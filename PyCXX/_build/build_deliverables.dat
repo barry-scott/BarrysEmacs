@@ -1,0 +1,15 @@
+#
+#	Win32 kit
+#
+kit /project=SDK /cfg=Release+Win32
+
+file /project=_Include/CXX/Config.hxx /file=CXX\CXX\Config.hxx
+file /project=_Include/CXX/Exception.hxx /file=CXX\CXX\Exception.hxx
+file /project=_Include/CXX/Extensions.hxx /file=CXX\CXX\Extensions.hxx
+file /project=_Include/CXX/IndirectPythonInterface.hxx /file=CXX\CXX\IndirectPythonInterface.hxx
+file /project=_Include/CXX/Objects.hxx /file=CXX\CXX\Objects.hxx
+
+file /project=_Source/CXX/cxxextensions.c /file=CXX\Src\cxxextensions.c
+file /project=_Source/CXX/cxxsupport.cxx /file=CXX\Src\cxxsupport.cxx
+file /project=_Source/CXX/cxx_extensions.cxx /file=CXX\Src\cxx_extensions.cxx
+file /project=_Source/CXX/IndirectPythonInterface.cxx /file=CXX\Src\IndirectPythonInterface.cxx

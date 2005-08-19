@@ -1,0 +1,24 @@
+#
+#	build version info data
+#
+version /maturity=V /major=7 /minor=1
+
+# All builds
+file kit\readme.txt			/type=generic /delimiter=@#@
+
+# Windows build
+file *.rc				/type=resource
+file win_emacs.rc			/type=generic /delimiter=@#@
+file BEmacsComClient.rc			/type=generic /delimiter=@#@
+file os.h				/type=generic /delimiter=@#@
+file win32.mak				/type=generic /delimiter=@#@
+
+# install shield
+file *.ipr				/type=install-shield
+file *.mda				/type=install-shield
+file value.shl				/type=generic /delimiter=@#@
+file infolist.txt			/type=generic /delimiter=@#@
+
+# Unix build
+file Unix_Kit\freebsd\PLIST.template	/type=generic /delimiter=@#@
+file Unix_Kit\linux\SPECS\bemacs.spec	/type=generic /delimiter=@#@
