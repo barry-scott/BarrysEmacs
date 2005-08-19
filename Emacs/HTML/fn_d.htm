@@ -1,0 +1,794 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<HTML>
+<HEAD>
+<TITLE>Functions D*</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<HR>
+<P><A name="dabbrev">(<B>dabbrev</B>) ^W</A></P>
+
+<BLOCKQUOTE>
+<P>Dynamic abbreviation facility. See <A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;extn&#39;,&#39;#dabbrev&#39;)">extension dabbrev</A></P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="debug">(<B>debug</B>) ESC-^D</A></P>
+
+<BLOCKQUOTE>
+<P>Enters the MLisp debugger. When in the debugger type h to get help on the debugger's key bindings.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="debug-emacs">(<B>debug-emacs</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>The function is used by the Emacs developers for debugging.</P>
+
+<P>When you using the OpenVMS operating system debug-emacs resets the terminal characteristics are reset, and control is passed to VMS DEBUG so that you can examine Emacs' data structures.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="declare-buffer-specific">(<B>declare-buffer-specific</B> <CODE>variable-name...</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Declares and allocates storage for each named variable that is not already declared. Buffer-specific bindings outlive all extended command calls. Each buffer will have its own copy of a buffer-specific variable.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="#declare-global">declare-global</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="declare-global">(<B>declare-global</B> <CODE>variable-name ...</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Globally declares and allocates storage for each named variable that is not already declared. Global bindings outlive all extended command calls.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="#declare-buffer-specific">declare-buffer-specific</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="decompile-current-line">(<B>decompile-current-line</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Returns the currently executing line decompiled into an MLisp expression. If called interactively, it returns a null string. If called non-interactively, it returns the decompiled MLisp for the line about to be traced.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_t.htm#trace">trace</A></LI>
+
+<LI><A href="#decompile-mlisp-function">decompile-mlisp-function</A></LI>
+
+<LI><A href="var_t.htm#trace-mode">trace-mode</A> variable</LI>
+
+<LI><A href="var_t.htm#trace-hook">trace-hook</A> variable</LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="decompile-mlisp-function">(<B>decompile-mlisp-function</B> <CODE>function-name</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Decompiles the MLisp function whose name is supplied, and puts the output into the current buffer at dot.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="default-emacs-init">(<B>default-emacs-init</B> <CODE>user-interface-style-list</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Add this function to your emacsinit.ml to setup the default emacs key bindings, mouse behaviour, variable settings and autoloads.</P>
+
+<P>The User Guide assumes the Emacs configuration setup by default-emacs-init in its discussion.</P>
+
+<P>The <CODE>user-interface-style-list</CODE> parameter allows default-emacs-init to setup the
+user interface in a particular style.
+<P>
+At the moment <CODE>user-interface-style</CODE> supports styles:</p>
+<ul>
+<li>"windows" - windows compatible style
+<li>"windows-extended" - more windows compatibility
+<li>"ere-searching" - use extended regular expression searching
+</ul>
+
+<p>The "windows" style will configure Barry's Emacs to operate in a style like other Microsoft Windows Applications.
+<p>Further windows like configuration is done when "windows-extended" is added.
+
+<P>In detail (default-emacs-init "windows") does the following:</P>
+
+<UL>
+<LI>Turns off checkpointing</LI>
+
+<LI>Turns on journaling</LI>
+
+<LI>Sets <A href="var_c.htm#case-fold-search">case-fold-search</A> on</LI>
+
+<LI>Sets <A href="var_r.htm#replace-case">replace-case</A> on</LI>
+
+<LI>Sets <A href="var_s.htm#silently-kill-processes">silently-kill-processes</A> on</LI>
+
+<LI>Sets <A href="var_a.htm#activity-indicator">activity-indicator</A> on</LI>
+
+<LI>Sets <A href="var_d.htm#display-end-of-file">display-end-of-file</A> on</LI>
+
+<LI>Sets <A href="var_c.htm#ctlchar-with-^">ctlchar-with-^</A> on</LI>
+
+<LI>Sets <A href="var_a.htm#automatic-horizontal-scrolling">automatic-horizontal-scrolling</A> on</LI>
+
+<LI>Sets <A href="var_h.htm#horizontal-scroll-step">horizontal-scroll-step</A> to 8</LI>
+
+<LI>Sets <A href="var_h.htm#highlight-region">highlight-region</A> on</LI>
+
+<LI>Sets <A href="var_s.htm#syntax-colouring">syntax-colouring</A> on</LI>
+
+<LI>Turns off <A href="var_t.htm#track-eol-on-^N-^P">track-eol-on-^N-^P</A></LI>
+
+<LI>Sets <A href="var_e.htm#expansion-only-completes-unique-choices">expansion-only-completes-unique-choices</A> on</LI>
+
+<LI>Sets <A href="var_i.htm#input-mode">input-mode</A> on</LI>
+
+<LI>Sets <A href="var_k.htm#keyboard-emulates-vt100-keypad">keyboard-emulates-vt100-keypad</A> off</LI>
+
+<LI>Loads the pc-keyboard package</LI>
+
+<LI>Loads the pc-mouse package</LI>
+
+<LI>Loads the minibuf-recall package</LI>
+
+<LI>Adds key bindings for the tab handling on Tab and Esc-Tab</LI>
+
+<LI>Adds key bindings for case conversion on Esc-C, Esc-l, Esc-u and Esc-i</LI>
+
+<li>Adds key binding for goto line on Esc-g
+
+<LI>Adds key binding for the minibuf function on Esc-Esc</LI>
+
+<LI>Auto executes lisp-mode for *.ml, *.key and *.mlp</LI>
+
+<LI>Auto executes electric-c-mode for *.c, *.cc, *.cpp, *.cxx, *.h, *.hh, *.hpp and *.hxx files</LI>
+
+<li>Auto executes Python-mode for *.py and *.pyc files</li>
+
+<LI>Auto executes Java-mode for *.java files</LI>
+
+<LI>Auto executes JavaScript-mode for *.js files</LI>
+
+<li>Auto executes install-shield-mode for *.rul files</li>
+
+<li>Auto executes latex-node for *.tex files</li>
+
+<li>Auto executes vbscript-mode for *.vbs files</li>
+
+<li>Auto executes electric-pascal-mode for *.pas files</li>
+
+<li>Auto executes HTML-mode for *.htm and *.html files</li>
+
+<li>Auto executes ntcmd-mode for *.bat and *.cmd files</li>
+
+<li>Auto executes sh-mode for *.sh, *.ksh, *.bash, .bashrc, .bash_profile and .profile</li>
+</UL>
+
+<P>In addition (default-emacs-init "windows,windows-extended") adds the following:</P>
+
+<ul>
+<li>Adds key bindings for incremental search. Search forward Ctrl-F and search reverse Ctrl-R.
+<li>Adds key bindings to open, Ctrl-O and save, Ctrl-S files.
+<li>Adds key binding for dabbrev, Ctrl-W
+<li>Adds key bindings to change buffers, Ctrl-B and list buffers, Ctrl-L Ctrl-B
+<li>Adds key bindings to list databases, Ctrl-L Ctrl-D
+<li>Adds key bindings to list processes, Ctrl-L Ctrl-P
+<li>Adds key bindings to redraw the screen, Ctrl-L Ctrl-L
+</ul>
+
+<P>Add "ere-searching" style sets up all search and replace keybinding to use the
+extended regular expression functions:</P>
+
+<ul>
+<li>ere-search-forward, ESC-s
+<li>ere-search-reverse, ESC-r
+<li>ere-query-replace-string, ESC-q
+</ul>
+
+<P><B>Example:</B></P>
+
+<p>Windows compatible initialisation:</p>
+
+<PRE>
+;
+; emacsinit.ml
+; load the default emacs settings
+;
+(default-emacs-init "windows,windows-extended")
+;
+; now for my customisations
+;
+</PRE>
+
+<p>Windows compatible initialisation withe extended regular expression saerching:</p>
+
+<PRE>
+;
+; emacsinit.ml
+; load the default emacs settings
+;
+(default-emacs-init "windows,windows-extended,ere-searching")
+;
+; now for my customisations
+;
+</PRE>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="default-global-keymap">(<B>default-global-keymap</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Returns the global keymap in which Emacs starts. The bindings are those wired into Emacs, as well as any bindings created by the user with bind-to-key.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_u.htm#use-local-map">use-local-map</A></LI>
+
+<LI><A href="fn_u.htm#use-global-map">use-global-map</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="define-buffer-macro">(<B>define-buffer-macro</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Takes the contents of the current buffer and defines it as a macro whose name is associated with the buffer. This is how you redefine a macro that has been edited using edit-macro.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="#define-keyboard-macro">define-keyboard-macro</A></LI>
+
+<LI><A href="#define-string-macro">define-string-macro</A></LI>
+
+<LI><A href="fn_e.htm#edit-macro">edit-macro</A></LI>
+
+<LI><A href="fn_r.htm#rename-macro">rename-macro</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="define-global-abbrev">(<B>define-global-abbrev</B> <CODE>"abbreviation" "expansion"</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Defines or redefines an abbreviation with the given name for the given phrase in the global abbreviation table. When you type the abbreviation and then enter a word-completion character, Emacs changes the abbreviation into the expanded form. This is similar to the AutoCorrect feature in Microsoft Word.</P>
+
+<P><B>Example:</B> Make Emacs convert "adn" into "and"</P>
+
+<PRE>
+(define-global-abbrev "adn" "and")
+</PRE>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_d.htm#define-local-abbrev">define-local-abbrev</A></LI>
+
+<LI><A href="fn_q.htm#quietly-read-abbrev-file">quietly-read-abbrev-file</A></LI>
+
+<LI><A href="fn_r.htm#read-abbrev-file">read-abbrev-file</A></LI>
+
+<LI><A href="fn_u.htm#use-abbrev-table">use-abbrev-table</A></LI>
+
+<LI><A href="fn_w.htm#write-abbrev-file">write-abbrev-file</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="define-hooked-global-abbrev">(<B>define-hooked-global-abbrev</B> <CODE>"abbrev" "phrase" "procedure"</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Defines or redefines an abbreviation with the given name for the given phrase in the global abbreviation table and associates a function with the abbreviation.</P>
+
+<P>When the abbreviation is typed the procedure is called. The variable abbrev-expansion holds the expanded phrase and dot will be at the end of the word.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="#define-hooked-local-abbrev">define-hooked-local-abbrev</A></LI>
+
+<LI><A href="var_a.htm#abbrev-expansion">abbrev-expansion</A></LI>
+
+<LI><A href="#define-global-abbrev">define-global-abbrev</A></LI>
+
+<LI><A href="#define-local-abbrev">define-local-abbrev</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="define-hooked-local-abbrev">(<B>define-hooked-local-abbrev</B> <CODE>"abbrev" "phrase" "procedure"</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Defines or redefines an abbreviation with the given name for the given phrase in the local abbreviation table and associates a procedure with the abbreviation.</P>
+
+<P>When the abbreviation is typed the procedure is called. The variable <A href="var_a.htm#abbrev-expansion">abbrev-expansion</A> holds the expanded phrase and dot will be at the end of the word.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="#define-hooked-global-abbrev">define-hooked-global-abbrev</A></LI>
+
+<LI><A href="#define-global-abbrev">define-global-abbrev</A></LI>
+
+<LI><A href="#define-local-abbrev">define-local-abbrev</A></LI>
+
+<LI><A href="var_a.htm#abbrev-expansion">abbrev-expansion</A> variable</LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="define-keyboard-macro">(<B>define-keyboard-macro</B> <CODE>macro-name</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Gives a name to the current keyboard macro. A keyboard macro is defined by using the <A href="fn_s.htm#start-remembering">start-remembering</A> and <A href="fn_s.htm#stop-remembering">stop-remembering</A> commands. define-keyboard-macro takes the current keyboard macro, makes a copy of it in a safe place, gives it a name, and erases the keyboard macro.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_e.htm#execute-keyboard-macro">execute-keyboard-macro</A></LI>
+
+<LI><A href="fn_s.htm#start-remembering">start-remembering</A></LI>
+
+<LI><A href="fn_s.htm#stop-remembering">stop-remembering</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="define-keymap">(<B>define-keymap</B> <CODE>keymap</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Defines a new, empty, keymap with the given name.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="define-local-abbrev">(<B>define-local-abbrev</B> <CODE>abbrevexpansion</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Defines or redefines an abbreviation with the given name for the given phrase in the local abbreviation table. A local abbreviation table must have already been set up with use-abbrev-table.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_u.htm#use-global-map">use-global-map</A></LI>
+
+<LI><A href="fn_u.htm#use-local-map">use-local-map</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="define-string-macro">(<B>define-string-macro</B> <CODE>macro-name</CODE> <CODE>body</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Defines a macro given a name and a body as a string entered in the mini-buffer.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="#define-buffer-macro">define-buffer-macro</A></LI>
+
+<LI><A href="#define-keyboard-macro">define-keyboard-macro</A></LI>
+
+<LI><A href="fn_e.htm#edit-macro">edit-macro</A></LI>
+
+<LI><A href="fn_r.htm#rename-macro">rename-macro</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="defun">(<B>defun</B> (function-name local... body))</A></P>
+
+<BLOCKQUOTE>
+<P>Defines a new MLisp function with the given name and a body composed of the given expressions. The value of the function is the value of the last expression executed.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="defun">(<B>defun</B> <CODE>function-name (arg...) local-variables... body</CODE>)</A>
+<BR>
+(<B>defun</B> <CODE>function-name (parameter-list) local-variables body</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Defines a new MLisp function with the given name and a body composed of the given expressions. The value of the function is the value of the last expression executed.</P>
+
+<P>An alternative form of defun has a parameter list. The parameters may have default values, see examples for details.</P>
+
+<P>The advantage of the second form is that the arguments are bound to the parameters before the context of the function is setup. With the first form of defun the arguments are evaluated in the context of the function.</P>
+
+<P>An example of the difference should make things clearer. The first form of defun causes an error for the following:</P>
+
+<PRE>
+    (defun
+        (function-print
+            num
+            (message "Number is " num)
+        )
+    )
+    (defun
+        (call-print
+            num
+            (setq num 12)
+            (function-print num)
+        )
+    )
+
+    (call-print) =&gt; "Number is 0"
+</PRE>
+
+<P>And the same problem solved using the second form of defun:</P>
+
+<PRE>
+    (defun
+        function-print (num)
+        (message "Number is " num)
+    )
+    (defun
+        (call-print
+            num
+            (setq num 12)
+            (function-print num)
+        )
+    )
+
+    (call-print) =&gt; "Number is 12"
+
+</PRE>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="delete-buffer">(<B>delete-buffer</B> <CODE>buffer-name</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Removes a buffer from the list of buffers, and discards any text the buffer contains. The function takes one argument, which is the name of the buffer to be deleted.</P>
+
+<P>If you use the delete-buffer command interactive and the target buffer is modified, delete-buffer will ask you if you really want to delete the specified buffer. There is no prompt if delete-buffer is executed from an MLisp program.</P>
+
+<P><B>Examples:</B></P>
+
+<PRE>
+(delete-buffer "fred")
+(delete-buffer (current-buffer-name))
+
+</PRE>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_k.htm#kill-buffer">kill-buffer</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="delete-next-character">(<B>delete-next-character</B> <CODE>repeat-count</CODE>) ^D</A></P>
+
+<BLOCKQUOTE>
+<P>Deletes the next <CODE>repeat-count</CODE> characters immediately following dot. If <CODE>repeat-count</CODE> is omitted, 1 is assumed. A line break counts as one character.</P>
+
+<P><B>Examples:</B></P>
+
+<PRE>
+(delete-next-character)       ;delete one character
+(delete-next-character 8)     ;delete next 8 characters
+
+;delete next 8 characters
+(provide-prefix-argument 8    
+    (delete-next-character))
+
+;delete white space
+(while (looking-at "[ \t]")   ;while next character is space or tab
+    (delete-next-character)
+)
+
+
+</PRE>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="delete-next-word">(<B>delete-next-word</B> <CODE>repeat-count</CODE>) ESC-d</A></P>
+
+<BLOCKQUOTE>
+<P>Deletes the next <CODE>repeat-count</CODE> words starting with the word that dot is currently in. It does not delete backwards to the start of the word. If <CODE>repeat-count</CODE> is omitted, 1 is assumed. If dot is not in a word, all punctuation up to the beginning of the next word is deleted as well as the word itself.</P>
+
+<P><B>Examples:</B></P>
+
+(delete-next-word) ;delete 1 word (delete-next-word 2) ;delete 2 words ;delete 4 words (provide-prefix-argument 4 (delete-next-word) )</BLOCKQUOTE>
+
+<HR>
+<P><A name="delete-other-windows">(<B>delete-other-windows</B>) ^X-1</A></P>
+
+<BLOCKQUOTE>
+<P>Deletes all windows on the screen except for the window containing dot.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="#delete-other-windows">delete-other-windows</A></LI>
+
+<LI><A href="#delete-window">delete-window</A></LI>
+
+<LI><A href="fn_e.htm#enlarge-window">enlarge-window</A></LI>
+
+<LI><A href="fn_n.htm#next-window">next-window</A></LI>
+
+<LI><A href="fn_p.htm#previous-window">previous-window</A></LI>
+
+<LI><A href="fn_s.htm#shrink-window">shrink-window</A></LI>
+
+<LI><A href="fn_s.htm#split-current-window">split-current-window</A></LI>
+
+<LI><A href="fn_s.htm#split-current-window-vertically">split-current-window-vertically</A></LI>
+
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="delete-previous-character">(<B>delete-previous-character</B>) Backspace</A></P>
+
+<BLOCKQUOTE>
+<P>Deletes prefix-argument characters backwards starting immediately preceding dot; that is, starting with the character to the left of the cursor.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="#delete-next-character"></A></LI>
+
+<LI><A href="#delete-next-word"></A></LI>
+
+<LI><A href="#delete-previous-word"></A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="delete-previous-word">(<B>delete-previous-word</B> <CODE>repeat-count</CODE>) ESC-h</A></P>
+
+<BLOCKQUOTE>
+<P>Deletes prefix-argument times <CODE>repeat-count</CODE> words backwards starting with the word that dot is in. If <CODE>repeat-count</CODE> is omitted, 1 is assumed.</P>
+
+<P>If dot is not in a word, the function deletes all the white-space up to the previous word as well.</P>
+
+<P>The function does not delete any characters in front of dot, not even if dot is in a word.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="#delete-next-word"></A></LI>
+
+<LI><A href="#delete-next-character"></A></LI>
+
+<LI><A href="#delete-previous-character"></A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="delete-region-to-buffer">(<B>delete-region-to-buffer</B> <CODE>buffer-name</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Deletes all characters between dot and the mark. The deleted text is saved in the specified buffer. The buffer is emptied before the characters are inserted.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_y.htm#yank-buffer">yank-buffer</A></LI>
+
+<LI><A href="#delete-to-killbuffer">delete-to-killbuffer</A></LI>
+
+<LI><A href="fn_y.htm#yank-from-killbuffer">yank-from-killbuffer</A></LI>
+
+<LI><A href="fn_w.htm#WIN-edit-copy">WIN-edit-copy</A></LI>
+
+<LI><A href="fn_w.htm#WIN-edit-cut">WIN-edit-cut</A></LI>
+
+<LI><A href="fn_w.htm#WIN-edit-paste">WIN-edit-paste</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="delete-to-killbuffer">(<B>delete-to-killbuffer</B>) ^W</A></P>
+
+<BLOCKQUOTE>
+<P>Deletes all characters between dot and the mark. The deleted text is moved to the buffer Kill buffer, which is emptied first.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_y.htm#yank-from-killbuffer">yank-from-killbuffer</A></LI>
+
+<LI><A href="fn_k.htm#kill-to-end-of-line">kill-to-end-of-line</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="delete-white-space">(<B>delete-white-space</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Deletes all white space characters on the current line on both sides dot. The definition of white-space is derived from the current syntax table.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_m.htm#modify-syntax-table">modify-syntax-table</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="delete-window">(<B>delete-window</B>) ^X-d</A></P>
+
+<BLOCKQUOTE>
+<P>Removes the current window from the screen and gives its space to the window below (or above if the current window is the bottom window). The new current window and buffer are those that just gained the extra space.</P>
+
+<P>This function does not delete any text. You can still go the buffer by various methods. For example, you can select it from the list of buffers (on the menu, click <B>Buffer</B> and then <B>Switch Buffer</B>.)</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="#delete-other-windows">delete-other-windows</A></LI>
+
+<LI><A href="fn_e.htm#enlarge-window">enlarge-window</A></LI>
+
+<LI><A href="fn_s.htm#shrink-window">shrink-window</A></LI>
+
+<LI><A href="fn_p.htm#pop-to-buffer">pop-to-buffer</A></LI>
+
+<LI><A href="fn_s.htm#switch-to-buffer">switch-to-buffer</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="describe-bindings">(<B>describe-bindings</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Places in the Help window a list of all the keys and the names of the extended commands that they are bound to. This listing is a good start if you want to create a quick-reference card for your own, customised version of Emacs.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="describe-command">(<B>describe-command</B> <CODE>command-name</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Describes the specified extended command.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="describe-key">(<B>describe-key</B> <CODE>keys</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Prints out a line of information describing the function that the sequence <CODE>keys</CODE> is bound to.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="extn_libraries.htm#whereis">The where-is package</A> defines the where-is function, which prompts for a function name and then tells you which key performs that function.</LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="describe-variable">(<B>describe-variable</B> <CODE>variable-name</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Describes the named variable.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="describe-word-in-buffer">(<B>describe-word-in-buffer</B>) ^X-^D</A></P>
+
+<BLOCKQUOTE>
+<P>Takes the word nearest dot and looks it up in a database and displays the information found. This database contains one-line descriptions of all of the C standard functions, VMS System Services, DCL lexical functions and Bliss string operations.</P>
+
+<P>If you supply a prefix-argument, describe-word-in-buffer allows you to edit the selected entry.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="digit">(<B>digit</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>This function is bound to the digit keys after a call to the argument-prefix command and until a non-digit function is executed. This means that the bindings for the digits changes during prefix argument collection, so that the prefix argument is correctly evaluated.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="dot">(<B>dot</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Returns the number of characters to the left of dot plus 1.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="dot-is-visible">(<B>dot-is-visible</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Returns 1 if dot is in a window. Note that this is not the same as asking whether dot is visible to the user.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="down-window">(<B>down-window</B> <CODE>repeat-count</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Moves the cursor into the window that is below the current window. This is different to the next-window function, which moves the cursor without regard to the physical position of the windows on the screen.</P>
+
+<P>If the <CODE>repeat-count</CODE> is given then the command is repeated that number of times.</P>
+
+<P>down-window reports an error if there is not a window below the current window.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_u.htm#up-window"></A></LI>
+
+<LI><A href="fn_n.htm#next-window"></A></LI>
+
+<LI><A href="fn_p.htm#previous-window"></A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="dump-abbreviation-tables">(<B>dump-abbreviation-tables</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Dumps a readable listing of an abbreviation table into the buffer <B>Abbreviation table</B> and makes the buffer visible.</P>
+
+<P>The listing includes the abbreviation, its expansion and the name of any MLisp hook function associated with the abbreviation.</P>
+
+<P>If there is more than one abbreviation table, the function prompts for the table name.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_l.htm#list-abbreviation-tables">list-abbreviation-tables</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="dump-memory-statistics">(<B>dump-memory-statistics</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>This function is used by the Emacs developers to determine the memory usage of Emacs.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="dump-stack-trace">(<B>dump-stack-trace</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Dumps an MLisp stack trace to the buffer Stack trace. This can be used to debug MLisp functions. The stack trace consists of an indication of what was executing when the trace occurred, and a line for each function that was active.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="var_t.htm#trace-mode">trace-mode</A> variable</LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="dump-syntax-table">(<B>dump-syntax-table</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Dumps a readable listing of a syntax table into a buffer and makes that buffer visible:</P>
+
+<UL>
+<LI>Each ASCII character in the range 0 to 127 is listed on consecutive lines. For runs of characters that have the same characteristic, the upper and lower bounds are separated by a dash.</LI>
+
+<LI>Dull characters are indicated by no flag.</LI>
+
+<LI>Word characters are indicated with the `w' flag.</LI>
+
+<LI>Quote characters are indicated with a '\'/ flag.</LI>
+
+<LI>Brackets are indicated with a '(' or ')' and the corresponding bracket character written out.</LI>
+
+<LI>Comment characters are indicated with a '{' or '}' flag. The second character is also displayed.</LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+</BODY>
+</HTML>
+

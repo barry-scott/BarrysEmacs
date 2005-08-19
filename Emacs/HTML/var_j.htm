@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<HTML>
+<HEAD>
+<TITLE>Variables - J</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<HR>
+<P><A name="journal-frequency"></A><B>journal-frequency</B> &laquo; 0</P>
+
+<BLOCKQUOTE>
+<P>Sets the time in seconds before any journal files are flushed to disk. A reasonable value for this variable is 30 seconds. To disable journalling, set this variable to 0 or false.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="journal-scratch-buffers"></A><B>journal-scratch-buffers</B> &laquo; 0</P>
+
+<BLOCKQUOTE>
+<P>By default Emacs will not journal scratch buffers, even when current-buffer-journalled is 1. This is normally a good thing as its improves the performance of Emacs. Many packages use scratch buffers which would be journalled if this variable was set to 1.</P>
+
+<P>Set this variable to 1 will enable journalling on all buffers.</P>
+</BLOCKQUOTE>
+
+<HR>
+</BODY>
+</HTML>
+

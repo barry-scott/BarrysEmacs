@@ -1,0 +1,12 @@
+(defun
+    (dired-com i
+	(declare-global ~DIRED-com)
+	(setq ~DIRED-com 1)
+	(setq checkpoint-frequency 0)
+	(setq silently-kill-processes 1)
+	(execute-mlisp-file "dired")
+	(dired
+	    (if (> (argc) 1) (argv 1) "")
+	)
+    )
+)

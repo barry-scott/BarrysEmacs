@@ -1,0 +1,25 @@
+/* XPM */
+static char *toolbar_region[] = {
+/* width height num_colors chars_per_pixel */
+"    16    15        3            1",
+/* colors */
+". c #000000",
+"# c #000080",
+"a c #c0c0c0",
+/* pixels */
+"aaaaaaa.aaaaaaaa",
+"aaaaaaaaaaaaaaaa",
+"aa....a........a",
+"aaaaaaaaaaaaaaaa",
+"aa............aa",
+"aa............aa",
+"aaaaaaaaaaaaaaaa",
+"aa........aaaaaa",
+"aa........aaaaaa",
+"aaaaaaaaaaaaaaaa",
+"aa....a........a",
+"aaaaaaaaaaaaaaaa",
+"aa....a..aaaaaaa",
+"aaaaaaaaaaaaaaaa",
+"aaaaaaa.aaaaaaaa"
+};

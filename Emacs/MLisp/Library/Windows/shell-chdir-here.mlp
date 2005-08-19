@@ -1,0 +1,15 @@
+; 
+; shell-chdir-here.mlp
+; 
+; Copyright (c) 2000 Barry A. Scott
+; 
+(defun
+    (shell-chdir-here-com
+	~dir
+	(setq ~dir (argv 1))
+	(if (file-is-a-directory ~dir)
+	    (setq previous-directory ~dir)
+	    (error-message ~dir " is not a directory")
+	)
+    )
+)

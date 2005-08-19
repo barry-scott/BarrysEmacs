@@ -1,0 +1,1251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<TITLE>User Guide - Default Key Bindings</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<P><A name="top"></A></P>
+
+<H1><A name="defaultkeybindings"></A>Default Key Bindings</H1>
+
+<P>The tables below are a list of the Emacs default key bindings.</P>
+
+<P>The default binding are provided by calling the function default-emacs-init 
+from your emacsinit.ml file. The default emacsinit.ml shipped with emacs calls default-emacs-init.</P>
+
+<P>This is the same information as displayed by the <FONT face="Courier New" size="2">describe-bindings</FONT> function.</P>
+
+<TABLE width="600" border="2" cellspacing="0" cellpadding="2">
+<CAPTION><B>Special Editing key bindings</B></CAPTION>
+
+<TR>
+<TH width="20%" align="left">
+<P>Binding</P>
+</TH>
+<TH width="30%" align="left">
+<P>Function</P>
+</TH>
+<TH width="20%" align="left">
+<P>Binding</P>
+</TH>
+<TH width="30%" align="left">
+<P>Function</P>
+</TH>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">up</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#previous-line&#39;)">previous-line</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ctrl-up</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#scroll-one-line-up&#39;)">scroll-one-line-up</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">down</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#next-line&#39;)">next-line</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ctrl-down</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#scroll-one-line-down&#39;)">scroll-one-line-down</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">right</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#forward-character&#39;)">forward-character</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ctrl-right</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#forward-word&#39;)">forward-word</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">left</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#backward-character&#39;)">backward-character</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ctrl-left</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#backward-word&#39;)">backward-word</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">home</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#PC-home-key&#39;)">PC-home-key</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ctrl-home</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#beginning-of-file&#39;)">beginning-of-file</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">insert</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#Toggle replace-mode&#39;)">Toggle replace-mode</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">shift-insert</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#UI-edit-paste&#39;)">UI-edit-paste</A></P>
+</TD>
+</TR>
+
+<TR>
+<td colspan=2>&nbsp;</td>
+<TD>
+<P><FONT face="Courier New" size="2">ctrl-insert</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#UI-edit-copy&#39;)">UI-edit-copy</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">delete</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-next-character&#39;)">delete-next-character</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">shift-delete</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#&#39;)">PC-edit-cut</A></P>
+</TD>
+</TR>
+
+<TR>
+<td colspan=2>&nbsp;</td>
+<TD>
+<P><FONT face="Courier New" size="2">ctrl-delete</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-next-word&#39;)">delete-next-word</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">end</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#end-of-line&#39;)">end-of-line</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ctrl-end</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#end-of-file&#39;)">end-of-file</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">page-up</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#previous-page&#39;)">previous-page</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ctrl-page-up</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#beginning-of-window&#39;)">beginning-of-window</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">page-down</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#next-page&#39;)">next-page</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ctrl-page-down</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#end-of-window&#39;)">end-of-window</A></P>
+</TD>
+</TR>
+</TABLE>
+
+<TABLE width="600" border="2" cellspacing="0" cellpadding="2">
+<CAPTION><B>Function Key bindings</B></CAPTION>
+
+<TR>
+<TH width="20%" align="left">
+<P>Binding</P>
+</TH>
+<TH width="30%" align="left">
+<P>Function</P>
+</TH>
+<TH width="20%" align="left">
+<P>Binding</P>
+</TH>
+<TH width="30%" align="left">
+<P>Function</P>
+</TH>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">f1</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#help&#39;)">help</A></P>
+</TD>
+<TD colspan="2">&nbsp;</TD>
+</TR>
+</TABLE>
+
+<TABLE width="600" border="2" cellspacing="0" cellpadding="2">
+<CAPTION><B>Mouse bindings</B></CAPTION>
+
+<TR>
+<TH width="20%" align="left">
+<P>Binding</P>
+</TH>
+<TH width="30%" align="left">
+<P>Function</P>
+</TH>
+<TH width="20%" align="left">
+<P>Binding</P>
+</TH>
+<TH width="30%" align="left">
+<P>Function</P>
+</TH>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">mouse-wheel-pos</FONT></P>
+</TD>
+<TD>
+<P>Scroll the buffer down 3 lines at a time</P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ctrl-mouse-wheel-pos</FONT></P>
+</TD>
+<TD>
+<P>Scroll the buffer up 3 lines at a time</P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">mouse-wheel-neg</FONT></P>
+</TD>
+<TD>
+<P>Scroll the buffer up 3 lines at a time</P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ctrl-mouse-wheel-neg</FONT></P>
+</TD>
+<TD>
+<P>Scroll the buffer up 1 page at a time</P>
+</TD>
+</TR>
+</TABLE>
+
+<TABLE width="600" border="2" cellspacing="0" cellpadding="2">
+<CAPTION><B>Ctrl Key bindings</B></CAPTION>
+
+<TR>
+<TH width="20%" align="left">
+<P>Binding</P>
+</TH>
+<TH width="30%" align="left">
+<P>Function</P>
+</TH>
+<TH width="20%" align="left">
+<P>Binding</P>
+</TH>
+<TH width="30%" align="left">
+<P>Function</P>
+</TH>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^@</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#set-mark&#39;)">set-mark</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^A</FONT></P>
+</TD>
+<TD>
+<P>Select the whole buffer</P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^B</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#switch-to-buffer&#39;)">switch-to-buffer</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^C</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#UI-edit-copy&#39;)">UI-edit-copy</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^D</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-next-character&#39;)">delete-next-character</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^E</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#end-of-line&#39;)">end-of-line</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^F</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#incremental-search&#39;)">incremental-search</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^G</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#interrupt-key&#39;)">interrupt-key</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^H</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-previous-character&#39;)">delete-previous-character</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^I</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#tab-key&#39;)">tab-key</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^J</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#newline-and-indent&#39;)">newline-and-indent</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^K</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#kill-to-end-of-line&#39;)">kill-to-end-of-line</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^L</FONT></P>
+</TD>
+<TD>
+<P><A href="#Ctrl-L-table")>See Ctrl-L table</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^M</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#newline&#39;)">newline</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^N</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#next-line&#39;)">next-line</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^O</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#visit-file&#39;)">visit-file</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^P</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#previous-line&#39;)">previous-line</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^Q</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#quote-character&#39;)">quote-character</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^R</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#reverse-incremental-search&#39;)">reverse-incremental-search</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^S</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#write-current-file&#39;)">write-current-file</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^T</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#transpose-characters&#39;)">transpose-characters</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^U</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#argument-prefix&#39;)">argument-prefix</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^V</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#UI-edit-paste&#39;)">UI-edit-paste</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^W</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;extn&#39;,&#39;#dabbrev&#39;)">dabbrev</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^X</FONT></P>
+</TD>
+<TD>
+<P><A href="#Ctrl-X-table")>See Ctrl-X table</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^Y</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#yank-from-killbuffer&#39;)">yank-from-killbuffer</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^Z</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#new-undo&#39;)">new-undo</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">Esc</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#See Esc table&#39;)">See Esc table</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^_</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#help-key&#39;)">help-key</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">BKSP</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-previous-character&#39;)">delete-previous-character</A></P>
+</TD>
+</TR>
+</TABLE>
+
+<p><a name="Ctrl-X-table">What happens when ^X</a> is typed changes if text is highlighted. If text is highlighted ^X will 
+cut the text into the paste buffer, using UI-edit-cut. Otherwise ^X acts as prefix for the commands
+in the following table.</p>
+
+<TABLE width="600" border="2" cellspacing="0" cellpadding="2">
+<CAPTION><B>Ctrl-X Key bindings</B></CAPTION>
+
+<TR>
+<TH width="20%" align="left">
+<P>Binding</P>
+</TH>
+<TH width="30%" align="left">
+<P>Function</P>
+</TH>
+<TH width="20%" align="left">
+<P>Binding</P>
+</TH>
+<TH width="30%" align="left">
+<P>Function</P>
+</TH>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^X-^@</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#unset-mark&#39;)">unset-mark</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^X-^B</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#list-buffers&#39;)">list-buffers</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^X-^C</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#exit-emacs&#39;)">exit-emacs</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^X-^D</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#describe-word-in-buffer&#39;)">describe-word-in-buffer</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^X-^E</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#compile-it&#39;)">compile-it</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^X-^F</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#write-file-exit&#39;)">write-file-exit</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^X-^I</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#insert-file&#39;)">insert-file</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^X-^M</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#write-modified-files&#39;)">write-modified-files</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^X-^N</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#next-error&#39;)">next-error</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^X-^O</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#use-old-buffer&#39;)">use-old-buffer</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^X-^R</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#read-file&#39;)">read-file</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^X-^S</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#write-current-file&#39;)">write-current-file</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^X-^U</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#new-undo&#39;)">new-undo</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^X-^V</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#visit-file&#39;)">visit-file</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^X-^W</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#write-named-file&#39;)">write-named-file</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^X-^X</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#exchange-dot-and-mark&#39;)">exchange-dot-and-mark</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^X-^Z</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#shrink-window&#39;)">shrink-window</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^X-!</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#execute-monitor-command&#39;)">execute-monitor-command</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^X-(</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#start-remembering&#39;)">start-remembering</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^X-)</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#stop-remembering&#39;)">stop-remembering</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^X-1</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-other-windows&#39;)">delete-other-windows</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^X-2</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#split-current-window&#39;)">split-current-window</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^X-3</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#split-current-window-vertically&#39;)">split-current-window-vertically</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^X-=</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#what-cursor-position&#39;)">what-cursor-position</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^X-?</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#apropos-variable&#39;)">apropos-variable</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^X-b</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#switch-to-buffer&#39;)">switch-to-buffer</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^X-d</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-window&#39;)">delete-window</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^X-e</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#execute-keyboard-macro&#39;)">execute-keyboard-macro</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^X-n</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#next-window&#39;)">next-window</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^X-p</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#previous-window&#39;)">previous-window</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^X-z</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#enlarge-window&#39;)">enlarge-window</A></P>
+</TD>
+<TD colspan="2">&nbsp;</TD>
+</TR>
+</TABLE>
+
+<TABLE width="600" border="2" cellspacing="0" cellpadding="2">
+<CAPTION><B><a name="Ctrl-L-table">Ctrl-L Key bindings</B></CAPTION>
+
+<TR>
+<TH width="20%" align="left">
+<P>Binding</P>
+</TH>
+<TH width="30%" align="left">
+<P>Function</P>
+</TH>
+<TH width="20%" align="left">
+<P>Binding</P>
+</TH>
+<TH width="30%" align="left">
+<P>Function</P>
+</TH>
+</TR>
+<!-- -------------------------------------------------- -->
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^L-^B</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#buffer-dired&#39;)">buffer-dired</A></P>
+</TD>
+<td>
+<P><FONT face="Courier New" size="2">^L-^D</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#list-databases&#39;)">list-databases</A></P>
+</TD>
+</TR>
+<!-- -------------------------------------------------- -->
+<tr>
+<td>
+<P><FONT face="Courier New" size="2">^L-^L</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#redraw-display&#39;)">redraw-display</A></P>
+</TD>
+<td>
+<P><FONT face="Courier New" size="2">^L-^P</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#list-processes&#39;)">list-processes</A></P>
+</TD>
+</TR>
+<!-- -------------------------------------------------- -->
+</TABLE>
+
+<TABLE width="600" border="2" cellspacing="0" cellpadding="2">
+<CAPTION><B><a name="Esc-table">Esc Key bindings</a></B></CAPTION>
+
+<TR>
+<TH width="20%" align="left">
+<P>Binding</P>
+</TH>
+<TH width="30%" align="left">
+<P>Function</P>
+</TH>
+<TH width="20%" align="left">
+<P>Binding</P>
+</TH>
+<TH width="30%" align="left">
+<P>Function</P>
+</TH>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-^C</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#exit-emacs&#39;)">exit-emacs</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-^D</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#debug&#39;)">debug</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-^I</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#tab-delete&#39;)">tab-delete</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-^V</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#page-next-window&#39;)">page-next-window</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-^W</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-region-to-buffer&#39;)">delete-region-to-buffer</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-^Y</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#yank-buffer&#39;)">yank-buffer</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-ESC</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#minibuf&#39;)">minibuf</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-!</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#line-to-top-of-window&#39;)">line-to-top-of-window</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-(</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#backward-paragraph&#39;)">backward-paragraph</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-)</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#forward-paragraph&#39;)">forward-paragraph</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-,</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#beginning-of-window&#39;)">beginning-of-window</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ESC--</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#meta-minus&#39;)">meta-minus</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-.</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#end-of-window&#39;)">end-of-window</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-0..ESC-9</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#meta-digit&#39;)">meta-digit</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-&lt;</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#beginning-of-file&#39;)">beginning-of-file</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-&gt;</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#end-of-file&#39;)">end-of-file</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-?</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#apropos&#39;)">apropos</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-@</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#column-to-left-of-window&#39;)">column-to-left-of-window</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-C</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#case-capitalize&#39;)">case-capitalize</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-^</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#case-word-invert&#39;)">case-word-invert</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-a</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#backward-sentence&#39;)">backward-sentence</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-b</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#backward-word&#39;)">backward-word</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-d</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-next-word&#39;)">delete-next-word</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-e</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#forward-sentence&#39;)">forward-sentence</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-f</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#forward-word&#39;)">forward-word</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-g</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#goto-line&#39;)">goto-line</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-h</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-previous-word&#39;)">delete-previous-word</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-i</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#case-invert&#39;)">case-invert</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-j</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#indent-C-procedure&#39;)">indent-C-procedure</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-l</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#case-lower&#39;)">case-lower</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-q</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#query-replace-string&#39;)">query-replace-string</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-r</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#replace-string&#39;)">replace-string</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-u</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#case-upper&#39;)">case-upper</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-v</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#previous-page&#39;)">previous-page</A></P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-x</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#execute-extended-command&#39;)">execute-extended-command</A></P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">ESC-z</FONT></P>
+</TD>
+<TD>
+<P><A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#scroll-one-line-down&#39;)">scroll-one-line-down</A></P>
+</TD>
+</TR>
+</TABLE>
+</BODY>
+</HTML>
+

@@ -1,0 +1,11 @@
+;
+;	build_dependencies.dat for EmacsV7
+;
+import Release /cfg=BUILD_TYPE=Release+PLATFORM=Win32 ~
+	/database=BuildToolsSources ~
+		/project=Python-2.2.1/SDK/Release ~
+			/label=Stable_Python-2.2.1_0015_BIN
+import Debug /cfg=BUILD_TYPE=Debug+PLATFORM=Win32 ~
+	/database=BuildToolsSources ~
+		/project=Python-2.2.1/SDK/Debug ~
+			/label=Stable_Python-2.2.1_0015_BIN

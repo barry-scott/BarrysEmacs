@@ -1,0 +1,28 @@
+/* XPM */
+static char *toolbar_search[] = {
+/* width height num_colors chars_per_pixel */
+"    16    15        6            1",
+/* colors */
+". c #000000",
+"# c #000080",
+"a c #c0c0c0",
+"b c #808080",
+"c c #ffff00",
+"d c #ffffff",
+/* pixels */
+"aaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaa",
+"aaa#aaaaaaaaaaaa",
+"aa#a#aaaaaaaaaaa",
+"aa#a#aa....a###a",
+"aa#a#aaaaaaaaaa#",
+"a#aaa#a....aaaa#",
+"a#aaa#aaaaaa####",
+"a#####aaaaa#aaa#",
+"#aaaaa#aaaa#aaa#",
+"#aaaaa#aaaaa####",
+"aaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaa",
+"aaaaaaaaaaaaaaaa"
+};

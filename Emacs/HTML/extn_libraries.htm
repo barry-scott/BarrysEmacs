@@ -1,0 +1,1677 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>Emacs Library Reference</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<A name="top"></A> 
+
+<H1><A name="libraryreference"></A>Emacs Library Reference</H1>
+
+<HR>
+<H2><A name="abbrev"></A>ABBREV, Extended Abbreviation Support</H2>
+
+<!-- ABBREV Abbreviation handling</P>-->
+<P>The ABBREV library provides useful functions that allow you to manipulate abbreviations. To access these functions, you must load ABBREV using <KBD>ESC-x execute-mlisp-file</KBD>.</P>
+
+<P>The functions defined in the ABBREV library and their key bindings are as follows:</P>
+
+<HR>
+<P><B>^X-G (define-global-abbrev-in-buffer)</B></P>
+
+<BLOCKQUOTE>
+<P>Takes the word to the left of dot and defines it as a global abbreviation. You are prompted for the expansion in the Mini-buffer.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>^X-L (define-local-abbrev-in-buffer)</B></P>
+
+<BLOCKQUOTE>
+<P>Takes the word to the left of dot and defines it as an abbreviation in the current buffer's local abbreviation table. You are prompted for the abbreviation's expansion in the Mini-buffer.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>(list-local-abbrevs)</B></P>
+
+<BLOCKQUOTE>
+<P>Displays a buffer called Abbrev list and fills it with the abbreviations and their expansions in effect for the current buffer.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>^X-W (edit-local-abbrevs)</B></P>
+
+<BLOCKQUOTE>
+<P>Displays a buffer called Abbrev list, fills it with the abbreviations and their expansions in effect for the current buffer and then enters a recursive edit so that you can edit these definitions. When the recursive edit is exited, the buffer is used to define the new abbreviations.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>(list-all-abbrevs)</B></P>
+
+<BLOCKQUOTE>
+<P>Displays a buffer called Abbrev list and fills it with the abbreviations and expansions currently defined in Emacs.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>(edit-all-abbrevs)</B></P>
+
+<BLOCKQUOTE>
+<P>Displays a buffer called Abbrev list, fills it with all the abbreviations defined in the current Emacs, and then enters a recursive edit to let you alter these abbreviations. When you exit the recursive edit, the modified buffer contents are used to define the abbreviations.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>^X-R (define-global-abbrev-for-region)</B></P>
+
+<BLOCKQUOTE>
+<P>Uses the region as an expansion and prompts you for an abbreviation. The abbreviation is defined in the global abbreviation table.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>^X-S (define-local-abbrev-for-region)</B></P>
+
+<BLOCKQUOTE>
+<P>Uses the region as an expansion and prompts you for an abbreviation. The abbreviation is defined in the current buffer's local abbreviation table.</P>
+
+<!--<P><I><B>AREA, Vertically Bounded Cut And Paste </B></I> AREA Rectangular cut and paste</P>-->
+<P>The AREA package defines two functions that allow you to define a box and then remove the text from that box leaving the text not included in the box undisturbed. The removed text is stored in a buffer called Area. This text may be inserted later at some other location.</P>
+
+<P>The AREA functions and key bindings are:</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>ESC-w (delete-area)</B></P>
+
+<BLOCKQUOTE>
+<P>Deletes a vertically-bounded area, storing the deleted area in a buffer named Area.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>ESC-y (insert-area)</B></P>
+
+<BLOCKQUOTE>
+<P>Inserts the contents of the Area buffer into the current buffer at dot.</P>
+
+<P>The AREA library has been superceded by the RECTANGULAR library, but it is still supplied with Emacs for compatibility with existing MLisp code. For details on the RECTANGULAR library, see <A href="#rectangular">RECTANGULAR, Rectangular Cut and Paste</A></P>
+</BLOCKQUOTE>
+
+<HR>
+<H2><A name="buff"></A>BUFF, One Line Buffer Listing</H2>
+
+<BLOCKQUOTE>
+<P>This library defines the single function one-line-buffer-list. This function displays the names of all of the buffers in Emacs in the mode line. If more that one line's worth of buffers exist, each line of names is displayed and a character input to display the next line. The default binding for the one-line-buffer-list function is <KBD>^X-^B</KBD>.</P>
+
+<P>Some buffers in the list may be preceded by a single character. The various characters and their meanings are:</P>
+
+<TABLE>
+<TR>
+<TD><STRONG>*</STRONG></TD>
+<TD>Indicates that the buffer has been modified since it was last written to disk</TD>
+</TR>
+
+<TR>
+<TD><STRONG>#</STRONG></TD>
+<TD>Indicates that the buffer is a scratch buffer.</TD>
+</TR>
+
+<TR>
+<TD><STRONG>@</STRONG></TD>
+<TD>Indicates that the buffer is empty.</TD>
+</TR>
+</TABLE>
+</BLOCKQUOTE>
+
+<HR>
+<H2><A name="centerlin"></A>CENTERLIN, Line Centering</H2>
+
+<!--<P><I><B>CENTERLIN, Line Centering </B></I> CENTERLIN Line centering Centering lines center-line left-margin right-margin</P>-->
+<P>The CENTERLIN library package defines the single function center-line which can be used to centre the current line between the margins as defined by left-margin and right-margin.</P>
+
+<P>There is no default binding for the center-line function.</P>
+
+<HR>
+<H2><A name="dabbrev"></A>DABBREV, Dynamic Abbreviation Expansion</H2>
+
+<!--<P><I><B>DABBREV, Dynamic Abbreviation Expansion </B></I> DABBREV dabbrev Dynamic abbrevation expansion Abbreviations, dynamic expansion of</P>-->
+
+<P>The DABBREV library defines the dabbrev function. The dabbrev function takes the word that the cursor is positioned in and looks through the buffer for a word for which the current word is a prefix. If a match is found, the current word is expanded into the full word.</P>
+
+<P>For example, if you have already typed the word FOOBAR into the buffer, you can then type the subword FOO, then execute the dabbrev function and FOO will be expanded to FOOBAR.</P>
+
+<hr>
+<P><B>dabbrev-expand-whole-word 0</B></P>
+
+<BLOCKQUOTE>
+<P>This variable changes the way dabbrev works when you start dabbrev in the middle of a word.
+Either dabbrev uses the whole of the word as the prefix to expand or dabbrev uses the beginning of
+the word and deletes the end of the word.</P>
+
+</BLOCKQUOTE>
+
+<hr>
+<P><B>^W (dabbrev)</B></P>
+
+<BLOCKQUOTE>
+<P>dabbrev.</P>
+</BLOCKQUOTE>
+
+<HR>
+<H2><A name="dent"></A>DENT, Region Indentation</H2>
+
+<!--<P><I><B>DENT, Region Indentation </B></I> DENT Indentation indent-region undent-region</P>-->
+<P>The DENT library defines the functions indent-region and undent-region. indent-region indents the currently selected region by logical-tab-size characters. If provided with a prefix argument, it performs the indentation the specified numbers of times. undent-region undents the current region.</P>
+
+<HR>
+<H2><A name="edtsim"></A>EDTSIM, EDT Simulation</H2>
+
+<!--<P><I><B>EDTSIM, EDT Simulation </B></I> EDTSIM EDT simulation</P>-->
+<P>The EDTSIM package defines functions which emulate the EDT text editor found on the OpenVMS operating system from Digital Equipment Corporation.</P>
+
+<P>When you load the EDTSIM library (using <KBD>ESC-x execute-mlisp-file edtsim</KBD>), the numeric keypad keys are re-bound to perform the same actions as they would in the real EDT editor. The major mode string in the mode line is modified to indicate that EDT simulation is loaded.</P>
+
+<P>The following list contains all of the implemented EDT commands with a simple description of what each command does.</P>
+
+<TABLE cellspacing="10">
+<TR>
+<TD valign="TOP" width="60%">Introduce a command repetition count.</TD>
+<TD><FONT face="Courier New" size="2">GOLD-digits</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">The GOLD key.</TD>
+<TD><FONT face="Courier New" size="2">PF1</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Give help and also, when a command is requested, cause Emacs name completion. The help text is obtained from the EDT help library, and re-formatted so that it can be displayed from within Emacs.</TD>
+<TD><FONT face="Courier New" size="2">PF2 (HELP)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Find the next occurrence of the current search string.</TD>
+<TD><FONT face="Courier New" size="2">PF3 (FNDNXT)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Delete to the end of the current line and delete the line terminator.</TD>
+<TD><FONT face="Courier New" size="2">PF4 (DEL-L)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Move to the next line in the current direction.</TD>
+<TD><FONT face="Courier New" size="2">KP0 (LINE)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Move to the next word in the current direction.</TD>
+<TD><FONT face="Courier New" size="2">KP1 (WORD)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Move to the end of the current line.</TD>
+<TD><FONT face="Courier New" size="2">KP2 (EOL)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Moves to the next character in the current direction.</TD>
+<TD><FONT face="Courier New" size="2">KP3 (CHAR)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Change the current direction to forwards. This key may also to used to terminate a search string.</TD>
+<TD><FONT face="Courier New" size="2">KP4 (ADVANCE)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Change the current direction to backwards. This key may also be used to terminate a search string.</TD>
+<TD><FONT face="Courier New" size="2">KP5 (BACKUP)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Cut the select region and put it in the paste buffer.</TD>
+<TD><FONT face="Courier New" size="2">KP6 (CUT)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Move to the next page in the current direction.</TD>
+<TD><FONT face="Courier New" size="2">KP7 (PAGE)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Scroll the window by two thirds and moves dot to the selected line.</TD>
+<TD><FONT face="Courier New" size="2">KP8 (SECT)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Set the start of the select region to the current cursor position.</TD>
+<TD><FONT face="Courier New" size="2">KP. (SELECT)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Delete the character following the current cursor position.</TD>
+<TD><FONT face="Courier New" size="2">KP, (DEL-C)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Delete the word following the current cursor position.</TD>
+<TD><FONT face="Courier New" size="2">KP-- (DEL-W)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Insert a line terminator after the current cursor position.</TD>
+<TD><FONT face="Courier New" size="2">GOLD-KP0 (OPEN LINE)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Invert the case of the current character or select region.</TD>
+<TD><FONT face="Courier New" size="2">GOLD-KP1 (CHGCASE)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Delete the text from dot to the end of the current line.</TD>
+<TD><FONT face="Courier New" size="2">GOLD-KP2 (DEL-EOL)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Insert a character into the buffer. The character inserted has the numeric value specified by the command's prefix argument.</TD>
+<TD><FONT face="Courier New" size="2">GOLD-KP3 (SPECINS)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Move the current cursor position to the bottom of the current buffer.</TD>
+<TD><FONT face="Courier New" size="2">GOLD-KP4 (BOTTOM)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Move the current cursor position to the top of the current buffer.</TD>
+<TD><FONT face="Courier New" size="2">GOLD-KP5 (TOP)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Insert the contents of the paste buffer at the current cursor position.</TD>
+<TD><FONT face="Courier New" size="2">GOLD-KP6 (PASTE)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Go to the Emacs command line.</TD>
+<TD><FONT face="Courier New" size="2">GOLD-KP7 (CMD)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Replace a string throughout the rest of the buffer.</TD>
+<TD><FONT face="Courier New" size="2">GOLD-KP9 (REPLACE)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Unset the start of the select region.</TD>
+<TD><FONT face="Courier New" size="2">GOLD-KP. (RESET)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Paste in the last character deleted.</TD>
+<TD><FONT face="Courier New" size="2">GOLD-KP, (UND-C)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Paste in the last word deleted.</TD>
+<TD><FONT face="Courier New" size="2">GOLD-KP- (UND-W)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Search for an occurrence of a string.</TD>
+<TD><FONT face="Courier New" size="2">GOLD-PF3 (FIND)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Paste in the last line deleted.</TD>
+<TD><FONT face="Courier New" size="2">GOLD-PF4 (UND-L)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Move the cursor up one line.</TD>
+<TD><FONT face="Courier New" size="2">Up-arrow (UP)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Move the cursor down one line.</TD>
+<TD><FONT face="Courier New" size="2">Down-arrow (DOWN)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Move the cursor left one character.</TD>
+<TD><FONT face="Courier New" size="2">Left-arrow (LEFT)</FONT></TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="60%">Move the cursor right one character.</TD>
+<TD><FONT face="Courier New" size="2">Right-arrow (RIGHT)</FONT></TD>
+</TR>
+</TABLE>
+
+<HR>
+<H2><A name="electricc"></A>ELECTRICC, A Mode for Writing C Programs</H2>
+
+<!--<P><I><B>ELECTRICC, A Mode for Writing C Programs </B></I> ELECTRICC Electric C Mode</P>-->
+<P>The ELECTRICC library defines functions for Electric C Mode, a major mode for writing C programs. Electric C Mode is an alternative library to the C Mode library described in the Barry's Emacs Programmer's Guide.</P>
+
+<P>Electric C Mode performs a number of useful functions for the C programmer, including:</P>
+
+<P>&middot; Balancing of parentheses</P>
+
+<P>&middot; Proper indentation of compound statement blocks</P>
+
+<P>&middot; Comment handling</P>
+
+<HR>
+<H2><A name="flasher"></A>FLASHER, Parenthesis Balancing</H2>
+
+<BLOCKQUOTE><!--<P><I><B>FLASHER, Parenthesis Balancing </B></I> FLASHER Parenthesis balancing Balancing parentheses paren-flash</P>-->
+<P>The FLASHER library defines the single function paren-flashwhich can be used to cause parenthesis balancing The function paren-flash should be bound to the closing version of the brackets that are to be balanced.</P>
+
+<P>Two buffer-specific variables are used to provide input parameters to the functions:</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>paren-flash-wait</B></P>
+
+<BLOCKQUOTE>
+<P>A numeric variable used to control the maximum length of time the cursor stays over a matching parenthesis. The value is specified in tenths of a second. The default value is 10 (1 second).</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>paren-flash-message</B></P>
+
+<BLOCKQUOTE>
+<P>A boolean variable used to control the displaying of the error message when no matching bracket is found. If true, an error message is displayed; otherwise, the fact that the bracket is non-matching is ignored.</P>
+</BLOCKQUOTE>
+
+<HR>
+<H2><A name="globdel"></A>GLOBDEL, Global Deletion Of Lines</H2>
+
+<BLOCKQUOTE><!--<P><I><B>GLOBDEL, Global Deletion Of Lines </B></I> GLOBDEL Global deletion of lines Deletion of lines</P>-->
+<P>The GLOBDEL library provides the facility to nominate a set of lines by a search string, and then delete all the nominated lines. The library defines two functions:</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>(global-delete-lines)</B></P>
+
+<BLOCKQUOTE>
+<P>Prompts for an ordinary search string, and deletes all lines containing that string.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>(re-global-delete-lines)</B></P>
+
+<BLOCKQUOTE>
+<P>Prompts for a regular expression search string, and deletes all lines containing the regular expression.</P>
+
+<P>Both functions indicate the total number of lines deleted.</P>
+</BLOCKQUOTE>
+
+<HR>
+<H2><A name="goto"></A>GOTO, Goto Line/Page/Percent</H2>
+
+<!--<P><I><B>GOTO, Goto Line/Page/Percent </B></I> GOTO Goto, line Goto, page Goto, percent</P>-->
+<BLOCKQUOTE>
+<P>The GOTO library defines functions that move dot directly to a specified line, page, or percentage of the current buffer. The functions defined are:</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>(goto-line)</B></P>
+
+<BLOCKQUOTE>
+<P>Moves dot to the beginning of the specified line. If a prefix argument is provided, use that as the line number to find. The first line in the buffer is line number 1.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>(adjust-line-number)</B></P>
+
+<BLOCKQUOTE>
+<P>Makes the current line line number 1 so that goto-line starts counting from the current line rather than the beginning of the file.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>(goto-page)</B></P>
+
+<BLOCKQUOTE>
+<P>Moves dot to the beginning of the specified page. If a prefix argument is provided, use that as the page number to find.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>(goto-percent)</B></P>
+
+<BLOCKQUOTE>
+<P>Moves dot to the percentage position of the file indicated. If a prefix argument is provided, use that as the percentage position to find. The beginning of the file is percentage position 0. The end of the file is percentage position 100.</P>
+</BLOCKQUOTE>
+
+<HR>
+<H2><A name="html"></A>HTMLMODE, HTML mode</H2>
+
+<BLOCKQUOTE>
+<P>The HTMLMODE library defines the HTML editing mode, HTML-mode.</P>
+
+<P>HTML-mode provides syntax colouring for HTML code. HTML version 3.2 is fully supported, however not all of HTML 4.0 is syntax coloured.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>ESC-c (HTML-view-buffer)</B></P>
+
+<BLOCKQUOTE>
+<P>Save the HTML document and then view the HTML document using the default Web browser.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>(HTML-mode)</B></P>
+
+<BLOCKQUOTE>
+<P>Start HTML-mode for the current buffer.</P>
+</BLOCKQUOTE>
+
+<HR>
+<H2><A name="incsearch"></A>INCSEARCH, Incremental Searching</H2>
+
+<BLOCKQUOTE><!--<P><I><B>INCSEARCH, Incremental Searching </B></I> INCSEARCH Incremental searching Searching, incremental</P>-->
+<P>When you execute the normal Emacs search commands, you are prompted for the search string in the Mini-buffer. You type in the entire search string, press Return, and Emacs searches for the specified string. The INCSEARCH library defines functions which implement a different style of searching called incremental searching.</P>
+
+<P>Incremental searches begin searching before you have finished typing the search string. As you type in the search string, Emacs moves the cursor to where the string would be found. When you have typed enough characters to identify the place you want, you can stop. Depending on what you will do next, you may or may not need to terminate the search explicitly with an RETURN.</P>
+
+<P>Incremental searching is enabled by loading the INCSEARCH package. This package replaces the existing search commands with the following commands:</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>^F (incremental-search)</B></P>
+
+<BLOCKQUOTE>
+<P>Performs a forwards incremental search.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>^R (reverse-incremental-search)</B></P>
+
+<BLOCKQUOTE>
+<P>Performs a reverse incremental search.</P>
+</BLOCKQUOTE>
+
+<hr>
+<P><B>inc-search-use-region 0</B></P>
+
+<BLOCKQUOTE>
+<P>Set variable inc-search-use-region to 1 to prevent incremental search from using the hilighted text 
+as the default search string.</P>
+</BLOCKQUOTE>
+
+<HR>
+
+<P>The ^F command initiates a forwards incremental search. It reads in characters and positions the cursor at the first occurrence of the characters that you have typed. If you type ^F-F, the cursor moves right after the first F. Type an O, and the cursor moves to the first FO. After another O, the cursor is moved to the first occurrence of FOO. At the same time, the text FOO is echoed at the bottom of the screen.</P>
+
+<P>If you type a incorrect character, you can rub it out. After the FOO, typing a Delete makes the last O disappear from the bottom of the screen, leaving only FO. The cursor moves back to the first occurrence of FO. If you delete the next O and the F, the cursor moves back to where you started the search.</P>
+
+<P>When you are satisfied with the place you have reached, you can type a RETURN, which stops the search, leaving the cursor where the search brought it. Also, any command not meaningful in incremental searches stops the searching and is then executed. Thus, typing HOME would exit the search and then move to the beginning of the line. RETURN is necessary only if the next command you want to type is a printing character, Delete, RETURN, ^Q, or another search command, since those are the characters that have special meanings inside the search.</P>
+
+<P>Sometimes you may search for FOO and find it, but not the one you expected to find. Type another ^F and the cursor will find the next FOO. This can be done any number of times. If you overshoot, you can rub out the unwanted ^F commands and the cursor will move back to the previous occurrences of the string.</P>
+
+<P>If your string is not found at all, the message Failing I-Search is displayed in the Mini-buffer. The cursor is placed where Emacs found as much of your string as was possible. For example, if you search for FOOT, and there is no FOOT, you might see the cursor after the FOO (if the text FOO exists). At this point there are several things you can do. If your string was mis-typed, you can rub some of it out and correct it. If you like the place you have found, you can type a RETURN or some other Emacs command to accept what the search found.</P>
+
+<P>The ^R command starts a reverse incremental search. This works in exactly the same way as the forward incremental search command, but in the opposite direction.</P>
+
+<P>
+If you highlighted some text in the buffer and then start incremental search the text is used as the default string to search for.
+</P>
+<P>For example hightlight FOO in the buffer, type ^F to start incremental search.
+ Notice that the prompt is now "forward I-search [FOO]: " showing that FOO is the default string to search for.
+ Type ^F again to find the next FOO.
+</p>
+
+<hr>
+<p>
+While incremental search is active the default key bindings are:
+</p>
+<TABLE width="600" border="2" cellspacing="0" cellpadding="2">
+<CAPTION><B>Incremental search key bindings</B></CAPTION>
+
+<TR>
+<TH width="20%" align="left">
+<P>Binding</P>
+</TH>
+<TH width="30%" align="left">
+<P>Function</P>
+</TH>
+<TH width="20%" align="left">
+<P>Binding</P>
+</TH>
+<TH width="30%" align="left">
+<P>Function</P>
+</TH>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^F</FONT></P>
+</TD>
+<TD>
+<P>Search forward</P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^R</FONT></P>
+</TD>
+<TD>
+<P>search reverse</P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^G</FONT></P>
+</TD>
+<TD>
+<P>Abort search and go back to where we started</P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">RETURN</FONT></P>
+</TD>
+<TD>
+<P>Exits incremental search here</P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^P</FONT></P>
+</TD>
+<TD>
+<P>prompt you for a string to replace what the search has matched so far</P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^Q</FONT></P>
+</TD>
+<TD>
+<P>Quote next character, allows you to search for special characters.</P>
+</TD>
+</TR>
+
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">^V</FONT></P>
+</TD>
+<TD>
+<P>Paste the clipboard contents into the search string.</P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^L</FONT></P>
+</TD>
+<TD>
+<P>enter a recursive edit level. Continue searching on exiting the recursive edit</P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">F1</FONT></P>
+</TD>
+<TD>
+<P>Display incremental search help.</P>
+</TD>
+<TD>
+<P><FONT face="Courier New" size="2">^_</FONT></P>
+</TD>
+<TD>
+<P>Display incremental search help.</P>
+</TD>
+</TR>
+
+</TABLE>
+
+
+<HR>
+<H2><A name="killer"></A>KILLER, A Kill Ring System</H2>
+
+<P>The KILLER library provides the ability to keep a history of killed objects, and to define a killed object as any combination of successive kill commands. The killed objects are stored in a kill ring and can be retrieved at any time.</P>
+
+<P>The KILLER text deletion functions replace the normal Emacs text deletion commands with versions that delete text and store it in the appropiate place in the kill ring. The kill ring functions and default key bindings are:</P>
+
+<HR>
+<P><B>ESC-. (kr-set-mark)</B></P>
+
+<BLOCKQUOTE>
+<P>Sets the mark with reverse-video highlighting enabled.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>^X-. (kr-toggle-highlight)</B></P>
+
+<BLOCKQUOTE>
+<P>Toggles the highlight setting.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>ESC-d (kr-kill-forward-word)</B></P>
+
+<BLOCKQUOTE>
+<P>Deletes the next word and inserts it into the kill ring.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>ESC-Delete (kr-kill-bacward-word)</B></P>
+
+<BLOCKQUOTE>
+<P>Deletes the previous word and inserts it in the kill ring.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>^W (kr-kill-region)</B></P>
+
+<BLOCKQUOTE>
+<P>Deletes the region and inserts it into the kill ring.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>^K (kr-kill-forward-line)</B></P>
+
+<BLOCKQUOTE>
+<P>Deletes the current line from dot to the end-of-line and inserts the deleted text into the kill ring.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>ESC-k (kr-kill-backward-line)</B></P>
+
+<BLOCKQUOTE>
+<P>Deletes the current line from dot to the beginning of the line and inserts the deleted text into the kill ring.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>^Y (kr-yank)</B></P>
+
+<BLOCKQUOTE>
+<P>Yanks the text from the current buffer in the kill ring, placing the yanked text into the current buffer at dot and leaving the region around the yanked text.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>ESC-y (kr-more-yank)</B></P>
+
+<BLOCKQUOTE>
+<P>If the text yanked by <KBD>^Y</KBD>. is not the text you want, use <KBD>ESC-y</KBD> to yank text from other buffers in the kill ring. Successive <KBD>ESC-y</KBD>s will yank text from successive buffers in the kill ring. <KBD>ESC-y</KBD> only works after <KBD>^Y</KBD>.</P>
+
+<P>You can change these bindings by making a copy of the KILLER.KEY file, modifying it with your own bindings, and saving the modified file in your EMACS$PATH. kr-max-buf</P>
+
+<P>The default size of the kill ring is 10 buffers. The size of the kill ring is controlled by the kr-max-buf variable which is defined in KILLER.KEY. If you want to change the size of the kill ring, make a private copy of the KILLER.KEY file as described above and change the setting of the kr-max-buf variable.</P>
+</BLOCKQUOTE>
+
+<HR>
+<H2><A name="latexmode"></A>LATEXMODE, A Major Mode for writing LaTeX Documents</H2>
+
+<!--<P><I><B>LATEXMODE, A Major Mode for writing LaTeX Documents </B></I> LATEXMODE LaTeX Mode</P>-->
+<P>The LATEXMODE library implements the LaTeX Mode major mode which can be used to help write documents with the LaTeX document preparation system.</P>
+
+<P>LaTeX Mode works in the same way as the standard Emacs language modes C Mode and Bliss Mode by providing expansion of templates for LaTeXreserved words. LaTeX Mode also defines comment handling and parenthesis balancing.</P>
+
+<P>See the Barry's Emacs Programmer's Guide for details of how to use the Emacs language modes.</P>
+
+<HR>
+<H2><A name="makebox"></A>MAKEBOX, Drawing Boxes Around Text</H2>
+
+<!--<P><I><B>MAKEBOX, Drawing Boxes Around Text </B></I> Boxes, Drawing MAKEBOX RECTANGULAR</P>-->
+<P>The MAKEBOX library can be used to draw rectangular boxes around text. It relies on functions defined in the RECTANGULAR library, so you must first load the RECTANGULAR library before loading MAKEBOX. See <A href="#rectangular">RECTANGULAR, Rectangular Cut and Paste</A> for a description of the RECTANGULAR library.</P>
+
+<P>The library defines the make-box function. To draw a box around text with make-box:</P>
+
+<P>&middot; Select one corner of the box using rectangular-select (which is bound to GOLD-Select by default).</P>
+
+<P>&middot; Move to the diagonally opposite corner of the box.</P>
+
+<P>&middot; Execute the make-box function.</P>
+
+<P>By default, make-box will use the +, -- and | characters to draw boxes. You can override these default values by setting the following variables:</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>makebox-h-symbol</B></P>
+
+<BLOCKQUOTE>
+<P>Contains the character that make-box uses to draw horizontal lines.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>makebox-v-symbol</B></P>
+
+<BLOCKQUOTE>
+<P>Contains the character that make-box uses to draw vertical lines.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>makebox-corners</B></P>
+
+<BLOCKQUOTE>
+<P>Contains the character that make-box uses to draw corners.</P>
+
+<P>The following example shows how to define your own drawing variables. Note that the MAKEBOX library must be loaded before setting the values of the drawing variables.</P>
+
+<P>(execute-mlisp-file "makebox")</P>
+
+<P>(setq makebox-h-symbol "=")</P>
+
+<P>(setq makebox-v-symbol "!")</P>
+
+<P>(setq makebox-corners "#")</P>
+
+<P>The following convenience functions are defined to set the drawing variables:</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>makebox-use-lines</B></P>
+
+<BLOCKQUOTE>
+<P>Sets the make-box drawing variables to the default line-drawing set.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>makebox-use-stars</B></P>
+
+<BLOCKQUOTE>
+<P>Sets all the make-box drawing variables to *.</P>
+</BLOCKQUOTE>
+
+<HR>
+<H2><A name="minibuf"></A>MINIBUF, Writing and Executing Small MLisp Programs</H2>
+
+<!--<P><I><B>MINIBUF, Writing and Executing Small MLisp Programs </B></I> MINIBUF execute-mlisp-line</P>-->
+<P>The MINIBUF library provides a better interface for the execution simple MLisp programs than the execute-mlisp-line function. When loaded, MINIBUF rebinds <KBD>ESC-ESC</KBD> so that instead of collecting its arguments in the Mini-buffer at the bottom of the screen, it pops up a small buffer called minibuffer to collect the MLisp code. Lisp Mode is in effect in this buffer so that MLisp name expansion can be used.</P>
+
+<P>When you are satisfied that the MLisp in the minibuffer is correct, you can execute it with the command <KBD>ESC-ESC</KBD>. Subsequent uses of <KBD>ESC-ESC</KBD> will re-display the minibuffer containing the last program executed; you can re-execute the same code with <KBD>ESC-ESC</KBD>, or you can edit the code first before executing it with <KBD>ESC-ESC</KBD>.</P>
+
+<HR>
+<H2><A name="minibufrecall"></A>MINIBUF-RECALL, Command Recall in the Mini-buffer</H2>
+
+<!--<P><I><B>MINIBUF-RECALL, Command Recall in the Mini-buffer </B></I> MINIBUF-RECALL Command recall, in the Mini-buffer Recalling commands, in the Mini-buffer</P>-->
+<P>The MINIBUF-RECALL library provides the ability to recall and edit commands in the Mini-buffer. The library remembers the last 60 commands executed. The following keys can be used to edit and recall commands when MINIBUF-RECALL has been loaded:</P>
+
+<H3>Up-arrow or ESC-r</H3>
+
+<P>Recalls the previous command in the command history.</P>
+
+<H3>Down-arrow or ESC-v</H3>
+
+<P>Recalls the next command in the command history.</P>
+
+<H3>Left-arrow</H3>
+
+<P>Moves the cursor one character left in the Mini-buffer.</P>
+
+<H3>Right-arrow</H3>
+
+<P>Moves the cursor one character right in the Mini-buffer.</P>
+
+<H3>PgUp and PgDn</h3>
+
+<p>Pop up a buffer that allows you to select a line to recall from a list</p>
+
+<H3>F1</H3>
+
+<P>Pops up a Help window and lists the available options.</P>
+
+<H3>F11</H3>
+
+<P>Executes a command with completion.</P>
+
+<H3>^G</H3>
+
+<P>Aborts the Mini-buffer command.</P>
+
+<HR>
+<H2><A name="mouse"></A>MOUSE, Mouse Support</H2>
+
+<BLOCKQUOTE>
+<P>The MOUSE library defines functions that support the use of a mouse with Barry's Emacs.</P>
+
+<P>You can use the MOUSE library to:</P>
+
+<P>&middot; Select windows</P>
+
+<P>&middot; Position the cursor</P>
+
+<P>&middot; Cut and paste regions of text</P>
+
+<P>&middot; Change window sizes</P>
+
+<P>&middot; Scroll a window up or down</P>
+
+<P>&middot; Scroll a window left or right</P>
+
+<P>&middot; Execute the keyboard macro at a specific position</P>
+
+<P>In addition, you can customise the MOUSE library to perform specialised mouse actions for buffers, and you can build mouse support into your own MLisp code.</P>
+</BLOCKQUOTE>
+
+<HR>
+<H2><A name="usingthemouselibrary"></A>Using the MOUSE Library</H2>
+
+<HR>
+<H2><A name="enablingmousesupport"></A>Enabling and Disabling Mouse Support</H2>
+
+<P>To use the MOUSE library functions, add the following MLisp code to your EMACSINIT.ML:</P>
+
+<P>(load "mouse")</P>
+
+<P>(mouse-mode) mouse-on</P>
+
+<P>With the MOUSE library loaded, you can turn on mouse support with the mouse-on function. mouse-on takes one argument which is a number describing the required mouse cursor. A value of 0 (the default) specifies the default mouse cursor. A value of 1 specifies a cross-hair cursor (the cross-hair cursor is supported only on VWS workstations).</P>
+
+<P>When Emacs mouse handling is enabled, you do not have access to the workstation cut and paste features. To use workstation cut and paste with Emacs, you must disable Emacs mouse handling using the mouse-off function. When you want to use Emacs mouse handling again, re-execute the mouse-on function.</P>
+
+<P>The easiest way to have mouse support enabled whenever you enter Emacs is to execute mouse-on from the enter-emacs-hook and return-to-emacs-hook functions. You should always disable Emacs mouse support when you leave Emacs and return to DCL. The easiest way to do this is to execute mouse-off from the leave-emacs-hook and exit-emacs-hook functions. <A href="#exampleenablingmouse">The example</A> shows how you can define the hook functions in your EMACSINIT.ML to enable and disable mouse support:</P>
+
+<H3><A name="exampleenablingmouse"></A>Example: Enabling and Disabling Emacs Mouse Support</H3>
+
+<PRE>
+;
+; Set up Emacs hook functions to enable/disable
+; mouse support.
+;
+(defun
+    (my-return-to-emacs-actions
+  (mouse-on 0) ; Turn on Emacs mouse support
+  ;
+  ; Other code to be executed on returning
+  ; to Emacs
+  ;
+    )
+)       ; defun - my-return-to-emacs-actions
+
+(defun
+    (my-leave-emacs-actions
+  (mouse-off) ; Turn off Emacs mouse support
+  ;
+  ; Other code to be executed on leaving Emacs
+  ;
+    )
+)       ; defun - my-leave-emacs-actions
+
+(setq enter-emacs-hook "my-enter-emacs-actions")
+(setq return-to-emacs-hook "my-enter-emacs-actions")
+(setq exit-emacs-hook "my-leave-emacs-actions")
+(setq leave-emacs-hook "my-leave-emacs-actions")
+</PRE>
+
+<P>The MLisp code in <A href="#exampletogglemouse">the example</A> shows how to toggle the Emacs mouse on and off simply by pressing the F14 key. This provides easy access to the workstation cut and paste facilities from within Emacs.</P>
+
+<H3><A name="exampletogglemouse"></A>Example: TOGGLEMOUSE --- Toggling the Emacs Mouse</H3>
+
+<PRE>
+(declare-global ~togglemouse)
+(setq ~togglemouse 0)
+(defun
+    (togglemouse
+  (setq ~togglemouse
+      (if ~togglemouse
+    (progn
+        ;
+        ; Mouse was off, turn it on
+        ;
+        (mouse-on 0)
+        (message "Emacs mouse enabled")
+      (! ~togglemouse)
+        )
+        ; else
+        (progn
+      ;
+      ; Mouse was on, turn it off
+      ;
+      (mouse-off)
+      (message "Emacs mouse disabled")
+          (! ~togglemouse)
+      )
+        )
+    )
+      )     ; if
+  )
+    )
+)       ; defun - togglemouse
+(bind-to-key "togglemouse" "f14)")
+</PRE>
+
+<HR>
+<H2><A name="usingmousefeatures"></A>Using Mouse Features</H2>
+
+<P>The following list describes how to use the various features provided by the Emacs mouse support. In the descriptions of each feature, MB1refers to mouse button 1, MB2 refers to mouse button 2, and MB3 refers to mouse button 3.</P>
+
+<H3>Position cursor</H3>
+
+<P>Move the pointer to the position you wish to locate the cursor and click MB1. In overstrike mode, spaces (but not newlines) are inserted when needed to reach the selected position. In insert mode, no spaces are inserted, the cursor is placed at the end of the selected line.</P>
+
+<H3>Select window</H3>
+
+<P>Move the pointer to the mode line of the window you wish to select, and click MB1.</P>
+
+<H3>Scroll window, vertical</H3>
+
+<P>Grab part of the text by pointing to it with the pointer and pressing MB1. Move the mouse up or down to the position you would like the grabbed line to appear, then release MB1. The text is scrolled by a corresponding distance.</P>
+
+<H3>Scroll window, horizontal</H3>
+
+<P>Grab part of the mode line with MB1 and move the mouse left or right. Release with the pointer still on the mode line. The window will be panned to the left or right a corresponding distance.</P>
+
+<H3>Change window size</H3>
+
+<P>To make a window taller, shorter, narrower, or wider, grab the window's mode line, a vertical window border, or their intersection point, with MB1. Move the pointer to the new location of the mode line or border, and release MB1. Windows are deleted, if needed, to make room for the new window size.</P>
+
+<H3>Execute keyboard macro</H3>
+
+<P>A double-click of MB1 positions the cursor at the selected location, and then executes the current keyboard macro at that location.</P>
+
+<H3>Copy region to Kill buffer</H3>
+
+<P>A click of MB2 copies the text from the current location of dot to the selected position into the Kill buffer. The cursor position remains as selected with the mouse. Moving the mouse between the press and release of MB2 will perform the same scroll/pan/resize functions as with MB1.</P>
+
+<H3>Kill region to Kill buffer</H3>
+
+<P>A double-click of MB2 kills the text from the current location of dot to the selected position into the Kill buffer.</P>
+
+<H3>Yank region from Kill buffer</H3>
+
+<P>A double-click of MB3 yanks the Kill buffer into the selected position. If you click on the mode line, the yank is performed at the current location of dot in the selected window. A single click of MB3 performs the same functions as MB1. Moving the mouse between the press and release of MB3 performs the same scroll/pan/resize functions as MB1.</P>
+
+<HR>
+<P><B>NOTE: The following features work only with the VWS terminal emulator, not with the DECwindows DECterm emulator.</B></P>
+
+<H3>Copy region to local paste buffer</H3>
+
+<BLOCKQUOTE>
+<P>The keystroke <KBD>^X-c</KBD> copies the current select region into the terminal-wide cross-session paste buffer. The sequence <KBD>^X-MB2</KBD> copies the text from the current location of dot to the position selected into the cross-session paste buffer.</P>
+
+<H3>Yank from local paste buffer</H3>
+
+<P>The keystroke <KBD>^X-^C</KBD> yanks the current contents of the terminal-wide cross-session paste buffer into the current buffer. The sequence <KBD>^X-MB3</KBD> pastes the paste buffer into the selected position.</P>
+</BLOCKQUOTE>
+
+<HR>
+<H2><A name="custommouselibrary"></A>Customising the MOUSE Library</H2>
+
+<HR>
+<H3><A name="custommousecut"></A>Customising Mouse Cut and Paste</H3>
+
+<P>By default, MOUSE uses the standard Kill buffer handling routines for performing cut and paste operations. If you are using a modified version of cut and paste, or some kind of kill ring library, you can communicate this to the mouse library by setting the favorite-... series of global variables defined by the MOUSE library. These are:</P>
+
+<H3>favorite-set-mark</H3>
+
+<P>A string variable containing the name of the function the MOUSE library should use to set the mark. This is set-mark by default.</P>
+
+<H3>favorite-kill-region</H3>
+
+<P>A string variable containing the name of the function the MOUSE library should use to kill the region to the Kill buffer. This is delete-to-killbuffer by default.</P>
+
+<H3>favorite-copy-region</H3>
+
+<P>A string variable containing the name of the function the MOUSE library should use to copy the region to the Kill buffer. This is copy-to-killbuffer by default (a function defined by the MOUSE library).</P>
+
+<H3>favorite-yank</H3>
+
+<P>A string variable containing the name of the function the MOUSE library should use to yank the contents of the Kill buffer into the current buffer. This is yank-from-killbuffer by default. KILLER, With the MOUSE library</P>
+
+<P><A href="#examplekillermouse">The example</A> shows how to set these variables so that the KILLER cut and paste routines can be used with the MOUSE library. KILLER is described in <A href="#killer">KILLER, A Kill Ring System</A>.</P>
+
+<H3><A name="examplekillermouse"></A>Example: Using KILLER with the MOUSE Package</H3>
+
+<PRE>
+;
+; Use the KILLER cut and paste functions
+; with the MOUSE library.
+;
+(setq favorite-set-mark "kr-set-mark")
+(setq favorite-copy-region "kr-copy-region")
+(setq favorite-kill-region "kr-kill-region")
+(setq favorite-yank "kr-yank")
+</PRE>
+
+<P>When you use the mouse to scroll or pan windows, the default behaviour is for the scroll or pan to occur when the mouse button is released. If you set the variable mouse-continuous to 1, the scroll and pan functions will continuously update the display to reflect the position of the mouse pointer. Add the following MLisp line to your EMACSINIT.ML to use continuous scrolling:</P>
+
+<PRE>
+(setq mouse-continuous 1)
+</PRE>
+
+<P>Note that you need a fast communications line or a fast Xwindows environment to use continuous scrolling.</P>
+
+<HR>
+<H2><A name="mlispprogrammingwithmouse"></A>Mlisp Programming with the Mouse</H2>
+
+<P>To write MLisp code with a mouse interface, you must write a mouse action function in MLisp, then bind the function to a mouse button sequence. Pressing that mouse button sequence will then invoke the mouse action function.</P>
+
+<P>The general scheme for a mouse action function is as follows:</P>
+
+<UL>
+<LI>Declare local variables mousex, mousey, mouseevent and mouse-second-click. These are set by the mouse-parameters function to reflect the results of the most recent mouse click.</LI>
+
+<LI>Execute the mouse-parameters function to set mousex to column, mousey to row, mouseevent to a code which indicates which button was used and whether it was pressed or released. mouse-second-click is a mouse-click counter, and is set to 1 on the second click if you double-click a mouse button.</LI>
+
+<LI>Execute the MLisp line (mouse-reposition mousex mousey mouseevent)to position the cursor. mouse-reposition also performs parts of the mode-line and scrolling operations when necessary.</LI>
+</UL>
+
+<P>See the <A name="templatemouseaction">template mouse action function</A> that illustrates how to program both for single and double mouse clicks. When written in this way, your local mouse action functions retain the pan and scroll features of the default mouse actions.</P>
+
+<H3><A href="#templatemouseaction"></A>Example: Template Mouse Action Function</H3>
+
+<PRE>
+(defun
+    (my-local-mouse-action
+  mousex
+  mousey
+  mouseevent
+  mouse-second-click
+  ;
+  ; Fetch the mouse parameters and position the cursor.
+  ;
+  (mouse-parameters)
+  (mouse-reposition mousex mousey mouseevent)
+  ;
+  ; At this point, the cursor has been positioned at a
+  ; location specified by the mouse cursor.
+  ;
+  (if mouse-second-click _ ; Check for double-click
+      (progn
+    ;
+    ; If action is desired only on the second click,
+    ; place it here.
+    ; Note that the action of the double click must be a
+    ; logical superset of the action of the single click
+    ; (the single click code is always executed if it
+    ; exists).
+    ;
+      )
+      (progn ; else
+    ;
+    ; If action is desired on the first click, place it
+    ; here, otherwise leave out the else clause.
+    ;
+      )
+  )     ; if
+    )
+)       ; defun - my-local-mouse-action
+
+(local-bind-to-key "my-local-mouse-action" "mouse-1-down)")
+</PRE>
+
+<P><A name="mousebuttonescapes"></A>You can bind your own local mouse action functions to any of the <A href="#mousebuttonescapes">mouse button escapes</A> listed in the table.</P>
+
+<TABLE>
+<TR>
+<TD align="Left" valign="Top">
+<P>mouse-1-down</P>
+</TD>
+<TD align="Left" valign="Top">
+<P>mouse-1-up</P>
+</TD>
+</TR>
+
+<TR>
+<TD align="Left" valign="Top">
+<P>mouse-2-down</P>
+</TD>
+<TD align="Left" valign="Top">
+<P>mouse-2-up</P>
+</TD>
+</TR>
+
+<TR>
+<TD align="Left" valign="Top">
+<P>mouse-3-down</P>
+</TD>
+<TD align="Left" valign="Top">
+<P>mouse-3-up</P>
+</TD>
+</TR>
+</TABLE>
+
+<P>Note that it is possible to include Escape or function key prefixes in mouse button bindings. For example, the following bindings are all legal:</P>
+
+<P>(local-bind-to-key "my-local-mouse-action" "mouse-1-down)")</P>
+
+<P>(local-bind-to-key "my-local-mouse-action" "xmouse-1-down)")</P>
+
+<P>(local-bind-to-key "my-local-mouse-action" "do)mouse-1-down)")</P>
+
+<P><A href="#examplemousebindings">The example</A> contains a complete mouse programming example. The example is intended for use with the Emacs Notes package, and binds several useful actions to MB3. For example, clicking MB3 on a conference name in a conference directory will open the conference, and clicking MB3 on a note in a note directory will read the selected note.</P>
+
+<H3><A name="examplemousebindings"></A>Example: Example Mouse Bindings for the Notes Package</H3>
+
+<PRE>
+;
+; Mouse bindings for the Notes package.
+;
+; When pressing MB3, do the most appropriate thing
+; depending on which buffer is selected.
+;
+(defun
+    (my-notes-action
+  mousex
+  mousey
+  mouseevent
+  mouse-second-click
+  ;
+  ; Get the mouse parameters and position the cursor at the
+  ; selected position.
+  ;
+  (mouse-parameters)
+  (mouse-reposition mousex mousey mouseevent)
+  ;
+  ; Depending on which buffer was selected with the mouse,
+  ; perform the most appropriate action.
+  ;
+  (if
+      (= current-buffer-name notes-notebook-entry-directory)
+      (notes-c-open)
+      (= current-buffer-name notes-notebook-class-directory)
+      (notes-c-set-class)
+      (= current-buffer-name notes-notefile-directory)
+      (notes-c-read-note)
+      (= current-buffer-name notes-notefile-header)
+      (notes-c-close)
+      (= current-buffer-name notes-notebook-header)
+      (notes-c-exit)
+      (notes-c-enter-key)
+  )     ; if
+    )
+)       ; defun - my-notes-action
+
+(local-bind-to-key "my-notes-action" "mouse-3-up)")
+(local-bind-to-key "novalue" "mouse-3-down)")
+</PRE>
+
+<HR>
+<H2><A name="mouserectangular"></A>MOUSE-RECTANGULAR, Mouse Interface to the RECTANGULAR Library</H2>
+
+<!--<P><I><B>MOUSE-RECTANGULAR, Mouse Interface to the RECTANGULAR Library   </B></I> MOUSE-RECTANGULAR Rectangular cut and paste, mouse interface</P>-->
+<P>The MOUSE-RECTANGULAR library provides a workstation mouse interface to the rectangular cut and paste routines defined in the RECTANGULAR library. You must load the RECTANGULAR library before loading the MOUSE-RECTANGULAR library. The RECTANGULAR library is described in <A href="#rectangular">RECTANGULAR, Rectangular Cut and Paste</A>.</P>
+
+<P>The MOUSE-RECTANGULAR mouse button bindings are:</P>
+
+<H3>ESC-Mouse Button 1</H3>
+
+<P>Rectangular copy between text cursor and mouse pointer position.</P>
+
+<H3>ESC-Mouse Button 2</H3>
+
+<P>Rectangular cut between text cursor and mouse pointer position.</P>
+
+<H3>ESC-Mouse Button 3</H3>
+
+<P>Rectangular paste at mouse pointer location.</P>
+
+<P>If Replace Mode is active, the Replace Mode versions of the rectangular cut and paste routines are used.</P>
+
+<HR>
+<H2><A name="newcompil"></A>NEWCOMPIL, Compiling Programs</H2>
+
+<!--<P><I><B>NEWCOMPIL, Compiling Programs </B></I> NEWCOMPIL Compiling programs Program compilation compile-it next-error</P>-->
+<P>The NEWCOMPIL library provides a more convenient program compilation interface than the compile-it and next-errorfunctions built in to Emacs. After loading the NEWCOMPIL library, compile-it and next-error are modified so that while compilation is in progress, other work in Emacs can continue. The standard functions do not provide this capability. kill-compilation</P>
+
+<P>An extra command is provided to cater for this extra flexibility: <KBD>^X-^K</KBD> (kill-compilation), which aborts the currently active compilation.</P>
+
+<HR>
+<H2><A name="number"></A>NUMBER, Number Base Conversion</H2>
+
+<!--<P><I><B>NUMBER, Number Base Conversion </B></I> NUMBER Base conversion</P>-->
+<P>The NUMBER library defines functions to convert a number into hexadecimal, octal and decimal notation and display the result in the Mini-buffer.</P>
+
+<P>The interface to the base conversion functions is the numberfunction. When executed, number prompts for a number to convert. The number can be one of the following forms:</P>
+
+<TABLE>
+<TR>
+<TD align="Left" valign="Top">
+<P>dddddd</P>
+</TD>
+<TD align="Left" valign="Top">
+<P>Decimal</P>
+</TD>
+</TR>
+
+<TR>
+<TD align="Left" valign="Top">
+<P>0ooooooo</P>
+</TD>
+<TD align="Left" valign="Top">
+<P>Octal</P>
+</TD>
+</TR>
+
+<TR>
+<TD align="Left" valign="Top">
+<P>0xhhhhh</P>
+</TD>
+<TD align="Left" valign="Top">
+<P>Hexadecimal</P>
+</TD>
+</TR>
+</TABLE>
+
+<P>The number function then returns the specified value in hexadecimal, octal and decimal formats in the Mini-buffer. For example, if the value 55 is entered, number returns:</P>
+
+<P>Converted 55 to: 0x37 067 55</P>
+
+<HR>
+<H2><A name="python"></A>PYTHONMODE, Python mode</H2>
+
+<P>An editing mode for Python code. Python mode provide syntax colouring for Python code.</P>
+
+<P>Python is a well designed, object oriented, simple to learn, scripting language. Python is available for Windows, Unix and Mac systems. The home of Python is <A href="http://www.python.org">www.python.org</A></P>
+
+<HR>
+<P><B>(Python-mode)</B></P>
+
+<BLOCKQUOTE>
+<P>Start Python mode on the current buffer</P>
+</BLOCKQUOTE>
+
+<HR>
+<H2><A name="rectangular"></A>RECTANGULAR, Rectangular Cut and Paste</H2>
+
+<P>The RECTANGULAR library provides the ability to cut and paste rectangular areas of text bounded by any two opposite corners. The corners can be in the same row or column. RECTANGULAR handles Tab characters correctly and fixes problems in the AREA package. RECTANGULAR functions correctly in insert or replace mode.</P>
+
+<P>To handle all possible options, there are two modes for cut and two modes for paste which are controlled by the following variables:</P>
+
+<HR>
+<P><B>replace-with-white-space</B></P>
+
+<BLOCKQUOTE>
+<P>Controls the action of the rectangular cut function. When this variable is set to 1, deleted text is replaced with white-space. When the variable is set to 0, text is deleted and is not replaced with white-space.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>overstrike-mode</B></P>
+
+<BLOCKQUOTE>
+<P>Controls the action of the rectangular paste function. When this variable is set to 1, text is pasted in overstrike (replace) mode. When the variable is set to 0, text is pasted in insert mode.</P>
+
+<P>The rectangular cut and paste key bindings and commands are:</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>GOLD-Select (rectangular-select)</B></P>
+
+<BLOCKQUOTE>
+<P>Selects one corner of the area to be cut.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>Remove (rectangular-cut)</B></P>
+
+<BLOCKQUOTE>
+<P>Cuts the selected area from the buffer with replace-with-white-space set to 0.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>GOLD-Remove (rectangular-cut)</B></P>
+
+<BLOCKQUOTE>
+<P>Cuts the selected area from the buffer with replace-with-white-space set to 1.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>Insert Here (rectangular-paste)</B></P>
+
+<BLOCKQUOTE>
+<P>Pastes the previously-cut text into the buffer at dot in insert mode (overstrike-mode set to 0).</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>GOLD-Insert Here (rectangular-paste)</B></P>
+
+<BLOCKQUOTE>
+<P>Pastes the previously-cut text into the buffer at dot in replace mode (overstrike-mode set to 1).</P>
+
+<P>The following convenience functions are also defined:</P>
+
+<H3>rect-cut-space</H3>
+
+<P>Performs a rectangular cut with replace-with-white-space set to 1.</P>
+
+<H3>rect-cut</H3>
+
+<P>Performs a rectangular cut with replace-with-white-space set to 0.</P>
+
+<H3>rect-paste</H3>
+
+<P>Performs a rectangular paste with overstrike-mode set to 0.</P>
+
+<H3>rect-paste-overstrike</H3>
+
+<P>Performs a rectangular paste with overstrike-mode set to 1.</P>
+
+<P>To cut a rectangular area from the buffer, move the cursor to one corner of the area to be cut and press GOLD-Select. Then move to the opposite corner and press either Remove or GOLD-Remove. Tabs replaced by spaces in the cut area.</P>
+
+<P>When you cut a rectangular area where one of the corners is a space character, the highlighted space may remain highlighted after the cut operation is completed. To remove the highlighting, type ^L(redraw-display) and Emacs will redraw the display with the highlighting removed.</P>
+
+<P>To paste a previously cut area back into the buffer, move the cursor to the desired location and type either Insert Here or GOLD-Insert Here. White-space at the ends of lines affected by the rectangular paste will first be removed.</P>
+
+<P>Here are some examples:</P>
+
+<P>Remove --- removes the area and the text moves to to fill the hole:</P>
+
+<P>aaaaaaaaabb aaaaaaaaabb</P>
+
+<P>aaaaaaaaabb -------&gt; aabb</P>
+
+<P>aaaaaaaaabb aabb</P>
+
+<P>aaaaaaaaabb aaaaaaaaabb</P>
+
+<P>GOLD-Remove --- removes the area and leaves a hole:</P>
+
+<P>aaaaaaaaabb aaaaaaaaabb</P>
+
+<P>aaaaaaaaabb ------&gt; aa bb</P>
+
+<P>aaaaaaaaabb aa bb</P>
+
+<P>aaaaaaaaabb aaaaaaaaabb</P>
+
+<P>Insert Here --- inserts the area into the text in insert mode:</P>
+
+<P>oooo aa$$$*** aaoooo$$$***</P>
+
+<P>oooo aa$$$*** aaoooo$$$***</P>
+
+<P>oooo + aa$$$*** -------&gt; aaoooo$$$***</P>
+
+<P>oooo oooo</P>
+
+<P>oooo oooo</P>
+
+<P>Text to Original</P>
+
+<P>be inserted text</P>
+
+<P>GOLD-Insert --- inserts the area in the text in replace mode:</P>
+
+<P>oooo aa$$$*** aaoooo**</P>
+
+<P>oooo aa$$$*** aaoooo**</P>
+
+<P>oooo + aa$$$*** -------&gt; aaoooo**</P>
+
+<P>oooo oooo</P>
+
+<P>oooo oooo</P>
+
+<P>Text to Original</P>
+
+<P>be inserted text</P>
+</BLOCKQUOTE>
+
+<HR>
+<H2><A name="tags"></A>TAGS, An Indexing System</H2>
+
+<BLOCKQUOTE><!--<P><I><B>TAGS, An Indexing System </B></I> TAGS Tagging source files Indexing source files</P>-->
+<P>The TAGS library defines functions which remember the locations of function definitions in a file, and enable you to go directly to the definition of any function without having to search the whole file.</P>
+
+<P>The TAGS package can be used to tag a set of files used to build a program as well as an individual file.</P>
+
+<P>Any text file or set of files may be tagged, not just computer programs. All that is required is that some entity be used to initially create the tags.</P>
+
+<P>The functions provided by the TAGS library are summarised here and are described in detail in the following sections.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>(make-tag-table)</B></P>
+
+<BLOCKQUOTE>
+<P>Makes a tag table for a specified set of files.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>(set-tag-language)</B></P>
+
+<BLOCKQUOTE>
+<P>Sets the tag language to a user-specified language. This is used when files being tagged are not known to the TAGS library.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>(recompute-all-tags)</B></P>
+
+<BLOCKQUOTE>
+<P>Updates all the tags in the tag table.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>(visit-tag-table)</B></P>
+
+<BLOCKQUOTE>
+<P>Tells Emacs which tag table file to use.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>^X-^L (goto-tag)</B></P>
+
+<BLOCKQUOTE>
+<P>Moves dot to the specified tag, visiting the appropriate file if necessary.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>^X-^A (add-tag)</B></P>
+
+<BLOCKQUOTE>
+<P>Adds a new tag to the current tag table.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>(list-tags)</B></P>
+
+<BLOCKQUOTE>
+<P>Lists all tags in the current tag table.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>(tag-replace-string)</B></P>
+
+<BLOCKQUOTE>
+<P>Replace a string in all files in the current tag table.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>(tag-query-replace-string)</B></P>
+
+<BLOCKQUOTE>
+<P>Perform a query-replace operation on all files in the tag table.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>(tag-execute-mlisp)</B></P>
+
+<BLOCKQUOTE>
+<P>Execute an MLisp expression over all files in the tag table.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><B>How to Make a Tag Table for a Program</B></P>
+
+<BLOCKQUOTE>
+<P>To use the TAGS package, you must create a tag table from the source file or files in your program. Normally, the tag table does not reside in any of these files, but in a separate tag table file which contains the names of the text files which it describes. Tag table files are generated using the <KBD>ESC-x make-tag-table command</KBD>. make-tag-table asks you to specify the names of the files you wish to tag (which may contain wildcards), then proceeds to read all the files matching that file specification into Emacs. It then uses a set of built-in rules to tag the lines according to the source language. TAGS selects the language based on the file's extension. TAGS has built-in rules for building tag tables for the following languages:</P>
+
+<P>&middot; MLisp</P>
+
+<P>&middot; C, C++</P>
+
+<P>&middot; Python</P>
+
+<P>&middot; BLISS, BLISS-16, BLISS-32</P>
+
+<P>&middot; RUNOFF</P>
+
+<P>&middot; MACRO-32</P>
+
+<P>&middot; FORTRAN. set-tag-language</P>
+
+<P>If the language you wish to tag does not have built-in rules, you will have to teach TAGS how to recognise the lines to be tagged by using the <KBD>ESC-x set-tag-language</KBD> command. This command asks for a file type for the language and a regular expression search string to use to select lines to be tagged. Only one extra language can be specified; multiple calls of set-tag-language overwrite previous language specifications. recompute-all-tags</P>
+
+<P>Once a tag table file exists, you must update it if you add new tags to the source files, or change the files extensively. You can do this by using the command <KBD>ESC-x recompute-all-tags</KBD>. TAGS finds the names and languages of the source files by reading the old tag table.</P>
+</BLOCKQUOTE>
+
+<HR>
+<H2><A name="howusetags"></A>How to Tell Emacs You Want to Use TAGS</H2>
+
+<P>Before you can use the TAGS package, you have to load the library using the <KBD>ESC-x execute-mlisp-file</KBD> command. visit-tag-table</P>
+
+<P>Before you can access a particular tag, you have to tell TAGS the name of the tag table file you want to use. This is done with the command <KBD>ESC-x visit-tag-table</KBD>. TAGS can only know about one tag table file at a time; executing a second <KBD>ESC-x visit-tag-table</KBD> command will overwrite any existing tag table (including any changes you may have made to it).</P>
+
+<P>If no tag table has been specified and you attempt to find a tag, Emacs will read in the default tag table called SYS$DISK:[]TAGS.TAG.</P>
+
+<P>visit-tag-table is essentially equivalent to selecting the buffer *TAGS* (which is where the tags live) and visiting the tag table file in that buffer, then returning to the previously selected buffer. After execution of visit-tag-table, <KBD>ESC-x list-buffers</KBD> will show the buffer *TAGS* visiting the tag table file.</P>
+
+<HR>
+<P><B>Jumping to a Tag</B></P>
+
+<BLOCKQUOTE>
+<P>To jump to the definition of a tagged item, use the command <KBD>^X-^L</KBD> (goto-tag). You will go straight to the definition of the tag you want. If the definition is in a different file, TAGS will visit that file and locate the tag. If it is in the same file, TAGS moves dot to the appropriate place.</P>
+
+<P>You do not need to type the complete name of the tag to be found; any substring will do. If you use this feature, you may not always find the tag you expected; when this happens, <KBD>^U-^X-^L</KBD> will find the next definition matching the tag substring. For example, if you want to find the definition of X-SET-TYPE-1 and you specify just TYPE-1, you might find X-READ-TYPE-1 instead. You could then type <KBD>^U-^X-^L</KBD> until you reach X-SET-TYPE-1.</P>
+</BLOCKQUOTE>
+
+<HR>
+<H3><A name="otheroperationsontags"></A>Other Operations on Tag Tables</H3>
+
+<!--
+<HR>
+<P><B><I>Adding a New Function to a Tag Table </I></B> add-tag</P>-->
+<BLOCKQUOTE>
+<P>When you define a new function, its location does not go in the tag table automatically. This is because Emacs cannot tell that you have defined a function unless you tell it by invoking the command <KBD>^X-^A</KBD> (add-tag).</P>
+
+<P>When you type the command <KBD>^X-^A</KBD>, dot should be on the line that introduces the function definition. Thus, in a Lisp program, you might type (defun (foo) and then type <KBD>^X-^A</KBD> to define a tag for the foo function.</P>
+
+<P>add-tag modifies only the copy of the tag table loaded into Emacs. To modify the tag table file itself, you must save the tag table to disk. <KBD>^X-^M</KBD> (write-modified-files) is the easiest way to do this.</P>
+
+<P>Although local modifications to a file do not degrade the efficiency of the TAGS package or require that the tag table be rebuilt, moving a function a great distance makes finding that function much slower. In this case, you can add the function to the tag table with <KBD>^X-^A</KBD> to give the table its new location. Alternatively, you can run recompute-all-tags to update everything, as is usually done.</P>
+</BLOCKQUOTE>
+
+<HR>
+<H2><A name="vistingafunction"></A>Visiting a Function</H2>
+
+<P>The command <KBD>ESC-x visit-function</KBD> can be used to temporarily view a function in another window. Type the function's name in the buffer, then execute visit-function. The function's name is extracted from the buffer and used as a tag to find. Before the tag is located, TAGS enters a recursive edit, so that when you have finished viewing the function, your original windows and buffers are re-displayed.</P>
+
+<H3>Finding Out What Has Been Tagged</H3>
+
+<!--<P><I><B>Finding Out What Has Been Tagged </B></I> list-tags</P>-->
+<P>The function list-tags can be used to list the files and functions that have been tagged for any tag table. Just load the tag table and call the function. When you use make-tag-table, the list-tags function is automatically called so that you can see exactly what TAGS has tagged.</P>
+
+<H3>Replacing Strings in a Tagged Program</H3>
+
+<!--<P><I><B>Replacing Strings in a Tagged Program </B></I> tag-replace-string tag-query-replace-string</P>-->
+<P>Two functions can be used to change all occurrences of a string in a set of files that have been tagged: tag-replace-string and tag-query-replace-string. Both of these functions require a regular expression search string and a replacement string as arguments, and apply the appropriate replace commands to all of the files tagged in the tag table.</P>
+
+<H3>Applying MLisp to Lines in a Tagged Program</H3>
+
+<!--<P><I><B>Applying MLisp to Lines in a Tagged Program </B></I> tag-execute-mlisp</P>-->
+<P>A more flexible approach to multiple file editing is provided by the function tag-execute-mlisp. This function requires a regular expression search string which is used to find lines in all the files specified in the tag table. For all of the lines that match the pattern, the function sets dot to the found line, and executes a specified MLisp expression at that location.</P>
+
+<HR>
+<H2><A name="whatconstitutesatag"></A>What Constitutes a Tag?</H2>
+
+<P>The following list describes what defines an item to be tagged using the built-in tagging rules for the supported languages. Any of these definitions may be overriden using the set-tag-language command.</P>
+
+<TABLE>
+<TR>
+<TD><STRONG>C</STRONG></TD>
+<TD>matches file type .c, .cpp and .cxx and tags lines that start a C or C++ routine or #define symbol. C++, ANSI C and K&amp;R C are correctly tagged.</TD>
+</TR>
+
+<TR>
+<TD><STRONG>MLisp</STRONG></TD>
+<TD>matches file type .ml and tags lines that start with (defun where all white space is optional.</TD>
+</TR>
+
+<TR>
+<TD><STRONG>Python</STRONG></TD>
+<TD>matches file type .py and .pyw and tags lines that start with def or class.</TD>
+</TR>
+
+<TR>
+<TD><STRONG>BLISS</STRONG></TD>
+<TD>matches file type .BLI and tags all lines that start with optional white space and contain either ROUTINE or GLOBAL ROUTINE.</TD>
+</TR>
+
+<TR>
+<TD><STRONG>BLISS-16</STRONG></TD>
+<TD>matches file type .B16 and tags lines as BLISS does.</TD>
+</TR>
+
+<TR>
+<TD><STRONG>BLISS-32</STRONG></TD>
+<TD>matches file type .B32 and tags lines as BLISS does.</TD>
+</TR>
+
+<TR>
+<TD><STRONG>RUNOFF</STRONG></TD>
+<TD>matches file type .RNO and tags lines that start with .CH, .HL or .AX.</TD>
+</TR>
+
+<TR>
+<TD><STRONG>FORTRAN</STRONG></TD>
+<TD>matches file type .FOR and tags lines containing SUBROUTINE or FUNCTION.</TD>
+</TR>
+</TABLE>
+
+<HR>
+<H2><A name="addingorremovingsource"></A>Adding or Removing Source Files</H2>
+
+<P>A tag table file is a sequence of entries, one per file. Each entry looks like:</P>
+
+<PRE>
+^-filename
+^Adata line^Bchar pos
+</PRE>
+
+<P>where:
+<BR>
+<CODE>filename</CODE> is the file name and file type of the file for which the following lines are tag information.
+<BR>
+<CODE>data line</CODE> contains the tag's line
+<BR>
+<CODE>char pos</CODE> is the position of the start of the tagged line.</P>
+
+<P>If you are changing a source file's name, you should simply change the name where it is presently described in the tag table.</P>
+
+<P>To add a new source file, simply insert a dummy entry containing the filename and update the tag table. The dummy will then be turned into a real entry.</P>
+
+<P>You can delete a source file from a tag table by deleting its entire entry. Since the counts of the remaining entries are still valid, you need not run recompute-all-tags over the file again. You can also change the order of the entries without doing any harm. The order of the entries matters if there are tags which appear in more than one source file.</P>
+
+<HR>
+<H2><A name="tabs"></A>TABS, Intelligent Tab Handling</H2>
+
+<!--<P><I><B>TABS, Intelligent Tab Handling </B></I> TABS Tab Handling</P>-->
+<P>The TABS library defines functions that insert and delete Tab characters in an intelligent way. The functions use the buffer-specific variable logical-tab-size to compute how much whitespace to insert or delete. The two functions defined are:</P>
+
+<P><B>(tab-key)</B></P>
+
+<BLOCKQUOTE>
+<P>Inserts enough tabs and spaces to move to the next tab stop as indicated by logical-tab-size.</P>
+</BLOCKQUOTE>
+
+<P><B>(tab-delete)</B></P>
+
+<BLOCKQUOTE>
+<P>Deletes enough tabs and spaces to move back to the previous tab stop as indicated by logical-tab-size.</P>
+</BLOCKQUOTE>
+
+<HR>
+<H2><A name="time"></A>TIME, A Running Time Display</H2>
+
+<!--<P><I><B>TIME, A Running Time Display </B></I> TIME Clock Digital clock time</P>-->
+<P>The TIME library defines the time function. When executed, the time function puts a running digital time display of the form HH:MM:SS in the mode line of the current window.</P>
+
+<P>When you move the cursor to a new window or visit a new file, the time display is added to the new mode line and is made active.</P>
+
+<P>The time display is only active in the current window's mode line. If the time display is enabled in any other window, the time shown is the time that the cursor was moved out of that window.</P>
+
+<HR>
+<H2><A name="whereis"></A>WHEREIS, Where Is That Command?</H2>
+
+<!--<P><I><B>WHEREIS, Where Is That Command? </B></I> WHEREIS where-is</P>-->
+<P>The WHEREIS library defines the where-is function, which prompts for a function name and displays in the Mini-buffer the key binding (if any) to which the function is bound.</P>
+
+<P>where-is cannot be called from an MLisp program.</P>
+
+<HR>
+<H2><A name="writereg"></A>WRITEREG, Write Region to File</H2>
+
+<!--<P><I><B>WRITEREG, Write Region to File </B></I> WRITEREG Region, write to file write-region-to-file</P>-->
+<P>The WRITEREG library defines the single function write-region-to-file which prompts for a file name and writes the region to the specified file.</P>
+</BODY>
+</HTML>
+

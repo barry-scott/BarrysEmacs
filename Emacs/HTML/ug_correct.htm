@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//SoftQuad//DTD HTML 3.2 + extensions for HoTMetaL PRO 3.0(U) 19961211//EN"
+ "hmpro3.dtd">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<TITLE>User Guide - Correcting Mistakes</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<P><A name="top"></A></P>
+
+<UL>
+<LI><A href="#interruptingandaborting">Interrupting and Aborting Emacs Commands</A></LI>
+
+<LI><A href="#dealingwithcommonproblems">Dealing with Common Emacs Problems</A></LI>
+
+<LI><A href="#undoingchanges">Undoing Changes to the Buffer</A></LI>
+</UL>
+
+<P><A name="CorrectingMistakes"></A></P>
+
+<H1><A name="correctingmistakes"></A>Correcting Mistakes and Emacs Problems</H1>
+
+<P>If you type an Emacs command you did not intend, the results are often mysterious. This chapter describes what you can do to cancel your mistakes and recover from such mysterious situations.</P>
+
+<UL>
+<LI><A HREF="#interruptingandaborting">Interrupting and Aborting Emacs Commands</A> shows how you can interrupt commands.</LI>
+
+<LI><A HREF="#dealingwithcommonproblems">Dealing with Common Emacs Problems</A> describes how you can deal with some commonly-occurring Emacs problems.</LI>
+
+<LI><A HREF="#undoingchanges">Undoing Changes to the Buffer</A> describes how you can undo changes made to your editing buffers.</LI>
+</UL>
+
+
+<HR>
+<H2><A name="interruptingandaborting"></A>Interrupting and Aborting Emacs Commands</H2>
+
+<TABLE>
+<TR>
+<TD>Cancel a running or partially-typed command.</TD>
+<TD><CODE>^G (interrupt-key)</CODE></TD>
+</TR>
+
+<TR>
+<TD>Abort all recursive editing levels and subsystems that are currently executing.</TD>
+<TD><CODE>ESC-x top-level</CODE></TD>
+</TR>
+</TABLE>
+
+<P>There are two ways of cancelling commands which have not finished executing: interrupting the command with <FONT face="Courier New" size="2">^G</FONT>, or aborting all recursive edits with <FONT face="Courier New" size="2">ESC-x top-level</FONT>.</P>
+
+<P>Interrupting with <FONT face="Courier New" size="2">^G</FONT> is used to abort a partially-typed command or a numeric argument that you do not want. It also stops a running command in a safe way, so you can use <FONT face="Courier New" size="2">^G</FONT> if you accidentally give a command which takes a long time to execute.</P>
+
+<P>When you are in a position to use <FONT face="Courier New" size="2">ESC-x</FONT>, you can use <FONT face="Courier New" size="2">ESC-x top-level</FONT>. This command aborts all active recursive edits and subsystems. <FONT face="Courier New" size="2">ESC-x top-level</FONT> is like all other commands (apart from <FONT face="Courier New" size="2">^G</FONT>) in that it is effective only when Emacs is waiting for keyboard input, whereas <FONT face="Courier New" size="2">^G</FONT> can be used at any time.</P>
+
+<P><A name="Dealingwithcommonproblems"></A></P>
+
+<HR>
+<H2><A name="dealingwithcommonproblems"></A>Dealing with Common Emacs Problems</H2>
+
+<P>This section describes various conditions which can cause Emacs to function incorrectly or which can cause it to display strange things, and describes how to correct such conditions.</P>
+
+<H3>Subsystems and Recursive Editing Levels</H3>
+
+<P>Subsystems and recursive editing levels are important and useful features of Emacs, but they can make Emacs appear to behave strangely to the user who does not understand them or has never used them before.</P>
+
+<P>If the mode line starts with a <FONT face="Courier New" size="2">[</FONT>, or does not look like the standard mode line, you have probably entered a subsystem or a recursive editing level.</P>
+
+<P>In such a situation, first try typing <FONT face="Courier New" size="2">ESC-x exit-emacs</FONT>. This will exit from any recursive editing level or subsystem. The usual mode line and text display will reappear. If <FONT face="Courier New" size="2">exit-emacs</FONT> does not seem to work, try typing <FONT face="Courier New" size="2">^G</FONT> to abort the current command. This may have the desired effect. Otherwise, use <FONT face="Courier New" size="2">ESC-x top-level</FONT>.</P>
+
+<H2><A name="undoingchanges"></A>Undoing Changes to the Buffer</H2>
+
+<P>If you mistakenly issue commands that make changes to the buffer, you can often undo the changes without having to know precisely how they came about. This is done by using the <FONT face="Courier New" size="2">^X-^U</FONT> command (<FONT face="Courier New" size="2">undo</FONT>). Type <FONT face="Courier New" size="2">^X-^U</FONT> and a change is undone. <FONT face="Courier New" size="2">undo</FONT> then displays the message <FONT face="Courier New" size="2">Hit &lt;Space&gt; to undo more</FONT> in the Mini-buffer. For every <FONT face="Courier New" size="2">Space</FONT> that you press, another change you made to the buffers will be undone. When you press the first non-space character, that character is treated in the usual way and <FONT face="Courier New" size="2">undo</FONT> exits with the message <FONT face="Courier New" size="2">Finished undoing</FONT>. If the command is not a <FONT face="Courier New" size="2">Return</FONT>, its usual action is also executed.</P>
+
+<P>The changes that <FONT face="Courier New" size="2">^X-^U</FONT> undoes include all buffer insertions and deletions and any movement of dot in a buffer. Side-effects of MLisp functions, including creation of buffers and setting of variables, are not undone.</P>
+
+<P>For commands that have not affected a buffer, <FONT face="Courier New" size="2">^X-^U</FONT> appears to have no effect. So, if you use <FONT face="Courier New" size="2">undo</FONT> and nothing happens when an undo step is requested, this may well be because a non-buffer-modifying command was executed.</P>
+
+<P>The <FONT face="Courier New" size="2">undo</FONT> function maintains a database of changes made to buffers. This database has a finite size; if you attempt to undo more than is contained in the database, <FONT face="Courier New" size="2">undo</FONT> will issue the following message:</P>
+
+<PRE>
+I can't undo that. What's done is done.
+</PRE>
+
+<P>Note that, when you undo changes, you can redo the changes by using undo again. For example, if you undo too many changes, use <FONT face="Courier New" size="2">^X-^U</FONT> again to undo the unwanted undos.</P>
+</BODY>
+</HTML>
+

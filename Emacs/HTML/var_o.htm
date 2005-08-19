@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>Variables - O</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<HR>
+<P><A name="omit-file-version-expansion"></A><B>omit-file-version-expansion</B> &laquo; 0</P>
+
+<BLOCKQUOTE>
+<P>Controls file name expansion. When true, it causes file versions to be omitted when file recognition is used with visit-file, read-file etc.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="override-end-of-line-style"></A><B>override-end-of-line-style</B> _ &laquo; "none"</P>
+
+<BLOCKQUOTE>
+<P>Specifies whether the end-of-line style of all buffers should be overridden when writing them
+out to files. The default value is none, meaning that the buffer-specific attribute settings
+specified by current-buffer-end-of-line-style are not overridden. If override-RMS-record-attribute
+ is set to one of "crlf" or "lf", then all buffers will be written out with the specified style,
+regardless of the value of current-buffer-end-of-line-style.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="override-RMS-record-attribute"></A><B>override-RMS-record-attribute</B> _ &laquo; "none"</P>
+
+<BLOCKQUOTE>
+<P>We recommend you use the variable override-end-of-line-style to set the end-of-line
+style rather then use the RMS variables.</p> 
+<P>Specifies whether the RMS attributes of all buffers should be overridden when writing them out to files. The default value is none, meaning that the buffer-specific attribute settings specified by current-buffer-RMS-record-attribute are not overridden. If override-RMS-record-attribute is set to one of stream, stream-lf or stream-cr, then all buffers will be written out with the specified attribute, regardless of the value of current-buffer-RMS-record-attribute.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="operating-system-name"></A><B>operating-system-name</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>This read only variable contains the name of the operating system that Emacs is running on.</P>
+
+<TABLE border="1" cellspacing="0" cellpadding="3" bgcolor="#aaffaa">
+<TR>
+<TH align="left" width="100">Value</TH>
+<TH align="left">Description</TH>
+</TR>
+
+<TR>
+<TD>"Windows"</TD>
+<TD>Microsoft Windows NT, Windows 9x or Windows 3.1</TD>
+</TR>
+
+<TR>
+<TD>"Macintosh"</TD>
+<TD>Apple Macintosh</TD>
+</TR>
+
+<TR>
+<TD>"MS-DOS"</TD>
+<TD>Microsoft MS-DOS</TD>
+</TR>
+
+<TR>
+<TD>"osf1"</TD>
+<TD>OSF/1</TD>
+</TR>
+
+<TR>
+<TD>"ultrix"</TD>
+<TD>Ultrix</TD>
+</TR>
+
+<TR>
+<TD>"VMS"</TD>
+<TD>OpenVMS/VAX or OpenVMS/AXP</TD>
+</TR>
+</TABLE>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="operating-system-version"></A><B>operating-system-version</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>This read only variable contains the version of the operating system that Emacs is running on.</P>
+
+<P>In the case of the Microsoft Windows set of operating systems operating-system-version allows you to tell them apart.</P>
+
+<TABLE border="1" cellspacing="0" cellpadding="3" bgcolor="#aaffaa">
+<TR>
+<TH align="left" width="100">Value</TH>
+<TH align="left">Description</TH>
+</TR>
+
+<TR>
+<TD>V4.0 NT</TD>
+<TD>Windows NT 4.0</TD>
+</TR>
+
+<TR>
+<TD>V3.51 NT</TD>
+<TD>Windows NT 3.51</TD>
+</TR>
+
+<TR>
+<TD>V4.10 Win95</TD>
+<TD>Windows 98</TD>
+</TR>
+
+<TR>
+<TD>V4.0 Win95</TD>
+<TD>Windows 95</TD>
+</TR>
+</TABLE>
+
+<P>On other operating systems it returns the version in a format compatible with the host operating systems conventions.</P>
+</BLOCKQUOTE>
+
+<HR>
+</BODY>
+</HTML>
+

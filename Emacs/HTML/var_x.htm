@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<HTML>
+<HEAD>
+<TITLE>Variables - X</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<HR>
+<P><A name="xon-mode"></A><B>xon-mode</B></P>
+
+<BLOCKQUOTE>
+<P>This variable is only used when Emacs is connected to a terminal.</P>
+
+<P>xon-mode controls the way that Emacs synchronises with the terminal.</P>
+
+<P>When true, ^S is treated as an XOFF character and causes the terminal to suspend output; ^Q is treated as an XON character which causes character transmission to be resumed. These characters are processed by VMS and never reach Emacs, so you cannot have anything bound to these keys.</P>
+
+<P>When xon-mode is false, ^S and ^Q are treated just like any other character, and you can bind commands to these keys.</P>
+
+<P>Some terminals require that xon-mode be set non-zero. If such terminals have a specialist Emacs terminal driver, xon-mode will be switched on by default. If you have a terminal that requires xon-mode and you pretend to be some other terminal, you will need to turn xon-mode on in your emacsinit.ml.</P>
+
+<P>A notable example of when this is necessary is with the VT125 terminal.</P>
+</BLOCKQUOTE>
+
+<HR>
+</BODY>
+</HTML>
+

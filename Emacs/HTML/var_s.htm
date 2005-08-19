@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<TITLE>Variables - S</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<HR>
+<P><A name="scroll-step"></A><B>scroll-step</B> &laquo; 7</P>
+
+<BLOCKQUOTE>
+<P>Controls the number of lines by which a window moves when dot moves out of the window.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="search-string"></A><B>search-string</B></P>
+
+<BLOCKQUOTE>
+<P>This read-only variable holds the last search string used by any search command. The search-string variable is preserved by the save-... functions.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="silently-kill-processes"></A><B>silently-kill-processes</B> &laquo; 0</P>
+
+<BLOCKQUOTE>
+<P>Controls process termination during Emacs rundown. If non-zero, Emacs will kill processes when it exits without asking any questions. Normally, if you have processes running when Emacs exits, Emacs asks the question You have processes on the prowl, should I chase them down for you?.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="split-height-threshold"></A><B>split-height-threshold</B> &laquo; 7</P>
+
+<BLOCKQUOTE>
+<P>Controls which windows Emacs considers when it decides to create a new window. Any window with a height that is less than split-height-threshold is a candidate for being split to create space for the new window.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="stack-trace-on-error"></A><B>stack-trace-on-error</B> &laquo; 0</P>
+
+<BLOCKQUOTE>
+<P>Controls automatic stack tracing. If non-zero, Emacs will write an MLisp stack trace to the Stack trace buffer whenever an error is encountered from within an MLisp function (even inside an error-occurred).</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="swap-ctrl-x-char"></A><B>swap-ctrl-x-char</B> &laquo; 24</P>
+
+<BLOCKQUOTE>
+<P>This variable allows you to change the way that emacs interprets control keys you type.</P>
+
+<P>The value of this variable is the character code to swap with ^X. Whenever emacs sees a ^X the value of swap-ctrl-x-char is substituted. And whenever the you type the key corrisponding to the value of swap-ctrl-x-char ^x is substituted.</P>
+
+<P>The reason this variable was added to emacs was to make it easy to use ^X as the Windows style Cut action. Without rewritting all the existing MLisp code so that it does not use ^X as a key binding prefix.</P>
+
+<P>The (<A href="Z" onmouseover="return top.bemacs.mouseOver()" onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#default-emacs-init&#39;)">default-emacs-init</A>) function sets up ^\ (28) and ^] (29) as suitable swap candadates.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="syntax-array"></A><B>syntax-array</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>When syntax-array is true Emacs will optimise the operation of commands that depend on syntax data. However maintaining the syntax array will slow down other operations in Emacs.</P>
+
+<P>The following compares commands and features with and without syntax-array:</P>
+
+<P><B>syntax colouring</B></P>
+
+<P>Syntax colouring is disabled if syntax-array is turned off. Turning on syntax-colouring will also turn on synatx-array for a buffer.</P>
+
+<P>re-search-forward, re-search-reverse, re-query-replace-string and re-replace-string</P>
+
+<P>The \S, \C, \s, \c regular expression features are only available when syntax-array is true.</P>
+
+<P>backward-paren, forward-paren, backward-balanced-paren-line and forward-balanced-paren-line</P>
+
+<P>When syntax-array is true these commands correctly take into account comments and strings when searching for a parenthesis. When syntax-array is false these commands uses a dead reckoning algorithm that in some situations will not find the correct parenthesis.</P>
+
+<P><B>current-syntax-entity</B></P>
+
+<P>When syntax-array is true this command is fast. However when syntax-array is false current-syntax-entity has to calculate the syntax by examining each character from the start of the buffer up to dot.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="syntax-colouring"></A><B>syntax-colouring</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>When syntax-colouring is true Emacs will colour the characters of a buffer depending on the syntax of those characters.</P>
+
+<P>The colours are taken from the variables:</P>
+
+
+<DL>
+<DD>syntax-word-rendition</DD>
+<DD>syntax-string-rendition</DD>
+<DD>syntax-comment-rendition</DD>
+<DD>syntax-keyword1-rendition</DD>
+<DD>syntax-keyword2-rendition</DD>
+</DL>
+<P>All dull characters are displayed in the window-graphic-rendition colour.</P>
+
+<P>If syntax-colouring is false all characters are displayed in the window-graphic-rendition.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="syntax-word-rendition"></A><B>syntax-word-rendition</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>Defines the colour that will be used to draw word characters when syntax-colouring is true.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="syntax-string-rendition"></A><B>syntax-string-rendition</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>Defines the colour that will be used to draw string characters when syntax-colouring is true.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="syntax-comment-rendition"></A><B>syntax-comment-rendition</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>Defines the colour that will be used to draw comment characters when syntax-colouring is true.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="syntax-keyword1-rendition"></A><B>syntax-keyword1-rendition</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>Defines the colour that will be used to draw keyword type 1 characters when syntax-colouring is true.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="syntax-keyword2-rendition"></A><B>syntax-keyword2-rendition</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>Defines the colour that will be used to draw keyword type 2 characters when syntax-colouring is true.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="syntax-keyword3-rendition"></A><B>syntax-keyword3-rendition</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>Defines the colour that will be used to draw keyword type 3 characters when syntax-colouring is true.</P>
+</BLOCKQUOTE>
+
+<HR>
+</BODY>
+</HTML>
+

@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//SoftQuad//DTD HTML 3.2 + extensions for HoTMetaL PRO 3.0(U) 19961211//EN"
+ "hmpro3.dtd">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<TITLE>MLisp Programers Guide - Command lines</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<H1><A name="commandlines"></A>Command lines</H1>
+
+<H2><A name="bemacscommandline"></A>Bemacs Command line</H2>
+
+<P>bemacs passes the whole command line to the Barry's Emacs application for processing.</P>
+
+<P>Barry's Emacs then parses the command line into its component parts, called arguments. Having parsed the command line Barry's Emacs determines the package for the command line. The default package is called <I>emacs</I>. This can be overridden by using the /package switch.</P>
+
+<DL>
+<DT>/package=<I>package-name</I></DT>
+
+<DD>This causes emacs to execute the MLisp command <I>package-name</I>-com. If <I>package-name</I>-com is not yet defined then emacs loads the MLisp module named <I>package-name</I>.mlp.</DD>
+
+<DT>--</DT>
+
+<DD>This causes emacs to treat all the following command line arguments as not being qualifiers. This is useful for allowing Emacs to open a file whoes name starts with a "+" or "-" character.</DD>
+</DL>
+
+It is the job of the package to process the command line. The default package is named "emacs". How the emacs package handles the command line is documented in the <A href="Z" onmouseover="return top.bemacs.mouseOver()" onclick="return top.bemacs.loadDocument(&#39;ug&#39;,&#39;#emacscommand&#39;)">User Guide</A>. 
+
+<H2><A name="writingapackage">Writing a package</A></H2>
+
+<P>Emacs will automatically load a packages definition from an MLisp module named <I>package</I> from the file <TT><I>package</I>.mlp</TT>. That module must contain atleast one function definition for the MLisp function <I>package</I>-com.</P>
+
+<P>It is the job of the package to process the command line. Emacs has already parsed the command line into its component parts. Use the following functions to access the components of the command line:</P>
+
+<DL>
+<DT>(<A href="Z" onmouseover="return top.bemacs.mouseOver()" onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#argc&#39;)">argc</A>)</DT>
+
+<DD>Returns the number of command line arguments. There is always one arguments.</DD>
+
+<DT>(<A href="Z" onmouseover="return top.bemacs.mouseOver()" onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#argv&#39;)">argv</A> <I>position</I>)</DT>
+
+<DD>Returns the text of the argument at position <I>position</I>. Position zero always returns the name of the package.</DD>
+
+<DT>(<A href="Z" onmouseover="return top.bemacs.mouseOver()" onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#arg-is-qualifier&#39;)">arg-is-qualifier</A> <I>position</I>)</DT>
+
+<DD>Returns true if the argument at position <I>position</I> is a command line qualifier (also called a command line switch).</DD>
+</DL>
+
+<P>If the package does not use one of these functions then Emacs will call visit-file for each argument that is not a qualifier.</P>
+
+<H2><A name="servercommandline"></A>BemacsServer Command line</H2>
+
+<P>BEmacsServer supports a full command line. BemacsServer can be used directly if required. BEmacsServer supports the following command line options:</P>
+
+<DL>
+<DT>/restore[=<I>file</I>]</DT>
+
+<DD>Restore the Emacs Environment from <I>file</I>.</DD>
+
+<DT>/norestore</DT>
+
+<DD>Do not restore any Emacs Environment file</DD>
+
+<DT>/package=<I>package-file</I></DT>
+
+<DD>See above for details</DD>
+
+<DT>/RegServer</DT>
+
+<DD>register the OLE interface</DD>
+
+<DT>/embedding</DT>
+
+<DD>used by OLE</DD>
+
+<DT>/automation</DT>
+
+<DD>used by OLE</DD>
+
+<DT>/UnRegServer</DT>
+
+<DD>unregister the OLE interface (not implemented in this version)</DD>
+</DL>
+</BODY>
+</HTML>
+

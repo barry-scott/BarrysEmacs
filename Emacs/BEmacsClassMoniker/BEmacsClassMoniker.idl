@@ -1,0 +1,38 @@
+// BEmacsClassMoniker.idl : IDL source for BEmacsClassMoniker.dll
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (BEmacsClassMoniker.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+	[
+		object,
+		uuid(75DBD8F1-7CF1-11D3-817E-00500445EFA8),
+	
+		helpstring("IBemacsMoniker Interface"),
+		pointer_default(unique)
+	]
+	interface IBemacsMoniker : IROTData
+	{
+	};
+
+[
+	uuid(6B9D8212-7CE8-11D3-817D-00500445EFA8),
+	version(1.0),
+	helpstring("BEmacsClassMoniker 1.0 Type Library")
+]
+library BEMACSCLASSMONIKERLib
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	[
+		uuid(75DBD8F2-7CF1-11D3-817E-00500445EFA8),
+		helpstring("BemacsMoniker Class")
+	]
+	coclass BemacsMoniker
+	{
+		[default] interface IBemacsMoniker;
+	};
+};

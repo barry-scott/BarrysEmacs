@@ -1,0 +1,25 @@
+/* XPM */
+static char *toolbar_view[] = {
+/* width height num_colors chars_per_pixel */
+"    16    15        3            1",
+/* colors */
+". c #000000",
+"# c #800080",
+"a c #c0c0c0",
+/* pixels */
+"a###aaaaaaaaaaaa",
+"#aaa#aaaaaaaaaaa",
+"a####a..aaaaaaaa",
+"#aaa#aaa..aaaaaa",
+"#aa##aaaaa.aaaaa",
+"a##a#aaaaa..aaaa",
+"aaaaaaaaaaa.aaaa",
+"#aaaaaaa.aa.aaaa",
+"#aaaaaa..a.aaaaa",
+"#a##aa....aaaaaa",
+"##aa#aa..aaaaaaa",
+"#aaa#aaa.aaaaaaa",
+"#aaa#aaaaaaaaaaa",
+"##aa#aaaaaaaaaaa",
+"#a##aaaaaaaaaaaa"
+};

@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<HTML>
+<HEAD>
+<TITLE>Variables - I</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<HR>
+<P><A name="input-mode"></A><B>input-mode</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>Emacs can operate in two different input modes, traditional and GUI.</P>
+
+<P>In GUI mode Emacs operates the highlight region in the style of Windows and Motif, a more intuitive mode.</P>
+
+<P>The region will be set if you move the cursor while holding the shift key.</P>
+
+<P>Typing or otherwise inserting text while the region is set will erase the region first. In effect replacing region with new text.</P>
+
+<P>Using a delete command will erase the region rather then doing the normal delete action. delete commands includes, but is not limited to: delete-next-character, delete-next-word, delete-previous-character, delete-previous-word, erase-region.</P>
+
+<P>Setting the mark manually, using the set-mark command, will temporarily disable the GUI input mode.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="is-comment"></A><B>is-comment</B> &laquo; 4</P>
+
+<BLOCKQUOTE>
+<P>This constant is returned by the current-syntax-entity function when dot is located in a comment.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="is-dull"></A><B>is-dull</B> &laquo; 0</P>
+
+<BLOCKQUOTE>
+<P>This constant is returned by the current-syntax-entity function when dot is located in punctuation or white-space.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="is-quote"></A><B>is-quote</B> &laquo; 3</P>
+
+<BLOCKQUOTE>
+<P>This constant is returned by the current-syntax-entity function when dot is located just after a quote character.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="is-string"></A><B>is-string</B> &laquo; 2</P>
+
+<BLOCKQUOTE>
+<P>This constant is returned by the current-syntax-entity function when dot is located in a matched quoted string.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="is-word"></A><B>is-word</B> &laquo; 1</P>
+
+<BLOCKQUOTE>
+<P>This constant is returned by the current-syntax-entity function when dot is located in a word.</P>
+</BLOCKQUOTE>
+
+<HR>
+</BODY>
+</HTML>
+

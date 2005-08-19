@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>Functions W*</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<HR>
+<P><A name="wait-for-process-input-request">(<B>wait-for-process-input-request</B> <CODE>process-name</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Suspends keyboard processing until an input request is made by the target process. The function returns 1 if the process wants input, or 0 if the user typed a key at the keyboard.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="what-cursor-position">(<B>what-cursor-position</B>) ^X-=</A></P>
+
+<BLOCKQUOTE>
+<P>Writes out a brief summary of the position of dot in the current window. It reports the co-ordinates of dot with respect to the current window, what the character to the right of dot is, what character number dot is at, the percentage of the file above dot, and what portion of the file is displayed in the window.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="while">(<B>while</B> <CODE>test expression...</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Executes the given expressions while the <CODE>test</CODE> is true (not equal to zero).</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="widen-region">(<B>widen-region</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Removes a restriction put on a buffer by narrow-region.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="widen-window">(<B>widen-window</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Increases the width of a vertically-split window. widen-window can only succeed if at least one of the other windows is greater than one column wide.</P>
+</BLOCKQUOTE>
+
+
+
+<HR>
+<P><A NAME="WIN-edit-copy"><B>WIN-edit-copy</B></A> ^C</P>
+<BLOCKQUOTE>
+
+<P>Copies the selected text to the Windows clipboard.</P>
+
+
+<P><B>See also:</B></P>
+<UL>
+<LI><A href="#WIN-edit-cut">WIN-edit-cut</A></LI>
+<LI><A href="#WIN-edit-paste">WIN-edit-paste</A></LI>
+</UL>
+
+
+
+</BLOCKQUOTE>
+
+
+<HR>
+<P><A NAME="WIN-edit-cut"><B>WIN-edit-cut</B></A></P>
+<BLOCKQUOTE>
+
+<P>Cuts the selected text and puts it on the Windows clipboard.</P>
+
+<P>The default emacsinit.ml binds this function to ^X for consistency with normal Windows keys. Historically, emacs uses ^X to begin a command sequence, so the default emacsinit.ml swaps ^X and ^\ so that ^X can be used for WIN-edit-cut. </P>
+
+
+<P><B>See also:</B></P>
+<UL>
+<LI><A href="#WIN-edit-copy">WIN-edit-copy</A></LI>
+<LI><A href="#WIN-edit-paste">WIN-edit-paste</A></LI>
+<LI><A href="var_s.htm#swap-ctrl-x-char">swap-ctrl-x-char</A> variable</LI>
+</UL>
+
+
+
+</BLOCKQUOTE>
+
+
+<HR>
+<P><A NAME="WIN-edit-paste"><B>WIN-edit-paste</B></A> ^V</P>
+<BLOCKQUOTE>
+
+<P>Pastes text from the Windows clipboard.</P>
+
+
+<P><B>See also:</B></P>
+<UL>
+<LI><A href="#WIN-edit-copy">WIN-edit-copy</A></LI>
+<LI><A href="#WIN-edit-cut">WIN-edit-cut</A></LI>
+</UL>
+
+
+
+</BLOCKQUOTE>
+
+
+
+<HR>
+<P><A name="window-dimensions">(<B>window-dimensions</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>This command returns a one dimensional array containing the top, left, bottom and right coordinates of the current window.</P>
+
+<TABLE>
+<TR>
+<TD>Index</TD>
+<TD>Description</TD>
+</TR>
+
+<TR>
+<TD>1</TD>
+<TD>Top Y coordinate</TD>
+</TR>
+
+<TR>
+<TD>2</TD>
+<TD>Left X coordinate</TD>
+</TR>
+
+<TR>
+<TD>3</TD>
+<TD>Bottom Y coordinate</TD>
+</TR>
+
+<TR>
+<TD>4</TD>
+<TD>Right X coordinate</TD>
+</TR>
+</TABLE>
+
+<P>The position values are the same as used by goto-window-at-x-y and returned in control-string-parameters for a mouse click.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="write-abbrev-file">(<B>write-abbrev-file</B> <CODE>file-name</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Writes all defined abbreviations to the named file. This file can be read back into Emacs with read-abbrev-file.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="write-current-file">(<B>write-current-file</B> <CODE>file-name</CODE>) ^X-^S</A></P>
+
+<BLOCKQUOTE>
+<P>Writes the contents of the current buffer to the file whose name is associated with the buffer.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="write-file-exit">(<B>write-file-exit</B>) ^X-^F</A></P>
+
+<BLOCKQUOTE>
+<P>Writes all modified buffers to their associated files and if the command succeeds, Emacs exits.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="write-modified-files">(<B>write-modified-files</B>) ^X-^M</A></P>
+
+<BLOCKQUOTE>
+<P>Writes each modified buffer into the file whose name is associated with the buffer. Emacs generates an error message if a modified buffer does not have an associated file.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="write-named-file">(<B>write-named-file</B> <CODE>file-name</CODE>) ^X-^W</A></P>
+
+<BLOCKQUOTE>
+<P>Writes the contents of the current buffer to the named file and changes the association of the buffer to the specified file name.</P>
+</BLOCKQUOTE>
+
+<HR>
+</BODY>
+</HTML>
+

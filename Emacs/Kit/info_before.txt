@@ -1,0 +1,9 @@
+Barry's Emacs @#@version@#@
+
+After the installation is completed please
+see the readme.txt file for changes new in
+this kit.
+
+    BArry Scott
+
+    @#@format:%(date)s@#@

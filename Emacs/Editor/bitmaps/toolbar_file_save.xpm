@@ -1,0 +1,28 @@
+/* XPM */
+static char *toolbar_file[] = {
+/* width height num_colors chars_per_pixel */
+"    16    15        6            1",
+/* colors */
+". c #000000",
+"# c #808000",
+"a c #c0c0c0",
+"b c #ff0000",
+"c c #ffff00",
+"d c #ffffff",
+/* pixels */
+"aaaaaaaaaaaaaaaa",
+"aa..............",
+"aa.#.aaaaaaaa.a.",
+"aa.#.aaaaaaaa...",
+"aa.#.aaaaaaaa.#.",
+"aa.#.aaaaaaaa.#.",
+"aa.#.aaaaaaaa.#.",
+"aa.#.aaaaaaaa.#.",
+"aa.##........##.",
+"aa.############.",
+"aa.##.........#.",
+"aa.##......aa.#.",
+"aa.##......aa.#.",
+"aa.##......aa.#.",
+"aaa............."
+};

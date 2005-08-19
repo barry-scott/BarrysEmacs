@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+KITDIR=${1}
+if [ "$KITDIR" = "" ]
+then
+	echo "Usage: $0 <install-kit>"
+	exit 1
+fi
+
+osname=`os_name.ksh`
+
+export edit_obj=$osname/obj/
+export edit_exe=$osname/exe/
+
+for image in bemacs bemacs_server dbadd dbcreate dbdel dblist dbprint mll-2-db
+do
+	cp -f ${edit_exe}${image} $KITDIR
+done
+for bitmap in bitmaps/*.x[pb]m
+do
+	cp -f $bitmap $KITDIR
+done
+for keymap in x11_keymaps/*.xkeys
+do
+	cp -f $keymap $KITDIR
+done
+ln -s -f emacs-hp-new.xkeys $KITDIR/emacs.xkeys

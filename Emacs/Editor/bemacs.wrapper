@@ -1,0 +1,89 @@
+#!/bin/ksh
+#
+#	bemacs.wrapper
+#	Copyright 1997-1999 (c) Barry A. Scott
+#
+
+#
+#	Figure out the OS directory to use
+#
+system="`/bin/uname -s`"
+release="`/bin/uname -r`"
+version="`/bin/uname -v`"
+
+case "$system" in
+AIX)
+	name=aix-$version.$release;;
+HP-UX)
+	case "$release" in
+	B.10.*)	
+		if [[ $release < "B.10.20" ]]
+		then
+			name=hp-ux-09.03
+		else
+			name=hp-ux-10.20
+		fi
+		;;
+	A.09.*)	name=hp-ux-09.03
+		;;
+	*)		name=unknown;;
+	esac;;
+*)
+	name=unknown;;
+esac
+
+#
+#	untangle any symbolic links used to get to the command
+#
+
+# figure out the script name including finding it on the PATH if required
+script_name=`which $0`
+
+if [[ ! -L $script_name ]]
+then
+	echo
+	echo "        Do not run bemacs.wrapper directly"
+	echo
+	exit 1
+fi
+
+bemacs_file=""
+bemacs_dir=""
+
+original_wd=`pwd`
+
+while true
+do
+	prev_bemacs_file=$bemacs_file
+	bemacs_file=${script_name##*/}
+	bemacs_dir=${script_name%%$bemacs_file}
+
+	# no dir so default it
+	if [[ $bemacs_dir != "" ]]
+	then
+		cd "$bemacs_dir"
+	fi
+
+	# see if its a symbolic link
+	if [[ -L $bemacs_file ]]
+	then
+		# find the value of the link
+		script_name=`/bin/ls -l $bemacs_file|awk '{print $11}'`
+	else
+		# all done so exit
+		break
+	fi
+done
+
+
+bemacs_dir=`pwd`
+cd "$original_wd"
+
+# only set emacs_library if its not been set by the user
+if [[ $emacs_library = "" ]]
+then
+	export emacs_library=$bemacs_dir
+fi
+
+# run the command using the correct OS binary
+exec "${bemacs_dir}/${name}/$prev_bemacs_file" "$@"
