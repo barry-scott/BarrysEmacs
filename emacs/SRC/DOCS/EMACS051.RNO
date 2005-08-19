@@ -1,0 +1,558 @@
+.ps 58,70
+.style headers (testpage=6,bold,leavecase,level=1:3)
+.style headers (testpage=6,bold,leavecase,level=4:6)
+.sthl 6,1,6,7,7,2,1,7,2
+.autosubtitle 2
+.no flags underline
+.no flags uppercase
+.no flags accept
+.autoparagraph
+.set paragraph 0,1,5
+.flags bold &
+.layout 0
+.no number
+
+.title EMACS Version V5.1 release notes
+
+.fg 20
+.c;EMACS V5.1
+.b
+.c;Release Notes
+.b
+.c;April 1991
+.page
+.require "docs$obj:emacs051.rnt"
+.number page 1
+.page
+
+.hl 1 INTRODUCTION
+
+This version  of EMACS requires VMS V5.1 or later to work. MLisp files
+written for V5.0 EMACS should not require changes to work on V5.1 EMACS.
+However  you  may wish to take advantage of new commands and variables
+to improve packages. 
+
+The principle features of this release are:-
+
+.list "o"
+.le; Support for Stream files
+.le; Support for colour display handling
+.end list
+
+Many problems reported in EMACS V5.0 have been fixed in this version.
+
+.hl 1 DOCUMENTATION
+
+The manuals  have been prepared with VAX Document and are available in
+PostScript or BookReader formats.
+
+The Emacs users guide is in EMACS$HELP:EMACS_UG.PS.
+
+The Emacs programmers guide is in EMACS$HELP:EMACS_PROG.PS.
+
+The Emacs   catalogue   of   MLisp   functions  and  variables  is  in
+EMACS$HELP:EMACS_CAT.PS.
+
+The Emacs    MLisp    library    of    packages   is   documented   in
+EMACS$HELP:EMACS_LIB.PS.
+
+
+.hl 1 HOW TO UPGRADE TO EMACS V5.1
+
+EMACS is  installed  by  using VMSINSTAL. You can either install EMACS
+privately or system wide.
+
+The EMACS  kit comes as six files EMACS051.A, EMACS051.B, EMACS051.C,
+EMACS051.D,   EMACS051.E,  EMACS051.F,  EMACS051.G  which  are  VMS BACKUP
+save sets,  and  EMACS_INSTALL.COM  for private installations.  See the
+section on "Installing EMACS" for details.
+
+.hl 1 COMPATIBILITY WITH EMACS V5.0
+
+There are no known compatibility problems with V5.0 MLisp files.
+
+.hl 1 IN CASE OF PROBLEMS
+
+If you find a bug in EMACS please enter a QAR into the EMACS QAR notes
+file.        The       notes       file       is       located      on
+MARVIN::EMACS$KIT:EMACS_V50_QAR.NOTE.
+
+.hl 1 REPORTING BUGS AND SUGGESTIONS
+
+There are  three  conferences  setup  for EMACS.  MARVIN::EMACS is for
+general  discussions and suggestions for EMACS.  MARVIN::EMACSPROCS is
+a    specialised    notes    file   that   holds   MLisp   procedures.
+MARVIN::EMACS$KIT:EMACS_V50_QAR is the QAR file for EMACS V5.1.
+
+For other matters concerning EMACS mail Barry Scott at MARVIN::SCOTT.
+
+Please read the section in the manual on reporting bugs. 
+
+.hl 1 Problem with save environment
+
+When upgrading  from  one  version  of VMS to the next you may need to
+rebuild  all  save  environment  files.  This  may  also  happen  when
+installing  layered  products  that  install  new versions of sharable
+libraries.
+
+EMACS outputs  an error message to tell you that the saved environment
+file  needs  rebuilding.  Use  the  following  commands to rebuild the
+environment files on your system.
+
+Each user must do the following
+
+.literal
+
+$ @emacs$library:emacs_save_environment
+
+.end literal
+
+And the  system  manager  must do the following to rebuild the default
+environment file.
+
+.literal
+
+$ @emacs$library:emacs_save_default_environment
+
+.end literal
+
+.hl 1 CHANGES SINCE THE LAST VERSION
+
+This  section  of  the  Release  Notes  identifies  the changes to the
+commands, variables and packages in EMACS from version V5.0 to V5.1.
+
+
+.hl New Variables
+
+This section describes the new variables for EMACS V5.1.
+.tp 10
+.s
+.lm +16
+.i -8
+window-graphic-rendition
+.br
+
+This variable  is  used to set the graphic rendition for the text area
+of     an     Emacs     window.      Used    in    conjunction    with
+highlight-region-graphic-rendition and mode-line-graphic-rendition you
+can choose the colours for any part of the display.
+
+.tp 10
+.s
+.i -8
+current-buffer-RMS-record-attribute
+.br
+
+This variable  allows  you  to  see  the  RMS  attributes  of the file
+associated  with the current buffer.  The RMS attribute will be on off
+the  following: "none", "fixed", "variable", "variable-fixed-control",
+"stream", "stream-lf" or "stream-cr".
+
+By setting  this variable to one of the attributes you can control the
+format  that  Emacs  writes  the file to disk in when next the file is
+written  out.   Files  that  are accessed from ULTRIX system should be
+written in "stream-lf" format. 
+
+.tp 10
+.s
+.i -8
+default-auto-fill-hook
+.br
+
+Set this  variable  to  the default auto-fill-hook that should be used
+when a new buffer is created.
+
+.tp 10
+.s
+.i -8
+override-RMS-record-attribute
+.br
+
+If this  variable has been set then when Emacs writes any file to disk
+it  will  be  saved with this attributes.  This variable overrides the
+the value of current-buffer-RMS-record-attribute.
+
+.tp 10
+.s
+.i -8
+default-buffer-RMS-record-attribute
+.br
+
+This variable provides the default RMS attributes for new buffers.
+
+.tp 10
+.s
+.lm -16 
+
+.hl 1 Changed Packages
+
+This section  lists  the  packages  that have been changed since Emacs
+V4.1.
+
+.tp 10
+.s
+.lm +16
+.i -8
+Notes
+.br
+
+The Notes package will now support multiple open Notes files.
+
+.tp 10
+.s
+.lm -16
+
+.hl 1 INSTALLING EMACS
+
+This section  describes  how  to  install EMACS. The first sub section
+tell  you  how to install system wide the second section describes how
+to install EMACS privately.
+
+.hl +1 System installation
+
+To install EMACS you require the following environment:-
+
+.list
+.le;Login to the SYSTEM account or any account with privileges.
+
+.le;At least 13000 free blocks on the system disk
+
+.le;At least 12000 free blocks on the target disk for the installation.
+
+.end list
+
+Below is  an example output from an EMACS V5.1 installation. All lines
+of   the  dialogue  from  VMSINSTAL  have  a  "|"  at  the  beginning,
+explanation text does not.
+
+.literal
+|
+|$ @sys$update:vmsinstal
+|
+|	VAX/VMS Software Product Installation Procedure V5.4-1
+|
+|
+|It is 18-APR-1991 at 19:18.
+|
+|Enter a question mark (?) at any time for help.
+|
+|%VMSINSTAL-W-NOTSYSTEM, You are not logged in to the SYSTEM account.
+|%VMSINSTAL-W-ACTIVE, The following processes are still active:
+|	SCOTT
+|	DECW$WM_1
+|	Barry I 1
+|	Barry I 5
+|	Barry I 4
+|	DECW$TE_1
+|	Fenny One
+|* Do you want to continue anyway [NO]? y
+
+If VMSINSTAL asks this question answer "YES".
+
+|* Are you satisfied with the backup of your system disk [YES]? 
+
+If VMSINSTAL asks this question answer "YES" by pressing RETURN.
+
+|* Where will the distribution volumes be mounted:
+
+You can   answer  "MARVIN::EMACS$KIT:".  Otherwise you can copy the
+files   EMACS051.A  EMACS051.B,  EMACS051.C,  EMACS051.D,  EMACS051.E,
+EMACS051.F,  EMACS051.G   MARVIN::EMACS$KIT:
+to your node.  Then answer this question with the location of EMACS051
+save sets, for example SYS$UPDATE:.
+
+Only copy  EMACS051.F if you wish to install the Emacs PostScript documents.
+And only copy EMACS051.E if you wish to install the Emacs Bookreader
+documents.
+
+|Enter the products to be processed from the first distribution volume set.
+|* Products: 
+
+Answer "EMACS051".
+
+|* Enter installation options you wish to use (none): 
+
+Answer by pressing RETURN.
+
+|The following products will be processed:
+|
+|  EMACS V5.1
+|
+|	Beginning installation of EMACS V5.1 at 19:19
+|
+|%VMSINSTAL-I-RESTORE, Restoring product save set A ...
+|
+|********************************************************************
+|*                                                                  *
+|*                      EMACS display editor                        *
+|*                                                                  *
+|*                                                                  *
+|* April 1991                                            EMACS V5.1 *
+|********************************************************************
+|
+|	Type "?"  in  response  to to any question for help about
+|	that question.
+|
+|The base EMACS system requires 3133 blocks.
+|
+|	The next few questions ask you to select which
+|	optional parts of the Emacs kit you wish to install.
+|
+|* Install the EMACS describe database (789 blocks) [YES]? 
+|* Install the EMACS PostScript documentation (3327 blocks) [YES]? 
+|* Install the EMACS Book Reader documentation (2166 blocks) [YES]?
+|* Install the EMACS INFO database (765 blocks) [YES]? 
+|* Install the EMACS quick INFO database (494 blocks) [YES]? 
+|* Do you want to purge files replaced by this installation [YES]? 
+
+If you  do  not  wish  to install any of the above options then answer
+"NO".   The files that comprise the 5 options are listed in the "Files
+In  The  Kit"  section.   We  recommend  that  you answer "YES" on all
+time sharing  systems  and  only  answer "NO" on VMS systems where disk
+space is at a premium.
+
+|
+|	EMACS  can  be  installed  on  the  system  disk  or on a
+|	separate  disk,  if  the system disk does not have enough
+|	disk space for 10675 blocks used by EMACS.
+|
+|* Do you want to install EMACS in the standard system directories [YES]? 
+
+The standard   system   directory   are   SYS$SYSTEM:,   SYS$LIBRARY:
+SYS$MANAGER: and DECW$BOOK:.
+
+If  you  wish  to  install  EMACS  on  your  system disk answer "YES",
+otherwise  answer  "NO". If you answer "NO" the installation procedure
+will ask the next question. If you already have EMACS installed on the
+system  the installation procedure default the answer to this question
+to reflect the way EMACS is currently installed.
+
+The EMACS  installation  will  default the answer to this question and
+the  next.  The  default  is  based  on  where  EMACS  was  previously
+installed. This is to make upgrading an EMACS installation easier.
+
+|* Enter the device and directory to install EMACS in
+|  [SYS$COMMON:[EMACS]]: 
+
+Answer with the disk and directory that you wish EMACS to be installed
+in,  for  example "DISK$USER01:[EMACS]". If EMACS is already installed
+on  the system this question is defaulted to current location of EMACS
+on the system.
+
+
+|	This kit contains release notes in file,
+|		DISK$OWL:[EMACS]EMACS051.MEM
+| 
+|* Do you wish /SUBPROCESS to be the default [YES]? 
+
+Answer "YES" to have EMACS run in a subprocess by default.
+
+|	All of the installation questions have been answered. The installation
+|	will proceed automatically from here.
+|
+|%VMSINSTAL-I-RESTORE, Restoring product save set B ...
+|%VMSINSTAL-I-RESTORE, Restoring product save set C ...
+|%VMSINSTAL-I-RESTORE, Restoring product save set D ...
+|%VMSINSTAL-I-RESTORE, Restoring product save set E ...
+|%VMSINSTAL-I-RESTORE, Restoring product save set F ...
+|%VMSINSTAL-I-RESTORE, Restoring product save set G ...
+|
+|	Creating default EMACSINIT.EMACS_ENVIRONMENT
+|
+|	The file EMACSTART.COM has been provided to set up the logical
+|	names  that  EMACS  uses. You should edit your startup file to
+|	include the supplied commands.
+|
+|	For example:
+|
+| 	$ @DISK$USER01:[EMACS]EMACSTART SYSTEM DISK$USER01:[EMACS]
+
+If  you are installing EMACS on your system disk the example line will
+read:-
+
+|	 $ @SYS$MANAGER:EMACSTART SYSTEM
+
+Now VMSINSTAL  will move the files into their target directories. When
+it has finished moving the file VMSINSTAL prints the messages:-
+
+|%VMSINSTAL-I-MOVEFILES, Files will now be moved to their target
+| directories...
+|
+|	Installation of EMACS V5.1 completed at 19:34
+|
+|Enter the products to be processed from the next distribution volume set.
+|* Products: 
+
+Answer Control-Z to exit from VMSINSTAL.
+
+|	VMSINSTAL procedure done at 22:33
+
+After installing EMACS you will need to install the new images. You do
+this  by  first  shutting  down the old Emacs and then startup the new
+EMACS. For example:-
+
+$ @emacs$library:emacsshut system
+$ @sys$manager:emacstart system
+$ mcr install
+sys$library:dcltables/replace
+
+.end literal
+
+If you  are on a cluster system repeat the above commands on each node
+of the cluster.
+
+This completes the installation of EMACS V5.1.
+
+.hl Private EMACS installation
+
+To install  EMACS  privately  you  only require disk space to hold the
+files  from the kit. A minimum installation requires 3500 blocks and a
+full installation requires 13000 blocks.
+
+The EMACS_INSTALL.COM  procedure  uses  VMSINSTAL  to  install  EMACS.
+VMSINSTAL  will delete all global symbols and deassign process logical
+names.   To  preserve  your  environment  first  SPAWN  and  then  use
+EMACS_INSTALL.
+
+Below is an example output from an EMACS V5.1 private installation. All
+lines  of  the  dialogue  from  VMSINSTAL have a "|" at the beginning,
+explanation text does not.
+
+First copy  EMACS_INSTALL.COM  and  VMSINSTAL.COM  to  your  node from
+MARVIN::EMACS$KIT:  and  place  both  files  in  the  same  directory,
+SYS$LOGIN: for example.
+
+.literal
+|$ @sys$login:emacs_install
+|
+|	VAX/VMS Software Product Installation Procedure V5.4-1A
+|
+|
+|It is 18-APR-1991 at 19:41.
+|
+|Enter a question mark (?) at any time for help.
+|
+|%VMSINSTAL-W-NOTSYSTEM, You are not logged in to the SYSTEM account.
+|%VMSINSTAL-W-NOSETPRV, You are not running on an account with SETPRV privilege.
+|%VMSINSTAL-W-ACTIVE, The following processes are still active:
+|	SCOTT
+|	DECW$WM_1
+|	Barry I 1
+|	Barry I 5
+|	Barry I 4
+|* Where will the distribution volumes be mounted:
+
+You can   answer   "MARVIN::EMACS$KIT:".  Otherwise you can copy the
+files   EMACS051.A  EMACS051.B,  EMACS051.C,  EMACS051.D,  EMACS051.E,
+EMACS051.F,  EMACS051.G  from  MARVIN::EMACS$KIT:
+to your node.  Then answer this question with the location of EMACS051
+save sets, for example SYS$LOGIN:.
+
+Only copy  EMACS051.F if you wish to install the Emacs PostScript documents.
+And only copy EMACS051.E if you wish to install the Emacs Bookreader
+documents.
+
+|Enter the products to be processed from the first distribution volume set.
+|* Products: 
+
+Answer "EMACS051".
+
+|* Enter installation options you wish to use (none): 
+
+Answer by pressing RETURN.
+
+|The following products will be processed:
+|
+|  EMACS V5.1
+|
+|	Beginning installation of EMACS V5.1 at 23:59
+|
+|%VMSINSTAL-I-RESTORE, Restoring product save set A ...
+|
+|********************************************************************
+|*                                                                  *
+|*                      EMACS display editor                        *
+|*                                                                  *
+|*                                                                  *
+|* April 1991                                            EMACS V5.1 *
+|********************************************************************
+|
+|	Type "?"  in  response  to to any question for help about
+|	that question.
+|
+|* Install the EMACS describe database (789 blocks) [YES]?
+|* Install the EMACS PostScript documentation (3327 blocks) [YES]?
+|* Install the EMACS Book Reader documentation (2166 blocks) [YES]?
+|* Install the EMACS INFO database (765 blocks) [YES]?
+|* Install the EMACS quick INFO database (494 blocks) [YES]?
+
+If you  do  not  wish  to install any of the above options then answer
+"NO".
+
+|* Do you want to purge files replaced by this installation [YES]?
+
+Enter "YES"  by  typing  RETURN  to  have  the  installation purge old
+version of files.
+
+|* Enter the device and directory to install EMACS in: 
+
+Answer with the disk and directory that you wish EMACS to be installed
+in,  for  example  "DISK$USER01:[SCOTT.EMACS]".   Note that the device
+name  cannot be a rooted logical name.  Use the name of a real device.
+
+|	This kit contains release notes in file,
+|		DISK$USER01:[SCOTT.EMACS]EMACS051.MEM
+| 
+|* Do you wish /SUBPROCESS to be the default [YES]?
+
+Answer "YES" to have EMACS run in a subprocess by default.
+
+|	All of the installation questions have been answered. The installation
+|	will proceed automatically from here.
+|
+|%VMSINSTAL-I-RESTORE, Restoring product save set B ...
+|%VMSINSTAL-I-RESTORE, Restoring product save set C ...
+|%VMSINSTAL-I-RESTORE, Restoring product save set D ...
+|%VMSINSTAL-I-RESTORE, Restoring product save set E ...
+|%VMSINSTAL-I-RESTORE, Restoring product save set F ...
+|%VMSINSTAL-I-RESTORE, Restoring product save set G ...
+|
+|	Creating default EMACSINIT.EMACS_ENVIRONMENT
+|
+|	The file EMACSTART.COM has been provided to set up the logical
+|	names  that  EMACS  uses. You should edit your startup file to
+|	include the supplied commands.
+|
+|	For example:
+|
+| 	$ @DISK$USER01:[SCOTT.EMACS]EMACSTART
+
+Now VMSINSTAL  will move the files into their target directories. When
+it has finished moving the file VMSINSTAL prints the messages:-
+
+|%VMSINSTAL-I-MOVEFILES, Files will now be moved to their target
+| directories...
+|
+|	Installation of EMACS V5.1 completed at 00:16
+|
+|Enter the products to be processed from the next distribution volume set.
+|* Products: 
+
+Answer Control-Z to exit from VMSINSTAL.
+
+|	VMSINSTAL procedure done at 00:17
+
+After installing EMACS you will need to use the EMACSTART procedure to
+set up the required logical names.
+
+$ @sys$manager:emacstart
+
+.end literal
+
+This completes the installation of EMACS. Use EMACSTART.COM to declare
+the logical name and define the EMACS command. Then EMACS is ready for
+use.
+
+.tp 10
+.s
+[End of EMACS051]

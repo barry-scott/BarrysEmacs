@@ -1,0 +1,146 @@
+module tt_struct;
+/*	Copyright (c) 1982, 1983, 1984, 1985
+/*		Barry A. Scott and nick Emery 
+
+
+aggregate "trm_control" structure;
+/*
+/*	Screen control
+/*
+t_version	longword;
+constant	TT_STRUCT_VERSION equals 3;
+t_context	longword;		/* terminal context
+t_topos		address(entry);	/* move the cursor to the indicated (row,column); (1,1) is the upper left
+t_reset		address(entry);	/* reset terminal (screen is in unkown state, convert it to a known one)
+t_update_begin	address(entry);
+t_update_end	address(entry);
+t_insert_mode	address(entry);	/* set or reset character insert mode
+t_highlight_mode address(entry);	/* set or reset highlighting
+t_inslines	address(entry);	/* insert n lines
+t_dellines	address(entry);	/* delete n lines
+t_blanks	address(entry);	/* print n blanks
+t_select	address(entry);	/* select a terminal for operations
+t_init		address(entry);	/* initialize terminal settings
+t_cleanup	address(entry);	/* clean up terminal settings
+t_wipe_line	address(entry);	/* erase to the end of the line
+t_wipe_screen	address(entry);	/* erase the entire screen
+t_delete_chars	address(entry);	/* delete n characters
+t_write_chars	address(entry);	/* write characters; either inserting or overwriting according to the current character insert mode.
+t_window	address(entry);	/* set the screen window so that IDline operations only affect the first n lines of the screen
+t_flash		address(entry);	/* Flash the screen -- not set if this terminal type won't support it.
+t_geometry_change address(entry);
+t_display_activity address(entry);
+/* costs are expressed as number_affected*mf + ov
+/*	cost to insert/delete 1 line: (number of lines left)*ILmf+ILov
+/*	cost to insert one character: (number of chars left on line)*ICmf+ICov
+/*	cost to delete n characters:  n*DCmf+DCov
+t_il_mf		longword;		/* insert lines multiply factor
+t_il_ov		longword;		/* insert lines overhead
+t_ic_mf		longword;		/* insert character multiply factor
+t_ic_ov		longword;		/* insert character overhead
+t_dc_mf		longword;		/* delete character multiply factor
+t_dc_ov		longword;		/* delete character overhead
+t_change_width	address(entry);/* Routine to call when changing width
+t_update_line	address(entry);	/* Routine to call to update a line
+t_change_attributes address(entry); /* Routine to change attributes
+t_length	longword;	/* screen length
+t_width		longword;		/* screen width
+t_baud_rate	longword;	/* buad rate of terminal
+t_beep		address(entry);
+
+/*
+/*	Keyboard routines
+/*
+k_context	longword;	/* context of keyboard not used by emacs
+k_input_enable	address(entry); /* start input
+k_input_disable	address(entry); /* stop input
+k_input_char	address(entry); /* pass new charater to Emacs
+k_input_event	address(entry); /* Pointer and other "smart" input
+k_input_end	address(entry); /* input terminated
+k_check_for_input address(entry); /* check for any input
+t_alloc_mem	address(entry); /* allocate memory
+t_free_mem	address(entry); /* free allocated memory
+t_io_putchar	address(entry);
+t_io_print	address(entry);
+t_io_printf	address(entry);
+t_io_flush	address(entry);
+
+t_phys_screen	address(longword);
+t_desired_screen address(longword);
+constant K_CHAR_SIZE equals 80;
+k_char		byte dimension K_CHAR_SIZE;
+t_flags	structure; /* tag "l";	/* flags to do with the screen
+	t_attr_valid	bitfield mask;
+	k_enabled	bitfield mask;	/* keyboard is enabled
+	t_bit_fill	bitfield mask length 30;
+	end;
+
+/*
+/*	The current attributes that Emacs is running with
+/*
+t_cur_attributes_1	longword;	/* Terminal attributes TT$M_xxx
+t_cur_attributes_2	longword;	/* Terminal attributes TT2$M_xxx
+t_cur_attributes_3	longword;	/* Terminal attributes TT2$M_xxx
+/*
+/*	The users attributes that existed when emacs started.
+/*
+t_user_attributes_1	longword;	/* Terminal attributes TT$M_xxx
+t_user_attributes_2	longword;	/* Terminal attributes TT2$M_xxx
+t_user_attributes_3	longword;	/* Terminal attributes TT2$M_xxx
+
+k_input_readtimed	longword;	/* true when need to do a read with timeout
+
+k_iosb		longword;
+k_iosb2		longword;
+t_iosb		longword;
+t_iosb2		longword;
+
+end;
+
+
+
+/*
+/*	fields of an IOSB
+/*
+aggregate $iosb_def structure prefix iosb$;
+	status		word;
+	one union fill;
+	/*	normal read IOSB
+		"read" structure fill;	
+		read_size	word;
+		terminator	word;
+		terminator_size	word;
+		end;
+	/*	sensemode IOSB
+		sensemode structure fill;
+		tx_speed	byte;
+		rx_speed	byte;
+		cr_fill		byte;
+		lf_fill		byte;
+		parity		byte;
+		mbz_1		byte fill;
+		end;
+	/*	write iosb
+		write structure fill;
+		count		word;
+		mbz_2		longword fill;
+		end;
+	end;
+	
+end;
+
+/*
+/*	fields of a sense mode block from TT
+/*
+aggregate tt_mode structure prefix tt_mode$;
+
+	class	byte;
+	type	byte;
+	width	word;
+	char_1	bitfield length 24;
+	length	byte;
+	char_2	longword;
+end;
+
+constant MISSINGFEATURE equal 9999;
+end_module;

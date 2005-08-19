@@ -1,0 +1,452 @@
+module vms_rtl ( addressing_mode( external=general, nonexternal=general ) ) =
+!
+!	Copyright (c) 1993 BArry A. Scott
+!
+begin
+require 'edit$src:emacs.r32';
+
+external routine
+	term_restore_charactistics,
+	term_init_device;
+
+external literal
+	emacs$_restore_env,
+	emacs$_norestore;
+
+global routine get_log
+	(
+	name	: ref vector[,byte],
+	buf	: ref vector[,byte]
+	)  =
+	begin
+	!
+	!	Return the definition of a logical name "name", in
+	!	buffer "buf". "buf" must be at least 128 chars long.
+	!
+	local
+		name_length	: word,	! chars in translated string
+		name_d		: vector[2,long],
+		tran_d		: vector[2,long],
+		status;
+
+	name_d[0] = strlen(name[0]);
+	name_d[1] = name[0];
+	tran_d[0] = 128;
+	tran_d[1] = buf[0];
+
+	status =$trnlog(lognam = name_d, rsllen = name_length, rslbuf = tran_d);
+	if not  .status or .status eql ss$_notran
+	then
+		buf[0] = 0		! It failed
+	else
+		buf[.name_length] = 0;	! Terminate with a null
+
+	return buf[0];
+	end; 
+
+
+global routine	vms_set_term_is_terminal( device_name : ref vector[,byte] ) : novalue =
+	begin
+	local
+		kb_nam		: vector[127,byte] volatile,
+		chn		: vector[2,long],
+		kb_desc		: vector[2,long] initial( 0, kb_nam ),
+		p		: ref vector[,byte] initial (kb_nam),
+		x		: vector [128, byte],
+		status		: long,
+		dvi_trm		: $itmlst_decl( items=1 );
+
+
+	if .device_name eql 0
+	then
+		device_name = uplit byte( %asciz 'SYS$INPUT');
+
+	p = get_log (.device_name, x);
+	if .p[0] eql 27 then p = p [4];
+	strcpy( kb_nam, .p );
+	kb_desc[0] = strlen( kb_nam );
+
+	!
+	!	Find out if the terminal is a terminal
+	!
+	$itmlst_init
+	(
+	itmlst = dvi_trm,
+	(itmcod=dvi$_trm, bufadr=term_is_terminal)
+	);
+	status = $getdvi( devnam = kb_desc, itmlst = dvi_trm );
+	if not .status then signal( .status );
+	end;
+
+global routine get_config_env( str ) =
+	begin
+	own
+		get_log_buf	: vector[256,byte];
+
+	if get_log( .str, get_log_buf ) neq 0
+	then
+		return get_log_buf
+	else
+		return 0;
+	end;
+
+
+external unknown_str : vector[,byte];
+
+global routine get_user_full_name
+		(
+		users_name : ref vector[,byte],
+		users_full_name : ref vector[,byte]
+		) : novalue =
+	begin
+	local
+	    itmlst	: $itmlst_decl (items = 1),
+	    len		: word,
+	    p		: ref vector[,byte,unsigned],
+	    buf		: vector[36,byte],
+	    udesc	: vector [2];
+
+	udesc[0] = strlen (.users_name);
+	udesc[1] = .users_name;
+
+	$itmlst_init (itmlst = itmlst,
+	    (itmcod = uai$_owner, bufsiz = %allocation (buf),
+	        bufadr = buf, retlen = len));
+
+	if $getuai (usrnam = udesc, itmlst = itmlst)
+	then
+	    begin
+	    buf[.buf[0]+1] = 0;
+	    strcpy( .users_full_name, buf[1] );
+	    end
+	else
+	    strcpy (.users_full_name, unknown_str);
+	end;
+
+global routine get_system_name( str ) : novalue =
+	begin
+	local
+		buf : vector[128,byte,unsigned],
+		p : ref vector[,byte,unsigned];
+
+  	p = (get_log ($str ('SYS$NODE'), buf));
+	if .p eql 0 or .p[0] eql 0
+	then
+		p = unknown_str
+	else
+		while .p[0] eql '_' do p = .p + 1;
+
+	strcpy( .str, .p );
+	end;
+
+global routine vms_restoring_env( rest_fn ) : novalue =
+	begin
+	local
+		vec	: vector[ 5, long ];
+
+	vec[0] = 4;
+	vec[1] = emacs$_restore_env;
+	vec[2] = 2;
+	vec[3] = strlen( .rest_fn );
+	vec[4] = .rest_fn;
+	$putmsg( msgvec = vec );
+	end;
+
+global routine vms_restore_fail( status, rest_fn ) : novalue =
+	begin
+	local
+		vec	: vector[ 6, long ];
+
+	vec[0] = 4;
+	vec[1] = emacs$_norestore;
+	vec[2] = 2;
+	vec[3] = strlen( .rest_fn );
+	vec[4] = .rest_fn;
+	if not .status
+	then
+		begin
+		vec[0] = 5;
+		vec[5] = .status;
+		end;
+	$putmsg( msgvec = vec );
+	if not .status
+	then
+		$exit( code = emacs$_norestore or sts$m_inhib_msg );
+	end;
+
+literal
+	MBXmax			= 512,
+	EMACS_k_arguments	= 10,
+	EMACS_k_dcl		= 2,
+	LIB$k_cli_global_symbol	= 2;
+
+external
+	Parent_pid;
+own
+	mbx_chan	: word;
+
+global routine read_restart_message( SetGargs ) : novalue =
+	begin
+	own
+		First		: initial( 1 ),
+		GargsBuffer	: vector[ MBXmax, long ],
+		resp,
+		class,
+		cont,
+		iosb	: vector[4,word];
+	local
+		p		: ref vector[,byte,unsigned];
+
+	! 
+	! Sort out the re-start mailbox. First translate the EMACS$$RESTART CLI
+	! symbol. If this translates, then attempt to open the file whose name
+	! is specified as the translation. Then check to see if the device is a
+	! mail box. Otherwise, create a mailbox, fetch its name using $GETDVI and
+	! put its name in the EMACS$$RESTART symbol for later use by the spawned
+	! EMACS. NEVER deassign the channel until this image exits.
+	!
+	! 
+	!	Assume that the args have been used. This will be true when
+	!	the user does an attach instead of using the EMACS command.
+	!
+	if .SetGargs
+	then
+		touched_command_args = 1;
+	if .First
+	and (resp = $assign( devnam = %ascid 'EMACS$$RESTART', chan = mbx_chan))
+	then
+		if (resp = $getdviw
+			( efn = efn_restart_mbx, chan = .mbx_chan,
+			itmlst = $itmlst_uplit
+				(
+				(itmcod = dvi$_devclass, bufadr = class)
+				),
+			iosb = IOsb))
+		then
+			begin
+			resp = (if .IOsb[0]
+				then (.class eql dc$_mailbox)
+				else .IOsb[0]);
+			if not .resp
+			then
+				begin
+				$Dassgn( chan = .mbx_chan );
+				mbx_chan = 0;
+				end;
+			end;
+
+	First = 0;
+	if .mbx_chan eql 0
+	then
+		return;
+
+	! 
+	! Read in the message from the spawning process, and parse
+	! it up if required.
+	!
+	cont = 0;
+	do
+		begin
+		if	$qiow
+			(
+			efn	= efn_restart_mbx,
+			chan	= .mbx_chan,
+			func	= io$_readvblk or io$m_now,
+			iosb	= IOsb,
+			p1	= GargsBuffer,
+			p2	= MBXmax
+			)
+		and .IOsb[0]
+		and .GargsBuffer[0] eql EMACS_k_arguments
+		then
+			begin
+			Parent_pid = .GargsBuffer[1];
+			if .SetGargs
+			then
+				begin
+				own
+					SavedMem	: ref vector[,byte,unsigned]
+							initial( 0 );
+
+				if .SavedMem neq 0
+				then
+					free( .SavedMem );
+				if (SavedMem = malloc( .GargsBuffer[2] * %upval, malloc_type_char)) eql 0
+				then
+					return;
+				gargc = .GargsBuffer[2];
+				gargv = .SavedMem;
+				p = GargsBuffer[3];
+				while .p[0] neq 0
+				do
+					begin
+					p[0] = _tolower( .p[0] );
+					p = p[1];
+					end;
+				strcpy( parent_path[0], GargsBuffer[3] );
+				p = p[1];
+				incr i from 0 to .gargc - 1
+				do
+					begin
+					gargv[.i] = .p;
+					while .p[0] neq 0
+					do
+						begin
+						p[0] = _tolower( .p[0] );
+						p = p[1];
+						end;
+					p = p[1];
+					end;
+				touched_command_args = 0;
+				end;
+			end;
+		end
+	while .cont;
+	end;
+
+global routine send_exit_message
+	(
+	str	: ref vector[,byte,unsigned]
+	)
+		: novalue =
+	begin
+	local
+		iosb	: vector[4,word];
+
+	if .mbx_chan neq 0
+	then
+		begin
+		local
+			buf	: vector[ MBXmax, long ];
+
+		buf[0] = EMACS_k_dcl;
+		buf[1] = strlen( .str );
+		if .buf[1] gtr MBXmax - (2 * %upval)
+		then
+			buf[1] = MBXmax - (2 * %upval);
+		memmove( buf[2], .str, .buf[1] );
+		$qiow
+		(
+		efn	= efn_restart_mbx,
+		iosb	= iosb,
+		chan	= .mbx_chan,
+		func	= io$_writevblk or io$m_now,
+		p1	= buf[0],
+		p2	= .buf[1] + (2 * %upval)
+		);
+		end;
+	end;
+
+global routine fatal_error( int ) : novalue =
+	begin
+	signal_stop( ss$_bugcheck );
+	end;
+
+global routine invoke_debug( int ) : novalue =
+	begin
+	$setast( enbflg = 0 );
+
+	signal( ss$_debug );
+
+	$setast( enbflg = 1 );
+	end;
+
+external
+	Wake_queued;
+
+global routine wait_for_activity : novalue =
+	begin
+	Wake_queued = 0;
+	(.tt[ k_check_for_input ])( .tt );
+	$setimr( efn = efn_sit_for, daytim = uplit( -1*5*1000*100, -1 ) );
+	$waitfr( efn = efn_sit_for );
+	end;
+
+global routine	wait_abit : novalue =
+	begin
+	wait_for_activity();	! Wait .05 seconds
+	wait_for_activity();	! wait .1 seconds
+	end;
+
+global routine conditional_wake : novalue =
+	begin
+!	if not .Wake_queued
+!	then
+!		$setef( efn = efn_sit_for );
+
+	Wake_queued = 1;
+	end;
+
+global routine interlock_dec( cell :ref vector[,long] ) =
+	begin
+	builtin adawi;
+	local result : block[4,byte];
+
+	result = adawi( %ref( -1 ), cell[0] );
+	if .result[ 0,2,1,0 %( Z bit )% ]
+	then
+		return 0;
+	if .result[ 0,3,1,0 %( N bit )% ]
+	then
+		return -1;
+
+	return 1;
+	end;
+
+global routine interlock_inc( cell :ref vector[,long] ) : novalue =
+	begin
+	builtin adawi;
+	local result : block[4,byte];
+
+	result = adawi( %ref( 1 ), cell[0] );
+
+	if .result[ 0,2,1,0 %( Z bit )% ]
+	then
+		return 0;
+	if .result[ 0,3,1,0 %( N bit )% ]
+	then
+		return -1;
+
+	return 1;
+	end;
+
+%if 0 %then
+global routine vms_insque( q, e ) : novalue =
+	begin
+	builtin
+		insque;
+	insque( .e, .q );
+	end;
+
+global routine vms_remque( e ) =
+	begin
+	builtin
+		remque;
+	remque( .e, e );
+	return .e;
+	end;
+%fi
+
+global routine put_config_env = return 0;
+
+global routine time_schedule_timeout( handler, interval ) : novalue =
+	begin
+	local
+		time : vector[2] initial( -10*1000*.interval, -1 );
+
+	$setimr
+	(
+	efn	= efn_do_not_wait_on,
+	daytim	= time,		! interval mS
+	astadr	= .handler,
+	reqidt	= 'EM_T'
+	);
+	end;
+
+global routine time_cancel_timeout : novalue =
+	begin
+	$cantim( reqidt='EM_T' );
+	end;
+
+end
+eludom

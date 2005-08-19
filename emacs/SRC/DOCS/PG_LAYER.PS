@@ -1,0 +1,179 @@
+%!PS-Adobe-2.0 EPSF-1.2
+%%Title: EMACS_PG_LAYERMODEL.PS
+%%Creator: RAGS - MOPS
+%%CreationDate: Mon Mar 19 17:51:06 1990
+%%Pages: 1
+%%BoundingBox: 144.252 335.187 449.748 438.813
+%%EndComments
+%%BeginProlog
+/MopsDict 150 dict def
+MopsDict begin
+/an /arcn load def
+/ar /arc load def
+/cl /closepath load def
+/cp /eoclip load def
+/ex /exch load def
+/fi /eofill load def
+/Bxr {arcto pop pop pop pop} bind def
+/gs /gsave load def
+/gr /grestore load def
+/li /lineto load def
+/mo /moveto load def
+/np /newpath load def
+/rl /rlineto load def
+/ro /rotate load def
+/rgb /setrgbcolor load def
+/sh /show load def
+/sc /scale load def
+/sd /setdash load def
+/slc /setlinecap load def
+/slj /setlinejoin load def
+/slw /setlinewidth load def
+/st /stroke load def
+/tr /translate load def
+% THIS SECTION WILL DEFINE THE ISOLATIN1 VECTOR...
+mark					% CREATE ISOLatin1 ENCODING
+/ISOLatin1
+  8#000 1 8#054 {StandardEncoding exch get} for 
+  /minus
+  8#056 1 8#217 {StandardEncoding exch get} for 
+  /dotlessi 
+  8#301 1 8#317 {StandardEncoding exch get} for 
+  /space /exclamdown /cent /sterling /currency /yen /brokenbar /section 
+  /dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen 
+  /registered /macron /degree /plusminus /twosuperior /threesuperior /acute
+  /mu /paragraph /periodcentered /cedilla /onesuperior /ordmasculine 
+  /guillemotright /onequarter /onehalf /threequarters /questiondown /Agrave 
+  /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla /Egrave /Eacute 
+  /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis /Eth /Ntilde 
+  /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply /Oslash /Ugrave 
+  /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls /agrave /aacute 
+  /acircumflex /atilde /adieresis /aring /ae /ccedilla /egrave /eacute 
+  /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis /eth /ntilde
+  /ograve /oacute /ocircumflex /otilde /odieresis /divide /oslash /ugrave 
+  /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis 
+  /ISOLatin1 where not {256 array astore def} if 
+cleartomark
+%
+% THIS ROUTINE WILL RE-ENCODE THE FILE...
+/reencodedict 10 dict def			%Local storage for ReENCODE
+/ReENCODE {		% /basefont /newfont encoding ReENCODE
+    /newencoding exch def	%ARG: NAME OF ENCODING VECTOR
+    /newfontname exch def	%ARG: NEW NAME FOR FONT AFTER RE-ENCODING
+    findfont
+    /basefontdict exch def	%ARG: NAME OF FONT TO BE RE-ENCODED
+    basefontdict maxlength dict begin	%CREATE AND OPEN NEW DICT
+	   basefontdict {		%COPY ENTRIES FROM BASE FONT DICT TO NEW ONE
+ 	    1 index /FID ne {
+		def		%IF NOT THE ONE WE'RE ENCODING, JUST COPY PTRS
+	    } { %else
+		pop pop		%IGNORE FID AND ENCODING FOR ONE WE'RE ENCODING
+	    } ifelse
+	} forall
+	/FontName newfontname def	%DEFINE NEW NAME 
+	/Encoding newencoding def	%DEFINE NEW ENCODING VECTOR
+	newfontname currentdict definefont	%TURN IT INTO A PS FONT
+	pop			%IGNORE MODIFIED DICT RETURNED BY DEFINEFONT
+    end
+} bind def
+/CBdict 5 dict def
+/CMdict 3 dict def
+/TBdict 5 dict def
+/ELPdict 2 dict def
+/MOPSpage /showpage load def
+/Arc
+ { np 1 eq  {ar} {an} ifelse } bind def
+/Box
+ { np mo li li li cl } bind def
+/Circle
+ { np 0 360 ar } bind def
+/Ellipse
+ { ELPdict begin
+   /elpscratch matrix def
+   np elpscratch currentmatrix pop
+   tr
+   neg ro
+   sc
+   0 0 1 0 360 ar
+   elpscratch setmatrix
+   end
+ } bind def
+/LF
+{ findfont } bind def
+/SF
+{ makefont setfont } bind def
+/Line
+ { np mo li } bind def
+/Pie
+ { np 1 eq  {ar} {an} ifelse li cl } bind def
+/TextBox
+ { TBdict begin
+   /y2 ex def
+   /x2 ex def
+   /y1 ex def
+   /x1 ex def
+   np x1 y1 mo
+   x2 y1 li
+   x2 y2 li
+   x1 y2 li cl
+   end
+ } bind def
+/Text
+ { np mo dup 4 1 roll
+   stringwidth pop ex 72 mul ex sub ex div
+   dup dup sub 3 -1 roll ashow } bind def
+/OText
+ { gs np mo slw false charpath st gr } bind def
+/Label
+ { np mo sh } bind def
+/Crop
+ { CBdict begin
+   /y2 ex def
+   /x2 ex def
+   /y1 ex def
+   /x1 ex def
+   np x1 y1 mo
+   x2 y1 li
+   x2 y2 li
+   x1 y2 li cl
+   1 eq {gs rgb fi gr} {pop pop pop} ifelse
+   clip np
+   end
+ } bind def
+/Cropmark
+ { CMdict begin
+   /ys ex def
+   /xs ex def
+   .2 slw
+   np xs ys mo
+   1 eq {ys add xs ex li st} {xs add ys li st} ifelse
+   end
+ } bind def
+/ImgCropBox
+ { np mo rl rl rl rl clip np } bind def
+end
+%%EndProlog
+%%BeginSetup
+MopsDict begin
+%%EndSetup
+save
+144.252 438.813 tr
+1 -1 sc
+0.673 slw
+0 slc
+0 slj
+0.000 0.000 0.000 rgb 
+1.000 1.000 1.000 0 0.000 0.000 305.495 103.626 Crop
+/Helvetica /Helvetica@ISO ISOLatin1 ReENCODE
+/Helvetica@ISO LF [18 0 0 -18 0 0] SF
+15 1.71963 (Shareable Image) 88.822 22.879 Text
+25 2.69159 (Interface Shareable Image) 55.178 56.523 Text
+5 0.68224 (Emacs) 129.196 90.168 Text
+68.636 1.682 236.860 1.682 236.860 35.327 68.636 35.327 Box st
+34.991 35.327 270.505 35.327 270.505 68.972 34.991 68.972 Box st
+1.346 68.972 304.150 68.972 304.150 102.617 1.346 102.617 Box st
+MOPSpage
+restore
+end
+%%Trailer
+

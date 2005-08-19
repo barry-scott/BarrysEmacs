@@ -1,0 +1,19 @@
+src contents.dat
+obj ident.dat
+
+src emacsini.ml
+src emacslib.mll
+src mlisp_bld.com
+src mlisp_do_file.com
+src profile.ml
+src mlisp_do.ksh
+
+exe_vms emacsinit.ml
+exe_vms emacslib.tlb
+exe_vms emacs_profile.ml
+
+exe_unix emacsinit.ml
+exe_unix emacslib.dir
+exe_unix emacslib.dat
+exe_unix emacslib.pag
+exe_unix emacs_profile.ml

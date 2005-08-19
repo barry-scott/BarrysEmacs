@@ -1,0 +1,61 @@
+!
+!	files of the emacs docs component
+!
+src contents.dat
+src docs_bld.com
+src emacs.decw$bookshelf
+
+obj ident.dat
+
+src emacs_rel.com
+src emacs051.rno
+obj emacs051.brn
+obj emacs051.rnt
+exe emacs051.mem
+
+src build_user_guide.com
+src build_prog_guide.com
+src build_mlisp_ref.com
+src build_ext_ref.com
+
+src emacs_symbols.sdml
+src emacs_user_guide.sdml
+src emacs_ug_front.sdml
+src emacs_ug_intro.sdml
+src emacs_ug_vms.sdml
+src emacs_ug_basicedit.sdml
+src emacs_ug_filetypes.sdml
+src emacs_ug_advedit.sdml
+src emacs_ug_mistakes.sdml
+src emacs_ug_custom.sdml
+src emacs_ug_packages.sdml
+src emacs_ug_bindings.sdml
+src emacs_prog_guide.sdml
+src emacs_pg_intro.sdml
+src emacs_pg_front.sdml
+src emacs_pg_macros.sdml
+src emacs_pg_mlisp.sdml
+src emacs_pg_extension.sdml
+src emacs_pg_otherlang.sdml
+src emacs_pg_startup.sdml
+src emacs_pg_editkeypad_fig.fse
+src emacs_pg_editkeypad_fig.ps
+src emacs_pg_editkeypad_fig.rags
+src emacs_pg_funkeys_fig.fse
+src emacs_pg_funkeys_fig.ps
+src emacs_pg_funkeys_fig.rags
+src emacs_pg_layermodel_fig.fse
+src emacs_pg_layermodel_fig.ps
+src emacs_pg_layermodel_fig.rags
+src emacs_pg_numkeypad_fig.fse
+src emacs_pg_numkeypad_fig.ps
+src emacs_pg_numkeypad_fig.rags
+src emacs_mlisp_ref.sdml
+src emacs_mr_front.sdml
+src emacs_mr_functions.sdml
+src emacs_mr_variables.sdml
+src emacs_ext_ref.sdml
+src emacs_er_intro.sdml
+src emacs_er_front.sdml
+src emacs_er_packagesubsys.sdml
+src emacs_er_libraries.sdml

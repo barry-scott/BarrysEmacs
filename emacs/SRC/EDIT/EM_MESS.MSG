@@ -1,0 +1,25 @@
+	.facility/system	EMACS 494
+
+	.severity	severe
+	BadName/Fao=1	"illegal process name !AS"
+  	NoProc		"unable to locate process information"
+	NoSet		"unable to Set up process connection"
+	NoSpawn		"unable to create sub-process"
+	CantDo		"unable to run EMACS in current process"
+	BadMBX		"Failed to access re-start mailbox"
+	JTQlow		"unable to create job logical name - use fewer job logical names or raise JTquota"
+	
+	.severity	information
+   	Current		"starting EMACS in current process"
+	New/Fao=1	"starting EMACS in sub-process !AS"
+	Returned/Fao=1	"returned to directory !AS"
+	Attach/Fao=1	"re-starting EMACS in sub-process !AS"
+	usesubproc	"use the /SUBPROCESS qualifier inplace of /SUB_PROCESS"
+	debugversion	"beware this version has no crash protection"
+	restore_env	"restoring environment !AD"
+	NORESTORE /FAO=2	"unable to restore environment file !AD - please recreate"
+
+	.severity	severe
+	incompterm	"attempt to use incompatible version of display handler image"
+	.end
+

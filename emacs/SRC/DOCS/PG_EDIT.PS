@@ -1,0 +1,446 @@
+%!PS-Adobe-2.0 EPSF-1.2
+%%Title: ADRIAN_EMACS_2.PS
+%%Creator: RAGS
+%%CreationDate: Tue Apr 10 10:15:40 1990
+%%Pages: 1
+%%BoundingBox: 191.981 292.557 405.619 549.844
+%%EndComments
+%%BeginProlog
+/MopsDict 150 dict def
+MopsDict begin
+/an /arcn load def
+/ar /arc load def
+/cl /closepath load def
+/cp /eoclip load def
+/ex /exch load def
+/fi /eofill load def
+/Bxr {arcto pop pop pop pop} bind def
+/gs /gsave load def
+/gr /grestore load def
+/li /lineto load def
+/mo /moveto load def
+/np /newpath load def
+/rl /rlineto load def
+/ro /rotate load def
+/rgb /setrgbcolor load def
+/sh /show load def
+/sc /scale load def
+/sd /setdash load def
+/slc /setlinecap load def
+/slj /setlinejoin load def
+/slw /setlinewidth load def
+/st /stroke load def
+/tr /translate load def
+% THIS SECTION WILL DEFINE THE ISOLATIN1 VECTOR...
+mark					% CREATE ISOLatin1 ENCODING
+/ISOLatin1
+  8#000 1 8#054 {StandardEncoding exch get} for 
+  /minus
+  8#056 1 8#217 {StandardEncoding exch get} for 
+  /dotlessi 
+  8#301 1 8#317 {StandardEncoding exch get} for 
+  /space /exclamdown /cent /sterling /currency /yen /brokenbar /section 
+  /dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen 
+  /registered /macron /degree /plusminus /twosuperior /threesuperior /acute
+  /mu /paragraph /periodcentered /cedilla /onesuperior /ordmasculine 
+  /guillemotright /onequarter /onehalf /threequarters /questiondown /Agrave 
+  /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla /Egrave /Eacute 
+  /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis /Eth /Ntilde 
+  /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply /Oslash /Ugrave 
+  /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls /agrave /aacute 
+  /acircumflex /atilde /adieresis /aring /ae /ccedilla /egrave /eacute 
+  /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis /eth /ntilde
+  /ograve /oacute /ocircumflex /otilde /odieresis /divide /oslash /ugrave 
+  /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis 
+  /ISOLatin1 where not {256 array astore def} if 
+cleartomark
+%
+% THIS ROUTINE WILL RE-ENCODE THE FILE...
+/reencodedict 10 dict def			%Local storage for ReENCODE
+/ReENCODE {		% /basefont /newfont encoding ReENCODE
+    /newencoding exch def	%ARG: NAME OF ENCODING VECTOR
+    /newfontname exch def	%ARG: NEW NAME FOR FONT AFTER RE-ENCODING
+    findfont
+    /basefontdict exch def	%ARG: NAME OF FONT TO BE RE-ENCODED
+    basefontdict maxlength dict begin	%CREATE AND OPEN NEW DICT
+	   basefontdict {		%COPY ENTRIES FROM BASE FONT DICT TO NEW ONE
+ 	    1 index /FID ne {
+		def		%IF NOT THE ONE WE'RE ENCODING, JUST COPY PTRS
+	    } { %else
+		pop pop		%IGNORE FID AND ENCODING FOR ONE WE'RE ENCODING
+	    } ifelse
+	} forall
+	/FontName newfontname def	%DEFINE NEW NAME 
+	/Encoding newencoding def	%DEFINE NEW ENCODING VECTOR
+	newfontname currentdict definefont	%TURN IT INTO A PS FONT
+	pop			%IGNORE MODIFIED DICT RETURNED BY DEFINEFONT
+    end
+} bind def
+/CBdict 5 dict def
+/CMdict 3 dict def
+/TBdict 5 dict def
+/ELPdict 2 dict def
+/MOPSpage /showpage load def
+/Arc
+ { np 1 eq  {ar} {an} ifelse } bind def
+/Box
+ { np mo li li li cl } bind def
+/Circle
+ { np 0 360 ar } bind def
+/Ellipse
+ { ELPdict begin
+   /elpscratch matrix def
+   np elpscratch currentmatrix pop
+   tr
+   neg ro
+   sc
+   0 0 1 0 360 ar
+   elpscratch setmatrix
+   end
+ } bind def
+/LF
+{ findfont } bind def
+/SF
+{ makefont setfont } bind def
+/Line
+ { np mo li } bind def
+/Pie
+ { np 1 eq  {ar} {an} ifelse li cl } bind def
+/TextBox
+ { TBdict begin
+   /y2 ex def
+   /x2 ex def
+   /y1 ex def
+   /x1 ex def
+   np x1 y1 mo
+   x2 y1 li
+   x2 y2 li
+   x1 y2 li cl
+   end
+ } bind def
+/Text
+ { np mo dup 4 1 roll
+   stringwidth pop ex 72 mul ex sub ex div
+   dup dup sub 3 -1 roll ashow } bind def
+/OText
+ { gs np mo slw false charpath st gr } bind def
+/Label
+ { np mo sh } bind def
+/Crop
+ { CBdict begin
+   /y2 ex def
+   /x2 ex def
+   /y1 ex def
+   /x1 ex def
+   np x1 y1 mo
+   x2 y1 li
+   x2 y2 li
+   x1 y2 li cl
+   1 eq {gs rgb fi gr} {pop pop pop} ifelse
+   clip np
+   end
+ } bind def
+/Cropmark
+ { CMdict begin
+   /ys ex def
+   /xs ex def
+   .2 slw
+   np xs ys mo
+   1 eq {ys add xs ex li st} {xs add ys li st} ifelse
+   end
+ } bind def
+/ImgCropBox
+ { np mo rl rl rl rl clip np } bind def
+end
+%%EndProlog
+%%BeginSetup
+MopsDict begin
+%%EndSetup
+save
+191.981 549.844 tr
+1 -1 sc
+0.923 slw
+0 slc
+0 slj
+1.000 1.000 1.000 0 0.000 0.000 213.638 257.287 Crop
+0 0 0 rgb
+np 142.819 80.643 mo
+152.973 42.797 li 
+203.742 42.797 li 
+211.127 80.643 li 
+211.127 24.335 li 
+211.127 80.643 li 
+142.819 80.643 li 
+gs 0.900 0.900 0.900 rgb fi gr
+0 slc
+153.382 42.879 142.708 81.002 Line st
+203.705 42.879 153.382 42.879 Line st
+211.331 81.002 203.705 42.879 Line st
+211.331 24.580 211.331 81.002 Line st
+211.331 81.002 211.331 24.580 Line st
+142.708 81.002 211.331 81.002 Line st
+np 142.819 24.335 mo
+152.973 3.105 li 
+203.742 3.105 li 
+211.127 24.335 li 
+gs 1.000 1.000 1.000 rgb fi gr
+1.846 slw
+153.382 2.769 142.708 24.118 Line st
+203.705 2.769 153.382 2.769 Line st
+211.331 24.118 203.705 2.769 Line st
+0.923 slw
+153.382 3.231 203.705 3.231 203.705 42.879 153.382 42.879 Box st
+np 3.434 80.643 mo
+13.588 42.797 li 
+64.358 42.797 li 
+71.742 80.643 li 
+71.742 24.335 li 
+71.742 80.643 li 
+3.434 80.643 li 
+gs 0.900 0.900 0.900 rgb fi gr
+0.923 slw
+13.813 42.879 3.139 81.002 Line st
+64.136 42.879 13.813 42.879 Line st
+71.761 81.002 64.136 42.879 Line st
+71.761 24.580 71.761 81.002 Line st
+71.761 81.002 71.761 24.580 Line st
+3.139 81.002 71.761 81.002 Line st
+np 3.434 24.335 mo
+13.588 3.105 li 
+64.358 3.105 li 
+71.742 24.335 li 
+gs 1.000 1.000 1.000 rgb fi gr
+1.846 slw
+13.813 2.769 3.139 24.118 Line st
+64.136 2.769 13.813 2.769 Line st
+71.761 24.118 64.136 2.769 Line st
+0.923 slw
+13.813 3.231 64.136 3.231 64.136 42.879 13.813 42.879 Box st
+0.923 slw
+3.139 81.234 3.139 23.287 Line st
+np 72.665 80.643 mo
+83.742 42.797 li 
+133.588 42.797 li 
+141.896 80.643 li 
+141.896 24.335 li 
+141.896 80.643 li 
+72.665 80.643 li 
+gs 0.900 0.900 0.900 rgb fi gr
+83.598 42.879 72.923 81.002 Line st
+133.921 42.879 83.598 42.879 Line st
+141.545 81.002 133.921 42.879 Line st
+141.545 24.580 141.545 81.002 Line st
+141.545 81.002 141.545 24.580 Line st
+72.923 81.002 141.545 81.002 Line st
+np 72.665 24.335 mo
+83.742 3.105 li 
+133.588 3.105 li 
+141.896 24.335 li 
+gs 1.000 1.000 1.000 rgb fi gr
+1.846 slw
+83.598 2.769 72.923 24.118 Line st
+133.921 2.769 83.598 2.769 Line st
+141.545 24.118 133.921 2.769 Line st
+0.923 slw
+83.598 3.231 133.921 3.231 133.921 42.879 83.598 42.879 Box st
+0.923 slw
+72.923 197.749 72.923 139.802 Line st
+np 3.434 256.028 mo
+13.588 217.258 li 
+64.358 217.258 li 
+71.742 256.028 li 
+71.742 198.797 li 
+71.742 256.028 li 
+3.434 256.028 li 
+gs 0.900 0.900 0.900 rgb fi gr
+13.813 217.547 3.139 255.671 Line st
+64.136 217.547 13.813 217.547 Line st
+71.761 255.671 64.136 217.547 Line st
+71.761 199.248 71.761 255.671 Line st
+71.761 255.671 71.761 199.248 Line st
+3.139 255.671 71.761 255.671 Line st
+np 3.434 198.797 mo
+13.588 177.566 li 
+64.358 177.566 li 
+71.742 198.797 li 
+gs 1.000 1.000 1.000 rgb fi gr
+1.846 slw
+13.813 177.438 3.139 198.786 Line st
+64.136 177.438 13.813 177.438 Line st
+71.761 198.786 64.136 177.438 Line st
+0.923 slw
+13.813 177.900 64.136 177.900 64.136 217.547 13.813 217.547 Box st
+0.923 slw
+3.139 255.902 3.139 197.956 Line st
+np 142.819 256.028 mo
+152.973 217.258 li 
+203.742 217.258 li 
+211.127 256.028 li 
+211.127 198.797 li 
+211.127 256.028 li 
+142.819 256.028 li 
+gs 0.900 0.900 0.900 rgb fi gr
+153.382 217.547 142.708 255.671 Line st
+203.705 217.547 153.382 217.547 Line st
+211.331 255.671 203.705 217.547 Line st
+211.331 199.248 211.331 255.671 Line st
+211.331 255.671 211.331 199.248 Line st
+142.708 255.671 211.331 255.671 Line st
+np 142.819 198.797 mo
+152.973 177.566 li 
+203.742 177.566 li 
+211.127 198.797 li 
+gs 1.000 1.000 1.000 rgb fi gr
+1.846 slw
+153.382 177.438 142.708 198.786 Line st
+203.705 177.438 153.382 177.438 Line st
+211.331 198.786 203.705 177.438 Line st
+0.923 slw
+153.382 177.900 203.705 177.900 203.705 217.547 153.382 217.547 Box st
+0.923 slw
+2.769 138.672 2.769 80.725 Line st
+np 2.511 138.797 mo
+13.588 100.028 li 
+63.434 100.028 li 
+71.742 138.797 li 
+71.742 81.566 li 
+71.742 138.797 li 
+2.511 138.797 li 
+gs 0.900 0.900 0.900 rgb fi gr
+13.444 100.316 2.769 138.440 Line st
+63.767 100.316 13.444 100.316 Line st
+71.392 138.440 63.767 100.316 Line st
+71.392 82.017 71.392 138.440 Line st
+71.392 138.440 71.392 82.017 Line st
+2.769 138.440 71.392 138.440 Line st
+np 2.511 81.566 mo
+13.588 60.335 li 
+63.434 60.335 li 
+71.742 81.566 li 
+gs 1.000 1.000 1.000 rgb fi gr
+1.846 slw
+13.444 60.207 2.769 81.555 Line st
+63.767 60.207 13.444 60.207 Line st
+71.392 81.555 63.767 60.207 Line st
+0.923 slw
+13.444 60.669 63.767 60.669 63.767 100.316 13.444 100.316 Box st
+np 72.665 138.797 mo
+83.742 100.028 li 
+133.588 100.028 li 
+141.896 138.797 li 
+141.896 81.566 li 
+141.896 138.797 li 
+72.665 138.797 li 
+gs 0.900 0.900 0.900 rgb fi gr
+0.923 slw
+83.598 100.316 72.923 138.440 Line st
+133.921 100.316 83.598 100.316 Line st
+141.545 138.440 133.921 100.316 Line st
+141.545 82.017 141.545 138.440 Line st
+141.545 138.440 141.545 82.017 Line st
+72.923 138.440 141.545 138.440 Line st
+np 72.665 81.566 mo
+83.742 60.335 li 
+133.588 60.335 li 
+141.896 81.566 li 
+gs 1.000 1.000 1.000 rgb fi gr
+1.846 slw
+83.598 60.207 72.923 81.555 Line st
+133.921 60.207 83.598 60.207 Line st
+141.545 81.555 133.921 60.207 Line st
+0.923 slw
+83.598 60.669 133.921 60.669 133.921 100.316 83.598 100.316 Box st
+np 141.896 138.797 mo
+152.973 100.028 li 
+202.819 100.028 li 
+211.127 138.797 li 
+211.127 81.566 li 
+211.127 138.797 li 
+141.896 138.797 li 
+gs 0.900 0.900 0.900 rgb fi gr
+0.923 slw
+152.829 100.316 142.154 138.440 Line st
+203.152 100.316 152.829 100.316 Line st
+210.776 138.440 203.152 100.316 Line st
+210.776 82.017 210.776 138.440 Line st
+210.776 138.440 210.776 82.017 Line st
+142.154 138.440 210.776 138.440 Line st
+np 141.896 81.566 mo
+152.973 60.335 li 
+202.819 60.335 li 
+211.127 81.566 li 
+gs 1.000 1.000 1.000 rgb fi gr
+1.846 slw
+152.829 60.207 142.154 81.555 Line st
+203.152 60.207 152.829 60.207 Line st
+210.776 81.555 203.152 60.207 Line st
+0.923 slw
+152.829 60.669 203.152 60.669 203.152 100.316 152.829 100.316 Box st
+np 72.665 197.874 mo
+83.742 159.105 li 
+133.588 159.105 li 
+141.896 197.874 li 
+141.896 140.643 li 
+141.896 197.874 li 
+72.665 197.874 li 
+gs 0.900 0.900 0.900 rgb fi gr
+0.923 slw
+83.598 159.393 72.923 197.517 Line st
+133.921 159.393 83.598 159.393 Line st
+141.545 197.517 133.921 159.393 Line st
+141.545 141.094 141.545 197.517 Line st
+141.545 197.517 141.545 141.094 Line st
+72.923 197.517 141.545 197.517 Line st
+np 72.665 140.643 mo
+83.742 119.412 li 
+133.588 119.412 li 
+141.896 140.643 li 
+gs 1.000 1.000 1.000 rgb fi gr
+1.846 slw
+83.598 119.284 72.923 140.632 Line st
+133.921 119.284 83.598 119.284 Line st
+141.545 140.632 133.921 119.284 Line st
+0.923 slw
+83.598 119.746 133.921 119.746 133.921 159.393 83.598 159.393 Box st
+np 72.665 256.028 mo
+83.742 217.258 li 
+133.588 217.258 li 
+141.896 256.028 li 
+141.896 198.797 li 
+141.896 256.028 li 
+72.665 256.028 li 
+gs 0.900 0.900 0.900 rgb fi gr
+0.923 slw
+83.598 217.547 72.923 255.671 Line st
+133.921 217.547 83.598 217.547 Line st
+141.545 255.671 133.921 217.547 Line st
+141.545 199.248 141.545 255.671 Line st
+141.545 255.671 141.545 199.248 Line st
+72.923 255.671 141.545 255.671 Line st
+np 72.665 198.797 mo
+83.742 177.566 li 
+133.588 177.566 li 
+141.896 198.797 li 
+gs 1.000 1.000 1.000 rgb fi gr
+1.846 slw
+83.598 177.438 72.923 198.786 Line st
+133.921 177.438 83.598 177.438 Line st
+141.545 198.786 133.921 177.438 Line st
+0.923 slw
+83.598 177.900 133.921 177.900 133.921 217.547 83.598 217.547 Box st
+/AvantGarde-Demi /AvantGarde-Demi@ISO ISOLatin1 ReENCODE
+/AvantGarde-Demi@ISO LF [8 0 0 -8 0 0] SF
+7 0.38462 (\\\(FIND\)) 24.517 24.031 Text
+9 0.48718 (\\\(INSERT\)) 90.056 24.031 Text
+9 0.57692 (\\\(REMOVE\)) 159.287 24.031 Text
+9 0.50000 (\\\(SELECT\)) 20.825 82.184 Text
+7 0.41026 (\\\(PREV\)) 94.671 82.184 Text
+7 0.39744 (\\\(NEXT\)) 163.902 82.184 Text
+5 0.29487 (\\\(UP\)) 97.441 141.261 Text
+7 0.35897 (\\\(LEFT\)) 25.441 200.338 Text
+7 0.48718 (\\\(DOWN\)) 91.902 200.338 Text
+8 0.44872 (\\\(RIGHT\)) 163.902 200.338 Text
+MOPSpage
+restore
+end
+%%Trailer

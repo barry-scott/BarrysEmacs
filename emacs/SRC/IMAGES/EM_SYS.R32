@@ -1,0 +1,129 @@
+!	Ident	'V4.1-0'
+!
+!	emacs_sys.r32
+!
+
+macro
+	$in_item( buf, size ) =
+		begin
+		item_list[ .cur_item, itm$w_bufsiz ] = size;
+		item_list[ .cur_item, itm$w_itmcod ] = .code;
+		item_list[ .cur_item, itm$l_bufadr ] = buf;
+		cur_item = .cur_item + 1;
+		end
+	%,
+	$out_item( buf, size, ret_len ) =
+		begin
+		item_list[ .cur_item, itm$w_bufsiz ] = size;
+		item_list[ .cur_item, itm$w_itmcod ] = .code;
+		item_list[ .cur_item, itm$l_bufadr ] = buf;
+		%if not %null( ret_len )
+		%then
+			item_list[ .cur_item, itm$l_retlen ] = ret_len;
+		%fi
+		cur_item = .cur_item + 1;
+		end
+	%;
+
+!
+!	Item info data structure
+!
+!	The item info is held in a two level structure.
+!	The first level is used to select the appropiate table of
+!	detailed info.
+!
+!	The first level table has a set of pointers to the second level table.
+!	The first level trable has two other fields in it. The bit offset
+!	to the table index and the max index used.
+!
+!	The second level table has two fields at its start. The number of
+!	first element and the number of the last. The index into the table
+!	is calculated by subtracting the number of the first from the code.
+!
+!	With the above schema any item-info can be retrived with two range
+!	checks, a field extract and a subtract. (No loop involved.)
+!
+macro
+	!
+	! T1 tables header
+	!
+	t1_w_index_offset	= 0,0,0,16,0 %,	! .code<16,l_index_offset,0> is the index
+	t1_w_item_mask		= 0,2,0,16,0 %,	! mask item code before checking
+	t1_l_max_index		= 0,4,0,32,0 %,	! largest index allowed
+	t1_l_records		= 0,8,0,0,0 %,	! start of t1 records
+	!
+	!	Each T1 record contains
+	!
+	t1_l_first_itmcod	= 0,0,16,0 %,	! code of first item
+	t1_l_last_itmcod	= 2,0,16,0 %,	! code of last item
+	t1_l_t2_pointer		= 4,0,32,0 %;	! first point to a t2 table
+macro
+	t2_w_size		= 0,0,16,0 %,	! the size of the item buffer
+	t2_b_item_type		= 2,0,8,0 %;	! the type of the item, string, time etc
+
+literal
+	t1_s_item_info	= 8,
+	t2_s_item_info	= 4,
+
+	k_string 	= 255,		! Max allowed size of most strings
+	k_max		= %x'7fff',	! Largest size string we'll handle
+	k_date		= 8,		! Size of VMS quadword for date/time
+	k_symbol	= 31,		! Size of a VMS symbol
+	k_filename	= 39,		! Size of a VMS filename
+
+	k_type_min	= 1,
+	k_type_string	= 1,
+	k_type_integer	= 2,
+	k_type_time	= 3,
+	k_type_noop	= 4,
+	k_type_priv	= 5,
+	k_type_bits	= 6,
+	k_type_hex	= 7,
+	k_type_string_in = 8,
+	k_type_integer_in = 9,
+	k_type_time_in	= 10,
+	k_type_flag_in	= 11,
+	k_type_context	= 12,
+	k_type_max	= 12;
+
+macro
+	_item_table( prefix, t1_table, offset, mask, max_index ) =
+
+global
+	_item_info_t2( prefix, %remaining ),
+
+	t1_table	: blockvector[ max_index + 1, t1_s_item_info, byte ]
+			psect( $code$ )
+	preset
+	(
+	[t1_w_index_offset] = offset,
+	[t1_w_item_mask] = mask,
+	[t1_l_max_index] = max_index,
+	_item_t1_table( prefix, offset, %remaining )
+	);
+	%;
+macro
+	_item_info_t2( prefix )[ first, last, t2_table, params ] =
+	t2_table	: blockvector[ last - first + 1, t2_s_item_info, byte ]
+			psect( $code$ )
+	preset
+	(
+	_item_t2_table( prefix, first, %remove( params ) )
+	)
+	%;	
+macro
+	_item_t1_table( prefix, offset )[ first, last, t2_table, params ] =
+	[1 + ( first ^ -offset), t1_l_first_itmcod] = first,
+	[1 + ( first ^ -offset), t1_l_last_itmcod] = last,
+	[1 + ( first ^ -offset), t1_l_t2_pointer] = t2_table[-first,0,0,0,0]
+	%;
+macro
+	_item_t2_table( prefix, bias )[ item, size, type ] =
+	[%name( prefix, item) - bias, t2_w_size] = size,
+	[%name( prefix, item) - bias, t2_b_item_type] = %name( k_type_, type )
+	%;
+
+
+!
+!	end of emacs_sys.r32
+!

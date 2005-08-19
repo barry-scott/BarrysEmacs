@@ -1,0 +1,248 @@
+<chapter>(Starting Up EMACS\startup_chap)
+
+<p>
+This chapter describes the events  involved in starting up EMACS,
+and the various facilities that you can use to change the way EMACS starts.
+
+<p>
+<reference>(startup_sec) describes the EMACS start-up procedure.
+<reference>(initfiles_sec) describes how to use initialisation files to
+customise EMACS.  <reference>(envfiles_sec) describes how to save
+customisations in environment files.
+
+<head1>(The EMACS Start-Up Procedure\startup_sec)
+
+<x>(Start-up procedure)
+<x>(pause-emacs)
+
+<P>
+This section describes in detail what happens when EMACS is initially
+started and re-started after an <key_name>(ESC-x pause-emacs) command.
+The steps that are executed when returning to a paused EMACS are
+specifically noted.
+
+<P>
+The following steps are executed in order:
+
+<list>(unnumbered)
+<LE>
+If the /RESTORE qualifier has been specified, the specified environment file
+is restored. For interactive sessions, the terminal on which EMACS is
+running is initialised and <key_name>(^O) is cancelled.
+
+<LE>
+The file <hyphenate>(EMACS$\LIBRARY:\EMACS\PROF.ML) is then executed as a
+series of Mock Lisp expressions. This provides for site-dependent
+initialisation and is executed only if the /NORESTORE qualifier is
+specified.
+
+<P>
+<hyphenate>(EMACS$\LIBRARY:\EMACS\PROF.ML) causes the file
+<hyphenate>(SYS$LOGIN:\EMACS\INIT.ML) to be executed as a series of MLisp
+expressions. If this file does not exist,
+<hyphenate>(EMACS$\PATH:\EMACS\INIT.ML) is executed instead. Finally, if
+this file does not exist, the MLisp program EMACSINIT is executed from
+the <hyphenate>(SYS$\LOGIN:\EMACS\LIB.TLB) database.
+
+<LE>
+If EMACS is starting and the variable <key_name>(enter-emacs-hook) contains
+the name of an MLisp function, then this function is executed.
+
+<LE>
+If EMACS is returning to a paused editing session and the variable
+<key_name>(return-to-emacs-hook) contains the name of an MLisp
+function, then this function is executed.
+
+<LE>
+If the /PACKAGE qualifier is specified on the EMACS command line,
+and the package specified is not EMACS, then the designated package is
+loaded and run. This is achieved by taking the name specified and adding
+<quote>(.MLP) to it. The resulting name is then used as the name of a file to
+execute as a series of MLisp expressions. When the file has been
+completely executed, the function <keep>(<key_name>(package-name-com)) is
+called.
+
+<P>
+For example, a package called DIRED will have file file called
+DIRED.MLP which contains an MLisp function called
+<keep>(<key_name>(dired-com)).
+
+<P>
+This step is executed even when returning to a paused EMACS.
+
+<LE>
+If the EMACS functions <key_name>(argc) and <key_name>(argv) have not been
+used since the EMACS command was issued, all the files specified on
+the command line are automatically visited.
+
+<P>
+The default directory of the parent is used to visit these files.
+When returning to a paused EMACS, this default may be different to
+the default in EMACS. The parent's default directory can be obtained
+in EMACS by using the MLisp expression <quote>(<cx>((getenv "PATH"))).
+
+<LE>
+If no arguments were specified on the command line, EMACS attempts to
+restore the files that were displayed on the screen when EMACS last exited
+completely. This information is maintained in the file
+<hyphenate>(EMACS$\MEMORY:\EMACS_\username\.MEMORY), where
+<emphasis>(username\italic) is the user's VMS username. The contents of
+this file are private to EMACS, and should never be altered or edited. If
+the file does not exist, no files will be automatically visited.
+
+<LE>
+If EMACS is running from a command procedure or in batch, EMACS opens
+SYS$OUTPUT to receive messages, and then forces the command
+<quote>(<cx>((execute-mlisp-file "SYS$INPUT:"))) to be executed. When
+end-of-file is returned, EMACS exits.
+
+<le>
+For interactive sessions, EMACS then calls its display processor to
+display the screen, and then calls its keyboard processor to process
+keyboard commands.
+
+<endlist>
+
+<head1>(EMACS Initialisation Files\initfiles_sec)
+
+<x>(Initialisation files)
+<x>(EMACSINIT.ML)
+
+<p>
+An <newterm>(initialisation file) is  an MLisp  program  which  is
+executed whenever you start EMACS.  EMACS looks for an initialisation file
+using the file name <hyphenate>(EMACS$\PATH:\EMACS\INIT.ML) or the MLisp
+program EMACSINIT.
+
+<p>
+An initialisation file can ask you questions and do things,
+as well as just setting up commands for later use.
+
+<p>
+<reference>(emacsinit_ex) shows a sample initialisation file.
+
+<x>(setq)
+<x>(xon-mode)
+<x>(progn)
+<x>(if)
+<x>(auto-execute)
+<x>(autoload)
+<x>(bind-to-key)
+
+<example>(Sample EMACSINIT.ML\emacsinit_ex)
+<code_example>
+;
+; Set up some variables
+;
+(setq scroll-step 1)
+(setq visible-bell 1)
+(setq silently-kill-processes 1)
+(setq checkpoint-frequency 500)
+(setq unlink-checkpoint-files 1)
+(setq default-case-fold-search 1)
+(setq default-comment-column 41)
+
+;
+; Make some functions automatically load a library or package
+;
+(autoload "add-tag" "tags")
+(autoload "goto-tag" "tags")
+(autoload "email" "email")
+
+;
+; Associate some commands with file specifications
+;
+(auto-execute "lisp-mode" "*.ml")
+(auto-execute "text-mode" "*.tex")
+(auto-execute "runoff-mode" "*.rno")
+(auto-execute "bliss-mode" "*.b32")
+
+;
+; Some re-wired key bindings
+;
+(bind-to-key "re-query-replace-string" "\eq")
+(bind-to-key "re-replace-string" "\er")
+(bind-to-key "re-search-forward" "\^^s")
+(bind-to-key "re-search-reverse" "\^R")
+(bind-to-key "goto-line" "\eg")
+(bind-to-key "goto-percent" "\^Xg")
+(bind-to-key "add-tag" "\^X\^A")
+(bind-to-key "goto-tag" "\^X\^L")
+(bind-to-key "visit-function" "\^X\^P")
+<endcode_example>
+<endexample>
+
+
+<head1>(EMACS Environment Files\envfiles_sec)
+
+<x>(Environment files)
+
+<p>
+It is  more efficient to save your customisations, extensions and
+small amounts of data in an EMACS <newterm>(environment file). EMACS can
+be started up using an environment file many times faster than it can when
+reading in initialisation files. However, environment files tend to be
+much larger than initialisation files because they contain all the
+volatile information needed to re-start an EMACS editing session.
+
+<p>
+EMACS saves the following information in environment files:
+
+<list>(unnumbered)
+<le>Buffers
+<le>Variables
+<le>All loaded MLisp functions, packages and libraries
+<le>Macros (including the keyboard macro)
+<le>Global and local bindings
+<le>Syntax tables
+<le>Abbreviation tables
+<le>Database search-lists
+<le>subprocesses
+<le>Scheduled procedures.
+<endlist>
+
+<p>
+subprocesses stored in an environment file are re-started
+when the EMACS environment is restored. The input, output and termination
+procedures and buffers are also restored. Note, however, that
+re-created subprocesses  execute with the default directory of the
+new EMACS process. Symbols and logical names defined in the saved process
+are not restored.
+
+<p>
+Scheduled procedures saved in an environment file are delivered at the
+specified time. If that time has already expired,  they are delivered
+immediately.
+
+<x>(save-environment)
+<p>
+You use the <key_name>(ESC-x save-environment) command to save the current
+environment in an EMACS environment file. <key_name>(save-environment)
+asks for the name of the file you want to create and will supply a default
+file type of <quote>(.EMACS_ENVIRONMENT) if no file type is
+specified.
+
+<p>
+Use the /RESTORE qualifier on the EMACS command line to cause EMACS to
+restore an environment file.
+
+<p>
+You cannot restore an environment file that was saved by a previous
+version of EMACS.  EMACS will not be able to restore an environment file
+if the VMS shared libraries that EMACS uses have changed
+significantly since the environment was saved (this often happens when VMS
+is upgraded).
+
+<p>
+If EMACS detects an attempt to restore an incompatible environment,
+an error message is displayed and the editing session is
+aborted. If this happens to you, you must rebuild your environment file.
+
+<p>
+You can build a new environment file by executing the DCL command
+procedure <hyphenate>(EMACS$\LIBRARY:\EMACS_\SAVE_\ENVIRON\MENT.COM).
+This procedure loads the default EMACS bindings, and then loads your
+EMACSINIT initialisation file to build your tailored environment. The
+environment is then saved in the file
+<hyphenate>(EMACS$\ENVIRON\MENT:\EMACS\INIT.\EMACS_\ENVIRON\MENT), and
+EMACS then exits.

@@ -1,0 +1,1576 @@
+<chapter>(Mock Lisp\mlisp_chap)
+
+<x>(Mock Lisp)
+<x>(MLisp)
+
+<p>
+The <newterm>(Mock Lisp) (MLisp) programming language provides access to
+all the EMACS  extension facilities.  This chapter describes how to use
+MLisp to extend EMACS by writing private functions or shareable libraries
+and subsystems.
+
+
+<head1>(MLisp Syntax\mlispsyntax_sec)
+
+<x>(MLisp<xs>Syntax)
+
+<p>
+The syntax of MLisp is based on certain dialects of the full Lisp
+language. This is a highly structured syntax with few built-in constructs.
+This simple syntax means that an efficient interpreter can be written, so
+that executing MLisp code does not use significant CPU overhead.
+
+
+<head2>(Expressions\expression_sec)
+
+<x>(Expressions)
+<x>(MLisp<xs>Expressions)
+
+<p>
+An MLisp program consists of an expression. Each expression may contain
+further expressions to be evaluated.
+
+<p>
+Expressions fall into two categories:
+
+<list>(unnumbered)
+<le>
+<newterm>(Function call expressions), which are introduced with the
+left parenthesis character.  The left parenthesis is followed by the name
+of a function to be executed, followed by its arguments. Finally, the
+entire expression is completed with a right parenthesis.  White-space is
+used to separate the arguments from themselves and the function name.
+
+<p>
+Some examples of function call expressions are:
+
+<online_popup>(example)
+<code_example>
+(setq left-margin 9)
+(forward-word)
+(fetch-database-entry "MLisp-library" "process")
+<endcode_example>
+<endonline_popup>
+
+<le>
+<newterm>(Evaluation expressions), which are specified simply by the
+presence of a constant or variable name.
+
+<p>
+Some examples of evaluation expressions are:
+
+<online_popup>(example)
+<code_example>
+24
+"abc"
+left-margin
+<endcode_example>
+<endonline_popup>
+
+<endlist>
+
+
+<head2>(Names\names_sec)
+
+<x>(Names<xs>Function)
+<x>(Names<xs>Variable)
+<x>(Function names)
+<x>(Variable names)
+
+<p>
+MLisp names in EMACS are held in two name-spaces: one for function names,
+and the other for variable names. A name in one name-space is not
+related to the same name in the other name-space. There is never
+any confusion about which name-space a particular name belongs in, as
+this information can always be deduced from the syntactic positioning
+of the name.  Whenever you need to pass the name of a
+function to another function, you must pass it as a string.
+
+<p>
+A name can consist of an arbitrary sequence of any characters
+excluding the MLisp syntax characters <quote>(<cx>(<oparen>)),
+<quote>(<cx>(<cparen>)) and <quote>(<cx>(;)). Names may not start with a digit
+or a minus sign. Upper-case letters are always distinguished from lowercase
+letters.
+
+<p>
+Some examples of names include:
+
+<online_popup>(example)
+<code_example>
+execute-mlisp-file
+~TAGS-replace-string
+^K-character
+the-quick-brown-fox-jumps-over-a-lazy-dog
+A_NAME_WITH_CAPITAL_LETTERS
+<endcode_example>
+<endonline_popup>
+
+
+<head2>(Comments\comments_sec)
+
+<x>(Comments)
+
+<p>
+Comments are introduced in MLisp using the <quote>(<cx>(;)) character. The
+comment extends from the semicolon character to the end of the line.
+During MLisp compilation, all comments are removed.
+
+
+<head2>(Constants\constants_sec)
+
+<x>(Constants)
+
+<p>
+Constants are  represented in MLisp by either writing their value in the
+MLisp expressions, or by referencing one of the <newterm>(named constants)
+provided by EMACS for special purposes.  Named constants are located in
+the variable name-space along with other named variables.  You cannot
+alter the value of a named constant.
+
+
+<head3>(Numeric and Character Constants\numcharconstants_sec)
+
+<x>(Character constants)
+<x>(Numeric constants)
+<x>(Constants<xs>Character)
+<x>(Constants<xs>Numeric)
+
+<p>
+You specify numeric constants using digit characters. An optional leading
+minus sign may be included to obtain negative values.  Note, however, that
+you cannot specify a leading plus sign.  Numeric constants are integers in
+the range 2,147,483,647 to -2,147,483,648. Overflow is not detected by the
+MLisp compiler, and merely results in wrap around.
+
+<p>
+Character constants are converted to their numeric equivalent during
+MLisp compilation; they are merely a convenient way of
+specifying the ASCII numeric value for a character.
+
+<p>
+Character constants are introduced and terminated with the single quote
+character, and can represent only one ASCII character.  During MLisp
+compilation, the special sequences in <reference>(charconst_tab) allow you
+to specify  the control characters of the ASCII character set.
+
+<table>(MLisp Character Constants\charconst_tab)
+<table_setup>(2\6)
+<table_heads>(Sequence \ ASCII Character)
+<table_row>(<literal>(\)n \ Linefeed)
+<table_row>(<literal>(\)b \ Backspace)
+<table_row>(<literal>(\)t \ Tab)
+<table_row>(<literal>(\)r \ Return)
+<table_row>(<literal>(\)e \ Escape)
+<table_row>(<literal>(\)' \ Quote)
+<table_row>(<literal>(\)<literal>(\) \ <literal>(\))
+<table_row>(<literal>(\)<emphasis>(xxx\italic) \ Octal character
+                                                 <emphasis>(xxx\italic))
+<table_row>(^<emphasis>(X\italic) \ Control <emphasis>(X\italic))
+<table_row>(^? \ Delete)
+<table_row>(<literal>(\)<emphasis>(x\italic) \ character <emphasis>(x\italic))
+<endtable>
+
+
+<p>
+It is best to use the <quote>(<cx>(<literal>(\))) sequences for the
+characters that are available using that mechanism, rather than using the
+equivalent <quote>(<cx>(^)) sequences because the <quote>(<cx>(<literal>(\)))
+sequences are more meaningful.
+
+
+<head3>(String Constants\stringconstants_sec)
+
+<x>(String constants)
+<x>(Constants<xs>String)
+
+<p>
+String constants are enclosed in double quote characters and can be up
+to 800 characters in length. Any ASCII character can be included in the string.
+An escape mechanism is provided using a scheme similar to that for character
+constants. The codes are described in <reference>(stringconst_tab).
+
+<table>(MLisp String Constants\stringconst_tab)
+<table_setup>(2\6)
+<table_heads>(Sequence \ ASCII character)
+<table_row>(<literal>(\)n \ Linefeed)
+<table_row>(<literal>(\)b \ Backspace)
+<table_row>(<literal>(\)t \ Tab)
+<table_row>(<literal>(\)r \ Return)
+<table_row>(<literal>(\)e \ Escape)
+<table_row>(<literal>(\)" \ Double quotes)
+<table_row>(<literal>(\)<literal>(\) \ <literal>(\))
+<table_row>(<literal>(\)<emphasis>(xxx\italic) \ Octal character
+                                                 <emphasis>(xxx\italic))
+<table_row>(<literal>(\)^<emphasis>(X\italic) \ Control <emphasis>(X\italic))
+<table_row>(<literal>(\)^? \ Delete)
+<table_row>(<literal>(\)<emphasis>(x\italic) \ Character <emphasis>(x\italic))
+<table_row>(<literal>(\)<emphasis>((key)\italic) \ Key sequence for
+                                                   <emphasis>(key\italic))
+<endtable>
+
+<p>
+Named key string constant escapes are particularly useful in MLisp
+expressions that bind keys.  Figures <reference>(numkeypad_fig\value),
+<reference>(editkeypad_fig\value) and <reference>(funkeys_fig\value)
+illustrate the escapes for the keys found on VT100-series terminals and
+terminals or workstations with LK201 keyboards.
+
+<figure>(VT100/LK201 Numeric Keypad Key Escapes\numkeypad_fig)
+<figure_file>(postscript\docs$src:emacs_pg_numkeypad_fig.ps\27)
+<figure_file>(bookreader\docs$src:emacs_pg_numkeypad_fig.fse\27)
+<endfigure>
+
+<figure>(LK201 Editing Keypad Key Escapes\editkeypad_fig)
+<figure_file>(postscript\docs$src:emacs_pg_editkeypad_fig.ps\21)
+<figure_file>(bookreader\docs$src:emacs_pg_editkeypad_fig.fse\21)
+<endfigure>
+
+<figure>(LK201 Top-Row Function Key Escapes\funkeys_fig)
+<figure_file>(postscript\docs$src:emacs_pg_funkeys_fig.ps\30)
+<figure_file>(bookreader\docs$src:emacs_pg_funkeys_fig.fse\30)
+<endfigure>
+
+
+<head1>(Variables\variables_sec)
+
+<x>(Variables)
+
+<p>
+A <newterm>(variable) is a name which is associated with a value, either a
+<newterm>(number), <newterm>(mark), <newterm>(string),
+<newterm>(window-ring) or an <newterm>(array).  EMACS uses many variables
+internally, and provides many others which allow the user to customise
+various EMACS features.
+
+<x>(setq)
+<p>
+The  easiest way to set a variable is to use the <key_name>(setq)
+function.  This function requires the name of the variable and the value
+to be assigned to the variable.  Before the variable is set, the value
+being assigned may be checked so that you cannot set impossible values
+which might jeopardise other EMACS code. The variable to be set must
+already exist.  You can set the value of a variable interactively using
+the <key_name>(ESC-x set) command.
+
+<p>
+To fetch the value of a variable, simply reference it by name.  You can
+also display the value of a single variable interactively with the
+<key_name>(ESC-x print) command.
+
+
+<head2>(Variable Types\vartypes_sec)
+
+<x>(Variables<xs>Types of)
+
+<p>
+There are four different types of variable:
+
+<definition_list>
+
+<deflist_item>(Numerics)
+<deflist_def>
+which  hold integer numbers in the range 2,147,483,647 to -2,147,483,648;
+
+<deflist_item>(Strings)
+<deflist_def>
+which contain arbitrary length text;
+
+<deflist_item>(Markers)
+<deflist_def>
+which contain a buffer name and positional information;
+
+<deflist_item>(Window-rings)
+<deflist_def>
+which contain a set of windows that make up a screen.
+
+<enddefinition_list>
+
+<p>
+You can also create arrays with up to 10 dimensions. A single array can
+contain elements of any of the basic types. Variable length system arrays
+conform to a convention where element zero contains the number of elements
+in the array excluding element zero.
+
+<p>
+When using variables in MLisp programs, the type of the variable
+is coerced to the type that a particular function expects. For
+example, if a variable holds a number and is supplied to a function
+expecting a string, the number is converted to a string when it
+is needed. When coercion takes place for markers, if a string is
+required, the value of the variable is the buffer name part; if
+a numeric is required, the position in the buffer is returned.
+
+<p>
+No coercion is available for window-rings. The only operation that
+can be performed on a window-ring is assignment.
+
+
+<head2>(Variable Classes\varclasses_sec)
+
+<x>(Variables<xs>Classes of)
+
+<p>
+There are five different classes of variable as described below:
+
+<definition_list>
+
+<deflist_item>(System Variables)
+<deflist_def>
+System variables  are used to set up a specific option upon which EMACS
+acts. They either modify the way EMACS presents information, or they
+contain some specific information. Some examples of system variables
+include <key_name>(pop-up-windows), which tells EMACS to pop a window up
+when one is needed, and <key_name>(window-size) which tells you the size,
+in lines, of the currently selected window.
+
+<deflist_item>(Buffer-Specific Variables)
+<deflist_def>
+<x>(declare-buffer-specific)
+<x>(set-default)
+<x>(setq-default)
+Buffer-specific variables are used to contain information which
+is private to each buffer. The name of the variable is the same for
+each buffer, but when its value is fetched or set, a private copy
+for the currently selected buffer is used. If you attempt to fetch
+the value of a buffer-specific variable before you have set it,
+the variable is preset with a default value.
+Buffer specific variables are created using the
+<key_name>(declare-buffer-specific) function, and their default value is
+set using <key_name>(setq-default) (or <key_name>(ESC-x set-default)).
+
+<deflist_item>(Global Variables)
+<deflist_def>
+Global variables are used to contain information to be accessed by
+functions executed at any time. Once created, these variables remain in
+existence until EMACS exits.
+
+<deflist_item>(Named Constants)
+<deflist_def>
+Named constants are used by EMACS to provide users with useful
+information. Each named constant has a name in the variable name-space and
+has a read-only value.  If you attempt to alter the value of a named
+constant, EMACS issues an error message.
+
+<deflist_item>(Local Variables)
+<deflist_def>
+Local variables are used to contain local information in a block
+inside an MLisp program. The lifetime of these variables is only
+while the block in which they are declared is executing. Local
+variables are declared by nominating them immediately after the block
+introducer (after <key_name>(progn) and function names).  For example:
+
+<online_popup>(example)
+<code_example>
+(progn
+    a b c d
+    <ellipsis>
+)
+<endcode_example>
+<endonline_popup>
+
+<enddefinition_list>
+
+
+<head2>(The Scope of Variables\varscope_sec)
+
+<x>(Variables<xs>Scope of)
+<x>(Scope of variables)
+
+<p>
+The name scope for all variables is everywhere in EMACS, but the lifetime
+of the storage allocated to the variable depends on the class of variable.
+For example, once some MLisp has been compiled which declares a local
+variable,  that variable's name is entered into the variable
+name-space and may  be freely accessed. However, if you attempt to access
+the variable outside the block in which it is declared, no storage will
+have been allocated for it, and EMACS will issue an error message.
+
+
+<head2>(Commands for Manipulating Variables\varcmd_sec)
+
+<x>(Variables<xs>Commands for manipulating)
+
+<definition_list>
+
+<deflist_item>((declare-global <emphasis>(name\italic)<hellipsis>))
+<x>(declare-global)
+<deflist_def>
+Declares  global variables and initialises their default value to zero.
+
+<deflist_item>((declare-buffer-specific <emphasis>(name\italic)<hellipsis>))
+<x>(declare-buffer-specific)
+<deflist_def>
+Declares  buffer-specific variables and initialises their default value to zero.
+
+<deflist_item>(ESC-x set)
+<x>(set)
+<deflist_def>
+Prompts  for and sets the value of any variable interactively.
+
+<deflist_item>((setq <emphasis>(name\italic) <emphasis>(expression\italic)))
+<x>(setq)
+<deflist_def>
+Sets  the value of any variable in an MLisp program.
+
+<deflist_item>(ESC-x set-default)
+<x>(set-default)
+<deflist_def>
+Prompts  for and sets the default value of a buffer-specific variable
+interactively.
+
+<deflist_item>((setq-default <emphasis>(name\italic)
+                <emphasis>(expression\italic)))
+<x>(setq-default)
+<deflist_def>
+Sets  the default value of a buffer-specific variable in an MLisp program.
+
+<deflist_item>(ESC-x print)
+<x>(print)
+<deflist_def>
+Displays  the current value of a variable in the Mini-buffer.
+
+<deflist_item>(ESC-x print-default)
+<x>(print-default)
+<deflist_def>
+Displays  the default value of a buffer-specific
+variable in the Mini-buffer. If the variable is not buffer-specific,
+<key_name>(print-default) functions the same way as the  <key_name>(print)
+command.
+
+<deflist_item>((use-variables-of-buffer <emphasis>(buffer\italic)
+                <emphasis>(expression\italic)))
+<x>(use-variables-of-buffer)
+<deflist_def>
+This function provides access to the buffer-specific variables of the buffer
+named <emphasis>(buffer\italic). When <emphasis>(expression\italic) uses a
+buffer-specific variable, it will be the instance of the variable from
+buffer <emphasis>(buffer\italic), not from the current buffer.
+The following  example inserts the file name of buffer <key_name>(fred)
+into the current buffer <key_name>(joe):
+
+<online_popup>(example)
+<code_example>
+(switch-to-buffer "joe")
+(use-variables-of-buffer "fred"
+    (insert-string current-buffer-file-name)
+)
+<endcode_example>
+<endonline_popup>
+
+<enddefinition_list>
+
+
+<head2>(Arrays\arrays_sec)
+
+<x>(Arrays)
+
+<p>
+You create an array by using the <key_name>(array) MLisp function, and
+assign the resulting structure to a variable. The target variable is then
+coerced into an array.
+
+<p>
+Once the array has been created, you can use all the functions defined
+below to manipulate the array contents.
+
+<p>
+You can finally free up the space allocated to array by assigning one of
+the basic types to the array variable.
+
+<definition_list>
+
+<deflist_item>((array <emphasis>(low-bound\italic)
+                <emphasis>(high-bound\italic)<hellipsis>))
+<x>(array)
+<deflist_def>
+Creates  an array with up to 10 dimensions. The array is initialised to integer
+zeroes in all elements.
+
+<deflist_item>((bounds-of-array <emphasis>(array-name\italic)))
+<x>(bounds-of-array)
+<deflist_def>
+Analyses  an array, and returns another array describing the bounds of the
+supplied array.
+
+<p>
+The output array is declared as
+<quote>(<cx>((array 1 2 0 <emphasis>(input-array-dimensions\italic)))).
+Element [1,0] contains the number of dimensions of the array. Element [2,0]
+contains the total size of the array. Other elements contain the
+lower and upper bounds for each dimension of the array.
+
+<deflist_item>((fetch-array <emphasis>(array\italic)
+                <emphasis>(index\italic)<hellipsis>))
+<x>(fetch-array)
+<deflist_def>
+Retrieves  an element from the specified array.
+
+<deflist_item>((setq-array <emphasis>(array index<hellipsis> value\italic)))
+<x>(setq-array)
+<deflist_def>
+Assigns  a value to an element of an array.
+
+<enddefinition_list>
+
+
+<head1>(Defining Functions\defun_sec)
+
+<x>(Defining functions)
+<x>(Functions<xs>Defining)
+
+<p>
+A <newterm>(function) is the object through which EMACS runs programs
+written in MLisp.  A function is defined, then compiled, and may then be
+run simply by nominating it using the <key_name>(ESC-x) command, or by
+calling it in an MLisp program. MLisp functions may also have key
+sequences bound to them. In this way, key bindings may be altered in a way
+suitable for a given application.
+
+<x>(defun)
+<p>
+Functions are defined using the MLisp <key_name>(defun) function using either
+of the following syntaxes:
+
+<definition_list>
+
+<deflist_item>((defun (<emphasis>(name local\italic)<hellipsis>
+                      <emphasis>(expression\italic)<hellipsis>)))
+<deflist_def>
+This defines a function called <emphasis>(name\italic) with local
+variables <emphasis>(local\italic)s.  The function executes
+<emphasis>(expression\italic)s each time it is called. The local variables
+are separated by white-space. Any arguments that need to be passed to the
+function must be accessed using the <key_name>(arg) MLisp function.  All
+the components except <emphasis>(name\italic) are optional. The result of
+the function is the result of the last expression executed.
+
+<deflist_item>((defun <emphasis>(name\italic)
+                (<emphasis>(arg<hellipsis>\italic))
+                <emphasis>(local<hellipsis> expression\italic)<hellipsis>))
+<deflist_def>
+This defines a function with arguments. The arguments are entered into the
+variable name-space, and may have optional default expressions. The
+initialising expressions are executed just before the function in invoked.
+The result of the function is the value of the last expression executed in
+the expression list.
+
+<enddefinition_list>
+
+
+<head1>(Block Structuring Functions\blockfuns_sec)
+
+<x>(Block structuring functions)
+<x>(Functions<xs>Block structuring)
+
+<p>
+This section describes all the block structuring functions
+in  MLisp. All the block structuring functions
+introduce a block which may contain local variable declarations. The
+value of most blocks is the value of the last expression
+executed in the block.
+
+<definition_list>
+
+<deflist_item>((progn <emphasis>(local<hellipsis>
+                expression\italic)<hellipsis>))
+<x>(progn)
+<deflist_def>
+Introduces a basic block.
+
+<deflist_item>((save-excursion <emphasis>(local<hellipsis>
+                expression\italic)<hellipsis>))
+<x>(save-excursion)
+<deflist_def>
+Introduces a block, and saves the current environment
+for restoration after the last expression has been
+executed. The items saved are the current position of dot, the
+current buffer name, the current mark (if set), the last specified search
+string, and the visibility of the current buffer on the current
+screen.
+
+<deflist_item>((save-window-excursion <emphasis>(local<hellipsis>
+                expression\italic)<hellipsis>))
+<x>(save-window-excursion)
+<deflist_def>
+Introduces a block, and saves the current environment for restoration
+after the last expression in the block has been executed. The items saved
+are the screen state, the current buffer, the current position of dot,
+the current mark (if set) and the last search string.
+
+<p>
+After the expression has been executed, the windows that were visible
+on the screen when the command was started will be restored in the
+correct order with each window's dot in the correct location.
+
+<deflist_item>((save-restriction <emphasis>(local<hellipsis>
+                expression\italic)<hellipsis>))
+<x>(save-restriction)
+<deflist_def>
+Introduces a block, and saves the current environment for restoration
+after the last expression has been executed. The items saved are the
+current buffer, the current position of dot, the current mark (if set), the
+current narrowing, the last search string, and the visibility of the
+current buffer on the screen.
+
+<deflist_item>((error-occurred <emphasis>(local<hellipsis>
+                expression\italic)<hellipsis>))
+<x>(error-occurred)
+<x>(error-message)
+<deflist_def>
+Introduces  a block, and evaluates expressions until an error occurs. If
+no error occurs, then the value of the block is 0, otherwise, the value of
+the block is 1. When an error occurs, the text of the error message is
+available in the system variable <key_name>(error-message), but is not
+displayed in the Mini-buffer.
+
+<enddefinition_list>
+
+
+<head1>(Flow Control Functions\flowcontrol_sec)
+
+<x>(Flow control functions)
+<x>(Functions<xs>Flow control)
+
+<p>
+This section describes the  functions provided to control the flow of
+execution of MLisp statements.
+
+<definition_list>
+
+<deflist_item>((while <emphasis>(test-expression
+                expression\italic)<hellipsis>))
+<x>(while)
+<deflist_def>
+This  function implements a <newterm>(pre-tested while loop) statement.
+The <emphasis>(test-expression\italic) is evaluated, and if non-zero, the
+<emphasis>(expression\italic)s are executed.  When the expressions have been
+executed, control returns to the test expression.  The test expression is
+re-evaluated at each iteration. The result of the expression is the result
+of the test expression at exit.
+
+<deflist_item>((if <emphasis>(test-expression true-expression
+                false-expression\italic)))
+<x>(if)
+<deflist_def>
+This  function implements an <newterm>(if-then-else) statement common in
+most high level languages. <emphasis>(test-expression\italic) is
+evaluated, and if non-zero, <emphasis>(true-expression\italic) is
+evaluated, otherwise <emphasis>(false-expression\italic) is evaluated.
+
+<p>
+A <newterm>(multi-way if) statement can be constructed by repeating
+<emphasis>(test-expression\italic) and <emphasis>(true-expression\italic)
+in place of the false expression. The last test in the list must have a
+<emphasis>(false-expression\italic).  For example, for the variable
+<quote>(<cx>(a)), the following prints out the power of ten if
+<quote>(<cx>(a)) is less than  1000:
+
+<online_popup>(example)
+<code_example>
+(message
+    (if
+        (< a 0)
+           "a is too small"
+        (< a 10)
+           "Zero"
+        (< a 100)
+           "One"
+        (< a 1000)
+           "Two"
+           "a is too large"
+    )
+)
+<endcode_example>
+<endonline_popup>
+
+<enddefinition_list>
+
+
+<head1>(Operator Functions\operfuns_sec)
+
+<x>(Operator Functions)
+<x>(Functions<xs>Operator)
+
+<p>
+EMACS has numerous <newterm>(operator functions) specifically designed for
+use in MLisp programs.
+
+<p>
+There is no distinction between an operator function and an ordinary
+function as far as the syntax of calling the operators is concerned.
+They are called operator functions merely to distinguish them from
+functions whose values are of no interest to the caller.
+
+
+<head2>(Arithmetic Operator Functions\arithop_sec)
+
+<x>(Arithmetic operator functions)
+<x>(Functions<xs>Arithmetic operator)
+
+<p>
+The arithmetic operator functions are shown in <reference>(arithop_tab).
+
+<y>(+<xs>See Arithmetic operator functions)
+<y>(--<xs>See Arithmetic operator functions)
+<y>(/<xs>See Arithmetic operator functions)
+<y>(*<xs>See Arithmetic operator functions)
+<y>(!<xs>See Arithmetic operator functions)
+<y>(<literal>(&)<xs>See Arithmetic operator functions)
+<y>(<literal>(|)<xs>See Arithmetic operator functions)
+<y>(^<xs>See Arithmetic operator functions)
+<y>(<literal>(<)<literal>(<)<xs>See Arithmetic operator functions)
+<y>(<literal>(>)<literal>(>)<xs>See Arithmetic operator functions)
+<y>(=<xs>See Arithmetic operator functions)
+<y>(!=<xs>See Arithmetic operator functions)
+<y>(<literal>(<)<xs>See Arithmetic operator functions)
+<y>(<literal>(>)<xs>See Arithmetic operator functions)
+<y>(<literal>(<)=<xs>See Arithmetic operator functions)
+<y>(<literal>(>)=<xs>See Arithmetic operator functions)
+<y>(c=<xs>See Arithmetic operator functions)
+
+<table>(Arithmetic Operator Functions\arithop_tab)
+<table_setup>(2\5)
+<table_row>( + \  Addition )
+<table_row>( -- \ Subtraction )
+<table_row>( / \ Division )
+<table_row>( * \ Multiplication )
+<table_row>( ! \ Complimentation )
+<table_row>( & \ And )
+<table_row>( <literal>(|) \ Inclusive-or )
+<table_row>( ^ \ Exclusive-or )
+<table_row>( <literal>(<)<literal>(<) \ Left shift )
+<table_row>( <literal>(>)<literal>(>) \ Right shift )
+<table_row>( = \ Equality )
+<table_row>( != \ Non-equality )
+<table_row>( <literal>(<) \ Less than )
+<table_row>( <literal>(>) \ Greater than )
+<table_row>( <literal>(<)= \ Less than or equal )
+<table_row>( <literal>(>)= \ Greater than or equal )
+<table_row>( c= \ Character equal )
+<endtable>
+
+<p>
+All of these functions can be used with one or more arguments. Arguments
+are used singly or in pairs to form a running total. The only unary
+operator is <quote>(<key_name>(!)) (complimentation).
+
+
+<head2>(String Operator Functions\stringop_sec)
+
+<x>(String operator functions)
+<x>(Functions<xs>String operator)
+
+<p>
+The string operator functions include:
+
+<definition_list>
+
+<deflist_item>((concat <emphasis>(expression\italic)<hellipsis>))
+<x>(concat)
+<deflist_def>
+This  function returns the concatenation of all of expressions as a
+single string. The expressions are coerced into strings before the
+concatenation takes place.
+
+<deflist_item>((substr <emphasis>(str pos n\italic)))
+<x>(substr)
+<deflist_def>
+This  function returns the substring of <emphasis>(str\italic) starting
+at character <emphasis>(pos\italic) of length <emphasis>(n\italic). If
+<emphasis>(pos\italic) is negative, the length of the string is added to
+it before it is used.
+
+<deflist_item>((length <emphasis>(expression\italic)))
+<x>(length)
+<deflist_def>
+This  function returns the string length of <emphasis>(expression\italic).
+If the expression yields a numeric or mark value, it is coerced into
+a string.
+
+<deflist_item>((region-to-string))
+<x>(region-to-string)
+<deflist_def>
+This  function returns the region in the current buffer as a string value.
+
+<deflist_item>((case-string-capitalize <emphasis>(string\italic)))
+<x>(case-string-captalize)
+<deflist_def>
+This function converts the first letter of each word in
+<emphasis>(string\italic) to upper-case and all other letters to
+lowercase and returns the result as a string.
+
+<deflist_item>((case-string-invert <emphasis>(string\italic)))
+<x>(case-string-invert)
+<deflist_def>
+This function inverts the case of each letter in <emphasis>(string\italic)
+and returns the result as a string.
+
+<deflist_item>((case-string-upper <emphasis>(string\italic)))
+<x>(case-string-upper)
+<deflist_def>
+This function changes the case of each letter in <emphasis>(string\italic)
+to upper-case and returns the result as a string.
+
+<deflist_item>((case-string-lower <emphasis>(string\italic)))
+<x>(case-string-lower)
+<deflist_def>
+This function changes the case of each letter in <emphasis>(string\italic)
+to lowercase and returns the result as a string.
+
+<enddefinition_list>
+
+
+<head2>(Other Useful Operator Functions\otheropfuns_sec)
+
+<x>(Functions<xs>Miscellaneous operator)
+
+<p>
+The following list includes other useful operator functions:
+
+<definition_list>
+
+<deflist_item>((dot))
+<x>(dot)
+<deflist_def>
+<key_name>(dot)   returns a marker for the current position of dot in the
+current buffer.
+
+<deflist_item>((mark))
+<x>(mark)
+<deflist_def>
+<key_name>(mark)  returns a marker for the current position of the current
+buffer's mark if the mark is set. An error is generated if no mark is set.
+
+<deflist_item>((preceding-char))
+<x>(preceding-char)
+<deflist_def>
+<key_name>(preceding-char)  returns the numeric value of the character to
+the left of dot in the current buffer. If dot is located at the beginning
+of the buffer, 0 is returned.
+
+<deflist_item>((following-char))
+<x>(following-char)
+<deflist_def>
+<key_name>(following-char)  returns the numeric value of the character to
+the right of dot in the current buffer. If dot is located at the end of
+the buffer, 0 is returned.
+
+<enddefinition_list>
+
+
+<head1>(Miscellaneous MLisp Functions\miscfun_sec)
+
+<x>(Functions<xs>Miscellaneous MLisp)
+
+<p>
+EMACS contains a set of functions and variables which are primarily for
+use when programming in MLisp. Some of the functions actually check when
+they are called that they have not been executed interactively.
+
+
+<head2>(Predicates\predicates_sec)
+
+<x>(Predicates)
+
+<p>
+The following predicates are provided to test certain conditions in
+MLisp programs:
+
+<definition_list>
+
+<deflist_item>((eolp))
+<x>(eolp)
+<deflist_def>
+<key_name>(eolp)  returns <key_name>(true) if dot is currently at the end
+of a line in the current buffer. Otherwise, it returns <key_name>(false).
+
+<deflist_item>((eobp))
+<x>(eobp)
+<deflist_def>
+<key_name>(eobp)  returns <key_name>(true) if dot is at the end of the
+current buffer.  Otherwise, it returns <key_name>(false).
+
+<deflist_item>((bolp))
+<x>(bolp)
+<deflist_def>
+<key_name>(bolp)  returns <key_name>(true) if dot is currently at the
+beginning of a line in the current buffer. Otherwise, it returns
+<key_name>(false).
+
+<deflist_item>((bobp))
+<x>(bobp)
+<deflist_def>
+<key_name>(bobp)  returns <key_name>(true) if dot is at the beginning of
+the current buffer.  Otherwise, it returns <key_name>(false).
+
+<deflist_item>((dot-is-visible))
+<x>(dot-is-visible)
+<deflist_def>
+<key_name>(dot-is-visible)  returns <key_name>(true) if the current
+location of dot is being displayed in a window on the screen. Otherwise,
+it returns <key_name>(false).
+
+<deflist_item>((interactive))
+<x>(interactive)
+<deflist_def>
+<key_name>(interactive)  returns <key_name>(true) if the
+currently executing MLisp function was invoked either by using
+<key_name>(ESC-x), or as a result of a key binding. Otherwise, it returns
+<key_name>(false).
+
+<deflist_item>((is-bound <emphasis>(name\italic)<hellipsis>))
+<x>(is-bound)
+<deflist_def>
+<key_name>(is-bound)  returns <key_name>(true) if all the specified
+variables currently bound to storage.  Otherwise, it returns
+<key_name>(false).
+
+<enddefinition_list>
+
+
+<head2>(Accessing Prefix and Postfix Arguments\prepostfixargs_sec)
+
+<x>(Prefix arguments)
+<x>(Postfix arguments)
+<x>(Arguments<xs>Prefix)
+<x>(Arguments<xs>Postfix)
+
+<p>
+EMACS has two argument systems: <newterm>(prefix arguments), which are always
+numerics; and <newterm>(post-fix) arguments which may be numerics, strings,
+markers, arrays or window-rings. Prefix arguments are generally specified
+interactively from the keyboard using the <key_name>(^U) command, but may
+also be manipulated from within an MLisp program by using the following
+functions and variables:
+
+<definition_list>
+
+<deflist_item>((provide-prefix-argument <emphasis>(prefix expression\italic)))
+<x>(provide-prefix-argument)
+<deflist_def>
+This  function applies the numeric prefix argument
+<emphasis>(prefix\italic) to the <emphasis>(expression\italic) provided.
+The result of the function is the result of the execution of the
+expression. It is generally more efficient to use
+<key_name>(provide-prefix-argument) to repeat a command many times than to
+use a <key_name>(while) loop, or by repetition of the desired command.
+However, the command to be executed must interpret a prefix argument as a
+repetition count in order for this to work properly.
+
+<deflist_item>((prefix-argument-loop <emphasis>(expression\italic)<hellipsis>))
+<x>(prefix-argument-loop)
+<deflist_def>
+<key_name>(prefix-argument-loop)  causes the
+<emphasis>(expression\italic)s provided to be executed prefix argument
+number of times. If no prefix argument was provided to the MLisp function
+that calls <key_name>(prefix-argument-loop), the expressions will
+only be executed once. The result of the function is the result of the
+last expression in the expression list to be executed.
+
+<deflist_item>((return-prefix-argument <emphasis>(expression\italic)))
+<x>(return-prefix-argument)
+<deflist_def>
+This  function sets up the prefix argument for the next function to be
+executed. The value of the function is the value of the expression
+returned as the prefix argument.
+
+<p>
+If you wish to provide a prefix argument for the next function to run
+after the current function has finished,
+<key_name>(return-prefix-argument) must be the last expression to be
+executed.
+
+<deflist_item>((prefix-argument))
+<x>(prefix-argument)
+<deflist_def>
+This  variable contains the value of the prefix argument supplied to
+the current MLisp function. If no prefix argument was supplied,
+then its value is 1. Both positive and negative prefix arguments may
+be supplied.
+
+<deflist_item>(prefix-argument-provided)
+<x>(prefix-argument-provided)
+<deflist_def>
+This  variable is  <key_name>(true) if an MLisp function has been
+called with a prefix argument, otherwise it is <key_name>(false).
+This variable is provided because there is no way to tell if a prefix
+argument has been provided by merely examining its value.
+
+<deflist_item>((arg <emphasis>(num prompt\italic)))
+<x>(arg)
+<deflist_def>
+This  function causes the evaluation of the <emphasis>(num\italic)th
+postfix argument provided to the function. If the required argument is an
+expression, then it will be re-evaluated every time <key_name>(arg)
+accesses it.  The left-most argument in a  function call is argument
+number 1.
+
+<p>
+If the desired argument was not provided in the call,
+<emphasis>(prompt\italic) is used as a terminal prompt string to read in
+the argument from the user. If <emphasis>(prompt\italic) is omitted,
+this feature is disabled, and an error message is generated.
+
+<deflist_item>((nargs))
+<x>(nargs)
+<deflist_def>
+This  function returns the number of arguments supplied to the called
+function. Arguments that are prompted for are not included in this
+count.
+
+<enddefinition_list>
+
+
+<head2>(Functions for Obtaining User Input\inputfuns_sec)
+
+<x>(Functions<xs>For obtaining user input)
+<x>(Input functions)
+
+<p>
+A number of functions exist to enable MLisp programmers to obtain input
+from the user. These functions generally take a string argument which is
+used as a prompt in the Mini-buffer. Specific functions may enable name
+completion.
+
+<p>
+The input functions are:
+
+<definition_list>
+
+<deflist_item>((expand-from-string-table <emphasis>(prompt\italic)
+                <emphasis>(word-list-string\italic)))
+<x>(expand-from-string-table)
+<deflist_def>
+This  function  provides  access to  the  EMACS  input  expansion
+mechanism.  The function has two parameters: the first is a prompt, the
+second  is  a  string that contains a space-separated list of words from
+which the  user can  select a choice.   The result of the function is the
+selected word.  <key_name>(expand-from-string-table) will only allow one
+of the words in the list to be returned.  The following example, causes
+a <cx>(Command: ) prompt to appear in the Mini-buffer; the user must then
+enter one of the four words from the supplied list:
+
+<online_popup>(example)
+<code_example>
+(expand-from-string-table "Command: " "exit" "read" "write" "quit")
+<endcode_example>
+<endonline_popup>
+
+<deflist_item>((get-tty-character))
+<x>(get-tty-character)
+<deflist_def>
+This  function waits for a single key to be pressed by the user. No prompt
+is available. The character that the user presses is returned as the value
+of the function. No keymaps are used to interpret the typed character.
+
+<deflist_item>((get-tty-command <emphasis>(prompt\italic)))
+<x>(get-tty-command)
+<deflist_def>
+<key_name>(get-tty-command)  issues the prompt in the Mini-buffer and then
+reads in a string. Function name completion is enabled during this
+operation, and the only valid input is an existing function name. The
+value of this function is a string containing the name of the function
+selected.
+
+<deflist_item>((get-tty-file <emphasis>(prompt\italic)))
+<x>(get-tty-file)
+<deflist_def>
+<key_name>(get-tty-file)  issues the prompt supplied in the Mini-buffer
+and then reads in a string. File name completion is enabled during this
+operation, although any string is valid when a <key_name>(Return) is
+pressed. Multiple versions of the same file are ignored during completion.
+The value of this function is a string containing the name of the file
+selected.
+
+<deflist_item>((get-tty-string <emphasis>(prompt\italic)))
+<x>(get-tty-string)
+<deflist_def>
+This  function issues the prompt in the Mini-buffer,  then reads in a
+string from the user. This string is returned as the function's value.
+
+<deflist_item>((get-tty-variable <emphasis>(prompt\italic)))
+<x>(get-tty-variable)
+<deflist_def>
+<key_name>(get-tty-variable)  issues the prompt in the Mini-buffer and
+then reads in the name of a variable. Variable name completion is enabled
+during this operation. The value of the function is a string containing
+the variable name selected.
+
+<deflist_item>((get-tty-buffer <emphasis>(prompt\italic)))
+<x>(get-tty-buffer)
+<deflist_def>
+This function issues the prompt and then obtains the name of a buffer using
+buffer name completion. The value of the function is a string containing
+the buffer name selected.
+
+<deflist_item>((process-keys <emphasis>(keymap\italic)))
+<x>(process-keys)
+<deflist_def>
+This function reads one key sequence from the keyboard by using the supplied
+keymap. The function selected by the key sequence is executed, and the
+result is returned as <key_name>(process-key)'s value.
+
+<enddefinition_list>
+
+
+<head2>(Functions for Displaying Messages\msgfuns_sec)
+
+<x>(Messages<xs>Displaying)
+<x>(Displaying messages)
+<x>(Functions<xs>For displaying messages)
+
+<p>
+Two functions exist for displaying text. Both  functions display
+the text in the Mini-buffer, and can take any number of arguments. The
+arguments are coerced into strings and concatenated in the order in which
+they appear as arguments.
+
+<definition_list>
+
+<deflist_item>((message <emphasis>(string\italic)<hellipsis>))
+<x>(message)
+<deflist_def>
+Displays  the concatenated <emphasis>(string\italic)s in the Mini-buffer
+the next time the screen is updated.
+
+<deflist_item>((error-message <emphasis>(string\italic)<hellipsis>))
+<x>(error-message)
+<x>(error-occurred)
+<deflist_def>
+Displays  the concatenated <emphasis>(string\italic)s in the Mini-buffer
+and declares an error. No further statements of an MLisp program will be
+executed, and the keyboard processor will resume operation (unless
+<key_name>(error-message) has been issued from inside an
+<key_name>(error-occurred) function).
+
+<deflist_item>((sit-for <emphasis>(length\italic)))
+<x>(sit-for)
+<deflist_def>
+This  function causes the display to be updated, and executes a pause for
+<emphasis>(length\italic) tenths of a second. The pause may be interrupted
+by the user pressing a key.
+
+<p>
+This function is useful when displaying status information to the
+user. For example, if a function takes some time to execute, it
+may be helpful to indicate what the function is currently
+doing. An argument of zero to <key_name>(sit-for) will update the screen,
+but will not pause EMACS processing.
+
+<enddefinition_list>
+
+
+<head1>(How to Compile an MLisp Program\compilemlisp_sec)
+
+<x>(Compiling MLisp)
+
+<p>
+Once you have written some MLisp, the code must be compiled before it can
+be executed. There are several ways to compile MLisp code:
+
+<list>(unnumbered)
+<le>
+<x>(execute-mlisp-buffer)
+If the MLisp is located in a buffer in EMACS,  make the buffer
+current and use the <key_name>(ESC-x execute-mlisp-buffer) command. This
+command takes the Mlisp expressions in the buffer, compiles and executes
+them.
+
+<le>
+<x>(execute-mlisp-file)
+<x>(EMACS$PATH)
+<x>(MLisp-library)
+If the MLisp is in a file,  you can use the <key_name>(ESC-x
+execute-mlisp-file)  command.  If no file type has been specified, then
+<quote>(.ML) is assumed.  This command first searches for the
+specified file using the EMACS$PATH logical name. If no
+file is found, then a search is made in the database
+<quote>(<key_name>(MLisp-library)) (if the file type is <quote>(.ML),
+this is first removed).  If no  module is found in the database with the
+specified name, an error message is displayed.
+
+<p>
+When the file has been opened, all the MLisp expressions contained in the
+file are read in, compiled, and executed.
+
+<le>
+<x>(execute-mlisp-line)
+If you wish to type a one-line MLisp program,  you can use
+<key_name>(ESC-x execute-mlisp-line). This prompts in the Mini-buffer for
+a single MLisp expression to compile and execute.  When the expression has
+been executed, <key_name>(execute-mlisp-line) prints  the returned
+value of the expression in the Mini-buffer.
+
+<p>
+<key_name>(execute-mlisp-line) can also be used from MLisp programs to
+dynamically compile and execute a string.  When called non-interactively,
+a single string argument can be specified. This string is compiled and
+executed as above, and the result returned as the result of the
+<key_name>(execute-mlisp-line) function.
+
+<x>(MINIBUF)
+<le>
+If you wish to type a short MLisp program, you can use the MINIBUF
+package. See the <reference>(emacs_ext_ref) for a description of the
+MINIBUF package.
+
+<endlist>
+
+
+<head1>(Libraries of Commands\libs_sec)
+
+<x>(Libraries)
+
+<p>
+A considerable number of the functions in EMACS reside in
+<newterm>(libraries).   A  library function  is  not  accessible unless  the
+library  that  contains  it  is loaded.  A number of libraries  are
+provided  with  EMACS,  and  can be loaded automatically or on request to
+make  their  functions  available.
+
+<x>(execute-mlisp-file)
+<x>(MLisp-library)
+<p>
+To  load  a  library,  use <key_name>(execute-mlisp-file).  EMACS loads
+the library by first looking in your own directory for the library file
+(or a directory you specify), then in the EMACS directory, then in the
+<key_name>(MLisp-library) database search-list.
+Once the library has been loaded, all the functions defined in the library
+are then available for  use.
+
+<p>
+<x>(insert-area)
+For example, if you load the AREA library, you can then  use the
+<key_name>(delete-area) function to delete an area of the screen.
+<key_name>(delete-area) is defined in the AREA library.
+
+
+<p>
+In addition to making functions accessible to <key_name>(ESC-x), the
+library may bind some functions to key sequences.  This is done by the
+library loading another file called <emphasis>(LIBRARY-NAME\italic).KEY,
+where <emphasis>(LIBRARY-NAME\italic) is the name of the library being
+loaded.
+
+<p>
+Some libraries are loaded automatically in the course of
+executing certain functions. You will not normally notice
+this. For example, the PROCESS library is automatically loaded when you
+use the <key_name>(shell) function for the first time.  This facility is
+known as <newterm>(autoloading). Autoloading is used to make  library
+functions available without you having to know how to load the library.
+Autoloading also saves space in EMACS by loading libraries only when you
+need them.
+
+<x>(autoload)
+<p>
+<x>(execute-mlisp-file)
+Autoloading works by simply calling <key_name>(execute-mlisp-file) on the
+required library. Autoloading is set up using the <key_name>(autoload)
+function.      For  example,  if you have a function named
+<key_name>(box-it) which is defined in the file  BOXIT.ML, then the
+command:
+
+<online_popup>(example)
+<code_example>
+(autoload  "box-it" "boxit.ml")
+<endcode_example>
+<endonline_popup>
+
+<cp>
+will define the <key_name>(box-it) function, but will not actually load the
+definition from BOXIT.ML until you execute the <key_name>(box-it) function.
+
+
+<head1>(Debugging MLisp Programs\debugmlisp_sec)
+
+<x>(Debugging MLisp)
+<x>(MLisp<xs>Debugging)
+
+<p>
+EMACS  provides a powerful debugging facility to help you develop your MLisp
+programs. This section describes the  supplied MLisp debugger and the
+tools that EMACS provides to support the development of new debuggers.
+
+
+<head2>(The DEBUG Package\debugpackage_sec)
+
+<x>(DEBUG package)
+
+<p>
+The DEBUG package is a powerful MLisp source-line debugger,  providing the
+MLisp programmer with tracing, breakpointing, error trapping and
+stack-dumping facilities.
+
+<p>
+<x>(debug)
+To start DEBUG, load the DEBUG library. Each time you want to enter DEBUG
+mode, use the <key_name>(ESC-^D) command (or execute the <key_name>(ESC-x
+debug) command).  The <key_name>(debug) function loads up the breakpoint,
+error and trace handlers, binds debug commands to keys and pops up the
+DEBUG windows.  Source code and other information displayed by DEBUG will
+appear in these windows.
+
+<p>
+The following commands are available in the <key_name>(DEBUG) window:
+
+<definition_list>
+
+<deflist_item>(b (set breakpoint))
+<deflist_def>
+Sets a breakpoint on the specified function. When this function is executed
+after the breakpoint has been set, it will cause DEBUG to regain control,
+and DEBUG will display the decompiled source showing the call to the function.
+
+<deflist_item>(B (remove breakpoint))
+<deflist_def>
+Clears the breakpoint flag for the specified function so that it will no
+longer cause a breakpoint when executed.
+
+<deflist_item>(c (show calls))
+<deflist_def>
+Displays the current call stack in the <key_name>(DEBUG) window.
+
+<deflist_item>(. or KP5 (display current source))
+<deflist_def>
+Displays the current source line, in context, in the Debug window.
+
+<deflist_item>(e (interrupt on error))
+<deflist_def>
+Causes DEBUG to trap error reports and display them and the function that
+generated them. Errors are not trapped by default.
+
+<deflist_item>(E (kill error trapping))
+<deflist_def>
+Disables error-trapping.
+
+<deflist_item>(g or KP, (go))
+<deflist_def>
+Continues the execution of a program without interference from DEBUG. The
+only way DEBUG will regain control is at a breakpoint or when an error is
+detected and error-trapping is enabled.
+
+<p>
+Use this function when you have finished examining execution at one point
+in your program, and you wish to continue the program.
+
+<deflist_item>(h or ? or Help (help))
+<deflist_def>
+Displays help on DEBUG commands.
+
+<deflist_item>(l (list breakpoints))
+<deflist_def>
+Lists in the <key_name>(DEBUG) window  all  functions which have
+their breakpoint flag set.
+
+<deflist_item>(o or KP0 (step over))
+<deflist_def>
+Executes the next MLisp expression and then stops in DEBUG afterwards. However,
+if the expression is a function call, DEBUG executes all of the
+expressions in the called function and any functions it calls.
+
+<deflist_item>(p (print))
+<deflist_def>
+Prints the contents of a variable.
+
+<deflist_item>(q (quit))
+<deflist_def>
+Exits DEBUG. The DEBUG windows are removed and all variables controlled by
+DEBUG are reset. Breakpoints remain intact, but will not cause DEBUG to be
+run. To restart debugging, use the <key_name>(ESC-^D) command.
+
+<deflist_item>(s or GOLD-KP0 (step))
+<deflist_def>
+Executes the next MLisp expression.
+
+<deflist_item>(t (set trace mode))
+<deflist_def>
+Enables trace-mode. During trace-mode, every MLisp expression that is
+executed will be displayed in the DEBUG windows for
+<key_name>(debug-sit-for) tenths of a second. Execution will continue
+until all MLisp expression have been executed.
+
+<deflist_item>(T (Unset trace mode))
+<deflist_def>
+Unsets trace-mode.
+
+<deflist_item>(v (View last expression))
+<deflist_def>
+Prints the value of the last executed expression.
+
+<enddefinition_list>
+
+<p>
+DEBUG never displays debug information about any of the DEBUG functions or
+MLisp functions that are called while in the <key_name>(DEBUG) window.
+This stops DEBUG from confusing you.
+
+
+<head2>(Tools for Building MLisp Debuggers\debugtool_sec)
+
+<x>(Debuggers<xs>Building)
+
+<p>
+This section describes the components which can be used to build
+MLisp  tracing  and debugging packages.
+
+<p>
+Four facilities are provided with EMACS for debugging
+programs written in MLisp: <newterm>(breakpoints),
+<newterm>(error-trapping), <newterm>(tracing) and <newterm>(stack-trace
+generation).
+
+
+<head3>(Breakpoints\breakpoints_sec)
+
+<x>(Breakpoints)
+<x>(Debugging<xs>Breakpoints)
+
+<p>
+Each  function  within EMACS can have a breakpoint applied to it. If,
+during the  course  of  executing  functions,  EMACS attempts to execute a
+function which  has  a  breakpoint, it calls the breakpoint function
+specified in the <key_name>(breakpoint-hook) variable.
+
+<p>
+<x>(breakpoint-hook)
+<x>(breakpoint)
+Breakpoints  are  set  for  a  function   using the <key_name>(ESC-x
+breakpoint) command. This command  asks  for  the name of a function
+and the value to which  the function's  breakpoint  flag  should be
+set.  The execution  of  a  function causes a breakpoint  if the
+function's breakpoint flag is set and if the variable
+<key_name>(breakpoint-hook) contains the name of an EMACS function.
+
+<p>
+The  breakpoint  function is called just before the function that caused the
+breakpoint to occur is called.
+
+<p>
+<key_name>(decompile-current-line) can be used to display the environment
+from which the breakpointing function was called.
+
+
+<head3>(Error Trapping\errortrapping_sec)
+
+<x>(Error trapping)
+<x>(Debugging<xs>Error trapping)
+
+<p>
+If an error occurs during the execution of MLisp code, the normal action
+is to display the error message in the Mini-buffer, and to abort the
+execution of all macros and MLisp code.
+
+<x>(error-hook)
+<x>(error-message)
+<p>
+However, if the variable <key_name>(error-hook) contains the name of a
+function, then this function is called instead. This means that a debugger
+can gain control when an error occurs. Further, during the execution of
+the error function, the error message that should have been displayed is
+available to the debugger in the variable <key_name>(error-message).
+<x>(error-message)
+
+<x>(error-occurred)
+<p>
+Error trapping does not occur for errors that happen in an <key_name>(
+error-occurred) block.
+
+
+<head3>(Trace Mode\tracemode_sec)
+
+<x>(Trace Mode)
+<x>(Debugging<xs>Trace Mode)
+
+<p>
+Tracing of MLisp programs is controlled with three variables:
+
+<x>(trace-mode)
+<x>(trace-hook)
+<x>(trace-into)
+
+<list>(unnumbered)
+<le>
+<key_name>(trace-into)
+<le>
+<key_name>(trace-mode)
+<le>
+<key_name>(trace-hook)
+<endlist>
+
+<p>
+<x>(decompile-current-line)
+When <key_name>(trace-mode) is set, the function whose name is contained
+in <key_name>(trace-hook) is called before each MLisp statement is
+executed. The decompiled form of the statement about to be executed is
+available using the <key_name>(decompile-current-line) function.
+
+<p>
+On  MLisp function calls, <key_name>(trace-into) controls whether tracing
+continues into the  called  code.  If  <key_name>(trace-into)  is
+<key_name>(true),  tracing continues into functions. Otherwise,
+tracing will be suspended until the inner function has completed
+execution.
+
+
+<head3>(Stack Tracing\stacktracing_sec)
+
+<x>(Stack tracing)
+<x>(Debugging<xs>Stack tracing)
+
+<p>
+The generation of an MLisp stack trace can be automatic when an error is
+detected, or can be generated by the user at any time from an MLisp
+function.
+
+<x>(stack-trace-on-error)
+<x>(error-occurred)
+<p>
+The variable <key_name>(stack-trace-on-error) controls the generation of
+stack-traces when an error is detected. If set to <key_name>(true), 
+when an error is generated, a buffer called <key_name>(Stack-trace) is
+created, and the current MLisp stack is inserted into the buffer. No
+action is taken inside  an <key_name>(error-occurred) block. The first
+line of the stack trace contains the error message that caused the
+stack-trace to occur. The second and subsequent lines contain the
+decompiled expressions being executed when the error was detected. An
+end-of-stack marker is located at the end of the buffer.
+
+<p>
+For example, if the following function is executed with a parameter
+of <quote>(<cx>(1)):
+
+<online_popup>(example)
+<code_example>
+(defun x (a)
+    (if (> a 3)
+        (error-message "Too deep")
+        (x (+ a 1))
+    )
+)
+<endcode_example>
+<endonline_popup>
+
+<cp>
+then the buffer <key_name>(Stack-trace) would contain:
+
+<online_popup>(example)
+<code_example>
+Message:   Too deep
+Executing: (error-message "Too deep")
+(x (+ a 1))
+(x (+ a 1))
+(x (+ a 1))
+(x 1)
+--- bottom of stack ---
+<endcode_example>
+<endonline_popup>
+
+<x>(dump-stack-trace)
+<p>
+The function <key_name>(dump-stack-trace) can be used to generate a
+stack-trace at any time. The stack-trace will be located in buffer
+<key_name>(Stack-trace), which will be popped onto the screen. The
+stack-trace format is the same as that displayed for stack-traced errors,
+except that there will never be a <quote>(<cx>(Message:)) line.

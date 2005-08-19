@@ -1,0 +1,32 @@
+src contents.dat
+obj ident.dat
+
+src describe_bld.com
+src describe_do_file.com
+src em_desc.mll
+src qi_bliss.mll
+src qi_cc.mll
+src qi_dcl.mll
+src qi_vms.mll
+
+exe_vms emacsdesc.tlb
+exe_vms emacs_qinfo_bliss.tlb
+exe_vms emacs_qinfo_dcl.tlb
+exe_vms emacs_qinfo_system_services.tlb
+exe_vms emacs_qinfo_vaxc.tlb
+
+exe_unix emacsdesc.dir
+exe_unix emacsdesc.pag
+exe_unix emacsdesc.dat
+exe_unix emacs_qinfo_bliss.dir
+exe_unix emacs_qinfo_bliss.pag
+exe_unix emacs_qinfo_bliss.dat
+exe_unix emacs_qinfo_dcl.dir
+exe_unix emacs_qinfo_dcl.pag
+exe_unix emacs_qinfo_dcl.dat
+exe_unix emacs_qinfo_system_services.dir
+exe_unix emacs_qinfo_system_services.pag
+exe_unix emacs_qinfo_system_services.dat
+exe_unix emacs_qinfo_vaxc.dir
+exe_unix emacs_qinfo_vaxc.pag
+exe_unix emacs_qinfo_vaxc.dat

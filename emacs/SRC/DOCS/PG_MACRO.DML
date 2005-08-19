@@ -1,0 +1,179 @@
+<chapter>(Macros\macros_chap)
+
+<x>(Macros)
+
+<p>
+This chapter describes the macro facilities available in EMACS. These
+facilities allow you to build macros <quote>(on the fly), and then use them to
+replace multiple keystrokes.  You can also use macros to write
+generalised facilities, map them into the function name-space and
+bind key sequences to them.
+
+<p>
+Macros differ from Mock Lisp (MLisp) functions because they are  key
+sequences that are replayed into the EMACS keyboard processor and are
+subject to the current bindings. The effect of a  macro will be
+unpredictable if the key bindings used in a macro change between the macro's
+definition and its use.  There are no facilities to alter control flow
+while a macro is being executed.
+
+
+<head1>(Keyboard Macros\kbmacros_sec)
+
+<x>(Keyboard macros)
+<x>(Macros<xs>Keyboard)
+
+<definition_list>
+
+<deflist_item>((start-remembering) ^X-<oparen>)
+<x>(start-remembering)
+<deflist_def>
+Starts defining a keyboard macro.
+
+<deflist_item>((stop-remembering) ^X-<cparen>)
+<x>(stop-remembering)
+<deflist_def>
+Ends the definition of a keyboard macro.
+
+<deflist_item>((execute-keyboard-macro) ^X-e)
+<x>(execute-keyboard-macro)
+<deflist_def>
+Executes the most recently-defined keyboard macro.
+
+<deflist_item>((define-keyboard-macro))
+<x>(define-keyboard-macro)
+<deflist_def>
+Turns the most recent keyboard macro into a named macro.
+
+<enddefinition_list>
+
+<p>
+A <newterm>(keyboard macro) is a command defined by you to abbreviate
+a sequence of other commands.  For example, if you discover that you are
+about to type <key_name>(^U-^D) forty times, you can define a keyboard
+macro  to execute <key_name>(^U-^D) and call it with a repeat count of
+forty.
+
+<p>
+You define a keyboard macro while executing the commands  which
+are part of  the  definition. In this  way, you can see what the effects of
+your commands are---you do not have to work  them  out  in  your
+head.  When you have finished, the keyboard macro is defined and has also
+been,  in effect, executed once.  You can execute the sequence of commands
+again by invoking the macro.
+
+<p>
+To start defining a keyboard macro,  type  the  <key_name>(^X-<oparen>)
+(<key_name>(start-remembering)) command.  From then on, your commands
+continue to be executed,  but  also become part of the macro definition.
+When you have finished, the <key_name>(^X-<cparen>)
+(<key_name>(stop-remembering)) command terminates the definition (without
+becoming part of it).
+
+<p>
+You can call the newly-defined  macro the <key_name>(^X-e)
+(<key_name>(execute-keyboard-macro)) command.  You can give
+<key_name>(^X-e) a repeat count as a prefix argument to execute the macro
+several times.
+
+<p>
+There are two ways of using a keyboard macro to perform some action on
+each line in the buffer.  The first is to start by positioning dot on the
+line above the first line  to  be  processed, then begin the macro
+definition with a <key_name>(^N) (<key_name>(next-line)).  The second
+method is to start on the proper line, and end the macro with a
+<key_name>(^N). Repeating the macro will operate on successive lines using
+either method.
+
+<p>
+EMACS can  have only one current keyboard macro.  When you define a new
+keyboard macro, the old macro definition is lost.  To save a keyboard
+macro definition, you must give it a name. If you execute
+<key_name>(define-keyboard-macro), the last keyboard macro defined is
+turned into a <newterm>(named macro).  When a named macro has been created,
+you can bind it to any key sequence in the usual way.
+
+<head1>(Named Macros\namedmacros_sec)
+
+<x>(Named macros)
+<x>(Macros<xs>Named)
+
+<p>
+The <newterm>(named macro) facility in EMACS allows you to specify a
+collection of keystrokes to act as an EMACS function, and then associate
+the function  with another key sequence.
+
+<definition_list>
+
+<deflist_item>((define-buffer-macro))
+<x>(define-buffer-macro)
+<deflist_def>
+Defines a macro using the current buffer's contents as the keystroke
+sequence. The name of the macro is obtained from the buffer-specific
+variable <key_name>(current-buffer-macro-name).
+
+<deflist_item>((define-keyboard-macro
+				<emphasis>(function-name\italic)))
+<x>(define-keyboard-macro)
+<deflist_def>
+Defines a named macro with the current contents of the keyboard macro.
+
+<deflist_item>((define-string-macro
+		<emphasis>(function-name keys\italic)))
+<x>(define-string-macro)
+<deflist_def>
+Defines a macro given its name and the key sequence as arguments.
+
+<deflist_item>(ESC-x edit-macro)
+<x>(edit-macro)
+<deflist_def>
+Inserts the body of the specified macro into the buffer
+<key_name>(Macro edit) to allow editing of the keystroke
+sequence.
+
+<deflist_item>((rename-macro <emphasis>(old-name new-name\italic)))
+<x>(rename-macro)
+<deflist_def>
+Changes the name of a macro or function.
+
+<enddefinition_list>
+
+<p>
+You normally define a named macro by first defining it as a
+keyboard macro, then using <key_name>(ESC-x define-keyboard-macro) to give the
+macro a name. When a macro has been given a name, you can execute it using
+<key_name>(ESC-x) as if it were an ordinary EMACS function. The fact that
+it is a macro is transparent to <key_name>(ESC-x).
+
+<p>
+A quick way to define a short macro is to use <key_name>(ESC-x
+define-string-macro). This command prompts you  for the
+name of the macro and the key sequence to use for the macro's body.
+Special characters have to be quoted, otherwise they will be executed as
+commands in the Mini-buffer.  A disadvantage of this type of macro definition
+is that you must know, or be able to visualise, the key sequence while
+you are typing it in. <key_name>(ESC-x define-string-macro) does not
+execute the macro key sequence while it is being defined.
+
+<p>
+If you discover a mistake in a macro, or
+you wish to change the macro's definition, use <key_name>(ESC-x
+edit-macro). This command generates a buffer called
+<key_name>(Macro edit) with the body of the macro inserted in the
+buffer. The name of the macro is associated with the buffer, and the
+buffer's type is <key_name>(Macro).  You can identify the name of
+the macro by looking at the variable <key_name>(current-buffer-macro-name).
+<x>(current-buffer-macro-name)
+When you have finished editing the macro, the buffer contents can replace
+the body of the macro. Use <key_name>(ESC-x define-buffer-macro) to
+re-define the macro.
+
+<p>
+If you wish to change the name of a macro (or any EMACS function, including
+MLisp and wired-in functions), use the <key_name>(rename-macro) command.
+<key_name>(rename-macro) asks you to specify the old name of the macro,
+followed by the new name you wish to give it. If the new name already
+exists, the existing MLisp or macro function will be overwritten. If
+the new function name already exists and is a wired-in function, an error
+message will be generated. This prevents you from removing wired-in parts
+of EMACS that packages may need.

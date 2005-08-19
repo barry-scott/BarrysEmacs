@@ -1,0 +1,93 @@
+	        Quick Summary of Basic Emacs Notes Commands
+	        ___________________________________________
+
+	To invoke EMACS Notes, type:
+
+             $ EMACS/PACKAGE=NOTES
+
+	or inside Emacs type
+
+	     ESC-x notes <RET>
+
+	You can  get online HELP for Emacs Notes commands and key
+	definitions  at any time during a Emacs Notes session. To
+	see key definitions for VAX Notes, press "h".
+
+	Before you  can  read the notes in a conference, you must
+	first  add the conference to your Notebook, then open the
+	conference.
+
+	To add  a  conference to your Notebook, use the ADD ENTRY
+	command.  For example, to add the ETIQUETTE conference to
+	your Notebook, type:
+
+             Ae
+
+	And fill  in  the  form  with the name of the conference,
+	ETIQUETTE. Type Control-C when the form is complete. Then
+	answer  "y"  to confirm that the entry should be added to
+	your notebook.
+
+		Notefile name:		ETIQUETTE
+		Entry name:		
+		Classes:		MAIN
+		Personal name:		
+
+	To open  a conference, use the OPEN command. For example,
+	to  open  the  ETIQUETTE conference, type "o" on the same
+	line as the ETIQUETTE conference is listed.
+
+	A conference   is   organized   into   discussions.  Each
+	discussion begins with a topic, each having any number of
+	replies. Topics are numbered consecutively, starting with
+	1.  Replies  are  also  numbered consecutively, by topic,
+	starting with .1. For example, if there are three replies
+	to topic 4, they are numbered 4.1, 4.2, and 4.3.
+
+	To see a listing of the topics in a conference, type:
+
+             dn
+
+	To read a specific topic or reply, type the number at the
+	"Read note (nn.rr) prompt. For example, to read the third
+	reply to topic 6, type "r" and to the prompt type:
+
+             Read note (nn.rr) 6.3
+
+	Use the  ENTER  key  to  page  through  the  replies in a
+	discussion.
+
+	To add  a  reply to a discussion, use the ANSWER command.
+	You  must  be  reading  a  reply  (or  the  topic) in the
+	discussion  before  you  issue  the  ANSWER  command. For
+	example,  to  add  a reply to the discussion on topic 10,
+	type:
+
+		r10
+		a
+
+	To start a discussion on a new topic, type:
+
+		w
+
+	To print  notes,  use  the PRINT command. For example, to
+	print  topic  3 and all replies to that topic, "p" to get
+	the print form, then fill in the form:
+
+		Note-id:	3.*
+		Mark as seen:	n
+		Print options:	
+		String:		
+		Author:		
+		Since:		
+		Before:		
+		Title:		
+		Unseen:		n
+		Keyword:	
+
+
+	To leave   a  conference,  use  the  CLOSE  command.  For
+	example, to close a conference, type "c".
+
+	To end  your  Emacs  Notes session, use the EXIT command,
+	type "q".

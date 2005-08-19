@@ -1,0 +1,18 @@
+<comment>
+	Profile for the VAX Emacs Programmer's Guide
+<endcomment>
+
+<doctype>(SOFTWARE.GUIDE)
+
+<profile>
+	<element>(docs$src:emacs_pg_front.sdml)
+
+	<element>(docs$src:emacs_pg_intro.sdml)
+	<element>(docs$src:emacs_pg_macros.sdml)
+	<element>(docs$src:emacs_pg_mlisp.sdml)
+	<element>(docs$src:emacs_pg_extension.sdml)
+	<element>(docs$src:emacs_pg_otherlang.sdml)
+	<element>(docs$src:emacs_pg_startup.sdml)
+
+	<index_file>
+<endprofile>

@@ -1,0 +1,678 @@
+module vms_ndbm
+	(
+	ident	= 'V5.0 Emacs',
+	addressing_mode (nonexternal=long_relative, external=general)
+	) =
+begin
+! 	Copyright(c ) 1982, 1983, 1984, 1985, 1986, 1987
+!		Barry A, Scott and Nick Emery
+
+require 'edit$src:emacs';
+
+forward routine
+    exit_db 			: novalue ,
+    open_db			: ,
+    reopen_db			: ,
+    get_db			: ,
+    dbmhelpprocessor		: bliss,
+    get_db_help			: ,
+    put_db			: ,
+    free_db 			: novalue ,
+    close_db 			: novalue ,
+    index_db			: ;
+
+macro
+	database	= block[s_database,byte] %,
+	db_rdonly	=  0,0,32,0 %,
+	db_reopen	=  4,0,32,0 %,
+	db_name		=  8,0,32,0 %,
+	db_dirf		= 12,0,32,0 %,
+	db_datf		= 16,0,32,0 %,
+	db_pagf		= 20,0,32,0 %;
+
+literal s_database = 24;
+
+literal
+	ch$_lf	= 10,
+	hlp$k_maxrecsiz = 132,
+	hlp$k_maxkeys = 9,
+	lbr$k_max_key_length = 31;
+
+external
+    lbr$gl_rmsstv;
+
+external routine
+    lbr$ini_control,
+    lbr$open,
+    lbr$lookup_key,
+    lbr$get_record,
+    lbr$get_help,
+    lbr$put_record,
+    lbr$delete_data,
+    lbr$put_end,
+    lbr$replace_key,
+    lbr$get_index,
+    lbr$close,
+    calloc			: ;
+
+
+
+routine exit_db (reason, db : ref vector[]) : novalue  =
+	lbr$close(db);
+
+
+
+global routine open_db (fn : ref vector[,byte,unsigned], acc) :  =
+	begin
+	local
+	    db : ref database initial (calloc (s_database, 1, malloc_type_struct_database)),
+	    fnd : vector[2],
+	    hdr : vector[lbr$c_maxhdrsiz],
+	    inicode,
+	    p : ref vector[];
+
+	if .db neqa 0
+	then
+		begin
+		if .acc neq 0
+		then
+			db[db_rdonly] = 1
+		else
+			db[db_rdonly] = (fio_access(.fn) leq 0);
+
+		inicode = 
+		    begin
+		    if .db[db_rdonly] neq 0
+		    then
+			lbr$c_read
+		    else
+			lbr$c_update
+		    end;
+
+		if lbr$ini_control (db[db_dirf], inicode)
+		then
+			begin
+			fnd[0] = strlen (.fn);
+			fnd[1] = .fn;
+			if lbr$open(db[db_dirf], fnd)
+			then
+				begin
+				if (db[db_datf] = .lbr$gl_rmsstv) eql lbr$c_typ_mlb
+  				or .lbr$gl_rmsstv eql lbr$c_typ_hlp
+				or .lbr$gl_rmsstv eql lbr$c_typ_txt
+				then
+					begin
+					if (p = db [db_pagf] = malloc (20, malloc_type_char)) neqa 0
+					then
+						begin
+						p[1] = exit_db;
+						p[2] = 2;
+						p[3] = p[3];
+						p[4] = .db[db_dirf];
+						$dclexh (desblk = .p);
+						end;
+					db[db_name] = savestr (.fn);
+					return .db;
+					end;
+				lbr$close (db[db_dirf]);
+				end;
+			end;
+		free (.db);
+		end;
+	0
+	end;
+
+
+
+routine reopen_db (db : ref database) :  =
+	begin
+
+	local
+	    fnd : vector[2],
+	    hdr : vector[lbr$c_maxhdrsiz],
+	    inicode,
+	    p : ref vector[];
+
+	inicode = 
+	    begin
+	    if .db[db_rdonly] neq 0
+	    then
+	        lbr$c_read
+	    else
+		lbr$c_update
+	    end;
+
+	if lbr$ini_control (db[db_dirf], inicode)
+	then
+		begin
+		fnd[0] = strlen(.db[db_name]);
+		fnd[1] = .db[db_name];
+		if lbr$open (db[db_dirf], fnd)
+		then
+			begin
+			if (p = db[db_pagf] = malloc (20, malloc_type_char)) neqa 0
+			then
+				begin
+				p[1] = exit_db;
+				p[2] = 2;
+				p[3] = p[3];
+				p[4] = .db[db_dirf];
+				$dclexh (desblk = .p);
+				end;
+			return .db;
+			end;
+		end;
+
+	0
+	end;
+
+
+
+!
+!	return
+!		-1 failed
+!		0 success
+!		1 success user must free content buffer
+!
+global routine get_db
+    (
+    key : ref vector[,byte,unsigned], 
+    keylen, 
+    cont : ref vector[], 
+    contlen : ref vector[], 
+    ins,
+    db : ref database
+    ) :  =
+	begin
+
+	label
+		failed;
+
+	local
+	    keyd : vector[2],
+	    rfa : vector[2],
+	    base : ref vector[,byte,unsigned] initial (malloc (lbr$c_maxrecsiz + 1, malloc_type_char)),
+	    index : initial (0),
+	    len : initial (lbr$c_maxrecsiz + 1);
+
+failed:	begin
+	if .base eql 0
+	then
+		return -1;
+
+	keyd[0] = 
+	    begin
+	    if .keylen gtr lbr$k_max_key_length
+	    then
+		lbr$k_max_key_length
+	    else
+		.keylen
+	    end;
+	keyd[1] = .key;
+	if .db[db_reopen] neq 0 or .db[db_dirf] eql 0
+	then
+		if reopen_db (.db) eql 0
+		then
+			return -1;
+
+	if lbr$lookup_key (db[db_dirf], keyd, rfa)
+	then
+		begin
+
+		local
+		    buf : vector[lbr$c_maxrecsiz + 1,byte,unsigned],
+		    inbuf : vector[2],
+		    outbuf : vector[4, word];
+
+		inbuf[0] = lbr$c_maxrecsiz;
+		inbuf[1] = buf;
+		while lbr$get_record (db[db_dirf], inbuf, outbuf) do
+			begin
+			if .len - .index leq .outbuf[0] + 1
+			then
+				begin
+				base = realloc (.base, .len + lbr$c_maxrecsiz + 1, malloc_type_char);
+				if .base eql 0
+				then
+					leave failed
+				else
+					len = .len + lbr$c_maxrecsiz + 1;
+				end;
+			buf[.outbuf[0]] = ch$_lf;
+			memmove( base[.index], .vector[outbuf, 1; long], .outbuf[0] + 1 );
+			index = .index + .outbuf[0] + 1;
+			end;
+		contlen[0] = .index;
+
+		if .db[db_reopen] neq 0
+		then
+			close_db (.db);
+		!
+		! base must be free'd up by whomever return 0 to this routine.
+		!
+		if (cont[0] = bliss(.ins, .index, .base)) neq 0
+		then
+			begin
+			memmove( .cont[0], .base, .index );
+			free (.base);
+			return 0;
+			end;
+
+		return 1;
+		end;
+	end;
+
+	if .db[db_reopen] neq 0
+	then
+		close_db (.db);
+	-1
+	end;
+
+
+
+own
+    base : ref vector[,byte,unsigned],
+    index : signed long,
+    len,
+    no_help;
+
+routine dbmhelpprocessor
+    (
+    str : ref vector[4, word],
+    flags : ref vector[],
+    a,
+    b
+    ) : bliss =
+	begin
+
+	if (.flags[0] and hlp$m_nohlptxt) neq 0
+	then
+		begin
+		no_help = 1;
+		return 0;
+		end;
+
+	if (.flags[0] eql 0 and (.get_db_help_flags and 1) neq 0)
+	or (.flags[0] and (.get_db_help_flags and 6)) neq 0
+	then
+		begin
+		if .len - .index leq .str[0] + 1
+		then
+			begin
+
+			local
+			    size : initial (.str[0] + hlp$k_maxrecsiz + 1);
+
+			base = realloc (.base, .len + .size, malloc_type_char);
+			if .base eqla 0
+			then
+
+				return 0
+			else
+				len = .len + .size;
+			end;
+
+		memmove( base[.index], .vector[.str, 1; long], .str[0] );
+		index = .index + .str[0];
+		base[.index] = ch$_lf;
+		index = .index + 1;
+		end;
+	1
+	end;
+
+
+
+!
+!	return
+!		-1 failed
+!		0 success
+!		1 success user must free content buffer
+!
+global routine get_db_help
+    ( 
+    key_spec : ref vector[,byte,unsigned],
+    ins, 
+    db : ref database
+    ) :  = 
+	begin
+
+	label
+	    failed;
+
+	structure 
+	    array [i, j; n, m, unit = %upval, ext = 0] =
+	    [(n * m * unit) ]
+	    begin
+	      (array + (i * m * unit) + j * unit)
+	    end <0, unit * %bpunit, ext>;
+
+	local
+	    keys : ref vector[,byte,unsigned],
+	    key_data : vector[300,byte,unsigned],
+	    keyds : array [hlp$k_maxkeys, 2],
+	    i,
+	    end_found : initial (0);
+
+failed:	begin
+	strcpy (key_data, .key_spec);
+	keys = key_data;
+	if (base = malloc (hlp$k_maxrecsiz + 1, malloc_type_char)) eqla 0
+	then
+		return - 1;
+
+	len = hlp$k_maxrecsiz + 1;
+	index = 0;
+	i = 0;
+	while .i lss hlp$k_maxkeys and not .end_found do
+		begin
+		while .keys[0] neq 0 and isspace (.keys[0])
+		do
+			keys = .keys + 1;
+		keyds[.i, 1] = .keys;
+		while .keys[0] neq 0 and not isspace(.keys[0])
+		do
+			keys = .keys + 1;
+		if .keys[0] eql 0
+		then
+			end_found = .end_found + 1;
+		keys[0] = 0;
+		keys = .keys + 1;
+		keyds[.i, 0] = strlen (.keyds[.i, 1]);
+		i = .i + 1;
+		end;
+
+	if .i eql 1 and .keyds[0, 0] eql 0
+	then
+		begin
+		keyds[0, 0] = 4;
+		keyds[0, 1] = $str ('HELP');
+		end;
+
+	while .i lss hlp$k_maxkeys do
+		begin
+		keyds[.i, 0] = keyds[.i, 1] = 0;
+		i = .i + 1;
+		end;
+
+	no_help = 0;
+	if .db[db_reopen] neq 0 or .db[db_dirf] eql 0
+	then
+		if reopen_db (.db) eql 0
+		then
+			return - 1;
+
+	if lbr$get_help (db[db_dirf], 0, dbmhelpprocessor, 0,
+	    keyds[0, 0], keyds[1, 0], keyds[2, 0], keyds[3, 0],
+	    keyds[4, 0], keyds[5, 0], keyds[6, 0], keyds[7, 0],
+	    keyds[8, 0], keyds[9, 0]) and not .no_help
+	then
+		begin
+		local
+		    cont : ref vector[,byte,unsigned] initial ( bliss(.ins, .index, .base));
+
+		if .db[db_reopen] neq 0
+		then
+			close_db (.db);
+
+		if .cont neq 0
+		then
+			begin
+			memmove( .cont, .base, .index );
+
+			free (.base);
+			return 0;
+			end;
+
+		return 1;
+		end
+	else
+		if .base neq 0
+		then
+			free (.base);
+	end;
+
+	if .db[db_reopen] neq 0
+	then
+		close_db (.db);
+	-1
+	end;
+
+
+
+global routine put_db
+    ( 
+    key : ref vector[,byte,unsigned],
+    keylen,
+    cont : ref vector[,byte,unsigned],
+    contlen,
+    db : ref database
+    ) :  =
+	begin
+
+	label
+	    failed;
+
+	local
+	    keyd  : vector[2],
+	    oldrfa : vector[2],
+	    newrfa : vector[2],
+	    bufdes : vector[2],
+	    i,
+	    deldot;
+
+failed:	begin
+	keyd[0] = 
+	    begin
+	    if .keylen gtr lbr$k_max_key_length
+	    then
+		lbr$k_max_key_length
+	    else
+		.keylen
+	    end;
+
+	keyd[1] = .key;
+	if .db[db_reopen] neq 0 or .db[db_dirf] eql 0
+	then
+		if reopen_db (.db) eql 0
+		then
+			return -1;
+
+	deldot = lbr$lookup_key (db[db_dirf], keyd, oldrfa);
+	bufdes[1] = .cont;
+	i = 0;
+	if .contlen leq 0
+	then
+		begin
+		bufdes[0] = 0;
+		if not lbr$put_record (db[db_dirf], bufdes, newrfa)
+		then
+			begin
+			lbr$delete_data (db[db_dirf], newrfa);
+			leave failed;
+			end;
+		end
+	else
+		while .contlen gtr 0 do
+			begin
+			if .i geq lbr$c_maxrecsiz  or  .cont[0] eql ch$_lf
+			then
+				begin
+
+				local
+				    j : initial (.i lss  lbr$c_maxrecsiz);
+
+				bufdes[0] = .i;
+				i = 0;
+				if not lbr$put_record (db[db_dirf], bufdes, newrfa)
+				then
+					begin
+					lbr$delete_data (db[db_dirf], newrfa);
+					leave failed;
+					end;
+				bufdes[1] =
+				    cont = cont[.j];
+				contlen = .contlen - .j;
+				end
+			else
+				begin
+				i = .i + 1;
+				cont = cont[1];
+				contlen = .contlen - 1;
+				end;
+			end;
+
+	if .i gtr 0
+	then
+		begin
+		bufdes[0] = .i;
+		if not lbr$put_record (db[db_dirf], bufdes, newrfa)
+		then
+			begin
+			lbr$delete_data (db[db_dirf], newrfa);
+			leave failed;
+			end;
+		end;
+
+	lbr$put_end (db[db_dirf]);
+	lbr$replace_key (db[db_dirf], keyd, oldrfa, newrfa);
+	if .deldot
+	then
+		lbr$delete_data (db[db_dirf], oldrfa);
+	if .db[db_reopen] neq 0
+	then
+		close_db (.db);
+	return 0;
+	end;
+
+	if .db[db_reopen] neq 0
+	then
+		close_db (.db);
+	-1
+	end;
+!
+
+
+! global routine delete_db
+!     (
+!     key : ref vector[,byte,unsigned],
+!     keylen : signed long,
+!     db : ref database
+!     ) :  = 
+! 	begin
+! 
+! 	local
+! 	    keyd  : vector[2],
+! 	    rfa : vector[2];
+! 
+! 	keyd[0] = strlen (.key);
+! 	keyd[1] = .key;
+! 	if .db[db_reopen] neq 0 or .db[db_dirf] eql 0
+! 	then
+! 		if reopen_db (.db) eql 0
+! 		then
+! 			return - 1;
+! 
+! 	if lbr$lookup_key (db[db_dirf], keyd, rfa)
+! 	then
+! 		if lbr$delete_key (db[db_dirf], keyd)
+! 		then
+! 			if lbr$delete_data (db[db_dirf], rfa)
+! 			then
+! 				begin
+! 				if .db[db_reopen] neq 0
+! 				then
+! 					close_db (.db);
+! 				return 0;
+! 				end
+! 			else
+! 				lbr$insert_key (db[db_dirf], keyd, rfa);
+! 
+! 	if .db[db_reopen] neq 0
+! 	then
+! 		close_db (.db);
+! 	-1
+! 	end;
+
+
+
+global routine free_db (db : ref database) : novalue  =
+	begin
+
+	if .db[db_dirf] neq 0
+	then
+		lbr$close (db[db_dirf]);
+
+	if .db[db_pagf] neq 0
+	then
+		begin
+		$canexh (desblk = .db[db_pagf]);
+		free (.db[db_pagf]);
+		end;
+
+	if .db[db_name] neq 0
+	then
+		free (.db[db_name]);
+
+	free (.db);
+	end;
+
+
+
+global routine close_db (db : ref database) : novalue  =
+	begin
+	if .db[db_dirf] neq 0
+	then
+		lbr$close (db[db_dirf]);
+
+	if .db[db_pagf] neq 0
+	then
+		$canexh (desblk = .db[db_pagf]);
+	end;
+
+
+
+own
+	index_db_helper_rtn;
+routine index_db_helper( key : ref block[,byte], rfa ) =
+	(.index_db_helper_rtn)( .key[ dsc$w_length ], .key[ dsc$a_pointer ], .rfa );
+
+global routine index_db
+    (
+    match_string : ref vector[,byte,unsigned],
+    rtn,
+    db : ref database
+    ) :  = 
+	begin
+
+	local
+	    match : vector[2],
+	    index_number  : initial (1),
+	    result;
+
+	match[0] = strlen (.match_string);
+	if .match[0] geq lbr$k_max_key_length
+	then
+		match[0] = lbr$k_max_key_length;
+	match[1] = .match_string;
+
+	if .db[db_reopen] neq 0 or .db[db_dirf] eql 0
+	then
+		if reopen_db (.db)  eql  0
+		then
+			return - 1;
+
+	index_db_helper_rtn = .rtn;
+	result = lbr$get_index(db[db_dirf], index_number, index_db_helper, match);
+
+	if .db[db_reopen] neq 0
+	then
+		close_db (.db);
+
+	if .result
+	then
+	    0
+	else
+	    -1
+	end;
+end
+eludom

@@ -1,0 +1,10 @@
+#!/usr/bin/ksh
+export CC_NOANSI="c89"
+export CC_ANSI="c89 -std"
+export COPTIMIZE=" "
+export OBJ_TYPE=".o"
+
+echo makemake ${hand_make_ini} \$\(edit_src\)unix.mak \$\(edit_obj\)unix.mak >/tmp/hand_1_$$
+echo make -f \$\(edit_obj\)unix.mak 2\>\&1 \| tee \$\(edit_obj\)/unix_mak.log >>/tmp/hand_1_$$
+makemake ${hand_make_ini} /tmp/hand_1_$$ /tmp/hand_2_$$
+. /tmp/hand_2_$$

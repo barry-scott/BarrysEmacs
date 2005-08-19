@@ -1,0 +1,24 @@
+!
+!	emacs.r32
+!
+!	Copyright 1986 Barry A. Scott
+!
+%if %declared( load_library_lib )
+%then
+library 'target_library:lib';
+%else
+library 'target_library:starlet';
+%fi
+require 'edit$src:em_gen.req';		! general constants used in emacs
+require 'edit$src:em_mac.req';		! general useful macros
+require 'edit$obj:tt.r32';
+
+!
+!	declare routines as external
+!
+require 'edit$src:em_rtn.req';
+
+!
+!	declare variables as external
+!
+require 'edit$src:em_var.req';

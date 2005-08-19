@@ -1,0 +1,12 @@
+src contents.dat
+src emacsshr.b32
+src emacsshr.cld
+src emacsshr_bld.com
+src emacsshr_lnk.com
+obj ident.dat
+obj_vms emacsshr.obj
+obj_vms emacsshr.opt
+obj_vms emacsshr_cld.obj
+obj_vms emacs_message.obj
+exe_vms emacsshr.exe
+lis_vms emacsshr.map

@@ -1,0 +1,17 @@
+src contents.dat
+obj ident.dat
+src kitinstal.com
+src emacs.cld
+src kit_bld.com
+src spkitbld.com
+src kit_bld_vms.com
+src kit_bld_ultrix.ksh
+src kit_bld_osf1.ksh
+src ultrix_kit.files
+src osf1_kit.files
+src emacs.hlp
+src emacstart.com
+src emacsshut.com
+src emacs_save_environment.com
+src emacs_save_default_environment.com
+exe_unix emacs_ultrix_mips_x060.tar

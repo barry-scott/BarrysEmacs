@@ -1,0 +1,1172 @@
+module emacs_spell_shr
+	(
+	ident	= 'X1-004',
+	addressing_mode (nonexternal=long_relative, external=general)
+	) =
+begin
+
+!
+! 	Copyright (c© 1986, 1987
+!	Barry A. Scott and Nick W. Emery
+!
+! This module implements the EMACS <=> DECspell interface layer in the
+! EMACS sharable image EMACS_SPELL_SHR.EXE.
+!
+! DECspell calls from EMACS through this interface have the following
+! format:
+!
+!	EMACS$SPELL( CMS_COMMAND_ID, ARGS ... )
+!
+
+require 'edit$obj:em_user';
+library 'target_library:starlet';
+
+linkage
+    jsb_regs = jsb (register = 11, register = 10, register = 9,
+	register = 8, register = 7, register = 6, register = 5);
+
+builtin
+    movc3;
+
+forward routine
+    emit_one_line,
+    message,
+    emacs$spell,
+    sig_to_ret,
+    fetch_refs : novalue,
+    check : jsb_regs,
+    reinitialize_et : novalue,
+    initialize_et,
+    lookup_et,
+    terminate_et,
+    reopen_vc : novalue,
+    open_vc,
+    load_vc,
+    verify_vc,
+    correct_vc,
+    add_memory_vc,
+    add_disk_vc,
+    close_vc;
+
+! Tunable parameters
+literal
+    ch$_lf = 10,		! LF ascii character
+    max_string = 1068,		! maximum size of string
+    max_count = 40,		! maximum number of entries
+    max_sptype = 4,
+    line_length = 70;		! line length
+
+!
+! Define the SPELL command function codes. These are global literals so that
+! they can be made universal and imported into EMACS
+!
+
+global literal
+    spell$_low = 0,
+    spell$_et_open = 0,			! Start up the thesaurus
+    spell$_et_lookup = 1,		! Look up a word in the thesaurus
+    spell$_et_close = 2,		! Close access to the thesaurus
+    spell$_vc_open = 3,			! Start using the spell checker
+    spell$_vc_load = 4,			! Load personal.lgp file
+    spell$_vc_add_memory = 5,		! Add word into memory dictionary
+    spell$_vc_add_disk = 6,		! Add word to pernonal.lgp file
+    spell$_vc_verify = 7,		! Verify a word's spelling
+    spell$_vc_correct = 8,		! Provide corrections for a word
+    spell$_vc_close = 9,		! Stop using the spell checker
+    spell$_high = 9;
+
+!
+! Define access to the LNGSPL functions
+!
+
+macro
+    lngspl$initialize_et = (.lngspl$_initialize_et) %,
+    lngspl$lookup_et = (.lngspl$_lookup_et) %,
+    lngspl$terminate_et = (.lngspl$_terminate_et) %,
+    lngspl$initialize_verifier = (.lngspl$_initialize_verifier) %,
+    lngspl$initialize_user = (.lngspl$_initialize_user) %,
+    lngspl$verify_word_master = (.lngspl$_verify_word_master) %,
+    lngspl$add_word_user = (.lngspl$_add_word_user) %,
+    lngspl$verify_line = (.lngspl$_verify_line) %,
+    lngspl$get_correction = (.lngspl$_get_correction) %,
+    lngspl$load_user_disk = (.lngspl$_load_user_disk) %,
+    lngspl$open_user_disk = (.lngspl$_open_user_disk) %,
+    lngspl$add_word_user_disk = (.lngspl$_add_word_user_disk) %,
+    lngspl$close_user_disk = (.lngspl$_close_user_disk) %,
+    lngspl$terminate_verifier = (.lngspl$_terminate_verifier) %;
+
+
+own
+    lngspl$_initialize_et,
+    lngspl$_lookup_et,
+    lngspl$_terminate_et,
+    lngspl$_initialize_verifier,
+    lngspl$_initialize_user,
+    lngspl$_verify_word_master,
+    lngspl$_add_word_user,
+    lngspl$_verify_line,
+    lngspl$_get_correction,
+    lngspl$_load_user_disk,
+    lngspl$_open_user_disk,
+    lngspl$_add_word_user_disk,
+    lngspl$_close_user_disk,
+    lngspl$_terminate_verifier;
+
+external literal
+    lngspl$_completed;
+
+!
+! Define the EMACS callback macros.
+!
+
+macro
+	check_args (min, max) = bliss (.call_back,
+	    emacs__k_check_args, min, max) %,
+	arg_count (location) = bliss (.call_back,
+	    emacs__k_arg_count, location) %,
+	numeric_arg (offset, location) = bliss (.call_back,
+	    emacs__k_numeric_arg, offset, location) %,
+	string_arg (offset, location, size) = bliss (.call_back,
+	    emacs__k_string_arg, offset, location, size) %,
+	error (string) = bliss (.call_back,
+	    emacs__k_error, string) %,
+	malloc (size, address) = bliss (.call_back,
+	    emacs__k_allocate, size, address) %,
+	free (address) = bliss (.call_back,
+	    emacs__k_free, address) %,
+	use_buffer (address) = bliss (.call_back,
+	    emacs__k_use_buffer, address) %,
+	goto_character (number) = bliss (.call_back,
+	    emacs__k_goto_character, number) %,
+	buffer_size (size) = bliss (.call_back,
+	    emacs__k_buffer_size, size) %,
+	delete_characters (count) = bliss (.call_back,
+	    emacs__k_delete_characters, count) %,
+	insert_string (str) = bliss (.call_back,
+	    emacs__k_insert_string, str) %,
+	insert_character (ch) = bliss (.call_back,
+	    emacs__k_insert_character, ch) %,
+	dot (d, b, s) = bliss (.call_back,
+	    emacs__k_dot, d, b, s) %,
+	return_string_to_param (arg, str) = bliss (.call_back,
+	    emacs__k_return_string_to_param, arg, str) %,
+	GapTo (pos) = bliss (.call_back,
+	    emacs__k_gap_to, pos) %,
+	buffer_extent (s1,p1,s2,p2) = bliss (.call_back,
+	    emacs__k_buffer_extent, s1, p1, s2, p2) %,
+	numeric_result (val) = bliss (.call_back,
+	    emacs__k_numeric_result, val) %,
+	string_result (val) = bliss (.call_back,
+	    emacs__k_string_result, val) %;
+
+!
+! Save the context information
+!
+
+field
+    ctx_fields =
+	set
+	ctx_restore = [0],		! Restore of image
+	ctx_et_restore = [1],		! Restore count of last use of et
+	ctx_et_len = [2],		! Length of ET filespec
+	ctx_et = [3],			! Pointer to ET filespec
+	ctx_vc_restore = [4],		! Restore count of last useof vc
+	ctx_vc_master_len = [5],	! Length of master dictionary file
+	ctx_vc_master = [6],		! Length of master dictionary file
+	ctx_vc_ram_len = [7],		! Length of ram dictionary file
+	ctx_vc_ram = [8],		! Length of ram dictionary file
+	ctx_vc_personal_len = [9],	! Length of personal dictionary file
+	ctx_vc_personal = [10],		! Length of personal dictionary file
+	ctx_vc_um_len = [11],		! Size of user memory
+	ctx_vc_um = [12]		! User memory
+	tes;
+
+literal
+    ctx_length = %fieldexpand (ctx_vc_um,0) + 1;	! Length of CTX strcuture
+
+bind
+    not_present = %ascid 'This facility is not available in your version of DECspell',
+    four_spaces = %ascid '    ';
+
+own
+    call_back,
+    line_count;
+
+external routine
+    lib$find_image_symbol;
+! Put message codes - emits error message lines
+routine emit_one_line (str : ref block[2*%upval, byte]) =
+	begin
+	if .line_count eql 0
+	then
+		error (.str);
+	line_count = .line_count + 1;
+	sts$k_warning
+	end;
+
+routine message (sig) =
+	begin
+	local
+	    p : ref vector[ ,long] initial (sig);
+	line_count = 0;
+	p[-1]  = .p[-1] or (1 ^ 16);
+	$putmsg (msgvec = p[-1], actrtn = emit_one_line);
+	ss$_continue
+	end;
+global routine emacs$spell
+    (
+    cb,
+    context : ref vector[],
+    restore : ref vector[]
+    ) =
+	begin
+
+	local
+	    status,
+	    func;
+
+	call_back = .cb;
+
+	! Allocate the memory for the context block if it is required
+	if .context[0] eqla 0
+	then
+		if not (status = malloc(%upval * ctx_length, .context))
+		then
+			return .status
+		else
+			begin
+
+			local
+			    ctx : ref vector[] field (ctx_fields) initial (.context[0]);
+
+			ch$fill (0, %upval * ctx_length, .ctx);
+			ctx[ctx_restore] = -1;
+			ctx[ctx_et_restore] = -1;
+			ctx[ctx_vc_restore] = -1;
+			end;
+
+	! Fetch the addresses of interest
+	if .vector[.context[0], ctx_restore] neq .restore[0]
+	then
+		fetch_refs (.context[0], .restore[0]);
+
+	! Check that there are a reasonable number of args
+	if (status = check_args (1, 10))
+	then
+		if (status = numeric_arg (1, func))
+		then
+			status =
+				begin
+				case .func
+				from spell$_low to spell$_high of
+					set
+					[inrange, outrange]:
+						begin
+						error (%ascid 'Invalid function code for DECspell');
+						ss$_normal
+						end;
+
+					[spell$_et_open]:
+						initialize_et (.context[0], .restore[0]);
+
+					[spell$_et_lookup]:
+						lookup_et(.context[0], .restore[0]);
+
+					[spell$_et_close]:
+						terminate_et (.context[0], .restore[0], 1);
+
+					[spell$_vc_open]:
+						open_vc (.context[0], .restore[0]);
+
+					[spell$_vc_load]:
+						load_vc (.context[0], .restore[0]);
+
+					[spell$_vc_add_memory]:
+						add_memory_vc (.context[0], .restore[0]);
+
+					[spell$_vc_add_disk]:
+						add_disk_vc (.context[0], .restore[0]);
+
+					[spell$_vc_correct]:
+						correct_vc (.context[0], .restore[0]);
+
+					[spell$_vc_verify]:
+						verify_vc (.context[0], .restore[0]);
+
+					[spell$_vc_close]:
+						close_vc (.context[0], .restore[0], 1);
+					tes
+				end;
+	return .status;
+	end;
+! Fetch the context information
+routine sig_to_ret (sig : ref vector[], mech : ref vector[]) =
+	if .sig[1] leq ss$_tbit
+	then
+		ss$_resignal
+	else
+		ss$_continue;
+
+routine fetch_refs (context : ref vector[] field (ctx_fields), restore) : novalue =
+	begin
+
+	bind
+	    lngsplshr = %ascid 'LNGSPLSHR';
+
+	enable
+		sig_to_ret;
+
+	! Fetch the symbol addresses
+	if not lib$find_image_symbol (lngsplshr, %ascid 'LNGSPL$INITIALIZE_ET',
+	    lngspl$_initialize_et)
+	then
+		lngspl$_initialize_et = 0;
+	if not lib$find_image_symbol(lngsplshr, %ascid 'LNGSPL$LOOKUP_ET',
+	    lngspl$_lookup_et)
+	then
+		lngspl$_lookup_et = 0;
+	if not lib$find_image_symbol(lngsplshr, %ascid 'LNGSPL$TERMINATE_ET',
+	    lngspl$_terminate_et)
+	then
+		lngspl$_terminate_et = 0;
+	if not lib$find_image_symbol (lngsplshr, %ascid 'LNGSPL$INITIALIZE_VERIFIER',
+	    lngspl$_initialize_verifier)
+	then
+		lngspl$_initialize_verifier = 0;
+	if not lib$find_image_symbol (lngsplshr, %ascid 'LNGSPL$INITIALIZE_USER',
+	    lngspl$_initialize_user)
+	then
+		lngspl$_initialize_user = 0;
+	if not lib$find_image_symbol (lngsplshr, %ascid 'LNGSPL$VERIFY_WORD_MASTER',
+	    lngspl$_verify_word_master)
+	then
+		lngspl$_verify_word_master = 0;
+	if not lib$find_image_symbol (lngsplshr, %ascid 'LNGSPL$ADD_WORD_USER',
+	    lngspl$_add_word_user)
+	then
+		lngspl$_add_word_user = 0;
+	if not lib$find_image_symbol (lngsplshr, %ascid 'LNGSPL$VERIFY_LINE',
+	    lngspl$_verify_line)
+	then
+		lngspl$_verify_line = 0;
+	if not lib$find_image_symbol (lngsplshr, %ascid 'LNGSPL$GET_CORRECTION',
+	    lngspl$_get_correction)
+	then
+		lngspl$_get_correction = 0;
+	if not lib$find_image_symbol (lngsplshr, %ascid 'LNGSPL$LOAD_USER_DISK',
+	    lngspl$_load_user_disk)
+	then
+		lngspl$_load_user_disk = 0;
+	if not lib$find_image_symbol (lngsplshr, %ascid 'LNGSPL$OPEN_USER_DISK',
+	    lngspl$_open_user_disk)
+	then
+		lngspl$_open_user_disk = 0;
+	if not lib$find_image_symbol (lngsplshr, %ascid 'LNGSPL$ADD_WORD_USER_DISK',
+	    lngspl$_add_word_user_disk)
+	then
+		lngspl$_add_word_user_disk = 0;
+	if not lib$find_image_symbol (lngsplshr, %ascid 'LNGSPL$CLOSE_USER_DISK',
+	    lngspl$_close_user_disk)
+	then
+		lngspl$_close_user_disk = 0;
+	if not lib$find_image_symbol (lngsplshr, %ascid 'LNGSPL$TERMINATE_VERIFIER',
+	    lngspl$_terminate_verifier)
+	then
+		lngspl$_terminate_verifier = 0;
+
+	context[ctx_restore] = .restore;
+	end;
+! Check status, and also check for fortran error codes!
+routine check (value) : jsb_regs =
+	selectone .value
+	of
+		set
+		[29, 30] :
+			rms$_fnf;
+		[42] :
+			ss$_nosuchdev;
+		[43] :
+			rms$_fnm;
+		[44] :
+			ss$_bugcheck;
+		[otherwise] :
+			.value;
+		tes;
+routine reinitialize_et (context : ref vector[] field (ctx_fields)) : novalue =
+	begin
+	! Try to open the ET if it was opened before
+	if .context[ctx_et] neqa 0
+	then
+		if .lngspl$_initialize_et neq 0
+		then
+			lngspl$initialize_et (context[ctx_et_len]);
+	end;
+! Initialize the ET
+routine initialize_et (context : ref vector[] field (ctx_fields), restore) =
+	begin
+
+	local
+	    status : signed long,
+	    argc : signed long,
+	    et_text : vector [255,byte],
+	    et  : vector [2] initial (%allocation (et_text), et_text);
+
+	! Check the arguments, arg[1] is optional and is defaulted
+	if not (status = check_args(1, 2))
+	or not (status = arg_count(argc))
+	then
+		return .status;
+
+	! Fetch the filename if specified
+	if .argc gtr 1
+	then
+		begin
+		if (status = string_arg (2, et, et))
+		then
+			incra p from et_text to et_text[.et[0]-1] do
+				begin
+				map
+					p : ref vector [, byte];
+				if .p[0] geq 'a' and .p[0] leq 'z'
+				then
+					p[0] = .p[0] + 'A' - 'a'
+				end
+		else
+			return .status;
+		end
+	else
+		begin
+		et[1] = uplit (%ascii 'LNGSPLAET');
+		et[0] = 9;
+		end;
+
+	! Close the existing ET if it was already open
+	if .context[ctx_et_len] neq 0
+	then
+		terminate_et (.context, .restore, 0);
+
+	! Try to open the ET
+	if .lngspl$_initialize_et neq 0
+	then
+		if (status = check (lngspl$initialize_et (et)))
+		then
+			begin
+
+			local
+			    p : ref vector[, byte];
+
+			if malloc(.et[0], p)
+			    then
+				begin
+				if .context[CTX_ET]
+				then
+					free (.context[CTX_ET]);
+				context[ctx_et_restore] = .restore;
+				context[ctx_et_len] = .et[0];
+				context[ctx_et] = .p;
+				movc3 (et[0], .et[1], .p);
+				end;
+			end
+		else
+			message (.status, 0)
+	else
+		error (not_present);
+
+	ss$_normal
+	end;
+! Lookup a word in the ET
+literal
+    include_synonyms = 2,	! Include synonyms in the output
+    include_description = 1;	! Include description in the output
+
+own
+    sp  : blockvector [MAX_SPTYPE, 2*%upval, byte] initial
+	(
+        11, uplit (%ascii '(adjective)'),
+        6, uplit (%ascii '(noun)'),
+        8, uplit (%ascii '(adverb)'),
+        6, uplit (%ascii '(verb)')
+    	);
+routine lookup_et (context : ref vector[] field(ctx_fields), restore) =
+	begin
+
+	local
+	    status : signed long,
+	    argc : signed long,
+	    word_text : vector[max_string, byte],
+	    word_is : vector[2] initial (%allocation (word_text), word_text),
+	    option : initial (0),
+	    syn_cap : initial (1),
+	    start_pos : initial (0),
+	    word_length : signed long,
+	    string_text : vector[max_string, byte],
+	    string_out : vector[2] initial (%allocation (string_text), string_text),
+	    syn_text : vector[max_string, byte],
+	    syn_out : vector[2] initial (%allocation (syn_text), syn_text),
+	    word_start : vector[max_count],
+	    word_lengths : vector[max_count],
+	    sptype : vector[max_count],
+	    syn_start : vector[max_count],
+	    syn_lengths : vector[max_count],
+	    syn_sptype : vector[max_count],
+	    selector : initial (include_description or include_synonyms);
+
+	! Make sure ET is open before looking up in it.
+	if .context[ctx_et_restore] neq .restore
+	then
+		reinitialize_et (.context, .restore);
+
+	! Check the arguments, arg[1] is the word to check
+	if not (status = check_args(2, 3))
+	then
+		return .status;
+
+	! Fetch the word if specified
+	if not (status = string_arg (2, word_is, word_is))
+	then
+		return .status;
+
+	! Fetch the word if specified
+	if not (status = arg_count (argc))
+	then
+		return .status;
+
+	if .argc gtr 2
+	then
+		if not (status = numeric_arg (3, selector))
+		then
+			return .status;
+
+	! Look up the word in the ET
+	if .lngspl$_lookup_et neq 0
+	then
+		if (status = check (lngspl$lookup_et (word_is, option,
+		    syn_cap, start_pos, word_length, string_out,
+		    word_start, word_lengths, sptype)))
+		    then
+			begin
+
+			local
+			    i : signed long,
+			    def : vector[2];
+
+			word_is[0] = .word_length;
+			word_is[1] = word_text[.start_pos - 1];
+
+			! Load the information into the current buffer
+			i = 0;
+			while .i lss max_count and .word_start[.i] neq 0 do
+				begin
+				insert_string (word_is);
+				insert_character (' ');
+				if .sptype[.i] lss max_sptype
+				then
+					insert_string (sp[.sptype[.i], dsc$w_length]);
+				insert_character (ch$_lf);
+
+				! Include the description if required
+				if (.selector and include_description) neq 0
+				then
+					begin
+					insert_string (four_spaces);
+					def[0] = .word_lengths[.i];
+					def[1] = string_text[.word_start[.i] - 1];
+					insert_string (def);
+					insert_character (ch$_lf);
+					end;
+
+				! Include the synonyms if required
+				if (.selector and include_synonyms) neq 0
+				then
+					begin
+
+					local
+					    opt_syn  : initial (.i + 1),
+					     j;
+
+					if (status = check (lngspl$lookup_et(
+					    word_is, opt_syn, syn_cap, start_pos,
+					    word_length, syn_out, syn_start,
+					    syn_lengths, syn_sptype)))
+					    then
+						begin
+						insert_string (four_spaces);
+						j = 1;
+						while .j lss max_count
+						and .syn_start[.j] neq 0 do
+							begin
+							if .j neq 1
+							then
+								insert_character (' ');
+							def[0] = .syn_lengths[.j] + 1;
+							def[1] = syn_text[.syn_start[.j] - 1];
+							insert_string (def);
+							j = .j + 1;
+							end;
+						end;
+					insert_character (ch$_lf);
+					end;
+				i = .i + 1;
+				end;
+			end
+		else
+			message (.status, 0)
+	else
+		error (not_present);
+	ss$_normal
+	end;
+routine terminate_et (context : ref vector[] field (ctx_fields), restore, chk) =
+	begin
+
+	local
+	    status  : signed long;
+
+	if .chk
+	then
+		! Check the arguments
+		if not (status = check_args (1, 1))
+		then
+			return .status;
+
+	! Check that the ET is open
+	if .context[ctx_et] eql 0
+	then
+		begin
+		error (%ascid 'You hav''nt opened the Electronic Thesaurus');
+		return ss$_normal;
+		end;
+
+	! Close the ET
+	if .lngspl$_terminate_et neq 0 and .context[ctx_et_restore] eql .restore
+	then
+		lngspl$terminate_et ();
+
+	if .context[ctx_et] neq 0
+	then
+		free (.context[ctx_et]);
+	context[ctx_et] = 0;
+	context[ctx_et_len] = 0;
+
+	ss$_normal
+	end;
+routine reopen_vc (context : ref vector[] field (ctx_fields), restore, reload)
+    : novalue =
+	begin
+
+	local
+	    num_loaded,
+	    status : signed long;
+
+	! Try to open the speller
+	if .lngspl$_initialize_verifier neq 0
+	then
+		begin
+		if (status = check (lngspl$initialize_verifier (
+		    context[ctx_vc_master_len], context[ctx_vc_ram_len], %ref (1),
+		    context[ctx_vc_um_len], .context[ctx_vc_um])))
+		then
+			begin
+			if .reload and .lngspl$_load_user_disk neqa 0
+			and .context[ctx_vc_personal] neqa 0
+			then
+				lngspl$load_user_disk (
+				    context[ctx_vc_personal_len],
+				    .context[ctx_vc_um], num_loaded);
+			context [ctx_vc_restore] = .restore;
+			return;
+			end;
+		end;
+	end;
+routine open_vc (context : ref vector[] field (ctx_fields), restore) =
+	begin
+	local
+	    status : signed long,
+	    argc : signed long,
+	    master_text : vector [255,byte],
+	    master  : vector [2] initial (%allocation (master_text), master_text),
+	    ram_text : vector [255,byte],
+	    ram  : vector [2] initial (%allocation (ram_text), ram_text),
+	    um_len,
+	    um : ref vector [];
+
+	! Check the arguments
+	if not (status = check_args(1, 4))
+	or not (status = arg_count(argc))
+	then
+		return .status;
+
+	! Fetch the master filename if specified
+	if .argc gtr 1
+	then
+		begin
+		if (status = string_arg (2, master, master))
+		then
+			incra p from master_text to master_text[.master[0]-1] do
+				begin
+				map
+					p : ref vector [, byte];
+				if .p[0] geq 'a' and .p[0] leq 'z'
+				then
+					p[0] = .p[0] + 'A' - 'a'
+				end
+		else
+			return .status;
+		end
+	else
+		begin
+		master[1] = uplit (%ascii 'LNGSPLAED');
+		master[0] = 9;
+		end;
+
+	! Fetch the ram filename if specified
+	if .argc gtr 2
+	then
+		begin
+		if (status = string_arg (3, ram, ram))
+		then
+			incra p from ram_text to ram_text[.ram[0]-1] do
+				begin
+				map
+					p : ref vector [, byte];
+				if .p[0] geq 'a' and .p[0] leq 'z'
+				then
+					p[0] = .p[0] + 'A' - 'a'
+				end
+		else
+			return .status;
+		end
+	else
+		begin
+		ram[1] = uplit (%ascii 'LNGSPLAEM');
+		ram[0] = 9;
+		end;
+
+	! Fetch the User Memory size if specified
+	if .argc gtr 3
+	then
+		begin
+		if not (status = numeric_arg (4, um_len))
+		then
+			return .status;
+		end
+	else
+		um_len = 4096;
+
+	! Close the existing verifier if necessary
+	if .context[ctx_vc_master] neqa 0
+	then
+		close_vc (.context, .restore, 0);
+
+	! Create the user memory
+	if not (status = malloc(%upval * (.um_len + 2), um))
+	then
+		return .status;
+
+	! Try to open the speller
+	if .lngspl$_initialize_verifier neq 0
+	then
+		begin
+		if (status = check (lngspl$initialize_verifier (master,
+		    ram, %ref (1), um_len, .um)))
+		then
+			begin
+			if (status = malloc (.master[0], context[ctx_vc_master]))
+			then
+				if (status = malloc (.ram[0], context[ctx_vc_ram]))
+				then
+					begin
+					context[ctx_vc_restore] = .restore;
+					context[ctx_vc_master_len] = .master[0];
+					context[ctx_vc_ram_len] = .ram[0];
+					movc3 (master[0], .master[1],
+					    .context[ctx_vc_master]);
+					movc3 (ram[0], .ram[1],
+					    .context[ctx_vc_ram]);
+					context[ctx_vc_um_len] = .um_len;
+					context[ctx_vc_um] = .um;
+					return ss$_normal;
+					end
+				else
+					free (.context[ctx_vc_master]);
+			end;
+
+		if not .status
+		then
+			message (.status, 0);
+		end
+	else
+		error (not_present);
+
+	ss$_normal
+	end;
+routine load_vc (context : ref vector[] field (ctx_fields), restore) =
+	begin
+	local
+	    status : signed long,
+	    argc : signed long,
+	    lgp_text : vector [255,byte],
+	    num_loaded,
+	    initialize,
+	    lgp  : vector [2] initial (%allocation (lgp_text), lgp_text);
+
+	! Check the arguments
+	if not (status = check_args(1, 3))
+	or not (status = arg_count(argc))
+	then
+		return .status;
+
+	! Fetch the personal.lgp filename if specified
+	if .argc gtr 1
+	then
+		begin
+		if (status = string_arg (2, lgp, lgp))
+		then
+			incra p from lgp_text to lgp_text[.lgp[0]-1] do
+				begin
+				map
+					p : ref vector [, byte];
+				if .p[0] geq 'a' and .p[0] leq 'z'
+				then
+					p[0] = .p[0] + 'A' - 'a'
+				end
+		else
+			return .status;
+		end
+	else
+		begin
+		lgp[1] = uplit (%ascii 'PERSONAL');
+		lgp[0] = 8;
+		end;
+
+	! Fetch the third argument if present - specifies wthether to reinit
+	if .argc gtr 2
+	then
+		begin
+		if not (status = numeric_arg (3, initialize))
+		then
+			return .status;
+		end
+	else
+		initialize = 1;
+
+	! Check to see if we are restarting after a save-environment
+	if .context[ctx_vc_restore] neq .restore
+	then
+		reopen_vc (.context, .restore, 0);
+
+	! If there was already a personal dictionary open, then throw it away
+	! and initialize the memory etc if not .initialize! 
+	if .initialize neq 0 and .context[ctx_vc_personal] neqa 0
+	then
+		begin
+		free (.context[ctx_vc_personal]);
+		if lngspl$_initialize_user neqa 0
+		then
+			lngspl$initialize_user (context[ctx_vc_um_len], .context[ctx_vc_um]);
+		end;
+
+	! Try to read in the user's disk file
+	if .lngspl$_load_user_disk neq 0
+	then
+		if (status = lngspl$load_user_disk (lgp, .context[ctx_vc_um],
+		    num_loaded))
+		then
+			begin
+			if .initialize neq 0
+			then
+				if malloc (.lgp[0], context[ctx_vc_personal])
+				then
+					begin
+					movc3 (lgp[0], .lgp[1], .context[ctx_vc_personal]);
+					context[ctx_vc_personal_len] = .lgp[0];
+					end;
+			numeric_result (.num_loaded);
+			end
+		else
+			message (.status, 0)
+	else
+		error (not_present);
+	ss$_normal
+	end;
+literal
+    lngspl$_correct_spelling = 1,
+    lngspl$_initial_capital = 2,
+    lngspl$_all_upper_case = 4,
+    lngspl$_compound_word = 8,
+    lngspl$_case_incorrect = 16,
+    lngspl$_word_not_found = 32,
+    lngspl$_illegal_string = 64;
+
+routine verify_vc (context : ref vector[] field(ctx_fields), restore) =
+	begin
+
+	local
+	    status : signed long,
+	    argc : signed long,
+	    error_mask : initial (lngspl$_case_incorrect or lngspl$_word_not_found or lngspl$_illegal_string),
+	    error_count,
+	    error_pos,
+	    error_size,
+	    error_type,
+	    word_text : vector[256, byte],
+	    word_is : vector[2] initial (%allocation (word_text), word_text),
+	    hyphen;
+
+	! Make sure verifier is open before looking up in it.
+	if .context[ctx_vc_restore] neq .restore
+	then
+		reopen_vc (.context, .restore, 1);
+
+	! Check the arguments, arg[1] is the word to check
+	if not (status = check_args(2, 3))
+	or not (status = arg_count(argc))
+	then
+		return .status;
+
+	! Fetch the word to be checked
+	if not (status = string_arg (2, word_is, word_is))
+	then
+		return .status;
+
+	! Fetch error mask flags if specified
+	if .argc gtr 2
+	then
+		if not (status = numeric_arg (3, error_mask))
+		then
+			return .status;
+
+	! Look up the word
+	if .lngspl$_verify_line neq 0
+	then
+		if (status = check (lngspl$verify_line (
+		    word_is, %ref (1), %ref(1), error_mask, .context[ctx_vc_um],
+		    error_count, error_pos, error_size, error_type)))
+		    then
+			numeric_result (.error_count eql 0)
+		else
+			message (.status, 0)
+	else
+		error (not_present);
+	ss$_normal
+	end;
+literal
+    max_correct = 255,		! Size of corrections
+    max_loop = 30;		! Number of correction loops permitted
+
+routine correct_vc (context : ref vector[] field(ctx_fields), restore) =
+	begin
+
+	local
+	    status : signed long,
+	    argc : signed long,
+	    try_number : initial (0),
+	    hyph : vector [max_loop + 1],
+	    word_text : vector[256, byte],
+	    word_is : vector[2] initial (%allocation (word_text), word_text),
+	    correction_text : vector[max_correct, byte],
+	    correction : vector[2] initial (%allocation (correction_text), correction_text);
+
+	! Make sure verifier is open before looking up in it.
+	if .context[ctx_vc_restore] neq .restore
+	then
+		reopen_vc (.context, .restore, 1);
+
+	! Check the arguments, arg[1] is the word to check
+	if not (status = check_args(2, 2))
+	or not (status = arg_count(argc))
+	then
+		return .status;
+
+	! Fetch the word to be checked
+	if not (status = string_arg (2, word_is, word_is))
+	then
+		return .status;
+
+	! Look up the word
+	if .lngspl$_get_correction neq 0
+	then
+		begin
+		ch$fill (' ', %allocation (correction_text), correction_text);
+		while (status = check (lngspl$get_correction (
+		    word_is, %ref (0), %ref (1), %ref (1), .context[ctx_vc_um],
+		    try_number, correction, hyph))) eql lngspl$_completed do ;
+		if .status
+		then
+			begin
+			if .correction_text[0] eql ' '
+			then
+				correction[0] = 0
+			else
+				decra p from correction_text[max_correct - 1] to correction_text do
+					begin
+					map
+						p : ref vector[, byte];
+					if .p[0] neq ' '
+					then
+						begin
+						correction[0] = p[0] - correction_text + 1;
+						exitloop;
+						end
+					end;
+
+			string_result (correction);
+			end
+		else
+			message (.status, 0)
+		end
+	else
+		error (not_present);
+	ss$_normal
+	end;
+routine add_memory_vc (context : ref vector[] field(ctx_fields), restore) =
+	begin
+
+	local
+	    status : signed long,
+	    argc : signed long,
+	    word_text : vector[256, byte],
+	    word_is : vector[2] initial (%allocation (word_text), word_text);
+
+	! Make sure verifier is open before adding a word
+	if .context[ctx_vc_restore] neq .restore
+	then
+		reopen_vc (.context, .restore, 1);
+
+	! Check the arguments, arg[1] is the word to check
+	if not (status = check_args(2, 2))
+	or not (status = arg_count(argc))
+	then
+		return .status;
+
+	! Fetch the word to be checked
+	if not (status = string_arg (2, word_is, word_is))
+	then
+		return .status;
+
+	! Add the word
+	if .lngspl$_add_word_user neq 0
+	then
+		begin
+		if not (status = check (lngspl$add_word_user (
+		    word_is, %ref (0),.context[ctx_vc_um])))
+		then
+			message (.status, 0)
+		end
+	else
+		error (not_present);
+	ss$_normal
+	end;
+routine add_disk_vc (context : ref vector[] field(ctx_fields), restore) =
+	begin
+
+	local
+	    status : signed long,
+	    argc : signed long,
+	    word_text : vector[256, byte],
+	    word_is : vector[2] initial (%allocation (word_text), word_text);
+
+	! Make sure verifier is open before adding a word
+	if .context[ctx_vc_restore] neq .restore
+	then
+		reopen_vc (.context, .restore, 1);
+
+	! Check the arguments, arg[1] is the word to check
+	if not (status = check_args(2, 2))
+	or not (status = arg_count(argc))
+	then
+		return .status;
+
+	! Check to see if a personal file has been specified. If not, then
+	! Spit out a suitable message
+	if .context[ctx_vc_personal] eqla 0
+	then
+		begin
+		error (%ascid 'No personal dictionary known to the Spelling Corrector');
+		return ss$_normal;
+		end;
+
+	! Fetch the word to be checked
+	if not (status = string_arg (2, word_is, word_is))
+	then
+		return .status;
+
+	! Add the word
+	if .lngspl$_open_user_disk neq 0
+	and .lngspl$_add_word_user_disk neq 0
+	and .lngspl$_close_user_disk neq 0
+	then
+		begin
+		if (status = check (lngspl$open_user_disk (
+		    context[ctx_vc_personal_len])))
+		then
+			if (status = check (lngspl$add_word_user_disk (
+			    word_is, %ref (0))))
+			then
+				begin
+				lngspl$close_user_disk();
+				return ss$_normal;
+				end;
+		message (.status, 0)
+		end
+	else
+		error (not_present);
+	ss$_normal
+	end;
+routine close_vc (context : ref vector[] field (ctx_fields), restore, chk) =
+	begin
+
+	local
+	    status  : signed long;
+
+	if .chk
+	then
+		! Check the arguments
+		if not (status = check_args (1, 1))
+		then
+			return .status;
+
+	! Check that the VC is open
+	if .context[ctx_vc_master] eqla 0
+	then
+		begin
+		error (%ascid 'You hav''nt used the Spelling Corrector');
+		return ss$_normal;
+		end;
+
+	! Close the VC
+	if .lngspl$_terminate_verifier neq 0
+	then
+		if .context[ctx_vc_restore] neq .restore
+		or  (status = check (lngspl$terminate_verifier()))
+		then
+			begin
+			if .context[ctx_vc_master] neqa 0
+			then
+				free (.context[ctx_vc_master]);
+			if .context[ctx_vc_ram] neqa 0
+			then
+				free (.context[ctx_vc_ram]);
+			if .context[ctx_vc_personal] neqa 0
+			then
+				free (.context[ctx_vc_personal]);
+			if .context[ctx_vc_um] neqa 0
+			then
+				free (.context[ctx_vc_um]);
+			context[ctx_vc_master_len] = 0;
+			context[ctx_vc_master] = 0;
+			context[ctx_vc_ram_len] = 0;
+			context[ctx_vc_ram] = 0;
+			context[ctx_vc_personal_len] = 0;
+			context[ctx_vc_personal] = 0;
+			context[ctx_vc_um_len] = 0;
+			context[ctx_vc_um] = 0;
+			end
+		else
+			message (.status, 0)
+	else
+		error (not_present);
+
+	ss$_normal
+	end;
+end
+eludom

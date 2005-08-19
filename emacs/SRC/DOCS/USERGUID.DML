@@ -1,0 +1,26 @@
+<comment>
+	Profile for the Emacs User's Guide.
+
+	Process using the SOFTWARE.GUIDE doctype.
+
+	Adrian Pasciuta,  9-Mar-1990
+<endcomment>
+
+<doctype>(SOFTWARE.GUIDE)
+
+<profile>
+	<element>(docs$src:emacs_ug_front.sdml)
+
+	<element>(docs$src:emacs_ug_intro.sdml)
+	<element>(docs$src:emacs_ug_vms.sdml)
+	<element>(docs$src:emacs_ug_basicedit.sdml)
+	<element>(docs$src:emacs_ug_filetypes.sdml)
+	<element>(docs$src:emacs_ug_advedit.sdml)
+	<element>(docs$src:emacs_ug_mistakes.sdml)
+	<element>(docs$src:emacs_ug_custom.sdml)
+
+	<element>(docs$src:emacs_ug_packages.sdml)
+	<element>(docs$src:emacs_ug_bindings.sdml)
+
+	<index_file>
+<endprofile>

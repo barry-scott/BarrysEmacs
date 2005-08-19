@@ -1,0 +1,946 @@
+<chapter>(Programming EMACS From Other Languages\otherlang_chap)
+
+<p>
+You can program EMACS using the Mock Lisp programming language built in to
+EMACS, or you can use any other supported VMS programming language.
+This chapter describes the various ways you can program EMACS from other
+VMS programming  languages.
+
+<p>
+<reference>(emacsshr_sec) describes how to invoke EMACS from another
+program.  <reference>(shraccess_sec) describes how to access internal
+EMACS routines from another program.
+
+<head1>(EMACSSHR and Callable EMACS\emacsshr_sec)
+
+<x>(EMACSSHR shareable image)
+<x>(Callable EMACS)
+
+<p>
+The image  SYS$SHARE:EMACSSHR.EXE is a callable interface to EMACS that
+allows you to access EMACS from a program.
+
+<p>
+EMACSSHR tries to access the EMACS running in the subprocess described by
+the logical name EMACS$PROCESS_NAME.  If this logical name does not exist,
+EMACSSHR uses the default EMACS subprocess name. If the target EMACS
+subprocess does not exist,  EMACSSHR creates the subprocess
+and starts EMACS in the subprocess. Otherwise, it simply attaches to the
+specified EMACS as usual.
+
+<x>(EMACSSHR)
+<p>
+The following sections describe the various entry points in EMACSSHR.
+
+<head2>(EMACS$EMACS\emacsdollaremacs_sec)
+
+<x>(EMACS$EMACS)
+
+<p>
+This interface is the simplest entry point to EMACSSHR. You specify the
+address of a string descriptor as the only argument, and EMACSSHR treats the
+string as a DCL command line. The command is parsed in the usual way, and
+then the arguments are passed to the appropriate EMACS image.
+
+<head2>(EMACS$EDIT\emacsdollaredit_sec)
+
+<x>(EMACS$EDIT)
+
+<p>
+EMACSSHR conforms to the calling standards for
+callable VMS MAIL images. EMACSSHR has an appropriate universal symbol,
+EMACS$EDIT, which is the callable entry point for callable VMS MAIL.
+EMACS$EDIT takes the following parameters:
+
+<definition_list>
+
+<deflist_item>(IN_FILE)
+<deflist_def>
+The address of a string descriptor containing the name of the file to be
+edited.
+
+<deflist_item>(OUT_FILE)
+<deflist_def>
+The address of a string descriptor containing the name of the file to be
+written with the completed edits. If this parameter is omitted, The
+default action is to write a new version of the input file.
+
+<deflist_item>(PACKAGE_NAME)
+<deflist_def>
+The address of a descriptor containing the name of the EMACS package
+to be run to edit the file. If this parameter is omitted, the default package
+<quote>(EMACS) is invoked.
+
+<enddefinition_list>
+
+
+<head2>(EMACS$UTILITY\emacsdollarutility_sec)
+
+<x>(EMACS$UTILITY)
+
+<p>
+The EMACS$UTILITY entry point  in EMACSSHR provides access to all of
+the functionality of the EMACS command interface. This entry point takes the
+following parameters:
+
+<definition_list>
+
+<deflist_item>(PROCESS_NAME)
+<deflist_def>
+The address of a descriptor containing the name of the
+subprocess to which to attach when resuming a paused EMACS or to spawn when
+creating a new EMACS. Omit this parameter to use the current process name.
+
+<deflist_item>(PACKAGE)
+<deflist_def>
+The address of a descriptor containing the name of the package
+to run when EMACS gains control. Omit this parameter to run the default
+package (EMACS).
+
+<deflist_item>(RESTORE)
+<deflist_def>
+The address of a descriptor containing the name of the
+environment file to be restored by EMACS when it is starting a new
+subprocess. If you omit this argument, no environment is restored.
+
+<deflist_item>(ARG_COUNT)
+<deflist_def>
+A longword containing the number of entries in the ARGS vector.
+
+<deflist_item>(ARGS)
+<deflist_def>
+The address of a vector of descriptors containing the arguments
+for EMACS.
+
+<deflist_item>(LOG)
+<deflist_def>
+A longword used to control whether logging messages are displayed
+between EMACS and DCL transitions. If true, logging is performed.
+
+<deflist_item>(CURRENT_PROCESS)
+<deflist_def>
+A longword used to control whether EMACS is run in the current process or
+in a subprocess. If true, EMACS runs in the current process.
+
+<deflist_item>(PATH)
+<deflist_def>
+The address of a descriptor which contains the default directory
+of the parent process. If omitted, the default directory is used.
+
+<deflist_item>(RETADR)
+<deflist_def>
+The address of a string descriptor that EMACS$UTILITY fills
+with any information returned from EMACS when it exits or pauses.
+
+<enddefinition_list>
+
+
+<head1>(Shareable Image Access\shraccess_sec)
+
+<x>(Shareable image access)
+
+<p>
+The Shareable Image Access facility allows you to access and execute any
+routines defined with the universal attribute in a VMS shareable
+image.  You can access routines in external images from EMACS by defining
+an EMACS <newterm>(external function) and by specifying the image location
+of the external function; EMACS will load in the specified shareable image
+file when the function is called.
+
+<p>
+EMACS allows you to call an external function in exactly the same way as any
+other EMACS function. Arguments can be provided with the usual range of
+types.
+
+<p>
+EMACS provides an external function with a set of <quote>(call-back)
+operations that enable it to perform operations such as fetching
+arguments and reading and writing buffers.
+
+<p>
+These features provide a layered  interface to any shareable image by
+providing interfacing routines between EMACS and the shareable image. This
+is shown in  <reference>(layermodel_fig).
+
+<figure>(Layer Model of External Functions\layermodel_fig)
+<figure_file>(postscript\docs$src:emacs_pg_layermodel_fig.ps\8)
+<figure_file>(bookreader\docs$src:emacs_pg_layermodel_fig.fse\8)
+<endfigure>
+
+
+<head2>(Shareable Image Access Functions\shraccessfuns_sec)
+
+<x>(Shareable image access<xs>Functions)
+
+<definition_list>
+
+<deflist_item>((external-function
+		<emphasis>(function shareable-image symbol\italic)))
+<x>(external-function)
+<deflist_def>
+Defines an EMACS function which executes code in a shareable image.
+<emphasis>(function\italic) is the name of the EMACS function to be
+defined.  When this function is called, the code in the shareable image is
+executed.  <emphasis>(shareable-image\italic) is the filename of the
+shareable image in which the code is located. If no device or directory is
+specified, SYS$SHARE: is used.  <emphasis>(symbol\italic) is the name of
+the universal symbol defining the entry point to the routine to be
+executed. If this argument is omitted, <emphasis>(function\italic) is used
+to define <emphasis>(symbol\italic).
+
+<deflist_item>((list-images))
+<x>(list-images)
+<deflist_def>
+Creates a buffer called <key_name>(Image list) and fills
+it with information about the images in which external functions have been
+referenced.
+
+<enddefinition_list>
+
+<p>
+A call to <key_name>(external-function) does not actually cause the
+shareable image to be loaded and no check is made to see that the required
+symbol is defined in the image---the image is loaded and symbol is checked
+when the function is first called.
+
+<p>
+When a saved environment is restored, images are automatically re-loaded
+the first time an external function is called.
+
+
+<head2>(External Function Interface\extfunint_sec)
+
+<x>(External functions<xs>Interface to)
+
+<p>
+Each function called by EMACS must comply with a strict set of inputs and
+outputs. EMACS imposes these rules to limit the possibility of a called
+routine  destroying EMACS' internal data structures.
+
+<p>
+Each function called by EMACS must accept the following arguments:
+
+<definition_list>
+
+<deflist_item>(CALL_BACK)
+<deflist_def>
+This is the address of the EMACS call-back routine that allows
+the code to access the call-back operations. You call this
+routine according to the rules described in the following sections.
+
+<deflist_item>(CONTEXT)
+<deflist_def>
+This is the address of a longword that the called routine can use to
+maintain some cross-call context. You could use this longword as the
+address of a context block, and allocate this block using the EMACS memory
+allocation call-back operation.
+
+<deflist_item>(RESTORE)
+<deflist_def>
+This is the address of a longword that contains the current value of the
+<key_name>(restored-environment) variable. You should use this value in
+conjunction with the routine's context block to decide when to take any
+special action after a saved environment is restored.
+
+<enddefinition_list>
+
+<p>
+Any routine value that is returned to EMACS is ignored.
+
+
+<head2>(Call-back Operations\callbackops_sec)
+
+<x>(Call-backs)
+
+<p>
+Each call-back operation is invoked by calling the passed
+call-back routine address. Each operation is identified by
+passing its operation code as the first argument. The argument codes are
+described below and the symbols are available for the supported VMS
+languages in the file  <hyphenate>(SYS$\LIBRARY:\EMACS_\CALL\BACK.*).  Each
+operation may have additional arguments which are also described below.
+
+<p>
+The call-back routine returns an indication of the success of the
+requested operation. When an operation fails, the EMACS error buffer is
+filled with a suitable error message and the error flag is set.  Unless
+you decide to issue a better error message, your routine should exit and
+EMACS will display the generated error message; all further MLisp
+processing will be aborted.
+
+
+<head3>(emacs$k_message\k_message_sec)
+
+<x>(emacs$k_message)
+
+<p>
+This operation is equivalent to the <key_name>(message) MLisp function.
+You should provide one additional argument which is the address of a
+string descriptor containing the message text to be displayed.
+
+<p>
+The message will be displayed when the screen is next updated.
+
+<head3>(emacs$k_error\k_error_sec)
+
+<x>(emacs$k_error)
+
+<p>
+This operation is equivalent to the <key_name>(error-message) MLisp
+function. You should provide one additional argument which is the address
+of a string descriptor containing the error message to be displayed.
+
+<p>
+All further MLisp processing will be aborted (until the most enclosing
+<key_name>(error-occurred) block is encountered), and the error message
+will be displayed when the screen is next updated.
+
+
+<head3>(emacs$k_sitfor\k_sitfor_sec)
+
+<x>(emacs$k_sitfor)
+
+<p>
+This operation is equivalent to the <key_name>(sit-for) MLisp function.
+You provide one additional argument which is the number of tenths of a
+second that you want to pause the display and EMACS processing. You pass
+this argument by value.
+
+<p>
+The display is updated, and EMACS pauses for the specified amount of time.
+
+
+<head3>(emacs$k_arg_count\k_arg_count_sec)
+
+<x>(emacs$k_arg_count)
+
+<p>
+This operation is equivalent to the <key_name>(nargs) MLisp function. You
+provide one additional argument which is the address of a longword where
+the argument count is returned.
+
+<p>
+The returned value is the number of arguments with which the external
+function was called.
+
+<head3>(emacs$k_check_args\k_check_args_sec)
+
+<x>(emacs$k_check_args)
+
+<p>
+This operation implements an easy way for external functions to check that
+they were called with a satisfactory number of arguments. You provide the
+following arguments:
+
+<definition_list>
+
+<deflist_item>(MIN)
+<deflist_def>
+The minimum number of arguments acceptable. It is passed by value.
+
+<deflist_item>(MAX)
+<deflist_def>
+The maximum number of arguments acceptable. This parameter is passed by value.
+
+<enddefinition_list>
+
+<p>
+This request checks that the number of arguments supplied with the
+external function call is between the specified limits. If the argument
+count is unsatisfactory, EMACS generates a suitable error message, and the
+call-back function returns an error status. If the argument count
+is within the bounds, EMACS returns a success status.
+
+<head3>(emacs$k_string_arg\k_string_arg_sec)
+
+<x>(emacs$k_string_arg)
+
+<p>
+This operation provides access to the specified argument and returns it as
+a string.
+
+<p>
+You provide the following arguments:
+
+<definition_list>
+
+<deflist_item>(ARG_NUM)
+<deflist_def>
+The number of the argument that you want to access.
+Argument number 1 is the first argument.
+
+<deflist_item>(STRING)
+<deflist_def>
+The address of a string descriptor which EMACS fills
+with the specified argument.
+
+<deflist_item>(RETLEN)
+<deflist_def>
+The address of a word which EMACS fills  with the
+length of the returned string.
+
+<enddefinition_list>
+
+<p>
+This operation evaluates the specified argument. If the argument is not a
+string, it is coerced into one. The resulting string is then copied
+into the provided buffer.
+
+<p>
+If the buffer is not big enough for the string, a suitable error status is
+returned, and the extra characters are ignored.
+
+<p>
+Note that each time this operation is performed on a particular argument,
+the expression that makes up the argument is evaluated. So, if the argument
+calls a function which has side effects, strange behaviour may result. It is
+better to access the argument once, and then maintain the
+argument in your code.
+
+<head3>(emacs$k_numeric_arg\k_numeric_arg_sec)
+
+<x>(emacs$k_numeric_arg)
+
+<p>
+This operation provides access to the specified argument, and returns it as
+an integer.
+
+<p>
+You provide the following arguments:
+
+<definition_list>
+
+<deflist_item>(ARG_NUM)
+<deflist_def>
+The number of the argument that you want to access.
+Argument number 1 is the first argument.
+
+<deflist_item>(RESULT)
+<deflist_def>
+The address of a longword that EMACS fills with the required
+argument.
+
+<enddefinition_list>
+
+<p>
+The specified argument is evaluated. If the argument is not an
+integer, it is coerced into one. The resulting integer value is then copied
+into the provided longword.
+
+<p>
+Note that each time this operation is requested on a particular argument,
+the expression that makes up the argument is evaluated. So, if the argument
+calls a function which has side effects, strange behaviour may result. It is
+better  to access the argument once, and then maintain the
+argument in your code.
+
+<head3>(emacs$k_string_result\k_string_result_sec)
+
+<x>(emacs$k_string_result)
+
+<p>
+This request causes the specified text string  to be returned as the result
+of the external function call. It takes a single argument which is the
+address of a descriptor containing the string  to be returned.
+
+<p>
+This request does not cause the calling routine to be terminated; it merely
+specifies the value to be returned when the code does eventually exit.
+If this call-back is requested more that once from the same routine, the
+value returned is the value specified in the last call to either the
+<key_name>(emacs$k_string_result) or <key_name>(emacs$k_numeric_result)
+operations.
+
+<head3>(emacs$k_numeric_result\k_numeric_result_sec)
+
+<x>(emacs$k_numeric_result)
+
+<p>
+This request causes the specified integer to be returned as the result of
+the external function call. It takes a single argument which is the value
+to be returned.
+
+<p>
+This request does not cause the calling routine to be terminated; it merely
+specifies the value to be returned when the routine does eventually exit.
+If this operation is requested more that once from the same routine, the
+value returned is the value specified in the last call to either the
+<key_name>(emacs$k_string_result) or <key_name>(emacs$k_numeric_result)
+operations.
+
+<head3>(emacs$k_allocate\k_allocate_sec)
+
+<x>(emacs$k_allocate)
+
+<p>
+This request allocates some memory using the EMACS memory allocation
+scheme.  Memory allocated by EMACS is saved in environment files when the
+<key_name>(save-environment) function is executed.
+
+<p>
+The following parameters are expected:
+
+<definition_list>
+
+<deflist_item>(SIZE)
+<deflist_def>
+The number of bytes of memory you want EMACS to allocate.
+This argument is passed by value.
+
+<deflist_item>(RETADR)
+<deflist_def>
+The address of a longword that EMACS fills with the
+address of the allocated memory.
+
+<enddefinition_list>
+
+<head3>(emacs$k_reallocate\k_reallocate_sec)
+
+<x>(emacs$k_reallocate)
+
+<p>
+This request reallocates some memory using the EMACS memory allocation
+scheme. You provide some existing EMACS memory, and it is reallocated with
+an adjusted size. Existing data is copied into the new memory block and is
+truncated if the new block is shorter than the old block.  You can use
+this call-back to grow some already-allocated memory by a specified
+amount.
+
+<p>
+The following parameters are expected:
+
+<definition_list>
+
+<deflist_item>(OLD_BUF)
+<deflist_def>
+The address of the existing memory to be reallocated.
+
+<deflist_item>(SIZE)
+<deflist_def>
+The size required for the reallocated memory.
+
+<deflist_item>(RETADR)
+<deflist_def>
+The address of a longword that EMACS fills with the address of
+the reallocated memory.
+
+<enddefinition_list>
+
+<head3>(emacs$k_free\k_free_sec)
+
+<x>(emacs$k_free)
+
+<p>
+This request frees some EMACS memory previously allocated by
+<key_name>(emacs$k_allocate) or <key_name>(emacs$k_reallocate). Memory
+freed that was not allocated by these routines will be ignored.
+
+<p>
+The following parameter is expected:
+
+<definition_list>
+
+<deflist_item>(BUFFER)
+<deflist_def>
+The address of the memory to be freed.
+
+<enddefinition_list>
+
+<head3>(emacs$k_buffer_size\k_buffer_size_sec)
+
+<x>(emacs$k_buffer_size)
+
+<p>
+This routine is used to find out how many characters are in the current
+buffer. When narrowing is in force, only accessible characters are counted.
+
+<p>
+The following parameter is expected:
+
+<definition_list>
+
+<deflist_item>(RETLEN)
+<deflist_def>
+The address of a longword that EMACS fills with the size of the
+current buffer.
+
+<enddefinition_list>
+
+<head3>(emacs$k_dot\k_dot_sec)
+
+<x>(emacs$k_dot)
+
+<p>
+This request returns the current buffer name and current position of dot in
+the buffer. It is equivalent to the <key_name>(dot) MLisp function.
+
+<p>
+The following parameters are expected:
+
+<definition_list>
+
+<deflist_item>(RETPOS)
+<deflist_def>
+The address of a longword that EMACS fills with the current
+position of dot.
+
+<deflist_item>(BUFFER)
+<deflist_def>
+The address of a string descriptor into which EMACS puts the
+current buffer name.
+
+<deflist_item>(RETLEN)
+<deflist_def>
+The address of a word that EMACS fills with the length of the
+current buffer's name.
+
+<enddefinition_list>
+
+<head3>(emacs$k_mark\k_mark_sec)
+
+<x>(emacs$k_mark)
+
+<p>
+This request returns the current buffer name and current position of the
+mark in the buffer. It is equivalent to the <key_name>(mark) MLisp
+function.
+
+<p>
+The following parameters are expected:
+
+<definition_list>
+
+<deflist_item>(RETPOS)
+<deflist_def>
+The address of a longword that EMACS fills with the current
+position of the mark.
+
+<deflist_item>(BUFFER)
+<deflist_def>
+The address of a string descriptor into which EMACS puts the
+current buffer name.
+
+<deflist_item>(RETLEN)
+<deflist_def>
+The address of a word that EMACS fills with the length of the
+current buffer's name.
+
+<enddefinition_list>
+
+<head3>(emacs$k_set_mark\k_set_mark_sec)
+
+<x>(emacs$k_set_mark)
+
+<p>
+This request sets or unsets the current buffer's mark. If the mark is set,
+it is set to the current value of dot. It is equivalent to the
+<key_name>(set-mark) and <key_name>(unset-mark) MLisp functions.
+
+<p>
+The following parameter is expected:
+
+<definition_list>
+
+<deflist_item>(SET_UNSET)
+<deflist_def>
+A longword indicating whether to set the mark (low bit set)
+or unset it (low bit clear).
+
+<enddefinition_list>
+
+<head3>(emacs$k_use_buffer\k_use_buffer_sec)
+
+<x>(emacs$k_use_buffer)
+
+<p>
+This function provides access to the MLisp <key_name>(temp-use-buffer)
+function. It switches the current buffer to the named buffer without
+altering any windows. Note that if you use this function and you
+cause the screen to be updated (with <key_name>(emacs$k_sitfor)), EMACS will
+bind the buffer to a window.
+
+<p>
+The following parameter is expected:
+
+<definition_list>
+
+<deflist_item>(BUFFER)
+<deflist_def>
+The address of a descriptor containing the name of the buffer
+to be used.
+
+<enddefinition_list>
+
+<head3>(emacs$k_goto_character\k_goto_character_sec)
+
+<x>(emacs$k_goto_character)
+
+<p>
+This request causes dot to be positioned at the specified character. If
+you specify a value before the start of the buffer, dot is moved to the
+start of the buffer.  If you specify a value beyond the end of the buffer,
+dot is moved to the end of the buffer.
+
+<p>
+<key_name>(emacs$k_goto_character) call-back is equivalent to the
+<key_name>(goto-character) MLisp function.
+
+<p>
+The following parameter is expected:
+
+<definition_list>
+
+<deflist_item>(POSITION)
+<deflist_def>
+A longword describing the position required.
+
+<enddefinition_list>
+
+<head3>(emacs$k_insert_character\k_insert_character_sec)
+
+<x>(emacs$k_insert_character)
+
+<p>
+This request implements the <key_name>(insert-character) MLisp function. It
+inserts the single character specified by the ASCII code provided.
+
+<p>
+The following parameter is expected:
+
+<definition_list>
+
+<deflist_item>(CHARACTER)
+<deflist_def>
+A longword containing the ASCII code for the character to be
+inserted.
+
+<enddefinition_list>
+
+<head3>(emacs$k_insert_string\k_insert_string_sec)
+
+<x>(emacs$k_insert_string)
+
+<p>
+This request provides access to the <key_name>(insert-string) MLisp function.
+It inserts the specified string into the current buffer.
+
+<p>
+The following parameter is expected:
+
+<definition_list>
+
+<deflist_item>(STRING)
+<deflist_def>
+The address of a string descriptor containing the string to be
+inserted in the current buffer.
+
+<enddefinition_list>
+
+<head3>(emacs$k_delete_characters\k_delete_characters_sec)
+
+<x>(emacs$k_delete_characters)
+
+<p>
+This request allows you to delete characters from the current buffer
+around dot. You provide the number of characters to be deleted. A request
+to delete 0 characters has no effect; positive character counts cause
+characters after dot to be deleted, while negative counts cause characters
+before dot to be deleted.
+
+<p>
+The following parameter is expected:
+
+<definition_list>
+
+<deflist_item>(COUNT)
+<deflist_def>
+The number of characters to be deleted.
+
+<enddefinition_list>
+
+<head3>(emacs$k_fetch_character\k_fetch_character_sec)
+
+<x>(emacs$k_fetch_character)
+
+<p>
+This request returns the value of the single character at the specified
+position in the current buffer. If the requested position is beyond the
+bounds of the current buffer, -1 is returned.
+
+<p>
+The following parameters are expected:
+
+<definition_list>
+
+<deflist_item>(POSITION)
+<deflist_def>
+The character position of the character to be fetched.
+
+<deflist_item>(RETCHAR)
+<deflist_def>
+The address of a longword that EMACS fills with the character
+at the specified position.
+
+<enddefinition_list>
+
+<head3>(emacs$k_return_string_to_param\k_return_string_to_param_sec)
+
+<x>(emacs$k_return_string_to_param)
+
+<p>
+This request writes a string to the parameter specified in the original call
+of the external function. It can be used to pass multiple text values from
+an external function.
+
+<p>
+An error is generated if the designated argument is not a variable name.
+
+<p>
+The following parameters are expected:
+
+<definition_list>
+
+<deflist_item>(ARG)
+<deflist_def>
+A longword indicating the parameter  to be written.
+
+<deflist_item>(STRING)
+<deflist_def>
+The address of a string descriptor containing the text to be
+written into the specified argument.
+
+<enddefinition_list>
+
+<head3>(emacs$k_return_number_to_param\k_return_number_to_param_sec)
+
+<x>(emacs$k_return_number_to_param)
+
+<p>
+This request writes a number to the parameter specified in the original
+call of the external function. It can be used to pass multiple numeric
+values from an external function.
+
+<p>
+An error is generated if the designated argument is not a variable name.
+
+<p>
+The following parameters are expected:
+
+<definition_list>
+
+<deflist_item>(ARG)
+<deflist_def>
+A longword indicating the parameter to be written.
+
+<deflist_item>(VALUE)
+<deflist_def>
+The value to be written into the specified argument.
+
+<enddefinition_list>
+
+<head3>(emacs$k_buffer_extent\k_buffer_extent_sec)
+
+<x>(emacs$k_buffer_extent)
+
+<p>
+This request returns complex information about the current buffer. EMACS
+keeps the contents of a buffer in two regions of memory with an area in
+between used to insert and delete characters.  The first region, which
+contains the top part of the buffer, is called <newterm>(P1);  the second
+region, which contains the bottom of the buffer, is called <newterm>(P2).
+The region between the two areas is called the <newterm>(Gap).  This
+call-back  returns  the sizes and addresses of the base of P1 and P2.
+
+<p>
+The following parameters are expected:
+
+<definition_list>
+
+<deflist_item>(S1)
+<deflist_def>
+The address of a longword that EMACS  fills with the size of the P1
+region.
+
+<deflist_item>(P1)
+<deflist_def>
+The address of a longword that EMACS fills with the address of the
+P1 region.
+
+<deflist_item>(S2)
+<deflist_def>
+The address of a longword that EMACS  fills with the size of the P2
+region.
+
+<deflist_item>(P2)
+<deflist_def>
+The address of a longword that EMACS fills with the address of the
+P2 region.
+
+<enddefinition_list>
+
+<head3>(emacs$k_gap_to\k_gap_to_sec)
+
+<x>(emacs$k_gap_to)
+
+<p>
+This request moves the Gap to the specified character. You can use this
+request to force the entire contents of the current buffer into either the
+P1 or P2 regions by selecting a suitable value for the Gap position.
+
+<p>
+The following parameter is expected:
+
+<definition_list>
+
+<deflist_item>(POSITION)
+<deflist_def>
+A longword containing the character position to which the
+Gap is set. A value of 0 puts Gap before all characters; -1 puts it after all
+characters.
+
+<enddefinition_list>
+
+<head3>(emacs$k_gap_room\k_gap_room_sec)
+
+<x>(emacs$k_gap_room)
+
+<p>
+This request forces the Gap to be at least as big as the specified value.
+
+<p>
+The following parameter is expected:
+
+<definition_list>
+
+<deflist_item>(SIZE)
+<deflist_def>
+A longword containing the size to set the Gap.
+
+<enddefinition_list>
+
+<comment>
+
+(This routine commented out from the LaTeX source.)
+
+<head3>(emacs$k_change_buffer_extent\k_change_buffer_extent_sec)
+
+<x>(emacs$k_change_buffer_extent)
+
+<p>
+This request changes the size of the P1 and P2 regions for the current
+buffer.
+
+<p>
+The following parameters are expected:
+<definition_list>
+<deflist_item>(S1)
+<deflist_def>
+A longword containing the new size of P1.
+
+<deflist_item>(S2)
+<deflist_def>
+A longword containing the new size of P2.
+
+<enddefinition_list>
+
+<endcomment>

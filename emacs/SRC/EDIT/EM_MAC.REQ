@@ -1,0 +1,316 @@
+!	Copyright 1985
+!		Barry A. Scott & Nick Emery
+!
+!	macros required for bliss to access Emacs data structures
+!
+macro
+	CharAt( n ) =
+		begin
+		if (n) gtr .bf_s1
+		then
+			.bf_p2[(n)]
+		else
+			.bf_p1[(n)]
+		end
+	% ,
+	RefCharAt( n ) =
+		begin
+		if (n) gtr .bf_s1
+		then
+			bf_p2[(n)]
+		else
+			bf_p1[(n)]
+		end
+	% ;
+
+macro
+	first_character	= .bf_mode[ md_HeadClip ] %,
+	num_characters	= (.bf_s1+.bf_s2-.bf_mode[ md_TailClip ]) %;
+macro
+	Interactive = (.Mem_Ptr eql 0 and .Cur_Exec eql 0) %;
+
+!
+!	macro to do with syntax tables
+!
+macro
+	CharIs( char, prop ) =
+	(.blockvector[ .bf_mode[ md_syntax ], (char), s_kind;,4,byte ] eql (prop))
+	%;
+
+macro
+	$vb( addr, index ) =
+		vector[ addr, index;, byte ]
+	% ,
+	$vw( addr, index ) =
+		vector[ addr, index;, word ]
+	% ,
+	$vl( addr, index ) =
+		vector[ addr, index;, long ]
+	% ,
+	$bb( addr, bfield ) =
+		block[ addr, bfield; ,byte ]
+	% ;
+macro
+	$SynEnt( addr, entry, bfield ) =
+		blockvector[ (addr), (entry), bfield;,s_SyntaxTableEntry,byte]
+	%;
+
+psect nodefault = $string$(read, nowrite, pic,global, share, noexecute);
+
+macro
+	$str( str, rw ) =
+		uplit
+			%if %null( rw )
+			%then
+				psect( $string$ )
+			%else %if not rw
+			%then
+				psect( $string$ )
+			%fi %fi
+		byte( %asciz $_$e_s( str ) )
+	%;
+compiletime
+	$_$escape	= 0,	! seen "\" C escape to process
+	$_$value	= 0,	! value of numeric escape
+	$_$number	= 0;	! numeric escape
+
+!+
+!	$_$e_s takes the input string and replaces any '\x'  with
+!	the  C escape  character.  The result is the edited string.
+!-
+macro
+	$_$e_s[] =
+	%assign( $_$escape , 0 )
+	%string( $_$s1( %explode( %string( %remaining ) ) ) )
+	% ;
+
+!+
+!	Called by $_$e_s
+!-
+macro
+	$_$s1[ ch ] =
+	%if %number( $_$number )
+	and not
+	(%identical( '0', ch )
+	or %identical( '1', ch )
+	or %identical( '2', ch )
+	or %identical( '3', ch )
+	or %identical( '4', ch )
+	or %identical( '5', ch )
+	or %identical( '6', ch )
+	or %identical( '7', ch ))
+	%then
+		%char( %number( $_$value ) ),
+		%assign( $_$escape, 0 )
+		%assign( $_$number, 0 )
+		%assign( $_$value, 0 )
+	%fi
+
+	%if %number( $_$escape )
+	%then
+		%if %identical( 'r', ch ) %then %char( 13 )		! return
+		%else %if %identical( 't', ch ) %then %char( 9 )	! tab
+		%else %if %identical( 'n', ch ) %then %char( 10 )	! lf
+		%else %if %identical( 'e', ch ) %then %char( 27 )	! esc
+		%else %if %identical( '\', ch ) %then '\'
+		%else
+		%if %identical( '0', ch )
+		or  %identical( '1', ch )
+		or  %identical( '2', ch )
+		or  %identical( '3', ch )
+		or  %identical( '4', ch )
+		or  %identical( '5', ch )
+		or  %identical( '6', ch )
+		or  %identical( '7', ch )
+		%then
+			%assign( $_$number, 1 )
+			%assign( $_$value,
+				%number( $_$value )*8 + %number( ch ) )
+		%else
+			%inform( %string('Unknown escape char ', ch ) )
+			ch
+			%assign( $_$number, 0 )
+		%fi %fi %fi %fi %fi %fi
+		%assign( $_$escape, max( 0, %number( $_$number ) ) )
+	%else
+		%if %identical( '\' , ch )
+		%then
+			%assign( $_$escape , 1 )
+		%else
+			ch
+		%fi
+	%fi
+	%;
+macro
+	$char( ch ) =
+		%if %identical( '\r', ch ) %then %char( 13 )		! return
+		%else %if %identical( '\t', ch ) %then %char( 9 )	! tab
+		%else %if %identical( '\n', ch ) %then %char( 10 )	! lf
+		%else %if %identical( '\e', ch ) %then %char( 27 )	! esc
+		%else %if %identical( '\\', ch ) %then '\'
+		%else
+			%error( 'unknown \ character' )
+		%fi %fi %fi
+		%fi %fi
+		% ;
+
+macro
+	release_expr(e) =
+	begin
+	local __expr__ : ref Expression;
+	__expr__ = (e);
+	if .__expr__ neq 0
+	and .__expr__[ exp_release ]
+!	or (__expr__[ exp_refcnt ] = .__expr__[ exp_refcnt ] - 1) lss 0)
+	then
+		do_release (e);
+	end
+	% ;
+
+literal
+	_U	= %x'1',
+	_L	= %x'2',
+	_D	= %x'4',
+	_S	= %x'8',
+	_P	= %x'10',
+	_C	= %x'20',
+	_X	= %x'40',
+	_B	= %x'80';
+
+external
+	decc$ga___ctype;
+
+macro _ctype_(arg) = vector[ .decc$ga___ctype, (arg);,byte ] %;
+ 
+macro isupper(c) = ((._ctype_[(c) and %x'7F'] and _U) neq 0 )%;
+macro islower(c) = ((._ctype_[(c) and %x'7F'] and _L) neq 0 )%;
+macro isalpha(c) = ((._ctype_[(c) and %x'7F'] and (_U or _L)) neq 0 )%;
+macro isdigit(c) = ((._ctype_[(c) and %x'7F'] and _D) neq 0 )%;
+macro isalnum(c) = ((._ctype_[(c) and %x'7F'] and (_U or _L or _D)) neq 0 )%;
+macro isxdigit(c) = ((._ctype_[(c) and %x'7F'] and _X) neq 0 )%;
+macro isspace(c) = ((._ctype_[(c) and %x'7F'] and _S) neq 0 )%;
+macro ispunct(c) = ((._ctype_[(c) and %x'7F'] and _P) neq 0 )%;
+macro isgraph(c) = ((._ctype_[(c) and %x'7F'] and (_P or _U or _L or _D)) neq 0 )%;
+macro isprint(c) = ((._ctype_[(c) and %x'7F'] and (_P or _U or _L or _D or _B)) neq 0 )%;
+macro iscntrl(c) = ((._ctype_[(c) and %x'7F'] and _C) neq 0 )%;
+macro isascii(c) = ((c) leq %x'7F') %;
+
+macro _toupper(c) =	(if (c) geq 'a' and (c) leq 'z'
+				then (c) and %x'5F' else (c)) %;
+macro _tolower(c) =	(if (c) geq 'A' and (c) leq 'Z'
+				then (c) or %x'20' else (c)) %;
+
+macro toascii(c) =	((c) and %x'7F') %;
+
+psect
+	nodefault = $savres$( global, noexecute, read, write);
+
+!
+! cur_col returns the current print column number for dot, which may
+! have to be calculated
+!
+macro cur_col = (if .Col_Valid neq 0 then .Dot_Col else calc_col()) %;
+
+!
+! dot should ONLY be given a value by calling set_dot(new) -- it ensures
+! that all associated bookkeeping is done.
+!
+macro set_dot(n) = (Col_Valid = 0; dot = (n)) %;
+
+!
+! dot should be moved left or right using the following macros -- they
+! attempt (or will, eventually) to keep DotCol valid.  They don't check
+! the new valid of dot: you have to do that.
+!
+macro dot_right(n) = (Col_Valid = 0; dot = .dot + (n)) %;
+macro dot_left(n) = (Col_Valid = 0; dot = .dot - (n)) %;
+macro control_character(c) = ((c and %x'7F') lss ' ' or (c and %x'7f') eql %x'7F') %;
+
+macro InsStr( insstr_str ) = 
+    begin
+
+    local
+	insstr_s : initial (insstr_str);
+
+    InsCStr( .insstr_s, strlen( .insstr_s ) ) 
+    end%;
+
+macro Ctl( char ) = (char and %x'9f') %;
+
+macro
+	$interlock_inc( cell ) =
+		adawi( %ref(1), cell ) %,
+	$interlock_test( cell ) =
+		((adawi( %ref(0), cell ) and 4) neq 0) %,	! sf$m_z == 4
+	$interlock_dec( cell ) =
+		((adawi( %ref(-1), cell ) and 4) neq 0) %,	! sf$m_z == 4
+	$conditional_$wake( null_arg_not_used ) =
+		begin
+		if not .Wake_queued
+		then
+			$wake();
+		Wake_queued = 1;
+		end %,
+	$conditional_$hiber( null_arg_not_used ) =
+		begin
+		Wake_queued = 0;
+		$hiber;
+		end %;
+
+macro	
+	atoi = decc$atoi %,
+	ctime = decc$ctime %,
+	cuserid = decc$cuserid %,
+	getpid = decc$getpid %,
+	memmove = decc$memmove %,
+	memcpy = decc$memcpy %,
+	strcat = decc$strcat %,
+	strcmp = decc$strcmp %,
+	strncmp = decc$strncmp %,
+	time = decc$time %,
+	strlen = decc$strlen %,
+ 	strcpy = decc$strcpy %;
+
+external routine decc$atoi;
+external routine decc$ctime;
+external routine decc$cuserid;
+external routine decc$getpid;
+external routine decc$memmove;
+external routine decc$memcpy;
+external routine decc$strcat;
+external routine decc$strcmp;
+external routine decc$strncmp;
+external routine decc$time;
+external routine decc$strlen;
+external routine decc$strcpy;
+external routine emacs_strlwr;
+
+%if %bliss( bliss32e ) %then
+builtin
+	establish,
+	revert;
+
+
+%else
+macro
+	establish = lib$establish %,
+	revert = lib$revert %;
+external routine
+	lib$establish,
+	lib$revert;
+%fi
+builtin
+	remque,
+	insque,
+	testbitss,
+	testbitsc,
+	testbitcs,
+	testbitcc,
+	adawi;
+
+macro
+	malloc	= emacs_malloc %,
+	free	= emacs_free %,
+	calloc	= emacs_calloc %,
+	cfree	= emacs_cfree %,
+	realloc	= emacs_realloc %;

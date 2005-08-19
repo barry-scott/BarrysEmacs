@@ -1,0 +1,63 @@
+!
+!	Copyright( c ) 1986                                                  
+!		Barry A. Scott and Nick Emery                               
+!
+literal broadcast = 1;
+literal SAVEDBUFFERMAX = 100;              ! maximum number of buffers to save in subprocess 
+literal MAX_SYNTAX_TABLES = 40;		! the maximum number of syntax tables 
+literal MAXABBREVTABLES = 40;		! the maximum number of abbrev tables 
+literal BUFFERSIZE = 300;			! Maximum buffer size              
+literal DEFAULTMAILBOXPROTECTION = 65295;	! VMS Mail box protection for sub- 
+literal MLLINE_SIZE = 300;
+literal BUFSIZ = 512;
+literal VMSFILENAMESIZE = 254;
+literal MAXPATHLEN = VMSFILENAMESIZE;
+
+literal EFN_DO_NOT_WAIT_ON = 0;         !  used when an EFN is require that is not waited on
+literal EFN_SIT_FOR = 1;                !  used for sit-for
+literal EFN_RESTART_MBX = 2;            !  used for reading the restart mailbox message
+literal EFN_TERM_IO = 3;                !  used for terminal IO
+literal EFN_SUB_PROC_SEND = 4;          !  used to send messages to subprocesses
+literal EFN_SUB_PROC_REC = 5;           !  used to receive a message from a subprocess
+literal EFN_GETJPI = 6;                 !  used to do a getjpi and wait
+literal EFN_ACTIVITY_IO = 7;            !  used to do activity indicator IO
+literal EFN_EMACS_PAUSED = 96;          !  event flag 96 = EMACS has paused 
+literal EFN_EMACS_EXITED = 97;          !  event flag 97 = EMACS has exited 
+literal EFN_EMACS_RESUME = 98;          !  event flag 98 = resume EMACS   
+
+literal	malloc_type_none = 0,
+	malloc_type_char = 1,
+	malloc_type_star_star = 2,
+	malloc_type_struct_abbrevent = 3,
+	malloc_type_struct_abbrevtable = 4,
+	malloc_type_struct_automode = 5,
+	malloc_type_struct_binding = 6,
+	malloc_type_struct_binding_list = 7,
+	malloc_type_struct_bound_name = 8,
+	malloc_type_struct_database = 9,
+	malloc_type_struct_dbsearch = 10,
+	malloc_type_struct_emacs_array = 11,
+	malloc_type_struct_emacs_buffer = 12,
+	malloc_type_struct_emacs_line = 13,
+	malloc_type_struct_errblk = 14,
+	malloc_type_struct_expression = 15,
+	malloc_type_struct_extern_func = 16,
+	malloc_type_struct_find_data = 17,
+	malloc_type_struct_jnl_block = 18,
+	malloc_type_struct_keymap = 19,
+	malloc_type_struct_keymap_long = 20,
+	malloc_type_struct_keymap_short = 21,
+	malloc_type_struct_marker = 22,
+	malloc_type_struct_process = 23,
+	malloc_type_struct_process_blk = 24,
+	malloc_type_struct_prognode = 25,
+	malloc_type_struct_syntax_strng = 26,
+	malloc_type_struct_syntax_table = 27,
+	malloc_type_struct_time_request = 28,
+	malloc_type_struct_timer_entry = 29,
+	malloc_type_struct_trmcontrol = 30,
+	malloc_type_struct_variablename = 31,
+	malloc_type_struct_window = 32,
+	malloc_type_struct_windowring = 33,
+	! insert new types before this one
+	malloc_type_last = 34;

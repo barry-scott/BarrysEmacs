@@ -1,0 +1,34 @@
+!
+!	Emacs DCL command
+!
+!	Defaults to spawned emacs.
+!
+define verb emacs
+	image emacs$exe:emacs$emacs
+	qualifier nosubprocess, nonnegatable syntax=emacs_current
+	qualifier subprocess, nonnegatable, syntax=emacs_spawn, default
+	qualifier name, nonnegatable, value (required)
+	qualifier restore, default, value (default=emacs$environment:)
+     	qualifier package, nonnegatable, value (default="emacs")
+	qualifier start_position, value(list)
+	qualifier log, default
+	qualifier interface, value(required,type=emacs_interface)
+	parameter p1, value (list)
+	parameter p2, value (list)
+	parameter p3, value (list)
+	parameter p4, value (list)
+	parameter p5, value (list)
+	parameter p6, value (list)
+	parameter p7, value (list)
+	parameter p8, value (list)
+	disallow subprocess and nosubprocess
+
+define type emacs_interface
+	keyword character_cell,value(type=$file,default="SYS$INPUT:"),label=interface_ansi
+	keyword decwindows,value(type=$file,default="DECW$DISPLAY"),label=interface_xwin
+	keyword file,value(type=$file,default="SYS$INPUT:"),label=interface_file
+
+define syntax emacs_current
+	image emacs$exe:emacs
+define syntax emacs_spawn
+	image emacs$exe:emacs$emacs

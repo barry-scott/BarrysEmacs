@@ -1,0 +1,122 @@
+<front_matter>(emacs_mr)
+
+<title_page>
+<title>(VAX EMACS\Mock Lisp\Reference Manual)
+<abstract>
+This manual contains an alphabetically ordered list of all of the
+functions and variables available in the Mock Lisp programming environment
+of VAX EMACS.
+
+<endabstract>
+
+<revision_info>(Revision Information:\This manual supersedes the
+<reference>(emacs_cat) issued with EMACS V5.0)
+<revision_info>(Software Version:\EMACS V5.1)
+<revision_info>(Operating System:\VMS V5.0 or higher)
+<endtitle_page>
+
+<copyright_page>
+<print_date>(October 1990)
+<copyright_date>(1990)
+<endcopyright_page>
+
+<contents_file>
+
+<preface>
+
+<subhead1>(EMACS Usage\EMACS Usage)
+
+<p>
+The VAX EMACS software and documentation is for <emphasis>(Digital
+Internal Use Only\bold).
+
+<subhead1>(Intended Audience\Intended Audience)
+
+<p>
+This manual is intended for programmers needing to extend EMACS using the
+Mock Lisp programming language.
+
+<subhead1>(Document Structure\Document Structure)
+
+<p>
+The information in this manual is structured as follows:
+
+<list>(unnumbered)
+<le>
+<reference>(functions_chap) contains an alphabetically ordered list of all
+the functions available in EMACS.  The default binding (if any) for each
+function is given.
+
+<le>
+<reference>(variables_chap) contains an alphabetically ordered list of all
+the variables available in EMACS.  The default value (if any) for each
+variable is given.
+
+<endlist>
+
+<subhead1>(Associated Documents\Associated Documents)
+
+<p>
+The <reference>(emacs_user_guide) describes how to use the editing
+features of EMACS.
+
+<p>
+The <reference>(emacs_prog_guide) describes how to extend EMACS using the
+Mock Lisp programming language.
+
+<p>
+The <reference>(emacs_ext_ref) documents the EMACS extensions
+(packages, subsystems and libraries) that are distributed with VAX EMACS.
+
+<subhead1>(Conventions Used in This Document\Conventions Used in This Document)
+
+<p>
+Throughout this manual, key sequences are described as
+causing specific actions to occur (functions to run, for example).
+These key sequences are those set up when EMACS is started
+(they are the default key bindings).
+
+<p>
+Key sequences are displayed with each key separated by a dash. When using
+these sequences, do not include the dashes. The dashes are displayed for
+clarity only.
+
+<p>
+Many EMACS key sequences use <key_name>(Control) keys.  These are
+indicated by a caret character (<quote>(^)) appearing in the key sequence.
+For example, to type the <key_name>(^O) key sequence, press and hold down
+the <key_name>(Ctrl) key and simlutaneously press the <key_name>(O) key.
+To type <key_name>(^^), press and hold down the <key_name>(Ctrl) key, then
+simultaneously type the <key_name>(^) key.
+
+<p>
+Many other EMACS key sequences use <key_name>(Escape) keys.  These are
+indicated with an <key_name>(ESC-) in the key sequence.  For example, to
+type the <key_name>(ESC-e) key sequence, press the key labelled
+<key_name>(ESC), then press the <key_name>(e) key.  Note that
+<key_name>(ESC-) key sequences are case-sensitive; this means that
+<key_name>(ESC-e) is not the same as <key_name>(ESC-E).
+
+<p>
+Different typefaces used in this book are used to distinguish between
+normal text and special symbols.  These are described in the following
+table:
+
+<table>
+<table_setup>(2\15)
+<table_row>(<key_name>(Return)\
+The following special characters are displayed as shown:
+<key_name>(Return), <key_name>(Delete), <key_name>(Escape), <key_name>(Tab),
+<key_name>(Backspace), <key_name>(Linefeed) and <key_name>(Space).)
+
+<table_row>(<cx>(This is an example)\
+All examples and system displays are displayed in <cx>(this) typeface.)
+
+<table_row>(<key_name>(execute-mlisp-file)\
+All keystroke sequences, function names, command names and variable names are
+displayed in <key_name>(this) typeface.)
+<endtable>
+
+<endpreface>
+
+<endfront_matter>

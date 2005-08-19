@@ -1,0 +1,124 @@
+<chapter>(Introduction\intro_chap)
+
+<p>
+VAX EMACS is distributed with a number of <newterm>(packages),
+<newterm>(subsystems) and <newterm>(libraries).  These are Mock Lisp
+programs that extend EMACS to provide specific functions not built in to
+EMACS itself.
+
+<p>
+The packages, subsystems and libraries of code distributed with EMACS are
+stored in the text library <hyphenate>(EMACS$\LIBRARY:\EMACS\LIB.\TLB).
+
+<head1>(EMACS Subsystems\subsys_sec)
+
+<p>
+A <newterm>(subsystem) is an EMACS function which is an interactive
+program in its own right: it reads commands in a language of its own, and
+displays the results.
+
+<p>
+A subsystem must be loaded before it can be used.  Many
+subsystems are automtically loaded the first time you execute them.
+EMACS loads a subsystem by first searching the directories in the EMACS$PATH
+logical name search-list.  If the package is not found in the EMACS path, it is
+searched for in the <key_name>(MLisp-library) database search-list.
+
+<p>
+You enter a subsystem by typing an EMACS command which invokes the
+subsystem.  Once entered, the subsystem runs until a specific command to
+exit the subsystem is typed.
+
+<p>
+The commands understood by a subsystem are not like normal EMACS
+commands, because their purpose is something other than editing text.
+In EMACS, most commands are control or escape sequences because printing
+characters insert themselves. In most subsystems, there is no insertion
+of text, so non-control characters can act as commands.
+
+<p>
+While you are inside a subsystem, the mode line usually gives the name of
+the subsystem, as well as other information optionally supplied by the
+subsystem.
+
+
+<head1>(EMACS Packages\packages_sec)
+
+<p>
+EMACS packages are subsystems that can be invoked from the DCL command
+line as well as from inside EMACS.
+
+<p>
+To run a package from the DCL command line, use the /PACKAGE qualifier on
+the EMACS DCL command:
+
+<display>
+$ EMACS/PACKAGE=<emphasis>(PACKAGE-NAME\italic)
+<enddisplay>
+
+<p>
+EMACS loads packages by loading a file named
+<emphasis>(PACKAGE-NAME\italic).MLP (the <keep>(.MLP) filetype stands for
+<quote>(Mock Lisp Package)).  EMACS searches for the package file by
+first looking in the directories in the EMACS$PATH logical name
+search-list.  If the package is not found in the EMACS path, it is
+searched for in the in the <key_name>(MLisp-library) database search-list.
+When the package has been found, it is loaded, and EMACS starts execution
+of the package by executing the routine
+<quote>(<key_name>(<cx>(<emphasis>(package-name\italic)-com))) which is
+defined in the <keep>(.MLP) file.
+
+<p>
+When the package is running, you do not usually have access to the normal
+editing commands, as the package will define its own command language.
+
+<p>
+While you are running a package, the mode line usually gives the name of
+the package, as well as other information optionally supplied by the
+package.
+
+
+<head1>(EMACS Libraries\libraries_sec)
+
+<p>
+EMACS libraries are Mock Lisp programs that define useful functions.  They
+are not interactive programs in their own right like subsystems and
+packages; they are more like subroutines in a high-level programming
+language which provide the user (or EMACS itself) with features not built
+in to EMACS.
+
+<p>
+The functions defined by a library are not accessible until the
+appropriate library has been loaded.  Libraries can be loaded explicitly
+by the user, or they may be loaded automatically.
+
+<x>(execute-mlisp-file)
+<x>(MLisp-library)
+<p>
+To load a library while EMACS is running, use <key_name>(ESC-x
+execute-mlisp-file).  EMACS looks for the library using the EMACS$PATH
+logical name.  If the library is not found in the EMACS path, it is
+searched for in the in the <key_name>(MLisp-library) database search-list.
+Once EMACS has located the library, it is loaded. All the functions
+defined in the library are then available for use.
+
+<p>
+Some libraries are loaded automatically in the course of executing certain
+functions. You will not normally notice this.  This facility is known as
+<newterm>(autoloading). Autoloading is used to make  library functions
+available without you having to know how to load the library;  autoloading
+also saves space in EMACS by loading libraries only when you need them.
+
+<p>
+In addition to making functions accessible to <key_name>(ESC-x), the
+library may bind some functions to key sequences.  This is done by the
+library loading another file called <emphasis>(LIBRARY-NAME\italic).KEY,
+where <emphasis>(LIBRARY-NAME\italic) is the name of the library being
+loaded. This separation of functions from key bindings allows you to
+define your own bindings for functions in the library that will override
+the default bindings.  To do this, make a private copy of the <keep>(.KEY)
+file, edit it to make your own bindings, then put the modified file in
+your EMACS$PATH or in in your EMACSLIB.TLB database file.
+<x>(EMACSLIB.TLB)
+When EMACS loads the <keep>(.KEY) file, your private copy will be loaded
+if it exists, rather than the default system copy.

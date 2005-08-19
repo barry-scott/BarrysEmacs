@@ -1,0 +1,335 @@
+<chapter>(Emacs Customisation\custom_chap)
+
+<p>
+This chapter  describes some simple ways of customising EMACS without
+knowing much about MLisp programming. If you wish to write extensions, or
+find that the information given in this chapter does not allow you to
+customise EMACS satisfactorily, then you should read the
+<reference>(emacs_prog_guide).
+
+<p>
+EMACS is designed to be customisable; you can re-arrange
+many EMACS attributes to suit your own taste. Simple customisations are
+primarily of the following types: 
+
+<list>(unnumbered)
+<le>
+Changing function bindings from one character sequence to another
+<le>
+Setting variables
+<le>
+Causing a function to automatically load a library or package
+<le>
+Defining actions to be taken when files of a specific type are accessed.
+<endlist>
+
+<head1>(EMACS Environments\emacsenv_sev)
+
+<p>
+Most EMACS users find that they want to customise some features when they
+first start using EMACS.  Later, as they become more familiar with EMACS
+features, new customisations become apparent.
+
+<p>
+You will decide which bindings, options and libraries you want to access
+regularly, and then expect them to be automatically available each time
+you use EMACS.  You can achieve this by making your customisations, 
+then saving them in an EMACS <newterm>(environment) file. EMACS starts very
+quickly when using environment files.
+
+<p>
+EMACS saves the following information in environment files:
+
+<list>(unnumbered)
+<le>
+Buffers
+<le>
+Variables
+<le>
+All loaded MLisp functions, packages and libraries
+<le>
+Macros (including the keyboard macro)
+<le>
+Global and local bindings
+<le>
+Syntax tables
+<le>
+Abbreviation tables
+<le>
+Database search-lists
+<le>
+The existence of subprocesses
+<le>
+Scheduled procedures.
+<endlist>
+
+
+<p>
+Subprocesses stored in an environment file are re-started when the EMACS
+environment is restored. The subprocess input, output and termination
+procedures and buffers are also restored. Note, however, that 
+re-created subprocesses execute with the default directory of the new
+EMACS process. Symbols and logical names set up in the saved process are
+not restored.
+
+<p>
+Scheduled procedures are procedures delivered at a specified time. If that
+time has already expired, they are delivered immediately.
+
+<x>(save-environment)
+<p>
+You use the <key_name>(ESC-x save-environment) command to save the current
+environment in an EMACS environment file.  <key_name>(save-environment)
+asks for the name of the file you want to create and will supply a default
+file type of .EMACS_ENVIRONMENT if no file type is supplied.
+
+<p>
+You use the /RESTORE command qualifier on the EMACS command to cause EMACS
+to restore an environment. This qualifier is implicitly applied when it is
+not present on the command line.  By default, EMACS restores the file
+<hyphenate>(EMACS$\ENVIRONMENT:\EMACS\INIT.\EMACS_\ENVIRONMENT).  The
+EMACS$ENVIRONMENT logical name points to the location of the EMACS
+environment file.  The logical name is defined as a search-list so that
+EMACS looks for the environment in your SYS$LOGIN directory before using
+the system default environment file.
+
+<p>
+You cannot restore an environment file that was saved by a previous
+version of EMACS.  EMACS will not be able to restore an environment file
+if the VMS shared libraries that EMACS uses have changed significantly
+since the environment was saved (this often happens when VMS is upgraded).
+
+<p>
+If EMACS detects an attempt to restore an incompatible environment,
+an error message is displayed and the editing session is
+aborted. If this happens to you, you must rebuild your environment file.
+
+
+<head2>(Building an Environment File\buildenv_sec)
+
+<p>
+Since it is possible that an environment file can become out-of-date, it
+is best to build your environment file in such a way that it can be
+easily rebuilt. EMACS allows this by supplying you with a DCL command
+procedure which builds a new environment file in the right place from the
+customisations that you request.
+
+<p>
+You build a new environment file by executing the DCL
+command procedure EMACS$LIBRARY:EMACS_SAVED_ENVIRONMENT.COM.
+
+<p>
+This procedure loads the default EMACS bindings, and then executes the
+MLisp file SYS$LOGIN:EMACSINIT.ML.  EMACSINIT.ML is the file that contains
+the MLisp code that defines your customisations.  The following sections
+describe how to make customisations in this file.
+
+<head1>(Customising Variables\variables_sec)
+
+<p>
+Some customisations in EMACS can be achieved by setting <newterm>(system
+variables).  Some examples of system variables are
+<key_name>(ask-about-buffer-names), <key_name>(split-height-threshold) and
+<key_name>(quick-redisplay).
+
+<x>(set)
+<x>(^G)
+<p>
+To change a variable while EMACS is running, use the command
+<key_name>(ESC-x set). <key_name>(set) will ask you for the name of the
+variable you want to change. You can use name completion to enter the
+variable name. <key_name>(set) will then
+ask for the value to be inserted into the variable. All
+the usual Mini-buffer editing commands are available while
+entering the value. You can abort the whole command
+using <key_name>(^G).
+
+<p>
+If the variable is a boolean, you can type the string <quote>(<cx>(1)),
+<quote>(<cx>(on)), <quote>(<cx>(yes)) or <quote>(<cx>(true)) to set the
+value of a variable to logical true, or <quote>(<cx>(0)),
+<quote>(<cx>(off)), <quote>(<cx>(no)) or <quote>(<cx>(false)) to set the
+value to logical false. Otherwise, just type the value required.
+
+<p>
+If the variable is a string, then the value you type is inserted into
+the variable exactly as you type it. If the variable is numeric, the value
+is first converted to an integer.
+
+<p>
+To set a variable in your EMACSINIT.ML file, you must use the
+<key_name>(setq) function rather than <key_name>(set).  The format is as
+follows:
+
+<online_popup>(example)
+<code_example>
+(setq <emphasis>(variable-name\italic) <emphasis>(value\italic))
+<endcode_example>
+<endonline_popup>
+
+<cp>
+where <cx>(<emphasis>(variable-name\italic)) is the name of the variable to be
+set, and <cx>(<emphasis>(value\italic)) is the value required. If the
+value is a string, then the text of the string should be enclosed in
+double quotes.
+
+<p>
+Some variables have a different value in each buffer. These are
+called <newterm>(buffer-specific variables). Each buffer-specific
+variable has a default value which is used to initialise each
+buffer's local copy of the variable. To set the default value
+of a buffer-specific variable in your EMACSINIT.ML file,
+enter a line with the following format:
+
+<online_popup>(example)
+<code_example>
+(setq-default <emphasis>(variable-name\italic) <emphasis>(value\italic))
+<endcode_example>
+<endonline_popup>
+
+<cp>
+where <emphasis>(variable-name\italic) is the name of the variable to be
+set, and <emphasis>(value\italic) is the value required.
+
+<p>
+Some examples of setting variables are:
+
+<online_popup>(example)
+<code_example>
+(setq journal-frequency 30)
+(setq global-mode-string "EMACS")
+(setq-default highlight-region 1)
+<endcode_example>
+<endonline_popup>
+
+
+<head1>(Binding Keys to Functions\binding_sec)
+
+<p>
+EMACS allows you to associate arbitrary sequences of keystrokes with any
+EMACS function. This association is called a <newterm>(key binding)---the key
+sequence is said to be <newterm>(bound) to the function. More than one key
+sequence can be bound to each function.
+
+<p>
+For each buffer, EMACS keeps two possible sets of associations: the
+<newterm>(global bindings) and the <newterm>(local bindings). Global
+bindings apply to all of EMACS' buffers, while local bindings apply only
+to a specific buffer. Each type of binding has its own command that makes
+the function-to-keystroke association.
+
+<p>
+To create a global binding while EMACS is running, use the <key_name>(ESC-x
+bind-to-key) command. This command prompts you for the command name and
+the key sequence. To make the binding in your EMACSINIT.ML file,
+enter a line of the form:
+
+<online_popup>(example)
+<code_example>
+(bind-to-key "<emphasis>(function-name\italic)" "<emphasis>(key-sequence\italic)")
+<endcode_example>
+<endonline_popup>
+
+<cp>
+where <cx>(<emphasis>(function-name\italic)) is the name of the function to be
+bound to the sequence <cx>(<emphasis>(key-sequence\italic)).
+
+<p>
+To make local bindings, use the same syntax as above, but
+replace <key_name>(bind-to-key) with <key_name>(local-bind-to-key).
+
+<p>
+Here are some examples of key bindings:
+
+<online_popup>(example)
+<code_example>
+(bind-to-key "pause-emacs" "<literal>(\)^Z")
+(bind-to-key "execute-extended-command" "<literal>(\)(DO)")
+(local-bind-to-key "execute-mlisp-file" "<literal>(\)^X<literal>(\)^X")
+<endcode_example>
+<endonline_popup>
+
+<head1>(Libraries of Commands\libraries_sec)
+
+<p>
+A considerable number of the functions in EMACS reside in
+<newterm>(libraries). A function is not accessible unless the
+library that defines the function is loaded. A number of libraries
+are provided with EMACS, and can be loaded automatically or
+on request to make their functions available.
+
+<x>(execute-mlisp-file)
+<x>(MLisp-library)
+<p>
+To load a library while EMACS is running, use <key_name>(ESC-x
+execute-mlisp-file). EMACS looks for the library either in your default
+directory or the directory you specify, or in the EMACS directory, or in
+the <key_name>(MLisp-library) database search-list.  Once EMACS has
+located the library, it is loaded. All the
+functions defined in the library are then available for use.
+
+<p>
+For example, if you load the AREA library, you can then use
+<key_name>(ESC-x delete-area) to delete an area of the screen.
+The <key_name>(delete-area) function is defined in the AREA library.
+
+<p>
+In addition to making functions accessible to <key_name>(ESC-x), the
+library may bind some functions to key sequences.  This is done by the
+library loading another file called <emphasis>(LIBRARY-NAME\italic).KEY,
+where <emphasis>(LIBRARY-NAME\italic) is the name of the library being
+loaded. This separation of functions from key bindings allows you to
+define your own bindings for functions in the library that will override
+the default bindings.  To do this, make a private copy of the <keep>(.KEY)
+file, edit it to make your own bindings, then put the modified in your
+EMACS$PATH or in your EMACSLIB.TLB database file.
+
+<x>(EMACSLIB.TLB)
+
+<p>
+Some libraries are loaded automatically in the course of
+executing certain functions. You will not normally notice
+this. For example, the PROCESS library is automatically
+loaded when you use the <key_name>(shell) function for the first time.
+This facility is known as <newterm>(autoloading). Autoloading is used to
+make  library functions available without you
+having to know how to load the library;  autoloading also saves space in
+EMACS by loading libraries only when you need them.
+
+<x>(autoload)
+<p>
+Autoloading works by simply calling <key_name>(execute-mlisp-file) on the
+required library. Autoloading is set up using the function
+<key_name>(autoload).
+
+<p>
+To make an autoload association, enter a line with the
+format shown below in your EMACSINIT.ML file:
+
+<online_popup>(example)
+<code_example>
+(autoload "<emphasis>(function-name\italic)" "<emphasis>(file-name\italic)")
+<endcode_example>
+<endonline_popup>
+
+<cp>
+where <cx>(<emphasis>(function-name\italic)) is the name of the function to be
+autoloaded and <cx>(<emphasis>(file-name\italic)) is the library which must be
+loaded to define the specified function. Both are text strings and should be
+enclosed in double quotes.
+
+<p>
+Some examples of autoloads are:
+
+<online_popup>(example)
+<code_example>
+(autoload "notes" "notes")
+(autoload "shell" "process")
+(autoload "emacs$cms" "cms.ml")
+<endcode_example>
+<endonline_popup>
+
+<p>
+You can create your own libraries which you can share with other EMACS
+users if you know how to write MLisp code. See the
+<reference>(emacs_prog_guide) for details on MLisp programming.

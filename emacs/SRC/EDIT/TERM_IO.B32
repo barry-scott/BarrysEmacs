@@ -1,0 +1,589 @@
+module term_io
+	(
+	ident	= 'V4.0 Emacs',
+	addressing_mode( nonexternal=long_relative, external=general )
+	) =
+begin
+library 'target_library:starlet';
+require 'edit$src:em_gen.req';		! general constants used in emacs
+require 'edit$src:em_mac.req';		! general useful macros
+require 'edit$obj:tt.r32';
+
+
+forward routine
+	term_io_channels	: novalue,
+	term_select		: novalue,
+	term_change_attributes	: novalue,
+	term_init_device	,
+	term_input_enable	: novalue,
+	term_input_char		: novalue,
+	term_input_disable	: novalue,
+	CheckTermOutputSize	,
+
+	t_print			: novalue,
+	t_putchar		: novalue,
+	t_flush			: novalue;
+
+%if %variant %then
+global
+%else
+external
+%fi
+	term_output_buffer_size	: long,
+	protocol_mode		: long,
+	term_edit		: long,
+	term_regis		: long,
+	term_app_keypad		: long,
+	term_eightbit		: long,
+	term_deccrt		: long,
+	term_deccrt2		: long,
+	term_deccrt3		: long,
+	term_deccrt4		: long,
+	term_avo		: long,
+	term_nopadding		: long,
+	term_width		: long,
+	term_length		: long,
+	black_on_white		: long;
+
+external
+	mode_line_rendition_Ref	: ref vector[43+1, byte],
+	window_rendition_Ref	: ref vector[43+1, byte],
+	region_rendition_Ref	: ref vector[43+1, byte];
+
+own
+	current_terminal	: ref Trm_Control,
+	term_expand_c1		: long,
+	output_channel		: word,
+	baud_convert		: vector[18,long]
+		initial
+		(
+		9600, 50, 75, 110, 134, 150, 300, 600, 1200, 1800,
+		2000, 2400, 3600, 4800, 7200, 9600, 19200, 38400
+		);
+
+macro emalloc( size ) = bliss (.current_terminal[ t_alloc_mem ], size, malloc_type_char ) %;
+macro efree( mem ) = bliss (.current_terminal[ t_free_mem ], mem ) %;
+
+external routine
+	do_print : bliss;
+
+routine term_check_for_input( tt : ref Trm_Control ) : novalue = return;
+global routine term_io_channels
+		(
+		tt	: ref trm_control,
+		dev	: ref block[,byte]
+		)
+			: novalue =
+	begin
+	local
+		device		: vector[2,long],
+		status		: long,
+		iosb		: $iosb_def;
+
+	if .dev eql 0
+	then
+		dev = uplit byte( %asciz 'sys$input' );
+
+	device[0] = strlen( .dev );
+	device[1] = .dev;
+
+	status = $assign( devnam = device, chan = tt[ t_context ] );
+	if not .status then signal( .status );
+	status = $assign( devnam = device, chan = tt[ k_context ] );
+	if not .status then signal( .status );
+
+	tt[ t_io_putchar ] = t_putchar;
+	tt[ t_io_print ] = t_print;
+	tt[ t_io_flush ] = t_flush;
+	tt[ k_input_enable ] = term_input_enable;
+	tt[ k_input_disable ] = term_input_disable;
+	tt[ t_select ] = term_select;
+	tt[ t_change_attributes ] = term_change_attributes;
+	tt[ k_check_for_input ] = term_check_for_input;
+	end;
+
+
+routine term_select
+		(
+		tt	: ref trm_control,
+		mode,
+		region,
+		win
+		) : novalue =
+ 	begin
+	local
+		status,
+		iosb		: $iosb_def,
+		tt_chars	: ref tt_mode,
+		char1		: block[4,byte],
+		char2		: block[4,byte];
+
+	!
+	!	If attributes are invalid
+	!	get information about the terminal
+	!
+	if not .tt[ t_attr_valid ]
+	then
+		begin
+		status = $qiow
+			(
+			efn	= efn_term_io,
+			chan	= .tt[ t_context ],
+			func	= io$_sensemode,
+			iosb	= iosb,
+			p1	= tt[ t_user_attributes_1 ],
+			p2	= 12
+			);
+		if not .status then signal( .status );
+	  	if not .iosb[ iosb$w_status ] then signal( .iosb[ iosb$w_status ] );
+
+		tt[ t_cur_attributes_1 ] = .tt[ t_user_attributes_1 ];
+		tt[ t_cur_attributes_2 ] = .tt[ t_user_attributes_2 ];
+		tt[ t_cur_attributes_3 ] = .tt[ t_user_attributes_3 ];
+		tt[ t_attr_valid ] = 1;
+		end;
+
+	current_terminal = .tt;
+	mode_line_rendition_Ref = .mode;
+	region_rendition_Ref = .region;
+	window_rendition_Ref = .win;
+	CheckTermOutputSize( 0, 0 );
+
+	tt_chars = tt[ t_user_attributes_1 ];
+	tt[ t_baud_rate ] = .baud_convert[ .iosb[ iosb$b_tx_speed ] ];	
+	tt[ t_width ] = .tt_chars[ tt_mode$w_width ];
+	tt[ t_length ] = .tt_chars[ tt_mode$b_length ];
+
+	char1 = .tt_chars[ tt_mode$v_char_1 ];
+	char2 = .tt_chars[ tt_mode$l_char_2 ];
+
+	term_edit = .char2[ tt2$v_edit ];
+	term_regis = .char2[ tt2$v_regis ];
+	term_avo = .char2[ tt2$v_avo ];
+	term_edit = .char2[ tt2$v_edit ];
+	term_app_keypad = .char2[ tt2$v_app_keypad ];
+	term_deccrt = .char2[ tt2$v_deccrt ];
+	term_deccrt2 = .char2[ tt2$v_deccrt2 ];
+	term_deccrt3 = .char2[ tt2$v_deccrt2 ];
+	term_deccrt4 = .char2[ tt2$v_deccrt4 ];
+	term_nopadding = .char1[ tt$v_ttsync ];
+	term_eightbit =  .char1[ tt$v_eightbit ];
+	term_expand_c1 = not(.char1[ tt$v_eightbit ] and .char2[ tt2$v_deccrt2 ]);
+	term_width = .tt[ t_width ];                                      
+	term_length = .tt[ t_length ];
+	if .term_deccrt
+	then
+		begin
+		tt[ t_IL_mf ] = 0;
+		tt[ t_IL_ov ] = 1;
+		end
+	else
+		begin
+		tt[ t_IL_mf ] = 9999;
+		tt[ t_IL_ov ] = 9999;
+		end;
+	if .term_edit
+	then
+		begin
+		tt[ t_IC_mf ] = 1;
+		tt[ t_IC_ov ] = 0;
+		end
+	else
+		begin
+		tt[ t_IC_mf ] = 9999;
+		tt[ t_IC_ov ] = 9999;
+		end;
+	output_channel = .tt[ t_context ];
+	end;
+
+global routine term_init_device
+		(
+		tt	: ref trm_control
+		)
+		 =
+	begin
+	local
+		kb_was_enabled,
+		status,
+		iosb		: $iosb_def,
+		tt_chars	: ref tt_mode,
+		chars		: tt_mode;
+
+	if .tt[ t_version ] neq tt_struct_version
+	then
+		return ss$_nosuchdev;
+
+	kb_was_enabled = .tt[ k_enabled ];
+	term_input_disable( .tt );
+	status = $qiow
+		(
+		efn	= efn_term_io,
+		chan	= .tt[ t_context ],
+		func	= io$_writevblk or io$m_canctrlo,
+		iosb	= iosb
+		);
+	if not .status then signal( .status );
+	if not .iosb[ iosb$w_status ] then signal( .iosb[ iosb$w_status ] );
+
+	tt_chars = tt[ t_cur_attributes_1 ];
+	chars[ tt_mode$b_class ] = .tt_chars[ tt_mode$b_class ];
+	chars[ tt_mode$b_type ] = .tt_chars[ tt_mode$b_type ];
+	chars[ tt_mode$w_width ] = .tt_chars[ tt_mode$w_width ];
+	chars[ tt_mode$v_char_1 ] = .tt_chars[ tt_mode$v_char_1 ] and not
+			(tt$m_wrap or tt$m_halfdup or
+			tt$m_escape or tt$m_readsync)
+		or
+			tt$m_noecho;
+	chars[ tt_mode$b_length ] = .tt_chars[ tt_mode$b_length ];
+	chars[ tt_mode$l_char_2 ] = .tt_chars[ tt_mode$l_char_2 ] or
+					 tt2$m_pasthru;
+
+	status = $qiow
+		(
+		efn	= efn_term_io,
+		chan	= .tt[ k_context ],
+		func	= io$_setmode,
+		iosb	= iosb,
+		p1	= chars,
+		p2	= 12
+		);
+	if not .status then signal( .status );
+	if not .iosb[ iosb$w_status ] then signal( .iosb[ iosb$w_status ] );
+	status = $qiow
+		(
+		efn	= efn_term_io,
+		chan	= .tt[ t_context ],
+		func	= io$_sensemode,
+		iosb	= iosb,
+		p1	= chars,
+		p2	= 12
+		);
+	if not .status then signal( .status );
+	if not .iosb[ iosb$w_status ] then signal( .iosb[ iosb$w_status ] );
+
+	tt[ t_attr_valid ] = 1;
+	tt[ t_baud_rate ] = .baud_convert[ .iosb[ iosb$b_tx_speed ] ];	
+	term_width = tt[ t_width ] = tt_chars[ tt_mode$w_width ] =
+				.chars[ tt_mode$w_width ];
+	term_length = tt[ t_length ] = tt_chars[ tt_mode$b_length ] =
+				.chars[ tt_mode$b_length ];
+
+	if .kb_was_enabled
+	then
+		begin
+		term_input_enable( .tt );
+		end;
+
+	return ss$_normal;
+	end;
+
+
+routine term_change_attributes
+		(
+		tt	: ref trm_control
+		) : novalue =
+	begin
+	bind tt_chars	= tt[ t_cur_attributes_1 ]	: tt_mode;
+	term_width = tt_chars[ tt_mode$w_width ] = .tt[ t_width ];
+	term_length = tt_chars[ tt_mode$b_length ] = .tt[ t_length ];
+
+	term_init_device( .tt );
+	end;
+
+
+global routine term_restore_charactistics
+		(
+		tt	: ref trm_control
+		) : novalue =
+	begin
+	local
+		status,
+		iosb		: $iosb_def;
+	bind tt_chars	= current_terminal[ t_user_attributes_1 ]	: tt_mode;
+	tt_chars[ tt_mode$w_width ] = .current_terminal[ t_width ];
+	tt_chars[ tt_mode$b_length ] = .current_terminal[ t_length ];
+
+	status = $qiow
+		(
+		efn	= efn_term_io,
+		chan	= .current_terminal[ t_context ],
+		func	= io$_setmode,
+		iosb	= iosb,
+		p1	= current_terminal[ t_user_attributes_1 ],
+		p2	= 12
+		);
+	current_terminal[ t_attr_valid ] = 0;
+	if not .status then signal( .status );
+	if not .iosb[ iosb$w_status ] then signal( .iosb[ iosb$w_status ] );
+	end;
+
+
+global routine term_input_enable
+	(
+	tt	: ref trm_control
+	)
+		: novalue =
+	begin
+	local
+		status;
+	if .tt[ k_enabled ] then return;
+	tt[ k_enabled ] = 1;
+	tt[ k_input_readtimed ] = 1;
+        status = $qio
+		(
+		efn	= efn_do_not_wait_on,
+		chan	= .tt[ k_context ],
+		func	= io$_readvblk,
+		iosb	= tt[ k_iosb ],
+		astadr	= term_input_char,
+		astprm	= .tt,
+		p1	= tt[ k_char ],
+		p2	= 1
+		);
+	if not .status then signal( .status );
+	end;
+
+
+own	old_status,
+	old_iosb	: vector[2,long];
+routine term_input_char
+	(
+	tt	: ref trm_control
+	)
+		: novalue =
+	begin
+	local
+		status,
+		iosb		: ref $iosb_def,
+		p		: ref vector[,byte];
+
+	old_iosb[0] = .tt[ k_iosb ];
+	old_iosb[1] = .tt[ k_iosb2 ];
+
+	iosb = tt[ k_iosb ];
+%if %bliss( bliss32v ) %then
+codecomment 'blah':
+%fi
+	begin
+	if not .iosb[ iosb$w_status ]
+	and .iosb[ iosb$w_status ] neq ss$_timeout
+	then
+		begin
+		if .iosb[ iosb$w_status ] neq ss$_abort
+		and .iosb[ iosb$w_status ] neq ss$_cancel
+		then
+			signal( .iosb[ iosb$w_status ] );
+		return;
+		end;
+	end;
+
+	if not .tt[ k_enabled ] then return;
+
+	p = tt[ k_char ];
+	incr i from 1 to .iosb[ iosb$w_read_size ] +
+				.iosb[ iosb$w_terminator_size ]
+	do
+		bliss (.tt[ k_input_char ], .tt, ch$rchar_a( p ) );
+
+	!
+	!	Alternate between read with 0 timeouts and 1 char read
+	!
+	if .tt[ k_input_readtimed ]
+	then
+		status = $qio
+			(
+			efn	= efn_do_not_wait_on,
+			chan	= .tt[ k_context ],
+			func	= io$_readvblk or io$m_timed,
+			iosb	= .iosb,
+			astadr	= term_input_char,
+			astprm	= .tt,
+			p1	= tt[ k_char ],
+			p2	= k_char_size,
+			p3	= 0,	! zero second timeout
+			p4	= uplit long( 32, uplit byte( rep 32 of (0) ) )
+			)
+	else
+		status = $qio
+			(
+			efn	= efn_do_not_wait_on,
+			chan	= .tt[ k_context ],
+			func	= io$_readvblk,
+			iosb	= .iosb,
+			astadr	= term_input_char,
+			astprm	= .tt,
+			p1	= tt[ k_char ],
+			p2	= 1
+			);
+	tt[ k_input_readtimed ] = .tt[ k_input_readtimed ] + 1;
+	old_status = .status;
+%if %bliss( bliss32v ) %then
+codecomment 'blah':
+%fi
+	begin
+	if not .status
+	then
+		signal( .status );
+	end;
+	end;
+
+
+global routine term_input_disable
+	(
+	tt	: ref trm_control
+	)
+		: novalue =
+	begin
+	local
+		status;
+	tt[ k_enabled ] = 0;
+	status = $cancel( chan = .tt[ k_context ] );
+	if not .status then signal( .status );
+	end;
+
+
+!+
+!	Emacs output
+!
+!	all characters passed to t_putchar and t_printf are collected
+!	in the output_buffer. When the output_size is greater then
+!	the output_length less the output_overrun size the buffer is
+!	output.
+!-
+
+literal
+	output_minimum	= 1,
+	output_overrun	= 128,
+	output_length	= 256 + output_overrun;
+global
+	output_size	: initial( 0 ),
+	output_buffer	: ref vector[,byte] initial( 0 );
+
+global routine CheckTermOutputSize( value, v ) =
+	begin
+	local
+		status,
+		max_qio_size	: volatile,
+		get_syi_list	: $itmlst_decl( items=1 );
+	
+	$itmlst_init
+	(
+	itmlst = get_syi_list,
+	(itmcod=syi$_maxbuf, bufadr=max_qio_size)
+	);
+	status = $getsyiw( itmlst = get_syi_list );
+	if not .status then value = 0;
+
+	if .value leq output_minimum
+	then
+		term_output_buffer_size = output_length - output_overrun
+	else
+		!
+		!	The 38 is the over head on the IO in the TT driver
+		!	At this time it is TTY$C_WB_LENGTH = 38. See
+		!	TTYFDT.MAR and TTYDEF.SDL
+		!
+		term_output_buffer_size = 
+			min( .value, .max_qio_size - 38 - output_overrun );
+
+	!
+	!	allocate a buffer of the correct size
+	!
+	if .output_buffer neq 0 then efree( .output_buffer );
+	output_buffer = emalloc( .term_output_buffer_size + output_overrun );
+	output_size = 0;
+
+	return 0;
+	end;
+
+
+routine T_print( tt : ref trm_control, str : ref vector[,byte] ) : novalue =
+	begin
+	local
+		s	: ref vector[,byte],
+		char;
+
+	s = .str;
+
+	if not .term_expand_c1
+	then
+		begin
+		while (char = .s[0]; s = .s+1; .char) neq 0
+		do
+			begin
+			output_buffer[ .output_size ] = .char;
+			output_size = .output_size + 1;
+			end ;
+		end
+	else
+		begin
+		while (char = .s[0]; s = .s+1; .char) neq 0
+		do
+			begin
+			if .char geq 128 and .char leq 128+31
+			then
+				begin
+				output_buffer[ .output_size ] = %x'1b';
+				output_size = .output_size + 1;
+
+				char = .char - %x'40';		
+				end;
+
+			output_buffer[ .output_size ] = .char;
+			output_size = .output_size + 1;
+			end ;
+		end;
+
+	if .output_size gtr .term_output_buffer_size
+	then
+		t_flush(.tt);
+	end ;
+
+routine T_putchar( tt : ref trm_control, char ) : novalue =
+	begin
+	!
+	!	If there is no eightbit support on the terminal
+	!	and the character is C1 control fold onto a 7-bit code.
+	!
+	if .term_expand_c1
+	and .char geq 128 and .char leq 128+31
+	then
+		begin
+		output_buffer[ .output_size ] = %x'1b';
+		output_size = .output_size + 1;
+
+		char = .char - %x'40';		
+		end;
+
+	output_buffer[ .output_size ] = .char;
+	output_size = .output_size + 1;
+
+	if .output_size gtr .term_output_buffer_size
+	then
+		t_flush(.tt);
+	end ;
+
+
+own
+	flush_iosb	: vector[4,word];
+
+routine t_flush( tt : ref trm_control ) : novalue =
+	begin
+
+	if .output_size gtr 0
+	then
+		$qiow
+		(
+		efn	= efn_term_io+10,
+		iosb	= flush_iosb,
+		chan	= .output_channel,
+		func	= io$_writevblk,
+		p1	= output_buffer[0],
+		p2	= .output_size
+		);
+	output_size = 0;
+	end ;
+
+
+end
+eludom

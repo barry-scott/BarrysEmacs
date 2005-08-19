@@ -1,0 +1,2472 @@
+<chapter>(EMACS Library Reference\libraries_chap)
+
+<head1>(ABBREV, Extended Abbreviation Support\abbrev_sec)
+
+<x>(ABBREV)
+<x>(Abbreviation handling)
+
+<p>
+The ABBREV library provides useful functions that allow you to
+manipulate  abbreviations. To access these functions, you
+must load ABBREV using <key_name>(ESC-x execute-mlisp-file).
+
+<p>
+The functions defined in the ABBREV library and their key bindings are
+as follows:
+
+<definition_list>
+
+<deflist_item>(^X-G (define-global-abbrev-in-buffer))
+<x>(define-global-abbrev-in-buffer)
+<deflist_def>
+Takes the word to the left of dot and defines
+it as a global abbreviation. You are prompted for the
+expansion in the Mini-buffer.
+
+<deflist_item>(^X-L (define-local-abbrev-in-buffer))
+<x>(define-local-abbrev-in-buffer)
+<deflist_def>
+Takes the word to the left of dot and defines it as an abbreviation in the
+current buffer's local abbreviation table. You are prompted for the
+abbreviation's expansion in the Mini-buffer.
+
+<deflist_item>((list-local-abbrevs))
+<x>(list-local-abbrevs)
+<deflist_def>
+Displays a buffer called <key_name>(Abbrev list) and fills it with the
+abbreviations and their expansions in effect for the current buffer.
+
+<deflist_item>(^X-W (edit-local-abbrevs))
+<x>(edit-local-abbrevs)
+<deflist_def>
+Displays a buffer called <key_name>(Abbrev list), fills it with the
+abbreviations and their expansions in effect for the current buffer and
+then enters a recursive edit so that you can edit these definitions. When
+the recursive edit is exited, the buffer is used to define the new
+abbreviations.
+
+<deflist_item>((list-all-abbrevs))
+<x>(list-all-abbrevs)
+<deflist_def>
+Displays a buffer called <key_name>(Abbrev list) and fills it with the
+abbreviations and expansions currently defined in EMACS.
+
+<deflist_item>((edit-all-abbrevs))
+<x>(edit-all-abbrevs)
+<deflist_def>
+Displays a buffer called <key_name>(Abbrev list), fills it with all the
+abbreviations defined in the current EMACS, and then enters a recursive
+edit to let you alter these abbreviations.  When you exit the recursive
+edit, the modified buffer contents are used to define the abbreviations.
+
+<deflist_item>(^X-R (define-global-abbrev-for-region))
+<x>(define-global-abbrev-for-region)
+<deflist_def>
+Uses the region as an expansion and prompts you for an
+abbreviation. The abbreviation is defined in the global abbreviation
+table.
+
+<deflist_item>(^X-S (define-local-abbrev-for-region))
+<x>(define-local-abbrev-for-region)
+<deflist_def>
+Uses the region as an expansion and prompts you for an
+abbreviation. The abbreviation is defined in the current buffer's local
+abbreviation table.
+
+<enddefinition_list>
+
+
+<head1>(AREA, Vertically Bounded Cut And Paste\area_sec)
+
+<x>(AREA)
+<x>(Rectangular cut and paste)
+
+<p>
+The AREA package defines two functions that allow you to define a box and
+then remove the text from that box leaving the text not included in the
+box undisturbed. The removed text is stored in a buffer called
+<key_name>(Area). This text may be inserted later at some other location.
+
+<p>
+The AREA functions and key bindings are:
+
+<definition_list>
+
+<deflist_item>(ESC-w (delete-area))
+<x>(delete-area)
+<deflist_def>
+Deletes a vertically-bounded area, storing the deleted area in  a buffer
+named <key_name>(Area).
+
+<deflist_item>(ESC-y (insert-area))
+<x>(insert-area)
+<deflist_def>
+Inserts the contents of the <key_name>(Area) buffer into the current
+buffer at dot.
+
+<enddefinition_list>
+
+<p>
+The AREA library has been superceded by the RECTANGULAR library, but it is
+still supplied with EMACS for compatibility with existing MLisp code.  For
+details on the RECTANGULAR library, see <reference>(rectangular_sec).
+
+
+<head1>(BUFF, One Line Buffer Listing\buff_sec)
+
+<x>(BUFF)
+<x>(One line buffer listing)
+<x>(Buffer listing<xs>one line)
+<x>(one-line-buffer-list)
+
+<p>
+This library defines the single function <key_name>(one-line-buffer-list).
+This function displays the names of all of the buffers in EMACS in
+the mode line. If more that one line's worth of buffers exist, each line of
+names is displayed and a character input to display the next line.
+The default binding for the <key_name>(one-line-buffer-list) function is
+<key_name>(^X-^B).
+
+<p>
+Some buffers in the list may br preceded by a single character.  The
+various characters and their meanings are:
+
+<definition_list>
+
+<deflist_item>(*)
+<deflist_def>
+Indicates that the buffer has been modified since it was last written to
+disk
+
+<deflist_item>(#)
+<deflist_def>
+Indicates that the buffer is a scratch buffer.
+
+<deflist_item>(@)
+<deflist_def>
+Indicates that the buffer is empty.
+
+<enddefinition_list>
+
+
+<head1>(CENTERLIN, Line Centering\centerlin_sec)
+
+<x>(CENTERLIN)
+<x>(Line centering)
+<x>(Centering lines)
+<x>(center-line)
+<x>(left-margin)
+<x>(right-margin)
+
+<p>
+The CENTERLIN library package defines the single function
+<key_name>(center-line) which can be used to centre the current line
+between the margins as defined by <key_name>(left-margin) and
+<key_name>(right-margin).
+
+<p>
+There is no default binding for the <key_name>(center-line) function.
+
+
+<head1>(CMS, An Interface to DEC/CMS\cms_sec)
+
+<x>(CMS)
+<x>(DEC/CMS interface)
+
+<p>
+The CMS library of functions provide an interface to the Code
+Management System (DEC/CMS) from within EMACS.  The CMS library functions
+are analogous to their equivalents in the CMS application.
+
+<p>
+The functions are not bound to any keys by default. If you do want to
+bind the functions, create a file called CMS.KEY containing your bindings
+in your EMACS$PATH. The CMS library will load this file when you load
+the CMS library.
+
+<p>
+Most CMS library functions have an alternate form when passed a
+prefix argument: some commands will prompt for input in the Mini-buffer;
+others will display a form which you can fill in to modify the default
+action of the command.  When you have completed the forms, use the
+<key_name>(exit-emacs) command to execute the command.  To abort the form,
+use the <key_name>(^C) command.
+
+<p>
+For more information on CMS libraries and the DEC/CMS layered product
+itself, see the <reference>(vax_dec_cms_gt).
+
+<p>
+The EMACS CMS interface functions are:
+
+<definition_list>
+
+<deflist_item>((cms-set-library))
+<x>(cms-set-library)
+<deflist_def>
+Sets the current CMS library by translating the logical name CMS$LIB.
+
+<p>
+If provided a prefix argument, <key_name>(cms-set-library) prompts for the
+name of the library in the Mini-buffer.
+
+<deflist_item>((cms-show-library))
+<x>(cms-show-library)
+<deflist_def>
+Prints the name of the currently set CMS library in the Mini-buffer.
+
+<deflist_item>((cms-show-elements))
+<x>(cms-show-elements)
+<deflist_def>
+Lists the elements in the current CMS library in the buffer
+<key_name>(CMS list), which is popped onto the screen.
+
+<p>
+If a prefix argument is provided, a <key_name>(Show Elements) form is
+popped onto the screen.  The form contains the following fields:
+
+<list>(unnumbered)
+<le>
+Elements
+<le>
+Include groups flag (default is 1).
+<endlist>
+
+<deflist_item>((cms-show-class))
+<x>(cms-show-class)
+<deflist_def>
+Lists the classes in the current CMS library in the <key_name>(CMS list)
+buffer which is popped onto the screen.
+
+<p>
+If passed a prefix argument, <key_name>(cms-show-class) prompts for the
+class to list in the Mini-buffer.
+
+<deflist_item>((cms-show-group))
+<x>(cms-show-group)
+<deflist_def>
+Lists the groups in the current CMS library in the <key_name>(CMS list)
+buffer which is popped onto the screen.  If passed a prefix argument,
+<key_name>(cms-show-group) prompts for the group to list in the Mini-buffer.
+
+<deflist_item>((cms-show-reservation))
+<x>(cms-show-reservation)
+<deflist_def>
+Lists the element reservations in the current CMS library in the
+<key_name>(CMS list) buffer.
+
+<p>
+If passed a prefix argument, <key_name>(cms-show-reservations) pops a
+<key_name>(Show Reservations) form onto the screen.  The fields in the
+form are:
+
+<list>(unnumbered)
+<le>
+Elements
+<le>
+Generation
+<le>
+User name.
+<endlist>
+
+<deflist_item>((cms-fetch))
+<x>(cms-fetch)
+<deflist_def>
+Prompts for an element name and fetches the specified element, reading it
+into a new buffer and making that buffer current.
+
+<p>
+If passed a prefix argument, <key_name>(cms-fetch) pops up a
+<key_name>(Fetch) form.  The fields in the form are:
+
+<list>(unnumbered)
+<le>
+Element
+<le>
+Generation (defaults to highest generation)
+<le>
+No history flag (default is 1)
+<le>
+No notes flag (default is 1).
+<endlist>
+
+<deflist_item>((cms-reserve))
+<x>(cms-reserve)
+<deflist_def>
+Prompts for an element name and a remark in the Mini-buffer and reserves
+the specified element, reading it into a new buffer and making that buffer
+the current buffer.
+
+<p>
+If passed a prefix argument, <key_name>(cms-reserve) pops a
+<key_name>(Reserve) form onto the screen.  The fields in the form are:
+
+<list>(unnumbered)
+<le>
+Element
+<le>
+Remark
+<le>
+Generation
+<le>
+No history flag (default is 1)
+<le>
+No notes flag (default is 1).
+<endlist>
+
+<deflist_item>((cms-unreserve))
+<x>(cms-unreserve)
+<deflist_def>
+Prompts for the name of an element and a remark in the Mini-buffer and
+unreserves the specified element.
+
+<p>
+If passed a prefix argument, <key_name>(cms-unreserve) does not prompt for
+a remark.
+
+<deflist_item>((cms-replace))
+<x>(cms-replace)
+<deflist_def>
+Prompts for the name of an element and replaces the specified element into
+the CMS library.
+
+<p>
+If passed a prefix argument, <key_name>(cms-replace) pops up a
+<key_name>(Replace) form onto the screen.  The fields in the form are:
+
+<list>(unnumbered)
+<le>
+Element
+<le>
+Remark
+<le>
+Variant
+<le>
+Reservation flag
+<endlist>
+
+<deflist_item>((cms-create-element))
+<x>(cms-create-element)
+<deflist_def>
+Prompts for the name of an element and creates the named element.
+
+<p>
+If passed a prefix argument, <key_name>(cms-create-element) pops up a
+<key_name>(Create Element) form.  The fields in the form are:
+
+<list>(unnumbered)
+<le>
+Element
+<le>
+Remark
+<le>
+History
+<le>
+Keep flag
+<le>
+Reservation flag
+<le>
+Concurrency flag (default is 1)
+<le>
+Reference flag (default is 0).
+<endlist>
+
+<deflist_item>((cms-copy-element))
+<x>(cms-copy-element)
+<deflist_def>
+Prompts for the name of an existing element and a new element name, then
+copies the existing element to the new element.
+
+<p>
+If passed a prefix argument, <key_name>(cms-copy-element) pops up a
+<key_name>(Copy Element) form.  The fields in the form are:
+
+<list>(unnumbered)
+<le>
+Element
+<le>
+New element
+<le>
+Remark.
+<endlist>
+
+<deflist_item>((cms-insert-element))
+<x>(cms-insert-element)
+<deflist_def>
+Prompts for the name of an existing element and a group name, then inserts
+the specified element into the named group.
+
+<p>
+If passed a prefix argument, <key_name>(cms-insert-element) pops up an
+<key_name>(Insert Element) form.  The fields in the form are:
+
+<list>(unnumbered)
+<le>
+Element
+<le>
+Group
+<le>
+Remark.
+<endlist>
+
+<deflist_item>((cms-insert-group))
+<x>(cms-insert-group)
+<deflist_def>
+Prompts for the name of a subgroup and the group into which the subgroup
+should be inserted, then performs the insertion.
+
+<p>
+If passed a prefix argument, <key_name>(cms-insert-group) pops up an
+<key_name>(Insert Group) form.  The fields in the form are:
+
+<list>(unnumbered)
+<le>
+Subgroup
+<le>
+Group
+<le>
+Remark.
+<endlist>
+
+<deflist_item>((cms-insert-generation))
+<x>(cms-insert-generation)
+<deflist_def>
+Prompts for an element name and a class name, then inserts the latest
+generation of the specified element into the named class.
+
+<p>
+If passed a prefix argument, <key_name>(cms-insert-generation) pops up an
+<key_name>(Insert Generation) form.  The fields in the form are:
+
+<list>(unnumbered)
+<le>
+Element
+<le>
+Class
+<le>
+Generation (default is highest generation)
+<le>
+Remark.
+<endlist>
+
+<deflist_item>((cms-modify-class))
+<x>(cms-modify-class)
+<deflist_def>
+Pops up a <key_name>(Modify Class) form which allows you to modify class
+attributes.  The fields in the form are:
+
+<list>(unnumbered)
+<le>
+Class
+<le>
+Remark
+<le>
+New class
+<le>
+New class remark
+<le>
+Read-only flag.
+<endlist>
+
+<deflist_item>((cms-modify-group))
+<x>(cms-modify-group)
+<deflist_def>
+Pops up a <key_name>(Modify Group) form which allows you to modify group
+attributes.  The fields in the form are:
+
+<list>(unnumbered)
+<le>
+Group
+<le>
+Remark
+<le>
+New group
+<le>
+New group remark
+<le>
+Read-only flag.
+<endlist>
+
+<deflist_item>((cms-modify-element))
+<x>(cms-modify-element)
+<deflist_def>
+Pops up a <key_name>(Modify Element) form which allows you to modify
+element attributes.  The fields in the form are:
+
+<list>(unnumbered)
+<le>
+Element
+<le>
+Remark
+<le>
+New element
+<le>
+New element remark
+<le>
+History
+<le>
+Concurrency flag (default is 1)
+<le>
+Reference flag (default is 1).
+<endlist>
+
+<deflist_item>((cms-remove-element))
+<x>(cms-remove-element)
+<deflist_def>
+Prompts for the name of an element and a group name and removes the
+element from the specified group.
+
+<p>
+If passed a prefix argument, <key_name>(cms-remove-element) pops up a
+<key_name>(Remove Element) form.  The form contains the following fields:
+
+<list>(unnumbered)
+<le>
+Element
+<le>
+Group
+<le>
+Remark.
+<endlist>
+
+<deflist_item>((cms-remove-generation))
+<x>(cms-remove-generation)
+<deflist_def>
+Prompts for an element name and a class name and removes the specified
+generation of the element from the class.
+
+<p>
+If passed a prefix argument, <key_name>(cms-remove-generation) pops up a
+<key_name>(Remove Generation) form containing the following fields:
+
+<list>(unnumbered)
+<le>
+Element
+<le>
+Class
+<le>
+Remark.
+<endlist>
+
+<deflist_item>((cms-remove-group))
+<x>(cms-remove-group)
+<deflist_def>
+Prompts for a subgroup name and a group name, then removes the subgroup
+from the specified group.
+
+<deflist_item>((cms-delete-class))
+<x>(cms-delete-class)
+<deflist_def>
+Prompts for a class name and deletes the specified class.
+
+<deflist_item>((cms-delete-element))
+<x>(cms-delete-element)
+<deflist_def>
+Prompts for an element name and a remark deletes the specified element.
+If a prefix argument is provided, the remark is not required.
+
+<deflist_item>((cms-delete-group))
+<x>(cms-delete-group)
+<deflist_def>
+Prompts for a group name and a remark, then deletes the specified group.
+If a prefix argument is provided, the remark is not required.
+
+<deflist_item>((cms-remark))
+<x>(cms-remark)
+<deflist_def>
+Prompts for a remark and enters this into the CMS library's remark history.
+
+<enddefinition_list>
+
+
+<head1>(DABBREV, Dynamic Abbreviation Expansion\dabbrev_sec)
+
+<x>(DABBREV)
+<x>(dabbrev)
+<x>(Dynamic abbrevation expansion)
+<x>(Abbreviations<xs>dynamic expansion of)
+
+<p>
+The DABBREV  library  defines  the  <key_name>(dabbrev) function.   The
+<key_name>(dabbrev) function  takes  the  word  that the  cursor is
+positioned in and looks through the buffer for a word for which the current
+word is a prefix.  If a match is found, the current word is expanded into
+the full word.
+
+<p>
+For example, if you have already typed the word <quote>(<cx>(FOOBAR)) into
+the buffer, you can then type the subword <quote>(<cx>(FOO)), then
+execute the <key_name>(dabbrev) function and <quote>(<cx>(FOO)) will be
+expanded to <quote>(<cx>(FOOBAR)).  It is best to bind <key_name>(dabbrev)
+to an easily-typed key sequence so that abbreviations be be expanded
+quickly as you type in your text.
+
+
+<head1>(DCLMODE, A Mode for Writing DCL Command Procedures\dcl_sec)
+
+<x>(DCLMODE)
+
+<x>(DCL-mode)
+<p>
+The DCLMODE library defines functions to help write DCL command
+procedures.  The library defines the function <key_name>(DCL-mode), which
+enables the DCL Mode major mode.
+
+<p>
+<key_name>(DCL-mode) provides facilities for DCL comment handling and
+automatic indentation of DCL command lines.
+
+
+<head1>(DENT, Region Indentation\dent_sec)
+
+<x>(DENT)
+<x>(Indentation)
+<x>(indent-region)
+<x>(undent-region)
+
+<p>
+The DENT library defines the functions <key_name>(indent-region) and
+<key_name>(undent-region).  <key_name>(indent-region) indents the
+currently selected region by <key_name>(logical-tab-size) characters.  If
+provided with a prefix argument, it performs the indentation the specified
+numbers of times.  <key_name>(undent-region) <quote>(undents) the current
+region.
+
+
+<head1>(EDTSIM, EDT Simulation\edtsim_sec)
+
+<x>(EDTSIM)
+<x>(EDT simulation)
+
+<p>
+The EDTSIM package defines functions which emulate the EDT text editor.
+When you load the EDTSIM library (using <key_name>(ESC-x execute-mlisp-file
+edtsim)), the numeric keypad keys are re-bound to perform the same actions
+as they would in the real EDT editor.  The major mode string in the mode
+line is modified to indicate that EDT simulation is loaded.
+
+<p>
+EDTSIM is loaded by the default EMACS initialisation file
+EMACS$LIBRARY:EMACSINIT.ML, so that new EMACS users who have not created
+their own initialisation file will have EDT simulation when they start
+EMACS.
+
+
+<head1>(ELECTRICC, A Mode for Writing C Programs\electricc_sec)
+
+<x>(ELECTRICC)
+<x>(Electric C Mode)
+
+<p>
+The ELECTRICC library defines functions for Electric C Mode, a major mode
+for writing C programs.  Electric C Mode is an alternative library to the
+C Mode library described in the <reference>(emacs_prog_guide).
+
+<p>
+Electric C Mode performs a number of useful functions for the C
+programmer, including:
+
+<list>(unnumbered)
+
+<le>
+Balancing of parentheses
+
+<le>
+Proper indentation of compound statement blocks
+
+<le>
+Comment handling
+
+<endlist>
+
+
+<head1>(FLASHER, Parenthesis Balancing\flasher_sec)
+
+<x>(FLASHER)
+<x>(Parenthesis balancing)
+<x>(Balancing parentheses)
+
+<x>(paren-flash)
+<p>
+The FLASHER  library  defines the single function <key_name>(paren-flash)
+which can be used to cause parenthesis balancing The function
+<key_name>(paren-flash) should be bound to the closing version of the
+brackets that are to be balanced.
+
+<p>
+Two buffer-specific variables are used to provide input parameters to the
+functions:
+
+<definition_list>
+
+<deflist_item>(paren-flash-wait)
+<x>(paren-flash-wait)
+<deflist_def>
+A numeric variable used to control the maximum length of time the cursor
+stays over a matching parenthesis. The value is specified in tenths of a
+second. The default value is 10 (1 second).
+
+<deflist_item>(paren-flash-message)
+<x>(paren-flash-message)
+<deflist_def>
+A boolean variable used to control the displaying of the error message
+when no matching bracket is found. If true, an error message is
+displayed; otherwise, the fact that the bracket is non-matching is
+ignored.
+
+<enddefinition_list>
+
+
+<head1>(GLOBDEL, Global Deletion Of Lines\globdel_sec)
+
+<x>(GLOBDEL)
+<x>(Global deletion of lines)
+<x>(Deletion of lines)
+
+<p>
+The GLOBDEL  library  provides the facility to nominate a set of lines
+by a search string, and then delete all the nominated lines. The
+library defines two functions:
+
+<definition_list>
+
+<deflist_item>((global-delete-lines))
+<x>(global-delete-lines)
+<deflist_def>
+Prompts for an ordinary search string, and deletes all lines containing
+that string.
+
+<deflist_item>((re-global-delete-lines))
+<x>(re-global-delete-lines)
+<deflist_def>
+Prompts for a regular expression search string, and deletes all lines
+containing the regular expression.
+
+<enddefinition_list>
+
+<p>
+Both functions indicate the total number of lines deleted.
+
+
+<head1>(GOTO, Goto Line/Page/Percent\goto_sec)
+
+<x>(GOTO)
+<x>(Goto<xs>line)
+<x>(Goto<xs>page)
+<x>(Goto<xs>percent)
+
+<p>
+The GOTO library defines functions that move dot directly to a specified
+line, page, or percentage of the current buffer.  The functions defined
+are:
+
+<definition_list>
+
+<deflist_item>((goto-line))
+<x>(goto-line)
+<deflist_def>
+Moves dot to the beginning of the specified line.  If a prefix argument is
+provided, use that as the line number to find.  The first line in the
+buffer is line number 1.
+
+<deflist_item>((adjust-line-number))
+<x>(adjust-line-number)
+<deflist_def>
+Makes the current line line number 1 so that <key_name>(goto-line) starts
+counting from the current line rather than the beginning of the file.
+
+<deflist_item>((goto-page))
+<x>(goto-page)
+<deflist_def>
+Moves dot to the beginning of the specified page.  If a prefix argument is
+provided, use that as the page number to find.
+
+<deflist_item>((goto-percent))
+<x>(goto-percent)
+<deflist_def>
+Moves dot to the percentage position of the file indicated.  If a prefix
+argument is provided, use that as the percentage position to find.  The
+beginning of the file is percentage position 0.  The end of the file is
+percentage position 100.
+
+<enddefinition_list>
+
+
+<head1>(INCSEARCH, Incremental Searching\incsearch_sec)
+
+<x>(INCSEARCH)
+<x>(Incremental searching)
+<x>(Searching<xs>incremental)
+
+<p>
+When you execute the normal EMACS search commands, you are prompted for
+the search string in the Mini-buffer.  You type in the entire search
+string, press <key_name>(Return), and EMACS searches for the specified
+string.  The INCSEARCH library defines functions which implement a
+different style of searching called <newterm>(incremental searching).
+
+<p>
+Incremental searches begin searching before you have finished typing the
+search string. As you type in the search string, EMACS moves the cursor to
+where the string would be found. When you have typed enough characters to
+identify the place you want, you can stop. Depending on what you will do
+next, you may or may not need to terminate the search explicitly with an
+<key_name>(Escape).
+
+<p>
+Incremental searching is enabled by loading the INCSEARCH package. This
+package replaces the existing search commands with the following commands:
+
+<definition_list>
+
+<deflist_item>(^^-S (incremental-search))
+<x>(incremental-search)
+<deflist_def>
+Performs a forwards incremental search.
+
+<deflist_item>(^R (reverse-incremental-search))
+<x>(reverse-incremental-search)
+<deflist_def>
+Performs a reverse incremental search.
+
+<enddefinition_list>
+
+<p>
+The <key_name>(^^-S) command initiates a forwards incremental search. It
+reads in characters and positions the cursor at the first occurrence of
+the characters that you have typed. If you type <key_name>(^^-SF), the
+cursor moves right after the first <quote>(<cx>(F)). Type an
+<quote>(<key_name>(O)), and the cursor moves to the first
+<quote>(<cx>(FO)). After another <quote>(<key_name>(O)), the cursor is
+moved to the first occurrence of <quote>(<cx>(FOO)).  At the same time,
+the text <quote>(<cx>(FOO)) is echoed at the bottom of the screen.
+
+<p>
+If you type a incorrect character, you can rub it out. After the
+<quote>(<cx>(FOO)), typing a <key_name>(Delete) makes the last
+<quote>(<cx>(O)) disappear from the bottom of the screen, leaving
+only <quote>(<cx>(FO)). The cursor moves back to the first occurrence of
+<quote>(<cx>(FO)). If you delete the next <quote>(<cx>(O)) and the
+<quote>(<cx>(F)), the cursor moves back to where you started the
+search.
+
+<p>
+When you are satisfied with the place you have reached, you can type an
+<key_name>(Escape), which stops the search, leaving the cursor where the
+search brought it. Also, any command not  meaningful in
+incremental searches stops the searching and is then executed. Thus,
+typing <key_name>(^A) would exit the search and then move to the beginning
+of the line.  <key_name>(Escape) is necessary only if the next command you
+want to type is a printing character, <key_name>(Delete),
+<key_name>(Escape), <key_name>(^Q), or another search command, since those
+are the characters that have special meanings inside the search.
+
+<p>
+Sometimes you may search for <quote>(<cx>(FOO)) and find it, but not the
+one you expected to find.  Type another <key_name>(^^-S) and the cursor
+will find the next <quote>(<cx>(FOO)).  This can be done any number of
+times. If you overshoot, you can rub out the unwanted <key_name>(^^-S)
+commands and the cursor will move back to the previous occurrences of the
+string.
+
+<p>
+If your string is not found at all, the message
+<quote>(<cx>(Failing I-Search)) is displayed in the Mini-buffer.
+The cursor is placed where EMACS found as much of your string as
+was possible.  For example, if you search for <quote>(<cx>(FOOT)), and
+there is no <quote>(<cx>(FOOT)), you might see the cursor after the
+<quote>(<cx>(FOO)) (if the text <quote>(<cx>(FOO)) exists). At this point
+there are several things you can do.  If your string was mis-typed, you
+can rub some of it out and correct it.  If you like the place you have
+found, you can type an <key_name>(Escape) or some other EMACS command to
+accept what the search found.
+
+<p>
+The <key_name>(^R) command starts a reverse incremental search.  This
+works in exactly the same way as the forward incremental search command,
+but in the opposite direction.
+
+
+<head1>(KILLER, A Kill Ring System\killer_sec)
+
+<x>(KILLER)
+<x>(Kill Ring)
+<x>(Deleting text)
+
+<p>
+The KILLER library provides the ability to keep a history of killed
+objects, and to define a killed object as any combination of successive
+kill commands.  The killed objects are stored in a kill ring and can be
+retrieved at any time.
+
+<p>
+The KILLER text deletion functions replace the normal EMACS text deletion
+commands with versions that delete text and store it in the appropiate
+place in the kill ring.  The kill ring functions and default key bindings are:
+
+<definition_list>
+
+<deflist_item>(ESC-. (kr-set-mark))
+<x>(kr-set-mark)
+<deflist_def>
+Sets the mark with reverse-video highlighting enabled.
+
+<deflist_item>(^X-. (kr-toggle-highlight))
+<x>(kr-toggle-highlight)
+<deflist_def>
+Toggles the highlight setting.
+
+<deflist_item>(ESC-d (kr-kill-forward-word))
+<x>(kr-kill-forward-word)
+<deflist_def>
+Deletes the next word and inserts it into the kill ring.
+
+<deflist_item>(ESC-Delete (kr-kill-bacward-word))
+<x>(kr-kill-backward-word)
+<deflist_def>
+Deletes the previous word and inserts it in the kill ring.
+
+<deflist_item>(^W (kr-kill-region))
+<x>(kr-kill-region)
+<deflist_def>
+Deletes the region and inserts it into the kill ring.
+
+<deflist_item>(^K (kr-kill-forward-line))
+<x>(kr-kill-forward-line)
+<deflist_def>
+Deletes the current line from dot to the end-of-line and inserts the
+deleted text into the kill ring.
+
+<deflist_item>(ESC-k (kr-kill-backward-line))
+<x>(kr-kill-backward-line)
+<deflist_def>
+Deletes the current line from dot to the beginning of the line and inserts
+the deleted text into the kill ring.
+
+<deflist_item>(^Y (kr-yank))
+<x>(kr-yank)
+<deflist_def>
+Yanks the text from the current buffer in the kill ring, placing the
+yanked text into the current buffer at dot and leaving the region around
+the yanked text.
+
+<deflist_item>(ESC-y (kr-more-yank))
+<x>(kr-more-yank)
+<deflist_def>
+If the text yanked by <key_name>(^Y) is not the text you want, use
+<key_name>(ESC-y) to yank text from other buffers in the kill ring.
+Successive <key_name>(ESC-y)s will yank text from successive buffers in
+the kill ring.  <key_name>(ESC-y) only works after <key_name>(^Y).
+
+<enddefinition_list>
+
+<x>(KILLER.KEY)
+<p>
+You can change these bindings by making a copy of the KILLER.KEY file,
+modifying it with your own bindings, and saving the modified file in your
+EMACS$PATH.
+
+<x>(kr-max-buf)
+<p>
+The default size of the kill ring is 10 buffers.  The size of the kill
+ring is controlled by the <key_name>(kr-max-buf) variable which is defined
+in KILLER.KEY.  If you want to change the size of the kill ring, make a
+private copy of the KILLER.KEY file as described above and change the
+setting of the <key_name>(kr-max-buf) variable.
+
+
+<head1>(LATEXMODE, A Major Mode for writing La<TeX> Documents\latex_sec)
+
+<x>(LATEXMODE)
+<x>(La<TeX> Mode)
+
+<p>
+The LATEXMODE library implements the La<TeX> Mode major mode which can be
+used to help write documents with the La<TeX> document preparation system.
+
+<p>
+La<TeX> Mode works in the same way as the standard EMACS language modes C
+Mode and Bliss Mode by providing expansion of templates for La<TeX>
+reserved words.  La<TeX> Mode also defines comment handling and
+parenthesis balancing.
+
+<p>
+See the <reference>(emacs_prog_guide) for details of how to use the EMACS
+language modes.
+
+
+<head1>(MAKEBOX, Drawing Boxes Around Text\makebox_sec)
+
+<x>(Boxes<xs>Drawing)
+<x>(MAKEBOX)
+<x>(RECTANGULAR)
+
+<p>
+The MAKEBOX library can be used to draw rectangular boxes around text.  It
+relies on functions defined in the RECTANGULAR library, so you must first
+load the RECTANGULAR library before loading MAKEBOX.  See
+<reference>(rectangular_sec) for a description of the RECTANGULAR library.
+
+<x>(make-box)
+<p>
+The library defines the <key_name>(make-box) function.
+To draw a box around text with <key_name>(make-box):
+
+<list>(numbered)
+<le>
+Select one corner of the box using <key_name>(rectangular-select) (which
+is bound to <key_name>(GOLD-Select) by default).
+
+<le>
+Move to the diagonally opposite corner of the box.
+
+<le>
+Execute the <key_name>(make-box) function.
+
+<endlist>
+
+<p>
+By default, <key_name>(make-box) will use the <quote>(<cx>(+)),
+<quote>(<cx>(--)) and <quote>(<cx>(<literal>(|))) characters to draw
+boxes.  You can override these default values by setting the following
+variables:
+
+<definition_list>
+<deflist_item>(makebox-h-symbol)
+<x>(makebox-h-symbol)
+<deflist_def>
+Contains the character that <key_name>(make-box) uses to draw horizontal
+lines.
+
+<deflist_item>(makebox-v-symbol)
+<x>(makebox-v-symbol)
+<deflist_def>
+Contains the character that <key_name>(make-box) uses to draw vertical
+lines.
+
+<deflist_item>(makebox-corners)
+<x>(makebox-corners)
+<deflist_def>
+Contains the character that <key_name>(make-box) uses to draw corners.
+
+<enddefinition_list>
+
+<p>
+The following example shows how to define your own drawing variables.
+Note that the MAKEBOX library must be loaded before setting the values of
+the drawing variables.
+
+<online_popup>(example)
+<code_example>
+(execute-mlisp-file "makebox")
+(setq makebox-h-symbol "=")
+(setq makebox-v-symbol "!")
+(setq makebox-corners "#")
+<endcode_example>
+<endonline_popup>
+
+<p>
+The following convenience functions are defined to set the drawing
+variables:
+
+<definition_list>
+<deflist_item>(makebox-use-lines)
+<x>(makebox-use-lines)
+<deflist_def>
+Sets the <key_name>(make-box) drawing variables to the default
+line-drawing set.
+
+<deflist_item>(makebox-use-stars)
+<x>(makebox-use-stars)
+<deflist_def>
+Sets all the <key_name>(make-box) drawing variables to <quote>(<cx>(*)).
+
+<enddefinition_list>
+
+
+<head1>(MESSAGES, Displaying Broadcast Messages\messages_sec)
+
+<x>(MESSAGES)
+<x>(Broadcast message trapping)
+<x>(Trapping broadcast messages)
+
+<p>
+The MESSAGES library defines functions which trap broadcast messages and
+display their text in a small window at the bottom of the screen.
+
+<p>
+To start the trapping of broadcast messages, load the
+MESSAGES package with <key_name>(ESC-x execute-mlisp-file).
+
+<x>(broadcast-feeps)
+<p>
+The variable <key_name>(broadcast-feeps) can be used to customise the
+behaviour of MESSAGES library; it contains the number of bell characters
+that are sent to the terminal when a new message is received.  The default
+value of <key_name>(broadcast-feeps) is 1.
+
+
+<head1>(MINIBUF, Writing and Executing Small MLisp Programs\minibuf_sec)
+
+<x>(MINIBUF)
+
+<x>(execute-mlisp-line)
+<p>
+The MINIBUF library provides a better interface for the execution simple
+MLisp programs than the <key_name>(execute-mlisp-line) function.  When
+loaded, MINIBUF rebinds <key_name>(ESC-ESC) so that instead of collecting
+its arguments in the Mini-buffer at the bottom of the screen, it pops up a
+small buffer called <key_name>(minibuffer) to collect the MLisp code.
+Lisp Mode is in effect in this buffer so that MLisp name expansion can be
+used.
+
+<p>
+When you are satisfied that the MLisp in the <key_name>(minibuffer) is
+correct, you can execute it with the command <key_name>(ESC-ESC).
+Subsequent uses of <key_name>(ESC-ESC) will re-display the
+<key_name>(minibuffer) containing the last program  executed; you can
+re-execute the same code with <key_name>(ESC-ESC), or you can edit the
+code first before executing it with <key_name>(ESC-ESC).
+
+
+
+<head1>(MINIBUF-RECALL, Command Recall in the Mini-buffer\minibufrecall_sec)
+
+<x>(MINIBUF-RECALL)
+<x>(Command recall<xs>in the Mini-buffer)
+<x>(Recalling commands<xs>in the Mini-buffer)
+
+<p>
+The MINIBUF-RECALL library provides the ability to recall and edit
+commands in the Mini-buffer.  The library remembers the last 60 commands
+executed.
+
+The following keys can be used to edit and recall commands when
+MINIBUF-RECALL has been loaded:
+
+<definition_list>
+
+<deflist_item>(Up-arrow or ESC-r)
+<deflist_def>
+Recalls the previous command in the command history.
+
+<deflist_item>(Down-arrow or ESC-v)
+<deflist_def>
+Recalls the next command in the command history.
+
+<deflist_item>(Left-arrow)
+<deflist_def>
+Moves the cursor one character left in the Mini-buffer.
+
+<deflist_item>(Right-arrow)
+<deflist_def>
+Moves the cursor one character right in the Mini-buffer.
+
+<deflist_item>(PF2 or Help)
+<deflist_def>
+Pops up a <key_name>(Help) window and lists the available options.
+
+<deflist_item>(Do)
+<deflist_def>
+Executes a command with completion.
+
+<deflist_item>(^G)
+<deflist_def>
+Aborts the Mini-buffer command.
+
+<enddefinition_list>
+
+
+<head1>(MOUSE, Workstation Mouse Support\mouse_sec)
+
+<x>(MOUSE)
+<x>(Workstation mouse support)
+
+<p>
+The MOUSE library defines functions that support the use of a workstation
+mouse with VAX EMACS on a system running either the VWS or DECwindows
+terminal emulator.
+
+<p>
+You can use the MOUSE library to:
+
+<list>(unnumbered)
+<le>Select windows
+<le>Position the cursor
+<le>Cut and paste regions of text
+<le>Change window sizes
+<le>Scroll a window up or down
+<le>Scroll a window left or right
+<le>Execute the keyboard macro at a specific position
+<endlist>
+
+<p>
+In addition, you can customise the MOUSE library to perform specialised
+mouse actions for buffers, and you can build mouse support into
+your own MLisp code.
+
+
+<head2>(Using the MOUSE Library\usingmouse_sec)
+
+<head3>(Enabling and Disabling Mouse Support\enabledisablemouse_sec)
+
+<p>
+To use the MOUSE library functions, add the following MLisp code to your
+EMACSINIT.ML:
+
+<code_example>
+(load "mouse")
+(mouse-mode)
+<endcode_example>
+
+<x>(mouse-on)
+<p>
+With the MOUSE library loaded, you can turn on mouse support with the
+<key_name>(mouse-on) function.  <key_name>(mouse-on) takes one argument
+which is a number describing the required mouse cursor.  A value of 0 (the
+default) specifies the default mouse cursor.  A value of 1 specifies a
+cross-hair cursor (the cross-hair cursor is  supported only on
+VWS workstations).
+
+<x>(mouse-off)
+<p>
+When EMACS mouse handling is enabled, you do not have access to the
+workstation cut and paste features.  To use workstation cut and paste with
+EMACS, you must disable EMACS mouse handling using the
+<key_name>(mouse-off) function.  When you want to use EMACS mouse handling
+again, re-execute the <key_name>(mouse-on) function.
+
+<x>(enter-emacs-hook)
+<x>(return-to-emacs-hook)
+<x>(leave-emacs-hook)
+<x>(exit-emacs-hook)
+<p>
+The easiest way to have mouse support enabled whenever you enter EMACS is
+to execute <key_name>(mouse-on) from the <key_name>(enter-emacs-hook) and
+<key_name>(return-to-emacs-hook) functions.  You should always disable
+EMACS mouse support when you leave EMACS and return to DCL.
+The easiest way to do this is to execute <key_name>(mouse-off) from the
+<key_name>(leave-emacs-hook) and <key_name>(exit-emacs-hook) functions.
+<reference>(mousehooks_ex) shows how you can define the hook functions in
+your EMACSINIT.ML to enable and disable mouse support:
+
+<example>(Enabling and Disabling EMACS Mouse Support\mousehooks_ex)
+<example_attributes>(keep)
+<code_example>
+;
+; Set up Emacs hook functions to enable/disable
+; mouse support.
+;
+(progn
+
+(defun
+    (my-return-to-emacs-actions
+        (mouse-on 0)   ; Turn on EMACS mouse support
+        ;
+        ; Other code to be executed on returning
+	; to EMACS
+        ;
+    )
+)
+
+(defun
+    (my-leave-emacs-actions
+        (mouse-off)    ; Turn off EMACS mouse support
+        ;
+        ; Other code to be executed on leaving EMACS
+        ;
+    )
+)
+
+(setq enter-emacs-hook          "my-enter-emacs-actions")
+(setq return-to-emacs-hook      "my-enter-emacs-actions")
+(setq exit-emacs-hook           "my-leave-emacs-actions")
+(setq leave-emacs-hook          "my-leave-emacs-actions")
+
+)
+<endcode_example>
+<endexample>
+
+<x>(Mouse<xs>Toggling)
+<x>(TOGGLEMOUSE)
+<p>
+The MLisp code in <reference>(togglemouse_ex) shows how to toggle the EMACS
+mouse on and off simply by pressing the <key_name>(F14) key.  This
+provides easy access to the workstation cut and paste facilities from
+within EMACS.
+
+<example>(TOGGLEMOUSE --- Toggling the EMACS Mouse\togglemouse_ex)
+<code_example>
+(declare-global ~togglemouse)
+
+(setq ~togglemouse 0)
+
+(defun
+    (togglemouse
+        (setq ~togglemouse
+            (if ~togglemouse
+                (progn
+                    ;
+                    ; Mouse was off, turn it on
+                    ;
+                    (mouse-on 0)
+                    (message "Emacs mouse enabled")
+                    (! ~togglemouse)
+                )
+                ; else
+                (progn
+                    ;
+                    ; Mouse was on, turn it off
+                    ;
+                    (mouse-off)
+                    (message "Emacs mouse disabled")
+                    (! ~togglemouse)
+                )
+            )
+        )
+    )
+)
+
+(bind-to-key "togglemouse" "\(f14)")
+<endcode_example>
+<endexample>
+
+
+<head3>(Using Mouse Features\mousefeatures_sec)
+
+<p>
+The following list describes how to use the various features provided by
+the EMACS mouse support. In the descriptions of each feature, <quote>(MB1)
+refers to mouse button 1, <quote>(MB2) refers to mouse button 2, and
+<quote>(MB3) refers to mouse button 3.
+
+<definition_list>
+
+<deflist_item>(Position cursor)
+<deflist_def>
+Move the pointer to the position you wish to locate the cursor and click
+MB1.  In overstrike mode, spaces (but not newlines) are
+inserted when needed to reach the selected position.  In insert mode, no
+spaces are inserted, the cursor is placed at the end of the selected line.
+
+<deflist_item>(Select window)
+<deflist_def>
+Move the pointer to the mode line of the window you wish to select, and
+click MB1.
+
+<deflist_item>(Scroll window, vertical)
+<deflist_def>
+<quote>(Grab) part of the text by pointing to it with the pointer and pressing
+MB1.  Move the mouse up or down to the position you would like the grabbed
+line to appear,  then release MB1.  The text is scrolled by a
+corresponding distance.
+
+<deflist_item>(Scroll window, horizontal)
+<deflist_def>
+<quote>(Grab) part of the mode line with MB1 and move the mouse
+left or right.  Release with the pointer still on the mode line.  The
+window will be panned to the left or right a corresponding distance.
+
+<deflist_item>(Change window size)
+<deflist_def>
+To make a window taller, shorter, narrower, or wider, <quote>(grab) the
+window's mode line, a vertical window border, or their intersection point,
+with MB1.  Move the pointer to the  new location of the mode line
+or border, and release MB1.  Windows are deleted, if needed, to
+make room for the new window size.
+
+<deflist_item>(Execute keyboard macro)
+<deflist_def>
+A double-click of MB1 positions the cursor at the selected location, and
+then executes the current keyboard macro at that location.
+
+<deflist_item>(Copy region to Kill buffer)
+<deflist_def>
+A click of MB2  copies the text from the current location of dot to the
+selected position  into the <key_name>(Kill buffer).  The cursor position
+remains as selected with the mouse.  Moving the mouse between the press and
+release of MB2 will perform the same scroll/pan/resize functions as
+with MB1.
+
+<deflist_item>(Kill region to Kill buffer)
+<deflist_def>
+A double-click of MB2  kills the text from the current location of dot
+to the selected position into the <key_name>(Kill buffer).
+
+<deflist_item>(Yank region from Kill buffer)
+<deflist_def>
+A double-click of MB3 yanks the <key_name>(Kill buffer) into the
+selected position.  If you click on the mode line, the yank is
+performed at the current location of dot in the selected window.  A
+single click of MB3 performs the same functions as MB1.  Moving the mouse
+between the press and release of MB3  performs the same
+scroll/pan/resize functions as MB1.
+
+<note>
+The following features work only with the VWS terminal emulator, not with
+the DECwindows DECterm emulator.
+<endnote>
+
+<deflist_item>(Copy region to local paste buffer)
+<deflist_def>
+The keystroke <key_name>(^X-c)  copies the current select region into the
+terminal-wide cross-session paste buffer.  The sequence <key_name>(^X-MB2)
+copies the text from the current location of dot to the position
+selected into the cross-session paste buffer.
+
+<deflist_item>(Yank from local paste buffer)
+<deflist_def>
+The keystroke <key_name>(^X-^C) yanks the current contents of the
+terminal-wide cross-session paste buffer into the current buffer.  The
+sequence  <key_name>(^X-MB3)  pastes the paste buffer into
+the selected position.
+
+<enddefinition_list>
+
+
+<head2>(Customising the MOUSE Library\custmouse_sec)
+
+<head3>(Customising Mouse Cut and Paste\cutpastecust_sec)
+
+<p>
+By default, MOUSE uses the standard <key_name>(Kill buffer) handling
+routines for performing cut and paste operations.  If you are using a
+modified version of cut and paste, or some kind of kill ring library, you can
+communicate this to the mouse library by setting the
+<key_name>(favorite-<hellipsis>)  series of global variables defined by
+the MOUSE library.  These are:
+
+<definition_list>
+
+<deflist_item>(favorite-set-mark)
+<deflist_def>
+A string variable containing the name of the function the MOUSE library
+should use to set the mark.  This is <key_name>(set-mark) by default.
+
+<deflist_item>(favorite-kill-region)
+<deflist_def>
+A string variable containing the name of the function the MOUSE library
+should use to kill the region to the <key_name>(Kill buffer).  This is
+<key_name>(delete-to-killbuffer) by default.
+
+<deflist_item>(favorite-copy-region)
+<deflist_def>
+A string variable containing the name of the function the MOUSE library
+should use to copy the region to the <key_name>(Kill buffer).  This is
+<key_name>(copy-to-killbuffer) by default (a function defined by the MOUSE
+library).
+
+<deflist_item>(favorite-yank)
+<deflist_def>
+A string variable containing the name of the function the MOUSE library
+should use to yank the contents of the <key_name>(Kill buffer) into the
+current buffer.  This is <key_name>(yank-from-killbuffer) by default.
+
+<enddefinition_list>
+
+<x>(KILLER<xs>With the MOUSE library)
+<p>
+<reference>(killermouse_ex) shows how to set these variables so that the
+KILLER cut and paste routines can be used with the MOUSE library. KILLER is
+described in <reference>(killer_sec).
+
+<example>(Using KILLER with the MOUSE Package\killermouse_ex)
+<example_attributes>(keep)
+<code_example>
+;
+; Use the KILLER cut and paste functions
+; with the MOUSE library.
+;
+(setq favorite-set-mark    "kr-set-mark")
+(setq favorite-copy-region "kr-copy-region")
+(setq favorite-kill-region "kr-kill-region")
+(setq favorite-yank        "kr-yank")
+<endcode_example>
+<endexample>
+
+<head3>(Using Continuous Scrolling\contscrolling_sec)
+
+<x>(Mouse<xs>Continuous scrolling)
+
+<x>(mouse-continuous)
+<p>
+When you use the mouse to scroll or pan windows, the default behaviour is
+for the scroll or pan to occur when the mouse button is released.
+If you set the variable <key_name>(mouse-continuous) to 1,
+the scroll and pan functions will continuously update the display to
+reflect the position of the mouse pointer.  Add the following MLisp line
+to your EMACSINIT.ML to use continuous scrolling:
+
+<code_example>
+(setq mouse-continuous 1)
+<endcode_example>
+
+<p>
+Note that you need a fast communications line or a fast DECwindows
+environment to use continuous scrolling.
+
+
+<head2>(MLisp Programming with the Mouse\mlispmouseprog_sec)
+
+<p>
+To write MLisp code with a mouse interface, you must write a mouse action
+function in MLisp, then bind the function to a mouse button sequence.
+Pressing that mouse button sequence will then invoke the mouse action
+function.
+
+<p>
+The general scheme for a mouse action function is as follows:
+
+<list>(unnumbered)
+
+<le>
+Declare local variables <key_name>(mousex), <key_name>(mousey),
+<key_name>(mouseevent) and <key_name>(mouse-second-click).  These are set
+by the <key_name>(mouse-parameters) function to reflect the results of
+the most recent mouse click.
+
+<le>
+Execute the <key_name>(mouse-parameters) function to set
+<key_name>(mousex) to column, <key_name>(mousey) to row,
+<key_name>(mouseevent) to a code which indicates which button was used and
+whether it was pressed or released.  <key_name>(mouse-second-click) is a
+mouse-click counter, and is set to 1 on the second click if you
+double-click a mouse button.
+
+<le>
+Execute the MLisp line <cx>((mouse-reposition mousex mousey mouseevent))
+to position the cursor.  <key_name>(mouse-reposition) also performs parts
+of the mode-line and scrolling operations when necessary.
+
+<endlist>
+
+<p>
+<reference>(mousetemplate_ex) is a template mouse action function that
+illustrates how to program both for single and double mouse clicks.  When
+written in this way, your local mouse action functions retain the pan
+and scroll features of the default mouse actions.
+
+
+<example>(Template Mouse Action Function\mousetemplate_ex)
+<example_attributes>(keep)
+<code_example>
+(defun
+    (my-local-mouse-action
+        mousex
+        mousey
+        mouseevent
+        mouse-second-click
+        ;
+        ; Fetch the mouse parameters and position the cursor.
+        ;
+        (mouse-parameters)
+        (mouse-reposition mousex mousey mouseevent)
+        ;
+        ; At this point, the cursor has been positioned at a
+        ; location specified by the mouse cursor.
+        ;
+        (if mouse-second-click 	       ; Check for double-click
+            (progn
+                ;
+                ; If action is desired only on the second click,
+                ; place it here.
+                ; Note that the action of the double click must be a
+                ; logical superset of the action of the single click
+                ; (the single click code is always executed if it
+		; exists).
+                ;
+            )
+            (progn     	       	       ; else
+                ;
+                ; If action is desired on the first click, place it
+                ; here, otherwise leave out the else clause.
+                ;
+            )
+        )
+    )
+)
+
+(local-bind-to-key "my-local-mouse-action" "\(mouse-1-down)")
+
+<endcode_example>
+<endexample>
+
+<p>
+You can bind your own local mouse action functions to any of the
+mouse button escapes listed in <reference>(mouseescapes_tab).
+
+<table>(Mouse Button Escapes\mouseescapes_tab)
+<table_attributes>(keep)
+<table_setup>(2\12)
+<table_row>(mouse-1-down\mouse-1-up)
+<table_row>(mouse-2-down\mouse-2-up)
+<table_row>(mouse-3-down\mouse-3-up)
+<endtable>
+
+<p>
+Note that it is possible to include <key_name>(Escape) or function key
+prefixes in mouse button bindings.  For example, the following bindings
+are all legal:
+
+<online_popup>(example)
+<code_example>
+(local-bind-to-key "my-local-mouse-action" "\e\(mouse-1-down)")
+(local-bind-to-key "my-local-mouse-action" "\^x\(mouse-1-down)")
+(local-bind-to-key "my-local-mouse-action" "\(do)\(mouse-1-down)")
+<endcode_example>
+<endonline_popup>
+
+<p>
+<reference>(mousenotes_ex) contains a complete mouse programming example.
+The example is intended for use with the EMACS Notes package, and binds
+several useful actions to MB3.  For example, clicking MB3 on a conference
+name in a conference directory will open the conference, and clicking MB3
+on a note in a note directory will read the selected note.
+
+<example>(Example Mouse Bindings for the Notes Package\mousenotes_ex)
+<example_attributes>(keep)
+<code_example>
+;
+; Mouse bindings for the Notes package.
+;
+; When pressing MB3, do the most appropriate thing
+; depending on which buffer is selected.
+;
+(progn
+
+(defun
+    (my-notes-action
+        mousex
+        mousey
+        mouseevent
+        mouse-second-click
+        ;
+        ; Get the mouse parameters and position the cursor at the
+        ; selected position.
+        ;
+        (mouse-parameters)
+        (mouse-reposition mousex mousey mouseevent)
+        ;
+        ; Depending on which buffer was selected with the mouse,
+        ; perform the most appropriate action.
+        ;
+        (if (= current-buffer-name notes-notebook-entry-directory)
+            (notes-c-open)
+            (= current-buffer-name notes-notebook-class-directory)
+            (notes-c-set-class)
+            (= current-buffer-name notes-notefile-directory)
+            (notes-c-read-note)
+            (= current-buffer-name notes-notefile-header)
+            (notes-c-close)
+            (= current-buffer-name notes-notebook-header)
+            (notes-c-exit)
+            (notes-c-enter-key)
+        )
+    )
+)
+
+(local-bind-to-key "my-notes-action" "\(mouse-3-up)")
+(local-bind-to-key "novalue" "\(mouse-3-down)")
+
+)
+
+<endcode_example>
+<endexample>
+
+
+<head1>(MOUSE-RECTANGULAR, Mouse Interface to the RECTANGULAR Library
+                \mouserectangular_sec)
+
+<x>(MOUSE-RECTANGULAR)
+<x>(Rectangular cut and paste<xs>mouse interface)
+
+<p>
+The MOUSE-RECTANGULAR library provides a workstation mouse interface to
+the rectangular cut and paste routines defined in the RECTANGULAR
+library.  You must load the RECTANGULAR library before loading the
+MOUSE-RECTANGULAR library.  The RECTANGULAR library is described in
+<reference>(rectangular_sec).
+
+<p>
+The MOUSE-RECTANGULAR mouse button bindings are:
+
+<definition_list>
+
+<deflist_item>(ESC-Mouse Button 1)
+<deflist_def>
+Rectangular copy between text cursor and mouse pointer position.
+
+<deflist_item>(ESC-Mouse Button 2)
+<deflist_def>
+Rectangular cut between text cursor and mouse pointer position.
+
+<deflist_item>(ESC-Mouse Button 3)
+<deflist_def>
+Rectangular paste at mouse pointer location.
+
+<enddefinition_list>
+
+<p>
+If Replace Mode is active, the Replace Mode versions of the rectangular
+cut and paste routines are used.
+
+
+<head1>(NEWCOMPIL, Compiling Programs\newcompil_sec)
+
+<x>(NEWCOMPIL)
+<x>(Compiling programs)
+<x>(Program compilation)
+
+<x>(compile-it)
+<x>(next-error)
+<p>
+The NEWCOMPIL library provides a more  convenient program compilation
+interface than the <key_name>(compile-it) and <key_name>(next-error)
+functions built in to EMACS.  After loading the NEWCOMPIL
+library, <key_name>(compile-it) and <key_name>(next-error) are modified so
+that while compilation is in progress, other work in EMACS can
+continue.  The standard functions do not provide this capability.
+
+<x>(kill-compilation)
+<p>
+An extra command is provided to cater for this extra flexibility:
+<key_name>(^X-^K) (<key_name>(kill-compilation)), which aborts the
+currently active compilation.
+
+
+<head1>(NUMBER, Number Base Conversion\number_sec)
+
+<x>(NUMBER)
+<x>(Base conversion)
+
+<p>
+The NUMBER library defines functions to convert a number into
+hexadecimal, octal and decimal notation and display the result in the
+Mini-buffer.
+
+<p>
+The interface to the base conversion functions is the <key_name>(number)
+function.  When executed, <key_name>(number) prompts for a number to
+convert.  The number can be one of the following forms:
+
+<table>
+<table_setup>(2\8)
+<table_row>(ddddddd\Decimal)
+<table_row>(0oooooo\Octal)
+<table_row>(0xhhhhh\Hexadecimal)
+<endtable>
+
+<p>
+The <key_name>(number) function then returns the specified value in
+hexadecimal, octal and decimal formats in the Mini-buffer.  For example,
+if the value 55 is entered, <key_name>(number) returns:
+
+<display>
+Converted 55 to: 0x37 067 55
+<enddisplay>
+
+
+<head1>(RECTANGULAR, Rectangular Cut and Paste\rectangular_sec)
+
+<x>(RECTANGULAR)
+<x>(Rectangular cut and paste)
+
+<p>
+The RECTANGULAR library provides the ability to cut and paste rectangular
+areas of text bounded by any  two  opposite corners.  The corners can be
+in the same row or column.  RECTANGULAR handles <key_name>(Tab) characters
+correctly and fixes problems in the AREA package. RECTANGULAR  functions
+correctly in insert or replace mode.
+
+<p>
+To handle  all  possible  options, there are two modes for cut and two
+modes for paste which are controlled by the following variables:
+
+<definition_list>
+
+<deflist_item>(replace-with-white-space)
+<x>(replace-with-whitespace)
+<deflist_def>
+Controls the action of the rectangular cut function.  When this variable
+is set to 1, deleted text is replaced with white-space.  When the variable
+is set to 0, text is deleted and is not replaced with white-space.
+
+<deflist_item>(overstrike-mode)
+<x>(overstrike-mode)
+<deflist_def>
+Controls the action of the  rectangular paste function.  When this
+variable is set to 1, text is pasted in overstrike (replace) mode.  When
+the variable is set to 0, text is pasted in insert mode.
+
+<enddefinition_list>
+
+<p>
+The rectangular cut and paste key bindings and commands are:
+
+<definition_list>
+
+<deflist_item>(GOLD-Select (rectangular-select))
+<x>(rectangular-select)
+<deflist_def>
+Selects one corner of the area to be cut.
+
+<deflist_item>(Remove (rectangular-cut))
+<x>(rectangular-cut)
+<deflist_def>
+Cuts the selected area from the buffer with
+<key_name>(replace-with-white-space) set to 0.
+
+<deflist_item>(GOLD-Remove (rectangular-cut))
+<x>(rectangular-cut)
+<deflist_def>
+Cuts the selected area from the buffer with
+<key_name>(replace-with-white-space) set to 1.
+
+<deflist_item>(Insert Here (rectangular-paste))
+<x>(rectangular-paste)
+<deflist_def>
+Pastes the previously-cut text into the buffer at dot in insert mode
+(<key_name>(overstrike-mode) set to 0).
+
+<deflist_item>(GOLD-Insert Here (rectangular-paste))
+<x>(rectangular-paste)
+<deflist_def>
+Pastes the previously-cut text into the buffer at dot in replace mode
+(<key_name>(overstrike-mode) set to 1).
+
+<enddefinition_list>
+
+<p>
+The following convenience functions are also defined:
+
+<definition_list>
+
+<deflist_item>(rect-cut-space)
+<deflist_def>
+Performs a rectangular cut with <key_name>(replace-with-white-space) set
+to 1.
+
+<deflist_item>(rect-cut)
+<deflist_def>
+Performs a rectangular cut with <key_name>(replace-with-white-space) set
+to 0.
+
+<deflist_item>(rect-paste)
+<deflist_def>
+Performs a rectangular paste with <key_name>(overstrike-mode) set to 0.
+
+<deflist_item>(rect-paste-overstrike)
+<deflist_def>
+Performs a rectangular paste with <key_name>(overstrike-mode) set to 1.
+
+<enddefinition_list>
+
+<p>
+To cut a rectangular area from the buffer, move the cursor to one corner
+of the area to be cut and press <key_name>(GOLD-Select).  Then move to the
+opposite corner and press either <key_name>(Remove) or
+<key_name>(GOLD-Remove). Tabs replaced by spaces in the cut area.
+
+<p>
+When  you  cut a rectangular  area  where one of the corners is a space
+character, the highlighted  space  may  remain highlighted after the cut
+operation is completed.  To remove the highlighting, type <key_name>(^L)
+(redraw-display) and EMACS will redraw the display with the highlighting
+removed.
+
+<p>
+To paste a previously cut area back into the buffer, move the cursor to
+the desired location and type either <key_name>(Insert Here) or
+<key_name>(GOLD-Insert Here).  White-space at the ends of lines affected
+by the rectangular paste will first be removed.
+
+<p>
+Here are some examples:
+
+<list>(unnumbered)
+
+<le>
+<key_name>(Remove) ---  removes the area  and the text moves to
+to fill the <quote>(hole):
+
+<online_popup>(figure)
+<figure>
+<figure_attributes>(keep)
+<line_art>
+     aaaaaaaaabb                 aaaaaaaaabb
+     aaaaaaaaabb    ------->     aabb
+     aaaaaaaaabb                 aabb
+     aaaaaaaaabb                 aaaaaaaaabb
+<endline_art>
+<endfigure>
+<endonline_popup>
+
+<le>
+<key_name>(GOLD-Remove) --- removes the area and leaves a <quote>(hole):
+
+<online_popup>(figure)
+<figure>
+<figure_attributes>(keep)
+<line_art>
+     aaaaaaaaabb                 aaaaaaaaabb
+     aaaaaaaaabb    ------>      aa       bb
+     aaaaaaaaabb                 aa       bb
+     aaaaaaaaabb                 aaaaaaaaabb
+<endline_art>
+<endfigure>
+<endonline_popup>
+
+<le>
+<key_name>(Insert Here) --- inserts the area into the text in insert mode:
+
+<online_popup>(figure)
+<figure>
+<figure_attributes>(keep)
+<line_art>
+     oooo        aa<cpos>($)$$***                aaoooo$$$***
+     oooo        aa$$$***                aaoooo$$$***
+     oooo   +    aa$$$***    ------->    aaoooo$$$***
+     oooo                                  oooo
+     oooo                                  oooo
+
+   Text to       Original
+ be inserted       text
+<endline_art>
+<endfigure>
+<endonline_popup>
+
+<le>
+<key_name>(GOLD-Insert) --- inserts the area in the text in replace mode:
+
+<online_popup>(figure)
+<figure>
+<figure_attributes>(keep)
+<line_art>
+     oooo        aa<cpos>($)$$***                aaoooo**
+     oooo        aa$$$***                aaoooo**
+     oooo   +    aa$$$***    ------->    aaoooo**
+     oooo                                  oooo
+     oooo                                  oooo
+
+   Text to       Original
+ be inserted       text
+<endline_art>
+<endfigure>
+<endonline_popup>
+
+<endlist>
+
+
+<head1>(SPELL, Spelling Error Detection And Correction\spell_sec)
+
+<x>(SPELL)
+<x>(Spelling correction)
+<x>(DECspell interface)
+
+<p>
+The SPELL defines functions which provide a user interface to EMACS'
+interface to the DECspell layered product.
+
+<p>
+The following functions are provided:
+
+<definition_list>
+
+<deflist_item>((spell-line))
+<x>(spell-line)
+<deflist_def>
+This function spell-checks each word on the line in which dot is located.
+For each spelling error reported by DECspell, a list of possible spelling
+corrections is displayed and you are asked to input the correct spelling.
+Full word expansion is available during this operation. If you type just a
+<key_name>(Return), the word will not be changed.
+
+<deflist_item>((spell-word-in-buffer))
+<x>(spell-word-in-buffer)
+<deflist_def>
+This function checks the spelling of the word in which dot is located. If
+the spelling is incorrect, a list of possible corrections are displayed
+and you are asked you to type one. Full word expansion is enabled.
+
+<deflist_item>((spell-newline))
+<x>(spell-newline)
+<deflist_def>
+This function is used to replace the binding for the <key_name>(Return) key in
+buffers that require automatic spell checking. It causes the current line
+to be checked before the <key_name>(newline) function is executed.
+
+<deflist_item>((spell-newline-and-indent))
+<x>(spell-newline-and-indent)
+<deflist_def>
+This function is used to replace the binding of the <key_name>(Linefeed)
+key in buffers that require automatic spell checking.  It causes the
+current line to be checked before the <key_name>(newline-and-indent)
+function is executed.
+
+<deflist_item>((make-text-mode-spell))
+<x>(make-text-mode-spell)
+<deflist_def>
+This function is used to make Text Mode perform automatic spelling
+detection and correction as text is typed in. If you require this
+feature, you should include the following lines in your EMACSINIT.ML:
+
+<online_popup>(example)
+<code_example>
+(execute-mlisp-file "spell")
+(make-text-mode-spell)
+<endcode_example>
+<endonline_popup>
+
+<enddefinition_list>
+
+
+<head1>(TAGS, An Indexing System\tags_sec)
+
+<x>(TAGS)
+<x>(Tagging source files)
+<x>(Indexing source files)
+
+<p>
+The TAGS library defines functions which remember the locations of function
+definitions in a file, and enable you to go directly to the definition of
+any function without having to search the whole file.
+
+<p>
+The TAGS package can be used to tag a set of files used to build a program
+as well as an individual file.
+
+<p>
+Any text file or set of files may be tagged, not just computer programs.
+All that is required is that some entity be used to initially create the
+tags.
+
+<p>
+The functions provided by the TAGS library are summarised here and are
+described in detail in the following sections.
+
+<definition_list>
+
+<deflist_item>((make-tag-table))
+<x>(make-tag-table)
+<deflist_def>
+Makes a tag table for a specified set of files.
+
+<deflist_item>((set-tag-language))
+<x>(set-tag-language)
+<deflist_def>
+Sets the tag language to a user-specified language.  This is used when
+files being tagged are not known to the TAGS library.
+
+<deflist_item>((recompute-all-tags))
+<x>(recompute-all-tags)
+<deflist_def>
+Updates all the tags in the tag table.
+
+<deflist_item>((visit-tag-table))
+<x>(visit-tag-table)
+<deflist_def>
+Tells EMACS which tag table file to use.
+
+<deflist_item>(^X-^L (goto-tag))
+<x>(goto-tag)
+<deflist_def>
+Moves dot to the specified tag, visiting the appropriate file if necessary.
+
+<deflist_item>(^X-^A (add-tag))
+<x>(add-tag)
+<deflist_def>
+Adds a new tag to the current tag table.
+
+<deflist_item>((list-tags))
+<x>(list-tags)
+<deflist_def>
+Lists all tags in the current tag table.
+
+<deflist_item>((tag-replace-string))
+<x>(tag-replace-string)
+<deflist_def>
+Replace a string in all files in the current tag table.
+
+<deflist_item>((tag-query-replace-string))
+<x>(tag-query-replace-string)
+<deflist_def>
+Perform a query-replace operation on all files in the tag table.
+
+<deflist_item>((tag-execute-mlisp))
+<x>(tag-execute-mlisp)
+<deflist_def>
+Execute an MLisp expression over all files in the tag table.
+
+<enddefinition_list>
+
+<head2>(How to Make a Tag Table for a Program\tagprogram_sec)
+
+<x>(make-tag-table)
+<p>
+To use the TAGS package, you must create a tag table from the source file
+or files in your program. Normally, the tag table does not reside in any
+of these files, but in a separate tag table file which contains the names
+of the text files which it describes. Tag table files are generated
+using the <key_name>(ESC-x make-tag-table) command.
+<key_name>(make-tag-table) asks you to specify the names of the files you
+wish to tag (which may contain wildcards), then proceeds to read all
+the files matching that file specification into EMACS. It then uses a set
+of built-in rules to tag the lines according to the source language.  TAGS
+selects the language based on the file's extension.  TAGS has built-in
+rules for building tag tables for the following languages:
+
+<list>(unnumbered)
+
+<le>
+MLisp
+<le>
+C
+<le>
+BLISS, BLISS-16, BLISS-32
+<le>
+RUNOFF
+<le>
+MACRO-32
+<le>
+FORTRAN.
+
+<endlist>
+
+<x>(set-tag-language)
+<p>
+If the language you wish to tag does not have built-in rules, you will
+have to teach TAGS how to recognise the lines to be tagged by using the
+<key_name>(ESC-x set-tag-language) command.  This command asks for a file
+type for the language and a regular expression search string to use to
+select lines to be tagged. Only one extra language can be specified;
+multiple calls of <key_name>(set-tag-language) overwrite previous
+language specifications.
+
+<x>(recompute-all-tags)
+<p>
+Once a tag table file exists, you must update it if you add new tags to
+the source files, or change the files extensively.  You can do this by
+using the command <key_name>(ESC-x recompute-all-tags).  TAGS finds the
+names and languages of the source files by reading the old tag table.
+
+<head2>(How to Tell EMACS You Want to Use TAGS\usetags_sec)
+
+<p>
+Before you can use the TAGS package, you have to load the library using the
+<key_name>(ESC-x execute-mlisp-file) command.
+
+<x>(visit-tag-table)
+<p>
+Before you can access a particular tag, you have to tell TAGS the name of
+the tag table file you want to use. This is done with the command
+<key_name>(ESC-x visit-tag-table). TAGS can only know about one tag table
+file at a time; executing a second <key_name>(ESC-x visit-tag-table)
+command will overwrite any existing tag table (including any changes you
+may have made to it).
+
+<p>
+If no tag table has been specified and you attempt to find
+a tag, EMACS will read in the default tag table called SYS$DISK:[]TAGS.TAG.
+
+<p>
+<key_name>(visit-tag-table) is essentially equivalent to selecting
+the buffer <key_name>(*TAGS*) (which is where the tags live) and
+visiting the tag table file in that buffer, then returning
+to the previously selected buffer. After execution of
+<key_name>(visit-tag-table), <key_name>(ESC-x list-buffers) will show the
+buffer <key_name>(*TAGS*) visiting the tag table file.
+
+<head2>(Jumping to a Tag\jumptotag_sec)
+
+<x>(goto-tag)
+<p>
+To jump to the definition of a tagged item, use the command
+<key_name>(^X-^L) (<key_name>(goto-tag)). You will go straight to the
+definition of the tag you want. If the definition is in a different file,
+TAGS will visit that file and locate the tag.  If it is in the same file,
+TAGS moves dot to the appropriate place.
+
+<p>
+You do not need to type the complete name of the tag to be found; any
+substring will do. If you use this feature, you may not always find the
+tag you expected; when this happens, <key_name>(^U-^X-^L) will find
+the next definition matching the tag substring. For example, if you want to
+find the definition of <cx>(X-SET-TYPE-1) and you specify just
+<cx>(TYPE-1), you might find <cx>(X-READ-TYPE-1) instead. You
+could then type <cx>(^U-^X-^L) until you reach <cx>(X-SET-TYPE-1).
+
+<head2>(Other Operations on Tag Tables\othertagops_sec)
+
+<head3>(Adding a New Function to a Tag Table\addnewtag_sec)
+
+<x>(add-tag)
+<p>
+When you define a new function, its location does not go in the tag table
+automatically. This is because EMACS cannot tell that you have defined a
+function unless you tell it by invoking the command <key_name>(^X-^A)
+(<key_name>(add-tag)).
+
+<p>
+When you type the command <key_name>(^X-^A), dot should be on
+the line that introduces the function definition. Thus, in a
+Lisp program, you might type
+<quote>(<cx>(<oparen>defun <oparen>foo<cparen>)) and then type
+<key_name>(^X-^A) to define a tag for the <cx>(foo) function.
+
+<p>
+<key_name>(add-tag) modifies only the copy of the tag table loaded
+into EMACS. To modify the tag table file itself, you must
+save the tag table to disk. <key_name>(^X-^M)
+(<key_name>(write-modified-files)) is the easiest way to do this.
+
+<p>
+Although local modifications to a file do not degrade the efficiency of
+the TAGS package or require that the tag table be rebuilt, moving a
+function a great distance makes finding that function much slower. In
+this case, you can add the function to the tag table with
+<key_name>(^X-^A) to give the table its new location.  Alternatively, you
+can run <key_name>(recompute-all-tags) to update everything, as is
+usually done.
+
+<head3>(Visiting a Function\visitfun_sec)
+
+<p>
+The command <key_name>(ESC-x visit-function) can be used to temporarily
+view a function in another window. Type the function's name in the
+buffer, then execute <key_name>(visit-function). The function's name is
+extracted from the buffer and used as a tag to find. Before the tag is
+located, TAGS enters a recursive edit, so that when you have finished
+viewing the function, your original windows and buffers are re-displayed.
+
+<head3>(Finding Out What Has Been Tagged\whatistagged_sec)
+
+<x>(list-tags)
+<p>
+The function <key_name>(list-tags) can be used to list the files and
+functions that have been tagged for any tag table.  Just load the tag
+table and call the function. When you use <key_name>(make-tag-table),
+the <key_name>(list-tags) function is automatically called so that you can
+see exactly what TAGS has tagged.
+
+<head3>(Replacing Strings in a Tagged Program\replstrings_sec)
+
+<x>(tag-replace-string)
+<x>(tag-query-replace-string)
+<p>
+Two functions can be used to change all occurrences of a string in a set
+of files that have been tagged: <key_name>(tag-replace-string) and
+<key_name>(tag-query-replace-string). Both of these functions require a
+regular expression search string and a replacement string as arguments,
+and apply the appropriate replace commands to all of the files tagged in
+the tag table.
+
+<head3>(Applying MLisp to Lines in a Tagged Program\mlisptag_sec)
+
+<x>(tag-execute-mlisp)
+<p>
+A more flexible approach to multiple file editing is provided by the
+function <key_name>(tag-execute-mlisp). This function requires a regular
+expression search string which is used to find lines in all the files
+specified in the tag table. For all of the lines that match the pattern,
+the function sets dot to the found line, and executes a specified MLisp
+expression at that location.
+
+<head2>(What Constitutes a Tag?\wassatag_sec)
+
+<p>
+The following list describes what defines an item to be tagged using the
+built-in tagging rules for the supported languages. Any of these
+definitions may be overriden using the <key_name>(set-tag-language)
+command.
+
+<definition_list>
+
+<deflist_item>(C)
+<deflist_def>
+matches file type <quote>(.C) and tags lines that
+start with C symbols which may be prefixed with a number
+of asterisks and parentheses followed by some white space,
+followed by an open parenthesis.
+
+<deflist_item>(MLisp)
+<deflist_def>
+matches file type <quote>(.ML) and tags lines that start with
+<quote>(<cx>(<oparen>defun <oparen>)) where all white space is optional.
+
+<deflist_item>(BLISS)
+<deflist_def>
+matches file type <quote>(.BLI) and tags all lines that start with
+optional white space and contain either <quote>(<cx>(ROUTINE)) or
+<quote>(<cx>(GLOBAL ROUTINE)).
+
+<deflist_item>(BLISS-16)
+<deflist_def>
+matches file type <quote>(.B16) and tags lines as BLISS does.
+
+<deflist_item>(BLISS-32)
+<deflist_def>
+matches file type <quote>(.B32) and tags lines as BLISS does.
+
+<deflist_item>(RUNOFF)
+<deflist_def>
+matches file type <quote>(.RNO) and tags lines
+that start with <quote>(<cx>(.CH)), <quote>(<cx>(.HL)) or
+<quote>(<cx>(.AX)).
+
+<deflist_item>(FORTRAN)
+<deflist_def>
+matches file type <quote>(.FOR) and tags lines
+containing <quote>(<cx>(SUBROUTINE)) or <quote>(<cx>(FUNCTION)).
+
+<enddefinition_list>
+
+<head2>(Adding or Removing Source Files\addremsrc_sec)
+
+<p>
+A tag table file is a sequence of entries, one per file.
+Each entry looks like:
+
+<code_example>
+^\_filename
+^Adata line^Bchar pos
+<endcode_example>
+
+<cp>
+where <emphasis>(filename\italic) is the file name and file type of the
+file for which the following lines are tag information. <emphasis>(data
+line\italic) contains the tag's line and <emphasis>(char pos\italic) is
+the position of the start of the tagged line.
+
+<p>
+If you are changing a source file's name, you should simply change the
+name where it is presently described in the tag table.
+
+<p>
+To add a new source file, simply insert a dummy entry containing the
+filename and update the tag table. The dummy will then be turned into a
+real entry.
+
+<p>
+You can delete a source file from a tag table by deleting its entire
+entry. Since the counts of the remaining entries are still valid, you need
+not run <key_name>(recompute-all-tags) over the file again. You can also
+change the order of the entries without doing any harm. The order of the
+entries matters if there are tags which appear in more than one source
+file.
+
+
+
+
+<head1>(TABS, Intelligent Tab Handling\tabs_sec)
+
+<x>(TABS)
+<x>(Tab Handling)
+
+<p>
+The TABS library defines functions that insert and delete <key_name>(Tab)
+characters in an intelligent way.  The functions use the buffer-specific
+variable <key_name>(logical-tab-size) to compute how much whitespace to
+insert or delete.  The two functions defined are:
+
+<definition_list>
+<deflist_item>((tab-key))
+<x>(tab-key)
+<deflist_def>
+Inserts enough tabs and spaces to move to the next tab stop as indicated
+by <key_name>(logical-tab-size).
+
+<deflist_item>((tab-delete))
+<x>(tab-delete)
+<deflist_def>
+Deletes enough tabs and spaces to move back to the previous tab stop as
+indicated by <key_name>(logical-tab-size).
+
+<enddefinition_list>
+
+
+<head1>(THESAURUS, An Interface to the DECspell Thesaurus\thesaurus_sec)
+
+<x>(THESAURUS)
+<x>(DECspell thesaurus interface)
+
+<p>
+The THESAURUS library defines two functions that provide an interface to
+the DECspell Thesaurus from within EMACS:
+
+<definition_list>
+
+<deflist_item>((et-word))
+<x>(et-word)
+<deflist_def>
+Prompts for a word in the Mini-buffer and checks this against the DECspell
+thesaurus.  If the word is found in the thesaurus, EMACS pops up a buffer
+called <key_name>(Electronic Thesaurus) and displays in the buffer
+alternatives for the specified word.  If the specified word is not found
+in the thesaurus, an error message is displayed.
+
+<deflist_item>((et-word-in-buffer))
+<x>(et-word-in-buffer)
+<deflist_def>
+Checks the word that dot is in against the thesaurus.  If the word is
+found in the thesaurus, a list of possible alternatives is displayed in
+the <key_name>(Electronic Thesaurus) buffer.  If the word is not found, an
+error message is displayed.
+
+<enddefinition_list>
+
+<x>(THESAURUS.KEY)
+<p>
+There are no default key bindings for these functions, but you can define
+your own bindings by creating a file called THESAURUS.KEY in your
+EMACS$PATH.  The file should contain appropriate MLisp commands to bind
+the thesaurus functions to the desired key bindings.  The THESAURUS
+library will attempt to load this file automatically when you load the
+THESAURUS library.
+
+
+<head1>(TIME, A Running Time Display\time_sec)
+
+<x>(TIME)
+<x>(Clock)
+<x>(Digital clock)
+
+<x>(time)
+<p>
+The TIME library defines the  <key_name>(time) function.  When executed,
+the <key_name>(time) function puts a running digital time display of the
+form <quote>(HH:MM:SS) in the mode line of the current window.
+
+<p>
+When you move the cursor to a new window or visit a new file, the time
+display is added to the new mode line and is made active.
+
+<p>
+The time display is only active in the current window's mode line.
+If the time display is enabled in any other window, the time  shown is
+the time that the cursor was moved out of that window.
+
+
+<head1>(WHEREIS, Where Is That Command?\whereis_sec)
+
+<x>(WHEREIS)
+<x>(where-is)
+
+<p>
+The WHEREIS library defines the <key_name>(where-is) function, which
+prompts for a function name and displays in the Mini-buffer the key
+binding (if any) to which the function is bound.
+
+<p>
+<key_name>(where-is) cannot be called from an MLisp program.
+
+
+<head1>(WRITEREG, Write Region to File\writereg_sec)
+
+<x>(WRITEREG)
+<x>(Region<xs>write to file)
+
+<x>(write-region-to-file)
+<p>
+The WRITEREG library defines the single function
+<key_name>(write-region-to-file) which prompts for a file name and writes
+the region to the specified file.

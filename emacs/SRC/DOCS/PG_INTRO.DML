@@ -1,0 +1,37 @@
+<chapter>(Introduction\intro_chap)
+
+<p>
+EMACS provides an extremely comprehensive set of text editing features.
+These standard features will provide most novice EMACS users with all the
+editing capability they require.  When a new user has had some experience
+with EMACS, they will often want to change the way that EMACS does certain
+things, or will want features that are not built in to the standard EMACS.
+The great thing about EMACS is that you can customise the manner in which
+standard features function or appear, or you can create new features that
+do not exist in the standard EMACS.
+
+<p>
+Simple EMACS extensions can be created using macros.  These are key
+sequences  remembered by EMACS which can be replayed at any time during
+the editing session.  These so-called keyboard macros can be saved in a
+buffer and stored in a file, so you can save macro definitions and reload
+them in a subsequent editing session.  Macros are described in detail in
+<reference>(macros_chap).
+
+<p>
+Macros do not provide the generality required to perform complex
+operations.  To create complex EMACS extensions, you must write programs
+in the EMACS programming language Mock Lisp (MLisp).  As the name
+suggests, MLisp is a dialect of the Lisp programming language.  The MLisp
+language itself is described in detail in <reference>(mlisp_chap).  EMACS
+provides a complete MLisp program development environment to aid
+programmers developing MLisp code.  This environment includes debugging,
+online documentation, database access and process control facilities.
+These extension facilities are described in detail in
+<reference>(extension_chap).
+
+<p>
+It is also possible for external applications written in other programming
+languages to make use of EMACS' powerful editing facilities, and for EMACS
+to execute code in executable images outside EMACS itself.  These advanced
+facilities are described in <reference>(otherlang_chap).

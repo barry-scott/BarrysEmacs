@@ -1,0 +1,137 @@
+<front_matter>(emacs_pg)
+
+<title_page>
+<title>(VAX EMACS\Programmer's Guide)
+<abstract>
+This Guide describes how to program the VAX EMACS display editor. It
+contains a definition for the Mock Lisp programming language and
+describes, in detail, all the primitive Mock Lisp functions and system
+variables.
+<endabstract>
+
+<revision_info>(Revision Information:\This guide supersedes the
+<reference>(prog_emacs) guide issued with EMACS V5.0)
+<revision_info>(Software Version:\EMACS V5.1)
+<revision_info>(Operating System Version:\VMS V5.0 or higher)
+<endtitle_page>
+
+<copyright_page>
+<print_date>(October 1990)
+<copyright_date>(1990)
+<endcopyright_page>
+
+<contents_file>
+
+<preface>
+
+<subhead1>(EMACS Usage\EMACS Usage)
+
+<p>
+The VAX EMACS software and documentation is for <emphasis>(Digital
+Internal Use Only\bold).
+
+<subhead1>(Intended Audience\Intended Audience)
+
+<p>
+This manual is intended for programmers wishing to program EMACS or add
+extensions.  For information on how to use EMACS as an editor, refer to
+the <reference>(emacs_user_guide).
+
+<subhead1>(Document Structure\Document Structure)
+
+<p>
+The information in this Guide is structured as follows:
+
+<list>(unnumbered)
+<le>
+<reference>(intro_chap) provides an introduction to the programming
+facilities of VAX EMACS.
+
+<le>
+<reference>(macros_chap) describes the macro facilities for
+extending EMACS using keystroke sequences.
+
+<le>
+<reference>(mlisp_chap) describes the Mock Lisp programming language used
+to write complex extensions.
+
+<le>
+<reference>(extension_chap) describes the various facilities provided in
+EMACS to help you write extensions.
+
+<le>
+<reference>(otherlang_chap) describes how to call EMACS from other
+programming languages.
+
+<le>
+<reference>(startup_chap) describes the process by which EMACS is
+activated and how control is passed to the user.
+<endlist>
+
+<subhead1>(Associated Documents\Associated Documents)
+
+<p>
+The <reference>(emacs_mlisp_ref) contains an alphabetically ordered list
+of all EMACS functions and variables available in the Mock Lisp programming
+language.
+
+<p>
+The <reference>(emacs_user_guide) describes how to use the editing
+features of VAX EMACS.
+
+<p>
+The <reference>(emacs_ext_ref) documents the EMACS extensions
+(packages, subsystems and libraries) that are distributed with VAX EMACS.
+
+<subhead1>(Conventions Used in This Document\Conventions Used in This Document)
+
+<p>
+Throughout this manual, key sequences are described as
+causing specific actions to occur (functions to run, for example).
+These key sequences are those set up when EMACS is started
+(they are the default key bindings).
+
+<p>
+Key sequences are displayed with each key separated by a dash. When using
+these sequences, do not include the dashes. The dashes are displayed for
+clarity only.
+
+<p>
+Many EMACS key sequences use <key_name>(Control) keys.  These are
+indicated by a caret character (<quote>(^)) appearing in the key sequence.
+For example, to type the <key_name>(^O) key sequence, press and hold down
+the <key_name>(Ctrl) key and simlutaneously press the <key_name>(O) key.
+To type <key_name>(^^), press and hold down the <key_name>(Ctrl) key, then
+simultaneously type the <key_name>(^) key.
+
+<p>
+Many other EMACS key sequences use <key_name>(Escape) keys.  These are
+indicated with an <key_name>(ESC-) in the key sequence.  For example, to
+type the <key_name>(ESC-e) key sequence, press the key labelled
+<key_name>(ESC), then press the <key_name>(e) key.  Note that
+<key_name>(ESC-) key sequences are case-sensitive; this means that
+<key_name>(ESC-e) is not the same as <key_name>(ESC-E).
+
+<p>
+Different typefaces used in this book are used to distinguish between
+normal text and special symbols.  These are described in the following
+table:
+
+<table>
+<table_setup>(2\15)
+<table_row>(<key_name>(Return)\
+The following special characters are displayed as shown:
+<key_name>(Return), <key_name>(Delete), <key_name>(Escape), <key_name>(Tab),
+<key_name>(Backspace), <key_name>(Linefeed) and <key_name>(Space).)
+
+<table_row>(<cx>(This is an example)\
+All examples and system displays are displayed in <cx>(this) typeface.)
+
+<table_row>(<key_name>(execute-mlisp-file)\
+All keystroke sequences, function names, command names and variable names are
+displayed in <key_name>(this) typeface.)
+<endtable>
+
+<endpreface>
+
+<endfront_matter>

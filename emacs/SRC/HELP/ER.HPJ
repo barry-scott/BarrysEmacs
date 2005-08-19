@@ -1,0 +1,11 @@
+[OPTIONS]
+CONTENTS=main_index
+TITLE=Barry's Emacs Extension Reference
+COMPRESS=true
+WARNING=2
+
+[CONFIG]
+BrowseButtons()
+
+[FILES]
+\work\emacs\src\help\er.rtf

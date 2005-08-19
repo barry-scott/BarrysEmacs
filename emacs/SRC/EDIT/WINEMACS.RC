@@ -1,0 +1,766 @@
+//Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""res\\winemacs.rc2""  // non-App Studio edited resources\r\n"
+    "\r\n"
+    "#include ""afxres.rc""  // Standard components\r\n"
+    "#include ""afxprint.rc""  // printing/print preview resources\r\n"
+    "\0"
+END
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+IDR_MAINFRAME           ICON    DISCARDABLE     "\\WORK\\EMACS\\SRC\\EDIT\\RES\\WINEMACS.ICO"
+IDR_WINEMATYPE          ICON    DISCARDABLE     "\\WORK\\EMACS\\SRC\\EDIT\\RES\\WINEMDOC.ICO"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "\\WORK\\EMACS\\SRC\\EDIT\\RES\\TOOLBAR.BMP"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New\tCtrl+N",                ID_FILE_NEW
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&Index",                      ID_HELP_INDEX
+        MENUITEM "&Using Help",                 ID_HELP_USING
+        MENUITEM SEPARATOR
+        MENUITEM "&About WINEMACS...",          ID_APP_ABOUT
+    END
+END
+
+IDR_WINEMATYPE MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Open...\tCtrl+X Ctrl+V",     ID_FILE_OPEN
+        MENUITEM "&Save\tCtrl+X Ctrl+S",        ID_FILE_SAVE
+        MENUITEM "Save &As...\tCtrl+X Ctrl+W",  ID_FILE_SAVE_AS
+        MENUITEM SEPARATOR
+        MENUITEM "&Print...",                   ID_FILE_PRINT
+        MENUITEM "Print Pre&view",              ID_FILE_PRINT_PREVIEW
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "Save &Environment",           ID_FILE_SAVE_ENVIRONMENT
+        MENUITEM "Stop Execution\tCtrl+G",      ID_STOP_EXECUTION
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+        MENUITEM SEPARATOR
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "Cu&t",                        ID_EDIT_CUT
+        MENUITEM "&Copy",                       ID_EDIT_COPY
+        MENUITEM "&Paste",                      ID_EDIT_PASTE
+        MENUITEM SEPARATOR
+        MENUITEM "&Find...",                    ID_SEARCH_FIND
+        MENUITEM "&Replace...",                 ID_SEARCH_REPLACE
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Options"
+    BEGIN
+        MENUITEM "&Font...",                    ID_OPTIONS_FONT
+        MENUITEM "&Colours...",                 ID_OPTIONS_COLORS
+        MENUITEM "&Directories...",             ID_OPTIONS_DIRECTORIES
+        MENUITEM "&Printing...",                ID_OPTIONS_PRINTING
+        MENUITEM "File Parsing &rules...",      ID_OPTIONS_FILE_PARSING
+    END
+    POPUP "&Help", HELP
+    BEGIN
+        MENUITEM "&Index",                      ID_HELP_INDEX
+        MENUITEM "&Using Help",                 ID_HELP_USING
+        MENUITEM SEPARATOR
+        MENUITEM "&About EMACS...",             ID_APP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS PRELOAD MOVEABLE PURE 
+BEGIN
+    VK_F1,          ID_HELP,                VIRTKEY, ALT, NOINVERT
+    VK_F1,          ID_CONTEXT_HELP,        VIRTKEY, SHIFT, ALT, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  34, 22, 182, 140
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Emacs"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,18,11,18,20
+    CTEXT           "Emacs for Windows",301,60,29,64,13
+    CTEXT           "Copyright \251 1990-1995 BArry A. Scott",302,20,44,142,
+                    12
+    CTEXT           "Version V2.1-999",IDC_ABOUT_VERSION,62,73,60,10
+    RTEXT           "Memory in use:",IDC_STATIC,40,88,62,8
+    LTEXT           "123456",IDC_ABOUT_MEMORY,105,88,39,8
+    PUSHBUTTON      "OK",IDOK,70,114,40,14,WS_GROUP
+    CTEXT           "Internet mail: barry@scottb.demon.co.uk",303,21,58,142,
+                    12
+END
+
+IDD_SWITCH_BUFFER DIALOG DISCARDABLE  80, 40, 194, 123
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Switch Buffer"
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_SWITCH_BUFFER,1,3,191,89,CBS_SIMPLE | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,49,103,40,14
+    PUSHBUTTON      "Cancel",IDCANCEL,105,103,40,14
+END
+
+IDD_ERROR DIALOG DISCARDABLE  90, 72, 160, 100
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Fatal Error!"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Emacs fatal error encountered",301,27,18,99,8
+    LTEXT           "Error Code:",300,36,46,38,8,NOT WS_GROUP
+    PUSHBUTTON      "Quit",IDOK,54,72,40,14
+    LTEXT           "0",IDC_ERROR_CODE,77,46,31,8
+END
+
+IDD_YESORNO DIALOG DISCARDABLE  75, 30, 171, 50
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Emacs"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CTEXT           "modified buffers exist really exit?",
+                    IDC_YESORNO_QUESTION,3,6,165,8
+    PUSHBUTTON      "Yes",IDCANCEL,37,30,40,14
+    DEFPUSHBUTTON   "No",IDOK,93,30,40,14
+END
+
+IDD_FIND DIALOG DISCARDABLE  45, 18, 252, 36
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Find"
+FONT 8, "MS Sans Serif"
+BEGIN
+    RTEXT           "Find &what:",IDC_STATIC,2,4,45,9
+    EDITTEXT        IDC_FIND_TEXT,50,2,126,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "&Forward",IDC_FIND_NEXT,12,20,40,14
+    PUSHBUTTON      "&Backward",IDC_FIND_PREV,70,20,40,14
+    PUSHBUTTON      "Cl&ose",IDCANCEL,130,20,40,14
+    CHECKBOX        "Regular &expression",IDC_FIND_RE_SEARCH,178,2,72,9
+    CHECKBOX        "Match &case",IDC_FIND_MATCH_CASE,178,13,72,9
+END
+
+IDD_REPLACE DIALOG DISCARDABLE  45, 18, 252, 52
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Find and Replace"
+FONT 8, "MS Sans Serif"
+BEGIN
+    RTEXT           "Find &what:",302,2,4,45,9
+    EDITTEXT        IDC_FIND_TEXT,50,2,126,12,ES_AUTOHSCROLL
+    RTEXT           "&Replace with",1006,2,22,45,9
+    EDITTEXT        IDC_FIND_REPLACE_WITH,50,20,126,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Forward",IDC_FIND_NEXT,2,36,44,14
+    PUSHBUTTON      "&Backward",IDC_FIND_PREV,50,36,44,14
+    PUSHBUTTON      "Re&place",IDC_FIND_REPLACE,98,36,44,14,WS_DISABLED
+    PUSHBUTTON      "Replace A&ll",IDC_FIND_REPLACE_ALL,146,36,44,14,
+                    WS_DISABLED
+    PUSHBUTTON      "Cl&ose",IDCANCEL,206,36,44,14
+    CHECKBOX        "Regular &Expression",IDC_FIND_RE_SEARCH,178,2,72,9
+    CHECKBOX        "Match &Case",IDC_FIND_MATCH_CASE,178,13,72,9
+END
+
+IDD_OPTION_DIRECTORIES DIALOG DISCARDABLE  0, 0, 298, 219
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Emacs Directories"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "&OK",IDOK,85,198,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,181,198,50,14
+    RTEXT           "Sys$Lo&gin:",IDC_STATIC,5,8,70,8
+    EDITTEXT        IDC_OPTDIR_SYS_LOGIN,85,5,145,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Browse...",IDC_OPTDIR_BROWSE,238,5,50,14
+    RTEXT           "Sys$&Scratch:",IDC_STATIC,5,27,70,8
+    EDITTEXT        IDC_OPTDIR_SYS_SCRATCH,85,24,145,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Browse...",IDC_OPTDIR_BROWSE2,238,24,50,14
+    RTEXT           "Emacs$&User:",IDC_STATIC,7,46,68,8
+    EDITTEXT        IDC_OPTDIR_EMACS_USER,85,43,145,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Browse...",IDC_OPTDIR_BROWSE3,238,43,50,14
+    RTEXT           "Emacs$Lo&cal_Library:",IDC_STATIC,3,65,72,8
+    EDITTEXT        IDC_OPTDIR_EMACS_LOCAL_LIB,85,62,145,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Browse...",IDC_OPTDIR_BROWSE4,238,62,50,14
+    RTEXT           "Emacs$&Library:",IDC_STATIC,5,84,70,8
+    EDITTEXT        IDC_OPTDIR_EMACS_LIB,85,81,145,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Browse...",IDC_OPTDIR_BROWSE5,238,81,50,14
+    RTEXT           "Emacs$&Journal:",IDC_STATIC,5,103,70,8
+    EDITTEXT        IDC_OPTDIR_EMACS_JOURNAL,85,100,145,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Browse...",IDC_OPTDIR_BROWSE6,238,100,50,14
+    RTEXT           "Emacs$&Checkpoint:",IDC_STATIC,5,121,70,8
+    EDITTEXT        IDC_OPTDIR_EMACS_CHECKPOINT,85,119,145,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Browse...",IDC_OPTDIR_BROWSE7,238,119,50,14
+    RTEXT           "Emacs$&Memory:",IDC_STATIC,5,141,70,8
+    EDITTEXT        IDC_OPTDIR_EMACS_MEMORY,85,138,145,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Browse...",IDC_OPTDIR_BROWSE8,238,138,50,14
+    RTEXT           "Emacs$Path:",IDC_STATIC,5,160,70,8
+    EDITTEXT        IDC_OPTDIR_EMACS_PATH,85,157,203,14,ES_AUTOHSCROLL | 
+                    ES_READONLY
+END
+
+IDD_OPTION_COLOURS DIALOG DISCARDABLE  0, 0, 201, 160
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "&OK",IDOK,129,6,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,129,23,50,14
+    LTEXT           "&Item:",IDC_STATIC,9,4,18,8
+    LISTBOX         IDC_OPTCOL_ITEMLIST,9,19,85,99,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Change Colours",IDC_STATIC,116,91,80,57
+    PUSHBUTTON      "&Foreground...",IDC_OPTCOL_FOREGROUND,130,106,51,14
+    PUSHBUTTON      "&Background...",IDC_OPTCOL_BACKGROUND,130,126,51,14
+    GROUPBOX        "",IDC_STATIC,9,123,85,25
+    CTEXT           "Sample text",IDC_OPTCOL_SAMPLE,11,131,82,14
+    CONTROL         "&Underline",IDC_OPTCOL_UNDERLINE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,132,56,58,10
+    CONTROL         "Italic&s",IDC_OPTCOL_ITALIC,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,132,70,59,10
+    GROUPBOX        "Attributes",IDC_STATIC,116,41,80,46
+END
+
+IDD_OPTION_PRINTER DIALOG DISCARDABLE  0, 0, 269, 134
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+    RTEXT           "&Header format:",IDC_STATIC,14,9,50,8
+    EDITTEXT        IDC_PRINT_HEADER_FORMAT,68,7,125,12,ES_AUTOHSCROLL
+    RTEXT           "&Footer format:",IDC_STATIC,14,26,50,8
+    EDITTEXT        IDC_PRINTER_FOOTER_FORMAT,68,24,125,12,ES_AUTOHSCROLL
+    CTEXT           "&Top",IDC_STATIC,93,49,14,8
+    EDITTEXT        IDC_PRINTER_MARGIN_TOP,81,62,40,12,ES_AUTOHSCROLL
+    RTEXT           "&Left",IDC_STATIC,18,81,14,8
+    EDITTEXT        IDC_PRINTER_MARGIN_LEFT,35,79,40,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_PRINTER_MARGIN_RIGHT,125,79,40,12,ES_AUTOHSCROLL
+    LTEXT           "&Right",IDC_STATIC,167,81,19,8
+    EDITTEXT        IDC_PRINTER_MARGIN_BOTTOM,81,97,40,12,ES_AUTOHSCROLL
+    CTEXT           "&Bottom",IDC_STATIC,89,113,24,8
+    LTEXT           "&Name",IDC_STATIC,204,14,35,8
+    EDITTEXT        IDC_PRINTER_FONT_NAME,204,24,53,12,ES_AUTOHSCROLL
+    LTEXT           "&Size",IDC_STATIC,204,42,15,8
+    EDITTEXT        IDC_PRINTER_FONT_SIZE,204,52,53,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,205,82,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,205,99,50,14
+    GROUPBOX        "Margins",IDC_STATIC,11,42,182,85
+    GROUPBOX        "Font",IDC_STATIC,199,3,63,67
+END
+
+IDD_OPTION_FILENAME_PARSING DIALOG DISCARDABLE  0, 0, 235, 310
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Filename parsing options"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,146,278,50,14
+    COMBOBOX        IDC_FILE_PARSE_DISK_A,21,46,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_B,131,46,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_C,21,64,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_D,131,64,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDD_OPTION_FILENAME_PARSING,21,82,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_F,131,82,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_G,21,99,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_H,131,99,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_I,21,117,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_J,131,117,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_K,21,134,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_L,131,134,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_M,21,152,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_N,131,152,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_O,21,170,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_P,131,170,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_Q,21,186,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_R,131,186,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_S,21,204,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_T,131,204,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_U,21,222,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_V,131,222,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_W,21,239,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_X,131,239,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_Y,21,257,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FILE_PARSE_DISK_Z,131,257,82,60,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Cancel",IDCANCEL,38,278,50,14
+    RTEXT           "A:",IDC_STATIC,9,48,8,8
+    RTEXT           "B:",IDC_STATIC,119,48,8,8
+    RTEXT           "C:",IDC_STATIC,9,66,8,8
+    RTEXT           "D:",IDC_STATIC,118,66,9,8
+    RTEXT           "E:",IDC_STATIC,9,84,8,8
+    RTEXT           "F:",IDC_STATIC,119,84,8,8
+    RTEXT           "G:",IDC_STATIC,8,102,9,8
+    RTEXT           "H:",IDC_STATIC,118,102,9,8
+    RTEXT           "I:",IDC_STATIC,11,118,6,8
+    RTEXT           "J:",IDC_STATIC,120,118,7,8
+    RTEXT           "K:",IDC_STATIC,9,136,8,8
+    RTEXT           "L:",IDC_STATIC,119,136,8,8
+    RTEXT           "M:",IDC_STATIC,7,154,10,8
+    RTEXT           "N:",IDC_STATIC,118,154,9,8
+    RTEXT           "O:",IDC_STATIC,8,172,9,8
+    RTEXT           "P:",IDC_STATIC,119,172,8,8
+    RTEXT           "Q:",IDC_STATIC,8,190,9,8
+    RTEXT           "R:",IDC_STATIC,118,190,9,8
+    RTEXT           "S:",IDC_STATIC,9,206,8,8
+    RTEXT           "T:",IDC_STATIC,119,206,8,8
+    RTEXT           "U:",IDC_STATIC,8,224,9,8
+    RTEXT           "V:",IDC_STATIC,119,224,8,8
+    RTEXT           "W:",IDC_STATIC,6,240,11,8
+    RTEXT           "X:",IDC_STATIC,119,240,8,8
+    RTEXT           "Y:",IDC_STATIC,9,258,8,8
+    RTEXT           "Z:",IDC_STATIC,119,258,8,8
+    LTEXT           "For each drive Emacs needs to know if long file names are supported. Emacs is able to work out the correct setting in most cases. But if Emacs cannot correctly determine the file name limits you can select the limit below.",
+                    IDC_STATIC,23,7,195,38
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_OPTION_FILENAME_PARSING DLGINIT
+BEGIN
+    159, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    159, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    159, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    146, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    146, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    146, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    108, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    108, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    108, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    147, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    147, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    147, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    109, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    109, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    109, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    148, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    148, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    148, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    110, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    110, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    110, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    149, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    149, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    149, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    111, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    111, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    111, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    150, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    150, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    150, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    112, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    112, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    112, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    151, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    151, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    151, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    113, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    113, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    113, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    152, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    152, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    152, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    114, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    114, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    114, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    153, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    153, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    153, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    115, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    115, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    115, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    154, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    154, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    154, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    116, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    116, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    116, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    155, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    155, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    155, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    117, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    117, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    117, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    156, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    156, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    156, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    118, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    118, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    118, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    157, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    157, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    157, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    119, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    119, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    119, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    158, 0x403, 17, 0
+0x654c, 0x2074, 0x6d45, 0x6361, 0x2073, 0x6544, 0x6963, 0x6564, "\000" 
+    158, 0x403, 22, 0
+0x6853, 0x726f, 0x2074, 0x6946, 0x656c, 0x616e, 0x656d, 0x2073, 0x3828, 
+0x332e, 0x0029, 
+    158, 0x403, 15, 0
+0x6f4c, 0x676e, 0x4620, 0x6c69, 0x6e65, 0x6d61, 0x7365, "\000" 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE PRELOAD DISCARDABLE 
+BEGIN
+    IDR_MAINFRAME           "EMACS for Windows"
+    IDR_WINEMATYPE          "\nEmacs\nEmacs Document"
+END
+
+STRINGTABLE PRELOAD DISCARDABLE 
+BEGIN
+    AFX_IDS_APP_TITLE       "Emacs V6.0.0"
+    AFX_IDS_IDLEMESSAGE     "For Help, press Alt+F1"
+    AFX_IDS_HELPMODEMESSAGE "Select an object on which to get Help"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_INDICATOR_EXT        "EXT"
+    ID_INDICATOR_CAPS       "CAP"
+    ID_INDICATOR_NUM        "NUM"
+    ID_INDICATOR_SCRL       "SCRL"
+    ID_INDICATOR_OVR        "OVR"
+    ID_INDICATOR_REC        "REC"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_FILE_SAVE_ENVIRONMENT 
+                            "Save the current state of Emacs into the default Emacs environment file"
+    ID_OPTIONS_PRINTING     "Change the way Emacs prints"
+    ID_STATUS_LINE          "000000"
+    ID_STATUS_COLUMN        "000"
+    ID_STATUS_REPLACE_MODE  "OVR"
+    ID_STATUS_READ_ONLY     "READ"
+    ID_OPTIONS_FILE_PARSING "Change the way Emacs parses filenames"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_FILE_NEW             "Create a new document"
+    ID_FILE_OPEN            "Open an existing document\nOpen File"
+    ID_FILE_CLOSE           "Close the active document"
+    ID_FILE_SAVE            "Save the active document\nSave File"
+    ID_FILE_SAVE_AS         "Save the active document with a new name"
+    ID_FILE_PAGE_SETUP      "Change the printing options"
+    ID_FILE_PRINT_SETUP     "Change the printer and printing options"
+    ID_FILE_PRINT           "Print the active document\nPrint"
+    ID_FILE_PRINT_PREVIEW   "Display full pages"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_APP_ABOUT            "Display program information, version number and copyright"
+    ID_APP_EXIT             "Quit the application; prompts to save documents"
+    ID_HELP_INDEX           "List Help topics"
+    ID_HELP_USING           "Display instructions about how to use help"
+    ID_CONTEXT_HELP         "Display help for clicked on buttons, menus and windows"
+    ID_HELP                 "Display help for current task or command"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_FILE_MRU_FILE1       "Open this document"
+    ID_FILE_MRU_FILE2       "Open this document"
+    ID_FILE_MRU_FILE3       "Open this document"
+    ID_FILE_MRU_FILE4       "Open this document"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_NEXT_PANE            "Switch to the next window pane"
+    ID_PREV_PANE            "Switch back to the previous window pane"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_WINDOW_NEW           "Open another window for the active document"
+    ID_WINDOW_ARRANGE       "Arrange icons at the bottom of the window"
+    ID_WINDOW_CASCADE       "Arrange windows so they overlap"
+    ID_WINDOW_TILE_HORZ     "Arrange windows as non-overlapping tiles"
+    ID_WINDOW_TILE_VERT     "Arrange windows as non-overlapping tiles"
+    ID_WINDOW_SPLIT         "Split the active window into panes"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_EDIT_CLEAR           "Erase the selection"
+    ID_EDIT_CLEAR_ALL       "Erase everything"
+    ID_EDIT_COPY            "Copy the selection and put it on the Clipboard\nCopy"
+    ID_EDIT_CUT             "Cut the selection and put it on the Clipboard\nCut"
+    ID_EDIT_FIND            "Find the specified text"
+    ID_EDIT_PASTE           "Insert Clipboard contents\nPaste"
+    ID_EDIT_REPEAT          "Repeat the last action"
+    ID_EDIT_REPLACE         "Replace specific text with different text"
+    ID_EDIT_SELECT_ALL      "Select the entire document"
+    ID_EDIT_UNDO            "Undo the last action"
+    ID_EDIT_REDO            "Redo the previously undone action"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_VIEW_TOOLBAR         "Show or hide the toolbar"
+    ID_VIEW_STATUS_BAR      "Show or hide the status bar"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_SCSIZE          "Change the window size"
+    AFX_IDS_SCMOVE          "Change the window position"
+    AFX_IDS_SCMINIMIZE      "Reduce the window to an icon"
+    AFX_IDS_SCMAXIMIZE      "Enlarge the window to full size"
+    AFX_IDS_SCNEXTWINDOW    "Switch to the next document window"
+    AFX_IDS_SCPREVWINDOW    "Switch to the previous document window"
+    AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_SCRESTORE       "Restore the window to normal size"
+    AFX_IDS_SCTASKLIST      "Activate Task List"
+    AFX_IDS_MDICHILD        "Activate this window"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_SEARCH_FIND          "Find text"
+    ID_SEARCH_REPLACE       "Find and Replace text"
+    ID_SWITCH_BUFFER        "Select a new buffer into the current window"
+    ID_OPTIONS_FONT         "Change the font used in the editor windows"
+    ID_OPTIONS_COLORS       "Change the colours used in the editor windows"
+    ID_OPTIONS_DIRECTORIES  "Change the directories that Emacs uses"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_STOP_EXECUTION       "Abort the excution of the current command\nStop!"
+END
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#include "res\winemacs.rc2"  // non-App Studio edited resources
+
+#include "afxres.rc"  // Standard components
+#include "afxprint.rc"  // printing/print preview resources
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

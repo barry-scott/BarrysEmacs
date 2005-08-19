@@ -1,0 +1,45 @@
+<comment>
+	Define all tags, symbols and book names
+	for the VAX EMACS documentation.
+
+	Adrian Pasciuta, March 1990
+<endcomment>
+
+<comment>
+	Define a tag that we can use to get the equivalent of
+	{\tt } in LaTeX, as DOCUMENT's <code_example> uses
+	Courier only in displayed examples.
+
+	We define it as tag <cx>.
+<endcomment>
+
+<define>(cx<EOL>
+\|codexamplefont $1&\1\1)
+
+<comment>
+	Book names for the Emacs docs.
+<endcomment>
+
+<define_book_name>(emacs_user_guide\VAX EMACS User's Guide)
+<define_book_name>(emacs_prog_guide\VAX EMACS Programmer's Guide)
+<define_book_name>(emacs_mlisp_ref\VAX EMACS Mock Lisp Reference Manual)
+<define_book_name>(emacs_ext_ref\VAX EMACS Extensions Reference Manual)
+
+<comment>
+	Book names for the old Emacs docs.
+<endcomment>
+
+<define_book_name>(using_emacs\Using VAX Emacs)
+<define_book_name>(prog_emacs\Programming VAX Emacs)
+<define_book_name>(emacs_cat\VAX Emacs MLisp Catalogue)
+<define_book_name>(emacs_packlib\VAX Emacs Packages and Libraries)
+
+<define_book_name>(emacs_man_vms\Emacs Manual for VAX/VMS)
+<define_book_name>(twenex_emacs_man\Twenex Emacs Manual)
+
+<comment>
+	Include the VMS and layered product book names.
+<endcomment>
+
+<include>(doc$local_formats:cup$vms_v50_booknames.sdml)
+<include>(doc$local_formats:cup$lp_booknames.sdml)

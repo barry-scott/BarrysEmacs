@@ -1,0 +1,98 @@
+1 EMACS
+
+Invokes the  EMACS real-time, extensible, screen editor on one or more
+text  files.   This  editor is described in detail in the EMACS User's
+Guide.
+
+ Format:
+
+      EMACS file-spec[,...] file-spec...
+
+2 Parameters
+
+ file-spec[,...]
+
+
+  Specifies one  or  more  text files.  If you do not specify any
+  files,  then EMACS attempts to read in the same files that were
+  display last time the user used EMACS.
+
+  You  can  specify more than one input file either by separating
+  them  with  a  comma, or with a space or any combination of the
+  two. 
+
+2 Qualifiers
+/INTERFACE=type[=value]
+
+  This qualifier  selects  the  display interface that Emacs will
+  use. The optional "value" depends on the "type" choosen.
+
+	Type		Value		  default
+	----		-----		  -------
+	CHARACTER_CELL	Terminal device	  SYS$INPUT
+	DECWINDOWS	X server display  DECW$DISPLAY
+	FILE		File		  SYS$INPUT
+
+  Emacs defaults  the type in the following way.  If DECW$DISPLAY
+  is  defined  use  DECWINDOWS.   If  SYS$INPUT is a terminal use
+  CHARACTER_CELL otherwise use FILE.
+
+/LOG (D)
+/NOLOG
+
+  Controls  whether the informational messages are displayed when
+  changing between EMACS and DCL.
+  
+  The /NOLOG qualifier suppresses the output of all informational
+  EMACS messages.
+  
+/NAME[=name] (D=EMACS$terminal)
+
+  Controls  the  name  used  when  EMACS creates a sub-process in
+  which to run. Any valid VAX/VMS process name may be used.
+
+  The  default  value  is  constructed by appending EMACS$ to the
+  current terminal name (with all the punctuation first removed).
+
+/PACKAGE[=name] (D=emacs)
+
+  Controls the  name  of  the package to be run when EMACS starts
+  up. Any package name may be specified as long as a access route
+  may  be found by EMACS (e.g. the package must be accessible via
+  EMACS$PATH).
+
+  By  default,  the  package  loaded  is  "emacs", which causes a
+  normal EMACS to be started.
+
+/RESTORE[=save-file] (D)
+/NORESTORE
+
+  Controls whether  EMACS  executes the initialisation profile or
+  uses  a  saved  environment  files.  The  default  save file is
+  EMACS$ENVIRONMENT:EMACSINIT.EMACS_ENVIRONMENT.  This  qualifier
+  is ignored if attaching to an existing EMACS.
+
+  Use EMACS$LIBRARY:EMACS_SAVE_ENVIRONMENT.COM  to  create a save
+  file from your EMACSINIT.ML.
+
+  Example:
+	$ @emacs$library:emacs_save_environment
+
+/START_POSITION
+
+  This qualifier  takes  a list of values. The values are treated
+  as  addition parameters to the EMACS command. This qualifier is
+  provided to support the DEBUG EDIT command.
+
+  Example:
+
+   EMACS/PACKAGE=DEBUG32/START_POSITION=(54,8) DISK$OWL:[SCOTT]FRED.B32;4 
+
+/SUBPROCESS (D)
+/NOSUBPROCESS
+
+  Controls whether  EMACS  is  started as a subprocess, or run in
+  the context of the current image.
+
+  If  EMACS  is  run  in  the current image, then the pause-emacs
+  command is inaccessible.

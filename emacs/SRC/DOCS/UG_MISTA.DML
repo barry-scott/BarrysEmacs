@@ -1,0 +1,313 @@
+<chapter>(Correcting Mistakes and EMACS Problems\mistakes_chap)
+
+<p>
+If you type an EMACS command you did not intend, the results
+are often mysterious. This chapter describes what you can do to
+cancel your mistakes and recover from such mysterious situations.
+
+<p>
+<reference>(interrupt_sec) shows how you can interrupt commands.
+<reference>(commonprob_sec) describes how you can deal with some
+commonly-occurring EMACS problems.  <reference>(undo_sec) describes how
+you can undo changes made to your editing buffers.  <reference>(bugs_sec)
+describes how to report bugs with EMACS, and <reference>(crash_sec)
+describes what happens when EMACS crashes.
+
+
+<head1>(Interrupting and Aborting EMACS Commands\interrupt_sec)
+<x>(Interrupting)
+<x>(Aborting)
+
+<definition_list>
+<deflist_item>(^G (interrupt-key))
+<x>(^G)
+<x>(interrupt-key)
+<deflist_def>
+Cancels a running or partially-typed command.
+
+<deflist_item>(ESC-x top-level)
+<x>(top-level)
+<deflist_def>
+Aborts all recursive editing levels and subsystems
+which are currently executing.
+<enddefinition_list>
+
+<p>
+There are two ways of cancelling commands which have not finished
+executing: <newterm>(interrupting) the command with <key_name>(^G), or
+aborting all recursive edits with <key_name>(ESC-x top-level). 
+
+<p>
+Interrupting with <key_name>(^G) is used to abort a partially-typed
+command or a numeric argument that you do not want. It also stops a
+running command in a safe way, so you can use <key_name>(^G) if you
+accidentally give a command which takes a long time to execute.
+
+<p>
+When you are in a position to use <key_name>(ESC-x), you can use
+<key_name>(ESC-x top-level). This command aborts all active recursive
+edits and subsystems.  <key_name>(ESC-x top-level) is like all other
+commands (apart from <key_name>(^G)) in that it is effective only when EMACS
+is waiting for keyboard input, whereas <key_name>(^G) can be used at any time.
+
+
+<head1>(Dealing with Common EMACS Problems\commonprob_sec)
+
+<p>
+This section describes various conditions which can cause EMACS to function
+incorrectly or which can cause it to display strange things, and
+describes how to correct such conditions.
+
+<head2>(Subsystems and Recursive Editing Levels\subsysrecusedit_sec)
+
+<p>
+Subsystems and recursive editing levels are important and useful features
+of EMACS, but they can make EMACS appear to behave strangely to the user
+who does not understand them or has never used them before.
+
+<p>
+If the mode line starts with a <quote>(<cx>([)), or does not
+look like the standard mode line, you have probably entered a subsystem
+or a recursive editing level.
+
+<p>
+In such a situation, first try typing <key_name>(ESC-x exit-emacs). This
+will exit from any recursive editing level or subsystem. The usual mode
+line and text display will reappear. If <key_name>(exit-emacs) does not seem
+to  work, try typing <key_name>(^G) to abort the current  command.  This
+may have the desired effect. Otherwise, use <key_name>(ESC-x top-level).
+
+<head2>(Corrupted Screen Displays\corruptscreen_sec)
+
+<p>
+If the data on the screen looks wrong, it could be due to line noise on
+input or output, a bug in the terminal, a bug in EMACS' redisplay
+algorithm, or a bug in an EMACS command.  To find out whether there is
+really anything wrong with your text, the first thing to do is type
+<key_name>(^L). This command will clear the screen and redisplay it. Often
+this will display the text you expected.
+
+<head2>(Persistent Screen Corruption\persistcorrupt_sec)
+
+<p>
+If the data displayed by EMACS is persistently corrupted, or if EMACS
+outputs the right data but in the wrong locations, it may be that EMACS
+has the wrong idea of your terminal type. The first thing to do in this
+case is to exit from EMACS and restart it. Each time EMACS is restarted, it
+asks the system which terminal type you are using.  Whenever you disconnect
+and move to a terminal of a different type you should restart EMACS as a
+matter of course. If you stopped EMACS with the <key_name>(exit-emacs)
+command, or by interrupting it when it was awaiting a command, then this
+is sure to be safe.
+
+<p>
+The system itself may not know which type of terminal you have. You should
+try telling the system with the SET TERMINAL command. If your terminal is
+compatible with one of the standard types but has a different screen size,
+you must tell the system the screen size with the SET TERMINAL/WIDTH DCL
+command, because EMACS uses whatever size the system says it knows.
+
+<head2>(EMACS Hung and Not Responding\emacshung_sec)
+
+<p>
+Sometimes EMACS hangs and <key_name>(^G) does not work. The more
+drastic procedure of restarting EMACS may work at such times.
+<key_name>(^G) can sometimes fail to work because it only takes effect at
+specific times in the wired-in functions. If EMACS is hung and
+<key_name>(^G) is not noticed, you will have to abort the EMACS process
+from another terminal. Use the STOP DCL command to achieve this.
+
+<head1>(Undoing Changes to the Buffer\undo_sec)
+
+<x>(undo)
+<x>(^X-^U)
+<p>
+If you mistakenly issue commands that make changes to the buffer, you can
+often undo the changes without having to know precisely how they came
+about. This is done by using the <key_name>(^X-^U) command
+(<key_name>(undo)). Type <key_name>(^X-^U) and a change is undone.
+<key_name>(undo) then displays the message
+<quote>(<cx>(Hit <literal>(<)Space<literal>(>) to undo more)) in
+the Mini-buffer.  For every <key_name>(Space) that you press, another
+change you made to the buffers will be undone. When you press the first
+non-space character, that character is treated in the usual way and
+<key_name>(undo) exits with the message <quote>(<cx>(Finished undoing)).
+If the command is not a <key_name>(Return), its usual action is also
+executed.
+
+<p>
+The changes that <key_name>(^X-^U) undoes include all buffer insertions
+and deletions and any movement of dot in a buffer. Side-effects of MLisp
+functions, including creation of buffers and setting of variables, are not
+undone.
+
+<p>
+For commands that have not affected a buffer, <key_name>(^X-^U) appears to
+have no effect. So, if you use <key_name>(undo) and nothing happens when
+an undo step is requested, this may well be because a non-buffer-modifying
+command was executed.
+
+<p>
+The <key_name>(undo) function maintains a database of changes made to
+buffers. This database has a finite size; if you attempt to undo more than is
+contained in the database, <key_name>(undo) will issue the message
+<quote>(<cx>(I can't undo that. What's done is done.)).
+
+<p>
+Note that undoing buffer changes make changes to buffers, and therefore,
+can be undone. So, if you undo too many changes,  use <key_name>(^X-^U)
+again to undo the unwanted undos.
+
+
+<head1>(Reporting EMACS Bugs\bugs_sec)
+
+<p>
+Sometimes you will encounter a bug in EMACS.  You must report such bugs in
+order to have them fixed, but you must know how and when to do so
+if the report is to be constructive.
+
+<head2>(When Is There a Bug?\whenbug_sec)
+
+<p>
+If EMACS executes an illegal instruction, or it crashes with an
+operating system error message that indicates a problem in
+the program (as opposed to something like a disk full error), then
+this is certainly a bug.
+
+<p>
+If EMACS updates the display in a way that does not correspond to the text
+in the buffer, then this is certainly a bug. For example, if a command seems
+to do the wrong thing but the problem disappears if you type <key_name>(^L),
+this is a case of incorrect display updating.
+
+<p>
+Taking forever to complete a command can be a bug, but you must make
+certain that it was really EMACS' fault. Some commands simply take a long
+time to execute. If you know that a command should have processed quickly
+but instead seems to be looping infinitely, report a bug.
+
+<p>
+If a command with which you are familiar causes an EMACS error message in
+a situation where its usual definition ought to be reasonable, this is
+probably a bug.
+
+<p>
+If a command does the wrong thing, this is a bug.  However, you must be
+sure you know for certain what it ought to have done. If you are not
+familiar with the command, or do not know for certain how the command is
+supposed to work, then it might actually be working correctly. Rather than
+jumping to conclusions, show the problem to another EMACS user who is
+familiar with the command in question.
+
+<p>
+Finally, if you feel that a command's description in the various EMACS
+documentation sources is wrong or unclear, then you should report a
+problem with the documentation.   It is just as important to report
+documentation bugs as it is to report program bugs.
+
+<head2>(How to Report a Bug\reportbug_sec)
+
+<p>
+When you decide that there is a bug in EMACS, it is important that you
+report it in a way which is useful.  The most useful bug reports contain
+a description of exactly which commands you type to reproduce the bug,
+using a newly-started EMACS.  Enter the bug report in the EMACS bugs
+NOTES conference, or send mail to a member of the EMACS development team.
+
+<p>
+The most important principle in reporting a bug is to report facts, not
+hypotheses or conditions. For example, suppose that you type
+<quote>(<cx>(^X-^V [FOO]BAR$BAR.ALBERT)), visiting a file which (you know)
+happens to be rather large, and EMACS prints out <quote>(<cx>(I feel
+pretty today)).
+
+<p>
+The best way to report this bug is to say exactly what the previous
+paragraph says, because it gives all the facts and nothing but the facts.
+Do not assume that the problem is due to the size of the file and say
+<quote>(<cx>(When I visit a large file, EMACS prints out "I feel pretty
+today")).  The problem is just as likely to be due to the fact that there
+is a <cx>($) in the file name.  With a report based on such a guessed
+explanation, EMACS developers would try investigating the problem by
+visiting a large file; they would never guess that they should try
+visiting a file with a <quote>(<cx>($)) in its name.
+
+<p>
+Alternatively, the problem might be due to the fact that the file you are
+editing starts with exactly 25 spaces. For this reason, you should not
+change the file until the EMACS developers have looked at it. Suppose the
+problem only occurs when you have previously typed the
+<key_name>(^X-^A) command---this is why you are asked to give the
+exact sequence of characters you typed since starting the EMACS.
+
+<p>
+If you are not in Normal Mode when the problem occurs, you
+should state which mode you are using.
+
+<p>
+Be sure to state which version of EMACS you are running. If you do not
+know the EMACS version, type <quote>(<cx>(ESC-x emacs-version))
+<x>(emacs-version) and EMACS will display in the Mini-buffer the version
+number, where your copy of EMACS was created, and on what date.
+
+<p>
+If the bug occurred in a customised EMACS, or with several optional
+libraries loaded, it is helpful to try to reproduce the bug in a more
+standard EMACS with fewer non-standard components. It is best if you can
+make the problem happen in a completely standard EMACS with no optional
+libraries. If the problem does not occur in a standard EMACS, it is very
+important to report that fact, because the EMACS developers will
+otherwise try to debug the problem in a standard EMACS, will not find the
+problem, and will give up. If the problem does depend on an initialisation or
+environment file, then you should make sure it is not a bug in the file by
+first reporting the problem to the person who created the file. They should
+check over their code, and verify the definitions of the MLisp commands
+used. If they verify that the bug is in EMACS, then they  should report
+the bug.  The EMACS developers are not responsible for maintaining users'
+initialisation or environment files.
+
+<p>
+If possible, describe a way to reproduce the bug without reading in any
+files---this makes the problem much easier to debug. If you
+do need to read files to reproduce the bug, make sure that you send a copy
+of the files with the bug report.   Keep the files as small as possible.
+
+
+<head1>(What Happens when EMACS Crashes\crash_sec)
+
+<p>
+When EMACS crashes, a special sequence of events takes place. These events
+are designed to minimise the amount of data lost.
+
+<list>(unnumbered)
+<le>
+EMACS displays the message <quote>(<cx>(Whoops crashed!)).
+
+<le>
+EMACS then displays the message
+<quote>(<cx>(Checkpointing all modified buffers...)).
+
+<le>
+All modified buffers which have checkpointing enabled are then checkpointed
+in the normal way (all journal files will be up to date for all buffers that 
+have journalling enabled).
+
+<le>The message
+<quote>(<cx>(Restoring terminal characteristics...))
+is displayed, and the characteristics are returned to those
+in effect when EMACS was last started.
+
+<le>EMACS then displays the message
+<quote>(<cx>(Here comes the Stack Trace...))
+and the Traceback handler is called to display the stack.
+
+<le>
+EMACS then exits.
+<endlist>
+
+<p>
+It should be noted that it is possible for the data structures inside
+EMACS to cause a second crash while the original crash sequence is
+running. Under these circumstances, the procedure will be aborted and
+EMACS will exit with a register dump. All data since the last checkpoint
+will be lost.

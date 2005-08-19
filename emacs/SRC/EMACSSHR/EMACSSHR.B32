@@ -1,0 +1,1114 @@
+%title 'emacs$interface - Emacs starter program'
+module	emacs$interface
+	(
+	main = emacs$command,
+	addressing_mode( external = general ),
+	ident = 'v5.1-009'
+	) =
+begin
+
+!
+!		COPYRIGHT ( c ) 1983-1991 BY
+!	      DIGITAL EQUIPMENT CORPORATION, MAYNARD, MASS.
+!
+! This software is furnished under a license and may be used and  copied
+! only  in  accordance  with  the  terms  of  such  license and with the
+! inclusion of the above copyright notice.  This software or  any  other
+! copies  thereof may not be provided or otherwise made available to any
+! other person.  No title to and ownership of  the  software  is  hereby
+! transferred.
+!
+! The information in this software is subject to change  without  notice
+! and  should  not  be  construed  as  a commitment by DIGITAL EQUIPMENT
+! CORPORATION.
+!
+! DIGITAL assumes no responsibility for the use or  reliability  of  its
+! software on equipment which is not supplied by DIGITAL.
+!
+
+!++
+! FACILITY:	
+!	The Emacs Real time editor V3.00
+!
+! ABSTRACT:
+!	This module causes the emacs editor to be started up in the
+!	sub process created. If the sub process already exists, then
+!	it is attached to. An optional name may be specified on the
+!	command line. Also, an optional package name may be
+!	specified. The package name defaults to "emacs", while the
+!	default process name is constructed by taking the terminal
+!	number, removing leading and trailing _ and : and placing it
+!	after the string EMACS$ ( eg EMACS$TTA1 ).
+!
+! ENVIRONMENT:
+!	VAX/VMS V3 or later
+!
+! AUTHOR: NW EMERY	CREATION DATE: Fri May 27 13:17:44 1983
+!
+! MODIFIED BY:
+!
+! Edit	Modifier	Date		Reason
+! 000	Nick Emery	Somtime in 83	Original
+! 001	Nick Emery	ditto		Added re-start argument passing
+! 002	Nick Emery	ditto		Added exportation of PATH environment
+!					 variable
+! 003	Nick Emery	Mar-1984	Added exportation of PID of caller.
+! 004	Nick Emery	Jul-1984	Added support for DEC/SHELL
+!   5	Barry A. Scott	 1-Aug-1984	Support spawning of a command file
+!					so that process dump mode can be used.
+! 006	Nick EMery	Oct-1984	Add the /RESTORE= qualifier
+!   7	Barry A. Scott	28-Sep-1985	Merge Kept and Callable Emacs into
+!					one source file.
+!   8	Barry A. Scott	26-Jun-1986	Add EMACS$EMACS routine
+!
+!   9	Barry A. Scott	22-Apr-1991	Test for low JTquota and report an error
+!--
+%SBTTL 'Declarations'
+
+!
+! Include files:
+!
+library 'target_library:starlet';
+
+!
+! Table of Contents:
+!
+
+forward routine
+	emacs$command,		! routine to handle the EMACS verb
+	emacs$emacs,		! routine to parse a emacs command line
+	emacs$edit,		! callable editor interface
+	emacs$utility,		! general purpose interface
+	conditionhandler,
+	trim_desc,
+	emacs_default_process_name,
+	get_path;
+
+!
+! Macros:
+!
+compiletime
+	debug_callable	= 0;
+
+%if debug_callable
+%then
+macro
+	$trace_s( s ) = (lib$put_output( %ascid %string( s ) )); %,
+	$trace_d( d ) = (lib$put_output( d )); %;
+%else
+macro
+	$trace_s( s ) = %( sfa )% %,
+	$trace_d( d ) = %( sfa )% %;
+%fi
+macro
+	$decl_desc( name_, size ) =
+		%name( name_, _buf )	: vector[ size, byte],
+		%name( name_, _desc )	: block[ dsc$k_z_bln, byte ]
+					preset
+					(
+					[dsc$w_length] = size,
+					[dsc$b_dtype] = dsc$k_dtype_t,
+					[dsc$b_class] = dsc$k_class_s,
+					[dsc$a_pointer] = %name( name_, _buf )
+					)
+		%;
+macro
+	$len_ptr( desc ) = .desc[ dsc$w_length ], .desc[ dsc$a_pointer ] %;
+macro
+	$ch$move_desc( desc, p ) =
+		ch$move( $len_ptr( desc ), p )
+		%;
+macro
+	$ch$move_str( str, p ) =
+		(
+		ch$move
+		(
+		%charcount( %string( str ) ),
+		uplit byte( %ascii %string( str ) ),
+		p
+		);
+		%charcount( %string( str ) )
+		)
+		%;
+macro
+	$len( str ) = %charcount( %string( str ) ) %;
+
+%if not %declared( %quote CHF$IL_MCH_SAVR0_LOW )
+%then
+macro
+	CHF$IL_MCH_SAVR0_LOW = CHF$L_MCH_SAVR0 %;
+%fi
+
+!
+! Equated symbols:
+!
+literal
+	lib$k_cli_global_symbol	= 2,
+	emacs_k_arguments	= 10,	! mbx message type is arguments
+	emacs_k_dcl		= 2,	! mbx message type is dcl command
+	mbxmax			= 512,	! max width of restart mailbox
+	max_args		= 16,	! max number of command line arguments
+	mbxprotection		= %x'ff0f',	! mailbox protection mask
+	lognamsiz		= 256;	! size of buffers for logical names
+
+bind
+	zero		= %ascid 'Zero',
+	emacs_proc_name	= %ascid 'EMACS$PROCESS_NAME',
+	mbxname		= %ascid 'EMACS$$RESTART',
+	debug_name	= %ascid 'EMACS$$DEBUG';
+
+!
+! external references:
+!
+external routine
+	lib$put_output,
+	shell$is_shell	: weak,		! returns true for dec/shell
+	sys$setddir,			! fetch the current directory
+	lib$set_symbol,			! set a cli symbol
+	lib$set_logical,		! define a logical name
+	lib$get_symbol,			! fetch the value of a cli symbol
+	lib$delete_symbol,		! delete a cli symbol
+	lib$spawn,			! spawn a sub process
+	lib$attach,			! attach to a process
+	lib$do_command,			! execute a command in this process
+	cli$dcl_parse,			! parse a DCL command
+	cli$dispatch,			! dispatch to the routine to handle the command
+	cli$present,			! check if a parameter is present
+	cli$get_value;			! get value of a parameter
+
+external
+	emacs_command_table;
+
+external literal
+	cli$_present,
+	cli$_negated,
+
+	emacs$_cantdo,		! cant start emacs in this process
+	emacs$_current,		! starting emacs in current process
+	emacs$_new,		! creating a new emacs
+	emacs$_returned,	! returned to directory
+	emacs$_attach,		! re-started emacs
+	emacs$_noset,		! unable to set up link in sub process
+	emacs$_noproc,		! unable to find target process
+	emacs$_nospawn,		! unable to spawn emacs sub process
+	emacs$_badname,		! illegal process name specified
+	emacs$_badmbx,		! failed to create mailbox for sub-process comunication
+	emacs$_jtqlow,		! cannot create job logical name
+	emacs$_usesubproc;	! tell user to use new /SUBPROCESS
+%sbttl 'emacs$command - the code to start emacs'
+global routine emacs$command =
+
+!++
+! functional description:
+!
+!	this routine contains all the code to start the emacs image,
+!	or to re connect to an old one. the command line has the form:
+!
+!	emacs /subprocess/name=emacs$ttcn/package="emacs" files,...
+!
+!	if parameters are not present, then default values are
+!	calculated as shown.
+!
+!	the process table for this user is scanned ( using a wild card
+!	scan from getjpi ). the world and group privileges are
+!	disabled during this scan.
+!
+! formal parameters:
+!
+!	none
+!
+! implicit inputs:
+!
+!	none
+!
+! implicit outputs:
+!
+!	the symbol emacs$$foreign is created to activate the emacs
+!	image in the spawned sub process.
+!
+! routine value:
+!
+!	any status code resulting in an abort or ss$_normal
+!
+! side effects:
+!
+!	none
+!--
+	begin
+	!
+	!	Used to collect the users arguments
+	!
+	bind
+		pn	=
+			uplit
+			(
+			0,
+			%ascid 'P1', %ascid 'P2', %ascid 'P3', %ascid 'P4',
+			%ascid 'P5', %ascid 'P6', %ascid 'P7', %ascid 'P8'
+			)
+				: vector[1+8,long];
+	!
+	!	descriptors
+	!
+	local
+	 	$decl_desc( name, lognamsiz ),
+		$decl_desc( restore, lognamsiz ),
+		$decl_desc( package, lognamsiz ),
+		$decl_desc( path, lognamsiz ),
+		$decl_desc( return, lognamsiz ),
+		$decl_desc( arg_1, lognamsiz ), $decl_desc( arg_2, lognamsiz ),
+		$decl_desc( arg_3, lognamsiz ), $decl_desc( arg_4, lognamsiz ),
+		$decl_desc( arg_5, lognamsiz ), $decl_desc( arg_6, lognamsiz ),
+		$decl_desc( arg_7, lognamsiz ), $decl_desc( arg_8, lognamsiz ),
+		$decl_desc( arg_9, lognamsiz ), $decl_desc( arg_10, lognamsiz ),
+		$decl_desc( arg_11,lognamsiz ), $decl_desc( arg_12, lognamsiz ),
+		$decl_desc( arg_13,lognamsiz ), $decl_desc( arg_14, lognamsiz ),
+		$decl_desc( arg_15,lognamsiz ), $decl_desc( arg_16, lognamsiz ),
+		args		: vector[max_args,long]
+			initial
+			(
+			arg_1_desc, arg_2_desc, arg_3_desc, arg_4_desc,
+			arg_5_desc, arg_6_desc, arg_7_desc, arg_8_desc,
+			arg_9_desc, arg_10_desc, arg_11_desc, arg_12_desc,
+			arg_13_desc, arg_14_desc, arg_15_desc, arg_16_desc
+			),
+		arg_count	: initial( 0 );
+
+	local
+		current_process,
+		logflag,		! true is logging required
+		p	: ref vector[,byte],
+		siz,
+		resp,
+		sresp,
+		xresp,
+		msgvec	: vector [5];
+	enable
+		conditionhandler;
+	!
+	! set up the logging flag
+	!
+	logflag = cli$present( %ascid 'LOG' );
+
+	!
+	! find out the process name to use
+	!
+	if cli$get_value( %ascid 'NAME', name_desc )
+	then
+		begin
+		trim_desc( name_desc );
+		!
+		! check for valid process name.
+		!
+		if .name_desc[ dsc$w_length ] gtr 15
+		then
+			signal( emacs$_badname, 1, name_desc );
+		end
+	else
+		emacs_default_process_name( name_desc );
+
+	!
+	! fetch all those good arguments, and the
+	! contents of the macro flag
+	!
+	! define the local symbol. this involves fetching the
+	! package name and the restore file from the qualifiers
+	!
+	if cli$get_value( %ascid 'RESTORE', restore_desc )
+	then
+		trim_desc( restore_desc )
+	else
+		restore_desc[ dsc$w_length ] = 0;
+
+	if cli$get_value( %ascid 'PACKAGE', package_desc )
+	then
+		trim_desc( package_desc )
+	else
+		!
+		! fill in the default
+		!
+		package_desc[ dsc$w_length ] =
+				$ch$move_str( 'emacs', package_buf );
+
+	!
+	!	Work out the current PATH
+	!
+	get_path( path_desc );
+
+
+	!
+	!	Collect the arguments
+	!
+	incr n from 1 to 8
+	do
+		begin
+		local
+			desc	: ref block[,byte],
+			size;
+
+		while
+			begin
+			desc = .args[ .arg_count ];
+
+			cli$get_value( .pn[ .n ], .desc )
+			end
+		do
+			begin
+			trim_desc( .desc );
+			arg_count = .arg_count + 1;
+			if .arg_count eql max_args then exitloop;
+			end;
+
+		if .arg_count eql max_args then exitloop;
+		end;
+
+	!
+	!	See if /START_POSITION=(n[,...]) has been specified
+	!
+	if cli$present( %ascid 'START_POSITION' )
+	and .arg_count lss max_args
+	then
+		begin
+		local
+			desc	: ref block[,byte],
+			size;
+
+		while
+			begin
+			desc = .args[ .arg_count ];
+
+			cli$get_value( %ascid 'START_POSITION', .desc )
+			end
+		do
+			begin
+			trim_desc( .desc );
+			arg_count = .arg_count + 1;
+			if .arg_count eql max_args then exitloop;
+			end;
+		end;
+
+	!
+	! check to see if this emacs is to run in this process
+	!
+	current_process = not cli$present( %ascid 'SUBPROCESS' );
+
+	!
+	! now emit the returned to directory ... message
+	!
+	resp =	emacs$utility
+		(
+		name_desc,	! Process name
+		package_desc,	! Package to run
+		restore_desc,	! Restore file to use
+		.arg_count,	! number of arguments to pass
+		args,		!  and there values
+		.logflag,	! if logging desired
+		.current_process,! if want to run emacs in the current process
+		path_desc,	! where emacs's path should point
+		return_desc	! any strings that is passed back
+		);
+	if not .resp then return .resp;
+
+	!
+	!	If there was a command returned
+	!
+	if .return_desc[ dsc$w_length ] neq 0
+	then
+		begin
+		if not( resp = lib$do_command( return_desc ) )
+		then
+			signal( emacs$_cantdo, 0, .resp );
+		end;
+
+	msgvec[0] = 4; msgvec[1] = emacs$_returned;
+	msgvec[2] = 2; msgvec[3] = path_desc;
+	if .logflag then $putmsg( msgvec = msgvec );
+
+	ss$_normal
+	end;
+global routine emacs$emacs( command_line ) =
+	begin
+	local
+		status;
+
+!	lib$put_output( .command_line );
+
+	status = cli$dcl_parse( .command_line, emacs_command_table );
+	if not .status then return .status;
+	cli$dispatch()
+	end;
+!routine test_emacs_edit =
+!	begin
+!	emacs$edit( %ascid 'file_1', %ascid 'file_2', %ascid 'test_package' )
+!	end ;
+
+%if %variant %then
+global routine edt$edit( in_file, out_file, package_name ) =
+	begin
+	builtin
+		actualcount;
+
+	selectone actualcount()
+	of set
+	[1]:	emacs$edit( .in_file );
+	[2]:	emacs$edit( .in_file, .out_file );
+	[3]:	emacs$edit( .in_file, .out_file, .package_name );
+	[otherwise]: return ss$_badparam;
+	tes
+	end;
+%fi
+%sbttl 'emacs$edit'
+global routine emacs$edit( in_file, out_file, package_name ) =
+	begin
+	builtin
+		actualcount;
+	local
+		$decl_desc( name, lognamsiz ),
+		$decl_desc( path, lognamsiz ),
+		status,
+		args	: vector[2,long];
+
+	emacs_default_process_name( name_desc );
+
+	args[0] = .in_file;
+	args[1] = .out_file;
+
+	emacs$utility
+	(
+	name_desc,
+	(if actualcount() gtr 2 then .package_name else %ascid 'vms_mail'),
+	%ascid 'emacs$environment:emacsinit',
+	2,			! two args
+	args,			! vector of those args
+	1,			! log messages
+	0,			! Spawn emacs
+	get_path( path_desc ),	! pass current director as path
+	0			! No return descriptor required
+	)
+	end;	
+%sbttl 'emacs$utility'
+global routine emacs$utility
+		(
+		proc_name_desc		: ref block[,byte],
+		package_desc		: ref block[,byte],
+		restore_desc		: ref block[,byte],
+		arg_count		: long,
+		args			: ref vector[,long],
+		log			: long,
+		current_process		: long,
+		path_desc		: ref block[,byte],
+		return_desc		: ref block[,byte]
+		) =
+	begin
+	!
+	!	descriptors
+	!
+	local
+		$decl_desc( foreign, lognamsiz ),
+		$decl_desc( cmdln, 256 ),		! command line to issue
+		$decl_desc( debug, lognamsiz ),
+		$decl_desc( fetch, lognamsiz );
+	local
+		isshell,			! running with dec/shell
+		docommand	: initial( 0 ),	! true when a command must be executed
+		mbxchan		: word,		! channel number for re-start box
+		mbxmessage	: vector[mbxmax / %upval],	! where the mailbox message is created
+		mbxsize		: initial ( 0 ),		! size of mbxmessage
+		debug_siz	: long,
+		prv		: block[8,byte]		! privileges to turn off
+				preset
+				(
+				[prv$v_group] = 1,
+				[prv$v_world] = 1
+				),
+		oldprv		: block[8,byte],	! old turned off privileges
+		pid,				! target processes process id
+		ourpid		: volatile,	! the pid of this process
+		iosb		: vector [4,word],	! a general iosb 
+		cont,
+		p		: ref vector[,byte],
+		siz,
+		resp,
+		sresp,
+		xresp,
+		item_list	: $itmlst_decl( items=1 ),
+		msgvec	: vector [5];
+	enable
+		conditionhandler;
+	bind
+		mbxstrings	= mbxmessage[3]
+				: vector [mbxmax - 2 * %upval, byte];
+
+	!
+	! which cli are we using?
+	!
+	if shell$is_shell neq 0
+	then
+		isshell = shell$is_shell()
+	else
+		isshell = 0;
+
+	!
+	! switch off group and world privileges for a moment
+	!
+	resp = $setprv
+		(
+		enbflg = 0,
+		prvadr = prv,
+		prmflg = 0,
+		prvprv = oldprv
+		);
+	if not .resp
+	then
+		signal( emacs$_noproc, 0, .resp );
+
+	!
+	! now, find out the process id to which to attach. translate the
+	! name specified into an id. then attempt the attach. if the process
+	! is not one of those belonging to this job, the attach will be aborted,
+	! so a spawn request will be made
+	!
+	$itmlst_init
+	(
+	itmlst = item_list,
+	(itmcod = jpi$_pid, bufadr = pid )
+	);
+	sresp = $getjpiw
+		(
+		prcnam	= .proc_name_desc,
+		itmlst	= item_list,
+		iosb	= iosb
+		);
+	if .sresp
+	then
+		sresp = .iosb [0];
+
+	!
+	! turn the privileges back on while spawning
+	!
+	$setprv( enbflg = 1, prvadr = oldprv, prmflg = 0 );
+	if .isshell
+	then
+		p = cmdln_buf
+			[ $ch$move_str( '/emacs\$exe/emacs.exe ', cmdln_buf )]
+	else
+		p = cmdln_buf
+			[ $ch$move_str( 'EMACS$$FOREIGN ', cmdln_buf )];
+
+	$itmlst_init
+	(
+	itmlst = item_list,
+	(itmcod = jpi$_pid, bufadr = ourpid )
+	);
+	$getjpiw( itmlst = item_list );
+
+	mbxmessage[0] = emacs_k_arguments;
+	mbxmessage[1] = .ourpid;
+	mbxmessage[2] = 1;
+
+	!
+	!	move the PATH and PACKAGE into the mailbox message
+	!
+	$ch$move_desc( path_desc, mbxstrings );
+		mbxsize = .path_desc[ dsc$w_length ] + 1;
+	mbxstrings[ .mbxsize - 1 ] = 0;
+	$ch$move_desc( package_desc, mbxstrings [.mbxsize] );
+		mbxsize = .mbxsize + .package_desc[ dsc$w_length ] + 1;
+	mbxstrings [.mbxsize - 1] = 0;
+
+	if .isshell
+	then
+		!
+		!	For Shell
+		!
+		begin
+		if .restore_desc neq 0 and .restore_desc[ dsc$w_length ] neq 0
+		then
+			begin
+			p = $ch$move_desc
+				(
+				restore_desc,
+				p[ $ch$move_str( '''~restore-', .p ) ]
+				);
+			p[0] = %c'''';
+			p[1] = %c' ';
+			p = p[2]
+			end;
+		p[0] = %c'''';
+		p = p[1];
+		p = $ch$move_desc( package_desc, .p );
+		p [0] = %c'''';
+		p [1] = %c' ';
+		p = p [2]
+		end
+	else
+		!
+		!	For DCL
+		!
+		begin
+		!
+		!	Build up the emacs$$foreign symbol
+		!
+		literal
+			offset	 = $len( '$EMACS$EXE:EMACS ' );
+
+		$ch$move_str( '$EMACS$EXE:EMACS ', foreign_buf );
+
+		if .restore_desc neq 0 and .restore_desc[ dsc$w_length ] neq 0
+		then
+			begin
+			!
+			! deal with the /restore qualifier. add the name of
+			! the file to be restored to ~restore- and make it
+			! the very first argument to the command
+			!
+			ch$copy
+			(
+			$len( '~restore-' ), uplit byte( %ascii '~restore-' ),
+			$len_ptr( restore_desc ),
+			1, uplit( %ascii ' ' ),
+			$len_ptr( package_desc ),
+			%c' ',
+			lognamsiz - offset, foreign_buf[ offset ]
+			);
+			foreign_desc[ dsc$w_length ] =
+					offset + $len( '~restore-' ) +
+					.restore_desc[ dsc$w_length ] + 1 +
+					.package_desc[ dsc$w_length ];
+			end
+		else
+			begin
+			$ch$move_desc( package_desc, foreign_buf[ offset ] );
+			foreign_desc[ dsc$w_length ] =
+					.package_desc[ dsc$w_length ] + offset;
+			end;
+
+		!
+		!   if the debug symbol is around spawn @emacs$exe:emacs
+		!   instead of $emacs$exe:emacs
+		!
+		if lib$get_symbol( debug_name, debug_desc, debug_siz,
+					%ref( lib$k_cli_global_symbol ) )
+		then
+			foreign_buf[0] = '@';
+
+		resp = lib$set_symbol( %ascid 'EMACS$$FOREIGN', foreign_desc );
+		if not .resp
+		then
+			signal( emacs$_noset, 0, .resp );
+		end;
+
+	!
+	!	Work thru the arguments
+	!
+	incr arg from 0 to .arg_count - 1
+	do
+		begin
+		local
+			desc	: ref block[,byte],
+			size;
+
+		desc = .args[ .arg ];
+		size = .desc[ dsc$w_length ];
+
+		!
+		!	See if the command fits in the mailbox
+		!
+		if .size + 1 + .mbxsize - 2 * %upval lss mbxmax
+		then
+			begin
+			$ch$move_desc( desc, mbxstrings[ .mbxsize ] );
+			mbxsize = .mbxsize + .size + 1;
+			mbxstrings[ .mbxsize - 1 ] = 0;
+			mbxmessage[2] = .mbxmessage[2] + 1;
+			end;
+
+		!
+		!	add to command line
+		!
+		p = $ch$move_desc( desc, .p );
+		ch$wchar_a( %c' ', p );
+		end;
+
+	cmdln_desc[ dsc$w_length ] = .p - 1 - cmdln_buf;
+
+	if .current_process or .isshell
+	then
+		begin
+		!
+		! run emacs in this image, first emit the message
+		!
+		msgvec [0] = 2; msgvec [1] = emacs$_current; msgvec [2] = 0;
+		if .log then $putmsg ( msgvec = msgvec );
+		if not ( resp = lib$do_command( cmdln_desc ) )
+		then
+			signal( emacs$_cantdo, 0, .resp );
+		end;
+
+	!
+	! sort out the re-start mailbox. first translate the emacs$$restart cli
+	! symbol. if this translates, then attempt to open the file whose name
+	! is specified as the translation. then check to see if the device is a
+	! mail box. otherwise, create a mailbox, fetch its name using $getdvi
+	! and put its name in the emacs$$restart symbol for later use by the
+	! spawned emacs. never deassign the channel until this image exits.
+	!
+	if (xresp = $assign( devnam = mbxname, chan = mbxchan ) )
+	then
+		begin
+		!+
+		! check that the device is a mailbox. this stops
+		! smart people trying to screw things up dramatically
+		!-
+		local
+			class		: volatile,	! device class
+			iosb_jpi : vector [4, word];
+
+		$itmlst_init
+		(
+		itmlst = item_list,
+		(itmcod = dvi$_devclass, bufadr = class )
+		);
+		xresp = $getdviw
+			(
+			chan	= .mbxchan,
+			iosb	= iosb_jpi,
+			itmlst	= item_list
+			);
+		if .xresp
+		then
+			xresp = ( if .iosb_jpi [0]
+				then .class eql dc$_mailbox
+				else .iosb_jpi [0] );
+		end;
+
+	if not .xresp
+	then
+		begin
+		fetch_desc[ dsc$w_length ] = lognamsiz;
+
+		resp = $crelnm
+			(
+			tabnam	= %ascid 'LNM$JOB',
+			lognam	= mbxname,
+			itmlst	= $itmlst_uplit
+				((
+				itmcod	= lnm$_string,
+				bufsiz	= %charcount( '_mba9999:' ),
+				bufadr	= uplit byte( '_mba9999:' )
+				))
+			);
+		if not .resp
+		then
+			signal( emacs$_jtqlow );
+
+		resp = $crelnm
+			(
+			tabnam	= %ascid 'LNM$JOB',
+			lognam	= %ascid 'DCL$ATTACH_00000000',
+			itmlst	= $itmlst_uplit
+				((
+				itmcod	= lnm$_string,
+				bufsiz	= %charcount( '_mba9999:sixteenMoreBytes' ),
+				bufadr	= uplit byte( '_mba9999:sixteenMoreBytes' )
+				))
+			);
+
+		$dellnm( tabnam = %ascid 'LNM$JOB', lognam=mbxname );
+		$dellnm( tabnam = %ascid 'LNM$JOB', lognam = %ascid 'DCL$ATTACH_00000000' );
+		if not .resp
+		then
+			signal( emacs$_jtqlow );
+		end;
+
+	if not .xresp
+	then
+		xresp = $crembx
+			(
+			chan	= mbxchan,
+			maxmsg	= mbxmax, 
+			promsk	= mbxprotection,
+			lognam	= mbxname
+			);
+
+	if not .xresp
+	then
+		signal( emacs$_badmbx, 0, .xresp );
+
+	!
+	! set up the message to emit
+	!
+	msgvec[0] = 3; msgvec[2] = 1; msgvec[3] = .proc_name_desc;
+
+	!
+	!	define emacs$process_name
+	!
+	lib$set_logical( emacs_proc_name, .proc_name_desc, %ascid 'LNM$JOB' );
+
+
+	!
+	! poke any file names specified on the command line down the
+	! mailbox so that these files can be visited, and any package run.
+	!
+	$qiow
+	(
+	chan	= .mbxchan,
+	func	= io$_writevblk or io$m_now,
+	p1	= mbxmessage,
+	p2	= .mbxsize + 3 * %upval
+	);
+	!
+	! try an attach if applicable
+	!
+	if .sresp
+	then
+		!
+		! ok, so we obtain the process id for the target process.
+		! now attempt to attach to the process
+		!
+		begin
+		msgvec [1] = emacs$_attach; 
+		if .log then $putmsg ( msgvec = msgvec );
+		sresp = lib$attach( pid );
+		end;
+	if not .sresp
+	then
+		begin
+		!
+		! ok, so either we attempted to attach and got refused, or the
+		! process name specified does not exist anyway. either way, lets
+		! start a new subprocess in which to run the emacs.
+		!
+		msgvec [1] = emacs$_new; 
+		if .log then $putmsg ( msgvec = msgvec );
+		resp = lib$spawn( cmdln_desc, 0,0, %ref( 0 ), .proc_name_desc );
+		if not .resp
+		then
+			signal( emacs$_nospawn, 0, .resp );
+		end;
+
+	!
+	! attempt to fetch a message from the mailbox if one is open. this will
+	! be a dcl command that should be executed at the en d of this call to
+	! emacs.
+	!
+	do
+		begin
+		cont = 0;
+		if	$qiow
+			(
+			chan	= .mbxchan,
+			func	= io$_readvblk or io$m_now,
+			iosb	= iosb,
+			p1	= mbxmessage,
+			p2	= mbxmax
+			)
+		then
+			if .iosb [0]
+			then
+				if .mbxmessage[0] neq emacs_k_dcl
+				then
+					cont = 1
+				else
+					docommand = 1;
+		end
+	while .cont;
+
+	if .return_desc neq 0
+	then
+		if .docommand
+		then
+			begin
+			ch$copy
+			(
+			.mbxmessage[1], mbxmessage[2],
+			0,
+			$len_ptr( return_desc )
+			);
+			return_desc[ dsc$w_length ] = .mbxmessage[1];
+			end
+		else
+			return_desc[ dsc$w_length ] = 0;
+
+	return ss$_normal;
+	end;
+%sbttl 'conditionhandler - report error conditions'
+routine conditionhandler
+		(
+		sig	: ref block[,byte],
+		mech	: ref block[,byte]
+		) =
+
+!++
+! functional description:
+!
+!	this routine is used to report errors detected by the
+!	program. it issues a message determined from the signal
+!	condition and then exits the program. all errors are
+!	considered fatal.
+!
+! formal parameters:
+!
+!	sig and mch are the standard vax/vms condition handling
+!	arguments
+!
+! implicit inputs:
+!
+!	none
+!
+! implicit outputs:
+!
+!	none
+!
+! routine value:
+!
+!	this routine never exits
+!
+! side effects:
+!
+!	a message is emitted, and the program terminated
+!--
+	begin
+	!
+	!	If its a success or info ignore it
+	!
+	if .sig[ chf$l_sig_name ]
+	then
+		begin
+		$putmsg( msgvec = .sig );
+		return ss$_continue;
+		end;
+
+	!
+	!	If its an unwind resignal it
+	!
+	if .sig[ chf$l_sig_name ] eql ss$_unwind then return ss$_resignal;
+
+	!
+	!	Any problem status get returned to the user
+	!
+	mech[ chf$il_mch_savr0_low ] = .sig[ chf$l_sig_name ];
+
+	$unwind();
+	return ss$_normal;
+	end;
+routine trim_desc( desc : ref block[,byte] ) =
+	begin
+	local
+		buf	: ref vector[,byte] initial( .desc[ dsc$a_pointer ] );
+
+	desc[ dsc$w_length ] = 
+		(decr i from .desc[ dsc$w_length ] - 1 to 0 do
+		if .buf[ .i ] neq %c' '
+		then
+			exitloop .i) + 1;
+
+	return .desc;
+	end;
+routine emacs_default_process_name
+		(
+		desc	: ref block[,byte]
+		) =
+	begin
+	local
+		$decl_desc( tt, lognamsiz );
+	local
+		status,
+		buf	: ref vector[,byte],
+		p	: ref vector[,byte],
+		q	: ref vector[,byte];
+
+	!
+	!	First default process name to the translation
+	!	of emacs$process_name
+	!
+	status = $trnlog
+		(
+		lognam = emacs_proc_name,
+		rsllen = desc[ dsc$w_length ],
+		rslbuf = .desc,
+		dsbmsk = 3
+		);
+	if .status eql ss$_normal
+	then
+		begin
+		!
+		! check for valid process name.
+		!
+		if .desc[ dsc$w_length ] gtr 15
+		then
+			signal( emacs$_badname, 1, desc );
+
+		return .desc;
+		end;
+
+	!
+	! no process name has been specified, so synthesize the name. this
+	! is done by finding out the terminal name, removing leading and
+	! trailing _s and :s and adding it to the en d of the string emacs$
+	! so that it forms a string link emacs$tta1.
+	!
+
+	buf = .desc[ dsc$a_pointer ];
+
+	$trnlog
+	(
+	lognam = %ascid 'TT',
+	rsllen = tt_desc[ dsc$w_length ],
+	rslbuf = tt_desc,
+	dsbmsk = 3
+	);
+	p = ch$find_not_ch( $len_ptr( tt_desc ), %c'_' );
+	if .p eql 0
+	then
+		p = .tt_desc[ dsc$a_pointer ];
+
+	q = ch$find_ch
+		(
+		.tt_desc[ dsc$w_length ] - .tt_desc[ dsc$a_pointer ] - .p,
+		.p,
+		%c':'
+		);
+	if .q eql 0
+	then
+		q = p[ .tt_desc[ dsc$a_pointer ] - .p ];
+
+	$ch$move_str( 'EMACS$', buf[0] );
+	ch$move ( .q - .p, .p, buf[ $len( 'EMACS$' ) ] );
+	desc[ dsc$w_length ] = .q - .p + $len( 'EMACS$' );
+
+	return .desc;
+	end;
+routine get_path
+		(
+		desc	: ref block[,byte]
+		) =
+	begin
+	local
+		$decl_desc( dev, 64 ),
+		$decl_desc( dir, 256 );
+
+	!
+	!	Work out the current PATH
+	!
+	$trnlog
+	(
+	lognam = %ascid 'SYS$DISK',
+	rsllen = dev_desc,
+	rslbuf = dev_desc[ dsc$w_length ]
+	);
+	sys$setddir( 0, dir_desc, dir_desc[ dsc$w_length ] );
+	ch$copy
+	(
+	$len_ptr( dev_desc ),
+	$len_ptr( dir_desc ),
+	0,
+	$len_ptr( desc )
+	);
+	desc[ dsc$w_length ] =
+			.dev_desc[ dsc$w_length ] + .dir_desc[ dsc$w_length ];
+
+	return .desc;
+	end;
+end
+eludom

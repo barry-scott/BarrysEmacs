@@ -1,0 +1,372 @@
+;  DEC/CMS REPLACEMENT HISTORY, Element SETPRIV.MAR
+;   2H1  28-MAY-1986 15:58:23 GAMACHE "Create new SMP thread from V5.0_BL2 modules"
+;   2E1   4-APR-1986 00:12:34 HOLSTEIN "Create new Exec Reorg thread from V4.4 modules"
+;   2F1  24-MAR-1986 20:40:06 HOLSTEIN "Create new SMP thread from V4.4 modules"
+;   2D1  17-DEC-1985 13:22:36 FIORELLI "Create new exec reorg thread from BL7 modules"
+;  *2    20-SEP-1985 12:09:43 SOLOMON "remove TMPJNL/PRMJNL"
+;   1A1  20-JUL-1985 22:07:05 SYSTEMBUILD "Initial SMP entry"
+;  *1    18-JUN-1985 08:07:45 SYSTEMBUILD "Initial entry of V4.0 source"
+;  DEC/CMS REPLACEMENT HISTORY, Element SETPRIV.MAR
+	.TITLE	SETPRIV - PRIVILEGE RELATED PROCEDURES
+	.IDENT	'X-2'
+
+;
+;****************************************************************************
+;*									    *
+;*  COPYRIGHT (c) 1978, 1980, 1982, 1984 BY				    *
+;*  DIGITAL EQUIPMENT CORPORATION, MAYNARD, MASSACHUSETTS.		    *
+;*  ALL RIGHTS RESERVED.						    *
+;* 									    *
+;*  THIS SOFTWARE IS FURNISHED UNDER A LICENSE AND MAY BE USED AND COPIED   *
+;*  ONLY IN  ACCORDANCE WITH  THE  TERMS  OF  SUCH  LICENSE  AND WITH THE   *
+;*  INCLUSION OF THE ABOVE COPYRIGHT NOTICE. THIS SOFTWARE OR  ANY  OTHER   *
+;*  COPIES THEREOF MAY NOT BE PROVIDED OR OTHERWISE MADE AVAILABLE TO ANY   *
+;*  OTHER PERSON.  NO TITLE TO AND OWNERSHIP OF  THE  SOFTWARE IS  HEREBY   *
+;*  TRANSFERRED.							    *
+;* 									    *
+;*  THE INFORMATION IN THIS SOFTWARE IS  SUBJECT TO CHANGE WITHOUT NOTICE   *
+;*  AND  SHOULD  NOT  BE  CONSTRUED AS  A COMMITMENT BY DIGITAL EQUIPMENT   *
+;*  CORPORATION.							    *
+;* 									    *
+;*  DIGITAL ASSUMES NO RESPONSIBILITY FOR THE USE  OR  RELIABILITY OF ITS   *
+;*  SOFTWARE ON EQUIPMENT WHICH IS NOT SUPPLIED BY DIGITAL.		    *
+;* 									    *
+;*									    *
+;****************************************************************************
+
+;++
+; FACILITY: System Subroutine
+;
+; ABSTRACT:
+;
+;	This routine takes an ascii privilege name and sets or
+;	clears the specified bit in the supplied privilege vector.
+;
+; ENVIRONMENT: mode of caller
+;
+; AUTHOR: Henry M. Levy	, CREATION DATE: 10-January-1978
+;
+; MODIFIED BY:
+;
+;	X-2	DAS		David A. Solomon	20-Sep-1985
+;		Remove now obsolete TMPJNL/PRMJNL privileges.
+;
+;	V03-004	RSH0019		R.Scott Hanna		21-May-1983
+;		Add SECURITY privilege
+;
+;	V03-003 PRB0173		Paul Beck		 26-APR-1983 20:43:31 
+;		Add TMPJNL and PRMJNL privileges.
+;
+;	V03-002	LMP0083		L. Mark Pilant,		28-Feb-1983  9:18
+;		Add the new non-discretionary privileges.
+;
+;	V001	MLJ0085		Martin L. Jack		31-Mar-1982
+;		Change PSECT to _LIB$CODE.
+;
+;	V005	TMH0005		Tim Halvorsen		27-Oct-1981
+;		Fix checking for ALL keyword to happen before table lookup.
+;
+;	V004	TMH0004		Tim Halvorsen		26-Oct-1981
+;		Add routine to return bit number associated with privilege
+;		keyword.  Add routine to translate a privilege bit number
+;		into a privilege keyword string.
+;		Add "ALL" to list of privileges.
+;
+;	V02-003	GWF0096		Gary Fowler		29-Jul-1981
+;		Added SYSLCK privilege
+;
+;	V02-002	CNH0018		Chris Hume		12-Oct-1979	12:30
+;		Added PRV$V_BYPASS and brought various privilege bit tables
+;		up to date.  ([VMSLIB]STARDEF.MDL is already up to date.)
+;		([UAF]UAFMAIN.B32 02.02, [CLIUTL]SHOPROCES.MAR 01.03,
+;		RUNDET.MAR 01.02)
+;
+;	V02-001	GWF0001		Gary Fowler		30-May-1979
+;		Added PFNMAP, SHMEM, and SYSPRV privileges
+;--
+	.SBTTL	DECLARATIONS
+
+	.PSECT _LIB$DATA,PIC,USR,CON,REL,LCL,SHR,RD,NOWRT,NOVEC,2
+
+;
+; INCLUDE FILES:
+;
+
+	$PRVDEF				; define privilege bits
+
+;
+; MACROS:
+;
+
+;
+;	Macro to define entry to privilege name table.
+;
+
+	.MACRO	PRIVDEF BIT,MIN,NAME
+	.BYTE	MIN
+	.BYTE	PRV$V_'BIT
+	.IF	NB	NAME
+	.ASCIC	/NAME/
+	.IFF
+	.ASCIC /BIT/
+	.ENDC
+	.ENDM	PRIVDEF
+
+;
+; EQUATED SYMBOLS:
+;
+	NAMDSC = 4			; offset to string descriptor
+	PRIVEC = 8			; offset to privilege vector address
+
+	PRV$_INVNAM == 2		; privilege name invalid
+	PRV$_NOTUNQ == 4		; privilege name not unique
+
+
+;
+; OWN STORAGE:
+;
+
+ALLPRIV:
+	.ASCII	'ALL'		; SETS/CLEARS ALL PRIVILEGES
+
+PRV$AB_NAMES::
+	PRIVDEF	CMKRNL,3	; MAY CHANGE MODE TO KERNEL
+	PRIVDEF	CMEXEC,3	; MAY CHANGE MODE TO EXEC
+; ***** THE PRECEEDING TWO BITS MUST BE ADJACENT
+; ***** THE FOLLOWING TWO BITS MUST BE ADJACENT
+	PRIVDEF	SYSNAM,4	; MAY INSERT IN SYSTEM LOGICAL NAME TABLE
+	PRIVDEF	GRPNAM,4	; MAY INSERT IN GROUP LOGICAL NAME TABLE
+; ***** THE PRECEEDING TWO BITS MUST BE ADJACENT
+	PRIVDEF	ALLSPOOL,4	; MAY ALLOCATE SPOOLED DEVICE
+	PRIVDEF	DETACH,3	; MAY CREATE DETACHED PROCESSES
+	PRIVDEF	DIAGNOSE,3	; MAY DIAGNOSE DEVICES
+	PRIVDEF	LOG_IO,3	; MAY DO LOGICAL I/O
+	PRIVDEF	GROUP,3		; MAY AFFECT OTHER PROCESSES IN SAME GROUP
+	PRIVDEF	NOACNT,3,<ACNT>	; MAY SUPPRESS ACCOUNTING MESSAGE
+	PRIVDEF	PRMCEB,4	; MAY CREATE PERMANENT COMMON EVENT CLUSTERS
+	PRIVDEF	PRMMBX,4	; MAY CREATE PERMANENT MAILBOX
+	PRIVDEF	PSWAPM,3	; MAY CHANGE PROCESS SWAP MODE
+	PRIVDEF	SETPRI,3,<ALTPRI> ; MAY SET ANY PRIORITY VALUE
+	PRIVDEF	SETPRV,3	; MAY SET ANY PRIVILEGE BITS
+	PRIVDEF	TMPMBX,3	; MAY CREATE TEMPORARY MAILBOX
+	PRIVDEF	WORLD,3		; MAY AFFECT OTHER PROCESSES IN THE WORLD
+	PRIVDEF	OPER,3		; OPERATOR PRIVILEGE
+	PRIVDEF	EXQUOTA,3	; MAY EXCEED QUOTAS
+	PRIVDEF	NETMBX,3	; MAY CREATE NETWORK DEVICE
+	PRIVDEF	VOLPRO,3	; MAY OVERRIDE VOLUME PROTECTION
+	PRIVDEF	PHY_IO,3	; MAY DO PHYSICAL I/O
+	PRIVDEF	BUGCHK,3	; MAY MAKE BUG CHECK ERROR LOG ENTRIES
+	PRIVDEF	PRMGBL,4	; MAY CREATE PERMANENT GLOBAL SECTIONS
+	PRIVDEF	SYSGBL,4	; MAY CREATE SYSTEM WIDE GLOBAL SECTIONS
+	PRIVDEF	MOUNT,3		; MAY EXECUTE MOUNT VOLUME QIO
+	PRIVDEF	PFNMAP,3	; MAY MAP TO SPECIFIC PHYSICAL PAGES
+	PRIVDEF	SHMEM,3		; MAY CREATE/DELETE OBJECTS IN SHARED MEMORY
+	PRIVDEF	SYSPRV,4	; MAY ACCESS OBJECTS VIA SYSTEM PROTECTION
+	PRIVDEF	BYPASS,3	; BYPASSES UIC CHECKING
+	PRIVDEF	SYSLCK,4	; SYSLCK privilge
+	PRIVDEF	SHARE,3		; MAY ASSIGN CHANNEL TO NON-SHARED DEVICE
+	PRIVDEF	UPGRADE,3	; May upgrade classification
+	PRIVDEF	DOWNGRADE,3	; May downgrade classification
+	PRIVDEF	GRPPRV,4	; Group access via system protection field
+	PRIVDEF	READALL,3	; Read access to everything
+; (obsolete TMPJNL/PRMJNL went here)
+	PRIVDEF	SECURITY,3	; May perform security functions
+	.BYTE	0,0		; terminate table
+	.PSECT _LIB$code,PIC,USR,CON,REL,LCL,SHR,EXE,NOVEC,NOWRT,2
+
+	.SBTTL	PRV$SETPRIV - Set or Clear privilege bit
+;++
+;
+; FUNCTIONAL DESCRIPTION:
+;
+;	Set or clear privilege bit in specified privilege vector
+;	depending on ascii privilege name.
+;
+; CALLING SEQUENCE:
+;
+;	CALLS/CALLG
+;
+; INPUTS:
+;
+;	NAMDSC(AP) = address of a string descriptor for the ascii
+;		     privilege name
+;	PRIVEC = address of the privilege vector in which to clear
+;		 or set bits
+;
+; IMPLICIT INPUTS:
+;
+;	none
+;
+; OUTPUTS:
+;
+;	none
+;
+; IMPLICIT OUTPUTS:
+;
+;	none
+;
+; ROUTINE VALUE:
+;
+;    R0 =
+;	LOW BIT SET -> success
+;	LOW BIT CLEAR -> failure with:
+;	    PRV$_NOTUNQ -> privilege name is ambiguous
+;	    PRV$_INVNAM -> invalid privilege name
+;
+; SIDE EFFECTS:
+;
+;	none
+;--
+
+	.entry PRV$SETPRIV,^M<R2,R3,R4,R5,R6,R7,R8,R9,R10>
+	MOVL	NAMDSC(AP),R4		; get name string descriptor
+	MOVZWL	(R4),R10		; get string length
+	MOVL	4(R4),R4		; get string address
+	MOVAL	PRV$AB_NAMES,R5		; get address of name table
+	MOVL	#1,R6			; assume 'NO' not specified
+	CMPW	#2,R10			; check at least 2 long
+	BGTR	10$			; not enough to check for 'NO'
+	CMPW	#^A/NO/,(R4)		; see if bit to be turned off
+	BNEQ	10$			; branch if not
+	CLRL	R6			; else remember to turn off bit
+	ADDL	#2,R4			; point string over 'NO'
+	SUBL	#2,R10			; decrease length by 2
+10$:	CMPC5	#3,W^ALLPRIV,#0,-	; CHECK IF "ALL" KEYWORD
+		R10,(R4)
+	BNEQ	30$			; BRANCH IF NOT
+	MOVL	PRIVEC(AP),R0		; GET ADDRESS OF PRIVILEGE MASK
+	BLBC	R6,20$			; BRANCH IF WE MUST CLEAR ALL PRIVS
+	MNEGL	#1,(R0)+		; SET ALL PRIVILEGES
+	MNEGL	#1,(R0)+
+	BRB	90$			; EXIT WITH SUCCESS
+20$:	CLRQ	(R0)			; CLEAR ALL PRIVILEGES
+	BRB	90$			; EXIT WITH SUCCESS
+
+30$:	MOVZBL	(R5)+,R7		; get min string length
+	BEQL	80$			; continue if more in table
+	MOVZBL	(R5)+,R8		; get privilege bit number
+	MOVZBL	(R5)+,R9		; get cstring length
+	CMPC3	R10,(R4),(R5)		; see if string match
+	BEQL	40$			; branch if strings match
+	ADDL	R9,R5			; skip of string in table
+	BRB	30$			; continue search
+40$:
+	MOVL	#PRV$_NOTUNQ,R0		; assume not unique
+	CMPW	R10,R7			; see if enough was specified
+	BLSS	99$			; return if not enough
+	INSV	R6,R8,#1,@PRIVEC(AP)	; set or clear bit
+90$:	MOVL	#1,R0			; note success
+99$:	RET				; return to caller
+
+80$:	MOVL	#PRV$_INVNAM,R0		; table done, name not found
+	RET
+	.SBTTL	PRV$PRIVBIT - Return privilege bit number
+;++
+;
+; FUNCTIONAL DESCRIPTION:
+;
+;	Lookup the specified privilege keyword in the list of
+;	legal keywords and return the privilege bit number
+;	associated with the keyword.
+;
+; CALLING SEQUENCE:
+;
+;	CALLS/CALLG
+;
+; INPUTS:
+;
+;	4(AP) = address of a string descriptor for the ascii
+;		     privilege name
+;	8(AP) = address of a word to receive the privilege bit
+;		     number associated with the keyword.
+;
+; ROUTINE VALUE:
+;
+;    R0 =   1           -> bit number returned in RETNUM
+;	    PRV$_NOTUNQ -> privilege name is ambiguous
+;	    PRV$_INVNAM -> invalid privilege name
+;--
+
+	.entry PRV$PRIVBIT,^M<R2,R3,R4,R5,R6,R7,R8,R9,R10>
+
+	MOVL	4(AP),R4		; get name string descriptor
+	MOVZWL	(R4),R10		; get string length
+	MOVL	4(R4),R4		; get string address
+	MOVAL	PRV$AB_NAMES,R5		; get address of name table
+	CMPW	#2,R10			; check at least 2 long
+	BGTR	10$			; not enough to check for 'NO'
+	CMPW	#^A/NO/,(R4)		; see if bit to be turned off
+	BNEQ	10$			; branch if not
+	ADDL	#2,R4			; point string over 'NO'
+	SUBL	#2,R10			; decrease length by 2
+10$:
+	MOVZBL	(R5)+,R7		; get min string length
+	BEQL	60$			; continue if more in table
+	MOVZBL	(R5)+,R8		; get privilege bit number
+	MOVZBL	(R5)+,R9		; get cstring length
+	CMPC3	R10,(R4),(R5)		; see if string match
+	BEQL	30$			; branch if strings match
+	ADDL	R9,R5			; skip of string in table
+	BRB	10$			; continue search
+30$:
+	MOVL	#PRV$_NOTUNQ,R0		; assume not unique
+	CMPW	R10,R7			; see if enough was specified
+	BLSS	40$			; return if not enough
+	MOVL	R8,@8(AP)		; return bit number
+	MOVL	#1,R0			; note success
+40$:	RET				; return to caller
+
+60$:	MOVL	#PRV$_INVNAM,R0		; table done, name not found
+	RET
+	.SBTTL	PRV$KEYWORD - Translate privilege bit # to keyword
+;++
+;
+; FUNCTIONAL DESCRIPTION:
+;
+;	Return the keyword string associated with the given privilege
+;	bit number.
+;
+; CALLING SEQUENCE:
+;
+;	CALLS/CALLG
+;
+; INPUTS:
+;
+;	4(AP) = privilege mask bit number (0-63)
+;	8(AP) = address of a buffer descriptor to receive the keyword
+;	12(AP) = address of a word to receive the keyword length
+;
+; OUTPUTS:
+;
+;	R0 = status (error if illegal privilege bit number)
+;
+;	The keyword is stored into the buffer, and the length is
+;	returned in the user-specified word.
+;--
+
+	.entry PRV$KEYWORD, ^M<R2,R3,R4,R5>
+
+	MOVAL	PRV$AB_NAMES,R5		; get address of name table
+10$:	TSTB	(R5)+			; end of table?
+	BEQL	60$			; if so, illegal bit number
+	CMPB	4(AP),(R5)+		; does privilege bit number match?
+	BEQL	20$			; branch if so
+	MOVZBL	(R5)+,R0		; get length of counted string
+	ADDL	R0,R5			; skip to next entry in table
+	BRB	10$			; loop until end of table
+
+20$:	MOVZBL	(R5)+,R0		; get cstring length
+	MOVL	8(AP),R1		; get address of buffer descriptor
+	CMPW	R0,(R1)			; is buffer too small?
+	BLEQ	25$			; branch if ok
+	MOVZWL	(R1),R0			; truncate keyword to size of buffer
+25$:	MOVW	R0,@12(AP)		; return length of keyword
+	MOVC	R0,(R5),@4(R1)		; copy keyword into buffer
+	MOVL	#1,R0			; exit with success
+	RET
+
+60$:	CLRW	@12(AP)			; return nothing in buffer
+	MOVL	#PRV$_INVNAM,R0		; table done, name not found
+	RET
+
+	.END

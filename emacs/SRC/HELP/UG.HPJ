@@ -1,0 +1,11 @@
+[OPTIONS]
+CONTENTS=main_index
+TITLE=Barry's Emacs User's Guide
+COMPRESS=true
+WARNING=2
+
+[CONFIG]
+BrowseButtons()
+
+[FILES]
+\work\emacs\src\help\ug.rtf

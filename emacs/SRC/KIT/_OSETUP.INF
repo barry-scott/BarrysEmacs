@@ -1,0 +1,184 @@
+[Main Section]
+AppKeyword=BArrys.Emacs
+WindowTitle=Barrys Emacs Installation
+HeaderText=Barrys Emacs X6.1.23
+HeaderFontSize=40
+FooterText=Copyright © 1995 BArry A. Scott
+FooterFontSize=20
+DirectoryPrompt=\Emacs060
+MessageBoxTitle=Emacs Installation
+ReadBoxTitle=Emacs Notes
+
+Section1=CommonFiles
+Section2=WindowsEmacs
+Section3=WindowsEmacsDocs
+Section4=WindowsEmacsRegisterC
+Section5=MSDOSEmacs
+Section6=OpenVMS
+ExitRun=COMMAND.COM /C %O\POSTSETU.BAT %O %W
+
+[CommonFiles]
+Directory1=%O
+Directory2=%O\LIBRARY
+Directory3=%O\USERLIB
+Directory4=%O\INIFILES
+File1=copy,%I\README.TXT,%O\README.TXT,14809
+File2=copy,%I\POSTSETU.BAT,%O\POSTSETU.BAT,336
+File3=copy,%I\LIBRARY.DAT,%O\LIBRARY\FILENAME.DAT,803
+
+File4=copy,%I\EMACSINI.ML,%O\LIBRARY\EMACSINI.ML,1853
+File5=copy,%I\PROFILE.ML,%O\LIBRARY\PROFILE.ML,2481
+
+File6=copy,%I\EMACSLIB.DIR,%O\LIBRARY\EMACSLIB.DIR,0
+File7=copy,%I\EMACSLIB.PAG,%O\LIBRARY\EMACSLIB.PAG,4096
+File8=copy,%I\EMACSLIB.DAT,%O\LIBRARY\EMACSLIB.DAT,705725
+
+File9=copy,%I\EM_DESC.DIR,%O\LIBRARY\EM_DESC.DIR,4096
+File10=copy,%I\EM_DESC.PAG,%O\LIBRARY\EM_DESC.PAG,16384
+File11=copy,%I\EM_DESC.DAT,%O\LIBRARY\EM_DESC.DAT,269913
+
+File12=copy,%I\LANGUAGE.DIR,%O\LIBRARY\LANGUAGE.DIR,4096
+File13=copy,%I\LANGUAGE.PAG,%O\LIBRARY\LANGUAGE.PAG,8192
+File14=copy,%I\LANGUAGE.DAT,%O\LIBRARY\LANGUAGE.DAT,66057
+
+File15=copy,%I\QI_CC.DIR,%O\LIBRARY\QI_CC.DIR,0
+File16=copy,%I\QI_CC.PAG,%O\LIBRARY\QI_CC.PAG,4096
+File17=copy,%I\QI_CC.DAT,%O\LIBRARY\QI_CC.DAT,17712
+
+File18=copy,%I\EMACS.CBI,%O\LIBRARY\EMACS.CBI,32233
+
+[OpenVMS]
+Description=OpenVMS QInfo files
+IsOptional=1
+IsDeselected=1
+
+Directory1=%O\library
+File1=copy,%I\QI_BLISS.DIR,%O\LIBRARY\QI_BLISS.DIR,0
+File2=copy,%I\QI_BLISS.PAG,%O\LIBRARY\QI_BLISS.PAG,4096
+File3=copy,%I\QI_BLISS.DAT,%O\LIBRARY\QI_BLISS.DAT,6630
+
+File4=copy,%I\QI_DCL.DIR,%O\LIBRARY\QI_DCL.DIR,0
+File5=copy,%I\QI_DCL.PAG,%O\LIBRARY\QI_DCL.PAG,4096
+File6=copy,%I\QI_DCL.DAT,%O\LIBRARY\QI_DCL.DAT,1346
+
+File7=copy,%I\QI_VMS.DIR,%O\LIBRARY\QI_VMS.DIR,0
+File8=copy,%I\QI_VMS.PAG,%O\LIBRARY\QI_VMS.PAG,4096
+File9=copy,%I\QI_VMS.DAT,%O\LIBRARY\QI_VMS.DAT,20761
+
+[WindowsEmacs]
+Description=Emacs for Windows files
+IsOptional=1
+IsDeselected=0
+Directory1=%O\nt_x86
+File1=copy,%I\EMWINNT.HLP,%O\EMWINNT.HLP,572989
+File2=copy,%I\EMWINNT.EXE,%O\EMWINNT.EXE,570368
+File3=copy,%I\X86_DBCR.EXE,%O\NT_X86\DBCREATE.EXE,29184
+File4=copy,%I\X86_DBAD.EXE,%O\NT_X86\DBADD.EXE,29696
+File5=copy,%I\X86_DBDE.EXE,%O\NT_X86\DBDEL.EXE,29696
+File6=copy,%I\X86_DBLI.EXE,%O\NT_X86\DBLIST.EXE,30720
+File7=copy,%I\X86_DBPR.EXE,%O\NT_X86\DBPRINT.EXE,28672
+File8=copy,%I\X86_M2DB.EXE,%O\NT_X86\MLL-2-DB.EXE,33280
+
+File9=copy,%I\EMACS060.REG,%O\INIFILES\EMACS060.REG,302
+
+Ini1=%O\INIFILES\EMACS060.INI,Emacs,TextFontName,Courier New
+Ini2=%O\INIFILES\EMACS060.INI,Emacs,TextFontSize,-12
+
+Ini3=%O\INIFILES\EMACS060.INI,DeviceNames,sys$login,%O
+Ini4=%O\INIFILES\EMACS060.INI,DeviceNames,sys$scratch,%T
+Ini5=%O\INIFILES\EMACS060.INI,DeviceNames,emacs$library,%O\library\
+Ini6=%O\INIFILES\EMACS060.INI,DeviceNames,emacs$user,%O\userlib\
+Ini7=%O\INIFILES\EMACS060.INI,DeviceNames,emacs$journal,%T
+Ini8=%O\INIFILES\EMACS060.INI,DeviceNames,emacs$memory,.\
+
+Ini9=%O\INIFILES\EMACS060.INI,Colours,WindowText,1000;2000;3000;4255;5255;6255
+Ini10=%O\INIFILES\EMACS060.INI,Colours,HighlightText,1255;2255;3255;4128;5128;6000
+Ini11=%O\INIFILES\EMACS060.INI,Colours,ModeLine,1255;2255;3255;4027;5162;6165
+Ini12=%O\INIFILES\EMACS060.INI,Colours,Syntax_keyword1,1000;2000;3255;4255;5255;6255
+Ini13=%O\INIFILES\EMACS060.INI,Colours,Syntax_keyword2,1255;2000;3000;4255;5255;6255
+Ini14=%O\INIFILES\EMACS060.INI,Colours,Syntax_word,1000;2000;3000;4255;5255;6255
+Ini15=%O\INIFILES\EMACS060.INI,Colours,Syntax_string,1000;2000;3128;4255;5255;6255
+Ini16=%O\INIFILES\EMACS060.INI,Colours,Syntax_quote,1000;2000;3000;4255;5255;6255
+Ini17=%O\INIFILES\EMACS060.INI,Colours,Syntax_comment,1000;2128;3000;4255;5255;6255
+
+Ini18=%O\INIFILES\EMACS060.INI,Environment,Emacs_Path,.;emacs$user:;emacs$library:
+
+Reg1=.ml,EmacsEditTextFile
+Reg2=EmacsEditTextFile,Emacs Edit Text File
+Reg3=EmacsEditTextFile\shell\open\command,%O\emwinnt.EXE %%1
+Reg4=EmacsEditTextFile\shell\open\ddeexec=[open("%%1")]
+
+AddGroup=Emacs for Windows
+DeleteItem1=Emacs for Windows
+AddItem1=%O\emwinnt.exe,Emacs for Windows
+DeleteItem2=Emacs for Windows without Restore
+AddItem2=%O\emwinnt.exe /restore=nul,Emacs for Windows without Restore
+DeleteItem3=Readme for Emacs for Windows
+AddItem3=%O\emwinnt.exe %O\readme.txt,Readme for Emacs for Windows
+DeleteItem4=Tutorial for Emacs for Windows
+AddItem4=%O\emwinnt.exe /package=teach,Tutorial for Emacs for Windows
+DeleteItem5=Emacs Help
+AddItem5=%O\emwinnt.hlp,Emacs Help
+
+[WindowsEmacsDocs]
+Description=Emacs Documentation files
+IsOptional=1
+IsDeselected=0
+File1=copy,%I\BEmacsUG.HLP,%O\BEmacsUG.HLP,121456
+File2=copy,%I\BEmacsPG.HLP,%O\BEmacsPG.HLP,77033
+File3=copy,%I\BEmacsER.HLP,%O\BEmacsER.HLP,70524
+
+AddGroup=Emacs for Windows
+DeleteItem1=Barry's Emacs User Guide
+AddItem1=%O\BEmacsUG.hlp,Barry's Emacs User Guide
+DeleteItem2=Barry's Emacs MLisp Programers Guide
+AddItem2=%O\BEmacsPG.hlp,Barry's Emacs MLisp Programers Guide
+DeleteItem3=Barry's Emacs Extensions Reference
+AddItem3=%O\BEmacsER.hlp,Barry's Emacs Extensions Reference
+
+[WindowsEmacsRegisterC]
+Description=Emacs opens .C,.CPP and .RC files
+IsOptional=1
+IsDeselected=1
+Reg1=.c,EmacsEditTextFile
+Reg2=.cpp,EmacsEditTextFile
+Reg3=.h,EmacsEditTextFile
+Reg4=.hpp,EmacsEditTextFile
+Reg5=.rc,EmacsEditTextFile
+
+[MSDOSEmacs]
+Description=Emacs for MSDOS files
+IsOptional=1
+Directory1=%O\dos
+File1=copy,%I\NMLK_TSR.COM,%O\NMLK_TSR.COM,1536
+File2=copy,%I\EMDOS32.EXE,%O\EMDOS32.EXE,395897
+File3=copy,%I\DOS_DBCR.EXE,%O\DOS\DBCREATE.EXE,35204
+File4=copy,%I\DOS_DBAD.EXE,%O\DOS\DBADD.EXE,34796
+File5=copy,%I\DOS_DBDE.EXE,%O\DOS\DBDEL.EXE,34796
+File6=copy,%I\DOS_DBLI.EXE,%O\DOS\DBLIST.EXE,34892
+File7=copy,%I\DOS_DBPR.EXE,%O\DOS\DBPRINT.EXE,34780
+File8=copy,%I\DOS_M2DB.EXE,%O\DOS\MLL-2-DB.EXE,39892
+File11=copy,%I\DOS4GW.EXE,%O\DOS4GW.EXE,240580
+
+
+Ini1=%O\INIFILES\EMDOS32.INI,DeviceNames,sys$login,%O
+Ini2=%O\INIFILES\EMDOS32.INI,DeviceNames,sys$scratch,%T
+Ini3=%O\INIFILES\EMDOS32.INI,DeviceNames,emacs$memory,.\
+Ini4=%O\INIFILES\EMDOS32.INI,DeviceNames,emacs$library,%O\library\
+Ini5=%O\INIFILES\EMDOS32.INI,DeviceNames,emacs$user,%O\userlib\
+Ini6=%O\INIFILES\EMDOS32.INI,DeviceNames,emacs$journal,%T
+
+Ini7=%O\INIFILES\EMDOS32.INI,Colours,WindowText,1000;2000;3000;4255;5255;6255
+Ini8=%O\INIFILES\EMDOS32.INI,Colours,HighlightText,4255;1255;2255;3255
+Ini9=%O\INIFILES\EMDOS32.INI,Colours,ModeLine,6255;1255;2255
+Ini10=%O\INIFILES\EMDOS32.INI,Colours,Syntax_keyword1,1000;2000;3255;4255;5255;6255
+Ini11=%O\INIFILES\EMDOS32.INI,Colours,Syntax_keyword2,1255;2000;3000;4255;5255;6255
+Ini12=%O\INIFILES\EMDOS32.INI,Colours,Syntax_word,1000;2000;3000;4255;5255;6255
+Ini13=%O\INIFILES\EMDOS32.INI,Colours,Syntax_string,1127;2000;3000;4255;5255;6255
+Ini14=%O\INIFILES\EMDOS32.INI,Colours,Syntax_quote,1000;2000;3000;4255;5255;6255
+Ini15=%O\INIFILES\EMDOS32.INI,Colours,Syntax_comment,1000;2127;3000;4255;5255;6255
+
+Ini16=%O\INIFILES\EMDOS32.INI,Environment,Emacs_Path,.;emacs$user:;emacs$library:
+Ini17=%O\INIFILES\EMDOS32.INI,Environment,emacs_memory,emacs$memory:__emacs_.mem
+Ini18=%O\INIFILES\EMDOS32.INI,Environment,;video_mode , [mode number] [width] [height]
+Ini19=%O\INIFILES\EMDOS32.INI,Environment,;video_mode,35 132 25

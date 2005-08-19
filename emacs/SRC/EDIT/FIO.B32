@@ -1,0 +1,1230 @@
+%TITLE 'FIO - File I/O operations'
+MODULE FIO (
+    IDENT = 'V6.0-003',
+    ADDRESSING_MODE (EXTERNAL = GENERAL, NONEXTERNAL = GENERAL)
+) =
+BEGIN
+
+!++
+! FACILITY:	
+!	EMACS real time display editor
+!
+! ABSTRACT:
+!	This module contains the I/O primitives to open, close create
+!	fetch and put records to files. These operationsa re applied
+!	to data files to be read into and written out by the editor
+!
+! ENVIRONMENT:
+!	User Mode
+!
+! AUTHOR: NW EMERY	CREATION DATE: Tue Aug 23 1983
+!
+! MODIFIED BY:
+!
+! Edit	Modifier	Date		Reason
+! 000	Nick Emery	23-Aug-1983	Original
+! 001	Nick Emery	 8-Sep-1983	Fix checkpointing problem
+! 002	Nick Emery	16-Feb-1984	Make fio_getname return the password
+!   3	Barry A. Scott	 9-Mar-1986	Add fio_get_with_prompt
+!--
+
+%SBTTL 'Declarations'
+
+!
+! SWITCHES:
+!
+!	NONE
+!
+! INCLUDE FILES:
+!
+require 'edit$src:emacs';
+
+!
+! TABLE OF CONTENTS:
+!
+
+FORWARD ROUTINE
+    fio_make_file_structure	,		! Build a file's RMS structure
+    fio_disolve_file_structure : 	! Distroy a file structure
+	NOVALUE,
+    fio_open			,				! Open a file for reading
+    fio_close			,				! Close a file
+    fio_create			,				! Create a new version of a file
+    fio_get			,				! Get a record
+    fio_get_with_prompt		,		! Get a record, and prompt
+    fio_put			,				! put a record
+    fio_getname			,			! Get a resultant file name
+    fio_size			,				! Fetch the file's size in bytes
+    fio_delete			,				! Deletes files
+    vms_alarm			,				! Set an alarm timer
+    fio_access			:;				! Find out accessibility of a file
+
+!
+! MACRO DEFINITIONS:
+!
+
+MACRO
+    zero (a, b, c, d) = a %;
+
+!
+! EQUATED SYMBOLS:
+!
+
+LITERAL
+    MAX_GET_REC = 65535,		! Maximum size of an input record
+    MAX_PUT_REC = 32767,		! Maximum size of an emitted record
+    BLOCK_SIZE = 512,			! Disk Block Size
+    LF = 10,				! SOme ASCII control characters
+    CR = 13,
+    FF = 12,
+    alarm_timer = 100;			! vms_alarm timer id
+!
+! OWN STORAGE:
+!
+global
+	os_errno;	! Error location
+
+!
+! EXTERNAL REFERENCES:
+!
+external routine
+	cma$tis_errno_get_addr;
+external
+	rms_attribute_override;
+
+EXTERNAL ROUTINE
+	lib$cvt_from_internal_time,
+	lib$sub_times,
+	lib$delete_file;
+
+%SBTTL 'fio_split_put - put a line made from two buffer to a file'
+GLOBAL ROUTINE fio_split_put (
+    rab : ref block[,byte],
+    line : REF VECTOR [, BYTE],
+    size,
+    line1 : REF VECTOR [, BYTE],
+    size1,
+    buffer
+) =
+
+!++
+! FUNCTIONAL DESCRIPTION:
+!
+!	This routine loads the single line, which is a record into
+!	the file open on RAB. The number of characters written is
+!	reported, and returned to the caller. Any error is located in
+!	os_errno. The record to be written is made up of two buffers
+!	and some memory of the correct size is passed to hold them
+!
+! FORMAL PARAMETERS:
+!
+!	rab is the rab on which the file is open.
+!
+!	line is the address of the characters to be written.
+!
+!	size is the number of charactes in line
+!
+!	line1 is the address of the characters to be written.
+!
+!	size1 is the number of charactes in line
+!
+!	buffer is the address of a buffer to be used to join the lines
+!	together
+!
+! IMPLICIT INPUTS:
+!
+!	NONE
+!
+! IMPLICIT OUTPUTS:
+!
+!	NONE
+!
+! ROUTINE VALUE:
+!
+!	The number of characters written, or -1 for an error
+!
+! SIDE EFFECTS:
+!
+!	NONE
+!--
+    BEGIN
+    CH$COPY (.size, .line, .size1, .line1, %C' ', .size + .size1, .buffer);
+    fio_put (.rab, .buffer, .size + .size1)
+    END;				! Of routine fio_split_put
+
+%SBTTL 'fio_make_file_structure - make, and links together RMS structures'
+ROUTINE fio_make_file_structure =
+
+!++
+! FUNCTIONAL DESCRIPTION:
+!
+!	This routine allocates the appropriate structures to make a
+!	file accessible to RMS routines.
+!
+! FORMAL PARAMETERS:
+!
+!	NONE
+!
+! IMPLICIT INPUTS:
+!
+!	NONE
+!
+! IMPLICIT OUTPUTS:
+!
+!	NONE
+!
+! ROUTINE VALUE:
+!
+!	The address of the RAB for the file structure, or 0 to
+!	indicate that the virtual memory required for the operation
+!	was not accessible
+!
+! SIDE EFFECTS:
+!
+!	Memory for the RMS strcutures are allocated
+!--
+    BEGIN
+    LOCAL
+	fab : REF $FAB_DECL INITIAL (0),
+	rab : REF $RAB_DECL INITIAL (0),
+	nam : REF $NAM_DECL INITIAL (0),
+	xabdat : ref $xabdat_decl INITIAL(0),
+	esa : REF VECTOR [NAM$C_MAXRSS, BYTE] INITIAL (0),
+	rsa : REF VECTOR [NAM$C_MAXRSS, BYTE] INITIAL (0);
+    label
+	alloc_all;
+
+    !+
+    ! Allocate all of the blocks and buffers first.
+    !-
+alloc_all:
+    begin
+    IF (fab = malloc (FAB$C_BLN, malloc_type_char)) eqla 0
+    THEN
+	leave alloc_all;
+    IF (rab = malloc (RAB$C_BLN, malloc_type_char)) eqla 0
+    THEN
+	leave alloc_all;
+    IF (nam = malloc (NAM$C_BLN, malloc_type_char)) eqla 0
+    THEN
+	leave alloc_all;
+    IF (xabdat = malloc (XAB$C_DATLEN, malloc_type_char)) eqla 0
+    THEN
+	leave alloc_all;
+    IF (esa = malloc (NAM$C_MAXRSS, malloc_type_char)) eqla 0
+    THEN
+	leave alloc_all;
+    IF (rsa = malloc (NAM$C_MAXRSS, malloc_type_char)) eqla 0
+    THEN
+	leave alloc_all;
+
+    !
+    ! Now initialise the blocks, link them together
+    ! and return a single pointer to the whole lot.
+    !
+
+    $fab_init (fab = .fab, nam = .nam, xab = .xabdat);
+    $xabdat_init( xab = .xabdat, nxt = 0 );
+    $rab_init (rab = .rab, fab = .fab);
+    $nam_init (nam = .nam, esa = .esa, ess = nam$c_maxrss,
+        rsa = .rsa, rss = nam$c_maxrss, nop = pwd);
+
+    RETURN .rab;
+    end;
+
+    !
+    ! Something failed to allocate, so free the ones that got allocated, and
+    ! return zero to the caller
+    !
+
+    IF .fab NEQA 0
+    THEN
+	free (.fab);
+    IF .rab NEQA 0
+    THEN
+	free (.rab);
+    IF .nam NEQA 0
+    THEN
+	free (.nam);
+    IF .xabdat NEQA 0
+    THEN
+	free (.xabdat);
+    IF .esa NEQA 0
+    THEN
+	free (.esa);
+    IF .rsa NEQA 0
+    THEN
+	free (.rsa);
+    0
+    END;				! Of routine fio_make_file_structure
+
+%SBTTL 'fio_disolve_file_structure - frees up RMS data strcutures'
+ROUTINE fio_disolve_file_structure (
+    rab : REF $RAB_DECL
+) : NOVALUE =
+
+!++
+! FUNCTIONAL DESCRIPTION:
+!
+!	This routine, given a RAB distroys all of the virtual memory
+!	allocated to a file accessed by RMS
+!
+! FORMAL PARAMETERS:
+!
+!	rab is the address of the record access block
+!
+! IMPLICIT INPUTS:
+!
+!	NONE
+!
+! IMPLICIT OUTPUTS:
+!
+!	NONE
+!
+! ROUTINE VALUE:
+!
+!	NONE
+!
+! SIDE EFFECTS:
+!
+!	Memory is freed up
+!--
+    BEGIN
+    LOCAL
+	fab : REF $fab_decl,
+	nam : REF $nam_decl,
+	xab : ref block[,byte];
+
+    IF .rab NEQA 0
+    THEN
+	BEGIN
+	fab = .rab [rab$l_fab];
+	free (.rab);
+	IF .fab NEQA 0
+	THEN
+	    BEGIN
+	    nam = .fab [fab$l_nam];
+	    xab = .fab[ fab$l_xab ];
+	    while .xab neq 0
+	    do
+		begin
+		local nxt : initial( .xab[ xab$l_nxt ] );
+		free( .xab );
+		xab = .nxt;
+		end;
+	    free (.fab);
+	    IF .nam NEQA 0
+	    THEN
+		BEGIN
+		IF .nam [nam$l_rsa] NEQA 0
+		THEN
+		    free (.nam [nam$l_rsa]);
+		IF .nam [nam$l_esa] NEQA 0
+		THEN
+		    free (.nam [nam$l_esa]);
+		free (.nam);
+		END;
+	    END;
+        END;
+    END;				! Of routine fio_disolve_file_structure
+
+
+%SBTTL 'fio_open - Open a file given its name'
+GLOBAL ROUTINE fio_open (
+    name : REF VECTOR [, BYTE],
+    append,
+    defnam : REF VECTOR [, BYTE],
+    record_attribute : ref vector[,long]
+) =
+
+!++
+! FUNCTIONAL DESCRIPTION:
+!
+!	This function open's a file given it's name. The name is in
+!	ASCIZ format. The FAB is openned, and the RAB connected. 
+!
+! FORMAL PARAMETERS:
+!
+!	name is the address of the file to open
+!
+! IMPLICIT INPUTS:
+!
+!	NONE
+!
+! IMPLICIT OUTPUTS:
+!
+!	The FAB , RAB and NAME are filled with information
+!
+! ROUTINE VALUE:
+!
+!	the address of the RAB on which the file is open
+!
+! SIDE EFFECTS:
+!
+!	The file is accessed
+!--
+    BEGIN
+    LOCAL
+	fab : REF $FAB_DECL,
+	rab : REF $RAB_DECL;
+
+    !
+    ! Allocate the RMS data structures, and initialize them as required
+    !
+
+    IF (rab = fio_make_file_structure ()) EQLA 0
+    THEN
+	BEGIN
+	os_errno = SS$_INSFMEM;
+	return 0;
+	END;
+    fab = .rab [rab$l_fab];
+    fab [fab$v_sqo] = 1;
+    fab [fab$l_fna] = .name;
+    fab [fab$b_fns] = strlen (.name);
+    fab [fab$l_dna] = .defnam;
+    fab [fab$b_dns] = (IF .defnam EQLA 0 THEN 0 ELSE strlen (.defnam));
+    fab [fab$v_get] = 1;
+    fab [fab$v_put] = .append;
+    rab [rab$v_eof] = .append;
+    rab [rab$b_rac] = RAB$C_SEQ;
+
+    IF NOT (os_errno = $open (fab = .fab))
+    THEN
+	BEGIN
+	fio_disolve_file_structure (.rab);
+	if .os_errno eql rms$_fnf
+	then
+		(cma$tis_errno_get_addr()) = 2;
+	0
+	END
+    ELSE
+	IF NOT (os_errno = $connect (rab = .rab))
+	THEN
+	    BEGIN
+	    $CLOSE (FAB = .fab);
+	    fio_disolve_file_structure (.rab);
+	    0
+	    END
+	ELSE
+	    begin
+	    if .record_attribute neq 0
+	    then
+		record_attribute[0] = .fab[ fab$b_rfm ];
+	    .rab
+	    end
+    END;				! Of routine fio_open
+
+%SBTTL 'fio_create - create an output file'
+GLOBAL ROUTINE fio_create (
+    name : REF VECTOR [, BYTE],
+    size,
+    checkpoint,
+    defnam : REF VECTOR [, BYTE],
+    record_attribute
+) =
+
+!++
+! FUNCTIONAL DESCRIPTION:
+!
+!	This routin is used to create a new output file.
+!
+! FORMAL PARAMETERS:
+!
+!	name is the address of a vector containing the file name of
+!	the file to be created.
+!
+! IMPLICIT INPUTS:
+!
+!	NONE
+!
+! IMPLICIT OUTPUTS:
+!
+!	Tha FAB, RAB, and NAM block are all filled with the result of
+!	the create.
+!
+! ROUTINE VALUE:
+!
+!	The address of the RAB of the file created
+!
+! SIDE EFFECTS:
+!
+!	A VAX/VMS file is created
+!--
+    BEGIN
+    LOCAL
+	fab : REF $FAB_DECL,
+	rab : REF $RAB_DECL;
+
+    !
+    ! Allocate the RMS data structures, and initialize them as required
+    !
+
+    IF (rab = fio_make_file_structure ()) EQLA 0
+    THEN
+	BEGIN
+	os_errno = SS$_INSFMEM;
+	return 0;
+	END;
+    fab = .rab [rab$l_fab];
+    fab [fab$l_alq] = (IF .size EQL 0 THEN 0 ELSE (.size + BLOCK_SIZE) /
+	BLOCK_SIZE);
+    fab [fab$l_fna] = .name;
+    fab [fab$b_fns] = strlen (.name);
+    fab [fab$l_dna] = .defnam;
+    fab [fab$b_dns] = (IF .defnam EQLA 0 THEN 0 ELSE strlen (.defnam));
+    fab [fab$v_sqo] = fab [fab$v_tef] = 1;
+    fab [fab$v_sup] = .checkpoint;
+    fab [fab$v_put] = fab [fab$v_trn] = 1;
+    fab [fab$v_cr] = 1;
+    if .rms_attribute_override neq 0
+    then
+	fab [fab$b_rfm] = .rms_attribute_override
+    else
+	fab [fab$b_rfm] = .record_attribute;
+    if .fab [fab$b_rfm] eql fab$c_udf
+    then
+	fab [fab$b_rfm] = fab$c_var;
+    fab [fab$b_org] = fab$c_seq;
+    fab [fab$v_sup] = .checkpoint;
+    rab [rab$b_rac] = rab$c_seq;
+    IF NOT (os_errno = $create (fab = .fab))
+    THEN
+	BEGIN
+	fio_disolve_file_structure (.rab);
+	0
+	END
+    ELSE
+	IF NOT (os_errno = $connect (rab = .rab))
+	THEN
+	    BEGIN
+ 	    fab [fab$v_dlt] = 1;
+	    $close (fab = fab);
+	    fio_disolve_file_structure (.rab);
+	    0
+	    END
+	ELSE
+	    .rab
+    END;				! Of routine fio_create
+
+%SBTTL 'fio_put - put a line to a file'
+GLOBAL ROUTINE fio_put (
+    rab : REF $RAB_DECL,
+    line : REF VECTOR [, BYTE],
+    size
+) =
+
+!++
+! FUNCTIONAL DESCRIPTION:
+!
+!	This routine loads the single line, which is a record into
+!	the file open on RAB. The number of characters written is
+!	reported, and returned to the caller. Any error is located in
+!	os_errno.
+!
+! FORMAL PARAMETERS:
+!
+!	rab is the rab on which the file is open.
+!
+!	line is the address of the characters to be written.
+!
+!	size is the number of charactes in line
+!
+! IMPLICIT INPUTS:
+!
+!	NONE
+!
+! IMPLICIT OUTPUTS:
+!
+!	NONE
+!
+! ROUTINE VALUE:
+!
+!	The number of characters written, or -1 for an error
+!
+! SIDE EFFECTS:
+!
+!	NONE
+!--
+    BEGIN
+    rab [rab$l_rbf] = .line;
+    rab [rab$w_rsz] = (IF .size GTR MAX_PUT_REC THEN MAX_PUT_REC ELSE .size);
+    IF (os_errno = $PUT (RAB = .rab))
+    THEN
+        .rab [rab$w_rsz]
+    else
+        -1
+    END;				! Of routine fio_put
+
+%SBTTL 'fio_get - Get a record from a file, expand  its slew'
+GLOBAL ROUTINE fio_get (
+    rab : REF $RAB_DECL,
+    buffer : REF VECTOR [, BYTE],
+    size
+) =
+
+!++
+! FUNCTIONAL DESCRIPTION:
+!
+!	This routine is used to fetch a record from a file, and to
+!	expand its carriage control slew. This works best for RAT=CR
+!	and VAR files.
+!
+! FORMAL PARAMETERS:
+!
+!	rab is thw address of the open rab
+!	
+!	buffer is a buffer where the record can be put
+!
+!	size is the size of that buffer
+!
+! IMPLICIT INPUTS:
+!
+!	NONE
+!
+! IMPLICIT OUTPUTS:
+!
+!	NONE
+!
+! ROUTINE VALUE:
+!
+!	Number of character actually read, or 0 for EOF or -1 for error
+!
+! SIDE EFFECTS:
+!
+!	NONE
+!--
+    BEGIN
+    LOCAL
+ 	fab : REF $FAB_DECL;
+    fab = .rab [rab$l_fab];
+    rab [rab$l_ubf] = .buffer;
+    IF .size GTR 1 THEN size = .size -1;
+    rab [rab$w_usz] = (IF .size GTR MAX_GET_REC THEN MAX_GET_REC ELSE .size);
+    IF NOT (os_errno = $GET (RAB = .rab))
+    THEN
+        IF .os_errno EQL RMS$_EOF
+    	THEN
+    	    0
+    	ELSE
+    	    -1
+    ELSE
+        BEGIN
+        SELECTONE 1 OF
+    	    SET
+	    [.fab [fab$v_cr],		! Ordinary carriage control
+	     .fab [fab$v_prn]] :	! And print carriage control for now
+		BEGIN
+		buffer [.rab [rab$w_rsz]] = LF;
+		.rab [rab$w_rsz] + 1
+		END;
+		
+	    [.fab [fab$v_ftn]] :		! Fortran carriage control
+ 		IF .rab [rab$w_rsz] LEQ 0
+ 		THEN
+ 		    0
+ 		ELSE
+	    	BEGIN
+		LOCAL
+		    code;
+ 		code = .buffer [0];
+		IF .code EQL %C'0'
+		THEN
+		    buffer [0] = LF
+		ELSE
+		    IF .code EQL %C'1'
+		    THEN
+			buffer [0] = FF
+		    ELSE
+			BEGIN
+			rab [rab$w_rsz] = .rab [rab$w_rsz] - 1;
+			CH$MOVE (.rab [rab$w_rsz], buffer [1], buffer [0]);
+ 			END;
+		IF .code EQL %C'+'
+		THEN
+		    buffer [.rab [rab$w_rsz]] = CR
+		ELSE
+		    IF .code NEQ %C'$' AND .code NEQ 0
+		    THEN
+			BEGIN
+			buffer [.rab [rab$w_rsz]] = LF;
+			rab [rab$w_rsz] = .rab [rab$w_rsz] + 1;
+			END;
+		.rab [rab$w_rsz]
+		END;
+	    [OTHERWISE]:
+		.rab [rab$w_rsz]
+	    TES
+	END
+    END;				! Of routine fio_get
+
+%sbttl 'fio_get_with_prompt'
+global routine fio_get_with_prompt
+	(
+	rab	: ref $rab_decl,
+	buffer	: ref vector [, byte],
+	size,
+	prompt	: ref vector[,byte]
+	) =
+
+!++
+! FUNCTIONAL DESCRIPTION:
+!
+!	This routine is used to fetch a record from a file.
+!	A prompt string is provided if supplied.
+!
+! FORMAL PARAMETERS:
+!
+!	rab is thw address of the open rab
+!	
+!	buffer is a buffer where the record can be put
+!
+!	size is the size of that buffer
+!
+!	Prompt is the address of the asciz prompt string
+!
+! IMPLICIT INPUTS:
+!
+!	NONE
+!
+! IMPLICIT OUTPUTS:
+!
+!	NONE
+!
+! ROUTINE VALUE:
+!
+!	Number of character actually read, or -1 for EOF or -2 for error
+!
+! SIDE EFFECTS:
+!
+!	NONE
+!--
+
+	begin
+	local
+		fab : ref $fab_decl;
+
+	fab = .rab[ rab$l_fab ];
+	rab[ rab$l_ubf ] = .buffer;
+
+	if .prompt neq 0
+	then
+		begin
+		rab[ rab$b_psz ] = strlen( .prompt );
+		rab[ rab$l_pbf ] = .prompt;
+		end
+	else
+		begin
+		rab[ rab$b_psz ] = 0;
+		rab[ rab$l_pbf ] = 0;
+		end;
+
+	if .size gtr 1 then size = .size -1;
+	rab[ rab$w_usz ] =
+		(if .size gtr max_get_rec then max_get_rec else .size);
+
+	if not (os_errno = $get (rab = .rab))
+	then
+		if .os_errno eql rms$_eof
+		then
+			0
+		else
+			-1
+	else
+		.rab[ rab$w_rsz ]
+	end;				! of routine fio_get_with_prompt
+
+%SBTTL 'fio_close - close a file and distory the fab, rab and nam blocks'
+GLOBAL ROUTINE fio_close (
+    rab : REF $RAB_DECL
+) =
+
+!++
+! FUNCTIONAL DESCRIPTION:
+!
+!	This routine is used to close a fab, and rab for later use
+!
+! FORMAL PARAMETERS:
+!
+!	rab is the address of the rab connected to the fab to be
+!	closed
+!
+! IMPLICIT INPUTS:
+!
+!	The fab is access through the rab
+!
+! IMPLICIT OUTPUTS:
+!
+!	NONE
+!
+! ROUTINE VALUE:
+!
+!	NONE
+!
+! SIDE EFFECTS:
+!
+!	NONE
+!--
+    BEGIN
+    $CLOSE (FAB = .rab [rab$l_fab]);
+    fio_disolve_file_structure (.rab);
+    SS$_NORMAL
+    END;				! Of routine fio_close
+
+%SBTTL 'fio_getname - get a resultants file name for the open file'
+GLOBAL ROUTINE fio_getname (
+    rab : REF $RAB_DECL
+) =
+
+!++
+! FUNCTIONAL DESCRIPTION:
+!
+!	Return the name of the file just openned.
+!
+! FORMAL PARAMETERS:
+!
+!	rab is the address of the RAB to fetch the information about
+!
+! IMPLICIT INPUTS:
+!
+!	The fab and nam block are accessed
+!
+! IMPLICIT OUTPUTS:
+!
+!	NONE
+!
+! ROUTINE VALUE:
+!
+!	The address of the expanded string are
+!
+! SIDE EFFECTS:
+!
+!	NONE
+!--
+    BEGIN
+    LOCAL
+        rsa : REF VECTOR [, BYTE],
+        fab : REF $FAB_DECL,
+        nam : REF $NAM_DECL;
+    fab = .rab [rab$l_fab];
+    nam = .fab [fab$l_nam];
+    rsa = .nam [nam$l_rsa];
+    rsa [.nam [nam$b_rsl]] = 0;
+
+    emacs_strlwr( .rsa );
+    .rsa
+    END;				! Of routine fio_getname
+
+global routine fio_modify_date( rab : ref $RAB_DECL ) =
+	begin
+	local
+		fab : ref $fab_decl,
+		xab : ref $xabdat_decl,
+		date,
+		c_base_time	: vector[2,long],
+		time_diff	: vector[2,long];
+
+	fab = .rab [rab$l_fab];
+	xab = .fab [fab$l_xab];
+
+	$bintim( timadr = c_base_time, timbuf = %ascid '1-JAN-1970 0:0:0.0' );
+	lib$sub_times( xab[ xab$q_rdt ], c_base_time, time_diff );
+	lib$cvt_from_internal_time( %ref(lib$k_delta_seconds), date, time_diff );
+
+	return .date;
+	end;
+
+global routine fio_file_modify_date( name ) =
+	begin
+	local
+		date : long,
+		fab : ref $fab_decl,
+		xab : ref $xabdat_decl,
+		rab : ref $rab_decl;
+
+	rab = fio_open( uplit byte( %asciz ';0' ), 0, .name, 0 );
+	if .rab eql 0
+	then
+		return 0;
+
+	date = fio_modify_date( .rab );
+	fio_close( .rab );
+
+	return .date;
+	end;
+
+
+%SBTTL 'fio_size - return the allocated size of the file'
+GLOBAL ROUTINE fio_size (
+    rab : REF $RAB_DECL
+) =
+
+!++
+! FUNCTIONAL DESCRIPTION:
+!
+!	this function fetches the allocated size file from the open
+!	FAB pointed at by the RAB.
+!
+! FORMAL PARAMETERS:
+!
+!	rab is the address of the rab pointing to the fab
+!
+! IMPLICIT INPUTS:
+!
+!	NONE
+!
+! IMPLICIT OUTPUTS:
+!
+!	NONE
+!
+! ROUTINE VALUE:
+!
+!	the size of the file in characters
+!
+! SIDE EFFECTS:
+!
+!	NONE
+!--
+    BEGIN
+    LOCAL
+        fab : REF $FAB_DECL;
+    fab = .rab [rab$l_fab];
+    .fab [fab$l_alq] * BLOCK_SIZE
+    END;				! Of routine fio_size
+
+%SBTTL 'fio_delete - deletes files'
+GLOBAL ROUTINE fio_delete (
+    fn : REF VECTOR [, BYTE]
+) =
+
+!++
+! FUNCTIONAL DESCRIPTION:
+!
+!	This routine deletes the files specified by the ASCIZ string
+!	fn. To save time and space, the LIB$DELETE_FILE routine is
+!	used to do the work
+!
+! FORMAL PARAMETERS:
+!
+!	fn is the address of an ASCIZ string of the file to be
+!	deleted.
+!
+! IMPLICIT INPUTS:
+!
+!	NONE
+!
+! IMPLICIT OUTPUTS:
+!
+!	NONE
+!
+! ROUTINE VALUE:
+!
+!	The retuned status from LIB$DELETE_FILE
+!
+! SIDE EFFECTS:
+!
+!	files are deleted
+!--
+    BEGIN
+    LOCAL
+	fnd : BLOCK [DSC$K_S_BLN, BYTE];
+    fnd [dsc$w_length] = strlen (.fn);
+    fnd [dsc$b_dtype] = DSC$K_DTYPE_T;
+    fnd [dsc$b_class] = DSC$K_CLASS_S;
+    fnd [dsc$a_pointer] = .fn;
+    lib$delete_file (fnd)
+    END;				! Of routine fio_delete
+
+%SBTTL 'vms_alarm - set a timer for the specified routine after n secs'
+GLOBAL ROUTINE vms_alarm (
+    delta,
+    rtn
+) =
+
+!++
+! FUNCTIONAL DESCRIPTION:
+!
+!	This routine cancels the current time, and sets a timer for
+!	the new time. This routine is used by vmscoms to make the
+!	schedule-procedure procedure fire at the right time.
+!
+! FORMAL PARAMETERS:
+!
+!	delta is the number of seconds to the next timer
+!
+! IMPLICIT INPUTS:
+!
+!	NONE
+!
+! IMPLICIT OUTPUTS:
+!
+!	NONE
+!
+! ROUTINE VALUE:
+!
+!	0 to indicate success, or -1 for error
+!
+! SIDE EFFECTS:
+!
+!	A timer is canceled and set
+!--
+    BEGIN
+
+    BUILTIN
+	EMUL;
+
+    LOCAL
+	timer : VECTOR [2],
+	resp,
+	null : INITIAL (0),
+	nanos : INITIAL (-10 * 1000 * 1000);
+
+    !
+    ! Cancel any existing timer
+    !
+
+    $cantim (reqidt = alarm_timer);
+
+    !
+    ! Calculate the new time, and set the timer
+    !
+
+    IF .delta LSS 0
+    THEN
+	delta = 0;
+
+    EMUL (nanos, delta, null, timer);
+
+    IF $setimr (daytim = timer, astadr = .rtn, reqidt = alarm_timer)
+    THEN
+	0
+    ELSE
+	-1
+    END;				! Of routine vms_alarm
+
+%SBTTL 'fio_access - Check accessibility of a file'
+GLOBAL ROUTINE fio_access (
+    fn : REF VECTOR [, BYTE]
+) =
+
+!++
+! FUNCTIONAL DESCRIPTION:
+!
+!	This routine check what access is allowed to the specified
+!	file by the calling process. The file is accessed using a QIO
+!	request, and then the protection information used to call
+!	$CHKPRO to check the accessibility.
+!
+! FORMAL PARAMETERS:
+!
+!	fn is the ASCIZ name of the file to be checked
+!
+! IMPLICIT INPUTS:
+!
+!	NONE
+!
+! IMPLICIT OUTPUTS:
+!
+!	NONE
+!
+! ROUTINE VALUE:
+!
+!	1 means the file is writable
+!	0 means that it does not exist
+!      -1 means that the file is only readable
+!
+! SIDE EFFECTS:
+!
+!	The file's protection information is accessed from disk
+!--
+    BEGIN
+    LOCAL
+	chan : INITIAL (0),
+	result : INITIAL (0),
+	rsa : VECTOR [nam$c_maxrss],
+	esa : VECTOR [nam$c_maxrss],
+	nam : $nam_decl,
+	fab : $fab_decl;
+
+    !
+    ! Initialise the RMS data structures, and parse the file spec. This
+    ! will output the file ID of the directory so that we can do a IO$_ACCESS
+    ! on the file itself to obain the protection information
+    !
+
+    $nam_init (nam = nam, esa = esa, ess = nam$c_maxrss,nop = noconceal,
+	rsa = rsa, rss = nam$c_maxrss);
+    $fab_init (fab = fab, fac = get, fna = .fn, fns = strlen (.fn),
+	nam = nam);
+    IF (os_errno = $parse (fab = fab))
+    THEN
+	BEGIN
+
+	!+
+	! Fetch the protection for the object, and match it against the
+	! UIC of the calling process.
+	!
+	! ACLs and network checks are ignored at the moment. Network 
+	! operations just return -1 (indicating read access only, if the
+	! search operation is satisfactory.
+	!-
+
+	LOCAL
+	    dev : BLOCK [dsc$k_s_bln, BYTE],
+	    iosb : VECTOR [4, WORD],
+	    owner,
+	    protection : INITIAL (0),
+	    req : INITIAL (1),		! read access required
+	    itmlst : $itmlst_decl (items = 8);
+
+	IF .nam [nam$v_node]
+	THEN
+	    BEGIN
+
+	    !+
+	    ! Return that the file is readable. RMS does not support obtaining
+	    ! FIDs across the network, and $ASSIGN doesn't seem to like to
+	    ! assign them either.
+	    !-
+
+	    IF (os_errno = $search (fab = fab))
+	    THEN
+		return -1
+	    ELSE
+		return 0;
+	    END;
+
+	!
+	! Now, Check to see what type of file spec we were given. If its
+	! contains a non-file structured device, then use GETDVI to obtain
+	! the protection and owner. Otherwise, use the XQP to return the
+	! required information.
+	!
+
+	IF (.fab [fab$l_dev] AND dev$m_fod) EQL 0
+	THEN
+	    BEGIN
+
+	    !+
+	    ! Fetch the device protection and owner using GETDVI.
+	    !-
+	
+	    dev [0, 0, %BPVAL, 0] = .nam [nam$b_dev];
+	    dev [dsc$a_pointer] = .nam [nam$l_dev];
+	    $itmlst_init (itmlst = itmlst,
+		(itmcod = dvi$_ownuic, bufadr = owner, bufsiz = %UPVAL),
+		(itmcod = dvi$_vprot, bufadr = protection, bufsiz = %UPVAL));
+	    IF (os_errno = $getdviw (devnam = dev, itmlst = itmlst,
+		iosb = iosb))
+	    THEN
+		os_errno = .iosb [0]
+	    END
+	ELSE
+	    IF (os_errno = $search (fab = fab))
+	    THEN
+		BEGIN
+
+		!+
+		! Set up to assign the channel to the file structured
+		! device.
+		!-
+	
+		dev [0, 0, %BPVAL, 0] = .nam [nam$b_dev];
+		dev [dsc$a_pointer] = .nam [nam$l_dev];
+
+		IF (os_errno = $assign (devnam = dev, chan = chan))
+		THEN
+		    BEGIN
+
+		    !+
+		    ! Fetch the protection information from the file. For this first 
+		    ! version, the information required is the UIC of the owner, and
+		    ! file's protection (an ACL is ignored).
+		    !-
+
+		    LITERAL
+			sizeof_fib = zero (fib$w_did_rvn) + 2;
+	
+		    LOCAL
+			fib : BLOCK [sizeof_fib, BYTE],
+			fib_desc : VECTOR [2],
+			attrib : BLOCKVECTOR [3, zero (atr$l_addr) + %UPVAL,
+			    BYTE];
+	
+		    fib [fib$l_acctl] = 
+		    fib [fib$w_did_num] =
+		    fib [fib$w_did_seq] =
+		    fib [fib$w_did_rvn] = 0;
+		    fib [fib$w_fid_num] = .nam [nam$w_fid_num];
+		    fib [fib$w_fid_seq] = .nam [nam$w_fid_seq];
+		    fib [fib$w_fid_rvn] = .nam [nam$w_fid_rvn];
+		
+		    fib_desc [0] = sizeof_fib;
+		    fib_desc [1] = fib;
+		    attrib [0, atr$w_size] = atr$s_uic;
+		    attrib [0, atr$w_type] = atr$c_uic;
+		    attrib [0, atr$l_addr] = owner;
+		    attrib [1, atr$w_size] = atr$s_fpro;
+		    attrib [1, atr$w_type] = atr$c_fpro;
+		    attrib [1, atr$l_addr] = protection;
+		    attrib [2, 0, 0, %BPVAL, 0] = 0;
+	
+		    IF (os_errno = $qiow (chan = .chan, func = IO$_ACCESS, iosb = iosb,
+			p1 = fib_desc, p5 = attrib))
+		    THEN
+			os_errno = .iosb [0];
+		    END;
+		END;
+
+	IF .os_errno
+	THEN
+	    BEGIN
+	    local
+		jpi_iosb	: vector[4,word],
+		rights		: vector[(65536/4)-2,long],
+		rights_len	: word initial(0),
+		privs		: vector[2,long];
+
+	    $itmlst_init (itmlst = itmlst,
+		(itmcod = jpi$_curpriv, bufadr = privs, bufsiz = 8),
+		(itmcod = jpi$_rightslist, bufadr = rights, bufsiz = %allocation( rights ), retlen=rights_len));
+	    
+	    $getjpiw( itmlst=itmlst, iosb=jpi_iosb );
+
+	    !+
+	    ! First, check read accessibility to the file. Then if all goes
+	    ! well, check write accessibility. Set the result as
+	    ! appropriate.
+	    !-
+
+	    $itmlst_init (itmlst = itmlst,
+		(itmcod = chp$_access, bufadr = req, bufsiz = %UPVAL),
+		(itmcod = chp$_owner, bufadr = owner, bufsiz = %UPVAL),
+		(itmcod = chp$_priv, bufadr = privs, bufsiz = 8),
+		(itmcod = chp$_rights, bufadr = rights, bufsiz = .rights_len),
+		(itmcod = chp$_prot, bufadr = protection, bufsiz = %UPVAL));
+
+	    IF (os_errno = $chkpro (itmlst = itmlst))
+	    THEN
+		BEGIN
+		result = -1;
+		req = 2;			! Write access required
+		IF (os_errno = $chkpro (itmlst = itmlst))
+		THEN
+		    result = 1;
+		END;
+	    END;
+
+	IF .chan NEQ 0
+	THEN
+	    !+
+	    ! The channel is finished with, so just deassign it
+	    !-
+	    $dassgn (chan = .chan);
+	END;
+
+    .result
+    END;				! Of routine fio_access
+
+END					! Of module FIO
+ELUDOM

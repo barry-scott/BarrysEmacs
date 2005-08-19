@@ -1,0 +1,9 @@
+src contents.dat
+src lang_bld.com
+src language.mll
+obj ident.dat
+exe_vms emacslang.tlb
+exe_dos language.mll
+exe_unix emacslang.pag
+exe_unix emacslang.dat
+exe_unix emacslang.dir

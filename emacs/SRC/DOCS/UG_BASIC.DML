@@ -1,0 +1,834 @@
+<chapter>(Basic Editing\basicedit_chap)
+
+<x>(Text editing<xs>basic)
+<x>(Editing<xs>basic)
+
+<p>
+This chapter descibes basic EMACS functions that allow you to enter text,
+make corrections, and save the text in a file. <reference>(screen_sec)
+describes the organisation of the EMACS screen.  <reference>(selfdoc_sec)
+describes EMACS' self-documentation features.  <reference>(basicedit_sec)
+describes the basic editing commands.  <reference>(comprefix_sec) shows
+how to prefix EMACS commands with numerical arguments.
+<reference>(basicfiles_sec) describes EMACS basic file handling commands.
+<reference>(edtsim_sec) describes the EDTSIM package, which emulates the
+EDT text editor.
+
+<x>(Computer-based instruction)
+<x>(CBI)
+<x>(TEACH package)
+<p>
+If this material is new to you, you might learn it more easily by running
+the TEACH computer-based instruction package. To do this, use the command:
+
+<interactive>
+<s>($ )<u>(EMACS/PACKAGE=TEACH)
+<endinteractive>
+
+
+<head1>(The Organisation of the Screen\screen_sec)
+
+<x>(Screen<xs>organisation)
+
+<x>(Dot)
+<x>(Cursor)
+<p>
+EMACS divides the screen into several areas, each of which contains its own
+kind of information. The biggest area is the one in which you usually see
+the text you are editing. The terminal's cursor usually appears in the
+middle of the text, showing the position of <newterm>(dot), the location
+at which editing takes place. While the cursor appears to point at a
+character, dot should be thought of as being between two characters; it points
+before the character on which the cursor appears.
+
+<p>
+Terminals have only one cursor, and when output is in progress, the cursor
+must be positioned where the characters are to appear. This does not mean
+that dot is moving---it is only that EMACS has no way to show you the
+location of dot except when the terminal is idle.
+
+<x>(Mini-buffer)
+<p>
+The last line of the screen is called the <newterm>(Mini-buffer). This area is
+used to display messages and error text when a command is incorrectly used.
+It is also used to collect arguments for commands that require them when
+they are executed interactively. Normal editing commands can be used in the
+Mini-buffer.
+
+
+<head2>(Windows\windows_sec)
+
+<x>(Windows)
+<x>(Buffers)
+
+<p>
+The main area of the screen may be divided up into a number of
+<newterm>(windows). Each window is associated or (<newterm>(bound)) onto a
+<newterm>(buffer) which will contain the contents of a file.
+
+<p>
+Commands exist to change the association of windows to buffers and
+to change the number of windows displayed on the screen.
+
+<x>(split-height-threshold)
+<p>
+A window must be at least two lines deep---you can therefore display up to
+((lines-per-screen -- 1) / 2)) windows on the screen at any one time. The
+variable <key_name>(split-height-threshold) controls the size of windows
+that may be divided, and therefore controls the number of windows on the
+screen.  Note that windows smaller than about five lines are generally not
+useful for normal text editing, although they are sometimes used in
+special circumstances.
+
+
+<head2>(Mode Lines\modeline_sec)
+
+<x>(Mode Line)
+
+<p>
+The line at the bottom of each window is known as the window's
+<newterm>(Mode Line). It is the line that usually starts with
+<quote>(<cx>(Buffer)) and is displayed in reverse-video on terminals with
+the ANSICRT attribute.  Its purpose is to tell you information that may
+affect the meaning of your commands aside from the text itself.
+
+<x>(Subsystems)
+<x>(Recursive Editing Levels)
+<x>(Levels)
+<p>
+Some EMACS commands read and process other commands. They are known as
+<newterm>(subsystems) and may initiate <newterm>(recursive editing
+levels).  If you are inside a subsystem or a recursive editing level, the
+mode line tells you its name. Square brackets around the mode line
+indicate the depth of recursive editing levels.
+
+<x>(Top level)
+<p>
+Subsystems and recursive editing levels are advanced features, and you will
+not initially be using them. When you are not inside a subsystem or
+recursive editing level, we say that you are at the <newterm>(top level);
+this implies that the characters you type are interpreted as ordinary
+EMACS commands.  When you are at top level, the mode line tells you what
+file you are editing, where you are in it, and what editing modes are
+enabled which may affect the meaning of your commands. The top level mode
+line has the following format by default:
+
+<online_popup>(example)
+<display>
+[<literal>(<)col<literal>(<) Buffer: bfr*  File: filename subsys (major minor) pos]
+<enddisplay>
+<endonline_popup>
+
+<p>
+The components of the mode line are:
+
+<definition_list>
+
+<deflist_item>(major)
+<deflist_def>
+The name of the major mode you are in. At any time, EMACS is in one and
+only one of its possible major modes. The major modes available include
+<quote>(Normal) (in which buffers are created), <quote>(Text),
+<quote>(Lisp), <quote>(Pascal), and others.
+
+<deflist_item>(minor)
+<deflist_def>
+A list of some of the minor modes that are enabled.  <quote>(Journal)
+means that <newterm>(journalling) is enabled for this buffer.
+<quote>(Checkpoint) means that <newterm>(checkpointing) is enabled for
+this buffer and generally for all buffers. <quote>(Overstrike) means that
+character replace mode is switched on so that characters that you type
+replace the characters that exist in the buffer already.  <quote>(Abbrev)
+means that abbreviation mode is on and that abbreviations are
+automatically expanded. <quote>(Readonly) means that you cannot alter the
+contents of the buffer.
+
+<deflist_item>(bfr)
+<deflist_def>
+The name of the buffer currently associated with the window.  Each buffer
+has its own name and may hold a file being edited; this is how EMACS holds
+several files at once. At any time you can edit only one buffer---this
+buffer is known as the <newterm>(current buffer).
+
+<deflist_item>(File)
+<deflist_def>
+The name of the file that you are editing. It is the last file that was
+visited in the associated buffer. If the buffer does not contain the
+contents of a file, then <quote>(<cx>([No File])) is displayed. Buffers of
+this type are called <newterm>(scratch buffers).
+
+<deflist_item>(*)
+<deflist_def>
+A flag which indicates that there are changes in the buffer that have not
+been saved in the associated file. If the file has not been changed since
+it was read in or saved, no asterisk is displayed.
+
+<deflist_item>(pos)
+<deflist_def>
+tells you whether there is additional text above the top of the screen, or
+below the bottom. It is <quote>(<cx>(Top)) if you are looking at the
+beginning of the file, <quote>(<cx>(Bottom)) if you are looking at the end
+of the file, or <quote>(<cx>(nn%)) where <cx>(nn) is the percentage of the
+file above dot.
+
+<deflist_item>(subsys)
+<deflist_def>
+The name of the currently running subsystem. By default, this is blank.
+
+<deflist_item>([)
+<deflist_def>
+Square brackets in the mode line indicate the current recursive edit
+depth. When the recursion depth is zero, square brackets are not
+displayed. When the recursion depth is less than five, recursion-depth
+number of square brackets are included in the mode line. When the
+recursion depth is greater than five, the depth is indicated by
+<quote>(<cx>([n[)) and <quote>(<cx>(]n])), where <cx>(n) is the recursion
+depth.
+
+<deflist_item>(<literal>(<))
+<deflist_def>
+A marker which indicates that the buffer is horizontally scrolled left by
+the indicated number of characters. When no left-scrolling is being used,
+the indicator is not included in the mode line. Otherwise,
+<quote>(<cx>(<literal>(<)n<literal>(<))) is displayed, where <cx>(n) is
+the number of characters by which the screen is left-scrolled.
+
+<enddefinition_list>
+
+
+<head1>(Self-Documentation Commands\selfdoc_sec)
+
+<x>(Self-documentation commands)
+<x>(Documentation commands)
+<x>(Help)
+
+<x>(^_)
+<p>
+EMACS provides extensive self-documentation features which are invoked by
+a single character, called the <key_name>(Help) character. At any time
+while using EMACS, you can type the <key_name>(Help) character to ask for
+help. The <key_name>(Help) character is actually typed as <key_name>(^_).
+
+<p>
+On some terminals, it is not easy to work out how to type <key_name>(^_).
+On VT100 series terminals, typing <key_name>(CTRL/_) or <key_name>(CTRL/?)
+sends a <key_name>(^_) character. On LK201 keyboards, the <key_name>(Help)
+key is bound to the <key_name>(Help) character.
+
+<p>
+If you type the <key_name>(Help) character while you are using a
+subsystem (such as INFO), EMACS may print a list of the commands
+available in that subsystem.  However, it is up to the subsystem to
+provide this facility.
+
+<p>
+The EMACS Help facility offers several options for asking about the
+commands that exist and what the commands do. It prompts with
+<keep>(<quote>(<cx>(Doc (? for help):))) at the bottom of the screen, and you
+type a character to say what kind of help you want. You could type
+<key_name>(Help) or <key_name>(?) at this point to find out what options are
+available.  The available options are listed in <reference>(helpopt_tab).
+
+<x>(VMS HELP)
+<x>(INFO)
+
+<table>(Help Options\helpopt_tab)
+<table_setup>(2\5)
+<table_heads>(Option\Description)
+<footnote>(1\The VMS HELP and INFO systems are described in the
+<reference>(emacs_ext_ref))
+<table_row>(a\Show command containing a string (apropos))
+<table_row>(b\Describe all key bindings)
+<table_row>(c\LK201 compose key sequence chart)
+<table_row>(d\Describe a command)
+<table_row>(h\Access the VMS HELP subsystem<footref>(1))
+<table_row>(i\Access the INFO package<footref>(1))
+<table_row>(k\Describe a key binding)
+<table_row>(n\Print out EMACS news)
+<table_row>(v\Describe a variable)
+<table_row>(w\Find a function on the keyboard)
+<endtable>
+
+<x>(Extended commands)
+<x>(describe-command)
+<p>
+The most basic Help options are <key_name>(Help v) and <key_name>(Help d).
+You can use them to ask what a particular command or variable does.
+<key_name>(Help d) is for asking about functions (or <newterm>(extended
+commands)); type the name of the function and a <key_name>(Return).  Thus,
+<quote>(<cx>(<key>(Help) d lisp-mode)) tells you about <key_name>(ESC-x
+lisp-mode).  <key_name>(Help v) tells you about variables in the same way.
+<emphasis>(d\italic) stands for <emphasis>(describe\italic), since
+<key_name>(Help d) actually uses the function <key_name>(describe-command)
+to do the work.
+
+<x>(apropos)
+<x>(apropos-variable)
+<p>
+A more complicated question to ask is, <quote>(What are the commands or
+variables for manipulating something?). For this, you use the
+<key_name>(Help a) command.  This command prints a list of all the
+functions and variables that have the word you specified anywhere in their
+name. If some of the functions are bound to commands, it tells you that
+too. For example, it would say that you can invoke
+<key_name>(write-modified-files) by typing <key_name>(^X-^M).
+<emphasis>(a\italic) stands for <emphasis>(apropos\italic), since
+<key_name>(Help a) actually uses the functions <key_name>(apropos) and
+<key_name>(apropos-variable) to do the substring matching.
+
+<p>
+Since the apropos functions only look for functions and variables whose
+names contain the string which you specify, you must use ingenuity in
+choosing substrings. If you are looking for commands for deleting
+backwards and <quote>(<cx>(Help a delete-backwards)) does not reveal any, do
+not give up.  Try <quote>(<cx>(delete)), or <quote>(<cx>(backwards)), or just
+<quote>(<cx>(back)).  Be persistent.
+
+<p>
+<reference>(apropos_tab) contains a set of apropos strings that cover many
+classes of EMACS commands, since there are strong conventions for naming
+the standard EMACS commands.  By giving you a feel for the EMACS naming
+conventions, this set should help you to develop a technique for choosing
+apropos strings.
+
+<table>(Apropos Strings\apropos_tab)
+<table_setup>(5\8\8\8\8)
+<table_row>(character \ line \ word \ sentence \ paragraph)
+<table_row>(region \ buffer \ screen \ window \  bound)
+<table_row>(binding \  file \ beginning \ end \  case)
+<table_row>(mode \ forward \ backward \ next \ previous)
+<table_row>(up \ down \ search \ kill \ delete)
+<table_row>(mark \ fill \ indent \ \ )
+<endtable>
+
+<x>(Documentation)
+<p>
+Finally, you should know about the documentation files for EMACS, which are:
+
+<definition_list>
+<deflist_item>(EMACS$HELP:EMACS_USER_GUIDE.PS)
+<deflist_def>
+<reference>(emacs_user_guide)
+
+<deflist_item>(EMACS$HELP:EMACS_PROG_GUIDE.PS)
+<deflist_def>
+<reference>(emacs_prog_guide)
+
+<deflist_item>(EMACS$HELP:EMACS_MLISP_REF.PS)
+<deflist_def>
+<reference>(emacs_mlisp_ref)
+
+<deflist_item>(EMACS$HELP:EMACS_EXT_REF.PS)
+<deflist_def>
+<reference>(emacs_ext_ref).
+
+<enddefinition_list>
+
+<x>(Online documentation)
+<x>(Bookreader documentation)
+<p>
+The EMACS documentation is also available in DECwindows Bookreader format.
+The EMACS Bookreader documentation can be found on the <quote>(VAX EMACS
+Documentation) bookshelf.
+
+<p>
+There is an electronic copy of these manuals in the EMACS INFO
+database.  See the <reference>(emacs_ext_ref) for details on using INFO to
+access the EMACS documentation.
+
+
+<head1>(Basic Editing Commands\basicedit_sec)
+
+<p>
+This section describes the basic text editing features of EMACS.  It shows
+how to insert and erase text and how to move the cursor around the screen.
+
+
+<head2>(Inserting Text\inserttext_sec)
+
+<x>(Inserting text)
+
+<p>
+To insert printing characters into the text you are editing, just type them.
+When EMACS is at top level, all printing characters you type are inserted
+into the text at the cursor (that is, at dot), and the cursor moves
+forward.  Any characters after the cursor move forward too. For example,
+if the text in the buffer is <quote>(<cx>(FOOBAR)), with the cursor before
+the <quote>(<cx>(B)), then if you type <quote>(<cx>(XX)), you get
+<quote>(<cx>(FOOXXBAR)), with the cursor still before the
+<quote>(<cx>(B)).
+
+<x>(Delete)
+<p>
+To correct text you have just inserted, you can use the <key_name>(Delete) key.
+This is labelled <delete_key> on LK201 keyboards.
+<key_name>(Delete) deletes the character before the cursor, not the
+character that the cursor is over. The cursor and all characters after it
+move backwards. Therefore, if you type a printing character and then type
+<key_name>(Delete), they cancel out.
+
+<p>
+To end a line and start typing a new line, type the <key_name>(Return) key.
+<key_name>(Return) operates by inserting a line separator, so if you type
+<key_name>(Return) in the middle of a line, you break the line in two.
+
+<x>(wrap-long-lines)
+<p>
+If the <key_name>(wrap-long-lines) variable is set, and you add too many
+characters to one line without breaking it with a <key_name>(Return), the
+line will grow to occupy two or more lines on the screen, with a
+<quote>(<cx>(<math_char>(geq))) (on terminals with the ANSICRT
+characteristic) at the extreme right margin of all but the last line. The
+<quote>(<cx>(<math_char>(geq))) means that the following screen line is
+not really a distinct line in the file, but just the continuation of a
+line too long to fit on the screen. On non-ANSICRT terminals, a
+<quote>(<cx>(<literal>(\))) character is used to denote line continuation.
+
+<p>
+If the <key_name>(wrap-long-lines) variable is not set, a diamond is
+displayed at the end of each line that is longer than the screen.
+
+<x>(^^-q)
+<x>(quote-character)
+<p>
+Direct insertion works for printing and layout characters, but other
+characters act as editing commands and do not insert themselves. If you need
+to insert a control character you must quote it by using the
+<key_name>(^^-q) (<key_name>(quote-character)) command first.
+
+
+<head2>(Moving the Cursor\movingcurs_sec)
+
+<x>(Cursor<xs>Moving the)
+
+<p>
+To do more than insert characters, you have to know how to move the cursor.
+Here are a few of the commands for doing this:
+
+<definition_list>
+<deflist_item>(^A or F12 (beginning-of-line))
+<x>(^A)
+<x>(beginning-of-line)
+<deflist_def>
+Moves to the beginning of the current line.
+
+<deflist_item>(^E (end-of-line))
+<x>(end-of-line)
+<x>(^E)
+<deflist_def>
+Moves to the end of the current line.
+
+<deflist_item>(^F or Right-arrow (forward-character))
+<x>(forward-character)
+<x>(^F)
+<deflist_def>
+Moves forward one character.
+
+<deflist_item>(^B or Left-arrow (backward-character))
+<x>(^B)
+<x>(backward-character)
+<deflist_def>
+Moves backward one character.
+
+<deflist_item>(^N or Down-arrow (next-line))
+<x>(^N)
+<x>(next-line)
+<deflist_def>
+Moves down one line, vertically. If you start in the middle of one line, you
+end up in the middle of the next line.
+
+<deflist_item>(^P or Up-arrow (previous-line))
+<x>(^P)
+<x>(LK201 Up-arrow)
+<deflist_def>
+Moves up one line, vertically.
+
+<deflist_item>(^L (redraw-display))
+<x>(^L)
+<x>(redraw-display)
+<deflist_def>
+Clears and redraws the display.
+
+<deflist_item>(^T (transpose-characters))
+<x>(^T)
+<x>(transpose-characters)
+<deflist_def>
+Transposes the last two characters.
+
+<deflist_item>(ESC-<literal>(<) or GOLD-KP4 (beginning-of-file))
+<x>(ESC-<literal>(<))
+<x>(beginning-of-file)
+<deflist_def>
+Moves to the top of the file.
+
+<deflist_item>(ESC-<literal>(>) or GOLD-KP5 (end-of-file))
+<x>(ESC-<literal>(>))
+<x>(end-of-file)
+<deflist_def>
+Moves to the end of the file.
+
+<enddefinition_list>
+
+
+<head2>(Erasing Text\erasingtext_sec)
+
+<x>(Erasing text)
+<x>(Deleting text)
+
+<definition_list>
+<deflist_item>(Delete or <delete_key> (delete-previous-character))
+<x>(delete-previous-character)
+<x>(Delete)
+<deflist_def>
+Deletes the character before the cursor.
+
+<deflist_item>(^D or KP-Comma (delete-next-character))
+<x>(^D)
+<x>(delete-next-character)
+<deflist_def>
+Deletes the character after the cursor.
+
+<deflist_item>(^K (kill-to-end-of-line))
+<x>(^K)
+<x>(kill-to-end-of-line)
+<deflist_def>
+Deletes to the end of the current line.
+
+<enddefinition_list>
+
+<p>
+You already know about the <key_name>(Delete) command which deletes the
+character before the cursor. Another command, <key_name>(^D), deletes the
+character after the cursor, causing the rest of the text on the line to
+shift left. If <key_name>(^D) is typed at the end of a line, that line and
+the next line are joined together.
+
+<x>(^K)
+<p>
+To erase a larger amount of text, use the <key_name>(^K) command, which
+deletes a line at a time. If <key_name>(^K) is typed at the beginning
+or middle of a line, it deletes all the text up to the end of the line.
+If <key_name>(^K) is typed at the end of a line, it joins that line to
+the next line.
+
+
+<head2>(Using Blank Lines Can Make Editing Faster\blanklines_sec)
+
+<x>(Blank lines)
+
+<definition_list>
+<deflist_item>(^O (newline-and-backup))
+<x>(^O)
+<x>(newline-and-backup)
+<deflist_def>
+Inserts  one  or  more  blank  lines at dot.
+
+<enddefinition_list>
+
+<p>
+It is much more efficient to insert text at the end of a line rather than
+in the middle. If you want to insert a new line before an existing line,
+create a blank line  first, then type the text into it, rather than
+inserting the new text at the beginning of the existing line and finally
+inserting a line separator. Making the blank line first also makes the
+meaning of the text clearer while you are typing it in.
+
+<x>(^B)
+<p>
+To make a blank line, you can type <key_name>(Return) and then
+<key_name>(^B), but there is a single command character for this:
+<key_name>(^O).
+
+
+<head1>(Command Prefix Arguments\comprefix_sec)
+
+<p>
+Any EMACS command can be given a numeric argument. Some commands interpret
+the argument as a repetition count. For example, giving an argument of 10
+to the <key_name>(^F) command (move forward one character) moves forward 10
+characters. With these commands, specifying no argument is equivalent to
+providing an argument of 1.
+
+<p>
+Some commands care only about whether there is an argument, and not about
+its value; for example, the command <key_name>(^X-^D)
+(<key_name>(describe-word-in-buffer)) attempts to tell you about the word
+in which dot is located. If you provide a prefix argument, it allows
+you to alter the definition for the word using a recursive edit.
+
+<x>(argument-prefix)
+<x>(^U)
+<p>
+The fundamental way of specifying an argument is to use the <key_name>(^U)
+(<key_name>(argument-prefix)) command followed by the digits of the
+argument. Negative arguments are allowed---they often tell a command to
+move or act backwards. A negative argument is entered with <key_name>(^U)
+followed by a minus sign and the digits of the argument value.
+
+<x>(^F)
+<x>(^N)
+<p>
+<key_name>(^U) followed by a character which is neither a digit nor a
+minus sign has the special meaning of multiply by four. It multiplies the
+argument for the next command by four. Two such <key_name>(^U)s multiply
+it by sixteen. Thus, <key_name>(^U-^U-^F) moves forward sixteen
+characters.  This is a good way to move forward quickly, since it moves
+about a quarter of a line on most terminals. Other useful combinations are
+<key_name>(^U-^N) and <key_name>(^U-^U-^N) which move down useful
+fractions of a screen.
+
+<p>
+There are other terminal-dependent ways of specifying arguments. They have
+the same effect as typing <key_name>(^U), but may be easier to type. If
+your terminal has a numeric keypad which sends something recognisably
+different from the ordinary digits, it is possible to customise EMACS to
+allow use of the numeric keypad for specifying arguments.
+
+
+<head2>(Autoarg Mode\autoargmode_sec)
+
+<x>(Autoarg Mode)
+
+<p>
+<newterm>(Autoarg-mode) allows you to specify prefix arguments without
+using <key_name>(^U).  Instead, you type just the digits of the argument.
+Typing digits followed by an ordinary inserting character causes the
+digits themselves to be inserted, but digits followed by a command
+character serve as an argument to the command and are not inserted. A
+minus sign can also be part of an argument, but only at the beginning. If
+you type a minus sign following some digits, both the digits and the minus
+sign are inserted.
+
+<p>
+To use Autoarg Mode, type the command <key_name>(ESC-x auto-arg-mode).
+
+<x>(^G)
+<p>
+Auto-argument digits echo at the bottom of the screen; the first non-digit
+character causes the accumulated digits to be inserted or used  as an
+argument. To insert some digits and nothing else, you must follow the
+digits with a <key_name>(Space), then delete the space character.
+<key_name>(^G) cancels the digits.
+
+
+<head1>(Files\basicfiles_sec)
+
+<x>(^X-^V)
+<x>(Visiting files)
+<x>(^X-^^-s)
+<p>
+To keep any text permanently you must store it in a file. Files are the
+objects that the VMS operating system uses for storing data for
+communication between different programs or to hold information for a
+length of time. To tell EMACS to edit text in a file, choose a filename
+and use the <key_name>(^X-^V) command.  This visits the specified file so
+that its contents appear on the screen in a new buffer and window. You can
+make changes, and then save the file by typing <key_name>(^X-^^-s). This
+makes the changes permanent and  creates a new version of the file.  Note
+that until you save changes to the file, the changes are only inside your
+EMACS; the file itself is not really changed.
+
+<x>(^X-^^-s)
+<p>
+If the file does not exist and you want to create it, just visit it as if
+it did exist. When you save your text with <key_name>(^X-^^-s), 
+EMACS will create the file.
+
+<p>
+Of course, there is a lot more to learn about using files.  See
+<reference>(advfile_sec) for more information on handling files.
+
+
+<head1>(EDT Simulation\edtsim_sec)
+
+<x>(EDTSIM)
+<x>(EDT Simulation)
+
+<p>
+To help you when you start using EMACS, the default bindings contain some
+command sequences which are identical to those implemented in the EDT text
+editor.  The following list contains all of the implemented EDT commands
+with a simple description of what each command does.
+
+<definition_list>
+<deflist_item>(GOLD-digits)
+<x>(GOLD-digits)
+<deflist_def>
+Introduces a command repetition count.
+
+<deflist_item>(PF1)
+<x>(PF1)
+<deflist_def>
+The GOLD key.
+
+<deflist_item>(PF2 (HELP))
+<x>(HELP)
+<deflist_def>
+Gives help and also causes EMACS name completion when a command is
+requested. The help text is obtained from the EDT help library, and
+re-formatted so that it can be displayed from within EMACS.
+
+<deflist_item>(PF3 (FNDNXT))
+<x>(FNDNXT)
+<deflist_def>
+Finds the next occurrence of the current search string.
+
+<deflist_item>(PF4 (DEL-L))
+<x>(DEL-L)
+<deflist_def>
+Deletes to the end of the current line and deletes the line terminator.
+
+<deflist_item>(KP0 (LINE))
+<x>(LINE)
+<deflist_def>
+Moves to the next line in the current direction.
+
+<deflist_item>(KP1 (WORD))
+<x>(WORD)
+<deflist_def>
+Moves to the next word in the current direction.
+
+<deflist_item>(KP2 (EOL))
+<x>(EOL)
+<deflist_def>
+Moves to the end of the current line.
+
+<deflist_item>(KP3 (CHAR))
+<x>(CHAR)
+<deflist_def>
+Moves to the next character in the current direction.
+
+<deflist_item>(KP4 (ADVANCE))
+<x>(ADVANCE)
+<deflist_def>
+Changes the current direction to forwards. This key may also
+to used to terminate a search string.
+
+<deflist_item>(KP5 (BACKUP))
+<x>(BACKUP)
+<deflist_def>
+Changes the current direction to backwards. This key may
+also be used to terminate a search string.
+
+<deflist_item>(KP6 (CUT))
+<x>(CUT)
+<deflist_def>
+Moves the select region to the paste buffer.
+
+<deflist_item>(KP7 (PAGE))
+<x>(PAGE)
+<deflist_def>
+Moves to the next page in the current direction.
+
+<deflist_item>(KP8 (SECT))
+<x>(SECT)
+<deflist_def>
+Scrolls the window by two thirds and moves dot to the selected line.
+
+<deflist_item>(KP. (SELECT))
+<x>(SELECT)
+<deflist_def>
+Sets the start of the select region to the current cursor position.
+
+<deflist_item>(KP, (DEL-C))
+<x>(DEL-C)
+<deflist_def>
+Deletes the character following the current cursor position.
+
+<deflist_item>(KP-- (DEL-W))
+<x>(DEL-W)
+<deflist_def>
+Deletes the word following the current cursor position.
+
+<deflist_item>(GOLD-KP0 (OPEN LINE))
+<x>(OPEN LINE)
+<deflist_def>
+Inserts a line terminator after the current cursor position.
+
+<deflist_item>(GOLD-KP1 (CHGCASE))
+<x>(CHGCASE)
+<deflist_def>
+Inverts the case of the current character or select region.
+
+<deflist_item>(GOLD-KP2 (DEL-EOL))
+<x>(DEL-EOL)
+<deflist_def>
+Deletes the text from dot to the end of the current line.
+
+<deflist_item>(GOLD-KP3 (SPECINS))
+<x>(SPECINS)
+<deflist_def>
+Inserts a character into the buffer. The character inserted
+has the numeric value specified by the command's prefix argument.
+
+<deflist_item>(GOLD-KP4 (BOTTOM))
+<x>(BOTTOM)
+<deflist_def>
+Moves the current cursor position to the bottom of the current buffer.
+
+<deflist_item>(GOLD-KP5 (TOP))
+<x>(TOP)
+<deflist_def>
+Moves the current cursor position to the top of the current buffer.
+
+<deflist_item>(GOLD-KP6 (PASTE))
+<x>(PASTE)
+<deflist_def>
+Inserts the contents of the paste buffer at the current cursor position.
+
+<deflist_item>(GOLD-KP7 (CMD))
+<x>(CMD)
+<deflist_def>
+Requests and executes an EMACS extended command.
+
+<deflist_item>(GOLD-KP9 (REPLACE))
+<x>(REPLACE)
+<deflist_def>
+Replaces a string throughout the rest of the buffer.
+
+<deflist_item>(GOLD-KP. (RESET))
+<x>(RESET)
+<deflist_def>
+Unsets the start of the select region.
+
+<deflist_item>(GOLD-KP, (UND-C))
+<x>(UND-C)
+<deflist_def>
+Undeletes the last character deleted.
+
+<deflist_item>(GOLD-KP- (UND-W))
+<x>(UND-W)
+<deflist_def>
+Undeletes the last word deleted.
+
+<deflist_item>(GOLD-PF3 (FIND))
+<x>(FIND)
+<deflist_def>
+Searches for an occurrence of a string.
+
+<deflist_item>(GOLD-PF4 (UND-L))
+<x>(UND-L)
+<deflist_def>
+Undeletes the last line deleted.
+
+<deflist_item>(Up-arrow (UP))
+<x>(UP)
+<deflist_def>
+Moves the cursor up one line.
+
+<deflist_item>(Down-arrow (DOWN))
+<x>(DOWN)
+<deflist_def>
+Moves the cursor down one line.
+
+<deflist_item>(Left-arrow (LEFT))
+<x>(LEFT)
+<deflist_def>
+Moves the cursor left one character.
+
+<deflist_item>(Right-arrow (RIGHT))
+<x>(RIGHT)
+<deflist_def>
+Moves the cursor right one character.
+
+<enddefinition_list>

@@ -1,0 +1,32 @@
+module print_options
+define verb PRINT
+	parameter P1 label=file,value(required,type=$infile)
+	qualifier AFTER, value(required,type=$datetime)
+	qualifier BURST, placement=positional, value(type=PRINT_BFT)
+	qualifier CHARACTERISTICS, value(required,list)
+	qualifier COPIES, placement=positional, value(required)
+	qualifier DELETE, placement=positional
+	qualifier DEVICE, value(required)
+	qualifier FEED, placement=positional
+	qualifier FLAG, placement=positional, value(type=PRINT_BFT)
+	qualifier FORM, value(required)
+	qualifier HEADER, placement=positional
+	qualifier HOLD
+	qualifier IDENTIFY, default
+	qualifier JOB_COUNT, value(required)
+	qualifier LOWERCASE
+	qualifier NAME, value(required)
+	qualifier NOTE, value(required)
+	qualifier NOTIFY
+	qualifier OPERATOR, value(required)
+	qualifier PASSALL, placement=positional
+	qualifier PRIORITY, value(required)
+	qualifier QUEUE, value(required)
+	qualifier RESTART
+	qualifier SETUP, placement=positional, value(required,list)
+	qualifier SPACE, placement=positional
+	qualifier TRAILER, placement=positional, value(type=PRINT_BFT)
+	qualifier USER, value(required)
+define type PRINT_BFT
+	keyword ALL, default
+	keyword ONE

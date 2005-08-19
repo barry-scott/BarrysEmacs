@@ -1,0 +1,18 @@
+<comment>
+	Profile for the VAX Emacs Mock Lisp Reference Manual
+
+	Adrian Pasciuta, 22-Mar-1990
+<endcomment>
+
+<doctype>(SOFTWARE.REFERENCE)
+
+<profile>
+
+	<element>(docs$src:emacs_mr_front.sdml)
+
+	<element>(docs$src:emacs_mr_functions.sdml)
+	<element>(docs$src:emacs_mr_variables.sdml)
+
+	<index_file>
+
+<endprofile>

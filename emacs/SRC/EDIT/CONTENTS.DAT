@@ -1,0 +1,327 @@
+src contents.dat
+obj ident.dat
+
+src emacs.mms
+src emacs.mak
+src ntemacs.mak
+src edit_mak.com
+src edit_bld.com
+src edit_lnk.com
+src editlnk2.com
+
+src em_mess.com
+
+src unix_mak.
+src unix.mak
+
+src kit.bat
+src m.bat
+src srckit.bat
+src makehelp.bat
+src nt.bat
+
+!
+!	Sources
+!
+obj_vms decc$shr.exe	! copied from sys$library:
+obj_vms cma$tis_shr.exe	! copied from sys$library:
+
+src dbcreate.c
+src db_rtl.c
+src em_time.h
+src errlog.h
+src mll-2-db.c
+
+src winemacs.rc
+src emacs060.reg
+
+src finddlg.cpp
+src mainfrm.cpp
+src stdafx.cpp
+src switchdl.cpp
+src winemacs.cpp
+src winemdoc.cpp
+src winemvw.cpp
+src win_menu.cpp
+src win_opt.cpp
+src win_rtl.cpp
+src win_ui.cpp
+
+src em_timer.h
+src timer.c
+src em_time.c
+
+src ms_mouse.c
+src dos_load.c
+src dos_term.c
+
+src unix_rtl.c
+src unix_trm.c
+src unixcomm.h
+src unixcomm.c
+src em_mess.msg
+src glob_var.c
+src abbrev.h
+src buffer.h
+src display.h
+src emacs.h
+src emacsdlg.h
+src emacswin.h
+src em_gen.h
+src em_mac.h
+src em_rtn.h
+src em_var.h
+src fileio.h
+src fileserv.h
+src finddlg.h
+src funclist.h
+src ibmbios.h
+src journal.h
+src keyboard.h
+src mainfrm.h
+src mlisp.h
+src msdos.h
+src ms_mouse.h
+src ndbm.h
+src os.h
+src os_mac.h
+src os_msdos.h
+src os_unix.h
+src os_vms.h
+src os_win.h
+src profile.h
+src queue.h
+src resource.h
+src search.h
+src stdafx.h
+src switchdl.h
+src syntax.h
+src term.h
+src tt.h
+src undo.h
+src varlist.h
+src vms_comm.h
+src window.h
+src winemacs.h
+src winemdoc.h
+src winemvw.h
+src win_incl.h
+src win_opt.h
+src xwin_icn.h
+
+src abbrev.c
+src abspath.c
+src abspath.b32
+src arith.c
+src buffer.c
+src caseconv.c
+src columns.c
+src dbadd.c
+src dbdel.c
+src dblist.c
+src dbman.c
+src dbprint.c
+src display.c
+src doprint.c
+src dumpjnl.c
+src edoprint.c
+src emacs.c
+src emacsrtl.c
+src emversio.c
+src errlog.c
+src fileio.c
+src fileserv.c
+src fio.c
+src fio.b32
+src function.c
+src glob_var.c
+src journal.c
+src keyboard.c
+src lispfunc.c
+src macros.c
+src membegin.c
+src memend.c
+src mem_man.c
+src metacomm.c
+src minibuf.c
+src mlispars.c
+src mlisproc.c
+src ndbm.c
+src vms_ndbm.b32
+src options.c
+src prompt.c
+src queue.c
+src search.c
+src searchin.c
+src simpcomm.c
+src subproc.c
+src syntax.c
+src term.c
+src trmibmpc.c
+src trm_ansi.c
+src undo.c
+src variable.c
+src varthunk.c
+src vms_comm.c
+src windman.c
+src window.c
+src win_cmd.c
+src win_load.c
+src win_rtl.c
+src win_term.c
+src motiftk.c
+src motiftrm.c
+src motifcmd.c
+
+!
+!	VMS special files
+!
+src em_user.sdl
+src tt.sdl
+src emacs.r32
+src em_gen.req
+src em_mac.req
+src em_rtn.req
+src em_var.req
+
+src term_io.b32
+src start.b32
+src vms_rtl.b32
+
+!
+!	Outputs for ultrix
+!
+obj_ultrix dbgemacs
+obj_ultrix emversio
+
+obj_ultrix emversio.o
+obj_ultrix version.c
+
+obj_ultrix abbrev.o
+obj_ultrix abspath.o
+obj_ultrix arith.o
+obj_ultrix buffer.o
+obj_ultrix caseconv.o
+obj_ultrix columns.o
+obj_ultrix dbman.o
+obj_ultrix display.o
+obj_ultrix doprint.o
+obj_ultrix emacs.o
+obj_ultrix emacsrtl.o
+obj_ultrix emversio.o
+obj_ultrix errlog.o
+obj_ultrix fileio.o
+obj_ultrix fileserv.o
+obj_ultrix fio.o
+obj_ultrix function.o
+obj_ultrix glob_var.o
+obj_ultrix journal.o
+obj_ultrix keyboard.o
+obj_ultrix lispfunc.o
+obj_ultrix macros.o
+obj_ultrix mem_man.o
+obj_ultrix metacomm.o
+obj_ultrix minibuf.o
+obj_ultrix mlispars.o
+obj_ultrix mlisproc.o
+obj_ultrix ndbm.o
+obj_ultrix options.o
+obj_ultrix prompt.o
+obj_ultrix queue.o
+obj_ultrix search.o
+obj_ultrix searchin.o
+obj_ultrix simpcomm.o
+obj_ultrix subproc.o
+obj_ultrix syntax.o
+obj_ultrix term.o
+obj_ultrix trm_ansi.o
+obj_ultrix undo.o
+obj_ultrix unix_rtl.o
+obj_ultrix unix_trm.o
+obj_ultrix variable.o
+obj_ultrix varthunk.o
+obj_ultrix version.o
+obj_ultrix vms_comm.o
+obj_ultrix windman.o
+obj_ultrix window.o
+
+
+!
+!	Outputs for vms
+!
+exe_vms emacs.exe
+exe_vms emacs$display_ansi.exe
+
+obj_vms edit.olb
+obj_vms emacs$display_ansi.exe
+obj_vms emacs.exe
+obj_vms em_user.ada
+obj_vms em_user.for
+obj_vms em_user.mar
+obj_vms em_user.pas
+obj_vms em_user.pli
+obj_vms emacs_ident.dat
+obj_vms emversio.exe
+obj_vms emversio.obj
+obj_vms term_io.obj
+obj_vms trm_ansi.obj
+obj_vms trm_doprint.obj
+obj_vms tt.h
+obj_vms tt.r32
+obj_vms version.c
+obj_vms version.obj
+obj_vms edit.opt
+obj_vms ansi.opt
+
+!
+!	diag_vms files
+!
+obj_vms abbrev.dia
+obj_vms abspath.dia
+obj_vms arith.dia
+obj_vms buffer.dia
+obj_vms caseconv.dia
+obj_vms columns.dia
+obj_vms dbman.dia
+obj_vms display.dia
+obj_vms doprint.dia
+obj_vms emacs.dia
+obj_vms emacsrtl.dia
+obj_vms emversio.dia
+obj_vms errlog.dia
+obj_vms fileio.dia
+obj_vms fileserv.dia
+obj_vms fio.dia
+obj_vms function.dia
+obj_vms glob_var.dia
+obj_vms journal.dia
+obj_vms keyboard.dia
+obj_vms lispfunc.dia
+obj_vms macros.dia
+obj_vms mem_man.dia
+obj_vms metacomm.dia
+obj_vms minibuf.dia
+obj_vms mlispars.dia
+obj_vms mlisproc.dia
+obj_vms vms_ndbm.dia
+obj_vms options.dia
+obj_vms prompt.dia
+obj_vms queue.dia
+obj_vms search.dia
+obj_vms searchin.dia
+obj_vms simpcomm.dia
+obj_vms start.dia
+obj_vms subproc.dia
+obj_vms syntax.dia
+obj_vms term.dia
+obj_vms term_io.dia
+obj_vms trm_ansi.dia
+obj_vms trm_doprint.dia
+obj_vms undo.dia
+obj_vms variable.dia
+obj_vms varthunk.dia
+obj_vms version.dia
+obj_vms vms_comm.dia
+obj_vms vms_rtl.dia
+obj_vms windman.dia
+obj_vms window.dia

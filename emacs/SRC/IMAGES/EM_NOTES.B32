@@ -1,0 +1,1174 @@
+module emacs_vaxnotes
+	(
+	ident = 'V4.1-0',
+	addressing_mode( external=long_relative, nonexternal=long_relative )
+	) =
+begin
+!
+!	EMACS VAXnotes interface.
+!
+!	Copyright (c) 1986
+!	Barry A. Scott and Nick Emery
+!
+require 'images$src:notes$itemdef';
+require 'edit$obj:em_user';
+library 'target_library:starlet';
+
+forward routine
+	emacs$vaxnotes,
+	emacs_vaxnotes,
+	emacs_notes_handler,
+	emacs_putmsg_rtn,
+	check_arguments,
+	build_in_item_list,
+	build_out_item_list,
+	execute_function,
+	return_items,
+	report_message,
+	get_string,
+	get_number,
+	get_context;
+macro
+	$call_back( rtn, a, b, c, d, e ) =
+		(.call_back_routine)
+		(
+		%name( emacs__k_, rtn )
+		%if not %null( a ) %then ,a %fi
+		%if not %null( b ) %then ,b %fi
+		%if not %null( c ) %then ,c %fi
+		%if not %null( d ) %then ,d %fi
+		%if not %null( e ) %then ,e %fi
+		)
+	%,
+	$chkerr( expr ) =
+		if not (status = (expr)) then return .status
+	%,
+	$message( str )[] =
+		report_message( .call_back_routine, emacs__k_message,
+				uplit byte (%ascic str)
+				%if not %null( %remaining )
+				%then	, %remaining %fi
+				)
+	%,
+	$error( str )[] =
+		report_message( .call_back_routine, emacs__k_error,
+				uplit byte (%ascic str)
+				%if not %null( %remaining )
+				%then	, %remaining %fi
+				)
+	%;
+
+macro
+	w_size		= 0,0,16,0 %,	! the size of the item buffer
+	b_item_type	= 2,0,8,0 %;	! the type of the item, string, time etc
+
+!
+!	Change noop to have a value of zero so that it is simple to
+!	test for. Also change the value of notes$k_min_item to reflect
+!	this hack.
+!	And just to be safe do some compiletime checks on the values
+!
+%if notes$k_min_item neq 1
+%then
+	%error('emacs vaxnotes assumed that notes$k_min_item is 1')
+%fi
+undeclare
+	notes$k_noop, notes$k_min_item;
+literal
+	notes$k_noop	= 0,
+	notes$k_min_item= 0;
+literal
+	s_item_info	= 4,
+
+	k_string 	= 255,		! Max allowed size of most strings
+	k_text	 	= 1024,		! String size for note text parts
+	k_max		= %x'7fff',	! Largest size string we'll handle
+	k_date		= 8,		! Size of VMS quadword for date/time
+	k_flag		= 0,		! Indicates a flag item (with no value)
+
+	k_type_min	= 1,
+	k_type_context	= 1,
+	k_type_string	= 2,
+	k_type_integer	= 3,
+	k_type_time	= 4,
+	k_type_seen	= 5,
+	k_type_flag	= 6,
+	k_type_noop	= 7,
+	k_type_max	= 7;
+macro
+	_init_info[ item, size, type ] =
+	[%name( notes$k_, item), w_size] = size,
+	[%name( notes$k_, item), b_item_type] = %name( k_type_, type )
+	%;
+own
+	item_info	: PSECT ($PLIT$)
+			blockvector [notes$k_max_item+1,s_item_info,byte]
+	preset
+	(
+	_init_info(
+	noop,			k_flag,		noop,
+	nosignal,		k_flag,		flag,
+	notefile_context,	%upval,		context,
+	class_context,		%upval,		context,
+	entry_context,		%upval,		context,
+	keyword_context,	%upval,		context,
+	note_context,		%upval,		context,
+	profile_context,	%upval,		context,
+	server_context,		%upval,		context,
+	user_context,		%upval,		context,
+	class_name,		k_string,	string,
+	class_new_name,		k_string,	string,
+	continue,		k_flag,		flag,
+	entry_name,		k_string,	string,
+	entry_new_name,		k_string,	string,
+	entry_user_area,	k_string,	string,
+	keyword_name,		k_string,	string,
+	keyword_new_name,	k_string,	string,
+	note_all_responses,	k_flag,		flag,
+	note_author,		k_string,	string,
+	note_back_note,		k_flag,		flag,
+	note_back_response,	k_flag,		flag,
+	note_before_time,	k_date,		time,
+	note_blink_id,		k_string,	string,
+	note_blink_title,	k_string,	string,
+	note_blink_uid,		%upval,		integer,
+	note_create_time,	k_date,		time,
+	note_hint_get_text,	k_flag,		flag,
+	note_hidden,		%upval,		integer,
+	note_id,		k_string,	string,
+	note_mark_seen,		k_flag,		flag,
+	note_next_note,		k_flag,		flag,
+	note_next_response,	k_flag,		flag,
+	note_next_unseen,	k_flag,		flag,
+	note_numrecords,	%upval,		integer,
+	note_numresponses,	%upval,		integer,
+	note_pen_name,		k_string,	string,
+	note_search_string,	k_string,	string,
+	note_search_title,	k_string,	string,
+	note_since_time,	k_date,		time,
+	note_title,		k_string,	string,
+	note_uid,		%upval,		integer,
+	note_unseen,		%upval,		integer,
+	note_user_area,		k_string,	string,
+	note_writelock,		%upval,		integer,
+	notefile_create,	k_flag,		flag,
+	notefile_create_time,	k_date,		time,
+	notefile_default_name,	nam$c_maxrss,	string,
+	notefile_entrytotal,	%upval,		integer,
+	notefile_file_name,	nam$c_maxrss,	string,
+	notefile_format,	%upval,		integer,
+	notefile_high_uid,	%upval,		integer,
+	notefile_lastrev,	k_date,		time,
+	notefile_moderate,	%upval,		integer,
+	notefile_moderator,	k_string,	string,
+	notefile_notice,	k_string,	string,
+	notefile_numnotes,	%upval,		integer,
+	notefile_related_name,	nam$c_maxrss,	string,
+	notefile_restricted,	%upval,		integer,
+	notefile_result_spec,	nam$c_maxrss,	string,
+	notefile_title,		k_string,	string,
+	notefile_transport,	k_string,	string,	! TBD
+	notefile_user_area,	k_string,	string,
+	profile_auto_dir,	%upval,		integer,
+	profile_auto_unseen,	%upval,		integer,
+	profile_class_name,	k_string,	string,
+	profile_editor,		k_string,	string,
+	profile_editor_spawn,	%upval,		integer,
+	profile_pen_name,	k_string,	string,
+	profile_print,		k_string,	string,
+	profile_temporary,	k_flag,		flag,
+	seen_map,		k_max,		seen,
+	text_string,		k_text,		string,
+	text_end,		k_flag,		flag,
+	text_type,		%upval,		integer,
+	user_create_keyword,	%upval,		integer,
+	user_mail_addr,		k_string,	string,
+	user_moderate,		%upval,		integer,
+	user_name,		k_string,	string,
+	user_new_name,		k_string,	string,
+	user_new_nodename,	k_string,	string,
+	user_nodename,		k_string,	string,
+	user_access_list,	k_string,	string,
+	user_write_bypass,	%upval,		integer,
+	user_user_area,		k_string,	string,
+	user_uid,		%upval,		integer,
+	user_noaccess,		%upval,		integer,
+	note_x_keyword,		0,		flag,	! Unused by the interface integer,
+	keyword_x_note,		0,		flag,
+	class_x_entry,		0,		flag,
+	entry_x_class,		0,		flag,
+	entry_x_keyword,	0,		flag,
+	delif0,			k_flag,		flag,
+	unientry,		k_flag,		flag,
+	entry_unseen_est,	%upval,		integer,
+	entry_last_status,	%upval,		integer,
+	note_can_reply,		%upval,		integer,
+	note_before_time_a,	k_string,	string,
+	note_create_time_a,	k_string,	string,
+	note_since_time_a,	k_string,	string,
+	notefile_create_time_a,	k_string,	string,
+	notefile_lastrev_a,	k_string,	string,
+	note_hint_get_keyword,	k_flag,		flag,
+	keyword_hint_get_note,	k_flag,		flag
+	)
+	);
+external routine
+	notes$user_begin,
+	notes$user_end,
+	notes$user_add,
+	notes$user_delete,
+	notes$user_get,
+	notes$user_modify,
+	notes$profile_begin,
+	notes$profile_end,
+	notes$profile_get,
+	notes$profile_modify,
+	notes$note_begin,
+	notes$note_end,
+	notes$note_add,
+	notes$note_delete,
+	notes$note_get,
+	notes$note_modify,
+	notes$note_add_text,
+	notes$note_get_text,
+	notes$note_get_keyword,
+	notes$notefile_begin,
+	notes$notefile_end,
+	notes$notefile_get_info,
+	notes$notefile_modify,
+	notes$notefile_list_begin,
+	notes$notefile_list,
+	notes$keyword_begin,
+	notes$keyword_end,
+	notes$keyword_add,
+	notes$keyword_delete,
+	notes$keyword_get,
+	notes$keyword_modify,
+	notes$keyword_get_note,
+	notes$entry_begin,
+	notes$entry_end,
+	notes$entry_add,
+	notes$entry_delete,
+	notes$entry_get,
+	notes$entry_modify,
+	notes$entry_get_class,
+	notes$entry_get_keyword,
+	notes$class_begin,
+	notes$class_end,
+	notes$class_add,
+	notes$class_delete,
+	notes$class_get,
+	notes$class_modify,
+	notes$class_get_entry;
+
+literal
+	first_function		= 1,
+	last_function		= 47,
+	info_notefile_ctx	= 0,
+	info_class_ctx		= 1,
+	info_entry_ctx		= 2,
+	info_keyword_ctx	= 3,
+	info_note_ctx		= 4,
+	info_profile_ctx	= 5,
+	info_user_ctx		= 6;
+
+own
+	info_tab	: vector[(last_function+1)*2,long]
+				addressing_mode( general )
+		initial
+		(
+		0,			0,
+		notes$user_begin,	info_user_ctx,
+		notes$user_end,		info_user_ctx,
+		notes$user_add,		info_user_ctx,
+		notes$user_delete,	info_user_ctx,
+		notes$user_get,		info_user_ctx,
+		notes$user_modify,	info_user_ctx,
+		notes$profile_begin,	info_profile_ctx,
+		notes$profile_end,	info_profile_ctx,
+		notes$profile_get,	info_profile_ctx,
+		notes$profile_modify,	info_profile_ctx,
+		notes$note_begin,	info_note_ctx,
+		notes$note_end,		info_note_ctx,
+		notes$note_add,		info_note_ctx,
+		notes$note_delete,	info_note_ctx,
+		notes$note_get,		info_note_ctx,
+		notes$note_modify,	info_note_ctx,
+		notes$note_add_text,	info_note_ctx,
+		notes$note_get_text,	info_note_ctx,
+		notes$note_get_keyword,	info_note_ctx,
+		notes$notefile_begin,	info_notefile_ctx,
+		notes$notefile_end,	info_notefile_ctx,
+		notes$notefile_get_info,info_notefile_ctx,
+		notes$notefile_modify,	info_notefile_ctx,
+		notes$notefile_list_begin,	info_notefile_ctx,
+		notes$notefile_list,	info_notefile_ctx,
+		notes$keyword_begin,	info_keyword_ctx,
+		notes$keyword_end,	info_keyword_ctx,
+		notes$keyword_add,	info_keyword_ctx,
+		notes$keyword_delete,	info_keyword_ctx,
+		notes$keyword_get,	info_keyword_ctx,
+		notes$keyword_modify,	info_keyword_ctx,
+		notes$keyword_get_note,	info_keyword_ctx,
+		notes$entry_begin,	info_entry_ctx,
+		notes$entry_end,	info_entry_ctx,
+		notes$entry_add,	info_entry_ctx,
+		notes$entry_delete,	info_entry_ctx,
+		notes$entry_get,	info_entry_ctx,
+		notes$entry_modify,	info_entry_ctx,
+		notes$entry_get_class,	info_entry_ctx,
+		notes$entry_get_keyword,info_entry_ctx,
+		notes$class_begin,	info_class_ctx,
+		notes$class_end,	info_class_ctx,
+		notes$class_add,	info_class_ctx,
+		notes$class_delete,	info_class_ctx,
+		notes$class_get,	info_class_ctx,
+		notes$class_modify,	info_class_ctx,
+		notes$class_get_entry,	info_class_ctx
+		);
+literal
+	max_context		= 32,
+	max_items		= 29,
+	initial_area_size	= 10000;
+
+own
+	callback_routine	: long,
+
+	notefile_ctx	: vector[max_context+1,long],
+	class_ctx	: vector[max_context+1,long],
+	entry_ctx	: vector[max_context+1,long],
+	keyword_ctx	: vector[max_context+1,long],
+	note_ctx	: vector[max_context+1,long],
+	profile_ctx	: vector[max_context+1,long],
+	user_ctx	: vector[max_context+1,long],
+	seen_map	: blockvector[max_context+1,8,byte],
+	in_use,
+	in_item_list	: $itmlst_decl( items = max_items ),
+	out_item_list	: $itmlst_decl( items = max_items ),
+	out_item_sizes	: vector[max_items,word],
+
+	in_data_area	: long,
+	in_data_size	: initial(0),
+	out_data_area	: long,
+	out_data_size	: initial(0),
+	out_data_desc	: blockvector[max_items,8,byte],
+
+	initialised	: initial(0);
+literal
+	arg_function	= 1,
+	arg_context	= 2,
+	arg_num_in_items= 3,
+	arg_first_item	= 4,
+	arg_first_value	= 5,
+
+	arg_min_args	= 3;
+switches
+	zip;
+%sbttl	'emacs$notes'
+!
+! status = (emacs-notes-interface routine context num-in-items [item  value]*)
+!				   arg-1   arg-2   arg-3 arg-4
+!
+global routine emacs$vaxnotes
+		(
+		call_back_routine,
+		ctx	: ref block[,byte],
+		restore
+		)
+			=
+	begin
+	emacs_vaxnotes( .call_back_routine, .ctx, .restore );
+	return ss$_normal;
+	end;
+
+literal
+	buffer_name_size	= 128;
+own
+	new_msgvec	: vector[10,long],
+	original_buffer_name	: vector[buffer_name_size,byte];
+
+routine emacs_notes_handler
+		(
+		sig	: ref block[,byte],
+		mech	: ref block[,byte]
+		)
+			=
+	begin
+	macro
+		call_back_routine = callback_routine %;
+	local
+		desc		: vector[2,long]
+			initial( buffer_name_size, original_buffer_name ),
+		temp;
+
+	!
+	!	If its an unwind resignal it
+	!
+	if .sig[ chf$l_sig_name ] eql ss$_unwind then return ss$_resignal;
+
+	!
+	!	Put the message into the notes-message buffer
+	!
+	new_msgvec[0] = (.sig[ chf$l_sig_args ] - 2);
+	ch$copy
+	(
+	.new_msgvec[0]*4, sig[ chf$l_sig_name ], 0,
+	%allocation( new_msgvec ) - 4, new_msgvec[1]
+	);
+	(new_msgvec[0])<16,16,0> = %x'f';
+
+	!
+	!	Find out what the current buffer is called
+	!
+	$call_back( dot, temp, desc, desc[0] );
+
+	!
+	!	go to the end of buffer notes-messages
+	!	and set-mark there
+	!
+	$call_back( use_buffer, %ascid 'notes-messages' );
+	$call_back( goto_character, 9999999 );
+	$call_back( set_mark, 1 );
+
+	!
+	!	Use $putmsg to format up the signal in a nice way
+	!
+	$putmsg
+	(
+	msgvec	= new_msgvec[0],
+	facnam	= %ascid 'NOTES',
+	actrtn	= emacs_putmsg_rtn
+	);
+	!
+	!	Move to end of buffer
+	!
+	$call_back( goto_character, 9999999 );
+
+	!
+	!	Go back to the original buffer
+	!
+	$call_back( use_buffer, desc );
+
+	!
+	!	If its a success or info ignore it
+	!	or if its a warning we can continue
+	!
+	if .sig[ chf$l_sig_name ] 
+	or (.sig[ chf$l_sig_name ] and sts$m_severity) eql sts$k_warning
+	or (.sig[ chf$l_sig_name ] geq ss$_tbit)
+	then
+		return ss$_continue;
+
+	!
+	!	Any problem status get returned to the user
+	!
+%if %declared( %quote chf$l_mch_savr0 ) %then
+	mech[ chf$l_mch_savr0 ] = .sig[ chf$l_sig_name ];
+%else
+	mech[ chf$il_mch_savr0_low ] = .sig[ chf$l_sig_name ];
+%fi
+
+	$unwind();
+	return ss$_normal;
+	end;
+
+routine emacs_putmsg_rtn
+		(
+		message_desc	: ref block[,byte]
+		) =
+	begin
+	macro
+		call_back_routine = callback_routine %;
+
+	$call_back( insert_string, .message_desc );
+	$call_back( insert_character, 'J'-'@' );
+
+	return 0;	! stop $putmsg printing the text
+	end;
+routine emacs_vaxnotes
+		(
+		call_back_routine,
+		ctx		: ref vector[,long],
+		restore
+		)
+			=
+	begin
+	local
+		status,
+		func_status,
+		function,
+		user_context,
+		num_in_items,
+		context,
+		arg_count,
+		item_count,
+		items		: vector[ max_items, long ];
+
+	callback_routine = .call_back_routine;
+
+	if not .initialised
+	then
+		begin
+%inform( 'need to have a SET_CONTEXT call back' )
+!		if .ctx eql 0
+!		then
+!			begin
+!			$chkerr( $call_back( allocate, 4*%upval, ctx ) );
+!			$chkerr( $call_back( set_context, .ctx ) );
+!			ctx[0] = 0; ctx[1] = 0; ctx[2] = 0; ctx[3] = 0;
+!			end;
+!
+!		in_data_area = 0; ! .ctx[0];
+!		in_data_size = 0; ! .ctx[1];
+!		out_data_area = 0; ! .ctx[2];
+!		out_data_size = 0; ! .ctx[3];
+
+		$chkerr( $call_back( allocate, initial_area_size, in_data_area ) ) ;
+		$chkerr( $call_back( allocate, initial_area_size, out_data_area ) ) ;
+
+		in_data_size = initial_area_size;
+		out_data_size = initial_area_size;
+
+		initialised = 1;
+		end;
+
+	!
+	!	Find out how many args there are
+	!	And make sure that there is an even number of them
+	!
+	$chkerr( $call_back( arg_count, arg_count ) );
+	$chkerr( $call_back( check_args, arg_min_args,
+		min( .arg_count or 1, arg_min_args + max_items*2 ) ));
+	item_count = (.arg_count - arg_min_args)/2;
+
+	!
+	!	Fetch function and context numbers
+	!	and all the 
+	!
+	$chkerr( $call_back( numeric_arg, arg_function, function ) );
+	$chkerr( $call_back( numeric_arg, arg_num_in_items, num_in_items ) );
+	$chkerr( get_context( .call_back_routine, arg_context, user_context ) );
+
+	!
+	!	Collect all the item codes into the items vector
+	!
+	incr arg from 0 to .item_count - 1
+	do
+		$chkerr( $call_back( numeric_arg,
+					arg_first_item+.arg*2, items[.arg] ) );
+
+	!
+	!	Check the item codes for validity
+	!
+	$chkerr
+	(
+	check_arguments( .call_back_routine, .function, items, .item_count )
+	);
+
+	!
+	!	Check the interlock
+	!
+	if .in_use
+	then
+		begin
+		$error( 'Recursive call to NOTES' );
+		return ss$_badparam;
+		end;
+	!
+	!	Now build the input and output item lists
+	!
+	in_use = 1;	! lock out recursive use of notes
+
+	if .num_in_items gtr .item_count
+	then
+		num_in_items = .item_count;
+
+	status = build_in_item_list( .call_back_routine, items, .num_in_items );
+
+	in_use = 0;	! release lock now
+
+	if not .status then return .status;
+
+	$chkerr( build_out_item_list
+		( .call_back_routine, items, .num_in_items, .item_count ) );
+
+	!
+	!	Work out which context longword is required
+	!
+	case .info_tab[ .function*2 + 1 ]
+	from 0 to info_user_ctx
+	of
+	set
+	[info_notefile_ctx]:	context = notefile_ctx[ .user_context ];
+	[info_class_ctx]:	context = class_ctx[ .user_context ];
+	[info_entry_ctx]:	context = entry_ctx[ .user_context ];
+	[info_keyword_ctx]:	context = keyword_ctx[ .user_context ];
+	[info_note_ctx]:	context = note_ctx[ .user_context ];
+	[info_profile_ctx]:	context = profile_ctx[ .user_context ];
+	[info_user_ctx]:	context = user_ctx[ .user_context ];
+	tes;
+	!
+	!	Perform the function
+	!
+	func_status = execute_function( .function, .context );
+
+	!
+	!	Return results
+	!
+	$chkerr( return_items
+			( .call_back_routine, .func_status,
+					items, .num_in_items, .item_count ) );
+
+	return ss$_normal;
+	end;
+routine check_arguments
+	(
+	call_back_routine,
+	function,
+	items		: ref vector[,long],
+	item_count
+	)
+		=
+	begin
+	if .function lss first_function
+	or .function gtr last_function
+	then
+		begin
+		$error( 'Function value !SL out of range', .function );
+		return ss$_badparam;
+		end;
+
+	incr index from 0 to .item_count - 1
+	do
+		if (.items[ .index ] lss notes$k_min_item
+		or .items[ .index ] gtr notes$k_max_item)
+		then
+			begin
+			$error( 'Item code !SL value out of range', .items[ .index ] );
+			return ss$_badparam;
+			end;
+
+	return ss$_normal;
+	end;
+%sbttl	'Macros for build_item_lists'
+macro
+	$in_item( buf, size ) =
+		begin
+		in_item_list[ .cur_in_item, itm$w_bufsiz ] = size;
+		in_item_list[ .cur_in_item, itm$w_itmcod ] = .code;
+		in_item_list[ .cur_in_item, itm$l_bufadr ] = buf;
+		cur_in_item = .cur_in_item + 1;
+		end
+	%,
+	$out_item( buf, size, ret_len ) =
+		begin
+		out_item_list[ .cur_out_item, itm$w_bufsiz ] = size;
+		out_item_list[ .cur_out_item, itm$w_itmcod ] = .code;
+		out_item_list[ .cur_out_item, itm$l_bufadr ] = buf;
+		%if not %null( ret_len )
+		%then
+			out_item_list[ .cur_out_item, itm$l_retlen ] = ret_len;
+		%fi
+		cur_out_item = .cur_out_item + 1;
+		end
+	%;
+%sbttl 'build_in_item_list'
+routine build_in_item_list
+		(
+		call_back_routine,
+		items			: ref vector[,long],
+		item_count
+		)
+			=
+	begin
+	local
+		status,
+		in_buf,
+		in_free,
+		used_size,
+		cur_in_item;
+
+	cur_in_item = 0;
+
+	ch$fill( 0, %allocation( in_item_list ), in_item_list );
+
+	in_buf = .in_data_area;
+	in_free = .in_data_size;
+	used_size = 0;
+
+	incr index from 0 to .item_count - 1
+	do
+		begin
+		local
+			code;
+
+		code = .items[ .index ];
+
+		case .item_info[ .code, b_item_type ]
+		from k_type_min to k_type_max of
+		set
+		[k_type_context]:
+			begin
+			local
+				ctx_vec		: ref vector[,long],
+				ctx_num;
+
+			$chkerr( get_context
+			( .call_back_routine, arg_first_value + .index*2, ctx_num ) );
+
+			ctx_vec =
+				(case .code
+				from notes$k_notefile_context
+				to notes$k_user_context
+				of set
+				[notes$k_notefile_context]:	notefile_ctx;
+				[notes$k_class_context]:	class_ctx;
+				[notes$k_entry_context]:	entry_ctx;
+				[notes$k_keyword_context]:	keyword_ctx;
+				[notes$k_note_context]:		note_ctx;
+				[notes$k_profile_context]:	profile_ctx;
+				[notes$k_user_context]:		user_ctx;
+				[inrange,outrange]:		0;
+				tes);
+			$in_item( ctx_vec[.ctx_num], 4 );
+			end;
+		[k_type_string]:
+			begin
+			if .item_info[ .code, w_size ] gtr .in_free
+			then
+				begin
+				$error( 'Emacs NOTES in_data_area too small' );
+				return ss$_insfmem;
+				end;
+
+			$chkerr( get_string
+				(
+				.call_back_routine,
+				arg_first_value + .index*2,
+				.in_buf,
+				.item_info[ .code, w_size ],
+				used_size
+				)
+				);
+			$in_item( .in_buf, .used_size );
+			in_buf = .in_buf + .used_size;
+			in_free = .in_free - .used_size;
+			end;
+
+		[k_type_integer]:
+			begin
+			if %upval gtr .in_free
+			then
+				begin
+				$error( 'Emacs NOTES in_data_area too small' );
+				return ss$_insfmem;
+				end;
+
+			$chkerr( get_number
+				(
+				.call_back_routine,
+				arg_first_value + .index*2,
+				.in_buf
+				)
+				);
+			$in_item( .in_buf, %upval );
+			in_buf = .in_buf + %upval;
+			in_free = .in_free - %upval;
+			end;
+
+		[k_type_time]:
+			begin
+			local
+				desc	: vector[2,long],
+				buf	: vector[%charcount('19-Jan-1986 13:47:51.05'),byte];
+
+			if k_date gtr .in_free
+			then
+				begin
+				$error( 'Emacs NOTES in_data_area too small' );
+				return ss$_insfmem;
+				end;
+
+			desc[1] = buf;
+
+			$chkerr( get_string
+				(
+				.call_back_routine,
+				arg_first_value + .index*2,
+				buf,
+				%allocation( buf ),
+				desc[0]
+				)
+				);
+			$chkerr( $bintim( timbuf=desc[0], timadr=.in_buf ) );
+			$in_item( .in_buf, k_date );
+			in_buf = .in_buf + k_date;
+			in_free = .in_free - k_date;
+			end;
+
+		[k_type_seen]:
+			begin
+			local
+				desc		: ref block[,byte],
+				seen_num;
+
+			$chkerr( get_context
+				( .call_back_routine,
+					arg_first_value + .index*2, seen_num ) );
+	
+			desc = seen_map[ .seen_num, 0,0,0,0 ];
+			if .desc[ dsc$a_pointer ] eql 0
+			then
+				begin
+				!
+				!	Allocate the buffer for the seen map
+				!
+				$chkerr( $call_back( allocate, k_max, desc[ dsc$a_pointer ] ) );
+				desc[ dsc$w_length ] = 0;
+				end;
+
+			$in_item( .desc[ dsc$a_pointer ], .desc[ dsc$w_length ] );
+			end;
+
+		[k_type_flag]:
+			$in_item( 0, 0 );
+
+		[k_type_noop]:	;	! ignore a noop
+		[inrange,outrange]:
+			begin
+			$error( 'Item !SL is not an input item', .code );
+			return ss$_badparam;
+			end;
+		tes;
+		end;
+
+	return ss$_normal;
+	end;
+%sbttl 'build_out_item_list'
+routine build_out_item_list
+		(
+		call_back_routine,
+		items			: ref vector[,long],
+		num_in_items,
+		item_count
+		)
+			=
+	begin
+	local
+		status,
+		out_buf,
+		out_free,
+		used_size,
+		cur_out_item;
+
+	cur_out_item = 0;
+
+	ch$fill( 0, %allocation( out_item_list ), out_item_list );
+
+	out_buf = .out_data_area;
+	out_free = .out_data_size;
+	used_size = 0;
+
+	incr index from .num_in_items to .item_count - 1
+	do
+		begin
+		local
+			code,
+			item_type,
+			item_size;
+
+		code = .items[ .index ];
+		item_type = .item_info[ .code, b_item_type ];
+		item_size = .item_info[ .code, w_size ];
+
+		case .item_type
+		from k_type_min to k_type_max of
+		set
+		[k_type_string]:
+			begin
+			if .item_size gtr .out_free
+			then
+				begin
+				$error( 'Emacs NOTES out_data_area too small' );
+				return ss$_insfmem;
+				end;
+
+			out_data_desc[ .index, dsc$w_length ] = .item_size;
+			out_data_desc[ .index, dsc$a_pointer ] = .out_buf;
+
+			$out_item
+			(
+			.out_buf, .item_size,
+			out_data_desc[ .index, dsc$w_length ]
+			);
+			out_buf = .out_buf + .item_size;
+			out_free = .out_free - .item_size;
+			end;
+
+		[k_type_integer,
+		 k_type_time]:
+			begin
+			if .item_size gtr .out_free
+			then
+				begin
+				$error( 'Emacs NOTES out_data_area too small' );
+				return ss$_insfmem;
+				end;
+
+			out_data_desc[ .index, dsc$w_length ] = .item_size;
+			out_data_desc[ .index, dsc$a_pointer ] = .out_buf;
+
+			$out_item
+			(
+			.out_buf, .item_size,
+			0		! no return size they are fixed
+			);
+			out_buf = .out_buf + .item_size;
+			out_free = .out_free - .item_size;
+			end;
+
+		[k_type_seen]:
+			begin
+			local
+				desc		: ref block[,byte],
+				seen_num;
+
+			$chkerr( get_context
+				( .call_back_routine,
+					arg_first_value + .index*2, seen_num ) );
+	
+			desc = seen_map[ .seen_num, 0,0,0,0 ];
+			if .desc[ dsc$a_pointer ] eql 0
+			then
+				begin
+				!
+				!	Allocate the buffer for the seen map
+				!
+				$chkerr( $call_back( allocate, k_max, desc[ dsc$a_pointer ] ) );
+				desc[ dsc$w_length ] = k_max;
+				end;
+
+			$out_item
+			(
+			.desc[ dsc$a_pointer ], k_max,
+			desc[ dsc$w_length ]
+			);
+			end;
+
+		[k_type_noop]:	;	! ignore noop items
+		[inrange,outrange]:
+			begin
+			$error( 'Item !SL is not an output item', .code );
+			return ss$_badparam;
+			end;
+		tes;
+		end;
+
+	return ss$_normal;
+	end;
+%sbttl 'execute_function'
+routine execute_function
+	(
+	function,
+	context
+	)
+		=
+	begin
+	enable
+		emacs_notes_handler;
+
+	(.info_tab[ .function*2 ])( .context, in_item_list, out_item_list )
+	end;
+%sbttl 'return_items'
+routine return_items
+	(
+	call_back_routine,
+	func_status,
+	items		: ref vector[,long],
+	num_in_items,
+	item_count
+	)
+		=
+	begin
+	literal
+		notes$_openin	= %x'3fb109a';
+	literal
+		msg_buf_size	= 132;
+	local
+		status,
+		desc		: vector[2,long],
+		buf		: vector[msg_buf_size,byte];
+
+	!
+	!	First return status
+	!
+	selectone .func_status
+	of
+	set
+	[notes$_invitmcod]:
+		begin
+		func_status = (.func_status and sts$m_severity) or sts$k_warning;
+		$chkerr( $call_back( numeric_result, .func_status ) );
+		end;
+	[notes$_openin]:
+		begin
+		$chkerr( $call_back( numeric_result, .new_msgvec[4] ) );
+		func_status = 1;
+		end;
+	[otherwise]:
+		$chkerr( $call_back( numeric_result, .func_status ) );
+	tes;
+
+	!
+	!	Only return items if the operation succeeded
+	!
+	if not .func_status
+	then
+		return ss$_normal;
+
+	!
+	!	Now return all the output items
+	!
+	incr index from .num_in_items to .item_count - 1
+	do
+		begin
+		local
+			code,
+			item_code;
+
+		code = .items[ .index ];
+		item_code = .item_info[ .code, b_item_type ];
+
+		case .item_code
+		from k_type_min to k_type_max of
+		set
+		[k_type_string]:
+			begin
+			$chkerr( $call_back
+				(
+				return_string_to_param,
+				arg_first_value + .index*2,
+				out_data_desc[ .index, 0,0,0,0 ]
+				) );
+			end;
+
+		[k_type_integer]:
+			begin
+			$chkerr( $call_back
+				(
+				return_number_to_param,
+				arg_first_value + .index*2,
+				..out_data_desc[ .index, dsc$a_pointer ]
+				) );
+			end;
+
+		[k_type_time]:
+			begin
+			local
+				desc	: vector[2,long],
+				buf	: vector[%charcount('19-Jan-1986 13:47:51.05'),byte],
+				status;
+
+			desc[0] = %allocation( buf );
+			desc[1] = buf;
+
+			$chkerr( $asctim(
+				timbuf=desc[0], timlen=desc[0],
+				timadr=.out_data_desc[ .index, dsc$a_pointer ]
+				) );
+
+			$chkerr( $call_back
+				(
+				return_string_to_param,
+				arg_first_value + .index*2,
+				desc[0]
+				) );
+			end;
+
+		[inrange,outrange]:
+			;	! nothing to do
+		tes;
+		end;
+
+	return ss$_normal;
+	end;
+literal
+	fao_buf_size	= 200;
+
+routine report_message
+		(
+		call_back_routine,
+		type,
+		string		: ref vector[,byte],
+		args
+		) =
+	begin
+	local
+		status,
+		control_desc	: vector[2,long],
+		string_desc	: vector[2,long],
+		fao_buffer	: vector[fao_buf_size,byte];
+
+	control_desc[0] = .string[0];
+	control_desc[1] = string[1];
+
+	string_desc[0] = fao_buf_size;
+	string_desc[1] = fao_buffer;
+
+	status = $faol(	ctrstr = control_desc[0], outlen = string_desc[0],
+			outbuf = string_desc[0], prmlst = args );
+	if not .status then return .status;
+
+	(.call_back_routine)( .type, string_desc[0] )
+	end;
+routine get_string
+	(
+	call_back_routine,
+	argument,
+	buffer,
+	buffer_size,
+	actual_size
+	)
+		=
+	begin
+	local
+		desc	: vector[2,long];
+
+	desc[0] = .buffer_size;
+	desc[1] = .buffer;
+
+	return $call_back( string_arg, .argument, desc, .actual_size );
+	end;
+routine get_number
+	(
+	call_back_routine,
+	argument,
+	ref_number
+	)
+		=
+	begin
+	return $call_back( numeric_arg, .argument, .ref_number );
+	end;
+routine get_context
+	(
+	call_back_routine,
+	argument,
+	ref_context
+	)
+		=
+	begin
+	local
+		status;
+
+	$chkerr( get_number( .call_back_routine, .argument, .ref_context ) );
+	if ..ref_context lss 1 or ..ref_context gtr max_context
+	then
+		begin
+		$error( 'Context number !SL is not valid', ..ref_context );
+		return ss$_badparam;
+		end;
+
+	return ss$_normal;
+	end;
+end
+eludom

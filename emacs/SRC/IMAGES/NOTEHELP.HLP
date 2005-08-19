@@ -1,0 +1,3855 @@
+1 ADD (A)
+
+ Adds new elements to Emacs Notes conferences or your Notebook.
+
+2 ENTRY (Ae)
+
+ Adds a  new entry for a conference to your Notebook. This tells Emacs
+ Notes  that  you  want  to  keep  track  of  the  discussion  in this
+ conference.
+
+  Binding:
+	Ae
+
+  Format:
+	Notefile name:		notefile-name
+	Entry name:		entry-name
+	Classes:		class-name[,...]
+	Personal name:		personal-name
+
+3 Parameters
+Entry name:	entry-name
+
+ Specifies the entry name for a conference you add to your Notebook.
+
+ If you  specify a conference name as the parameter with the ADD ENTRY
+ command,  Emacs  Notes uses the conference name as the entry name. If
+ you  leave  this  field  blank it is defaulted to the filename of the
+ notefile spec.
+
+ If you  do  not  want  to  use the conference name as the entry name,
+ specify  the  entry  name as the parameter with the ADD ENTRY command
+ and specify the conference name with the /FILE qualifier.
+
+ To add  a conference on a remote node, you must include the node name
+ in the notefile specification.
+
+Classes: class-name[,...]
+
+ Names the  Notebook classes to which the entry is to belong. Separate
+ multiple class names with commas. The default is the current class.
+
+ You must separate names with commas.
+
+ You can  also  use  the CLASSES qualifier to add an existing entry to
+ one  or  more  classes.  If  you specify a class that does not exist,
+ Emacs  Notes  automatically  creates the class. The ADD ENTRY/CLASSES
+ command is convenient to use when an entry already belongs to several
+ classes;  with the MODIFY ENTRY/CLASSES command, you have to list the
+ classes  to  which  the  entry  currently belongs, as well as the new
+ ones, to add an existing entry to new classes.
+
+Notefile name: notefile-name
+
+ Specifies the  conference  you want to add to your Notebook. Use this
+ qualifier when you specify the entry name as the parameter.
+
+Personal name:	personal-name
+
+ Specifies the personal name to be used when this conference is used.
+ 
+3 Command_Description
+
+ The "Ae", ADD ENTRY, command adds a conference to one or more classes
+ in  your  Notebook.  The default entry name is the file name from the
+ notefile specification.
+
+ If you  are  currently  reading  a  note  that  has the "*", shopping
+ indicator, ADD ENTRY will use the conference specified in the note as
+ the default filename.
+
+ ADD ENTRY will also default the filename from the current region. Use
+ the "/Ae" command to do this.
+
+ In one  step,  you can add a conference to your Notebook and give the
+ conference an entry name that is easy for you to remember and type.
+
+ To add  a  conference that exists in the NOTES$LIBRARY directory on a
+ remote node, you must include the node name with the conference name.
+ To  add  a  conference  that resides in a private directory, you must
+ include  the  full notefile specification (device and directory name)
+ with the conference name.
+
+ You can  use  the  CLASSES  field  to  add  the  entry to one or more
+ specific  classes.  If  you  do  not specify any classes, Emacs Notes
+ assumes you want to add the entry to the current class.
+
+ Emacs Notes  does  not verify that the conference exists when you use
+ the ADD ENTRY command. This is done purposely to allow you to add the
+ entry  to  your  Notebook  even  if  the node on which the conference
+ resides  is  unreachable  at  the  time.  Make  sure  you  spell  the
+ conference name correctly.
+
+3 Examples
+
+Notefile name:		DSSDEV::EMACS
+Entry name:		
+Classes:		MAIN
+Personal name:		
+
+ Add the EMACS conference on DSSDEV:: to your notebook. The entry name
+ is defaulted to EMACS.
+
+2 KEYWORD (Ak)
+
+ Adds a  keyword  to  the  current  or  specified  note. The specified
+ keyword must be an existing keyword for the conference.
+
+ Format:
+	Note id:	note-id
+	Add keywords:	keyword-name
+
+3 Parameters
+Keywords:  keyword-name
+
+ Specifies the  keywords  you  want to add to a note. The keyword name
+ must  exactly  match  a  keyword  previously  defined with the CREATE
+ KEYWORD command.
+
+Note id:	note-id
+
+ Refers to  a single topic or reply. The default is the topic or reply
+ you are currently reading.
+
+3 Command_Description
+
+ Use the ADD KEYWORD command to add an existing keyword to the current
+ or  specified  note. If you do not specify a note, VAX Notes adds the
+ keyword to the note you are currently reading.
+
+ The keyword  name  you  specify  must  be an existing keyword for the
+ conference.  In a conference that restricts the creation of keywords,
+ you must have CREATE_KEYWORDS privilege to create a new keyword. In a
+ conference  that  does  not  restrict  keywords, you can create a new
+ keyword  with  the  CREATE  KEYWORD  command. If you have MODERATE or
+ CREATE_KEYWORDS   privilege,  Emacs  Notes  automatically  creates  a
+ keyword the first time you add the keyword to a note.
+
+ You can  see  all  the keywords defined for a conference by using the
+ "lk" or "\lk" LIST KEYWORDS commands.
+
+ You can  see  all  the  keywords associated with a particular note by
+ using the "ln", LIST NOTES command.
+
+ You can  see  all  the  notes  associated with a keyword by using the
+ "\dn", DIRECTORY NOTES, command and specify the keyword.
+
+3 Examples
+2 MARKER (m, Am)
+
+ Adds a  marker to the current or specified note in the current entry.
+
+ Format:
+
+	Note id:
+	Marker:
+
+3 Parameters
+Marker:
+
+ Consists of a text-string that names a marker in a Notebook entry.
+
+Note id:
+
+ Refers to  a single topic or reply. The default is the topic or reply
+ you are currently reading.
+
+3 Command_Description
+
+ A marker  is  a  word  or phrase that you associate with a particular
+ note  so that you can refer to the note by the word or phrase instead
+ of  its  note  number.  Marker  names must be unique within an entry,
+ although you can use the same marker name in different entries.
+
+ If you  do  not  specify  a  note  to be marked, Emacs Notes adds the
+ marker to the note you are currently reading.
+
+ You can  see  all  the markers you created for the current entry, and
+ the  note number associated with each, by using either the LIST ENTRY
+ command  or  the  "lm",  LIST MARKER, command. To see the note number
+ associated  with  a  particular  marker,  use  the "/lm", LIST MARKER
+ command.
+
+ To retrieve  a note that you marked, use the READ command and specify
+ the name of the marker at the note-id prompt.
+
+ To delete  a  marker,  use  the  "Dm",  DELETE MARKER, command. (This
+ deletes the marker only, not the note.)
+
+ The "Am",  ADD  MARKER, and "m", MARK, commands are synonyms, and can
+ be used interchangeably.
+
+3 Examples
+2 MEMBER (AM, Au)
+
+ Adds a new member, or user, to the conference.
+
+ Format:
+
+	Username:
+	Nodenames:
+	Create keywords:	n
+	Moderator:		n
+	Mail address:
+
+3 Parameters
+Username:
+
+ Specifies the  VAX/VMS  user  name  for  the  user you want to make a
+ member of a private conference.
+
+ When you  specify the full node::username, Emacs Notes treats this as
+ though you specified ADD MEMBER username /NODES=node.
+
+Mail address:
+
+ Specifies a  mailing address for this member. This is useful when the
+ member uses a mail system other than the VAX/VMS Mail Utility (MAIL),
+ or wants to receive mail on a particular system.
+
+Nodenames:	node-name[,...]
+
+ Specifies the  node-names  that,  used  in  combination with the user
+ name, identify this member. You must seperate a list of node names in
+ names with commas.
+
+
+Moderator:
+Create keywords:
+
+ Gives this  member  the  ability  to  act  as moderator or create new
+ keywords  for  this  conference.  If  you  give  the  member MODERATE
+ privilege, this member may issue the SET MODERATOR command.
+
+ If you  give  the  member  CREATE_KEYWORDS privilege, this member may
+ create new keywords. In a conference that restricts keyword creation,
+ without  CREATE_KEYWORDS  privilege,  a  user  may  only add existing
+ keywords to notes.
+
+ A user  who  has MODERATE privilege automatically has CREATE_KEYWORDS
+ privilege.
+
+3 Command_Description
+
+ The "AM",  ADD MEMBER, command adds a new user to the membership list
+ for a private or restricted conference. You can list node names that,
+ together  with  the  user  name,  identify  this  user.  Emacs  Notes
+ recognizes  this  user  by  any combination of node name and the user
+ name.
+
+ In addition  to  specifying a list of node names by which to identify
+ this  user,  you  can specify a mailing address, and grant privileges
+ that  let  the  user  act  as  moderator  or create keywords for this
+ conference.
+
+ You can  change  a  user's  privileges, mail address, nodes, and user
+ name at any time with the "MM", MODIFY MEMBER, command.
+
+3 Examples
+
+1 ANSWER (a)
+
+ Enters a reply to the current topic or reply.
+
+ Format:
+
+	Title:
+	Add keywords:
+	Hide note:
+
+2 Parameters
+Title:	string
+
+ If specified  the  string is used as the title of the note. Otherwise
+ the note does not have a title.
+
+Hide note:
+
+ Set this  parameter to "y" if you wish the note to written and hidden
+ from other member of the conference.
+
+Add keywords:	keyword [,...]
+
+ An optional  list  of  keywords  to  be added to the note after it is
+ written.
+
+2 Command_Description
+
+ The "a",  ANSWER,  command  allows  you to add a reply to the current
+ discussion.
+
+ If VAX  Notes  is unable to write your reply to the conference, or if
+ you  cancel  your reply the text of the reply is still in the compose
+ buffer.
+
+1 BACK (b)
+
+ Displays the  previous  topic,  note,  or  reply  to  the one you are
+ currently reading.
+
+2 NOTE (bn)
+
+ Displays the note previous to the one you are currently reading.
+
+3 Command_Description
+
+ The "bn",  BACK  NOTE,  command  displays  the  previous  note in the
+ conference,  whether  you  are  reading  a topic or reply. If you are
+ reading a topic, this command displays the last reply to the previous
+ topic.
+
+2 REPLY (br)
+
+ Displays the previous reply for the current note.
+
+3 Command_Description
+
+ The "br",  BACK  REPLY,  command  displays the previous reply for the
+ current topic. You cannot use the BACK REPLY command to move past the
+ current discussion. If you are reading a topic and you issue the BACK
+ REPLY command, Emacs Notes issues the message, 'No more replies'.
+
+ You can use the KP1 key to issue this command.
+
+2 TOPIC (Bt)
+
+ Display the previous topic.
+
+3 Command_Description
+
+ The "bt",  BACK  TOPIC,  command  displays  the previous topic in the
+ conference, whether you are reading a topic or reply.
+
+ You can use the KP5 key to issue this command.
+
+1 CLOSE (c)
+
+ Closes the currently open conference.
+
+2 Command_Description
+
+ The "c",  CLOSE  command  closes  the  currently open conference, and
+ returns you to your Notebook.
+
+ The "q", QUIT, command automatically close any open conferences.
+
+1 CREATE (C)
+
+ Creates a conference or a keyword in a conference.
+
+ If you  wish  to  enter a new note in an existing conference, use the
+ "w", WRITE, or "a", ANSWER, commands.
+
+2 CONFERENCE (CC)
+
+ Creates a new conference with the name you specify.
+
+ Format:
+
+	Notefile name:
+	Conference title:
+	Restrict members:	n
+	Restrict keywords:	y
+
+3 Parameters
+Notefile name:
+
+ Specifies the  conference  that  you  want  to  create.  To  create a
+ conference  on  a  remote node, you must specify the node name in the
+ specification.  The  default  directory (NOTES$LIBRARY) and file type
+ (.NOTE)  are  assumed. The file name portion of this specification is
+ the  default  entry  name  when someone adds this conference to their
+ Notebook.
+
+Conference title:	string
+
+ Sets the title of the conference to the string you specify.  
+
+
+Restrict members:
+
+ Specifies whether or not to restrict access.
+
+Restrict Keywords:
+
+ Specifies wheter or not to restrict the creation of keywords.
+
+3 Command_Description
+
+ The CREATE  CONFERENCE  command  lets  you create a new conference on
+ your  system. When you create a conference, Emacs Notes automatically
+ recognizes  you  as  a  moderator for the conference; you do not need
+ special privileges to issue this command.
+
+ Depending on  how your Emacs Notes system was installed, you may need
+ special  privileges  to  create  a  conference  in  the NOTES$LIBRARY
+ directory.  If  so,  you  can  create  the conference in your private
+ directory and ask your system manager to move the conference into the
+ NOTES$LIBRARY     directory,     using    the    command    procedure
+ SYS$MANAGER:NOTES$MOVE_CONFERENCE.COM.
+
+ You must  specify the name of the conference you want to create. This
+ name  is  the default entry name when someone adds this conference to
+ their Notebook.
+
+ You can   use  the  RESTRICT  qualifier  to  control  access  to  the
+ conference,  restrict  the creation of keywords to specific users, or
+ both.  The  default  is to create a public conference that anyone can
+ access and in which keyword creation is restricted.
+
+ If you  decide to create a private conference (open to a select group
+ of  users)  or a restricted conference (in which only certain members
+ can  create  keywords),  you  must  create  a membership list for the
+ conference.  The  membership  list  identifies  who  may  access  the
+ conference  and  which  of these members can create keywords. You use
+ the ADD MEMBER command to create the membership list.
+
+ You can  use  the  VAX/VMS  Mail Utility (MAIL) to announce a private
+ conference   to   members   only   by  issuing  the  SEND/MEMBERS  or
+ FORWARD/MEMBERS  command. Emacs Notes uses the membership list like a
+ MAIL distribution list. (Not yet implemented)
+
+ You can  make  a  public conference available on a "shopping list" in
+ another conference by using the "Sn", SET NOTE, command. (This method
+ is not recommended for private conferences.)
+
+ If you  want  to  add  a  new note to an existing conference, use the
+ ANSWER or WRITE commands.
+
+2 KEYWORD (Ck, CK)
+
+ Adds a new keyword to the current conference.
+
+ Format:
+
+	Create keyword (keyword)
+
+3 Parameters
+keyword-name
+
+ Names the keyword you want to create.
+
+3 Command_Description
+
+ The "Ck",  CREATE  KEYWORD, command allows you to create new keywords
+ for  a  conference.  You  specify the name of the keyword you want to
+ create.
+
+ In a conference that restricts keyword creation, you must either be a
+ moderator   or  have  CREATE_KEYWORDS  privilege  specified  in  your
+ membership  record.  You  can  use the "lu", LIST USER command to see
+ your membership record.
+
+ Once you  create  a keyword, any user can add the keyword to any note
+ in the conference with the ADD KEYWORD command.
+
+ If you  are  authorized to create keywords, Emacs Notes automatically
+ creates a keyword the first time you add the keyword to a note.
+
+3 Examples
+
+	Create keyword (keyword) TRUCKERS
+
+   Creates the keyword TRUCKERS for this conference.
+
+	Create keyword (keyword) MONEY_MARKET
+
+     Cannot create keyword MONEY_MARKET
+
+   Produces an error message in a conference that restricts keyword
+   creation if you do not have CREATE_KEYWORDS (or MODERATE)
+   privilege.
+
+1 DELETE (D)
+
+ Deletes various things.
+
+2 ENTRY (De)
+
+ Deletes an  entry  from your Notebook from the specified class or all
+ classes.
+
+ Format:
+
+	Entry:
+	Class:
+
+3 Parameters
+Entry:	entry-name
+
+ Names the  entry you want to delete. If the entry is in more than one
+ class,  it  is  deleted  from  the  current  class unless you specify
+ another  class  with the CLASS qualifier. To delete an entry from all
+ classes, use CLASS=*.
+
+Class:	class-name
+
+ Specifies a  single class from which to delete the entry. The default
+ is  to  delete  the entry from the current class. To delete the entry
+ from all classes, use the wildcard character (*) as the class-name.
+
+3 Command_Description
+
+ The "De",  DELETE ENTRY, command deletes an entry from your Notebook.
+ You must specify the name of the entry you want to delete.
+
+ If the  entry  is in more than one class, Emacs Notes deletes it from
+ the  current  class  unless you specify a particular class. To delete
+ the entry from all classes, issue the command:
+
+	Entry:	entry-name
+	Class:	*
+
+ To delete  all  entries  in  a  class  (that  is, to delete the class
+ itself), issue the command:
+
+	Entry:	*
+	Class:	class-name
+
+ If you  issue  the command DELETE ENTRY * /CLASS=FOO, and some of the
+ entries were in both class FOO and class MAIN but others were only in
+ FOO, the latter do not get deleted from the Notebook, but they do not
+ belong  to  any  classes and will not be visible unless you issue the
+ command DIRECTORY/NOTEBOOK/CLASSES=*.
+
+3 Examples
+     Notes> DELETE ENTRY FOOTBALL /CLASS=*
+
+   Deletes the entry FOOTBALL from all classes.
+
+     Notes> DELETE ENTRY /CLASS=GAMES ALIENS
+
+   Deletes the entry ALIENS from the class GAMES only.
+
+     Notes> DELETE ENTRY * /CLASS=MISC
+
+   Deletes the class MISC.
+
+2 KEYWORD (Dk)
+
+ Deletes a keyword from the specified or current note.
+
+ Format:
+
+	Note id:
+	Delete keywords:
+
+3 Parameters
+Delete keywords:	keyword-name [,...]
+
+ Names the keywords you want to delete.
+
+Note id:	note-id
+
+ Specifies a  single  topic  or reply. The default is the note you are
+ currently reading.
+
+3 Command_Description
+
+ The "Dk",  DELETE  KEYWORD, command deletes a keyword from a note. If
+ you  do  not specify a note, Emacs Notes deletes the keyword from the
+ current note.
+
+ To use  the /ALL qualifier to delete the keyword from all notes (and,
+ therefore,  delete  the  keyword),  you  must  be a moderator for the
+ conference  or have CREATE_KEYWORDS privilege. (Not implemented yet).
+
+3 Qualifiers
+/ALL
+
+ Specifies that the keyword is to be deleted from all notes. This also
+ causes  the keyword itself to be deleted. You must be a moderator for
+ the conference to use this qualifier.
+
+3 Examples
+     Notes> DELETE KEYWORD MRP
+
+   Deletes the keyword MRP from the current note.
+
+     Notes> DELETE KEYWORD KIDS 2.9
+
+   Deletes the keyword KIDS from note 2.9.
+
+     Notes> DELETE KEYWORD /ALL SUGAR
+
+   Deletes the keyword SUGAR from all notes, and deletes the keyword
+   SUGAR.
+
+2 MARKER (Dm)
+
+ Deletes a marker from the current entry.
+
+ Format:
+
+	Marker:
+	Entry:
+
+3 Parameters
+Marker:		marker-name
+
+ Names the marker you want to delete.
+
+Entry:		entry-name
+
+ Names the  entry  that  the  marker  is to be deleted from. The entry
+ is defaulted where possible.
+
+3 Command_Description
+
+ The "Dm",  DELETE  MARKER,  command deletes a marker from the current
+ entry only. If you used this marker name in another entry, the marker
+ remains  in that entry. You must specify the name of the marker to be
+ deleted.
+
+3 Examples
+     Notes> DELETE MARKER FORGET_ME_NOT
+
+   Deletes the marker FORGET_ME_NOT from the current entry.
+
+2 MEMBER or USER (Du)
+
+ Deletes a  member, user, from the membership list for the conference.
+
+ Format:
+
+	Delete member:
+
+3 Parameters
+Delete member:	username
+
+ Specifies the  member  to  be deleted. Do not specify a node with the
+ user name.
+
+3 Command_Description
+
+ The "Du",  DELETE  USER, command deletes a member from the membership
+ list.  You  must  specify  the  user  name;  the  user's  node is not
+ required.
+
+ To use the DELETE USER command, you must have moderator privilege and
+ must  have  first  issued  the  SET  MODERATOR command to enable that
+ privilege.
+
+ You can delete one member at a time.
+
+3 Examples
+     Notes> DELETE MEMBER MITCHELL
+
+   Deletes user MITCHELL from the membership list for this
+   conference.
+2 NOTE (Dn)
+
+ Deletes a topic or reply from the conference.
+
+ Format:
+
+	Note id:
+
+3 Parameters
+Note id:	note-ID
+
+ Specifies a  single topic or reply. The default is the topic or reply
+ you are currently reading.
+
+3 Command_Description
+
+ The "Dn", DELETE NOTE, command deletes the current or specified note.
+
+ If you  are  a moderator for the conference, you can delete any note.
+ Otherwise, you can delete only your own topics and replies.
+
+ To determine whether you are authorized to delete a note, Emacs Notes
+ checks  the  combination  of  the node name and the author name. In a
+ public  conference,  the node name in the note heading must match the
+ node  you  are  on in order for you to delete your note. In a private
+ conference,  as  long  as  you are on one of the nodes listed in your
+ membership record, you can delete your note.
+
+3 Examples
+     Notes> DELETE
+
+   Deletes the current note.
+
+     Notes> DELETE NOTE 2.1
+
+   Deletes note 2.1.
+
+1 DIRECTORY (d)
+
+ Displays a directory of things.
+
+2 NOTES (dn, \dn)
+
+ Format:
+
+	Note-id:
+	String:
+	Author:
+	Since:
+	Before:
+	Title:
+	Unseen:		n
+	Keyword:
+
+3 Command_Description
+
+ The DIRECTORY command displays a directory of the current conference.
+ If  no conference is open, DIRECTORY lists the entries in the current
+ class in your Notebook.
+
+ You can  optionally  specify  a  range  of  notes  to  include in the
+ directory,  and  selectively display notes you have or have not seen,
+ or those entered by a certain author, having a certain word or phrase
+ in  the  title,  entered  on  a  particular  date, having one or more
+ specific keywords, or a combination of these.
+
+ The default display sequence is in descending order.  You can display
+ the directory in ascending order by specifying the range of notes
+ from lowest to highest.
+
+ You can  display a note listed in the directory by moving the pointer
+ to  the  note  and pressing the "r", READ or SELECT key. You can move
+ the pointer forward with KP2, and backward with KP5.
+
+
+3 Parameters
+Note id:	note-range
+
+ Specifies a  range  of notes. If no range is specified, the directory
+ is centered around the current note. (Not implemented yet)
+
+Author:		username
+
+ Lists only  notes  written  by  the  specified  user (author). If you
+ include  a  node name with the user name, the directory is limited to
+ that specific combination.
+
+Before:		date-time
+
+ Lists only   notes   entered  before  the  date-time  specified.  The
+ date-time can be any valid VAX/VMS date-time specification.
+
+Keyword:	keyword-name
+
+ Lists only notes or replies having the specified keyword.
+
+Since:		date-time
+
+ Lists notes  entered since the date-time specified. The date-time can
+ be   any  valid  VAX/VMS  date-time  specification.  The  default  is
+ SINCE: TODAY.
+
+Title:		string
+
+ Lists notes  having  the  specified string in the title. Surround the
+ string with quotation marks.
+
+Unseen:		n
+
+ Lists only notes you have not yet seen if set to "y".
+
+3  Examples
+     Notes> DIR 6.*-25.*
+
+   Lists topics and replies, starting with note 6.0 and ending with
+   the last reply to topic 25.  (This is the same as typing
+   DIR /ALL 6-25.)
+
+     Notes> DIR 10-20
+
+   Lists topics in ascending order, starting with note 10 and ending
+   with note 20.
+
+     Notes> DIR 20-10
+
+   Lists topics in descending order, starting with note 20 and ending
+   with note 10.
+
+     Notes> DIR /TITLE="BUG" /AUTHOR=CHARLIE
+
+   Lists notes written by user CHARLIE that have the word BUG in the
+   title.
+
+     Notes> DIR /SINCE=YESTERDAY 100-9999
+
+   Lists notes written since yesterday, starting with note 100 and
+   ending with the last note in the conference.
+
+     Notes> DIR /UNSEEN /BUFFER=DIRECTORY
+
+   Puts a listing of notes you have not seen into a buffer named
+   DIRECTORY.  To see the listing, issue the command EVE BUFFER
+   DIRECTORY.
+
+     Notes> DIR /KEYWORD=NITROGLYCERIN
+
+   Lists notes that have the keyword NITROGLYCERIN.
+
+2 CONFERENCES (dC)
+
+ Displays a  directory  of the conferences on the current or specified
+ node.
+
+                        NOTE
+
+ Currently this  command  is  disable  due to a bug in the Emacs Notes
+ which causes the directory to hang indefinitly.
+
+3 Parameters
+node-name
+
+ Specifies the node for which you want a directory of conferences. The
+ default is the node you are currently on.
+
+3 Command_Description
+
+ The "dC",  DIRECTORY  of CONFERENCES, command displays a directory of
+ the  conferences  on  the  specified node. Unless you specify another
+ another  node,  you  get  a listing of the conferences on the current
+ node. (The default directory, NOTES$LIBRARY, is assumed.)
+
+ To see a directory of the conferences in a private directory, specify
+ the device name and directory name.
+
+ The conference  directory  shows the title, notice, and number of new
+ notes  for conferences you are allowed to access, and indicates which
+ conferences you are not allowed to access.
+
+ When the directory of available conferences is displayed, you can add
+ a  conference to your Notebook by moving the pointer and pressing the
+ SELECT  key.  You  move  the  pointer  forward  with the KP2 key, and
+ backward with the KP5 key.
+
+                                 NOTE
+
+      When you request a listing of conferences in someone's
+      private directory, that person's Notebook is listed as
+      a conference with the name NOTES$NOTEBOOK.  DIGITAL
+      recommends that you do not attempt to access or add
+      notes to a Notebook.
+
+3 Examples
+     Notes> DIRECTORY /CONFERENCES
+
+   Displays a listing of the conferences on the current node.
+
+     Notes> DIRECTORY /CONFERENCES NODE1
+
+   Displays a listing of the conferences on node NODE1.
+
+     Notes> DIRECTORY /CONFERENCES DISK$:[HARVEY]
+
+   Displays a listing of the conferences in user HARVEY's private
+   directory on device DISK$:.
+
+     Notes> DIRECTORY /CONFERENCES /BUFFER=DIR HALO
+
+   Puts the directory of conferences on node HALO into a buffer named
+   DIR.  You can view the directory listing at any time during the
+   current Emacs Notes session by issuing the command EVE BUFFER DIR,
+   instead of having to reissue the DIRECTORY /CONFERENCES command.
+
+     Notes> DIR /CONFERENCES /OUTPUT=DIR.LIS MYVAX
+
+   Puts the directory of conferences on the node MYVAX into an output
+   file named DIR.LIS.
+
+2 ENTRIES (de)
+
+ Displays a  listing  of  the  entries  in  the  current class in your
+ Notebook.
+
+ See also  "\lc", LIST CLASSES, which gives a directory of entries for
+ ever class.
+
+3 Command_Description
+
+ The "de",  DIRECTORY ENTRIES, command displays a directory listing of
+ the requested entries in your Notebook.
+
+ When the  directory listing is displayed on your screen, you can open
+ an  entry by moving the pointer to the entry you want and issuing the
+ "o",  OPEN,  command  (or  pressing  the SELECT key). You can use the
+ following keys to move the pointer:
+
+        [ - select previous entry
+        ] - select next entry
+
+1 EXIT (q)
+
+ Exits from Emacs Notes.
+
+2 Command_Description
+
+ The "q",  EXIT,  command exits from the Emacs notes package. Any open
+ conference is closed before exiting.
+
+ The "\q"  command  suspends the current notes seesion. You can return
+ to the suspended session with the "ESC-x notes" command.
+
+1 EXTRACT (e)
+
+ Creates a  text file in your current default directory containing the
+ specified note or range of notes.
+
+   Format:
+	Note-id:
+	Mark as seen:
+	File:
+	Buffer:
+	String:
+	Author:
+	Since:
+	Before:
+	Title:
+	Unseen:
+	Keyword:
+
+
+2 Command_Description
+
+ The "e",  EXTRACT,  command  creates a text file containing the notes
+ you  specify.  You  must  specify  the name of the output file as the
+ first  parameter in the command. Use the optional second parameter to
+ specify  the range of notes to extract. If no range is specified, VAX
+ Notes extracts only the note you are currently reading.
+
+ The following qualifiers should only be used when you specify a range
+ of notes:
+
+        AUTHOR          SINCE
+        BEFORE          TITLE
+        KEYWORD         UNSEEN
+        SEEN
+
+2 Parameters
+
+File:		output-file
+
+ Specifies the  output  file in which to store the specified notes. If
+ you do not specify an output file the extracted notes are left in the
+ extraction buffer.
+
+Buffer:		buffer-name
+
+ Specifies the  buffer  to  extact  the  notes  into.  By  default the
+ notes-extract buffer is used.
+
+Note id:	note-range
+
+ Specifies the range of notes to be extracted. The default is the note
+ you are currently reading.
+
+Author:		username
+
+ Lists only  notes  written  by  the  specified  user (author). If you
+ include  a  node name with the user name, the directory is limited to
+ that specific combination.
+
+Before:		date-time
+
+ Lists only   notes   entered  before  the  date-time  specified.  The
+ date-time can be any valid VAX/VMS date-time specification.
+
+Keyword:	keyword-name
+
+ Lists only notes or replies having the specified keyword.
+
+Since:		date-time
+
+ Lists notes  entered since the date-time specified. The date-time can
+ be   any  valid  VAX/VMS  date-time  specification.  The  default  is
+ SINCE: TODAY.
+
+Title:		string
+
+ Lists notes  having  the  specified string in the title. Surround the
+ string with quotation marks.
+
+Unseen:		n
+
+ Lists only notes you have not yet seen if set to "y".
+
+
+2 Examples
+     Notes> EXTRACT MAIL.MSG
+
+   Extracts the current note, and stores it in a file called MAIL.MSG.
+
+     Notes> EXTRACT BOOKS 10.*
+
+   Extracts topic 10 and all its replies and stores the notes in a
+   file called BOOKS.TXT.
+
+     Notes> EXTRACT /KEYWORD=YALE COLLEGES.MEM *.*
+
+   Extracts all notes in the conference that have the keyword
+   YALE and stores the notes in a file called COLLEGES.MEM.
+
+     Notes> EXTRACT /AUTHOR=GLEN /KEYWORD=NUCLEAR FIL.DAT 8-30
+
+   Extracts topics from topic 8.0 through 30.0 that were entered by
+   user GLEN and that refer to the keyword NUCLEAR.  The notes are
+   stored in a file named FIL.DAT.
+
+     Notes> EXTRACT /SINCE=15-MAR /BEFORE=18-MAR NOTES *.*
+
+   Extracts all notes in the conference entered after 15 March but
+   before 18 March, and puts them in a file called NOTES.TXT.
+
+1 FORWARD
+
+ Forwards the note you are reading as a mail message to someone.
+
+ Not implemented yet.
+
+2 Command_Description
+
+ The FORWARD  command  forwards  a  copy of the note you are currently
+ reading to someone by the VAX/VMS Mail Utility (MAIL).
+
+ Emacs Notes  prompts you for a mail address or list of addresses. You
+ specify  the  node  name  and  user  name  of the persons you want to
+ receive the note; use commas to separate addressees in a list.
+
+ If you  want  to  send a note to all members of a conference, use the
+ /MEMBERS  qualifier.  Emacs  Notes  automatically uses the membership
+ list as a MAIL distribution list. (If you use the /MEMBERS qualifier,
+ you will not be prompted for an addressee list.)
+
+ You can optionally choose a subject for the forwarded note. VAX Notes
+ uses a default subject consisting of the conference name and location
+ and the note number.
+
+ Emacs Notes automatically gives you a chance to preface the note with
+ a  message  before  forwarding  it.  You  type  your  message  in the
+ NOTES$MAIL_EDIT  buffer.  To  bypass  this  option,  use  the /NOEDIT
+ qualifier.
+
+ You can  retrieve  the text of the last message you sent (with either
+ the  SEND or FORWARD command) by using the /LAST qualifier. You start
+ off  in the editor with your last mail message in the NOTES$EDIT_MAIL
+ buffer. You can edit the text before forwarding it again.
+
+2 Qualifiers
+/HEADER (default)
+/NOHEADER
+
+ Specifies whether to include the note header at the top of the mail
+ message.
+
+/MEMBERS
+
+ Forwards the  note to the conference members. Use this qualifier when
+ you  want  to  be certain all members see a particular note. When you
+ use this qualifier, you are not prompted for a list of addressees.
+
+2 Examples
+     Notes> FORWARD /NOEDIT
+     Send to: FLOYD::GILMORE
+     Subject:
+     Default mail subject is "Notefile ORBIT::AI Note 45.3".
+
+   Forwards a copy of note 45.3 in the AI conference to user GILMORE on
+   node FLOYD, and uses the default subject as the mail subject.
+
+
+     Notes> FORWARD /NOEDIT /MEMBERS
+     Subject: Another opinion on the Magnum deal
+
+   The current note is forwarded as a mail message to all members of
+   this conference.
+1 HELP (h)
+
+ Displays on  your terminal the list of Emacs Notes commands for which
+ on-line HELP is available.
+
+2 Command_Description
+
+ The HELP  command  displays on your terminal a listing of Emacs Notes
+ commands for which on-line HELP is available.
+
+ If the  word  you  type after the HELP command is one of the commands
+ that  takes  an  option (ADD, CREATE, DELETE, MODIFY, SET, and LIST),
+ VAX  Notes  displays the option list for the command, and prompts you
+ for the option you want help on.
+
+ Emacs Notes  also  has  on-line  HELP  for  key bindings. See the the
+ section of Keybindings for details.
+
+ To leave HELP and return to Emacs Notes, type "q".
+
+1 KEYPAD
+
+2 SELECT
+
+  SELECT, E4, Keypad 7 (VT100 terminals)
+
+ SELECT allows you to make a selection from a directory listing, or to
+ select  a conference that is linked to a note, and add the conference
+ to your Notebook.
+
+ A pointer appears in the first column of a directory listing. You can
+ move  the  pointer  up  (using  KP5)  or down (using KP2) through the
+ listing.  When  the pointer is at the item you want, press the SELECT
+ key to select the item.
+
+ When viewing  a listing of entries in your Notebook, you can move the
+ pointer  to  the  next entry with a non-zero Unseen count by pressing
+ KP3.  You  can  move  the  pointer  back to the previous entry with a
+ non-zero Unseen count by pressing KP1.
+
+ A note that is linked to a conference has an asterisk (*) next to the
+ note number in the note heading.
+
+2 LAST_NOTE_READ
+
+  Keypad MINUS
+
+ LAST NOTE READ redisplays the note you were reading immediately prior
+ to  the current note. This works regardless of discussion boundaries.
+ For  example,  if  you  read  note  4.3,  then read note 6.5, you can
+ redisplay note 4.3 by pressing LAST NOTE READ.
+
+2 ENTER
+
+  ENTER
+
+ If you  are  reading  a  note, ENTER allows you to navigate through a
+ conference in the following manner:
+
+  o  If the current note continues onto another screen, the next
+     screen is displayed.
+
+  o  If you are at the end of the current note, the next reply
+     is displayed.
+
+  o  If there are no more replies, the next unseen note is displayed.
+
+
+2 RETURN
+
+  RETURN
+
+ RETURN is  used  as the continue-operation key in Emacs Notes. If you
+ are reading a note the RETURN key will display the new screen full of
+ text from the note.
+
+ If you  are doing a DIRECTORY of NOTES, "dn", RETURN with display the
+ next screen full of the directory listing.
+
+ If you prefix the RETURN key with "/" RETURN will read all of te text
+ of a note or complete the requested directory of notes.
+
+2 NEXT_UNSEEN
+
+  Keypad COMMA
+
+ NEXT UNSEEN  skips  the rest of the replies in the current discussion
+ and displays the next note you have not yet read. The skipped replies
+ are automatically marked as "seen".
+
+2 BACK_TOPIC
+
+  Keypad 5
+
+ BACK TOPIC displays the previous topic in the conference.
+
+ When viewing a directory, KP5 moves the pointer backward.
+
+2 BACK_REPLY
+
+  Keypad 1
+
+ BACK REPLY displays the previous reply in the current discussion. You
+ cannot use BACK REPLY if you are reading a topic.
+
+ When viewing  a  directory of entries in your Notebook, KP1 moves the
+ pointer  backward to the previous entry with a non-zero Unseen count.
+
+2 NEXT_TOPIC
+
+  Keypad 2
+
+ NEXT TOPIC displays the next topic in the conference.
+
+ When viewing a directory, KP2 moves the pointer forward.
+
+2 NEXT_REPLY
+
+  Keypad 3
+
+ NEXT REPLY displays the next reply in the current discussion.
+
+ When viewing  a  directory of entries in your Notebook, KP3 moves the
+ pointer  forward  to the next entry with a non-zero Unseen count. You
+ cannot use NEXT REPLY if you are reading the last reply.
+
+1 MARK (m)
+
+ Marks the current or specified note in the current entry.
+
+ Format:
+
+	Note id:
+	Marker:
+
+2 Parameters
+Marker:		marker-name
+
+ Specifies the name of the marker.
+
+Note id:	note-id
+
+ Specifies a  single topic or reply. The default is the topic or reply
+ you are currently reading.
+
+2 Command_Description
+
+ A marker  is  a  word  or phrase that you associate with a particular
+ note  so that you can refer to the note by the word or phrase instead
+ of  its  note  number.  Marker  names must be unique within an entry,
+ although you can use the same marker name in different entries.
+
+ If you  do  not  specify  a  note  to be marked, Emacs Notes adds the
+ marker to the note you are currently reading.
+
+ You can  see  all  the markers you created for the current entry, and
+ the  note number associated with each, by using either the LIST ENTRY
+ command  or  the  "lm",  LIST MARKER, command. To see the note number
+ associated  with  a  particular  marker,  use  the "/lm", LIST MARKER
+ command.
+
+ To retrieve  a note that you marked, use the READ command and specify
+ the name of the marker at the note-id prompt.
+
+ To delete  a  marker,  use  the  "Dm",  DELETE MARKER, command. (This
+ deletes the marker only, not the note.)
+
+ The "Am",  ADD  MARKER, and "m", MARK, commands are synonyms, and can
+ be used interchangeably.
+
+2 Examples
+     Notes> MARK TELEVISION
+
+   Marks the current note with the marker TELEVISION.
+
+     Notes> MARK HYPERSPACE 3.7
+
+   Marks note 3.7 with the marker HYPERSPACE.
+
+1 MODIFY (M)
+
+ Modifies information set up with the ADD and SET command options.
+
+2 CONFERENCE (MC)
+
+ Modifies or sets information for an existing conference.
+
+    Format:
+	Title:
+	Notice:
+	Restrict members:
+	Restrict keywords:
+	Write-lock:
+
+3 Command_Description
+
+ Use the  MODIFY  CONFERENCE  command  to  set or change the following
+ information for an existing conference:
+
+  o  The title, which appears in the conference heading
+
+  o  The notice, which appears beneath the conference title in the
+     heading
+
+  o  Whether to restrict access, keyword creation, or both to specific
+     members
+
+  o  Whether anyone besides you can enter notes in the conference
+
+ You must  be  a  moderator  for the conference, and must have enabled
+ your  moderator  privileges  with  the  "SM", SET MODERATOR, command,
+ before using the MODIFY CONFERENCE command.
+
+ When you restrict access, keyword creation, or both, you must specify
+ the  users  who can access the conference (called members), and which
+ of  these  users  can  create  keywords.  You  use the "Au", ADD USER
+ command to specify members and assign privileges to them.
+
+ To set  up  a  bulletin board, in which only you can write notes, use
+ the WRITE_LOCK qualifier.
+
+3 Parameters
+
+Title:		string
+
+ Modifies or  sets  the  title  of  the  conference  to the string you
+ specify. Surround the string with quotation marks.
+
+Notice:		string
+
+ Modifies or  sets  the  notice  for  the conference to the string you
+ specify. To remove the notice leave the field blank.
+
+Write-lock:	n
+
+ Specifies whether  to  prevent  anyone  other  than  a moderator from
+ adding  notes.  The  default  is  WRITE.  You can set this conference
+ attribute  at  any  time; for a conference in progress, this prevents
+ the  addition  of any new notes. Any note in progress at the time you
+ successfully  complete  the "MODIFY CONFERENCE WRITE-LOCK: y" command
+ will  not  be  added  to  the  conference.  The author will receive a
+ message indicating that the conference is write-protected.
+
+Restrict Members:
+Restrict Keywords:
+
+ Specifies whether or not to restrict access to the conference,
+ keyword creation, or both.
+
+3 Examples
+     Notes> MODIFY CONFERENCE  /TITLE="Course Evaluation System"
+
+   Opens the conference to all users and allows any user to create
+   keywords, and sets the title of the conference to 'Course
+   Evaluation System'.
+
+     Notes> MODIFY CONF /RESTRICT=(KEYWORDS) /NOTICE="NASA Project"
+
+   Allows anyone to access the conference but restricts the creation
+   of keywords to users with CREATE_KEYWORDS privilege (see the ADD
+   MEMBER command).  In addition, this command sets the notice to
+   'NASA Project'.
+
+     Notes> MODIFY CONF /NOWRITE
+
+   Prevents anyone besides yourself from entering new notes from this
+   point on.
+
+2 ENTRY (Me)
+
+ Modifies information for a Notebook entry.
+
+    Format:
+	Entry name:
+	New entry name:
+	Notefile name:
+	Classes:
+	Personal name:
+
+
+3 Parameters
+Entry name:	entry-name
+
+ Specifies the entry you want to modify.
+
+Classes:	class-name[,...]
+
+ Replaces the  classes  to  which the entry currently belongs with the
+ list  you  specify.  Enclose  the  list  in  parentheses and separate
+ class-names with commas.
+
+Notefile name:	file-spec
+
+ Changes the  notefile  specification.  This is necessary to keep your
+ Notebook up to date when a conference is relocated.
+
+New entry name:	new-entry-name
+
+ Changes the  entry name from the old name to the new one you specify.
+
+Personal name:	new-personal-name
+
+ Change the   personal   name  used  when  writting  notes  into  this
+ conference.
+
+3 Command_Description
+
+ The "Me",  MODIFY  ENTRY,  command lets you modify information for an
+ entry  in  your  Notebook.  You must specify the name of the Notebook
+ entry you want to modify.
+
+ You can change the name of the conference with the NAME qualifier, or
+ change the notefile specification with the FILE qualifier. The change
+ is  reflected  in  all classes (if the entry belongs to more than one
+ class), and seen/unseen information is unaffected.
+
+ You can change the classes to which an entry belongs with the CLASSES
+ qualifier.  The  list  of  classes  you  specify replaces the list of
+ classes to which the entry currently belongs. Therefore, to delete an
+ entry  from  a  class,  use the CLASSES qualifier and omit that class
+ from the new list.
+
+3 Examples
+     Notes> MODIFY ENTRY CLIMATE /NAME=WEATHER
+
+   Changes the name of the entry CLIMATE to WEATHER.
+
+     Notes> MODIFY ENTRY /FILE=PUBLIC::ENERGY
+
+   Changes the file specification of the current entry to
+   PUBLIC::ENERGY.
+2 KEYWORD
+
+ Modifies the name of a keyword.
+
+   Format:
+	Keyword name:		keyword-name
+	New keyword name:	new-keyword-name
+
+3 Parameters
+Keyword name:		keyword-name
+
+ Specifies the keyword name you want to modify.
+
+New keyword name:	new-keyword-name
+
+ Specifies the new name for the keyword you want to modify.
+
+3 Command_Description
+
+ The MODIFY KEYWORD command lets you change the name of a keyword. The
+ new  keyword  automatically replaces the old keyword for all notes to
+ which the old keyword had been added.
+
+3 Examples
+     Notes> MODIFY KEYWORD FARMS /NAME=FARMING
+
+   Changes the name of the keyword FARMS to FARMING.  All notes
+   to which the previous keyword name (FARMS) had been added now
+   have the new keyword FARMING.
+2 MEMBER
+
+ Modifies information  about  a  member on the membership list for the
+ conference.
+
+   Format:
+	Modify member:
+
+	Nodenames:
+	Create keywords:
+	Moderator:
+	Mail address:
+
+3 Parameters
+Modify member:		username
+
+ Specifies the  name  of  the  member  for  whom  you  want  to modify
+ information.
+
+Mail address:	mail-address
+
+ Sets or  changes the mailing address for this user to the address you
+ specify.
+
+New username:	new-username
+
+ Changes the user name to the new name you specify.
+
+Nodenames:	node-name[,...]
+
+ Replaces the  previous  list  of  nodes  for this member with the new
+ nodes you specify. You must separate names with commas.
+
+Moderator:
+Create keywords:
+
+ Modifies this user's privileges. With MODERATE privilege, this member
+ can  issue the SET MODERATOR command. With CREATE_KEYWORDS privilege,
+ this  member  can  create  new  keywords  for the current conference.
+ Without CREATE_KEYWORDS, the member can only add existing keywords to
+ notes.
+
+3 Command_Description
+
+ The MODIFY  MEMBER  command lets you modify information for a member.
+ You  must  have  moderator  privilege,  and  must  have  enabled this
+ privilege  by  issuing  the  SET  MODERATOR command, before using the
+ MODIFY MEMBER command.
+
+ Use this  command  to modify a user's mail address, user name, nodes,
+ or privileges.
+
+3 Examples
+     Notes> MODIFY MEMBER WAYNE /MAIL=TEXAN::WAYNE
+
+   Changes member WAYNE's mail address to TEXAN::WAYNE.
+
+     Notes> MODIFY MEMBER JONES /NAME=KENYON /MAIL=SPACE::KENYON
+
+   Changes JONES' user name to KENYON, and specifies the new user name
+   in the mail address.
+
+     Notes> MODIFY MEMBER JOHNSON /NODES=(GREEN,BROWN)
+
+   Changes the node names that member JOHNSON can use to GREEN and
+   BROWN.  This listing replaces the previous listing.
+
+     Notes> MODIFY MEMBER BYRD /PRIV=MODERATE
+
+   Grants MODERATE privilege to member BYRD, and automatically grants
+   this member CREATE_KEYWORDS privilege.
+2 NOTE
+
+ Modifies or sets attributes for the specified note.
+
+    Format:
+	Set note (note-id)
+
+	Title:
+	Hidden:
+	Write-lock:
+	Seen:
+	File-name:
+
+
+3 Parameters
+Set note (note-id)	note-ID
+
+ Specifies a  single  topic  or reply. The default is the note you are
+ currently reading.
+
+File-name:	notefile-spec
+
+ Associates the  specified conference with this note to allow users to
+ add  the  conference  to  their Notebooks by pressing the SELECT key.
+ Notes  that  are  linked to conferences by the MODIFY NOTE/CONFERENCE
+ command have an asterisk (*) next to the note number.
+
+Hidden:		y or n
+
+ Specifies whether  users can display this note. Hidden notes can only
+ be  viewed  by  the  author  or  the moderator. All other users get a
+ message indicating that the note is hidden.
+
+Title:		string
+
+ Allows a moderator to change the title of an existing note.
+
+Write-lock:	y or n
+
+ Specifies whether users can enter further replies to this topic. Only
+ the moderator or the author of the topic can specify this.
+
+Seen:		y
+
+ Set the note as seen.
+
+3 Command_Description
+
+ The "Mn",  MODIFY  NOTE,  command  modifies  or  sets  the  following
+ attributes for the current or specified note:
+
+  o  Puts the note on a "shopping list".
+
+  o  Hides the note from all users except yourself and the author.
+
+  o  Prevents anyone from replying to the note.
+
+ By putting  a  note  on  a shopping list, you give interested users a
+ convenient  way  to  add  a new conference to their Notebooks without
+ leaving  the  current conference. You use the CONFERENCE qualifier to
+ link  the  file specification of the new conference with a particular
+ note.  (Emacs  Notes  puts an asterisk (*) next to the note number to
+ indicate  that  the  note  is  linked to a conference.) Then, someone
+ reading  that note can add the linked conference to their Notebook by
+ pressing the SELECT key.
+
+ You can  temporarily hide a note using the HIDDEN qualifier. The note
+ remains  part  of  the  conference,  but can be displayed by only the
+ author  or  moderator.  All other users get a message indicating this
+ note is hidden when they try to access a hidden note.
+
+ Use the NOWRITE qualifier to prevent further replies to a discussion.
+ When you want to resume replies, issue the MODIFY NOTE/WRITE command.
+ Only  the  moderator  or  the author of the topic can specify whether
+ users can enter replies.
+
+ A moderator  can  use  the  TITLE qualifier to change the title of an
+ existing note.
+
+ To mark  notes  you  have  not  yet  read as "seen", use the SET SEEN
+ command.
+
+3 Examples
+      Notes> MODIFY NOTE /CONFERENCE=ANGEL::METHODS
+
+   Associates the conference METHODS on node ANGEL with the note you
+   are currently reading.  Users reading this note can add the
+   conference METHODS to their Notebooks by pressing the SELECT key.
+
+     Notes> MODIFY NOTE /HIDDEN 3.4
+
+   Only the author of topic 3 or the conference moderator can read
+   note 3.4.
+
+     Notes> MODIFY NOTE /NOWRITE /NOHIDDEN 55.7
+
+   Permits users to read the previously hidden note 55.7, but prevents
+   users from making further replies to topic 55.
+
+2 PROFILE (Mp)
+
+ Modifies or sets information in your profile.
+
+    Format:
+	Personal name:
+	Automatic Directory:
+	Automatic Next unseen:
+	Default class name:
+	Print options:
+
+3 Parameters
+
+Automatic Directory:	y or n
+Automatic Unseen:	y or n
+
+ Specifies whether an automatic DIRECTORY or NEXT UNSEEN command is
+ issued, or whether you see a conference heading only, when you open
+ an entry.
+
+ You can  cancel  the  automatic feature by issuing the MODIFY PROFILE
+ command and setting both fields to "n", no. In this case, you see the
+ conference heading only when you open an entry.
+
+Default class name:	class-name
+
+ Names the  class  you  want  to  be  the current class when you first
+ access your Notebook. Emacs Notes automatically creates a class named
+ MAIN  when  you  invoke Emacs Notes for the first time, and specifies
+ this  class  as  the  default class in your profile unless you change
+ this setting. The class you specify must be an existing class in your
+ Notebook.  You  cannot  use  the  wildcard character (*) in the class
+ name.
+
+
+Personal name:		string
+
+ Sets the  personal name string. The personal name string can be up to
+ 63 characters long. The personal name appears alongside your node and
+ user name in the heading of topics or replies you enter.
+
+ To delete a personal name, use PERSONAL_NAME="".
+
+Print options:	qualifier list"
+
+ Sets the  default qualifiers for the Emacs Notes PRINT command. These
+ qualifiers are added to the PRINT command before any other qualifiers
+ or  parameters  in the PRINT command line. In case of a conflict, the
+ qualifiers  on  the  command  line  override  the  default  qualifier
+ setting.
+
+ The selection  qualifiers for the PRINT command in Emacs Notes are as
+ follows:
+
+  o  /AUTHOR=username
+  o  /BEFORE=date-time
+  o  /COPIES=number
+  o  /FORM=form-name
+  o  /KEYWORD=keyword-name
+  o  /[NO]NOTIFY
+  o  /QUEUE=queue-name
+  o  /SEEN
+  o  /SINCE=date-time
+  o  /TITLE="string"
+  o  /UNSEEN
+
+3 Command_Description
+
+ The "Mp",  MODIFY  PROFILE,  command  lets  you  change  the  default
+ settings  in  your  profile.  Your  profile  tailors your Emacs Notes
+ sessions by specifying:
+
+  o  Whether a directory listing, the first unseen message, or a
+     conference heading is automatically displayed when you open a
+     conference.
+
+  o  The name of the class you want to be the current class when you
+     first access your Notebook (the default class).
+
+  o  A personal name to appear alongside your user name in notes you
+     write.
+
+  o  A list of the qualifiers you automatically want to use whenever
+     you issue the PRINT command in Emacs Notes.
+
+ Unless you issue the MODIFY PROFILE command to change the default
+ settings, your Emacs Notes sessions have the following characteristics:
+
+  o  When you open an entry, the first note you have not seen is
+     displayed.
+
+  o  When you issue the PRINT command without any qualifiers, the
+     following happens:
+
+      -  The notes you specified are not printed until you end your
+         Emacs Notes session (or change the print queue).
+
+      -  The notes are printed on the default printer at your
+         installation (queue SYS$PRINT).
+
+      -  You are not notified when the print job is complete.
+
+      -  You get one copy of each note.
+
+  o  When you write or reply to a note, your node and user name appear
+     in the note heading, and the area reserved for your personal name
+     is blank.
+
+  o  The class called MAIN is the default class.
+
+ You can  temporarily  change  the  settings  in  your profile for the
+ current Emacs Notes session using the TEMPORARY qualifier. Otherwise,
+ any  time  you  use the MODIFY PROFILE command to alter your profile,
+ the settings are permanently changed.
+
+ If you set up a list of default qualifiers for the PRINT command, any
+ additional  qualifiers you use in the PRINT command line are appended
+ to  the default qualifiers. If you include a qualifier with the PRINT
+ command  that  conflicts with the default qualifiers in your profile,
+ the qualifier on the command line takes precedence.
+
+3 Examples
+     Notes> MODIFY PROFILE /PRINT="/QUEUE=LPB0/NOWAIT"
+
+   When you issue the PRINT command, the notes are printed
+   immediately on the printer specified by the queue-name LPB0.
+
+     Notes> MODIFY PROFILE /PRINT="/COPIES=2"
+     Notes> PRINT/NOTIFY/QUEUE=LQP 3.*
+
+   Emacs Notes treats the PRINT command line as if you had typed
+   PRINT/COPIES=2/NOTIFY/QUEUE=LQP 3.*.  You get two copies of base
+   note 3 and all its replies.  The system prints the notes on the
+   letter quality printer (LQP) and notifies you when printing is
+   complete.
+
+     Notes> MODIFY PROFILE /PERSONAL_NAME="Johnny Be Good"
+
+   Displays the phrase 'Johnny Be Good' next to your node and user
+   name in the heading of topics or replies you enter.
+
+     Notes> MODIFY PROFILE /EDITOR=EDT
+
+   Sets up EVE with the EDT-style keypad as the editor for Emacs Notes
+   and specifies that Emacs Notes is to access EVE by calling it
+   directly.
+
+     Notes> MODIFY PROFILE /EDITOR=(EDT,CALL)
+
+   Sets up EDT as the editor for Emacs Notes and specifies that VAX
+   Notes is to access EDT by calling it directly.
+
+     Notes> MODIFY PROFILE /EDITOR=("@MYDIR:EDITOR",SPAWN)
+
+   Sets up the editor invoked by the command procedure EDITOR in the
+   directory MYDIR: as the editor to use in Emacs Notes.
+
+     Notes> MODIFY PROFILE /CLASS=PRIVATE
+
+   Sets PRIVATE as the default class.  When you first access your
+   Notebook, PRIVATE is the current class.
+
+     Notes> MODIFY PROFILE /AUTOMATIC=UNSEEN
+
+   When you open an entry, Emacs Notes automatically issues the NEXT
+   UNSEEN command to display the first note you have not yet seen.
+   You can use keypad comma to continue to read unseen notes.
+
+1 NEXT (n)
+Displays the next topic, reply or note.
+
+2 NOTE (nn)
+
+Displays the note following the one you are currently reading.
+
+3 Command_Description
+
+ The "nn",  NEXT  NOTE, command displays the next reply or, if no more
+ replies exist, the next topic.
+
+3 Examples
+
+	"r40.5
+"		! read 40.5
+	"nn"			! next note
+
+   Assuming 40.5 is not the last reply, displays note 40.6.  If topic
+   40 has only five replies, this command would display topic 41.
+
+2 REPLY (nr)
+
+ Displays the reply following the one you are currently reading.
+
+3 Command_Description
+
+ The "nr",  NEXT  REPLY,  command displays the reply following the one
+ you  are  currently  reading.  If you are reading the last reply, the
+ message,  'No  more replies' is displayed. You cannot move beyond the
+ current discussion using the NEXT REPLY command.
+
+ You can use the KP3 key to issue this command.
+
+3 Examples
+	"r4.6
+"		! read 4.6
+	"nr"			! next reply
+
+   Displays reply 4.7.  If topic 4 has only six replies, displays the
+   message, 'No more replies'.
+
+2 TOPIC (nt)
+
+ Displays the topic following the one you are currently reading.
+
+3 Command_Description
+
+ The "nt",  NEXT  TOPIC, command skips over the rest of the replies to
+ the current topic.
+
+ You can use the KP2 key to issue this command.
+
+3 Examples
+	"r40.5
+"		! read 40.5
+	"nt"			! next topic
+
+ Displays reply  40.5.  Then,  the  next command skips the rest of the
+ replies to topic 40 and displays topic 41.
+
+2 UNSEEN (u, nu)
+
+Displays the next unseen note.
+
+3 Command_Description
+
+ The "u",  NEXT  UNSEEN,  command  displays the next note outside the
+ current  discussion  that  you  have  not  yet read. Unseen notes are
+ displayed  in  chronological  order,  according to the time the notes
+ were  added to the conference. The NEXT UNSEEN command skips over the
+ rest of the replies to the current topic, and automatically marks the
+ skipped replies as "seen".
+
+ You can use keypad comma (,) to issue this command.
+
+3 Examples
+	"u"		! next unseen
+
+ Skips the  remaining  replies  to  the current topic and displays the
+ next  topic  or reply that you have not yet read. The skipped replies
+ are marked as "seen".
+
+1 OPEN (o)
+
+ Opens a  conference in your Notebook.
+
+    Format:
+	Open entry:
+
+2 Parameters
+Open entry:	entry-name
+
+ Specifies the  name of the Notebook entry to open. The entry-name can
+ be  abbreviated  to  the fewest characters that uniquely identify the
+ entry.
+
+2 Command_Description
+
+ The "o",  OPEN,  command  opens  the entry you have selected in ypour
+ notebook.  Use  "[" and "]" to position to the entry in your notebook
+ that you wish to open then type "o".
+
+ You must add a conference to your Notebook with the ADD ENTRY command
+ before you use the OPEN command.
+
+ The "/o"  command  will prompt you for the entry name, type the entry
+ name  that  you wish to open. You can use wildcard characters to easy
+ typing of long entry names.
+
+1 PRINT (p)
+
+ Prints the specified note or range of notes.
+
+   Format:
+
+	Note-id:	
+	Mark as seen:	n
+	Print options:	
+	String:		
+	Author:		
+	Since:		
+	Before:		
+	Title:		
+	Unseen:		n
+	Keyword:	
+
+2 Parameters
+Note-id:	note-range
+
+ Specifies a range of notes to be printed.
+
+Author:		username
+
+ Prints only notes entered by the specified user.  If you include a
+ node name with the user name, only notes entered by the author from
+ that node are printed.
+
+Before:		date-time
+
+ Prints notes entered before the specified date-time only.  Any valid
+ DCL date-time specification is acceptable.
+
+Keyword:		keyword-name
+
+ Prints only notes having the specified keyword.
+
+Mark as seen:
+
+ Marks the printed notes as seen.
+
+Since:		date-time
+
+ Prints notes entered since the specified date-time only.  Any valid
+ DCL date-time specification is acceptable.
+
+Title:		string
+
+ Prints notes having titles that contain the specified string only.
+ Surround the string with quotation marks.
+
+Unseen:		y or n
+
+ Prints only unseen notes if set to "y".
+
+2 Command_Description
+
+ The PRINT  command  prints  the  current  note  or,  optionally,  the
+ specified  range of notes. You can use several qualifiers in a single
+ PRINT command line with these exceptions or conditions:
+
+  o  To use BEFORE and SINCE to specify a time interval, make sure
+     that the date-time you specify for SINCE is earlier than the
+     date-time you specify for BEFORE.
+
+  o  The keyword you specify with KEYWORD must be an existing
+     keyword for the conference.
+
+  o  The following qualifiers should only be used when you specify a
+     range of notes:
+
+        AUTHOR          SINCE
+        BEFORE          TITLE
+        KEYWORD         UNSEEN
+        SEEN
+
+ You can  set up a list of default qualifiers for the PRINT command in
+ your  profile.  These qualifiers are executed by default whenever you
+ use  the  PRINT  command; you do not have to type the qualifiers each
+ time.  You  can  override the default qualifiers on the command line.
+ See  the  "Sp", SET PROFILE, command for information about setting up
+ default qualifiers for the PRINT command.
+
+2 Examples
+
+Note-id:	40.*-45.*
+Mark as seen:	n
+Print options:	/notify/queue=lqp
+String:		
+Author:		
+Since:		
+Before:		
+Title:		
+Unseen:		n
+Keyword:	
+
+ Prints topics  40  through  45,  including all replies, on the letter
+ quality printer (LQP) and notifies you when the job is complete.
+
+Note-id:	1-last
+Mark as seen:	n
+Print options:	
+String:		
+Author:		
+Since:		
+Before:		
+Title:		POLICY E-90
+Unseen:		n
+Keyword:	
+
+ Prints all  topics in the conference that have the phrase POLICY E-90
+ in the title.
+
+Note-id:	55.0-59.last
+Mark as seen:	n
+Print options:	
+String:		
+Author:		
+Since:		
+Before:		
+Title:		
+Unseen:		y
+Keyword:	
+
+   Prints topics and replies from 55.0 through the last reply to topic
+   59 that you have not yet seen.
+
+Note-id:	4-10
+Mark as seen:	n
+Print options:	
+String:		
+Author:		glen
+Since:		
+Before:		
+Title:		
+Unseen:		n
+Keyword:	
+
+ Prints topics  entered  by  user GLEN only from topic 4 through topic
+ 10.
+
+Note-id:	2.*-100.*
+Mark as seen:	n
+Print options:	
+String:		
+Author:		
+Since:		yesterday
+Before:		
+Title:		
+Unseen:		n
+Keyword:	
+
+ Prints topics and any replies entered since yesterday (24 hours prior
+ to 0:00 today), starting with topic 2 through the last reply to topic
+ 100.
+
+Note-id:	10.0-99.last
+Mark as seen:	y
+Print options:	
+String:		
+Author:		
+Since:		
+Before:		
+Title:		
+Unseen:		y
+Keyword:	
+
+ Prints topics  and  replies from 10.0 through the last reply to topic
+ 99 that you have not yet seen, and marks them as seen.
+
+1 READ (r)
+
+Displays the specified note.
+
+    Format:
+	Read note (nn.rr)
+
+2 Parameters
+Read note (nn.rr)	note-ID
+
+ Specifies a single topic, reply or marker to be displayed.
+
+2 Command_Description
+
+ The "r", READ, command displays the topic or reply you specify.
+
+ To display  a  note  you marked, use the READ command, specifying the
+ marker name instead of the note number.
+
+ The READ  command will default the note to be read whenever possible.
+ If  you have just used the "dn", DIRECTORY of NOTES, command move the
+ cursor  to the directory entry for the note you wish to read and type
+ "r".  If  you  have  used  the  "\lk", LIST KEYWORDS command move the
+ cursor  to  note  id that you wish to read and type "r". Use the "v",
+ VIEW,  command to return to the directory listing or keyword listing.
+
+ You can  see  the  number  of  the  note associated with a particular
+ marker by issuing the "lm", LIST MARKER, command.
+
+ You can  use  the  "nn",  NEXT NOTE, command to page through notes in
+ succession.
+
+ To skip the rest of the current discussion, and display the next note
+ you have not yet seen, issue the "u", NEXT UNSEEN, command.
+
+2 Examples
+     "r4.9
+"
+
+   Displays note 4.9.
+
+     "r.3
+"
+
+   Displays the third reply to the current topic.
+
+     "r5
+"
+
+   Displays topic 5.0.
+
+     "rlast
+"
+
+   Displays the last topic.
+
+     "r.last
+"
+
+   Display the last reply to the current topic.
+
+     "r3.3-3.5
+"
+     Illegal note specification
+
+ You cannot  specify  a  range  of notes for the READ command. To read
+ notes 3.3 through 3.5, first read 3.3, then use the NEXT NOTE command
+ to  page  through the replies. (Press the RETURN key to read the next
+ screen of a multi-screen note.)
+
+1 SEARCH (s)
+
+Searches a range of notes or the entire conference for notes containing
+the specified string.
+
+    Format:
+	Note-id:	
+	String:		
+	Author:		
+	Since:		
+	Before:		
+	Title:		
+	Unseen:		n
+	Keyword:	
+
+2 Parameters
+Note id:	note-range
+
+ Specifies a range of notes to be searched.
+
+Author:		username
+
+ Searches only  notes  entered by the specified user. If you include a
+ node  name  with the user name, only notes entered by the author from
+ that node are searched.
+
+Before:		date-time
+
+ Searches notes entered before the specified date-time only. Any valid
+ DCL date-time specification is acceptable.
+
+Keyword:		keyword-name
+
+ Searches only notes having the specified keyword.
+
+Mark as seen:		y or n
+
+ Marks the searched notes as seen.
+
+Since:			date-time
+
+ Searches notes  entered since the specified date-time only. Any valid
+ DCL date-time specification is acceptable.
+
+Title:			string
+
+ Searches notes  having titles that contain the specified string only.
+ Surround the string with quotation marks.
+
+Unseen:			y or n
+
+ Searches only unseen notes.
+
+2 Command_Description
+
+ The SEARCH command interactively searches through all notes in the
+ specified range of notes.
+
+ To start a new search use the "/s" command.
+
+ Emacs Notes displays a note containing the string and pauses for your
+ next  instruction.  To  search  for  the  next note that contains the
+ string, issue the "s", SEARCH, command again.
+
+ You will be able to search for the next occurrence of the same string
+ at  any time until you specify another string with the SEARCH command
+ or close the conference.
+
+                                     NOTE
+
+      Be aware that searching through the entire conference can take
+      a long time to finish.
+
+2 Examples
+Note-id:	1.0-last.last
+String:		DANTE'S INFERNO
+Author:		
+Since:		
+Before:		
+Title:		
+Unseen:		n
+Keyword:	
+
+   Searches the entire conference for the phrase DANTE'S INFERNO.
+
+Note-id:	2.*-99.*
+String:		BUTTER
+Author:		
+Since:		
+Before:		
+Title:		
+Unseen:		n
+Keyword:	
+
+   Searches for the word "butter" starting with topic 2 and ending with
+   the last reply to topic 99.
+
+Note-id:	1.0-last.last
+String:		
+Author:		SCOTT
+Since:		30-MAR-1986
+Before:		
+Title:		
+Unseen:		n
+Keyword:	
+
+ Searches the  whole  conference for notes written by user SCOTT which
+ where written before 30-MAR-1986.
+
+1 SELECT
+
+  Selects an item from a list displayed on your screen.  Also selects
+  a conference from a "shopping list" and adds the conference to your
+  Notebook.
+
+2 Command_Description
+ The SELECT command lets you select an item from a list displayed
+ on your screen without having to specify the item on the command
+ line.  When you issue the DIRECTORY/ENTRIES command (to see a list
+ of available entries) or the DIRECTORY command (to list notes in
+ a conference), Emacs Notes displays a pointer (>) at the far left of
+ the screen.  Move this pointer forward (using KP2) or backward
+ (using KP5) through the list until the pointer is at the item you
+ want.  Then, issue the SELECT command (or press KP7) to select the
+ item.
+
+ When you are viewing a list of entries, keypad key KP3 skips forward
+ to the next entry with a non-zero unseen count, and keypad key KP1
+ skips backward to the previous entry with a non-zero unseen count.
+ When you press the SELECT key, Emacs Notes opens the entry you selected.
+
+ When you are viewing a directory of notes, Emacs Notes displays the
+ note you selected.
+
+ You can also use the SELECT command to select a conference from a
+ "shopping list" and add the conference to your Notebook.  To select a
+ conference that is on a shopping list, read a note that has an asterisk
+ (*) next to the note number in the heading and issue the SELECT command.
+ The conference is added to your Notebook; the conference name is
+ used as the entry name.  You can issue the SET CLASS command before using
+ the SELECT command to add the conference to a particular existing class.
+
+ To see the name of the conference linked to a note that has an asterisk
+ next to its note number, use the LIST NOTE command.
+
+ You can also use the SELECT key on the editing keypad (VT200-series
+ terminals) or KP7 to issue this command.
+
+1 SEND
+Sends a mail message to one or more users without leaving Emacs Notes.
+
+ Not implemented yet.
+
+   Format:
+
+     SEND [file-spec]
+
+The square brackets [] indicate that the enclosed item is optional.
+2 Parameters
+file-spec
+
+ Specifies a file to send as the mail message.
+2 Command_Description
+ The SEND command sends a mail message to one or more users by the
+ VAX/VMS Mail Utility (MAIL) without leaving Emacs Notes.  You list the
+ addressees at the Send to:  prompt.
+
+ You can send the same message to all members in the conference
+ (without specifying these users individually) by using the /MEMBERS
+ qualifier.  Using the /MEMBERS qualifier suppresses the Send to:
+ prompt.
+
+ To send a file as the mail message, include the file specification in
+ the SEND command line.  You can use the /NOEDIT qualifier to send the
+ file without editing it.  If you do not specify a file to send as
+ your mail message, you cannot use the /NOEDIT qualifier.
+2 Qualifiers
+/AUTHOR
+
+ Specifies that you wish to send the message to the author of
+ the note you are currently reading.  Notice that the Send to:
+ prompt does not appear when you use the /AUTHOR qualifier.
+
+/EDIT (default)
+/NOEDIT
+
+ Specifies whether or not to invoke the editor to send the message.
+
+/LAST
+
+ Specifies that you wish to start off in the editor with the
+ last message that you mailed using the SEND or FORWARD command.
+
+/MEMBERS
+
+ Sends the mail message to all members on the membership list for
+ the conference.  You can use this qualifier only when a membership
+ list exists.
+2 Examples
+     Notes> SEND /NOEDIT MESSAGE.TEXT
+     Send to: BIGSIS::EDISON,LILSIS::MARSH
+     Subject: Progress Report on Project Clean-Up.
+     Notes>
+
+   Sends the text file named MESSAGE.TEXT, without editing, to users
+   BIGSIS::EDISON and LILSIS::MARSH, with the subject 'Progress Report
+   on Project Clean-Up'.  After the message is sent, you return to VAX
+   Notes.
+
+     Notes> SEND /MEMBERS
+     Subject: Announcing a New Conference on Networking Technology
+
+   Puts you in EVE (or your chosen editor) to let you type a mail
+   message to send to all members in the conference.  Notice that the
+   Send to:  prompt does not appear when you use the /MEMBERS
+   qualifier.
+
+     Notes> SEND /AUTHOR
+     Subject: Let's discuss your ideas at tomorrow's meeting
+
+   Puts you in EVE (or your chosen editor) to let you type a message to
+   send to the author of the note you are currently reading.  The node and
+   username appearing in the note header are used as the mailing address.
+
+1 SET (S)
+
+ Sets various  attributes for notes, conferences, privileged users, or
+ profiles.
+
+2 CLASS (Sc)
+
+ Allows you to make a specified class the current class.
+
+    Format:
+	Set-class 
+
+3 Parameters
+Set-class	class-name
+
+ Specifies the name of the class you want to be the current class.
+
+3 Command_Description
+
+ The "Sc", SET CLASS, command allows you to make a specified class the
+ current  class.  Once you specify a class with the SET CLASS command,
+ Emacs  Notes  assumes this class when performing commands (unless you
+ specify another class with the CLASS field in an individual command).
+ The  SET CLASS command is similar to the SELECT FOLDER command in the
+ VAX/VMS Mail Utility (MAIL).
+
+ Use the  SET  CLASS command when you want to permanently override the
+ default  class  specified in your profile for the current Emacs Notes
+ session.  The  class  you  specify with SET CLASS remains the current
+ class  until  you  issue  the  SET  CLASS command again or exit Emacs
+ Notes.
+
+ The class  you specify with the SET CLASS command must be an existing
+ class  in your Notebook. You cannot use the wildcard character (*) in
+ the class name.
+
+3 Examples
+
+2 CONFERENCE (SC)
+
+ Sets information for an existing conference.
+
+   Format:
+
+	Title:
+	Notice:
+	Restrict members:
+	Restrict keywords:
+	Write-lock:
+
+3 Command_Description
+
+ Use the "SC", SET CONFERENCE, command to set or change the following
+ information for an existing conference:
+
+  o  The title, which appears in the conference heading
+
+  o  The notice, which appears beneath the conference title in the
+     heading
+
+  o  Whether to restrict access, keyword creation, or both to specific
+     members
+
+  o  Whether anyone besides you can enter notes in the conference
+
+ You must be a moderator for the conference, and must have enabled
+ your moderator privileges with the SET MODERATOR command, before
+ using the SET CONFERENCE command.
+
+ When you restrict access, keyword creation, or both, you must specify
+ the users who can access the conference (called members), and which
+ of these users can create keywords.  You use the ADD MEMBER command
+ to specify members and assign privileges to them.
+
+ To set  up  a  bulletin board, in which only you can write notes, set
+ WRITE to "n", no write.
+
+3 Parameters
+Title:		string
+
+ Modifies or  sets  the  title  of  the  conference  to the string you
+ specify. Surround the string with quotation marks.
+
+Notice:		string
+
+ Modifies or  sets  the  notice  for  the conference to the string you
+ specify. To remove the notice leave the field blank.
+
+Write-lock:	n
+
+ Specifies whether  to  prevent  anyone  other  than  a moderator from
+ adding  notes.  The  default  is  WRITE.  You can set this conference
+ attribute  at  any  time; for a conference in progress, this prevents
+ the  addition  of any new notes. Any note in progress at the time you
+ successfully  complete  the "MODIFY CONFERENCE WRITE-LOCK: y" command
+ will  not  be  added  to  the  conference.  The author will receive a
+ message indicating that the conference is write-protected.
+
+Restrict Members:
+Restrict Keywords:
+
+ Specifies whether or not to restrict access to the conference,
+ keyword creation, or both.
+
+3 Examples
+
+Title:		Course Evaluation System
+Notice:		
+Restrict:	n
+Write-lock:	n
+
+   Opens the conference to all users and allows any user to create
+   keywords, and sets the title of the conference to 'Course
+   Evaluation System'.
+
+     Notes> SET CONF /RESTRICT=(KEYWORDS) /NOTICE="NASA Project"
+
+   Allows anyone to access the conference but restricts the creation
+   of keywords to users with CREATE_KEYWORDS privilege (see the ADD
+   MEMBER command).  In addition, this command sets the notice to
+   'NASA Project'.
+
+Title:		title
+Notice:		notice
+Restrict:	n
+Write-lock:	y
+
+   Prevents anyone besides yourself from entering new notes from this
+   point on.
+
+2 ENTRY (Se)
+Sets or modifies information for a Notebook entry.
+
+   Format:
+	Entry name:		entry-name
+	New entry name:		new-entry-name
+	Notefile name:		file-name
+	Classes:		classe[,class]
+	Personal name:		personal-name
+
+3 Parameters
+Entry name:	entry-name
+
+ Specifies the entry you want to modify.
+
+Classes:	class-name[,...]
+
+ Specifies the  classes  to which the entry currently belongs with the
+ list you specify. Separate class-names with commas.
+
+Notefile name: file-name
+
+ Specifies the  notefile specification. This is necessary to keep your
+ Notebook up to date when a conference is relocated.
+
+New Entry name: new-entry-name
+
+ Changes the entry name from the old name to the new one you specify.
+
+Personal name: string
+
+ Sets the personal-name associated with this entry to string.
+
+3 Command_Description
+
+ The "Se",  SET  ENTRY, command lets you set or modify information for
+ an  entry in your Notebook. You must specify the name of the Notebook
+ entry you want to modify.
+
+ You can  change the name of the conference with the "New entry name:"
+ field, or change the notefile specification with the "Notefile name:"
+ field.  The  change is reflected in all classes (if the entry belongs
+ to more than one class), and seen/unseen information is unaffected.
+
+ You can  change  the  classes  to  which  an  entry  belongs with the
+ "Classes:"  field.  The list of classes you specify replaces the list
+ of classes to which the entry currently belongs. Therefore, to delete
+ an  entry  from a class, use the "Classes:" field and omit that class
+ from the new list.
+
+3 Examples
+Entry name:		CLIMATE
+New entry name:		WEATHER
+Notefile name:		file-name
+Classes:		MAIN
+Personal name:		
+
+   Changes the name of the entry CLIMATE to WEATHER.
+
+Entry name:		ENERGY
+New entry name:		ENERGY
+Notefile name:		PUBLIC::ENERGY
+Classes:		ERGS,WATTS
+Personal name:		
+
+ Changes the file specification of the entry ENERGY to PUBLIC::ENERGY.
+
+2 KEYWORD (Sk)
+
+ Sets or modifies the name of a keyword.
+
+   Format:
+	Keyword name:		keyword-name
+	New keyword name:	new-keyword-name
+
+3 Parameters
+Keyword name:       keyword-name
+
+ Specifies the keyword name you want to set or modify.
+
+New keyword name:   new-keyword-name
+
+ Specifies the new name for the keyword.
+
+3 Command_Description
+
+ The "Sk", SET KEYWORD, command lets you change the name of a keyword.
+ The  new keyword automatically replaces the old keyword for all notes
+ to which the old keyword had been added.
+
+3 Examples
+Keyword name:		FARMS
+New keyword name:	FARMING
+
+   Changes the name of the keyword FARMS to FARMING.  All notes
+   to which the previous keyword name (FARMS) had been added now
+   have the new keyword FARMING.
+
+2 MEMBER or USER (Su)
+
+ Sets or  modifies  information  about a member on the membership list
+ for the conference.
+
+   Format:
+	Modify member:
+
+	Nodenames:
+	Create keywords:
+	Moderator:
+	Mail address:
+
+3 Command_Description
+ The SET MEMBER command lets you set or modify information for a member.
+ You must have moderator privilege, and must have enabled this
+ privilege by issuing the SET MODERATOR command, before using the
+ SET MEMBER command.
+
+ Use this command to modify a user's mail address, user name, nodes,
+ or privileges.
+
+3 Parameters
+Modify member:		username
+
+ Specifies the  name  of  the  member  for  whom  you  want  to modify
+ information.
+
+Mail address:	mail-address
+
+ Sets or  changes the mailing address for this user to the address you
+ specify.
+
+New username:	new-username
+
+ Changes the user name to the new name you specify.
+
+Nodenames:	node-name[,...]
+
+ Replaces the  previous  list  of  nodes  for this member with the new
+ nodes you specify. You must separate names with commas.
+
+Moderator:
+Create keywords:
+
+ Modifies this user's privileges. With MODERATE privilege, this member
+ can  issue the SET MODERATOR command. With CREATE_KEYWORDS privilege,
+ this  member  can  create  new  keywords  for the current conference.
+ Without CREATE_KEYWORDS, the member can only add existing keywords to
+ notes.
+
+3 Examples
+     Notes> SET MEMBER WAYNE /MAIL=TEXAN::WAYNE
+
+   Sets member WAYNE's mail address to TEXAN::WAYNE.
+
+     Notes> SET MEMBER JONES /NAME=KENYON /MAIL=SPACE::KENYON
+
+   Changes JONES' user name to KENYON, and specifies the new user name
+   in the mail address.
+
+     Notes> SET MEMBER JOHNSON /NODES=(GREEN,BROWN)
+
+   Sets the node names that member JOHNSON can use to GREEN and
+   BROWN.  This listing replaces the previous listing.
+
+     Notes> SET MEMBER BYRD /PRIV=MODERATE
+
+   Grants MODERATE privilege to member BYRD, and automatically grants
+   this member CREATE_KEYWORDS privilege.
+
+2 MODERATOR (SM)
+
+Enables or disable moderator privileges.
+
+3 Command_Description
+
+ You must  issue  the  SET  MODERATOR  command  to  perform  Moderator
+ commands  (provided  you  are the owner of the conference, or another
+ moderator  has  authorized  you to act as moderator). As long as your
+ member  record  for  this  conference  indicates  you  have  MODERATE
+ privilege,  you  can  issue  the  SET  MODERATOR command. 
+
+ Each time  you use the SET MODERATOR command your moderator status is
+ changed. If you where a moderator, moderator privilege is disable. If
+ you were disable then you will be enabled.
+
+ Emacs notes displays the word "Moderator" in the conference header so
+ that you can alway tell if you been enable as a moderator.
+
+ You can see whether you have MODERATE privilege in two ways:
+
+  o  Use the LIST MEMBER command to see your member record.
+
+  o  Use the LIST MODERATOR command to see if your user name is listed
+     as a moderator for this conference.
+
+ You can temporarily suspend your moderator privilege by issuing the
+ SET MODERATOR command.  When you do this, you forfeit the ability
+ to delete or hide other users' notes, to add new users or change
+ existing users' privileges, and so on.  You can suspend and reinstate
+ moderator privilege at any time, and as often as you like.  Your
+ member record does not change when you issue the SET NOMODERATOR
+ command.
+
+3 Examples
+     Notes> SET MODERATOR
+
+   Allows you to perform Moderator commands.
+
+     Notes> SET NOMODERATOR
+
+   Suspends your moderator privilege.  Emacs Notes recognizes you as an
+   ordinary user until you issue the SET MODERATOR command.
+
+2 NOTE
+Sets attributes for the specified note.
+
+   Format:
+	Set note (note-id)
+
+	Title:
+	Hidden:
+	Write-lock:
+	Seen:
+	File-name:
+
+
+3 Parameters
+Set note (note-id)	note-ID
+
+ Specifies a  single  topic  or reply. The default is the note you are
+ currently reading.
+
+File-name:	notefile-spec
+
+ Associates the  specified conference with this note to allow users to
+ add  the  conference  to  their Notebooks by pressing the SELECT key.
+ Notes  that  are  linked to conferences by the MODIFY NOTE/CONFERENCE
+ command have an asterisk (*) next to the note number.
+
+Hidden:		y or n
+
+ Specifies whether  users can display this note. Hidden notes can only
+ be  viewed  by  the  author  or  the moderator. All other users get a
+ message indicating that the note is hidden.
+
+Title:		string
+
+ Allows a moderator to change the title of an existing note.
+
+Write-lock:	y or n
+
+ Specifies whether users can enter further replies to this topic. Only
+ the moderator or the author of the topic can specify this.
+
+Seen:		y
+
+ Set the note as seen.
+
+3 Command_Description
+
+ The "Sn",  SET  NOTE,  command  sets the following attributes for the
+ current or specified note:
+
+  o  Puts the note on a "shopping list".
+
+  o  Hides the note from all users except yourself and the author.
+
+  o  Prevents anyone from replying to the note.
+
+ By putting  a  note  on  a shopping list, you give interested users a
+ convenient  way  to  add  a new conference to their Notebooks without
+ leaving  the  current  conference.  You  use  the SET NOTE/CONFERENCE
+ command  to  link the file specification of the new conference with a
+ particular  note.  (Emacs Notes puts an asterisk (*) next to the note
+ number  to  indicate  that the note is linked to a conference.) Then,
+ someone  reading  that  note  can  add the linked conference to their
+ Notebook by pressing the SELECT key.
+
+ You can temporarily hide a note using the /HIDDEN qualifier.  The
+ note remains part of the conference, but can be displayed by only the
+ author or moderator.  All other users get a message indicating this
+ note is hidden when they try to access a hidden note.
+
+ Use the /NOWRITE qualifier to prevent further replies to a
+ discussion.  When you want to resume replies, issue the SET
+ NOTE/WRITE command.  Only the moderator or the author of the topic
+ can specify whether users can enter replies.
+
+ A moderator can use the /TITLE qualifier to change the title of an
+ existing note.
+
+ To mark notes you have not yet read as "seen", use the SET SEEN
+ command.
+
+3 Examples
+      Notes> SET NOTE /CONFERENCE=ANGEL::METHODS
+
+   Associates the conference METHODS on node ANGEL with the note you
+   are currently reading.  Users reading this note can add the
+   conference METHODS to their Notebooks by pressing the SELECT key.
+
+     Notes> SET NOTE /HIDDEN 3.4
+
+   Only the author of topic 3 or the conference moderator can read
+   note 3.4.
+
+     Notes> SET NOTE /NOWRITE /NOHIDDEN 55.7
+
+   Permits users to read the previously hidden note 55.7, but prevents
+   users from making further replies to topic 55.
+
+2 PROFILE
+
+ Sets information in your profile.
+
+   Format:
+	Personal name:
+	Automatic Directory:
+	Automatic Next unseen:
+	Default class name:
+	Print options:
+
+3 Parameters
+
+Automatic Directory:	y or n
+Automatic Unseen:	y or n
+
+ Specifies whether an automatic DIRECTORY or NEXT UNSEEN command is
+ issued, or whether you see a conference heading only, when you open
+ an entry.
+
+ You can  cancel  the  automatic feature by issuing the MODIFY PROFILE
+ command and setting both fields to "n", no. In this case, you see the
+ conference heading only when you open an entry.
+
+Default class name:	class-name
+
+ Names the  class  you  want  to  be  the current class when you first
+ access your Notebook. Emacs Notes automatically creates a class named
+ MAIN  when  you  invoke Emacs Notes for the first time, and specifies
+ this  class  as  the  default class in your profile unless you change
+ this setting. The class you specify must be an existing class in your
+ Notebook.  You  cannot  use  the  wildcard character (*) in the class
+ name.
+
+
+Personal name:		string
+
+ Sets the  personal name string. The personal name string can be up to
+ 63 characters long. The personal name appears alongside your node and
+ user name in the heading of topics or replies you enter.
+
+ To delete a personal name, use PERSONAL_NAME="".
+
+Print options:	qualifier list"
+
+ Sets the  default qualifiers for the Emacs Notes PRINT command. These
+ qualifiers are added to the PRINT command before any other qualifiers
+ or  parameters  in the PRINT command line. In case of a conflict, the
+ qualifiers  on  the  command  line  override  the  default  qualifier
+ setting.
+
+ The selection  qualifiers for the PRINT command in Emacs Notes are as
+ follows:
+
+  o  /AUTHOR=username
+  o  /BEFORE=date-time
+  o  /COPIES=number
+  o  /FORM=form-name
+  o  /KEYWORD=keyword-name
+  o  /[NO]NOTIFY
+  o  /QUEUE=queue-name
+  o  /SEEN
+  o  /SINCE=date-time
+  o  /TITLE="string"
+  o  /UNSEEN
+
+3 Command_Description
+
+ The "Sp",  SET  PROFILE, command lets you change the default settings
+ in  your  profile.  Your profile tailors your Emacs Notes sessions by
+ specifying:
+
+  o  The editor of your choice, and the method for accessing the
+     editor.
+
+  o  Whether a directory listing, the first unseen message, or a
+     conference heading is automatically displayed when you open a
+     conference.
+
+  o  The name of the class you want to be the current class when you
+     first access your Notebook (the default class).
+
+  o  A personal name to appear alongside your user name in notes you
+     write.
+
+  o  A list of the qualifiers you automatically want to use whenever
+     you issue the PRINT command in Emacs Notes.
+
+ Unless you  issue  the  SET  PROFILE  command  to  change the default
+ settings,    your   Emacs   Notes   sessions   have   the   following
+ characteristics:
+
+  o  When you open an entry, the first note you have not seen is
+     displayed.
+
+  o  When you issue the PRINT command without any qualifiers, the
+     following happens:
+
+      -  The notes you specified are not printed until you end your
+         Emacs Notes session (or change the print queue).
+
+      -  The notes are printed on the default printer at your
+         installation (queue SYS$PRINT).
+
+      -  You are not notified when the print job is complete.
+
+      -  You get one copy of each note.
+
+  o  When you write or reply to a note, your node and user name appear
+     in the note heading, and the area reserved for your personal name
+     is blank.
+
+  o  The class called MAIN is the default class.
+
+ If you set up a list of default qualifiers for the PRINT command, any
+ additional qualifiers you use in the PRINT command line are appended
+ to the default qualifiers.  If you include a qualifier with the PRINT
+ command that conflicts with the default qualifiers in your profile,
+ the qualifier on the command line takes precedence.
+
+3 Examples
+     Notes> SET PROFILE /PRINT="/QUEUE=LPB0/NOWAIT"
+
+   When you issue the PRINT command, the notes are printed
+   immediately on the printer specified by the queue-name LPB0.
+
+     Notes> SET PROFILE /PRINT="/COPIES=2"
+     Notes> PRINT/NOTIFY/QUEUE=LQP 3.*
+
+   Emacs Notes treats the PRINT command line as if you had typed
+   PRINT/COPIES=2/NOTIFY/QUEUE=LQP 3.*.  You get two copies of base
+   note 3 and all its replies.  The system prints the notes on the
+   letter quality printer (LQP) and notifies you when printing is
+   complete.
+
+     Notes> SET PROFILE /PERSONAL_NAME="Johnny Be Good"
+
+   Displays the phrase 'Johnny Be Good' next to your node and user
+   name in the heading of topics or replies you enter.
+
+     Notes> SET PROFILE /EDITOR=EDT
+
+   Sets up EVE with the EDT-style keypad as the editor for Emacs Notes
+   and specifies that Emacs Notes is to access EVE by calling it
+   directly.
+
+     Notes> SET PROFILE /EDITOR=(EDT,CALL)
+
+   Sets up EDT as the editor for Emacs Notes and specifies that VAX
+   Notes is to access EDT by calling it directly.
+
+     Notes> SET PROFILE /EDITOR=("@MYDIR:EDITOR",SPAWN)
+
+   Sets up the editor invoked by the command procedure EDITOR in the
+   directory MYDIR: as the editor to use in Emacs Notes.
+
+     Notes> SET PROFILE /CLASS=PRIVATE
+
+   Sets PRIVATE as the default class.  When you first access your
+   Notebook, PRIVATE is the current class.
+
+     Notes> SET PROFILE /AUTOMATIC=UNSEEN
+
+   When you open an entry, Emacs Notes automatically issues the NEXT
+   UNSEEN command to display the first note you have not yet seen.
+   You can use keypad comma to continue to read unseen notes.
+
+2 SEEN (SS, Ss)
+
+Sets notes you have not yet read as "seen".
+
+   Format:
+	Set seen before (time):
+
+3 Command_Description
+
+ The SET  SEEN  command  sets  notes  you  have not yet read as "seen"
+ without  having  to  display  them. This is useful when you are first
+ joining an active conference that has been in progress for some time.
+ By  setting  notes  as  "seen", you limit the quantity of notes Emacs
+ Notes  shows  you  when you use the NEXT UNSEEN command. You can read
+ "seen" notes any time by using the READ command.
+
+3 Parameters
+Set seen before (time):		date-time
+
+ Specifies that notes entered before a certain date, time, or both are
+ to  be  marked  as  "seen".  The  date-time  can be any valid VAX/VMS
+ date-time specification.
+
+3 Examples
+
+      Notes> SET SEEN/BEFORE=YESTERDAY
+
+   Sets all notes in the conference that were entered before yesterday
+   as "seen".
+
+      Notes> SET SEEN /BEFORE=01-MAR:17:00
+
+   Sets all notes in the conference that were entered before 5:00PM
+   on 01 March as "seen".
+
+      Notes> SET SEEN
+
+   Sets all notes in the conference as "seen".
+
+1 SHOW (l)
+
+ Emacs notes  uses  the verb LIST in place of a SHOW command. All LIST
+ commands start with the letter "l".
+
+1 LIST (l)
+
+ Shows information about the current settings or attributes of various
+ elements in the system.
+
+2 CLASSES (lc, \lc)
+
+3 Command_Description
+
+ The "lc",  LIST  CLASSES,  command shows a listing of classes in your
+ Notebook.  The  current  class is indicated with an asterisk (*). The
+ default class is indicated with a letter D.
+
+ The "\lc"  command  lists  classes and all the entry that the classes
+ contain.
+
+3 Examples
+	"lc"
+
+   Shows a listing of class names in your Notebook.
+2 CONFERENCE "lC"
+ Lists information about the current conference.
+
+3 Command_Description
+
+ The "lC",  LIST  CONFERENCE,  command shows the following information
+ about the current conference:
+
+  o  The name of the last person to issue the SET MODERATOR command
+
+  o  Any restriction to access or keyword creation
+
+  o  The title and notice, if any
+
+  o  The notefile specification
+
+3 Examples
+	"lC"
+
+   Shows information about the current conference.
+
+2 ENTRY "le"
+
+ Shows information about the specified entry.
+
+   Format:
+	List entry (entry name):	entry-name
+3 Parameters
+List entry (entry name):	entry-name
+
+ Names the  entry  for  which you want information. You can abbreviate
+ the  entry  name  to  the  fewest  characters that identify the entry
+ uniquely.
+
+3 Command_Description
+
+ The "le", LIST ENTRY, command shows the following information for the
+ entry you specify:
+
+  o  Complete notefile specification
+
+  o  Marker names and the note to which each refers
+
+  o  The current number of topics in the conference
+
+  o  The total number of notes in the conference
+
+  o  The number of unseen notes
+
+  o  The classes to which the entry belongs
+
+ The "\le"  commands  will  prompt you for the name of the entry to be
+ listed.
+
+3 Examples
+     "\le"
+     List entry (entry name): JOKES
+
+   Shows information for the entry named JOKES.
+
+2 ERROR "lE"
+
+ Shows the full text of the last error message.
+
+3 Command_Description
+
+ The "lE",  LIST  ERROR, command shows the full text of the last error
+ message.  Use  this  command when you need more information about the
+ cause of an error.
+
+ The last  error  is  highlighed  to  distinguish  it from older error
+ messages.  Emacs notes keeps all the error message that are generated
+ in the buffer "notes-messages".
+
+3 Examples
+     Notes> PRNIT
+     Unrecognized command verb - check validity and spelling
+     Notes> LIST ERROR
+     Unrecognized command verb - check validity and spelling
+     /PRNIT/
+
+   Shows the full text of the error message.  In this case, the
+   command PRINT was incorrectly typed.
+
+     Notes> ADD MEMBER SCULLY
+     Cannot add member SCULLY
+     Notes> LIST ERROR
+     SCULLY is already a member of the conference
+
+   Shows the full text of the error message.  In this case, the
+   member SCULLY cannot be added to the conference because a
+   membership record for user SCULLY already exists.
+
+2 KEYWORDS
+
+ Shows information about keywords in the current conference.
+
+   Format:
+
+	List keyword (keyword)[*] keyword-name
+
+3 Parameters
+List keyword (keyword)[*]	keyword-name
+
+ Names the  keyword  about  which you want to get information. You can
+ use the wildcard character (*) in the keyword-name.
+
+3 Command_Description
+
+ The "lk",  LIST KEYWORDS, command shows information about keywords in
+ the  current  conference.
+
+ The "/lk"  commands  allows  you to specify the keyword-name and also
+ lists all the notes that each keyword is associated with.
+
+3 Examples
+	"\lk"
+	List keyword (keyword)[*] GOLD
+
+ Verifies that the keyword GOLD exists for the current conference. All
+ notes that have the keyword GOLD are also listed.
+
+	"\lk"
+	List keyword (keyword)[*] 
+
+
+   Lists all keywords for the current conference, and, for each
+   keyword, lists the notes that refer to the keyword.
+
+2 MARKER
+
+ Shows information about the marker you specify or all markers for the
+ current entry.
+
+   Format:
+	List marker (name) marker-name
+
+3 Parameters
+List marker (name) marker-name
+
+ Specifies a marker about which you want to get information.
+
+3 Command_Description
+
+ The "lm",  LIST  MARKERS,  commands  lists  all  the  markers for the
+ current entry and the notes that they mark.
+
+ The "\lm"  command  shows  the  note that is marked by the marker you
+ specify.
+
+
+3 Examples
+     Notes> LIST MARKER ACTION_ITEM
+
+   Shows which note in the current entry is marked with the marker
+   ACTION_ITEM.
+
+     Notes> LIST MARKER /ALL
+
+   Shows all markers, and the note number marked by each, for the
+   current entry.
+
+2 MEMBER or USERS (lM, lu)
+
+ Shows information   about   the  specified  members  in  the  current
+ conference.
+
+   Format:
+	List members (member name):	username
+
+3 Parameters
+List members (member name):	username
+
+ Specifies the name of the member for whom you want information.
+
+3 Command_Description
+
+ The "lu",  LIST USERS command, shows information about members in the
+ current  conference. You can see information for a specific member or
+ all members. The information listed includes:
+
+  o  Nodes
+
+  o  Mail address
+
+  o  Privileges
+
+ To see a listing of members who are also moderators, use the
+ LIST MODERATOR command.
+
+ If you use the LIST MEMBER command in a conference that does not have
+ a membership list, Emacs Notes displays the message, "No such member in
+ this conference".
+
+3 Examples
+     Notes> LIST MEMBER MARTIN
+
+   Shows information about user MARTIN.
+
+     Notes> LIST MEMBER
+
+   Shows information about all members in the current conference.
+
+     Notes> LIST MEMBER/MODERATOR
+
+   Shows complete information for all moderators.
+2 MODERATOR
+ Shows the name of moderators for the current conference.
+
+   Format:
+	List moderators (member name):	username
+
+3 Command_Description
+
+ The LIST  MODERATOR  command  shows  the  node  and user name of each
+ moderator for the current conference.
+
+3 Examples
+     Notes> LIST MODERATOR
+
+   Shows the names of moderators for this conference.
+
+2 NOTE
+ Shows information about the specified or current note.
+
+   Format:
+	List note (nn.rr)	note-id
+
+3 Parameters
+List note (nn.rr)  note-ID
+
+ Specifies a single topic or reply.  The default is the note you are
+ currently reading.
+
+3 Command_Description
+
+ The "ln",  LIST  NOTE,  command shows the following information about
+ the specified or current note:
+
+  o  The number of replies
+
+  o  The author's user name and complete personal name
+
+  o  The complete title
+
+  o  The number of lines of text in the note
+
+  o  Any associated notefile specification (if the note was put on a
+     'shopping list')
+
+  o  Whether further replies have been prohibited by the author or
+     moderator
+
+  o  Whether the note has been hidden by the author or moderator
+
+  o  A list of keywords set for the note.
+
+3 Examples
+     Notes> LIST NOTE 3.4
+
+   Shows information about note 3.4.
+
+     Notes> LIST NOTE /KEYWORDS 4
+
+   Shows the keywords referred to by topic 4.
+
+2 PROFILE (lp)
+ Shows your current profile settings.
+
+3 Command_Description
+
+ The "lp",  LIST PROFILE, command shows your current profile settings,
+ including:
+
+  o  The default class.
+
+  o  Your personal name, if any.
+
+  o  The default qualifier list for the PRINT command.
+
+  o  Whether a directory listing, the first unseen message, or a
+     conference heading is automatically displayed when you open an
+     entry.
+
+3 Examples
+     Notes> LIST PROFILE
+
+   Shows the current settings for your profile.
+
+2 VERSION (lv)
+
+ Shows information  about the version of Emacs Notes you are currently
+ using.
+
+3 Command_Description
+
+ The "lv", LIST VERSION, command shows the version number of the Emacs
+ Notes software you currently have installed on your system.
+
+3 Examples
+     Notes> LIST VERSION
+     Emacs Notes Version V01.0
+
+   Shows that you are using V1.0 of the Emacs Notes software.
+
+1 UPDATE (U, \U)
+
+ Queries the  specified  entry  to determine whether it contains notes
+ you have not yet seen.
+
+
+2 Command_Description
+
+ Use the  "U", UPDATE, command to determine whether an entry has notes
+ you  have  not yet seen. You can update a single entry or all entries
+ in  the  current class. Use the "\U" command to update all entries in
+ the current class.
+
+2 Examples
+     Notes> UPDATE CAMERAS
+
+   Updates the entry CAMERAS in the current class.
+
+     Notes> UPDATE /CLASS=A*
+
+   Updates all entries in all classes that start with the letter A.
+
+     Notes> UPDATE /CLASS=RELIGIONS CATHOLICISM
+
+   Updates entry CATHOLICISM in class RELIGIONS.
+
+1 VIEW (v, \v)
+
+ Change the buffers that are in view.
+
+1 Command_Description
+
+ Emacs notes  places the output of each command in a different buffer. 
+
+ Use the  "v",  VIEW,  command to change the buffers that are in view.
+ Each  time  you  use  the  "v"  command  Emacs notes selects the next
+ interesting buffer and displays it as the main buffer on the screen.
+
+ Use the  "\v" to change the view between the NOTEBOOK buffers and the
+ NOTEFILE buffers.
+
+ The VIEW  commands  allow  you to view information previous extracted
+ from  a  notes  file. For example after doing a "dn", DIRECTOR NOTES,
+ commands  followed  by  a  "r",  READ, command. The VIEW command will
+ return you to the directory listing.
+
+1 WRITE (w)
+ Adds a new topic to the conference.
+
+   Format:
+	Title:		title
+	Add keywords:	keyword[,...]
+	Hide note:	n or y
+	Write lock:	n or y
+
+2 Parameters
+Title:		string
+
+ Set the title of the note to be written to the string.
+
+Add keywords	keyword[,...]
+
+ An optional  list  of  keywords  to  be added to the note after it is
+ written.
+
+Hide note:	y or n
+
+ Specify wheter to hide the note when it is written.
+
+Write lock:	y or n
+
+ Specify wether to write lock to note when it is written.
+
+2 Command_Description
+
+ The "w",  WRITE  command  is  used  to  enter a new topic. You can be
+ positioned  anywhere  in  the  conference  when  you  issue the WRITE
+ command.
+
+
+ Emacs Notes immediately prompts you for a title for the topic.
+
+ If Emacs Notes is unable to write your topic, or if you cancel your
+ entry,  you  can  retrieve  the  text  of  your  last  note  from the
+ notefile-new-note-'n'  buffer. 'n' is the number of the notes seesion
+ that you are using, normally session 1.
+
+ If you want to start a new conference, use the CREATE CONFERENCE
+ command.
+
+2 Examples
+     Notes> WRITE
+
+   Invokes the editor with an empty NOTES$EDIT buffer, and assigns
+   your note the next available topic number.
+
+     Notes> WRITE /NOEDIT COURSES.TXT
+
+   Gets the text for the topic from the file COURSES.TXT without
+   invoking the editor.
+
+     Notes> WRITE /LAST
+
+   Invokes the editor and retrieves the most recent contents of the
+   NOTES$EDIT buffer.
+
+     Notes> CLOSE BOOKS
+     Notes> OPEN RESTAURANTS
+     Notes> WRITE /LAST
+
+   Uses the text last stored in the NOTES$EDIT buffer as the text for
+   the next topic in the RESTAURANTS conference.  This allows you to
+   enter the same note in more than one conference without having to
+   retype it each time.  Because WRITE/LAST invokes the editor, you
+   can edit the text before you enter it in the new conference, if
+   desired.
+1 Key_Bindings
+
+ These are the default key bindings for Emacs notes. 
+
+ Common commands  are  bound  to single keys. The rest of the commands
+ use  two  keys.  The first key is the command type, ADD, LIST etc and
+ the second key is the object of the command, ENTRY, NOTE etc.
+
+	Major commands		Binding		Qualifiers
+	--------------		-------		----------
+	Add			A		e k K m u U
+	Answer			a		none
+	Back			b		n N r R t T
+	Create			C		c C k K
+	Close notefile		c		none
+	Delete			D		e k K e U n N
+	Directory		d		c C e E n N
+	Extract			e		none
+	Forward			f		none
+	Help			h H ?		none
+	Modify			M		e k K M u U
+	Next			n		n N t r R T u U
+	Next unseen		u		none
+	Open notefile		o O		none
+	Print			p P		none
+	Read note		r		none
+	Search			s		none
+	Set			S		c C m M n N p P s S
+	Set marker		m		none
+	List (Show)		l		c C e E k K m M u U n N p P v V
+	Update			U		none
+	Change view		v		none
+	Exit or Quit		q		none
+	Select next item	]		none
+	Select previous item	[		none
+	Continue operation	RET		none
+
+	Qualifier		Character
+	---------		---------
+	Conference		C
+	Class			c
+	Entry			e
+	Errors			E
+	Keyword			k K
+	Note			n N
+	Reply			r R
+	Topic			t T
+	User (member)		u U
+	Moderator		M
+	Seen			s S
+	Profile			p P
+
+	/ prefixed commands
+	-------------------
+
+	Below is  a  list  of commands that take a "/" prefix and
+	the special actions they take.
+
+	Command		Binding	Special action
+	-------		-------	--------------
+	Add Entry	Ae	Default entry file name to the
+				current region.
+	Read		r	Always prompt for note-id
+	List Classes	lc	List class and entries
+	List Entry	le	Prompt for entry name
+	List keywords	lk	List the keywords and all notes
+				that have those keywords
+	List Marker	lm	Prompt for marker name
+	List Moderator	lM	Prompt for moderator name
+	List users	lu	Prompt for user name
+	List note	ln	Prompt for note id
+	Search		s	Prompt for the search criterion
+	Change view	v	Change major mode
+	Continue	RET	For reads read all the text of the
+				note.
+	Update		U	Update a range of entries
+	Quit		q	Suspend current notes session
+
+1 Command_Summary
+
+ If you  are  new to Emacs Notes, type New_User for examples of how to
+ use   Getting   Started   commands,   or  Terms_and_Concepts  for  an
+ explanation  of  your  Notebook  and  other  Emacs  Notes  terms  and
+ concepts.
+
+Getting Started Commands:
+
+  ADD ENTRY               ANSWER                  CLOSE
+  DIRECTORY               EXIT                    PRINT
+  HELP                    WRITE
+  READ                    OPEN
+
+
+The following topics have information on more advanced Emacs Notes commands:
+
+  Information_Commands    Keyword_Commands        Logical_Names
+  Moderator_Commands      Notebook_Commands       Subprocess_Commands
+  Other_Utilities         Reading_Notes
+
+1 Information_Commands
+
+ These commands  are  used  to  display information about conferences,
+ entries and Emacs Notes users.
+
+LIST CONFERENCE         LIST ERROR              LIST KEYWORDS
+LIST MEMBER             LIST MODERATOR          LIST NOTE
+LIST PROFILE            LIST VERSION
+
+1 Keyword_Commands
+
+ These commands  are  used  to  maintain  keywords for conferences and
+ entries.
+
+ADD KEYWORD     CREATE KEYWORD      DELETE KEYWORD      LIST KEYWORD
+
+1 Logical_Names
+
+ The following are the logical names that Emacs Notes uses:
+
+Logical Name        Definition
+
+NOTES$LIBRARY       Directory for storing notefiles.  Notefiles are opened
+                    with a default file specification of NOTES$LIBRARY:.NOTE.
+
+NOTES$NOTEBOOK      Your Notebook is opened with the file name
+                    NOTES$NOTEBOOK, with a default file specification of
+                    SYS$LOGIN:.NOTE.
+
+1 Customisation_of_Emacs_Notes.
+
+ Emacs notes  allow  the user to customise its behavoir in a number of
+ ways.
+
+ The following  MLisp  files  are  loaded  by  Emacs  Notes  to  allow
+ customisation:-
+
+notes_setup.ml
+
+ This file  is  loaded  to allow the user to define hook functions and
+ set variables controlling Emacs notes operation.
+
+ The variables that may be set in the notes_setup.ml are
+
+    notes-put-form-in-write-buffer
+
+ If true  puts the write note and answer note forms at the head of the
+ compose buffer.
+
+    notes-update-seen-map-frequency
+
+ Emacs Notes  checkpoints  the  seen  map  after  the  number of notes
+ defined by this variable have been read.
+
+    notes-keypad-binings
+
+ If true  notes.key  will  define  keys on the numeric keypad, ala VAX
+ notes.
+
+    notes-entry-key-reads-text
+
+ If false the ENTER key function will not display the next screen full
+ of text for the current note. It will skip that action.
+
+notes_user.key
+
+ This file  is  loaded  as  part  of  the  procedure  to setup the key
+ bindings  for  Emacs  Notes.  This  file  can  be  used to define any
+ additional  key  bindings  required.  They  should  be  defined using
+ local-bind-to-key.
+
+notes-hook-setup-compose-buffer
+
+ Is a  function  that is invoked when ever the compose buffer is used.
+ If could be defined to set the margins for text-mode, for example.
+
+1 Moderator_Commands
+
+ These commands are used by the moderator to manage a conference.
+
+  ADD MEMBER            DELETE KEYWORD          MODIFY (or SET) KEYWORD
+  CREATE CONFERENCE     DELETE MEMBER           MODIFY (or SET) MEMBER
+  CREATE KEYWORD        DELETE NOTE             SET (or MODIFY) CONFERENCE
+  SET MODERATOR                                 SET (or MODIFY) NOTE
+
+1 New_User
+
+ Before you can read the notes in a conference, you must first add the
+ conference to your Notebook, then open the conference.
+
+
+| To see  a  listing  of  the  conferences  that  are available on your
+| system, type:
+|
+|	Notes> DIRECTORY/CONFERENCES
+|
+| The name  of  each  conference  appears in capital letters. The title
+| briefly describes the subject of the conference.
+
+
+ To add  a conference to your Notebook, use the "Ae", ADD ENTRY, command. For
+ example, to add the CARS conference to your Notebook, type:
+
+	Ae
+
+ And then fill in the Add entry form.
+
+Notefile name:		CARS
+Entry name:		
+Classes:		MAIN
+Personal name:		
+
+ After you have filled in the form type Control-C and confirm that you
+ wish to add the entry.
+
+ To open  a conference, use the OPEN command. For example, to open the
+ CARS  conference.  Use  "["  and  "]"  to move the cursor to the CARS
+ entry. Then Type "o" to OPEN the conference.
+
+ A conference  is  organized  into discussions. Each discussion begins
+ with  a TOPIC, each having any number of REPLIES. Topics are numbered
+ consecutively,   starting   with   1.   Replies   are  also  numbered
+ consecutively,  by topic, starting with .1. For example, if there are
+ three replies to topic 4, they are numbered 4.1, 4.2, and 4.3.
+
+ To see a listing of the topics in a conference, type:
+
+		"dn"
+
+ Use the RETURN key to see more of the directory listing.
+
+ To read a specific topic or reply, Use the "r", READ command and type
+ the  note  number.  For  example, to read the third reply to topic 6,
+ type:
+
+	"r6.3
+"
+
+ Use the  ENTER  or  RETURN  key  to  page  through  the  replies in a
+ discussion.
+
+
+ To add  a  reply  to a discussion, use the ANSWER command. You must be
+ reading a reply (or the topic) in the discussion before you issue the
+ ANSWER command. For example, to add a reply to the discussion on topic
+ 10, type:
+
+	"r10
+"
+	"a"
+
+ To start a discussion on a new topic, use the WRITE command, type:
+
+	"w"
+
+
+ The following  table  shows  introductory  commands and gives a brief
+ description  of  each  command.  Type  HELP for a full listing of all
+ commands.
+
+
+Command                  Description
+-------                  -----------
+notes                    Invokes Emacs notes.
+h                        Accesses on-line HELP about Emacs Notes commands.
+DIRECTORY/CONFERENCES    Lists available conferences.
+ANSWER                   Enters a reply to a topic.
+ADD ENTRY                Adds a conference to your Notebook.
+DIRECTORY/NOTEBOOK       Displays a listing of the entries in your Notebook.
+OPEN                     Opens an existing conference in your Notebook.
+DIRECTORY NOTES          Lists notes in a conference.
+READ                     Displays a note.
+WRITE                    Enters a new topic.
+PRINT                    Prints notes.
+UPDATE                   Updates the "unseen" count in the Notebook directory.
+CLOSE (or CTRL/Z)        Leaves a conference and returns you to your Notebook.
+EXIT (or CTRL/Z)         Ends a Emacs Notes session.
+LIST ERROR               Displays more information after an error.
+
+1 Notebook_Commands
+
+ The following commands are used to maintain your Notebook.
+
+Basic Notebook Commands:
+
+CLOSE                   OPEN                    SET (or MODIFY) PROFILE
+UPDATE
+
+To Get Directories:
+
+DIRECTORY CONFERENCES         DIRECTORY ENTRIES
+
+To Maintain Entries:
+
+ADD ENTRY               DELETE ENTRY            MODIFY (or SET) ENTRY
+LIST CLASSES            LIST ENTRY              SELECT
+
+To Mark Notes:
+
+ADD MARKER (or MARK)    DELETE MARKER           READ
+LIST MARKER
+
+1 Reading_Notes
+
+ These commands are used to move through a conference.
+
+  BACK TOPIC        BACK NOTE       BACK REPLY
+  NEXT UNSEEN       NEXT NOTE       NEXT REPLY
+  NEXT TOPIC
+
+1 Release_Notes
+
+ You can read the release notes for this version of VAX Notes by typing
+ the following command at the DCL prompt ($):
+
+     $ TYPE SYS$HELP:NOTESvvv.RELEASE_NOTES
+
+ where "vvv" matches the number of the version of Emacs Notes you are currently
+ using.
+
+ You would substitute "010" for "vvv" in the DCL command to see release
+ notes for this version.
+
+ To get a print-out of the release notes, use the following DCL command:
+
+     $ PRINT SYS$HELP:NOTESvvv.RELEASE_NOTES
+
+1 Specifying_Notes
+
+ In command formats, the parameter "note-ID" refers to a single topic
+ or reply, and "note-range" refers to a range of notes.  Any command
+ that accepts a note-ID or note-range can only be used when a conference
+ is open.
+
+ To specify notes in a command line, you can use the following notations:
+
+
+    Notations for Specifying Note-IDs
+    _____________________________________________________________________
+    Notation        Specification                          Example
+    --------------  ----------------------------------     --------------
+    . (period)      The current note                       .
+    n or n.0        A single topic                         12 or 12.0
+    n.r             A single reply to topic n              4.9
+    TOPIC           The topic of the current reply         TOPIC
+    nnnn or LAST    The last topic in the file             999 or LAST
+    .rrrr or .LAST  The last reply to the current topic    .99 or .LAST
+
+
+    Notations for Specifying Note-Ranges
+    ---------------------------------------------------------------------
+    Notation        Specification                           Example
+    --------------  ----------------------------------      -------------
+    n-m             Topics only from n.0 to m.0, inclusive  12-18
+    * or ALL        All the topics in the conference        * or ALL
+    .* or .ALL      All replies to the current topic        .* or .ALL
+    n.* or n.ALL    All replies to topic n                  12.* or 12.ALL
+    n1.r1-n2.r2     A range of notes, including all replies 5.2-17.4
+    *.* or ALL.ALL  All notes in the conference             *.* or ALL.ALL
+
+
+                                     NOTE
+
+          A command format that shows a range of notes as a parameter
+          also allows a single note-ID as a parameter, but the reverse
+          is not true.  A command format that shows a single note as a
+          parameter does NOT accept a range of notes.
+
+1 Terms_and_Concepts
+
+Emacs Notes is a computer-mediated conferencing system.  It allows many
+people to communicate at their convenience, usually on a single
+subject or issue. In Emacs Notes, a private meeting to discuss marketing
+strategy, an electronic bulletin board to announce course offerings,
+or a public forum on environmental issues are all examples of
+CONFERENCES.
+
+A conference is organized into any number of TOPICS, each of which can
+have any number of REPLIES.  A topic and its associated replies are
+called a DISCUSSION.  Topics are identified as n.0, where n is a
+number assigned sequentially by the system.  Replies to a topic note
+are also sequentially numbered, starting with .1.  If topic 4 has 3
+replies, the replies are numbered 4.1, 4.2, and 4.3.  Topics and
+replies are referred to collectively as NOTES.
+
+The first time you invoke Emacs Notes, a NOTEBOOK is automatically
+created for you.  In your Notebook, you store the names of conferences
+you are interested in.  This figure shows how a typical Notebook might
+be organized, and how notes are arranged in a conference:
+
+
++------------------------------- +     +---------------+     +-------------+
+|             Emacs Notes          |     | Your Notebook |   ->| Conference F|
+| +-------------+ +------------+ |     |               |  /  |             |
+| |     All     | |   Your     | | --->| Main Class    | /   | Topic 1     |
+| |             | | Notebook   | |/    |  conference F _/    |   Reply 1.1 |
+| |  Available  | |    ***     |_/     |  conference G |     |   Reply 1.2 |
+| |             | |(conferences| |     | Fun Class     |     | Topic 2     |
+| | Conferences | |     of     | |     |  conference A |     |   Reply 2.1 |
+| |             | | interest)  | |     | Work Class    |     |   Reply 2.2 |
+| +-------------+ +------------+ |     |  conference B |     |   Reply 2.3 |
++---|----------------------------+     |  conference J |     |      .      |
+    |     +---------------+            |  conference P |     |      .      |
+    |     | conference  A |            +---------------+     +-------------+
+    |---> | conference  B |
+          | conference  C |
+          |     .         |
+          |     .         |
+          |     .         |
+          | conference  Z |
+          +---------------+
+
+
+A CLASS is a group of conferences that is related in some way.  A class works
+work like a tabbed divider to keep related conferences together.
+You can also think of a class as something like a mail folder in MAIL, or
+a VAX/VMS subdirectory.  Unlike a mail folder, however, a conference can
+be in more than one class at a time.  You can create as many classes
+as you want in your Notebook.
+

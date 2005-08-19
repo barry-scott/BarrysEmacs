@@ -1,0 +1,93 @@
+<appendix>(Package And Subsystem Index\packagesubsys_ax)
+
+<p>
+<reference>(packagesubsys_tab) contains a list and brief description of
+the packages and libraries supplied with EMACS.
+
+<p>
+For details on using the packages and libraries listed here, see the
+<reference>(emacs_ext_ref).
+
+<table>(Package and Subsystem Index\packagesubsys_tab)
+<table_setup>(2\10)
+<table_heads>(Package\Description)
+<table_row>(ABBREV\Additional Abbreviation Mode functions that simplify
+			using abbreviations)
+<table_row>(ADDLOG\A simple diary logging system)
+<table_row>(AREA\Horizontally- and vertically-bounded cut-and-paste functions)
+<table_row>(AUTOARG\Implements Auto-arg mode)
+<table_row>(BLISSMODE\A major mode for Bliss programmers)
+<table_row>(BUFDIRED\A buffer manipulation package)
+<table_row>(BUFF\A one-line buffer listing generator)
+<table_row>(CENTERLIN\Line-centering functions)
+<table_row>(CMODE\A major mode for C programmers)
+<table_row>(CMS\EMACS' CMS interface)
+<table_row>(DABBREV\Implements dynamic abbreviation expansion)
+<table_row>(DCLMODE\A major mode for DCL programmers)
+<table_row>(DEBUG\EMACS' Mock Lisp debugger)
+<table_row>(DENT\Functions to indent and un-indent blocks of text)
+<table_row>(DESCRIBEX\Implements the <key_name>(describe-command) and
+		<key_name>(describe-variable) functions)
+<table_row>(DESWORD\Implements the <key_name>(describe-word-in-buffer) function)
+<table_row>(DIRED\A directory editing subsystem)
+<table_row>(EDTSIM\Implements the EDT simulation keys)
+<table_row>(ELECTRICC\Another major mode for C programmers)
+<table_row>(EMACS_SYS\Functions to implement various VMS system service calls)
+<table_row>(ERRMSGPRS\Implements the default error message parser)
+<table_row>(EXPANDX\Defines the <key_name>(expand-mlisp-word) and
+			<key_name>(expand-mlisp-variable) functions)
+<table_row>(FLASHER\Implements basic parenthesis balancing)
+<table_row>(FUNDMODE\Implements Fundamental Mode---an alternative to
+			Normal Mode)
+<table_row>(GLOBDEL\Implements functions to apply operations to all lines
+		containing the specified pattern)
+<table_row>(GOTO\Implements various functions for moving dot by specifying
+			various entities)
+<table_row>(HELP\A package which provides access to VMS HELP)
+<table_row>(HELPCHAR\Implements the EMACS <key_name>(Help) character)
+<table_row>(INCSEARCH\Implements incremental search functions)
+<table_row>(INFO\The INFO subsystem)
+<table_row>(KILLER\The Kill-Ring package)
+<table_row>(LISPMODE\A major mode for Lisp and Mock Lisp programmers)
+<table_row>(MAKEBOX\Functions for drawing boxes around text)
+<table_row>(MESSAGES\Traps broadcast messages and displays them in a one-line
+			window)
+<table_row>(MINIBUF\A package that allows you to define and run small Mlisp
+			programs)
+<table_row>(MOUSE-RECTANGULAR\A mouse interface to the rectangular
+				cut-and-paste routines)
+<table_row>(NEWCOMPIL\Implements the <key_name>(compile-it) and
+			<key_name>(next-error) commands)
+<table_row>(NORMALMOD\Implements Normal Mode---the default major mode for
+			EMACS buffers)
+<table_row>(NOTES\The VAX NOTES interface package)
+<table_row>(NUMBER\A base conversion package)
+<table_row>(PAGE\Page-oriented commands using virtual buffer bounds)
+<table_row>(PARAGRAPH\Implements the <key_name>(paragraph) commands used
+			by the Text Mode functions)
+<table_row>(PASCAL\A major mode for PASCAL programmers)
+<table_row>(PROCESS\Implements the <key_name>(shell) command)
+<table_row>(RECTANGULAR\Implements rectangular cut and paste commands)
+<table_row>(SCRIBE\A major mode for Scribe programmers)
+<table_row>(SENTENCE\Implements the <key_name>(sentence) commands)
+<table_row>(SHELL\A DCL interaction package)
+<table_row>(SPAWN\Implements the <key_name>(spawn) function)
+<table_row>(SPELL\Implements access to DECspell)
+<table_row>(TABS\A package to do smart things with the <key_name>(Tab) key)
+<table_row>(TAGS\The TAGS program indexing library)
+<table_row>(TEACH\The EMACS computer-based instruction package)
+<table_row>(TECO\Implements functions to access TECO from within EMACS)
+<table_row>(TEXTMODE\Implements Text Mode---a major mode for text formatting)
+<table_row>(THESAURUS\An interface to the DECspell thesaurus)
+<table_row>(TIME\A package to display the time on the screen)
+<table_row>(TRACE\The MLisp trace package)
+<table_row>(UNDO\User-interface to the UNDO package)
+<table_row>(VIEW\Implements the <key_name>(view) commands)
+<table_row>(VMS_MAIL\Enables EMACS to be used as the VMS MAIL editor)
+<table_row>(WHATCURS\Displays statistics about the current cursor position)
+<table_row>(WHEREIS\Locates a key sequence when given a function name)
+<table_row>(WINDOWS\A window ring package)
+<table_row>(WRITEREG\Functions that allow you to write regions to files)
+<endtable>
+
+<endappendix>

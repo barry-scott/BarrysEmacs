@@ -1,0 +1,1459 @@
+<chapter>(EMACS Variables\variables_chap)
+
+<p>
+This chapter contains an alphabetically ordered list of all the EMACS
+system variables.  Where a variable has a default value, this is shown
+after the symbol <quote>(<math_char>(double_leftarrow)).
+
+<definition_list>
+
+
+<deflist_item>(abbrev-expansion)
+<x>(abbrev-expansion)
+<deflist_def>
+Holds the expansion of the abbreviation when an abbreviation  hook
+function  is called. At all other times it contains a null string.
+
+
+<deflist_item>(abbrev-mode <math_char>(double_leftarrow) 0)
+<x>(abbrev-mode)
+<deflist_def>
+Controls whether abbreviations are expanded. If set to
+true,    abbreviations  are  checked and expanded as required,
+otherwise, no expansion takes place.  This  variable  is buffer-specific
+and  its state  is  displayed in the mode line of each window.
+
+
+<deflist_item>(activity-indicator <math_char>(double_leftarrow) 0)
+<x>(activity-indicator)
+<deflist_def>
+Controls the  activity indicator. The activity indicator
+is a single letter code that is displayed at the bottom  left-hand
+corner of the screen.  The various codes are:
+
+<list>(unnumbered)
+
+<le>
+<quote>(<cx>(x)) --- indicates that EMACS is initialising
+
+<le>
+<quote>(<cx>(i)) --- indicates that EMACS is waiting for input
+
+<le>
+<quote>(<cx>(b)) --- indicates that EMACS is busy working
+
+<le>
+<quote>(<cx>(c)) --- indicates that EMACS is checkpointing
+
+<le>
+<quote>(<cx>(c)) --- indicates that EMACS is journalling
+
+<endlist>
+
+<p>
+To  make  room  for  the activity indicator, the Mini-buffer is moved over
+two columns to the right.
+
+
+<deflist_item>(animated-journal-recovery <math_char>(double_leftarrow) 0)
+<x>(animated-journal-recovery)
+<x>(journal-recover)
+<deflist_def>
+When  set  to  <key_name>(true),  the  <key_name>(journal-recover)
+command will update the screen   while   recovering   the   contents   of
+a  buffer.  If <key_name>(animated-journal-recovery) is <key_name>(false),
+the screen is updated after all  the journal has been used to recover the
+buffer.
+
+
+<deflist_item>(ask-about-buffer-names <math_char>(double_leftarrow) 1)
+<x>(ask-about-buffer-names)
+<x>(visit-file)
+<deflist_def>
+Controls what the <key_name>(visit-file) function  does if
+the buffer name it constructs is already in use.  If  it  is non-zero,
+EMACS will ask for a new  buffer  name, or for <key_name>(Return) to be
+typed which will overwrite the old buffer.  If the variable is zero, a
+buffer name will be created by appending <emphasis>(n\italic) to the
+buffer name, (where <emphasis>(n\italic) is a unique sequence number).
+
+
+<deflist_item>(auto-fill-hook <math_char>(double_leftarrow) <quote>())
+<x>(auto-fill-hook)
+<deflist_def>
+Controls  the  calling  of  a function to fill the current
+line.  The variable is set to the name of the function to be  called  to
+fill the line, or the null string if no function is to be called.
+
+
+<deflist_item>(black-on-white <math_char>(double_leftarrow) 0)
+<x>(black-on-white)
+<x>(visible bell)
+<deflist_def>
+Records the type of screen on which EMACS is running.
+If  non-zero,  text  is  displayed  on the screen as black characters on a
+white background. If zero, text is displayed as white characters on a
+black bcakground.  This information is used by some terminal interfaces to
+decide how to display a <quote>(visible bell).
+
+
+<deflist_item>(breakpoint-hook <math_char>(double_leftarrow) <quote>())
+<x>(breakpoint-hook)
+<x>(decompile-current-line)
+<deflist_def>
+Contains the name of the breakpoint function. When a
+breakpoint  occurs,  the function whose name is in
+<key_name>(breakpoint-hook) is called.
+
+<p>
+The  breakpoint function may decompile the expression that will be
+executed by using the <key_name>(decompile-current-line) function.
+
+
+<deflist_item>(buffer-is-modified <math_char>(double_leftarrow) 0)
+<x>(buffer-is-modified)
+<deflist_def>
+Is  positive  if  the  current buffer has been modified since it
+was last written out to disk. You may set it to 0  if  you  want
+EMACS to ignore the modifications that have been made  to a
+buffer.  However, this does not restore the unmodified  version of
+the buffer---it merely tells EMACS not to write out the buffer
+with  other  modified files.  EMACS sets
+<key_name>(buffer-is-modified) positive any time the buffer is
+modified.
+
+
+<deflist_item>(buffer-names)
+<x>(buffer-names)
+<deflist_def>
+A  1-dimensional array which contains all the buffer names
+currently in use in EMACS. Element 0 of the array is a count  of
+the  total  number  of  buffers contained in the array.
+
+
+<deflist_item>(case-fold-search <math_char>(double_leftarrow) 0)
+<x>(case-fold-search)
+<deflist_def>
+Controls search case-folding.  If  non-zero,  all  searches
+will ignore the case of alphabetic characters when doing comparisons.
+
+
+<deflist_item>(checkpoint-frequency <math_char>(double_leftarrow) 0)
+<x>(checkpoint-frequency)
+<deflist_def>
+Contains the    number    of    keystrokes   between
+checkpoints.   Every <key_name>(checkpoint-frequency)   keystrokes,  all
+buffers which  have  been modified   since   they  were  last
+checkpointed  and that  have checkpointing enabled are written to disk.
+If the value is zero, checkpointing is disabled.
+
+
+<deflist_item>(checkpoint-hook <math_char>(double_leftarrow)
+		<quote>(checkpoint-buffers))
+<x>(checkpoint-hook)
+<deflist_def>
+Contains the name of an EMACS function which will be called
+when  the <key_name>(checkpoint) function  is invoked.  The
+<key_name>(checkpoint) function should in some way checkpoint EMACS.
+
+
+<deflist_item>(cli-name <math_char>(double_leftarrow)
+		The name of the CLI that started EMACS)
+<x>(cli-name)
+<deflist_def>
+Indicates the name of the CLI that invoked EMACS.
+The contents of this variable are used to tell subprocesses
+which CLI  to use. You can alter its value to start a subprocess with a
+different CLI.
+
+
+<deflist_item>(comment-column <math_char>(double_leftarrow) 33)
+<x>(comment-column)
+<x>(move-to-comment-column)
+<deflist_def>
+Contains the column at which program comments are to start.
+This is used by the  language-dependent  commenting  features through the
+<key_name>(move-to-comment-column) command.
+
+
+<deflist_item>(compile-it-command <math_char>(double_leftarrow) <quote>())
+<x>(compile-it-command)
+<x>(compile-it)
+<deflist_def>
+Contains  the  string  which  will  be used by the
+<key_name>(compile-it) command  if  you type a null string to its prompt for a
+command  to  execute.  Also,  when  you type a command,
+<key_name>(compile-it) saves the command you type in the variable for
+later re-use.
+
+<note>(WARNING)
+The  values  of the following <key_name>(control-string<hellipsis>)
+variables must only be changed in the file EMACS_CONTROL_STRINGS.ML.   If
+you  wish  to  change any of these variables, make a copy of
+EMACS$LIBRARY:EMACS_CONTROL_STRINGS.ML in your EMACS$PATH:.   Then
+rebuild  your  EMACS  environment  using
+EMACS$LIBRARY:EMACS_SAVE_ENVIRONMENT.COM.
+
+<endnote>
+
+
+<deflist_item>(control-string-convert-F-keys
+		<math_char>(double_leftarrow) 1)
+<x>(control-string-convert-F-keys)
+<deflist_def>
+When <key_name>(control-string-convert-F-keys) is <key_name>(true), the
+keys F6 to F20 and E1 to  E6  are  converted  on  input to a compact form.
+This impoves  EMACS' performance in a number of ways---less memory used to
+store keymaps, and keyboard-handling uses less CPU time.
+
+<p>
+Before conversion the control sequence is:
+
+<code_example>
+CSI number ~
+<endcode_example>
+
+<p>
+This is  converted  to CSI followed by one key whose value is 32 plus the
+above number.
+
+<p>
+See <key_name>(control-string-processing) for general information.
+
+
+<deflist_item>(control-string-convert-mouse
+		<math_char>(double_leftarrow) 1)
+<x>(control-string-convert-mouse)
+<deflist_def>
+When <key_name>(control-string-convert-mouse)  is <key_name>(true), all
+control sequences of the form:
+
+<code_example>
+CSI event;params<hellipsis> &w
+<endcode_example>
+
+<cp>
+are converted  into  <quote>(<literal>(\)201)  followed  by one character
+which is the event number plus <quote>(A).
+
+<p>
+See <key_name>(control-string-processing) for general information.
+
+
+<deflist_item>(control-string-convert-to-8-bit
+		<math_char>(double_leftarrow) <quote>([OP:))
+<x>(control-string-convert-to-8-bit)
+<deflist_def>
+All control  sequences  which  start  with  ESC
+<literal>(<)char<literal>(>) have an 8-bit equivalent     control
+sequence.     The    string    variable
+<key_name>(control-string-convert-to-8-bit) contains all the
+<literal>(<)char<literal>(>)s that are to converted to their 8-bit form.
+
+<p>
+See <key_name>(control-string-processing) for general information.
+
+
+<deflist_item>(control-string-convert-to-CSI
+		<math_char>(double_leftarrow)
+		<quote>(<literal>(\)217<literal>(\)220<literal>(\)232))
+<x>(control-string-convert-to-CSI)
+<deflist_def>
+Contains a list of characters  to  be coerced into the single code
+for CSI.  This  reduces the number of keymaps that EMACS must maintain.
+
+<p>
+See <key_name>(control-string-processing) for general information.
+
+
+<deflist_item>(<keep>(control-string-final-characters)
+		<math_char>(double_leftarrow)
+<quote>(ABCDEFGHIJKLMNOPQRSTUVWXYZ[<literal>(\)]^_`abcdefghijklmnopqrstuvwxyz<literal>({)<literal>(|)<literal>(})))
+<x>(control-string-final-characters)
+<deflist_def>
+Contains all the characters that mark the end of a control
+sequence. See ISO 2020 for full details.
+
+<p>
+See <key_name>(control-string-processing) for general information.
+
+
+<deflist_item>(control-string-intermediate-characters
+		<math_char>(double_leftarrow)
+		<quote>( !"<literal>(\)#$&'<oparen><cparen>*+,-./))
+<x>(control-string-intermediate-characters)
+<deflist_def>
+Contains all the characters that follow the parameters  and
+precede the final character of a control sequence.  See ISO 2020
+for full details.
+
+<p>
+See <key_name>(control-string-processing) for general information.
+
+
+<deflist_item>(control-string-parameters)
+<x>(control-string-parameters)
+<deflist_def>
+This  two  dimensional  array variable contains the parameters and
+parameter  separators of the last control sequence that was parsed by
+EMACS. All elements of the array are strings.
+
+<p>
+Row 1 of the array contains the parameter value and Row 2 contains the
+value of the separator.  The first parameter is in column 0 of the array
+the second in column 1 and so on.
+
+<p>
+Use <key_name>(bounds-of-array)  to  find  out  how  many  parameters  are  in
+<key_name>(control-string-parameters).
+
+<p>
+<key_name>(control-string-parameters) is a read-only variable.
+
+<p>
+See <key_name>(control-string-processing) for general information.
+
+
+<deflist_item>(control-string-parameter-characters
+		<math_char>(double_leftarrow)
+		<quote>(0123456789:<literal>(<)=<literal>(>)?))
+<x>(control-string-parameter-characters)
+<deflist_def>
+Contains  all  the  characters  that can be parameter characters.
+See ISO 2020 for full details.
+
+<p>
+See <key_name>(control-string-processing) for general information.
+
+
+<deflist_item>(control-string-parameter-separators
+		<math_char>(double_leftarrow) <quote>(;))
+<x>(control-string-parameter-separators)
+<deflist_def>
+Contains  all  the  characters  that can be parameter separator
+characters.  See ISO 2020 for full details.
+
+<p>
+See <key_name>(control-string-processing) for general information.
+
+
+<deflist_item>(control-string-processing <math_char>(double_leftarrow) 1)
+<x>(control-string-processing)
+<deflist_def>
+The master control for all the control string functions.  Only
+when  <key_name>(control-string-processing) is <key_name>(true)
+will any processing be performed.
+
+<p>
+<key_name>(control-string-processing)  changes  the  behaviour  of a
+number of parts of EMACS:
+
+<list>(unnumbered)
+
+<le>
+All  keystrokes  are compressed and processed according to the
+control-string variables.
+
+<le>
+<key_name>(bind-to-key) and <key_name>(local-bind-to-key)  will  use  the
+control-string variables to compress their <literal>(<)keys<literal>(>)
+key sequences.
+
+<le>
+<key_name>(describe-bindings), <key_name>(describe-key) and
+<key_name>(apropos) will use the built-in keyname table to print the  names
+of keys.
+
+<endlist>
+
+
+<deflist_item>(ctlchar-with-^ <math_char>(double_leftarrow) 0)
+<x>(ctlchar-with-^)
+<deflist_def>
+Controls the way that non-printing characters are displayed.  If
+non-zero,  control  characters  are  printed  with a leading up-arrow,
+otherwise they are printed as an octal number.
+
+
+<deflist_item>(current-breakpoint <math_char>(double_leftarrow) <quote>())
+<x>(current-breakpoint)
+<deflist_def>
+This  read-only  variable  contains  the name of the function that caused
+the  <key_name>(breakpoint)  function  to  run.  This  variable is not
+altered from MLisp in a trace or breakpoint function.
+
+
+<deflist_item>(current-buffer-abbrev-table)
+<x>(current-buffer-abbrev-table)
+<deflist_def>
+Contains   the   name  of  te  current  buffer's
+abbreviation  table.  If you attempt to assign a value to it, the
+current  buffer's abbreviation table is changed; the name you
+supply must be the name of an already-existing abbreviation table.
+
+
+<deflist_item>(current-buffer-checkpointable)
+<x>(current-buffer-checkpointable)
+<deflist_def>
+Defines whether or not the current buffer is checkpointable.
+If non-zero,  when a checkpoint occurs, the buffer  will  be checkpointed
+if it has been modified. Otherwise, the buffer will not be checkpointed.
+
+<p>
+A  buffer  can never be checkpointed if the
+<key_name>(checkpoint-frequency) variable is set to zero.
+
+
+<deflist_item>(current-buffer-file-name)
+<x>(current-buffer-file-name)
+<deflist_def>
+Contains  the  full file specification of the file associated with
+the current buffer. If the file does not already exist, the version
+number is omitted.
+
+<p>
+Setting  this  variable  sets the filename to which the buffer is
+connected,  but does not write  the  file.  Also, the buffer is forced
+to be a <key_name>(File) buffer.
+
+<p>
+If  the  buffer  is  not  a  <key_name>(File)  buffer, a null string is
+returned.
+
+
+<deflist_item>(current-buffer-journalled)
+<x>(current-buffer-journalled)
+<x>(journal-frequency)
+<deflist_def>
+Controls wheter the current buffer is journalled. If
+set to <key_name>(true), the buffer will be journalled.
+
+<p>
+A buffer will never be journalled if the <key_name>(journal-frequency) is
+set to zero.
+
+
+<deflist_item>(current-buffer-macro-name)
+<x>(current-buffer-macro-name)
+<deflist_def>
+Contains the macro name associated with the current buffer.
+
+<p>
+Setting  this  variable  sets  the  macro  to which this buffer is
+connected. The buffer will be coerced into a <key_name>(Macro) buffer.
+
+<p>
+If  this  buffer  is  not  a  <key_name>(Macro) buffer,  a null string is
+returned.
+
+
+<deflist_item>(current-buffer-name)
+<x>(current-buffer-name)
+<deflist_def>
+Contains the name of the currently selected buffer.  You
+can  change the name of the current buffer by assigning a new name  to the
+variable. The new buffer name must not already exist.
+
+
+<deflist_item>(current-buffer-RMS-record-attribute)
+<x>(current-buffer-RMS-record-attribute)
+<x>(default-buffer-RMS-record-attribute)
+<deflist_def>
+Contains the RMS record attribute of the file associated with the current
+buffer.  The variable is one of <key_name>(variable), <key_name>(stream),
+<key_name>(stream-lf), or <key_name>(stream-cr).  The default value for
+new buffers is taken from the
+<key_name>(default-buffer-RMS-record-attribute) variable.
+
+
+<deflist_item>(current-buffer-syntax-table
+		<math_char>(double_leftarrow) <quote>())
+<x>(current-buffer-syntax-table)
+<deflist_def>
+Contains  the  name of the current buffer's syntax table.
+Assigning  to  this  variable changes the current buffer's syntax table.
+The specified syntax table must already exist.
+
+
+<deflist_item>(current-buffer-type)
+<x>(current-buffer-type)
+<deflist_def>
+Contains a string describing the type of the current buffer.
+
+
+<deflist_item>(current-function)
+<x>(current-function)
+<deflist_def>
+This  read-only  variable  contains  the  name  of  the  currently
+executing  MLisp  function.  The  value  is  not  changed for
+functions executed in a trace or breakpoint function.
+
+
+<deflist_item>(current-local-keymap
+		<math_char>(double_leftarrow) <quote>())
+<x>(current-local-keymap)
+<deflist_def>
+Contains  the  name  of the current buffer's local keymap
+as set by the  <key_name>(use-local-map) function. Assigning the variable
+has  the same  effect  as executing <key_name>(use-local-map). An existing
+keymap must be specified.
+
+
+<deflist_item>(current-windows)
+<x>(current-windows)
+<deflist_def>
+Contains the set of windows that are displayed on the screen.  If
+read,  <key_name>(current-windows)  returns  a window-ring  that
+represents the windows  on  the screen. When
+<key_name>(current-windows) is set, the screen is restored   from
+the   window ring provided.
+
+
+<deflist_item>(DCL-buffer-reduction <math_char>(double_leftarrow) 500)
+<x>(DCL-buffer-reduction)
+<x>(maximum-DCL-buffer-size)
+<deflist_def>
+Controls how many characters are deleted from a DCL buffer
+after   it  contains  more  than  <key_name>(maximum-DCL-buffer-size)
+characters.
+
+
+<deflist_item>(default-buffer-RMS-record-attribute
+       	       	       <math_char>(double_leftarrow) "variable")
+<x>(default-buffer-RMS-record-attribute)
+<deflist_def>
+Specifies the default RMS record attribute for new buffers.  The default
+is <key_name>(variable), so that new files are created with standard RMS
+variable length records.  Other values that this variable can take are
+<key_name>(stream), <key_name>(stream-lf) and <key_name>(stream-cr).
+
+
+<deflist_item>(default-case-fold-search <math_char>(double_leftarrow) 0)
+<x>(default-case-fold-search)
+<x>(case-fold-search)
+<deflist_def>
+Provides the  default  value  used  to initialise
+<key_name>(case-fold-search) whenever a new buffer is created.
+
+
+<deflist_item>(default-comment-column <math_char>(double_leftarrow) 33)
+<x>(default-comment-column)
+<x>(comment-column)
+<deflist_def>
+Provides  the  default  value  used  to initialise
+<key_name>(comment-column) whenever a new buffer is created.
+
+
+<deflist_item>(default-display-C1-as-graphics
+		<math_char>(double_leftarrow) 0)
+<x>(default-display-C1-as-graphics)
+<x>(display-C1-as-graphics)
+<deflist_def>
+Provides     the     default     value     used    to
+initialise <key_name>(display-C1-as-graphics) whenever a new buffer is
+created.
+
+
+<deflist_item>(default-display-end-of-file
+		<math_char>(double_leftarrow) 0)
+<x>(default-display-end-of-file)
+<x>(display-end-of-file)
+<deflist_def>
+Provides  the  default  value used to initialise
+<key_name>(display-end-of-file) whenever a new buffer is created.
+
+
+<deflist_item>(default-display-non-printing-characters
+		<math_char>(double_leftarrow) 0)
+<x>(default-display-non-printing-characters)
+<x>(display-non-printing-characters)
+<deflist_def>
+Provides     the     default     value     used    to
+initialise <key_name>(display-non-printing-characters) whenever a new buffer is
+created.
+
+
+<deflist_item>(default-highlight-region
+		<math_char>(double_leftarrow) 0)
+<x>(default-highlight-region)
+<x>(highlight-region)
+<deflist_def>
+Provides  the  default  value  used  to  initialise 
+<key_name>(highlight-region) whenever a new buffer is created.
+
+
+<deflist_item>(default-left-margin <math_char>(double_leftarrow) 1)
+<x>(default-left-margin)
+<x>(left-margin)
+<deflist_def>
+Provides  the default value used to initialise
+<key_name>(left-margin) whenever a new buffer is created.
+
+
+<deflist_item>(default-mode-line-format)
+<x>(default-mode-line-format)
+<x>(mode-line-format)
+<deflist_def>
+Provides   a   default   mode   line   format  used  to
+initialise <key_name>(mode-line-format) whenever a buffer is created. The
+default value is:
+
+<code_example>
+%[%hBuffer: %b%* File: %f %M(%m%c%j%r%a%R) %p%]
+<endcode_example>
+
+
+<deflist_item>(default-read-only-buffer <math_char>(double_leftarrow) 0)
+<x>(default-read-only-buffer)
+<x>(read-only-buffer)
+<deflist_def>
+Provides  the  default  value  used to initialise
+<key_name>(read-only-buffer) whenever a new buffer is created.
+
+
+<deflist_item>(default-replace-mode <math_char>(double_leftarrow) 1)
+<x>(default-replace-mode)
+<x>(replace-mode)
+<deflist_def>
+Provides the default value used to initialise
+<key_name>(replace-mode) whenever a new buffer is created.
+
+
+<deflist_item>(default-right-margin <math_char>(double_leftarrow) 10000)
+<x>(default-right-margin)
+<x>(right-margin)
+<deflist_def>
+Provides the default value used to initialise
+<key_name>(right-margin) whenever a new buffer is created.
+
+
+<deflist_item>(default-tab-size <math_char>(double_leftarrow) 8)
+<x>(default-tab-size)
+<x>(tab-size)
+<deflist_def>
+Provides  a  default  value  used to initialise
+<key_name>(tab-size) whenever a buffer is created.
+
+
+<deflist_item>(display-C1-as-graphics <math_char>(double_leftarrow) 0)
+<x>(display-C1-as-graphics)
+<deflist_def>
+Controls the way that C1-space characters are displayed.
+Setting  this  variable to 1 tells EMACS to display all  the
+characters in the range 128 to 159 as special graphic characters on 
+terminals with the DECCRT attribute.
+
+
+<deflist_item>(display-end-of-file <math_char>(double_leftarrow) 0)
+<x>(display-end-of-file)
+<deflist_def>
+Controls the end-of-file marker display.  Setting  this
+variable to 1 tells EMACS to display a diamond graphic character at the
+end of the buffer.
+
+
+<deflist_item>(display-non-printing-characters
+		<math_char>(double_leftarrow) 0)
+<x>(display-non-printing-characters)
+<deflist_def>
+Controls the way EMACS diplays non-printing characters.
+Setting  this  variable to 1 tells EMACS to display non-printing
+characters.  EMACS can display linefeeds, tabs and the
+end-of-buffer marker.
+
+<p>
+A linefeed is displayed as the <graphic>(N\L) graphic character and will
+appear at the end of every line.
+
+<p>
+A tab is displayed as the <graphic>(H\T) graphic character. The
+rest of the white-space  taken  up  by the tab  is displayed as centered
+dot characters.
+
+<p>
+The  end-of-buffer position  is  displayed as a diamond graphic character.
+
+
+<deflist_item>(enter-emacs-hook <math_char>(double_leftarrow) <quote>())
+<x>(enter-emacs-hook)
+<deflist_def>
+Contains the name of an EMACS function which will be called
+when EMACS initially starts up. You can assign the variable in  your
+EMACSINIT.ML  file  to  contain  the name of any already
+existing  function.
+
+
+<deflist_item>(error-file-name <math_char>(double_leftarrow) <quote>())
+<x>(error-file-name)
+<x>(error-message-parser)
+<x>(parse-error-messages-in-region)
+<deflist_def>
+A  string  variable used by error message parsers (as specified in the
+variable <key_name>(error-message-parser)) to indicate to the
+<key_name>(parse-error-messages-in-region)  function  the file in which
+the current error is located.  If  an  error  message parser sets this
+variable to a null string, error message parsing is stopped.
+
+
+<deflist_item>(error-hook <math_char>(double_leftarrow) <quote>())
+<x>(error-hook)
+<x>(error-message)
+<deflist_def>
+Defines the current error function. When an error occurs
+that  would  cause  an  error message to be displayed, the function  whose
+name is contained in this variable is called. The variable
+<key_name>(error-message) will contain the text of the error.
+
+<p>
+When the error function exits, the error message will be displayed in  the
+usual  way  unless  <key_name>(exit-emacs)  is used to exit the error function.
+
+
+<deflist_item>(error-line-number <math_char>(double_leftarrow) 0)
+<x>(error-line-number)
+<x>(error-message-parser)
+<x>(parse-error-messages-in-region)
+<deflist_def>
+A  numeric variable used by error message parsers (as specified in the
+variable <key_name>(error-message-parser)) to indicate to the
+<key_name>(parse-error-messages-in-region)  function  the line in  which
+the current error is located.  If an error message parser sets this to
+zero, error message parsing is stopped.
+
+
+<deflist_item>(error-message <math_char>(double_leftarrow) <quote>())
+<x>(error-message)
+<deflist_def>
+This  read-only  string  variable  holds the text of the last
+error message.  The variable will always  hold  the  last  error
+message, even if the error occurred inside an
+<key_name>(error-occurred) block.
+
+
+<deflist_item>(error-message-parser)
+<x>(parse-error-messages-in-region)
+<x>(error-file-name)
+<x>(error-line-number)
+<x>(error-start-position)
+<deflist_def>
+A  string variable used to specify the name of a function that the
+<key_name>(parse-error-messages-in-region)  function  should call to locate
+the next error.
+
+<p>
+The  error parser function should locate the error message, moving dot
+to   its   end,  and  fill  the  variables  <key_name>(error-file-name),
+<key_name>(error-line-number)    and    <key_name>(error-start-position)
+with   suitable information.  Parsing is stopped if any of these variables
+are set to zero or a null string.
+
+
+<deflist_item>(error-start-position <math_char>(double_leftarrow) 0)
+<x>(error-start-position)
+<deflist_def>
+A  numeric variable used by error message parsers (as specified in the
+variable <key_name>(error-message-parser)) to indicate to the
+<key_name>(parse-error-messages-in-region) function the line in which the
+current error message starts.  If  an error message parser sets this to
+zero, then error message parsing is stopped.
+
+
+<deflist_item>(execute-monitor-command)
+<x>(execute-monitor-command)
+<deflist_def>
+Contains the last string sent to the DCL subprocess
+executing  for <key_name>(execute-monitor-command). If you specify no
+argument to the  command,   <key_name>(execute-monitor-command)'s contents are
+re-used as the command string.
+
+
+<deflist_item>(exit-emacs-hook <math_char>(double_leftarrow) <quote>())
+<x>(exit-emacs-hook)
+<deflist_def>
+Contains the name of an EMACS function which will be called
+when  EMACS  exits  to DCL. You can assign the name of any existing
+function to this variable.
+
+
+<deflist_item>(fetch-help-database-flags <math_char>(double_leftarrow) 7)
+<x>(fetch-help-database-flags)
+<deflist_def>
+A  variable  used  to  describe  to  the <key_name>(fetch-help-database-entry)
+command which  portions  of  the  information  available should be
+inserted  into  the  buffer. The value is the logical or'ing of the values
+which indicate  that a portion should be included. The bit values
+available are:
+
+<list>(unnumbered)
+
+<le>
+1 --- means include the text of this entry
+
+<le>
+2 --- means include the key name lines for this entry
+
+<le>
+4 --- means include the additional information lines.
+
+<endlist>
+
+<p>
+The default value is 7, which means that all information is included.
+
+
+<deflist_item>(filter-region-command)
+<x>(filter-region-command)
+<x>(filter-region)
+<deflist_def>
+Contains the last command string issued to the DCL subprocessing
+that the <key_name>(filter-region) command uses. If you provide a
+null  string  argument  to  the  command,
+<key_name>(filter-region-command)'s value will be re-used.
+
+
+<deflist_item>(force-redisplay <math_char>(double_leftarrow) 0)
+<x>(force-redisplay)
+<deflist_def>
+Controls  how  the  screen  is updated when a large quantity  of
+data  is generated by a subprocess with an associated output
+buffer. If non-zero,  the screen is updated for every line   that
+arrives; otherwise,  the  screen  is  updated  less frequently.
+
+
+<deflist_item>(global-mode-string <math_char>(double_leftarrow) <quote>())
+<x>(global-mode-string)
+<x>(mode-line-format)
+<deflist_def>
+Contains the global mode active in EMACS.  The contents of
+this variable are displayed in every window's mode line with the use of
+the <quote>(<cx>(%M)) mode-line format identifier.
+
+
+<deflist_item>(help-on-command-completion-error <math_char>(double_leftarrow) 1)
+<x>(help-on-command-completion-error)
+<deflist_def>
+Controls the help window.  If  non-zero,  EMACS  will print
+a list of possibilities when an ambiguous  entity  (command,  variable,
+database search-list etc.) is given.  Otherwise, EMACS will just ring the
+bell and wait for you to type more.
+
+
+<deflist_item>(highlight-region <math_char>(double_leftarrow) 0)
+<x>(highlight-region)
+<deflist_def>
+Controls the way EMACS displays regions.  When set,  the
+region is displayed with graphic rendition defined by the variable
+<key_name>(highlight-region-graphic-rendition). By default, the  region
+is  bolded.  If  mark is not set, the buffer is displayed normally.
+
+
+<deflist_item>(highlight-region-graphic-rendition
+		<math_char>(double_leftarrow) <quote>(1))
+<x>(highlight-region-graphic-rendition)
+<deflist_def>
+Controls  the way that the highlighted region  is  displayed on
+terminals with  ANSI_CRT capability. It is the string of graphic
+rendition characters which are part of the ANSI SGR sequence.
+
+<p>
+On  VT200  series  terminals and terminal emulators,  the following
+renditions are possible:
+
+<list>(unnumbered)
+
+<le>
+1 --- bold
+
+<le>
+4 --- underscore
+
+<le>
+5 --- blinking
+
+<le>
+7 --- reverse video.
+
+<endlist>
+
+<p>
+These renditions can be combined by separating each rendition with
+a <quote>(;).
+
+
+<deflist_item>(is-comment <math_char>(double_leftarrow) 4)
+<x>(is-comment)
+<x>(current-syntax-entity)
+<deflist_def>
+This constant is returned by the <key_name>(current-syntax-entity)
+function when dot is located in a comment.
+
+
+<deflist_item>(is-dull <math_char>(double_leftarrow) 0)
+<x>(is-dull)
+<x>(current-syntax-entity)
+<deflist_def>
+This constant is returned by the <key_name>(current-syntax-entity)
+function when dot is located in punctuation or white-space.
+
+
+<deflist_item>(is-quote <math_char>(double_leftarrow) 3)
+<x>(is-quote)
+<x>(current-syntax-entity)
+<deflist_def>
+This constant is returned by the <key_name>(current-syntax-entity)
+function when dot is located just after a quote character.
+
+
+<deflist_item>(is-string <math_char>(double_leftarrow) 2)
+<x>(current-syntax-entity)
+<x>(is-string)
+<deflist_def>
+This constant is returned by the <key_name>(current-syntax-entity)
+function when dot is located in a matched quoted string.
+
+
+<deflist_item>(is-word <math_char>(double_leftarrow) 1)
+<x>(current-syntax-entity)
+<x>(is-word)
+<deflist_def>
+This constant is returned by the <key_name>(current-syntax-entity)
+function when dot is located in a word.
+
+
+<deflist_item>(journal-frequency <math_char>(double_leftarrow) 0)
+<x>(journal-frequency)
+<deflist_def>
+Sets  the time in seconds before any journal files are
+flushed  to disk.  A reasonable value for this variable is 30 seconds. To
+disable journalling, set this variable to 0 or <key_name>(false).
+
+
+<deflist_item>(keyboard-input-available)
+<x>(keyboard-input-available)
+<deflist_def>
+A count of the number of characters in the EMACS keyboard input
+buffer.  Use this function to check if anything has been typed.
+
+
+<deflist_item>(last-expression)
+<x>(last-expression)
+<deflist_def>
+This variable is used by EMACS debugging packages to pick up
+the value of the last MLisp expression evaluated by EMACS.
+
+
+<deflist_item>(last-keys-struck)
+<x>(last-keys-struck)
+<deflist_def>
+Holds the string of characters typed to activate the last command
+from a keymap.
+
+
+<deflist_item>(leave-emacs-hook <math_char>(double_leftarrow) <quote>())
+<x>(leave-emacs-hook)
+<x>(pause-emacs)
+<x>(return-to-monitor)
+<deflist_def>
+Contains the name of an EMACS function which will be called
+when  EMACS  temporarily returns control to DCL (either by
+<key_name>(pause-emacs) or <key_name>(return-to-monitor)). You can assign
+the name of any existing function to the variable.
+
+
+<deflist_item>(logical-tab-size <math_char>(double_leftarrow) 8)
+<x>(logical-tab-size)
+<deflist_def>
+Contains the number of spaces that make up a tab character for the
+current buffer.
+
+
+<deflist_item>(maximum-DCL-buffer-size <math_char>(double_leftarrow) 10000)
+<x>(maximum-DCL-buffer-size)
+<x>(DCL-buffer-reduction)
+<deflist_def>
+When  a DCL buffer is created, this variable is used to control the maximum
+amount of text that will be stored in the DCL buffer.  If  the  number
+of characters is exceeded, the first <key_name>(DCL-buffer-reduction)
+characters in the buffer will be discarded.
+
+
+<deflist_item>(mode-line-format)
+<x>(mode-line-format)
+<x>(default-mode-line-format)
+<deflist_def>
+Controls the way that the mode line at the bottom of each
+window is displayed. The variable contains raw text (which is displayed
+as  it  is typed), and format effectors.
+
+
+<deflist_item>(mode-line-graphic-rendition
+		<math_char>(double_leftarrow) <quote>(7))
+<x>(mode-line-graphic-rendition)
+<deflist_def>
+Controls the way that the mode line is displayed  on  terminals
+with  the ANSI_CRT capability. It is set to a string  of graphic
+rendition characters which are part of the ANSI SGR sequence. The
+default value is 7 (reverse video).
+
+
+<deflist_item>(mode-string <math_char>(double_leftarrow) <quote>(Normal))
+<x>(mode-string)
+<deflist_def>
+Contains the major mode for a buffer. The value of this
+variable is displayed in the mode line for each window where the format
+effector <quote>(<cx>(%m)) is used.
+
+
+<deflist_item>(omit-file-version-expansion <math_char>(double_leftarrow) 0)
+<x>(omit-file-version-expansion)
+<deflist_def>
+Controls file name expansion.  When <key_name>(true), it
+causes file versions to be omitted when file recognition is used with
+<key_name>(visit-file), <key_name>(read-file) etc.
+
+
+<deflist_item>(override-RMS-record-attribute
+       	       <math_char>(double_leftarrow) "none")
+<x>(override-RMS-record-attribute)
+<x>(current-buffer-RMS-record-attribute)
+<deflist_def>
+Specifies whether the RMS attributes of all buffers should be overridden
+when writing them out to files.  The default value is <key_name>(none),
+meaning that the buffer-specific attribute settings  specified by
+<key_name>(current-buffer-RMS-record-attribute) are not overridden.
+If <key_name>(override-RMS-record-attribute) is set to one of
+<key_name>(stream), <key_name>(stream-lf) or <key_name>(stream-cr), then
+all buffers will be written out with the specified attribute, regardless
+of the value of <key_name>(current-buffer-RMS-record-attribute).
+
+
+<deflist_item>(pop-up-windows <math_char>(double_leftarrow) 1)
+<x>(pop-up-windows)
+<deflist_def>
+Controls window pop-ups.  If  non-zero,  EMACS  will try to
+use a window other than the current window when it spontaneously
+generates a buffer that it wants you  to  see,  or  when  you visit a file.
+If set to zero, the current window is always used.
+
+
+<deflist_item>(prefix-argument)
+<x>(prefix-argument)
+<deflist_def>
+Every   function  invocation  is  always  prefixed  by  a  numeric
+argument,   either   explicitly   with   <key_name>(prefix-argument)  or
+implicitly with <key_name>(provide-prefix-argument). The value of the variable
+<key_name>(prefix-argument) is  the  argument  prefixed to the invocation
+of the current MLisp function.
+
+
+<deflist_item>(prefix-argument-provided)
+<x>(prefix-argument-provided)
+<deflist_def>
+If  non-zero, a prefix argument has been provided for the current
+function. The value of <key_name>(prefix-argument-provided) can be
+obtained from the <key_name>(prefix-argument) variable.
+
+
+<deflist_item>(prefix-string <math_char>(double_leftarrow) <quote>())
+<x>(prefix-string)
+<deflist_def>
+Contains  the  string  that  is  inserted after an
+automatic newline has been generated in response to moving the cursor past
+the right margin.  This  is  generally used by the language-dependent
+commenting features.
+
+
+<deflist_item>(process-key-hook <math_char>(double_leftarrow) <quote>())
+<x>(process-key-hook)
+<x>(last-keys-struck)
+<deflist_def>
+This  buffer-specific variable holds the name of a function to call after
+each  keymap  command.  <key_name>(last-keys-struck) holds the string of
+keys that invoked the last command.
+
+
+<deflist_item>(quick-redisplay <math_char>(double_leftarrow) 0)
+<x>(quick-redisplay)
+<deflist_def>
+Controls window updating  when you have more than on window
+open on the same buffer and you make changes to a part of the buffer
+visible in multiple windows.
+
+<p>
+If <key_name>(quick-redisplay) is non-zero, EMACS will not keep all
+windows updated as you type---this makes display updating much faster.
+All changes will eventually be applied to all windows.
+
+<p>
+When <key_name>(quick-redisplay) it is set to zero, all windows are always
+accurate.
+
+
+<deflist_item>(read-only-buffer <math_char>(double_leftarrow) 0)
+<x>(read-only-buffer)
+<deflist_def>
+Controls whether or not a buffer can be modified.  When
+<key_name>(read-only-buffer)  is  set to <key_name>(true),   all
+attempts to modify the buffer will be ignored and will result in
+an error.
+
+
+<deflist_item>(remove-help-window <math_char>(double_leftarrow) 1)
+<x>(remove-help-window)
+<deflist_def>
+Controls the removal of the help window.  When non-zero, help
+windows that have been automatically popped up onto the screen are
+removed. Otherwise, the help window will stay on the screen after
+the help function has completed.
+
+
+<deflist_item>(replace-case <math_char>(double_leftarrow) 0)
+<x>(replace-case)
+<x>(replace-string)
+<x>(re-replace-string)
+<deflist_def>
+Controls the case of replacement text.  If non-zero,  EMACS  will
+alter the case of strings substituted with
+<key_name>(replace-string) or <key_name>(query-replace-string) to
+match the case of the original string.
+
+
+<deflist_item>(replace-mode <math_char>(double_leftarrow) 0)
+<x>(replace-mode)
+<deflist_def>
+Controls the Replace minor mode. If non-zero, characters inserted
+into  the buffer replace existing characters, rather then
+inserting (the default).  This can be useful when editing
+diagrams.
+
+
+<deflist_item>(restored-environment <math_char>(double_leftarrow) 0)
+<x>(restored-environment)
+<deflist_def>
+This  read-only variable is  a count of the number of times that the
+current environment has been saved and restored. If EMACS has not been
+restored from a saved environment file, <key_name>(restored-environment)
+is zero.
+
+
+<deflist_item>(return-to-emacs-hook <math_char>(double_leftarrow) <quote>())
+<x>(return-to-emacs-hook)
+<deflist_def>
+Contains the name of an EMACS function which will be called
+when  EMACS  returns  from  DCL  after  a  <key_name>(pause-emacs)  or
+<key_name>(return-to-monitor)  command. You can assign the name of any
+existing function to the variable.
+
+
+<deflist_item>(right-margin)
+<x>(right-margin)
+<deflist_def>
+Controls the  right margin setting for automatic text
+justification. If a character is  inserted  at  the  end of a line to the
+right of <key_name>(right-margin), EMACS  will automatically insert at the
+beginning of the preceding word  a newline, tabs and spaces to indent to
+the left margin, and the  prefix  string. For example, with
+<key_name>(right-margin) set to 72, you  can type in a document without
+worrying about when to hit the <key_name>(Return)  key; EMACS will
+automatically do this for you at exactly the right place.
+
+
+<deflist_item>(scroll-step <math_char>(double_leftarrow) 7)
+<x>(scroll-step)
+<deflist_def>
+Controls the number of lines by which a window moves when
+dot moves out of the window.
+
+
+<deflist_item>(search-string)
+<x>(search-string)
+<deflist_def>
+This  read-only  variable holds the last search string used by any search
+command.  The  <key_name>(search-string)  variable  is  preserved  by
+the <key_name>(save-<hellipsis>) functions.
+
+
+<deflist_item>(silently-kill-processes <math_char>(double_leftarrow) 0)
+<x>(silently-kill-processes)
+<deflist_def>
+Controls process termination during EMACS rundown.  If  non-zero,
+EMACS  will  kill processes when it exits without asking any
+questions. Normally, if you have processes running when EMACS
+exits, EMACS asks the question <quote>(<cx>(You have processes on
+the prowl, should I chase them down for you?)).
+
+
+<deflist_item>(split-height-threshhold <math_char>(double_leftarrow) 7)
+<x>(split-height-threshhold)
+<deflist_def>
+Controls  which  windows  EMACS  considers when it decides to
+create a new window. Any window with a height that is less than
+<key_name>(split-height-threshold) is a candidate for being split
+to create space for the new window.
+
+
+<deflist_item>(stack-trace-on-error <math_char>(double_leftarrow) 0)
+<x>(stack-trace-on-error)
+<deflist_def>
+Controls automatic stack tracing.  If  non-zero, EMACS will write
+an MLisp stack trace to the <key_name>(Stack trace) buffer
+whenever  an  error  is encountered from within an MLisp function
+(even inside an <key_name>(error-occurred)).
+
+
+<deflist_item>(tab-size <math_char>(double_leftarrow) 8)
+<x>(tab-size)
+<deflist_def>
+Controls  how  a  tab is displayed on the screen. It describes
+the number of space characters used to display a single tab
+character.
+
+
+<deflist_item>(terminal-advanced-video-option)
+<x>(terminal-advanced-video-option)
+<deflist_def>
+This  variable  is  <key_name>(true) if the terminal has the AVO
+characteristic.  It is set each time EMACS is entered.
+
+
+<deflist_item>(terminal-ansi-crt)
+<x>(terminal-ansi-crt)
+<deflist_def>
+This  variable  is <key_name>(true) if the terminal has the ANSI
+characteristic set. It is set each time EMACS is entered.
+
+
+<deflist_item>(terminal-application-keypad)
+<x>(terminal-application-keypad)
+<deflist_def>
+This  variable  is  <key_name>(true) if the terminal has the
+APPLICATION_KEYPAD characteristic  set.  It  is  set each time EMACS is
+entered.
+
+
+<deflist_item>(terminal-DEC-CRT-level-1)
+<x>(terminal-DEC-CRT-level-1)
+<deflist_def>
+Is <key_name>(true) if the terminal has the DECCRT
+characteristic set. It is set each time EMACS is entered.
+
+
+<deflist_item>(terminal-DEC-CRT-level-2)
+<x>(terminal-DEC-CRT-level-2)
+<deflist_def>
+This   variable   is   <key_name>(true)   if   the  terminal  has  the
+DECCRT2 characteristic  set. It  is  set each time EMACS is entered.
+
+
+<deflist_item>(terminal-does-not-need-null-padding
+		<math_char>(double_leftarrow) 0)
+<x>(terminal-does-not-need-null-padding)
+<deflist_def>
+Controls padding to the terminal.  When  <key_name>(true), this
+variable stops EMACS from sending NUL characters as padding characters  to
+the terminal. This is only useful on VAXstations when <key_name>(xon-mode)
+is <key_name>(false).
+
+
+<deflist_item>(terminal-edit)
+<x>(terminal-edit)
+<deflist_def>
+This  variable  is <key_name>(true) if the terminal has the EDIT
+characteristic set. It is set each time EMACS is entered.
+
+
+<deflist_item>(terminal-eightbit)
+<x>(terminal-eightbit)
+<deflist_def>
+This   variable   is   <key_name>(true)   if  the  terminal  has  the
+EIGHTBIT characteristic  set.  It  is  set each time EMACS is entered.
+When  set,  the  full  DEC  multinational  character set can be displayed
+on the terminal.
+
+
+<deflist_item>(terminal-is-terminal)
+<x>(terminal-is-terminal)
+<deflist_def>
+This  variable  is  <key_name>(true) if EMACS is connected to a terminal
+and <key_name>(false) when  EMACS is reading input from a command file.
+
+
+<deflist_item>(terminal-length)
+<x>(terminal-length)
+<deflist_def>
+Holds the length of the terminal in lines. If this variable  is
+set  to a new length, EMACS will redraw the screen with the Is set
+each time EMACS is entered.
+
+<p>
+If  the  new  size  is  smaller than the old size, EMACS deletes all other
+windows  on  the  screen and adjusts the size of the current windows to
+fill the whole screen.
+
+<p>
+If  the  new  size is larger than the old size, EMACS will increase the
+size of the current window to include the extra lines.
+
+<p>
+The default value for this variable is the terminal page length. When EMACS
+exits  or  pauses,  it updates the terminal characteristics to include the
+new length.
+
+
+<deflist_item>(terminal-output-buffer-size <math_char>(double_leftarrow) 256)
+<x>(terminal-output-buffer-size)
+<deflist_def>
+Controls  the  size of the buffer used to output to the
+terminal from EMACS.
+
+
+<deflist_item>(terminal-regis)
+<x>(terminal-regis)
+<deflist_def>
+This  variable is <key_name>(true) if the terminal has the REGIS
+characteristic set. It is set each time EMACS is entered.
+
+
+<deflist_item>(terminal-soft-chars)
+<x>(terminal-soft-chars)
+<deflist_def>
+This  variable  is  <key_name>(true)  if  the  terminal has the
+SOFT_CHARACTERS characteristic  set.  It  is  set each time EMACS is
+entered.
+
+
+<deflist_item>(terminal-width)
+<x>(terminal-width)
+<deflist_def>
+Controls the width of the terminal. If the terminal is capable
+of   showing  different  screen  widths,    the appropriate width
+will be selected when the variable is assigned.  The  value  is
+specified as a number, and can be in the range from 32 to 145
+inclusive.
+
+
+<deflist_item>(this-command <math_char>(double_leftarrow) Last character struck)
+<x>(this-command)
+<deflist_def>
+This  read-only variable contains the ASCII character code of the last
+character  typed  in  the  key  sequence  used to invoke the current
+function.  It can be used by functions bound to many keys to decide what
+to do.
+
+
+<deflist_item>(trace-hook <math_char>(double_leftarrow) <quote>(trace))
+<x>(trace-hook)
+<x>(trace-mode)
+<deflist_def>
+Contains  the  name  of  the  trace function. When
+<key_name>(trace-mode) is enabled, the function whose name is in
+<key_name>(trace-hook) is called  just  before  each  complex
+MLisp expression is executed.  Simple expressions  (like
+<quote>(<cx>(45)) or <quote>(<cx>(Hello)) or <quote>(<cx>(foo)))
+do not cause the trace function to be executed.
+
+
+<deflist_item>(trace-into <math_char>(double_leftarrow) 1)
+<x>(trace-into)
+<deflist_def>
+Controls tracing.  If  non-zero,  tracing  will continue
+into called functions.  Otherwise,  tracing  is  temporarily  disabled
+while a call to another function is made.
+
+
+<deflist_item>(trace-mode <math_char>(double_leftarrow) 0)
+<x>(trace-mode)
+<deflist_def>
+This  variable  controls  Trace  Mode.  When  non-zero, MLisp execution
+is  traced.  When  <key_name>(trace-mode)  is enabled, the function whose
+name  is in  <key_name>(trace-hook) is called just before each complex MLisp
+expression  is executed.
+
+
+<deflist_item>(track-eol-on-^N-^P <math_char>(double_leftarrow) 0)
+<x>(track-eol-on-^N-^P)
+<deflist_def>
+Controls the action of the <key_name>(next-line) and
+<key_name>(previous-line) functions.  If non-zero, <key_name>(next-line)
+and <key_name>(previous-line) will stick to the end  of  a line if they
+are started there. If zero, the functions will  try  to stay in the same
+column as you move up and down, even if you started at the end of a line.
+
+
+<deflist_item>(unlink-checkpoint-files <math_char>(double_leftarrow) 0)
+<x>(unlink-checkpoint-files)
+<deflist_def>
+Controls the deletion of checkpoint files.  If  non-zero,
+EMACS will unlink the corresponding checkpoint file after  the  master
+copy of the file is written.  This avoids <keep>(.CKP) files from building
+up, but it does compromise safety a little.
+
+
+<deflist_item>(visible-bell <math_char>(double_leftarrow) 0)
+<x>(visible-bell)
+<deflist_def>
+Controls the <quote>(bell) presentation.  If  non-zero,
+EMACS will attempt to use a visible bell (usually a flashing  of  the
+screen), instead of the audible terminal bell, when  notifying you of some
+error.
+
+
+<deflist_item>(window-first-column)
+<x>(window-first-column)
+<deflist_def>
+Contains the column number of the first column that is visible in
+the current window.
+
+
+<deflist_item>(window-size)
+<x>(window-size)
+<deflist_def>
+This  read  only  variable  contains  the  height  of  the current
+buffer's window.
+
+
+<deflist_item>(window-width)
+<x>(window-width)
+<deflist_def>
+Contains  the width of the current window.  If the window
+is split vertically, setting this variable will change the width of
+the window.
+
+
+<deflist_item>(wrap-long-lines <math_char>(double_leftarrow) 0)
+<x>(wrap-long-lines)
+<deflist_def>
+Controls the way EMACS displays long lines.  If  non-zero,
+EMACS will display long lines by wrapping their continuation onto the next
+line. If set to zero, long lines are truncated at the right-hand edge of the
+screen  and  a  <quote>(<cx>($))  is  displayed  to  indicate  that 
+truncation has occurred.
+
+
+<deflist_item>(xon-mode)
+<x>(xon-mode)
+<deflist_def>
+Controls the way that EMACS synchronises with the terminal.
+
+<p>
+When  <key_name>(true),  <key_name>(^S)  is  treated  as  an  XOFF
+character and causes the terminal  to suspend output; <key_name>(^Q)  is
+treated as an XON character which causes  character transmission to be
+resumed.  These characters are processed  by  VMS  and  never  reach
+EMACS,  so you cannot have anything bound to these keys.
+
+<p>
+When  <key_name>(xon-mode)  is  <key_name>(false),  <key_name>(^S)  and
+<key_name>(^Q) are treated just like any other character, and you can bind
+commands to these keys.
+
+<p>
+Some  terminals  require  that <key_name>(xon-mode) be set non-zero. If
+such terminls have a specialist  EMACS  terminal driver,
+<key_name>(xon-mode) will be switched on by  default. If you have a
+terminal that requires <key_name>(xon-mode) and you pretend  to be some other
+terminal,  you will need to turn <key_name>(xon-mode)  on in  your
+EMACSINIT.ML. A notable example of when this is necessary is with the
+VT125 terminal.
+
+<enddefinition_list>

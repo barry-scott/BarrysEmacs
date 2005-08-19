@@ -1,0 +1,1214 @@
+module emacs_mail
+	(
+	ident = 'V4.1-0',
+	addressing_mode( external=long_relative, nonexternal=long_relative )
+	) =
+begin
+!
+!	EMACS mail interface.
+!
+!	Copyright (c) 1986
+!	Barry A. Scott and Nick Emery
+!
+require 'edit$obj:em_user';
+library 'target_library:starlet';
+require	'images$src:emacs_sys';
+
+forward routine
+	emacs$mail,
+	emacs_mail,
+	emacs_mail_handler,
+	emacs_putmsg_rtn,
+	build_in_item_list,
+	build_out_item_list,
+	execute_function,
+	return_items,
+	report_message,
+	get_string,
+	get_number,
+	get_context;
+macro
+	$call_back( rtn, a, b, c, d, e ) =
+		(.call_back_routine)
+		(
+		%name( emacs__k_, rtn )
+		%if not %null( a ) %then ,a %fi
+		%if not %null( b ) %then ,b %fi
+		%if not %null( c ) %then ,c %fi
+		%if not %null( d ) %then ,d %fi
+		%if not %null( e ) %then ,e %fi
+		)
+	%,
+	$chkerr( expr ) =
+		if not (status = (expr)) then return .status
+	%,
+	$message( str )[] =
+		report_message( .call_back_routine, emacs__k_message,
+				uplit byte (%ascic str)
+				%if not %null( %remaining )
+				%then	, %remaining %fi
+				)
+	%,
+	$error( str )[] =
+		report_message( .call_back_routine, emacs__k_error,
+				uplit byte (%ascic str)
+				%if not %null( %remaining )
+				%then	, %remaining %fi
+				)
+	%;
+
+undeclare
+	mail$_noop;
+literal
+	mail$_noop	= 0;
+
+!!!switches list( expand );
+_item_table
+(
+mail$_, item_info, 10, 0, 4,
+
+mail$_noop, mail$k_send_max_item, send_items,
+	(
+	noop,				0,		noop,
+	send_foreign,			%upval,		integer,
+	send_cc_line,			k_string,	string,
+	send_default_name,		k_string,	string,
+	send_default_transport,		k_string,	string,
+	send_error_entry,		0,		noop,	! routine
+	send_filename,			k_string,	string,
+	send_from_line,			k_string,	string,
+	send_no_default_transport,	0,		flag_in,
+	send_pers_name,			k_string,	string,
+	send_record,			k_string,	string,
+	send_resultspec,		k_string,	string,
+	send_server,			%upval,		integer,
+	send_subject,			k_string,	string,
+	send_success_entry,		0,		noop,	! routine
+	send_to_line,			k_string,	string,
+	send_uflags,			%upval,		integer,
+	send_user_data,			%upval,		integer,
+	send_username,			k_string,	string,
+	send_username_type,		2,		integer,
+	send_fid,			0,		noop,
+	send_no_pers_name,		0,		flag_in,
+	send_in_spare3,			0,		noop,
+	send_in_spare4,			0,		noop,
+	send_in_spare5,			0,		noop,
+!  Send output parameters
+! 
+	send_copy_reply,		%upval,		integer,
+	send_copy_send,			%upval,		integer,
+	send_user,			k_string,	string,
+	send_copy_forward,		%upval,		integer,
+	send_out_spare2,		0,		noop,
+	send_out_spare3,		0,		noop,
+	send_out_spare4,		0,		noop,
+	send_out_spare5,		0,		noop,
+	),
+! 
+!  file input parameters
+! 
+mail$k_mailfile_min_item, mail$k_mailfile_max_item, mailfile_items,
+	(
+!	mailfile_spare0,		0,		noop,
+	mailfile_default_name,		k_string,	string,
+	mailfile_folder_routine,	%upval,		noop,	! routine
+	mailfile_full_close,		0,		flag_in,
+	mailfile_name,			k_string,	string,
+	mailfile_reclaim,		0,		flag_in,
+	mailfile_user_data,		%upval,		integer,
+	mailfile_wastebasket_name,	k_string,	string,
+	mailfile_in_spare1,		0,		noop,
+	mailfile_in_spare2,		0,		noop,
+	mailfile_in_spare3,		0,		noop,
+	mailfile_in_spare4,		0,		noop,
+	mailfile_in_spare5,		0,		noop,
+!  file output parameters
+! 
+	mailfile_data_reclaim,		%upval,		integer,
+	mailfile_data_scan,		%upval,		integer,
+	mailfile_deleted_bytes,		%upval,		integer,
+	mailfile_index_reclaim,		%upval,		integer,
+	mailfile_mail_directory,	k_string,	string,
+	mailfile_messages_deleted,	%upval,		integer,
+	mailfile_resultspec,		k_string,	string,
+	mailfile_total_reclaim,		%upval,		integer,
+	mailfile_wastebasket,		k_string,	string,
+	mailfile_indexed,		%upval,		integer,
+	mailfile_out_spare2,		0,		noop,
+	mailfile_out_spare3,		0,		noop,
+	mailfile_out_spare4,		0,		noop,
+	mailfile_out_spare5,		0,		noop,
+	),
+! 
+!  message input parameters
+! 
+mail$k_message_min_item, mail$k_message_max_item, message_items,
+	(
+!	message_spare0,			0,		noop,
+	message_back,			0,		flag_in,
+	message_before,			k_date,		time,
+	message_cc_substring,		k_string,	string,
+	message_continue,		0,		flag_in,
+	message_file_action,		%upval,		noop,	! routine
+	message_folder_action,		%upval,		noop,	! routine
+	message_default_name,		k_string,	string,
+	message_delete,			0,		flag_in,
+	message_erase,			%upval,		noop,
+	message_file_ctx,		%upval,		context,
+	message_filename,		k_string,	string,
+	message_flags,			%upval,		integer,
+	message_folder,			k_string,	string,
+	message_from_substring,		k_string,	string,
+	message_id,			%upval,		integer,
+	message_next,			0,		flag_in,
+	message_since,			k_date,		time,
+	message_subj_substring,		k_string,	string,
+	message_to_substring,		k_string,	string,
+	message_uflags,			%upval,		integer,
+	message_auto_newmail,		%upval,		integer,
+	message_user_data,		%upval,		integer,
+	message_flags_mbz,		0,		flag_in,
+	message_min_class,		%UPVAL,		integer,
+	message_max_class,		%UPVAL,		integer,	
+	message_in_spare1,		0,		noop,
+	message_in_spare2,		0,		noop,
+	message_in_spare3,		0,		noop,
+	message_in_spare4,		0,		noop,
+	message_in_spare5,		0,		noop,
+	message_in_spare6,		0,		noop,
+	message_in_spare7,		0,		noop,
+	message_in_spare8,		0,		noop,
+	message_in_spare9,		0,		noop,
+	message_in_spare10,		0,		noop,
+	message_in_spare11,		0,		noop,
+	message_in_spare12,		0,		noop,
+	message_in_spare13,		0,		noop,
+	message_in_spare14,		0,		noop,
+	message_in_spare15,		0,		noop,
+	message_in_spare16,		0,		noop,
+	message_in_spare17,		0,		noop,
+	message_in_spare18,		0,		noop,
+	message_in_spare19,		0,		noop,
+	message_in_spare20,		0,		noop,
+!  message output parameters
+! 
+	message_cc,			k_string,	string,
+	message_current_id,		%upval,		integer,
+	message_date,			23,		string,
+	message_extid,			k_string,	string,
+	message_file_created,		%upval,		integer,
+	message_folder_created,		%upval,		integer,
+	message_from,			k_string,	string,
+	message_record,			k_string,	string,
+	message_record_type,		%upval,		integer,
+	message_reply_path,		k_string,	string,
+	message_resultspec,		k_string,	string,
+	message_return_flags,		2,		integer,
+	message_return_uflags,		%upval,		integer,
+	message_selected,		%upval,		integer,
+	message_sender,			k_string,	string,
+	message_size,			%upval,		integer,
+	message_subject,		k_string,	string,
+	message_to,			k_string,	string,
+	message_buffer,			%upval,		integer,
+	message_return_class,		%UPVAL,		integer,
+	message_binary_date,		%UPVAL,		integer,
+	message_spare4,			0,		noop,
+	message_spare5,			0,		noop,
+	message_spare6,			0,		noop,
+	message_spare7,			0,		noop,
+	message_spare8,			0,		noop,
+	message_spare9,			0,		noop,
+	message_spare10,		0,		noop,
+	message_spare11,		0,		noop,
+	message_spare12,		0,		noop,
+	message_spare13,		0,		noop,
+	message_spare14,		0,		noop,
+	message_spare15,		0,		noop,
+	message_spare16,		0,		noop,
+	message_spare17,		0,		noop,
+	message_spare18,		0,		noop,
+	message_spare19,		0,		noop,
+	),
+! 
+!  user input parameters
+! 
+mail$k_user_min_item, mail$k_user_max_item, user_items,
+	(
+	user_spare_0,			0,		noop,
+	user_first,			%upval,		integer,
+	user_next,			%upval,		integer,
+	user_username,			%upval,		integer,
+	user_set_auto_purge,		0,		flag_in,
+	user_set_no_auto_purge,		0,		flag_in,
+	user_set_sub_directory,		k_string,	string,
+	user_set_no_sub_directory,	0,		flag_in,
+	user_set_forwarding,		0,		flag_in,
+	user_set_no_forwarding,		0,		flag_in,
+	user_set_personal_name,		k_string,	string,
+	user_set_no_personal_name,	0,		flag_in,
+	user_set_copy_send,		0,		flag_in,
+	user_set_no_copy_send,		0,		flag_in,
+	user_set_copy_reply,		0,		flag_in,
+	user_set_no_copy_reply,		0,		flag_in,
+	user_set_new_messages,		2,		integer,
+	user_create_if,			0,		flag_in,
+	user_set_mailplus,		k_string,	string,
+	user_set_no_mailplus,		0,		flag_in,
+	user_set_transport,		k_string,	string,
+	user_set_no_transport,		0,		flag_in,
+	user_set_editor,		k_string,	string,
+	user_set_no_editor,		0,		flag_in,
+	user_set_queue,			k_string,	string,
+	user_set_no_queue,		0,		flag_in,
+	user_set_user1,			k_string,	string,
+	user_set_no_user1,		%upval,		integer,
+	user_set_user2,			k_string,	string,
+	user_set_no_user2,		%upval,		integer,
+	user_set_user3,			k_string,	string,
+	user_set_no_user3,		%upval,		integer,
+	user_set_form,			k_string,	string,
+	user_set_no_form,		0,		flag_in,
+	user_set_copy_forward,		0,		flag_in,
+	user_set_no_copy_forward,	0,		flag_in,
+	user_set_cc_prompt,		k_string,	string,
+	user_set_no_cc_prompt,		0,		flag_in,
+	user_set_spare3,		k_string,	string,
+	user_set_no_spare3,		0,		noop,
+	user_in_spare4,			0,		noop,
+	user_in_spare5,			0,		noop,
+	user_in_spare6,			0,		noop,
+	user_in_spare7,			0,		noop,
+	user_in_spare8,			0,		noop,
+	user_in_spare9,			0,		noop,
+	user_in_spare10,		0,		noop,
+	user_in_spare11,		0,		noop,
+	user_in_spare12,		0,		noop,
+	user_in_spare13,		0,		noop,
+	user_in_spare14,		0,		noop,
+	user_in_spare15,		0,		noop,
+	user_in_spare17,		0,		noop,
+	user_in_spare18,		0,		noop,
+	user_in_spare19,		0,		noop,
+	user_in_spare20,		0,		noop,
+!  Output item parameters
+! 
+	user_mailplus,			k_string,	string,
+	user_transport,			k_string,	string,
+	user_editor,			k_string,	string,
+	user_queue,			k_string,	string,
+	user_user1,			k_string,	string,
+	user_user2,			k_string,	string,
+	user_user3,			k_string,	string,
+	user_form,			k_string,	string,
+	user_copy_forward,		%upval,		integer,
+	user_return_username,		k_string,	string,
+	user_auto_purge,		%upval,		integer,
+	user_sub_directory,		k_string,	string,
+	user_full_directory,		k_string,	string,
+	user_new_messages,		2,		integer,
+	user_forwarding,		%upval,		integer,
+	user_personal_name,		k_string,	string,
+	user_copy_send,			%upval,		integer,
+	user_copy_reply,		%upval,		integer,
+	user_captive,			%upval,		integer,
+	user_cc_prompt,			k_string,	string,
+	user_out_spare2,		0,		noop,	
+	user_out_spare3,		0,		noop,	
+	user_out_spare4,		0,		noop,	
+	user_out_spare5,		0,		noop,	
+	user_out_spare6,		0,		noop,	
+	user_out_spare7,		0,		noop,	
+	user_out_spare8,		0,		noop,	
+	user_out_spare9,		0,		noop,	
+	user_out_spare10,		0,		noop,	
+	user_out_spare11,		0,		noop,	
+	user_out_spare12,		0,		noop,	
+	user_out_spare13,		0,		noop,	
+	user_out_spare14,		0,		noop,	
+	user_out_spare15,		0,		noop,	
+	user_out_spare16,		0,		noop,	
+	user_out_spare17,		0,		noop,	
+	user_out_spare18,		0,		noop,	
+	user_out_spare19,		0,		noop,	
+	user_out_spare20,		0,		noop,	
+	)
+);
+external routine
+	mail$mailfile_begin,
+	mail$mailfile_close,
+	mail$mailfile_compress,
+	mail$mailfile_end,
+	mail$mailfile_info_file,
+	mail$mailfile_modify,
+	mail$mailfile_open,
+	mail$mailfile_purge_waste,
+	mail$message_begin,
+	mail$message_copy,
+	mail$message_delete,
+	mail$message_end,
+	mail$message_get,
+	mail$message_info,
+	mail$message_modify,
+	mail$message_select,
+	mail$send_abort,
+	mail$send_add_address,
+	mail$send_add_attribute,
+	mail$send_add_bodypart,
+	mail$send_begin,
+	mail$send_end,
+	mail$send_message,
+	mail$user_begin,
+	mail$user_delete_info,
+	mail$user_end,
+	mail$user_get_info,
+	mail$user_set_info;
+
+literal
+	first_function		= 1,
+	last_function		= 28,
+	info_mailfile_ctx	= 0,
+	info_message_ctx	= 1,
+	info_send_ctx		= 2,
+	info_user_ctx		= 3;
+
+own
+	info_tab	: vector[(last_function+1)*2,long]
+				addressing_mode( general )
+		initial
+		(
+		0,				0,
+		mail$mailfile_begin,		info_mailfile_ctx,
+		mail$mailfile_close,		info_mailfile_ctx,
+		mail$mailfile_compress,		info_mailfile_ctx,
+		mail$mailfile_end,		info_mailfile_ctx,
+		mail$mailfile_info_file,	info_mailfile_ctx,
+		mail$mailfile_modify,		info_mailfile_ctx,
+		mail$mailfile_open,		info_mailfile_ctx,
+		mail$mailfile_purge_waste,	info_mailfile_ctx,
+		mail$message_begin,		info_message_ctx,
+		mail$message_copy,		info_message_ctx,
+		mail$message_delete,		info_message_ctx,
+		mail$message_end,		info_message_ctx,
+		mail$message_get,		info_message_ctx,
+		mail$message_info,		info_message_ctx,
+		mail$message_modify,		info_message_ctx,
+		mail$message_select,		info_message_ctx,
+		mail$send_abort,		info_send_ctx,
+		mail$send_add_address,		info_send_ctx,
+		mail$send_add_attribute,	info_send_ctx,
+		mail$send_add_bodypart,		info_send_ctx,
+		mail$send_begin,		info_send_ctx,
+		mail$send_end,			info_send_ctx,
+		mail$send_message,		info_send_ctx,
+		mail$user_begin,		info_user_ctx,
+		mail$user_delete_info,		info_user_ctx,
+		mail$user_end,			info_user_ctx,
+		mail$user_get_info,		info_user_ctx,
+		mail$user_set_info,		info_user_ctx
+		);
+literal
+	max_context		= 32,
+	max_items		= 29,
+	initial_area_size	= 10000;
+
+own
+	callback_routine	: long,
+
+	mailfile_ctx	: vector[max_context+1,long],
+	message_ctx	: vector[max_context+1,long],
+	send_ctx	: vector[max_context+1,long],
+	user_ctx	: vector[max_context+1,long],
+	in_use,
+	item_types	: vector[max_items,byte],
+	in_item_list	: $itmlst_decl( items = max_items ),
+	out_item_list	: $itmlst_decl( items = max_items ),
+	out_item_sizes	: vector[max_items,word],
+
+	in_data_area	: long,
+	in_data_size	: initial(0),
+	out_data_area	: long,
+	out_data_size	: initial(0),
+	out_data_desc	: blockvector[max_items,8,byte],
+
+	initialised	: initial(0);
+literal
+	arg_function	= 1,
+	arg_context	= 2,
+	arg_num_in_items= 3,
+	arg_first_item	= 4,
+	arg_first_value	= 5,
+
+	arg_min_args	= 3;
+switches
+	zip;
+%sbttl	'emacs$mail'
+!
+! status = (emacs-mail-interface routine context num-in-items [item  value]*)
+!				   arg-1   arg-2   arg-3 arg-4
+!
+global routine emacs$mail
+		(
+		call_back_routine,
+		ctx	: ref block[,byte],
+		restore
+		)
+			=
+	begin
+	emacs_mail( .call_back_routine, .ctx, .restore );
+	return ss$_normal;
+	end;
+
+literal
+	buffer_name_size	= 128;
+own
+	new_msgvec		: vector[10,long],
+	original_buffer_name	: vector[buffer_name_size,byte];
+
+routine emacs_mail_handler
+		(
+		sig	: ref block[,byte],
+		mech	: ref block[,byte]
+		)
+			=
+	begin
+	macro
+		call_back_routine = callback_routine %;
+	local
+		desc		: vector[2,long]
+			initial( buffer_name_size, original_buffer_name ),
+		temp;
+
+	!
+	!	If its an unwind resignal it
+	!
+	if .sig[ chf$l_sig_name ] eql ss$_unwind then return ss$_resignal;
+
+	!
+	!	Put the message into the mail-message buffer
+	!
+	new_msgvec[0] = (.sig[ chf$l_sig_args ] - 2);
+	ch$copy
+	(
+	.new_msgvec[0]*4, sig[ chf$l_sig_name ], 0,
+	%allocation( new_msgvec ) - 4, new_msgvec[1]
+	);
+	(new_msgvec[0])<16,16,0> = %x'f';
+
+	!
+	!	Find out what the current buffer is called
+	!
+	$call_back( dot, temp, desc, desc[0] );
+
+	!
+	!	go to the end of buffer mail-messages
+	!	and set-mark there
+	!
+	$call_back( use_buffer, %ascid 'mail-messages' );
+	$call_back( goto_character, 9999999 );
+	$call_back( set_mark, 1 );
+
+	!
+	!	Use $putmsg to format up the signal in a nice way
+	!
+	$putmsg
+	(
+	msgvec	= new_msgvec[0],
+	facnam	= %ascid 'mail',
+	actrtn	= emacs_putmsg_rtn
+	);
+	!
+	!	Move to end of buffer
+	!
+	$call_back( goto_character, 9999999 );
+
+	!
+	!	Go back to the original buffer
+	!
+	$call_back( use_buffer, desc );
+
+	!
+	!	If its a success or info ignore it
+	!	or if its a warning we can continue
+	!
+	if .sig[ chf$l_sig_name ] 
+	or (.sig[ chf$l_sig_name ] and sts$m_severity) eql sts$k_warning
+	or (.sig[ chf$l_sig_name ] geq ss$_tbit)
+	then
+		return ss$_continue;
+
+	!
+	!	Any problem status get returned to the user
+	!
+	mech[ chf$l_mch_savr0 ] = .sig[ chf$l_sig_name ];
+
+	$unwind();
+	return ss$_normal;
+	end;
+
+routine emacs_putmsg_rtn
+		(
+		message_desc	: ref block[,byte]
+		) =
+	begin
+	macro
+		call_back_routine = callback_routine %;
+
+	$call_back( insert_string, .message_desc );
+	$call_back( insert_character, 'J'-'@' );
+
+	return 0;	! stop $putmsg printing the text
+	end;
+routine emacs_mail
+		(
+		call_back_routine,
+		ctx		: ref vector[,long],
+		restore
+		)
+			=
+	begin
+	local
+		status,
+		func_status,
+		function,
+		user_context,
+		num_in_items,
+		context,
+		arg_count,
+		item_count,
+		items		: vector[ max_items, long ];
+
+	callback_routine = .call_back_routine;
+
+	if not .initialised
+	then
+		begin
+%inform( 'need to have a SET_CONTEXT call back' )
+!		if .ctx eql 0
+!		then
+!			begin
+!			$chkerr( $call_back( allocate, 4*%upval, ctx ) );
+!			$chkerr( $call_back( set_context, .ctx ) );
+!			ctx[0] = 0; ctx[1] = 0; ctx[2] = 0; ctx[3] = 0;
+!			end;
+!
+!		in_data_area = 0; ! .ctx[0];
+!		in_data_size = 0; ! .ctx[1];
+!		out_data_area = 0; ! .ctx[2];
+!		out_data_size = 0; ! .ctx[3];
+
+		$chkerr( $call_back( allocate, initial_area_size, in_data_area ) ) ;
+		$chkerr( $call_back( allocate, initial_area_size, out_data_area ) ) ;
+
+		in_data_size = initial_area_size;
+		out_data_size = initial_area_size;
+
+		initialised = 1;
+		end;
+
+	!
+	!	Find out how many args there are
+	!	And make sure that there is an even number of them
+	!
+	$chkerr( $call_back( arg_count, arg_count ) );
+	$chkerr( $call_back( check_args, arg_min_args,
+		min( .arg_count or 1, arg_min_args + max_items*2 ) ));
+	item_count = (.arg_count - arg_min_args)/2;
+
+	!
+	!	Fetch function and context numbers
+	!	and all the 
+	!
+	$chkerr( $call_back( numeric_arg, arg_function, function ) );
+	$chkerr( $call_back( numeric_arg, arg_num_in_items, num_in_items ) );
+	$chkerr( get_context( .call_back_routine, arg_context, user_context ) );
+
+	!
+	!	Collect all the item codes into the items vector
+	!
+	incr arg from 0 to .item_count - 1
+	do
+		$chkerr( $call_back( numeric_arg,
+					arg_first_item+.arg*2, items[.arg] ) );
+
+	!
+	!	Check the function code
+	!
+	if .function lss first_function
+	or .function gtr last_function
+	then
+		begin
+		$error( 'Function value !SL out of range', .function );
+		return ss$_badparam;
+		end;
+
+	!
+	!	Check the interlock
+	!
+	if .in_use
+	then
+		begin
+		$error( 'Recursive call to mail' );
+		return ss$_badparam;
+		end;
+	!
+	!	Now build the input and output item lists
+	!
+	in_use = 1;	! lock out recursive use of mail
+
+	if .num_in_items gtr .item_count
+	then
+		num_in_items = .item_count;
+
+	status = build_in_item_list( .call_back_routine, items, .num_in_items );
+
+	in_use = 0;	! release lock now
+
+	if not .status then return .status;
+
+	$chkerr( build_out_item_list
+		( .call_back_routine, items, .num_in_items, .item_count ) );
+
+	!
+	!	Work out which context longword is required
+	!
+	case .info_tab[ .function*2 + 1 ]
+	from 0 to info_user_ctx
+	of
+	set
+	[info_mailfile_ctx]:	context = mailfile_ctx[ .user_context ];
+	[info_message_ctx]:	context = message_ctx[ .user_context ];
+	[info_send_ctx]:	context = send_ctx[ .user_context ];
+	[info_user_ctx]:	context = user_ctx[ .user_context ];
+	tes;
+	!
+	!	Perform the function
+	!
+	func_status = execute_function( .function, .context );
+
+	!
+	!	Return results
+	!
+	$chkerr( return_items
+			( .call_back_routine, .func_status,
+					items, .num_in_items, .item_count ) );
+
+	return ss$_normal;
+	end;
+%sbttl 'build_in_item_list'
+routine build_in_item_list
+		(
+		call_back_routine,
+		items			: ref vector[,long],
+		item_count
+		)
+			=
+	begin
+	local
+		status,
+		max_index,
+		index_offset,
+		item_mask,
+		t1		: ref block[,byte],
+		t2		: ref blockvector[, t2_s_item_info, byte ],
+		in_buf,
+		in_free,
+		used_size,
+		cur_item;
+	macro
+		item_list	= in_item_list %;
+
+	cur_item = 0;
+
+	ch$fill( 0, %allocation( in_item_list ), in_item_list );
+
+	in_buf = .in_data_area;
+	in_free = .in_data_size;
+	used_size = 0;
+
+	index_offset = .item_info[ t1_w_index_offset ];
+	item_mask = .item_info[ t1_w_item_mask ];
+	max_index = .item_info[ t1_l_max_index ];
+
+	incr arg from 0 to .item_count - 1
+	do
+		begin
+		local
+			index,
+			code,
+			masked_code,
+			item_type,
+			item_size;
+
+		code = .items[ .arg ];
+
+		index = .code<.index_offset,16,0>;
+		if .index gtru .max_index
+		or
+			begin
+			t1 = item_info[ .index + t1_l_records ];
+			masked_code = .code and not .item_mask;
+			.masked_code lssu .t1[ t1_l_first_itmcod ]
+			or .masked_code gequ .t1[ t1_l_last_itmcod ]
+			end
+		then
+			begin
+			$error( 'Item code !SL value out of range', .code );
+			return ss$_badparam;
+			end;
+		t2 = .t1[ t1_l_t2_pointer ];
+
+		item_type = .t2[ .masked_code, t2_b_item_type ];
+		item_size = .t2[ .masked_code, t2_w_size ];
+
+		case .item_type
+		from k_type_min to k_type_max of
+		set
+		[k_type_context]:
+			begin
+			local
+				ctx_vec		: ref vector[,long],
+				ctx_num;
+
+			$chkerr( get_context
+			( .call_back_routine, arg_first_value + .arg*2, ctx_num ) );
+
+			ctx_vec =
+				(case .code
+				from mail$_message_file_ctx
+				to mail$_message_file_ctx
+				of set
+				[mail$_message_file_ctx]:	mailfile_ctx;
+				[inrange,outrange]:		0;
+				tes);
+			$in_item( ctx_vec[.ctx_num], 4 );
+			end;
+		[k_type_string]:
+			begin
+			if .item_size gtr .in_free
+			then
+				begin
+				$error( 'Emacs mail in_data_area too small' );
+				return ss$_insfmem;
+				end;
+
+			$chkerr( get_string
+				(
+				.call_back_routine,
+				arg_first_value + .arg*2,
+				.in_buf,
+				.item_size,
+				used_size
+				)
+				);
+			$in_item( .in_buf, .used_size );
+			in_buf = .in_buf + .used_size;
+			in_free = .in_free - .used_size;
+			end;
+
+		[k_type_integer]:
+			begin
+			if %upval gtr .in_free
+			then
+				begin
+				$error( 'Emacs mail in_data_area too small' );
+				return ss$_insfmem;
+				end;
+
+			$chkerr( get_number
+				(
+				.call_back_routine,
+				arg_first_value + .arg*2,
+				.in_buf
+				)
+				);
+			$in_item( .in_buf, .item_size );
+			in_buf = .in_buf + %upval;
+			in_free = .in_free - %upval;
+			end;
+
+		[k_type_time]:
+			begin
+			local
+				desc	: vector[2,long],
+				buf	: vector[%charcount('19-Jan-1986 13:47:51.05'),byte],
+				status;
+
+			if k_date gtr .in_free
+			then
+				begin
+				$error( 'Emacs mail in_data_area too small' );
+				return ss$_insfmem;
+				end;
+
+			desc[1] = buf;
+
+			$chkerr( get_string
+				(
+				.call_back_routine,
+				arg_first_value + .arg*2,
+				buf,
+				%allocation( buf ),
+				desc[0]
+				)
+				);
+			$chkerr( $bintim( timbuf=desc[0], timadr=.in_buf ) );
+			$in_item( .in_buf, k_date );
+			in_buf = .in_buf + k_date;
+			in_free = .in_free - k_date;
+			end;
+
+		[k_type_flag_in]:
+			$in_item( 0, 0 );
+
+		[k_type_noop]:	;	! ignore a noop
+		[inrange,outrange]:
+			begin
+			$error( 'Item !SL is not an input item', .code );
+			return ss$_badparam;
+			end;
+		tes;
+		end;
+
+	return ss$_normal;
+	end;
+%sbttl 'build_out_item_list'
+routine build_out_item_list
+		(
+		call_back_routine,
+		items			: ref vector[,long],
+		num_in_items,
+		item_count
+		)
+			=
+	begin
+	local
+		status,
+		max_index,
+		index_offset,
+		item_mask,
+		t1		: ref block[,byte],
+		t2		: ref blockvector[, t2_s_item_info, byte ],
+		out_buf,
+		out_free,
+		used_size,
+		cur_item;
+	macro
+		item_list	= out_item_list %;
+
+	cur_item = 0;
+
+	ch$fill( 0, %allocation( out_item_list ), out_item_list );
+
+	out_buf = .out_data_area;
+	out_free = .out_data_size;
+	used_size = 0;
+
+	index_offset = .item_info[ t1_w_index_offset ];
+	item_mask = .item_info[ t1_w_item_mask ];
+	max_index = .item_info[ t1_l_max_index ];
+
+	incr arg from .num_in_items to .item_count - 1
+	do
+		begin
+		local
+			index,
+			code,
+			masked_code,
+			item_type,
+			item_size;
+
+		code = .items[ .arg ];
+		index = .code<.index_offset,16,0>;
+		if .index gtru .max_index
+		or
+			begin
+			t1 = item_info[ .index + t1_l_records ];
+			masked_code = .code and not .item_mask;
+			.masked_code lssu .t1[ t1_l_first_itmcod ]
+			or .masked_code gequ .t1[ t1_l_last_itmcod ]
+			end
+		then
+			begin
+			$error( 'Item code !SL value out of range', .code );
+			return ss$_badparam;
+			end;
+		t2 = .t1[ t1_l_t2_pointer ];
+
+		item_type = .t2[ .masked_code, t2_b_item_type ];
+		item_size = .t2[ .masked_code, t2_w_size ];
+
+		item_types[ .arg ] = .item_type;
+
+		case .item_type
+		from k_type_min to k_type_max of
+		set
+		[k_type_string]:
+			begin
+			if .item_size gtr .out_free
+			then
+				begin
+				$error( 'Emacs mail out_data_area too small' );
+				return ss$_insfmem;
+				end;
+
+			out_data_desc[ .arg, dsc$w_length ] = .item_size;
+			out_data_desc[ .arg, dsc$a_pointer ] = .out_buf;
+
+			$out_item
+			(
+			.out_buf, .item_size,
+			out_data_desc[ .arg, dsc$w_length ]
+			);
+			out_buf = .out_buf + .item_size;
+			out_free = .out_free - .item_size;
+			end;
+
+		[k_type_time]:
+			begin
+			if .item_size gtr .out_free
+			then
+				begin
+				$error( 'Emacs mail out_data_area too small' );
+				return ss$_insfmem;
+				end;
+
+			out_data_desc[ .arg, dsc$w_length ] = .item_size;
+			out_data_desc[ .arg, dsc$a_pointer ] = .out_buf;
+
+			$out_item
+			(
+			.out_buf, .item_size,
+			0		! no return size they are fixed
+			);
+			out_buf = .out_buf + .item_size;
+			out_free = .out_free - .item_size;
+			end;
+
+		[k_type_integer]:
+			begin
+			if %upval gtr .out_free
+			then
+				begin
+				$error( 'Emacs mail out_data_area too small' );
+				return ss$_insfmem;
+				end;
+
+			out_data_desc[ .arg, dsc$w_length ] = %upval;
+			out_data_desc[ .arg, dsc$a_pointer ] = .out_buf;
+			.out_buf = 0;	! init for word and byte items
+			$out_item
+			(
+			.out_buf, .item_size,
+			0		! no return size they are fixed
+			);
+			out_buf = .out_buf + %upval;
+			out_free = .out_free - %upval;
+			end;
+
+		[k_type_noop]:	;	! ignore noop items
+		[inrange,outrange]:
+			begin
+			$error( 'Item !SL is not an output item', .code );
+			return ss$_badparam;
+			end;
+		tes;
+		end;
+
+	return ss$_normal;
+	end;
+%sbttl 'execute_function'
+routine execute_function
+	(
+	function,
+	context
+	)
+		=
+	begin
+	enable
+		emacs_mail_handler;
+
+	(.info_tab[ .function*2 ])( .context, in_item_list, out_item_list )
+	end;
+%sbttl 'return_items'
+routine return_items
+	(
+	call_back_routine,
+	func_status,
+	items		: ref vector[,long],
+	num_in_items,
+	item_count
+	)
+		=
+	begin
+	literal
+		mail$_openin	= %x'3fb109a';
+	literal
+		msg_buf_size	= 132;
+	local
+		status,
+		desc		: vector[2,long],
+		buf		: vector[msg_buf_size,byte];
+
+	!
+	!	First return status
+	!
+	selectone .func_status
+	of
+	set
+	[mail$_openin]:
+		begin
+		$chkerr( $call_back( numeric_result, .new_msgvec[4] ) );
+		func_status = 1;
+		end;
+	[otherwise]:
+		$chkerr( $call_back( numeric_result, .func_status ) );
+	tes;
+
+	!
+	!	Only return items if the operation succeeded
+	!
+	if not .func_status
+	then
+		return ss$_normal;
+
+	!
+	!	Now return all the output items
+	!
+	incr index from .num_in_items to .item_count - 1
+	do
+		begin
+		case .item_types[ .index ]
+		from k_type_min to k_type_max of
+		set
+		[k_type_string]:
+			begin
+			$chkerr( $call_back
+				(
+				return_string_to_param,
+				arg_first_value + .index*2,
+				out_data_desc[ .index, 0,0,0,0 ]
+				) );
+			end;
+
+		[k_type_integer]:
+			begin
+			$chkerr( $call_back
+				(
+				return_number_to_param,
+				arg_first_value + .index*2,
+				..out_data_desc[ .index, dsc$a_pointer ]
+				) );
+			end;
+
+		[k_type_time]:
+			begin
+			local
+				desc	: vector[2,long],
+				buf	: vector[%charcount('19-Jan-1986 13:47:51.05'),byte],
+				status;
+
+			desc[0] = %allocation( buf );
+			desc[1] = buf;
+
+			$chkerr( $asctim(
+				timbuf=desc[0], timlen=desc[0],
+				timadr=.out_data_desc[ .index, dsc$a_pointer ]
+				) );
+
+			$chkerr( $call_back
+				(
+				return_string_to_param,
+				arg_first_value + .index*2,
+				desc[0]
+				) );
+			end;
+
+		[inrange,outrange]:
+			;	! nothing to do
+		tes;
+		end;
+
+	return ss$_normal;
+	end;
+literal
+	fao_buf_size	= 200;
+
+routine report_message
+		(
+		call_back_routine,
+		type,
+		string		: ref vector[,byte],
+		args
+		) =
+	begin
+	local
+		status,
+		control_desc	: vector[2,long],
+		string_desc	: vector[2,long],
+		fao_buffer	: vector[fao_buf_size,byte];
+
+	control_desc[0] = .string[0];
+	control_desc[1] = string[1];
+
+	string_desc[0] = fao_buf_size;
+	string_desc[1] = fao_buffer;
+
+	status = $faol(	ctrstr = control_desc[0], outlen = string_desc[0],
+			outbuf = string_desc[0], prmlst = args );
+	if not .status then return .status;
+
+	(.call_back_routine)( .type, string_desc[0] )
+	end;
+routine get_string
+	(
+	call_back_routine,
+	argument,
+	buffer,
+	buffer_size,
+	actual_size
+	)
+		=
+	begin
+	local
+		desc	: vector[2,long];
+
+	desc[0] = .buffer_size;
+	desc[1] = .buffer;
+
+	return $call_back( string_arg, .argument, desc, .actual_size );
+	end;
+routine get_number
+	(
+	call_back_routine,
+	argument,
+	ref_number
+	)
+		=
+	begin
+	return $call_back( numeric_arg, .argument, .ref_number );
+	end;
+routine get_context
+	(
+	call_back_routine,
+	argument,
+	ref_context
+	)
+		=
+	begin
+	local
+		status;
+
+	$chkerr( get_number( .call_back_routine, .argument, .ref_context ) );
+	if ..ref_context lss 1 or ..ref_context gtr max_context
+	then
+		begin
+		$error( 'Context number !SL is not valid', ..ref_context );
+		return ss$_badparam;
+		end;
+
+	return ss$_normal;
+	end;
+end
+eludom

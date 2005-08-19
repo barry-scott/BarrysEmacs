@@ -1,0 +1,564 @@
+module emacs_cli
+	(
+	ident	= 'V4.1'
+	) =
+begin
+library 'target_library:starlet';
+require 'edit$obj:em_user';
+
+forward routine
+	emacs$cli_define_table,
+	 cli_setup_ctx,
+	emacs$cli_list_tables,
+	 cli_handler,
+	emacs$cli$dcl_parse,
+	emacs$cli$present,
+	emacs$cli$get_value,
+	 report_message;
+
+%if %bliss( bliss32e ) %then
+builtin
+	establish,
+	revert;
+
+
+%else
+macro
+	establish = lib$establish %,
+	revert = lib$revert %;
+external routine
+	lib$establish	: addressing_mode(general),
+	lib$revert	: addressing_mode(general);
+%fi
+
+!
+!	The context block for CLI is a pointer to a blockvector
+!	of cli_tables. Each cli_table holds a pointer to the
+!	cli_tables name, a pointer to the imagename and a pointer
+!	to its image its self.
+!
+macro
+	$call_back( rtn, a, b, c, d, e ) =
+		(.call_back_routine)
+		(
+		%name( emacs__k_, rtn )
+		%if not %null( a ) %then ,a %fi
+		%if not %null( b ) %then ,b %fi
+		%if not %null( c ) %then ,c %fi
+		%if not %null( d ) %then ,d %fi
+		%if not %null( e ) %then ,e %fi
+		)
+	%,
+	$chkerr( expr ) =
+		(if not (status = (expr)) then return .status)
+	%,
+	$text( desc, str ) =
+		(
+		desc[0] = %charcount( str ); desc[1] = uplit byte ( str )
+		desc[0]
+		)
+	%,
+	$message( str )[] =
+		report_message( .call_back_routine, emacs__k_message,
+				uplit byte (%ascic str)
+				%if not %null( %remaining )
+				%then , %remaining %fi )
+	%,
+	$error( str )[] =
+		report_message( .call_back_routine, emacs__k_error,
+				uplit byte (%ascic str)
+				%if not %null( %remaining )
+				%then , %remaining %fi )
+	%;
+
+macro
+	ctx$l_size	= 0,0,32,0 %,	! maximum number of tables that fit
+	ctx$l_used	= 4,0,32,0 %,	! number of tables defines
+	ctx$l_first_table = 8,0,0,0 %,	! start of the cli_tables
+
+	clitab$l_name	= 0,0,32,0 %,	! name of the table
+	clitab$l_image	= 4,0,32,0 %,	! name of the image
+	clitab$l_table	= 8,0,32,0 %;	! pointer to table
+
+literal
+	ctx$k_header_size	= 8,
+	clitab$k_length		= 12,
+	initial_size		= 32;	! number of tables
+
+macro
+	$ctx_setup =
+	if ..ctx eql 0
+	then
+		$chkerr( cli_setup_ctx( .call_back_routine, .ctx ) )
+	%;
+
+external routine
+	str$upcase		: addressing_mode( general ),
+	lib$find_image_symbol	: addressing_mode( general ),
+	cli$dcl_parse		: addressing_mode( general ),
+	cli$get_value		: addressing_mode( general ),
+	cli$present		: addressing_mode( general );
+!
+!	(cli_define_table table-name image-name)
+!
+global routine emacs$cli_define_table 
+		(
+		call_back_routine,
+		ctx	: ref block[,byte],
+		restore
+		)
+			=
+	begin
+	local
+		status,
+		c	: ref block[,byte],
+		ct	: ref blockvector[,clitab$k_length,byte],
+		table_s	: vector[31,byte],
+		image_s	: vector[39,byte],
+		table	: vector[2,long]
+			initial( %allocation( table_s ), table_s ),
+		image	: vector[2,long]
+			initial( %allocation( image_s ), image_s );
+
+	$ctx_setup;
+
+	c = ..ctx;
+	ct = c[ ctx$l_first_table ];
+
+	!
+	!	Collect the 2 args
+	!
+	$chkerr( $call_back( check_args, 2, 2 ) );
+	$chkerr( $call_back( string_arg, 1, table[0], table[0] ) );
+	$chkerr( $call_back( string_arg, 2, image[0], image[0] ) );
+
+	!
+	!	See if the table is already defined
+	!
+	incr x from 0 to .c[ ctx$l_used ] - 1
+	do
+		begin
+		local
+			t	: ref vector[,byte],	! table name pointer
+			i	: ref vector[,byte];	! image name pointer
+
+		t = .ct[ .x, clitab$l_name ];
+		i = .ct[ .x, clitab$l_image ];
+
+		if ch$eql
+			(
+			.table[0], .table[1],	! table name parameter
+			.t[0], t[1],		! table name from clitab
+			0
+			)
+		then
+			begin
+			!
+			!	Confirm that the image name is the same
+			!
+			if ch$eql
+				(
+				.image[0], .image[1],	! image name parameter
+				.i[0], i[1],		! image name from clitab
+				0
+				)
+			then
+				return ss$_normal	! nothing to do
+			else
+				begin
+				$error( 'cli_define_table - attempt to redefine image for table "!AS" from !AS to !AC',
+					table[0], image[0], i[0] );
+				end;
+			end;
+		end;
+
+	!
+	!	See if the clitab is large enough to add new table
+	!
+	if .c[ ctx$l_used ] eql .c[ ctx$l_size ]
+	then
+		begin
+		local
+			buf	: ref block[,byte];
+
+		$chkerr( $call_back( reallocate,
+			.c,
+			(.c[ ctx$l_size ] + initial_size)*clitab$k_length+ctx$k_header_size,
+			buf ) );
+		c = buf;
+		c[ ctx$l_size ] = .c[ ctx$l_size ] + initial_size;
+		ct = c[ ctx$l_first_table ];
+		end;
+
+	!
+	!	Add this table to the list
+	!
+	begin
+	local
+		table_name	: ref vector[,byte],
+		image_name	: ref vector[,byte];
+
+	$chkerr( $call_back( allocate, .table[0] + 1, table_name ) );
+	$chkerr( $call_back( allocate, .image[0] + 1, image_name ) );
+
+	table_name[0] = .table[0];
+	ch$move( .table[0], .table[1], table_name[1] );
+	image_name[0] = .image[0];
+	ch$move( .image[0], .image[1], image_name[1] );
+
+	ct[ .c[ ctx$l_used ], clitab$l_name ] = table_name[0];
+	ct[ .c[ ctx$l_used ], clitab$l_image ] = image_name[0];
+	ct[ .c[ ctx$l_used ], clitab$l_table ] = 0;
+
+	c[ ctx$l_used ] = .c[ ctx$l_used ] + 1;
+	end;
+
+	return ss$_normal;
+	end;
+
+routine cli_setup_ctx( call_back_routine, ctx ) =
+	begin
+	local
+		buf	: ref block[,byte],
+		status;
+
+	$chkerr( $call_back(
+		allocate,
+		ctx$k_header_size + initial_size*clitab$k_length,
+		buf ) );
+
+	buf[ ctx$l_size ] = initial_size;
+	buf[ ctx$l_used ] = 0;
+	.ctx = .buf;
+
+	return ss$_normal;
+	end;
+!
+!	(cli_list_tables)
+!
+global routine emacs$cli_list_tables
+		(
+		call_back_routine,
+		ctx	: ref block[,byte],
+		restore
+		)
+			=
+	begin
+	local
+		status,
+		c	: ref block[,byte],
+		ct	: ref blockvector[,clitab$k_length,byte],
+		string_desc	: vector[2,long],
+		fao_buffer	: vector[132,byte];
+
+	$ctx_setup;
+
+	c = ..ctx;
+	ct = c[ ctx$l_first_table ];
+
+	$chkerr( $call_back( insert_string,
+		%ascid %string (
+'Table-name			Image-name				Address',
+%char( 10 ),
+'----------			----------				-------',
+%char( 10 ) )
+		) );
+
+	incr x from 0 to .c[ ctx$l_used ] - 1
+	do
+		begin
+		string_desc[0] = %allocation( fao_buffer );
+		string_desc[1] = fao_buffer;
+
+		$fao
+		(
+		%ascid %string( '!32AC!40AC!8XL', %char( 10 )),
+		string_desc[0], string_desc[0],
+			.ct[ .x, clitab$l_name ],
+			.ct[ .x, clitab$l_image ],
+			.ct[ .x, clitab$l_table ]
+		);
+		$chkerr( $call_back( insert_string, string_desc[0] ) );
+		end;
+
+	return ss$_normal;
+	end;
+routine cli_handler
+		(
+		sig	: ref block[,byte],
+		mech	: ref block[,byte]
+		)
+			=
+	begin
+	!
+	!	If its an unwind resignal it
+	!
+	if .sig[ chf$l_sig_name ] eql ss$_unwind then return ss$_resignal;
+
+	!
+	!	If its a success or info ignore it
+	!	or if its a warning we can continue
+	!
+	if .sig[ chf$l_sig_name ] 
+	and (.sig[ chf$l_sig_name ] and sts$m_severity) eql sts$k_warning
+	then
+		return ss$_continue;
+
+	!
+	!	Any problem status get returned to the user
+	!
+%if %declared( %quote chf$l_mch_savr0 ) %then
+	mech[ chf$l_mch_savr0 ] = .sig[ chf$l_sig_name ];
+	$unwind( depadr=mech[ chf$l_mch_depth ] );
+%else
+	mech[ chf$il_mch_savr0_low ] = .sig[ chf$l_sig_name ];
+	$unwind( depadr=mech[ chf$is_mch_depth ] );
+%fi
+
+	return ss$_normal;
+	end;
+!
+!	(setq status (cli$dcl_parse table-name command-line))
+!
+global routine emacs$cli$dcl_parse
+		(
+		call_back_routine,
+		ctx	: ref block[,byte],
+		restore
+		)
+			=
+	begin
+	local
+		status,
+		c	: ref block[,byte],
+		ct	: ref blockvector[,clitab$k_length,byte],
+		entry	: ref block[,byte],
+		table_s	: vector[31,byte],
+		line_s	: vector[1024,byte],
+		table	: vector[2,long]
+			initial( %allocation( table_s ), table_s ),
+		image	: vector[2,long],
+		line	: vector[2,long]
+			initial( %allocation( line_s ), line_s );
+
+	$ctx_setup;
+
+	c = ..ctx;
+	ct = c[ ctx$l_first_table ];
+
+	!
+	!	Collect the 2 args
+	!
+	$chkerr( $call_back( check_args, 2, 2 ) );
+	$chkerr( $call_back( string_arg, 1, table[0], table[0] ) );
+	$chkerr( $call_back( string_arg, 2, line[0], line[0] ) );
+
+	!
+	!	Find the table
+	!
+	entry = 0;
+	incr x from 0 to .c[ ctx$l_used ] - 1
+	do
+		begin
+		local
+			t	: ref vector[,byte],	! table name pointer
+			i	: ref vector[,byte];	! image name pointer
+
+		t = .ct[ .x, clitab$l_name ];
+
+		if ch$eql
+			(
+			.table[0], .table[1],	! table name parameter
+			.t[0], t[1],		! table name from clitab
+			0
+			)
+		then
+			begin
+			entry = ct[ .x, 0,0,0,0 ];
+			i = .ct[ .x, clitab$l_image ];
+			image[0] = .i[0];
+			image[1] = i[1];
+			exitloop;
+			end;
+		end;
+	if .entry eql 0
+	then
+		begin
+		$error( 'CLI - unknown table !AS', table[0] );
+		return ss$_badparam;
+		end;
+
+	!
+	!	See if the image is mapped
+	!	
+	if .entry[ clitab$l_table ] eql 0
+	then
+		begin
+		local
+			fscn_item	: blockvector[2,8,byte],
+			table_s2	: vector[31,byte],
+			table_desc	: vector[2,long],
+			image_s		: vector[nam$c_maxrss,byte],
+			image_desc	: vector[2,long];
+
+		fscn_item[ 0, 0, 16, 16, 0 ] = fscn$_name;
+		fscn_item[ 1, 0, 0, 32, 0 ] = 0;
+
+		table_desc[0] = .table[0];
+		table_desc[1] = table_s2;
+		str$upcase( table_desc[0], table[0] );
+		image_desc[0] = .image[0];
+		image_desc[1] = image_s;
+		str$upcase( image_desc[0], image[0] );
+
+		!
+		!	See if the image name is in fact a filespec 
+		!
+		$filescan( srcstr = image_desc[0], valuelst = fscn_item );
+		if .image_desc[0] neq .fscn_item[ 0, 0,0,16,0 ]
+		then
+			begin
+			!
+			!	define a user mode logical name to point
+			!	at the image
+			!
+			local
+				lnm_item	: $itmlst_decl( items=1 );
+
+			$itmlst_init
+			(
+			itmlst = lnm_item,
+			(itmcod = lnm$_string,
+				bufadr=.image_desc[1], bufsiz=.image_desc[0] )
+			);
+			status = $crelnm
+				(
+				attr	= uplit( lnm$m_confine ),
+				tabnam	= %ascid 'LNM$PROCESS',
+				lognam	= fscn_item[0,0,0,0,0],
+				itmlst	= lnm_item
+				);
+			if not .status 
+			then
+				begin
+				$error( 'CLI - error defining logical name !AS as !AS',
+					fscn_item[0,0,0,0,0], lnm_item );
+
+				return .status;
+				end;
+			image_desc[0] = .fscn_item[ 0, 0,0,16,0 ];
+			image_desc[1] = .fscn_item[ 0, 4,0,32,0 ];
+			end;
+
+		status = lib$find_image_symbol
+			(
+			image_desc[0], table_desc[0], entry[ clitab$l_table ]
+			);
+		if not .status
+		then
+			begin
+			$error( 'CLI - error finding !AS in image !AS, !XL',
+				table[0], image[0], .status );
+			return .status;
+			end;
+		end;
+
+	establish( cli_handler );	! trap cli errors
+	status = cli$dcl_parse( line[0], .entry[ clitab$l_table ], 0, 0, 0 );
+	$chkerr( $call_back( numeric_result, .status ) );
+	return .status;
+	end;
+!
+!	(setq status (cli$present label-name))
+!
+global routine emacs$cli$present
+		(
+		call_back_routine,
+		ctx	: ref block[,byte],
+		restore
+		)
+			=
+	begin
+	local
+		status,
+		entry	: ref block[,byte],
+		entity_s	: vector[256,byte],
+		entity	: vector[2,long]
+			initial( %allocation( entity_s ), entity_s );
+
+	!
+	!	Collect the arg
+	!
+	$chkerr( $call_back( check_args, 1, 1 ) );
+	$chkerr( $call_back( string_arg, 1, entity[0], entity[0] ) );
+
+	establish( cli_handler );	! trap cli errors
+	status = cli$present( entity[0] );
+	$chkerr( $call_back( numeric_result, .status ) );
+	return .status;
+	end;
+!
+!	(setq status (cli$get_value label-name value))
+!
+global routine emacs$cli$get_value
+		(
+		call_back_routine,
+		ctx	: ref block[,byte],
+		restore
+		)
+			=
+	begin
+	local
+		status,
+		value_s		: vector[255,byte],
+		value		: vector[2,long]
+				initial( %allocation( value_s ), value_s ),
+		entity_s	: vector[255,byte],
+		entity		: vector[2,long]
+				initial( %allocation( entity_s ), entity_s );
+
+	!
+	!	Collect the 1st arg
+	!
+	$chkerr( $call_back( check_args, 2, 2 ) );
+	$chkerr( $call_back( string_arg, 1, entity[0], entity[0] ) );
+
+	establish( cli_handler );	! trap cli errors
+	status = cli$get_value( entity[0], value[0], value[0] );
+	if .status
+	then
+		$chkerr( $call_back( return_string_to_param, 2, value[0] ) );
+	$chkerr( $call_back( numeric_result, .status ) );
+	return .status;
+	end;
+literal
+	fao_buf_size	= 200;
+
+routine report_message
+		(
+		call_back_routine,
+		type,
+		string		: ref vector[,byte],
+		args
+		) =
+	begin
+	local
+		status,
+		control_desc	: vector[2,long],
+		string_desc	: vector[2,long],
+		fao_buffer	: vector[fao_buf_size,byte];
+
+	control_desc[0] = .string[0];
+	control_desc[1] = string[1];
+
+	string_desc[0] = fao_buf_size;
+	string_desc[1] = fao_buffer;
+
+	status = $faol(	ctrstr = control_desc[0], outlen = string_desc[0],
+			outbuf = string_desc[0], prmlst = args );
+	if not .status then return .status;
+
+	(.call_back_routine)( .type, string_desc[0] )
+	end;
+end
+eludom

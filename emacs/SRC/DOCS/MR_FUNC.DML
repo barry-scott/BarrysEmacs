@@ -1,0 +1,3306 @@
+<chapter>(EMACS Functions\functions_chap)
+
+<definition_list>
+
+
+<deflist_item>((! <emphasis>(expression\italic)))
+<x>(!)
+<deflist_def>
+An  arithmetic  operator  function  that returns the complement of
+<emphasis>(expression\italic). This function cannot be used interactively.
+
+
+<deflist_item>((!= <emphasis>(expression-1\italic)
+		<emphasis>(expression-2\italic)))
+<x>(!=)
+<deflist_def>
+An  arithmetic  operator function that returns 1 if
+<emphasis>(expression-1\italic) is not equal to
+<emphasis>(expression-2\italic). This function cannot be used
+interactively.
+
+
+<deflist_item>((% <emphasis>(expression-1\italic)
+		<emphasis>(expression-2\italic) <hellipsis>))
+<x>(%)
+<deflist_def>
+An  arithmetic  operator  function that returns the modulus of the
+first  argument  by  the  rest of its arguments. This function cannot be
+used interactively.
+
+
+<deflist_item>((& <emphasis>(expression-1\italic)
+		<emphasis>(expression-2\italic) <hellipsis>))
+<x>(<literal>(&))
+<deflist_def>
+An  arithmetic operator function that returns the result of
+logical-ANDing all its arguments together. This function cannot be used
+interactively.
+
+
+<deflist_item>((* <emphasis>(expression-1\italic)
+		<emphasis>(expression-2\italic) <hellipsis>))
+<x>(*)
+<deflist_def>
+An  arithmetic  operator  function  that  returns  the  result  of
+multiplying all  its  arguments  together.  This  function is cannot be
+used interactively.
+
+
+<deflist_item>((+ <emphasis>(expression-1\italic)
+		<emphasis>(expression-2\italic) <hellipsis>))
+<x>(+)
+<deflist_def>
+An  arithmetic  operator  function that returns the sum of all its
+arguments.  This function cannot be used interactively.
+
+
+<deflist_item>((-- <emphasis>(expression-1\italic)
+		<emphasis>(expression-2\italic) <hellipsis>))
+<x>(--)
+<deflist_def>
+An  arithmetic  operator  function that returns the first argument
+minus  the sum of the rest of the arguments. This function cannot be used
+interactively.
+
+
+<deflist_item>((/ <emphasis>(expression-1\italic)
+		<emphasis>(expression-2\italic) <hellipsis>))
+<x>(/)
+<deflist_def>
+An  arithmetic  operator  function  that  returns  the  result  of
+dividing  its  first  argument  by  rest  of  the  arguments. This
+function cannot be used interactively.
+
+
+<deflist_item>((<literal>(<) <emphasis>(expression-1\italic)
+		<emphasis>(expression-2\italic)))
+<x>(<literal>(<))
+<deflist_def>
+An  arithmetic  operator function that returns 1 if
+<emphasis>(expression-1\italic) is less  than
+<emphasis>(expression-2\italic).  This  function cannot be used
+interactively.
+
+
+<deflist_item>((<literal>(<)<literal>(<) <emphasis>(expression-1\italic)
+		<emphasis>(expression-2\italic) <hellipsis>))
+<x>(<literal>(<))
+<deflist_def>
+An  arithmetic  operator  function  that  returns  the  result  of
+shifting  left its first argument by the number of places which is the
+sum  of  the  rest  of  the arguments. This function cannot be used
+interactively.
+
+
+<deflist_item>((<literal>(<)= <emphasis>(expression-1\italic)
+		<emphasis>(expression-2\italic)))
+<x>(<literal>(<))
+<deflist_def>
+An  arithmetic  operator function that returns 1 if
+<emphasis>(expression-1\italic) is  less  than  or  equal to
+<emphasis>(expression-2\italic). This function cannot be used
+interactively.
+
+
+<deflist_item>((= <emphasis>(expression-1\italic)
+		<emphasis>(expression-2\italic)))
+<x>(=)
+<deflist_def>
+An  arithmetic  operator function that returns 1 if
+<emphasis>(expression-1\italic) is the same as
+<emphasis>(expression-2\italic). This function cannot be used
+interactively.
+
+
+<deflist_item>((<literal>(>) <emphasis>(expression-1\italic)
+		<emphasis>(expression-2\italic)))
+<x>(<literal>(>))
+<deflist_def>
+An   arithmetic   operator   function   that   returns   true   if
+<emphasis>(expression-1\italic)  is  greater  than
+<emphasis>(expression-2\italic). This function cannot be used
+interactively.
+
+
+<deflist_item>((<literal>(>)= <emphasis>(expression-1\italic)
+		<emphasis>(expression-2\italic)))
+<x>(<literal>(>))
+<deflist_def>
+An   arithmetic   operator   function   that   returns   true   if
+<emphasis>(expression-1\italic)  is  greater  than or equal to
+<emphasis>(expression-2\italic). This function cannot be used
+interactively.
+
+
+<deflist_item>((<literal>(>)<literal>(>) <emphasis>(expression-1\italic)
+		<emphasis>(expression-2\italic) <hellipsis>))
+<x>(<literal>(>))
+<deflist_def>
+An  arithmetic  operator  function  that  returns  the  result  of
+right-shifting  its first argument by the number of places which is the
+sum  of  the  rest  of  the  arguments. This function cannot be used
+interactively.
+
+
+<deflist_item>((append-region-to-buffer <emphasis>(buffer-name\italic)))
+<x>(append-region-to-buffer)
+<deflist_def>
+Appends   the   region   between   dot  and  mark  to
+the  buffer <emphasis>(buffer-name\italic). Neither the original text in
+the destination buffer nor the text in the region between dot and mark are
+disturbed.
+
+
+<deflist_item>((append-to-file <emphasis>(file-name\italic)))
+<x>(append-to-file)
+<deflist_def>
+Appends the  contents  of  the current buffer to the file named
+<emphasis>(file-name\italic).  If  the file does not exist, it is
+created.
+
+
+<deflist_item>((apply-auto-execute <emphasis>(filename\italic)))
+<x>(apply-auto-execute)
+<x>(auto-execute)
+<deflist_def>
+Scans  the  list  of file name patterns set up by <key_name>(auto-execute)
+and executes  an  associated  command if the supplied file name matches
+one of the patterns.
+
+
+<deflist_item>((apropos <emphasis>(keyword\italic))  ESC-?)
+<x>(apropos)
+<deflist_def>
+Prints  a  list  of  all  the commands whose extended
+command name contains  the  word  <emphasis>(keyword\italic).  For
+example, if you forget which commands deal with windows, you can type
+<quote>(<cx>(ESC-? window ESC)).
+
+
+<deflist_item>((apropos-variable <emphasis>(keyword\italic))  ^X-?)
+<x>(apropos-variable)
+<deflist_def>
+Prints  a  list  of  all  the variables whose extended
+command name contains  the  word  <emphasis>(keyword\italic).  For
+example, if you forget which variables deal with windows, you can type
+<quote>(<cx>(^X-? window ESC)).
+
+
+<deflist_item>((arg <emphasis>(expression-1\italic)
+		<emphasis>(prompt-string\italic)))
+<x>(arg)
+<deflist_def>
+Evaluates  the <emphasis>(expression-1\italic)th
+argument of the invoking function or  prompts  for  it  if called
+interactively. The prompt is optional;  if  it  is  omitted,  the
+function  cannot  be  called interactively.
+
+
+<deflist_item>((argc))
+<x>(argc)
+<deflist_def>
+Returns the number of arguments that were passed to
+EMACS  when  it  was invoked from DCL. If <key_name>(argc) is called early
+enough, EMACS' default startup action of visiting the files named on the
+command line is suppressed.
+
+
+<deflist_item>((argv <emphasis>(expression-1\italic)))
+<x>(argv)
+<deflist_def>
+Returns the <emphasis>(expression-1\italic)th argument that was passed to
+EMACS when it was invoked from DCL. If EMACS was invoked as
+<quote>(<cx>(EMACS blatto)) then <quote>(<cx>((argv 1))) would return the
+string <quote>(<cx>(blatto)).  If  <key_name>(argv)  is  called early
+enough, EMACS' default startup action of visiting the files named on the
+command line is suppressed.
+
+
+<deflist_item>((array <emphasis>(low-bound\italic)
+		<emphasis>(high-bound\italic) <hellipsis>))
+<x>(array)
+<deflist_def>
+Creates an array of up to 10 dimensions. The arguments to
+the command are pairs of array bounds (first the lower bound, then the upper
+bound).  All elements of the array are initialised to integer value 0.
+
+
+<deflist_item>((auto-execute <emphasis>(command-name\italic)
+		<emphasis>(file-pattern\italic)))
+<x>(auto-execute)
+<x>(read-file)
+<x>(visit-file)
+<deflist_def>
+Sets  up a filename-to-command association. When a
+file is read in via  <key_name>(visit-file) or <key_name>(read-file) whose
+name matches the given pattern, the  specified  command will be executed. The
+command is generally one which sets the mode for the buffer.  The
+following example shows how to enable Lisp Mode for all files with a .ML
+filetype:
+
+<code_example>
+(auto-execute "lisp-mode" "*.ml")
+<endcode_example>
+
+<p>
+Filename  patterns  must  be  of  the form <quote>(<cx>(*string)) or
+<quote>(<cx>(string*)).
+
+
+<deflist_item>((autoload <emphasis>(command-string\italic)
+		<emphasis>(file-name\italic)))
+<x>(autoload)
+<deflist_def>
+Specifies that the code that defines the specified command should be
+automatically loaded from the named file.  When  an attempt to execute the
+command is encountered, the file  is  loaded  and  then  the specified
+function is executed.  You can use <key_name>(autoload) to load functions
+into EMACS only when they are necessary rather than saving them as part of
+an environment; this saves space in EMACS and speeds up EMACS startup.
+
+
+<deflist_item>((backward-balanced-paren-line <emphasis>(expression\italic)))
+<x>(backward-balanced-paren-line)
+<deflist_def>
+Moves  dot  backwards  until either the beginning of
+the buffer is reached,  or  an unmatched open parenthesis is encountered,
+or the beginning  of  a  line is encountered at <newterm>(parenthesis
+level zero) (a line without an unmatched <quote>(<cx>(<cparen>)) existing
+between that position and the starting position of dot).
+
+<p>
+The  definition  of a parenthesis is derived from the syntax table for the
+current buffer.
+
+<p>
+<emphasis>(expression\italic)  is  the  number  of  parentheses  to
+skip  before applying the match.
+
+
+<deflist_item>((backward-character <emphasis>(repeat-count\italic))  ^B)
+<x>(backward-character)
+<deflist_def>
+Moves dot backwards <emphasis>(prefix-argument\italic)
+times <emphasis>(repeat-count\italic) characters. If
+<emphasis>(repeat-count\italic) is omitted, 1 is assumed. End-of-lines and
+tabs  each  count  as one character. You cannot move back further than the
+beginning of the buffer.
+
+
+<deflist_item>((backward-paragraph)  ESC-<oparen>)
+<x>(backward-paragraph)
+<deflist_def>
+Moves to the beginning of the current or previous
+paragraph. Blank lines,  Scribe  and  DSR/RNO command lines which separate
+paragraphs and are not considered parts of paragraphs.
+
+
+<deflist_item>((backward-paren <emphasis>(expression\italic)))
+<x>(backward-paren)
+<deflist_def>
+Moves  dot  backward  until  an  unmatched open parenthesis
+or the beginning  of  the  buffer  is  found.  This can be used to quickly
+skip over Lisp S-expressions.
+
+<p>
+The  definition  of a parenthesis is derived from the syntax table for the
+current buffer.
+
+<p>
+<emphasis>(expression\italic)  is  the  number  of  parentheses  to
+skip  before applying the match.
+
+
+<deflist_item>((backward-sentence)  ESC-a)
+<x>(backward-sentence)
+<x>(sentence-delimiters)
+<deflist_def>
+Moves  dot  to the beginning of the current sentence, or if
+dot is not  in  a  sentence,  moves  dot to the beginning of the previous
+sentence.
+
+<p>
+A  sentence  is  defined  by  the regular expression search string
+contained in the variable <key_name>(sentence-delimiters).
+
+
+<deflist_item>((backward-word <emphasis>(repeat-count\italic))  ESC-b)
+<x>(backward-word)
+<deflist_def>
+Moves dot backward over <emphasis>(prefix-argument\italic)
+times <emphasis>(repeat-count\italic) words.  If
+<emphasis>(repeat-count\italic) is omitted, 1 is assumed.
+
+<p>
+A word is defined by the syntax table currently in use.
+
+
+<deflist_item>((baud-rate))
+<x>(baud-rate)
+<deflist_def>
+Returns the baud rate of the terminal communications line. The baud rate
+is (usually) 10 times the number of characters transmitted per second.
+
+<p>
+The <key_name>(baud-rate) function  can  be used customise EMACS so that
+it performs faster on slow communications lines.  For example, you could
+set the   <key_name>(display-file-percentage) variable as follows:
+
+<online_popup>(example)
+<code_example>
+(setq display-file-percentage (<literal>(>) (baud-rate) 600)))
+<endcode_example>
+<endonline_popup>
+
+
+<deflist_item>((beginning-of-file)  ESC-<literal>(<))
+<x>(beginning-of-file)
+<deflist_def>
+Moves  dot  to  just  before  the  first  character of the current buffer.
+
+
+<deflist_item>((beginning-of-line)  ^A)
+<x>(beginning-of-line)
+<deflist_def>
+Moves  dot to the beginning of the line in the current buffer.
+
+
+<deflist_item>((beginning-of-window)  ESC-,)
+<x>(beginning-of-window)
+<deflist_def>
+Moves  dot  to  just  in front of the first character of the first line
+displayed in the current window.
+
+
+<deflist_item>((bind-to-key <emphasis>(command-name\italic)
+		<emphasis>(keys\italic)))
+<x>(bind-to-key)
+<deflist_def>
+Binds  the  extended command <emphasis>(command-name\italic) to a given
+key sequence <emphasis>(keys\italic).  All  future  hits  on  this  key
+sequence  will execute the extended  command.
+
+
+<deflist_item>((bobp))
+<x>(bobp)
+<deflist_def>
+Returns 1 if dot is at the beginning of the current buffer.
+
+
+<deflist_item>((bolp))
+<x>(bolp)
+<deflist_def>
+Returns 1 if dot is at the beginning of a line.
+
+
+<deflist_item>((bounds-of-array <emphasis>(array\italic)))
+<x>(bounds-of-array)
+<deflist_def>
+Returns an output array describing the bounds of the
+<emphasis>(array\italic).  The  output array  has two dimensions---its
+first  index  ranges from 1 to 2 and the second from 0 to the number of
+dimension of the input array.
+
+<p>
+Element  [1,0] in the output array is the number of dimensions in the
+input-array.
+
+<p>
+Element [2,0] is the total size of the array.
+
+<p>
+Elements  [1,1]<hellipsis>[1,<emphasis>(n\italic)] are the lower bounds of
+the input-array, where <emphasis>(n\italic)  is  the  number  of dimensions.
+
+<p>
+Elements [2,1]<hellipsis>[2,<emphasis>(n\italic)] are the high bounds of
+the input-array.
+
+
+<deflist_item>((breakpoint <emphasis>(function-name\italic)
+		<emphasis>(value\italic)))
+<x>(breakpoint)
+<x>(breakpoint-hook)
+<deflist_def>
+Sets the breakpoint flag on the specified function. If the
+flag is set   non-zero   for  a  particular  function  and  the  variable
+<key_name>(breakpoint-hook)  contains  the name of a function, then the
+<key_name>(breakpoint-hook) function will be invoked  just before the
+function is executed.
+
+
+<deflist_item>((buffer-size))
+<x>(buffer-size)
+<deflist_def>
+Returns the number of characters in the current buffer.
+
+
+<deflist_item>((c-mode))
+<x>(c-mode)
+<deflist_def>
+Invokes C Mode, a  major  mode which provides  help when writing programs
+in the C programming language.
+
+
+<deflist_item>((c= <emphasis>(char-1\italic) <emphasis>(char-2\italic)))
+<x>(c=)
+<deflist_def>
+Returns 1 if <emphasis>(char-1\italic) is equal to
+<emphasis>(char-2\italic) taking  into  account  the  character
+translations  indicated  by variable <key_name>(case-fold-search).  If
+<key_name>(case-fold-search) is  set, uppercase letters are
+<key_name>(c=) to their lowercase equivalents.
+
+
+<deflist_item>((case-region-capitalize))
+<x>(case-region-capitalize)
+<deflist_def>
+Capitalizes  all  the  words  in the region between dot
+and mark by making  their  first  characters uppercase and the remaining
+cgaracters lowercase.
+
+
+<deflist_item>((case-region-invert))
+<x>(case-region-invert)
+<deflist_def>
+Inverts the case of all alphabetic characters in the
+region between dot  and mark. Lowercase characters become uppercase
+characters, and uppercase characters become lowercase.
+
+
+<deflist_item>((case-region-lower))
+<x>(case-region-lower)
+<deflist_def>
+Changes  all  alphabetic  characters  in the region between dot and mark
+to lowercase.
+
+
+<deflist_item>((case-region-upper))
+<x>(case-region-upper)
+<deflist_def>
+Changes  all  alphabetic  characters  in the region between dot and mark
+to uppercase.
+
+
+<deflist_item>((case-string-capitalize <emphasis>(string\italic)))
+<x>(case-string-capitalize)
+<deflist_def>
+Capitalizes each  word of <emphasis>(string\italic) by
+making the first character of each  word  uppercase  and the remaining
+characters lowercase. Returns the capitalized string as the result
+of the function.
+
+
+<deflist_item>((case-string-invert <emphasis>(string\italic)))
+<x>(case-string-invert)
+<deflist_def>
+Inverts the  case  of  all  alphabetic  characters  in
+<emphasis>(string\italic) and returns the inverted string as the
+result of the function.
+
+
+<deflist_item>((case-string-lower <emphasis>(string\italic)))
+<x>(case-string-lower)
+<deflist_def>
+Changes  the  case  of  all alphabetic  characters  in
+<emphasis>(string\italic) to lowercase and returns the changed string as
+the result of the function.
+
+
+<deflist_item>((case-string-upper <emphasis>(string\italic)))
+<x>(case-string-upper)
+<deflist_def>
+Changes  the  case  of  all alphabetic  characters  in
+<emphasis>(string\italic) to uppercase and returns the changed string as
+the result of the function.
+
+
+<deflist_item>((case-word-capitalize))
+<x>(case-word-capitalize)
+<deflist_def>
+Capitalizes  the next <key_name>(prefix-argument) words (starting with the
+word above or to the left of dot) by making their first character
+uppercase and remaining characters lowercase.
+
+
+<deflist_item>((case-word-invert)  ESC-^)
+<x>(case-word-invert)
+<deflist_def>
+Inverts   the  case  of  all  alphabetic  characters  in the  next
+<key_name>(prefix-argument) words starting with the word above or to the
+left of dot.
+
+
+<deflist_item>((case-word-lower)  ESC-l)
+<x>(case-word-lower)
+<deflist_def>
+Changes  all  alphabetic  characters  in the next
+<key_name>(prefix-argument) words  to lowercase, starting with the word
+above or to the left of dot.
+
+
+<deflist_item>((case-word-upper)  ESC-u)
+<x>(case-word-upper)
+<deflist_def>
+Changes  all  alphabetic  characters  in the next
+<key_name>(prefix-argument) words to uppercase, starting with the word
+above or to the left of dot.
+
+
+<deflist_item>((change-directory <emphasis>(directory-string\italic)))
+<x>(change-directory)
+<x>(Directory<xs>changing)
+<deflist_def>
+Changes  the  current  directory (for EMACS) to
+<emphasis>(directory-string\italic).  All  future  calls  to  commands
+which access named files will be interpreted relative to the new
+directory.
+
+
+<deflist_item>((char-to-string <emphasis>(expression\italic)))
+<x>(char-to-string)
+<deflist_def>
+Takes  a  numeric  argument <emphasis>(expression\italic) and returns the
+one-character string that results  from  considering  the number  as  a
+member of the ASCII character set.
+
+
+<deflist_item>((checkpoint))
+<x>(checkpoint)
+<x>(checkpoint-hook)
+<x>(checkpoint-frequency)
+<deflist_def>
+Calls the  checkpoint  function whose  name  is  contained
+in the variable  <key_name>(checkpoint-hook).    The   checkpoint   function
+should checkpoint EMACS in some   way (the default checkpoint function is
+<key_name>(checkpoint-buffers)).   This    command    is   executed
+automatically every <key_name>(checkpoint-frequency) key strokes.
+
+
+<deflist_item>((checkpoint-buffers))
+<x>(checkpoint-buffers)
+<deflist_def>
+Writes  out  all  modified  buffers  to their associated
+checkpoint files. This function is called as the default checkpoint
+function.
+
+
+<deflist_item>((column-to-left-of-window)  ESC-@)
+<x>(column-to-left-of-window)
+<deflist_def>
+Repositions  the current window over the current buffer so
+that the current column is positioned at the left-hand edge of the window.
+
+
+<deflist_item>((compile-it <emphasis>(DCL-command\italic))  ^X-^E)
+<x>(compile-it)
+<x>(next-error)
+<x>(MMS)
+<deflist_def>
+Writes out all the modified file buffers and executes a
+DCL command to  compile and link the written files. If no
+<key_name>(prefix-argument) is specified,  then  the  command  executed
+is  <quote>(MMS).  Otherwise, the command to executed is requested as a
+string argument. Output from the  command  appears in the buffer
+<key_name>(Error log) ready to be parsed for  error  messages
+with the <key_name>(next-error) command.
+
+
+<deflist_item>((concat <emphasis>(string-expression\italic)<hellipsis>))
+<x>(concat)
+<deflist_def>
+Takes a set of string arguments and returns their concatenation.
+
+
+<deflist_item>((convert-key-string <emphasis>(string-expression\italic)))
+<x>(convert-key-string)
+<deflist_def>
+Takes  a  string and processes it according to EMACS' control  string
+processing  rules.  The result of the function is a string that contains
+converted  control sequences.  See  the
+<key_name>(control-string-<hellipsis>) variables for details of the
+processing that is performed.
+
+
+<deflist_item>((copy-region-to-buffer <emphasis>(buffer-name\italic)))
+<x>(copy-region-to-buffer)
+<deflist_def>
+Copies  the  region  between  dot  and mark to the named
+buffer. The buffer  is  erased  before the text is copied into it. The
+region between dot and mark is not disturbed.
+
+
+<deflist_item>((correct-word <emphasis>(string\italic)))
+<x>(correct-word)
+<deflist_def>
+Uses  the  supplied  incorrectly-spelt word and generates
+a list of possible  spelling  corrections  for  it, returning this list as
+a space-separated string.
+
+
+<deflist_item>((current-buffer-name))
+<x>(current-buffer-name)
+<deflist_def>
+Returns  the  current  buffer name as a string.
+
+
+<deflist_item>((current-column))
+<x>(current-column)
+<deflist_def>
+Returns the column number of the character immediately following dot.
+
+
+<deflist_item>((current-directory))
+<x>(current-directory)
+<x>(change-directory)
+<deflist_def>
+Returns  a  string which is the default directory  as  set  by the
+<key_name>(change-directory) command, or set as the default directory when
+EMACS starts up.
+
+
+<deflist_item>((current-file-name))
+<x>(current-file-name)
+<deflist_def>
+Returns the file name associated with the current buffer  as a string. If
+there is no associated file name, the null string is returned.
+
+
+<deflist_item>((current-indent))
+<x>(current-indent)
+<deflist_def>
+Returns  the amount of whitespace at the beginning  of the line in which dot
+is located (the column number of the first non-whitespace character).
+
+
+<deflist_item>((current-line-number))
+<x>(current-line-number)
+<deflist_def>
+Returns  the  current line number. The first line in the file is line 1.
+
+
+<deflist_item>((current-process-name))
+<x>(current-process-name)
+<deflist_def>
+Returns the name of the current process.  The current process is defined
+as being the last process accessed by  any  of the  process commands or
+the process which caused the current  procedure to be run. If there is no
+current process, the null string is returned.
+
+
+<deflist_item>((current-syntax-entity))
+<x>(current-syntax-entity)
+<deflist_def>
+Returns  an  indication of the type of syntax entity in which dot is
+currently located  according to the current syntax  table.  The  value
+returned is the value of one of the <key_name>(is-<hellipsis>) named
+constants.
+
+
+<deflist_item>((current-time))
+<x>(current-time)
+<deflist_def>
+Returns the current time of day as a string in the following format:
+
+<display>
+Fri Mar 23 09:45:01 1990
+<enddisplay>
+
+
+<deflist_item>((debug)  ESC-^D)
+<x>(debug)
+<deflist_def>
+Enters the MLisp debugger. When in the debugger type
+<quote>(<key_name>(h)) to get help on the debugger's key bindings.
+
+
+<deflist_item>((debug-emacs))
+<x>(debug-emacs)
+<deflist_def>
+The  function is used by the EMACS developers for debugging. When you
+execute the <key_name>(debug-emacs) command, the terminal characteristics are
+reset,  and  control  is passed  to VMS DEBUG so that you can examine
+EMACS' data structures.
+
+
+<deflist_item>((declare-buffer-specific
+		<emphasis>(variable-name\italic)<hellipsis>))
+<x>(declare-buffer-specific)
+<deflist_def>
+Declares and allocates storage for  each named variable
+that is not already declared.  Buffer-specific  bindings  outlive  all
+extended command calls.  Each  buffer  will  have its own copy of a
+buffer-specific variable.
+
+
+<deflist_item>((declare-global <emphasis>(variable-name\italic) <hellipsis>))
+<x>(declare-global)
+<deflist_def>
+Globally declares and allocates storage for each named
+variable  that is not already declared. Global bindings outlive all
+extended command calls.
+
+
+<deflist_item>((decompile-current-line))
+<x>(decompile-current-line)
+<deflist_def>
+Returns the currently executing line decompiled into an
+MLisp expression. If called interactively, it returns a null   string.
+If   called  non-interactively,  it  returns  the decompiled MLisp for the
+line about to be traced.
+
+
+<deflist_item>((decompile-mlisp-function <emphasis>(function-name\italic)))
+<x>(decompile-mlisp-function)
+<deflist_def>
+Decompiles  the  MLisp function whose name is supplied, and puts the
+output into the current buffer at dot.
+
+
+<deflist_item>((default-global-keymap))
+<x>(default-global-keymap)
+<x>(bind-to-key)
+<deflist_def>
+Returns the  global  keymap  in which EMACS starts. The bindings are those
+wired into EMACS, as well as any bindings created by the user with
+<key_name>(bind-to-key).
+
+
+<deflist_item>((define-buffer-macro))
+<x>(define-buffer-macro)
+<x>(edit-macro)
+<deflist_def>
+Takes  the  contents of the current buffer and defines it
+as a macro whose  name  is  associated  with  the  buffer.  This  is  how
+you redefine a macro that has been edited using <key_name>(edit-macro).
+
+
+<deflist_item>((define-global-abbrev <emphasis>(abbrev\italic)
+		<emphasis>(expansion\italic)))
+<x>(define-global-abbrev)
+<deflist_def>
+Defines  or  redefines  an  abbreviation with the given
+name for the given phrase in the global abbreviation table.
+
+
+<deflist_item>((define-hooked-global-abbrev <emphasis>(abbrev\italic)
+		<emphasis>(phrase\italic) <emphasis>(procedure\italic)))
+<x>(define-hooked-global-abbrev)
+<deflist_def>
+Defines  or  redefines  an  abbreviation with the given
+name for the given  phrase  in  the  global  abbreviation table and
+associates a function with the abbreviation.
+
+
+<deflist_item>((define-hooked-local-abbrev <emphasis>(abbrev\italic)
+		<emphasis>(phrase\italic) <emphasis>(procedure\italic)))
+<x>(define-hooked-local-abbrev)
+<deflist_def>
+Defines  or  redefines  an  abbreviation with the given name for the given
+phrase  in  the  local  abbreviation  table and associates a procedure
+with the abbreviation.
+
+
+<deflist_item>((define-keyboard-macro <emphasis>(macro-name\italic)))
+<x>(define-keyboard-macro)
+<x>(start-remembering)
+<x>(stop-remembering)
+<deflist_def>
+Gives  a  name  to  the current keyboard macro. A keyboard macro is
+defined   by  using  the  <key_name>(start-remembering)  and
+<key_name>(stop-remembering) commands.
+
+
+<deflist_item>((define-keymap <emphasis>(keymap\italic)))
+<x>(define-keymap)
+<deflist_def>
+Defines a new, empty, keymap with the given name.
+
+
+<deflist_item>((define-local-abbrev <emphasis>(abbrev\italic)
+		<emphasis>(expansion\italic)))
+<x>(define-local-abbrev)
+<x>(use-abbrev-table)
+<deflist_def>
+Defines  or  redefines an abbreviation with the given name for the given
+phrase in the local abbreviation table. A local abbreviation table must
+have already been set up with <key_name>(use-abbrev-table).
+
+
+<deflist_item>((define-string-macro <emphasis>(macro-name\italic)
+		<emphasis>(body\italic)))
+<x>(define-string-macro)
+<deflist_def>
+Defines  a macro given a name and a body.
+
+
+<deflist_item>((defun (<emphasis>(function-name\italic)
+		<emphasis>(local\italic)<hellipsis> <emphasis>(body\italic))))
+<x>(defun)
+<deflist_def>
+Defines a new MLisp function with the given name and  a  body composed of
+the given expressions. The value of the function is the value of the last
+expression executed.
+
+
+<deflist_item>((defun <emphasis>(function-name\italic)
+		(<emphasis>(arg\italic)<hellipsis>)
+		<emphasis>(local\italic)<hellipsis> <emphasis>(body\italic)))
+<x>(defun)
+<deflist_def>
+Defines a new MLisp function with the given name and  a  body composed of
+the given expressions. The value of the function is the value of the last
+expression executed.
+
+
+<deflist_item>((delete-buffer <emphasis>(buffer-name\italic)))
+<x>(delete-buffer)
+<deflist_def>
+Removes a buffer from the list of buffers, discards any text the buffer
+contains. The function takes one argument which is the name of the buffer
+to be deleted.
+
+<p>
+If  you  use  the <key_name>(delete-buffer) command interactive and the
+target  buffer  is  modified,  <key_name>(delete-buffer)  will  ask you if you
+really want to delete the specified buffer.  There is no prompt if
+<key_name>(delete-buffer) is executed from an MLisp program.
+
+
+<deflist_item>((delete-next-character <emphasis>(repeat-count\italic))  ^D)
+<x>(delete-next-character)
+<deflist_def>
+Deletes the next <key_name>(prefix-argument) times
+<emphasis>(repeat-count\italic) characters immediately following dot. If
+<emphasis>(repeat-count\italic) is omitted, 1 is assumed.  Lines may be
+merged by deleting newlines.
+
+
+<deflist_item>((delete-next-word <emphasis>(repeat-count\italic))  ESC-d)
+<x>(delete-next-word)
+<deflist_def>
+Deletes  the  next  <key_name>(prefix-argument) times
+<emphasis>(repeat-count\italic)  words starting with the word that dot is
+currently in. If <emphasis>(repeat-count\italic) is omitted, 1 is assumed.
+If dot is not in a word, all punctuation up  to  the  beginning  of the
+next word is deleted as well as the word itself.
+
+
+<deflist_item>((delete-other-windows)  ^X-1)
+<x>(delete-other-windows)
+<deflist_def>
+Deletes all windows on the screen except for the window containing dot.
+
+
+<deflist_item>((delete-previous-character)  Delete)
+<x>(delete-previous-character)
+<deflist_def>
+Deletes <key_name>(prefix-argument) characters backwards
+starting immediately preceding dot; that is, the character to the left of
+the terminal's cursor.
+
+
+<deflist_item>((delete-previous-word <emphasis>(repeat-count\italic))  ESC-h)
+<x>(delete-previous-word)
+<deflist_def>
+Deletes <key_name>(prefix-argument) times
+<emphasis>(repeat-count\italic) words backwards starting with the word
+that dot  is in. If <emphasis>(repeat-count\italic) is omitted, 1 is
+assumed. If dot is not in a word, the function deletes all the white-space up
+to the previous word as well.
+
+
+<deflist_item>((delete-region-to-buffer <emphasis>(buffer-name\italic)))
+<x>(delete-region-to-buffer)
+<deflist_def>
+Deletes  all  characters between dot and the mark. The
+deleted text is saved in the specified buffer. The buffer is emptied
+before the characters are inserted.
+
+
+<deflist_item>((delete-to-killbuffer)  ^W)
+<x>(delete-to-killbuffer)
+<deflist_def>
+Deletes  all  characters between dot and the mark. The
+deleted text is moved to the buffer <key_name>(Kill buffer), which is
+emptied first.
+
+
+<deflist_item>((delete-white-space))
+<x>(delete-white-space)
+<deflist_def>
+Deletes  all  white-space  characters  on  either  side  of
+dot. The definition of white-space is derived from the current syntax table.
+
+
+<deflist_item>((delete-window)  ^X-d)
+<x>(delete-window)
+<deflist_def>
+Removes  the  current window from the screen and gives its
+space to its  neighbour  below (or above if it is the bottom window).
+Makes the current window and buffer those of the neighbour.
+
+
+<deflist_item>((describe-bindings))
+<x>(describe-bindings)
+<deflist_def>
+Places  in  the  <key_name>(Help) window a list of
+all the keys and the names of the  extended  commands  that  they  are
+bound to. This listing is suitable for printing and making your own
+quick-reference card for your own customised version of EMACS.
+
+
+<deflist_item>((describe-command <emphasis>(command-name\italic)))
+<x>(describe-command)
+<deflist_def>
+Describes  the specified extended command.
+
+
+<deflist_item>((describe-key <emphasis>(keys\italic)))
+<x>(describe-key)
+<deflist_def>
+Prints  out  a  line  of  information  describing the
+function that the sequence <emphasis>(keys\italic) is bound to.
+
+
+<deflist_item>((describe-variable <emphasis>(variable-name\italic)))
+<x>(describe-variable)
+<deflist_def>
+Describes  the  named  variable.
+
+
+<deflist_item>((describe-word-in-buffer)  ^X-^D)
+<x>(describe-word-in-buffer)
+<deflist_def>
+Takes the word nearest dot and looks it up in a database
+and prints  the  information  found.  This  data  base  contains short
+one-line  descriptions of all of the VAX C standard functions, VMS System
+Services, DCL lexical functions and Bliss string operations.
+
+<p>
+If you supply a <key_name>(prefix-argument),
+<key_name>(describe-word-in-buffer) allows you to edit the selected entry.
+
+
+<deflist_item>((digit))
+<x>(digit)
+<deflist_def>
+This  function  is  bound  to  the  digit  keys after a call to the
+<key_name>(argument-prefix)   command   and  until  a  non-digit  function  is
+executed.  This  means  that  the  bindings for the digits changes during
+prefix argument collection, so that the prefix argument is correctly
+evaluated.
+
+
+<deflist_item>((dot))
+<x>(dot)
+<deflist_def>
+Returns the number of characters to the left of dot plus 1.
+
+
+<deflist_item>((dot-is-visible))
+<x>(dot-is-visible)
+<deflist_def>
+Returns 1 if dot is in a window.
+
+
+<deflist_item>((down-window <emphasis>(repeat-count\italic)))
+<x>(down-window)
+<x>(next-window)
+<deflist_def>
+Moves  the  cursor into the window that is below the current
+window.  This is different to the <key_name>(next-window) function, which
+moves the cursor without regard to the physical position of the windows on
+the screen.
+
+<p>
+If the <emphasis>(repeat-count\italic) is given then the command is
+repeated that number of times.
+
+<p>
+<key_name>(down-window) reports  an  error  if there is not a window below
+the current window.
+
+
+<deflist_item>((dump-abbreviation-tables))
+<x>(dump-abbreviation-tables)
+<deflist_def>
+Dumps  a  readable listing of an abbreviation table into the buffer
+<key_name>(Abbreviation table) and makes the buffer
+visible.
+
+<p>
+The listing  includes the abbreviation, its expansion and the name of any
+MLisp hook function associated with the abbreviation.
+
+
+<deflist_item>((dump-memory-statistics))
+<x>(dump-memory-statistics)
+<deflist_def>
+This  function is  used by the EMACS developers to determine the memory
+usage of EMACS.
+
+
+<deflist_item>((dump-stack-trace))
+<x>(dump-stack-trace)
+<deflist_def>
+Dumps an MLisp stack trace to the buffer
+<key_name>(Stack trace).  This can be used  to  debug  MLisp
+functions.  The stack trace consists of an indication  of  what  was
+executing when the trace occurred, and a line for each function that was
+active.
+
+
+<deflist_item>((dump-syntax-table))
+<x>(dump-syntax-table)
+<deflist_def>
+Dumps a  readable listing of a syntax table into a buffer
+and makes that buffer visible.
+
+
+<deflist_item>((edit-macro <emphasis>(macro-name\italic)))
+<x>(edit-macro)
+<x>(define-buffer-macro)
+<deflist_def>
+Takes  the  body  of  a named macro and places it in a
+buffer called <key_name>(Macro edit).  The  name of the macro is
+associated with the buffer and  appears  in  the  mode  line at the bottom
+of the window. The buffer may be edited just like any other buffer.
+After  the  macro  body  has  been edited it may be redefined using
+<key_name>(define-buffer-macro).
+
+
+<deflist_item>((emacs-version))
+<x>(emacs-version)
+<deflist_def>
+Returns a string describing the version of EMACS that  you are running.
+For V5.0 of EMACS, the string will look something like:
+
+<online_popup>(example)
+<display>
+V5.0 linked on 16-FEB-1990 at 22:39 on BENJY by SCOTT_EMACS
+<enddisplay>
+<endonline_popup>
+
+<p>
+The  string  contains  the version number, the date, time and node where
+EMACS was made, and who made it.
+
+<p>
+When  reporting  bugs or suggestions about EMACS, you should quote the version
+number of EMACS to which the comments refer.
+
+
+<deflist_item>((end-of-file)  ESC-<literal>(>))
+<x>(end-of-file)
+<deflist_def>
+Moves dot to just after the last character in the buffer.
+
+
+<deflist_item>((end-of-line)  ^E)
+<x>(end-of-line)
+<deflist_def>
+Moves  dot  to  the  end  of  the  line  in the current
+buffer that contains  the  cursor;  that  is,  to  just  after  the
+following end-of-line or the end of the buffer.
+
+
+<deflist_item>((end-of-window)  ESC-.)
+<x>(end-of-window)
+<deflist_def>
+Moves dot to just after the last character visible in the
+window.
+
+
+<deflist_item>((enlarge-window)  ^X-z)
+<x>(enlarge-window)
+<deflist_def>
+Makes  the  current  window <key_name>(prefix-argument)
+lines taller, and the window  below  (or  the  one  above  if  there is no
+window below) <key_name>(prefix-argument)  lines  shorter.  This function
+cannot be used if there is only one window on the screen.
+
+
+<deflist_item>((eobp))
+<x>(eobp)
+<deflist_def>
+Returns  1  if dot is at the end of the buffer.
+
+
+<deflist_item>((eolp))
+<x>(eolp)
+<deflist_def>
+Returns 1 if dot is at the end of a line.
+
+
+<deflist_item>((erase-buffer))
+<x>(erase-buffer)
+<deflist_def>
+Deletes  all  text  from  the  current buffer and sets the
+buffer as unmodified.  No prompt is given asking for confirmation that the
+buffer should be erased.
+
+
+<deflist_item>((erase-region))
+<x>(erase-region)
+<deflist_def>
+Deletes  all  text  between dot and mark in the current
+buffer. It does not ask to make sure if you really want to do it.
+
+
+<deflist_item>((error-and-exit)  ^G (in the Mini-buffer))
+<x>(error-and-exit)
+<deflist_def>
+This  function  is  used in the Mini-buffer local keymaps to abort the
+current  input operation. If called directly, this function is the same as
+<key_name>(exit-emacs).
+
+
+<deflist_item>((error-message <emphasis>(string-expression\italic)<hellipsis>))
+<x>(error-message)
+<deflist_def>
+Concatenates  the  supplied string expressions and sends
+them to the screen as an error message where they will appear
+in the Mini-buffer. EMACS  returns to keyboard level and sounds the
+terminal's bell.
+
+
+<deflist_item>((error-message-parser))
+<x>(error-message-parser)
+<x>(parse-error-message-in-region)
+<x>(compile-it)
+<deflist_def>
+Parses  error  messages  for  the
+<key_name>(parse-error-message-in-region)  and <key_name>(compile-it) commands.
+This  function  is  the  default  error  message  parser supplied with
+EMACS and is capable of locating error messages for VAX C, PL/I and BLISS.
+
+
+<deflist_item>((error-occurred <emphasis>(expression\italic)<hellipsis>))
+<x>(error-occurred)
+<deflist_def>
+Executes the  given  expressions  and  ignores their
+values. If all expressions execute successfully, it returns 0. Otherwise,
+it returns 1  and  all  expressions after the one which encountered the
+error will not be executed.
+
+<p>
+The  text  of any error message is available for processing in the string
+variable <key_name>(error-message).
+
+
+<deflist_item>((exchange-dot-and-mark)  ^X-^X)
+<x>(exchange-dot-and-mark)
+<deflist_def>
+Sets dot to the current location of the mark and sets the
+mark at the old position of dot. This is useful for bouncing back and
+forth between two points in a file, particularly when the two
+points delimit a region of text that  is  going  to  be  operated on by
+a command like such as <key_name>(^W).
+
+
+<deflist_item>((execute-extended-command <emphasis>(extended-command\italic))
+		ESC-x, Do)
+<x>(execute-extended-command)
+<deflist_def>
+Executes the specified extended command.  If called interactively, it
+prompts for the command to execute.
+
+
+<deflist_item>((execute-keyboard-macro)  ^X-e)
+<x>(execute-keyboard-macro)
+<deflist_Def>
+Invokes the currently defined keyboard macro.
+
+
+<deflist_item>((execute-mlisp-buffer))
+<x>(execute-mlisp-buffer)
+<deflist_def>
+Parses  and  compiles  the  current  buffer  as  as  a
+single MLisp expression and executes it. This is the function generally
+used for testing  out  new  functions.
+
+
+<deflist_item>((execute-mlisp-file <emphasis>(file-name\italic)))
+<x>(execute-mlisp-file)
+<x>(EMACS$PATH)
+<x>(MLisp-library)
+<deflist_def>
+Reads  the  named file as a series of MLisp expressions
+and executes them.
+
+<p>
+The  file  name  given  is  interpreted relative to the
+EMACS$PATH logical  name.  EMACS$PATH is defined as a logical name
+search-list.  If  the  file  cannot  be  located using
+EMACS$PATH, a search is made in the database search-list
+<key_name>(MLisp-library).
+
+<p>
+The default file type is <quote>(.ML).
+
+
+<deflist_item>((execute-mlisp-line <emphasis>(MLisp-expression\italic))
+		ESC-ESC)
+<x>(execute-mlisp-line)
+<deflist_def>
+Prompts  for  a  string  in  the  Mini-buffer, parses it as
+an MLisp expression, and executes it.
+
+<p>
+If  called from a MLisp program, the command to be executed is supplied as
+a string. This provides for dynamic compilation during the execution of a
+program.
+
+
+<deflist_item>((execute-monitor-command <emphasis>(DCL-command\italic))  ^X-!)
+<x>(execute-monitor-command)
+<deflist_def>
+Executes  a  DCL  command,  placing  the command output into a
+buffer called <key_name>(Command execution)  and  making that buffer
+visible in a window.  The  command  will not be able to read from its
+SYS$INPUT since this will be defined as <quote>(NLA0:).
+
+
+<deflist_item>((exit-emacs)  ^C or ESC-^C)
+<x>(exit-emacs)
+<deflist_def>
+Exits EMACS if  the  current  recursion depth is zero.  It
+will  ask for confirmation if there are any buffers that have been
+modified but not written out.
+
+<p>
+If  the  recursion  depth  is  not  zero,  <key_name>(exit-emacs)  exits
+the current recursive edit level.
+
+
+<deflist_item>((expand-and-exit)  ESC (in the Mini-buffer))
+<x>(expand-and-exit)
+<deflist_def>
+Causes command completion to occur in the Mini-buffer.
+If called interactively, this function is the same as
+<key_name>(exit-emacs).
+
+
+<deflist_item>((expand-file-name <emphasis>(file-name\italic)))
+<x>(expand-file-name)
+<deflist_def>
+Returns   the  fully-expanded  file specification of the file name
+argument.
+
+<p>
+Wildcards may be specified to obtain a sequence of file names. Call
+<key_name>(expand-file-name)  first with the wildcard file specification.
+Then call <key_name>(expand-file-name)  specifying  a null filename until
+an error occurs.
+
+
+<deflist_item>((expand-mlisp-variable <emphasis>(variable-name\italic)))
+<x>(expand-mlisp-variable)
+<deflist_def>
+Inserts the name of the specified variable in a buffer
+using variable name completion.
+
+
+<deflist_item>((expand-from-string-table <emphasis>(prompt\italic)
+		<emphasis>(word-list-string\italic)))
+<x>(expand-from-string-table)
+<deflist_def>
+Provides  access  to  the  EMACS  input  expansion
+mechanism.  The function has two parameters: the first is a prompt, the
+second  is  a  string that contains a space-separated list of words  from
+which the  user  can  select.   The result of the function is the
+selected word.  <key_name>(expand-from-string-table) will only allow one
+of the words in the list to be returned.
+
+
+<deflist_item>((expand-mlisp-word <emphasis>(command-name\italic)))
+<x>(expand-mlisp-word)
+<deflist_def>
+Inserts the name of the specified function in a buffer
+using variable name completion.
+
+
+<deflist_item>((extend-database-search-list <emphasis>(dbname\italic)
+		<emphasis>(file\italic) <emphasis>(access\italic)))
+<x>(extend-database-search-list)
+<deflist_def>
+Adds  the  given  database  file  to  the  database search
+list <emphasis>(dbname\italic).  If  the database is already in the search
+list, it is  left there. Otherwise, the new database is added at the
+beginning of the database list.
+
+<p>
+<emphasis>(access\italic)  specifies  the  type of access required is
+optional.  The allowable values of <emphasis>(access\italic) are
+
+<list>(unnumbered)
+
+<le>1 --- open a database read-only
+
+<le>2 --- keep the file open between database accesses
+
+<le>3 --- open read-only and keep open between database accesses
+
+<endlist>
+
+
+<deflist_item>((external-function <emphasis>(function file routine\italic)))
+<x>(external-function)
+<deflist_def>
+Declares  <emphasis>(function\italic) as being provided by
+<emphasis>(routine\italic) in  the image  <emphasis>(file\italic).  This
+image is dynamically linked into the EMACS process  when  the function is
+called.
+
+
+<deflist_item>((fetch-array <emphasis>(array\italic)
+		<emphasis>(indices\italic) <hellipsis>))
+<x>(fetch-array)
+<deflist_def>
+Retrieves a value from an array. The arguments to this
+function  are  the array and the indices of the array. <key_name>(fetch-array)
+checks that there are exactly the right number of indices and range-checks
+them.
+
+
+<deflist_item>((fetch-database-entry <emphasis>(dbname\italic)
+		<emphasis>(key\italic)))
+<x>(fetch-database-entry)
+<deflist_def>
+Reads the entry in the database corresponding to the
+given key and inserts it into the current buffer.
+
+
+<deflist_item>((fetch-help-database-entry <emphasis>(dbname\italic)
+		<emphasis>(keys-string\italic)))
+<x>(fetch-help-database-entry)
+<x>(fetch-help-database-flags)
+<deflist_def>
+Takes the entry in the help database corresponding to the
+given key string and inserts it into the current buffer.  The key string
+is a sequence of up to 9 whitespace-separated keys.
+
+<p>
+The  variable  <key_name>(fetch-help-database-flags)  is  used  to control the
+information retrieved from the help database file.
+
+
+<deflist_item>((file-exists <emphasis>(file-name\italic)))
+<x>(file-exists)
+<deflist_def>
+Returns 1 if the specified file exists and is
+writeable,  -1  if  the file exists but is only readable, and 0 otherwise.
+
+
+<deflist_item>((filter-region <emphasis>(DCL-command\italic)))
+<x>(filter-region)
+<deflist_def>
+Takes  the region  and passes it as <quote>(SYS$INPUT)
+for the  given  command. The output from the command replaces the region
+which is saved in <key_name>(Kill buffer).
+
+
+<deflist_item>((following-char))
+<x>(following-char)
+<deflist_def>
+Returns the character immediately following dot as
+an integer. The null character (0) is returned if dot is at the end of the
+buffer.
+
+
+<deflist_item>((force-exit-process <emphasis>(process-name\italic)
+		<emphasis>(exit-code\italic)))
+<x>(force-exit-process)
+<deflist_def>
+Forces  the image running is the specified subprocess to
+exit with the specified code. This can be used to stop an image that has
+run amok. All exit handlers for the image will be run.
+
+<p>
+If  no image is running in the process, the exit request will be queued up
+and  executed  next  time the target process executes in user mode (the
+next time an image is run).
+
+
+<deflist_item>((forward-balanced-paren-line <emphasis>(expression-1\italic)))
+<x>(forward-balanced-paren-line)
+<deflist_def>
+Moves dot forward until either the end of the buffer is
+reached, or an unmatched closing parenthesis is encountered, or the
+beginning of a  line  is  encountered  at  parenthesis  level  zero.
+
+<p>
+The  definition of parenthesis is derived from the syntax table for the
+current buffer.
+
+
+<deflist_item>((forward-character <emphasis>(repeat-count\italic))  ^F)
+<x>(forward-character)
+<deflist_def>
+Moves  dot  forward  <key_name>(prefix-argument) times
+<emphasis>(repeat-count\italic)  characters. If
+<emphasis>(repeat-count\italic) is omitted, 1 is assumed. End-of-lines and
+tabs  each count as one character. You cannot move past the
+end of the buffer.
+
+
+<deflist_item>((forward-paragraph)  ESC-<cparen>)
+<x>(forward-paragraph)
+<deflist_def>
+Moves  dot to  the end of the current or following paragraph.
+Blank and DSR command lines that separate paragraphs and are not considered
+parts of paragraphs.
+
+<p>
+Paragraphs are defined by the variable <key_name>(paragraph-delimiters).
+
+
+<deflist_item>((forward-paren))
+<x>(forward-paren)
+<deflist_def>
+Moves  dot forward until an unmatched closing parenthesis,
+or the end of  the  buffer is found. This can be used to aid in skipping
+over Lisp S-expressions.
+
+<p>
+The  definition of parenthesis is derived from the syntax table for the
+current  buffer.
+
+
+<deflist_item>((forward-sentence)  ESC-e)
+<x>(forward-sentence)
+<deflist_def>
+Moves dot forward to the end of a sentence.
+A sentence is bounded by the string variable <key_name>(sentence-delimiters).
+
+
+<deflist_item>((forward-word <emphasis>(repeat-count\italic))  ESC-f)
+<x>(forward-word)
+<deflist_def>
+Moves  dot  forward  to the end of the
+<key_name>(prefix-argument) times <emphasis>(repeat-count\italic)  word.
+If <emphasis>(repeat-count\italic) is  omitted, 1 is assumed. If dot is not
+currently  in  the  middle  of  a  word, the command skips all intervening
+punctuation.  It then skips  over  the  words, leaving dot positioned
+after the last character of the word.
+
+<p>
+A word is defined by the current syntax table.
+
+
+<deflist_item>((fundamental-mode))
+<x>(fundamental-mode)
+<deflist_def>
+Turns on a  major  mode  similar  to  Normal Mode.  It  provides  a natural
+environment  for  processing ordinary text, or program sources for which
+there  is no specialised language mode. The main advantage of Fundamental
+Mode over Normal mode is that it displays parenthesis balancing.
+
+
+<deflist_item>((get-tty-buffer <emphasis>(prompt-string\italic)))
+<x>(get-tty-buffer)
+<deflist_def>
+Prompts  for  a  buffer name using command completion and
+providing help. The function returns the name of the buffer as a string.
+
+
+<deflist_item>((get-tty-character))
+<x>(get-tty-character)
+<deflist_def>
+Reads  a  single  character  from  the terminal and
+returns it as an integer.  The  cursor is not moved to the message area,
+but is left in  the  text  window.
+
+
+<deflist_item>((get-tty-command <emphasis>(command-name\italic)))
+<x>(get-tty-command)
+<deflist_def>
+Prompts  for  the  name  of  a  declared  function  (using
+command completion and providing help) and returns the name of the
+function as a string.
+
+
+<deflist_item>((get-tty-correction <emphasis>(word prompt\italic)))
+<x>(get-tty-correction)
+<deflist_def>
+Uses  the supplied misspelt word and the prompt string to
+obtain a correction  for  the  word  from  the user. Full word expansion
+is enabled.
+
+
+<deflist_item>((get-tty-file <emphasis>(prompt\italic)))
+<x>(get-tty-file)
+<deflist_def>
+Prompts  for  a  file  name  using command completion and
+providing help. The function returns the name of the file as a string.
+
+
+<deflist_item>((get-tty-string <emphasis>(prompt\italic)))
+<x>(get-tty-string)
+<deflist_def>
+Reads  a string from the terminal using its single string
+parameter as a  prompt.
+
+
+<deflist_item>((get-tty-variable <emphasis>(prompt\italic)))
+<x>(get-tty-variable)
+<deflist_def>
+Prompts  for  the  name  of  a  declared  variable  (using
+command completion and providing help) and returns the name of the
+variable as a string.
+
+
+<deflist_item>((getenv <emphasis>(logical-name\italic)))
+<x>(getenv)
+<deflist_def>
+Translates the specified logical name and returns it as a
+string.
+
+<p>
+Four logical names are handled is a special way:
+
+<list>(unnumbered)
+
+<le><cx>("HOME") --- results in the name of the current login directory
+
+<le><cx>("TERM") --- results in the current terminal type
+
+<le><cx>("PATH") --- results in the current directory specification when EMACS
+	     was first started
+
+<le><cx>("USER") --- results in the current user's login name.
+
+<endlist>
+
+
+<deflist_item>((global-binding-of <emphasis>(key-sequence\italic)))
+<x>(global-binding-of)
+<deflist_def>
+Returns the name of the function that the
+provided key sequence will invoke, using the global keymap.
+
+
+<deflist_item>((goto-character <emphasis>(expression\italic)))
+<x>(goto-character)
+<deflist_def>
+Moves dot  to  the  specified  character position.
+
+
+<deflist_item>((goto-window-at-x-y <emphasis>(X-coordinate\italic)
+		<emphasis>(Y-coordinate\italic)))
+<x>(goto-window-at-x-y)
+<deflist_def>
+This  MLisp  function  is  for  supporting  a mouse-style pointing device.
+The   function   takes  two  arguments,  the  X  and  Y co-ordinates of
+the pointer on the screen.
+
+<p>
+<key_name>(goto-window-at-x-y) performs  two  operations:
+
+<list>(numbered)
+
+<le>
+It changes the current  window  to  be  the  one  at the X and Y
+co-ordinates.  A window  is  considered  to  be  the  mode  line of the
+window, the vertical  dividing line to its right and the content region of
+the window.
+
+<le>
+If the  co-ordinates are in the contents of the window, dot will be set  to
+the  position nearest the co-ordinates, otherwise dot is left as it was.
+
+<endlist>
+
+<p>
+<key_name>(goto-window-at-x-y) returns  an integer result that tells you
+which part of a window the co-ordinates are in. The result is one of the
+following:
+
+<list>(unnumbered)
+
+<le>
+0 --- in the content region of the window
+
+<le>
+1 --- in the mode-line
+
+<le>
+2 --- in the vertical divider
+
+<le>
+3 --- in both the mode-line and the vertical divider
+
+<endlist>
+
+
+<deflist_item>((help-and-exit)  ? (in the Mini-buffer))
+<x>(help-and-exit)
+<deflist_def>
+This  function  is  used in the Mini-buffer local keymaps to cause the
+Help  window  to  pop  up  and list the options available. If called
+directly, this function is the same as <key_name>(exit-emacs).
+
+
+<deflist_item>((if <emphasis>(test\italic) <emphasis>(then-clause\italic)
+		<emphasis>(else-clause\italic)))
+<x>(if)
+<deflist_def>
+Executes  and  returns  the  value  of <emphasis>(then-clause\italic)  if
+<emphasis>(test\italic)  is  not zero;  otherwise  it  executes
+<emphasis>(else-clause\italic) if it is present.
+
+
+<deflist_item>((illegal-operation)  All keys not currently bound)
+<x>(illegal-operation)
+<deflist_def>
+<key_name>(illegal-operation)  is  bound  to  those  keys  that  do not have a
+defined interpretation. Executing <key_name>(illegal-operation) is an error.
+
+
+<deflist_item>((indent-C-procedure)  ESC-j)
+<x>(indent-C-procedure)
+<deflist_def>
+Locates  the  current  C  language  procedure  and  passes
+it as the standard  input  to  the  INDENT program. The resulting indented
+C procedure will replace the initial C procedure.  The old text is
+temporarily stored in <key_name>(Kill buffer).
+
+
+<deflist_item>((insert-character <emphasis>(expression\italic)))
+<x>(insert-character)
+<deflist_def>
+Inserts  its numeric argument into the buffer as a single
+character <key_name>(prefix-argument)   times.
+
+
+<deflist_item>((insert-file <emphasis>(file-name\italic))  ^X-^I)
+<x>(insert-file)
+<deflist_def>
+Inserts the specified file's contents at dot in the current
+buffer.
+
+
+<deflist_item>((insert-string <emphasis>(expression\italic)))
+<x>(insert-string)
+<deflist_def>
+Inserts  the  string  that results from evaluating the given
+<emphasis>(expression\italic).
+
+
+<deflist_item>((interactive))
+<x>(interactive)
+<deflist_def>
+Returns 1 if the invoking MLisp function was
+called interactively.
+
+
+<deflist_item>((interrupt-key)  ^G)
+<x>(interrupt-key)
+<deflist_def>
+When bound to a single key causes  any  current
+activity  within   EMACS  to be aborted, and forces EMACS to accept
+commands from the keyboard when that key is struck.
+
+<p>
+Binding <key_name>(interrupt-key) to a sequence longer than one character
+does not allow the key sequence to interrupt EMACS. Only single key
+sequences can be used for interrupting.
+
+
+<p><deflist_item>((is-bound <emphasis>(variable-name\italic)<hellipsis>))
+<x>(is-bound)
+<deflist_def>
+Returns  1  if all of its variable name arguments are bound to some
+storage.
+
+
+<deflist_item>((is-function <emphasis>(string\italic)))
+<x>(is-function)
+<deflist_def>
+Checks that its string parameter is a defined function. It returns 1 if
+it is defined and 0 otherwise.
+
+<p>
+You can use this function to determine if a function is defined
+before attempting to execute it.
+
+
+<deflist_item>((journal-recover <emphasis>(file-spec\italic)))
+<x>(journal-recover)
+<deflist_def>
+Recovers a file or buffer after a system crash or other disaster.
+
+
+<deflist_item>((justify-paragraph))
+<x>(justify-paragraph)
+<x>(left-margin)
+<x>(right-margin)
+<deflist_def>
+Justifies the text of the current paragraph between the
+<key_name>(left-margin) and <key_name>(right-margin). The
+right margin will be ragged.
+
+
+<deflist_item>((kill-buffer <emphasis>(buffer-name\italic)))
+<x>(kill-buffer)
+<deflist_def>
+Removes a buffer from the list of buffers, and  discards
+all the text it contains. It takes one argument which is the name of
+the buffer to delete.
+
+
+<deflist_item>((kill-process <emphasis>(process-name\italic)))
+<x>(kill-process)
+<deflist_def>
+Kills  the  specified  subprocess.  The  subprocess  is
+killed by executing  a  delete process request.
+
+
+<deflist_item>((kill-to-end-of-line <emphasis>(repeat-count\italic))  ^K)
+<x>(kill-to-end-of-line)
+<deflist_def>
+Deletes characters  forward  from  dot to the immediately
+following end-of-line (or  end of buffer if there is not an end of line).
+If dot  is  positioned  at  the  end  of  a line, the end-of-line
+character is deleted.
+
+<p>
+Text  deleted by the <key_name>(^K) command is placed into <key_name>(Kill
+buffer). A <key_name>(^K) command  normally  erases  the  contents of the
+<key_name>(Kill buffer) first; subsequent <key_name>(^K)s in an unbroken
+sequence append text to the <key_name>(Kill buffer).  The number of lines
+killed is controlled by <key_name>(prefix-argument) times
+<emphasis>(repeat-count\italic). If <emphasis>(repeat-count\italic) is
+omitted, 1 is assumed.
+
+
+<deflist_item>((last-key-struck))
+<x>(last-key-struck)
+<deflist_def>
+Returns the last command character struck.  If
+you  have  a  function bound to many keys, the function may use
+<key_name>(last-key-struck)   to  tell  which  key  was  used  to  invoke  it.
+
+
+<deflist_item>((left-marker <emphasis>(marker-expression\italic)))
+<x>(left-marker)
+<deflist_def>
+Takes  a  marker  as a parameter and returns a new marker.
+The  new marker will be at the same position as the original but with
+left-hand affinity.  This means that text inserted at the position  of the
+marker will not move the marker's position.  Right-hand  affinity  markers
+move to the right as text is inserted.
+
+
+<deflist_item>((left-window <emphasis>(repeat-count\italic)))
+<x>(left-window)
+<x>(next-window)
+<deflist_def>
+Moves the cursor into the window that is to the left of
+the  current window.  (Unlike <key_name>(next-window) which moves the
+cursor without regard  to  the  physical  position of the windows on the
+screen).
+
+<p>
+If the <emphasis>(repeat-count\italic) is given then the command is
+repeated that number of times.
+
+<p>
+<key_name>(left-window) reports  an error if there is not a window to the
+left of the current window.
+
+
+<deflist_item>((length <emphasis>(string-expression\italic)))
+<x>(length)
+<deflist_def>
+Returns the length of its string parameter.
+
+
+<deflist_item>((line-to-top-of-window)  ESC-!)
+<x>(line-to-top-of-window)
+<deflist_def>
+Moves  the  line  in  which  dot  resides  to the top of the
+window associated with the current buffer.
+
+
+<deflist_item>((lisp-mode))
+<x>(lisp-mode)
+<deflist_def>
+Enables Lisp Mode, a major mode for editing programs written in the Lisp
+language and also MLisp  programs for EMACS.
+
+
+<deflist_item>((list-abbreviation-tables))
+<x>(list-abbreviation-tables)
+<deflist_def>
+Creates  a  buffer  called <key_name>(Abbreviation table list)
+and inserts a list of the abbreviation tables that have been defined in
+EMACS.
+
+
+<deflist_item>((list-auto-executes))
+<x>(list-auto-executes)
+<deflist_def>
+Creates  a buffer called <key_name>(Auto Execute list) and
+inserts a list of all the <key_name>(auto-execute) patterns and their
+functions.
+
+
+<deflist_item>((list-breakpoints))
+<x>(list-breakpoints)
+<deflist_def>
+Creates  a  buffer  called <key_name>(Breakpoint list)
+and inserts a list of the functions that have breakpoints set.
+
+
+<deflist_item>((list-buffers)  ^X-^B)
+<x>(list-buffers)
+<deflist_def>
+Produces  a listing of all existing buffers giving their
+names, the name  of  the  associated  file  (if  there is one), the number
+of characters  in  the buffer and an indication of whether or not the
+buffer  has  been  modified  since it was read from or written to the
+associated file.
+
+
+<deflist_item>((list-databases))
+<x>(list-databases)
+<deflist_def>
+Lists  all  database  search  lists and the names of the
+database files contained in them.
+
+
+<deflist_item>((list-images))
+<x>(list-images)
+<deflist_def>
+Lists  the  names  of  all images referenced by
+<key_name>(external-function)s.  The  listing  shows the image name, the
+value of the context and the filename that holds the image.
+
+
+<deflist_item>((list-processes))
+<x>(list-processes)
+<deflist_def>
+Lists  the  name  of  all  existing subprocesses. The
+list includes the state  in  which  each  process is running, the time at
+which each process  entered that state, and some information about the
+names of buffers and procedures associated with the process.
+
+
+<deflist_item>((list-syntax-tables))
+<x>(list-syntax-tables)
+<deflist_def>
+Lists all the syntax tables that have been defined.
+
+
+<deflist_item>((load <emphasis>(file-name\italic)))
+<x>(load)
+<x>(execute-mlisp-file)
+<deflist_def>
+Loads  the  nominated  file  as  a  series of MLisp
+expressions executing each in turn. (This function is exactly the same as
+<key_name>(execute-mlisp-file)).
+
+
+<deflist_item>((local-bind-to-key <emphasis>(function\italic)
+		<emphasis>(key-sequence\italic)))
+<x>(local-bind-to-key)
+<x>(bind-to-key)
+<deflist_def>
+Binds the specified function to the given key sequence.
+Unlike <key_name>(bind-to-key), the binding only  has effect in the
+current buffer.
+
+
+<deflist_item>((local-binding-of <emphasis>(key-sequence\italic)))
+<x>(local-binding-of)
+<deflist_def>
+Returns  the  name of the function that the key
+sequence  provided  will  invoke using the current local keymap.
+
+
+<deflist_item>((looking-at <emphasis>(regular-expression\italic)))
+<x>(looking-at)
+<deflist_def>
+Returns 1 if the given regular expression search
+string  matches the text immediately following dot. This is for use in
+packages that want to do limited parsing.
+
+<p>
+If a negative prefix argument is supplied, characters to the left of dot
+are checked, rather than those to the right.
+
+
+<deflist_item>((mark))
+<x>(mark)
+<deflist_def>
+Returns the position of the marker in the current
+buffer. An error is displayed if the marker is not set.
+
+
+<deflist_item>((message <emphasis>(string\italic)<hellipsis>))
+<x>(message)
+<deflist_def>
+Concatenates  its  string  arguments and displays them in the Mini-buffer
+at the bottom of the screen the next time the screen is updated.
+
+
+<deflist_item>((meta)  ESC-0<hellipsis>ESC-9)
+<x>(meta)
+<deflist_def>
+Provides for quick single-digit prefix arguments.
+
+
+<deflist_item>((meta-minus)  ESC- --)
+<x>(meta-minus)
+<deflist_def>
+Converts a meta-collected digit to a negative prefix argument.
+
+
+<deflist_item>((Minibuf-local-map))
+<x>(Minibuf-local-map)
+<deflist_def>
+This keymap  is used  to  read commands in the Mini-buffer  when  spaces
+are  command  terminators.
+
+
+<deflist_item>((Minibuf-local-NS-map))
+<x>(Minibuf-local-NS-map)
+<deflist_def>
+This  keymap is used to read commands in the mini-buffer  when spaces are
+not command terminators.
+
+
+<deflist_item>((minus)  --)
+<x>(minus)
+<deflist_def>
+This  command  is bound to the minus key after the argument-prefix command
+has  been  executed.  It  is  used  to  negate the prefix argument.
+
+
+<deflist_item>((modify-syntax-entry <emphasis>(syntax-string\italic)))
+<x>(modify-syntax-entry)
+<deflist_def>
+Modifies  a set of entries in the syntax table
+associated with the current buffer.  See the <reference>(emacs_prog_guide)
+for more information on how to alter syntax tables.
+
+
+<deflist_item>((move-dot-to-x-y <emphasis>(X-coordinate\italic)
+		<emphasis>(Y-coordinate\italic)))
+<x>(move-dot-to-x-y)
+<deflist_def>
+This MLisp  function  is used to  support  mouse-style pointing devices.
+The function takes two arguments, the X and Y co-ordinates of  the
+pointer  on  the  screen. It then positions the cursor in the correct
+window at the nearest character position in that window.
+
+<p>
+If  the  character  indicated  is  not  contained within a file or window,
+an error is generated.
+
+
+<deflist_item>((move-to-comment-column))
+<x>(move-to-comment-column)
+<deflist_def>
+Inserts enough spaces and tabs to move the cursor to the
+comment column.
+
+
+<deflist_item>((nargs))
+<x>(nargs)
+<deflist_def>
+Returns the number of arguments passed to the invoking MLisp function.
+
+
+<deflist_item>((narrow-region))
+<x>(narrow-region)
+<x>(widen-region)
+<deflist_def>
+Restricts  the  amount  of  a buffer that can be
+manipulated to the region between dot and mark.  <key_name>(widen-region)  will
+remove  the restriction.
+
+
+<deflist_item>((narrow-window))
+<x>(narrow-window)
+<deflist_def>
+Reduces  the  width of a vertically-split window.  A window has to be at
+least one column wide.
+
+
+<deflist_item>((newline)  ^M)
+<x>(newline)
+<deflist_def>
+Inserts a newline character into the buffer.
+
+
+<deflist_item>((newline-and-backup)  ^O)
+<x>(newline-and-backup)
+<deflist_def>
+Inserts  an  end-of-line immediately after dot, effectively
+opening up the line. If dot is positioned at the beginning of a line, then
+<key_name>(^O)  will  create  a  blank  line  preceding  the  current line and
+will position dot on that new line.
+
+
+<deflist_item>((newline-and-indent)  ^J)
+<x>(newline-and-indent)
+<deflist_def>
+Inserts  a  newline just  as  <key_name>(Return) does, but
+also inserts enough tabs and spaces so that the newly-created line has the
+same indentation as the old line.
+
+
+<deflist_item>((next-error)  ^X-^N)
+<x>(next-error)
+<x>(compile-it)
+<deflist_def>
+Takes  the  next  error  message  (as  returned from the <key_name>(ESC-x
+compile-it) command),  visits  the file in which the error occurred and
+sets dot to  the  line in which that error occurred.  The error message
+will be  displayed  at  the top of the window associated with the
+<key_name>(Error log) buffer.
+
+
+<deflist_item>((next-line <emphasis>(repeat-count\italic))  ^N)
+<x>(next-line)
+<deflist_def>
+Moves  dot  down <key_name>(prefix-argument) times
+<emphasis>(repeat-count\italic)  lines. If <emphasis>(repeat-count\italic)
+is omitted, 1 is assumed. <key_name>(next-line) attempts to keep dot  at
+the  same horizontal character position as you move from line to line.
+
+
+<deflist_item>((next-page)  ^V)
+<x>(next-page)
+<deflist_def>
+Repositions  the  current  window on the current buffer so
+that the page  <key_name>(prefix-argument)  pages  forward  is  visible in
+the window (where  a  page is a group of lines 4/5th's the size of the
+window).  If possible, dot is kept where it is, otherwise it is moved to
+the middle of the new page.
+
+
+<deflist_item>((next-window)  ^X-n)
+<x>(next-window)
+<deflist_def>
+Switches  to  the  window  (and associated buffer) that is
+below the current  window. The window below the last window is the window
+at the top of the screen.
+
+
+<deflist_item>((normal-mode))
+<x>(normal-mode)
+<deflist_def>
+Turns on Normal Mode---default major mode which EMACS gives to all new
+buffers  that  it creates. It provides a general text manipulating
+environment with no special features.
+
+
+<deflist_item>((novalue))
+<x>(novalue)
+<deflist_def>
+Does nothing. <key_name>(novalue) is a complete no-op---it
+performs no action and  returns no value.
+
+
+<deflist_item>((page-next-window)  ESC-^V)
+<x>(page-next-window)
+<deflist_def>
+Repositions the window below the current window (or the top
+window if the current  window  is the lowest one on the screen) on the
+displayed buffer  so  that  the  next  page  of the buffer is visible in
+the window  (where  a  page  is a group of lines 4/5th's the size of the
+window).
+
+<p>
+If  <key_name>(page-next-window)  is  given a prefix argument, it will flip the
+buffer backwards a page, rather than forwards.
+
+
+<deflist_item>((parse-error-messages-in-region))
+<x>(parse-error-messages-in-region)
+<x>(compile-it)
+<x>(next-error)
+<deflist_def>
+Parses  the  region between dot and mark for error
+messages (as the generated by the <key_name>(compile-it) command)   and
+sets  up for  subsequent invocations of <key_name>(next-error).
+
+
+<deflist_item>((pause-emacs <emphasis>(DCL-command\italic)))
+<x>(pause-emacs)
+<deflist_def>
+Passes  control  back  to  the parent process  that
+started  EMACS subprocess, using  the  VMS SPAWN/ATTACH  commands. EMACS
+goes to sleep until control is passed back to it by running EMACS again.
+The  optional <emphasis>(DCL-command\italic) string parameter
+is passed to DCL and executed after EMACS pauses.
+
+
+<deflist_item>((pause-process <emphasis>(process-name\italic)))
+<x>(pause-process)
+<x>(resume-process)
+<deflist_def>
+Sets  the  specified subprocess into VMS state SUSPENDed.
+This stops  the  process from executing. Use <key_name>(resume-process) to
+start the process executing again.
+
+
+<deflist_item>((pop-to-buffer <emphasis>(buffer-name\italic)))
+<x>(pop-to-buffer)
+<deflist_def>
+Switches to a buffer whose name is provided and ties that
+buffer to a newly-created  window.
+
+
+<deflist_item>((preceding-char))
+<x>(preceding-char)
+<deflist_def>
+Returns the character immediately preceding dot as
+an integer. The null character (0) is returned if dot is at the  beginning
+of  the buffer.
+
+
+<deflist_item>((prefix-argument)  ^U)
+<x>(prefix-argument)
+<deflist_def>
+A command that, when followed by a string of digits, causes that string of
+digits to be  interpreted  as a numeric prefix argument which is generally
+a repetition count for the following command.
+
+<p>
+For each <key_name>(^U) typed before a command, the current prefix argument is
+multiplied by 4. So <key_name>(^U) is 4, <key_name>(^U-^U) is 16 and
+<key_name>(^U-^U-^U) is 64 (and so on).
+
+<note>
+<key_name>(prefix-argument)  should  never  be  called  from an MLisp
+function.
+<endnote>
+
+
+<deflist_item>((prefix-argument-loop <emphasis>(statements\italic)))
+<x>(prefix-argument-loop)
+<deflist_def>
+Executes  <emphasis>(statements\italic) <key_name>(prefix-argument)
+times.  Every  function  invocation  is  always prefixed  by some
+argument. If no prefix argument has been provided, 1 is assumed.
+
+
+<deflist_item>((prepend-region-to-buffer <emphasis>(buffer-name\italic)))
+<x>(prepend-region-to-buffer)
+<deflist_def>
+Prepends  the  region to the buffer specified.  Neither
+the  original text in the destination buffer nor the text in the region
+between dot and mark are disturbed.
+
+
+<deflist_item>((previous-command))
+<x>(previous-command)
+<deflist_def>
+Returns the last command character struck.  If you  have  a  function
+bound to many keys, the function may use <key_name>(previous-command) to
+tell which key was used to invoke it.
+
+
+<deflist_item>((previous-line <emphasis>(repeat-count\italic))  ^P)
+<x>(previous-line)
+<deflist_def>
+Moves dot  to the <key_name>(prefix-argument) times
+<emphasis>(repeat-count\italic)  previous line. If
+<emphasis>(repeat-count\italic) is omitted 1, is assumed.
+<key_name>(previous-line) attempts to  keep  dot at the same horizontal
+position as you move from line to line.
+
+
+<deflist_item>((previous-page)  ESC-v)
+<x>(previous-page)
+<deflist_def>
+Repositions  the  current  window on the current buffer so
+that the <key_name>(prefix-argument)th  previous page of the buffer is
+visible in the window  (where  a  page  is a group of lines 4/5th's the size
+of the window).  If  possible,  dot  is kept where it is, otherwise it is
+moved to the middle of the new page.
+
+
+<deflist_item>((previous-window)  ^X-p)
+<x>(previous-window)
+<deflist_def>
+Switches  to  the  window  (and associated buffer) that is
+above the current  window.  If  there is no window above the current
+window, then the bottom window is used.
+
+
+<deflist_item>((print <emphasis>(variable-name\italic)))
+<x>(print)
+<deflist_def>
+Prints the value of the named variable. Use this command when
+you  want  to  inquire  about  the setting of a variable.
+
+
+<deflist_item>((print-default <emphasis>(variable-name\italic)))
+<x>(print-default)
+<deflist_def>
+Prints the default value of the named variable. Use this
+command when you want to inquire about the default setting of a variable.
+
+
+<deflist_item>((process-key <emphasis>(key-map\italic)))
+<x>(process-key)
+<deflist_def>
+Causes a key sequnce to be read using the provided
+keymap, and then executes the selected function. It returns the value
+returned by the selected function.
+
+
+<deflist_item>((process-output <emphasis>(process-name\italic)))
+<x>(process-output)
+<x>(set-process-output-procedure)
+<deflist_def>
+Returns the next line of output from the specified subprocess. This
+function is typically used in an MLisp procedure   specified   using
+the   <key_name>(set-process-output-procedure) command.
+
+
+<deflist_item>((progn <emphasis>(local-declarations\italic)<hellipsis>
+		<emphasis>(expression\italic) <hellipsis>))
+<x>(progn)
+<deflist_def>
+Evaluates the expressions and returns the value of   the  last
+expression  evaluated. <key_name>(progn)  is  roughly equivalent  to a
+compound  statement  (begin-end  block) in more conventional programming
+languages.
+
+
+<deflist_item>((provide-prefix-argument <emphasis>(value\italic)
+		<emphasis>(expression\italic)))
+<x>(provide-prefix-argument)
+<deflist_def>
+Provides the prefix argument <emphasis>(value\italic) to
+the <emphasis>(expression\italic).
+
+
+<deflist_item>((push-back-character <emphasis>(string\italic)))
+<x>(push-back-character)
+<deflist_def>
+Takes the character or string provided as its argument and
+causes it to  be  used as the next character(s) read from the keyboard.
+
+
+<deflist_item>((put-database-entry <emphasis>(dbname\italic)
+		<emphasis>(key\italic)))
+<x>(put-database-entry)
+<deflist_def>
+Takes the current buffer and stores it in the named
+database under the  given  key.  The  key  and  data  are  written into
+the first database  file in the specified database search list.
+
+
+<deflist_item>((query-replace-string <emphasis>(search\italic)
+		<emphasis>(replace\italic))  ESC-q)
+<x>(query-replace-string)
+<deflist_def>
+Replaces  all  occurrences  of one string with another, starting at dot
+and ending at the end of the buffer. For each occurrence of the old
+string,  EMACS  requests that the user type a character indicating
+whether or not to replace the string.  Dot will be positioned just after
+the found string.
+
+
+<deflist_item>((quietly-read-abbrev-file <emphasis>(file-name\italic)))
+<x>(quietly-read-abbrev-file)
+<x>(read-abbrev-file)
+<deflist_def>
+Reads  in and defines abbreviations  appearing in a named
+abbreviations file. Unlike <key_name>(read-abbrev-file),  an  error
+message  is not printed if the file cannot be found.
+
+
+<deflist_item>((quote <emphasis>(expression\italic)))
+<x>(quote)
+<deflist_def>
+Returns its string argument so that any meta-characters  used  by regular
+expression string searching are quoted so that  they  have  no  effect.
+This is useful for MLisp packages that use regular expression search
+commands.
+
+
+<deflist_item>((quote-character)  ^^-Q or ^Q)
+<x>(quote-character)
+<deflist_def>
+Inserts   into   the   buffer  the  next  character  typed without
+interpreting  it  as  a  command.  This  is  how  you insert non-printing
+characters.
+
+
+<deflist_item>((re-query-replace-string <emphasis>(pattern\italic)
+		<emphasis>(replacement\italic)))
+<x>(re-query-replace-string)
+<deflist_def>
+Replaces  all  occurrences  of a pattern with a string,
+starting at dot  and ending at the end of the buffer. For each occurrence
+of the old  string,  EMACS  requests that the user type a character to
+indicate whether or not to replace the string.
+Dot will be positioned just after the found string.
+
+
+<deflist_item>((re-replace-string <emphasis>(pattern\italic)
+		<emphasis>(replacement\italic)))
+<x>(re-replace-string)
+<deflist_def>
+Replaces  all  occurrences  of  a regular expression with
+a string, starting  at  dot  and  ending  and  the  end of the buffer.
+See the <reference>(emacs_user_guide) for information on how to specify
+regular expressions and replacement text.
+
+
+<deflist_item>((re-search-forward <emphasis>(pattern\italic)))
+<x>(re-search-forward)
+<deflist_def>
+Searches for a pattern  match in the current buffer,
+moving  forwards  from dot, stopping at the end of the buffer. Dot is
+left  at the end of the matched string if a match is found, or is unmoved
+if the string is not found.  
+
+
+<deflist_item>((re-search-reverse <emphasis>(string\italic)))
+<x>(re-search-reverse)
+<deflist_def>
+Searches for a pattern  match in the current buffer,
+moving  backwards  from  dot,  stopping  at  the  beginning of the buffer.
+Dot  is  left at the beginning of the matched string if a match is found,
+or is unmoved if not.  See the <reference>(emacs_user_guide) for
+information on how to specify regular expressions.
+
+
+<deflist_item>((read-abbrev-file <emphasis>(file-name\italic)))
+<x>(read-abbrev-file)
+<deflist_def>
+Reads  in  and defines abbreviations appearing in a named
+abbreviations file.  An error message is printed if the file cannot be found.
+
+
+<deflist_item>((read-file <emphasis>(file-name\italic))  ^X-^R)
+<x>(read-file)
+<deflist_def>
+Erases the contents of the current buffer, reads the specified file into
+the buffer and associates the name with the buffer.  Dot is set to the
+beginning of the buffer.
+
+
+<deflist_item>((recursion-depth))
+<x>(recursion-depth)
+<deflist_def>
+Returns the current number of active calls to <key_name>(recursive-edit).
+
+
+<deflist_item>((recursive-edit))
+<x>(recursive-edit)
+<x>(exit-emacs)
+<deflist_def>
+Invokes the keyboard processor to obtain input from the user until the
+<key_name>(exit-emacs) function is executed.  Then,
+<key_name>(recursive-edit) returns to the MLisp code that invoked it.
+
+<p>
+See the <reference>(emacs_user_guide) for a detailed description of recursive
+editing levels.
+
+
+<deflist_item>((redraw-display)  ^L)
+<x>(redraw-display)
+<deflist_def>
+Clears   the  screen  and  redraws it.
+
+
+<deflist_item>((region-around-match <emphasis>(n\italic)))
+<x>(region-around-match)
+<deflist_def>
+Sets  dot and mark around the region matched by the last
+search. An argument of  <emphasis>(n\italic)  puts  dot  and  mark around
+the <emphasis>(n\italic)th subpattern matched  by
+<quote>(<literal>(\)<oparen>) and <quote>(<literal>(\)<cparen>). An
+argument of zero matches the entire string.
+
+
+<deflist_item>((region-to-string))
+<x>(region-to-string)
+<deflist_def>
+Returns the region between dot and mark as a string.
+
+
+<deflist_item>((remove-all-local-bindings))
+<x>(remove-all-local-bindings)
+<x>(remove-local-binding)
+<deflist_def>
+Performs  a <key_name>(remove-local-binding) command for
+all possible keys,  This effectively undoes all local bindings.
+
+
+<deflist_item>((remove-binding <emphasis>(key-sequence\italic)))
+<x>(remove-binding)
+<deflist_def>
+Removes  the  global  binding  of  the given key sequence.
+Actually, it just rebinds the key sequence to <key_name>(illegal-operation).
+
+
+<deflist_item>((remove-database <emphasis>(dbsl\italic)
+		<emphasis>(database-file\italic)))
+<x>(remove-database)
+<deflist_def>
+Removes  a single database file from the specified database search-list.
+The database search-list will not be deleted when the last file has been
+removed.
+
+
+<deflist_item>((remove-local-binding <emphasis>(key-sequence\italic)))
+<x>(remove-local-binding)
+<deflist_def>
+Removes the local binding of the given key sequence. The
+global binding will subsequently be used when interpreting the key
+sequence.
+
+
+<deflist_item>((rename-macro <emphasis>(function\italic)
+		<emphasis>(new-function\italic)))
+<x>(rename-macro)
+<deflist_def>
+Renames  the  specified  function to a new name. You
+cannot rename a function to  a  name  used by an already existing wired-in
+function.  If  the  <emphasis>(new-function\italic)  name exists, the
+existing code is replaced.
+
+
+<deflist_item>((replace-string <emphasis>(search\italic)
+		<emphasis>(replacement\italic))  ESC-r)
+<x>(replace-string)
+<deflist_def>
+Replaces all occurrences of one string for another, starting
+at dot and  ending at the end of the buffer.
+
+
+<deflist_item>((pause-process <emphasis>(process-name\italic)))
+<x>(pause-process)
+<deflist_def>
+Resumes a subprocess that has been paused.  The  image
+in  the process starts working again. If the process is not paused, 
+an error is generated.
+
+
+<deflist_item>((return-prefix-argument <emphasis>(expression\italic)))
+<x>(return-prefix-argument)
+<deflist_def>
+Causes <emphasis>(expression\italic) to be
+considered as the prefix  argument to the next command executed (even if
+the command is  initiated  from  the keyboard). This can be useful for
+writing alternate prefix argument packages.
+
+
+<deflist_item>((right-marker))
+<x>(right-marker)
+<deflist_def>
+Takes  a  marker  as  a parameter and returns a new marker.  The  new
+marker will at the same position as the original but  with right-hand
+affinity.  This means that text inserted at the  position  of the marker
+will move the marker's position to the right.  Left-hand affinity markers
+do not move to the right as text is inserted.
+
+
+<deflist_item>((right-window <emphasis>(repeat-count\italic)))
+<x>(right-window)
+<x>(previous-window)
+<deflist_def>
+Moves the cursor into the window that is to the right of  the
+current  window, unlike  <key_name>(previous-window)  which moves the cursor
+without  regard to the physical position of the windows on the screen.
+
+<p>
+If the <emphasis>(repeat-count\italic) is given, the command is
+repeated that number of times.
+
+<p>
+<key_name>(right-window) reports  an  error  of  there  is not a window to
+the right of the current window.
+
+
+<deflist_item>((return-to-monitor))
+<x>(return-to-monitor)
+<deflist_def>
+Spawns a new DCL process, allowing the user to
+enter DCL commands. Return to EMACS by using the LOGOUT DCL command.
+
+
+<deflist_item>((save-environment <emphasis>(file-name\italic)))
+<x>(save-environment)
+<deflist_def>
+Saves the current state of EMACS into an environment  file.
+The  default  file type is <quote>(.EMACS_ENVIRONMENT).
+
+
+<deflist_item>((save-excursion <emphasis>(local\italic)<hellipsis>
+		<emphasis>(expression\italic)<hellipsis>))
+<x>(save-excursion)
+<deflist_def>
+Evaluates the given expressions and returns the
+value of the last expression evaluated. It is much like <key_name>(progn)
+except that  before  any  expressions  are  executed,  dot and the current
+buffer  are  marked  (via the marker mechanism) and the search-string is
+saved.
+
+
+<deflist_item>((save-restriction <emphasis>(locals\italic)<hellipsis>
+		<emphasis>(expression\italic) <hellipsis>))
+<x>(save-restriction)
+<deflist_def>
+Saves  the  current  dot,  mark,  buffer,
+search-string and buffer restriction;  executes  the  provided
+expressions; then restores the saved  information.
+
+
+<deflist_item>((save-window-excursion <emphasis>(local\italic)<hellipsis>
+		<emphasis>(expression\italic) <hellipsis>))
+<x>(save-window-excursion)
+<deflist_def>
+Saves the  current  dot,  mark,  buffer,  search-string
+and window state; executes the expressions; then restores the saved
+information.  <key_name>(save-window-excursion) returns the value of the last
+expression evaluated. If the mark was not  set  before calling
+<key_name>(save-window-excursion), it will not be set afterwards.
+
+
+<deflist_item>((schedule-procedure <emphasis>(function\italic)
+		<emphasis>(seconds\italic)))
+<x>(schedule-procedure)
+<deflist_def>
+Executes the given <emphasis>(function\italic) after the
+specified number of <emphasis>(seconds\italic).  If  the  number  of
+seconds is zero, then any outstanding schedule for the specified function
+is removed. If a schedule is specified for a procedure that already has a
+schedule, the old schedule is replaced.
+
+
+<deflist_item>((scroll-one-column-left))
+<x>(scroll-one-column-left)
+<deflist_def>
+Scrolls the current window one column to the left.
+
+
+<deflist_item>((scroll-one-column-right))
+<x>(scroll-one-column-right)
+<deflist_def>
+Scrolls the current window one column to the right.
+
+
+<deflist_item>((scroll-one-line-down)  ESC-z)
+<x>(scroll-one-line-down)
+<deflist_def>
+Repositions  the  current  window on the current buffer so
+that the line  which is currently the second to the last line in the
+window becomes the  last.  This effectively moves the buffer down one line
+in the window.
+
+
+<deflist_item>((scroll-one-line-up)  ^Z)
+<x>(scroll-one-line-up)
+<deflist_def>
+Repositions  the  current  window on the current buffer so that the line
+which is currently the second line in the window becomes the first.  This
+effectively move the buffer up one line in the window.
+
+
+<deflist_item>((search-forward <emphasis>(search-string\italic))  ^^-S or ^S)
+<x>(search-forward)
+<deflist_def>
+Searches for a match in the current buffer, moving  forwards
+from  dot and stopping at the end of the buffer.  Dot  is left at the end
+of the matched string if a match is found, or is unmoved if a match is not
+found.
+
+
+<deflist_item>((search-reverse <emphasis>(search-string\italic))  ^R)
+<x>(search-reverse)
+<deflist_def>
+Searches for a match in the current buffer, moving backwards  from  dot
+and stopping at the beginning of the buffer.  Dot is  left at the
+beginning of the matched string if a match is found, or is unmoved if a
+match is not found.
+
+
+<deflist_item>((self-insert)  All inserting keys)
+<x>(self-insert)
+<deflist_def>
+This  function is bound to those keys which  insert themselves  into  the
+current  buffer.  It is roughly the same as <key_name>((insert-character
+(last-key-struck))) with  the exception that it does not work unless it
+is bound to a key.
+
+
+<deflist_item>((send-string-to-process <emphasis>(process-name\italic)
+		<emphasis>(text\italic)))
+<x>(send-string-to-process)
+<x>(wait-for-process-input-request)
+<deflist_def>
+Sends  the  specified string to the specified subprocess.
+Use the  <key_name>(wait-for-process-input-request)  command  to  ensure
+that the process is ready.
+
+
+<deflist_item>((send-string-to-terminal <emphasis>(text\italic)))
+<x>(send-string-to-terminal)
+<deflist_def>
+Sends  the  string    to the terminal with no conversion or
+interpretation.  This should only be used for such applications as
+loading  function  keys  when EMACS starts up. If you disrupt the screen,
+EMACS   will not   know  about  it  and  will not  fix  it  up
+automatically---you will have to use <key_name>(redraw-display) to do
+this.
+
+
+<deflist_item>((set <emphasis>(variable-name\italic)
+		<emphasis>(expression\italic)))
+<x>(set)
+<deflist_def>
+Sets  the  value of a variable.
+
+<p>
+If  you  require  a value of 1, then from the terminal, you can type  the
+string <quote>(<cx>(true)) or <quote>(<cx>(on)).  If you require a value of 0,
+then from the terminal, you can type the string <quote>(<cx>(false)) or
+<quote>(<cx>(off)).
+
+
+<deflist_item>((set-current-process <emphasis>(process-name\italic)))
+<x>(set-current-process)
+<deflist_def>
+Sets  the current subprocess to the specified process.
+The current subprocess name is used in all of the subprocess commands
+when a blank process name is specified.
+
+
+<deflist_item>((set-default <emphasis>(variable-name\italic)
+		<emphasis>(expression\italic)))
+<x>(set-default)
+<deflist_def>
+Sets  the  default value of a variable.
+
+<p>
+If  you  require  a value of 1, then from the terminal, you can type  the
+string <quote>(<cx>(true)) or <quote>(<cx>(on)).  If you require a value of 0,
+then from the terminal, you can type the string <quote>(<cx>(false)) or
+<quote>(<cx>(off)).
+
+
+<deflist_item>((set-mark)  ^@ (NUL))
+<x>(set-mark)
+<deflist_def>
+Sets  the mark  at the current location of dot.
+
+
+<deflist_item>((set-process-input-procedure <emphasis>(process-name\italic)
+		<emphasis>(function\italic)))
+<x>(set-process-input-procedure)
+<x>(send-string-to-process)
+<deflist_def>
+Sets  the  input  function for the specified subprocess.
+Whenever the  subprocess  asks  for input, the specified procedure is
+run.  This  procedure  may  then  supply  the  process with input (using
+<key_name>(send-string-to-process)).
+
+
+<deflist_item>((set-process-name <emphasis>(old-name\italic)
+		<emphasis>(new-name\italic)))
+<x>(set-process-name)
+<deflist_def>
+Changes  the  name  of a subprocess. If the process is
+the current process, then the current process name is changed to the new
+name.
+
+
+<deflist_item>((set-process-output-buffer <emphasis>(process-name\italic)
+		<emphasis>(buffer-name\italic)))
+<x>(set-process-output-buffer)
+<x>(maximum-DCL-buffer-size)
+<x>(DCL-buffer-reduction)
+<deflist_def>
+Connects a  buffer  to  the  output  of the specified
+process. All output  from the process appears in this buffer. The buffer
+is not allowed   to   grow   indefinitely:  if  it  becomes  larger  than
+<key_name>(maximum-DCL-buffer-size)   characters,  it  will  be  truncated  by
+<key_name>(DCL-buffer-reduction)  characters  before  the next output from the
+process is inserted into the buffer.
+
+
+<deflist_item>((set-process-output-procedure <emphasis>(process-name\italic)
+		<emphasis>(function\italic)))
+<x>(set-process-output-procedure)
+<deflist_def>
+Defines  the  name  of  an  MLisp  function  to  be
+called when a subprocess  produces  output. This function is called
+instead of the  insertion  of  any  output  into  an  output  buffer. Use
+the process-output  function  to obtain the latest line of output from the
+process.
+
+
+<deflist_item>((set-process-termination-procedure
+		<emphasis>(process-name\italic) <emphasis>(function\italic)))
+<x>(set-process-termination-procedure)
+<deflist_def>
+Defines  an  MLisp  function  to  be  called  after  a
+process has terminated. This function should be used to tidy up any
+resources or MLisp variables that the process may have used.
+
+
+<deflist_item>((setq <emphasis>(variable-name\italic)
+		<emphasis>(expression\italic)))
+<x>(setq)
+<deflist_def>
+Assigns a new value to a variable.
+
+
+<deflist_item>((setq-array <emphasis>(array\italic)
+		<emphasis>(index\italic)<hellipsis> <emphasis>(value\italic)))
+<x>(setq-array)
+<deflist_def>
+Stores a value in an array.
+
+
+<deflist_item>((setq-default <emphasis>(variable-name\italic)
+		<emphasis>(expression\italic)))
+<x>(setq-default)
+<deflist_def>
+Assigns  a  new  default  value  to  a variable.
+
+
+<deflist_item>((shell))
+<x>(shell)
+<deflist_def>
+Starts  up  an interactive DCL session in an EMACS buffer
+<key_name>(shell-n) (where  <key_name>(n)  is a sequence number used to
+identify multiple shells).
+
+
+<deflist_item>((show-buffer))
+<x>(show-buffer)
+<deflist_def>
+Describes the current buffer in a buffer called
+<key_name>(Show buffer).
+
+
+<deflist_item>((shrink-window)  ^X-^Z)
+<x>(shrink-window)
+<deflist_def>
+Makes  the  current window <key_name>(prefix-argument) lines
+shorter, and the window  below  (or  the  one  above  if  there is no
+window below) <key_name>(prefix-argument) lines taller. The command cannot
+be used if there is only one window on the screen.
+
+
+<deflist_item>((sit-for <emphasis>(expression\italic)))
+<x>(sit-for)
+<deflist_def>
+Updates the  display and pauses for
+<emphasis>(expression\italic) tenths of a second.  <key_name>((sit-for
+10)) waits for one second.  If  an  argument  of zero  is  used,  then no
+pause is executed, but the display is still updated.
+
+
+<deflist_item>((spell-check-word <emphasis>(word\italic)))
+<x>(spell-check-word)
+<deflist_def>
+Checks the  spelling  of  the  supplied  word. If the word
+is spelled correctly then 1 is returned, otherwise 0 is returned.
+
+
+<deflist_item>((split-current-window)  ^X-2)
+<x>(split-current-window)
+<deflist_def>
+Splits the current window  into two, dividing the  space  on
+the  screen  equally  between  the two windows.
+
+
+<deflist_item>((split-current-window-vertically)  ^X-3)
+<x>(split-current-window-vertically)
+<deflist_def>
+Takes the  current  window  and  splits it into two windows side-by-side,
+dividing  the  space  on the screen equally between the two windows.   An
+arbitrary  number  of windows can be created---the only limit is  the
+width of the screen.  Each window must be at least one column wide.
+
+
+<deflist_item>((start-DCL-process <emphasis>(process-name\italic)))
+<x>(start-DCL-process)
+<x>(start-process)
+<deflist_def>
+Starts  a  DCL subprocess. Use  the  other
+subprocess commands  to  attach  buffers and MLisp procedures to the
+process.  The new process becomes the current process.
+
+<p>
+This function is a synonym for the <key_name>(start-process) function.
+
+
+<deflist_item>((start-process <emphasis>(process-name\italic)))
+<x>(start-process)
+<deflist_def>
+Starts  a DCL  subprocess. Use  the  other
+subprocess commands  to  attach  buffers and MLisp procedures to the
+process.  The new process becomes the current process.
+
+
+<deflist_item>((start-remembering)  ^X-<oparen>)
+<x>(start-remembering)
+<deflist_def>
+Causes all  following  keystrokes  to  be  remembered  by EMACS as the
+current keyboard macro. The functions to which the keys are bound will be
+executed.  The <key_name>(stop-remembering) function terminates the
+keyboard macro definition.
+
+
+<deflist_item>((stop-remembering)  ^X-<cparen>)
+<x>(stop-remembering)
+<x>(execute-keyboard-macro)
+<deflist_def>
+Stops  remembering  keystrokes,  as initiated by
+<key_name>(start-remembering).  The remembered keystrokes are not
+forgotten and may be re-executed with the
+<key_name>(execute-keyboard-macro) command.
+
+
+<deflist_item>((string-to-char <emphasis>(string\italic)))
+<x>(string-to-char)
+<deflist_def>
+Returns  the  integer  value  of  the first character of
+its string argument.
+
+
+<deflist_item>((substr <emphasis>(str\italic) <emphasis>(pos\italic)
+		<emphasis>(n\italic)))
+<x>(substr)
+<deflist_def>
+Returns  the substring of string <emphasis>(str\italic) starting  at
+position <emphasis>(pos\italic) (numbering from 1) and running for
+<emphasis>(n\italic) characters. If <emphasis>(pos\italic) is less than
+0, then the length of the string is added to it; the same is done for
+<emphasis>(n\italic).
+
+
+<deflist_item>((switch-to-buffer <emphasis>(buffer-name\italic))  ^X-b)
+<x>(switch-to-buffer)
+<deflist_def>
+Changes the buffer association of the current window to the
+selected buffer.
+
+
+<deflist_item>((sys$fao <emphasis>(ctrstr par-desc P1\italic)<hellipsis>))
+<x>(sys$fao)
+<deflist_def>
+Calls the VMS system service SYS$FAO. See the
+<reference>(vms_sysrout_r) for details of SYS$FAO operation.
+
+
+<deflist_item>((sys$filescan
+		<emphasis>(sl srcstr item result\italic)<hellipsis>))
+<x>(sys$filescan)
+<deflist_def>
+Calls  the VMS system service SYS$FILESCAN. See
+the <reference>(vms_sysrout_r)  for  details.
+
+
+<deflist_item>((sys$getdvi <emphasis>(devnam item value\italic)<hellipsis>))
+<x>(sys$getdvi)
+<deflist_def>
+Calls  the  VMS  system service SYS$GETDVI. See
+the <reference>(vms_sysrout_r) for details.
+
+
+<deflist_item>((sys$getjpi <emphasis>(ctrl-str pidadr prcnam item value\italic)<hellipsis>))
+<x>(sys$getjpi)
+<deflist_def>
+Calls  the  VMS  system service SYS$GETJPI. See the
+<reference>(vms_sysrout_r) for details.
+
+
+<deflist_item>((sys$getmsg <emphasis>(msgid flags\italic)))
+<x>(sys$getmsg)
+<deflist_def>
+Calls  the  VMS  system service SYS$GETMSG. See the
+<reference>(vms_sysrout_r) for details.
+
+
+<deflist_item>((sys$getsyi <emphasis>(ctrl-str csiddadr nodename item value\italic)<hellipsis>))
+<x>(sys$getsyi)
+<deflist_def>
+Calls  the  VMS  system service SYS$GETSYI. See the
+<reference>(vms_sysrout_r) for details.
+
+
+<deflist_item>((sys$setprn <emphasis>(prcnam\italic)))
+<x>(sys$setprn)
+<deflist_def>
+Calls  the  VMS  system service SYS$SETPRN. See
+the <reference>(vms_sysrout_r) for details.
+
+
+<deflist_item>((sys$sndjbc <emphasis>(func item value\italic)<hellipsis>))
+<x>(sys$sndjbc)
+<deflist_def>
+Calls  the  VMS  system service SYS$SNDJBC. See the
+<reference>(vms_sysrout_r) for details.
+
+
+<deflist_item>((system-name))
+<x>(system-name)
+<deflist_def>
+Returns the name of the system on which EMACS is  running.  This  should
+be the DECnet or ArpaNet (or whatever) host name of the machine.
+
+
+<deflist_item>((temp-use-buffer <emphasis>(buffer-name\italic)))
+<x>(temp-use-buffer)
+<deflist_def>
+Switches to a named buffer without changing
+window associations.
+
+
+<deflist_item>((test-abbrev-expand <emphasis>(abbreviation\italic)))
+<x>(test-abbrev-expand)
+<deflist_def>
+Returns the abbreviation expansion for the specified  string. An error is
+generated if there is no expansion.
+
+
+<deflist_item>((text-mode))
+<x>(text-mode)
+<deflist_def>
+Enables Text Mode, a  major mode for writing justified or filled and
+justified text.
+
+
+<deflist_item>((to-col <emphasis>(expression\italic)))
+<x>(to-col)
+<deflist_def>
+Inserts  tabs  and  spaces  to move the following character to printing
+column <emphasis>(expression\italic) in the current buffer.
+
+
+<deflist_item>((top-level))
+<x>(top-level)
+<deflist_def>
+Takes  you  back  to the top level, exiting all recursive   edits.
+
+
+<deflist_item>((trace))
+<x>(trace)
+<deflist_def>
+The  default  trace function. It provides MLisp users with
+extensive debugging and tracing facilities to help with the development of
+MLisp code.
+
+
+<deflist_item>((transpose-characters)  ^T)
+<x>(transpose-characters)
+<deflist_def>
+Takes  the  two  characters preceding dot and exchanges them.
+
+
+<deflist_item>((type-of-expression <emphasis>(expression\italic)))
+<x>(type-of-expression)
+<deflist_def>
+Returns  a  string  describing  the  type  of  the
+expression  that  is  its  argument. The string will be one of the
+following:
+
+<table>
+<table_attributes>(keep)
+<table_setup>(2\8)
+<table_heads>(String\Expression type)
+<table_row>(integer\Expression is an integer)
+<table_row>(string\Expression is a string)
+<table_row>(marker\Expression is a marker)
+<table_row>(windows\Expression is a set of windows)
+<table_row>(array\Expression is an array)
+<endtable>
+
+
+<deflist_item>((undo)  ^X-^U)
+<x>(undo)
+<deflist_def>
+Undoes editing changes made to modified buffers.  The command starts off
+a sequence of undo operations which are continued with the use of the
+<key_name>(undo-more) function. Each <key_name>(undo) or
+<key_name>(undo-more) undoes  one  more  series  of changes to the next
+<key_name>(undo-boundary).  <key_name>(undo-boundary)s are  planted
+before each keyboard key stroke.
+
+
+<deflist_item>((undo-boundary))
+<x>(undo-boundary)
+<deflist_def>
+All  operations  between  a pair of calls to <key_name>(undo-boundary) will be
+undone   by   <key_name>(undo)   and   <key_name>(undo-more).
+<key_name>(undo-boundary)   is  called automatically between key
+sequences.
+
+
+<deflist_item>((undo-more))
+<x>(undo-more)
+<deflist_def>
+Each  time <key_name>(undo-more) is called, the state of the buffers is
+restored to the  previous  <key_name>(undo-boundary).  If  called  from  the
+keyboard processor,  it  will  simply  undo the first call to <key_name>(undo).
+
+
+<deflist_item>((unlink-file <emphasis>(file-spec\italic)))
+<x>(unlink-file)
+<deflist_def>
+Deletes the specified file.
+
+
+<deflist_item>((unset-mark)  ^X-^@)
+<x>(unset-mark)
+<deflist_def>
+Un-sets the  mark.
+
+
+<deflist_item>((up-window <emphasis>(repeat-count\italic)))
+<x>(up-window)
+<x>(previous-window)
+<deflist_def>
+Moves  the  cursor into the window that is above the current
+window, unlike  <key_name>(previous-window), which  moves the cursor without
+regard  to  the  physical  position of the windows on the screen.
+
+<p>
+If the <emphasis>(repeat-count\italic) is given then the command is
+repeated that number of times.
+
+<p>
+<key_name>(up-window) reports  an  error  of  there  is not a window above
+the current window.
+
+
+<deflist_item>((use-abbrev-table <emphasis>(abbrev-table-name\italic)))
+<x>(use-abbrev-table)
+<deflist_def>
+Sets the current local abbreviation table to the specified
+table.
+
+
+<deflist_item>((use-global-map <emphasis>(keymap-name\italic)))
+<x>(use-global-map)
+<deflist_def>
+Specifies  that  the  named  keymap  will  be  used  for
+the global interpretation of all keystrokes. (<key_name>(use-local-map) is
+used to change the local interpretation of keystrokes.)
+
+
+<deflist_item>((use-local-map <emphasis>(keymap-name\italic)))
+<x>(use-local-map)
+<x>(use-global-map)
+<deflist_def>
+Specifies   that   the  named  keymap  to  be  used  for
+the  local interpretation  of  all  keystrokes.
+(<key_name>(use-global-map)  is used to change the global interpretation
+of key strokes.)
+
+
+<deflist_item>((use-old-buffer <emphasis>(buffer-name\italic))  ^X-^O)
+<x>(use-old-buffer)
+<deflist_def>
+Associates an existing buffer with the current window.
+
+
+<deflist_item>((use-syntax-table <emphasis>(syntax-table-name\italic)))
+<x>(use-syntax-table)
+<deflist_def>
+Associates the named syntax table with the current buffer.
+
+
+<deflist_item>((use-variables-of-buffer <emphasis>(buffer-name\italic)
+		<emphasis>(expression\italic)))
+<x>(use-variables-of-buffer)
+<deflist_def>
+Allows  an  MLisp  procedure  to access the buffer-specific variables of
+any buffer without switching to it.
+
+<p>
+The function takes two parameters: the first is a buffer name,  the
+second is an MLisp expression to execute.
+
+<p>
+This function  is  useful  when  writing packages that need to maintain
+context in the buffer-specific variables of one buffer but use many
+buffers.
+
+<p>
+The following  example inserts the file name of buffer <key_name>(fred)
+into the buffer <key_name>(joe):
+
+<online_popup>(example)
+<code_example>
+(switch-to-buffer "joe")
+(use-variables-of-buffer "fred"
+    (insert-string current-buffer-file-name)
+)
+<endcode_example>
+<endonline_popup>
+
+
+<deflist_item>((users-full-name))
+<x>(users-full-name)
+<deflist_def>
+Returns the user's full name as a string. In VMS EMACS this is the same
+as a user's login name.
+
+
+<deflist_item>((users-login-name))
+<x>(users-login-name)
+<deflist_def>
+Returns the users login name as a string.
+
+
+<deflist_item>((view-buffer <emphasis>(buffer-name\italic)))
+<x>(view-buffer)
+<deflist_def>
+Switches  into  View Mode  and to examine the specified buffer. If the
+specified  buffer  name is blank, View Mode examines the current buffer.
+
+
+<deflist_item>((view-file <emphasis>(file-name\italic)))
+<x>(view-file)
+<deflist_def>
+Views  the  specified  file. The file is read into an EMACS
+buffer, which is removed upon exiting from View Mode.
+
+
+<deflist_item>((visit-file <emphasis>(file-name\italic))  ^X-^V)
+<x>(visit-file)
+<deflist_def>
+Visits the specified file. If the file is already read into a
+buffer, EMACS pops up a new window and displays the buffer. Otherwise, a new
+buffer is created, the file is read in and is displayed in a new window.
+
+
+<deflist_item>((VMS-load-averages))
+<x>(VMS-load-averages)
+<deflist_def>
+Returns some process statistics for the process running  EMACS.
+
+
+<deflist_item>((wait-for-process-input-request <emphasis>(process-name\italic)))
+<x>(wait-for-process-input-request)
+<deflist_def>
+Suspends  keyboard processing until an input request is
+made by the target  process.  The function returns 1 if the process wants
+input, or 0 if the user typed a key at the keyboard.
+
+
+<deflist_item>((what-cursor-position) ^X-=)
+<x>(what-cursor-position)
+<deflist_def>
+Writes  out  a  brief summary of the position of dot in the current
+window.  It  reports  the  co-ordinates of dot with respect to the current
+window,  what  the character to the right of dot is, what character
+number dot is at, the percentage of the file above dot, and what portion
+of the file is displayed in the window.
+
+
+<deflist_item>((while <emphasis>(test\italic)
+		<emphasis>(expression\italic)<hellipsis>))
+<x>(while)
+<deflist_def>
+Executes the given expressions while the <emphasis>(test\italic) is true
+(not equal to zero).
+
+
+<deflist_item>((widen-region))
+<x>(widen-region)
+<x>(narrow-region)
+<deflist_def>
+Removes  a  restriction  put on a buffer by <key_name>(narrow-region).
+
+
+<deflist_item>((widen-window))
+<x>(widen-window)
+<deflist_def>
+Increases the width of a vertically-split window.
+<key_name>(widen-window) can only succeed  if  at least one of the other
+windows is greater than one column wide.
+
+
+<deflist_item>((write-abbrev-file <emphasis>(file-name\italic)))
+<x>(write-abbrev-file)
+<deflist_def>
+Writes  all  defined  abbreviations  to  the named file.
+This file can be read back into EMACS with <key_name>(read-abbrev-file).
+
+
+<deflist_item>((write-current-file <emphasis>(file-name\italic))
+		^X-^^-S or ^X-^S)
+<x>(write-current-file)
+<deflist_def>
+Writes the contents of the current buffer to the file whose
+name is associated with the buffer.
+
+
+<deflist_item>((write-file-exit)  ^X-^F)
+<x>(write-file-exit)
+<deflist_def>
+Writes  all  modified  buffers to their associated files and
+if the command succeeds, EMACS  exits.
+
+
+<deflist_item>((write-modified-files)  ^X-^M)
+<x>(write-modified-files)
+<deflist_def>
+Writes  each modified buffer into the file whose name is
+associated with the buffer. EMACS generates an error message if a modified
+buffer does not have an associated file.
+
+
+<deflist_item>((write-named-file <emphasis>(file-name\italic))  ^X-^W)
+<x>(write-named-file)
+<deflist_def>
+Writes the contents of the current buffer to the named file
+and changes the association of the buffer to the specified file name.
+
+
+<deflist_item>((yank-buffer <emphasis>(buffer-name\italic))  ESC-^Y)
+<x>(yank-buffer)
+<deflist_def>
+Inserts the contents of the specified buffer at the position
+of dot in the current buffer.
+
+
+<deflist_item>((yank-from-killbuffer)  ^Y)
+<x>(yank-from-killbuffer)
+<deflist_def>
+Inserts  the  contents of the <key_name>(Kill buffer) at the
+position of dot in the current buffer.
+
+
+<deflist_item>((^ <emphasis>(expression-1\italic)
+		<emphasis>(expression-2\italic)))
+<x>(^)
+<deflist_def>
+An  arithmetic  operator  function  that returns all its arguments
+exclusive  or'ed  together.  This  function cannot be used interactively.
+
+
+<deflist_item>((^X-prefix)  ^X)
+<x>(^X-prefix)
+<deflist_def>
+<key_name>(^X-prefix)  is  the  <key_name>(^X) command prefix keymap.
+
+
+<deflist_item>((<literal>(|) <emphasis>(expression-1\italic)
+		<emphasis>(expression-2\italic)))
+<x>(<literal>(|))
+<deflist_def>
+Returns  the  result  of  logical OR'ing all its arguments together.
+
+<enddefinition_list>

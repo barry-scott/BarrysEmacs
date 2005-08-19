@@ -1,0 +1,22 @@
+module emacs_command_table
+!
+!	Emacs DCL command
+!
+!	Defaults to spawned emacs.
+!
+define verb emacs
+	routine emacs$command
+	qualifier subprocess, nonnegatable, default
+	qualifier name, nonnegatable, value (required)
+	qualifier restore, default, value (default=emacs$environment:)
+     	qualifier package, nonnegatable, value (default="emacs")
+	qualifier start_position, value(list)
+	qualifier log, default
+	parameter p1, value (list)
+	parameter p2, value (list)
+	parameter p3, value (list)
+	parameter p4, value (list)
+	parameter p5, value (list)
+	parameter p6, value (list)
+	parameter p7, value (list)
+	parameter p8, value (list)

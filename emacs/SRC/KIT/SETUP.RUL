@@ -1,0 +1,786 @@
+declare
+#include "sddialog.h"
+#define WORKING 1
+#define	PRODUCT_NAME "Barry's Emacs"
+#define	PRODUCT_VERSION "X6.1.23"
+#define	PRODUCT_VERSION_NAME "V6.1"
+#define FOLDER_NAME "Barry's Emacs"
+
+#define DISK_SPACE_GRANULATITY 4096
+
+string	str_not_used;
+long	num_not_used;
+
+number	new_windows_shell;	// e.g. this is the windows 95 interface
+number	beta_newshell_warning;
+LIST	system_details;
+
+long	result;
+string	dest_path;
+string	str;
+
+number	next_step;
+
+number	option_vms_files;
+number	option_windows_files;
+number	option_emacs_documentation;
+number	option_register_emacs_open_c;
+number	option_msdos_files;
+
+number exit_option_readme;
+number exit_option_run_emacs;
+
+// these two give the range to use for feedback during file copying
+#define	STATUS_FILECOPY_START_PERCENT 5
+#define STATUS_FILECOPY_END_PERCENT 95
+#define	WRITE_INI_FILES 96
+number	current_status_percent;
+
+// the sizes of the blocks of files
+long	common_files_size;
+long	windows_files_size;
+long	msdos_files_size;
+long	vms_files_size;
+long	documentation_files_size;
+
+// the total disk space required
+long	disk_space_required;
+// the amount of disk space used so far
+long	disk_space_used;
+
+
+LIST	common_files_info;
+LIST	windows_files_info;
+LIST	msdos_files_info;
+LIST	vms_files_info;
+LIST	documentation_files_info;
+
+prototype	emacs_init_install();
+prototype	 emacs_init_lists();
+prototype	emacs_welcome();
+prototype	emacs_dest_path();
+prototype	emacs_options();
+prototype	emacs_create_directories();
+
+prototype	emacs_copy_files();
+prototype	 emacs_sizeof_listed_files( LIST /*files*/ );
+prototype	 emacs_copy_listed_files( LIST /*files*/, string /*comment*/ );
+prototype	 emacs_copy_one_file( string /*from*/, string /*path*/, string /*to*/, string /*comment*/ );
+
+prototype	emacs_write_ini_files();
+prototype	 emacs_write_emacs060_ini_file();
+prototype	 emacs_write_emdos32_ini_file();
+
+prototype	emacs_report_create_dir_error( number /*error*/ );
+prototype	emacs_report_copy_file_error( number /*error*/ );
+prototype	emacs_registration();
+prototype	 emacs_add_icon( string /*cmd*/, string /*title*/ );
+
+program
+start:
+	RegDBSetDefaultRoot( HKEY_LOCAL_MACHINE );
+	InstallationInfo( "Barry Scott", PRODUCT_NAME, PRODUCT_VERSION_NAME, "EmWinNT.EXE" );
+
+	next_step = 0;
+
+	emacs_init_install();
+
+	while( result >= 0 )
+		switch( result )
+		case BACK:	next_step = next_step - 1;
+		case NEXT:	next_step = next_step + 1;
+		endswitch;
+
+		//
+		// execute the next step of the installation
+		//
+		switch( next_step )
+		case 1:	Disable( BACKBUTTON );
+			emacs_welcome();
+			Enable( BACKBUTTON );
+		case 2:	result = SdShowInfoList
+				(
+				"Installation information",
+				"The following details describe your system:",
+				system_details
+				);
+		case 3:	emacs_options();
+		case 4: Disable( STATUS );
+			emacs_dest_path();
+		case 5: Enable( STATUS );
+			emacs_create_directories();
+			Enable( INDVFILESTATUS );
+			emacs_copy_files();
+			Disable( INDVFILESTATUS );
+			emacs_write_ini_files();
+			Disable( STATUS );
+			emacs_registration();			
+		default:
+			Disable( BACKBUTTON );
+	
+			SdFinish
+			(
+			"Setup complete",
+			PRODUCT_NAME + " has been installed.",
+			"Click Finish to complete setup",
+			"Yes, I want to see the README file",
+			"Yes, I want to launch Barry's Emacs",
+			exit_option_readme,
+			exit_option_run_emacs
+			);
+			if exit_option_readme
+			then
+				LaunchApp( "EmWinNt.exe", dest_path ^ "readme.txt" );
+			else
+				if exit_option_run_emacs
+				then
+					LaunchApp( "EmWinNt.exe", "" );
+				endif;
+			endif;
+			exit;	
+		endswitch;
+	endwhile;
+	exit;
+
+function emacs_init_install()
+		string tmp_str;
+		number tmp_num;
+
+		string win_version_str;
+		number win_major_version;
+		number win_minor_version;
+		number os;
+		string os_str;
+		string os_version_str;
+		number os_major_version;
+		number os_minor_version;				
+	begin
+	result = NEXT;
+
+	option_vms_files = FALSE;
+	option_windows_files = TRUE;
+	option_emacs_documentation = TRUE;
+	option_register_emacs_open_c = FALSE;
+	option_msdos_files = FALSE;
+
+	GetSystemInfo( WINMAJOR, win_major_version, win_version_str );
+	GetSystemInfo( WINMINOR, win_minor_version, win_version_str );
+	GetSystemInfo( OS, os, os_str );
+
+	switch( os )
+	case IS_WINDOWS:	os_str = "Windows";
+	case IS_WINDOWSNT:	os_str = "Windows/NT";
+	case IS_WINDOWS95:	os_str = "Windows/95";
+	case IS_WIN32S:		os_str = "Win32S";
+	endswitch;
+
+	GetSystemInfo( OSMAJOR, os_major_version, tmp_str );
+	GetSystemInfo( OSMINOR, os_minor_version, tmp_str );
+	if win_major_version = 4
+	then
+		new_windows_shell = TRUE;
+	else
+		new_windows_shell = FALSE;
+	endif;
+	beta_newshell_warning = FALSE;
+
+	system_details = ListCreate( STRINGLIST );
+		Sprintf( str,
+			"Windows version is %d.%d",
+			win_major_version, win_minor_version );
+		ListAddString( system_details, str, AFTER );
+		Sprintf( str,
+			"Operating System is %s",
+			os_str );
+		ListAddString( system_details, str, AFTER );
+
+	// default dest_path to the location of the last installation
+	if  RegDBGetAppInfo( "Installation Directory", num_not_used, dest_path, num_not_used ) < 0
+	then
+		// no value stored assume a new installation and default
+		dest_path = WINDISK ^ "Emacs060";
+	else
+		ListAddString( system_details, "Barry's Emacs was previous installed in:", AFTER );
+		ListAddString( system_details, "    " + dest_path, AFTER );
+	endif;
+
+	emacs_init_lists();
+	end;
+
+function emacs_init_lists()
+	begin
+	common_files_info = ListCreate( STRINGLIST );
+		ListAddString( common_files_info, "README.TXT,,README.TXT,14809", AFTER );
+		ListAddString( common_files_info, "POSTSETU.BAT,,POSTSETU.BAT,336", AFTER );
+		ListAddString( common_files_info, "LIBRARY.DAT,LIBRARY,FILENAME.DAT,803", AFTER );
+		ListAddString( common_files_info, "EMACSINI.ML,LIBRARY,EMACSINI.ML,1853", AFTER );
+		ListAddString( common_files_info, "PROFILE.ML,LIBRARY,PROFILE.ML,2481", AFTER );
+		ListAddString( common_files_info, "EMACSLIB.DIR,LIBRARY,EMACSLIB.DIR,0", AFTER );
+		ListAddString( common_files_info, "EMACSLIB.PAG,LIBRARY,EMACSLIB.PAG,4096", AFTER );
+		ListAddString( common_files_info, "EMACSLIB.DAT,LIBRARY,EMACSLIB.DAT,705725", AFTER );
+		ListAddString( common_files_info, "EM_DESC.DIR,LIBRARY,EM_DESC.DIR,4096", AFTER );
+		ListAddString( common_files_info, "EM_DESC.PAG,LIBRARY,EM_DESC.PAG,16384", AFTER );
+		ListAddString( common_files_info, "EM_DESC.DAT,LIBRARY,EM_DESC.DAT,269913", AFTER );
+		ListAddString( common_files_info, "LANGUAGE.DIR,LIBRARY,LANGUAGE.DIR,4096", AFTER );
+		ListAddString( common_files_info, "LANGUAGE.PAG,LIBRARY,LANGUAGE.PAG,8192", AFTER );
+		ListAddString( common_files_info, "LANGUAGE.DAT,LIBRARY,LANGUAGE.DAT,66057", AFTER );
+		ListAddString( common_files_info, "QI_CC.DIR,LIBRARY,QI_CC.DIR,0", AFTER );
+		ListAddString( common_files_info, "QI_CC.PAG,LIBRARY,QI_CC.PAG,4096", AFTER );
+		ListAddString( common_files_info, "QI_CC.DAT,LIBRARY,QI_CC.DAT,17712", AFTER );
+		ListAddString( common_files_info, "EMACS.CBI,LIBRARY,EMACS.CBI,32233", AFTER );
+
+	windows_files_info = ListCreate( STRINGLIST );
+		ListAddString( windows_files_info, "EMWINNT.HLP,,EMWINNT.HLP,572989", AFTER );
+		ListAddString( windows_files_info, "EMWINNT.EXE,,EMWINNT.EXE,570368", AFTER );
+		ListAddString( windows_files_info, "X86_DBCR.EXE,NT_X86,DBCREATE.EXE,29184", AFTER );
+		ListAddString( windows_files_info, "X86_DBAD.EXE,NT_X86,DBADD.EXE,29696", AFTER );
+		ListAddString( windows_files_info, "X86_DBDE.EXE,NT_X86,DBDEL.EXE,29696", AFTER );
+		ListAddString( windows_files_info, "X86_DBLI.EXE,NT_X86,DBLIST.EXE,30720", AFTER );
+		ListAddString( windows_files_info, "X86_DBPR.EXE,NT_X86,DBPRINT.EXE,28672", AFTER );
+		ListAddString( windows_files_info, "X86_M2DB.EXE,NT_X86,MLL-2-DB.EXE,33280", AFTER );
+		ListAddString( windows_files_info, "EMACS060.REG,INIFILES,EMACS060.REG,302", AFTER );
+
+	msdos_files_info = ListCreate( STRINGLIST );
+		ListAddString( msdos_files_info, "NMLK_TSR.COM,,NMLK_TSR.COM,1536", AFTER );
+		ListAddString( msdos_files_info, "EMDOS32.EXE,,EMDOS32.EXE,395897", AFTER );
+		ListAddString( msdos_files_info, "DOS_DBCR.EXE,DOS,DBCREATE.EXE,35204", AFTER );
+		ListAddString( msdos_files_info, "DOS_DBAD.EXE,DOS,DBADD.EXE,34796", AFTER );
+		ListAddString( msdos_files_info, "DOS_DBDE.EXE,DOS,DBDEL.EXE,34796", AFTER );
+		ListAddString( msdos_files_info, "DOS_DBLI.EXE,DOS,DBLIST.EXE,34892", AFTER );
+		ListAddString( msdos_files_info, "DOS_DBPR.EXE,DOS,DBPRINT.EXE,34780", AFTER );
+		ListAddString( msdos_files_info, "DOS_M2DB.EXE,DOS,MLL-2-DB.EXE,39892", AFTER );
+		ListAddString( msdos_files_info, "DOS4GW.EXE,,DOS4GW.EXE,240580", AFTER );
+
+	vms_files_info = ListCreate( STRINGLIST );
+		ListAddString( vms_files_info, "QI_BLISS.DIR,LIBRARY,QI_BLISS.DIR,0", AFTER );
+		ListAddString( vms_files_info, "QI_BLISS.PAG,LIBRARY,QI_BLISS.PAG,4096", AFTER );
+		ListAddString( vms_files_info, "QI_BLISS.DAT,LIBRARY,QI_BLISS.DAT,6630", AFTER );
+		ListAddString( vms_files_info, "QI_DCL.DIR,LIBRARY,QI_DCL.DIR,0", AFTER );
+		ListAddString( vms_files_info, "QI_DCL.PAG,LIBRARY,QI_DCL.PAG,4096", AFTER );
+		ListAddString( vms_files_info, "QI_DCL.DAT,LIBRARY,QI_DCL.DAT,1346", AFTER );
+		ListAddString( vms_files_info, "QI_VMS.DIR,LIBRARY,QI_VMS.DIR,0", AFTER );
+		ListAddString( vms_files_info, "QI_VMS.PAG,LIBRARY,QI_VMS.PAG,4096", AFTER );
+		ListAddString( vms_files_info, "QI_VMS.DAT,LIBRARY,QI_VMS.DAT,20761", AFTER );
+
+	documentation_files_info = ListCreate( STRINGLIST );
+		ListAddString( documentation_files_info, "BEmacsUG.HLP,,BEmacsUG.HLP,121456", AFTER );
+		ListAddString( documentation_files_info, "BEmacsPG.HLP,,BEmacsPG.HLP,77033", AFTER );
+		ListAddString( documentation_files_info, "BEmacsER.HLP,,BEmacsER.HLP,70524", AFTER );
+
+	end;
+
+function emacs_welcome()
+	begin
+	result = Welcome( "Welcome", 0 );
+	end;
+
+function emacs_dest_path()
+	long disk_space;
+	string disk;
+	begin
+	NumToStr( str, disk_space_required );
+	str =	"Setup will install " + PRODUCT_NAME + " in the following directory.\n" +
+		"The selected options require " + str + " bytes of disk space.\n" +
+		"To install in this directory, click Next.\n\n" +
+		"To install in a different directory, click Browse " +
+		"and select another directory.\n\n" +
+		"Click cancel to exit the Setup program.";
+
+	while( TRUE )
+		result = AskDestPath( "Choose Destination Directory", str, dest_path, 0 );
+		if result = BACK
+		then
+			return;
+		endif;
+
+		result = GetDisk( dest_path, disk );
+		if result < 0
+		then
+			MessageBox( "Unable to get information on " + dest_path, WARNING );
+		else
+			disk_space = GetDiskSpace( disk );
+			if disk_space > disk_space_required
+			then
+				result = NEXT;
+				return;
+			else
+				Sprintf( str, "There is not enough free disk space on %s.\n" +
+					PRODUCT_NAME + " requires %d bytes and there are only %d bytes on disk %s.",
+					disk, disk_space_required, disk_space, disk );
+				result = AskYesNo( str, NO );
+				if result = YES
+				then
+					result = NEXT;
+					return;
+				endif;
+			endif;
+		endif;
+	endwhile;
+	end;
+
+function emacs_options()
+	begin
+	result = AskOptions
+		(
+		NONEXCLUSIVE,
+
+		"Choose which version of Barry's Emacs you require,\n" +
+		"there are MSDOS and Windows versions in this kit.",
+
+		"Windows Emacs Application", option_windows_files,
+		"Emacs Documentation", option_emacs_documentation,
+		"MSDOS Emacs Application", option_msdos_files,
+		"Emacs will open .C, .CXX, .CPP and .H files", option_register_emacs_open_c,
+		"OpenVMS Quick Information files", option_vms_files
+		);
+
+	common_files_size = emacs_sizeof_listed_files( common_files_info );
+	disk_space_required = common_files_info;
+
+	if option_windows_files
+	then
+		windows_files_size = emacs_sizeof_listed_files( windows_files_info );
+		disk_space_required = disk_space_required + windows_files_size;
+	endif;
+	if option_msdos_files
+	then
+		msdos_files_size = emacs_sizeof_listed_files( msdos_files_info );
+		disk_space_required = disk_space_required + msdos_files_size;
+	endif;
+	if option_vms_files
+	then
+		vms_files_size = emacs_sizeof_listed_files( vms_files_info );
+		disk_space_required = disk_space_required + vms_files_size;
+	endif;
+	if option_emacs_documentation
+	then
+		documentation_files_size = emacs_sizeof_listed_files( documentation_files_info );
+		disk_space_required = disk_space_required + documentation_files_size;
+	endif;
+	end;
+
+function emacs_create_directories()
+	number status;	
+	begin
+
+	result = NEXT;
+
+	SetStatusWindow( 0, "Creating directory Library" );
+	status = CreateDir( dest_path ^ "Library" );
+	if emacs_report_create_dir_error( status )
+	then
+		return;
+	endif;
+
+	SetStatusWindow( 1, "Creating directory UserLib" );
+	status = CreateDir( dest_path ^ "UserLib" );
+	if emacs_report_create_dir_error( status )
+	then
+		return;
+	endif;
+
+	SetStatusWindow( 2, "Creating directory IniFiles" );
+	status = CreateDir( dest_path ^ "IniFiles" );
+	if emacs_report_create_dir_error( status )
+	then
+		return;
+	endif;
+	if option_windows_files
+	then
+		SetStatusWindow( 3, "Creating directory NT_x86" );
+		status = CreateDir( dest_path ^ "NT_x86" );
+		if emacs_report_create_dir_error( status )
+		then
+			return;
+		endif;
+	endif;
+
+	if option_msdos_files
+	then
+		SetStatusWindow( 4, "Creating directory Dos" );
+		status = CreateDir( dest_path ^ "Dos" );
+		if emacs_report_create_dir_error( status )
+		then
+			return;
+		endif;
+	endif;
+	
+	end;
+
+function emacs_sizeof_listed_files( /*LIST*/files )
+	LIST tokens;
+	string file_info;
+	string filename;
+	number result;
+	long total_size;
+	long file_size;
+	long rounded_up_file_size;
+	long mask;
+	begin
+	total_size = 0;
+	mask = DISK_SPACE_GRANULATITY - 1;
+	mask = ~mask;
+
+	result = ListGetFirstString( files, file_info );
+	while( result = 0 )
+
+		// fetch the filename from the LIST
+		tokens = ListCreate( STRINGLIST );
+		StrGetTokens( tokens, file_info, "," );
+		ListSetIndex( tokens, LISTFIRST );
+		ListCurrentString( tokens, filename );
+		ListDestroy( tokens );
+
+		// find the size of this file
+		result = GetFileInfo( SRCDIR ^ filename, FILE_SIZE, file_size, str_not_used );
+		if result < 0
+		then
+			SprintfBox( SEVERE, "Error", "Cannot get file size of %s", SRCDIR ^ filename );
+			exit;
+		endif;
+
+		rounded_up_file_size = file_size + DISK_SPACE_GRANULATITY;
+
+		rounded_up_file_size = rounded_up_file_size & mask;
+
+		total_size = total_size + file_size;
+
+		// step on to the next file
+		result = ListGetNextString( files, file_info );
+	endwhile;
+
+	return total_size;
+	end;
+
+function emacs_copy_files()
+	string file_info;
+	begin
+	result = NEXT;
+
+	disk_space_used = 0;
+	current_status_percent = STATUS_FILECOPY_START_PERCENT;
+
+	emacs_copy_listed_files( common_files_info, "Copying "+PRODUCT_NAME+" common files..." );
+
+	if option_windows_files
+	then
+		emacs_copy_listed_files( windows_files_info, "Copying Windows "+PRODUCT_NAME+" files..." );
+	endif;
+	if option_msdos_files
+	then
+		emacs_copy_listed_files( msdos_files_info, "Copying MSDOS "+PRODUCT_NAME+" files..." );
+	endif;
+	if option_vms_files
+	then
+		emacs_copy_listed_files( vms_files_info, "Copying VMS quick info files..."  );
+	endif;
+	if option_emacs_documentation
+	then
+		emacs_copy_listed_files( documentation_files_info, "Copying "+PRODUCT_NAME+" documentation..." );
+	endif;
+	end;
+
+function emacs_copy_listed_files( /*LIST*/files, /*string*/ comment )
+	string file_info;
+	LIST tokens;
+	string from_file;
+	string to_path;
+	string to_file;
+	begin
+	result = ListGetFirstString( files, file_info );
+	while( result = 0 )
+
+		// fetch the filename from the LIST
+		tokens = ListCreate( STRINGLIST );
+		StrGetTokens( tokens, file_info, "," );
+		ListGetFirstString( tokens, from_file );
+		ListGetNextString( tokens, to_path );
+		ListGetNextString( tokens, to_file );
+		ListDestroy( tokens );
+
+		// Copy this file
+		emacs_copy_one_file( from_file, to_path, to_file, comment );
+
+		// step on to the next file
+		result = ListGetNextString( files, file_info );
+	endwhile;
+	
+	end;
+
+function emacs_copy_one_file( /*string*/ from_file, /*string*/ path, /*string*/ to_file, /*string*/ comment )
+	number status;
+	long file_size;
+	long mask;
+	begin
+
+	result = GetFileInfo( SRCDIR ^ from_file, FILE_SIZE, file_size, str_not_used );
+	if result < 0
+	then
+		SprintfBox( SEVERE, "Error", "Cannot get file size of %s", SRCDIR ^ from_file );
+		exit;
+	endif;
+	mask = DISK_SPACE_GRANULATITY - 1;
+	mask = ~mask;
+
+	file_size = file_size + DISK_SPACE_GRANULATITY;
+	file_size = file_size & mask;
+
+	disk_space_used = disk_space_used + file_size;
+
+	SetStatusWindow( current_status_percent, comment );
+	current_status_percent = STATUS_FILECOPY_START_PERCENT +
+		(STATUS_FILECOPY_END_PERCENT-STATUS_FILECOPY_START_PERCENT)*disk_space_used/disk_space_required;
+	StatusUpdate( ON, current_status_percent );
+
+	TARGETDIR = dest_path ^ path;
+	status = CopyFile( from_file, to_file );
+
+	return emacs_report_copy_file_error( status );
+	end;
+
+// return ture if error found
+function emacs_report_create_dir_error( /*number*/ error )
+	begin
+	if error = 0
+	then
+		return FALSE;
+	endif;
+
+	SprintfBox( SEVERE, "Error", "Create Directory error %d", error );
+	result = BACK;
+
+	exit;
+	end;
+
+function emacs_report_copy_file_error( /*number*/ error )
+	begin
+	if error = 0
+	then
+		return FALSE;
+	endif;
+
+	SprintfBox( SEVERE, "Error", "Copy File error %d", error );
+	next_step = 1;
+	result = NEXT;
+
+	exit;
+	end;
+
+function emacs_write_ini_files()
+	begin
+	current_status_percent = WRITE_INI_FILES;
+
+	if option_windows_files
+	then
+		emacs_write_emacs060_ini_file();
+	endif;
+	if option_msdos_files
+	then
+		emacs_write_emdos32_ini_file();
+	endif;
+	end;
+
+function emacs_write_emacs060_ini_file()
+	string ini_file;
+	string tmp_path;
+	begin
+
+	if GetEnvVar( "TEMP", tmp_path ) < 0
+	then
+		if GetEnvVar( "TMP", tmp_path ) < 0
+		then
+			tmp_path = WINDIR;
+		endif;
+	endif;
+
+	SetStatusWindow( current_status_percent, "Writing "+PRODUCT_NAME+" MSDOS example initialisation file..." );
+	current_status_percent = current_status_percent + 1;
+
+	ini_file = dest_path ^ "IniFiles\\Emacs060.INI";
+	WriteProfString( ini_file, "Emacs", "TextFontName", "Courier New" );
+	WriteProfString( ini_file, "Emacs", "TextFontSize", "-12" );
+
+	WriteProfString( ini_file, "DeviceNames", "sys$login", dest_path );
+	WriteProfString( ini_file, "DeviceNames", "sys$scratch", tmp_path );
+	WriteProfString( ini_file, "DeviceNames", "emacs$library", dest_path ^ "library\\" );
+	WriteProfString( ini_file, "DeviceNames", "emacs$user", dest_path ^ "userlib\\" );
+	WriteProfString( ini_file, "DeviceNames", "emacs$journal", tmp_path );
+	WriteProfString( ini_file, "DeviceNames", "emacs$memory", ".\\" );
+
+	WriteProfString( ini_file, "Colours", "WindowText", "1000;2000;3000;4255;5255;6255" );
+	WriteProfString( ini_file, "Colours", "HighlightText", "1255;2255;3255;4128;5128;6000" );
+	WriteProfString( ini_file, "Colours", "ModeLine", "1255;2255;3255;4027;5162;6165" );
+	WriteProfString( ini_file, "Colours", "Syntax_keyword1", "1000;2000;3255;4255;5255;6255" );
+	WriteProfString( ini_file, "Colours", "Syntax_keyword2", "1255;2000;3000;4255;5255;6255" );
+	WriteProfString( ini_file, "Colours", "Syntax_word", "1000;2000;3000;4255;5255;6255" );
+	WriteProfString( ini_file, "Colours", "Syntax_string", "1000;2000;3128;4255;5255;6255" );
+	WriteProfString( ini_file, "Colours", "Syntax_quote", "1000;2000;3000;4255;5255;6255" );
+	WriteProfString( ini_file, "Colours", "Syntax_comment", "1000;2128;3000;4255;5255;6255" );
+
+	WriteProfString( ini_file, "Environment", "Emacs_Path", ".;emacs$user:;emacs$library:" );
+
+	if FindFile( WINDIR, "emacs060.ini", str ) < 0
+	then
+		SetStatusWindow( current_status_percent, "Writing "+PRODUCT_NAME+" Windows initialisation file..." );
+		current_status_percent = current_status_percent + 1;
+
+		ini_file = dest_path ^ "Emacs060.INI";
+		SRCDIR = dest_path ^ "IniFiles";
+		TARGETDIR = WINDIR;
+		CopyFile( "Emacs060.INI", "Emacs060.INI" );
+	else
+		SetStatusWindow( current_status_percent, "Updating "+PRODUCT_NAME+" Windows initialisation file..." );
+		current_status_percent = current_status_percent + 1;
+		WriteProfString( WINDIR ^ "Emacs060.INI", "DeviceNames", "emacs$library", dest_path ^ "library\\" );
+	endif;
+	end;
+
+function emacs_write_emdos32_ini_file()
+	string ini_file;
+	string tmp_path;
+	begin
+
+	if GetEnvVar( "TEMP", tmp_path ) < 0
+	then
+		if GetEnvVar( "TMP", tmp_path ) < 0
+		then
+			tmp_path = WINDIR;
+		endif;
+	endif;
+
+	SetStatusWindow( current_status_percent, "Writing "+PRODUCT_NAME+" MSDOS example initialisation file..." );
+	current_status_percent = current_status_percent + 1;
+
+	ini_file = dest_path ^ "IniFiles\\EmDos32.INI";
+	WriteProfString( ini_file, "DeviceNames", "sys$login", dest_path );
+	WriteProfString( ini_file, "DeviceNames", "sys$scratch", tmp_path );
+	WriteProfString( ini_file, "DeviceNames", "emacs$memory", ".\\" );
+	WriteProfString( ini_file, "DeviceNames", "emacs$library", dest_path ^ "Library\\" );
+	WriteProfString( ini_file, "DeviceNames", "emacs$user", dest_path ^ "UserLib\\" );
+	WriteProfString( ini_file, "DeviceNames", "emacs$journal", tmp_path );
+
+	WriteProfString( ini_file, "Colours", "WindowText", "1000;2000;3000;4255;5255;6255" );
+	WriteProfString( ini_file, "Colours", "HighlightText", "4255;1255;2255;3255" );
+	WriteProfString( ini_file, "Colours", "ModeLine", "6255;1255;2255" );
+	WriteProfString( ini_file, "Colours", "Syntax_keyword1", "1000;2000;3255;4255;5255;6255" );
+	WriteProfString( ini_file, "Colours", "Syntax_keyword2", "1255;2000;3000;4255;5255;6255" );
+	WriteProfString( ini_file, "Colours", "Syntax_word", "1000;2000;3000;4255;5255;6255" );
+	WriteProfString( ini_file, "Colours", "Syntax_string", "1127;2000;3000;4255;5255;6255" );
+	WriteProfString( ini_file, "Colours", "Syntax_quote", "1000;2000;3000;4255;5255;6255" );
+	WriteProfString( ini_file, "Colours", "Syntax_comment", "1000;2127;3000;4255;5255;6255" );
+
+	WriteProfString( ini_file, "Environment", "Emacs_Path", ".;emacs$user:;emacs$library:" );
+	WriteProfString( ini_file, "Environment", "emacs_memory", "emacs$memory:__emacs_.mem" );
+	WriteProfString( ini_file, "Environment", ";video_mode ", " [mode number] [width] [height]" );
+	WriteProfString( ini_file, "Environment", ";video_mode", "35 132 25" );
+
+	if FindFile( dest_path, "EmDos32.ini", str ) < 0
+	then
+		SetStatusWindow( current_status_percent, "Writing "+PRODUCT_NAME+" MSDOS initialisation file..." );
+		current_status_percent = current_status_percent + 1;
+
+		SRCDIR = dest_path ^ "IniFiles";
+		TARGETDIR = dest_path;
+		CopyFile( "EmDos32.INI", "EmDos32.INI" );
+	else
+		SetStatusWindow( current_status_percent, "Updating "+PRODUCT_NAME+" MSDOS initialisation file..." );
+		current_status_percent = current_status_percent + 1;
+		WriteProfString( ini_file, "DeviceNames", "emacs$library", dest_path ^ "Library\\" );
+	endif;
+	end;
+
+function emacs_registration()
+	string emacs_image;
+	begin
+#ifndef WORKING
+#else
+	result = RegDBSetAppInfo( "Installation Directory", REGDB_STRING, dest_path, -1 );
+	result = RegDBSetAppInfo( "Installed Version", REGDB_STRING, PRODUCT_VERSION, -1 );
+
+	result = ProgDefGroupType( COMMON );
+
+	emacs_image = dest_path ^ "EmWinNT.Exe";
+
+	if new_windows_shell
+	then
+		// set the keys in the registry for emacs
+		result = RegDBSetItem( REGDB_APPPATH_DEFAULT, emacs_image );
+
+		// create the folder and desktop stuff for the new shell
+		result = CreateDir( dest_path ^ "Folder" );
+		result = AddFolderIcon( WINDIR ^ "Desktop", PRODUCT_NAME, dest_path ^ "Folder", "", "", 0, "", REPLACE );
+		result = AddFolderIcon( "", PRODUCT_NAME, dest_path ^ "Folder", "", "", 0, "", REPLACE );
+	endif;
+
+	if option_windows_files
+	then
+		emacs_add_icon( emacs_image, "Barry's Emacs" );
+		emacs_add_icon( emacs_image + " /restore=_not_.a._file_", "Barry's Emacs without Restore" );
+		emacs_add_icon( emacs_image + " " + dest_path ^ "readme.txt", "Readme for Barry's Emacs" );
+		emacs_add_icon( emacs_image + " /package=teach", "Tutorial for Barry's Emacs" );
+		emacs_add_icon( dest_path ^ "EmWinNt.hlp", "Emacs Help" );
+	endif;
+	if option_emacs_documentation
+	then
+		emacs_add_icon( dest_path ^ "BEmacsUG.hlp", "Barry's Emacs User Guide" );
+		emacs_add_icon( dest_path ^ "BEmacsPG.hlp", "Barry's Emacs MLisp Programers Guide" );
+		emacs_add_icon( dest_path ^ "BEmacsER.hlp", "Barry's Emacs Extensions Reference" );
+	endif;
+
+	// setup the registry to allow users to have emacs open a file automatically
+	result = RegDBSetDefaultRoot( HKEY_CLASSES_ROOT );
+	result = RegDBCreateKeyEx( "BarrysEmacsDoc", "" );
+	result = RegDBSetKeyValueEx( "BarrysEmacsDoc", "", REGDB_STRING, "Barry's Emacs Document", -1 );
+	result = RegDBSetKeyValueEx( "BarrysEmacsDoc\\Shell\\open\\command", "", REGDB_STRING, emacs_image + " %1", -1 );
+
+	result = RegDBCreateKeyEx( "BarrysEmacsCmd", "" );
+	result = RegDBSetKeyValueEx( "BarrysEmacsCmd", "", REGDB_STRING, "Barry's Emacs Document", -1 );
+	result = RegDBSetKeyValueEx( "BarrysEmacsCmd\\Shell\\open\\command", "", REGDB_STRING, emacs_image + " /package=%1", -1 );
+
+	// have emacs open .ML files and .MLP files
+	result = RegDBSetKeyValueEx( ".ml", "", REGDB_STRING, "BarrysEmacsDoc", -1 );
+	result = RegDBSetKeyValueEx( ".mlp", "", REGDB_STRING, "BarrysEmacsCmd", -1 );
+
+	if option_register_emacs_open_c
+	then
+		// register all the C and C++ file types for emacs to open
+		result = RegDBSetKeyValueEx( ".c", "", REGDB_STRING, "BarrysEmacsDoc", -1 );	
+		result = RegDBSetKeyValueEx( ".cpp", "", REGDB_STRING, "BarrysEmacsDoc", -1 );	
+		result = RegDBSetKeyValueEx( ".cxx", "", REGDB_STRING, "BarrysEmacsDoc", -1 );	
+		result = RegDBSetKeyValueEx( ".h", "", REGDB_STRING, "BarrysEmacsDoc", -1 );	
+		result = RegDBSetKeyValueEx( ".hpp", "", REGDB_STRING, "BarrysEmacsDoc", -1 );	
+		result = RegDBSetKeyValueEx( ".hxx", "", REGDB_STRING, "BarrysEmacsDoc", -1 );	
+	endif;
+#endif
+	result = NEXT;
+	end;
+
+function emacs_add_icon( /*string*/ cmd, /*string*/ title )
+	string szFolder;
+	begin
+	if new_windows_shell
+	then
+		szFolder = dest_path ^ "Folder";
+	else
+		szFolder = PRODUCT_NAME;
+	endif;
+
+	result = AddFolderIcon( szFolder, title, cmd, ".", "", 0, "", REPLACE );
+	if result < 0
+	then
+		if !beta_newshell_warning
+		then
+			MessageBox
+			(
+			"This installation is unable to create program groups\n" +
+			"and icons at this point. You are probable running the\n" +
+			"newshell demo on NT 3.51 that is responible for this\n" +
+			"problem.",
+			INFORMATION
+			);
+			beta_newshell_warning = TRUE;
+		endif;
+	endif;
+	end;
+
+#include "sddialog.rul"

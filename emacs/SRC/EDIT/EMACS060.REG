@@ -1,0 +1,6 @@
+REGEDIT
+HKEY_CLASSES_ROOT\EmacsEditTextFile = Emacs Edit Text File
+HKEY_CLASSES_ROOT\EmacsEditTextFile\shell\print = 
+HKEY_CLASSES_ROOT\EmacsEditTextFile\shell\open\ddeexec = [open("%1")]
+HKEY_CLASSES_ROOT\EmacsEditTextFile\shell\open\command = emwinnt.exe %1
+HKEY_CLASSES_ROOT\.ml = EmacsEditTextFile

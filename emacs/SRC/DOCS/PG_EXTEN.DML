@@ -1,0 +1,967 @@
+<chapter>(Extension Facilities\extension_chap)
+
+<x>(Extending EMACS)
+
+<p>
+This chapter describes the various useful facilities which enable complex
+extensions to be built using MLisp programs.
+
+
+<head1>(Keymaps and Key Bindings\keymapbinding_sec)
+
+<x>(Keymaps)
+<x>(Key binding)
+<x>(Binding keys)
+
+<p>
+The facilities for binding command key sequences to functions are very
+general in nature.  When EMACS is accepting commands from the terminal, it
+translates those commands into EMACS functions. Every command key sequence
+will result in the execution of one function---either MLisp, a macro, an
+autoloaded function or some wired-in code.
+
+<p>
+A <newterm>(keymap) is the entity that tells EMACS what to do when a given
+key is typed by the user. It will either indicate that a function
+should be called, or that another keymap should be used to obtain
+another character in a multi-character command sequence.
+
+<p>
+For every buffer, there are two routes to follow for command key decoding;
+the <newterm>(global keymap) and the buffer's <newterm>(local keymap).
+Command key sequences that are defined by the global keymap may be used
+from any buffer in EMACS, while command key sequences defined in local
+keymaps may only be used from buffers that associate with the keymap.
+
+<p>
+When accepting commands, EMACS makes transitions across the two trees of
+keymaps as though they were finite state automata.  Keymaps can be
+regarded as look-up tables to make transitions across these automata. Each
+table contains 256 entries---one entry for each eight-bit ASCII character.
+
+<p>
+Keymaps have names which are entered into the function name-space.  This
+means that it is quite legal to execute a keymap as a function.  If you do
+this,  the next key sequence input by EMACS will be translated starting
+with the executed keymap. If you execute more than one keymap, the last
+keymap executed is used to start the keymap translation.
+
+
+<head2>(Manipulating Keymaps\manipkeymaps_sec)
+
+<x>(Keymaps<xs>Manipulating)
+
+<p>
+Several functions and variables can be used to manipulate keymaps.
+These include the following:
+
+<definition_list>
+
+<deflist_item>((define-keymap <emphasis>(name\italic)))
+<x>(define-keymap)
+<deflist_def>
+This function explicitly declares a keymap and initialises its contents.
+The keymap's name is entered into the function name-space. Once the keymap
+has been declared in this way, it can be explicitly nominated as a local
+or global keymap.
+
+<deflist_item>((use-global-map <emphasis>(name\italic)))
+<x>(use-global-map)
+<deflist_def>
+Uses the nominated keymap as the global keymap for all subsequent command
+input. <emphasis>(name\italic) must be an existing keymap.
+
+<deflist_item>((use-local-map <emphasis>(name\italic)))
+<x>(use-local-map)
+<deflist_def>
+Uses the nominated keymap as the local keymap for the current buffer.  Any
+previous local keymap association is removed (though the keymap itself
+will not be destroyed).
+
+<deflist_item>(current-local-keymap)
+<x>(current-local-keymap)
+<deflist_def>
+This variable contains the name of a buffer's current local keymap. The
+name it contains may be used with a <key_name>(use-local-map) function.
+
+<deflist_item>(default-global-keymap)
+<x>(default-global-keymap)
+<deflist_def>
+This variable contains the default global keymap that EMACS initialises
+and uses when it starts up. It contains the standard command key sequences
+plus any global alterations the user has made.
+
+<enddefinition_list>
+
+
+<head2>(Command Binding\cmdbinding_sec)
+
+<x>(Command binding)
+<x>(Binding commands)
+
+<p>
+Functions may be bound to any arbitrary key sequence using
+the functions described as follows:
+
+<definition_list>
+
+<deflist_item>((bind-to-key <emphasis>(name keys\italic)))
+<x>(bind-to-key)
+<deflist_def>
+Makes a global binding to a function.  The function binding will be usable
+from any buffer.  The function <emphasis>(name\italic) must have already
+been declared in the function name-space. <emphasis>(keys\italic) can be
+an arbitrary sequence of characters used to access the function.  The
+following example binds the function <key_name>(set-mark) to the
+<key_name>(Select) key:
+
+<code_example>
+(bind-to-key "set-mark" "\(select)")
+<endcode_example>
+
+<p>
+If <emphasis>(keys\italic) is a character constant, then the binding is
+entered into the current global keymap. If <emphasis>(keys\italic) is a
+string, then enough keymaps are automatically generated to define the
+entire path to the function. Automatically generated keymaps have names of
+the form <quote>(<key_name>(auto-defined-keymap-n)), where
+<quote>(<key_name>(n)) is a sequence number.
+
+<x>(convert-key-string)
+<x>(Binding<xs>Control sequences)
+<p>
+If the key sequence specified is a control sequence, it must be a valid
+ISO control sequence.  For example, the key sequence <key_name>(ESC-Select)
+is not a valid ISO control sequence because it generates two consecutive
+<key_name>(ESC) characters.  However, EMACS allows you to bind
+commands to such sequences by providing the <key_name>(convert-key-string)
+function.  <key_name>(convert-key-string) will convert a control sequence
+according to EMACS' control-string processing rules to a valid ISO control
+sequence.  For example, to bind the <key_name>(unset-mark) function to the
+<key_name>(ESC-Select) key sequence, use the
+<key_name>(convert-key-string) function as follows:
+
+<code_example>
+(bind-to-key "unset-mark"
+    (concat
+        "\e"
+        (convert-key-string "\(select)")
+    )
+)
+<endcode_example>
+
+<deflist_item>((local-bind-to-key <emphasis>(name keys\italic)))
+<x>(local-bind-to-key)
+<deflist_def>
+Defines a local binding to a function. The binding is entered into the
+current buffer's local keymap. Character and string
+<emphasis>(keys\italic) parameters are treated as described under
+<key_name>(bind-to-key).  If a buffer does not have a local keymap, an
+error is reported.
+
+<deflist_item>((global-binding-of <emphasis>(keys\italic)))
+<x>(global-binding-of)
+<deflist_def>
+Returns a string containing the name of the function defined
+by the <emphasis>(keys\italic) string using the current global keymap.
+
+<deflist_item>((local-binding-of <emphasis>(keys\italic)))
+<x>(local-binding-of)
+<deflist_def>
+Returns a string containing the name of the
+function defined by the <emphasis>(keys\italic) string using the current
+buffer's local keymap.
+
+<deflist_item>((remove-all-local-bindings))
+<x>(remove-all-local-bindings)
+<deflist_def>
+Removes all the local bindings in the current buffer's
+local keymap. The local keymap itself is not destroyed.
+
+<deflist_item>((remove-binding <emphasis>(keys\italic)))
+<x>(remove-binding)
+<deflist_def>
+Removes the association of a function to a command key sequence from the
+global keymap.
+
+<deflist_item>((remove-local-binding <emphasis>(keys\italic)))
+<x>(remove-local-binding)
+<deflist_def>
+Removes the association of a function to a command key sequence from the
+local keymap.
+
+<enddefinition_list>
+
+
+<head1>(Databases\databases_sec)
+
+<x>(Databases)
+<x>(LIBRARIAN)
+
+<p>
+EMACS provides a comprehensive database management system. This system
+interfaces to VMS text, help, and macro library files to provide easy
+access to keyed data.  The library files can be created and maintained
+using the VMS LIBRARIAN utility, and the contents of the files can be
+accessed and altered by EMACS.
+
+<x>(Search-lists)
+<p>
+The key components of the database system are <newterm>(database
+search-lists).  These are ordered lists of VMS library files. When
+data is to be fetched from a database search-list, EMACS scans all the
+files in the list until it either finds a key match, or the list is
+exhausted.  When EMACS writes data to a database search-list, the data
+is always inserted into the library at the top of the specified search-list.
+
+<p>
+The keys used to fetch and store data are VMS library keys, and
+must therefore conform to the  LIBRARIAN's key standards. These are:
+
+<list>(unnumbered)
+<le>
+lowercase letters are converted to upper-case when the key is
+stored or searched for.
+<le>
+Key names must be unique in the first 31 characters.
+<endlist>
+
+<p>
+Certain optimisations are made to ease the problems of multiple
+invocations of EMACS using the same library files. Library files in a
+database search-list will always be closed and re-opened between each
+library operation. This may slow down library searches, but it does ensure
+that data in the library is not cached inside EMACS, so that other EMACS
+users can access the library.  This strategy also conforms to the
+LIBRARIAN's  shared read and write library access requirements.
+
+<p>
+Database files are of two types: <newterm>(read-only), and
+<newterm>(read-write).  You control which type of access is required by
+specifying parameters to EMACS.  If a library file is protected against
+writing, read-only access will be granted if possible.
+
+<p>
+EMACS uses the following database search-lists:
+
+<definition_list>
+
+<deflist_item>(info)
+<x>(info)
+<deflist_def>
+This list is used by the INFO subsystem to provide pages of information.
+The INFO database describes which files are accessed.
+
+<deflist_item>(language)
+<x>(language)
+<deflist_def>
+This list is used by the language modes C Mode and Bliss Mode as the
+source of language construct templates.  The templates supplied with EMACS
+are found in the file EMACS$LIBRARY:EMACSLANG.TLB. During initialisation
+of the language subsystems, your language template file
+SYS$LOGIN:LANGUAGE-TEMPLATES.TLB is added to the search-list so that you
+can override the system templates with your own templates.
+
+<deflist_item>(MLisp-library)
+<x>(MLisp-library)
+<deflist_def>
+This list provides database access to stored MLisp programs. All  the
+distributed MLisp functions are stored in the file
+EMACS$LIBRARY:EMACSLIB.TLB.  This file is visible in the search-list. To
+provide for user extensions and customisations, EMACS will also 
+add the file SYS$LOGIN:EMACSLIB.TLB (if it exists) to the search-list
+during initialisation.
+
+<deflist_item>(describe)
+<x>(describe)
+<x>(describe-command)
+<x>(describe-variable)
+<x>(Help)
+<deflist_def>
+This search-list is used by the <key_name>(describe-command),
+<key_name>(describe-variable) and <key_name>(Help) functions. The files in
+the list contain the EMACS help database. This search-list can grow as new
+packages are added into the running EMACS.
+
+<deflist_item>(subr-names)
+<x>(subr-names)
+<x>(describe-word-in-buffer)
+<deflist_def>
+This search-list is used by the <key_name>(describe-word-in-buffer)
+function as the source of one-line information about words. It contains
+the supplied quick-information database files and the user's
+SYS$LOGIN:SUBRNAMES.TLB database if it exists.
+
+<enddefinition_list>
+
+<head2>(Database Functions\databasefuns_sec)
+
+<x>(Database<xs>Functions for manipulating)
+
+<p>
+The following commands are provided to manipulate database search-lists and
+to access the data contained in them:
+
+<definition_list>
+
+<deflist_item>((extend-database-search-list
+		<emphasis>(dbname dbfile access\italic)))
+<x>(extend-database-search-list)
+<deflist_def>
+This command adds the database file specified to the nominated database
+search-list. The file's writeability is checked and a flag is set to
+indicate the file's type. If the database search-list does not exist,
+it is created. If the file already exists in the search-list, it is not
+added again. <emphasis>(access\italic) is an optional argument containing
+access flags. The flags are specified as a bit-mask with the following
+meaning:
+
+	<list>(unnumbered)
+
+	<le>
+	<emphasis>(1 (read-only)\bold) --- indicates that read-only access
+	is required
+
+	<le>
+	<emphasis>(2 (noclose)\bold) --- indicates that the library should
+	remain open across library accesses.
+
+	<endlist>
+
+<deflist_item>((remove-database <emphasis>(dbname dbfile\italic)))
+<x>(remove-database)
+<deflist_def>
+Removes the <emphasis>(dbfile\italic) database file from the
+<emphasis>(dbname\italic) database search-list. No error message is
+generated if the file does not exist. The database search-list will remain
+even if the last file is removed.
+
+<deflist_item>((list-databases))
+<x>(list-databases)
+<deflist_def>
+Creates a buffer called <key_name>(Database list) and inserts the
+names and file names of all the database search-lists. This buffer is then
+displayed in a window.
+
+<deflist_item>((put-database-entry <emphasis>(dbname key\italic)))
+<x>(put-database-entry)
+<deflist_def>
+Inserts the current buffer into the first library in the designated
+database search-list using the specified key.  You cannot use
+<key_name>(put-database-entry) on a read-only database.  Completion is
+enabled for both the database search-list name and the key.
+
+<deflist_item>((fetch-database-entry <emphasis>(dbname key\italic)))
+<x>(fetch-database-entry)
+<deflist_def>
+Fetches the contents of the designated module and inserts the data into
+the current buffer at dot. Dot remains in the same place.  Completion is
+enabled for both the database search-list name and the key.  If the key
+does not exist, an error is generated.
+
+<deflist_item>((fetch-help-database-entry <emphasis>(dbname keys\italic)))
+<x>(fetch-help-database-entry)
+<deflist_def>
+Performs the special operation of fetching help from a VMS HELP library
+and formats it in the same way as the DCL HELP command.  The location of
+the key  must be a help library. The formatted help text is inserted into
+the buffer at dot. Dot remains in the same place. An error is reported if
+the keys are not found.  The keys are defined as a space-separated list of
+up to 8 keys which access the required help text.
+<key_name>(fetch-help-database-flags) controls the amount of information
+fetched from the entry.
+
+<deflist_item>(fetch-help-database-flags)
+<x>(fetch-help-database-flags)
+<deflist_def>
+Controls the amount of help text that is inserted into the current buffer
+when the <key_name>(fetch-help-database-entry) function is executed. It
+contains a bit-mask which can take the following values:
+
+	<list>(unnumbered)
+
+	<le>
+	<emphasis>(1 (text)\bold) --- includes the help text for this entry
+
+	<le>
+	<emphasis>(2 (keys)\bold) --- includes the key name lines for this
+	entry
+
+	<le>
+	<emphasis>(4 (additional)\bold) --- includes additional
+	information lines for this entry.
+
+	<endlist>
+
+<p>
+The default value of the bit-mask is 7, meaning that all the information
+is returned.
+
+<enddefinition_list>
+
+<head1>(Controlling Processes from EMACS\control_procs_sec)
+
+<x>(Processes<xs>Controlling from EMACS)
+
+<p>
+EMACS has a set of functions for controlling VMS subprocesses. These
+processes are created by EMACS and can execute any CLI to accept commands.
+All symbols and logical names are inherited by these subprocesses. You
+designate a name for each subprocess and use this name when you want to
+refer to it.
+
+<p>
+The number of concurrently running subprocesses is limited only by the
+VMS quotas allocated to your account. Pooled quotas are checked when the
+process is created<footnote>(1\See the <reference>(vms_sysrout_r) for more
+information on process quotas.).
+
+<x>(broadcast-messages)
+<p>
+A special subprocess can be started to receive messages broadcast to your
+terminal. This subprocess does not actually create a VMS process, but
+merely executes special code within EMACS itself. This special subprocess
+is identified by the reserved process name
+<key_name>(broadcast-messages).  When this process is started, the
+terminal is set up to receive broadcast messages, and to channel their
+text to the appropriate place within EMACS.
+
+
+<head2>(Functions for Controlling Processes\controlprocfuns_sec)
+
+<x>(Processes<xs>Functions for controlling)
+
+<definition_list>
+
+<deflist_item>((start-process <emphasis>(process-name\italic)))
+<x>(start-process)
+<deflist_def>
+Creates the named subprocess. <emphasis>(process-name\italic) must not
+already exist. The current process is changed to the newly-created
+process.
+
+<deflist_item>((kill-process <emphasis>(process-name\italic)))
+<x>(kill-process)
+<deflist_def>
+Deletes the named subprocess. If the name is null,  the current process
+is deleted. When the process has actually terminated, the process
+termination procedure will be called. After the termination procedure has
+finished executing, the process name will be removed from the process
+name-space.
+
+<deflist_item>((list-processes))
+<x>(list-processes)
+<deflist_def>
+Displays a buffer containing the name and state of each existing process.
+A time value is also displayed; this is set to the time the last
+state-transition occurred. The associated output buffer, input and output
+procedures are also displayed.
+
+<p>
+The possible process states include:
+
+	<list>(unnumbered)
+
+	<le>
+	<emphasis>(RUNNING\bold) --- indicates that an image is
+	running in the process
+
+	<le>
+	<emphasis>(PAUSED\bold) --- indicates that the process has
+	been explicitly suspended
+
+	<le>
+	<emphasis>(IN-WAIT\bold) --- indicates that the process has
+	asked for input
+
+	<le>
+	<emphasis>(OUT-WAIT\bold) --- indicates that the process has
+	generated some output, and that EMACS is waiting to process it
+
+	<le>
+	<emphasis>(DEAD\bold) --- indicates that the process has
+	terminated, and will soon be removed from the process list.
+
+	<endlist>
+
+<deflist_item>((pause-process <emphasis>(process-name\italic)))
+<x>(pause-process)
+<deflist_def>
+Allows a given process to be temporarily suspended by sending a VMS
+SUSPEND request to it. A paused process will remain paused until it is
+explicitly resumed or killed.
+
+<deflist_item>((resume-process <emphasis>(process-name\italic)))
+<x>(resume-process)
+<deflist_def>
+Resumes a process which has been paused with <key_name>( pause-process).
+
+<deflist_item>((force-exit-process <emphasis>(process-name reason\italic)))
+<x>(force-exit-process)
+<deflist_def>
+Causes the image running in the specified process to be terminated with
+the specified status code. Processes that are not running in user mode
+will not be affected by the exit until they resume execution in user mode.
+If the process is not running an image, the force exit will be issued on
+the next image run in the process.
+
+<deflist_item>((set-process-termination-procedure
+		<emphasis>(process-name function\italic)))
+<deflist_def>
+Associates an EMACS function with a process. The associated
+function will be called when the process terminates (not when an image
+exits). When the associated function is called, the current process is
+temporarily set to the associated process.
+
+<deflist_item>((current-process-name))
+<x>(current-process-name)
+<deflist_def>
+Returns a string containing the current process name.  This
+name will be either the name of the last created process, the name of the
+process which was a target of the <key_name>(set-current-process)
+function, or the name of the associated process for functions called as a
+result of process input, output or termination.
+
+<deflist_item>((set-current-process <emphasis>(process-name\italic)))
+<x>(set-current-process)
+<deflist_def>
+Changes the current process to the process with the specified name.
+If you change the current process name in an associated input, output or
+termination function, the effect will only last for the invocation of that
+function.
+
+<enddefinition_list>
+
+
+<head2>(Input and Output to Processes\ioproc_sec)
+
+<x>(Processes<xs>Input and Output to)
+
+<p>
+The following functions exist to make input and output to and from
+processes convenient.
+
+<p>
+For output, the data  produced by the process can be
+inserted into a buffer associated with the process. This provides a
+convenient way for you to see the output. If, however, some
+processing of the output is required, then an EMACS function can be
+automatically called to obtain the output when it is available and perform
+the required processing.
+
+<p>
+The functions available for output include:
+
+<definition_list>
+
+<deflist_item>((set-process-output-buffer
+		<emphasis>(process-name buffer-name\italic)))
+<x>(set-process-output-buffer)
+<deflist_def>
+Associates a buffer with a process. When output is
+available from the process, it is inserted at the end of the
+buffer. The screen will be updated if the buffer is associated with a
+window.
+
+<p>
+If the number of characters exceeds the maximum for the process,
+characters will be deleted from the beginning of the buffer. This feature
+protects you from creating huge process buffers.
+
+<deflist_item>((set-process-output-procedure
+		<emphasis>(process-name function\italic)))
+<x>(set-process-output-procedure)
+<deflist_def>
+Associates an EMACS function with a process. This function will be called
+once for every line that is produced by the process. It is assumed that
+the function will obtain the output line  and process it in some way. When
+the procedure is called, the current process is temporarily set to the
+process that produced the output line.
+
+<deflist_item>((process-output <emphasis>(process-name\italic)))
+<x>(process-output)
+<deflist_def>
+Returns the next output line from the process.
+
+<enddefinition_list>
+
+<p>
+For input, the user makes  lines of input available to the process.  If
+the process does not require input, an error is generated. To allow for
+co-ordination of input, the following functions are provided:
+
+<definition_list>
+
+<deflist_item>((set-process-input-procedure
+		<emphasis>(process-name function\italic)))
+<x>(set-process-input-procedure)
+<deflist_def>
+Associates an EMACS function with the process. When the
+process requests some input, the designated function is called. It is
+assumed that the function will provide some input to the process.  During
+the call of the associated function, the current process is temporarily
+set to the associated process.
+
+<deflist_item>((send-string-to-process
+		<emphasis>(process-name input-line\italic)))
+<x>(send-string-to-process)
+<deflist_def>
+Sends some input to the designated process. If that process is not
+requesting input, an error is generated.
+
+<deflist_item>((wait-for-process-input-request
+		<emphasis>(process-name\italic)))
+<x>(wait-for-process-input-request)
+<deflist_def>
+Suspends EMACS execution  until the designated process requests some
+input.  Keyboard input will also cause this function to return to prevent
+EMACS from becoming wedged.  When a process asks for input, the function
+returns 1; otherwise, it returns 0, indicating that the user pressed a key
+on the keyboard.
+
+<enddefinition_list>
+
+
+<head1>(Minor Modes\minormodes_sec)
+
+<x>(Minor modes)
+<x>(Modes<xs>Minor)
+
+<p>
+<newterm>(Minor modes) are used to alter the way EMACS performs an
+operation.  All minor modes are independent of each other and of the
+selected major mode.  The statuses of some minor modes are displayed in
+the mode lines for each window.  Each minor mode is controlled by a
+variable that can be turned on or off.  A non zero-value always turns the
+mode on,  and  an explicit  zero  value always turns the mode off.
+
+<p>
+The following minor modes are defined by EMACS:
+
+<definition_list>
+
+<deflist_item>(Auto-fill Mode)
+<x>(Auto-fill Mode)
+<deflist_def>
+This mode  allows  you  to  type  text  endlessly  without worrying  about
+the width of your screen.  Line separators are inserted as required to
+prevent lines from  becoming  too  long.
+
+<x>(right-margin)
+<p>
+Auto-fill Mode is controlled by setting the variable <key_name>(rigth-margin).
+When an attempt is made to insert a word character passed the right margin,
+auto-filling is invoked.
+
+<deflist_item>(Checkpoint Mode)
+<x>(Checkpoint Mode)
+<x>(checkpoint-frequency)
+<deflist_def>
+Checkpoint Mode protects  you  from  system  crashes  by periodically
+saving the buffers you  are  working with.    Whenever  you visit  a
+file,  checkpointing  is enabled if the variable
+<key_name>(checkpoint-frequency) is non-zero.
+
+<x>(current-buffer-checkpointable)
+<p>
+Checkpointing for individual buffers is also controlled by the
+buffer-specific variable <key_name>(current-buffer-checkpointable).
+
+<deflist_item>(Journal Mode)
+<x>(Journal Mode)
+<x>(journal-frequency)
+<deflist_def>
+Journal Mode protects you from system crashes by writing a journal of
+all the changes that are made to modified buffers. When you visit a file,
+journalling is automatically enabled if the variable
+<key_name>(journal-frequency) is non-zero.
+
+<x>(current-buffer-journalled)
+<p>
+Journalling for individual buffers is controlled by the buffer-specific
+variable <key_name>(current-buffer-journalled).
+
+<deflist_item>(Replace Mode)
+<x>(Replace Mode)
+<deflist_def>
+Replace Mode causes ordinary printing characters  to  replace
+existing text rather than be inserted.  For  example,  if  dot is in front
+of the <quote>(<cx>(B)) in <quote>(<cx>(FOOBAR)), then in Replace Mode,
+typing a <quote>(<cx>(G)) changes it  to <quote>(<cx>(FOOGAR)), instead
+of  making it <quote>(<cx>(FOOGBAR)) as usual.
+
+<x>(replace-mode)
+<p>
+This mode is controlled with variable <key_name>(replace-mode).
+
+<deflist_item>(Abbreviation Mode)
+<x>(Abbreviation Mode)
+<deflist_def>
+Abbreviation Mode  allows  you  to  define  abbreviations that
+automatically expand as you type them.  For example, <quote>(<cx>(am))
+might expand  to <quote>(<cx>(Abbrev mode)).  The abbreviations also may
+depend on the active major mode.
+
+<p>
+This mode is controlled by the variable <key_name>(abbrev-mode).
+<x>(abbrev-mode)
+
+<deflist_item>(Read-only Mode)
+<x>(Read-only Mode)
+<deflist_def>
+Read-only Mode allows you to protect the data in a buffer from being altered.
+When Read-only Mode is enabled, attempts to insert characters into the
+buffer are ignored and cause the bell to be sounded.
+
+<x>(read-only-buffer)
+<p>
+This mode is controlled by the variable <key_name>(read-only-buffer).
+
+<enddefinition_list>
+
+
+<head1>(The Mode Line\modeline_sec)
+
+<x>(Mode line)
+
+<x>(mode-line-format)
+<p>
+As with most things in EMACS, the information in the mode line is
+customisable. A buffer-specific variable <key_name>(mode-line-format)
+exists for this purpose.  <key_name>(mode-line-format)  contains a
+format string which governs the way that the mode line information is
+displayed. It contains literal text and embedded format effectors. The
+literal text will be displayed in the mode line as it is typed, while the
+format effectors will be expanded with the appropriate information.
+You normally alter the default value of this variable
+(<key_name>(default-mode-line-format)) so that when a new buffer is created,
+it displays your customised mode line immediately.
+
+<p>
+The general form of the format effectors is <quote>(<cx>(%nx)).
+<quote>(<cx>(n)) is the width of the string to be inserted and causes
+truncation or padding on the right.  <quote>(<cx>(x)) is one of the
+letters in the following list:
+
+
+<definition_list>
+
+<deflist_item>(a)
+<deflist_def>
+Inserts the string <quote>(<cx>(Abbrev))
+if Abbreviation Mode is on, otherwise it inserts nothing.
+
+<deflist_item>(b)
+<deflist_def>
+Inserts the current buffer's name.
+
+<deflist_item>(c)
+<deflist_def>
+Inserts the string <quote>(<cx>(Checkpoint)) if checkpointing is
+generally enabled and also enabled for the current buffer, otherwise it
+inserts nothing.
+
+<deflist_item>(f)
+<deflist_def>
+Inserts the current file name for buffers associated with files, or
+<quote>(<cx>([No File])) for scratch buffers.
+
+<deflist_item>(h)
+<deflist_def>
+Inserts the string
+<quote>(<cx>(<literal>(<)n<literal>(<))) if the horizontal
+position of the window on the current buffer does not include column one.
+<quote>(<cx>(n)) indicates by how many characters column one is
+offset from the left-hand side of the window.
+
+<deflist_item>(j)
+<deflist_def>
+Inserts the string <quote>(<cx>(Journal)) if journalling is enabled for
+the buffer, otherwise nothing is inserted.
+
+<deflist_item>(m)
+<deflist_def>
+<x>(mode-string)
+Inserts the value of the buffer-specific variable <key_name>(mode-string).
+This variable defines the major mode for the buffer.
+
+<deflist_item>(M)
+<x>(global-mode-string)
+<deflist_def>
+Inserts the value of the global variable <key_name>(global-mode-string)
+which defines the name of the currently running subsystem.
+
+<deflist_item>(p)
+<deflist_def>
+Inserts the position of dot in the current buffer as a percentage. If dot
+is at the beginning of the buffer, the string <quote>(<cx>(Top)) is
+inserted. If dot is at the end of the buffer, the string
+<quote>(<cx>(Bottom)) is inserted.
+
+<deflist_item>(r)
+<deflist_def>
+Inserts the string <quote>(<cx>(Overstrike)) if Replace Mode is currently
+enabled.
+
+<deflist_item>(R)
+<deflist_def>
+Inserts the string <quote>(<cx>(Readonly)) if Read-only Mode is currently
+enabled.
+
+<deflist_item>(*)
+<deflist_def>
+Inserts a asterisk if the current buffer has been modified
+since it was last written to disk, otherwise it inserts nothing.
+
+<deflist_item>([ and ])
+<deflist_def>
+Inserts zero or more square brackets depending on the depth of recursive
+editing.  One bracket is inserted per level when the recursive edit depth
+is less than 5. When the  edit depth is 5 or greater, the string
+<quote>(<cx>([n])) is inserted, where <quote>(<cx>(n)) is the recursive
+edit depth.
+
+<enddefinition_list>
+
+<p>
+The default value of <key_name>(mode-line-format) is:
+
+<online_popup>(example)
+<code_example>
+%[%hBuffer: %b%*  File: %f  %M (%m%c%r%a)  %p%]
+<endcode_example>
+<endonline_popup>
+
+
+<head1>(Syntax Tables\syntaxtables_sec)
+
+<x>(Syntax tables)
+
+<x>(global-syntax-table) 
+<x>(current-buffer-syntax-table) 
+<x>(use-syntax-table)
+<p>
+The effects of all the EMACS commands which parse words or balance
+parentheses are controlled by <newterm>(syntax tables).  Each ASCII
+character is represented by one entry in each syntax table. Each buffer
+has a syntax table associated with it. The default syntax table is called
+<key_name>(global-syntax-table). The name of the current syntax table (the
+syntax table associated with the current buffer) may be accessed through
+the variable <key_name>(current-buffer-syntax-table), and this table may
+be changed either by setting the variable, or by using
+the function <key_name>(use-syntax-table).
+
+<x>(modify-syntax-entry)
+<p>
+To alter a syntax table, the function <key_name>( modify-syntax-entry) is
+provided. This command takes a single string argument which describes the
+attributes to be applied to the specified characters as follows:
+
+<list>(numbered)
+
+<le>
+The first character is one of the following:
+
+	<definition_list>
+
+	<deflist_item>(w)
+	<deflist_def>
+	A word character, as used  by  such  functions  as
+	<key_name>(forward-word) and <key_name>(case-word-capitalize).
+
+	<deflist_item>(Space)
+	<deflist_def>
+	A character with no special interpretation.
+	
+	<deflist_item>(<oparen>)
+	<deflist_def>
+	A  open parenthesis.  Typical candidates for this type  are  the
+	characters <quote>(<cx>(<oparen>)), <quote>(<cx>([)) and
+	<quote>(<cx>({)).
+
+	<p>
+	Characters  of  this  type  also  have a matching closing
+	parenthesis specified which appears as the second character of the
+	parameter to <key_name>(modify-syntax-entry).
+
+	<deflist_item>(<cparen>)
+	<deflist_def>
+	A close parenthesis.  Typical candidates for this type  are  the
+	characters <quote>(<cx>(<cparen>)), <quote>(<cx>(])) and
+	<quote>(<cx>(})).  Characters of this type also have a matching
+	open parenthesis  specified which appears as the second character
+	of the parameter to <key_name>(modify-syntax-entry).
+
+	<deflist_item>(")
+	<deflist_def>
+	A double-quote character.  The C string delimiters
+	<quote>(<cx>(")) and <quote>(<cx>(')) are usually given this
+	class.
+
+	<deflist_item>(<literal>(\))
+	<deflist_def>
+	A prefix character, like <quote>(<cx>(<literal>(\))) in C.
+
+	<enddefinition_list>
+
+<le>
+The  second  character  of the string is the matching parenthesis if
+the first  character is of the open or close parenthesis type. If you specify
+that <quote>(<cx>(<oparen>)) is  a left parenthesis matched by
+<quote>(<cx>(<cparen>)), you should also specify that
+<quote>(<cx>(<cparen>)) is a right parenthesis matched by
+<quote>(<cx>(<oparen>)).
+
+<le>
+The third character, if a <quote>(<cx>({)), indicates that the characters
+described by this syntax entry begin a comment.
+
+<le>
+The fourth character, if equal
+to <quote>(<cx>(})), indicates that the character described by this syntax
+entry ends a comment.
+
+<le>
+If  either  the  beginning  or ending comment sequence is two
+characters long, then the fifth character provides the second character
+of the comment sequence.
+
+<le>
+The  sixth and  following  characters  specify  which  characters  are
+described  by  the  entry;  a  range of characters can be specified by
+using the sequence specifier <quote>(<cx>(a-b)), where <quote>(<cx>(a))
+and <quote>(<cx>(b)) are ASCII characters and <quote>(<cx>(a)) is less
+than <quote>(<cx>(b)).  <quote>(<cx>(--)) can be described if it appears
+as the sixth character.
+
+<endlist>
+
+<p>
+Attribute entries that are not relevant should be spaces.
+
+<p>
+For example:
+
+<code_example>
+(modify-syntax-entry "w    -")
+<endcode_example>
+
+<cp>
+makes <quote>(<cx>(-)) behave as a word character;
+
+<code_example>
+(modify-syntax-entry "(]   [")
+<endcode_example>
+
+<cp>
+makes <quote>(<cx>([)) behave as a left bracket which is matched by
+<quote>(<cx>(])).
+
+<x>(list-syntax-tables)
+<x>(dump-syntax-table)
+<p>
+The function <key_name>(list-syntax-tables) is useful for finding out
+the names of all the syntax tables known to EMACS. Use
+<key_name>(dump-syntax-table) to dump the contents of a syntax table.
+This function is very useful when trying to discover why a syntax table
+is not working as expected.

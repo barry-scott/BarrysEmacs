@@ -1,0 +1,515 @@
+<CHAPTER>(EMACS on VMS\vms_chap)
+
+<p>
+This chapter describes how VAX EMACS is integrated into the VMS operating
+system environment.  <reference>(dcl_cmd_sec) describes how to invoke
+EMACS with the EMACS DCL command.  <reference>(startup_sec) describes the
+EMACS startup procedure.  <reference>(special_file_sec) describes the
+special files that EMACS accesses while it is running, and
+<reference>(lognam_sec) lists the logical names used by EMACS.
+
+
+<head1>(The EMACS DCL Command\dcl_cmd_sec)
+
+<x>(DCL command)
+<x>(EMACS<xs>DCL command)
+
+<p>
+The following section describes the EMACS DCL command.
+
+<command_section>
+<set_template_command>(dcl_command)
+
+<dcl_command>(EMACS)
+
+<overview>
+Invoke the EMACS text editor to edit one or more specified input files.
+<endoverview>
+
+<format>
+<fcmd>(EMACS) <fparms>([input-file-spec[,...] [...]])
+
+<qual_list>(Command Qualifiers)
+<qpair>(/[NO]LOG\/LOG)
+<qpair>(/NAME[=name]\/NAME=EMACS$terminal)
+<qpair>(/PACKAGE[=package]\/PACKAGE=EMACS)
+<qpair>(/[NO]RESTORE[=env-file]\/RESTORE)
+<qpair>(/[NO]SUB_PROCESS\See text)
+<endqual_list>
+<endformat>
+
+<paramdeflist>
+<paramitem>([input-file-spec[,...]])
+<paramdef>
+<p>
+Specifies the names of one or more files to be edited.
+
+<p>
+EMACS allows you to specify up to eight parameters on the command line.
+Each parameter can be a comma separated list of strings. Usually (when no
+package is specified) these parameters are treated as file specifications,
+and the files they nominate are automatically visited.
+
+<P>
+If a package is run when you enter EMACS, the parameters can be
+interpreted by the package, and may not be file specifications.
+
+<P>
+The parameters follow the usual case conventions and undergo the usual
+syntactic analysis. If you require a special character in a parameter, you
+must quote the parameter.
+
+<P>
+Parameters may be specified both when EMACS is started, and when an
+existing paused EMACS is re-started.
+<endparamdeflist>
+
+<description>
+<p>
+The EMACS command invokes the VAX EMACS text editor to edit one or more
+specified files.  In addition to starting a new EMACS, the EMACS command
+is also used to re-start a paused EMACS editing session.
+
+<p>
+If no files are specified, EMACS  visits the files being edited the last
+time EMACS was used.
+<enddescription>
+
+<qualdeflist>(Command Qualifiers)
+<qualitem>(/LOG)
+<x>(EMACS<xs>/LOG)
+<qualdef>
+The /LOG qualifier controls the display of logging information.  If /LOG
+is applied to the command line, then:
+
+<list>(unnumbered)
+<le>
+when EMACS starts up, it displays one of the following messages:
+
+<online_popup>(example)
+<display>
+%EMACS-I-NEW, starting EMACS in subprocess <emphasis>(process-name\italic)
+%EMACS-I-CURRENT, starting EMACS in current process
+<enddisplay>
+<endonline_popup>
+
+<cp>
+where <cx>(<emphasis>(process-name\italic)) is the name of the started
+subprocess.
+
+<le>
+when EMACS returns to DCL as a result of an <key_name>(ESC-x exit-emacs)
+or <key_name>(ESC-x pause-emacs) command, the following message is
+displayed:
+
+<online_popup>(example)
+<display>
+%EMACS-I-RETURNED, returned to directory <emphasis>(directory\italic)
+<enddisplay>
+<endonline_popup>
+
+<cp>
+where <cx>(<emphasis>(directory\italic)) is the name of the directory to which
+EMACS returns.
+
+<p>
+If you supply <key_name>(ESC-x exit-emacs) or <key_name>(ESC-x
+pause-emacs) with a DCL command, the /NOLOG action is temporarily applied
+during this particular EMACS-to-DCL transition.
+
+<le>
+when control is returned to EMACS started in a sub-process, the following
+message is displayed:
+
+<online_popup>(example)
+<display>
+%EMACS-I-ATTACH, re-starting EMACS in sub-process <emphasis>(process-name\italic)
+<enddisplay>
+<endonline_popup>
+
+<cp>
+where <cx>(<emphasis>(process-name)) is the name of the EMACS process to which
+control is passed.
+<endlist>
+
+<p>
+If the /NOLOG qualifier is specified, none of the above messages are
+displayed.
+
+<p>
+The default qualifier setting is /LOG.
+
+<qualitem>(/NAME[=name])
+<x>(EMACS<xs>/NAME)
+
+<p>
+This qualifier controls the name of the EMACS sub-process to which
+the EMACS command applies. The user can have any number
+of EMACS processes running at the same time (the total number is limited by
+VMS process quotas).  Each invocation of EMACS must be supplied
+with a unique name using the /NAME qualifier.
+
+<P>
+If no name is specified, EMACS generates a name. This name is constructed
+by obtaining the terminal name from which EMACS is  running, and
+prefixing it with <quote>(EMACS$).  For example, for EMACS running on
+terminal LTA5:, the default EMACS sub-process name would be
+<quote>(EMACS$LTA5).
+
+<qualitem>(/PACKAGE[=package])
+<x>(EMACS<xs>/PACKAGE)
+<p>
+EMACS allows you to specify that a package should be run when EMACS is
+entered. This facility can be used to write EMACS subsystems that can
+be invoked directly from DCL.  You supply the name of the package to
+be run with the /PACKAGE qualifier.
+
+<P>
+A standard EMACS is run if you specify the package EMACS, or
+if you omit the /PACKAGE qualifier.
+
+<qualitem>(/[NO]RESTORE[=env-file])
+<x>(EMACS<xs>/RESTORE)
+<p>
+This qualifier tells EMACS which environment file to use in restoring the
+EMACS environment. EMACS environment files are created using the
+<key_name>(ESC-x save-environment) command described in
+<reference>(custom_chap).
+
+<p>
+If /RESTORE is specified without a file specification, the file
+<hyphenate>(EMACS$\ENVIRON\MENT:\EMACSINIT\.EMACS_\ENVIRON\MENT) is restored.
+Otherwise, the specified environment file is restored.
+
+<P>
+If the file cannot be restored, EMACS issues the message:
+
+<online_popup>(example)
+<display>
+%EMACS-F-NORESTORE, unable to restore environment file <emphasis>(env-file\italic)
+<enddisplay>
+<endonline_popup>
+
+<cp>
+where <emphasis>(env-file\italic) is the name of the environment file
+that could not be restored.  The reason for the failure is displayed on
+the following line.
+
+<P>
+If /NORESTORE is specified, no environment file is restored.
+
+<P>
+The default qualifier setting is /RESTORE.
+
+<qualitem>(/SUB_PROCESS)
+<x>(EMACS<xs>/SUB_PROCESS)
+<p>
+This qualifier controls the environment in which the EMACS image is run.
+If /SUB_PROCESS is specified, EMACS is run in a sub-process using the
+name supplied with the /NAME qualifier (or the default name if none was
+specified). If this process already exists as a paused EMACS, control
+returns to the paused EMACS.
+
+<P>
+If /NOSUB_PROCESS is supplied, a new EMACS is run in the
+current process. If you run EMACS in the current process, the
+<key_name>(ESC-x pause-emacs) command is disabled, as there is
+nowhere to which control can be passed.
+
+<P>
+The default settings for these qualifiers are set at installation time by
+your system manager.
+<endqualdeflist>
+
+<example_sequence>
+<exi><s>($ )<u>(EMACS)
+<extext>
+Invoke EMACS.  EMACS visits the files it was editing when it last
+exited.
+
+<exi><s>($ )<u>(EMACS LOGIN.COM)
+<extext>
+Invoke EMACS to edit the file LOGIN.COM.
+
+<exi>
+<s>($ )<u>(EMACS/RESTORE=TEST_ENVIRONMENT/NAME=TEST_EMACS)
+<extext>
+Invoke EMACS using the saved environment stored in
+<hyphenate>(TEST_\ENVIRON\MENT\.EMACS$\ENVIRON\MENT), with a process name
+of <keep>(<quote>(TEST_EMACS)).
+
+<exi>
+<s>($ )<u>(EMACS/PACKAGE=NOTES)
+<extext>
+Invoke EMACS to run the NOTES package.
+<endexample_sequence>
+<endcommand_section>
+
+
+<head1>(The EMACS Start-Up Procedure\startup_sec)
+
+<x>(Starting EMACS)
+
+<P>
+This section describes in detail what happens when EMACS is initially
+started and re-started after an <key_name>(ESC-x pause-emacs) command.
+The steps that are executed when returning to a paused EMACS are
+specifically noted.
+
+<P>
+The following steps are executed in order:
+
+<list>(unnumbered)
+<LE>
+If the /RESTORE qualifier has been specified, the specified environment file
+is restored. For interactive sessions, the terminal on which EMACS is
+running is initialised and <key_name>(^O) is cancelled.
+
+<LE>
+<x>(EMACSPROF.ML)
+The file <hyphenate>(EMACS$\LIBRARY:\EMACS\PROF.ML) is then executed as a
+series of Mock Lisp (MLisp) expressions. This provides for site-dependent
+initialisation and is executed only if the /NORESTORE qualifier is
+specified.
+
+<P>
+<x>(EMACSINIT.ML)
+<x>(EMACSLIB.TLB)
+<hyphenate>(EMACS$\LIBRARY:\EMACS\PROF.ML) causes the file
+<hyphenate>(SYS$LOGIN:\EMACS\INIT.ML) to be executed as a series of MLisp
+expressions. If this file does not exist,
+<hyphenate>(EMACS$\PATH:\EMACS\INIT.ML) is executed instead. Finally, if
+this file does not exist, the MLisp program EMACSINIT is executed from
+the <hyphenate>(SYS$\LOGIN:\EMACS\LIB.TLB) database instead.
+
+<LE>
+<x>(enter-emacs-hook)
+If EMACS is starting and the variable <key_name>(enter-emacs-hook) contains
+the name of an MLisp function, then this function is executed.
+
+<LE>
+<x>(return-to-emacs-hook)
+If EMACS is returning to a paused editing session and the variable
+<key_name>(return-to-emacs-hook) contains the name of an MLisp
+function, then this function is executed.
+
+<LE>
+If the /PACKAGE qualifier is specified on the EMACS command line,
+and the package specified is not EMACS, then the designated package is
+loaded and run. This is achieved by taking the name specified and adding
+<quote>(.MLP) to it. The resulting name is then used as the name of a file to
+execute as a series of MLisp expressions. When the file has been
+completely executed, the function <keep>(<key_name>(package-name-com)) is
+called.
+
+<P>
+For example, a package called DIRED will have file file called
+DIRED.MLP which contains an MLisp function called
+<keep>(<key_name>(dired-com)).
+
+<P>
+This step is executed even when returning to a paused EMACS.
+
+<LE>
+<x>(argc)
+<x>(argv)
+If the EMACS functions <key_name>(argc) and <key_name>(argv) have not been
+used since the EMACS command was issued, all the files specified on
+the command line are automatically visited.
+
+<P>
+<x>(getenv)
+The default directory of the parent is used to visit these files.
+When returning to a paused EMACS, this default may be different to
+the default in EMACS. The parent's default directory can be obtained
+in EMACS by using the MLisp expression <quote>(<cx>((getenv "PATH"))).
+
+<LE>
+If no arguments were specified on the command line, EMACS attempts to
+restore the files that were displayed on the screen when EMACS last exited
+completely. This information is maintained in the file
+<hyphenate>(EMACS$\MEMORY:\EMACS_\<emphasis>(username\italic)\.MEMORY), where
+<emphasis>(username\italic) is the user's VMS username. The contents of
+this file are private to EMACS, and should never be altered or edited. If
+the file does not exist, no files will be automatically visited.
+
+<LE>
+If EMACS is running from a command procedure or in batch, EMACS opens
+SYS$OUTPUT to receive messages, and then forces the command
+<quote>(<cx>(<oparen>execute-mlisp-file "SYS$INPUT:"<cparen>)) to be
+executed. When end-of-file is returned, EMACS exits.
+
+<LE>
+For interactive sessions, EMACS then calls its display processor to
+display the screen, and then calls its keyboard processor to process
+keyboard commands.
+<endlist>
+
+
+<head1>(Special EMACS Files\special_file_sec)
+
+<p>
+This section contains a list of all of the special files EMACS may
+access while it is running.
+
+<definition_list>
+<deflist_item>(SYS$LOGIN:EMACSINIT.ML)
+<x>(EMACSINIT.ML)
+<deflist_def>
+This is your private start-up file. The file is executed as a series of
+MLisp expressions as part of the EMACS initialisation process.
+
+<deflist_item>(EMACS$PATH:EMACSINIT.ML)
+<x>(EMACS$PATH)
+<x>(EMACSINIT.ML)
+<deflist_def>
+Alternative location for the EMACSINIT.ML file.
+
+<deflist_item>(EMACS$LIBRARY:EMACSINIT.EMACS_ENVIRONMENT)
+<x>(EMACSINIT.EMACS_ENVIRONMENT)
+<x>(Environment file)
+<deflist_def>
+This file contains the standard EMACS environment.
+
+<deflist_item>(EMACS$ENVIRONMENT:EMACSINIT.EMACS_ENVIRONMENT)
+<deflist_def>
+This file contains your private saved EMACS environment.
+
+<deflist_item>(SYS$LOGIN:EMACSLIB.TLB)
+<x>(EMACSLIB.TLB)
+<deflist_def>
+This file is a VMS text library which contains your private library of
+MLisp programs. When the <key_name>(ESC-x execute-mlisp-file) command is
+issued, this text library will be included in the search for a program.
+
+<deflist_item>(SYS$LOGIN:SUBRNAMES.TLB)
+<x>(SUBRNAMES.TLB)
+<deflist_def>
+This file is a VMS text library which contains your one-line
+descriptions for the <key_name>(ESC-x describe-word-in-buffer) command.
+<x>(describe-word-in-buffer)
+
+<deflist_item>(EMACS$LIBRARY:EMACSPROF.ML)
+<x>(EMACSPROF.ML)
+<deflist_def>
+This file is the EMACS system start-up file. It is executed as a series of
+MLisp expressions every time EMACS is started with the
+/NORESTORE qualifier.
+
+<deflist_item>(EMACS$LIBRARY:EMACSLIB.TLB)
+<x>(EMACSLIB.TLB)
+<deflist_def>
+This file is a text library containing all the MLisp programs and
+libraries supplied with EMACS.
+
+<deflist_item>(EMACS$LIBRARY:EMACSLANG.TLB)
+<x>(EMACSLANG.TLB)
+<deflist_def>
+This is the EMACS language template database for use with
+<keep>(<key_name>(c-mode)) and <keep>(<key_name>(bliss-mode)). The default
+templates are in this file.  See <reference>(editprog_sec) for more
+information on language-specific editing.
+
+<deflist_item>(SYS$LOGIN:LANGUAGE-TEMPLATES.TLB)
+<x>(LANGUAGE-TEMPLATES.TLB)
+<deflist_def>
+This is your personal language template database file. You put your own
+customised language templates for use with <keep>(<key_name>(c-mode)) and
+<keep>(<key_name>(bliss-mode)) in this file.
+See <reference>(editprog_sec) for more information on language specific
+editing.
+<enddefinition_list>
+
+
+<HEAD1>(EMACS Logical Names\lognam_sec)
+
+<p>
+EMACS uses a number of logical names. These include the following:
+
+<definition_list>
+<deflist_item>(EMACS$CHECKPOINT)
+<x>(EMACS$CHECKPOINT)
+<deflist_def>
+EMACS writes all checkpoint files to the directory specified by this
+logical name.
+
+<deflist_item>(EMACS$CONTROL_STRING_PROCESSING)
+<x>(EMACS$CONTROL_STRING_PROCESSING)
+<deflist_def>
+This logical name is used to turn off the EMACS
+<key_name>(control-string-processing) functions. Define
+this logical name with a value of 0 to disable control string  processing.
+This is only required if you have MLisp code that will not work with the
+control string processing functions of EMACS.
+
+<deflist_item>(EMACS$ENVIRONMENT)
+<x>(EMACS$ENVIRONMENT)
+<deflist_def>
+Points to the location of the default EMACS environment file. The default value
+of this logical name is <quote>(SYS$LOGIN:,EMACS$LIBRARY:). Your environment
+file will therefore be used before the system's environment file.
+
+<deflist_item>(EMACS$EXE)
+<x>(EMACS$EXE)
+<deflist_def>
+Points to the location of the EMACS executable image.
+
+<deflist_item>(EMACS$HELP)
+<x>(EMACS$HELP)
+<deflist_def>
+Points to the location of the EMACS Help information. This includes the
+<emphasis>(describe\italic) and <emphasis>(quick-information\italic)
+help databases.
+
+<deflist_item>(EMACS$INFO)
+<x>(EMACS$INFO)
+<deflist_def>
+This logical name is used by the INFO subsystem to access its database.
+
+<deflist_item>(EMACS$JOURNAL)
+<x>(EMACS$JOURNAL)
+<deflist_def>
+Points to the directory that EMACS uses to store journal files.
+
+<deflist_item>(EMACS$LIBRARY)
+<deflist_def>
+<x>(EMACS$LIBRARY)
+Points to the installed EMACS, and is used to access EMACSPROF.ML, the EMACS
+documentation and the supplied libraries and packages.
+
+<deflist_item>(EMACS$LIBRARY_ACCESS)
+<deflist_def>
+<x>(EMACS$LIBRARY_ACCESS)
+<x>(extend-database-search-list)
+This logical name is used to provide the
+<key_name>(extend-database-search-list) command with library access
+information when EMACSPROF.ML is run.  <x>(extend-database-search-list) If
+it is not defined, libraries are opened writeable and closed between
+accesses.
+
+<deflist_item>(EMACS$MEMORY)
+<x>(EMACS$MEMORY)
+<deflist_def>
+Points to the location of the EMACS memory file.  By default, this is
+defined as SYS$LOGIN:.  Other useful values include SYS$DISK:[] (which
+means that a memory file is created for each directory in which EMACS
+exits), and NLA0: (which turns the memory file off).
+
+<deflist_item>(EMACS$PATH)
+<x>(EMACS$PATH)
+<deflist_def>
+This logical name is used when EMACS attempts to load an MLisp library from
+a file. It should translate to a search-list defining the directories in
+which EMACS should look for MLisp files. If none of the directories
+in the search-list contains the requested file, the database search-list
+<keep>(<key_name>(MLisp-library)) will be used instead. The default
+value for EMACS$PATH is <quote>(SYS$DISK:[],EMACS$LIBRARY:), which
+causes the default directory to be searched first, then EMACS$LIBRARY.
+
+<deflist_item>(EMACS$SHARE)
+<x>(EMACS$SHARE)
+<deflist_def>
+This logical name is used by EMACS to access all shareable images supplied
+with EMACS.
+
+<enddefinition_list>

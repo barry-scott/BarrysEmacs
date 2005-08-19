@@ -1,0 +1,19 @@
+<comment>
+	Profile for the Vax Emacs Extensions Reference Manual
+
+	Adrian Pasciuta, 20-Mar-1990
+<endcomment>
+
+<doctype>(SOFTWARE.REFERENCE)
+
+<profile>
+
+	<element>(docs$src:emacs_er_front.sdml)
+
+	<element>(docs$src:emacs_er_intro.sdml)
+	<element>(docs$src:emacs_er_packagesubsys.sdml)
+	<element>(docs$src:emacs_er_libraries.sdml)
+
+	<index_file>
+
+<endprofile>

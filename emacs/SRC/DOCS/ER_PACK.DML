@@ -1,0 +1,1120 @@
+<chapter>(EMACS Package and Subsystem Reference\packagesubsys_chap)
+
+<head1>(BUFDIRED, A Buffer Editing Subsystem\bufdired_sec)
+
+<x>(BUFDIRED)
+<x>(Buffer editing)
+<x>(Editing buffers)
+
+<x>(buffer-dired)
+<p>
+The BUFDIRED subsystem defines the function <key_name>(buffer-dired).
+This function performs the same sort of editing operations as the DIRED
+package does for files.
+
+<p>
+When you execute the <key_name>(buffer-dired) function, EMACS displays a
+buffer called <key_name>(Buffer list), which contains a list of all the
+buffers currently in EMACS.  Each line in the list contains information
+about one buffer.  The information includes:
+
+<list>(unnumbered)
+
+<le>
+The buffer name
+
+<le>
+The size of the buffer in characters
+
+<le>
+The type of the buffer (<key_name>(File), <key_name>(Scratch) or
+<key_name>(Macro)).
+
+<le>
+The Major Mode string
+
+<le>
+The name of the file associated with the buffer.
+
+<endlist>
+
+<p>
+You can use the following commands to perform various operations on the
+buffers in the buffer list:
+
+<definition_list>
+
+<deflist_item>(?)
+<deflist_def>
+Displays a help screen describing the available commands.
+
+<deflist_item>(n)
+<deflist_def>
+Moves the cursor to the next line containing the next buffer.
+
+<deflist_item>(p)
+<deflist_def>
+Moves the cursor to the previous line containing the previous buffer.
+
+<deflist_item>(d)
+<deflist_def>
+Deletes the indicated buffer.
+
+<deflist_item>(c)
+<deflist_def>
+Toggles the checkpointing setting for the indicated buffer.
+
+<deflist_item>(j)
+<deflist_def>
+Toggles the journalling setting for the indicated buffer.
+
+<deflist_item>(m)
+<deflist_def>
+Toggles the modified buffer flag for the indicated buffer.
+
+<deflist_item>(e)
+<deflist_def>
+Edits the indicated buffer in a recursive editing level.
+
+<deflist_item>(g)
+<deflist_def>
+Fetches the indicated buffer from the <key_name>(MLisp-library) database
+search-list.
+
+<deflist_item>(p)
+<deflist_def>
+Puts the indicated buffer into the <key_name>(MLisp-library) database.
+
+<deflist_item>(w)
+<deflist_def>
+Writes out the indicated buffer to disk.
+
+<deflist_item>(r)
+<deflist_def>
+Re-reads the associated file into the indicated buffer, overwriting the
+buffer's existing contents.
+
+<deflist_item>(v)
+<deflist_def>
+Visits a named file.
+
+<deflist_item>(b)
+<deflist_def>
+Visits a named buffer.
+
+<deflist_item>(e)
+<deflist_def>
+Examines the indicated buffer.
+
+<deflist_item>(q)
+<deflist_def>
+Exits from the buffer editor.
+
+<enddefinition_list>
+
+
+<head1>(DEBUG, A Mock Lisp Debugger\debug_sec)
+
+<x>(DEBUG)
+<x>(Debugging Mock Lisp)
+<x>(Mock Lisp debugger)
+
+<p>
+The DEBUG subsystem uses the EMACS tracing, breakpointing, error trapping
+and stack dumping facilities  to provide a powerful source line Mock Lisp
+debugger.
+
+<p>
+To start DEBUG, load in the DEBUG subsystem. Each time you want to enter
+DEBUG mode, use the <key_name>(ESC-^D) (or <key_name>(ESC-x debug))
+command.
+
+<p>
+The <key_name>(ESC-x debug) command loads up the breakpoint, error
+and trace handlers, binds  DEBUG functions to keys and pops up the
+<key_name>(Debug) and <key_name>(show expression) windows. Source code
+and other information displayed by DEBUG will appear in these windows.
+
+<p>
+The <key_name>(show expression) window is used to display the type and
+value that the last expression returned or variable requested.
+
+<p>
+The <key_name>(Debug) window is used to display source lines to be
+executed, and is where DEBUG commands are requested. The following
+commands are available in the Debug window:
+
+<definition_list>
+
+<deflist_item>(b (set breakpoint))
+<deflist_def>
+Sets a breakpoint on the nominated function. When that
+function is executed after the breakpoint has been set, it
+will cause DEBUG to regain control, and DEBUG will display
+the decompiled source showing the call to the function.
+
+<deflist_item>(B (remove breakpoint))
+<deflist_def>
+Clears the breakpoint flag for the specified function so
+that it will no longer cause a breakpoint.
+
+<deflist_item>(c (show calls))
+<deflist_def>
+Displays the current call stack in the Debug window.
+
+<deflist_item>(. or KP5 (display current source))
+<deflist_def>
+Displays the current source line, in context, in the <key_name>(Debug) window.
+
+<deflist_item>(e (interrupt on error))
+<deflist_def>
+Causes DEBUG to trap error reports, and displays the reports along with and
+the erring function. Errors are not trapped by default.
+
+<deflist_item>(E (kill error trapping))
+<deflist_def>
+Disables error trapping.
+
+<deflist_item>(g or KP, (go))
+<deflist_def>
+Continues the execution of a program without interference
+from DEBUG. The only way DEBUG will re-gain control is at a
+breakpoint. Use this function when you have finished
+examining execution at one point in your program, and you
+wish to continue the program.
+
+<deflist_item>(h or ? or Help (help))
+<deflist_def>
+Displays help on DEBUG commands.
+
+<deflist_item>(l (list breakpoints))
+<deflist_def>
+Displays a list in the <key_name>(Debug) window of all of the functions
+which have their breakpoint flag set.
+
+<deflist_item>(o or KP0 (step over))
+<deflist_def>
+Executes the next MLisp expression and stays in DEBUG mode.
+However, if the expression if a function call,
+DEBUG executes all of the expressions in the called
+function and any functions it calls.
+
+<deflist_item>(p (print))
+<deflist_def>
+Prints the type and contents of a variable in the <key_name>(show
+expression) window.
+
+<deflist_item>(q (quit))
+<deflist_def>
+Exits DEBUG. The <key_name>(Debug) window is removed and all variables
+controlled by DEBUG are reset. Breakpoints remain intact,
+but will not cause DEBUG to be run. To re-start debugging,
+Use the <key_name>(ESC-^D) (<key_name>(ESC-x debug)) command.
+
+<deflist_item>(s or PF1-KP0 (step))
+<deflist_def>
+Executes the next MLisp expression.
+
+<deflist_item>(t (set trace mode))
+<deflist_def>
+Enables <key_name>(trace-mode). During <key_name>(trace-mode), every
+MLisp expression that is executed will be displayed in the
+<key_name>(Debug) window for <key_name>(debug-sit-for) tenths of a
+second. Execution will continue until all MLisp expression
+have been executed.
+
+<deflist_item>(T (Unset trace mode))
+<deflist_def>
+Unsets <key_name>(trace-mode).
+
+<deflist_item>(v (View last expression))
+<deflist_def>
+Prints the value of the last expression executed.
+
+<enddefinition_list>
+
+<p>
+DEBUG never displays information about any of the
+DEBUG functions, nor about MLisp functions that are called
+while in the Debug window. This stops DEBUG from confusing you.
+
+
+<head1>(DIRED, The Directory Editor\dired_sec)
+
+<x>(DIRED)
+<x>(Directory Editor)
+<x>(Editing directories)
+
+<p>
+DIRED is a directory editing package.  You can use it to perform
+housekeeping operations on a specified set of files.
+
+<p>
+DIRED makes it easy to delete many of the files in a single directory at
+once. It presents a copy of the directory listing which you can move
+around in, marking files for deletion. When you have marked all the files
+you want to delete, you can tell DIRED to go ahead and delete the marked
+files.
+
+<p>
+Invoke DIRED from DCL using the command:
+
+<display>
+$ EMACS/PACKAGE=DIRED <emphasis>(files\italic)
+<enddisplay>
+
+<cp>
+where <cx>(<emphasis>(files\italic)) is any valid VMS file specification
+(which may include wildcards).  If you invoke DIRED from DCL, when you
+exit DIRED, EMACS will also exit.
+
+<p>
+You can also invoke DIRED from EMACS by typing the <key_name>(ESC-x dired
+files) command.
+
+<p>
+If you do not specify which files DIRED should edit, it will edit all the
+files in the current directory.
+
+<p>
+The DIRED commands are:
+
+<definition_list>
+
+<deflist_item>(D)
+<deflist_def>
+Marks the file in the current line for deletion.
+The deletion mark is
+visible as a <quote>(<cx>(D)) at the beginning of the line. Dot is
+moved to the beginning of the next line, so that several
+<key_name>(D)s mark several files for deletion.
+
+<deflist_item>(U)
+<deflist_def>
+Removes the deletion mark for the file in the current line.
+
+<deflist_item>(N)
+<deflist_def>
+Moves down a line (similar to <key_name>(^N)).
+
+<deflist_item>(P)
+<deflist_def>
+Moves up a line (similar to <key_name>(^P)).
+
+<deflist_item>(E)
+<deflist_def>
+If you are not sure whether you want to delete a file, you
+can examine it by typing <key_name>(E). This enters a recursive
+edit and switches to a buffer containing the file. You can
+exit with <key_name>(ESC-x exit-emacs) (<key_name>(^C)). 
+Modifications to the file are not permitted.
+When you exit the recursive editing level, you return to
+DIRED.
+
+<deflist_item>(Q)
+<deflist_def>
+When you have marked the files you wish to delete, you can
+exit DIRED with <key_name>(Q). If any files were marked for
+deletion, DIRED lists them in a concise forma. Then DIRED asks 
+whether you really want to delete the files. You can type <key_name>(Y) to
+go ahead and delete them, <key_name>(R) to return to editing the directory
+or any other character to quit DIRED and delete nothing. No
+<key_name>(Return) character is needed.
+
+<deflist_item>(? or Help)
+<deflist_def>
+Displays a help screen listing the DIRED commands.
+
+<enddefinition_list>
+
+
+<head1>(HELP, An Interface to VMS HELP\help_sec)
+
+<x>(HELP)
+<x>(VMS HELP interface)
+
+<p>
+HELP is a subsystem that allows the user to read help pages from the
+system help files. It provides a paginated, structured interface allowing
+topics to be specified at each level, or from the root of the help tree.
+
+<x>(vms-help)
+<p>
+You can enter the VMS HELP subsystem by pressing the <key>(Help) key, and
+typing <quote>(<cx>(h)) at the Mini-buffer prompt.  Alternatively, you can
+start the HELP subsystem directly by executing the <key_name>(vms-help)
+function.  When HELP is run, the screen is saved for later restoration,
+and a single window is displayed containing the names of available help
+libraries
+
+<p>
+The following commands are available to move around the help
+tree:
+
+<definition_list>
+
+<deflist_item>(Space)
+<deflist_def>
+Moves forward one page of the current help display.
+
+<deflist_item>(Backspace)
+<deflist_def>
+Moves backward one page of the current help display.
+
+<deflist_item>(a)
+<deflist_def>
+Scrolls the display one line up.
+
+<deflist_item>(z)
+<deflist_def>
+Scrolls the display one line down.
+
+<deflist_item>(b)
+<deflist_def>
+Moves the window to display the first page.
+
+<deflist_item>(e)
+<deflist_def>
+Moves the window to display the last page.
+
+<deflist_item>(n)
+<deflist_def>
+Specifies a new help topic and fills the window with
+information on that topic.
+
+<deflist_item>(d)
+<deflist_def>
+Specifies the next topic and fills the window with
+information on that topic.
+
+<deflist_item>(u)
+<deflist_def>
+Removes one help level from the help path and fills the help
+window with the information for the new path.
+
+<deflist_item>(t)
+<deflist_def>
+Goes to the top of the help tree and displays the options
+available.
+
+<deflist_item>(q)
+<deflist_def>
+Exits HELP, and restores the saved screen.
+
+<deflist_item>(?)
+<deflist_def>
+Displays a short help screen on how to use the HELP subsystem.
+
+<enddefinition_list>
+
+
+<head1>(INFO, A Tree-structured Documentation Reader\info_sec)
+
+<x>(INFO)
+<x>(Documentation reader)
+
+<p>
+INFO is a package that allows you to read (and possibly alter)
+documentation written in a tree-structured format.
+
+<p>
+There are three ways to start the INFO package:
+
+<list>(unnumbered)
+
+<le>
+By starting INFO from the DCL command line:
+
+<code_example>
+$ EMACS/PACKAGE=INFO
+<endcode_example>
+
+<le>
+By pressing the <key>(Help) key and typing <key_name>(i) at the
+Mini-buffer prompt
+
+<le>
+By executing the function <key_name>(info) using <key_name>(ESC-x info).
+
+<endlist>
+
+<p>
+When INFO is started, it displays the available INFO databases.  These are
+listed in <reference>(info_tab).
+
+<table>(INFO Databases\info_tab)
+<table_setup>(2\8)
+<table_heads>(Database\Description)
+<table_row>(DCL\How to use DCL on VMS)
+<table_row>(EMACS\The VAX EMACS editor)
+<table_row>(Info\A tutorial on INFO)
+<table_row>(Languages\Language processors)
+<table_row>(Utilities\VMS utility programs)
+<endtable>
+
+<p>
+INFO is a large package and has many commands for navigating the various
+INFO databases.  Due to the complexity of the package, it contains its own
+tutorial which describes INFO concepts and the various INFO commands.  To
+start the tutorial, start the INFO package, then press <key_name>(h) (for
+<quote>(Help)).
+
+<p>
+The following keys are bound by INFO and are used for navigating the INFO
+databases:
+
+<definition_list>
+
+<deflist_item>(Space, ^V)
+<deflist_def>
+Display next screen
+
+<deflist_item>(Backspace, ^H, ESC-v)
+<deflist_def>
+Display previous screen
+
+<deflist_item>(?)
+<deflist_def>
+Visit this node (command-summary)
+
+<deflist_item>(@)
+<deflist_def>
+Menu path (enter menu items separated by spaces)
+
+<deflist_item>(a)
+<deflist_def>
+Scroll one line down
+
+<deflist_item>(b)
+<deflist_def>
+Beginning of node
+
+<deflist_item>(d)
+<deflist_def>
+Go to directory node (the top of the INFO tree)
+
+<deflist_item>(e)
+<deflist_def>
+Go to the end of the current node
+
+<deflist_item>(^E)
+<deflist_def>
+Edit current node (<key_name>(^]) exits the recursive edit)
+
+<deflist_item>(g)
+<deflist_def>
+Go to a node
+
+<deflist_item>(h)
+<deflist_def>
+Help---visit the INFO tutorial
+
+<deflist_item>(l)
+<deflist_def>
+Return to last node (retrace your path through the tree)
+
+<deflist_item>(m)
+<deflist_def>
+Go to a menu item
+
+<deflist_item>(n)
+<deflist_def>
+Go to the next node in sequence
+
+<deflist_item>(o)
+<deflist_def>
+Output current node to a file
+
+<deflist_item>(p)
+<deflist_def>
+Go to the previous node in sequence
+
+<deflist_item>(q)
+<deflist_def>
+Quit INFO
+
+<deflist_item>(r)
+<deflist_def>
+Reverse search for a string
+
+<deflist_item>(s)
+<deflist_def>
+Forward search for a string
+
+<deflist_item>(u)
+<deflist_def>
+Go up to this node's father
+
+<deflist_item>(x)
+<deflist_def>
+Execute an extended command
+
+<deflist_item>(z)
+<deflist_def>
+Scroll one line up
+
+<enddefinition_list>
+
+
+
+<head1>(NOTES, An Interface to VAX NOTES\notes_sec)
+
+<x>(NOTES)
+<x>(VAX NOTES interface)
+
+<p>
+The NOTES package provides access to the VAX NOTES Computer Conferencing
+software.  The following sections provide summary information on using the
+NOTES package and how to customise NOTES.
+
+<p>
+To invoke NOTES from DCL, type:
+
+<display>
+$ EMACS/PACKAGE=NOTES
+<enddisplay>
+
+<p>
+To invoke NOTES from inside EMACS, use the <key_name>(ESC-x notes) command.
+
+
+<head2>(Using NOTES\usingnotes_sec)
+
+<p>
+EMACS NOTES gives you access to all the features available in the default
+VAX NOTES interface, but the commands are different.  To get help on the
+EMACS NOTES commands, press <key_name>(h) or <key_name>(Help).
+
+<p>
+Before you  can  read the notes in a conference, you must first  add the
+conference to your Notebook, then open the conference.
+
+<p>
+To add  a  conference to your Notebook, use the ADD ENTRY command.  For
+example, to add the ETIQUETTE conference to your Notebook, type
+<quote>(<cx>(Ae)).  Fill  in  the  form  with the name of the conference,
+<quote>(<cx>(ETIQUETTE)). Type <key_name>(^C) when the form is complete,
+then answer  <quote>(<cx>(y))  to confirm that the entry should be added
+to your notebook:
+
+<display>
+Notefile name:     ETIQUETTE
+Entry name:                
+Classes:           MAIN
+Personal name:             
+<enddisplay>
+
+<p>
+To open  a conference, use the OPEN command. For example, to  open  the
+ETIQUETTE conference, move the cursor to the line containing the ETIQUETTE
+entry in your notebook and type <quote>(<cx>(o)).
+
+
+<p>
+A conference   is   organised   into   discussions.  Each discussion
+begins with a topic; each topic can have any number of replies. Topics are
+numbered consecutively, starting with topic number 1.  Replies  are  also
+numbered consecutively, by topic, starting with <keep>(.1). For example,
+if there are three replies to topic 4, they are numbered 4.1, 4.2, and
+4.3.
+
+<p>
+To see a listing of the topics in a conference, type <quote>(<cx>(dn)).
+
+<p>
+To read a specific topic or reply, type the number at the
+<quote>(<cx>(Read note <oparen>nn.rr<cparen>)) prompt. For example, to
+read the third reply to topic 6, type <quote>(<cx>(r)) and to the prompt
+type:
+
+<display>
+Read note (nn.rr) 6.3
+<enddisplay>
+
+<p>
+Use the  <key_name>(Enter)  key  to  page  through  the  replies in a
+discussion.
+
+<p>
+To add  a  reply to a discussion, use the ANSWER command.  You  must  be
+reading  a  reply  (or  the  topic) in the discussion  before  you  issue
+the  ANSWER  command. For example,  to  add  a reply to the discussion on
+topic 10, type:
+
+
+<display>
+r10
+a
+<enddisplay>
+
+<p>
+To start a discussion on a new topic, use the WRITE command by pressing
+<quote>(<cx>(w)).
+
+<p>
+To print  notes,  use  the PRINT command. For example, to print  topic  3
+and all replies to that topic, press <quote>(<cx>(p)) to display the print
+form, then fill in the form and type <key_name>(^C):
+
+<display>
+Note-id:        3.*
+Mark as seen:   n
+Print options:  
+String:         
+Author:         
+Since:          
+Before:         
+Title:          
+Unseen:         n
+Keyword:        
+<enddisplay>
+
+<p>
+To leave   a  conference,  use  the  CLOSE  command by pressing
+<quote>(<cx>(c)).
+
+<p>
+To end  your  EMACS  NOTES session, use the QUIT command, by pressing
+<quote>(<cx>(q)).
+
+<p>
+A complete list of the NOTES key bindings is given in
+<reference>(notescommands_tab).  Each EMACS NOTES command is listed with
+its equivalent VAX NOTES command.
+
+<table>(EMACS NOTES Commands and their VAX NOTES Equivalents\notescommands_tab)
+<table_attributes>(multipage)
+<table_setup>(2\14)
+<table_heads>(EMACS Command\VAX NOTES Equivalent)
+
+<table_unit>
+<table_unit_heads>(<span>(2\left)Main Keyboard Bindings)
+
+<table_row>(Ae or AE\ADD ENTRY)
+
+<table_row>(Ak or AK\ADD KEYWORD)
+
+<table_row>(Am\ADD MARKER)
+
+<table_row>(AM\ADD MEMBER)
+
+<table_row>(a\ANSWER)
+
+<table_row_break>(first)
+
+<table_row>(bn or bN\BACK NOTE)
+
+<table_row>(br or bR\BACK REPLY)
+
+<table_row>(<\BACK REPLY)
+
+<table_row>(bt or bT\BACK TOPIC)
+
+<table_row>(,\BACK TOPIC)
+
+<table_row>(c\CLOSE)
+
+<table_row>(Cc or CC\CREATE CONFERENCE)
+
+<table_row>(Ck or CK\CREATE KEYWORD)
+
+<table_row>(De or DE\DELETE ENTRY)
+
+<table_row>(Dk or DK\DELETE KEYWORD)
+
+<table_row>(Dm\DELETE MARKER)
+
+<table_row>(DM or Du or DU\DELETE MEMBER)
+
+<table_row>(Dn or DN\DELETE NOTE)
+
+<table_row>(dc or dC\DIRECTORY/CONFERENCES)
+
+<table_row>(de or dE\DIRECTORY/ENTRIES)
+
+<table_row>(dn or dN\DIRECTORY (of notes))
+
+<table_row>(e\EXTRACT)
+
+<table_row>(f\FORWARD)
+
+<table_row>(h or H or ?\HELP)
+
+<table_row>(m\ADD MARKER)
+
+<table_row>(Me or ME\MODIFY ENTRY)
+
+<table_row>(Mk or MK\MODIFY KEYWORD)
+
+<table_row>(MM or Mu or MU\MODIFY MEMBER)
+
+<table_row>(MC\SET CONFERENCE)
+
+<table_row>(Mn or MN\SET NOTE)
+
+<table_row>(Mp or MP\SET PROFILE)
+
+<table_row>(nn or nN\NEXT NOTE)
+
+<table_row>(nr or nR\NEXT REPLY)
+
+<table_row>(>\NEXT REPLY)
+
+<table_row>(nt or nT\NEXT TOPIC)
+
+<table_row>(.\NEXT TOPIC)
+
+<table_row>(nu or nU\NEXT UNSEEN)
+
+<table_row>(u\NEXT UNSEEN)
+
+<table_row>(o\OPEN)
+
+<table_row>(O\OPEN (If there are any unseen notes))
+
+<table_row>(p or P\PRINT)
+
+<table_row>(r\READ)
+
+<table_row>(R\(Last note read))
+
+<table_row>(s\SEARCH)
+
+<table_row>(Sc\SET CLASS)
+
+<table_row>(SC\SET CONFERENCE)
+
+<table_row>(Sm or SM\SET MODERATOR)
+
+<table_row>(Sn or SN\SET NOTE)
+
+<table_row>(Sp or SP\SET PROFILE)
+
+<table_row>(Ss or SS\SET SEEN)
+
+<table_row>(Se or SE\MODIFY ENTRY)
+
+<table_row>(Sk or SK\MODIFY KEYWORD)
+
+<table_row>(Su or SU\MODIFY MEMBER)
+
+<table_row>(lc\SHOW CLASS)
+
+<table_row>(lC\SHOW CONFERENCE)
+
+<table_row>(le\SHOW ENTRY)
+
+<table_row>(lE\SHOW ERRORS)
+
+<table_row>(lk or lK\SHOW KEYWORDS)
+
+<table_row>(lm\SHOW MARKER)
+
+<table_row>(lM\SHOW MODERATOR)
+
+<table_row>(lu or lU\SHOW MEMBERS)
+
+<table_row>(ln or lN\SHOW NOTE)
+
+<table_row>(lp or lP\SHOW PROFILE)
+
+<table_row>(lv or lV\SHOW VERSION)
+
+<table_row>(U\UPDATE)
+
+<table_row>(v\(Change view))
+
+<table_row>(w\WRITE NOTE)
+
+<table_row>(q or Q\EXIT)
+
+<table_row>(Return\(Continue command))
+<endtable_unit>
+
+<table_row_break>(last)
+
+<table_unit>
+<table_unit_heads>(<span>(2\left)Numeric Keypad Bindings)
+
+<table_row>(KP1\BACK REPLY)
+
+<table_row>(KP2\NEXT TOPIC)
+
+<table_row>(KP3\NEXT REPLY)
+
+<table_row>(KP5\BACK TOPIC)
+
+<table_row>(KP7\(<key_name>(Select) key))
+
+<table_row>(COMMA\NEXT UNSEEN)
+
+<table_row>(MINUS\(Last note read))
+
+<table_row>(PF2\HELP)
+
+<table_row>(ENTER\(<key_name>(Enter) key))
+
+<endtable_unit>
+<endtable>
+
+<p>
+The EMACS NOTES commands behave differently when passed a prefix
+argument.  Specifying a prefix argument causes a form to be popped
+up allowing you to specify command options different from the defaults
+supplied with the normal command.  Use the <key_name>(/) key to specify a
+prefix argument.  For example, to specify a prefix argument for the
+DIRECTORY command, enter <quote>(<cx>(/dn)).
+
+
+<head2>(Customising NOTES\custnotes_sec)
+
+<p>
+You can customise NOTES in two ways:
+
+<list>(unnumbered)
+<le>
+By changing the default values of NOTES variables
+<le>
+By creating your own NOTES key bindings
+<endlist>
+
+<p>
+To modify the value of default NOTES variables, create a file in your
+EMACS$PATH called NOTES_SETUP.ML containing MLisp code that sets the
+NOTES variables as you require them.  The NOTES package will load
+NOTES_SETUP.ML when you load the NOTES package.
+
+<p>
+The variables that you can set and their default values are listed as
+follows:
+
+<definition_list>
+
+<deflist_item>(notes-update-seen-map-frequency <math_char>(double_leftarrow) 10)
+<x>(notes-update-seen-map-frequency)
+<deflist_def>
+Indicates the frequency at which the seen map is updated.  With the
+default value of 10, the seen map is updated after every ten unseen notes
+have been read.  after n update operation, the unseen count in the
+conference header is updated to display the number of remaining unseen
+notes.
+
+<deflist_item>(notes-put-form-in-write-buffer <math_char>(double_leftarrow) 0)
+<x>(notes-put-form-in-write-buffer)
+<deflist_def>
+Indicates whether the new note/reply form should be popped up in the write
+buffer or in a buffer of its own.
+
+<deflist_item>(notes-keypad-binding <math_char>(double_leftarrow) 1)
+<x>(notes-keypad-binding)
+<deflist_def>
+Defines whether the numeric keypad keys perform the same functions as they
+do in the standard VAX NOTES interface.  If set to 0, the numeric keypad
+keys perform their normal functions as defined in the global keymap.
+
+<deflist_item>(notes-entry-key-reads-text <math_char>(double_leftarrow) 1)
+<x>(notes-entry-key-reads-text)
+<deflist_def>
+Defines whether the <key_name>(Enter) key can be used to read successive
+pages of text in long notes.
+
+<deflist_item>(notes-note-read-timeout <math_char>(double_leftarrow) 0)
+<x>(notes-note-read-timeout)
+<deflist_def>
+Defines the timeout setting in seconds for a note read operation.  A note
+read operation will fail if it does not complete within the timeout
+setting.  There is no timeout setting by default.
+
+<enddefinition_list>
+
+<x>(NOTES_USER.KEY)
+<p>
+You can also customise the NOTES package by creating your own NOTES key
+bindings.  You can do this by creating a file called NOTES_USER.KEY in your
+EMACS$PATH which contains your key binding code.  The NOTES package will 
+automatically load this file when you run the NOTES package.
+
+
+<head1>(SHELL, A DCL Interaction Package\shell_sec)
+
+<x>(SHELL)
+<x>(DCL interaction)
+
+<p>
+The SHELL package provides access to DCL from inside EMACS.  Invoke SHELL
+using the command:
+
+<display>
+$ EMACS/PACKAGE=SHELL
+<enddisplay>
+
+<p>
+EMACS will spawn a <key_name>(shell) subprocess and will pop up a window
+called <quote>(<key_name>(DCL Interaction Window <emphasis>(n\italic))),
+where <key_name>(<emphasis>(n\italic)) is a sequence number.
+
+<p>
+When dot is in the <key_name>(DCL Interaction) window, you can type any
+DCL command terminated by a <key_name>(Return), and this command will be
+executed in the <key_name>(shell) subprocess with the command output
+appearing in the window.
+
+<p>
+If you enter a command that invokes an interactive program which prompts
+for input, you can send input to the running program by terminating lines
+of input with <key_name>(Linefeed) rather than <key_name>(Return).
+
+<p>
+You can start as many <key_name>(shell) subprocesses as your VMS PRCLM
+process quota will allow.  Each subprocess will have its own
+<key_name>(DCL Interaction) window.
+
+<p>
+The <key_name>(shell) key bindings are summarised as follows:
+
+<definition_list>
+
+<deflist_item>(^?)
+<deflist_def>
+Prints a help screen describing the <key_name>(shell) commands.
+
+<deflist_item>(^R)
+<deflist_def>
+Recalls the last command executed.  The last 20 commands are remembered.
+
+<deflist_item>(Return)
+<deflist_def>
+Execute the command on the current line in the <key_name>(shell)
+subprocess.
+
+<deflist_item>(Linefeed)
+<deflist_def>
+Send the current line as input to a program running in the
+<key_name>(shell) subprocess.
+
+<deflist_item>(^])
+<deflist_def>
+Finish the current <key_name>(shell) session.  The subprocess is deleted,
+but the interaction window is kept.
+
+<deflist_item>(^C)
+<deflist_def>
+Aborts the program running in the <key_name>(shell) subprocess.
+
+<enddefinition_list>
+
+<p>
+Two variables are defined which allow you to customise the behaviour of
+the <key_name>(shell) package:
+
+<definition_list>
+
+<deflist_item>(shell-ctrlc)
+<deflist_def>
+Contains the termination code to be sent when <key_name>(^C) is pressed.
+The default value is 44.
+
+<deflist_item>(shell-feeps)
+<deflist_def>
+Contains the number of times the bell will ring when a process input
+request is made.  By default, this variable is set to 0, so the bell does
+not ring when a program running in the <key_name>(shell) subprocess asks
+for input.
+
+<enddefinition_list>
+
+
+<head1>(TEACH, A Computer-Based Instruction Package\teach_sec)
+
+<x>(TEACH)
+<x>(Computer-based instruction)
+<x>(CBI)
+
+<p>
+The TEACH package is the EMACS computer-based instruction package.  You
+can use this package to learn about the basic editing features of EMACS.
+
+<p>
+Invoke the TEACH package using the command:
+
+<display>
+$ EMACS/PACKAGE=TEACH
+<enddisplay>
+
+<p>
+When you start the TEACH package, EMACS visits a file called EMACS.CBI.
+This file contains the text of the tutorial, and contains examples and
+directions for you to try out various EMACS commands.
+
+
+<head1>(VMS_MAIL, A VMS MAIL Editing Package\vmsmail_sec)
+
+<x>(VMS_MAIL)
+<x>(VMS MAIL interface)
+
+<p>
+VMS_MAIL is a package that provides access to your EMACS from the VMS MAIL
+utility. It allows you to use EMACS as the editor in which VMS MAIL
+places you to edit text to be sent.
+
+<head2>(Using VMS_MAIL\usingvms_mail_sec)
+
+<p>
+You can use the VMS_MAIL package by setting the logical name
+MAIL$EDIT to the string <quote>(CALLABLE_EMACS):
+
+<display>
+$ DEFINE MAIL$EDIT CALLABLE_EMACS
+<enddisplay>
+
+<x>(MAIL$EDIT)
+<x>(CALLABLE_EMACS)
+
+<p>
+This causes VMS MAIL to invoke the EMACSSHR shareable image with suitable
+parameters to run the VMS_MAIL package.
+
+<p>
+You can also have VMS MAIL invoke EMACS to edit text by typing the following
+MAIL command:
+
+<display>
+MAIL> SET EDITOR EMACS
+<enddisplay>
+
+<p>
+Every time the VMS_MAIL package is entered, it switches the current
+buffer to <keep>(<key_name>(vms_mail_edit)), erases this buffer, and
+removes other buffers from the screen. It then reads in any source file to
+be edited and lets you edit. When you have finished editing, use the
+<key_name>(^C) command.  EMACS will then prompt in the Mini-buffer
+whether or not to send the text.
+
+<head2>(Customising VMS_MAIL\custvms_mail_sec)
+
+<p>
+There are two ways to customise the behaviour of VMS_MAIL:
+
+<list>(unnumbered)
+
+<le>
+Create a private VMS_MAIL.KEY file
+
+<le>
+Define a <key_name>(vms_mail_hook) function.
+
+<endlist>
+
+<x>(VMS_MAIL.KEY)
+<p>
+When VMS_MAIL starts for the first time, it loads the file
+VMS_MAIL.KEY to define which keys are used to send the mail
+message and which are used to abort the send operation. You can make your
+own copy of the file and make your own bindings for these functions.
+
+<x>(vms-mail-hook)
+<p>
+Also, when VMS_MAIL starts, it executes the function
+<key_name>(vms_mail_hook) if it has been defined.  You can define your own
+<key_name>(vms_mail_hook) function in your EMACSINIT.ML to initialise the
+VMS_MAIL package as you require.  

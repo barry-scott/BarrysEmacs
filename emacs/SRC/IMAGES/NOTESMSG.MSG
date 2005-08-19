@@ -1,0 +1,281 @@
+	.IDENT 'V01-001'
+!
+!			  COPYRIGHT (c) 1984 BY
+!	      DIGITAL EQUIPMENT CORPORATION, MAYNARD, MASS.
+!
+
+!++
+! FACILITY:
+!   NOTES
+!
+! ABSTRACT:
+!
+! ENVIRONMENT:
+!
+! AUTHOR: Benn Schreiber, CREATION DATE: 23-OCT-1984
+!
+! MODIFIED BY:
+!	Val Rodgers 09-SEP-1985
+!       Val Rodgers 26-DEC-1985
+!
+!--
+	.FACILITY	NOTES,1019 /SYSTEM /MACRO=$NOTESMSGDEF
+                               
+	.SEVERITY	SUCCESS
+
+	NORMAL		<>	! Unused
+	CMDKEYENA	<command keypad enabled>
+	NUMKEYENA	<numeric keypad enabled>
+	PROFILE_MOD	<your profile has been modified>
+	PROFILE_TEMP	<setting temporarily changed. Permanent profile not modified>
+	MODERATE	<moderator privilege enabled>
+	NOMODERATE	<moderator privilege disabled>
+	ENTRY_ADDED	<entry for !AS added to your Notebook> /FAO=1
+	KEYWORD_ADDNOTE	<keyword !AS added to note !AS> /FAO=2
+	MARKER_ADDED	<marker !AS for note !AS added to your Notebook>/FAO=2
+	MEMBER_ADDED	<!AS added as a member of this conference>/FAO=1
+	KEYWORD_CREATED	<keyword !AS created> /FAO=1
+	ENTRY_DELETED	<entry !AS deleted> /FAO=1
+	KEYWORD_DELETED	<keyword !AS deleted> /FAO=1
+	KEYWORD_DELNOTE	<keyword !AS deleted from note !AS> /FAO=2
+	MARKER_DELETED	<marker !AS deleted> /FAO=1
+	NOTE_DELETED	<note !AS deleted> /FAO=1
+	MEMBER_DELETED	<member !AS deleted> /FAO=1
+	NOTE_MODIFIED	<note !AS modified> /FAO=1
+	ENTRY_MODIFIED	<entry !AS modified> /FAO=1
+	KEYWORD_MODIFIED <keyword !AS modified> /FAO=1
+	MEMBER_MODIFIED	<member !AS modified> /FAO=1
+	CLASS_SET	<"!AS" set as your current class> /FAO=1
+	INSERT_MODE	<insert mode enabled>
+	OVERSTRIKE_MODE	<overstrike mode enabled>
+	ENTRY_DELCLASS	<entry !AS deleted from class !AS>/FAO=2
+	SPACE_COMPRESS	<consecutive double spaces removed from personal name>
+	.BASE		512
+
+	.SEVERITY	INFORMATION
+                               
+	MORE_INFO	<>	! Unused
+	SRV_NEWPROTUPD	<server is running new protocol update: !UL/!UL> /FAO=2
+	ENTRY_ABORTED	<note will not be entered in the conference>
+	NOTES_WRFIL	<!UL note!%S written to file !AS> /FAO=2
+	NOTES_WRBUF	<!UL note!%S written to buffer !AS> /FAO=2
+	DIRTOBUF	<directory listing written to buffer !AS> /FAO=1
+	DIRTOFILE	<directory listing written to file !AS> /FAO=1
+	HIDDEN		<note !AS is set hidden>/FAO=1
+	OPEN_CONF	<opening conference !AS>/FAO=1
+	UPDATE_CONF	<updating entry !AS (file !AS)...>/FAO=2
+	MARKSUPER	<previous marker (to note !AS) superseded>/FAO=1
+	.BASE		1024
+
+	.SEVERITY	WARNING
+
+	SRV_OLDPROTUPD	<server is running old protocol update: !UL/!UL> /FAO=2
+	NO_MORE_CLASSES	<no more classes>
+	NO_MORE_ENTRIES	<no more entries>
+	NO_MORE_KEYWORDS <no more keywords>
+	NO_MORE_NOTES	<no more notes>
+	NO_MORE_TEXT	<no more text>
+	NO_MORE_USERS	<no more members>
+	NONotebook	<user profile information and Notebook not available>
+	NOERRTXT	<there is no error text to show>
+	NEEDNBMODIFY	<you must be using your Notebook to modify your profile>
+	MSGSEND		"your message is complete. Proceed to send it? (Y/N) <Y> "
+	ENTERINTRO	<you may now enter the text for the introductory topic>
+	CTRLZMAIL	<press F10 or CTRL/Z to finish sending mail message>
+	NOTREADING	<you are not reading a note>
+	NO_MORE_REPLIES	<no more replies>
+	ANSWER_YES	<y>
+	EOB_TEXT	<[End of buffer]>
+	PRESS_PF2	<Enter the command HELP for help>
+	NOTES_HDR1	<VAX Notes Computer Conferencing>
+	PRESS_CTRLZ_N	<press F10 or CTRL/Z to add your note>
+	SET_CONFERENCE	<conference has been modified>
+	ENTER_TITLE	<enter a title for your >
+	PRESS_RETURN	<press RETURN to continue: >
+	PRESS_ANY_KEY	<press any key to continue: >
+	DIR_HEAD1	"!5<Topic!>  !20<Author!> !11<Date!>  Repl  Title"
+	ENDREQ_LIST	<end of requested listing>
+	NOTE_END_TEXT	<end of note>
+	TEXT_NOTE	<note>
+	TEXT_REPLY	<reply>
+	NO_NB		<creating your Notebook (!AS)> /FAO=1
+	YOUR_SP		<your >
+	NOTE_COMPLETE	" is complete. Proceed to enter it? (Y/N) <Y> "
+	NOTE_NOTEXT	" has no text.  Really enter it? (Y/N) <N> "
+	NOREPLIES	<no replies>
+	ONE_REPLY	<1 reply>
+	MANY_REPLIES	<!UL replies> /FAO=1
+	N_OF_N		<!UL of !UL> /FAO=2
+	ENTER_CTITLE	<enter a title for the conference: >
+	DELETE_NOTE	"are you sure you want to delete note !AS? (Y/N) <N> " /FAO=1
+	NOTENOTDEL	<note not deleted>
+	FINDING_HELP	<locating keypad help. One moment, please...>
+	NOKEYHELP	<sorry, keypad help is not available>
+	NOTESQADD	<!UL note!%S added to job on queue !AS> /FAO=2
+	REALLYQUIT	"really quit NOTES? (Y/N) <N> "
+	MAILNOTSENT	<MAIL message not sent>
+	NUMNOTES	<!UL note!%S> /FAO=1
+	SENDTO		<Send to: >
+	SUBJECT		<Subject: >
+	PROFILE_USER	<Profile for user !AS> /FAO=1
+	MORE_TEXT	<More...>
+	SHOW_MARK_1	< Marker>
+	SHOW_MARK_2	" !20<Marker!> !11<Note!>"
+	SHOW_MARK_3     " !20<Marker!> !11<Note!> Conference"
+	SHOW_CONF_1	" !20<Entry Name!> Unseen  !17<Last new note!> Topics  Update status"
+	SHOW_PROF_EDIT	<    Editor and access: >
+	SHOW_PROF_DCLASS<    Default class:     >
+	SHOW_PROF_PRINT	<    PRINT qualifiers:  >
+	SHOW_PROF_NAME	<    Personal name:     >
+	SHOW_PROF_AUTO	<    Automatic on open: >
+	SHOW_PROF_ADIR	<Directory>
+	SHOW_PROF_AUNS	<Next Unseen>
+	SHOW_PROF_NONE	<None>
+	ENDREQ_SHOW	<end of SHOW listing>
+	CTRLZ_COM_RET	<Enter command or press RETURN to resume: >
+	SHOW_ENT_CONF   <    Entry Name:        >
+	SHOW_ENT_FILE 	<    File:              >
+	SHOW_CLASS_1 	<    Class>
+	SHOW_CONF_MOD	<    Moderator:         >
+	SHOW_CONF_RESA1	<    Access is restricted to joined members>
+	SHOW_CONF_RESA2	<    Access is not restricted to joined members>
+	SHOW_CONF_RESK1	<    Keyword creation is restricted>
+	SHOW_CONF_RESK2	<    Keyword creation is not restricted>
+	SHOW_KEYW_1	" !20<Keyword!> Note"
+	SHOW_KEYW_2	< Keyword>
+  	SHOW_MOD_1	<Conference Moderator>
+	SHOW_MOD_NODE	<    Node:          >
+	SHOW_MOD_USER	<    Username:      >
+	SHOW_USER_MADR  <    Mail Address:  >
+	SHOW_USER_PRIV  <    Privileges:    >                 
+	SHOW_USER_JOIN  <    Joined Members>
+	SHOW_NOTE_HID   <    Note is hidden>
+	SHOW_NOTE_VIS   <    Note is not hidden>
+	SHOW_NOTE_REP1  <    Further replies are prohibited>
+	SHOW_NOTE_REP2	<    Replies are enabled>
+	SHOW_PROF_PERM	<      (Permanent)      >
+	SHOW_USER_FULL  " !16<Member!> !19<Nodes!> !20<Mail Address!> Privileges"
+	SHOW_MODU_FULL  " !16<Moderator      !> !19<Nodes!> !20<Mail Address!> Privileges"
+	NMF		<no more files>
+	NJU		<no joined members>
+	NO_MORE_MARKERS	<?no more markers>
+	SEARCHF1	<no more notes containing string "!AS" found> /FAO=1
+	SEARCHF2	<no notes containing string "!AS" found> /FAO=1
+	DIR_CONF1	< Conference file>
+	DIR_CONF_TITLE	<directory of conferences on !AS> /FAO=1
+	N_TOPICS	<!UL topic!%S> /FAO=1
+	DIR_NB_CLASS	<directory of Notebook class !AS> /FAO=1
+	CTRLZ_CANCEL	<press F10 or CTRL/Z to cancel your note>
+	REPBUFINFO1	<note !AS by !AS>
+	REPBUFINFO2	<note !AS by !AS "!AS">
+	NMORELINES	<!UL more line!%S...>
+	READINGCONF	<Conference !AS is open>
+	WILLNOTSEND	<MAIL message will not be sent>
+	WORKING		<Working...>
+	FILECREUPD	"Created: !17AS!#* !12AS!#* Updated: !17AS" /FAO=3
+	ENTERNOTE	<Enter your note below.  Press CTRL/Z when complete.>
+	ANDTO		<And to: >
+	SENDANYWAY	"Do you want to send anyway? (Y/N) <Y> "
+	SPAWNKEY	<SPAWN>
+	CALLKEY		<CALL>
+	EDICALL		<, callable>
+	EDISPAWN	<, spawn>
+	SPELLSELECT	"Spell selected text? (Y/N) <Y> "
+	SPELLBUFFER	"Spell buffer !AS? (Y/N) <Y> "
+	SPELLSTART	<Beginning spelling correction...>
+	SPELLDONE	<Spelling correction complete>
+	SENDING_MAIL	<Sending mail...>
+	SENDBOTH	<!UL error!%S while sending message, !UL sent successfully>
+	NONESENT	<No messages successfully sent>
+	SENT_TO_ALL	<Message sucessfully sent to all recipients>
+	SHOW_CONF_RESW1	<    Notes may not be written to this conference>
+	SHOW_CONF_RESW2	<    Notes may be written>
+	.BASE		2048
+
+	.SEVERITY	ERROR
+
+	ILLCTXADR	<illegal context block address>
+	WRONGCTX	<incorrect context block>
+	INVITMCOD	<invalid item code>
+	INVITMLEN	<invalid item length>
+	MISREQITM	<required item is missing>
+	NOCURNOTE	<no current note>
+	CANTCONTINUE	<last request is not continuable>
+	FAILGETVM	<failed to allocate required virtual memory>
+	STRCOPYERR	<string copy error>
+	ILLNOTEID	<illegal note specification>
+	NOSUCHNOTE	<>	! Unused
+	SRV_NOINIT	<>	! Unused
+	SRV_INVSEQ	<invalid sequence of operations>
+	SRV_NOCONTEXT	<required context not provided>
+	SRV_NOUSERNAME	<>	! Unused
+	SRV_INVITEM	<>	! Unused
+	CREPRIJOB	<error creating print job on queue !AS> /FAO=1
+	PREMEOF		<>	! Unused
+	NOPRIVDEL_N	<no privilege to delete this note>
+	NOPRIVWRITE_N	<>	! Unused
+	SRV_UNRECPROT	<unrecognized protocol -- server is running !UL/!UL> /FAO=2
+	NOFILEOPEN	<>	! Unused
+	ALREXISTS_OLD	<>	! Unused
+	NOSUCHENTRY	<>	! Unused
+
+	MUST_OPEN	<you must use the OPEN command to open a notefile first>
+	MUST_READ_REPLY	<you must be reading a note to reply to it>
+	MUST_READ_FORWARD	<you must be reading a note to forward it>
+	NOT_ENTERING_NOTE	<you are not entering a note>
+	NONOTE_SPECIFIED	<you did not specify a note>
+	ERROR_MAILING	<error mailing message(s)>
+	NOPREVIOUS_NOTE	<you have not read any notes>
+	ALREADY_IN_EDITOR	<you are already in the editor>
+	ALREADY_IN_NOTES	<you are already in VAX Notes>
+	MUST_COMPLETE_MESSAGE	<you must first complete this message>
+	UNREC_CALLUSER		<unrecognized call_user code (!UL.)> /FAO=1
+
+	NO_SUCH_CLASS	<no such class>
+	NO_SUCH_ENTRY	<no such entry>
+	NO_SUCH_KEYWORD	<no such keyword>
+	NO_SUCH_NOTE	<no such note>
+!	NO_SUCH_TEXT	<?no such text>
+	NO_SUCH_USER	<no such member in this conference>
+	NOMORE_RECALL	<no more commands to recall>
+	EDIT_OR_FILE	<you must either use the editor or specify a file>
+	NOMAIL		<please use the SEND or FORWARD command>
+	ERRORWRITE	<cannot add your note to the conference - type SHOW ERROR>
+	NOMAILPROC	<cannot start MAIL subprocess>
+
+	IFF		<invalid notefile format>
+	NOPRIV		<no privilege for attempted operation>
+	CTRLC_CANCEL	<command cancelled by CTRL/C>
+	ERRCREKEY	<cannot add keyword !AS to the conference> /FAO=1
+	ERRADDMARK	<cannot add marker !AS to the conference> /FAO=1
+	ERRADDMEM	<cannot add member !AS to the conference> /FAO=1
+	ERRADDENT	<cannot add entry !AS to your Notebook> /FAO=1
+	ERRDELENT	<cannot delete entry !AS> /FAO=1
+	ERRDELMARK	<cannot delete marker !AS> /FAO=1
+	ERRDELMEMBER	<cannot delete member !AS> /FAO=1
+	ERRMODNOTE	<cannot modify note !AS> /FAO=1
+	ERRMODENTRY	<cannot modify entry !AS> /FAO=1
+	ERRMODKEYWORD	<cannot modify keyword !AS> /FAO=1
+	ERRMODMEMBER	<cannot modify member !AS> /FAO=1
+	NOWRITE		<no privilege to reply to this note (set nowrite)>
+	NOSUCHMARKER	<no marker named !AS for this conference> /FAO=1
+	NOPRIVMOD_N	<no privilege to modify this note>
+	ALREXISTS_C	<class !AS already exists>/FAO=1
+	ALREXISTS_E	<entry !AS is already in your Notebook>/FAO=1
+	ALREXISTS_K	<keyword !AS already exists>/FAO=1
+	ALREXISTS_U	<!AS is already a member of this conference>/FAO=1
+	ALREXISTS_M	<marker !AS already exists>/FAO=1
+	NO_SUCH_MARKER	<no such marker>
+	NOMEMBERS	<no members found in the conference>
+	NOTMEMBER	<you are not a member of this conference>
+	BASEWRITELOCK	<only topic notes (not replies) can be set nowrite>
+	NOWRITE_CONF	<no privilege to write or modify this conference>
+	SPELLERROR	<error during spelling correction>
+	PNINVCHAR	<first character in personal name must be alphanumeric>
+	SENDNOAUT	<you must be reading a note to use /AUTHOR>
+	.BASE		3584
+
+	.SEVERITY	SEVERE
+	NOTNETWRK	<server not running in a network process>
+	WRONG_ACCT	<server not running in the NOTES$SERVER account>
+	.END

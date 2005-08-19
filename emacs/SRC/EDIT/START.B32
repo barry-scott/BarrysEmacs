@@ -1,0 +1,924 @@
+%title 'start - start up the EMACS editor'
+module start
+	(
+	main = main,
+	ident = 'V4.0-000',
+	addressing_mode( external = general, nonexternal = general )
+	) =
+begin
+
+!
+!			  COPYRIGHT (c) 1984,1885,1986 BY
+!	      DIGITAL EQUIPMENT CORPORATION, MAYNARD, MASS.
+!
+! This software is furnished under a license and may be used and  copied
+! only  in  accordance  with  the  terms  of  such  license and with the
+! inclusion of the above copyright notice.  This software or  any  other
+! copies  thereof may not be provided or otherwise made available to any
+! other person.  No title to and ownership of  the  software  is  hereby
+! transferred.
+!
+! The information in this software is subject to change  without  notice
+! and  should  not  be  construed  as  a commitment by DIGITAL EQUIPMENT
+! CORPORATION.
+!
+! DIGITAL assumes no responsibility for the use or  reliability  of  its
+! software on equipment which is not supplied by DIGITAL.
+!
+
+!++
+! Facility:	
+!	EMACS realtime editor
+!
+! Abstract:
+!	This module in the program entry point to the EMACS editor.
+!	It fetched a foreign command line, and parses it into space
+!	speparated components. It the calls the editor proper to
+!	start the editing functions
+!
+! Environment:
+!	user mode not re-entrant
+!
+! Author: NW EMERY	CREATION DATE:  9-Oct-1984
+!
+! Modified By:
+!
+! Edit	Modifier	Date		Reason
+! 000	NW EMERY	 9-Oct-1984	Original
+!   1	Barry A. Scott	17-May-1986
+!
+!	As of V4.1 Emacs this module does the DCL parsing for the
+!	EMACS/NOSUB command. Otherwise it does what it used to.
+!--
+
+
+
+%sbttl 'Declarations'
+
+!
+! Include files:
+!
+require 'edit$src:emacs';
+
+!
+! Table of contents:
+!
+forward routine
+	main,			! Entry point to editor
+	call_emacs,
+	emacs$kept,
+	emacs$command,
+	trim_desc,
+	get_path,
+	conditionhandler,
+	cli_condition_handler,
+	Exit_Handler : novalue,
+	Emacs_Bugcheck : novalue,
+	lower_case_desc;
+
+
+external routine
+	str$copy_dx,
+	lib$getdvi,
+	str$trim,
+	lib$put_output;
+
+!
+! Macro definitions:
+!
+macro
+	$decl_desc( name_, size ) =
+		%name( name_, _buf )	: vector[ size+1, byte],
+		%name( name_, _desc )	: block[ dsc$k_z_bln, byte ]
+					preset
+					(
+					[dsc$w_length] = size,
+					[dsc$b_dtype] = dsc$k_dtype_t,
+					[dsc$b_class] = dsc$k_class_s,
+					[dsc$a_pointer] = %name( name_, _buf )
+					)
+		%;
+macro
+	$len_ptr( desc ) = .desc[ dsc$w_length ], .desc[ dsc$a_pointer ] %;
+
+macro
+	$ch$move_desc( desc, p ) =
+		ch$move( $len_ptr( desc ), p )
+		%;
+macro
+	$ch$move_str( str, p ) =
+		(
+		ch$move
+		(
+		%charcount( %string( str ) ),
+		uplit byte( %ascii %string( str ) ),
+		p
+		);
+		%charcount( %string( str ) )
+		)
+		%;
+macro
+	$len( str ) = %charcount( %string( str ) ) %;
+
+!
+! Equated symbols:
+!
+literal
+	lognamsiz	= 256,		! size of buffers for logical names
+	max_args	= 50,		! Maximum parsed args
+	max_length	= 1024;		! Maximum command string length
+
+!
+! Own storage:
+!
+!	none
+!
+! External references:
+!
+external
+	default_environment_file : vector[256,byte],
+	exit_emacs_dcl_command	: ref vector[,byte];
+
+external routine
+	lib$do_command	: addressing_mode( general ),
+	sys$setddir	: addressing_mode( general ),
+	cli$present	: addressing_mode( general ),
+	cli$get_value	: addressing_mode( general ),
+	lib$get_foreign : addressing_mode( general ),
+	emacs		: addressing_mode( general );
+external literal
+	emacs$_debugversion,
+	emacs$_current,
+	emacs$_returned,
+	emacs$_cantdo;
+
+
+
+%sbttl 'main'
+global routine main =
+!++
+!
+! Functional description:
+!
+!	main entry point for the emacs editor. The only thing that this
+!	routine has to do is choose between spawn or directly invoked emacs.
+!	It does this based on the fact that lib$dcl_present will fail if
+!	a dcl parse has not been done to invoke this image.
+!
+!--
+
+
+
+	begin
+	local
+		status;
+
+	establish( cli_condition_handler );	! catch nasty CLI signals
+	status = cli$present( %ascid 'NOSUBPROCESS' );
+	revert();			! lose the handler
+
+	if .status
+	then
+		emacs$command()	! expect to parse up the args
+	else
+		emacs$kept()	! we have been spawned
+	end;
+
+%sbttl 'emacs$kept - kept emacs startup'
+routine emacs$kept =
+
+!++
+! Functional description:
+!
+!	This is the main entry pointer for the EMACS editor program.
+!	This routine parses up the command line into small portions,
+!	and saves them in a C argc/argv type combination. The EMACS
+!	editor itself, is then called with the arguments passed in
+!	the usual way
+!
+!--
+
+	begin
+	local
+		null		: initial ( 0 ),
+		eos		: ref vector [, byte],
+		ptr		: ref vector [, byte],
+		command_text	: vector [max_length, byte],
+		command		: block [dsc$k_s_bln, byte]
+			preset
+			(
+			[ dsc$w_length ] = max_length,
+			[ dsc$b_dtype ] = dsc$k_dtype_t,
+			[ dsc$b_class ] = dsc$k_class_s,
+			[ dsc$a_pointer ] = command_text
+			),
+		rest_fn		: initial( 0 ),
+		argc		: initial( 0 ),
+		argv		: vector[ max_args ];
+
+	!
+	! obtain the foreign command line. do not ever prompt for it
+	!
+	if lib$get_foreign ( command, 0, command [ dsc$w_length ] )
+	then
+		begin
+		!+
+		! parse up the obtained command line. parse it into space
+		! separated words. if a quote character is found at the start
+		! of a string, then a single argument proceeds untill the end
+		! of the string, or until another quote is found. the quotes
+		! are removed. none-quoted parameters are converted to lower
+		! case. quoted one remain as typed on the command line.
+		!-
+		eos = command_text[ .command[ dsc$w_length ] ];
+		ptr = command_text;
+		while .ptr lssa .eos
+		do
+			begin
+			if .ptr [0] neq %c'"'
+			then
+				begin
+				!
+				! deal with ordinary parameters
+				!
+				argv [.argc] = .ptr;
+				while .ptr [0] neq ' ' and .ptr lssa .eos do
+					begin
+					if .ptr [0] eql %c'"'
+					then
+						do
+							ptr = ptr [1]
+						while .ptr [0] neq %c'"' and .ptr lssa .eos
+					else
+						if .ptr [0] geq %c'A' and .ptr [0] leq %c'Z'
+						then
+							ptr [0] = .ptr [0] - %c'A' + %c'a';
+					if .ptr lssa .eos then ptr = ptr [1];
+					end;
+				ptr [0] = 0;
+				end
+			else	
+				begin
+				!
+				! deal with quoted parameters
+				!
+				argv [.argc] = ptr = ptr [1];
+				while .ptr [0] neq %c'"' and .ptr lssa .eos
+				do
+					ptr = ptr [1];
+				ptr [0] = 0;
+				ptr = ptr [1];
+				end;
+
+			ptr = ptr [1];
+			argc = .argc + 1;
+			end;
+		end;
+
+	!
+	!	See if there is a restore file
+	!
+	if .argc gtr 0 and ch$eql( 9, uplit( '~restore-' ), 9, .argv[0] )
+	then
+		call_emacs( .argc - 1, argv + 4, .argv[0] + 9,
+			uplit byte( %asciz 'char' ),
+			uplit byte( %asciz 'SYS$INPUT:') )
+	else
+		!
+		! the arguments have been parsed, so call the editor
+		!
+		call_emacs( .argc, argv, 0,
+			uplit byte( %asciz 'char' ),
+			uplit byte( %asciz 'SYS$INPUT:') )
+	end;				! of routine emacs$kept
+
+%sbttl 'emacs$command - the code to start emacs'
+routine emacs$command =
+
+!++
+! functional description:
+!
+!	this routine contains all the code to start the emacs image,
+!	or to re connect to an old one. the command line has the form:
+!
+!	emacs /subprocess/name=emacs$ttcn/package="emacs" files,...
+!
+!	if parameters are not present, then default values are
+!	calculated as shown.
+!
+!	the process table for this user is scanned ( using a wild card
+!	scan from getjpi ). the world and group privileges are
+!	disabled during this scan.
+!
+! formal parameters:
+!
+!	none
+!
+! implicit inputs:
+!
+!	none
+!
+! implicit outputs:
+!
+!	the symbol emacs$$foreign is created to activate the emacs
+!	image in the spawned sub process.
+!
+! routine value:
+!
+!	any status code resulting in an abort or ss$_normal
+!
+! side effects:
+!
+!	none
+!--
+
+	begin
+	!
+	!	Used to collect the users arguments
+	!
+	bind
+		pn	=
+			uplit
+			(
+			0,
+			%ascid 'P1', %ascid 'P2', %ascid 'P3', %ascid 'P4',
+			%ascid 'P5', %ascid 'P6', %ascid 'P7', %ascid 'P8'
+			)
+				: vector[1+8,long];
+	!
+	!	descriptors
+	!
+	local
+		return_desc		: block[ dsc$c_z_bln, byte ]
+						initial( 0, 0 ),
+	 	$decl_desc( name, lognamsiz ),
+		$decl_desc( restore, lognamsiz ),
+		$decl_desc( package, lognamsiz ),
+		$decl_desc( path, lognamsiz ),
+		$decl_desc( arg_1, lognamsiz ), $decl_desc( arg_2, lognamsiz ),
+		$decl_desc( arg_3, lognamsiz ), $decl_desc( arg_4, lognamsiz ),
+		$decl_desc( arg_5, lognamsiz ), $decl_desc( arg_6, lognamsiz ),
+		$decl_desc( arg_7, lognamsiz ), $decl_desc( arg_8, lognamsiz ),
+		$decl_desc( arg_9, lognamsiz ), $decl_desc( arg_10, lognamsiz ),
+		$decl_desc( arg_11,lognamsiz ), $decl_desc( arg_12, lognamsiz ),
+		$decl_desc( arg_13,lognamsiz ), $decl_desc( arg_14, lognamsiz ),
+		$decl_desc( arg_15,lognamsiz ), $decl_desc( arg_16, lognamsiz ),
+		args		: vector[max_args,long]
+			initial
+			(
+			0,
+			arg_1_desc, arg_2_desc, arg_3_desc, arg_4_desc,
+			arg_5_desc, arg_6_desc, arg_7_desc, arg_8_desc,
+			arg_9_desc, arg_10_desc, arg_11_desc, arg_12_desc,
+			arg_13_desc, arg_14_desc, arg_15_desc, arg_16_desc
+			),
+		arg_count	: initial( 1 ),
+		arg_vector	: vector[ 17, long ]
+			initial
+			(
+			package_buf,
+			arg_1_buf, arg_2_buf, arg_3_buf, arg_4_buf,
+			arg_5_buf, arg_6_buf, arg_7_buf, arg_8_buf,
+			arg_9_buf, arg_10_buf, arg_11_buf, arg_12_buf,
+			arg_13_buf, arg_14_buf, arg_15_buf, arg_16_buf
+			),
+		interface_type	: ref vector[,byte],
+	 	$decl_desc( interface_device, 256 );
+
+	local
+		logflag,		! true is logging required
+		p	: ref vector[,byte],
+		siz,
+		resp,
+		sresp,
+		xresp,
+		msgvec	: vector [5];
+
+	establish( conditionhandler );
+	!
+	! set up the logging flag
+	!
+	logflag = cli$present( %ascid 'LOG' );
+
+	msgvec [0] = 2; msgvec [1] = emacs$_current; msgvec [2] = 0;
+	if .logflag then $putmsg ( msgvec = msgvec );
+
+	!
+	!	Find out the interface that the user wants to use
+	!
+	if cli$present( %ascid 'interface_ansi' )
+	then
+		begin
+		interface_type = uplit( %asciz 'char' );
+		cli$get_value( %ascid 'interface_ansi', interface_device_desc );
+		end
+	else if cli$present( %ascid 'interface_xwin' )
+	then
+		begin
+		interface_type = uplit( %asciz 'gui' );
+		cli$get_value( %ascid 'interface_xwin', interface_device_desc );
+		end
+	else if cli$present( %ascid 'interface_file' )
+	then
+		begin
+		interface_type = uplit( %asciz 'file' );
+		cli$get_value( %ascid 'interface_file', interface_device_desc );
+		end
+	else
+		begin
+		local
+			trm,
+			log_buf	: vector[128,byte];
+
+		if get_log( $str('DECW$DISPLAY'), log_buf[0] )
+		then
+			begin
+			interface_type = uplit( %asciz 'gui' );
+			str$copy_dx( interface_device_desc, %ascid 'DECW$DISPLAY' );
+			end
+		else
+			begin
+			lib$getdvi( %ref( dvi$_trm ), 0, %ascid 'SYS$INPUT', trm, 0, 0 );
+			if .trm
+			then
+				interface_type = uplit( %asciz 'char' )
+			else
+				interface_type = uplit( %asciz 'file' );
+
+			str$copy_dx( interface_device_desc, %ascid 'SYS$INPUT:' );
+			end
+		end;
+
+	!
+	! Turn the device into a asciz string
+	!
+	str$trim( interface_device_desc, interface_device_desc,
+				interface_device_desc[dsc$w_length] );
+	interface_device_buf[.interface_device_desc[dsc$w_length]] = 0;
+
+	!
+	! contents of the macro flag
+	!
+	! define the local symbol. this involves fetching the
+	! package name and the restore file from the qualifiers
+	!
+	if cli$get_value( %ascid 'RESTORE', restore_desc )
+	then
+		trim_desc( restore_desc )
+	else
+		restore_desc[ dsc$a_pointer ] = 0;
+
+	if cli$get_value( %ascid 'PACKAGE', package_desc )
+	then
+		trim_desc( package_desc )
+	else
+		!
+		! fill in the default
+		!
+		package_desc[ dsc$w_length ] =
+				$ch$move_str( 'emacs', package_buf );
+	lower_case_desc( package_desc );
+
+	!
+	!	Collect the arguments
+	!
+	incr n from 1 to 8
+	do
+		begin
+		local
+			desc	: ref block[,byte],
+			size;
+
+		while
+			begin
+			desc = .args[ .arg_count ];
+
+			cli$get_value( .pn[ .n ], .desc )
+			end
+		do
+			begin
+			trim_desc( .desc );
+			lower_case_desc( .desc );
+			arg_count = .arg_count + 1;
+			if .arg_count eql max_args then exitloop;
+			end;
+
+		if .arg_count eql max_args then exitloop;
+		end;
+
+	!
+	!	See if /START_POSITION=(n[,...]) has been specified
+	!
+	if cli$present( %ascid 'START_POSITION' )
+	and .arg_count lss max_args
+	then
+		begin
+		local
+			desc	: ref block[,byte],
+			size;
+
+		while
+			begin
+			desc = .args[ .arg_count ];
+
+			cli$get_value( %ascid 'START_POSITION', .desc )
+			end
+		do
+			begin
+			trim_desc( .desc );
+			arg_count = .arg_count + 1;
+			if .arg_count eql max_args then exitloop;
+			end;
+		end;
+
+	!
+	!	Now invoke emacs
+	!	but disable the condition handler first so debug works
+	!
+	revert();
+
+	call_emacs
+	(
+	.arg_count, arg_vector, .restore_desc[ dsc$a_pointer ],
+		.interface_type,
+		interface_device_buf
+	);
+
+	!
+	!	If there was a command returned
+	!
+	if .exit_emacs_dcl_command neq 0
+	then
+		begin
+		return_desc[ dsc$w_length ] = strlen( .exit_emacs_dcl_command );
+		return_desc[ dsc$a_pointer ] = .exit_emacs_dcl_command;
+		if not( resp = lib$do_command( return_desc ) )
+		then
+			signal( emacs$_cantdo, 0, .resp );
+		end;
+
+	!
+	!	Work out the current PATH
+	!
+	get_path( path_desc );
+
+	msgvec[0] = 4; msgvec[1] = emacs$_returned;
+	msgvec[2] = 2; msgvec[3] = path_desc;
+	if .logflag then $putmsg( msgvec = msgvec );
+
+	ss$_normal
+	end;
+
+
+
+%sbttl 'conditionhandler - report error conditions'
+routine conditionhandler
+		(
+		sig	: ref block[,byte],
+		mech	: ref block[,byte]
+		) =
+
+!++
+! functional description:
+!
+!	this routine is used to report errors detected by the
+!	program. it issues a message determined from the signal
+!	condition and then exits the program. all errors are
+!	considered fatal.
+!
+! formal parameters:
+!
+!	sig and mch are the standard vax/vms condition handling
+!	arguments
+!
+! implicit inputs:
+!
+!	none
+!
+! implicit outputs:
+!
+!	none
+!
+! routine value:
+!
+!	this routine never exits
+!
+! side effects:
+!
+!	a message is emitted, and the program terminated
+!--
+
+
+
+	begin
+	!
+	!	If its a success or info ignore it
+	!
+	if .sig[ chf$l_sig_name ]
+	then
+		begin
+		$putmsg( msgvec = .sig );
+		return ss$_continue;
+		end;
+
+	!
+	!	If its an unwind resignal it
+	!
+	if .sig[ chf$l_sig_name ] eql ss$_unwind then return ss$_resignal;
+
+	!
+	!	Any problem status get returned to the user
+	!
+%if %declared( %quote chf$l_mch_savr0 ) %then
+	mech[ chf$l_mch_savr0 ] = .sig[ chf$l_sig_name ];
+%else
+	mech[ chf$il_mch_savr0_low ] = .sig[ chf$l_sig_name ];
+%fi
+	$unwind();
+	return ss$_normal;
+	end;
+
+
+
+routine trim_desc( desc : ref block[,byte] ) =
+	begin
+	local
+		buf	: ref vector[,byte] initial( .desc[ dsc$a_pointer ] );
+
+	desc[ dsc$w_length ] = 
+		(decr i from .desc[ dsc$w_length ] - 1 to 0 do
+		if .buf[ .i ] neq %c' '
+		then
+			exitloop .i) + 1;
+
+	buf[ .desc[ dsc$w_length ] ] = 0;	! turn into asciz for C
+	return .desc;
+	end;
+
+
+
+routine get_path
+		(
+		desc	: ref block[,byte]
+		) =
+	begin
+	local
+		$decl_desc( dev, 64 ),
+		$decl_desc( dir, 256 );
+
+	!
+	!	Work out the current PATH
+	!
+	$trnlog
+	(
+	lognam = %ascid 'SYS$DISK',
+	rsllen = dev_desc,
+	rslbuf = dev_desc[ dsc$w_length ]
+	);
+	sys$setddir( 0, dir_desc, dir_desc[ dsc$w_length ] );
+	ch$copy
+	(
+	$len_ptr( dev_desc ),
+	$len_ptr( dir_desc ),
+	0,
+	$len_ptr( desc )
+	);
+	desc[ dsc$w_length ] =
+			.dev_desc[ dsc$w_length ] + .dir_desc[ dsc$w_length ];
+
+	return .desc;
+	end;
+
+
+
+routine lower_case_desc( desc : ref block[,byte] ) =
+	begin
+	local
+		char,
+		buf	: ref vector[,byte];
+
+	buf = .desc[ dsc$a_pointer ];
+	incr i from 0 to .desc[ dsc$w_length ] - 1
+	do
+		begin
+		char = .buf[0];
+		if .char leq 'Z' and .char geq 'A'
+		then
+			buf[0] = .char - 'A' + 'a';
+		buf = .buf + 1;
+		end;
+	buf[0] = 0;	! turn into asciz for C
+	.desc
+	end;
+
+
+
+%sbttl 'cli_condition_handler'
+routine cli_condition_handler
+		(
+		sig	: ref block[,byte],
+		mech	: ref block[,byte]
+		) =
+
+!++
+! functional description:
+!
+!	this routine is used to report errors detected by the
+!	program. it issues a message determined from the signal
+!	condition and then exits the program. all errors are
+!	considered fatal.
+!
+! formal parameters:
+!
+!	sig and mch are the standard vax/vms condition handling
+!	arguments
+!
+! implicit inputs:
+!
+!	none
+!
+! implicit outputs:
+!
+!	none
+!
+! routine value:
+!
+!	this routine never exits
+!
+! side effects:
+!
+!	a message is emitted, and the program terminated
+!--
+
+
+
+	begin
+	!
+	!	If its a success or info ignore it
+	!
+	if .sig[ chf$l_sig_name ]
+	then
+		begin
+		$putmsg( msgvec = .sig );
+		return ss$_continue;
+		end;
+
+	!
+	!	If its an unwind resignal it
+	!
+	if .sig[ chf$l_sig_name ] eql ss$_unwind then return ss$_resignal;
+
+	!
+	!	Any problem status get returned to the user
+	!
+%if %declared( %quote chf$l_mch_savr0 ) %then
+	mech[ chf$l_mch_savr0 ] = .sig[ chf$l_sig_name ];
+%else
+	%inform('what goes here?')
+%fi
+
+	$unwind( depadr = 1 );
+	return ss$_normal;
+	end;
+
+own
+	Exit_Handler_Block	: vector[5,long]
+			initial( 0, Exit_Handler, 2, Exit_Handler_Block[4], 0 );
+external
+	Emacs_Is_Exiting	: long;
+
+routine Exit_Handler : novalue =
+	begin
+	if .term_is_terminal and not .Emacs_Is_Exiting
+	then
+		Emacs_Bugcheck();
+	end;
+
+routine Emacs_Bugcheck : novalue =
+	begin
+	signal( ss$_bugcheck );
+	end;
+
+own
+	xb				: vector[ 128, byte ];
+
+global routine Crash_Handler
+	(
+	sig	: ref block[,byte],
+	mech	: ref block[,byte]
+	)
+		=
+	begin
+	own
+		FirstTime	: initial( 1 );
+
+	if .sig[ chf$l_sig_name ] lss ss$_tbit and .FirstTime
+	then
+		begin
+		FirstTime = 0;
+		lib$put_output( %ascid 'Emacs has crashed.' );
+		Rst_Dsp();
+		lib$put_output( %ascid 'Restored terminal to original characteristics.');
+
+		if .Must_Checkpoint_On_Crash
+		then
+			begin
+			Checkpoint_Everything( 0 );
+			lib$put_output( %ascid 'Checkpointed all modified buffers.' );
+			end;
+		if get_log( $str('EMACS$DEBUG'), xb[0] )
+		then
+			begin
+			lib$put_output( %ascid 'Here comes debug...' );
+			signal( ss$_debug );
+			end
+		else
+			lib$put_output( %ascid 'Here comes the stack trace...' );
+		end;
+
+	return ss$_resignal;
+	end;
+
+global routine vms_debug_emacs( cmd ) : novalue =
+	begin
+	rst_dsp();
+
+	if .cmd neq 0
+	then
+		signal( ss$_debug, 1, .cmd )
+	else
+		signal( ss$_debug );
+
+	$setast( enbflg = 1 );
+	complete_reinit = 0;
+	init_dsp();
+	start_async_io();
+	complete_reinit = 1;
+	end;
+
+routine call_emacs( argc, argv, rest_fn, term, device ) =
+	begin
+	own
+		cli	: block[8,byte]
+			preset
+			(
+			[dsc$w_length] = 63,
+			[dsc$b_class] = dsc$k_class_s,
+			[dsc$b_dtype] = dsc$k_dtype_t,
+			[dsc$a_pointer] = cli_name[0]
+			);
+	begin
+	external routine
+		 lib$get_symbol;
+	own
+		crash_symbol	: block[ dsc$s_dscdef1, byte ]
+			preset
+			(
+			[dsc$b_class] = dsc$k_class_d,
+			[dsc$b_dtype] = dsc$k_dtype_t
+			);
+	if lib$get_symbol( %ascid 'emacs_crash', crash_symbol )
+	and .vector[ .crash_symbol[ dsc$a_pointer ], 0;,byte] eql 'Y'
+	then
+		$putmsg( msgvec = uplit( 1, emacs$_debugversion ) )
+	else
+		begin
+		$dclexh( desblk = Exit_Handler_Block );
+		establish( Crash_Handler );
+		end;
+	end;
+
+
+%if %declared( %quote chf$l_mch_savr0 ) %then
+	strcpy( default_environment_file, uplit byte( %asciz 'emacs$environment:emacs_vms_vax.emacs_environment;' ) );
+%else
+	strcpy( default_environment_file, uplit byte( %asciz 'emacs$environment:emacs_vms_axp.emacs_environment;' ) );
+%fi
+	begin
+%if 0
+%then
+	external routine
+		shell$cli_name;
+
+	if shell$cli_name( cli )
+	then
+		begin
+		local
+			ax;
+		decr ax from 64 - 1 to 0
+		do
+			if .cli_name[ .ax ] eql ' '
+			then
+				cli_name[ .ax ] = 0;
+		end
+	else
+%fi
+		strcpy( cli_name[0], $str('DCL') );
+	end;
+
+
+	return emacs( .argc, .argv, .rest_fn, .term, .device );
+	end;
+
+end					! Of module start
+eludom

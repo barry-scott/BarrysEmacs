@@ -1,0 +1,59 @@
+(defun
+    (docs-com
+	(convert-Windows-DOC-to-HELP "ug.rtf")
+	(convert-Windows-DOC-to-HELP "er.rtf")
+	(convert-Windows-DOC-to-HELP "pg.rtf")
+    )
+)
+(defun
+    convert-Windows-DOC-to-HELP (~file)
+    ~target-ref
+    ~browse_seq
+    ~tmp
+    
+    (switch-to-buffer "emacs_doc.rtf")
+    (erase-buffer)
+    (insert-file (concat "\\work\\emacs\\src\\docs\\" ~file))
+    (setq current-buffer-allocation-size (+ (buffer-size) 100000))
+    (setq ~browse_seq 1002)
+    
+    (while (! (error-occurred (re-search-forward "\\bGOTOBUTTON\\b \\(_Toc[0-9]*\\)")))
+	(region-around-match 1)
+	(sit-for 0)
+	(setq ~target-ref (region-to-string))
+	(save-excursion
+	    (set-mark)
+	    (beginning-of-file)
+	    (search-forward (concat "{\\*\\bkmkstart " ~target-ref  "}"))
+	    (insert-string "#{\\footnote \\pard\\plain \\s38\\fi-187\\li187\\sa120\\sl-220\\slmult1\\widctlpar\\tx187 "
+		"\\f4\\fs18 {\\cs37\\super #} " ~target-ref "}")
+	    (search-reverse "\\par ")
+	    (insert-string "\\page +{\\footnote Browse_" ~browse_seq "}")
+	    (setq ~browse_seq (+ ~browse_seq 1))
+	    (exchange-dot-and-mark)
+	    (search-reverse "\\tab")
+	    (set-mark)
+	    (search-reverse "\\")(forward-word)
+	    (setq ~tmp (region-to-string))
+	    (erase-region)
+	    (insert-string " {\\uldb" ~tmp "}{\\v " ~target-ref "}${\\footnote " ~tmp "}")
+	)
+    )
+    (beginning-of-file)
+    (search-forward "\\page ")
+    (insert-string "#{\\footnote main_index} +{\\footnote Browse_1001}")
+    
+    (beginning-of-file)
+    (while (! (error-occurred (search-forward "{\\xe {")))
+	(region-around-match 0)
+	(sit-for 0)
+	(erase-region)
+	(insert-string "K{\\footnote ")
+	(search-forward "}")
+	(delete-previous-character)
+    )
+    
+    
+    (write-named-file (concat "\\work\\emacs\\src\\help\\" ~file))
+)
+)

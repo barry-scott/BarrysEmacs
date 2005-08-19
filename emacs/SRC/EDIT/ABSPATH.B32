@@ -1,0 +1,293 @@
+module abspath
+	(
+	ident	= 'V5.0 Emacs',
+	addressing_mode( nonexternal=long_relative, external=general )
+	) =
+begin
+
+! 
+! 	Copyright (c) 1982, 1983, 1984, 1985
+!		Barry A. Scott and Nick Emery
+!
+
+require 'edit$src:emacs';
+
+! Table of contents
+forward routine
+    chdir_and_set_global_record,
+    save_abs,
+    expand_and_default,
+    init_abs;
+
+! Local variables for this module
+own
+    RMSerror : signed long,
+    fab : $fab(),
+    nam : $nam(),
+    VMSfile : vector[VMSFileNameSize,byte,unsigned],
+    expfil : vector[VMSFileNameSize,byte,unsigned];
+
+! Local strings
+bind
+    null_str = $str ('') : vector[,byte,unsigned];
+
+! Special external routine
+
+external routine
+    sys$setddir,
+    lib$set_logical;
+
+
+global routine chdir_and_set_global_record (
+    buf : ref vector[,byte,unsigned]
+) =
+    begin
+
+    local
+	max_index : initial (-1),
+        items : blockvector [7, 2*%upval, byte],
+	src : vector [2] initial (strlen (.buf), .buf),
+	dev : vector [2],
+	r,
+	components,
+	newbuf : vector[VMSFileNameSize,byte,unsigned],
+        resp : initial (ss$_normal);
+
+    !
+    ! Find the various file components
+    !
+
+    items [0, itm$w_itmcod] = fscn$_node;
+    items [1, itm$w_itmcod] = fscn$_device;
+    items [2, itm$w_itmcod] = fscn$_directory;
+    items [3, itm$w_itmcod] = fscn$_name;
+    items [4, itm$w_itmcod] = fscn$_type;
+    items [5, itm$w_itmcod] = fscn$_version;
+    items [6, 0, 0, %bpval, 0] = 0;
+    $filescan (srcstr = src, valuelst = items, fldflags = components);
+
+    ! Screen out undesirables now
+    if (.components and (fscn$m_node or fscn$m_type or fscn$m_version)) neq 0
+    or ((.components and fscn$m_name) neq 0 and (.components and not fscn$m_name) neq 0)
+    then
+	return -1;
+
+    !
+    ! Work out the device spec
+    !
+    
+    if (.components and (fscn$m_device or fscn$m_name)) neq 0
+    then
+	begin
+
+	local
+	    itmlst : $itmlst_decl (items = 2);
+
+	!
+	! Check to see if device or only filespec has multiple logical name
+	! translations. If so, then we just set the logical name as the device
+	! so that it acts as a search list. Otherwise, we use RMS to expand the
+	! filespec.
+	!
+
+	if (.components and fscn$m_device) neq 0
+	then
+	    begin
+	    dev[0] = .items[1, itm$w_bufsiz] - 1;
+	    dev[1] = .items[1, itm$l_bufadr];
+	    end
+	else
+	    begin
+	    dev[0] = .items[3, itm$w_bufsiz];
+	    dev[1] = .items[3, itm$l_bufadr];
+	    end;
+
+	! Translate to check for search list
+
+	$itmlst_init (itmlst = itmlst,
+	    (itmcod = lnm$_max_index, bufadr = max_index));
+	$trnlnm (attr = %ref (lnm$m_case_blind), tabnam = %ascid 'LNM$FILE_DEV',
+	    lognam = dev, itmlst = itmlst);
+	end;
+
+    ! Expand out the device and directory
+    expand_and_default (.buf, null_str, newbuf);
+
+    r = .nam[nam$l_fnb];
+    if (not .RMSerror and .RMSerror neq RMS$_FNF)
+    or (.r and NAM$M_EXP_VER) neq 0
+    or (.r and NAM$M_EXP_TYPE) neq 0
+    or (.r and NAM$M_WILD_VER) neq 0
+    or (.r and NAM$M_WILD_TYPE) neq 0
+    or (.r and NAM$M_WILD_NAME) neq 0
+    or (.r and NAM$M_WILDCARD) neq 0
+    or (.r and NAM$M_PPF) neq 0
+    or (.r and NAM$M_NODE) neq 0
+    or (.r and NAM$M_QUOTED) neq 0
+    or (.r and NAM$M_WILD_DIR) neq 0
+    then
+	return -1;
+
+    ! Now set the device component as required
+    if .max_index leq 0
+    then
+	begin
+	dev[0] = .nam[nam$b_dev];
+	dev[1] = .nam[nam$l_dev];
+	end;    if .dev[0] neq 0
+    then
+	begin
+	if .$vb (.dev[0], .dev[1] - 1) neq ':'
+	then
+	    begin
+	    $vb (.dev[0], .dev[1]) = ':';
+	    dev[0] = .dev[0] + 1;
+	    end;
+	resp = lib$set_logical (%ascid'SYS$DISK', dev);
+	end;
+
+    ! Now set the directory part
+    if .resp
+    then
+	begin
+	ch$copy (.dev[0], .dev[1], 0, .dev[0]+1, current_directory);
+	if .nam[nam$b_dir] neq 0
+	and (.max_index leq 0 or (.components and fscn$m_directory) neq 0)
+	then
+	    begin
+
+	    local
+		dir : vector [2];
+
+	    dir[0] = .nam[nam$b_dir];
+	    dir[1] = .nam[nam$l_dir];
+	    if (resp = sys$setddir (dir, 0, 0))
+	    then
+		ch$copy (.dir[0], .dir[1], 0, .dir[0]+1, current_directory[.dev[0]]);
+	    end;
+	end;
+
+    ! Lower case the directory
+    buf = current_directory;
+    while .buf[0] neq 0 do
+	begin
+	if .buf[0] geq 'A' and .buf[0] leq 'Z'
+	then
+	    buf[0] = .buf[0] + 'a' - 'A';
+	buf = buf[1];
+	end;
+
+    if .resp
+    then
+	0 
+    else
+	-1
+    end;			 ! Of ChdirAndSetGlobalRecord
+
+
+global routine save_abs (
+    fn : ref vector[,byte,unsigned]
+) =
+    begin
+
+    own
+	buf : vector[VMSFileNameSize,byte,unsigned];
+
+    expand_and_default (null_str, .fn, buf);
+    buf
+    end;
+
+
+global routine expand_and_default (
+    fn : ref vector[,byte,unsigned], 
+    dn : ref vector[,byte,unsigned], 
+    ou : ref vector[,byte,unsigned]
+) =
+    begin
+
+    local
+        j : ref vector[,byte,unsigned],
+	sz,
+	fn_len : initial (strlen (.fn));
+
+    fab[fab$l_nam]= nam;
+    fab[fab$l_fna]= .fn;
+    fab[fab$l_dna]= .dn;
+    fab[fab$b_fns]= .fn_len;
+    fab[fab$b_dns]= (if .dn eql 0 then 0 else strlen (.dn));
+    nam[nam$b_nop]= NAM$M_PWD;
+    nam[nam$l_esa]= VMSfile;
+    nam[nam$b_esl]= 0;
+    nam[nam$b_ess]= NAM$C_MAXRSS;
+    nam[nam$l_rsa]= expfil;
+    nam[nam$b_rsl]= 0;
+    nam[nam$b_rss]= NAM$C_MAXRSS;
+
+    !
+    !	First search in case the file exists.
+    !	if not do a parse to find out where to write the file to
+    !
+    $parse (fab = fab);
+    if not (RMSerror = $search (fab = fab))
+    then
+	RMSerror = $parse (fab = fab);
+
+    if (sz = .nam[nam$b_rsl]) gtr 0
+    then
+	ch$copy (.sz, expfil, 0, .sz+1, vmsfile)
+    else
+	if (sz = .nam[nam$b_esl]) leq 0
+	then 	
+	    begin
+	    sz = begin
+	        if .fn_len gtr NAM$C_MAXRSS
+		then
+		    NAM$C_MAXRSS
+		else
+		    .fn_len
+		end;
+	    ch$copy (.sz, .fn, 0, .sz+1, .ou);
+	    return 0;
+	    end
+	else
+	    VMSfile[.sz] = 0;
+
+    j = VMSfile;
+    while .j[0] neq 0 and .j[0] eql '_' do j = j[1];
+    do
+	begin
+	ou[0] =
+	    begin
+	    selectone .j[0] of
+	        set
+		['<'] : '[';
+		['>'] : ']';
+		[otherwise] : _tolower (.j[0]);
+		tes
+	    end;
+	j = j[1];
+	ou = ou[1];
+	end
+    while .j[-1] neq 0;
+    return 0;
+    end;			! Of ExpandAndDefault
+
+
+global routine init_abs =
+    begin
+    local
+        items : blockvector [2, 2*%upval, byte],
+	src : vector [2],
+	p : ref vector[,byte,unsigned];
+
+    expand_and_default ($str('[]'), null_str, current_directory);
+    items[0, itm$w_itmcod] = fscn$_directory;
+    items[1, 0, 0, %bpval, 0] = 0;
+    src[0] = strlen (current_directory);
+    src[1] = current_directory;
+    $filescan (srcstr = src, valuelst = items);
+    $vb (.items[0, itm$l_bufadr], .items[0, itm$w_bufsiz]) = 0;
+    return 0;
+    end;			! Of InitAbs
+end
+eludom

@@ -1,0 +1,958 @@
+<chapter>(Editing Specific File Types\filetypes_chap)
+
+<p>
+This chapter describes the commands available in EMACS for editing specific
+types of file, such as text memos or program source code.
+
+<p>
+<reference>(majormodes_sec) summarises the EMACS major modes used to edit
+specific file types.  <reference>(editnatlang_sec) describes EMACS commands
+for editing natural language text.  <reference>(editprog_sec) describes
+special features for editing programs.
+
+<head1>(Major Modes\majormodes_sec)
+
+<x>(top level)
+<p>
+EMACS has many different major modes, each of which customises EMACS for
+editing text of a particular file type. The major modes are mutually
+exclusive---that is, only one major mode can be active at a time. When at
+top level, EMACS indicates in the mode line which major mode is active
+for each buffer displayed on the screen.
+
+<x>(Normal Mode)
+<x>(normal-mode)
+<p>
+When EMACS creates a buffer, it is in what is called <newterm>(Normal
+Mode), which means that the character commands are defined so as to be
+convenient for general use. More precisely, in Normal Mode every EMACS
+binding is set to its default state. For editing any specific type of
+text, such as Lisp code or English text, you should switch to the
+appropriate major mode. This tells EMACS to change the meanings of a few
+commands to become more specifically adapted to the language being edited.
+Most commands remain unchanged.
+
+<x>(lisp-mode)
+<x>(Lisp Mode)
+<x>(auto-execute)
+<p>
+Selecting a new major mode is done with an <key_name>(ESC-x) command. Each
+major mode is the name of the function that selects that mode. Thus, you can
+enter <emphasis>(Lisp Mode) by typing <quote>(<cx>(ESC-x lisp-mode)).
+EMACS can be made to enter the correct major mode for a file simply based
+on the file's type, so you do not have to worry about selecting a mode.
+This is achieved by using the <key_name>(auto-execute) function.
+
+<p>
+The <key_name>(ESC-x auto-execute) command causes the nominated command to be
+executed every time a file is manipulated which matches the specified file
+pattern. The file pattern is specified as a subset of the wildcard facility
+usable with VMS RMS: you can specify <quote>(<cx>(*text)) or
+<quote>(<cx>(text*)) as patterns where <cx>(<emphasis>(text\italic)) is an
+appropriate string.  The command is executed whenever the appropriate
+portion of the file name matches. So, if you wish to switch to Lisp Mode
+when visiting files with a type of <quote>(<cx>(.ML)), use the
+command <quote>(<cx>(ESC-x auto-execute lisp-mode *.ML)).
+
+<x>(Syntax tables)
+<p>
+<newterm>(Syntax tables) define how EMACS commands (such as
+<key_name>(forward-word)) react to the characters in a buffer.  Many major
+modes alter syntax tables so that characters are treated in the most
+suitable way for the particular mode.  For example, most programming
+language major modes specify that only blank lines separate paragraphs.
+This is so that the paragraph commands remain useful when writing program
+source code rather than natural language text.
+
+<p>
+To find out which keys a particular major mode redefines, use the command
+<key_name>(ESC-x describe-bindings) while the required mode is in effect.
+<x>(describe-bindings)
+This command displays all the key bindings for the current buffer. The
+specific bindings for the current major mode will be displayed under the
+heading <quote>(<cx>(Local bindings)), along with any other local bindings
+you have defined yourself.  <x>(Local bindings)
+
+<head1>(Editing Natural Language Text\editnatlang_sec)
+
+<p>
+EMACS enables you to easily manipulate words, sentences, or paragraphs of
+text. In addition, there are commands to fill text and convert character
+cases.
+
+<head2>(Word Commands\wordcmd_sec)
+
+<p>
+EMACS has commands for moving over or operating on words. By convention,
+they are all <key_name>(Escape) prefixed commands. All of these commands may be
+used in any major mode.
+
+<definition_list>
+<deflist_item>(ESC-f (forward-word))
+<x>(ESC-f)
+<x>(forward-word)
+<deflist_def>
+Moves forward over a word.
+
+<deflist_item>(ESC-b (backward-word))
+<x>(ESC-b)
+<x>(backword-word)
+<deflist_def>
+Moves backward over a word.
+
+<deflist_item>(ESC-d or KP-Minus (delete-next-word))
+<x>(ESC-d)
+<x>(delete-next-word)
+<deflist_def>
+Deletes up to the end of a word.
+
+<deflist_item>(ESC-h (delete-previous-word))
+<x>(ESC-h)
+<x>(delete-previous-word)
+<deflist_def>
+Deletes back to the beginning of a word.
+
+<enddefinition_list>
+
+<x>(^F)
+<x>(^B)
+<x>(^D)
+<x>(^H)
+<p>
+Notice how these commands form a group that parallels the character-based
+commands <key_name>(^F), <key_name>(^B), <key_name>(^D) and <key_name>(Delete).
+
+<x>(forward-word)
+<x>(backward-word)
+<p>
+The commands <key_name>(ESC-f) and <key_name>(ESC-b) move forward and
+backward over words. They are  analogous to <key_name>(^F) and
+<key_name>(^B), which move over single characters. Like their
+<key_name>(Control-) analogues, <key_name>(ESC-f) and <key_name>(ESC-b)
+move over several words if they are given a prefix argument. <key_name>(ESC-f)
+with a negative argument moves backwards like <key_name>(ESC-b), and
+<key_name>(ESC-b) with a negative argument moves forwards. Forward motion
+stops exactly after the last letter of the word, while backward motion
+stops exactly before the first letter.
+
+<x>(ESC-d)
+<x>(ESC-f)
+<x>(ESC-h)
+<p>
+It is easy to delete a word at a time. <key_name>(ESC-d) deletes the word
+after dot. To be precise, it deletes everything from dot to the place that
+<key_name>(ESC-f) would move dot. Therefore, if dot is in the middle of a
+word, only the part of the word after dot is deleted. If some punctuation
+comes after dot and before the next word, it is deleted along with the
+word. If you wish to delete only the next word but not the punctuation,
+use <key_name>(ESC-f) to go to the end, then delete the word
+backwards with <key_name>(ESC-h). <key_name>(ESC-d) takes arguments just
+like <key_name>(ESC-f).
+
+<p>
+<key_name>(ESC-h) deletes the word before dot. It deletes everything from
+dot back to where <key_name>(ESC-b) would move dot. If dot is after the space
+in <quote>(<cx>(FOO, BAR)), then <quote>(<cx>(FOO,)) is deleted. If you
+wish to delete just <quote>(<cx>(FOO)), use <key_name>(ESC-b) then
+<key_name>(ESC-d) instead of an <key_name>(ESC-h).
+
+<p>
+The definition of a <quote>(word) as used by the word commands is
+completely controlled by the current syntax table. Any character can, for
+example, be declared as a word-delimiter.
+
+<head2>(Sentence And Paragraph Commands\sentparacmd_sec)
+
+<p>
+The EMACS commands for manipulating sentences and paragraphs are mostly
+<key_name>(Escape) prefixed commands so as to resemble the word-handling
+commands.
+
+<definition_list>
+<deflist_item>(ESC-a (backward-sentence))
+<x>(ESC-a)
+<x>(backward-sentence)
+<deflist_def>
+Moves back to the beginning of a sentence.
+
+<deflist_item>(ESC-e (forward-sentence))
+<x>(ESC-e)
+<x>(forward-sentence)
+<deflist_def>
+Moves forward to the end of a sentence.
+
+<deflist_item>(ESC-<oparen> (backward-paragraph))
+<x>(ESC-<oparen>)
+<x>(backward-paragraph)
+<deflist_def>
+Moves back to the beginning of the previous paragraph.
+
+<deflist_item>(ESC-<cparen> (forward-paragraph))
+<x>(ESC-<cparen>)
+<x>(forward-paragraph)
+<deflist_def>
+Moves forward to the end of the next paragraph.
+
+<enddefinition_list>
+
+<p>
+The commands <key_name>(ESC-a) and <key_name>(ESC-e) move to the beginning
+and end of the current sentence respectively. They were chosen to
+resemble <key_name>(^A) and <key_name>(^E), which move to the beginning
+and end of the current line. EMACS considers a sentence to end wherever
+there is a <quote>(<cx>(.)), <quote>(<cx>(?)) or <quote>(<cx>(!))
+character followed by white-space or an end-of-line.  Neither
+<key_name>(ESC-a) nor <key_name>(ESC-e) move past the white-space which
+delimits the sentence.
+
+<x>(sentence-delimiters)
+<p>
+The variable <key_name>(sentence-delimiters) is a <newterm>(regular expression)
+search-string composed of the various strings that define a sentence
+boundary. The default value of this variable is:
+
+<code_example>
+[.!?][<literal>(\)040<literal>(\)t<literal>(\)n][<literal>(\)040<literal>(\)t<literal>(\)n]*
+<endcode_example>
+
+<x>(ESC-<oparen>)
+<x>(ESC-<cparen>)
+<p>
+<key_name>(ESC-<oparen>) moves to the beginning of the current or previous
+paragraph, while <key_name>(ESC-<cparen>) moves to the end of the current
+or next paragraph. Blank lines and text formatter command lines  are
+not considered part of any paragraph. Also, an indented line starts a new
+paragraph.
+
+<x>(paragraph-delimiters)
+<p>
+The variable <key_name>(paragraph-delimiters) is a regular expression search
+string composed of the various strings that define a paragraph boundary.
+The default value of this variable is:
+
+<code_example>
+<literal>(\)f<literal>(\)n<literal>(\)|[<literal>(\)040<literal>(\)t]*<literal>(\)n
+<endcode_example>
+
+<head2>(Indentation Commands for Text\txtindentcmd_sec)
+
+<definition_list>
+<deflist_item>(Tab)
+<x>(Tab)
+<deflist_def>
+Indents  appropriately in a mode-dependent fashion.
+
+<deflist_item>(Linefeed)
+<x>(Linefeed)
+<deflist_def>
+Performs the same action as <key_name>(Return) followed by <key_name>(Tab).
+<enddefinition_list>
+
+<p>
+Use the <key_name>(Tab) command to request indentation. Its precise effect
+depends on the major mode. In Text and Normal Modes, it indents to the
+next tab-stop.
+
+<p>
+When you type normal text, if you use the <key_name>(Linefeed) key to
+terminate a line, the indentation of the current line will be
+duplicated at the start of the next line. So to type in several lines of
+text all starting at a specified indent, use the <key_name>(Linefeed)
+key to terminate each line.
+
+<head2>(Text Filling and Text Mode\textfilling_sec)
+
+<x>(Text Mode)
+<x>(Text<xs>filling)
+<x>(Text<xs>justifying)
+<x>(Filling text)
+<x>(Justifying text)
+
+<p>
+EMACS  has  a  major mode called Text Mode which provides functions for
+setting   margins,   filling,  justifying  and  centering  text.   Use  the
+<key_name>(ESC-x text-mode) command to enter Text Mode.
+
+<p>
+The Text Mode functions can be used without needing to switch to Text
+Mode---they can be used from any major mode.  This is usually more
+convenient than having to change the major mode to Text Mode when you need
+to format some text.  Text Mode is included in EMACS for backwards
+compatibility only.
+
+<p>
+If you enable the Text Mode functions explicitly using <key_name>(ESC-x
+text-mode), the Text Mode functions are bound to keys.  If you do not
+switch to Text Mode to use the functions, you must either provide your own
+bindings for the functions, or execute the functions as extended commands
+using <key_name>(ESC-x).
+
+<p>
+The Text Mode functions and key bindings are:
+
+<definition_list>
+
+<deflist_item>(ESC-1 (set-left-margin))
+<deflist_def>
+Sets the left margin.
+
+<deflist_item>(ESC-^H (set-right-margin))
+<deflist_def>
+Sets the right margin.
+
+<deflist_item>((set-margins))
+<deflist_def>
+Sets  the  margins  to the values indicated by text in the current
+paragraph. The right margin is defined as the right-most column in which
+text appears for paragraphs with a ragged-right margin.
+
+<deflist_item>(ESC-i (set-indent-offset))
+<deflist_def>
+Sets the paragraph indent offset.
+
+<deflist_item>(ESC-j (fill-and-justify-paragraph))
+<deflist_def>
+Fills or justifies the current paragraph between the currently set
+margins.
+
+<deflist_item>(ESC-J (fill-and-justify-region))
+<deflist_def>
+Fills or justifies the region between the currently set margins.
+
+<deflist_item>(ESC-m (justify-mode))
+<deflist_def>
+Toggles  the  current  justify  mode  to  either a ragged or straight right
+margin.
+
+<deflist_item>(ESC-c (center-line))
+<deflist_def>
+Centres the current line between the currently set margins.
+
+<enddefinition_list>
+
+<p>
+The fill-and-justify functions will re-fill the current paragraph between
+the current margin settings. If you edit text in the middle of a
+paragraph, the paragraph may no longer be correctly filled---just type
+<key_name>(ESC-j) to re-fill the paragraph.  The effect of
+<key_name>(ESC-j) can be undone with <key_name>(^X-^U) (<key_name>(undo)).
+See <reference>(undo_sec) for more information on undoing changes.
+
+<p>
+Paragraphs can be indented using <key_name>(ESC-i) to set an indent
+offset.  A positive value for the indent offset causes the first line of
+the paragraph to be indented by the specified number of characters.  For
+example, with an indent offset of 5, paragraphs will appear as:
+
+<online_popup>(example)
+<display>
+
+     Here is  the  beginning  of the
+paragraph.   Here is some more text,
+and here is yet more.
+
+<enddisplay>
+<endonline_popup>
+
+<p>
+A  negative indent offset allows you to create <quote>(hanging
+paragraphs); with  an  indent  of  -5  and  a  left  margin of 5, text
+will be filled as follows:
+
+<online_popup>(example)
+<display>
+
+1.  text....text    ....text
+    more text..... text text
+    more text..... text text
+    more text..... text text
+
+2.  text....text    ....text
+    more text..... text text
+    more text..... text text
+
+Here is  the beginning of the paragraph.
+    Here  is some more text, and here is
+    yet more.
+
+<enddisplay>
+<endonline_popup>
+
+<p>
+The Text Mode functions access several buffer-specific variables.  You can
+use either use the Text Mode bindings listed above to set the values of
+these variables, or you can set them directly using <key_name>(ESC-x set).
+If you want to change their default values, use <key_name>(ESC-x
+set-default).
+
+<p>
+The Text Mode variables are:
+
+<definition_list>
+
+<deflist_item>(left-margin)
+<deflist_def>
+Contains the left margin setting for the current buffer.  The default
+setting for the left margin is 1.
+
+<deflist_item>(right-margin)
+<deflist_def>
+Contains the right margin setting for the current buffer.  The default
+setting for the right margin is 1000---if you use the Text Mode fill
+functions from any mode other than Text Mode, be sure to set
+<key_name>(right-margin) to a reasonable value.
+
+<deflist_item>(index-offset)
+<deflist_def>
+Contains the index offset for the current buffer.
+
+<deflist_item>(buffer-display-margins)
+<deflist_def>
+Controls whether the current margin settings are displayed in the buffer's
+mode line.  This variable is set to 1 by default, so margins are
+displayed.  If you do not want margins displayed, set the variable to 0.
+
+<deflist_item>(autowrap-mode-flag)
+<deflist_def>
+Controls whether text is automatically wrapped as you type it.  This is
+set to 1 by default, so that when you type text beyond the right margin, a
+line separator is automatically inserted, and you can continue typing
+without worrying about breaking the line yourself.  This feature is known
+as <newterm>(auto-filling).
+
+<deflist_item>(buffer-justify-flag)
+<deflist_def>
+Controls the appearance of text at the right margin.  If set to 1 (the
+default), text will be be filled with a straight right margin; if
+<key_name>(buffer-display-margins) is set to 1, the right margin indicator
+in the mode line will be a <quote>(<cx>(J)).  If
+<key_name>(buffer-justify-flag) is set to 0, text will be filled with a
+ragged right margin; if <key_name>(buffer-display-margins) is set to 1,
+the right margin indicator in the mode line will be an <quote>(<cx>(R)).
+
+<enddefinition_list>
+
+
+
+<head2>(Case Conversion Commands\caseconv_sec)
+
+<p>
+EMACS has commands for converting either a single word or any arbitrary
+range of text to upper-case, lowercase or to invert the case.
+
+<definition_list>
+<deflist_item>(ESC-l (case-word-lower))
+<x>(ESC-l)
+<x>(case-word-lower)
+<deflist_def>
+Converts the following word to lowercase.
+
+<deflist_item>(ESC-u (case-word-upper))
+<x>(ESC-u)
+<x>(case-word-upper)
+<deflist_def>
+Converts the following word to upper-case.
+
+<deflist_item>(ESC-^ (case-word-invert))
+<x>(ESC-^)
+<x>(case-word-invert)
+<deflist_def>
+Inverts the case of the following word.
+
+<deflist_item>(ESC-x case-word-capitalize)
+<x>(case-word-capitalize)
+<deflist_def>
+Capitalizes the following word.
+
+<deflist_item>(ESC-x case-region-lower)
+<x>(case-region-lower)
+<deflist_def>
+Converts the region to lowercase.
+
+<deflist_item>(ESC-x case-region-upper)
+<x>(case-region-upper)
+<deflist_def>
+Converts the region to upper-case.
+
+<deflist_item>(ESC-x case-region-invert)
+<x>(case-region-invert)
+<deflist_def>
+Inverts the case of the region.
+
+<deflist_item>(ESC-x case-region-capitalize)
+<x>(case-region-capitalize)
+<deflist_def>
+Capitalizes the region.
+
+<enddefinition_list>
+
+<p>
+The word conversion commands are the most useful. <key_name>(ESC-l)
+converts the word in which dot is located to lowercase. <key_name>(ESC-u)
+converts the current word to all capitals, while <key_name>(ESC-x
+case-word-capitalize) makes the first letter of the word upper-case and
+the rest lowercase. <key_name>(ESC-^) inverts the case of all the
+characters in the current word.
+
+<p>
+If a word case conversion command is given in the middle of a word, it
+applies to the whole word.
+
+<head2>(Spelling Correction\spell_sec)
+<x>(Spelling correction)
+
+<p>
+EMACS contains an interface to the DECspell spelling correction layered
+product. This interface consists of three functions, a package and the
+facility for automatic spelling error detection when using the text
+filling functions described in <reference>(textfilling_sec).
+
+<p>
+The DECspell interface functions are:
+
+<definition_list>
+<deflist_item>((spell-check-word))
+<x>(spell-check-word)
+<deflist_def>
+Returns 1 if the spelling is correct, or 0 otherwise.
+
+<deflist_item>((correct-word))
+<x>(correct-word)
+<deflist_def>
+Returns a list of corrections for the supplied word.
+
+<deflist_item>((get-tty-correction))
+<x>(get-tty-correction)
+<deflist_def>
+Provides expanded input of corrected words.
+
+<enddefinition_list>
+
+<x>(SPELL)
+<p>
+A user-interface to these functions is supplied in the SPELL package.
+See the <reference>(emacs_ext_ref) for details on using the SPELL package.
+
+<head1>(Editing Programs\editprog_sec)
+
+<p>
+Special features for editing programs include automatic indentation, comment
+alignment, parenthesis matching, and the ability to move over balanced,
+parenthesised expressions. Many of these features are generalised so that
+they can work for any programming language.
+
+<p>
+For some languages, there is a special major mode which customises EMACS to
+be better-suited to editing programs written in that language. 
+
+<p>
+The languages supported by major modes include:
+
+<list>(unnumbered)
+<le>
+Bliss in Bliss Mode
+<le>
+C in C Mode
+<le>
+Lisp and MLisp in Lisp Mode
+<le>
+PASCAL in PASCAL Mode
+<endlist>
+
+<x>(TAGS)
+<p>
+The TAGS package can be used to remember all the labels or functions in a
+multi-file program, and to find any one of them quickly.
+
+<head2>(Compiling Your Program\compiling_sec)
+<x>(Compilation)
+
+<x>(compile-it)
+<x>(^X-^E)
+<p>
+The command <key_name>(^X-^E) (<key_name>(compile-it)) is used to compile
+a program within EMACS. Normally, <key_name>(^X-^E) uses the MMS product
+to compile a program. See the <reference>(vax_dec_mms_gt)
+for details on using MMS. MMS knows how to build your program based on a
+description file that you give it.
+
+<p>
+The first thing <key_name>(^X-^E) does is to write out all modified files.
+This is because it is likely that other buffers contain parts of the same
+program that you are about to compile.
+
+<p>
+Then, <key_name>(^X-^E) invokes the MMS command. All output from MMS goes into
+the empty buffer <key_name>(Error log), which will be displayed in a
+window on the screen. Messages that the compilation generates are
+displayed in the <key_name>(Error Log) buffer as they are generated.
+
+<x>(parse-error-messages-in-region)
+<x>(error-message-parser)
+<x>(^X-^N)
+<x>(next-error)
+<p>
+When the compilation is complete, the function
+<key_name>(parse-error-messages-in-region) is applied to the entire buffer.
+This command uses the function specified in the variable
+<key_name>(error-message-parser) to find all the compiler error messages.
+For each error message generated, the source file in which the error was
+detected is visited (typically this will already be in a buffer), and the
+line on which the compilation detected an error is marked. This process
+generates a list of marks in various buffers for viewing with the
+<key_name>(^X-^N) (<key_name>(next-error)) command. When all errors have
+been visited, <key_name>(^X-^N) says so.
+
+<p>
+In summary, a typical use of the compilation facility is as follows:
+
+<list>(numbered)
+<le>
+Prepare some source files;
+<le>
+Type <key_name>(^X-^E) to compile the program;
+<le>
+Use <key_name>(^X-^N) until EMACS says there are no more errors, then
+go back to step 2;
+<le>
+When no more errors are detected, the program is ready to run, so leave
+EMACS to run the program (probably by using <key_name>(ESC-x pause-emacs)).
+<x>(pause-emacs)
+
+<endlist>
+
+<x>(shell)
+<p>
+You can also compile programs with the <key_name>(ESC-x shell) command. In
+<key_name>(shell), you are put into <key_name>(shell) window in EMACS where
+every line that you type and end with a <key_name>(Return) is executed as
+a DCL command.  The output from the commands is displayed in the
+<key_name>(shell) window.  Several key sequences are re-bound in
+<key_name>(shell) to be more useful.  <key_name>(^R) is bound to insert
+the last command sent to DCL into the buffer at dot. So, if you make a
+mistake, you can easily edit the command and try it again.  The last 20
+commands are remembered and can be recalled with successive <key_name>(^R)
+commands.  The <key_name>(shell) command is described more fully in the
+<reference>(emacs_ext_ref).
+
+<p>
+Whenever you need to leave EMACS to run a program you can use the
+<key_name>(ESC-x pause-emacs) command. This simply causes EMACS to stop
+working and causes the parent process from which EMACS was created to
+start running again. You get the DCL prompt back, and can use all the
+usual DCL commands.  When you next issue the EMACS DCL command, the paused
+EMACS is resumed exactly where you left it.  <x>(pause-emacs)
+
+<head2>(Indentation Commands for Code\indentcode_sec)
+
+<definition_list>
+<deflist_item>(Tab)
+<x>(Tab)
+<deflist_def>
+Indents the current line.
+
+<deflist_item>(Linefeed)
+<x>(Linefeed)
+<deflist_def>
+Equivalent to <key_name>(Return) followed by <key_name>(Tab).
+
+<deflist_item>(ESC-x delete-white-space)
+<x>(delete-white-space)
+<deflist_def>
+Deletes all spaces and tabs around dot.
+
+<enddefinition_list>
+
+<p>
+Most programming languages have some indentation convention. For Lisp, lines
+are indented according to their nesting in parentheses. For assembler code,
+almost all lines start with a single tab, but some have one or more spaces
+as well.
+
+<p>
+Whatever the language, to indent a line, use the <key_name>(Tab) command.
+Each major mode defines this command to perform the sort of indentation
+appropriate for the particular language. In Lisp Mode, <key_name>(Tab)
+aligns the line according to its depth in parentheses. This only happens
+if the tab is the first character on a line.
+<x>(lisp-mode)
+<x>(Lisp Mode)
+
+<p>
+The command <key_name>(Linefeed) does a <key_name>(Return), then does a
+<key_name>(Tab) on the next line. Thus, <key_name>(Linefeed) at the end of
+the line makes a following blank line and supplies it with the appropriate
+amount of indentation. <key_name>(Linefeed) in the middle of a line breaks
+the line and supplies the indentation in front of the new line.
+
+<x>(delete-white-space)
+<p>
+To delete just the indentation of a line, go to the beginning of the line
+and use <key_name>(ESC-x delete-white-space), which deletes all spaces and tabs
+around the cursor.
+
+<x>(^A)
+<x>(^O)
+<x>(newline-and-indent)
+<p>
+To insert an indented line before the current line, use
+<key_name>(^A-^O-Tab). To make an indented line after the current one, use
+<key_name>(^E-Linefeed).
+
+<head2>(Automatic Display Of Matching Parentheses\matchparen_sec)
+
+<p>
+The EMACS parenthesis matching feature is designed to show automatically
+how parentheses balance in text as it is typed in. When this feature is
+enabled, after a closing parenthesis or other close-bracket character is
+inserted, the cursor automatically moves for an instant to the open
+parenthesis which balances the newly-inserted character. The cursor stays
+at the open parenthesis for a second before returning to the close
+parenthesis.
+
+<x>(fundamental-mode)
+<x>(FLASHER)
+<p>
+The parenthesis-matching feature is enabled by using <newterm>(Fundamental
+Mode) rather than the default Normal Mode, and may be enabled by language
+modes as required. It is also available on its own as the MLisp package
+FLASHER.  You can load the FLASHER package yourself to have
+parenthesis-matching in a specific buffer.  Several language major modes
+also load FLASHER to provide this feature when you edit program source code.
+
+<p>
+It is worth emphasising that the location of dot (the place where your
+text will be inserted) is not affected by the parenthesis-matching
+feature. Dot stays after the close parenthesis, where it ought to be---only
+the cursor on the screen moves away and back. You can type ahead freely as
+if the parenthesis display feature was not enabled. In fact, if you type fast
+enough, you will not see the cursor move---you must pause after typing a close
+parenthesis to let the cursor move to the open parenthesis.
+
+<p>
+If you type in an un-matched parenthesis, EMACS rings the bell and
+tells you there is an error.
+
+<head2>(Major Modes for Programming Languages\proglangmodes_sec)
+
+<head3>(Lisp Mode\lispmode_sec)
+<x>(Lisp Mode)
+<x>(lisp-mode)
+
+<p>
+Lisp's simple syntax makes it easy for an editor to understand. As a
+result, EMACS can do more for Lisp, and with less work, than for any other
+language.
+
+<p>
+Paragraphs are defined to start only with blank lines so that the paragraph
+commands can be useful. Auto-fill Mode indents the new lines which it creates.
+Comments start with <quote>(<cx>(;)).
+
+<x>(expand-mlisp-word)
+<p>
+The command <key_name>(`) (<key_name>(expand-mlisp-word)) can be used to
+insert EMACS function names completed with completion. This saves typing
+in long EMACS function names.
+
+<p>
+Lisp Mode commands include:
+
+<definition_list>
+<deflist_item>(ESC-<oparen>)
+<deflist_def>
+Moves back one s-expression.
+
+<deflist_item>(ESC-<cparen>)
+<deflist_def>
+Moves forward one s-expression.
+
+<deflist_item>(ESC-c)
+<deflist_def>
+Compiles and executes the first MLisp expression in the current buffer.
+
+<deflist_item>(ESC-j)
+<deflist_def>
+Re-indents the current MLisp function.
+
+<deflist_item>(ESC-i)
+<deflist_def>
+Re-indents the current MLisp line.
+
+<deflist_item>(;)
+<deflist_def>
+Inserts a Lisp comment.
+
+<enddefinition_list>
+
+<p>
+<key_name>(ESC-c) can be used to take the single MLisp expression in the
+current buffer and compile it in EMACS as MLisp. The compiled MLisp is
+then executed. Thus, if you write some MLisp, the easiest way to test and
+debug it is to run it using <key_name>(ESC-c).
+
+<p>
+To re-indent the current function (as defined by lines staring with
+<quote>(<cx>(<oparen>defun))) use the <key_name>(ESC-j) command. This
+command uses the same indenting algorithm as  the <key_name>(Linefeed) and
+<key_name>(Tab) commands.
+
+<p>
+Lisp Mode works in exactly the right way only for the MLisp dialect of
+Lisp. For other Lisps, the syntax tables may have to be modified.
+
+<head3>(Bliss Mode\blissmode_sec)
+<x>(Bliss Mode)
+<x>(bliss-mode)
+
+<p>
+<newterm>(Bliss Mode) is a major programming mode for writing any dialect
+of Bliss code.  It  provides optional automatic expansion of Bliss
+keywords, formatting them according to Software Engineering standards.
+
+<p>
+When  you type a Bliss keyword in Bliss Mode and complete it with a
+non-word  character,  Bliss Mode  automatically  recognises  the  word,  and
+performs  the  expansion. If a word is not recognised by Bliss Mode, it
+will  not  be  expanded. Some words in Bliss may be grouped together to form
+strings of keywords (e.g. EXTERNAL ROUTINE). To solve the problem of
+whether or not to expand  a  word,  Bliss Mode looks at the word
+separator. If a word may form a string  of words, Bliss Mode assumes that
+there are no more words to be input  if  the  separator  is a
+<key_name>(Return). So, to define a <quote>(<cx>(GLOBAL BIND ROUTINE)),
+type <quote>(<cx>(GLOBAL BIND ROUTINE<key>(Return))).
+
+<x>(bliss-auto-expansion)
+<x>(expand-bliss-keyword)
+<p>
+If you  do  not  require automatic expansion, set the variable
+<key_name>(bliss-auto-expansion) to zero.
+The function <key_name>(expand-bliss-keyword)  can then be used directly
+after each keyword to be expanded to force the expansion to take place.
+
+<p>
+Bliss Mode works  by  reading  templates  from  the  EMACS language template
+library  accessed  through  the <key_name>(language) database search-list.
+This search-list   contains   the  provided  template  library,  and  also
+the  library <hyphenate>(SYS$\LOGIN:\LANGUAGE-\TEMPLATE\.TLB). The file
+<hyphenate>(LANGUAGE-\TEMPLATE\.TLB) is searched first, so that your
+customised templates are used before the system's templates.
+
+<p>
+For example, when you need to write a new Bliss module, do the following:
+
+<list>(numbered)
+<le>
+Obtain a new buffer and switch to Bliss Mode.
+
+<le>
+Type the word <quote>(<cx>(module) ).  Bliss Mode fills in the module
+bracket at the end of the line, and expects you to type in the module name
+by prompting with <quote>(<cx>([Module Name])) in the Mini-buffer.
+
+<le>
+Type in the module name. Use <key_name>(^C) (<key_name>(exit-emacs)) to
+terminate the field.
+
+<le>
+Bliss Mode proceeds to fill in the <quote>(<cx>(%TITLE)) line above the
+module name, and asks you to fill in the rest of the title. It prompts
+<quote>(<cx>([Module title])).
+
+<le>
+The next field is module options;  Bliss Mode fills in the
+copyright notice, asking for your name and stepping through the possible
+module switches and header information.
+
+<endlist>
+
+<p>
+If you try to expand a Bliss word that Bliss Mode does not understand,
+an error message is issued. All Bliss reserved keywords and comment
+characters are recognised.
+
+<head3>(PASCAL Mode\pascalmode_sec)
+<x>(pascal-mode)
+<x>(PASCAL Mode)
+
+<p>
+<newterm>(PASCAL Mode) is a simple major mode for writing VAX PASCAL
+programs. PASCAL Mode works by automatically upper-casing all PASCAl
+reserved words as they are entered.  <reference>(pascalmode_tab) shows
+which PASCAL keywords are recognised.
+
+<table>(PASCAL Keywords Recognised by PASCAL Mode\pascalmode_tab)
+<table_setup>(3\9\9)
+<table_row>(AND \ ARRAY \ BEGIN)
+<table_row>(BOOLEAN \ CAND \ CASE)
+<table_row>(CHR \ CONST \ COR)
+<table_row>(DIV \ DO \ DOWNTO)
+<table_row>(ELSE \ END \ EXIT)
+<table_row>(EXPORTS \ FALSE \ FILE)
+<table_row>(FOR \ FORWARD \ FROM)
+<table_row>(FUNCTION \ GET \ GOTO)
+<table_row>(IF \ IMPORTS \ IN)
+<table_row>(INPUT \ INTEGER \ LABEL)
+<table_row>(LONG \ MOD \ MODULE)
+<table_row>(NEW \ NIL \ NOT)
+<table_row>(OF \ OR \ ORD)
+<table_row>(OTHERWISE \ OUTPUT \ PACKED)
+<table_row>(PRIVATE \ PROCEDURE \ PROGRAM)
+<table_row>(PUT \ READ \ READLN)
+<table_row>(REAL \ RECORD \ REPEAT)
+<table_row>(RESET \ REWRITE \ SET)
+<table_row>(SET \ STRING \ TEXT)
+<table_row>(THEN \ TO \ TRUE)
+<table_row>(TYPE \ UNTIL \ VAR)
+<table_row>(WHILE \ WITH \ WRITE)
+<table_row>(WRITELN \ \ )
+<endtable>
+
+<p>
+Two types of PASCAL comment are recognised: <quote>(<cx>(<oparen>*)) with
+<quote>(<cx>(*<cparen>)) and <quote>(<cx>(<literal>({))) with
+<quote>(<cx>(<literal>(}))).
+
+<p>
+The function <key_name>(Pascal-Skeleton) can be used to create a function or
+procedure template and fills in the appropriate parameters and types.
+
+<head3>(C Mode\cmode_sec)
+<x>(C Mode)
+<x>(c-mode)
+
+<p>
+<newterm>(C Mode) is a major programming mode for writing C programs.
+It  provides  optional automatic expansion of C keywords, formatting them
+according to Software Engineering standards.
+
+<p>
+When  you type a C keyword in C Mode and complete it with a non-word
+character,  C Mode  automatically  recognises  the  word,  and performs
+the  expansion. If a word is not recognised, it is not expanded.
+
+<x>(c-auto-expansion)
+<x>(expand-c-keyword)
+<p>
+If you  do  not  require automatic expansion, set the variable
+<key_name>(c-auto-expansion) to zero.  The function
+<key_name>(expand-c-keyword)  can then be used directly after each keyword
+to force the expansion to take place.
+
+<p>
+C Mode works  by  reading  templates  from  the  EMACS language template
+library  accessed  through  the <key_name>(language) database search-list.
+This search-list   contains   the  provided  template  library,  and  also
+the library <hyphenate>(SYS$\LOGIN:\LANGUAGE-\TEMPLATE\.TLB). The file
+<hyphenate>(LANGUAGE-\TEMPLATE\.TLB) is searched first, so your customised
+templates are used before the system's templates.
+
+<p>
+To cause the expansion for <quote>(<cx>(module)) and
+<quote>(<cx>(function)) headers, enter the appropriate word and use
+the <key_name>(expand-c-keyword) function.
+
+<p>
+If you try to expand a C word that C Mode does not understand, an
+error message is issued.  All C keywords, braces, comments and tertiary
+operators are recognised by C Mode.

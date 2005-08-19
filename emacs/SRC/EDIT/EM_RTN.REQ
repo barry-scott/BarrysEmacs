@@ -1,0 +1,18 @@
+! em_rtn.req
+external routine
+	emacs_free,
+	emacs_malloc,
+	emacs_realloc,
+	rst_dsp,
+	Checkpoint_Everything,
+	start_async_io		: novalue,
+	Keyboard_Interrupt,
+	emacs_exit,
+	savestr,
+	fio_create,
+	fio_access,
+	fio_open,
+	fio_close,
+	fio_put,
+	get_log,
+	init_dsp;

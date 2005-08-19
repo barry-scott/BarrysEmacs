@@ -1,0 +1,18 @@
+! em_var.req
+external
+	get_db_help_flags,
+	current_directory	: vector[MAXPATHLEN+1,byte],
+	parent_path		: vector[MAXPATHLEN+1,byte],
+	complete_reinit,
+	touched_command_args,
+	Must_Checkpoint_On_Crash,
+	cli_name		: vector[64,byte],
+	gargc,
+	gargv			: ref vector[,long],
+	input_pending,
+	timer_interrupt_occurred,
+	activity_character,
+	activity_indicator,
+	tt			: ref trm_control,
+	term_ansi,
+	term_is_terminal;

@@ -1,0 +1,1555 @@
+module emacs_sys
+	(
+	ident	= 'V4.1-0'
+	) =
+begin
+require 'edit$obj:em_user';
+library 'target_library:starlet';
+require	'images$src:emacs_sys';
+
+!
+!	Routines to access VMS system services
+!
+forward routine
+	emacs$sys$fao,
+	emacs$sys$filescan,
+	emacs$sys$getmsg,
+	emacs$sys$setprn,
+
+	!
+	!	Item list services
+	!
+	initialise_ctx,
+	build_item_list,
+	get_string,
+	return_items,
+	privs_to_string,
+
+	emacs$sys$getdvi,
+	emacs$sys$getjpi,
+	emacs$sys$getqui,
+	emacs$sys$getsyi,
+        emacs$sys$getuai,
+        emacs$sys$setuai,
+
+	emacs$sys$sndjbc,
+
+	emacs$sys$setprv,
+
+	report_message;
+
+macro
+	$call_back( rtn, a, b, c, d, e ) =
+		(.call_back_routine)
+		(
+		%name( emacs__k_, rtn )
+		%if not %null( a ) %then ,a %fi
+		%if not %null( b ) %then ,b %fi
+		%if not %null( c ) %then ,c %fi
+		%if not %null( d ) %then ,d %fi
+		%if not %null( e ) %then ,e %fi
+		)
+	%,
+	$chkerr( expr ) =
+		(if not (status = (expr)) then return .status)
+	%,
+	$text( desc, str ) =
+		(
+		desc[0] = %charcount( str ); desc[1] = uplit byte ( str )
+		desc[0]
+		)
+	%,
+	$message( str )[] =
+		report_message( .call_back_routine, emacs__k_message,
+				uplit byte (%ascic str)
+				%if not %null( %remaining )
+				%then , %remaining %fi )
+	%,
+	$error( str )[] =
+		report_message( .call_back_routine, emacs__k_error,
+				uplit byte (%ascic str)
+				%if not %null( %remaining )
+				%then , %remaining %fi )
+	%,
+	$time_decl =
+		vector[time_bin_len+time_string_len,byte]
+	%;
+
+literal
+	max_items		= 29,
+	initial_area_size	= 10000;
+own
+	item_list	: $itmlst_decl( items = max_items ),
+	item_types	: vector[max_items,byte],
+	data_desc	: blockvector[max_items,8,byte],
+
+	data_area	: long,
+	data_size	: initial(0);
+
+external
+	dvi_item_info	: blockvector[ , t1_s_item_info, byte ],
+	jpi_item_info	: blockvector[ , t1_s_item_info, byte ],
+	syi_item_info	: blockvector[ , t1_s_item_info, byte ],
+	qui_item_info	: blockvector[ , t1_s_item_info, byte ],
+	sjc_item_info	: blockvector[ , t1_s_item_info, byte ],
+	uai_item_info	: blockvector[ , t1_s_item_info, byte ];
+
+EXTERNAL LITERAL
+	prv$_notunq,	! privilege name ambiguous
+	prv$_invnam;	! invalid privilege name
+
+EXTERNAL ROUTINE
+	str$upcase:	ADDRESSING_MODE(general),
+	prv$privbit,	! status = prv$privbit(address of name descriptor, address of word to receive bit number)
+	prv$setpriv,	! status = prv$setpriv(address of name descriptor, address of priv vector)
+	prv$keyword;	! status = prv$keyword(privilege bit number, output descriptor, output length word)
+!
+!	(sys$fao fao-control par-desc par1 par2 ...)
+!
+literal
+	strings_size		= 4096,
+	max_param		= 16;
+global routine emacs$sys$fao
+		(
+		call_back_routine,
+		ctx	: ref block[,byte],
+		restore
+		)
+			=
+	begin
+	local
+		strings			: vector[strings_size],
+		string_addr,
+		string_remaining,
+		control_desc		: vector[2,long],
+		param_desc		: vector[2,long],
+		out_desc		: vector[2,long],
+		param_buf		: ref vector[,byte],
+		desc			: vector[2*max_param,long],
+		param			: vector[max_param,long],
+		status;
+
+	string_addr = strings;
+	string_remaining = strings_size;
+
+	$chkerr( $call_back( check_args, 2, 0 ));
+
+	control_desc[0] = .string_remaining;
+	control_desc[1] = .string_addr;
+	$chkerr( $call_back( string_arg, 1,
+			control_desc[0], control_desc[0] ) );
+
+	string_addr = .string_addr + .(control_desc[0])<0,16,0>;
+	string_remaining = .string_remaining - .(control_desc[0])<0,16,0>;
+
+	param_desc[0] = .string_remaining;
+	param_desc[1] = .string_addr;
+	$chkerr( $call_back( string_arg, 2, param_desc[0], param_desc[0] ) );
+
+	string_addr = .string_addr + .(param_desc[0])<0,16,0>;
+	string_remaining = .string_remaining - .(param_desc[0])<0,16,0>;
+
+	param_buf = .param_desc[1];
+
+	incr index from 0 to min( max_param-1, .(param_desc[0])<0,16,0>-1 )
+	do
+		begin
+		selectone .param_buf[ .index ]
+		of
+		set
+		['s']:
+			begin
+			desc[ .index*2 + 0 ] = .string_remaining;
+			desc[ .index*2 + 1 ] = .string_addr;
+
+			$chkerr( $call_back( string_arg, .index + 3,
+				desc[ .index*2 + 0 ], desc[ .index*2 + 0 ] ) );
+
+			string_addr = .string_addr +
+						.(desc[ .index*2 + 0 ])<0,16,0>;
+			string_remaining = .string_remaining -
+						.(desc[ .index*2 + 0 ])<0,16,0>;
+
+			param[ .index ] = desc[ .index*2 + 0 ];
+			end;
+		['n']:
+			begin
+			$chkerr( $call_back( numeric_arg, .index + 3,
+					 param[ .index ] ) );
+			end;
+		[otherwise]:
+			begin
+			$error( 'sys$fao unknown char in control string "!AS"', param_desc[0] );
+			return ss$_badparam;
+			end;
+		tes;
+		end;
+
+	out_desc[0] = .string_remaining;
+	out_desc[1] = .string_addr;
+	status = $faol
+		(
+		ctrstr = control_desc[0], prmlst = param[0],
+		outbuf = out_desc[0], outlen = out_desc[0]
+		);
+	if not .status
+	then
+		begin
+		$error( 'sys$fao failed !XL "!AS"', .status, control_desc[0] );
+		return .status;
+		end
+	else
+		$chkerr( $call_back( string_result, out_desc[0] ) );
+
+	return ss$_normal;
+	end;
+%sbttl 'sys$filescan'
+!
+!	(setq flags (sys$filescan file-str [item var]*))
+!
+global routine emacs$sys$filescan
+		(
+		call_back_routine,
+		ctx	: ref block[,byte],
+		restore
+		)
+			=
+	begin
+	local
+		status,
+		item_code	: long,
+		flags		: long,
+		arg_count,
+		items	: blockvector[fscn$s_fscndef+1,fscn$s_item_len,byte],
+		source	: vector[ nam$c_maxrss, byte ],
+		source_desc	: vector[ 2, long ]
+					initial( nam$c_maxrss, source );
+
+	!
+	!	Check the number parameters
+	!
+	$chkerr( $call_back( arg_count, arg_count ) );
+
+	$chkerr( $call_back( check_args, 1,
+				min( fscn$s_fscndef*2+1, (.arg_count or 1)) ));
+
+	!
+	!	Get the source-string
+	!
+	$chkerr( $call_back( string_arg, 1, source_desc[0], source_desc[0] ) );
+
+	!
+	!	Fill in the item list
+	!
+	ch$fill( 0, %allocation( items ), items );
+
+	incr i from 0 to ((.arg_count-1)/2) - 1
+	do
+		begin
+		$chkerr( $call_back( numeric_arg, 2 + .i*2, item_code ) );
+		items[ .i, fscn$w_item_code ] = .item_code;
+		end;
+
+	!
+	!	Call $filescan to do its work
+	!
+	status = $filescan
+		(
+		srcstr	= source_desc[0],
+		valuelst= items,
+		fldflags= flags
+		);
+	if not .status
+	then
+		begin
+		$error( 'sys$filescan failed !XL', .status );
+		return .status;
+		end;
+
+	!
+	!	return the results
+	!
+	$chkerr( $call_back( numeric_result, .flags ) );
+
+	incr i from 0 to ((.arg_count-1)/2) - 1
+	do
+		begin
+		!
+		!	turn the item cell into a string descriptor
+		!
+		items[ .i, fscn$w_item_code ] = 0;
+		$chkerr( $call_back
+			(
+			return_string_to_param,
+			3 + .i*2,
+			items[ .i, 0, 0, 0, 0 ]
+			) );
+		end;
+
+	return ss$_normal;
+	end;
+%sbttl	'emacs$sys$getmsg'
+!
+!	(vms-getmsg cond-id [msg-flags])
+!
+global routine emacs$sys$getmsg
+		(
+		call_back_routine,
+		ctx	: ref block[,byte],
+		restore
+		)
+			=
+	begin
+	local
+		status,
+		buffer		: vector[ 256, byte ],
+		buf_desc	: vector[2,long] initial( 256, buffer ),
+		arg_count,
+		cond_id, flags;
+
+	$chkerr( $call_back( check_args, 1, 2 ));
+
+	$chkerr( $call_back( numeric_arg, 1, cond_id ) );
+
+	$chkerr( $call_back( arg_count, arg_count ) );
+
+	if .arg_count gtr 1
+	then
+		$chkerr( $call_back( numeric_arg, 2, flags ) )
+	else
+		flags = 0;
+
+	status = $getmsg
+		(
+		msgid = .cond_id, msglen = buf_desc[0],
+		bufadr = buf_desc[0], flags = .flags
+		);
+	if not .status
+	then
+		begin
+		$error( 'sys$getmsg failed !XL msgid=!XL', .status, .cond_id );
+		return .status;
+		end;
+
+	$chkerr( $call_back( string_result, buf_desc[0] ) );
+
+	return ss$_normal;
+	end;
+%sbttl 'emacs$sys$setprn'
+!
+!	(sys$setprn prcnam)
+!
+global routine emacs$sys$setprn
+		(
+		call_back_routine,
+		ctx	: ref block[,byte],
+		restore
+		)
+			=
+	begin
+	local
+		status;
+	stacklocal
+		prcstr		: vector[15,byte],
+		prcnam		: vector[2,long]
+				initial( %allocation( prcstr ), prcstr );
+
+	!
+	!	Check the number parameters
+	!
+	$chkerr( $call_back( check_args, 1, 1) );
+
+	!
+	!	Get the process name
+	!
+	$chkerr( $call_back( string_arg, 1, prcnam[0], prcnam[0] ) );
+
+	!
+	!	Call $setprn to do its work
+	!
+	status = $setprn( prcnam = prcnam[0] );
+
+	if not .status
+	then
+		begin
+		$error( 'sys$setprn failed !XL', .status );
+		return .status;
+		end;
+
+	return ss$_normal;
+	end;
+routine initialise_ctx( call_back_routine, ctx ) =
+	begin
+	local
+		status,
+		global_args	: ref vector[,long];
+
+	if ..ctx eql 0
+	then
+		begin
+		$chkerr( $call_back( allocate, 2*%upval, .ctx ) );
+		global_args = ..ctx;
+		global_args[0] = 0;
+		global_args[1] = 0;
+		end
+	else
+		begin
+		global_args = ..ctx;
+		data_area = .global_args[0];
+		data_size = .global_args[1];
+		end;
+
+	if .data_area eql 0
+	then
+		begin
+		$chkerr( $call_back( allocate, initial_area_size, data_area ) ) ;
+		data_size = initial_area_size;
+		global_args[0] = .data_area;
+		global_args[1] = initial_area_size;
+		end;
+
+	return ss$_normal;
+	end;
+%sbttl 'build_item_list'
+routine build_item_list
+		(
+		call_back_routine,
+		first_arg, last_arg,
+		item_info	: ref blockvector[,t1_s_item_info,byte]
+		)
+			=
+	begin
+	local
+		status,
+		max_index,
+		index_offset,
+		item_mask,
+		t1		: ref block[,byte],
+		t2		: ref blockvector[, t2_s_item_info, byte ],
+		buf,
+		free,
+		used_size,
+		cur_item;
+
+	cur_item = 0;
+
+	ch$fill( 0, %allocation( item_list ), item_list );
+
+	buf = .data_area;
+	free = .data_size;
+	used_size = 0;
+
+	index_offset = .item_info[ t1_w_index_offset ];
+	item_mask = .item_info[ t1_w_item_mask ];
+	max_index = .item_info[ t1_l_max_index ];
+
+	incr arg from 0 to (.last_arg - .first_arg)/2
+	do
+		begin
+		local
+			index,
+			code,
+			masked_code,
+			item_type,
+			item_size;
+
+		$chkerr( $call_back( numeric_arg, .first_arg + .arg*2 , code) );
+		index = .code<.index_offset,16,0>;
+		if .index gtru .max_index
+		or
+			begin
+			t1 = item_info[ .index + t1_l_records ];
+			masked_code = .code and not .item_mask;
+			.masked_code lssu .t1[ t1_l_first_itmcod ]
+			or .masked_code gequ .t1[ t1_l_last_itmcod ]
+			end
+		then
+			begin
+			$error( 'Item code !SL value out of range', .code );
+			return ss$_badparam;
+			end;
+		t2 = .t1[ t1_l_t2_pointer ];
+
+		item_type = .t2[ .masked_code, t2_b_item_type ];
+		item_size = .t2[ .masked_code, t2_w_size ];
+
+		item_types[ .arg ] = .item_type;
+
+		case .item_type
+		from k_type_min to k_type_max of
+		set
+		[k_type_string]:
+			begin
+			if .item_size gtr .free
+			then
+				begin
+				$error( 'Emacs item processing data_area too small' );
+				return ss$_insfmem;
+				end;
+
+			data_desc[ .arg, dsc$w_length ] = .item_size;
+			data_desc[ .arg, dsc$a_pointer ] = .buf;
+
+			$out_item
+			(
+			.buf, .item_size,
+			data_desc[ .arg, dsc$w_length ]
+			);
+			buf = .buf + .item_size;
+			free = .free - .item_size;
+			end;
+
+		[k_type_integer,
+		 k_type_time,
+		 k_type_priv]:
+			begin
+			if .item_size gtr .free
+			then
+				begin
+				$error( 'Emacs item processor data_area too small' );
+				return ss$_insfmem;
+				end;
+
+			data_desc[ .arg, dsc$w_length ] = .item_size;
+			data_desc[ .arg, dsc$a_pointer ] = .buf;
+
+			$out_item
+			(
+			.buf, .item_size,
+			0		! no return size they are fixed
+			);
+			buf = .buf + .item_size;
+			free = .free - .item_size;
+			end;
+
+!
+!	Input item processing
+!
+		[k_type_string_in]:
+			begin
+			if .item_size gtr .free
+			then
+				begin
+				$error( 'Emacs sys data_area too small' );
+				return ss$_insfmem;
+				end;
+
+			$chkerr( get_string
+				(
+				.call_back_routine,
+				.first_arg + 1 + .arg*2,
+				.buf,
+				.item_size,
+				used_size
+				)
+				);
+			$in_item( .buf, .used_size );
+			buf = .buf + .used_size;
+			free = .free - .used_size;
+			end;
+
+		[k_type_integer_in]:
+			begin
+			if %upval gtr .free
+			then
+				begin
+				$error( 'Emacs sys data_area too small' );
+				return ss$_insfmem;
+				end;
+
+			$chkerr( $call_back( numeric_arg,
+				.first_arg + 1 + .arg*2,
+				.buf
+				)
+				);
+			$in_item( .buf, %upval );
+			buf = .buf + %upval;
+			free = .free - %upval;
+			end;
+
+		[k_type_time_in]:
+			begin
+			local
+				desc		: vector[2,long],
+				date_buf	: vector[%charcount('19-Jan-1986 13:47:51.05'),byte],
+				status;
+
+			if k_date gtr .free
+			then
+				begin
+				$error( 'Emacs SYS data_area too small' );
+				return ss$_insfmem;
+				end;
+
+			desc[1] = date_buf;
+
+			$chkerr( get_string
+				(
+				.call_back_routine,
+				.first_arg + 1 + .arg*2,
+				date_buf,
+				%allocation( date_buf ),
+				desc[0]
+				)
+				);
+			$chkerr( $bintim( timbuf=desc[0], timadr=.buf ) );
+			$in_item( .buf, k_date );
+			buf = .buf + k_date;
+			free = .free - k_date;
+			end;
+
+		[k_type_flag_in]:
+			$in_item( 0, 0 );
+
+		[k_type_noop]:	;	! ignore noop items
+		[inrange,outrange]:
+			begin
+			$error( 'Item !SL is not a valid item', .code );
+			return ss$_badparam;
+			end;
+		tes;
+		end;
+
+	return ss$_normal;
+	end;
+routine get_string
+	(
+	call_back_routine,
+	argument,
+	buffer,
+	buffer_size,
+	actual_size
+	)
+		=
+	begin
+	local
+		desc	: vector[2,long];
+
+	desc[0] = .buffer_size;
+	desc[1] = .buffer;
+
+	return $call_back( string_arg, .argument, desc, .actual_size );
+	end;
+%sbttl 'return_items'
+routine return_items
+	(
+	call_back_routine,
+	func_status,
+	first_arg, last_arg
+	)
+		=
+	begin
+	literal
+		msg_buf_size	= 132;
+	local
+		status,
+		desc		: vector[2,long],
+		buf		: vector[msg_buf_size,byte];
+
+	!
+	!	First return status
+	!
+	$chkerr( $call_back( numeric_result, .func_status ) );
+
+	!
+	!	Only return items if the operation succeeded
+	!
+	if not .func_status
+	then
+		return ss$_normal;
+
+	!
+	!	If no items return
+	!
+	if .last_arg leq .first_arg
+	then
+		return ss$_normal;
+
+	!
+	!	Now return all the output items
+	!
+	incr arg from 0 to (.last_arg - .first_arg)/2
+	do
+		begin
+		local
+			item_type;
+
+		case .item_types[ .arg ]
+		from k_type_min to k_type_max of
+		set
+		[k_type_string]:
+			begin
+			$chkerr( $call_back
+				(
+				return_string_to_param,
+				.first_arg + 1 + .arg*2,
+				data_desc[ .arg, 0,0,0,0 ]
+				) );
+			end;
+
+		[k_type_integer]:
+			begin
+			$chkerr( $call_back
+				(
+				return_number_to_param,
+				.first_arg + 1 + .arg*2,
+				..data_desc[ .arg, dsc$a_pointer ]
+				) );
+			end;
+
+		[k_type_time]:
+			begin
+			local
+				desc	: vector[2,long],
+				buf	: vector[%charcount('19-Jan-1986 13:47:51.05'),byte],
+				status;
+
+			desc[0] = %allocation( buf );
+			desc[1] = buf;
+
+			$chkerr( $asctim(
+				timbuf=desc[0], timlen=desc[0],
+				timadr=.data_desc[ .arg, dsc$a_pointer ]
+				) );
+
+			$chkerr( $call_back
+				(
+				return_string_to_param,
+				.first_arg + 1 + .arg*2,
+				desc[0]
+				) );
+			end;
+
+		[k_type_priv]:
+			BEGIN
+			LOCAL	out_priv_string: VECTOR[512,BYTE],
+				out_priv_desc: VECTOR[2,LONG];
+			out_priv_desc[0] = %allocation(out_priv_string);
+			out_priv_desc[1] = out_priv_string[0];
+			$chkerr( privs_to_string(.data_desc[.arg, dsc$a_pointer], .data_desc[.arg, dsc$a_pointer],
+					out_priv_desc[0], out_priv_desc[0]) );
+
+			$chkerr ( $call_back
+					(
+					return_string_to_param,
+					.first_arg + 1 + .arg*2,
+					out_priv_desc[0]
+					) );
+			END;
+
+		[inrange,outrange]:
+			;	! nothing to do
+		tes;
+		end;
+
+	return ss$_normal;
+	end;
+routine privs_to_string
+	(
+	control_priv_mask: REF BITVECTOR[64],
+	priv_mask: REF BITVECTOR[64],
+	string_desc: REF VECTOR[2,LONG],
+	return_length: REF VECTOR[1,WORD]
+	)
+		=
+	BEGIN
+	LOCAL
+		desc: VECTOR[2,LONG],
+		priv_end,
+		length: WORD,
+		comma: REF VECTOR[,BYTE];
+
+	desc[0] = .string_desc[0];
+	desc[1] = .string_desc[1];
+	priv_end = 0;
+
+	INCR i FROM 0 TO 63
+	DO
+		BEGIN
+		IF .control_priv_mask[.i]
+		THEN
+			BEGIN
+			IF NOT .priv_mask[.i]
+			THEN
+				BEGIN
+				ch$move(2,UPLIT('NO'),.desc[1]);
+				priv_end = .priv_end + 2;
+				desc[0] = .desc[0] - 2;
+				desc[1] = .desc[1] + 2;
+				END;
+			IF prv$keyword(.i, desc[0], length)
+			THEN
+				BEGIN
+				priv_end = .priv_end + .length + 1;
+				desc[0] = .desc[0] - .length - 1;
+				comma = .desc[1] + .length;
+				comma[0] = ',';
+				desc[1] = .comma + 1;
+				END
+			ELSE
+				BEGIN
+				! Priv NOT formattable
+				IF NOT .priv_mask[.i]
+				THEN
+					BEGIN
+					! Remove "NO"
+					priv_end = .priv_end - 2;
+					desc[0] = .desc[0] + 2;
+					desc[1] = .desc[1] - 2;
+					END
+				END;
+			END;
+		END;
+
+	return_length[0] = max(0,.priv_end - 1);
+
+	ss$_normal
+
+	END;
+%sbttl	'emacs$sys$getdvi'
+!
+!	(setq status (sys$getdvi device-name [item val]*))
+!
+global routine emacs$sys$getdvi
+		(
+		call_back_routine,
+		ctx,
+		restore
+		)
+			=
+	begin
+	local
+		status;
+	stacklocal
+		arg_count,
+		iosb		: vector[4,word],
+		pid,
+		devstr		: vector[2,byte],
+		device		: vector[2,long]
+				initial( %allocation( devstr ), devstr );
+	!
+	!	check context is setup
+	!
+	if .data_area eql 0
+	then
+		$chkerr( initialise_ctx( .call_back_routine, .ctx ) );
+
+	!
+	!	fetch the ctrl string paramter
+	!
+	$chkerr( $call_back( string_arg, 1, device[0], device[0] ) );
+
+	!
+	!	check the number of arguments
+	!
+	$chkerr( $call_back( arg_count, arg_count ) );
+
+	$chkerr( $call_back( check_args, 2, 0 ) );
+
+	!
+	!	Build the output item list
+	!
+	build_item_list( .call_back_routine, 2, .arg_count, dvi_item_info );
+
+	!
+	!	Do the getdvi call
+	!
+	status = $getdviw
+		(
+		efn	= 0,
+		iosb	= iosb,
+		devnam	= device[0],
+		itmlst	= item_list		
+		);
+	if .status
+	then
+		status = .iosb[0];
+
+	return_items( .call_back_routine, .status, 2, .arg_count );
+
+	return ss$_normal;
+	end;
+%sbttl	'emacs$sys$getjpi'
+!
+!	(setq status (sys$getjpi ctrl-str [pid] [prcnam] [item variable]*))
+!
+global routine emacs$sys$getjpi
+		(
+		call_back_routine,
+		ctx,
+		restore
+		)
+			=
+	begin
+	local
+		pid_ptr		: initial( 0 ),
+		prcnam_ptr	: initial( 0 ),
+		arg_count,
+		p		: ref vector[,byte],
+		status;
+
+	stacklocal
+		iosb		: vector[4,word],
+		pid,
+		ctrlstr		: vector[2,byte],
+		control		: vector[2,long]
+				initial( %allocation( ctrlstr ), ctrlstr ),
+		prcstr		: vector[15,byte],
+		prcnam		: vector[2,long]
+				initial( %allocation( prcstr ), prcstr );
+
+	!
+	!	check context is setup
+	!
+	if .data_area eql 0
+	then
+		$chkerr( initialise_ctx( .call_back_routine, .ctx ) );
+
+	!
+	!	fetch the ctrl string paramter
+	!
+	$chkerr( $call_back( string_arg, 1, control[0], control[0] ) );
+
+	!
+	!	check the number of arguments
+	!
+	$chkerr( $call_back( arg_count, arg_count ) );
+
+	$chkerr( $call_back( check_args, 2, 0 ) );
+
+	!
+	!	process the control string
+	!
+	p = ctrlstr[0];
+	incr i from 0 to .control[0] - 1
+	do
+		selectone .p[ .i ]
+		of
+		set
+		['i']:
+			begin
+			$chkerr( $call_back( numeric_arg, .i + 2, pid) );
+			pid_ptr = pid;
+			end;
+		['n']:
+			begin
+			$chkerr( $call_back( string_arg, .i + 2,
+				prcnam[0], prcnam[0]) );
+			prcnam_ptr = prcnam[0];
+			end;
+		[otherwise]:
+			begin
+			$error( 'sys$getjpi unknown char in control string "!AS"', control[0] );
+			return ss$_badparam;
+			end;
+
+		tes;
+
+	!
+	!	Build the output item list
+	!
+	build_item_list
+	(
+	.call_back_routine, .control[0] + 2, .arg_count, jpi_item_info
+	);
+
+	!
+	!	Do the getjpi call
+	!
+	status = $getjpiw
+		(
+		efn	= 0,
+		iosb	= iosb,
+		pidadr	= .pid_ptr,
+		prcnam	= .prcnam_ptr,
+		itmlst	= item_list		
+		);
+	if .status
+	then
+		status = .iosb[0];
+
+	!
+	!	return the values
+	!
+	if .status
+	then
+		incr i from 0 to .control[0] - 1
+		do
+			if .p[ .i ] eql 'i'
+			then
+				$chkerr( $call_back
+				(
+				return_number_to_param,
+				.i + 2,
+				.pid
+				) );
+
+	return_items( .call_back_routine, .status, .control[0] + 2, .arg_count );
+
+	return ss$_normal;
+	end;
+%sbttl	'emacs$sys$getqui'
+!
+!	(setq status (sys$getqui func [item val]*))
+!
+global routine emacs$sys$getqui
+		(
+		call_back_routine,
+		ctx,
+		restore
+		)
+			=
+	begin
+	local
+		status;
+	stacklocal
+		arg_count,
+		iosb		: vector[4,word],
+		function;
+
+	!
+	!	check context is setup
+	!
+	if .data_area eql 0
+	then
+		$chkerr( initialise_ctx( .call_back_routine, .ctx ) );
+
+	!
+	!	check the number of arguments
+	!
+	$chkerr( $call_back( arg_count, arg_count ) );
+
+	$chkerr( $call_back( check_args, 1, 0 ) );
+
+	!
+	!	fetch the function code
+	!
+	$chkerr( $call_back( numeric_arg, 1, function ) );
+
+	!
+	!	Build the output item list
+	!
+	if .arg_count geq 2
+	then
+		build_item_list
+		(
+		.call_back_routine, 2, .arg_count, qui_item_info
+		);
+
+	!
+	!	Do the getqui call
+	!
+	status = $getquiw
+		(
+		efn	= 0,
+		iosb	= iosb,
+		func	= .function,
+		itmlst	= (if .arg_count gtr 1 then item_list else 0)
+		);
+	if .status
+	then
+		status = .iosb[0];
+
+	return_items( .call_back_routine, .status, 2, .arg_count );
+
+	return ss$_normal;
+	end;
+%sbttl	'emacs$sys$getuai'
+!
+!	(setq status (sys$getuai usrnam [item val]*))
+!
+global routine emacs$sys$getuai
+		(
+		call_back_routine,
+		ctx,
+		restore
+	  	)
+	  	   	=
+        begin
+        local
+               arg_count,
+               status;
+        stacklocal
+               username       : vector [12,byte],
+               usr_desc       : vector [2,long] 
+				initial ( %allocation(username) , username);
+
+	!
+	!	check context is setup
+	!
+	if .data_area eql 0
+	then
+		$chkerr( initialise_ctx( .call_back_routine, .ctx ) );
+
+	!
+	!	check the number of arguments
+	!
+	$chkerr( $call_back( arg_count, arg_count ) );
+
+	$chkerr( $call_back( check_args, 2, 0 ) );
+
+	!
+	!	fetch the Username
+	!
+	$chkerr( $call_back( string_arg, 1, usr_desc[0], usr_desc[0] ) );
+
+	!
+	!	Build the output item list
+	!
+	if .arg_count geq 2
+	then
+		build_item_list
+		(
+		.call_back_routine, 2, .arg_count, uai_item_info
+		);
+
+	!
+       	!      	Do the getuai call
+	!						  
+       	status = $getuai
+		(efn    = 0,
+	         contxt = 0,
+		 usrnam	= usr_desc[0],
+		 itmlst	= (if .arg_count geq 2 then item_list else 0),
+		 iosb   = 0,
+                 astadr = 0,
+                 astprm = 0);
+	if not .status
+	then
+		begin
+                $error( 'Sys$GetUAI failed !XL', .status);
+                return .status
+                end;
+
+	return_items( .call_back_routine, .status, 2, .arg_count );
+
+	return ss$_normal;
+	end;
+%sbttl	'emacs$sys$setuai'
+!
+!	(setq status (sys$setuai usrnam [item val]*))
+!
+global routine emacs$sys$setuai
+	 	(
+	 	call_back_routine,
+	 	ctx,
+	 	restore
+	     	)
+                        =
+        begin
+        local
+               arg_count,
+               status;
+        stacklocal
+               username       : vector [12,byte],
+               usr_desc       : vector [2,long] 
+				initial ( %allocation(username), username);
+
+	!
+	!	check context is setup
+	!
+	if .data_area eql 0
+	then
+		$chkerr( initialise_ctx( .call_back_routine, .ctx ) );
+
+	!
+	!	check the number of arguments
+	!
+	$chkerr( $call_back( arg_count, arg_count ) );
+
+	$chkerr( $call_back( check_args, 2, 0 ) );
+
+	!
+	!	fetch the Username
+	!
+	$chkerr( $call_back( string_arg, 1, usr_desc[0], usr_desc[0] ) );
+
+	!
+	!	Build the output item list
+	!
+	if .arg_count geq 2
+	then
+		build_item_list
+		(
+		.call_back_routine, 2, .arg_count, uai_item_info
+		);
+
+	!
+       	!      	Do the setuai call
+	!
+	status = $setuai
+		(efn    = 0,
+	         contxt = 0,
+		 usrnam	= usr_desc[0],
+		 itmlst	= (if .arg_count geq 2 then item_list else 0),
+		 iosb   = 0,
+                 astadr = 0,
+                 astprm = 0);
+	if not .status
+	then
+		begin
+                $error( 'Sys$SetUAI failed !XL', .status);
+                return .status
+                end;
+
+	return_items( .call_back_routine, .status, 2, .arg_count );
+
+	return ss$_normal;
+	end;
+%sbttl	'emacs$sys$getsyi'
+!
+!	(setq status (sys$getsyi ctrl-str [csidadr] [nodename] [item var]*))
+!
+global routine emacs$sys$getsyi
+		(
+		call_back_routine,
+		ctx,
+		restore
+		)
+			=
+	begin
+	local
+		csidadr_ptr	: initial( 0 ),
+		nodename_ptr	: initial( 0 ),
+		arg_count,
+		p		: ref vector[,byte],
+		status;
+
+	stacklocal
+		iosb		: vector[4,word],
+		csidadr,
+		ctrlstr		: vector[2,byte],
+		control		: vector[2,long]
+				initial( %allocation( ctrlstr ), ctrlstr ),
+		nodestr		: vector[15,byte],
+		nodename	: vector[2,long]
+				initial( %allocation( nodestr ), nodestr );
+
+	!
+	!	check context is setup
+	!
+	if .data_area eql 0
+	then
+		$chkerr( initialise_ctx( .call_back_routine, .ctx ) );
+
+	!
+	!	fetch the ctrl string paramter
+	!
+	$chkerr( $call_back( string_arg, 1, control[0], control[0] ) );
+
+	!
+	!	check the number of arguments
+	!
+	$chkerr( $call_back( arg_count, arg_count ) );
+
+	$chkerr( $call_back( check_args, 2, 0 ) );
+
+	!
+	!	process the control string
+	!
+	p = ctrlstr[0];
+	incr i from 0 to .control[0] - 1
+	do
+		selectone .p[ .i ]
+		of
+		set
+		['i']:
+			begin
+			$chkerr( $call_back( numeric_arg, .i + 2, csidadr) );
+			csidadr_ptr = csidadr;
+			end;
+		['n']:
+			begin
+			$chkerr( $call_back( string_arg, .i + 2,
+				nodename[0], nodename[0]) );
+			nodename_ptr = nodename[0];
+			end;
+		[otherwise]:
+			begin
+			$error( 'sys$getsyi unknown char in control string "!AS"', control[0] );
+			return ss$_badparam;
+			end;
+
+		tes;
+
+	!
+	!	Build the output item list
+	!
+	build_item_list
+	(
+	.call_back_routine, .control[0] + 2, .arg_count, syi_item_info
+	);
+
+	!
+	!	Do the getsyi call
+	!
+	status = $getsyiw
+		(
+		efn	= 0,
+		iosb	= iosb,
+		csidadr	= .csidadr_ptr,
+		nodename= .nodename_ptr,
+		itmlst	= item_list		
+		);
+	if .status
+	then
+		status = .iosb[0];
+
+	!
+	!	return the values
+	!
+	if .status
+	then
+		incr i from 0 to .control[0] - 1
+		do
+			if .p[ .i ] eql 'i'
+			then
+				$chkerr( $call_back
+				(
+				return_number_to_param,
+				.i + 2,
+				.csidadr
+				) );
+
+	return_items( .call_back_routine, .status, .control[0] + 2, .arg_count );
+
+	return ss$_normal;
+	end;
+%sbttl	'emacs$sys$sndjbc'
+!
+!	(setq status (sys$sndjbc func [item val]*))
+!
+global routine emacs$sys$sndjbc
+		(
+		call_back_routine,
+		ctx,
+		restore
+		)
+			=
+	begin
+	local
+		status;
+	stacklocal
+		arg_count,
+		iosb		: vector[4,word],
+		function;
+
+	!
+	!	check context is setup
+	!
+	if .data_area eql 0
+	then
+		$chkerr( initialise_ctx( .call_back_routine, .ctx ) );
+
+	!
+	!	check the number of arguments
+	!
+	$chkerr( $call_back( arg_count, arg_count ) );
+
+	$chkerr( $call_back( check_args, 1, 0 ) );
+
+	!
+	!	fetch the ctrl string paramter
+	!
+	$chkerr( $call_back( numeric_arg, 1, function ) );
+
+	!
+	!	Build the output item list
+	!
+	build_item_list( .call_back_routine, 2, .arg_count, sjc_item_info );
+
+	!
+	!	Do the sndjbc call
+	!
+	status = $sndjbcw
+		(
+		efn	= 0,
+		iosb	= iosb,
+		func	= .function,
+		itmlst	= (if .arg_count gtr 1 then item_list else 0)
+		);
+	if .status
+	then
+		status = .iosb[0];
+
+	return_items( .call_back_routine, .status, 2, .arg_count );
+
+	return ss$_normal;
+	end;
+%sbttl	'emacs$sys$setprv'
+LITERAL
+	max_priv_string = 512;
+!
+!	(setq status (sys$setprv control-string privilege-list [old-privileges]))
+!
+global routine emacs$sys$setprv
+		(
+		call_back_routine,
+		ctx,
+		restore
+		)
+			=
+	BEGIN
+	LOCAL
+		arg_count,
+		status,
+		desc: VECTOR[2,LONG],
+		priv_enable_vector: VECTOR[2,LONG] INITIAL (0,0),
+		priv_disable_vector: VECTOR[2,LONG] INITIAL (-1,-1),
+		permanent_flag,
+		prev_priv_vector: BITVECTOR[64],
+		touched_privs: BITVECTOR[64] INITIAL(0,0),
+		control: VECTOR[1,BYTE] VOLATILE,
+		priv_string: VECTOR[max_priv_string,BYTE],
+		priv_end;
+
+	MACRO	privbit( priv_start, priv_len ) =
+		BEGIN
+		LOCAL	_desc: VECTOR[2,LONG],
+			status,
+			bit_no: WORD;
+		_desc[0] = (priv_len);
+		_desc[1] = (priv_start);
+		status = prv$setpriv( _desc[0], priv_enable_vector[0]);
+		IF .status THEN status = prv$setpriv(_desc[0], priv_disable_vector[0]);
+		IF NOT .status
+		THEN 
+			SELECTONE .status OF
+			SET
+			[prv$_notunq]:	BEGIN
+					$error('sys$setprv privilege "!AS" not unique', _desc[0]);
+					RETURN ss$_badparam;
+					END;
+			[prv$_invnam]:	BEGIN
+					$error('sys$setprv privilege "!AS" not valid', _desc[0]);
+					RETURN ss$_badparam;
+					END;
+			[OTHERWISE]:	RETURN .status;
+			TES;
+		IF prv$privbit(_desc[0], bit_no)
+		THEN touched_privs[.bit_no] = 1;
+		IF ch$eql(._desc[0], ._desc[1], 3, UPLIT('ALL'), 0)
+		OR ch$eql(._desc[0], ._desc[1], 5, UPLIT('NOALL'), 0)
+		THEN
+			BEGIN
+			touched_privs<0,32,1> = -1;
+			touched_privs<32,32,1> = -1;
+			END;
+		END %;
+
+	!
+	!	Arguments
+	!
+
+	IF NOT $call_back ( check_args, 2, 3)	! Check no. of args. 
+	THEN RETURN ss$_normal;
+
+	$chkerr ( $call_back ( arg_count, arg_count) );	! Get no. of args.
+
+	!
+	!	Fetch arguments
+	!
+	desc[0] = 1;
+	desc[1] = control;
+	$chkerr ($call_back( string_arg, 1, desc[0], desc[0]));
+
+	SELECTONE .control[0] OF
+	SET
+	['i','I']: permanent_flag = 0;
+	['p','P']: permanent_flag = 1;
+	[OTHERWISE]:
+		BEGIN
+		$error( 'sys$setprv unknown char in control string "!AS"', desc[0]);
+		RETURN ss$_badparam;
+		END;
+	TES;
+
+	desc[0] = max_priv_string;
+	desc[1] = priv_string;
+	$chkerr ($call_back( string_arg, 2, desc[0], desc[0]));
+	$chkerr (str$upcase( desc[0], desc[0]));
+
+	!
+	!	Step through privileges
+	!
+	WHILE NOT ch$fail(priv_end = ch$find_ch(.desc[0], .desc[1], ','))
+	DO
+		BEGIN
+		privbit( .desc[1], .priv_end - .desc[1]);
+		desc[0] = .desc[0] - (.priv_end - .desc[1] + 1);
+		desc[1] = .priv_end + 1;
+		END;
+
+	! Don't forget the part after the last comma
+	privbit( .desc[1], .desc[0]);
+		
+	!
+	!	Enable requested privileges
+	!
+	$chkerr(
+		$setprv
+			(
+			enbflg = 1,
+			prvadr = priv_enable_vector[0],
+			prmflg = .permanent_flag,
+			prvprv = prev_priv_vector)
+		);
+
+	!
+	!	Disable requested privileges
+	!
+	priv_disable_vector[0] = NOT .priv_disable_vector[0];
+	priv_disable_vector[1] = NOT .priv_disable_vector[1];
+
+	$chkerr(
+		$setprv
+			(
+			enbflg= 0,
+			prvadr = priv_disable_vector,
+			prmflg = .permanent_flag)
+		);
+
+	IF .arg_count GTR 2
+	THEN
+		BEGIN
+		desc[0] = max_priv_string;
+		desc[1] = priv_string;
+		$chkerr ( privs_to_string ( touched_privs, prev_priv_vector,
+						desc[0], desc[0]) );
+		$chkerr ( $call_back ( return_string_to_param , 3, desc[0] ));
+		END;
+
+	RETURN ss$_normal;
+
+	END;
+literal
+	fao_buf_size	= 200;
+
+routine report_message
+		(
+		call_back_routine,
+		type,
+		string		: ref vector[,byte],
+		args
+		) =
+	begin
+	local
+		status,
+		control_desc	: vector[2,long],
+		string_desc	: vector[2,long],
+		fao_buffer	: vector[fao_buf_size,byte];
+
+	control_desc[0] = .string[0];
+	control_desc[1] = string[1];
+
+	string_desc[0] = fao_buf_size;
+	string_desc[1] = fao_buffer;
+
+	status = $faol(	ctrstr = control_desc[0], outlen = string_desc[0],
+			outbuf = string_desc[0], prmlst = args );
+	if not .status then return .status;
+
+	(.call_back_routine)( .type, string_desc[0] )
+	end;
+end
+eludom

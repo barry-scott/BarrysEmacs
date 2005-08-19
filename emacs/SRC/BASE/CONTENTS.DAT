@@ -1,0 +1,9 @@
+src contents.dat
+obj ident.dat
+src basebld.com
+src emacs_define_logicals.com
+src emacs_environment.ksh
+src bliss.com
+src cc.com
+src sdl.com
+src rshell.com

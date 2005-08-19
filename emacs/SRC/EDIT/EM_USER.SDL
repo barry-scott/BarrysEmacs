@@ -1,0 +1,38 @@
+module emacs_callback;
+/*	Copyright (c) 1985-1993
+/*	Barry A. Scott and Nick Emery 
+
+	constant
+	(
+	EMACS__K_MESSAGE,		/* Display a string as a message
+	EMACS__K_ERROR,			/* Display a string as an error message
+	EMACS__K_SITFOR,		/* Re-displays and waits for n 1/10s sec
+	EMACS__K_ARG_COUNT,		/* Return the argument count
+	EMACS__K_CHECK_ARGS,     	/* Check the arguments, and return an error
+	EMACS__K_STRING_ARG,		/* Return Nth arg as a string
+	EMACS__K_NUMERIC_ARG,		/* Return Nth arg as an integer
+	EMACS__K_STRING_RESULT,		/* Make the function return a string
+	EMACS__K_NUMERIC_RESULT,	/* Make the function return a number
+	EMACS__K_ALLOCATE,		/* Allocates memory
+	EMACS__K_REALLOCATE,		/* Reallocates memory
+	EMACS__K_FREE,			/* Frees allocated memory
+	EMACS__K_BUFFER_SIZE,		/* Returns the size of the buffer
+	EMACS__K_DOT,			/* Returns the components of dot
+	EMACS__K_MARK,			/* Returns the components of mark
+	EMACS__K_SET_MARK,		/* Set the mark to where dot is
+	EMACS__K_USE_BUFFER,		/* Temp use buffer
+	EMACS__K_GOTO_CHARACTER,	/* Sets dot to the specified character
+	EMACS__K_INSERT_CHARACTER,	/* Inserts the character at dot
+	EMACS__K_INSERT_STRING,		/* Inserts a string at dot
+	EMACS__K_DELETE_CHARACTERS,	/* Delete character, +ve is forward
+	EMACS__K_FETCH_CHARACTER,	/* Fetch character at a given spot
+	EMACS__K_RETURN_STRING_TO_PARAM,/* The given parameter is set to a string
+	EMACS__K_RETURN_NUMBER_TO_PARAM,/* The given parameter is set to a number
+	EMACS__K_BUFFER_EXTENT,		/* Returns the buffer extent
+	EMACS__K_GAP_TO,		/* Move the buffer gap
+	EMACS__K_GAP_ROOM		/* Make the gap bigger and BETTER
+	)
+		equals 0 increment 1;
+constant EMACS__K_MIN equals 0;
+constant EMACS__K_MAX equals EMACS__K_GAP_ROOM;
+end_module;
