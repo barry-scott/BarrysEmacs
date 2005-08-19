@@ -70,8 +70,8 @@ IDI_ICON8               ICON    DISCARDABLE     "icon8.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,0,0,0
- PRODUCTVERSION 0,0,0,0
+ FILEVERSION %(major)s,%(minor)s,%(patch)s,%(build)s
+ PRODUCTVERSION %(major)s,%(minor)s,%(patch)s,%(build)s
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x9L
@@ -89,12 +89,12 @@ BEGIN
             VALUE "Comments", "Release version\0"
             VALUE "CompanyName", "Barry Scott (barry@barrys-emacs.org)\0"
             VALUE "FileDescription", "Barry's Emacs Client\0"
-            VALUE "FileVersion", "0, 0, 0, 0\0"
+            VALUE "FileVersion", "%(major)s,%(minor)s,%(patch)s,%(release)s\0"
             VALUE "InternalName", "BEmacs\0"
             VALUE "LegalCopyright", "Copyright © 1998-@#@format:%(year)s@#@\0"
             VALUE "OriginalFilename", "BEmacs.exe\0"
             VALUE "ProductName", "Barry's Emacs for Windows\0"
-            VALUE "ProductVersion", "0, 0, 0, 0\0"
+            VALUE "ProductVersion", "%(major)s,%(minor)s,%(patch)s,%(release)s\0"
         END
     END
     BLOCK "VarFileInfo"

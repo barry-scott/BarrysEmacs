@@ -1,9 +1,9 @@
-	       Emacs Version @#@version@#@
+	       Emacs Version %(version)s
 	       ____________________________________________
 
 Introduction
 
-	Barry's Emacs is copyright (c) 1991-@#@format:%(year)s@#@ by Barry A. Scott.
+	Barry's Emacs is copyright (c) 1991-%(year)s by Barry A. Scott.
 
 	You can contact me at the following Email address.
 
@@ -17,7 +17,7 @@ Introduction
 
 		http://www.barrys-emacs.org/
 
-	This is a release version of @#@format:%(maturity)s%(major)s.%(minor)s@#@ of Barry's Emacs.
+	This is a release version of %(maturity)s%(major)s.%(minor)s of Barry's Emacs.
 
 	This kit works on:
 		Windows XP
@@ -32,7 +32,7 @@ Introduction
 	This kit should work on:
 		Windows 95 (not tested)
 
-New in @#@version@#@
+New in %(version)s
 	New in this release
 
 	* XML-mode,  a  simple  mode  that colours XML files with

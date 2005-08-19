@@ -52,8 +52,8 @@ end;
 
 [Setup]
 AppName=Barry's Emacs
-AppVerName=Barry's Emacs @#@format:%(maturity)s%(major)s.%(minor)s@#@
-AppCopyright=Copyright (C) 1991-@#@format:%(year)s@#@ Barry A. Scott
+AppVerName=Barry's Emacs %(maturity)s%(major)s.%(minor)s
+AppCopyright=Copyright (C) 1991-%(year)s Barry A. Scott
 DefaultDirName={pf}\Barry Scott\Barry's Emacs
 DefaultGroupName=Barry's Emacs
 UninstallDisplayIcon={app}\bemacs.exe

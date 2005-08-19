@@ -15,7 +15,7 @@ DebugTrace _t( L"BEmacsMoniker: " );
 
 CBemacsMoniker::CBemacsMoniker()
 	{
-	_t.addLast( L"CBemacsMoniker::CBemacsMoniker() @#@version@#@" );
+	_t.addLast( L"CBemacsMoniker::CBemacsMoniker() %(version)s" );
 	memset( process_name, 0, sizeof( process_name ) );
 	}
 

@@ -54,8 +54,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,1
- PRODUCTVERSION 1,0,0,1
+ FILEVERSION %(major)s,%(minor)s,%(patch)s,%(build)s
+ PRODUCTVERSION %(major)s,%(minor)s,%(patch)s,%(build)s
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x9L
@@ -72,12 +72,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "\0"
             VALUE "FileDescription", "BEmacsClassMoniker Module\0"
-            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "FileVersion", "%(major)s,%(minor)s,%(patch)s,%(release)s\0"
             VALUE "InternalName", "BEmacsClassMoniker\0"
-            VALUE "LegalCopyright", "Copyright 1999\0"
+            VALUE "LegalCopyright", "Copyright 1999-%(year)s\0"
             VALUE "OriginalFilename", "BEmacsClassMoniker.DLL\0"
             VALUE "ProductName", "BEmacsClassMoniker Module\0"
-            VALUE "ProductVersion", "1, 0, 0, 1\0"
+            VALUE "ProductVersion", "%(major)s,%(minor)s,%(patch)s,%(release)s\0"
             VALUE "OLESelfRegister", "\0"
         END
     END

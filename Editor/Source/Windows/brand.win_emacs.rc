@@ -533,9 +533,9 @@ FONT 8, "MS Sans Serif"
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,18,11,20,20
     CTEXT           "Barry's Emacs for Windows",301,49,12,86,8
-    CTEXT           "Copyright © 1990-@#@format:%(year)s@#@ BArry A. Scott",
+    CTEXT           "Copyright © 1990-%(year)s BArry A. Scott",
                     302,8,44,168,9
-    CTEXT           "Version @#@version@#@",IDC_ABOUT_VERSION,8,73,168,8
+    CTEXT           "Version %(version)s",IDC_ABOUT_VERSION,8,73,168,8
     RTEXT           "Memory in use:",IDC_STATIC,35,87,48,8
     LTEXT           "999,999,999 Bytes",IDC_ABOUT_MEMORY,86,87,60,8
     PUSHBUTTON      "OK",IDOK,70,114,40,14,WS_GROUP
@@ -1121,8 +1121,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 7,0,85,0
- PRODUCTVERSION 7,0,85,0
+ FILEVERSION %(major)s,%(minor)s,%(patch)s,%(build)s
+ PRODUCTVERSION %(major)s,%(minor)s,%(patch)s,%(build)s
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x9L
@@ -1140,14 +1140,14 @@ BEGIN
             VALUE "Comments", "Beta test version\0"
             VALUE "CompanyName", "Barry Scott (barry@barrys-emacs.org)\0"
             VALUE "FileDescription", "Barry's Emacs Server\0"
-            VALUE "FileVersion", "7.1\0"
+            VALUE "FileVersion", "%(major)s,%(minor)s,%(patch)s,%(release)s%(wc_state)s\0"
             VALUE "InternalName", "BemacsServer\0"
-            VALUE "LegalCopyright", "Copyright © 1996-2001\0"
+            VALUE "LegalCopyright", "Copyright © 1996-%(year)s\0"
             VALUE "LegalTrademarks", "\0"
             VALUE "OriginalFilename", "BEmacsServer.exe\0"
             VALUE "PrivateBuild", "\0"
             VALUE "ProductName", "Barry's Emacs for Windows\0"
-            VALUE "ProductVersion", "7.1, 0\0"
+            VALUE "ProductVersion", "%(major)s,%(minor)s,%(patch)s,%(release)s%(wc_state)s\0"
             VALUE "SpecialBuild", "\0"
         END
     END
@@ -1236,7 +1236,7 @@ END
 
 STRINGTABLE PRELOAD DISCARDABLE 
 BEGIN
-    AFX_IDS_APP_TITLE       "Barry's Emacs V7.0.85"
+    AFX_IDS_APP_TITLE       "Barry's Emacs %(version)s"
     AFX_IDS_IDLEMESSAGE     "For Help, press Alt+F1"
     AFX_IDS_HELPMODEMESSAGE "Select an object on which to get Help"
 END

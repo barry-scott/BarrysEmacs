@@ -71,7 +71,7 @@ int WINAPI WinMain
 	int /* nCmdShow */		// show state of window
 	)
 	{
-	_t.addLast( L"@#@version@#@" );
+	_t.addLast( L"%(version)s" );
 
 	HRESULT hresult = 0;
 	DWORD rc = 0;

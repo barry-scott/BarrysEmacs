@@ -1,0 +1,9 @@
+#
+#   Barry's Emacs version info
+#
+maturity:   V
+major:      7
+minor:      2
+patch:      0
+
+version:%(wc_state)s%(maturity)s%(major)s.%(minor)s-%(revision)s
