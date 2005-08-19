@@ -1,0 +1,21 @@
+(defun
+    (vss-view-com
+	~buffer-name
+	~index
+	
+	(visit-file (argv 1))
+	(if (= (case-string-lower (file-format-string "%pa" (argv 1))) "c:\\temp\\")
+	    (progn
+		(setq current-buffer-type "scratch")
+		(setq ~index 0)
+		(setq ~buffer-name current-buffer-name)
+		(while
+		    (error-occurred
+			(setq current-buffer-name (concat "VSS" (if ~index (concat ~index " ") " ") ~buffer-name))
+		    )
+		    (setq ~index (+ ~index 1))
+		)
+	    )
+	)
+    )
+)

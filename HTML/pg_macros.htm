@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>Mlisp Programmer's Guide</TITLE>
+<META name="GENERATOR" content="HTML Transit 3.0 by InfoAccess Inc. www.infoaccess.com">
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<A name="TopOfPage"></A>
+
+<H1><A name="P101_5186"></A> Macros</H1>
+
+<P>This chapter describes the macro facilities available in Emacs. These facilities allow you to build macros on the fly, and then use them to replace multiple keystrokes. You can also use macros to write generalised facilities, map them into the function name-space and bind key sequences to them.</P>
+
+<P>Macros differ from Mock Lisp (MLisp) functions because they are key sequences that are replayed into the Emacs keyboard processor and are subject to the current bindings. The effect of a macro will be unpredictable if the key bindings used in a macro change between the macro's definition and its use. There are no facilities to alter control flow while a macro is being executed.</P>
+
+<HR align="LEFT" size="2" color="#800080">
+<A name="P108_5867"></A> 
+
+<H2>Keyboard Macros</H2>
+
+<TABLE border="1">
+<TR>
+<TD valign="TOP" width="236">
+<P><B>(start-remembering) ^X-(</B></P>
+</TD>
+<TD valign="TOP" width="437">
+<P>Starts defining a keyboard macro.</P>
+</TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="236">
+<P><B>(stop-remembering) ^X-)</B></P>
+</TD>
+<TD valign="TOP" width="437">
+<P>Ends the definition of a keyboard macro.</P>
+</TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="236">
+<P><B>(execute-keyboard-macro) ^X-e</B></P>
+</TD>
+<TD valign="TOP" width="437">
+<P>Executes the most recently-defined keyboard macro.</P>
+</TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="236">
+<P><B>(define-keyboard-macro)</B></P>
+</TD>
+<TD valign="TOP" width="437">
+<P>Turns the most recent keyboard macro into a named macro.</P>
+</TD>
+</TR>
+</TABLE>
+
+<P>A keyboard macro is a command defined by you to abbreviate a sequence of other commands. For example, if you discover that you are about to type <CODE>^U-^D</CODE> forty times, you can define a keyboard macro to execute <CODE>^U-^D</CODE> and call it with a repeat count of forty.</P>
+
+<P>You define a keyboard macro while executing the commands which are part of the definition. In this way, you can see what the effects of your commands are---you do not have to work them out in your head. When you have finished, the keyboard macro is defined and has also been, in effect, executed once. You can execute the sequence of commands again by invoking the macro.</P>
+
+<P>To start defining a keyboard macro, type the <CODE>^X-(</CODE> (<CODE>start-remembering</CODE>) command. From then on, your commands continue to be executed, but also become part of the macro definition. When you have finished, the <CODE>^X-)</CODE> (<CODE>stop-remembering</CODE>) command terminates the definition (without becoming part of it).</P>
+
+<P>You can call the newly-defined macro the <CODE>^X-e</CODE> (<CODE>execute-keyboard-macro</CODE>) command. You can give <CODE>^X-e</CODE> a repeat count as a prefix argument to execute the macro several times.</P>
+
+<P>There are two ways of using a keyboard macro to perform some action on each line in the buffer. The first is to start by positioning dot on the line above the first line to be processed, then begin the macro definition with a <CODE>^N</CODE> (<CODE>next-line</CODE>). The second method is to start on the proper line, and end the macro with a <CODE>^N</CODE>. Repeating the macro will operate on successive lines using either method.</P>
+
+<P>Emacs can have only one current keyboard macro. When you define a new keyboard macro, the old macro definition is lost. To save a keyboard macro definition, you must give it a name. If you execute <CODE>define-keyboard-macro</CODE>, the last keyboard macro defined is turned into a named macro . When a named macro has been created, you can bind it to any key sequence in the usual way.</P>
+
+<HR align="LEFT" size="2" color="#800080">
+<A name="P133_8015"></A> 
+
+<H2>Named Macros</H2>
+
+<P>The named macro facility in Emacs allows you to specify a collection of keystrokes to act as an Emacs function, and then associate the function with another key sequence.</P>
+
+<TABLE border="1">
+<TR>
+<TD valign="TOP" width="236">
+<P><B>(define-buffer-macro)</B></P>
+</TD>
+<TD valign="TOP" width="437">
+<P>Defines a macro using the current buffer's contents as the keystroke sequence. The name of the macro is obtained from the buffer-specific variable <CODE>current-buffer-macro-name</CODE>.</P>
+</TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="236">
+<P><B>(define-keyboard-macro <I>function-name</I>)</B></P>
+</TD>
+<TD valign="TOP" width="437">
+<P>Defines a named macro with the current contents of the keyboard macro.</P>
+</TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="236">
+<P><B>(define-string-macro <I>function-name keys</I>)</B></P>
+</TD>
+<TD valign="TOP" width="437">
+<P>Defines a macro given its name and the key sequence as arguments.</P>
+</TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="236">
+<P><B>ESC-x edit-macro</B></P>
+</TD>
+<TD valign="TOP" width="437">
+<P>Inserts the body of the specified macro into the buffer <CODE>Macro edit</CODE> to allow editing of the keystroke sequence.</P>
+</TD>
+</TR>
+
+<TR>
+<TD valign="TOP" width="236">
+<P><B>(rename-macro <I>old-name new-name</I>)</B></P>
+</TD>
+<TD valign="TOP" width="437">
+<P>Changes the name of a macro or function.</P>
+</TD>
+</TR>
+</TABLE>
+
+<P>You normally define a named macro by first defining it as a keyboard macro, then using <CODE>ESC-x define-keyboard-macro</CODE> to give the macro a name. When a macro has been given a name, you can execute it using <CODE>ESC-x</CODE> as if it were an ordinary Emacs function. The fact that it is a macro is transparent to <CODE>ESC-x</CODE>.</P>
+
+<P>A quick way to define a short macro is to use <CODE>ESC-x define-string-macro</CODE>. This command prompts you for the name of the macro and the key sequence to use for the macro's body. Special characters have to be quoted, otherwise they will be executed as commands in the Mini-buffer. A disadvantage of this type of macro definition is that you must know, or be able to visualise, the key sequence while you are typing it in. <CODE>ESC-x define-string-macro</CODE> does not execute the macro key sequence while it is being defined.</P>
+
+<P>If you discover a mistake in a macro, or you wish to change the macro's definition, use <CODE>ESC-x edit-macro</CODE>. This command generates a buffer called <CODE>Macro edit</CODE> with the body of the macro inserted in the buffer. The name of the macro is associated with the buffer, and the buffer's type is <CODE>Macro</CODE>. You can identify the name of the macro by looking at the variable <CODE>current-buffer-macro-name</CODE>. When you have finished editing the macro, the buffer contents can replace the body of the macro. Use <CODE>ESC-x define-buffer-macro</CODE> to re-define the macro.</P>
+
+<P>If you wish to change the name of a macro (or any Emacs function, including MLisp and wired-in functions), use the <CODE>rename-macro</CODE> command. <CODE>rename-macro</CODE> asks you to specify the old name of the macro, followed by the new name you wish to give it. If the new name already exists, the existing MLisp or macro function will be overwritten. If the new function name already exists and is a wired-in function, an error message will be generated. This prevents you from removing wired-in parts of Emacs that packages may need.</P>
+
+<!-- TRANSIT - TEXTBAR -->
+</BODY>
+</HTML>
+

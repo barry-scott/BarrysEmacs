@@ -1,0 +1,25 @@
+HKCR
+{
+	'BarryScottEmacs.CommandLine'
+	{
+		CLSID = s '{4B62A432-701D-11D1-8C8B-0000C07229D3}'
+	}
+
+	NoRemove CLSID
+	{
+		ForceRemove {4B62A431-701D-11D1-8C8B-0000C07229D3}
+		{
+			InprocHandler32 = s 'ole32.dll'
+			LocalServer32 = s '%MODULE%'
+		}
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {4B62A432-701D-11D1-8C8B-0000C07229D3}
+		{
+			ProgID = s 'BarryScottEmacs.CommandLine'
+			InprocHandler32 = s 'ole32.dll'
+			LocalServer32 = s '%MODULE%'
+		}
+	}
+}

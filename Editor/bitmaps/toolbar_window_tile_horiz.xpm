@@ -1,0 +1,28 @@
+/* XPM */
+static char *toolbar_window[] = {
+/* width height num_colors chars_per_pixel */
+"   16    15        6            1",
+/* colors */
+". c #000000",
+"# c #800000",
+"a c #000080",
+"b c #c0c0c0",
+"c c #ff0000",
+"d c #ffffff",
+/* pixels */
+"bbbbbbbbbbbbbbbb",
+"baaaaaaaaaaaaabb",
+"badaaaaaaaaaaabb",
+"baaaaaaaaaaaaabb",
+"badddddddddddabb",
+"badddddddddddabb",
+"badddddddddddabb",
+"baaaaaaaaaaaaabb",
+"badaaaaaaaaaaabb",
+"baaaaaaaaaaaaabb",
+"badddddddddddabb",
+"badddddddddddabb",
+"badddddddddddabb",
+"baaaaaaaaaaaaabb",
+"bbbbbbbbbbbbbbbb"
+};

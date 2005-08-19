@@ -1,0 +1,7 @@
+#!/bin/sh
+export RB_CFG_PLATFORM=Darwin
+export RB_CFG_BUILD_TYPE=Release
+export RB_WORKINGDIR=~/wc/rb/Emacs
+
+gnumake -f unix.mak build_Darwin 2>&1 | tee darwin-build.log
+

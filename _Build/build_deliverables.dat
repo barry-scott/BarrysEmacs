@@ -1,0 +1,29 @@
+#
+#	Win32 kit
+#
+kit /project=EUD/win32 /cfg=BUILD_TYPE=Release+PLATFORM=Win32
+file /project=bemacs-setup.exe /file=Kit\output\setup.exe
+
+#
+#	Linux kit
+#
+kit /project=EUD/linuxrh72/i386 /cfg=BUILD_TYPE=Release+PLATFORM=LinuxRH72
+file /project=bemacs.i386.rpm /file=Unix_Kit\linux\RPMS\i386\bemacs.i386.rpm
+
+kit /project=EUD/linuxrh90/i386 /cfg=BUILD_TYPE=Release+PLATFORM=LinuxRH90
+file /project=bemacs.i386.rpm /file=Unix_Kit\linux\RPMS\i386\bemacs.i386.rpm
+
+kit /project=EUD/linuxmdk92/i586 /cfg=BUILD_TYPE=Release+PLATFORM=LinuxMDK92
+file /project=bemacs.i586.rpm /file=Unix_Kit\linux\RPMS\i586\bemacs.i586.rpm
+
+#
+#	FreeBSD kit
+#
+kit /project=EUD/freebsd/i386 /cfg=BUILD_TYPE=Release+PLATFORM=FreeBSD
+file /project=bemacs.i386.tgz /file=Unix_Kit\freebsd\pkg\bemacs.i386.tgz
+
+#
+#	OpenBSD kit
+#
+kit /project=EUD/openbsd/i386 /cfg=BUILD_TYPE=Release+PLATFORM=OpenBSD
+file /project=bemacs.i386.tgz /file=Unix_Kit\openbsd\pkg\bemacs.i386.tgz

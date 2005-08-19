@@ -1,0 +1,108 @@
+[Version]
+Signature="$CHICAGO$"
+AdvancedINF=2.5,%BadAdvpackVer%
+
+[SourceDisksNames]
+10="%VCREDIST%",,0 
+
+[DefaultInstall]
+;existing gen install INF options
+Copyfiles=CopyFileSection
+AddReg=Addreg.9x
+RegisterOCXs=RegisterDlls
+RunPreSetupCommands=RunPreSetupCommandsSection
+RunPostSetupCommands=RunPostSetupCommandsSection
+CustomDestination=CustomDestinationSection
+SmartReboot=A
+Cleanup=1
+RequiredEngine=SETUPX,%EngineErrorString% 
+
+[DefaultInstall.NT]
+;existing gen install INF options
+Copyfiles=CopyFileSection.NT
+AddReg=Addreg.NT
+RegisterOCXs=RegisterDlls.NT
+RunPreSetupCommands=RunPreSetupCommandsSection
+RunPostSetupCommands=RunPostSetupCommandsSection
+CustomDestination=CustomDestinationSection
+SmartReboot=A
+Cleanup=1
+RequiredEngine=SETUPAPI,%EngineErrorString% 
+
+[RunPreSetupCommandsSection]
+PreSetup.exe
+
+[RunPostSetupCommandsSection]
+50comupd.exe /Q:A /R:N 
+
+[CopyFileSection]
+asycfilt.dll,,,96
+atl.dll,atla.dll,,96
+comcat.dll,,,96
+mfc42.dll,,,96
+msvcp60.dll,,,96
+msvcirt.dll,,,96
+msvcrt.dll,,,96
+oleaut32.dll,,,96
+olepro32.dll,,,96
+stdole2.tlb,,,96
+
+[CopyFileSection.NT]
+asycfilt.dll,,,96
+atl.dll,atlu.dll,,96
+comcat.dll,,,96
+mfc42.dll,,,96
+mfc42u.dll,,,96
+msvcp60.dll,,,96
+msvcirt.dll,,,96
+msvcrt.dll,,,96
+oleaut32.dll,,,96
+olepro32.dll,,,96
+stdole2.tlb,,,96
+
+
+[RegisterDlls]
+%11%\atl.dll
+%11%\mfc42.dll
+
+[RegisterDlls.NT]
+%11%\atl.dll
+%11%\mfc42u.dll
+
+
+[DestinationDirs]
+CopyFileSection=11
+CopyFileSection.NT=11
+
+;*****************************
+; The following lines cause IExpress to require the existence
+; of a reg value that enables the installation of the VC++ 6.0
+; Redistribution Pack.
+
+[CustomDestinationSection]
+49030=DestA,18
+;Add more here as needed
+
+[DestA]
+HKLM,"SOFTWARE\Microsoft\VCRedist","RedistPack","",""
+
+[AddReg.9x]
+HKLM,Software\Microsoft\Windows\CurrentVersion\RunOnce,"atl.dll",,"%11%\regsvr32 /s %11%\atl.dll"
+HKLM,Software\Microsoft\Windows\CurrentVersion\RunOnce,"comcat.dll",,"%11%\regsvr32 /s %11%\comcat.dll"
+HKLM,Software\Microsoft\Windows\CurrentVersion\RunOnce,"mfc42.dll",,"%11%\regsvr32 /s %11%\mfc42.dll"
+HKLM,Software\Microsoft\Windows\CurrentVersion\RunOnce,"oleaut32.dll",,"%11%\regsvr32 /s %11%\oleaut32.dll"
+HKLM,Software\Microsoft\Windows\CurrentVersion\RunOnce,"olepro32.dll",,"%11%\regsvr32 /s %11%\olepro32.dll"
+
+[AddReg.NT]
+HKLM,Software\Microsoft\Windows\CurrentVersion\RunOnce,"atl.dll",,"%11%\regsvr32 /s %11%\atl.dll"
+HKLM,Software\Microsoft\Windows\CurrentVersion\RunOnce,"comcat.dll",,"%11%\regsvr32 /s %11%\comcat.dll"
+HKLM,Software\Microsoft\Windows\CurrentVersion\RunOnce,"mfc42.dll",,"%11%\regsvr32 /s %11%\mfc42.dll"
+HKLM,Software\Microsoft\Windows\CurrentVersion\RunOnce,"mfc42u.dll",,"%11%\regsvr32 /s %11%\mfc42u.dll"
+HKLM,Software\Microsoft\Windows\CurrentVersion\RunOnce,"oleaut32.dll",,"%11%\regsvr32 /s %11%\oleaut32.dll"
+HKLM,Software\Microsoft\Windows\CurrentVersion\RunOnce,"olepro32.dll",,"%11%\regsvr32 /s %11%\olepro32.dll"
+
+[Strings]
+VCREDIST="Redistribution Pack"
+BadAdvpackVer="Incorrect version of advpack.dll. Please get new version from our web site."
+EngineErrorString="The required engine could not be found."
+

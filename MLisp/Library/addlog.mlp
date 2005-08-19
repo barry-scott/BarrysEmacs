@@ -1,0 +1,9 @@
+(defun
+    (addlog-com
+	(load "addlog")
+	(add-log
+	    (if (> (argc) 1) (argv 1) (arg 1 "Enter name of log file "))
+	)
+	(exit-emacs)
+    )
+)

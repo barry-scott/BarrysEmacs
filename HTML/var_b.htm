@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>Variables - B</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<HR>
+<P><A name="backup-file-mode"></A><B>backup-file-mode</B> &laquo; "copy", ("none" on OpenVMS)</P>
+
+<BLOCKQUOTE>
+<P>The value of this variable controls the way that Emacs creates backup files.</P>
+
+<TABLE border="1" cellspacing="0" cellpadding="3" bgcolor="#aaffaa">
+<TR>
+<TH align="left" width="100">Value</TH>
+<TH align="left">Description</TH>
+</TR>
+
+<TR>
+<TD>"none"</TD>
+<TD>Do not create backup files</TD>
+</TR>
+
+<TR>
+<TD>"copy"</TD>
+<TD>Create backup file by copying</TD>
+</TR>
+
+<TR>
+<TD>"rename"</TD>
+<TD>Create backup file by renaming</TD>
+</TR>
+</TABLE>
+
+<P>Use backup by "copy" on Unix systems to leave the file protection and symbolic links unchanged.</P>
+
+<P>Use backup by "rename" to speed up file saving.</P>
+
+<P>Use backup "none" to prevent backup files being created.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="backup-filename-format"></A><B>backup-filename-format</B> &laquo; "%pa%fn._%1ft"</P>
+
+<BLOCKQUOTE>
+<P>This variable controls how emacs names backup files. 
+Emacs bases the backup filename on the buffers file name as directed by the format string.</P>
+
+<P>The syntax of the format string is the same as used by the command file-format-string.
+The equivilent MLisp would be:</P>
+
+<PRE>
+    (setq backup-filename
+        (file-format-string
+            backup-filename-format 
+            current-buffer-file-name))
+</PRE>
+
+<P>The default format create backup files in the same director as the original file but with a leading "_" prefixed to the file type. For example <CODE>c:\docs\readme.txt</CODE> is backed up as <CODE>c:\docs\readme._txt</CODE>.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="black-on-white"></A><B>black-on-white</B> &laquo; 0</P>
+
+<BLOCKQUOTE>
+<P>Records the type of screen on which Emacs is running. If non-zero, text is displayed on the screen as black characters on a white background. If zero, text is displayed as white characters on a black background. This information is used by some terminal interfaces to decide how to display a visible bell.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="breakpoint-hook"></A><B>breakpoint-hook</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>Contains the name of the breakpoint function. When a breakpoint occurs, the function whose name is in breakpoint-hook is called.</P>
+
+<P>The breakpoint function may decompile the expression that will be executed by using the decompile-current-line function.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="buffer-backup-filename-hook"></A><B>buffer-backup-filename-hook</B> &laquo; ""</P>
+
+<BLOCKQUOTE>
+<P>Emacs calls the function in buffer-backup-filename-hook with the filename being backed up.
+The function is expected to return a string containing the filename to backup the file to.
+<p>
+<PRE>
+    (defun
+        my-backup-filename-maker(~filename)
+        ; backup to the filename with a "~" appended
+        (concat ~filename "~")
+    )
+    (setq buffer-backup-filename-hook "my-backup-filename-maker")
+</PRE>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="buffer-choose-name-hook"></A><B>buffer-choose-name-hook</B> &laquo; ""</P>
+
+<BLOCKQUOTE>
+<P>Emacs calls the function in buffer-choose-name-hook with the filename being loaded into a new buffer.
+The function is expected to return a string containing the name to use for the new buffer.
+<p>
+<PRE>
+    (defun
+        my-buffer-name-maker(~filename)
+        ; use a buffer name of file.typ in directory
+        (file-format-string "%fa in %pa" ~filename)
+    )
+    (setq buffer-choose-name-hook "my-buffer-name-maker")
+</PRE>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="buffer-file-loaded-hook"></A><B>buffer-file-loaded-hook</B> &laquo; ""</P>
+
+<BLOCKQUOTE>
+<P>Emacs calls the function in buffer-file-loaded-hook with the filename being loaded into a new buffer.
+The function is expected to return a string containing the name to use for the new buffer.
+<p>
+<PRE>
+    (defun
+        my-file-loaded-hook(~buf-name)
+	; figure out the mode and settings to use for this buffer
+	;...
+    )
+    (setq buffer-file-loaded-hook "my-file-read-hook")
+</PRE>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="buffer-is-modified"></A><B>buffer-is-modified</B> &laquo; 0</P>
+
+<BLOCKQUOTE>
+<P>Is positive if the current buffer has been modified since it was last written out to disk. You may set it to 0 if you want Emacs to ignore the modifications that have been made to a buffer. However, this does not restore the unmodified version of the buffer -- it merely tells Emacs not to write out the buffer with other modified files. Emacs sets buffer-is-modified positive any time the buffer is modified.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="buffer-names"></A><B>buffer-names</B></P>
+
+<BLOCKQUOTE>
+<P>A 1-dimensional array which contains all the buffer names currently in use in Emacs. Element 0 of the array is a count of the total number of buffers contained in the array.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="buffer-saved-as-hook"></A><B>buffer-saved-as-hook</B> &laquo; 0</P>
+
+<BLOCKQUOTE>
+<P>Emacs calls the function in buffer-saved-as-hook with the filename being loaded into a new buffer.
+The function is expected to return a string containing the name to use for the new buffer.
+<p>
+<PRE>
+    (defun
+        my-saved-as-hook(~filename)
+        ; change the buffer name to match the filename used in save as
+        (setq buffer-name (file-format-string "%fa in %pa" ~filename))
+    )
+    (setq buffer-saved-as-hook "my-saved-as-hook")
+</PRE>
+</BLOCKQUOTE>
+
+<HR>
+</BODY>
+</HTML>

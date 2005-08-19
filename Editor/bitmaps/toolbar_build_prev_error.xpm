@@ -1,0 +1,25 @@
+/* XPM */
+static char *toolbar_build[] = {
+/* width height num_colors chars_per_pixel */
+"    16    15        3            1",
+/* colors */
+". c #000000",
+"# c #000080",
+"a c #c0c0c0",
+/* pixels */
+"aaaaaa.aaaaaaaaa",
+"aaaaa.#.aaaaaaaa",
+"aaaa.###.aaaaaaa",
+"aaa.#####.aaaaaa",
+"aa.#######.aaaaa",
+"a.#########.aaaa",
+".....###.....aaa",
+"aaaa.###.aaaaaaa",
+"aaaa.###.aaaaaaa",
+"aaaa.###.aaaaaaa",
+"aaaa.###.aaaaaaa",
+"aaaa.###.aaaaaaa",
+"aaaa.###.aaaaaaa",
+"aaaa.###.aaaaaaa",
+"aaaa.....aaaaaaa"
+};

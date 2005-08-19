@@ -1,0 +1,254 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "BEmacsClassMoniker"=..\BEmacsClassMoniker\BEmacsClassMoniker.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Latest/EmacsV7/BEmacsClassMoniker", HTCAAAAA
+    ..\bemacsclassmoniker
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "BEmacsComClient"=.\BEmacsComClient\BEmacsComClient.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Latest/EmacsV7/Editor/BEmacsComClient", QQBAAAAA
+    .\bemacscomclient
+    end source code control
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name editor
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "Python_CXX_Lib"=.\Python_CXX_Lib\Python_CXX_Lib.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "bemacs"=.\BEMACS.DSP - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Latest/EmacsV7/Editor", ZWAAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name dbadd
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dblist
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dbprint
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dbcreate
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dbdel
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mll2db
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name BEmacsComClient
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "db_rtl"=.\db_rtl\db_rtl.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Latest/EmacsV7/Editor/db_rtl", HECAAAAA
+    .\db_rtl
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dbadd"=.\dbadd\dbadd.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Latest/EmacsV7/Editor/dbadd", JIBAAAAA
+    .\dbadd
+    end source code control
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name db_rtl
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "dbcreate"=.\dbcreate\dbcreate.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Latest/EmacsV7/Editor/dbcreate", PECAAAAA
+    .\dbcreate
+    end source code control
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name db_rtl
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "dbdel"=.\dbdel\dbdel.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Latest/EmacsV7/Editor/dbdel", PIBAAAAA
+    .\dbdel
+    end source code control
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name db_rtl
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "dblist"=.\dblist\dblist.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Latest/EmacsV7/Editor/dblist", LIBAAAAA
+    .\dblist
+    end source code control
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name db_rtl
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "dbprint"=.\dbprint\dbprint.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Latest/EmacsV7/Editor/dbprint", NIBAAAAA
+    .\dbprint
+    end source code control
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name db_rtl
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "editor"=.\editor\editor.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Latest/EmacsV7/Editor", ZWAAAAAA
+    .\editor
+    end source code control
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name Python_CXX_Lib
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "mll2db"=.\mll2db\mll2db.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Latest/EmacsV7/Editor/mll2db", KECAAAAA
+    .\mll2db
+    end source code control
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name db_rtl
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Latest/EmacsV7/Editor", ZWAAAAAA
+    .
+    end source code control
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################
+

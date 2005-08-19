@@ -1,0 +1,172 @@
+info '^Crit:'
+normal '^Info:'
+warning '^Warning:'
+warning '^Warn:'
+error '^Error:'
+normal '^[	 ]*$'
+
+; VC++ 6.0 messages
+normal	'^Setting environment for using Microsoft Visual C\+\+ tools\.'
+normal	'^--------------------Configuration:'
+
+; VC++ 7.1 messages
+normal	'Setting environment for using Microsoft Visual Studio \.NET 2003 tools.'
+normal	'\(If you have another version of Visual Studio or Visual C\+\+ installed and wish'
+normal	'to use its tools from the command line, run vcvars32\.bat for that version.\)'
+normal	'^Searching Libraries'
+normal	'^Done Searching Libraries'
+
+normal	'^Build log was saved at '
+normal	'^------ Build started: Project: '
+normal	'^---------------------- Done ----------------------'
+info ' - \d+ error\(s\), \d+ warning\(s\)'
+normal	'^\x00'
+
+normal	'^Searching libraries'
+normal '^    Searching'
+normal	'^Finished searching libraries'
+info	'^\s+Build: \d+ succeeded, \d+ failed, \d+ skipped'
+error	' is obsolete. Please remove it from your project'
+error	' - up-to-date.'
+error	'More than one global threading model defined.'
+
+normal '^.*\.[Cc][Ppx][Ppx]$'
+normal '^.*\.c$'
+normal '^Processing '
+normal '^Generating Code...'
+normal '^Compiling...'
+normal '^Creating Type Library...'
+normal '^Creating library...'
+normal '^   Creating library'
+normal ' : warning C4786: '
+normal '^warning C4786: '
+warning ' : warning '
+error ' : error '
+error ' : fatal error '
+normal 'Linking...'
+normal '^        '
+
+
+
+; VC++ messages
+;info '^--------------------Configuration:'
+;normal '^Compiling resources...'
+;info ' - \d+ error\(s\), \d+ warning\(s\)$'
+;warning '^Stop.$'
+;normal '^Searching Libraries'
+;normal '^Done Searching Libraries'
+;error '^Error executing link\.exe\.'
+;normal '^        \.\.\\\.\.\\Editor\\emobject\.h\(38\) : see declaration of .new.'
+;error	'^Error executing cl\.exe\.'
+
+; nmake messages
+normal	'^Copyright '
+normal	'^\Microsoft '
+normal	'^	'
+error	'^Error executing '
+error	'^Stop\.'
+; midl
+normal	'.*\.[oi]dl$'
+normal	'^.*\.acf$'
+;normal '^64 bit Processing '
+normal	'^.*\.h$'
+
+;registration messages
+normal '^Performing registration$'
+normal '^RegSvr32: DllRegisterServer .* succeeded\.$'
+
+
+;Windows messages
+error '^The system cannot find the file specified\.$'
+error '^The system cannot find the path specified\.$'
+normal '^        \d+ file\(s\) copied\.$'
+
+;emacs scripts
+normal '^Updated '
+normal '^LibCreate '
+
+;Unix messages
+normal '^cd '
+normal '^chmod '
+normal '^cp '
+normal '^cat '
+normal '^do '
+normal '^done'
+normal '^echo '
+normal '^for '
+normal '^grep '
+normal '^if '
+normal '^ln '
+normal '^sed '
+normal '^strip '
+
+normal '^Terminal readThe pipe has been ended\.'
+normal '^: Info:'
+
+normal '^Added '
+normal '^Updated '
+normal '^Create'
+normal '^/usr/bin/g\+\+'
+normal '^make\[1\]: Entering directory'
+normal '^gmake\[1\]: Entering directory'
+normal '^make\[1\]: Leaving directory'
+normal '^gmake\[1\]: Leaving directory'
+normal '^gmake: Info:'
+error '^\*\*\* Warning: '
+normal '^Executing\(%\w+\):'
+error '^gmake: warning:'
+
+warning ': In method '
+warning ': In function '
+warning ': warning:'
+error ': error:'
+normal '^tar: Can.t change to directory /usr/local'
+error '^tar:'
+error '^pkg_create:'
+
+# RPM messages
+normal '^rpmbuild '
+normal '^\+ '
+normal '^Executing:'
+normal '^Processing files:'
+normal '^Finding  Provides:'
+normal '^Finding  Requires:'
+normal '^PreReq:'
+normal '^Requires:'
+normal '^Wrote:'
+normal '^Requires\(interp\):'
+normal '^Requires\(rpmlib\):'
+normal '^Requires\(post\):'
+normal '^Requires\(postun\):'
+
+# RPM newer error messages
+normal '^Cleaning files\.\.\.done'
+normal '^Compressing files\.\.\.done'
+normal '^Stripping files\.\.\.done'
+normal '^Relativisation of symlinks\.\.\.done'
+normal '^Clean perl\.\.\.done'
+normal '^Building libraries symlinks\.\.\.done'
+normal '^Using BuildRoot: '
+error  '^error: Installed \(but unpackaged\) file\(s\) found:'
+error  '^RPM build errors:'
+normal '^Checking for unpackaged file\(s\): '
+
+# INNO messages
+normal	'^Inno Setup 4 Command-Line Compiler'
+normal '^Copyright \(C\) 1998-2001 Jordan Russell\. All rights reserved\.'
+normal '^Portions by Martijn Laan'
+normal '^Compiler engine version: Inno Setup'
+normal '^Reading \[[a-zA-Z]+\] '
+normal '^Parsing \[[a-zA-Z]+\] '
+normal '^Reading file '
+normal '^   File:'
+normal '^Compiling \[Code\] section'
+normal '^   Reading version info: '
+normal '^Creating setup files'
+normal '^   Compressing: '
+normal '^Successful compile \(\d+.\d+ sec\)\. Resulting Setup program filename is:'
+normal '^.*\\Output\\setup\.exe'
+normal '^   Messages in script file'
+
+# line end that is split off on its own
+normal '^used$'

@@ -1,0 +1,25 @@
+HKCR
+{
+	BEmacs.1 = s 'BemacsMoniker Class'
+	{
+		CLSID = s '{75DBD8F2-7CF1-11D3-817E-00500445EFA8}'
+	}
+	BEmacs = s 'BemacsMoniker Class'
+	{
+		CLSID = s '{75DBD8F2-7CF1-11D3-817E-00500445EFA8}'
+		CurVer = s 'BEmacs.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {75DBD8F2-7CF1-11D3-817E-00500445EFA8} = s 'BemacsMoniker Class'
+		{
+			ProgID = s 'BEmacs.1'
+			VersionIndependentProgID = s 'BEmacs'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			'TypeLib' = s '{6B9D8212-7CE8-11D3-817D-00500445EFA8}'
+		}
+	}
+}

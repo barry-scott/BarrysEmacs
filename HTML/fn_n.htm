@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<HTML>
+<HEAD>
+<TITLE>Functions N*</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<HR>
+<P><A name="nargs"></A>(<B>nargs</B>)</P>
+
+<BLOCKQUOTE>
+<P>Returns the number of arguments passed to the invoking MLisp function.</P>
+
+<P>For example, within the execution of foo invoked by (foo x y) the value returned by nargs would be 2.  </P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_a.htm#arg">arg</A></LI>
+</UL>
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="narrow-region"></A>(<B>narrow-region</B>)</P>
+
+<BLOCKQUOTE>
+<P>Restricts the amount of a buffer that can be manipulated to the region between dot and mark. <CODE>widen-region</CODE> will remove the restriction.</P>
+
+<P>File operations ignore this restriction so, for example, you can save a file after performing <CODE>narrow-region</CODE> and the whole file is saved, not just the visible portion.</P>
+
+<P>This function is useful for replacing strings over a small parts of a buffer or for running packages that usually affect the whole of a buffer but a required to operate on a portion of it.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_w.htm#widen-region">widen-region</A></LI>
+<LI><A HREF="fn_s.htm#save-restriction">save-restriction</A></LI>
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="narrow-window"></A>(<B>narrow-window</B>)</P>
+
+<BLOCKQUOTE>
+<P>Reduces the width of a vertically-split window. A window has to be at least one column wide.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_w.htm#widen-window">widen-window</A></LI>
+<LI><A HREF="var_w.htm#window-width">window-width</A> variable</LI>
+</UL>
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="newline"></A>(<B>newline</B>) ^M (Return)</P>
+
+<BLOCKQUOTE>
+<P>Inserts a newline character into the buffer.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="#newline-and-backup">newline-and-backup</A></LI>
+<LI><A HREF="#newline-and-indent">newline-and-indent</A></LI>
+</UL>
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="newline-and-backup"></A>(<B>newline-and-backup</B>) ^O</P>
+
+<BLOCKQUOTE>
+<P>Inserts an end-of-line immediately after dot, effectively opening up the line. If dot is positioned at the beginning of a line, then ^O will create a blank line preceding the current line and will position dot on that new line.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="#newline">newline</A></LI>
+<LI><A HREF="#newline-and-indent">newline-and-indent</A></LI>
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="newline-and-indent"></A>(<B>newline-and-indent</B>) ^J</P>
+
+<BLOCKQUOTE>
+<P>Inserts a newline just as Return does, but also inserts enough tabs and spaces so that the newly-created line has the same indentation as the old line.</P>
+
+<P>This is useful when you are typing in a block of program text all at the same indentation level. </P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="#newline">newline</A></LI>
+<LI><A HREF="#newline-and-backup">newline-and-backup</A></LI>
+</UL>
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="next-error"></A>(<B>next-error</B>) ^X-^N</P>
+
+<BLOCKQUOTE>
+<P>Takes the next error message (as returned from the ESC-x <CODE>compile-it</CODE> command), visits the file in which the error occurred and sets dot to the line in which that error occurred. The error message will be displayed at the top of the window associated with the Error log buffer.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_c.htm#compile-it">compile-it</A></LI>
+<LI><A HREF="fn_p.htm#previous-error">previous-error</A></LI>
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="next-line"></A>(<B>next-line</B> <CODE>repeat-count</CODE>) ^N</P>
+
+<BLOCKQUOTE>
+<P>Moves dot down <CODE>prefix-argument</CODE> times <CODE>repeat-count</CODE> lines. If <CODE>repeat-count</CODE> is omitted, 1 is assumed. <CODE>next-line</CODE> attempts to keep dot at the same horizontal character position as you move from line to line.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_p.htm#previous-line">previous-line</A></LI>
+<LI><A HREF="var_t.htm#track-eol-on-^N-^P">track-eol-on-^N-^P</A> variable</LI>
+</UL>
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="next-page"></A>(<B>next-page</B>) page-down</P>
+
+<BLOCKQUOTE>
+<P>Repositions the current window on the current buffer so that the page prefix-argument pages forward is visible in the window (where a page is a group of lines 4/5th's the size of the window). If possible, dot is kept where it is, otherwise it is moved to the middle of the new page.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_p.htm#previous-page">previous-page</A></LI>
+<LI><A HREF="fn_p.htm#page-next-window">page-next-window</A></LI>
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="next-window"></A>(<B>next-window</B>) ^X-n</P>
+
+<BLOCKQUOTE>
+<P>Switches to the window (and associated buffer) that is below the current window. If there is no lower window, moves to the window at the top of the screen.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_b.htm#beginning-of-window">beginning-of-window</A></LI>
+<LI><A HREF="fn_e.htm#end-of-window">end-of-window</A></LI>
+<LI><A HREF="fn_l.htm#line-to-top-of-window">line-to-top-of-window</A></LI>
+<LI><A HREF="fn_p.htm#previous-window">previous-window</A></LI>
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="normal-mode"></A>(<B>normal-mode</B>)</P>
+
+<BLOCKQUOTE>
+<P>Turns on Normal Mode -- default major mode which Emacs gives to all new buffers that it creates. It provides a general text manipulating environment with no special features.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_f.htm#fundamental-mode">fundamental-mode</A></LI>
+<LI><A HREF="fn_t.htm#text-mode">text-mode</A></LI>
+<LI><A HREF="fn_c.htm#c-mode">c-mode</A></LI>
+<LI><A HREF="fn_l.htm#lisp-mode">lisp-mode</A></LI>
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="novalue"></A>(<B>novalue</B>)</P>
+
+<BLOCKQUOTE>
+<P>Does nothing. <CODE>novalue</CODE> is a complete no-op -- it performs no action and returns no value.</P>
+
+<P>Normally, the value of an MLisp function is the value of the last expression evaluated in the body of the function. If you do not want the function to return a value, use <CODE>novalue</CODE>as the last expression in the function.</P>
+
+</BLOCKQUOTE>
+
+<HR>
+</BODY>
+</HTML>
+

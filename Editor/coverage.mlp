@@ -1,0 +1,1053 @@
+; 
+; purify coverage test program
+; 
+; execute functions to extend the coverage of emacs code
+; 
+(defun
+    (X
+	(execute-mlisp-file "../coverage.mlp")
+    )
+)
+(defun
+    (coverage-com
+	pass
+	
+	(setq pass (+ (getenv "pass")))
+	(message "Purify Coverage starting...")(sit-for 0)
+	(if (= pass 1)
+	    (progn
+		(setq exit-emacs-hook "novalue")
+		(setq leave-emacs-hook "novalue")
+		(setq return-to-emacs-hook "novalue")
+		(setq enter-emacs-hook "novalue")
+		(save-excursion
+		    (switch-to-buffer "~keymap-hack")
+		    (use-local-map "Minibuf-local-NS-map")
+		    (local-bind-to-key "help-and-exit" "?")
+		    (use-local-map "Minibuf-local-map")
+		    (local-bind-to-key "help-and-exit" "?")
+		)
+		(save-environment (getenv "envfile"))
+		(message "Forcing an exit...")(sit-for 10)
+		(coverage-exit-recursive-edit)
+	    )
+	    (= pass 2)
+	    (progn
+		; run the tests in the exit hook to allow
+		; read_in_files and other code in emacs() to be tested
+		(setq exit-emacs-hook "coverage_tests")
+		(coverage-exit-recursive-edit)
+	    )
+	    (= pass 3)
+	    (progn
+		(message "Interactive testing")(sit-for 0)
+		(switch-to-buffer "test instructions")
+		(insert-string
+		    "Type a Ctrl-G to ding the bell\n"
+		    "Use fetch-database-entry and press help at each prompt\n"
+		)
+		(recursive-edit)
+		(exit-emacs)
+	    )
+	)
+	(message "Purify Coverage Done.")(sit-for 0)
+    )
+)
+(defun
+    (coverage_tests
+	(progn
+	    (~test "init" (coverage-init))
+	    
+	    (~test "abbrev" (coverage-abbrev))
+	    (~test "abspath" (coverage-abspath))
+	    (~test "arith" (coverage-arith))
+	    (~test "buffer" (coverage-buffer))
+	    (~test "caseconv" (coverage-caseconv))
+	    (~test "columns" (coverage-columns))
+	    (~test "display" (coverage-display))
+	    (~test "dbman" (coverage-dbman))
+	    (~test "emacs" (coverage-emacs))
+	    (~test "errlog" (coverage-errlog))
+	    (~test "fileio" (coverage-fileio))
+	    (~test "journal" (coverage-journal))
+	    (~test "keyboard" (coverage-keyboard))
+	    (~test "lispfunc" (coverage-lispfunc))
+	    (~test "mem_man" (coverage-mem_man))
+	    (~test "metacomm" (coverage-metacomm))
+	    (~test "minibuf" (coverage-minibuf))
+	    (~test "mlispars" (coverage-mlispars))
+	    (~test "mlisproc" (coverage-mlisproc))
+	    (~test "mlprintf" (coverage-mlprintf))
+	    (~test "options" (coverage-options))
+	    (~test "search" (coverage-search))
+	    (~test "simpcomm" (coverage-simpcomm))
+	    (~test "subproc" (coverage-subproc))
+	    (~test "syntax" (coverage-syntax))
+	    (~test "time" (coverage-time))
+	    (~test "undo" (coverage-undo))
+	    (~test "windman" (coverage-windman))
+	    (~test "window" (coverage-window))
+	    ; 
+	    ; tests below this point require user input
+	    ; 
+	    (~test "prompt" (coverage-prompt))
+	    (~test "macro" (coverage-macro))
+	    (~test "motiftk" (coverage-motiftk))	    
+	    (dump-memory-statistics)
+	    
+	    (pop-to-buffer "Test-result")
+	    (message "Tests complete...")(sit-for 0)
+	    (write-named-file "purify-coverage.phase-2-results.tmp")
+	    (exit-emacs)
+	)
+    )
+)
+(defun
+    (~test
+	~msg
+	~name
+	~test
+	
+	(setq ~name (arg 1))
+	(setq ~msg (concat "Working on " ~name))
+	
+	(pop-to-buffer "Test-result")
+	(end-of-file)
+	(insert-string ~msg)
+	(message ~msg)(sit-for 1)
+	(if (error-occurred (arg 2))
+	    (setq ~msg (concat " - failed " error-message "\n"))
+	    (setq ~msg " - passed\n")
+	)
+	(pop-to-buffer "Test-result")
+	(end-of-file)
+	(insert-string ~msg)
+    )
+)
+
+
+; 
+; test sections
+; 
+(defun
+    (coverage-init
+	(setq silently-kill-processes 1)
+	(load "newcompil")
+	(load "lk201")
+	(load "mouse")
+	(execute-mlisp-file "minibuf-recall")
+	(auto-execute "lisp-mode" "*.ml")
+        (auto-execute "lisp-mode" "*.key")
+        (auto-execute "lisp-mode" "*.mlp")
+    )
+)
+
+(defun
+    (coverage-abbrev
+	~tmp
+	(switch-to-buffer "coverage-abbrev")
+	(define-global-abbrev "bas" "Barry Alan Scott")
+	(define-hooked-global-abbrev "gsm" "GsomethingM" "coverage-abbrev-hook-test")
+	(use-abbrev-table "coverage")
+	(define-local-abbrev "asp" "Alexander William Scott-Peters")
+	(define-hooked-local-abbrev "abc" "123" "coverage-abbrev-hook-test")
+	(list-abbreviation-tables)
+	(dump-abbreviation-tables "coverage")
+	(coverage-input "bas\ngsm\nasp\nabc\n")
+	(test-abbrev-expand "bas")
+	(write-abbrev-file "./coverage-abbrev.tmp")
+	(read-abbrev-file "./coverage-abbrev.tmp")
+	(error-occurred (read-abbrev-file "./coverage-abbrev.tmp-not-present"))
+	(quietly-read-abbrev-file "./coverage-abbrev.tmp")
+	(setq ~tmp current-buffer-abbrev-table)
+	(setq current-buffer-abbrev-table "zzzzz")
+    )
+)
+(defun
+    (coverage-abspath
+	(current-directory ".")
+	(error-occurred (current-directory "/bad-path-name"))
+    )
+)
+(defun
+    (coverage-arith
+	; no arguments provided
+	(coverage-input "\ex+\r")
+	; too few args
+	(error-occurred (+))
+	; too many args
+	(error-occurred (region-to-string 1 2 3))
+	
+
+	(+ " + 1 ")
+	(+ " -1 ")
+
+	(+ 9 13)
+	(error-occurred (+ 1 (error-message "!") 1))
+	(error-occurred (+ (error-message "!") 4))
+	(error-occurred (+ 1 2 3 (error-message "!") 4))
+	(& 14 33)
+	(error-occurred (& 1 (error-message "!")))
+	(error-occurred (& 1 2 3 4 (error-message "!") 4))
+	(/ 7 2)
+	(error-occurred (/ 1 0))
+	(error-occurred (/ 1 (error-message "!") 9))
+	(error-occurred (/ (error-message "!") 9))
+	(error-occurred (/ 1 2 3 (error-message "!") 9))
+	(= 3 3)
+	(= "Barry Alan Scott" "Barry Alan Scott")
+	(error-occurred (= "fred" (error-message)))
+	(= "13" 3)
+	(> 3 2)
+	(> "a" "b")
+	(>= 3 2)
+	(>= "a" "b")
+	(< 3 2)
+	(< "a" "b")
+	(<= 3 2)
+	(<= "a" "b")     
+	(error-occurred (= 1 current-windows))
+	(error-occurred (= current-windows 1))
+	(% 7 2)
+	(error-occurred (% 1 0))
+	(error-occurred (% 1 (error-message "!") 9))
+	(error-occurred (% (error-message "!") 9))
+	(error-occurred (% 1 2 3 (error-message "!") 9))
+	(! 0)             
+	(!= 3 2)
+	(| 1 4)
+	(error-occurred (| 1 (error-message "!") 9))
+	(error-occurred (| (error-message "!") 9))
+	(error-occurred (| 1 2 3 (error-message "!") 9))
+	(<< 4 6)
+	(error-occurred (<< 1 (error-message "!") 9))
+	(error-occurred (<< (error-message "!") 9))
+	(error-occurred (<< 1 2 3 (error-message "!") 9))
+	(>> 90000 7)
+	(error-occurred (>> 1 (error-message "!") 9))
+	(error-occurred (>> (error-message "!") 9))
+	(error-occurred (>> 1 2 3 (error-message "!") 9))
+	(- 6 9)
+	(- 3)
+	(error-occurred (- 1 (error-message "!") 9))
+	(error-occurred (- (error-message "!") 9))
+	(error-occurred (- 1 2 3 (error-message "!") 9))
+	(* 2 3)
+	(error-occurred (* 1 (error-message "!") 9))
+	(error-occurred (* (error-message "!") 9))
+	(error-occurred (* 1 2 3 (error-message "!") 9))
+	(^ 3 2)
+	(error-occurred (^ 1 (error-message "!") 9))
+	(error-occurred (^ (error-message "!") 9))
+	(error-occurred (^ 1 2 3 (error-message "!") 9))
+	(set-mark)
+	(concat (mark))
+	(error-occurred (concat current-windows))
+	(error-occurred (<))
+	(error-occurred (< 2))        
+	(error-occurred (setq ~tmp))
+	(setq current-windows current-windows)
+
+	(error-occurred (+ "fred"))
+	(error-occurred (+ current-windows))
+	(error-occurred (setq current-windows (dot)))
+	(error-occurred (setq current-windows (error-message "!")))
+	(error-occurred (+ (novalue)))
+    )
+)
+(defun
+    (coverage-abbrev-hook-test
+	(insert-string "[abbrev hook test has expansion " abbrev-expansion "]")
+    )
+)
+(defun
+    (coverage-buffer
+	~tmp
+	~right-mark
+	(switch-to-buffer "buffer-test")
+	(setq syntax-colouring 1)	
+	(setq ~tmp (fetch-array buffer-names 0))
+	(setq ~tmp (fetch-array buffer-names 1))
+	(error-occurred (setq ~tmp (fetch-array buffer-names 9999)))
+	(error-occurred (setq ~tmp (fetch-array buffer-names -1)))
+	(error-occurred (setq buffer-names ~tmp))
+	(error-occurred (setq-array buffer-names 0 17))
+	
+	(setq current-buffer-allocation-size (+ current-buffer-allocation-size 10))
+	(setq-default left-margin 6)
+	(setq-default right-margin 65)
+	(error-occurred (setq-default left-margin -1))
+	(error-occurred (setq-default right-margin -1))
+	(setq left-margin 16)
+	(setq right-margin 56)
+	
+	(error-occurred (setq left-margin 99))
+	(error-occurred (setq right-margin 8))
+	
+	(delete-next-character 99)	
+	(delete-previous-character 99)
+	
+	(insert-string "line 1\nand 2\nor three")
+	(goto-character 3)
+	(setq ~right-mark (right-marker (dot)))
+	(goto-character 1)
+	(insert-string "\n")
+	(delete-previous-character)
+	(end-of-file)
+	(insert-string "\n")    
+	(backward-character)
+	(delete-next-character)
+	(current-line-number)
+	(setq ~tmp current-buffer-allocation-size)
+	(while
+	    (< 0 (- ~tmp (buffer-size) 32 2))
+	    (insert-string "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n")
+	)
+	(while
+	    (= current-buffer-allocation-size ~tmp)
+	    (insert-character 'x')
+	)
+	(insert-string "fred")
+	(setq read-only-buffer 1)
+	(error-occurred (insert-string "Fred"))
+	(error-occurred (insert-character '!'))
+	(error-occurred (delete-previous-character))
+	(error-occurred (delete-next-character))
+	(setq tab-size 8)
+	(error-occurred (setq tab-size 0))
+	(list-buffers)
+    )
+)
+(defun
+    (coverage-caseconv
+	(switch-to-buffer "caseconv")
+	(insert-string "this is\nthe life!")
+	(setq buffer-is-modified 0)
+	(error-occurred (case-region-capitalize))
+	(goto-character 1)
+	(set-mark)
+	(goto-character 13)
+	(case-region-capitalize)
+	(case-region-invert)
+	(case-region-lower)
+	(case-region-upper)
+	(case-word-capitalize)
+	(case-word-invert)
+	(case-word-lower)
+	(case-word-upper)
+	(case-string-capitalize "frEd")
+	(error-occurred (case-string-capitalize (error-message "Ugh!")))
+	(case-string-invert "frEd")
+	(case-string-lower " frEd")
+	(case-string-upper "frEd")
+    )
+)
+(defun
+    (coverage-columns
+	(switch-to-buffer "column-test")
+	(insert-string "This is test text for column \n")
+	(backward-character)
+	(set ctlchar-with-^ 0)
+	(sit-for 5)
+	(current-column)
+	(set ctlchar-with-^ 1)
+	(sit-for 5)
+	(current-column)
+    )
+)
+(defun
+    (coverage-display
+	~tmp
+
+	(setq terminal-cursor-type 1)
+	(error-occurred (setq cursor-type 99))
+	(setq terminal-width terminal-width)
+	(setq terminal-length terminal-length)
+	(setq xon-mode xon-mode)
+	(setq mouse-enable mouse-enable)
+	(setq mode-line-graphic-rendition "7;1")
+	(error-occurred (setq mode-line-graphic-rendition "7;1a"))
+
+	(switch-to-buffer "display-test")
+	(setq ~tmp 1)
+	(while (< ~tmp 30)
+	    (insert-string "This is line " ~tmp " on " (current-time) "\n")
+	    (sit-for 2)
+	    (setq ~tmp (+ ~tmp 1))
+	)
+	(goto-line 5)
+	(sit-for 5)
+	(kill-to-end-of-line 2)
+	(sit-for 5)
+	(scroll-one-line-up)
+	(sit-for 5)
+	(scroll-one-line-down)
+	(sit-for 5)
+	(scroll-one-column-left)
+	(sit-for 5)
+	(scroll-one-column-right)
+
+    ; cause copyline code to run
+	(delete-other-windows)
+	(beginning-of-file)
+	(split-current-window-vertically)
+	(sit-for 5)
+	(next-line)
+	(sit-for 5)
+
+	(coverage-input "\exget-tty-string Ding!\n\^g")
+    )
+)
+(defun
+    (coverage-dbman
+	(switch-to-buffer "dbman-test")
+	(erase-buffer)
+	(fetch-database-entry "MLisp-library" "lispmode.ml")
+	(list-databases)
+	(extend-database-search-list "Test-Database" "testdb1")
+	(extend-database-search-list "Test-Database" "testdb2")
+	(remove-database "Test-Database" (substr (expand-file-name "testdb1.dir") 1 -4))
+	(insert-string "this is the text for entry one\n")
+	(put-database-entry "Test-Database" "entry1")
+	(insert-string "this is the text for entry two\n")
+	(put-database-entry "Test-Database" "entry-two")
+	(fetch-help-database-entry "Test-Database" "entry1")
+	(coverage-input "\exfet da \200<T \200<en \200<- ")
+    )
+)
+(defun
+    (coverage-emacs
+	(argc)
+	(argv 0)
+	(error-occurred (argv 99))
+	(debug-emacs "flags=0x0")
+	(emacs-version)
+    )
+)
+(defun
+    (coverage-errlog
+    )
+)
+
+(defun
+    (coverage-fileio ~file
+	(setq checkpoint-hook "checkpoint-buffers")
+	(list-auto-executes)
+	(auto-execute "null-mode" "*.tmp")
+	(switch-to-buffer "fileio-test")
+	(read-file "emacsinit.ml")
+	(apply-auto-execute "not.me.for.sure")
+	(apply-auto-execute "fred.tmp")
+	(write-named-file "test-append.tmp")
+	(insert-string "testing 1 2 3\n")
+	(write-current-file)
+	(synchronise-files)
+	(setq current-buffer-type "scratch")
+	(append-to-file "test-append.tmp")
+	(setq backup-file-mode backup-file-mode)
+	(insert-file "test-append.tmp")
+	(visit-file "test-append.tmp")
+	(unlink-file "test-append.tmp")
+	; test write-file-exit
+	(coverage-input "\^x\^f")
+	(setq ~file (expand-file-name "*.*"))
+	(while (length ~file)
+	    (setq ~file (expand-file-name "")))
+	(setq ~file (expand-file-name "*.*"))
+	(while (length ~file)
+	    (setq ~file (expand-file-name "")))
+   )
+)
+(defun
+    (coverage-journal
+	~tmp
+
+	(switch-to-buffer "journal-test")
+	(setq journal-scratch-buffers 1)
+	(error-occurred (setq journal-frequency 1))
+	(setq journal-frequency 10)
+	(setq current-buffer-journalled 1)
+	(setq current-buffer-checkpointable 1)
+
+	(setq ~tmp current-buffer-journalled)
+	(setq ~tmp current-buffer-checkpointable)
+
+	(erase-buffer)
+	(insert-string "Second")    ; test merge of insert
+	(insert-string "-line\n")
+	(beginning-of-file)
+	(insert-string "First-line\n")
+	(end-of-line)
+	(insert-string "third-line\n")
+	(beginning-of-file)
+	(replace-string "-line" " line")
+	(end-of-file)
+	; test removing the insert
+	(insert-string "123")
+	(delete-previous-character 3)
+	; test triming the insert
+	(insert-string "1234")
+	(delete-previous-character 2)
+	; test removing the insert
+	(insert-string "123")
+	(delete-previous-character 4)
+	; test merging the delete
+	(delete-previous-character 4)
+
+	(checkpoint)
+	; allow journal flush to happen
+	(coverage-wait 12)
+	; copy the file to safty
+	(execute-monitor-command "cp journal-test.eja saved-journal-test.eja")
+	; kill off the journal test buffer
+	(delete-buffer "journal-test")
+	(setq animated-journal-recovery 1)
+	(journal-recover "saved-journal-test.eja")
+	(setq journal-scratch-buffers 0)
+    )
+)
+(defun
+    (coverage-keyboard
+	(switch-to-buffer "keyboard-test")
+	(describe-bindings)
+	(lisp-mode)
+	(local-binding-of "`")
+	(global-binding-of "a")
+	(global-binding-of "\^a")
+	(remove-all-local-bindings)
+	(recursion-depth)
+	(convert-key-string "\e[A")
+    )
+)
+(defun
+    (coverage-lispfunc
+	~tmp
+	(switch-to-buffer "lispfunc-test")
+	(push-back-character "t ")
+	(expand-from-string-table "Test: " "one two no")
+	(push-back-character "string\^m")
+	(get-tty-string "Test: ")
+	(push-back-character "x")
+	(get-tty-character)
+	(push-back-character "main\^m")
+	(get-tty-buffer "test: ")
+	(push-back-character "filename\^m")
+	(get-tty-file "Test: ")
+	(push-back-character "new-un ")
+	(get-tty-command "Cmd: ")
+	(push-back-character "ct ")
+	(get-tty-variable "Var: ")
+	(eolp)
+	(eobp)
+	(users-full-name)
+	(users-login-name)
+	(system-name)
+	(string-to-char "a")
+	(current-buffer-name)
+	(current-file-name)
+	(dot-is-visible)
+	(to-col 39)
+	(baud-rate)
+	(bobp)
+	(bolp)
+	(current-column)
+	(goto-character 3)
+	(following-char)
+	(preceding-char)
+	(recursion-depth)
+	(current-indent)
+	(insert-character 'a')
+	(setq ~tmp (last-key-struck))
+	(setq ~tmp (previous-command))
+	(interactive)
+	(nargs)
+	(putenv "emacs_testing" "yes")
+	(goto-character 2)
+	
+	(set-mark)
+	(goto-character 7)
+	(region-to-string)
+	(exchange-dot-and-mark)
+	(region-to-string)
+	(region-to-string (dot) (mark))
+	(region-to-string (mark) (dot))
+	(region-to-string (mark))
+	(region-to-string 3 7)
+	(region-to-string 7 3)
+	(region-to-string 7)
+	(error-occurred (region-to-string current-windows))
+	(error-occurred (region-to-string (mark) current-windows))
+	(unset-mark)
+	(error-occurred (region-to-string))
+    )
+)
+(defun
+    (coverage-macro
+	(switch-to-buffer "macro-test")
+	(start-remembering)
+	(message "Type keyboard macro body then ^C")
+	(recursive-edit)
+	(stop-remembering)
+	(define-keyboard-macro "keyboard-macro")
+	(edit-macro "keyboard-macro")
+	(define-buffer-macro)
+	(define-string-macro "string-macro" "text \^q\200 \^q\201 1 2 3")
+	(string-macro)
+    )
+)
+(defun
+    (coverage-mem_man
+    )
+)
+(defun
+    (coverage-metacomm
+	(apropos "insert")
+	(apropos-variable "hook")
+	(error-occurred (apropos (error-message "Ugh!")))
+	(error-occurred (apropos-variable (error-message "Ugh!")))
+	(beginning-of-window)
+	(sit-for 0)
+	(switch-to-buffer "metacom-test")
+	(insert-string "first\nsecond\n")
+	(beginning-of-file)
+	(kill-to-end-of-line 2)
+	(yank-buffer "Kill buffer")
+	(end-of-window)
+	(sit-for 0)
+	(set-mark)
+	(next-line)
+	(delete-region-to-buffer "Kill buffer")
+	(unset-mark)
+	(error-occurred (delete-region-to-buffer "z"))
+	(insert-string "a few well chosen words are required here")
+	(beginning-of-file)
+	(forward-word 3)
+	(delete-previous-word)
+	(delete-next-word)
+	(setq replace-mode 1)
+	(delete-previous-word)
+	(delete-next-word)
+    )
+)
+(defun
+    (coverage-minibuf
+    )
+)
+(defun
+    (coverage-mlispars
+	(switch-to-buffer "mlispars-test")
+	(execute-mlisp-line "(novalue)")
+	(insert-string "(novalue)\n(novalue)")
+	(execute-mlisp-buffer)
+	(insert-string "(message \"\\(badkey)\")\n")
+	(error-occurred (execute-mlisp-buffer))
+    )
+)
+(defun
+    (coverage-mlisproc
+	~tmp
+	(switch-to-buffer "mlisproc-test")
+	(set "~tmp" "string")
+	(set-default "left-margin" "1")
+	(print "~tmp")
+	(print-default "left-margin")
+	
+	(is-function "not-a-function")
+	(is-function "is-function")
+	
+	(setq ~tmp (dot))
+	(setq ~tmp (left-marker ~tmp))
+	(setq ~tmp (right-marker ~tmp))
+	(error-occurred (setq-array ~tmp 1 1 "First cell"))
+
+	(setq ~tmp (array 1 8 1 4))
+	(setq-array ~tmp 1 1 "First cell")
+	(bounds-of-array ~tmp)
+	(fetch-array ~tmp 1 1)
+	(error-occurred (fetch-array ~tmp 1 1 0 ))
+	(error-occurred (fetch-array ~tmp 0 0))
+	(error-occurred (fetch-array ~tmp 0))
+	(provide-prefix-argument 3 (prefix-argument-loop (setq ~tmp 1)))
+	(setq ~tmp prefix-argument)
+	(decompile-mlisp-function "compile-it")
+	
+	(type-of-expression (concat "tsring"))
+	(type-of-expression (+ 99))
+	(type-of-expression (dot))
+	
+	(use-variables-of-buffer "main" (setq syntax-colouring 1))
+	(send-string-to-terminal "Hello terminal!")
+	
+	(error-occurred (setq true false))
+	(return-prefix-argument 99)
+    )
+)
+(defun
+    (coverage-mlprintf
+	(sprintf "%o %d %x %s" 7 32 567 "Hello")
+    )
+)
+(defun
+    (coverage-motiftk
+	~text
+	~button0
+	~button1
+	~button2
+	~button3
+	~button4
+	~button5
+	~scale
+	
+	(error-occurred (XmDestroyDialog "Test"))
+	
+	(XmFormDialog "Test" "" 400 500
+	    (XmFrame -1 -1 -1
+		(XmRowColumn -1 -1 -1 -1 0 -1 -1 -1
+		    (XmLabel 0 -1 "Enter Text and click button")
+		    (XmTextField -1 -1 30 2 ~text)
+		    (XmSeparator)
+		    (XmToggleButton -1 -1 "Button 0" ~button0)
+		    (XmToggleButton -1 -1 "Button 1" ~button1)
+		    (XmScale -1 -1 "Scale" -1 -1 1 13 1 -1 ~scale)
+		    (XmRadioBox -1 -1 1 
+			(XmToggleButton -1 -1 "Button 2" ~button2)
+			(XmToggleButton -1 -1 "Button 3" ~button3)
+		    )
+		    (XmCheckBox -1 -1 1 
+			(XmToggleButton -1 -1 "Button 4" ~button4)
+			(XmToggleButton -1 -1 "Button 5" ~button5)
+		    )
+		)
+	    )	    
+	)
+	(setq ~text "Click OK")
+	(setq ~button0 0)
+	(setq ~button1 1)
+	(setq ~button2 0)
+	(setq ~button3 1)
+	(setq ~button4 0)
+	(setq ~button5 1)
+	(setq ~scale 7)
+	(XmOperateDialog "Test")
+	(setq ~text "Click Cancel")
+	(XmOperateDialog "Test")
+	
+	
+	(progn
+	    ~pattern
+	    ~filename
+	    (setq ~pattern "")
+	    (setq ~filename "")
+	    
+	    (if (! (XmIsDialog "Test File"))
+		(XmFileSelectionDialog "Test File" "" ~pattern ~filename)
+	    )
+	    (XmOperateDialog "Test File")
+	    
+	    (if (! (XmIsDialog "Test Message"))
+		(XmMessageDialog "Test Message" 0 ~filename)
+	    )
+	    (XmOperateDialog "Test Message")
+	)
+
+	(XmDumpDialogs)
+
+	(error-occurred (XmDestroyDialog "Test2"))
+	(XmFormDialog "Test2" "\^C" 400 200
+	    (XmFrame -1 -1 -1
+		(XmRowColumn -1 -1 -1 -1 0 -1 -1 -1
+		    (XmLabel 0 -1 "Click Apply then Click OK")
+		)
+	    )
+	)
+	(XmOperateDialog "Test2")
+	(recursive-edit)
+    )
+)
+(defun 
+    (coverage-debug
+	(+ (* 5 4) 3)
+	(concat "A" "B" "c")
+    )
+)
+(defun
+    (coverage-options
+	(list-breakpoints)
+	(list-images)
+	(dump-stack-trace)
+	(debug)
+	(breakpoint "coverage-debug" 1)
+	(push-back-character "\excoverage-debug")
+	(recursive-edit)
+    )
+)
+(defun
+    (coverage-prompt
+	(pop-to-buffer "ZZZZZ")
+	(push-back-character "Z "); 
+	(get-tty-buffer "Please select a buffer: ")
+	(get-tty-file "Please select a file - user help and expansion: ")
+    )
+)
+(defun
+    (coverage-search
+	~tmp
+	(switch-to-buffer "search-test")
+	(insert-string "this is data\na = 1\nb = 2\nto search over\n")
+	(search-reverse " is ")
+	(re-search-reverse "his")
+	(re-search-forward "\\b\\w\\w\\b")
+	(beginning-of-file)
+	(re-replace-string
+	    "\\(\\w\\w*\\) = \\([0-9][0-9]*\\)"
+	    "\\1 is a name which value \\2 is assign into \\1")
+	(push-back-character "!")
+	(re-query-replace-string "a" "A")
+						   
+	(error-occurred (re-search-forward "This is a string"))
+	(setq ~tmp search-string)
+    )
+)
+(defun
+    (coverage-simpcomm
+	(switch-to-buffer "simpcomm-test")
+	(sit-for 1)	
+	(insert-string
+	    "line 1\n"
+	    "line two\n"
+	    "third line\n"
+	)
+	(sit-for 1)	
+	(save-restriction
+	    (beginning-of-file)
+	    (set-mark)
+	    (next-line)
+	    (narrow-region)
+	    (sit-for 1)	
+	)
+	(sit-for 1)	
+    )
+)
+(defun
+    (error-message-parser
+	(if
+	    (error-occurred
+		(re-search-forward "^\\(.*\\):\\([0-9][0-9]*\\): .*$")
+	    )
+	    (setq error-line-number 0)
+	    (save-window-excursion
+		(region-around-match 2)
+		(setq error-line-number (region-to-string))
+		(region-around-match 1)
+		(setq error-file-name (region-to-string))
+		(beginning-of-line)
+		(setq error-start-position (dot))
+		(next-line)
+		(beginning-of-line)
+	    )
+	)
+    )
+)
+	    
+(defun
+    (coverage-subproc
+	(shell)
+	(switch-to-buffer "subproc-test")
+	(set-mark)
+	(insert-string "2\n2\n1\n")
+	(filter-region "sort")
+	(erase-buffer)
+	(insert-string	"coverage_tmp.c:1: error on line one\n"
+			"coverage_tmp.c:2: error on line two\n")
+	(write-named-file "errors.tmp")
+	(erase-buffer)
+	(insert-string "unsigned signed char error;\n"
+	    "unsigned signed int another;\n")
+	(write-named-file "coverage_tmp.c")
+	(setq compile-it-command "cat errors.tmp")
+	(compile-it)
+	(coverage-wait 10)
+	(kill-compilation)
+	(next-error)
+	(next-error)
+	(error-occurred (next-error))
+	(previous-error)
+	(list-processes)
+    )
+)
+(defun
+    (coverage-syntax
+	(switch-to-buffer "syntax-test")
+	(electric-c-mode)
+	(insert-string
+	    "// c++ comment\n"
+	    "int main( int argc, char **argv)\n"
+	    "	{\n"
+	    "	class new (int) fred;\n"
+	    "	return 0	; /* comment */\n"
+	    "	'c'++;\n"
+	    "	}\n"
+	)
+	
+	(error-occurred (setq syntax-array 99))
+	(error-occurred (setq syntax-colouring -3))
+	
+	(setq syntax-array 0)
+	(setq syntax-colouring 1)
+	
+	(setq current-buffer-syntax-table current-buffer-syntax-table)
+	
+	(beginning-of-file)
+	(forward-paren 0)
+	(backward-paren 0)
+	(forward-balanced-paren-line 0)
+	(backward-balanced-paren-line 0)
+	
+	(setq syntax-array 0)
+	
+	(beginning-of-file)
+	(forward-paren 0)
+	(backward-paren 0)
+	(forward-balanced-paren-line 0)
+	(backward-balanced-paren-line 0)
+	
+	(setq syntax-colouring 1)
+	(sit-for 0)	
+	; test update of syntax array
+	(beginning-of-file)
+	(search-forward "cla")
+	(debug-emacs)
+	(insert-string "junk")
+	(sit-for 0)
+	(delete-previous-character 4)
+	(sit-for 0)	
+	
+	(beginning-of-file)
+	(search-forward "comm")
+	(current-syntax-entity)
+	(dump-syntax-table "C")
+
+	(list-syntax-tables)
+    )
+)
+(defun
+    (coverage-time
+	(error-occurred (schedule-procedure "not-defined" 1))
+	(error-occurred (schedule-procedure "novalue" -1))
+	(schedule-procedure "forward-word" 1000)
+	(schedule-procedure "backward-word" 1000)
+	(schedule-procedure "set-mark" 1000)
+	(schedule-procedure "forward-word" 0)
+	(schedule-procedure "backward-word" 0)
+	(schedule-procedure "set-mark" 0)
+    )
+)
+(defun
+    (coverage-undo
+    )
+)
+(defun
+    (coverage-windman
+    (save-window-excursion
+	(switch-to-buffer "test")
+	(setq current-buffer-type "file")
+	(setq current-buffer-file-name "./bad/bad.bad")
+	(setq current-buffer-type "scratch")
+	(insert-string "one two three")
+	(apply-colour-to-region 1 12 1)
+	(apply-colour-to-region 4 7 2)
+	(apply-colour-to-region 10 11 3)
+	(sit-for 1) 	
+	(delete-other-windows)
+	(sit-for 1)	
+	(split-current-window)
+	(sit-for 1)	
+	(split-current-window-vertically)
+	(sit-for 1)	
+	(split-current-window-vertically)
+	(sit-for 1)	
+	(split-current-window)
+	(up-window)
+	(sit-for 1)	
+	(previous-window)
+	(sit-for 1)	
+	(page-next-window)
+	(sit-for 1)	
+	(enlarge-window)
+	(setq window-width (+ window-width 3))
+	(sit-for 1)	
+	(error-occurred (right-window))
+	(sit-for 1)	
+	(down-window)
+	(sit-for 1)	
+	(shrink-window)	
+	(sit-for 1)	
+	(error-occurred (left-window))
+	(sit-for 1)	
+	(right-window)
+	(sit-for 1)	
+	(narrow-window)
+	(sit-for 1)	
+	(next-window)
+	(sit-for 1)	
+	(widen-window)
+	(sit-for 1)
+	(left-window)
+	(delete-window)
+	(sit-for 1)	
+	(delete-window)
+	(sit-for 1)	
+	(delete-window)
+	(sit-for 1)	
+	(delete-window)
+	(sit-for 1)	
+	(delete-window)
+	(sit-for 1)	
+	(delete-window)
+	(sit-for 1)	
+	(delete-window)
+	(sit-for 1)	
+    )
+    )
+)
+(defun
+    (coverage-window
+	(delete-other-windows)
+	(split-current-window-vertically)
+	(split-current-window)
+	(move-dot-to-x-y 1 1)
+	(goto-window-at-x-y 1 1)
+    )
+)
+(defun
+    (coverage-unixcomm
+    )
+)
+(defun
+    coverage-input (keys)
+    (push-back-character keys)
+    (coverage-input-wait)
+)
+(defun
+    (coverage-exit-recursive-edit
+	; send a ^C on behalf of the user
+	(push-back-character 3)
+    )
+)
+(defun
+    (coverage-input-wait
+	(schedule-procedure "coverage-exit-recursive-edit" 2)
+	(recursive-edit)
+    )
+)
+(defun
+    coverage-wait(~time)
+	(schedule-procedure "coverage-exit-recursive-edit" ~time)
+	(message "Waiting for " ~time " seconds...")
+	(recursive-edit)
+)
+(defun
+    (null-mode
+	(novalue)
+    )
+)

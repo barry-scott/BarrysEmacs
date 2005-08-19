@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<workflow-instructions>
+    <make name="db-rtl.r-mak"/>
+    <pack name="db-rtl.r-pkg" 
+        output-directory-suffix="db-rtl"
+        root-directory="."/>
+</workflow-instructions>

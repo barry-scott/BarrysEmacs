@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>Mlisp Programmer's Guide</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<A name="TopOfPage"></A> <!-- TRANSIT - TEXTBAR --> 
+
+<H1><A name="activex"></A>Emacs ActiveX (COM) interface</H1>
+
+<p>Emacs supports one ActiveX interface called:</p>
+
+<pre>Barry Scott Emacs.Commandline</pre>
+
+<p>This interface  has  one function defined which takes two
+string parameters:</p>
+
+<pre>CommandLine <i>current_directory</i> <i>command_line</i></pre>
+
+<p>Emacs will  change  its current directory to the value of
+the <i>current_directory</i> parameter.  Then the command line
+in <i>command_line</i> is parsed and executed by emacs.
+
+<p>The following code VBA fragment creates the emacs command
+line object and opens the file "u:\work\emacs\emacs.cpp".
+The current directory is set to "u:\work".
+
+<pre>
+Set myServer = CreateObject("Barry Scott Emacs.CommandLine")
+myServer.CommandLine "u:\work", "emacs\emacs.cpp"
+</pre>
+
+<p>This second example runs the a package:</p>
+
+<pre>
+Set myServer = CreateObject("Barry Scott Emacs.CommandLine")
+myServer.CommandLine "u:\work", "/package=testpack arg1 arg2 etc"
+</pre> 
+
+</BODY>
+</HTML>

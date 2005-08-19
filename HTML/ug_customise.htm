@@ -1,0 +1,301 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<TITLE>User Guide - Customising Emacs</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<P><A name="top"></A></P>
+
+<UL>
+<LI><A href="#emacsenvironments">Emacs Environments</A></LI>
+
+<LI><A href="#customisingvariables">Customising Variables</A></LI>
+
+<LI><A href="#bindingkeystofunctions">Binding Keys to Functions</A></LI>
+<UL>
+<LI><A href="ug_customise.htm#keynames" target="body">Key Names</A></LI>
+</UL>
+
+<LI><A href="#librariesofcommands">Libraries of Commands</A></LI>
+</UL>
+
+<H1><A name="emacscustomisation"></A>Emacs Customisation</H1>
+
+<P>This chapter describes some simple ways of customising Emacs without knowing much about MLisp programming. If you find that the information given in this chapter does not allow you to customise Emacs satisfactorily, then you should read the Barry's Emacs Programmer's Guide.</P>
+
+<P>Emacs is designed to be customisable; you can rearrange many Emacs attributes to suit your own taste. Simple customisations are primarily of the following types:</P>
+
+<UL>
+<LI>Changing function bindings from one character sequence to another</LI>
+
+<LI>Setting variables</LI>
+
+<LI>Causing a function to automatically load a library or package</LI>
+
+<LI>Defining actions to be taken when files of a specific type are accessed.</LI>
+</UL>
+
+<HR>
+<H2><A name="emacsenvironments"></A>Emacs Environments</H2>
+
+<P>Most Emacs users find that they want to customise some features when they first start using Emacs. Later, as they become more familiar with Emacs features, new customisations become apparent.</P>
+
+<P>You will decide which bindings, options and libraries you want to access regularly, and then expect them to be automatically available each time you use Emacs. You can achieve this by making your customisations, then saving them in an Emacs environment file. Emacs starts very quickly when using environment files.</P>
+
+<P>Emacs saves the following information in environment files:</P>
+
+<UL>
+<LI>Buffers</LI>
+
+<LI>Variables</LI>
+
+<LI>All loaded MLisp functions, packages and libraries</LI>
+
+<LI>Macros (including the keyboard macro)</LI>
+
+<LI>Global and local bindings</LI>
+
+<LI>Syntax tables</LI>
+
+<LI>Abbreviation tables</LI>
+
+<LI>Database search-lists</LI>
+
+<LI>The existence of subprocesses</LI>
+
+<LI>Scheduled procedures.</LI>
+</UL>
+
+<P>Subprocesses stored in an environment file are re-started when the Emacs environment is restored. The subprocess input, output and termination procedures and buffers are also restored. Note, however, that re-created subprocesses execute with the default directory of the new Emacs process. Symbols and logical names set up in the saved process are not restored.</P>
+
+<P>Scheduled procedures are procedures delivered at a specified time. If that time has already expired, they are delivered immediately.</P>
+
+<P>You use the <FONT face="Courier New" size="2">ESC-x save-environment</FONT> command to save the current environment in an Emacs environment file. <FONT face="Courier New" size="2">save-environment</FONT> asks for the name of the file you want to create. Press <FONT face="Courier New" size="2">return</FONT> to get the default filename.</P>
+
+<P>You use the <FONT face="Courier New" size="2">/restore</FONT> command qualifier on the Emacs command to make Emacs restore an environment. This qualifier is implicitly applied when it is not present on the command line. By default, Emacs restores the environment file from <FONT face="Courier New" size="2">emacs$user:</FONT></P>
+
+<P>Each operating system uses a different name for the default Emacs environment file. This allows you use share your emacs$user directory between different operating systems.</P>
+
+<TABLE cellpadding="2">
+<THEAD>
+<TR>
+<TH align="left">Operating System</TH>
+<TH align="left">Default Emacs Environment Filename</TH>
+</TR>
+</THEAD>
+
+<TBODY>
+<TR>
+<TD>Windows NT</TD>
+<TD>emacs$user:emacs7_nt.env</TD>
+</TR>
+
+<TR>
+<TD>Windows 95</TD>
+<TD>emacs$user:emacs7_95.env</TD>
+</TR>
+
+<TR>
+<TD>FreeBSD</TD>
+<TD>emacs$user:emacs7_FreeBSD_i386.emacs_environment</TD>
+</TR>
+
+<TR>
+<TD>HP-UX</TD>
+<TD>emacs$user:emacs7_hpux_pa_risc.emacs_environment</TD>
+</TR>
+
+<TR>
+<TD>AIX</TD>
+<TD>emacs$user:emacs7_aix_ppc.emacs_environment</TD>
+</TR>
+</TBODY>
+</TABLE>
+
+<P>You cannot restore an environment file that was saved by a previous version of Emacs or on a different operating system.</P>
+
+<P>If Emacs detects an attempt to restore an incompatible environment, an error message is displayed and the editing session is aborted. If this happens to you, you must rebuild your environment file.</P>
+
+<H3>Building an Environment File</H3>
+
+<P>Since it is possible that an environment file can become out-of-date, it is best to build your environment file in such a way that it can be easily rebuilt.</P>
+
+<HR>
+<H2><A name="customisingvariables"></A>Customising Variables</H2>
+
+<P>Some customisations in Emacs can be achieved by setting system variables . Some examples of system variables are:
+<BR>
+ <FONT face="Courier New" size="2">ask-about-buffer-names</FONT>
+<BR>
+ <FONT face="Courier New" size="2">split-height-threshold
+<BR>
+ quick-redisplay</FONT>.</P>
+
+<P>To change a variable while Emacs is running, use the command <FONT face="Courier New" size="2">ESC-x set</FONT>. <FONT face="Courier New" size="2">set</FONT> will ask you for the name of the variable you want to change. You can use name completion to enter the variable name. <FONT face="Courier New" size="2">set</FONT> will then ask for the value to be inserted into the variable. All the usual Mini-buffer editing commands are available while entering the value. You can abort the whole command using <FONT face="Courier New" size="2">^G</FONT>.</P>
+
+<P>If the variable is a boolean, you can type the string <FONT face="Courier New" size="2">1</FONT>, <FONT face="Courier New" size="2">on</FONT>, <FONT face="Courier New" size="2">yes</FONT> or <FONT face="Courier New" size="2">true</FONT> to set the value of a variable to logical true, or <FONT face="Courier New" size="2">0</FONT>, <FONT face="Courier New" size="2">off</FONT>, <FONT face="Courier New" size="2">no</FONT> or <FONT face="Courier New" size="2">false</FONT> to set the value to logical false. Otherwise, just type the value required.</P>
+
+<P>If the variable is a string, then the value you type is inserted into the variable exactly as you type it. If the variable is numeric, the value is first converted to an integer.</P>
+
+<P>To set a variable in your <FONT face="Courier New" size="2">emacsinit.ml</FONT> file, you must use the <FONT face="Courier New" size="2">setq</FONT> function rather than <FONT face="Courier New" size="2">set</FONT>. The format is as follows:</P>
+
+<P><FONT face="Courier New" size="2">(setq <I>variable-name</I> <I>value</I>)</FONT></P>
+
+<P>where <I><FONT face="Courier New" size="2">variable-name</FONT></I> is the name of the variable to be set, and <I><FONT face="Courier New" size="2">value</FONT></I> is the value required. If the value is a string, then the text of the string should be enclosed in double quotes.</P>
+
+<P>Some variables have a different value in each buffer. These are called buffer-specific variables . Each buffer-specific variable has a default value which is used to initialise each buffer's local copy of the variable. To set the default value of a buffer-specific variable in your EmacsINIT.ML file, enter a line with the following format:</P>
+
+<P><FONT face="Courier New" size="2">(setq-default <I>variable-name</I> <I>value</I>)</FONT></P>
+
+<P>where <I>variable-name</I> is the name of the variable to be set, and <I>value</I> is the value required.</P>
+
+<P>Some examples of setting variables are:</P>
+
+<P><FONT face="Courier New" size="2">(setq journal-frequency 30)
+<BR>
+ (setq global-mode-string "Emacs")
+<BR>
+ (setq-default highlight-region 1)</FONT></P>
+
+<HR>
+<H2><A name="bindingkeystofunctions"></A>Binding Keys to Functions</H2>
+
+<P>Emacs allows you to associate arbitrary sequences of keystrokes with any Emacs function. This association is called a key binding -- the key sequence is said to be bound to the function. More than one key sequence can be bound to each function.</P>
+
+<P>For each buffer, Emacs keeps two possible sets of associations: the global bindings and the local bindings. Global bindings apply to all of Emacs' buffers, while local bindings apply only to a specific buffer. Each type of binding has its own command that makes the function-to-keystroke association.</P>
+
+<P>To create a global binding while Emacs is running, use the <FONT face="Courier New" size="2">ESC-x bind-to-key</FONT> command. This command prompts you for the command name and the key sequence. To make the binding in your EmacsINIT.ML file, enter a line of the form:</P>
+
+<P><FONT face="Courier New" size="2">(bind-to-key "<I>function-name</I>" "<I>key-sequence</I>")</FONT></P>
+
+<P>where <I><FONT face="Courier New" size="2">function-name</FONT></I> is the name of the function to be bound to the sequence <I><FONT face="Courier New" size="2">key-sequence</FONT></I>.</P>
+
+<P>To make local bindings, use the same syntax as above, but replace <FONT face="Courier New" size="2">bind-to-key</FONT> with <FONT face="Courier New" size="2">local-bind-to-key</FONT>.</P>
+
+<P>Here are some examples of key bindings:</P>
+
+<P><FONT face="Courier New" size="2">(bind-to-key "new-undo" "\^Z")
+<BR>
+ (bind-to-key "execute-extended-command" "\[f12]")
+<BR>
+ (local-bind-to-key "execute-mlisp-file" "\^X\^X")</FONT></P>
+
+<h3><A name="keynames"></A>Key Names</h3>
+<p>Emacs has two sets of key names. For older code there is a set of key names based on the DEC LK201
+keyboard used on the VT220 video terminal.</p>
+<p>The second set of key names if based on the names of key from the PC keyboard.</p>
+
+<p>describe-binding, describe-key,  etc  use the name of keys on the PC key board, not the LK201 as before.
+
+<p>Use \[pc-key-name]  to  bind  to  a key using the name of
+keys   as   they   appear   on   a   PC   keyboard.   Use
+\(lk201-key-name) for LK201 key names.</p>
+
+<p>You can bind to seperately to a KEY and to ctrl-KEY. For example \[f5] and \[ctrl-f5]</p>
+
+<p>The full list of PC key names is:
+
+<TABLE width="600" border="2" cellspacing="0" cellpadding="2">
+<CAPTION><B>PC Key names</B></CAPTION>
+
+<tr><td>\[f1]</td><td>\[ctrl-f1]</td></tr>
+<tr><td>\[f2]</td><td>\[ctrl-f2]</td></tr>
+<tr><td>\[f3]</td><td>\[ctrl-f3]</td></tr>
+<tr><td>\[f4]</td><td>\[ctrl-f4]</td></tr>
+<tr><td>\[f5]</td><td>\[ctrl-f5]</td></tr>
+<tr><td>\[f6]</td><td>\[ctrl-f6]</td></tr>
+<tr><td>\[f7]</td><td>\[ctrl-f7]</td></tr>
+<tr><td>\[f8]</td><td>\[ctrl-f8]</td></tr>
+<tr><td>\[f9]</td><td>\[ctrl-f9]</td></tr>
+<tr><td>\[f10]</td><td>\[ctrl-f10]</td></tr>
+<tr><td>\[f11]</td><td>\[ctrl-f11]</td></tr>
+<tr><td>\[f12]</td><td>\[ctrl-f12]</td></tr>
+
+<tr><td>\[delete]</td><td>\[ctrl-delete]</td></tr>
+<tr><td>\[insert]</td><td>\[ctrl-insert]</td></tr>
+<tr><td>\[shift-delete]</td><td>\[shift-insert]</td></tr>
+<tr><td>\[end]</td><td>\[ctrl-end]</td></tr>
+<tr><td>\[home]</td><td>\[ctrl-home]</td></tr>
+<tr><td>\[page-down]</td><td>\[ctrl-page-down]</td></tr>
+<tr><td>\[page-up]</td><td>\[ctrl-page-up]</td></tr>
+
+<tr><td>\[pause]</td><td>\[ctrl-pause]</td></tr>
+<tr><td>\[scroll-lock]</td><td>\[ctrl-scroll-lock]</td></tr>
+
+<tr><td>\[left]</td><td>\[ctrl-left]</td></tr>
+<tr><td>\[right]</td><td>\[ctrl-right]</td></tr>
+<tr><td>\[up]</td><td>\[ctrl-up]</td></tr>
+<tr><td>\[down]</td><td>\[ctrl-down]</td></tr>
+</table>
+
+<TABLE width="600" border="2" cellspacing="0" cellpadding="2">
+<CAPTION><B>Mouse Wheel key names</B></CAPTION>
+
+<tr><td>\[mouse-wheel-neg]</td><td>\[ctrl-mouse-wheel-neg]</td></tr>
+<tr><td>\[mouse-wheel-pos]</td><td>\[ctrl-mouse-wheel-pos]</td></tr>
+
+</table>
+
+<TABLE width="600" border="2" cellspacing="0" cellpadding="2">
+<CAPTION><B>PC Key names available if keyboard-emulates-vt100-keypad is 1</B></CAPTION>
+
+<tr><td>\[kp-divide]</td><td>\[kp-dot]</td></tr>
+<tr><td>\[kp-enter]</td><td>\[kp-minus]</td></tr>
+<tr><td>\[kp-multiple]</td><td>\[kp-plus]</td></tr>
+<tr><td>\[kp0]</td><td>\[kp1]</td></tr>
+<tr><td>\[kp2]</td><td>\[kp3]</td></tr>
+<tr><td>\[kp4]</td><td>\[kp5]</td></tr>
+<tr><td>\[kp6]</td><td>\[kp7]</td></tr>
+<tr><td>\[kp8]</td><td>\[kp9]</td></tr>
+
+</table>
+
+<TABLE width="600" border="2" cellspacing="0" cellpadding="2">
+<CAPTION><B>Key names used by package authors</B></CAPTION>
+
+<tr><td>\[csi]</td><td>\[ss3]</td></tr>
+<tr><td>\[menu]</td><td>\[mouse]</td></tr>
+<tr><td>\[mouse-1-down]</td><td>\[mouse-1-up]</td></tr>
+<tr><td>\[mouse-2-down]</td><td>\[mouse-2-up]</td></tr>
+<tr><td>\[mouse-3-down]</td><td>\[mouse-3-up]</td></tr>
+<tr><td>\[mouse-4-down]</td><td>\[mouse-4-up]</td></tr>
+<tr><td>\[mouse-wheel]</td></tr>
+
+</table>
+
+<HR>
+<H2><A name="librariesofcommands"></A>Libraries of Commands</H2>
+
+<P>A considerable number of the functions in Emacs reside in libraries. A function is not accessible unless the library that defines the function is loaded. A number of libraries are provided with Emacs, and can be loaded automatically or on request to make their functions available.</P>
+
+<P>To load a library while Emacs is running, use <FONT face="Courier New" size="2">ESC-x execute-mlisp-file</FONT>. Emacs looks for the library either in your default directory or the directory you specify, or in the Emacs directory, or in the <FONT face="Courier New" size="2">MLisp-library</FONT> database search-list. Once Emacs has located the library, it is loaded. All the functions defined in the library are then available for use.</P>
+
+<P>For example, if you load the AREA library, you can then use <FONT face="Courier New" size="2">ESC-x delete-area</FONT> to delete an area of the screen. The <FONT face="Courier New" size="2">delete-area</FONT> function is defined in the AREA library.</P>
+
+<P>In addition to making functions accessible to <FONT face="Courier New" size="2">ESC-x</FONT>, the library may bind some functions to key sequences. This is done by the library loading another file called <FONT face="Courier New" size="2">libraryname.key</FONT>, where <FONT face="Courier New" size="2">libraryname</FONT> is the name of the library being loaded.</P>
+
+<P>This separation of functions from key bindings allows you to define your own bindings for functions in the library that will override the default bindings. To do this, make a private copy of the <FONT face="Courier New" size="2">.key</FONT> file, edit it to make your own bindings, then put the modified in your <FONT face="Courier New" size="2">emacs$user</FONT> directory or in your personal emacslib database file.</P>
+
+<P>Some libraries are loaded automatically in the course of executing certain functions. You will not normally notice this. For example, the <FONT face="Courier New" size="2">process</FONT> library is automatically loaded when you use the <FONT face="Courier New" size="2">shell</FONT> function for the first time. This facility is known as autoloading. Autoloading is used to make library functions available without you having to know how to load the library; autoloading also saves space in Emacs by loading libraries only when you need them.</P>
+
+<P>Autoloading works as if you had used <FONT face="Courier New" size="2">execute-mlisp-file</FONT> on the required library. Autoloading is set up using the function <FONT face="Courier New" size="2">autoload</FONT>.</P>
+
+<P>To make an autoload association, enter a line with the format shown below in your <FONT face="Courier New" size="2">emacsinit.ml</FONT> file:</P>
+
+<P><FONT face="Courier New" size="2">(autoload "<I>function-name</I>" "<I>file-name</I>")</FONT></P>
+
+<P>where <I><FONT face="Courier New" size="2">function-name</FONT></I> is the name of the function to be autoloaded and <I><FONT face="Courier New" size="2">file-name</FONT></I> is the library which must be loaded to define the specified function. Both are text strings and should be enclosed in double quotes.</P>
+
+<P>Some examples of autoloads are:</P>
+
+<P><FONT face="Courier New" size="2">(autoload "dabbrev" "dabbrev")
+<BR>
+ (autoload "shell" "process")</FONT></P>
+
+<P>You can create your own libraries which you can share with other Emacs users if you know how to write MLisp code. See the Barry's Emacs Programmer's Guide for details on MLisp programming.</P>
+</BODY>
+</HTML>
+

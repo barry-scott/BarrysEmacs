@@ -1,0 +1,361 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>Variables - C</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<HR>
+<P><A name="CPU-type"></A><B>CPU-type</B> &laquo; 0</P>
+
+<BLOCKQUOTE>
+<P>Contains a string decribing the type of CPU emacs is running on.</P>
+
+<P>The value will be one of:</P>
+
+<TABLE bgcolor="#aaffaa" border="1" cellspacing="0" cellpadding="3">
+<TR>
+<TH width="80" align="left">Value</TH>
+<TH align="left">Description</TH>
+</TR>
+
+<TR>
+<TD>AXP</TD>
+<TD>Digital Alpha processor</TD>
+</TR>
+
+<TR>
+<TD>i386</TD>
+<TD>Intel x86 processor</TD>
+</TR>
+
+<TR>
+<TD>pa_risc</TD>
+<TD>HP PA Risc processor</TD>
+</TR>
+
+<TR>
+<TD>m68k</TD>
+<TD>Motorola 68000 family processor</TD>
+</TR>
+
+<TR>
+<TD>r6000</TD>
+<TD>IBM Risc processor</TD>
+</TR>
+</TABLE>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="case-fold-search"></A><B>case-fold-search</B> &laquo; 0</P>
+
+<BLOCKQUOTE>
+<P>Controls search case-folding. If non-zero, all searches will ignore the case of alphabetic characters when doing comparisons.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="checkpoint-frequency"></A><B>checkpoint-frequency</B> &laquo; 0</P>
+
+<BLOCKQUOTE>
+<P>Contains the number of keystrokes between checkpoints. Every checkpoint-frequency keystrokes, all buffers which have been modified since they were last checkpointed and that have checkpointing enabled are written to disk. If the value is zero, checkpointing is disabled.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="checkpoint-hook"></A><B>checkpoint-hook</B> &laquo; checkpoint-buffers</P>
+
+<BLOCKQUOTE>
+<P>Contains the name of an Emacs function which will be called when the checkpoint function is invoked. The checkpoint function should in some way checkpoint Emacs.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="cli-name"></A><B>cli-name</B> &laquo; The name of the CLI that started Emacs</P>
+
+<BLOCKQUOTE>
+<P>Indicates the name of the CLI that invoked Emacs. The contents of this variable are used to tell subprocesses which CLI to use. You can alter its value to start a subprocess with a different CLI.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="comment-column"></A><B>comment-column</B> &laquo; 33</P>
+
+<BLOCKQUOTE>
+<P>Contains the column at which program comments are to start. This is used by the language-dependent commenting features through the move-to-comment-column command.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="compile-it-command"></A><B>compile-it-command</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>Contains the string which will be used by the compile-it command if you type a null string to its prompt for a command to execute. Also, when you type a command, compile-it saves the command you type in the variable for later re-use.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="confirm-expansion-choice"></A><B>confirm-expansion-choice</B> &laquo; 0</P>
+
+<BLOCKQUOTE>
+<P>This variable changes the way that Emacs input completion logic works.</P>
+
+<P>When confirm-expansion-choice is true emacs will always prompt once more after expanding a unique input choice. It confirm-expansion-choice is false emacs will take the unique choice and use it with out further prompts.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="control-string-convert-F-keys"></A><B>control-string-convert-F-keys</B> &laquo; 1</P>
+
+<BLOCKQUOTE>
+<P>When control-string-convert-F-keys is true, the keys F6 to F20 and E1 to E6 are converted on input to a compact form. This improves Emacs' performance in a number of ways -- less memory used to store keymaps, and keyboard-handling uses less CPU time.</P>
+
+<P>Before conversion the control sequence is:</P>
+
+<P>CSI number ~</P>
+
+<P>This is converted to CSI followed by one key whose value is 32 plus the above number.</P>
+
+<P>See <A href="#control-string-processing">control-string-processing</A> for general information.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="control-string-convert-mouse"></A><B>control-string-convert-mouse</B> &laquo; 1</P>
+
+<BLOCKQUOTE>
+<P>When control-string-convert-mouse is true, all control sequences of the form:</P>
+
+<P>CSI event;params... &amp;w</P>
+
+<P>are converted into \201 followed by one character which is the event number plus A.</P>
+
+<P>See <A href="#control-string-processing">control-string-processing</A> for general information.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="control-string-convert-to-8-bit"></A><B>control-string-convert-to-8-bit</B> &laquo; [OP:</P>
+
+<BLOCKQUOTE>
+<P>All control sequences which start with ESC &lt;char&gt; have an 8-bit equivalent control sequence. The string variable control-string-convert-to-8-bit contains all the &lt;char&gt;s that are to converted to their 8-bit form.</P>
+
+<P>See <A href="#control-string-processing">control-string-processing</A> for general information.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="control-string-convert-to-CSI"></A><B>control-string-convert-to-CSI</B> &laquo; \217\220\232</P>
+
+<BLOCKQUOTE>
+<P>Contains a list of characters to be coerced into the single code for CSI. This reduces the number of keymaps that Emacs must maintain.</P>
+
+<P>See <A href="#control-string-processing">control-string-processing</A> for general information.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="control-string-final-characters"></A><B>control-string-final-characters</B> &laquo;ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}</P>
+
+<BLOCKQUOTE>
+<P>Contains all the characters that mark the end of a control sequence. See ISO 2020 for full details.</P>
+
+<P>See <A href="#control-string-processing">control-string-processing</A> for general information.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="control-string-intermediate-characters"></A><B>control-string-intermediate-characters</B> &laquo; !"\#$&amp;'()*+,-./</P>
+
+<BLOCKQUOTE>
+<P>Contains all the characters that follow the parameters and precede the final character of a control sequence. See ISO 2020 for full details.</P>
+
+<P>See <A href="#control-string-processing">control-string-processing</A> for general information.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="control-string-parameters"></A><B>control-string-parameters</B></P>
+
+<BLOCKQUOTE>
+<P>This two dimensional array variable contains the parameters and parameter separators of the last control sequence that was parsed by Emacs. All elements of the array are strings.</P>
+
+<P>Row 1 of the array contains the parameter value and Row 2 contains the value of the separator. The first parameter is in column 0 of the array the second in column 1 and so on.</P>
+
+<P>Use bounds-of-array to find out how many parameters are in control-string-parameters.</P>
+
+<P>control-string-parameters is a read-only variable.</P>
+
+<P>See <A href="#control-string-processing">control-string-processing</A> for general information.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="control-string-parameter-characters"></A><B>control-string-parameter-characters</B> &laquo; 123456789:&lt;=&gt;?</P>
+
+<BLOCKQUOTE>
+<P>Contains all the characters that can be parameter characters. See ISO 2020 for full details.</P>
+
+<P>See <A href="#control-string-processing">control-string-processing</A> for general information.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="control-string-parameter-separators"></A><B>control-string-parameter-separators</B> &laquo; ;</P>
+
+<BLOCKQUOTE>
+<P>Contains all the characters that can be parameter separator characters. See ISO 2020 for full details.</P>
+
+<P>See <A href="#control-string-processing">control-string-processing</A> for general information.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="control-string-processing"></A><B>control-string-processing</B> &laquo; 1</P>
+
+<BLOCKQUOTE>
+<P>The master control for all the control string functions. Only when control-string-processing is true will any processing be performed.</P>
+
+<P>control-string-processing changes the behaviour of a number of parts of Emacs:</P>
+
+<UL>
+<LI>All keystrokes are compressed and processed according to the control-string variables.</LI>
+
+<LI>bind-to-key and local-bind-to-key will use the control-string variables to compress their &lt;keys&gt;key sequences.</LI>
+
+<LI>describe-bindings, describe-key and apropos-commands will use the built-in keyname table to print the names of keys.</LI>
+</UL>
+
+<P>Note: The values of the control-string...variables must only be changed in the file |<CODE>emacs_control_strings.ml</CODE>. If you wish to change any of these variables, do the following:</P>
+
+<OL>
+<LI>Make a copy of <CODE>emacs$library:emacs_control_strings.ml</CODE> in your <CODE>emacs$path:</CODE></LI>
+
+<LI>Rebuild your Emacs environment.</LI>
+</OL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="ctlchar-with-^"></A><B>ctlchar-with-^</B> &laquo; 0</P>
+
+<BLOCKQUOTE>
+<P>Controls the way that non-printing characters are displayed. If non-zero, control characters are printed with a leading up-arrow, otherwise they are printed as an octal number.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-breakpoint"></A><B>current-breakpoint</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>This read-only variable contains the name of the function that caused the breakpoint function to run. This variable is not altered from MLisp in a trace or breakpoint function.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-buffer-abbrev-table"></A><B>current-buffer-abbrev-table</B></P>
+
+<BLOCKQUOTE>
+<P>Contains the name of te current buffer's abbreviation table. If you attempt to assign a value to it, the current buffer's abbreviation table is changed; the name you supply must be the name of an already-existing abbreviation table.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-buffer-allocation-size"></A><B>current-buffer-allocation-size</B></P>
+
+<BLOCKQUOTE>
+<P>When read current-buffer-allocation-size returns the size in characters allocated for use in the current buffer.</P>
+
+<P>Assigning a new, larger, value to current-buffer-allocation-size will increase the capacity of the current buffer.</P>
+
+<P>It is not normally nessesary to use this variable. However as a performance enhancement it is sometimes useful.</P>
+
+<P>If you plan to perform a complex set of operations on a buffer. These operations will cause the buffer to slowly grow to a much larger size. Assigning to current-buffer-allocation-size a suitable large value will reduce the CPU overhead of expanding the buffer is many small increments.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-buffer-checkpointable"></A><B>current-buffer-checkpointable</B></P>
+
+<BLOCKQUOTE>
+<P>Defines whether or not the current buffer is checkpointable. If non-zero, when a checkpoint occurs, the buffer will be checkpointed if it has been modified. Otherwise, the buffer will not be checkpointed.</P>
+
+<P>A buffer can never be checkpointed if the checkpoint-frequency variable is set to zero.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-buffer-file-name"></A><B>current-buffer-file-name</B></P>
+
+<BLOCKQUOTE>
+<P>Contains the full file specification of the file associated with the current buffer. If the file does not already exist, the version number is omitted.</P>
+
+<P>Setting this variable sets the filename to which the buffer is connected, but does not write the file. Also, the buffer is forced to be a File buffer.</P>
+
+<P>If the buffer is not a File buffer, a null string is returned.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-buffer-journalled"></A><B>current-buffer-journalled</B></P>
+
+<BLOCKQUOTE>
+<P>Controls whether the current buffer is journalled. If set to true, the buffer will be journalled.</P>
+
+<P>A buffer will never be journalled if the journal-frequency is set to zero.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-buffer-macro-name"></A><B>current-buffer-macro-name</B></P>
+
+<BLOCKQUOTE>
+<P>Contains the macro name associated with the current buffer.</P>
+
+<P>Setting this variable sets the macro to which this buffer is connected. The buffer will be coerced into a Macro buffer.</P>
+
+<P>If this buffer is not a Macro buffer, a null string is returned.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-buffer-name"></A><B>current-buffer-name</B></P>
+
+<BLOCKQUOTE>
+<P>Contains the name of the currently selected buffer. You can change the name of the current buffer by assigning a new name to the variable. The new buffer name must not already exist.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-buffer-end-of-line-style"></A><B>current-buffer-end-of-line-style</B></P>
+
+<BLOCKQUOTE>
+<P>Contains the end-of-line style of the file associated with the current buffer.
+The variable is one of variable, "crlf", "lf". The default value for new buffers is taken from the default-buffer-end-of-line-style variable.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-buffer-RMS-record-attribute"></A><B>current-buffer-RMS-record-attribute</B></P>
+
+<BLOCKQUOTE>
+<P>We recommend you use the variable current-buffer-end-of-line-style to set the end-of-line style rather then use
+the RMS variables.</p> 
+<P>Contains the RMS record attribute of the file associated with the current buffer.
+The variable is one of variable, stream, stream-lf, or stream-cr.
+The default value for new buffers is taken from the default-buffer-RMS-record-attribute variable.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-buffer-syntax-table"></A><B>current-buffer-syntax-table</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>Contains the name of the current buffer's syntax table. Assigning to this variable changes the current buffer's syntax table. The specified syntax table must already exist.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-buffer-type"></A><B>current-buffer-type</B></P>
+
+<BLOCKQUOTE>
+<P>Contains a string describing the type of the current buffer.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-function"></A><B>current-function</B></P>
+
+<BLOCKQUOTE>
+<P>This read-only variable contains the name of the currently executing MLisp function. The value is not changed for functions executed in a trace or breakpoint function.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-local-keymap"></A><B>current-local-keymap</B></P>
+
+<BLOCKQUOTE>
+<P>Contains the name of the current buffer's local keymap as set by the use-local-map function. Assigning the variable has the same effect as executing use-local-map. An existing keymap must be specified.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-windows"></A><B>current-windows</B></P>
+
+<BLOCKQUOTE>
+<P>Contains the set of windows that are displayed on the screen. If read, current-windows returns a window-ring that represents the windows on the screen. When current-windows is set, the screen is restored from the window ring provided.</P>
+</BLOCKQUOTE>
+
+<HR>
+</BODY>
+</HTML>
+

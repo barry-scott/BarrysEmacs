@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<build-instructions>
+	<condition name="windows">
+		<trait name="Win32"/>
+	</condition>
+	<condition name="unix">
+		<or>
+			<trait name="FreeBSD"/>
+			<trait name="Linux"/>
+			<trait name="OpenBSD"/>
+		</or>
+	</condition>
+
+	<package name="common">
+		<header-group condition="windows"	path="../Include/Windows"/>
+		<header-group condition="unix"		path="../Include/Unix"/>
+		<header-group				path="../Include/Common"/>
+		<CXX-define				name="__has_bool__"	value="1"/>
+		<CXX-define condition="windows"		name="_NT"		value="1"/>
+		<CXX-define condition="windows"		name="WIN32"		value="1"/>
+		<CXX-define condition="windows"		name="_CONSOLE"		value="1"/>
+		<uses-package name="bemacs/db-rtl"/>
+	</package>
+
+	<executable name="dbprint">
+		<CXX name=".\dbprint.cpp">
+			<uses-package name="common"/>
+		</CXX>
+	</executable>
+</build-instructions>

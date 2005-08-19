@@ -1,0 +1,28 @@
+/* XPM */
+static char *toolbar_edit[] = {
+/* width height num_colors chars_per_pixel */
+"    16    15        6            1",
+/* colors */
+". c #000000",
+"# c #800000",
+"a c #808000",
+"b c #000080",
+"c c #c0c0c0",
+"d c #ffffff",
+/* pixels */
+"cccccc....cccccc",
+"cc.....cc.....cc",
+"c.aaa.c..c.aaa.c",
+"c.aa.cccccc.aa.c",
+"c.aa........aa.c",
+"c.aaaaaaaaaaaa.c",
+"c.aaaaa........c",
+"c.aaaaa.ccccc..c",
+"c.aaaaa.ccccc.c.",
+"c.aaaaa.c...c...",
+"c.aaaaa.ccccccc.",
+"c.aaaaa.c.....c.",
+"cc......ccccccc.",
+"ccccccc.........",
+"cccccccccccccccc"
+};

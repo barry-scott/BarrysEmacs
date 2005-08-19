@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<HTML>
+<HEAD>
+<TITLE>Functions I*</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<HR>
+<P><A name="if"></A>(<B>if</B> <CODE>test then-clause else-clause</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Executes and returns the value of <I>then-clause</I> if <I>test</I> is not zero; otherwise it executes <I>else-clause</I> if it is present.</P>
+
+<P><B>Example:</B> Tab to column 33 if dot is currently at the start of a line:</P>
+
+<PRE>
+(if (bolp)
+    (to-col 33)
+)
+</PRE>
+
+<P>You can also have multiple tests, which gives you the equivalent of switch or case statements in other programming languages:</P>
+
+<PRE>
+(defun
+    (month
+        response
+        (setq response (get-tty-string "Month number: "))
+        (if
+            (= response 1)
+            (insert-string "January")
+            (= response 2)
+            (insert-string "February")
+            (= response 3)
+            (insert-string "March"))
+        )                   ; if
+    )
+)
+</PRE>
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="illegal-operation"></A>(<B>illegal-operation</B>) All keys not currently bound</P>
+
+<BLOCKQUOTE>
+<P>illegal-operation is bound to those keys that do not have a defined interpretation. Executing illegal-operation is an error.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="incremental-search"></A>(<B>incremental-search</B>) ^F</P>
+
+<BLOCKQUOTE>
+<P>Start incremental search in forward search mode.
+See <A href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;extn&#39;,&#39;#incsearch&#39;)">extension incsearch</A> for details
+</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="indent-C-procedure"></A>(<B>indent-C-procedure</B>) ESC-j</P>
+
+<BLOCKQUOTE>
+<P>Locates the current C language procedure and passes it as the standard input to the INDENT program. The resulting indented C procedure will replace the initial C procedure. The old text is temporarily stored in Kill buffer.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="insert-character"></A>(<B>insert-character</B> <CODE>expression</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Inserts its numeric argument into the buffer as a single character prefix-argument times.</P>
+
+<P><B>Example:</B> Each of the following inserts a zero into the current buffer:</P>
+
+<PRE>
+(insert-character 48)
+
+(insert-character '0')
+</PRE>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="insert-file"></A>(<B>insert-file</B> <CODE>file-name</CODE>) ^X-^I</P>
+
+<BLOCKQUOTE>
+<P>Inserts the specified file's contents at dot in the current buffer.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_a.htm#append-to-file">append-to-file</A></LI>
+<LI><A HREF="fn_r.htm#read-file">read-file</A></LI>
+<LI><A HREF="fn_v.htm#visit-file">visit-file</A></LI>
+<LI><A HREF="fn_w.htm#write-current-file">write-current-file</A></LI>
+<LI><A HREF="fn_w.htm#write-file-exit">write-file-exit</A></LI>
+<LI><A HREF="fn_w.htm#write-modified-files">write-modified-files</A></LI>
+<LI><A HREF="fn_w.htm#write-named-file">write-named-file</A></LI>
+</UL>
+
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="insert-string"></A>(<B>insert-string</B> <CODE>expression</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Inserts the string that results from evaluating the given <I>expression</I>. <CODE>insert-string</CODE> concatenates multiple string arguments.</P>
+
+<P><B>Examples:</B></P>
+<P>Insert the current date and time into the current buffer:</P>
+
+<PRE>
+(insert-string (current-time))
+</PRE>
+
+<P>Insert the current time and buffer name:</P>
+
+<PRE>
+(insert-string "Time:   " (current-time) "\nBuffer: " (current-buffer-name) "\n") 
+</PRE>
+
+<P>Sample output from this line:</P>
+
+<PRE>
+Time:   Tue Sep 28 10:48:41 1999
+Buffer: fred
+</PRE>
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="interactive">(<B>interactive</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Returns 1 if the invoking MLisp function was called interactively.</P>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="interrupt-key"></A>(<B>interrupt-key</B>) ^G</P>
+
+<BLOCKQUOTE>
+<P>When bound to a single key causes any current activity within Emacs to be aborted, and forces Emacs to accept commands from the keyboard when that key is struck.</P>
+
+<P>Binding interrupt-key to a sequence longer than one character does not allow the key sequence to interrupt Emacs. Only single key sequences can be used for interrupting.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="is-bound"></A>(<B>is-bound</B> <CODE>variable-name...</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Returns 1 if all of its variable name arguments are bound to some storage.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="is-function"></A>(<B>is-function</B> <CODE>string</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Checks that its string parameter is a defined function. It returns 1 if it is defined and 0 otherwise.</P>
+
+<P>You can use this function to determine whether a function is defined before attempting to execute it.</P>
+
+</BLOCKQUOTE>
+
+<HR>
+</BODY>
+</HTML>
+

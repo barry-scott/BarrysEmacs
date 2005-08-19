@@ -1,0 +1,238 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>Variables - T</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<P><A name="tab-indents-region"></A><B>tab-indents-region</B> &laquo; 1</P>
+
+<BLOCKQUOTE>
+<P>When tab-indents-region controls what happends when you type a
+    tab and the region is set. If tab-indents-region is 1 the region
+    is indented, if 0 the region is replaced with a tab.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="tab-size"></A><B>tab-size</B> &laquo; 8</P>
+
+<BLOCKQUOTE>
+<P>Controls how a tab is displayed on the screen. It describes the number of space characters used to display a single tab character.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="terminal-advanced-video-option"></A><B>terminal-advanced-video-option</B></P>
+
+<BLOCKQUOTE>
+<P>VMS only</P>
+
+<P>This variable is true if the terminal has the AVO characteristic. It is set each time Emacs is entered.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="terminal-ansi-crt"></A><B>terminal-ansi-crt</B></P>
+
+<BLOCKQUOTE>
+<P>VMS only</P>
+
+<P>This variable is true if the terminal has the ANSI characteristic set. It is set each time Emacs is entered.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="terminal-application-keypad"></A><B>terminal-application-keypad</B></P>
+
+<BLOCKQUOTE>
+<P>VMS only</P>
+
+<P>This variable is true if the terminal has the APPLICATION_KEYPAD characteristic set. It is set each time Emacs is entered.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="terminal-cursor-type"></A><B>terminal-cursor-type</B> &laquo; 0</P>
+
+<BLOCKQUOTE>This variable controls the shape of the cursor. A line cursor is used when the value is 0 and a block cursor is used when the value is 1.</BLOCKQUOTE>
+
+<HR>
+<P><A name="terminal-DEC-CRT-level-1"></A><B>terminal-DEC-CRT-level-1</B></P>
+
+<BLOCKQUOTE>
+<P>VMS only</P>
+
+<P>Is true if the terminal has the DECCRT characteristic set. It is set each time Emacs is entered.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="terminal-DEC-CRT-level-2"></A><B>terminal-DEC-CRT-level-2</B></P>
+
+<BLOCKQUOTE>
+<P>VMS only</P>
+
+<P>This variable is true if the terminal has the DECCRT2 characteristic set. It is set each time Emacs is entered.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="terminal-DEC-CRT-level-3"></A><B>terminal-DEC-CRT-level-3</B></P>
+
+<BLOCKQUOTE>
+<P>VMS only</P>
+
+<P>Is true if the terminal has the DECCRT3 characteristic set. It is set each time Emacs is entered.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="terminal-DEC-CRT-level-4"></A><B>terminal-DEC-CRT-level-4</B></P>
+
+<BLOCKQUOTE>
+<P>VMS only</P>
+
+<P>This variable is true if the terminal has the DECCRT4 characteristic set. It is set each time Emacs is entered.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="terminal-does-not-need-null-padding"></A><B>terminal-does-not-need-null-padding</B> &laquo; 0</P>
+
+<BLOCKQUOTE>
+<P>VMS only</P>
+
+<P>Controls padding to the terminal. When true, this variable stops Emacs from sending NUL characters as padding characters to the terminal. This is only useful on VAXstations when xon-mode is false.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="terminal-edit"></A><B>terminal-edit</B></P>
+
+<BLOCKQUOTE>
+<P>VMS only</P>
+
+<P>This variable is true if the terminal has the EDIT characteristic set. It is set each time Emacs is entered.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="terminal-eightbit"></A><B>terminal-eightbit</B></P>
+
+<BLOCKQUOTE>
+<P>VMS only</P>
+
+<P>This variable is true if the terminal has the EIGHTBIT characteristic set. It is set each time Emacs is entered. When set, the full DEC multinational character set can be displayed on the terminal.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="terminal-is-terminal"></A><B>terminal-is-terminal</B></P>
+
+<BLOCKQUOTE>
+<P>The value of this variable is one of:</P>
+
+<TABLE border="1" cellspacing="0" cellpadding="3" bgcolor="#aaffaa">
+<TR>
+<TH align="left" width="60">Value</TH>
+<TH align="left">Description</TH>
+</TR>
+
+<TR>
+<TD>0</TD>
+<TD>Emacs is reading input from a command file</TD>
+</TR>
+
+<TR>
+<TD>1</TD>
+<TD>Emacs is connected to a terminal. Do not use the UI-xxx family of functions</TD>
+</TR>
+
+<TR>
+<TD>3</TD>
+<TD>Emacs is connected to Microsoft Windows or X Windows. The UI-xxx family of functions are available.</TD>
+</TR>
+</TABLE>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="terminal-length"></A><B>terminal-length</B></P>
+
+<BLOCKQUOTE>
+<P>Holds the length of the terminal in lines. If this variable is set to a new length, Emacs will redraw the screen with the Is set each time Emacs is entered.</P>
+
+<P>If the new size is smaller than the old size, Emacs deletes all other windows on the screen and adjusts the size of the current windows to fill the whole screen.</P>
+
+<P>If the new size is larger than the old size, Emacs will increase the size of the current window to include the extra lines.</P>
+
+<P>The default value for this variable is the terminal page length. When Emacs exits or pauses, it updates the terminal characteristics to include the new length.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="terminal-output-buffer-size"></A><B>terminal-output-buffer-size</B> &laquo; 256</P>
+
+<BLOCKQUOTE>
+<P>Controls the size of the buffer used to output to the terminal from Emacs.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="terminal-regis"></A><B>terminal-regis</B></P>
+
+<BLOCKQUOTE>
+<P>VMS only</P>
+
+<P>This variable is true if the terminal has the REGIS characteristic set. It is set each time Emacs is entered.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="terminal-soft-chars"></A><B>terminal-soft-chars</B></P>
+
+<BLOCKQUOTE>
+<P>VMS only</P>
+
+<P>This variable is true if the terminal has the SOFT_CHARACTERS characteristic set. It is set each time Emacs is entered.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="terminal-width"></A><B>terminal-width</B></P>
+
+<BLOCKQUOTE>
+<P>Controls the width of the terminal. If the terminal is capable of showing different screen widths, the appropriate width will be selected when the variable is assigned. The value is specified as a number, and can be in the range from 32 to 145 inclusive.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="this-command"></A><B>this-command</B> &laquo; Last character struck</P>
+
+<BLOCKQUOTE>
+<P>This read-only variable contains the ASCII character code of the last character typed in the key sequence used to invoke the current function. It can be used by functions bound to many keys to decide what to do.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="trace-hook"></A><B>trace-hook</B> &laquo; trace</P>
+
+<BLOCKQUOTE>
+<P>Contains the name of the trace function. When trace-mode is enabled, the function whose name is in trace-hook is called just before each complex MLisp expression is executed. Simple expressions (like 45 or Hello or foo)do not cause the trace function to be executed.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="trace-into"></A><B>trace-into</B> &laquo; 1</P>
+
+<BLOCKQUOTE>
+<P>Controls tracing. If non-zero, tracing will continue into called functions. Otherwise, tracing is temporarily disabled while a call to another function is made.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="trace-mode"></A><B>trace-mode</B> &laquo; 0</P>
+
+<BLOCKQUOTE>
+<P>This variable controls Trace Mode. When non-zero, MLisp execution is traced. When trace-mode is enabled, the function whose name is in trace-hook is called just before each complex MLisp expression is executed.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="track-eol-on-^N-^P"></A><B>track-eol-on-^N-^P</B>&laquo; 0</P>
+
+<BLOCKQUOTE>
+<P>Controls the action of the next-line and previous-line functions. If non-zero, next-line and previous-line will stick to the end of a line if they are started there. If zero, the functions will try to stay in the same column as you move up and down, even if you started at the end of a line.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="true"></A><B>true</B> &laquo; 1</P>
+
+<BLOCKQUOTE>
+<P>This constant holds the truth value for true.</P>
+</BLOCKQUOTE>
+
+<HR>
+</BODY>
+</HTML>
+

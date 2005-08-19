@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<HTML>
+<HEAD>
+<TITLE>Functions K*</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<HR>
+<P><A name="kill-buffer"></A>(<B>kill-buffer</B> <CODE>buffer-name</CODE>)</P>
+
+<BLOCKQUOTE>
+<P><CODE>kill-buffer</CODE> has been replaced by <A HREF="fn_d.htm#delete-buffer"><CODE>delete-buffer</CODE></A>. Use <A HREF="fn_d.htm#delete-buffer"><CODE>delete-buffer</CODE></A> in preference to <CODE>kill-buffer</CODE>;</P>
+
+
+<P><CODE>kill-buffer</CODE> removes a buffer from the list of buffers, and discards all the text it contains. It takes one argument which is the name of the buffer to delete.</P>
+
+<P>If you use the <CODE>kill-buffer</CODE> interactively and the
+ target buffer is modified, <CODE>kill-buffer</CODE> asks for confirmation that you want to delete the specified buffer.
+</P>
+
+<P>If you delete the current buffer, then dot is moved to one of the other buffers displayed on the screen. If there are no other buffers, then "main" is used (and created if necessary).  </P>
+
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_d.htm#delete-buffer">delete-buffer</A></LI>
+</UL>
+
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="kill-process"></A>(<B>kill-process</B> <CODE>process-name</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Kills the specified subprocess. The subprocess is killed by executing a delete process request, so exit handlers for the target process will not be executed.</P>
+
+<P>This does not work on Windows 95 or Windows 98.</P>
+
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_f.htm#force-exit-process">force-exit-process</A></LI>
+<LI><A HREF="fn_k.htm#kill-process">kill-process</A></LI>
+<LI><A HREF="fn_l.htm#list-processes">list-processes</A></LI>
+<LI><A HREF="fn_p.htm#pause-process">pause-process</A></LI>
+<LI><A HREF="fn_r.htm#resume-process">resume-process</A></LI>
+<LI><A HREF="fn_s.htm#set-current-process">set-current-process</A></LI>
+<LI><A HREF="fn_s.htm#start-DCL-process">start-DCL-process</A></LI>
+<LI><A HREF="fn_w.htm#wait-for-process-input-request">wait-for-process-input-request</A></LI>
+</UL>
+
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="kill-to-end-of-line"></A>(<B>kill-to-end-of-line</B> <CODE>repeat-count</CODE>) ^K</P>
+
+<BLOCKQUOTE>
+<P>Deletes characters forward from dot to, and including, the next end-of-line (or end of buffer if there is not an end of line). If dot is positioned at the end of a line, just the end-of-line character is deleted.</P>
+
+<P>Text deleted by the ^K command is placed into <CODE>Kill buffer</CODE>. A ^K command normally erases the contents of <CODE>Kill buffer</CODE> first; subsequent ^Ks in an unbroken sequence append text <CODE>Kill buffer</CODE>. The number of lines killed is controlled by <CODE>prefix-argument</CODE> times <CODE>repeat-count</CODE>. If <CODE>repeat-count</CODE> is omitted, 1 is assumed.</P>
+</BLOCKQUOTE>
+
+<HR>
+</BODY>
+</HTML>
+

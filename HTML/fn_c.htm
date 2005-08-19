@@ -1,0 +1,978 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<HTML>
+<HEAD>
+<TITLE>Functions C*</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<HR>
+<P><A name="c-mode">(<B>c-mode</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Invokes C Mode, a major mode which provides help when writing programs in the C programming language.</P>
+
+<P>Set the major mode to C to provide some basic help for writing programs in the C language. For example, ESC-j is bound to the extended command indent-C-procedure which indents the procedure in which dot is located, ESC-` starts a C comment and ESC-' ends a C comment.</P>
+
+<P><STRONG>Default binding:</STRONG> none</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_i.htm#indent-C-procedure">indent-C-procedure</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="cequals"></A>(<B>c=</B> <CODE>char-1 char-2</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Returns 1 if <CODE>char-1</CODE> is equal to <CODE>char-2</CODE> taking into account the character translations indicated by variable case-fold-search. If case-fold-search is set, uppercase letters are c=to their lowercase equivalents.</P>
+
+<P><STRONG>Default binding:</STRONG> none</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#case-region-capitalize">case-region-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-region-capitalize">case-region-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-region-lower">case-region-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-region-upper">case-region-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-word-capitalize">case-word-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-word-invert">case-word-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-word-lower">case-word-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-word-upper">case-word-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-upper">case-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-capitalize">case-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-invert">case-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-lower">case-lower</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="case-region-capitalize"></A>(<B>case-region-capitalize</B>)</P>
+
+<BLOCKQUOTE>
+<P>Capitalizes all the words in the region between dot and mark by making their first characters uppercase and the remaining characters lowercase.</P>
+
+<P><STRONG>Default binding:</STRONG> none</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#case-region-invert">case-region-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-region-lower">case-region-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-region-upper">case-region-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-word-capitalize">case-word-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-word-invert">case-word-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-word-lower">case-word-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-word-upper">case-word-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-upper">case-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-capitalize">case-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-invert">case-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-lower">case-lower</A></LI>
+
+<LI><A href="fn_c.htm#cequals">c=</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="case-region-invert"></A><B>(case-region-invert</B>)</P>
+
+<BLOCKQUOTE>
+<P>Inverts the case of all alphabetic characters in the region between dot and mark. Lowercase characters become uppercase characters, and uppercase characters become lowercase.</P>
+
+<P><STRONG>Default binding:</STRONG> none</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#case-region-capitalize">case-region-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-region-lower">case-region-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-region-upper">case-region-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-word-capitalize">case-word-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-word-invert">case-word-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-word-lower">case-word-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-word-upper">case-word-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-upper">case-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-capitalize">case-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-invert">case-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-lower">case-lower</A></LI>
+
+<LI><A href="fn_c.htm#cequals">c=</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="case-region-lower"></A>(<B>case-region-lower</B>)</P>
+
+<BLOCKQUOTE>
+<P>Changes all alphabetic characters in the region between dot and mark to lowercase.</P>
+
+<P><STRONG>Default binding:</STRONG> none</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#case-region-capitalize">case-region-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-region-invert">case-region-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-region-upper">case-region-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-word-capitalize">case-word-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-word-invert">case-word-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-word-lower">case-word-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-word-upper">case-word-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-upper">case-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-capitalize">case-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-invert">case-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-lower">case-lower</A></LI>
+
+<LI><A href="fn_c.htm#cequals">c=</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="case-region-upper"></A>(<B>case-region-upper</B>)</P>
+
+<BLOCKQUOTE>
+<P>Changes all alphabetic characters in the region between dot and mark to uppercase.</P>
+
+<P><STRONG>Default binding:</STRONG> none</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#case-region-capitalize">case-region-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-region-invert">case-region-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-region-lower">case-region-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-word-capitalize">case-word-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-word-invert">case-word-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-word-lower">case-word-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-word-upper">case-word-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-upper">case-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-capitalize">case-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-invert">case-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-lower">case-lower</A></LI>
+
+<LI><A href="fn_c.htm#cequals">c=</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="case-string-capitalize"></A>(<B>case-string-capitalize</B> <CODE>string</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Capitalizes each word of <CODE>string</CODE> by making the first character of each word uppercase and the remaining characters lowercase. Returns the capitalized string as the result of the function.</P>
+
+<P><STRONG>Default binding:</STRONG> none</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#case-string-invert">case-string-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-string-lower">case-string-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-string-upper">case-string-upper</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="case-string-invert"></A>(<B>case-string-invert</B> <CODE>string</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Inverts the case of all alphabetic characters in <CODE>string</CODE> and returns the inverted string as the result of the function.</P>
+
+<P><STRONG>Default binding:</STRONG> none</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#case-string-capitalize">case-string-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-string-lower">case-string-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-string-upper">case-string-upper</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="case-string-lower"></A>(<B>case-string-lower</B> <CODE>string</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Changes the case of all alphabetic characters in <CODE>string</CODE> to lowercase and returns the changed string as the result of the function.</P>
+
+<P><STRONG>Default binding:</STRONG> none</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#case-string-capitalize">case-string-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-string-invert">case-string-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-string-upper">case-string-upper</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="case-string-upper"></A>(<B>case-string-upper</B> <CODE>string</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Changes the case of all alphabetic characters in <CODE>string</CODE> to uppercase and returns the changed string as the result of the function.</P>
+
+<P><STRONG>Default binding:</STRONG> none</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#case-string-capitalize">case-string-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-string-invert">case-string-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-string-upper">case-string-upper</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="case-word-capitalize"></A>(<B>case-word-capitalize</B>)</P>
+
+<BLOCKQUOTE>
+<P>Capitalizes the next prefix-argument words (starting with the word above or to the left of dot) by making their first character uppercase and remaining characters lowercase.</P>
+
+<P><STRONG>Default binding:</STRONG> none</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#case-region-capitalize">case-region-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-region-invert">case-region-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-region-lower">case-region-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-region-upper">case-region-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-word-invert">case-word-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-word-lower">case-word-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-word-upper">case-word-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-upper">case-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-capitalize">case-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-invert">case-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-lower">case-lower</A></LI>
+
+<LI><A href="fn_c.htm#cequals">c=</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="case-word-invert"></A>(<B>case-word-invert</B>)</P>
+
+<BLOCKQUOTE>
+<P>Inverts the case of all alphabetic characters in the next prefix-argument words starting with the word above or to the left of dot.</P>
+
+<P><STRONG>Default binding:</STRONG> ESC-^</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#case-region-capitalize">case-region-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-region-invert">case-region-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-region-lower">case-region-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-region-upper">case-region-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-word-capitalize">case-word-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-word-lower">case-word-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-word-upper">case-word-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-upper">case-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-capitalize">case-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-invert">case-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-lower">case-lower</A></LI>
+
+<LI><A href="fn_c.htm#cequals">c=</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="case-word-lower"></A>(<B>case-word-lower</B>)</P>
+
+<BLOCKQUOTE>
+<P>Changes all alphabetic characters in the next prefix-argument words to lowercase, starting with the word above or to the left of dot.</P>
+
+<P><STRONG>Default binding:</STRONG> ESC-l</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#case-region-capitalize">case-region-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-region-invert">case-region-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-region-lower">case-region-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-region-upper">case-region-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-word-capitalize">case-word-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-word-invert">case-word-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-word-upper">case-word-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-upper">case-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-capitalize">case-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-invert">case-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-lower">case-lower</A></LI>
+
+<LI><A href="fn_c.htm#cequals">c=</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="case-word-upper"></A>(<B>case-word-upper</B>)</P>
+
+<BLOCKQUOTE>
+<P>Changes all alphabetic characters in the next prefix-argument words to uppercase, starting with the word above or to the left of dot.</P>
+
+<P><STRONG>Default binding:</STRONG> ESC-u</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#case-region-capitalize">case-region-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-region-invert">case-region-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-region-lower">case-region-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-region-upper">case-region-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-word-capitalize">case-word-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-word-invert">case-word-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-word-lower">case-word-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-upper">case-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-capitalize">case-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-invert">case-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-lower">case-lower</A></LI>
+
+<LI><A href="fn_c.htm#cequals">c=</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="case-upper"></A>(<B>case-upper</B>)</P>
+
+<BLOCKQUOTE>
+<P>This function upper cases selected text.</P>
+
+<P>If there is a region all the text in the region is set to upper-case. Otherwise the current word is set to upper-case.</P>
+
+<P><STRONG>Default binding:</STRONG> ESC-u</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#case-region-capitalize">case-region-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-region-invert">case-region-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-region-lower">case-region-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-region-upper">case-region-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-word-capitalize">case-word-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-word-invert">case-word-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-word-lower">case-word-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-word-upper">case-word-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-capitalize">case-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-invert">case-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-lower">case-lower</A></LI>
+
+<LI><A href="fn_c.htm#cequals">c=</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="case-lower"></A>(<B>case-lower</B>)</P>
+
+<BLOCKQUOTE>
+<P>This function lower cases selected text.</P>
+
+<P>If there is a region all the text in the resion is set to lower-case. Otherwise the current word is set to lower-case.</P>
+
+<P><STRONG>Default binding:</STRONG> ESC-l</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#case-region-capitalize">case-region-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-region-invert">case-region-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-region-lower">case-region-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-region-upper">case-region-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-word-capitalize">case-word-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-word-invert">case-word-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-word-lower">case-word-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-word-upper">case-word-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-upper">case-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-capitalize">case-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-invert">case-invert</A></LI>
+
+<LI><A href="fn_c.htm#cequals">c=</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="case-capitalize"></A>(<B>case-capitalize</B>)</P>
+
+<BLOCKQUOTE>
+<P>This function capitalizes the case of the selected text.</P>
+
+<P>If there is a region all the words in the region are capitalized. Otherwise the current word is capitalized.</P>
+
+<P><STRONG>Default binding:</STRONG> ESC-u</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#case-region-capitalize">case-region-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-region-invert">case-region-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-region-lower">case-region-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-region-upper">case-region-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-word-capitalize">case-word-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-word-invert">case-word-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-word-lower">case-word-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-word-upper">case-word-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-upper">case-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-invert">case-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-lower">case-lower</A></LI>
+
+<LI><A href="fn_c.htm#cequals">c=</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="case-invert"></A>(<B>case-invert</B>)</P>
+
+<BLOCKQUOTE>
+<P>This function inverts the case of the selected text.</P>
+
+<P>If there is a region the case of all the text in the region is inverted. Otherwise the case of the current word is inverted.</P>
+
+<P><STRONG>Default binding:</STRONG> ESC-i</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#case-region-capitalize">case-region-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-region-invert">case-region-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-region-lower">case-region-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-region-upper">case-region-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-word-capitalize">case-word-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-word-invert">case-word-invert</A></LI>
+
+<LI><A href="fn_c.htm#case-word-lower">case-word-lower</A></LI>
+
+<LI><A href="fn_c.htm#case-word-upper">case-word-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-upper">case-upper</A></LI>
+
+<LI><A href="fn_c.htm#case-capitalize">case-capitalize</A></LI>
+
+<LI><A href="fn_c.htm#case-lower">case-lower</A></LI>
+
+<LI><A href="fn_c.htm#cequals">c=</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="change-directory"></A>(<B>change-directory</B> <CODE>directory-string</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Changes the current directory for Emacs to <CODE>directory-string</CODE>. All future calls to commands which access named files will be interpreted relative to the new directory.</P>
+
+<P>If the <CODE>directory-string</CODE> is the special value "-" the directory is set to the value in the variable previous-directory.</P>
+
+<P><STRONG>Default binding:</STRONG> none</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#current-directory">current-directory</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="char-to-string"></A>(<B>char-to-string</B> <CODE>expression</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Takes a numeric argument <CODE>expression</CODE> and returns the one-character string that results from considering the number as a member of the ASCII character set.</P>
+
+<P><STRONG>Default binding:</STRONG> none</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_s.htm#string-to-char">string-to-char</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="checkpoint"></A>(<B>checkpoint</B>)</P>
+
+<BLOCKQUOTE>
+<P>Calls the checkpoint function whose name is contained in the variable checkpoint-hook. The checkpoint function should checkpoint Emacs in some way (the default checkpoint function is checkpoint-buffers). This command is executed automatically every checkpoint-frequency key strokes.</P>
+
+<P><STRONG>Default binding:</STRONG> none</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#checkpoint-buffers">checkpoint-buffers</A></LI>
+
+<LI><A href="var_c.htm#checkpoint-frequency">checkpoint-frequency</A> (variable)</LI>
+
+<LI><A href="var_c.htm#checkpoint-hook">checkpoint-hook</A> (variable)</LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="checkpoint-buffers"></A>(<B>checkpoint-buffers</B>)</P>
+
+<BLOCKQUOTE>
+<P>Writes out all modified buffers to their associated checkpoint files. This function is called as the default checkpoint function.</P>
+
+<P><STRONG>Default binding:</STRONG> none</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#checkpoint">checkpoint</A></LI>
+
+<LI><A href="var_c.htm#checkpoint-frequency">checkpoint-frequency</A> (variable)</LI>
+
+<LI><A href="var_c.htm#checkpoint-hook">checkpoint-hook</A> (variable)</LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="column-to-left-of-window"></A>(<B>column-to-left-of-window</B>)</P>
+
+<BLOCKQUOTE>
+<P>Repositions the current window over the current buffer so that the current column is positioned at the left-hand edge of the window.</P>
+
+<P><STRONG>Default binding:</STRONG> ESC-@</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_s.htm#scroll-one-line-up">scroll-one-line-up</A></LI>
+
+<LI><A href="fn_s.htm#scroll-one-line-down">scroll-one-line-down</A></LI>
+
+<LI><A href="fn_s.htm#scroll-one-column-left">scroll-one-column-left</A></LI>
+
+<LI><A href="fn_s.htm#scroll-one-column-right">scroll-one-column-right</A></LI>
+
+<LI><A href="var_w.htm#window-first-column">window-first-column</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="compile-it"></A>(<B>compile-it</B> <CODE>DCL-command</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Writes out all the modified file buffers and executes a DCL command to compile and link the written files. If no prefix-argument is specified, then the command executed is MMS. Otherwise, the command to executed is requested as a string argument. Output from the command appears in the buffer <B>Error log</B> ready to be parsed for error messages with the next-error command.</P>
+
+<P><STRONG>Default binding:</STRONG> ^X-^E</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_n.htm#next-error">next-error</A></LI>
+
+<LI><A href="fn_p.htm#previous-error">previous-error</A></LI>
+
+<LI><A href="var_c.htm#compile-it-command">compile-it-command</A> (Variable)</LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="concat"></A>(<B>concat</B> <CODE>string-expression...</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Takes a set of string arguments and returns their concatenation.</P>
+
+<P><STRONG>Default binding:</STRONG> None</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="convert-key-string"></A>(<B>convert-key-string</B> <CODE>string-expression</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Takes a string and processes it according to Emacs' control string processing rules. The result of the function is a string that contains converted control sequences. See the control-string-... variables for details of the processing that is performed.</P>
+
+<P><STRONG>Default binding:</STRONG> None</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="var_c.htm#control-string-convert-F-keys">control-string-convert-F-keys</A> (Variable)</LI>
+
+<LI><A href="var_c.htm#control-string-convert-mouse">control-string-convert-mouse</A> (Variable)</LI>
+
+<LI><A href="var_c.htm#control-string-convert-to-8-bit">control-string-convert-to-8-bit</A> (Variable)</LI>
+
+<LI><A href="var_c.htm#control-string-convert-to-CSI">control-string-convert-to-CSI</A> (Variable)</LI>
+
+<LI><A href="var_c.htm#control-string-final-characters">control-string-final-characters</A> (Variable)</LI>
+
+<LI><A href="var_c.htm#control-string-intermediate-characters">control-string-intermediate-characters</A> (Variable)</LI>
+
+<LI><A href="var_c.htm#control-string-parameter-characters">control-string-parameter-characters</A> (Variable)</LI>
+
+<LI><A href="var_c.htm#control-string-parameter-separators">control-string-parameter-separators</A> (Variable)</LI>
+
+<LI><A href="var_c.htm#control-string-parameters">control-string-parameters</A> (Variable)</LI>
+
+<LI><A href="var_c.htm#control-string-processing">control-string-processing</A> (Variable)</LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="copy-region-to-buffer"></A>(<B>copy-region-to-buffer</B> <CODE>buffer-name</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Copies the region between dot and mark to the named buffer. The buffer is erased before the text is copied into it. The region between dot and mark is not disturbed.</P>
+
+<P><STRONG>Default binding:</STRONG> None</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_a.htm#append-region-to-buffer">append-region-to-buffer</A></LI>
+
+<LI><A href="fn_p.htm#prepend-region-to-buffer">prepend-region-to-buffer</A></LI>
+
+<LI><A href="fn_d.htm#delete-region-to-buffer">delete-region-to-buffer</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="correct-word"></A>(<B>correct-word</B> <CODE>string</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Uses the supplied incorrectly-spelt word and generates a list of possible spelling corrections for it, returning this list as a space-separated string.</P>
+
+<P><STRONG>Default binding:</STRONG> None</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+
+<LI><A href="fn_s.htm#spell-check-word">spell-check-word</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-buffer-name"></A>(<B>current-buffer-name</B>)</P>
+
+<BLOCKQUOTE>
+<P>An MLisp function that returns the current buffer name as a string.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#current-column">current-column</A></LI>
+
+<LI><A href="fn_c.htm#current-directory">current-directory</A></LI>
+
+<LI><A href="fn_c.htm#current-file-name">current-file-name</A></LI>
+
+<LI><A href="fn_c.htm#current-process-name">current-process-name</A></LI>
+
+<LI><A href="fn_c.htm#current-time">current-time</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-column"></A>(<B>current-column</B>)</P>
+
+<BLOCKQUOTE>
+<P>Returns the column number of the character immediately following dot.</P>
+
+<P><STRONG>Default binding:</STRONG> None</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#current-line-number">current-line-number</A></LI>
+
+<LI><A href="fn_c.htm#current-buffer-name">current-buffer-name</A></LI>
+
+<LI><A href="fn_c.htm#current-directory">current-directory</A></LI>
+
+<LI><A href="fn_c.htm#current-file-name">current-file-name</A></LI>
+
+<LI><A href="fn_c.htm#current-indent">current-indent</A></LI>
+
+<LI><A href="fn_c.htm#current-process-name">current-process-name</A></LI>
+
+<LI><A href="fn_c.htm#current-time">current-time</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-directory"></A>(<B>current-directory</B>)</P>
+
+<BLOCKQUOTE>
+<P>Returns a string which is the default directory as set by the change-directory command, or set as the default directory when Emacs starts up.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-file-name"></A>(<B>current-file-name</B>)</P>
+
+<BLOCKQUOTE>
+<P>Returns the file name associated with the current buffer as a string. If there is no associated file name, the null string is returned.</P>
+
+<P><STRONG>Default binding:</STRONG> None</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#current-buffer-name">current-buffer-name</A></LI>
+
+<LI><A href="fn_c.htm#current-column">current-column</A></LI>
+
+<LI><A href="fn_c.htm#current-file-name">current-file-name</A></LI>
+
+<LI><A href="fn_c.htm#current-indent">current-indent</A></LI>
+
+<LI><A href="fn_c.htm#current-process-name">current-process-name</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-indent"></A>(<B>current-indent</B>)</P>
+
+<BLOCKQUOTE>
+<P>Returns the amount of white space at the beginning of the line in which dot is located (the column number of the first non-white-space character).</P>
+
+<P><STRONG>Default binding:</STRONG> None</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#current-buffer-name">current-buffer-name</A></LI>
+
+<LI><A href="fn_c.htm#current-column">current-column</A></LI>
+
+<LI><A href="fn_c.htm#current-directory">current-directory</A></LI>
+
+<LI><A href="fn_c.htm#current-file-name">current-file-name</A></LI>
+
+<LI><A href="fn_c.htm#current-process-name">current-process-name</A></LI>
+
+<LI><A href="fn_c.htm#current-time">current-time</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-line-number"></A>(<B>current-line-number</B>)</P>
+
+<BLOCKQUOTE>
+<P>Returns the current line number, which is the line that dot is in. The first line in the file is line 1.</P>
+
+<P><STRONG>Default binding:</STRONG> None</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#current-column">current-column</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-process-name"></A>(<B>current-process-name</B>)</P>
+
+<BLOCKQUOTE>
+<P>Returns the name of the current process. The current process is the last process accessed by any of the process commands or the process which caused the current procedure to be run. If there is no current process, the null string is returned.</P>
+
+<P><STRONG>Default binding:</STRONG> None</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#current-buffer-name">current-buffer-name</A></LI>
+
+<LI><A href="fn_c.htm#current-column">current-column</A></LI>
+
+<LI><A href="fn_c.htm#current-directory">current-directory</A></LI>
+
+<LI><A href="fn_c.htm#current-file-name">current-file-name</A></LI>
+
+<LI><A href="fn_c.htm#current-indent">current-indent</A></LI>
+
+<LI><A href="fn_c.htm#current-time">current-time</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-syntax-entity"></A>(<B>current-syntax-entity</B>)</P>
+
+<BLOCKQUOTE>
+<P>Returns an indication of the type of syntax entity in which dot is currently located, according to the current syntax table. The value returned is the value of one of the <CODE>is-...</CODE> named constants.</P>
+
+<P><STRONG>Default binding:</STRONG> None</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="var_i.htm#is-dull">is-dull</A> (Constant)</LI>
+
+<LI><A href="var_i.htm#is-word">is-word</A> (Constant)</LI>
+
+<LI><A href="var_i.htm#is-string">is-string</A> (Constant)</LI>
+
+<LI><A href="var_i.htm#is-quote">is-quote</A> (Constant)</LI>
+
+<LI><A href="var_i.htm#is-comment">is-comment</A> (Constant)</LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="current-time"></A>(<B>current-time</B>)</P>
+
+<BLOCKQUOTE>
+<P>Returns the current time of day as a string in the following format:</P>
+
+<PRE>
+Sun Jan 04 15:26:35 1998
+</PRE>
+
+<P><STRONG>Default binding:</STRONG> None</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_c.htm#current-buffer-name">current-buffer-name</A></LI>
+
+<LI><A href="fn_c.htm#current-column">current-column</A></LI>
+
+<LI><A href="fn_c.htm#current-directory">current-directory</A></LI>
+
+<LI><A href="fn_c.htm#current-file-name">current-file-name</A></LI>
+
+<LI><A href="fn_c.htm#current-indent">current-indent</A></LI>
+
+<LI><A href="fn_c.htm#current-process-name">current-process-name</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+</BODY>
+</HTML>
+
