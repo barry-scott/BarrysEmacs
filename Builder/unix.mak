@@ -47,6 +47,10 @@ build_LinuxRH90: build_Linux
 
 build_LinuxMDK92: build_Linux
 
+build_LinuxFC3: build_Linux
+
+build_LinuxFC4: build_Linux
+
 build_Linux: brand $(BEMACS_DOC_DIR) $(BEMACS_LIB_DIR) editor mlisp describe language quick_info docs rpm
 	@ echo Info: Linux kitting
 
@@ -147,6 +151,10 @@ rpm_LinuxMDK92:
 	cd $(BEMACS_DOC_DIR); for docfile in *.css *.htm *.js *.gif; do echo %doc $$docfile >>$(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec; done
 	rpmbuild --rcfile=/usr/lib/rpm/rpmrc:$(BUILD_KIT_DIR)/rpmrc -bb $(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
 	cp -f $(BUILD_KIT_DIR)/RPMS/i586/bemacs-*.*-*.i586.rpm $(BUILD_KIT_DIR)/RPMS/i586/bemacs.i586.rpm
+
+rpm_LinuxFC3: rpm_LinuxRH90
+
+rpm_LinuxFC4: rpm_LinuxRH90
 
 clean:
 	cd ../Editor; PATH=.:$$PATH; export BUILD_KIT_DIR=$(BEMACS_LIB_DIR); ./build clean
