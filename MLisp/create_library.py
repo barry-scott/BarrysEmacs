@@ -30,7 +30,11 @@ class BemacsDatabaseTools:
 	def __init__(self, tool_path):
 		self.tool_path = tool_path
 		self._dbcreate = os.path.join( tool_path, 'dbcreate' )
+		if not os.path.exists( self._dbcreate ):
+			raise ValueError, 'Missing tool %s' % self._dbcreate
 		self._dbadd = os.path.join( tool_path, 'dbadd' )
+		if not os.path.exists( self._dbadd ):
+			raise ValueError, 'Missing tool %s' % self._dbadd
 		
 	def _run_command( self, command ):
 		#print command

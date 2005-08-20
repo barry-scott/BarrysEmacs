@@ -890,12 +890,18 @@ EmacsString os_error_code( unsigned int code )
 #ifdef _DEBUG
 void _emacs_assert( const char *exp, const char *file, unsigned line )
 	{
-#if defined( __linux__ ) || defined( __APPLE_CC__ ) 
+#if defined( __FreeBSD__ )
+	// freebsd assert order
+	__assert( "unknown", file, line, exp );
+
+#elif defined( __GNUC__ ) && __GNUC__ >= 3
 	// unix assert order
 	__assert( exp, file, line );
+
 #else
 	// unix assert order
 	__assert( file, line, exp );
+
 #endif
 	}
 #endif

@@ -11,22 +11,22 @@ test -a ${edit_obj}.depend || touch ${edit_obj}.depend
 log_file=`uname -s`.log
 
 case `uname -s` in
-AIX)	make -e -f aix.mak $* 2>&1 | tee $log_file;;
+AIX)	(make -e -f aix.mak $* 2>&1 || kill -HUP $$) | tee $log_file;;
 HP-UX)	
-	make -e -f hpux.mak $* 2>&1 | tee $log_file
+	(make -e -f hpux.mak $* 2>&1 || kill -HUP $$) | tee $log_file
 #	g++2.8 make -e -f hpux-gnu.mak $* 2>&1 | tee $log_file
 	;;
 FreeBSD)
-	gmake -e -f make-freebsd.mak $* 2>&1 | tee $log_file;;
+	(gmake -e -f make-freebsd.mak $* 2>&1 || kill -HUP $$) | tee $log_file;;
 
 OpenBSD)
-	gmake -e -f make-openbsd.mak $* 2>&1 | tee $log_file;;
+	(gmake -e -f make-openbsd.mak $* 2>&1 || kill -HUP $$) | tee $log_file;;
 
 Linux)
-	make -e -f make-${RB_CFG_PLATFORM}.mak $* 2>&1 | tee $log_file;;
+	(make -e -f make-${RB_CFG_PLATFORM}.mak $* 2>&1 || kill -HUP $$) | tee $log_file;;
 
 Darwin)
-	gnumake -e -f make-darwin.mak $* 2>&1 | tee $log_file;;
+	(gnumake -e -f make-darwin.mak $* 2>&1 || kill -HUP $$) | tee $log_file;;
 
 *)
 	echo Do not know now to build on `uname -s`.

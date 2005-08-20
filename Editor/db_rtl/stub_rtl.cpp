@@ -179,22 +179,21 @@ EmacsString os_error_code( unsigned int code )
 #ifdef _DEBUG
 void _emacs_assert( const char *exp, const char *file, unsigned line )
 	{
-#ifdef _WIN32
+#if defined( __FreeBSD__ )
+	// freebsd assert order
+	__assert( "unknown", file, line, exp );
+
+#elif defined( _WIN32 )
 	// windows assert order
 	_assert( (void *)exp, (void *)file, line );
-#else
-#ifdef __APPLE_CC__
+
+#elif defined( __GNUC__ )
 	// apple assert order
 	__assert( exp, file, line );
-#else
-#ifdef __linux__
-	// unix assert order
-	__assert( exp, file, line );
+
 #else
 	// unix assert order
 	__assert( file, line, exp );
-#endif
-#endif
 #endif
 	}
 #endif
