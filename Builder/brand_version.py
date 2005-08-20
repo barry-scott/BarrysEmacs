@@ -80,7 +80,7 @@ class VersionInfo:
             key, value = line.split( ':', 1 )
             try:
                 self.__info[ key.strip() ] = value.strip() % self.__info
-            except ValueError, e:
+            except (ValueError,TypeError,KeyError), e:
                 raise Error( 'Cannot format key %s with value "%s" because %s' % (key.strip(), value.strip(), str(e)) )
         f.close()
 
@@ -96,7 +96,7 @@ class VersionInfo:
             modifiers += version_string[-1]
             version_string = version_string[:-1]
 
-        if modifiers == ''
+        if modifiers == '':
             self.__info[ 'build' ] = version_string
         else:
             self.__info[ 'build' ] = 0
@@ -111,21 +111,23 @@ class VersionInfo:
 
     def brandOneFile( self, filename ):
         f = file( filename )
-        template_contents = f.read()
+        template_contents = f.readlines()
         f.close()
 
         try:
-            branded_contents = template_contents % self.__info
-        except ValueError, e:
-            raise Error( 'Cannot format %s because %s' % (filename, str(e)) )
+            branded_contents = []
+            for line_no, line in enumerate( template_contents ):
+                branded_contents.append( line % self.__info )
+        except (ValueError,TypeError,KeyError), e:
+            raise Error( 'Cannot format %s:%d because %s' % (filename, line_no+1, str(e)) )
 
         parent_dir = os.path.dirname( filename )
         base = os.path.basename( filename )
         new_filename = os.path.join( parent_dir, base[len(template_file_prefix):] )
-        print 'Create',new_filename
+        print 'Info: Creating',new_filename
 
         f = file( new_filename, 'w' )
-        f.write( branded_contents )
+        f.writelines( branded_contents )
         f.close()
 
 if __name__ == '__main__':

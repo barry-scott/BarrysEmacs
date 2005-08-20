@@ -1140,14 +1140,14 @@ BEGIN
             VALUE "Comments", "Beta test version\0"
             VALUE "CompanyName", "Barry Scott (barry@barrys-emacs.org)\0"
             VALUE "FileDescription", "Barry's Emacs Server\0"
-            VALUE "FileVersion", "%(major)s,%(minor)s,%(patch)s,%(release)s%(wc_state)s\0"
+            VALUE "FileVersion", "%(major)s,%(minor)s,%(patch)s,%(revision)s%(wc_state)s\0"
             VALUE "InternalName", "BemacsServer\0"
             VALUE "LegalCopyright", "Copyright © 1996-%(year)s\0"
             VALUE "LegalTrademarks", "\0"
             VALUE "OriginalFilename", "BEmacsServer.exe\0"
             VALUE "PrivateBuild", "\0"
             VALUE "ProductName", "Barry's Emacs for Windows\0"
-            VALUE "ProductVersion", "%(major)s,%(minor)s,%(patch)s,%(release)s%(wc_state)s\0"
+            VALUE "ProductVersion", "%(major)s,%(minor)s,%(patch)s,%(revision)s%(wc_state)s\0"
             VALUE "SpecialBuild", "\0"
         END
     END

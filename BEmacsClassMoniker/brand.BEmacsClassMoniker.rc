@@ -72,12 +72,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "\0"
             VALUE "FileDescription", "BEmacsClassMoniker Module\0"
-            VALUE "FileVersion", "%(major)s,%(minor)s,%(patch)s,%(release)s\0"
+            VALUE "FileVersion", "%(major)s,%(minor)s,%(patch)s,%(revision)s%(wc_state)s\0"
             VALUE "InternalName", "BEmacsClassMoniker\0"
             VALUE "LegalCopyright", "Copyright 1999-%(year)s\0"
             VALUE "OriginalFilename", "BEmacsClassMoniker.DLL\0"
             VALUE "ProductName", "BEmacsClassMoniker Module\0"
-            VALUE "ProductVersion", "%(major)s,%(minor)s,%(patch)s,%(release)s\0"
+            VALUE "ProductVersion", "%(major)s,%(minor)s,%(patch)s,%(revision)s%(wc_state)s\0"
             VALUE "OLESelfRegister", "\0"
         END
     END

@@ -24,7 +24,7 @@ emacs-hp-new.xkeys
 emacs-hp-old.xkeys
 emacs-lk201.xkeys
 emacs-xfree86.xkeys
-@exec ln -fs %f %%D/emacs.xkeys
+@exec ln -fs %%f %%D/emacs.xkeys
 @unexec rm -f %%D/emacs.xkeys
 emacs_profile.ml
 emacs_qinfo_c.dat
@@ -80,11 +80,11 @@ justify.xpm
 
 @mode a=rx
 @cwd /usr/local/share/doc/bemacs
-@srcdir %KITDIR%
+@srcdir %%KITDIR%%
 @mode a=r
 readme.txt
 
 @mode a=rx
 @cwd /usr/local/share/doc/bemacs/HTML
 @mode a=r
-@srcdir %HTMLDIR%
+@srcdir %%HTMLDIR%%

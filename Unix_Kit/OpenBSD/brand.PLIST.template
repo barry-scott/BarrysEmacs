@@ -1,15 +1,15 @@
-@name @#@format:bemacs-%(major)s.%(minor)s-%(build)s@#@
+@name bemacs-%(major)s.%(minor)s-%(build)s
 @cwd /usr/local/bemacs
-@src %SRCDIR%
-@exec echo "BEmacs @#@version@#@ Copyright (c) 1990-@#@format:%(year)s@#@ Barry A. Scott (barry@barrys-emacs.org)"
+@src %%SRCDIR%%
+@exec echo "BEmacs %(version)s Copyright (c) 1990-%(year)s Barry A. Scott (barry@barrys-emacs.org)"
 
 @owner root
 @group wheel
 @mode a=rx
 bemacs
-@exec echo ln -s %D/bemacs %D/../bin/bemacs
-@exec ln -sf %D/bemacs %D/../bin/bemacs
-@unexec rm -f %D/../bin/bemacs
+@exec echo ln -s %%D/bemacs %%D/../bin/bemacs
+@exec ln -sf %%D/bemacs %%D/../bin/bemacs
+@unexec rm -f %%D/../bin/bemacs
 bemacs_server
 dbadd
 dbcreate
@@ -24,8 +24,8 @@ emacs-hp-new.xkeys
 emacs-hp-old.xkeys
 emacs-lk201.xkeys
 emacs-xfree86.xkeys
-@exec ln -fs %f %D/emacs.xkeys
-@unexec rm -f %D/emacs.xkeys
+@exec ln -fs %%f %%D/emacs.xkeys
+@unexec rm -f %%D/emacs.xkeys
 emacs_profile.ml
 emacs_qinfo_c.dat
 emacs_qinfo_c.dir
@@ -80,11 +80,11 @@ justify.xpm
 
 @mode a=rx
 @cwd /usr/local/share/doc/bemacs
-@src %KITDIR%
+@src %%KITDIR%%
 @mode a=r
 readme.txt
 
 @mode a=rx
 @cwd /usr/local/share/doc/bemacs/HTML
-@src %HTMLDIR%
+@src %%HTMLDIR%%
 @mode a=r

@@ -1,6 +1,7 @@
 * text=auto !eol
 BEmacsClassMoniker/BEmacsClassMoniker.aps -text
 BEmacsClassMoniker/RES/ICON1.ICO -text
+Builder/builder_custom_init.cmd -text
 Editor/BEmacsComClient/icon1.ico -text
 Editor/BEmacsComClient/icon2.ico -text
 Editor/BEmacsComClient/icon3.ico -text
