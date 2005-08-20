@@ -12,13 +12,13 @@ Darwin)
 Linux)
     if [ -e /etc/redhat-release ]
     then
-        case "$(head /etc/readhat-release)" in
+        case "$(head /etc/redhat-release)" in
 
-        "Fedora Core Release 3 *")
+        "Fedora Core release 3 "*)
             export RB_CFG_PLATFORM=LinuxFC3
             ;;
 
-        "Fedora Core Release 4 *")
+        "Fedora Core release 4 "*)
             export RB_CFG_PLATFORM=LinuxFC4
             ;;
 
