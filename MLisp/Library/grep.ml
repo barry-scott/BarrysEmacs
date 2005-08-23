@@ -1,6 +1,6 @@
 ; 
 ; grep.ml
-;   Copyright (c) 1993-2000 Barry A. Scott
+;   Copyright (c) 1993-2005 Barry A. Scott
 ; 
 ; Grep for emacs that does not depend on any external programs
 ; and offers the full power of Emacs regular expressions
@@ -17,6 +17,7 @@
     grep-file-list
     grep-results-buffer-name
     grep-exclude-file-list
+    grep-exclude-directory-list
     grep-matched-string-colour
     grep-name-colour
     grep-position-to-match-column
@@ -39,7 +40,8 @@
 	(setq grep-search-pattern "")
 	(setq grep-file-list "")
 	(setq grep-results-buffer-name "grep-results")
-	(setq grep-exclude-file-list "*._* *.exe *.obj *.pch *.pdb *.zip *.tar.gz *.tgz *.dll *.sbr *.pyd *.ico *.ncb *.lnk *.bsc *.ilk *.exp *.lib *.aps *.opt")
+	(setq grep-exclude-file-list "*._* *~ *.exe *.obj *.pch *.pdb *.zip *.tar.gz *.tar.bz2 *.tgz *.tbz *.dll *.sbr *.pyd *.ico *.ncb *.lnk *.bsc *.ilk *.exp *.lib *.aps *.opt *.o *.a")
+	(setq grep-exclude-directory-list ".svn CVS")
 	(setq grep-matched-string-colour 1)	; override in grep.key
 	(setq grep-name-colour 2)		; override in grep.key
         (setq grep-position-to-match-column 1)	; override in grep.key
@@ -414,12 +416,32 @@
     
     (if ~option-use-exclude-list
 	(progn
-	    ~start-pos ~end-pos ~pattern ~filename ~list
+	    ~start-pos ~end-pos ~pattern ~filename ~list ~directories ~dirname
+	    ~path-sep
 
+	    (setq ~path-sep (file-format-string "%pc" ""))
+
+	    (setq ~start-pos 0)
+	    (setq ~list (concat grep-exclude-directory-list " "))
+	    (setq ~directories (file-format-string "%pd" ~file))
+	    
+	    (while
+		(&
+		    ~include
+		    (progn
+			(setq ~end-pos (string-index-of-string ~list " " ~start-pos))
+			(> ~end-pos 0)
+		    )
+		)
+		(setq ~dirname (concat ~path-sep (string-extract ~list ~start-pos ~end-pos) ~path-sep))
+		(setq ~start-pos (+ ~end-pos 1))
+		
+	        (setq ~include (= -1 (string-index-of-first ~directories ~dirname)))
+	    )
+
+	    (setq ~start-pos 0)
 	    (setq ~list (concat grep-exclude-file-list " "))
 	    (setq ~filename (file-format-string "%fa" ~file))
-	    (setq ~start-pos 0)
-	    
 	    (while
 		(&
 		    ~include
@@ -431,9 +453,7 @@
 		(setq ~pattern (string-extract ~list ~start-pos ~end-pos))
 		(setq ~start-pos (+ ~end-pos 1))
 		
-		(error-occurred	; only get an error in pre 7.0.84 emacs
-		    (setq ~include (! (match-wild ~filename ~pattern)))
-		)
+		(setq ~include (! (match-wild ~filename ~pattern)))
 	    )
 	)
     )
