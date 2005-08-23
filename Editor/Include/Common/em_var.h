@@ -115,6 +115,7 @@ extern volatile int input_pending;
 extern SystemExpressionRepresentationStringReadOnly last_search_string;
 extern EmacsSearch sea_glob;
 extern BoundName *default_auto_fill_proc;
+extern BoundName *auto_execute_proc;
 extern SystemExpressionRepresentationIntBoolean default_display_c1;
 extern SystemExpressionRepresentationIntBoolean default_display_eof;
 extern SystemExpressionRepresentationIntBoolean default_read_only_buffer;

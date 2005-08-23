@@ -73,6 +73,8 @@ SystemExpressionRepresentationInt maximum_file_read_size( 10*1024*1024 );
 
 SystemExpressionRepresentationIntBoolean unlink_checkpoint_files;
 
+BoundName *auto_execute_proc;
+
 // If true (the default) Emacs will ask
 // instead of synthesizing a unique name in
 // the case where visit-file encounters a
@@ -180,13 +182,21 @@ static void do_auto( const EmacsString &filename )
 	// Scan the list of autoexecutes. For each pattern that matches the
 	// supplied file name, execute the supplied function
 	//
+	bool match_found = false;
 
 	for( FileAutoMode *p = auto_list; p != NULL; p = p->a_next )
 		if( match_wild( fn, p->a_pattern ) )
 			{
+			match_found = true;
 			execute_bound_saved_environment( p->a_what );
 			break;
 			}
+
+	if( !match_found && auto_execute_proc != NULL )
+		{
+		// run the auto_execute_hook
+		execute_bound_saved_environment( auto_execute_proc );
+		}
 
 	ml_err |= saverr;
 	}

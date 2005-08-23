@@ -1034,6 +1034,7 @@ void EmacsSaveRestoreEnvironment::serialize_savres_globals(void)
 	_serialize_object( default_display_c1 );
 	_serialize_object( default_read_only_buffer );
 	_ptr_i( default_auto_fill_proc );
+	_ptr_i( auto_execute_proc );
 	_serialize_object( VariableName::name_table );
 	_ptr_i( error_message_parser );
 	_serialize_object( rms_attribute_override );
