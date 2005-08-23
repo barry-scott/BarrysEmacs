@@ -1410,10 +1410,13 @@ void TerminalControl_GUI::updateWindowTitle()
 	if( application.shell == NULL  )
 		return;
 
-	strcpy( title, "Barry's Emacs V7 - "  );
-	if( !name_arg.isNull() )
+	if( name_arg.isNull() )
 		{
-		strcat( title, name_arg.sdata() );
+		strcpy( title, "Barry's Emacs V7 - "  );
+		}
+	else
+		{
+		strcpy( title, name_arg.sdata() );
 		strcat( title, " - " );
 		}
 	if( cwd.commonPrefix( home ) == home.length() )
