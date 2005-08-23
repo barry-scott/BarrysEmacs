@@ -238,7 +238,7 @@ $(edit_obj)dbdel.o : dbdel/dbdel.cpp
 ##################################################################################
 $(edit_obj)bemacs_server_dynamic : $(obj_files)
 	@ echo Info: Link $(edit_obj)bemacs_server_dynamic
-	$(lddynamic) -o $(edit_obj)bemacs_server_dynamic $(obj_files) -lXm -lXpm -lXp -lXt -lXmu -lSM -lICE -lXext -lX11
+	$(lddynamic) -o $(edit_obj)bemacs_server_dynamic $(obj_files) $(bemacs_libs)
 
 $(edit_obj)linux_ld_fix.o : Source/Unix/linux_ld_fix.cpp
 	@ echo Info: Compile Source/Unix/linux_ld_fix.cpp
