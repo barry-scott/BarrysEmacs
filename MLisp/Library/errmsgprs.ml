@@ -221,7 +221,7 @@
 		(if
 		    (error-occurred
 			(ere-search-forward 
-			    "(^In file included from |^)([^:\n]+):(\\d+):.*$")
+			    "(^In file included from |^ + from |^)([^:\n]+):(\\d+):.*$")
 		    )
 		    (setq error-line-number 0)
 		    (save-window-excursion
