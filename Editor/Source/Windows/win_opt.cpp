@@ -468,6 +468,7 @@ void CColourOpt::save_options()
 	regcolours.user8( colours[COLOR_ITEM_USER_8] );
 
 	EmacsWinRegistry reg;
+	reg.loadRegistrySettings();
 	reg.displayColours( regcolours );
 	reg.saveRegistrySettings();
 	}
