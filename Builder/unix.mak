@@ -18,8 +18,8 @@ BUILD_KIT_DIR=$(RB_WORKINGDIR)/Unix_Kit/OpenBSD
 
 else
 ifeq  (${RB_CFG_PLATFORM},MacOSX)
-BEMACS_DOC_DIR=$(RB_WORKINGDIR)/Unix_Kit/MacOSX/pkg
-BEMACS_LIB_DIR=$(RB_WORKINGDIR)/Unix_Kit/MacOSX/pkg
+BEMACS_DOC_DIR=$(RB_WORKINGDIR)/Unix_Kit/MacOSX/bemacs-kit
+BEMACS_LIB_DIR=$(RB_WORKINGDIR)/Unix_Kit/MacOSX/bemacs-kit
 BUILD_KIT_DIR=$(RB_WORKINGDIR)/Unix_Kit/MacOSX
 
 else
@@ -118,7 +118,8 @@ OpenBSD_pkg:	$(BEMACS_DOC_DIR) $(BEMACS_LIB_DIR) $(BUILD_KIT_DIR)/PLIST.template
 
 MacOSX_pkg:	$(BEMACS_DOC_DIR) $(BEMACS_LIB_DIR)
 	@ echo Info: MacOSX package creation...
-	@ echo Error: TBD
+	cp -f ../Editor/MacOSX/be $(BUILD_KIT_DIR)/bemacs-kit
+	cd $(BUILD_KIT_DIR); tar czf bemacs-macosx.tgz bemacs-kit
 
 rpm: rpm_$(RB_CFG_PLATFORM)
 
@@ -152,9 +153,38 @@ rpm_LinuxMDK92:
 	rpmbuild --rcfile=/usr/lib/rpm/rpmrc:$(BUILD_KIT_DIR)/rpmrc -bb $(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
 	cp -f $(BUILD_KIT_DIR)/RPMS/i586/bemacs-*.*-*.i586.rpm $(BUILD_KIT_DIR)/RPMS/i586/bemacs.i586.rpm
 
-rpm_LinuxFC3: rpm_LinuxRH90
+rpm_LinuxFC2:
+	@ echo Info: Linux FC2 RPM creation...
+	grep ^macrofiles: /usr/lib/rpm/rpmrc |sed -e s!~/.rpmmacros!$(BUILD_KIT_DIR)/rpmmacros! >$(BUILD_KIT_DIR)/rpmrc
+	echo %_topdir $(BUILD_KIT_DIR) >$(BUILD_KIT_DIR)/rpmmacros
+	echo BuildRoot: $(BUILD_KIT_DIR)/ROOT >$(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
+	cat $(BUILD_KIT_DIR)/SPECS/bemacs.spec >>$(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
+	cd $(BEMACS_DOC_DIR); for docfile in *.css *.htm *.js *.gif; do echo %doc $$docfile >>$(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec; done
+	cd $(BEMACS_LIB_DIR); chmod u+w *
+	rpmbuild --rcfile=/usr/lib/rpm/rpmrc:$(BUILD_KIT_DIR)/rpmrc -bb $(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
+	cp -f $(BUILD_KIT_DIR)/RPMS/i386/bemacs-*.*-*.i386.rpm $(BUILD_KIT_DIR)/RPMS/i386/bemacs.i386.rpm
 
-rpm_LinuxFC4: rpm_LinuxRH90
+rpm_LinuxFC3:
+	@ echo Info: Linux FC3 RPM creation...
+	grep ^macrofiles: /usr/lib/rpm/rpmrc |sed -e s!~/.rpmmacros!$(BUILD_KIT_DIR)/rpmmacros! >$(BUILD_KIT_DIR)/rpmrc
+	echo %_topdir $(BUILD_KIT_DIR) >$(BUILD_KIT_DIR)/rpmmacros
+	echo BuildRoot: $(BUILD_KIT_DIR)/ROOT >$(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
+	cat $(BUILD_KIT_DIR)/SPECS/bemacs.spec >>$(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
+	cd $(BEMACS_DOC_DIR); for docfile in *.css *.htm *.js *.gif; do echo %doc $$docfile >>$(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec; done
+	cd $(BEMACS_LIB_DIR); chmod u+w *
+	rpmbuild --rcfile=/usr/lib/rpm/rpmrc:$(BUILD_KIT_DIR)/rpmrc -bb $(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
+	cp -f $(BUILD_KIT_DIR)/RPMS/i386/bemacs-*.*-*.i386.rpm $(BUILD_KIT_DIR)/RPMS/i386/bemacs.i386.rpm
+
+rpm_LinuxFC4:
+	@ echo Info: Linux FC4 RPM creation...
+	grep ^macrofiles: /usr/lib/rpm/rpmrc |sed -e s!~/.rpmmacros!$(BUILD_KIT_DIR)/rpmmacros! >$(BUILD_KIT_DIR)/rpmrc
+	echo %_topdir $(BUILD_KIT_DIR) >$(BUILD_KIT_DIR)/rpmmacros
+	echo BuildRoot: $(BUILD_KIT_DIR)/ROOT >$(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
+	cat $(BUILD_KIT_DIR)/SPECS/bemacs.spec >>$(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
+	cd $(BEMACS_DOC_DIR); for docfile in *.css *.htm *.js *.gif; do echo %doc $$docfile >>$(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec; done
+	cd $(BEMACS_LIB_DIR); chmod u+w *
+	rpmbuild --rcfile=/usr/lib/rpm/rpmrc:$(BUILD_KIT_DIR)/rpmrc -bb $(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
+	cp -f $(BUILD_KIT_DIR)/RPMS/i386/bemacs-*.*-*.i386.rpm $(BUILD_KIT_DIR)/RPMS/i386/bemacs.i386.rpm
 
 clean:
 	cd ../Editor; PATH=.:$$PATH; export BUILD_KIT_DIR=$(BEMACS_LIB_DIR); ./build clean
