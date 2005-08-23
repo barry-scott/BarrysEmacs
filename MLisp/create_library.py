@@ -35,7 +35,7 @@ class BemacsDatabaseTools:
 		self._dbadd = os.path.join( tool_path, 'dbadd' )
 		if not os.path.exists( self._dbadd ):
 			raise ValueError, 'Missing tool %s' % self._dbadd
-		
+
 	def _run_command( self, command ):
 		#print command
 		pipe = os.popen( command + ' 2>&1' )
@@ -88,7 +88,7 @@ library_files =	[
 	('common',	'Library/desword.ml'),
 	('common',	'Library/diff.ml'),
 	('common',	'Library/dired.ml'),
-	('common',	'Library/dired.mlp'),
+	('common',	'Library/edit-variable.ml'),
 	('common',	'Library/edtsim.ml'),
 	('common',	'Library/electricc.key'),
 	('common',	'Library/electricc.ml'),
@@ -163,6 +163,7 @@ library_files =	[
 	('common',	'Library/lk201_compose_chart'),
 	('common',	'Library/lk201_minibuf.ml'),
 	('common',	'Library/makebox.ml'),
+	('common',	'Library/makefile-mode.ml'),
 	('common',	'Library/minibuf-recall.key'),
 	('common',	'Library/minibuf-recall.ml'),
 	('common',	'Library/minibuf.ml'),
@@ -193,6 +194,7 @@ library_files =	[
 	('common',	'Library/sh-mode.ml'),
 	('common',	'Library/shell.mlp'),
 	('common',	'Library/show-buffer.ml'),
+	('common',	'Library/smart-auto-execute.ml'),
 	('common',	'Library/spawn.ml'),
 	('common',	'Library/sys_literals.ml'),
 	('common',	'Library/tabs.ml'),

@@ -4,7 +4,7 @@
 ; This module can be used as the basis of the users emacsinit.ml
 ; initialisation procedure.
 ; 
-; Copyright (c) 1998-2002 Barry A. Scott
+; Copyright (c) 1998-2005 Barry A. Scott
 ; 
 
 ; 
@@ -181,6 +181,13 @@
     ; XML files
     (auto-execute "XML-mode" "*.xml")
 
+    ; Make files
+    (auto-execute "makefile-mode" "Makefile")
+    (auto-execute "makefile-mode" "Makefile.in")
+    (auto-execute "makefile-mode" "makefile")
+    (auto-execute "makefile-mode" "*.mak")
+    (auto-execute "makefile-mode" "*.mk")
+
     ; Windows NT CMD mode
     (auto-execute "ntcmd-mode" "*.cmd")
     (auto-execute "ntcmd-mode" "*.bat")
@@ -196,6 +203,9 @@
     )
     (auto-execute "sh-mode" ".bashrc")
     (auto-execute "sh-mode" ".bash_profile")
+
+    ; if none of the auto executes match the filename then run this hook
+    (setq auto-execute-hook "smart-auto-execute")
 
     (setq enter-emacs-hook (setq return-to-emacs-hook "default-user-enter-actions"))
     (setq buffer-choose-name-hook "default-buffer-choose-name")
