@@ -10,6 +10,7 @@ Editor/BEmacsComClient/icon5.ico -text
 Editor/BEmacsComClient/icon6.ico -text
 Editor/BEmacsComClient/icon7.ico -text
 Editor/BEmacsComClient/icon8.ico -text
+Editor/MacOSX/be -text
 Editor/Source/Windows/Resources/BMP16175.BMP -text
 Editor/Source/Windows/Resources/BMP24826.BMP -text
 Editor/Source/Windows/Resources/BMP28043.BMP -text
