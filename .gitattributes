@@ -56,5 +56,6 @@ Kit/vc6redist/stdole2.tlb -text
 Kit/vc71redist/MFC71.dll -text
 Kit/vc71redist/msvcp71.dll -text
 Kit/vc71redist/msvcr71.dll -text
+MLisp/Library/edit-variable.ml -text
 MLisp/Library/makefile-mode.ml -text
 MLisp/Library/smart-auto-execute.ml -text
