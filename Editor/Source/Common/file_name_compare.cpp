@@ -22,6 +22,14 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 //
 //	Implementation
 //
+FileNameCompare::~FileNameCompare()
+{
+}
+
+FileNameCompareCaseSensitive::~FileNameCompareCaseSensitive()
+{
+}
+
 bool FileNameCompareCaseSensitive::isEqual( const EmacsString &string1, const EmacsString &string2 )
 	{
 	return string1.compare( string2 ) == 0;
@@ -36,6 +44,10 @@ int FileNameCompareCaseSensitive::commonPrefix( const EmacsString &string1, cons
 	{
 	return string1.commonPrefix( string2 );
 	}
+
+FileNameCompareCaseBlind::~FileNameCompareCaseBlind()
+{
+}
 
 bool FileNameCompareCaseBlind::isEqual( const EmacsString &string1, const EmacsString &string2 )
 	{

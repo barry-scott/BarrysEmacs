@@ -1070,7 +1070,7 @@ void EmacsSaveRestoreEnvironment::serialize_star_star( void **ptr, int size )
 void EmacsObject::SaveEnvironment()
 	{
 	const char *object_name = objectName();
-	strlen( object_name );	// called to stop a warning
+	(void)strlen( object_name );	// called to stop a warning
 	debug_invoke();
 	}
 

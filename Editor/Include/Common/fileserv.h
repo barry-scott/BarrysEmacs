@@ -8,6 +8,7 @@
 class FileNameCompare
 	{
 public:
+        virtual ~FileNameCompare();
 	virtual bool isEqual( const EmacsString &string1, const EmacsString &string2 ) = 0;
 	virtual int compare( const EmacsString &string1, const EmacsString &string2 ) = 0;
 	virtual int commonPrefix( const EmacsString &string1, const EmacsString &string2 ) = 0;
@@ -15,6 +16,9 @@ public:
 
 class FileNameCompareCaseSensitive : public FileNameCompare
 	{
+public:
+        virtual ~FileNameCompareCaseSensitive();
+private:
 	virtual bool isEqual( const EmacsString &string1, const EmacsString &string2 );
 	virtual int compare( const EmacsString &string1, const EmacsString &string2 );
 	virtual int commonPrefix( const EmacsString &string1, const EmacsString &string2 );
@@ -22,6 +26,9 @@ class FileNameCompareCaseSensitive : public FileNameCompare
 
 class FileNameCompareCaseBlind : public FileNameCompare
 	{
+public:
+        virtual ~FileNameCompareCaseBlind();
+private:
 	virtual bool isEqual( const EmacsString &string1, const EmacsString &string2 );
 	virtual int compare( const EmacsString &string1, const EmacsString &string2 );
 	virtual int commonPrefix( const EmacsString &string1, const EmacsString &string2 );

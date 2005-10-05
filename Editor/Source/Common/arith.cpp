@@ -150,6 +150,7 @@ int string_arg(int n)
 class arith_op
 	{
 public:
+        virtual ~arith_op() {};
 	virtual int action( int a, int b ) = 0;
 	};
 
@@ -229,6 +230,7 @@ int not_command( void )
 class op_compare
 	{
 public:
+        virtual ~op_compare() {};
 	virtual bool compare( int left, int right ) = 0;
 	virtual bool compare( const EmacsString &left, const EmacsString &right ) = 0;
 	};

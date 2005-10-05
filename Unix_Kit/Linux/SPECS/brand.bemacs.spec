@@ -2,7 +2,7 @@ Name:		bemacs
 Version:	%(major)s.%(minor)s
 Release:	%(build)s
 Summary:	Barry's Emacs %(version)s text editor for X11 and ANSI terminals
-Copyright:	Barry A. Scott (c) 1990-%(year)s
+License:	Copyright Barry A. Scott (c) 1990-%(year)s
 Group:		Applications/Editors
 Packager:	Barry A. Scott <barry@barrys-emacs.org>
 %%description

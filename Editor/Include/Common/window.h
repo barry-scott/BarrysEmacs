@@ -1,10 +1,12 @@
-//	Copyright (c) 1982-2001
+//	Copyright (c) 1982-2005
 //	Barry A. Scott
 
 
 class EmacsWindow;
 class EmacsWindowGroup;
 class EmacsView;
+class SavedEmacsView;
+
 //
 // structure that defines a window
 //

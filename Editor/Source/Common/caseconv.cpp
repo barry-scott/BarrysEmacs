@@ -27,7 +27,12 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 //
 //	These class encapsulate the algorithms to decide if a char needs converting
 //
-class case_op { public: virtual bool convert( bool is_upper, bool is_first_letter ) = 0; };
+class case_op
+{
+public:
+    virtual ~case_op() {};
+    virtual bool convert( bool is_upper, bool is_first_letter ) = 0;
+};
 
 class case_op_to_upper : public case_op { public: virtual bool convert( bool is_upper, bool /*is_first_letter*/ )
 	{ return !is_upper; } };
