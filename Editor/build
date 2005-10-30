@@ -1,5 +1,5 @@
 #! /usr/bin/env bash
-osname=`os_name.ksh`
+osname=$(./os_name.ksh)
 
 export edit_obj=$osname/obj/
 export edit_exe=$osname/exe/
@@ -8,9 +8,9 @@ mkdir -p $edit_obj $edit_exe
 
 test -a ${edit_obj}.depend || touch ${edit_obj}.depend
 
-log_file=`uname -s`.log
+log_file=$(uname -s).log
 
-case `uname -s` in
+case $(uname -s) in
 AIX)	(make -e -f aix.mak $* 2>&1 || kill -HUP $$) | tee $log_file;;
 HP-UX)	
 	(make -e -f hpux.mak $* 2>&1 || kill -HUP $$) | tee $log_file
@@ -29,5 +29,5 @@ Darwin)
 	(gnumake -e -f make-darwin.mak $* 2>&1 || kill -HUP $$) | tee $log_file;;
 
 *)
-	echo Do not know now to build on `uname -s`.
+	echo Do not know now to build on $(uname -s).
 esac

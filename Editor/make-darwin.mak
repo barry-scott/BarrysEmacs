@@ -21,7 +21,7 @@ edit_obj=darwin/obj/
 edit_exe=darwin/exe/
 
 ld_bintools=$(cpp)
-bemacs_libs=-lXm -lXp -lXt -lXmu -lSM -lICE -lXext -lX11 -lc_r
+bemacs_libs=-lX11 -lXm -lXt -lXmu -lSM -lICE -lXext -lX11
 
 os_specific_obj_files = \
  $(edit_obj)ptyopen_bsd.o

@@ -266,11 +266,11 @@ motif_test_objs=\
 
 $(edit_obj)motif_test : $(motif_test_objs)
 	@ echo Info: Link $(edit_obj)motif_test
-	$(lddynamic) -o $(edit_obj)motif_test $(motif_test_objs) -lXm -lXt -lSM -lICE -lXext -lX11 2>&1 |c++filt
+	$(lddynamic) -o $(edit_obj)motif_test $(motif_test_objs) $(bemacs_libs) 2>&1 |c++filt
 
 $(edit_obj)unix_rtl.o : Source/Unix/unix_rtl.cpp
 	@ echo Info: Compile Source/Unix/unix_rtl.cpp
-	$(cpp) $(cc_flags) -o $(edit_obj)unix_rtl.o Source/Unix/unix_rtl.cpp
+	@ $(cpp) $(cc_flags) -o $(edit_obj)unix_rtl.o Source/Unix/unix_rtl.cpp
 
 $(edit_obj)motif_test.o : Source/Unix/motif_test.cpp
 	@ echo Info: Compile Source/Unix/motif_test.cpp
