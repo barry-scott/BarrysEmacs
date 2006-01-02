@@ -1,5 +1,5 @@
 //
-//	Copyright 1995 Barry A. Scott
+//    Copyright 1995 Barry A. Scott
 //
 extern bool emacs_internal_init_done_event(void);
 extern void gui_set_dot( int n );
@@ -136,7 +136,7 @@ extern EmacsString save_abs( const EmacsString &  );
 extern void not_implemented(void);
 
 extern void check_free(void *x);
-extern int check_yes_no( EmacsString &s );	//...
+extern int check_yes_no( EmacsString &s );    //...
 extern int check_args(int min, int max);
 
 extern int fetch_array_command( void );
@@ -155,8 +155,8 @@ extern int interlock_dec( volatile int * );
 extern int interlock_inc( volatile int * );
 extern void wake_main_thread(void);
 extern void conditional_wake(void);
-extern void DebugPrintf( const EmacsString &str );	//...
-extern int get_yes_or_no( int yes, const EmacsString &prompt );	//...
+extern void DebugPrintf( const EmacsString &str );    //...
+extern int get_yes_or_no( int yes, const EmacsString &prompt );    //...
 
 #ifndef get_config_env
 extern EmacsString get_config_env( const EmacsString & );
@@ -165,7 +165,7 @@ extern int put_config_env( const EmacsString &, const EmacsString & );
 
 #if defined(_WINDOWS)
 extern int win_yes_or_no( int yes, const EmacsString &prompt );
-extern void win_error( EmacsString msg );	//...
+extern void win_error( EmacsString msg );    //...
 #endif
 #if defined(_WINDOWS) || defined(_MSDOS)
 EmacsString get_device_name_translation( const EmacsString &name );

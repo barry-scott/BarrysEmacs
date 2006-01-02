@@ -396,7 +396,7 @@ void SearchAdvancedAlgorithm::parse_min_max( EmacsStringStream &pattern, int &re
             break;
         repeat_min = repeat_min*10 + int( ch - '0' );
     }
-    
+
     if( ch == '}' )
     {
         // it is {[0-9]+}
@@ -599,11 +599,11 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_term( EmacsStringStream &p
                 {
                 int code = hex_to_int( pattern.nextChar() )*16;
                 code += hex_to_int( pattern.nextChar() );
-                return parse_repeated_char( (EmacsChar_t)code, pattern );                
+                return parse_repeated_char( (EmacsChar_t)code, pattern );
                 }
             default:
                 throw RegularExpressionSyntaxError( FormatString("reserved \"\\%c\" escape code") << ch );
-            }    
+            }
         else if( ch == '<' )
             return new RegularExpressionWordStart( *this );
 
@@ -684,7 +684,7 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_set( EmacsStringStream &pa
             case 's':
                 char_set.append( " \t" );
                 break;
-            case '-':                
+            case '-':
             case ']':
             case '\\':
                 char_set.append( ch );

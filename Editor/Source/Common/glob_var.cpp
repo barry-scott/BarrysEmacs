@@ -1,8 +1,8 @@
 //
-//	glob_var.cpp
+//    glob_var.cpp
 //
-//	Copyright (c) 1982-1997
-//		Barry A. Scott
+//    Copyright (c) 1982-1997
+//        Barry A. Scott
 //
 
 #include <emacs.h>
@@ -48,33 +48,33 @@ EmacsString users_name;
 //
 //// minibuf.c
 SystemExpressionRepresentationStringReadOnly error_message_text;
-	// error message text area
+    // error message text area
 SystemExpressionRepresentationIntBoolean stack_trace_on_error;
-	// if true, whenever an error is encountered
-	// a stack trace will be dumped to the stack trace buffer
+    // if true, whenever an error is encountered
+    // a stack trace will be dumped to the stack trace buffer
 SystemExpressionRepresentationIntBoolean remove_help_window( 1 );
-	// if true, then the help window will be
-	// removed on exit of any command completion routines.
+    // if true, then the help window will be
+    // removed on exit of any command completion routines.
 SystemExpressionRepresentationIntBoolean auto_help( 1 );
-	// true iff ambiguous or misspelled words
-	// should create a help window (DJH)
+    // true iff ambiguous or misspelled words
+    // should create a help window (DJH)
 int minibuf_depth;
 
 //// mlisp.c
 int in_error_occurred = 0;
-Expression ml_value;		// the value returned from the last evaluation
+Expression ml_value;        // the value returned from the last evaluation
 int ml_err;
 
 // options.c
 SystemExpressionRepresentationIntBoolean trace_into( 1 );
-SystemExpressionRepresentationIntBoolean trace_mode( 0 );		// True if MLisp tracing is required
-int in_trace;			// True if inside a trace functions
-Expression last_expression;	// last expression
+SystemExpressionRepresentationIntBoolean trace_mode( 0 );        // True if MLisp tracing is required
+int in_trace;            // True if inside a trace functions
+Expression last_expression;    // last expression
 int (*last_proc)(void);
 
 //// simplcoms.c
 EmacsString exit_emacs_dcl_command;
-SystemExpressionRepresentationIntBoolean track_eol( 1 );	// true iff ^n and ^p should stick with eol's
+SystemExpressionRepresentationIntBoolean track_eol( 1 );    // true iff ^n and ^p should stick with eol's
 int argument_prefix_cnt;
 //
 //// trm_ansi.c

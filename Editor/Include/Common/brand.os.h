@@ -1,54 +1,54 @@
 //
-//	os.h
+//    os.h
 //
-//	This module contains all the macros, definitions, include, etc
-//	that it takes to make the main code OS independent.
+//    This module contains all the macros, definitions, include, etc
+//    that it takes to make the main code OS independent.
 //
-//	OS is chosen on the following symbol
+//    OS is chosen on the following symbol
 //
-//	vms		- VAX/VMS
-//	unix		- any old unix
-//	macintosh	- the Apple Macintosh
-//	_MSDOS		- MS DOS
-//	windows		- MS Windows
+//    vms        - VAX/VMS
+//    unix        - any old unix
+//    macintosh    - the Apple Macintosh
+//    _MSDOS        - MS DOS
+//    windows        - MS Windows
 //
-//	Features are conditional on the following symbols
+//    Features are conditional on the following symbols
 //
-//	DB		- database management
-//	MEMMAP		- directly write the display hardware
-//	REAL_TTY	- there is a real terminal as I/O device
-//	MOUSE		- has a mouse device
-//	INODE		- file system has unix like inodes
-//	subprocesses	- Support subprocesses
-//	ALIGN_ACCESS	- True if the hardware only supports aligned memory
-//	USER_ID		- A system with usernames and the like
-//	NETWORK_ID	- A system with a network address and name
-//	XTERM		- X interface
+//    DB        - database management
+//    MEMMAP        - directly write the display hardware
+//    REAL_TTY    - there is a real terminal as I/O device
+//    MOUSE        - has a mouse device
+//    INODE        - file system has unix like inodes
+//    subprocesses    - Support subprocesses
+//    ALIGN_ACCESS    - True if the hardware only supports aligned memory
+//    USER_ID        - A system with usernames and the like
+//    NETWORK_ID    - A system with a network address and name
+//    XTERM        - X interface
 //
 //
-#define EMACS_VERSION	"%(maturity)s%(major)s.%(minor)s-%(revision)s%(wc_state)s"
+#define EMACS_VERSION    "%(maturity)s%(major)s.%(minor)s-%(revision)s%(wc_state)s"
 
 #ifndef RC_INVOKED
-//********************* Include files *********************
+// Include files
 
 # ifndef OS_NO_INCLUDES
 #endif
 
 #ifndef RC_INVOKED
-#  include	<stdio.h>
-#  include	<string>
-#  include	<stdlib.h>
-#  include	<stddef.h>
-#  include	<time.h>
-#  include	<stdarg.h>
-#  include	<ctype.h>
-#  include	<errno.h>
-#  include	<limits.h>
+#  include    <stdio.h>
+#  include    <string>
+#  include    <stdlib.h>
+#  include    <stddef.h>
+#  include    <time.h>
+#  include    <stdarg.h>
+#  include    <ctype.h>
+#  include    <errno.h>
+#  include    <limits.h>
 
 
 #  ifdef macintosh
-#   include	<fcntl.h>
-#   define O_TEXT	0
+#   include    <fcntl.h>
+#   define O_TEXT    0
 #  endif
 # endif
 
@@ -106,7 +106,7 @@ extern void debug( int row, const EmacsString &text );
 void debug_bpt(void);
 
 #ifdef _DEBUG
-// assert macro based on <assert.h> assert 
+// assert macro based on <assert.h> assert
 extern void _emacs_assert(const char *, const char *, unsigned);
 #define emacs_assert(exp) (void)( (exp) || (_emacs_assert(#exp, __FILE__, __LINE__), 0) )
 #else

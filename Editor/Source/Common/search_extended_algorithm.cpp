@@ -695,7 +695,7 @@ bool RegularExpressionAlternation::matchTerm( int start_pos, int &end_pos )
     {
         RegularExpressionTerm *m_expression = *alternative;
         if( m_expression->matchExpression( start_pos, end_pos ) )
-            return true;    
+            return true;
         ++alternative;
     }
 
@@ -995,7 +995,7 @@ bool RegularExpressionBeginningOfLine::matchTerm( int pos, int &end_pos )
         return true;
     }
 
-    return false;        
+    return false;
 }
 
 

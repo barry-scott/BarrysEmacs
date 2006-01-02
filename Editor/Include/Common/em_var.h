@@ -1,7 +1,7 @@
 //
-//	Copyright 1986-2002 Barry A. Scott
-//                    
- 
+//    Copyright 1986-2002 Barry A. Scott
+//
+
 extern EmacsString default_environment_file;
 extern EmacsString version_string;
 extern SystemExpressionRepresentationTermProtocolMode protocol_mode;
@@ -225,7 +225,7 @@ extern int must_checkpoint_on_crash;
 extern SystemExpressionRepresentationStringReadOnly operating_system_name;
 extern SystemExpressionRepresentationStringReadOnly operating_system_version;
 extern SystemExpressionRepresentationStringReadOnly CPU_type;
-#if defined(_WINDOWS)    
+#if defined(_WINDOWS)
 extern int win_emacs_quit;
 extern int is_windows_nt;
 #endif
@@ -244,7 +244,7 @@ extern BoundName *trace_proc;
 extern BoundName *break_proc;
 extern BoundName *error_proc;
 extern BoundName *user_interface_hook_proc;
-extern unsigned int last_auto_keymap;	// Index of last auto keymap
+extern unsigned int last_auto_keymap;    // Index of last auto keymap
 extern SystemExpressionRepresentationStringReadOnly current_function;
 extern SystemExpressionRepresentationStringReadOnly current_break;
 extern Expression *call_back_result;

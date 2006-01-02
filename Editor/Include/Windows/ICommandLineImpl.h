@@ -15,30 +15,30 @@
 /////////////////////////////////////////////////////////////////////////////
 // CCommandLine
 
-class CCommandLine : 
-	public IDispatchImpl<ICommandLine, &IID_ICommandLine, &LIBID_winemacs>, 
-	public ISupportErrorInfo,
-	public CComObjectRoot,
-	public CComCoClass<CCommandLine,&CLSID_CommandLine>
+class CCommandLine :
+    public IDispatchImpl<ICommandLine, &IID_ICommandLine, &LIBID_winemacs>,
+    public ISupportErrorInfo,
+    public CComObjectRoot,
+    public CComCoClass<CCommandLine,&CLSID_CommandLine>
 {
 public:
-	CCommandLine() {}
+    CCommandLine() {}
 BEGIN_COM_MAP(CCommandLine)
-	COM_INTERFACE_ENTRY(IDispatch)
-	COM_INTERFACE_ENTRY(ICommandLine)
-	COM_INTERFACE_ENTRY(ISupportErrorInfo)
+    COM_INTERFACE_ENTRY(IDispatch)
+    COM_INTERFACE_ENTRY(ICommandLine)
+    COM_INTERFACE_ENTRY(ISupportErrorInfo)
 END_COM_MAP()
-DECLARE_NOT_AGGREGATABLE(CCommandLine) 
+DECLARE_NOT_AGGREGATABLE(CCommandLine)
 
 DECLARE_REGISTRY(CCommandLine, _T("BarryScottEmacs.CommandLine.1"), _T("BarryScottEmacs.CommandLine"), IDS_COMMANDLINE_DESC, THREADFLAGS_BOTH)
 // ISupportsErrorInfo
-	STDMETHOD(InterfaceSupportsErrorInfo)(REFIID riid);
+    STDMETHOD(InterfaceSupportsErrorInfo)(REFIID riid);
 
 // ICommandLine
 public:
-	STDMETHOD(GetProcessId)(long *id);
-	STDMETHOD(SetProcessName)(BSTR process_name);
-	STDMETHOD(CommandLine)(BSTR current_working_directory,  BSTR command_line);
+    STDMETHOD(GetProcessId)(long *id);
+    STDMETHOD(SetProcessName)(BSTR process_name);
+    STDMETHOD(CommandLine)(BSTR current_working_directory,  BSTR command_line);
 
 };
 

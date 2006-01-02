@@ -1,13 +1,13 @@
-/****************************** Module Header ******************************\
-* Module Name: async.h
-*
-* Copyright (c) 1991, Microsoft Corporation
-*
-* Defines types and functions used by async module.
-*
-* History:
-* 06-29-92 Davidc       Created.
-\***************************************************************************/
+//
+// Module Name: async.h
+//
+// Copyright (c) 1991, Microsoft Corporation
+//
+// Defines types and functions used by async module.
+//
+// History:
+// 06-29-92 Davidc       Created.
+//
 
 
 //

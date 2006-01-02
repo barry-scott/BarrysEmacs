@@ -1,13 +1,13 @@
-// 
-//	emacs.h
-// 
-//	Copyright 1986-2002 Barry A. Scott 
+//
+//    emacs.h
+//
+//    Copyright 1986-2002 Barry A. Scott
 //
 
 #include <emacsutl.h>
 
 //
-//	classes that need forward declaration
+//    classes that need forward declaration
 //
 class EmacsInitialisation;
 class EmacsBuffer;
@@ -27,12 +27,12 @@ class VariableName;
 class EmacsString;
 
 //
-//	typedefs for fundemental types
+//    typedefs for fundemental types
 //
 typedef unsigned char EmacsChar_t;
 
 //
-//	externs that need forward declaration
+//    externs that need forward declaration
 //
 extern EmacsBuffer *bf_cur;
 
@@ -41,8 +41,8 @@ extern EmacsBuffer *bf_cur;
 //
 const int must_be_zero( 0 );
 
-// 
-//	structure definitions 
+//
+//    structure definitions
 //
 #include <emobject.h>
 #include <emexcept.h>
@@ -74,24 +74,24 @@ const int must_be_zero( 0 );
 #include <getdb.h>
 #include <CommandLine.h>
 
-// 
-//	declare routines as external 
+//
+//    declare routines as external
 //
 #include <em_rtn.h>
 
-// 
-//	declare variables as external 
+//
+//    declare variables as external
 //
 #include <em_var.h>
 
 //
-//	macros and inline fucntions
+//    macros and inline fucntions
 //
 #include <em_mac.h>
 
 
 //
-//	Save class definitions
+//    Save class definitions
 //
 #include <em_util.h>
 

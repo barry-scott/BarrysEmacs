@@ -1,13 +1,12 @@
-/****************************** Module Header ******************************\
-* Module Name: pipe.h
-*
-* Copyright (c) 1991, Microsoft Corporation
-*
-* Defines functions exported by pipe.c
-*
-* History:
-* 06-29-92 Davidc       Created.
-\***************************************************************************/
+// Module Name: pipe.h
+//
+// Copyright (c) 1991, Microsoft Corporation
+//
+// Defines functions exported by pipe.c
+//
+// History:
+// 06-29-92 Davidc       Created.
+
 
 
 //

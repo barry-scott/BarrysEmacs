@@ -1,8 +1,8 @@
 //
-//	emacsutl.h
-//	Copyright (c) 1996 Barry A. Scott
+//    emacsutl.h
+//    Copyright (c) 1996 Barry A. Scott
 //
-//	Contains the mandatory definitions to configure emacs code
+//    Contains the mandatory definitions to configure emacs code
 //
 #ifndef __EMACSUTL_H__
 #define __EMACSUTL_H__
@@ -14,12 +14,12 @@ extern void _dbg_msg( const EmacsString &msg );
 
 #if defined( _MSC_VER )
 // control the warning messages of the compiler
-#pragma warning( disable : 4511 )	// "class" copy constructor could not be generated
-#pragma warning( disable : 4512 )	// "class" assignment operator could not be generated
-#pragma warning( disable : 4237 )	// nonstandard extension used : 'true' keyword is reserved for future use
-#pragma warning( disable : 4514 )	// "func" : unreferenced inline function has been removed
-#pragma warning( disable : 4711 )	// Function "x" selected for automatic inline expansion
-#pragma warning( disable : 4290 )	// C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+#pragma warning( disable : 4511 )    // "class" copy constructor could not be generated
+#pragma warning( disable : 4512 )    // "class" assignment operator could not be generated
+#pragma warning( disable : 4237 )    // nonstandard extension used : 'true' keyword is reserved for future use
+#pragma warning( disable : 4514 )    // "func" : unreferenced inline function has been removed
+#pragma warning( disable : 4711 )    // Function "x" selected for automatic inline expansion
+#pragma warning( disable : 4290 )    // C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
 #endif
 
 class EmacsString;
@@ -29,10 +29,10 @@ class EmacsString;
 #include <os.h>
 
 
-#include <em_gen.h>		// general constants used in emacs
+#include <em_gen.h>        // general constants used in emacs
 
 //
-//	extern functions of global interest
+//    extern functions of global interest
 //
 extern void fatal_error( int );
 extern void debug_invoke(void);
@@ -61,9 +61,9 @@ extern EmacsString get_config_env( const EmacsString & );
 #define ctl( ch ) (ch & 0x9f)
 
 inline int _str_len( const unsigned char *a )
-	{
-	return strlen( s_str( a ) );
-	}
+{
+    return strlen( s_str( a ) );
+}
 
 #define _str_cat( a, b ) u_str( strcat( s_str( a ), s_str( b ) ) )
 #define _str_chr( a, b ) u_str( strchr( s_str( a ), b ) )
@@ -75,20 +75,20 @@ inline int _str_len( const unsigned char *a )
 #define _str_nicmp( a, b, c ) emacs_strnicmp( a, b, c )
 #define _str_ncpy( a, b, c ) u_str( strncpy( s_str( a ), s_str( b ), c ) )
 #define _str_ncat( a, b, c ) u_str( strncat( s_str( a ), s_str( b ), c ) )
-#define	_str_str( a, b ) u_str( strstr( s_str( a ), s_str( b ) ) )
+#define    _str_str( a, b ) u_str( strstr( s_str( a ), s_str( b ) ) )
 #define _str_lwr( a ) emacs_strlwr( a )
 #define _str_upr( a ) emacs_strupr( a )
 
 # if DBG_ALLOC_CHECK
-#  define	EMACS_MALLOC(a,t)	emacs_malloc(a,t,THIS_FILE,__LINE__)
-#  define	EMACS_FREE(a)		emacs_free(a)
+#  define    EMACS_MALLOC(a,t)    emacs_malloc(a,t,THIS_FILE,__LINE__)
+#  define    EMACS_FREE(a)        emacs_free(a)
 
-#  define	EMACS_REALLOC(a,b,t)	emacs_realloc(a,b,t,THIS_FILE,__LINE__)
+#  define    EMACS_REALLOC(a,b,t)    emacs_realloc(a,b,t,THIS_FILE,__LINE__)
 # else
-#  define	EMACS_MALLOC(a,t)	emacs_malloc(a,t)
-#  define	EMACS_FREE(a)		emacs_free(a)
+#  define    EMACS_MALLOC(a,t)    emacs_malloc(a,t)
+#  define    EMACS_FREE(a)        emacs_free(a)
 
-#  define	EMACS_REALLOC(a,b,t)	emacs_realloc(a,b,t)
+#  define    EMACS_REALLOC(a,b,t)    emacs_realloc(a,b,t)
 # endif
 
 #define realloc_ustr(a,b) ((unsigned char *)EMACS_REALLOC(a,b,malloc_type_char))
@@ -96,22 +96,22 @@ inline int _str_len( const unsigned char *a )
 #define malloc_ustr( i ) ((unsigned char *)EMACS_MALLOC( i, malloc_type_char ))
 
 #ifdef __cplusplus
-# define PNOTUSED(arg) /* arg */
+# define PNOTUSED(arg) // arg
 # ifdef min
 #  undef min
 # endif
 inline int min( int a, int b )
-	{
-	return a < b ? a : b;
-	}
+{
+    return a < b ? a : b;
+}
 
 # ifdef max
 #  undef max
 # endif
 inline int max( int a, int b )
-	{
-	return a > b ? a : b;
-	}
+{
+    return a > b ? a : b;
+}
 #else
 # define PNOTUSED(arg) arg
 # ifndef min
@@ -124,27 +124,27 @@ inline int max( int a, int b )
 
 #endif
 //
-//	Use this class's constructor to
-//	initialise any subsystem required for
-//	the correct construction of other global objects.
+//    Use this class's constructor to
+//    initialise any subsystem required for
+//    the correct construction of other global objects.
 //
 //
 class EmacsInitialisation
-	{
+{
 public:
-	EmacsInitialisation( const char *date_and_time, const char *file_name );
-	virtual ~EmacsInitialisation();
+    EmacsInitialisation( const char *date_and_time, const char *file_name );
+    virtual ~EmacsInitialisation();
 
-	// hook for operating system specific init
-	// in the very earliest stage of process startup
-	static void os_specific_init();
+    // hook for operating system specific init
+    // in the very earliest stage of process startup
+    static void os_specific_init();
 
-	static void setup_version_string();
+    static void setup_version_string();
 
-	static bool init_done;
+    static bool init_done;
 
-	static time_t most_recent_built_module;
-	};
+    static time_t most_recent_built_module;
+};
 
 
 #endif // __EMACSUTL_H__

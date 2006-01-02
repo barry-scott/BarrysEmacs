@@ -1,22 +1,21 @@
-/****************************** Module Header ******************************\
-* Module Name: session.h
-*
-* Copyright (c) 1991, Microsoft Corporation
-*
-* Remote shell session module header file
-*
-* History:
-* 06-28-92 Davidc       Created.
-\***************************************************************************/
+// Module Name: session.h
+//
+// Copyright (c) 1991, Microsoft Corporation
+//
+// Remote shell session module header file
+//
+// History:
+// 06-28-92 Davidc       Created.
+
 
 inline void MyCloseHandle(HANDLE Handle, const char *handle_name)
-	{
+{
         if (CloseHandle(Handle) == FALSE)
-		{
-		_dbg_msg( FormatString("Close Handle failed for <%s>, error = %d\n") << handle_name << GetLastError() );
-		emacs_assert(FALSE);
-		}
-	}
+    {
+        _dbg_msg( FormatString("Close Handle failed for <%s>, error = %d\n") << handle_name << GetLastError() );
+        emacs_assert(FALSE);
+    }
+}
 
 const int SHELL_BUFFER_SIZE = 1000;
 

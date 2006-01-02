@@ -68,7 +68,7 @@ private:
     RegularExpressionTerm *parse_group_contents( EmacsStringStream &pattern );
 
     RegularExpressionTerm *m_expression;
-    
+
     bool m_case_fold;        // true if case fold for this search is enabled
 
     // make private to prevent use

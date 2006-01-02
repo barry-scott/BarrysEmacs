@@ -1,7 +1,7 @@
-//	Copyright 1985-1995
-//		Barry A. Scott
+//    Copyright 1985-1995
+//        Barry A. Scott
 //
-//	macros required to access Emacs data structures
+//    macros required to access Emacs data structures
 //
 
 inline int interactive() { return macro_replay_next < 0 && cur_exec == NULL; }
@@ -11,24 +11,24 @@ inline int interactive() { return macro_replay_next < 0 && cur_exec == NULL; }
 // have to be calculated
 //
 inline int cur_col()
-	{
-	if( col_valid )
-		return dot_col;
-	else
-		return calc_col();
-	}
+{
+    if( col_valid )
+        return dot_col;
+    else
+        return calc_col();
+}
 
 //
 // dot should ONLY be given a value by calling set_dot(new) -- it ensures
 // that all associated bookkeeping is done.
 //
 inline int set_dot( int n )
-	{
-	if( input_mode == 1 ) gui_input_mode_set_dot( n );
-	col_valid = 0;
-	dot = n;
-	return n;
-	}
+{
+    if( input_mode == 1 ) gui_input_mode_set_dot( n );
+    col_valid = 0;
+    dot = n;
+    return n;
+}
 
 //
 // dot should be moved left or right using the following macros -- they
@@ -36,19 +36,19 @@ inline int set_dot( int n )
 // the new valid of dot: you have to do that.
 //
 inline void dot_right( int n )
-	{
-	set_dot( dot + n );
-	}
+{
+    set_dot( dot + n );
+}
 
 inline void dot_left( int n )
-	{
-	set_dot( dot - n );
-	}
+{
+    set_dot( dot - n );
+}
 
 inline int control_character( int c)
-	{
-	return (c & 0x7F) < ' ' || (c & 0x7f) == 0x7F;
-	}
+{
+    return (c & 0x7F) < ' ' || (c & 0x7f) == 0x7F;
+}
 
 //
 // the functions used by the macros above

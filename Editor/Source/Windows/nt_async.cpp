@@ -1,21 +1,21 @@
-/****************************** Module Header ******************************\
-* Module Name: async.c
-*
-* Copyright (c) 1991, Microsoft Corporation
-*
-* This module implements asynchronous I/O on file handles in a more
-* useful way than provided for by Win32 apis.
-*
-* This module provides 2 main apis : ReadFileAsync, WriteFileAsync.
-* These apis take a handle to an async object and always return
-* immediately without waiting for the I/O to complete. An event
-* can be queried from the async object and used to wait for completion.
-* When this event is signalled, the I/O result can be queried from
-* the async object.
-*
-* History:
-* 06-29-92 Davidc       Created.
-\***************************************************************************/
+//
+//Module Name: async.c
+//
+//Copyright (c) 1991, Microsoft Corporation
+//
+//This module implements asynchronous I/O on file handles in a more
+//useful way than provided for by Win32 apis.
+//
+//This module provides 2 main apis : ReadFileAsync, WriteFileAsync.
+//These apis take a handle to an async object and always return
+//immediately without waiting for the I/O to complete. An event
+//can be queried from the async object and used to wait for completion.
+//When this event is signalled, the I/O result can be queried from
+//the async object.
+//
+//History:
+//06-29-92 Davidc       Created.
+
 
 #include <emacs.h>
 

@@ -178,7 +178,7 @@ int replace_string_helper( EmacsSearch::sea_type RE, const EmacsString &prompt )
         if( dot == np )
         {
             set_dot( dot + 1 );
-            
+
             np = sea_glob.search( 1, dot );
         }
 #endif
@@ -256,7 +256,7 @@ int region_around_match_command( void )
     region_around_match( n );
     return 0;
 }
-    
+
 int region_around_match( int n )
 {
     if( n < 0 || n > sea_glob.get_number_of_groups() )

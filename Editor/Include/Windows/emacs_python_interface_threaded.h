@@ -1,76 +1,76 @@
 //
-//	Emacs_python_interface.h
+//    Emacs_python_interface.h
 //
-//	Copyright (c) 1999 Barry A. Scott
+//    Copyright (c) 1999 Barry A. Scott
 //
 class EmacsPythonCommand;
 
 class EmacsPythonThread: public EmacsThread
-	{
+{
 public:
-	EmacsPythonThread( EmacsProcess *proc );
-	virtual ~EmacsPythonThread();
+    EmacsPythonThread( EmacsProcess *proc );
+    virtual ~EmacsPythonThread();
 
-	unsigned run();
+    unsigned run();
 
-	void writeToConsole( const EmacsString &string );
+    void writeToConsole( const EmacsString &string );
 
-	// client uses these functions
-	bool sendCommandToPython( EmacsPythonCommand *command );
-	bool getResultFromPython( EmacsPythonCommand *command );
+    // client uses these functions
+    bool sendCommandToPython( EmacsPythonCommand *command );
+    bool getResultFromPython( EmacsPythonCommand *command );
 
-	// server uses these functions
-	bool getCommandFromEmacs( EmacsPythonCommand **command );
-	bool sendResultToEmacs( EmacsPythonCommand *command );
+    // server uses these functions
+    bool getCommandFromEmacs( EmacsPythonCommand **command );
+    bool sendResultToEmacs( EmacsPythonCommand *command );
 
 private:
-	HANDLE command_event;			// the owner is allowed to get the command
-	HANDLE result_event;			// the owner is allowed to get the result
+    HANDLE command_event;            // the owner is allowed to get the command
+    HANDLE result_event;            // the owner is allowed to get the result
 
-	EmacsPythonCommand *the_command;
-	EmacsProcess *proc;
+    EmacsPythonCommand *the_command;
+    EmacsProcess *proc;
 
-	FILE *py_stdin;
-	FILE *py_stdout;
-	FILE *py_stderr;
-	};
+    FILE *py_stdin;
+    FILE *py_stdout;
+    FILE *py_stderr;
+};
 
 
 class EmacsPythonCommand
-	{
+{
 public:
-	EmacsPythonCommand();
-	virtual ~EmacsPythonCommand();
+    EmacsPythonCommand();
+    virtual ~EmacsPythonCommand();
 
-	virtual bool executeCommand() = 0;	
+    virtual bool executeCommand() = 0;
 
-	
 
-	bool failed() const;
-	const EmacsString &failureReason() const;
-	const Expression &getResult() const;
 
-	void commandSucceeded( const Expression &result );
-	void commandFailed( const EmacsString &reason );
+    bool failed() const;
+    const EmacsString &failureReason() const;
+    const Expression &getResult() const;
+
+    void commandSucceeded( const Expression &result );
+    void commandFailed( const EmacsString &reason );
 
 protected:
-	void runPythonStringInsideTryExcept( const EmacsString &command );
+    void runPythonStringInsideTryExcept( const EmacsString &command );
 
 private:
-	bool command_failed;
-	EmacsString failure_reason;
-	Expression result;
-	};
+    bool command_failed;
+    EmacsString failure_reason;
+    Expression result;
+};
 
 
 class EmacsPythonRecursionBarrier
-	{
+{
 public:
-	EmacsPythonRecursionBarrier();
-	virtual ~EmacsPythonRecursionBarrier();
+    EmacsPythonRecursionBarrier();
+    virtual ~EmacsPythonRecursionBarrier();
 
-	bool barrierClosed();
+    bool barrierClosed();
 private:
-	bool owner;
-	static HANDLE barrier_mutex;
-	};
+    bool owner;
+    static HANDLE barrier_mutex;
+};

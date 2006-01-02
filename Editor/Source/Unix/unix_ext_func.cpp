@@ -1,7 +1,7 @@
 //
-//	unix_ext_func.cpp
+//    unix_ext_func.cpp
 //
-//	Copyright (c) 1996-2003 Barry A. Scott
+//    Copyright (c) 1996-2003 Barry A. Scott
 //
 #include <emacs.h>
 
@@ -10,49 +10,49 @@ static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
 class EmacsExternImageOsInfo_ForUnix: public EmacsExternImageOsInfo
-	{
+{
 public:
-	EmacsExternImageOsInfo_ForUnix();
-	~EmacsExternImageOsInfo_ForUnix();
+    EmacsExternImageOsInfo_ForUnix();
+    ~EmacsExternImageOsInfo_ForUnix();
 
-	bool isLoaded();
-	bool load( const EmacsString &file );
-	bool unload();
-	void *symbolValue( const EmacsString &symbol );
+    bool isLoaded();
+    bool load( const EmacsString &file );
+    bool unload();
+    void *symbolValue( const EmacsString &symbol );
 
-	EmacsString	file;
-	};
+    EmacsString    file;
+};
 
 extern EmacsExternImageOsInfo *make_EmacsExternImageOsInfo()
-	{
-	return new EmacsExternImageOsInfo_ForUnix();
-	}
+{
+    return new EmacsExternImageOsInfo_ForUnix();
+}
 
 EmacsExternImageOsInfo_ForUnix::EmacsExternImageOsInfo_ForUnix()
-	{
-	}
+{
+}
 
 EmacsExternImageOsInfo_ForUnix::~EmacsExternImageOsInfo_ForUnix()
-	{
-	}
+{
+}
 
 bool EmacsExternImageOsInfo_ForUnix::isLoaded()
-	{
-	return false;
-	}
+{
+    return false;
+}
 
 bool EmacsExternImageOsInfo_ForUnix::load( const EmacsString &_file )
-	{
-	file = _file;
-	return false;
-	}
+{
+    file = _file;
+    return false;
+}
 
 bool EmacsExternImageOsInfo_ForUnix::unload()
-	{
-	return false;
-	}
+{
+    return false;
+}
 
 void *EmacsExternImageOsInfo_ForUnix::symbolValue( const EmacsString &symbol )
-	{
-	return NULL;
-	}
+{
+    return NULL;
+}

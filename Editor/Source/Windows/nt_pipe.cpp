@@ -1,14 +1,14 @@
-/****************************** Module Header ******************************\
-* Module Name: pipe.c
-*
-* Copyright (c) 1991, Microsoft Corporation
-*
-* This module implements a version of CreatePipe that allows
-* control over the file flags. e.g. FILE_FLAG_OVERLAPPED
-*
-* History:
-* 06-29-92 Davidc       Created.
-\***************************************************************************/
+//
+//Module Name: pipe.c
+//
+//Copyright (c) 1991, Microsoft Corporation
+//
+//This module implements a version of CreatePipe that allows
+//control over the file flags. e.g. FILE_FLAG_OVERLAPPED
+//
+//History:
+//06-29-92 Davidc       Created.
+
 
 #include <emacs.h>
 

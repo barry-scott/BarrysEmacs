@@ -1,135 +1,135 @@
 //
-//	Copyright (c) 1995 Barry A. Scott
+//    Copyright (c) 1995 Barry A. Scott
 //
-//	emacs exceptions header
+//    emacs exceptions header
 //
 
 extern void debug_exception(void);
 
 class EmacsException
-	{
+{
 public:
-	EmacsException() : _code(0)
-		{
-		debug_exception();
-		}
-	virtual ~EmacsException() { }
+    EmacsException() : _code(0)
+    {
+        debug_exception();
+    }
+    virtual ~EmacsException() { }
 private:
-	int _code;
-	};
+    int _code;
+};
 
 class EmacsInternalError
-	{
+{
 public:
-	EmacsInternalError( const char *reason ) : error_reason( reason ) { }
-	virtual ~EmacsInternalError() { }
-	const char *error_reason;
-	};
+    EmacsInternalError( const char *reason ) : error_reason( reason ) { }
+    virtual ~EmacsInternalError() { }
+    const char *error_reason;
+};
 
 class EmacsExceptionTextError : public EmacsException
-	{
+{
 public:
-	EmacsExceptionTextError( const char *text )
-		: error_text( text )
-		{ }
+    EmacsExceptionTextError( const char *text )
+        : error_text( text )
+    { }
 
-	const char *error_text;
-	};
+    const char *error_text;
+};
 
 //
-//	Expression handling expressions
+//    Expression handling expressions
 //
 class EmacsExceptionExpression : public EmacsException
-	{
+{
 public:
-	EmacsExceptionExpression() : EmacsException() { }
-	};
+    EmacsExceptionExpression() : EmacsException() { }
+};
 
 class EmacsExceptionExpressionNotInteger : public EmacsExceptionExpression
-	{
+{
 public:
-	EmacsExceptionExpressionNotInteger() : EmacsExceptionExpression() { }
-	};
+    EmacsExceptionExpressionNotInteger() : EmacsExceptionExpression() { }
+};
 
 class EmacsExceptionExpressionNotString : public EmacsExceptionExpression
-	{
+{
 public:
-	EmacsExceptionExpressionNotString() { }
-	};
+    EmacsExceptionExpressionNotString() { }
+};
 
 class EmacsExceptionExpressionNotMarker : public EmacsExceptionExpression
-	{
+{
 public:
-	EmacsExceptionExpressionNotMarker() { };
-	};
+    EmacsExceptionExpressionNotMarker() { };
+};
 
 class EmacsExceptionExpressionNotArray : public EmacsExceptionExpression
-	{
+{
 public:
-	EmacsExceptionExpressionNotArray() { };
-	};
+    EmacsExceptionExpressionNotArray() { };
+};
 
 class EmacsExceptionExpressionNotWindows : public EmacsExceptionExpression
-	{
+{
 public:
-	EmacsExceptionExpressionNotWindows() { };
-	};
+    EmacsExceptionExpressionNotWindows() { };
+};
 
 //
-//	Variable handling exceptions
+//    Variable handling exceptions
 //
 class EmacsExceptionVariable : public EmacsException
-	{
+{
 public:
-	EmacsExceptionVariable() { }
-	};
+    EmacsExceptionVariable() { }
+};
 
 class EmacsExceptionVariableReadOnly : public EmacsExceptionVariable
-	{
+{
 public:
-	EmacsExceptionVariableReadOnly() { }
-	};
+    EmacsExceptionVariableReadOnly() { }
+};
 
 class EmacsExceptionVariablePositive : public EmacsExceptionVariable
-	{
+{
 public:
-	EmacsExceptionVariablePositive() { }
-	};
+    EmacsExceptionVariablePositive() { }
+};
 
 class EmacsExceptionVariableBoolean : public EmacsExceptionVariable
-	{
+{
 public:
-	EmacsExceptionVariableBoolean() { }
-	};
+    EmacsExceptionVariableBoolean() { }
+};
 
 class EmacsExceptionVariableStringTooLong : public EmacsExceptionVariable
-	{
+{
 public:
-	EmacsExceptionVariableStringTooLong() { }
-	};
+    EmacsExceptionVariableStringTooLong() { }
+};
 
 class EmacsExceptionVariableTabOutOfRange : public EmacsExceptionVariable
-	{
+{
 public:
-	EmacsExceptionVariableTabOutOfRange() { }
-	};
+    EmacsExceptionVariableTabOutOfRange() { }
+};
 
 class EmacsExceptionVariableGreaterThanRange : public EmacsExceptionVariable
-	{
+{
 public:
-	EmacsExceptionVariableGreaterThanRange( int _range ) : range( _range ) { }
-	int range;
-	};
+    EmacsExceptionVariableGreaterThanRange( int _range ) : range( _range ) { }
+    int range;
+};
 
 class EmacsExceptionVariableLessThanRange : public EmacsExceptionVariable
-	{
+{
 public:
-	EmacsExceptionVariableLessThanRange( int _range ) : range( _range ) { }
-	int range;
-	};
+    EmacsExceptionVariableLessThanRange( int _range ) : range( _range ) { }
+    int range;
+};
 
 class EmacsExceptionUserInputAbort : public EmacsException
-	{
+{
 public:
-	EmacsExceptionUserInputAbort() { }
-	};
+    EmacsExceptionUserInputAbort() { }
+};

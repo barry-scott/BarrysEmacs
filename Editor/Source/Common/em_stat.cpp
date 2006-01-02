@@ -1,8 +1,8 @@
 //
-//	em_stat.cpp
+//    em_stat.cpp
 //
-//	Copyright (c) 1996 Barry A. Scott
-//	 5-Feb-1996
+//    Copyright (c) 1996 Barry A. Scott
+//     5-Feb-1996
 //
 
 #include <emacsutl.h>
@@ -13,24 +13,24 @@
 
 
 EmacsFileStat::EmacsFileStat()
-	{ }
+{ }
 
 EmacsFileStat::~EmacsFileStat()
-	{ }
+{ }
 
 bool EmacsFileStat::stat( const char *file_name )
-	{
-	int status = ::stat( file_name, &uu.stat_buf );
-	return status == 0;
-	}
+{
+    int status = ::stat( file_name, &uu.stat_buf );
+    return status == 0;
+}
 
 bool EmacsFileStat::stat( FILE *file )
-	{
-	return stat( fileno( file ) );
-	}
+{
+    return stat( fileno( file ) );
+}
 
 bool EmacsFileStat::stat( int fd )
-	{
-	int status = ::fstat( fd, &uu.stat_buf );
-	return status == 0;
-	}
+{
+    int status = ::fstat( fd, &uu.stat_buf );
+    return status == 0;
+}

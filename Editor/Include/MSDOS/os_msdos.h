@@ -1,9 +1,9 @@
-/*
- *      os_msdos.h
- */
+//
+//      os_msdos.h
+//
 #define BROADCAST 0
 #define CHECK_POINTER_SUPPORT   0
-/* #define SUBPROCESSES 1 */
+// #define SUBPROCESSES 1
 #define DB 1
 #define SAVE_ENVIRONMENT
 
@@ -24,7 +24,7 @@ extern unsigned char *get_config_env( unsigned char *entry );
 
 # define align_int (sizeof (int) - 1)
 
-/* debug flag bits */
+// debug flag bits
 #define DBG_DUMPTOFILE  0x0001
 #define DBG_ALLOC_CHECK 0x0002
 #define DBG_EXEC        0x0004
@@ -51,7 +51,7 @@ extern unsigned char *get_config_env( unsigned char *entry );
 
 # define MAXNAMLEN      (8+1+3)
 # define MAXPATHLEN     63
-# define ROOT_CHAR_POS  2       /* root is "x:\\" */
+# define ROOT_CHAR_POS  2       // root is "x:\\"
 
 # define checkpoint_extension ".CKP"
 
@@ -62,9 +62,9 @@ extern unsigned char *get_config_env( unsigned char *entry );
 extern unsigned char *get_tmp_path(void);
 #define EMACS_TMP_PATH          get_tmp_path()
 #ifdef MLL_DB
-#define	EMACS_DB_DEFAULT	u_str(".mll")
+#define    EMACS_DB_DEFAULT    u_str(".mll")
 #else
-#define	EMACS_DB_DEFAULT	u_str("")
+#define    EMACS_DB_DEFAULT    u_str("")
 #endif
 #define TEXT_MODE "t"
 #define BINARY_MODE "b"
