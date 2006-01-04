@@ -3,8 +3,6 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="editor"
-	SccProjectName="&quot;$/EmacsV7/Editor&quot;, ZWAAAAAA"
-	SccLocalPath=".."
 	Keyword="MFCProj">
 	<Platforms>
 		<Platform
@@ -23,7 +21,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="..\..\Editor\Include\Common,..\..\Editor\Include\Windows"
+				AdditionalIncludeDirectories="..\..\Editor\Include\Common;..\..\Editor\Include\Windows;..\..\Python\pycxx_5_3_5;c:\Python24\include"
 				PreprocessorDefinitions="NDEBUG;_WINDOWS;WIN32;_NT;__has_bool__"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -43,15 +41,15 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib largeint.lib winmm.lib Python_CXX.lib python22.lib Delayimp.lib"
+				AdditionalDependencies="wsock32.lib largeint.lib winmm.lib Python_CXX.lib python24.lib Delayimp.lib"
 				ShowProgress="2"
 				OutputFile=".\Release/editor.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\Release\_Lib,..\Python_CXX_Lib\Release"
+				AdditionalLibraryDirectories="..\..\Release\_Lib;..\Python_CXX_Lib\Release;C:\Python24\libs"
 				IgnoreAllDefaultLibraries="FALSE"
-				IgnoreDefaultLibraryNames="python22_d"
-				DelayLoadDLLs="python22.dll"
+				IgnoreDefaultLibraryNames="python24_d"
+				DelayLoadDLLs="python24.dll"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Release/editor.pdb"
 				GenerateMapFile="TRUE"
@@ -133,7 +131,6 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -170,8 +167,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\Editor\Include\Common,..\..\Editor\Include\Windows"
-				PreprocessorDefinitions="_WINDOWS;WIN32;_NT;__has_bool__"
+				AdditionalIncludeDirectories="..\..\Editor\Include\Common;..\..\Editor\Include\Windows;..\..\Python\pycxx_5_3_5;c:\Python24\include"
+				PreprocessorDefinitions="_WINDOWS;WIN32;NDEBUG;_NT;__has_bool__"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="emacs.h"
@@ -189,20 +186,19 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/verbose:lib"
-				AdditionalDependencies="wsock32.lib largeint.lib winmm.lib Python_CXX.lib python22_d.lib Delayimp.lib"
+				AdditionalDependencies="wsock32.lib largeint.lib winmm.lib Python_CXX.lib python24.lib Delayimp.lib"
 				OutputFile=".\Debug/editor.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\Debug\_Lib,..\Python_CXX_Lib\Debug"
-				IgnoreDefaultLibraryNames="LIBC.lib,libcd.lib"
-				DelayLoadDLLs="python22_d.dll"
+				AdditionalLibraryDirectories="..\..\Debug\_Lib;..\Python_CXX_Lib\Debug;C:\Python24\libs"
+				IgnoreDefaultLibraryNames="LIBC.lib;libcd.lib;python24_d.lib"
+				DelayLoadDLLs="python24.dll"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/editor.pdb"
 				SubSystem="2"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
@@ -216,7 +212,6 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
 				Culture="2057"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -3040,16 +3035,16 @@
 				RelativePath="..\Sources\Windows\Resources\bmp00007.bmp">
 			</File>
 			<File
-				RelativePath="..\SOURCES\WINDOWS\RESOURCES\BMP16175.BMP">
-			</File>
-			<File
 				RelativePath="..\Sources\Windows\Resources\bmp16175.bmp">
 			</File>
 			<File
-				RelativePath="..\SOURCES\WINDOWS\RESOURCES\BMP24826.BMP">
+				RelativePath="..\SOURCES\WINDOWS\RESOURCES\BMP16175.BMP">
 			</File>
 			<File
 				RelativePath="..\Sources\Windows\Resources\bmp24826.bmp">
+			</File>
+			<File
+				RelativePath="..\SOURCES\WINDOWS\RESOURCES\BMP24826.BMP">
 			</File>
 			<File
 				RelativePath="..\SOURCES\WINDOWS\RESOURCES\BMP28043.BMP">
@@ -3082,10 +3077,10 @@
 				RelativePath="..\Sources\Windows\Resources\toolbar_.bmp">
 			</File>
 			<File
-				RelativePath="..\SOURCES\WINDOWS\RESOURCES\toolbar_build.bmp">
+				RelativePath="..\Sources\Windows\Resources\toolbar_build.bmp">
 			</File>
 			<File
-				RelativePath="..\Sources\Windows\Resources\toolbar_build.bmp">
+				RelativePath="..\SOURCES\WINDOWS\RESOURCES\toolbar_build.bmp">
 			</File>
 			<File
 				RelativePath="..\SOURCES\WINDOWS\RESOURCES\TOOLBAR_CASE.BMP">
@@ -3094,16 +3089,16 @@
 				RelativePath="..\Sources\Windows\Resources\toolbar_case.bmp">
 			</File>
 			<File
-				RelativePath="..\SOURCES\WINDOWS\RESOURCES\TOOLBAR_EDIT.BMP">
-			</File>
-			<File
 				RelativePath="..\Sources\Windows\Resources\toolbar_edit.bmp">
 			</File>
 			<File
-				RelativePath="..\SOURCES\WINDOWS\RESOURCES\TOOLBAR_FILE.BMP">
+				RelativePath="..\SOURCES\WINDOWS\RESOURCES\TOOLBAR_EDIT.BMP">
 			</File>
 			<File
 				RelativePath="..\Sources\Windows\Resources\toolbar_file.bmp">
+			</File>
+			<File
+				RelativePath="..\SOURCES\WINDOWS\RESOURCES\TOOLBAR_FILE.BMP">
 			</File>
 			<File
 				RelativePath="..\SOURCES\WINDOWS\RESOURCES\TOOLBAR_MACRO.BMP">
@@ -3112,16 +3107,16 @@
 				RelativePath="..\Sources\Windows\Resources\toolbar_macro.bmp">
 			</File>
 			<File
-				RelativePath="..\SOURCES\WINDOWS\RESOURCES\TOOLBAR_REGION.BMP">
-			</File>
-			<File
 				RelativePath="..\Sources\Windows\Resources\toolbar_region.bmp">
 			</File>
 			<File
-				RelativePath="..\SOURCES\WINDOWS\RESOURCES\toolbar_search.bmp">
+				RelativePath="..\SOURCES\WINDOWS\RESOURCES\TOOLBAR_REGION.BMP">
 			</File>
 			<File
 				RelativePath="..\Sources\Windows\Resources\toolbar_search.bmp">
+			</File>
+			<File
+				RelativePath="..\SOURCES\WINDOWS\RESOURCES\toolbar_search.bmp">
 			</File>
 			<File
 				RelativePath="..\SOURCES\WINDOWS\RESOURCES\toolbar_tools.bmp">
@@ -3130,16 +3125,16 @@
 				RelativePath="..\Sources\Windows\Resources\toolbar_tools.bmp">
 			</File>
 			<File
-				RelativePath="..\SOURCES\WINDOWS\RESOURCES\TOOLBAR_VIEW.BMP">
-			</File>
-			<File
 				RelativePath="..\Sources\Windows\Resources\toolbar_view.bmp">
 			</File>
 			<File
-				RelativePath="..\SOURCES\WINDOWS\RESOURCES\TOOLBAR_WINDOW.BMP">
+				RelativePath="..\SOURCES\WINDOWS\RESOURCES\TOOLBAR_VIEW.BMP">
 			</File>
 			<File
 				RelativePath="..\Sources\Windows\Resources\toolbar_window.bmp">
+			</File>
+			<File
+				RelativePath="..\SOURCES\WINDOWS\RESOURCES\TOOLBAR_WINDOW.BMP">
 			</File>
 			<File
 				RelativePath="..\Sources\Windows\Resources\win_doc.ico">

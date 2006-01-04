@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /Zi /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /FR /YX /FD /c
+# ADD CPP /nologo /MD /W3 /GX /Zi /O2 /I "c:\python23\include" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /FR /YX /FD /c
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -85,15 +85,15 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE="..\..\PyCXX\Src\cxx_extensions.cxx"
+SOURCE="..\..\Python\pyCXX_5_3_5\Src\cxx_extensions.cxx"
 
 !IF  "$(CFG)" == "Python_CXX_Lib - Win32 Release"
 
-# ADD CPP /I "..\..\PyCXX" /I "..\..\Release\_Include" /D "PY_WIN32_DELAYLOAD_PYTHON_DLL" /FR
+# ADD CPP /I "..\..\Python\pyCXX_5_3_5" /I "..\..\Release\_Include" /D "PY_WIN32_DELAYLOAD_PYTHON_DLL" /FR
 
 !ELSEIF  "$(CFG)" == "Python_CXX_Lib - Win32 Debug"
 
-# ADD CPP /I "..\..\PyCXX" /I "..\..\Debug\_Include" /D "PY_WIN32_DELAYLOAD_PYTHON_DLL" /FR
+# ADD CPP /I "..\..\Python\pyCXX_5_3_5" /I "..\..\Debug\_Include" /D "PY_WIN32_DELAYLOAD_PYTHON_DLL" /FR
 # SUBTRACT CPP /YX
 
 !ENDIF 
@@ -101,15 +101,15 @@ SOURCE="..\..\PyCXX\Src\cxx_extensions.cxx"
 # End Source File
 # Begin Source File
 
-SOURCE="..\..\PyCXX\Src\cxxextensions.c"
+SOURCE="..\..\Python\pyCXX_5_3_5\Src\cxxextensions.c"
 
 !IF  "$(CFG)" == "Python_CXX_Lib - Win32 Release"
 
-# ADD CPP /I "..\..\PyCXX" /I "..\..\Release\_Include" /D "PY_WIN32_DELAYLOAD_PYTHON_DLL" /FR
+# ADD CPP /I "..\..\Python\pyCXX_5_3_5" /I "..\..\Release\_Include" /D "PY_WIN32_DELAYLOAD_PYTHON_DLL" /FR
 
 !ELSEIF  "$(CFG)" == "Python_CXX_Lib - Win32 Debug"
 
-# ADD CPP /I "..\..\PyCXX" /I "..\..\Debug\_Include" /D "PY_WIN32_DELAYLOAD_PYTHON_DLL" /FR
+# ADD CPP /I "..\..\Python\pyCXX_5_3_5" /I "..\..\Debug\_Include" /D "PY_WIN32_DELAYLOAD_PYTHON_DLL" /FR
 # SUBTRACT CPP /YX
 
 !ENDIF 
@@ -117,15 +117,15 @@ SOURCE="..\..\PyCXX\Src\cxxextensions.c"
 # End Source File
 # Begin Source File
 
-SOURCE="..\..\PyCXX\Src\cxxsupport.cxx"
+SOURCE="..\..\Python\pyCXX_5_3_5\Src\cxxsupport.cxx"
 
 !IF  "$(CFG)" == "Python_CXX_Lib - Win32 Release"
 
-# ADD CPP /I "..\..\PyCXX" /I "..\..\Release\_Include" /D "PY_WIN32_DELAYLOAD_PYTHON_DLL" /FR
+# ADD CPP /I "..\..\Python\pyCXX_5_3_5" /I "..\..\Release\_Include" /D "PY_WIN32_DELAYLOAD_PYTHON_DLL" /FR
 
 !ELSEIF  "$(CFG)" == "Python_CXX_Lib - Win32 Debug"
 
-# ADD CPP /I "..\..\PyCXX" /I "..\..\Debug\_Include" /D "PY_WIN32_DELAYLOAD_PYTHON_DLL" /FR
+# ADD CPP /I "..\..\Python\pyCXX_5_3_5" /I "..\..\Debug\_Include" /D "PY_WIN32_DELAYLOAD_PYTHON_DLL" /FR
 # SUBTRACT CPP /YX
 
 !ENDIF 
@@ -133,15 +133,15 @@ SOURCE="..\..\PyCXX\Src\cxxsupport.cxx"
 # End Source File
 # Begin Source File
 
-SOURCE="..\..\PyCXX\Src\IndirectPythonInterface.cxx"
+SOURCE="..\..\Python\pyCXX_5_3_5\Src\IndirectPythonInterface.cxx"
 
 !IF  "$(CFG)" == "Python_CXX_Lib - Win32 Release"
 
-# ADD CPP /I "..\..\PyCXX" /I "..\..\Release\_Include" /D "PY_WIN32_DELAYLOAD_PYTHON_DLL" /FR
+# ADD CPP /I "..\..\Python\pyCXX_5_3_5" /I "..\..\Release\_Include" /D "PY_WIN32_DELAYLOAD_PYTHON_DLL" /FR
 
 !ELSEIF  "$(CFG)" == "Python_CXX_Lib - Win32 Debug"
 
-# ADD CPP /I "..\..\PyCXX" /I "..\..\Debug\_Include" /D "PY_WIN32_DELAYLOAD_PYTHON_DLL" /FR
+# ADD CPP /I "..\..\Python\pyCXX_5_3_5" /I "..\..\Debug\_Include" /D "PY_WIN32_DELAYLOAD_PYTHON_DLL" /FR
 # SUBTRACT CPP /YX
 
 !ENDIF 

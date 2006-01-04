@@ -1485,7 +1485,8 @@ void CWinemacsView::t_update_line(  EmacsLinePtr old_line, EmacsLinePtr new_line
             {
                 int codepage = CP_ACP;
 //                codepage = 1251;
-                int rc = MultiByteToWideChar( codepage, 0, (const char *)&new_line->line_body[ col ], 1, &unicode_line[ col ], 1 );
+                //int rc = 
+                MultiByteToWideChar( codepage, 0, (const char *)&new_line->line_body[ col ], 1, &unicode_line[ col ], 1 );
 
                 //unicode_line[ col ] = line->line_body[ col ];
             }

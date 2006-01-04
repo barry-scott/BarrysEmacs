@@ -21,7 +21,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				AdditionalIncludeDirectories="C:\Python24\include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
@@ -49,7 +50,6 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -72,6 +72,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="C:\Python24\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				StringPooling="TRUE"
 				RuntimeLibrary="3"
@@ -120,13 +121,13 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
 			<File
-				RelativePath="..\..\Python\CXX-Bindings\CXX\Src\cxx_extensions.cxx">
+				RelativePath="..\..\Python\pycxx_5_3_5\Src\cxx_extensions.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
-						AdditionalIncludeDirectories="..\..\Python\CXX-Bindings\cxx,..\..\Debug\_Include"
+						AdditionalIncludeDirectories="..\..\Python\pycxx_5_3_5,..\..\Debug\_Include"
 						PreprocessorDefinitions="PY_WIN32_DELAYLOAD_PYTHON_DLL"
 						BasicRuntimeChecks="3"
 						UsePrecompiledHeader="0"
@@ -138,7 +139,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						AdditionalIncludeDirectories="..\..\Python\CXX-Bindings\cxx,..\..\Release\_Include"
+						AdditionalIncludeDirectories="..\..\Python\pycxx_5_3_5,..\..\Release\_Include"
 						PreprocessorDefinitions="PY_WIN32_DELAYLOAD_PYTHON_DLL"
 						RuntimeLibrary="2"
 						BrowseInformation="1"
@@ -146,13 +147,13 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\Python\CXX-Bindings\CXX\Src\cxxextensions.c">
+				RelativePath="..\..\Python\pycxx_5_3_5\Src\cxxextensions.c">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
-						AdditionalIncludeDirectories="..\..\Python\CXX-Bindings\cxx,..\..\Debug\_Include"
+						AdditionalIncludeDirectories="..\..\Python\pycxx_5_3_5,..\..\Debug\_Include"
 						PreprocessorDefinitions="PY_WIN32_DELAYLOAD_PYTHON_DLL"
 						BasicRuntimeChecks="3"
 						UsePrecompiledHeader="0"
@@ -164,7 +165,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						AdditionalIncludeDirectories="..\..\Python\CXX-Bindings\cxx,..\..\Release\_Include"
+						AdditionalIncludeDirectories="..\..\Python\pycxx_5_3_5,..\..\Release\_Include"
 						PreprocessorDefinitions="PY_WIN32_DELAYLOAD_PYTHON_DLL"
 						RuntimeLibrary="2"
 						BrowseInformation="1"
@@ -172,13 +173,13 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\Python\CXX-Bindings\CXX\Src\cxxsupport.cxx">
+				RelativePath="..\..\Python\pycxx_5_3_5\Src\cxxsupport.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
-						AdditionalIncludeDirectories="..\..\Python\CXX-Bindings\cxx,..\..\Debug\_Include"
+						AdditionalIncludeDirectories="..\..\Python\pycxx_5_3_5,..\..\Debug\_Include"
 						PreprocessorDefinitions="PY_WIN32_DELAYLOAD_PYTHON_DLL"
 						BasicRuntimeChecks="3"
 						UsePrecompiledHeader="0"
@@ -190,7 +191,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						AdditionalIncludeDirectories="..\..\Python\CXX-Bindings\cxx,..\..\Release\_Include"
+						AdditionalIncludeDirectories="..\..\Python\pycxx_5_3_5,..\..\Release\_Include"
 						PreprocessorDefinitions="PY_WIN32_DELAYLOAD_PYTHON_DLL"
 						RuntimeLibrary="2"
 						BrowseInformation="1"
@@ -198,13 +199,13 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\Python\CXX-Bindings\CXX\Src\IndirectPythonInterface.cxx">
+				RelativePath="..\..\Python\pycxx_5_3_5\Src\IndirectPythonInterface.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
-						AdditionalIncludeDirectories="..\..\Python\CXX-Bindings\cxx,..\..\Debug\_Include"
+						AdditionalIncludeDirectories="..\..\Python\pycxx_5_3_5,..\..\Debug\_Include"
 						PreprocessorDefinitions="PY_WIN32_DELAYLOAD_PYTHON_DLL"
 						BasicRuntimeChecks="3"
 						UsePrecompiledHeader="0"
@@ -216,7 +217,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						AdditionalIncludeDirectories="..\..\Python\CXX-Bindings\cxx,..\..\Release\_Include"
+						AdditionalIncludeDirectories="..\..\Python\pycxx_5_3_5,..\..\Release\_Include"
 						PreprocessorDefinitions="PY_WIN32_DELAYLOAD_PYTHON_DLL"
 						RuntimeLibrary="2"
 						BrowseInformation="1"

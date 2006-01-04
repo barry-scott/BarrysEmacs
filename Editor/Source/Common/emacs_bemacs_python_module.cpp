@@ -3,9 +3,20 @@
 //
 //    Copyright (c) 1999 Barry A. Scott
 //
+#if defined( _DEBUG )
+#error "_debug defined"
+#endif
+
 
 #include <emacs.h>
+
+#if defined( _DEBUG )
+#error "_debug defined"
+#endif
 #include <string_map.h>
+#if defined( _DEBUG )
+#error "_debug defined"
+#endif
 
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -14,11 +25,21 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 #ifdef EMACS_PYTHON_EXTENSION
 
 #include <nt_comm.h>
+#if defined( _DEBUG )
+#error "_debug defined"
+#endif
 #include <emacs_python_interface.h>
+#if defined( _DEBUG )
+#error "_debug defined"
+#endif
 
 // disable warning C4786: symbol greater than 255 character,
 // okay to ignore
 #pragma warning(disable: 4786)
+
+#if defined( _DEBUG )
+#error "_debug defined"
+#endif
 
 #include <python.h>
 
@@ -281,7 +302,6 @@ private:
     {
         throw Py::NameError( c_name );
 
-        return 0;
     }
 };
 
@@ -337,7 +357,6 @@ private:
     virtual int setattr( const char *c_name, Py::Object /*value*/ )
     {
         throw Py::NameError( c_name );
-        return 0;
     }
 
     //--------------------------------------------------------------------------------
@@ -359,8 +378,6 @@ private:
             throw Py::ValueError("buffer has been deleted");
 
         throw Py::ValueError("cannot concat");
-
-        return Py::Object();
     }
 
     virtual Py::Object sequence_repeat( int )
@@ -369,8 +386,6 @@ private:
             throw Py::ValueError("buffer has been deleted");
 
         throw Py::ValueError("cannot repeat");
-
-        return Py::Object();
     }
 
     virtual Py::Object sequence_item( int position )
@@ -417,8 +432,6 @@ private:
             throw Py::ValueError("buffer has been deleted");
 
         throw Py::ValueError("cannot ass_item");
-
-        return 0;
     }
 
     virtual int sequence_ass_slice( int, int, const Py::Object & )
@@ -427,8 +440,6 @@ private:
             throw Py::ValueError("buffer has been deleted");
 
         throw Py::ValueError("cannot ass_slice");
-
-        return 0;
     }
 };
 
@@ -481,7 +492,6 @@ private:
     virtual int setattr( const char *c_name, Py::Object /*value*/ )
     {
         throw Py::NameError( c_name );
-        return 0;
     }
 
     //--------------------------------------------------------------------------------
@@ -503,8 +513,6 @@ private:
             throw Py::ValueError("buffer has been deleted");
 
         throw Py::ValueError("cannot concat");
-
-        return Py::Object();
     }
 
     virtual Py::Object sequence_repeat( int )
@@ -513,8 +521,6 @@ private:
             throw Py::ValueError("buffer has been deleted");
 
         throw Py::ValueError("cannot repeat");
-
-        return Py::Object();
     }
 
     virtual Py::Object sequence_item( int position )
@@ -571,8 +577,6 @@ private:
             throw Py::ValueError("buffer has been deleted");
 
         throw Py::ValueError("cannot ass_item");
-
-        return 0;
     }
 
     virtual int sequence_ass_slice( int, int, const Py::Object & )
@@ -581,8 +585,6 @@ private:
             throw Py::ValueError("buffer has been deleted");
 
         throw Py::ValueError("cannot ass_slice");
-
-        return 0;
     }
 };
 
@@ -717,7 +719,6 @@ private:
     virtual int setattr( const char *c_name, Py::Object /*value*/ )
     {
         throw Py::NameError( c_name );
-        return 0;
     }
 
 };
@@ -818,8 +819,6 @@ private:
     virtual int mapping_ass_subscript( const Py::Object &, const Py::Object & )
     {
         throw Py::TypeError("cannot assign to buffer_names");
-
-        return 0;
     }
 };
 
@@ -900,7 +899,6 @@ private:
     virtual int setattr( const char *c_name, Py::Object /*value*/ )
     {
         throw Py::NameError( c_name );
-        return 0;
     }
 
     Py::Object as_tuple( const Py::Tuple &args )

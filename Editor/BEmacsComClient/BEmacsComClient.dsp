@@ -23,6 +23,8 @@ CFG=BEmacsComClient - Win32 Debug
 
 # Begin Project
 # PROP AllowPerConfigDependencies 0
+# PROP Scc_ProjName ""$/Latest/V7.1/Emacs/Editor/BEmacsComClient", QQBAAAAA"
+# PROP Scc_LocalPath "."
 CPP=cl.exe
 MTL=midl.exe
 RSC=rc.exe
@@ -88,7 +90,6 @@ LINK32=link.exe
 # Begin Source File
 
 SOURCE=.\BEmacsComClient.cpp
-
 # End Source File
 # Begin Source File
 

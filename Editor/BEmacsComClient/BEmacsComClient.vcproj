@@ -22,7 +22,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="../Include/Windows/ExternalInclude"
+				AdditionalIncludeDirectories="../Include/Windows"
 				PreprocessorDefinitions="WIN32;_WINDOWS;UNICODE"
 				StringPooling="TRUE"
 				RuntimeLibrary="4"
@@ -85,7 +85,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\Include/Windows/ExternalInclude"
+				AdditionalIncludeDirectories="..\Include\Windows"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;UNICODE"
 				RuntimeLibrary="5"
 				PrecompiledHeaderFile=".\Debug/BEmacsComClient.pch"

@@ -13,6 +13,12 @@ static int tmp_name_count = 1;
 # include <win_incl.h>
 //# include <emacs_process.h>
 extern "C" { int _getpid(void); };
+
+unsigned int getpid()
+{
+    return _getpid();
+}
+
 #endif
 
 #ifdef __unix__

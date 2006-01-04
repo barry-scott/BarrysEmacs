@@ -1,8 +1,11 @@
 //
 //    emacs.h
 //
-//    Copyright 1986-2002 Barry A. Scott
+//    Copyright 1986-2006 Barry A. Scott
 //
+#if defined( _DEBUG )
+#undef _DEBUG
+#endif
 
 #include <emacsutl.h>
 

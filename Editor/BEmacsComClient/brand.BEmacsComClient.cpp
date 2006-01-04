@@ -65,10 +65,10 @@ DebugTrace _t( L"BEmacs COM client: " );
 
 int WINAPI WinMain
     (
-    HINSTANCE hInstance,        // handle to current instance
-    HINSTANCE // hPrevInstance,    // handle to previous instance
-    LPSTR // lpCmdLine,        // pointer to command line
-    int // nCmdShow        // show state of window
+    HINSTANCE hInstance,            // handle to current instance
+    HINSTANCE /*hPrevInstance*/,    // handle to previous instance
+    LPSTR /*lpCmdLine*/,            // pointer to command line
+    int /*nCmdShow*/                // show state of window
     )
 {
     _t.addLast( L"%(version)s" );
@@ -369,7 +369,7 @@ void check( HRESULT hresult )
 //    CoGetObject is not available on Windows 95
 //    Here is Emacs's private version of CoGetObject
 //
-HRESULT EmacsCoGetObject( LPCWSTR pszName, BIND_OPTS * // pBindOptions,  REFIID riid,  void **ppv )
+HRESULT EmacsCoGetObject( LPCWSTR pszName, BIND_OPTS * /*pBindOptions*/,  REFIID riid,  void **ppv )
 {
     HRESULT hr;
 

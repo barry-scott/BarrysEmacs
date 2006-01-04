@@ -185,7 +185,7 @@ void _emacs_assert( const char *exp, const char *file, unsigned line )
 
 #elif defined( _WIN32 )
     // windows assert order
-    _assert( (void *)exp, (void *)file, line );
+    _assert( exp, file, line );
 
 #elif defined( __GNUC__ )
     // apple assert order

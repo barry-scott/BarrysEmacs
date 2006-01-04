@@ -24,6 +24,8 @@ CFG=EDITOR - WIN32 DEBUG
 
 # Begin Project
 # PROP AllowPerConfigDependencies 0
+# PROP Scc_ProjName ""
+# PROP Scc_LocalPath ""
 CPP=cl.exe
 MTL=midl.exe
 RSC=rc.exe
@@ -42,7 +44,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir "."
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /c
-# ADD CPP /nologo /MD /W4 /GX /Zi /O2 /Ob2 /I "..\..\Editor\Include\Common" /I "..\..\Editor\Include\Windows" /D "NDEBUG" /D "_AFXDLL" /D "_WINDOWS" /D "WIN32" /D "_NT" /D "_MBCS" /D "__has_bool__" /FR /Yu"emacs.h" /FD /c
+# ADD CPP /nologo /MD /W4 /GX /Zi /O2 /Ob2 /I "..\..\Editor\Include\Common" /I "..\..\Editor\Include\Windows" /I "c:\python23\include" /I "..\..\Python\pycxx_5_3_5" /D "NDEBUG" /D "_AFXDLL" /D "_WINDOWS" /D "WIN32" /D "_NT" /D "_MBCS" /D "__has_bool__" /FR /Yu"emacs.h" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x809 /d "NDEBUG"
@@ -52,7 +54,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 wsock32.lib largeint.lib winmm.lib Python_CXX.lib python23.lib Delayimp.lib /nologo /subsystem:windows /incremental:yes /debug /machine:I386 /nodefaultlib:"LIBC.lib" /nodefaultlib:"libcd.lib" /libpath:"..\..\Release\_Lib" /libpath:"..\Python_CXX_Lib\Release" /verbose:lib /delayload:python23.dll
+# ADD LINK32 wsock32.lib largeint.lib winmm.lib Python_CXX.lib python23.lib Delayimp.lib /nologo /subsystem:windows /incremental:yes /debug /machine:I386 /nodefaultlib:"LIBC.lib" /nodefaultlib:"libcd.lib" /libpath:"..\..\Release\_Lib" /libpath:"..\Python_CXX_Lib\Release" /libpath:"c:\python23\libs" /verbose:lib /delayload:python23.dll
 # SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "editor - Win32 Debug"
@@ -120,7 +122,6 @@ LINK32=link.exe
 # Begin Source File
 
 SOURCE=..\Source\Common\abbrev.cpp
-
 # End Source File
 # Begin Source File
 
@@ -500,18 +501,18 @@ SOURCE=..\Source\Windows\win_emacs.rc
 
 !IF  "$(CFG)" == "editor - Win32 Release"
 
-# ADD BASE RSC /l 0x809 /i ".." /i ".\Release" /i "\Latest\EmacsV7\Editor" /i "\Stable\EmacsV7\Editor" /i ".." /I "..\..\Editor\Include\Common" /I "..\..\Editor\Include\Windows"
-# ADD RSC /l 0x809 /i ".." /i ".\Release" /i "\Latest\EmacsV7\Editor" /i "\Stable\EmacsV7\Editor" /i ".." /I "..\..\Editor\Include\Common" /I "..\..\Editor\Include\Windows"
+# ADD BASE RSC /l 0x809 /i "\wc\Emacs\Editor\Source\Windows" /i ".\Release" /i ".." /i "\Latest\EmacsV7\Editor" /i "\Stable\EmacsV7\Editor" /i "..\..\Editor\Include\Common" /i "..\..\Editor\Include\Windows"
+# ADD RSC /l 0x809 /i "\wc\Emacs\Editor\Source\Windows" /i ".\Release" /i ".." /i "\Latest\EmacsV7\Editor" /i "\Stable\EmacsV7\Editor" /i "..\..\Editor\Include\Common" /i "..\..\Editor\Include\Windows"
 
 !ELSEIF  "$(CFG)" == "editor - Win32 Debug"
 
-# ADD BASE RSC /l 0x809 /i ".." /i ".\Debug" /i "\Latest\EmacsV7\Editor" /i "\Stable\EmacsV7\Editor" /i ".." /I "..\..\Editor\Include\Common" /I "..\..\Editor\Include\Windows"
-# ADD RSC /l 0x809 /i ".." /i ".\Debug" /i "\Latest\EmacsV7\Editor" /i "\Stable\EmacsV7\Editor" /i ".." /I "..\..\Editor\Include\Common" /I "..\..\Editor\Include\Windows"
+# ADD BASE RSC /l 0x809 /i "\wc\Emacs\Editor\Source\Windows" /i ".\Debug" /i ".." /i "\Latest\EmacsV7\Editor" /i "\Stable\EmacsV7\Editor" /i "..\..\Editor\Include\Common" /i "..\..\Editor\Include\Windows"
+# ADD RSC /l 0x809 /i "\wc\Emacs\Editor\Source\Windows" /i ".\Debug" /i ".." /i "\Latest\EmacsV7\Editor" /i "\Stable\EmacsV7\Editor" /i "..\..\Editor\Include\Common" /i "..\..\Editor\Include\Windows"
 
 !ELSEIF  "$(CFG)" == "editor - Win32 Profile"
 
-# ADD BASE RSC /l 0x809 /i ".." /i ".\Profile" /i "\Latest\EmacsV7\Editor" /i "\Stable\EmacsV7\Editor" /i ".." /I "..\..\Editor\Include\Common" /I "..\..\Editor\Include\Windows"
-# ADD RSC /l 0x809 /i ".." /i ".\Profile" /i "\Latest\EmacsV7\Editor" /i "\Stable\EmacsV7\Editor" /i ".." /I "..\..\Editor\Include\Common" /I "..\..\Editor\Include\Windows"
+# ADD BASE RSC /l 0x809 /i "\wc\Emacs\Editor\Source\Windows" /i ".\Profile" /i ".." /i "\Latest\EmacsV7\Editor" /i "\Stable\EmacsV7\Editor" /i "..\..\Editor\Include\Common" /i "..\..\Editor\Include\Windows"
+# ADD RSC /l 0x809 /i "\wc\Emacs\Editor\Source\Windows" /i ".\Profile" /i ".." /i "\Latest\EmacsV7\Editor" /i "\Stable\EmacsV7\Editor" /i "..\..\Editor\Include\Common" /i "..\..\Editor\Include\Windows"
 
 !ENDIF 
 

@@ -61,7 +61,7 @@ int python_init()
     }
 
     // set the Python flags
-{
+    {
     EmacsString flags( python_flags.asString() );
     for( int i=0; i<flags.length(); i++ )
         switch( flags[i] )
@@ -78,7 +78,7 @@ int python_init()
             return 0;
         }
         }
-}
+    }
 
     EmacsString new_python_path( calcNewPythonPath() );
     putenv( new_python_path.sdata() );
@@ -175,12 +175,6 @@ static int python_watch_dog( void * )
     return 0;
 }
 
-
-//--------------------------------------------------------------------------------
-//
-//    Emacs Python Eval
-//
-//--------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------
 //
