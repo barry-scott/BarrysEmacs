@@ -1,6 +1,6 @@
 ; 
 ; emacs.mlp
-; Copyright 1998-2001 (c) Barry A. Scott
+; Copyright 1998-2006 (c) Barry A. Scott
 ; 
 
 ; return true if this qualifier matches the candidate
@@ -17,115 +17,140 @@
     ~emacs-com-report-error(~msg)
     (get-tty-string ~msg)
 )
+
 (defun
     (emacs-com
-	~arg
-	~line-num
-	~read-only
-	~wait
-	~restore
-	
-	(synchronise-files)
-	
-	;;;(switch-to-buffer "Testing Arg handling")
-	
-	(setq ~arg 1)
-	(setq ~line-num 0)
-	(setq ~read-only 0)
-	(setq ~wait 0)
-	(setq ~restore 1)
-	
-	(while (< ~arg (argc))
-	    (if (arg-is-qualifier ~arg)
-		(progn
-		    ~index
-		    ~qual
-		    ~qual-name
-		    ~qual-value
-		    
-		    ; full qualifier name include "/" or "-", etc
-		    (setq ~qual (argv ~arg))
-		    ; lost the "/" or "-"
-		    (setq ~qual-name (substr ~qual 2 999))
-		    (setq ~index (string-index-of-first ~qual-name "="))
-		    (if (= ~index -1)
-			(setq ~index (string-index-of-first ~qual-name ":"))
-		    )
-		    (if (> ~index 0)
-			(progn
-			    (setq ~qual-value (string-extract ~qual-name (+ ~index 1) 999))
-			    (setq ~qual-name (string-extract ~qual-name 0 ~index))
-			)
-			(setq ~qual-value "")
-		    )
-		    ;;;(insert-string "Qualifier: " ~qual "\n")
-		    ;;;(insert-string "\tName: " ~qual-name " Value: " ~qual-value "\n")
-		    (if
-			; handle vi style line number qualifier
-			(= (substr ~qual 1 1) "+")
-			(setq ~line-num (+ ~qual-name))
-			(~emacs-com-is-qualifier "line" 1 1 ~qual-name ~qual-value)
-			(setq ~line-num (+ ~qual-value))
-			(~emacs-com-is-qualifier "nowindow-restore" 5 0 ~qual-name ~qual-value)
-			(setq ~restore 0)
-			(~emacs-com-is-qualifier "readonly" 1 0 ~qual-name ~qual-value)
-			(setq ~read-only 1)
-			
-			(~emacs-com-is-qualifier "noreadonly" 5 0 ~qual-name ~qual-value)
-			(setq ~read-only -1)
-			(~emacs-com-is-qualifier "cd" 2 0 ~qual-name ~qual-value)
-			(setq previous-directory (current-directory))
-			(~emacs-com-is-qualifier "name" 4 1 ~qual-name ~qual-value)
-			(novalue); ignore the name=xxx parameter
-			(~emacs-com-is-qualifier "wait" 4 0 ~qual-name ~qual-value)
-			(setq ~wait 1)
-			(~emacs-com-report-error (concat "Unknown qualifier " ~qual))
-		    )
-		)
-		(progn
-		    ; handle value
-		    ;;;(insert-string "Value: " (argv ~arg) "\n")
-		    (if
-			(error-occurred
-			    ~filename
-			    ~filename-pattern
-			    
-			    (setq ~filename-pattern (argv ~arg))
-			    (if (length (expand-file-name ~filename-pattern))
-				(while (length (setq ~filename (expand-file-name ~filename-pattern)))
-				    (setq ~filename-pattern "")
-				    (visit-file ~filename)
-				    (if (> ~line-num 0)
-					(goto-line ~line-num))
-				    (if ~read-only
-					(setq read-only-buffer (= ~read-only 1)))
-				)
-				(visit-file ~filename-pattern)
-			    )
-			)
-			(if (!= (substr error-message 1 10) "New file: ")
-			    (~emacs-com-report-error
-				(concat "Error processing " (argv ~arg) ": " error-message)
-			    )
-			)
-		    )
-		    (setq ~line-num 0)
-		    (setq ~read-only 0)
-		)
-	    )
-	    (setq ~arg (+ ~arg 1))
-	)
-	(if ~restore
-	    (if (= (UI-frame-state) "minimized")
-		(progn
-		    (UI-frame-restore)
-		)
-	    )
-	)
-	(if ~wait
-	    (progn
-		(recursive-edit)
-	    )
-	)
+        ~arg
+        ~line-num
+        ~read-only
+        ~wait
+        ~restore
+
+        ;(motif-version)
+
+        (synchronise-files)
+
+        ;;;(switch-to-buffer "Testing Arg handling")
+
+        (setq ~arg 1)
+        (setq ~line-num 0)
+        (setq ~read-only 0)
+        (setq ~wait 0)
+        (setq ~restore 1)
+
+        (while (< ~arg (argc))
+            (if (arg-is-qualifier ~arg)
+                (progn
+                    ~index
+                    ~qual
+                    ~qual-name
+                    ~qual-value
+
+                    ; full qualifier name include "/" or "-", etc
+                    (setq ~qual (argv ~arg))
+                    ; lost the "/" or "-"
+                    (setq ~qual-name (substr ~qual 2 999))
+                    (setq ~index (string-index-of-first ~qual-name "="))
+                    (if (= ~index -1)
+                        (setq ~index (string-index-of-first ~qual-name ":"))
+                    )
+                    (if (> ~index 0)
+                        (progn
+                            (setq ~qual-value (string-extract ~qual-name (+ ~index 1) 999))
+                            (setq ~qual-name (string-extract ~qual-name 0 ~index))
+                        )
+                        (setq ~qual-value "")
+                    )
+                    ;;;(insert-string "Qualifier: " ~qual "\n")
+                    ;;;(insert-string "\tName: " ~qual-name " Value: " ~qual-value "\n")
+                    (if
+                        ; handle vi style line number qualifier
+                        (= (substr ~qual 1 1) "+")
+                        (setq ~line-num (+ ~qual-name))
+                        (~emacs-com-is-qualifier "line" 1 1 ~qual-name ~qual-value)
+                        (setq ~line-num (+ ~qual-value))
+                        (~emacs-com-is-qualifier "nowindow-restore" 5 0 ~qual-name ~qual-value)
+                        (setq ~restore 0)
+                        (~emacs-com-is-qualifier "readonly" 1 0 ~qual-name ~qual-value)
+                        (setq ~read-only 1)
+
+                        (~emacs-com-is-qualifier "noreadonly" 5 0 ~qual-name ~qual-value)
+                        (setq ~read-only -1)
+                        (~emacs-com-is-qualifier "cd" 2 0 ~qual-name ~qual-value)
+                        (setq previous-directory (current-directory))
+                        (~emacs-com-is-qualifier "name" 4 1 ~qual-name ~qual-value)
+                        (novalue); ignore the name=xxx parameter
+                        (~emacs-com-is-qualifier "wait" 4 0 ~qual-name ~qual-value)
+                        (setq ~wait 1)
+                        (~emacs-com-report-error (concat "Unknown qualifier " ~qual))
+                    )
+                )
+                (progn
+                    ; handle value
+                    ;;;(insert-string "Value: " (argv ~arg) "\n")
+                    (if
+                        (error-occurred
+                            ~filename
+                            ~filename-pattern
+
+                            (setq ~filename-pattern (argv ~arg))
+                            (if (length (expand-file-name ~filename-pattern))
+                                (while (length (setq ~filename (expand-file-name ~filename-pattern)))
+                                    (setq ~filename-pattern "")
+                                    (~emacs-com-visit-file ~filename)
+                                )
+                                (~emacs-com-visit-file ~filename-pattern)
+                            )
+                        )
+                        (if (!= (substr error-message 1 10) "New file: ")
+                            (~emacs-com-report-error
+                                (concat "Error processing " (argv ~arg) ": " error-message)
+                            )
+                        )
+                    )
+                    (setq ~line-num 0)
+                    (setq ~read-only 0)
+                )
+            )
+            (setq ~arg (+ ~arg 1))
+        )
+        (if ~restore
+            (if (= (UI-frame-state) "minimized")
+                (progn
+                    (UI-frame-restore)
+                )
+            )
+        )
+        (if ~wait
+            (progn
+                (recursive-edit)
+            )
+        )
     )
+)
+
+(defun 
+    ~emacs-com-visit-file(~filename)
+    ;;;(get-tty-string (concat "~emacs-com-visit-file " ~filename))
+    (if (>= (string-index-of-first ~filename ":") 0)
+        (progn
+            ~index-first
+            ~index-next
+
+            (setq ~index-first (string-index-of-first ~filename ":"))
+            (setq ~index-next (string-index-of-string ~filename ":" (+ 1 ~index-first)))
+            (if (< ~index-next 0)
+                (setq ~index-next (length ~filename))
+            )
+            (setq ~line-num (string-extract ~filename (+ 1 ~index-first) ~index-next))
+            ;;;(get-tty-string (concat "line number " ~index-first " " ~index-next " " ~line-num))
+            (setq ~filename (string-extract ~filename 0 ~index-first))
+            ;;;(get-tty-string (concat "~filename " ~filename))
+        )
+    )
+    (visit-file ~filename)
+    (if (> ~line-num 0)
+        (goto-line ~line-num))
+    (if ~read-only
+        (setq read-only-buffer (= ~read-only 1)))
 )
