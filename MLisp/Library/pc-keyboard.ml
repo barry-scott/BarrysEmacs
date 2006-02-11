@@ -1,7 +1,7 @@
 ; 
 ; pc-keyboard.ml
 ; 
-; Barry A. Scott (c) 1997-2001
+; Barry A. Scott (c) 1997-2006
 ; 
 ; bind keys on a PC style keyboard to functions that
 ; match the behaviour defined by Windows interface.
@@ -28,10 +28,23 @@
     )
 )
 (defun
+    (PC-edit-copy
+        ;  only copy if a region is set
+        (if (! (error-occurred (mark)))
+            (UI-edit-copy)
+        )
+    )
+)
+(defun
     (PC-edit-cut
-	(UI-edit-copy)
-	(erase-region)
-	(unset-mark)
+        ;  only cot if a region is set
+        (if (! (error-occurred (mark)))
+            (progn
+                (UI-edit-copy)
+                (erase-region)
+                (unset-mark)
+            )
+        )
     )
 )
 
@@ -90,7 +103,7 @@
 ; 
 ; Old Windows cut/copy/paste bindings
 ; 
-(bind-to-key "UI-edit-copy" "\[ctrl-insert]")
+(bind-to-key "PC-edit-copy" "\[ctrl-insert]")
 (bind-to-key "UI-edit-paste" "\[shift-insert]")
 (bind-to-key "PC-edit-cut" "\[shift-delete]")
 
@@ -99,7 +112,7 @@
 ; 
 (bind-to-key "PC-select-all" "\^a")
 (bind-to-key "new-undo" "\^z")
-(bind-to-key "UI-edit-copy" "\^c")
+(bind-to-key "PC-edit-copy" "\^c")
 (bind-to-key "UI-edit-paste" "\^v")
 (bind-to-key "PC-cut-or-ctrl-x-prefix" "\034")
 (bind-to-key "PC-cut-or-ctrl-x-prefix" "\035")
