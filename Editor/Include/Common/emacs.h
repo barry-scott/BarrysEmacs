@@ -3,7 +3,7 @@
 //
 //    Copyright 1986-2006 Barry A. Scott
 //
-#if defined( _DEBUG )
+#if defined( _WIN32 ) && defined( _DEBUG )
 #undef _DEBUG
 #endif
 
