@@ -69,37 +69,56 @@
 ; 
 (defun
     (diff-goto-diff
-	~line 
-	
-	(if (= operating-system-name "Windows")
-	    (save-excursion
-		(beginning-of-line)
-		(while (& (! (bobp)) (! (looking-at " *[0-9]")))
-		    (previous-line)
-		)
-		(looking-at " *[0-9][0-9]*")
-		(region-around-match 0)
-		(setq ~line (+ (region-to-string)))
-	    )
-	    ; default parsing - unix style
-	    (save-excursion
-		(beginning-of-line)
-		(while (& (! (bobp)) (! (looking-at "[0-9]")))
-		    (previous-line)
-		)
-		(looking-at "[0-9][0-9]*")
-		(region-around-match 0)
-		(setq ~line (+ (region-to-string)))
-	    )
-	)	
-	(pop-to-buffer diff-buffer)
-	(goto-line ~line)
+        ~line 
+        
+        (if (= operating-system-name "Windows")
+            (save-excursion
+                (beginning-of-line)
+                (while (& (! (bobp)) (! (looking-at " *[0-9]")))
+                    (previous-line)
+                )
+                (looking-at " *[0-9][0-9]*")
+                (region-around-match 0)
+                (setq ~line (+ (region-to-string)))
+            )
+            (save-excursion
+                (beginning-of-file)
+                (looking-at "--- ")
+            )
+            ; diff -u output
+            (save-excursion
+                (setq ~line (current-line-number))
+                (beginning-of-line)
+                (while (& (! (bobp)) (! (looking-at "@@ ")))
+                    (if (looking-at "-")
+                        (setq ~line (- ~line 1))
+                    )
+                    (previous-line)
+                )
+                (ere-looking-at ".*\\+(\\d+),")
+                (region-around-match 1)
+                (setq ~line
+                    (+ (region-to-string) (- ~line (current-line-number) 1)))
+            )
+            ; default parsing - unix style
+            (save-excursion
+                (beginning-of-line)
+                (while (& (! (bobp)) (! (looking-at "[0-9]")))
+                    (previous-line)
+                )
+                (looking-at "[0-9][0-9]*")
+                (region-around-match 0)
+                (setq ~line (+ (region-to-string)))
+            )
+        )	
+        (pop-to-buffer diff-buffer)
+        (goto-line ~line)
     )
 )
 
 (if (= diff-command 0)
     (if (= operating-system-name "unix")
-	(setq diff-command "diff")
+	(setq diff-command "diff -u")
 	(= operating-system-name "vms")
 	(setq diff-command "diff")
 	(= operating-system-name "Windows")
