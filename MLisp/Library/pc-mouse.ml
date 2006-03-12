@@ -25,6 +25,8 @@
     mouse-2-up-time		; time when button two came up last
     mouse-3-up-time		; time when button three came up last
 
+    mouse-wheel-multiplier      ; how many lines per wheel movement to move
+
     mouse-multi-click-count	; the number of multiple clicks so far
 
     favorite-set-mark		; Set-mark function
@@ -50,6 +52,8 @@
 (declare-buffer-specific
     mouse-1-double-click-hook	; action for double-click of mouse-1
 )
+(setq mouse-wheel-multiplier 3)
+
 (setq-default mouse-1-double-click-hook "")
 (setq ~mouse-version "pc v1.0")
 (setq ~last-mouse-1-down-hooked-double-click 0)
@@ -84,19 +88,19 @@
     ; mouse-wheel bindings
     ; 
     (bind-to-key
-	"(scroll-one-line-down (* 3 (fetch-array  control-string-parameters 1 2)))"
+	"(scroll-one-line-down (* mouse-wheel-multiplier (fetch-array  control-string-parameters 1 2)))"
 	"\[mouse-wheel-pos]"
     )
     (bind-to-key
-	"(scroll-one-line-up (* 3 (fetch-array  control-string-parameters 1 2)))"
+	"(scroll-one-line-up (* mouse-wheel-multiplier (fetch-array  control-string-parameters 1 2)))"
 	"\[mouse-wheel-neg]"
     )
     (bind-to-key
-	"(previous-line (* 3 (fetch-array  control-string-parameters 1 2)))"
+	"(previous-line (* mouse-wheel-multiplier (fetch-array  control-string-parameters 1 2)))"
 	"\[shift-mouse-wheel-pos]"
     )
     (bind-to-key
-	"(next-line (* 3 (fetch-array  control-string-parameters 1 2)))"
+	"(next-line (* mouse-wheel-multiplier (fetch-array  control-string-parameters 1 2)))"
 	"\[shift-mouse-wheel-neg]"
     )
     (bind-to-key
