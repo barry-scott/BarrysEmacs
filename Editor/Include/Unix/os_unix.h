@@ -86,8 +86,8 @@
 #endif
 
 // debug flag bits
-#define DBG___ON            0x00000000
-#define DBG__OFF            0xffffffff
+#define DBG__OFF            0x00000000
+#define DBG___ON            0xffffffff
 
 #define DBG_DUMPTOFILE      (0x00000001&DBG___ON)
 #define DBG_ALLOC_CHECK     (0x00000002&DBG__OFF)
