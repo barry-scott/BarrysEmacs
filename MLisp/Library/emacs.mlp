@@ -133,7 +133,7 @@
 
 (defun
     ~emacs-com-visit-file(~filename)
-    (get-tty-string (concat "~emacs-com-visit-file " ~filename))
+    ;;;(get-tty-string (concat "~emacs-com-visit-file " ~filename))
     (if (>= (string-index-of-first ~filename ":") 0)
         (progn
             ~index-start
@@ -154,13 +154,13 @@
             )
             
             (setq ~line-num (string-extract ~filename (+ 1 ~index-first) ~index-next))
-            (get-tty-string (concat "line number " ~index-start " " ~index-first " " ~index-next " " ~line-num))
+            ;;;(get-tty-string (concat "line number " ~index-start " " ~index-first " " ~index-next " " ~line-num))
             
             (setq ~col-num (string-extract ~filename (+ 1 ~index-next) (length ~filename)))
-            (get-tty-string (concat "col number " ~index-start " " ~index-first " " ~index-next " Line:" ~line-num " Col:" ~col-num ))
+            ;;;(get-tty-string (concat "col number " ~index-start " " ~index-first " " ~index-next " Line:" ~line-num " Col:" ~col-num ))
             
             (setq ~filename (string-extract ~filename 0 ~index-first))
-            (get-tty-string (concat "~filename " ~filename))
+            ;;;(get-tty-string (concat "~filename " ~filename))
         )
     )
     (visit-file ~filename)
