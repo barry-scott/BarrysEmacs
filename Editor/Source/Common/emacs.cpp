@@ -620,6 +620,8 @@ int parse_dbg_flags( const EmacsString &flags )
             flags_value |= DBG_TMP;
         else if( keyword == "timer" )
             flags_value |= DBG_TIMER;
+        else if( keyword == "ext_search" )
+            flags_value |= DBG_EXT_SEARCH;
         else
             _dbg_msg( FormatString("Unknown debug flag %s") << keyword );
     }

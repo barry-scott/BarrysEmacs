@@ -11,6 +11,13 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
+#if DBG_EXT_SEARCH != 0
+#define S_dbg_msg( msg )        do { if( dbg_flags&DBG_EXT_SEARCH ) _dbg_msg( msg ); } while( 0 )
+#define S_dbg_fn_trace( msg )   _dbg_fn_trace t____( msg )
+#else
+#define S_dbg_msg( msg )        do { (void)0; } while( 0 )
+#define S_dbg_fn_trace( msg )   do { (void)0; } while( 0 )
+#endif
 
 //
 //    repeaters
@@ -19,11 +26,11 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 //    *?
 //    +
 //    +?
-//{n}
-//{n,}
-//{n,m}
-//{n,}?
-//{n,m}?
+//    {n}
+//    {n,}
+//    {n,m}
+//    {n,}?
+//    {n,m}?
 //
 //
 //    terms
@@ -40,6 +47,7 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 void SearchAdvancedAlgorithm::compile( const EmacsString &pattern, EmacsSearch::sea_type RE )
 {
+    S_dbg_fn_trace( "SearchAdvancedAlgorithm::compile" );
     if( pattern.isNull() && m_expression != NULL )
         return;
 
@@ -107,10 +115,10 @@ public:
     EmacsStringStream( EmacsStringStream &stream_ );
     virtual ~EmacsStringStream();
 
-    EmacsChar_t nextChar();             // return next char from pattern and move position
-    EmacsChar_t peekNextChar();         // return following char, don't move position
-    void undoNextChar();                // undo the effect of the last nextChar()
-    virtual bool atEnd() = 0;           // at the end?
+    EmacsChar_t nextChar( bool quoted=false );      // return next char from pattern and move position
+    EmacsChar_t peekNextChar( bool quoted=false );  // return following char, don't move position
+    void undoNextChar();                            // undo the effect of the last nextChar()
+    virtual bool atEnd( bool quoted=false ) = 0;    // at the end?
 protected:
     EmacsStringStreamData &data;
 };
@@ -122,7 +130,7 @@ public:
     EmacsStringStreamStringEnd( EmacsStringStreamData &stream_data_ );
     EmacsStringStreamStringEnd( EmacsStringStream &stream_data_ );
     virtual ~EmacsStringStreamStringEnd();
-    virtual bool atEnd();
+    virtual bool atEnd( bool quoted=false );
 };
 
 // atEnd is true at end of string, when next char is "|" or ")"
@@ -132,7 +140,7 @@ public:
     EmacsStringStreamExpressionEnd( EmacsStringStreamData &stream_data_ );
     EmacsStringStreamExpressionEnd( EmacsStringStream &stream_data_ );
     virtual ~EmacsStringStreamExpressionEnd();
-    virtual bool atEnd();
+    virtual bool atEnd( bool quoted=false );
 };
 
 //--------------------------------------------------------------------------------
@@ -165,20 +173,25 @@ EmacsStringStream::~EmacsStringStream()
 {}
 
 // return next char from pattern and move position
-EmacsChar_t EmacsStringStream::nextChar()
+EmacsChar_t EmacsStringStream::nextChar( bool quoted )
 {
-    if( atEnd() )
+    S_dbg_fn_trace( "EmacsStringStream::nextChar" );
+
+    if( atEnd( quoted ) )
         throw RegularExpressionSyntaxError( "expecting more characters in regular expression" );
 
+    S_dbg_msg( FormatString( "next char %c" ) << data.string[ data.position ] );
     return data.string[ data.position++ ];
 }
 
 // return following char, don't move position
-EmacsChar_t EmacsStringStream::peekNextChar()
+EmacsChar_t EmacsStringStream::peekNextChar( bool quoted )
 {
-    if( atEnd() )
+    S_dbg_fn_trace( "EmacsStringStream::peekNextChar" );
+    if( atEnd( quoted ) )
         throw RegularExpressionSyntaxError( "expecting more characters in regular expression" );
 
+    S_dbg_msg( FormatString( "peek char %c" ) << data.string[ data.position ] );
     return data.string[ data.position ];
 }
 
@@ -209,7 +222,7 @@ EmacsStringStreamStringEnd::EmacsStringStreamStringEnd( EmacsStringStream &strea
 EmacsStringStreamStringEnd::~EmacsStringStreamStringEnd()
 {}
 
-bool EmacsStringStreamStringEnd::atEnd()
+bool EmacsStringStreamStringEnd::atEnd( bool )
 {
     return data.position >= data.string.length();
 }
@@ -226,11 +239,18 @@ EmacsStringStreamExpressionEnd::EmacsStringStreamExpressionEnd( EmacsStringStrea
 EmacsStringStreamExpressionEnd::~EmacsStringStreamExpressionEnd()
 {}
 
-bool EmacsStringStreamExpressionEnd::atEnd()
+bool EmacsStringStreamExpressionEnd::atEnd( bool quoted )
 {
-    return data.position >= data.string.length()
-        || data.string[data.position] == ')'
-        || data.string[data.position] == '|';
+    if( quoted )
+    {
+        return data.position >= data.string.length();
+    }
+    else
+    {
+        return data.position >= data.string.length()
+            || data.string[data.position] == ')'
+            || data.string[data.position] == '|';
+    }
 }
 
 
@@ -466,7 +486,7 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_term( EmacsStringStream &p
         switch( ch )
         {
         case '\\':
-            switch( pattern.peekNextChar() )
+            switch( pattern.peekNextChar( true ) )
             {
             case '\\':
             case '*':
@@ -477,7 +497,8 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_term( EmacsStringStream &p
             case '$':
             case '?':
             case '+':
-                ch = pattern.nextChar();
+            case ')':
+                ch = pattern.nextChar( true );
                 break;
             default:
                 is_simple_ch = false;
