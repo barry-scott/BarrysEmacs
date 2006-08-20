@@ -89,6 +89,15 @@
 		; is if <tag/> ?
 		(ere-looking-at ".*/\\s*$")
 		(setq ~tag-type "<>")
+                ; is it a comment ?
+		(ere-looking-at "!--")
+		(setq ~tag-type "<>")
+                ; is it an processing instruction ?
+		(ere-looking-at "\\?")
+		(setq ~tag-type "<>")
+                ; is it a DOCTYPE ?
+		(ere-looking-at "!DOCTYPE")
+		(setq ~tag-type "<>")
 		; it should be <tag ...>
 		(setq ~tag-type "<")
 	    )
