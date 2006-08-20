@@ -22,6 +22,7 @@
     (emacs-com
         ~arg
         ~line-num
+        ~col-num
         ~read-only
         ~wait
         ~restore
@@ -34,6 +35,7 @@
 
         (setq ~arg 1)
         (setq ~line-num 0)
+        (setq ~col-num 0)
         (setq ~read-only 0)
         (setq ~wait 0)
         (setq ~restore 1)
@@ -129,28 +131,47 @@
     )
 )
 
-(defun 
+(defun
     ~emacs-com-visit-file(~filename)
-    ;;;(get-tty-string (concat "~emacs-com-visit-file " ~filename))
+    (get-tty-string (concat "~emacs-com-visit-file " ~filename))
     (if (>= (string-index-of-first ~filename ":") 0)
         (progn
+            ~index-start
             ~index-first
             ~index-next
-
-            (setq ~index-first (string-index-of-first ~filename ":"))
+            
+            (if (= operating-system-name "Windows")
+                (setq ~index-start (string-index-of-first ~filename ":"))
+                (setq ~index-start 0)
+            )
+            (setq ~index-first (string-index-of-string ~filename ":" (+ 1 ~index-start)))
             (setq ~index-next (string-index-of-string ~filename ":" (+ 1 ~index-first)))
-            (if (< ~index-next 0)
+            (if (< ~index-first 0)
+                (setq ~index-first (length ~filename))
+            )
+            (if (< ~index-next ~index-first)
                 (setq ~index-next (length ~filename))
             )
+            
             (setq ~line-num (string-extract ~filename (+ 1 ~index-first) ~index-next))
-            ;;;(get-tty-string (concat "line number " ~index-first " " ~index-next " " ~line-num))
+            (get-tty-string (concat "line number " ~index-start " " ~index-first " " ~index-next " " ~line-num))
+            
+            (setq ~col-num (string-extract ~filename (+ 1 ~index-next) (length ~filename)))
+            (get-tty-string (concat "col number " ~index-start " " ~index-first " " ~index-next " Line:" ~line-num " Col:" ~col-num ))
+            
             (setq ~filename (string-extract ~filename 0 ~index-first))
-            ;;;(get-tty-string (concat "~filename " ~filename))
+            (get-tty-string (concat "~filename " ~filename))
         )
     )
     (visit-file ~filename)
+    
     (if (> ~line-num 0)
         (goto-line ~line-num))
+    
+    (while (& (! (eolp)) (< (current-column) ~col-num))
+        (forward-character)
+    )
+
     (if ~read-only
         (setq read-only-buffer (= ~read-only 1)))
 )
