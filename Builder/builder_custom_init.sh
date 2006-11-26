@@ -9,28 +9,6 @@ Darwin)
     export RB_CFG_PLATFORM=MacOSX
     ;;
 
-Linux)
-    if [ -e /etc/redhat-release ]
-    then
-        case "$(head /etc/redhat-release)" in
-
-        "Fedora Core release 3 "*)
-            export RB_CFG_PLATFORM=LinuxFC3
-            ;;
-
-        "Fedora Core release 4 "*)
-            export RB_CFG_PLATFORM=LinuxFC4
-            ;;
-
-        *)
-            echo Error: Unknown RedHat Linux
-            ;;
-        esac
-    else
-        echo Error: Unknown RedHat Linux        
-    fi
-    ;;
-
 *)
     # no need to change
     ;;

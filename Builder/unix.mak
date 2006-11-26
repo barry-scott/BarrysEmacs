@@ -175,7 +175,9 @@ rpm_LinuxFC3:
 	rpmbuild --rcfile=/usr/lib/rpm/rpmrc:$(BUILD_KIT_DIR)/rpmrc -bb $(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
 	cp -f $(BUILD_KIT_DIR)/RPMS/i386/bemacs-*.*-*.i386.rpm $(BUILD_KIT_DIR)/RPMS/i386/bemacs.i386.rpm
 
-rpm_LinuxFC4:
+rpm_LinuxFC4: rpm_Linux
+
+rpm_Linux:
 	@ echo Info: Linux FC4 RPM creation...
 	grep ^macrofiles: /usr/lib/rpm/rpmrc |sed -e s!~/.rpmmacros!$(BUILD_KIT_DIR)/rpmmacros! >$(BUILD_KIT_DIR)/rpmrc
 	echo %_topdir $(BUILD_KIT_DIR) >$(BUILD_KIT_DIR)/rpmmacros
