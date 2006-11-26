@@ -508,6 +508,10 @@ $(edit_obj)profile.o : Source/Common/profile.cpp
 	@ echo Info: Compile Source/Common/profile.cpp
 	@ $(cpp) $(cc_flags) -o $(edit_obj)profile.o Source/Common/profile.cpp
 
+$(edit_obj)ptyopen_linux.o : Source/Unix/ptyopen_linux.cpp
+	@ echo Info: Compile Source/Unix/ptyopen_linux.cpp
+	@ $(cpp) $(cc_flags) -o $(edit_obj)ptyopen_linux.o Source/Unix/ptyopen_linux.cpp
+
 $(edit_obj)ptyopen_svr4.o : Source/Unix/ptyopen_svr4.cpp
 	@ echo Info: Compile Source/Unix/ptyopen_svr4.cpp
 	@ $(cpp) $(cc_flags) -o $(edit_obj)ptyopen_svr4.o Source/Unix/ptyopen_svr4.cpp

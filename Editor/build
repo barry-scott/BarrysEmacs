@@ -23,7 +23,7 @@ OpenBSD)
 	(gmake -e -f make-openbsd.mak $* 2>&1 || kill -HUP $$) | tee $log_file;;
 
 Linux)
-	(make -e -f make-${RB_CFG_PLATFORM}.mak $* 2>&1 || kill -HUP $$) | tee $log_file;;
+	(make -e -f make-${RB_CFG_PLATFORM}.mak $* 2>&1 || (sleep 3;kill -HUP $$)) | tee $log_file;;
 
 Darwin)
 	(gnumake -e -f make-darwin.mak $* 2>&1 || kill -HUP $$) | tee $log_file;;
