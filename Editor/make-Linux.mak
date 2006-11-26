@@ -27,7 +27,7 @@ edit_exe=linux/exe/
 bemacs_libs=-lXm -lXp -lXt -lSM -lICE -lXext -lX11
 
 os_specific_obj_files = \
- $(edit_obj)ptyopen_bsd.o \
+ $(edit_obj)ptyopen_linux.o \
  $(edit_obj)linux_ld_fix.o 
 
 #ld_bintools=$(ldstatic) -Wl,-Bstatic
