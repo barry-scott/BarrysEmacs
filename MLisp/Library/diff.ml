@@ -43,9 +43,9 @@
 		
 		(if (| ~buffer-is-not-modified ~prefix)
 		    (filter-region
-			(concat diff-command " _diff_.tmp \"" ~backup-filename "\"") )
+			(concat diff-command " \"" ~backup-filename "\" _diff_.tmp") )
 		    (filter-region
-			(concat diff-command " _diff_.tmp \"" ~filename "\"") )
+			(concat diff-command " \"" ~filename "\"  _diff_.tmp") )
 		)
 		
 		(beginning-of-file)
@@ -110,7 +110,7 @@
                 (region-around-match 0)
                 (setq ~line (+ (region-to-string)))
             )
-        )	
+        )
         (pop-to-buffer diff-buffer)
         (goto-line ~line)
     )
