@@ -267,7 +267,7 @@ int abbrev_expand( void )
         dot_left( phrase.length() );
 
         int pos;
-        for( pos=0; a->abbrev_phrase[ pos ] != '\0'; pos++ )
+        for( pos=0; pos < a->abbrev_phrase.length(); pos++ )
         {
             unsigned char ch = a->abbrev_phrase[ pos ];
             if( islower( ch )
