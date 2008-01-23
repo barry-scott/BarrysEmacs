@@ -164,7 +164,7 @@
 (defun XML-previous-tag()
     (goto-character
 	(save-excursion
-	    (search-forward "<")
+	    (search-reverse "<")
 	    (dot)
 	)
     )
