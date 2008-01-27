@@ -46,7 +46,7 @@ int main(int argc,char **argv)
     buf = new char[size];
     if( buf == NULL )
     {
-        printf("Failed to allocate %d bytes\n", buf_size );
+        printf("Failed to allocate %lu bytes\n", buf_size );
         exit(EXIT_FAILURE);
     }
 

@@ -118,8 +118,7 @@ OpenBSD_pkg:	$(BEMACS_DOC_DIR) $(BEMACS_LIB_DIR) $(BUILD_KIT_DIR)/PLIST.template
 
 MacOSX_pkg:	$(BEMACS_DOC_DIR) $(BEMACS_LIB_DIR)
 	@ echo Info: MacOSX package creation...
-	cp -f ../Editor/MacOSX/be $(BUILD_KIT_DIR)/bemacs-kit
-	cd $(BUILD_KIT_DIR); tar czf bemacs-macosx.tgz bemacs-kit
+	cd $(BUILD_KIT_DIR); chmod +x ./make-macosx-kit.sh; ./make-macosx-kit.sh
 
 rpm: rpm_$(RB_CFG_PLATFORM)
 
