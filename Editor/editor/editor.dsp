@@ -44,7 +44,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir "."
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /c
-# ADD CPP /nologo /MD /W4 /GX /Zi /O2 /Ob2 /I "..\..\Editor\Include\Common" /I "..\..\Editor\Include\Windows" /I "c:\python25\include" /I "..\..\Python\pycxx_5_3_5" /D "NDEBUG" /D "_AFXDLL" /D "_WINDOWS" /D "WIN32" /D "_NT" /D "_MBCS" /D "__has_bool__" /FR /Yu"emacs.h" /FD /c
+# ADD CPP /nologo /MD /W4 /GX /Zi /O2 /Ob2 /I "..\..\Editor\Include\Common" /I "..\..\Editor\Include\Windows" /I "c:\python25\include" /I "..\..\Python\pycxx-5.4.0" /D "NDEBUG" /D "_AFXDLL" /D "_WINDOWS" /D "WIN32" /D "_NT" /D "_MBCS" /D "__has_bool__" /FR /Yu"emacs.h" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x809 /d "NDEBUG"
@@ -71,7 +71,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir "."
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /c
-# ADD CPP /nologo /MDd /W4 /GX /Zi /Od /I "..\..\Editor\Include\Common" /I "..\..\Editor\Include\Windows" /D "_WINDOWS" /D "WIN32" /D "_NT" /D "_MBCS" /D "__has_bool__" /D "_AFXDLL" /FR /Yu"emacs.h" /FD /c
+# ADD CPP /nologo /MDd /W4 /GX /Zi /Od /I "..\..\Editor\Include\Common" /I "..\..\Editor\Include\Windows" /I "c:\python25\include" /D "_WINDOWS" /D "WIN32" /D "_NT" /D "_MBCS" /D "__has_bool__" /D "_AFXDLL" /FR /Yu"emacs.h" /FD /c
 # ADD BASE MTL /nologo /D "_DEBUG" /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x809 /d "_DEBUG"

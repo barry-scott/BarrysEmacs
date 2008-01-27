@@ -12,8 +12,8 @@
 
 // only turn on Python if its a MSVC60 build
 //#if _MSC_VER == 1200
-#define EMACS_PYTHON_EXTENSION 1        // compile in python extension support
-#define EMACS_PYTHON_EXTENSION_THREADED 0    // Using the threaded version if true
+// #define EMACS_PYTHON_EXTENSION 1        // compile in python extension support
+// #define EMACS_PYTHON_EXTENSION_THREADED 0    // Using the threaded version if true
 //#endif
 #define OS_NAME "Windows"
 
