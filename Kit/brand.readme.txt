@@ -34,7 +34,9 @@ New in %(version)s
 
         * Improve Python mode
 
-        * Embeds python 2.5
+        * Disable python integration. Too compile bemacs MFC is required
+          which I only have for VC 6.0.  Python 2.5 needs newer compiler
+          that does not provide MFC unless I get the expensive version.
 
         * Fix crash with abbrev expansions.
 
