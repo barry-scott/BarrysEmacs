@@ -24,7 +24,7 @@ ldstatic = $(cpp) -g -L/usr/X11R6/lib -L$(MOTIFLIB)
 lddynamic = $(cpp) -g -L/usr/X11R6/lib -L$(MOTIFLIB)
 edit_obj=linux/obj/
 edit_exe=linux/exe/
-bemacs_libs=-lXm -lXp -lXt -lSM -lICE -lXext -lX11
+bemacs_libs=-lXm -lXmu -lXp -lXt -lSM -lICE -lXext -lX11
 
 os_specific_obj_files = \
  $(edit_obj)ptyopen_linux.o \
