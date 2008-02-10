@@ -3,12 +3,10 @@
 #
 #	build emacs for FreeBSD, OpenBSD and Linux
 #
-
 ifeq  (${RB_CFG_PLATFORM},FreeBSD)
 BEMACS_DOC_DIR=$(RB_WORKINGDIR)/Unix_Kit/FreeBSD/pkg
 BEMACS_LIB_DIR=$(RB_WORKINGDIR)/Unix_Kit/FreeBSD/pkg
 BUILD_KIT_DIR=$(RB_WORKINGDIR)/Unix_Kit/FreeBSD
-
 
 else
 ifeq  (${RB_CFG_PLATFORM},OpenBSD)
@@ -23,15 +21,15 @@ BEMACS_LIB_DIR=$(RB_WORKINGDIR)/Unix_Kit/MacOSX/bemacs-kit
 BUILD_KIT_DIR=$(RB_WORKINGDIR)/Unix_Kit/MacOSX
 
 else
-ifeq  (${RB_CFG_PLATFORM},Linux_Fedora)
+ifeq  (${RB_CFG_PLATFORM},Linux-Fedora)
 BEMACS_DOC_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/RPM/BUILD
 BEMACS_LIB_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/RPM/ROOT/usr/local/bemacs
 BUILD_KIT_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/RPM
 
 else
-ifeq  (${RB_CFG_PLATFORM},Linux_Ubuntu)
-BEMACS_DOC_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/DPKG/BUILD
-BEMACS_LIB_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/DPKG/ROOT/usr/local/bemacs
+ifeq  (${RB_CFG_PLATFORM},Linux-Ubuntu)
+BEMACS_DOC_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/DPKG/tree/usr/local/share/doc/bemacs
+BEMACS_LIB_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/DPKG/tree/usr/local/bemacs
 BUILD_KIT_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/DPKG
 
 endif
@@ -132,7 +130,7 @@ Fedora_rpm_LinuxFC4: Fedora_rpm_Any
 Fedora_rpm_Linux-Fedora: Fedora_rpm_Any
 
 Fedora_rpm_Any:
-	@ echo Info: Linux FC4 RPM creation...
+	@ echo Info: ${RB_CFG_PLATFORM} RPM creation...
 	grep ^macrofiles: /usr/lib/rpm/rpmrc |sed -e s!~/.rpmmacros!$(BUILD_KIT_DIR)/rpmmacros! >$(BUILD_KIT_DIR)/rpmrc
 	echo %_topdir $(BUILD_KIT_DIR) >$(BUILD_KIT_DIR)/rpmmacros
 	echo BuildRoot: $(BUILD_KIT_DIR)/ROOT >$(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
@@ -142,7 +140,8 @@ Fedora_rpm_Any:
 	rpmbuild --rcfile=/usr/lib/rpm/rpmrc:$(BUILD_KIT_DIR)/rpmrc -bb $(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
 
 Debian_pkg:
-	echo dpkg TBD
+	@ echo Info: ${RB_CFG_PLATFORM} DPKG creation...
+	cd ${BUILD_KIT_DIR}; chmod +x ./create-dpkg.sh; ./create-dpkg.sh
 
 clean:
 	cd ../Editor; PATH=.:$$PATH; export BUILD_KIT_DIR=$(BEMACS_LIB_DIR); ./build clean
