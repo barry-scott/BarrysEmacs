@@ -16,6 +16,8 @@ cat <<EOF >tree/DEBIAN/postinst
 #!/bin/sh
 cd /usr/local/bin
 ln -s ../bemacs/bemacs bemacs
+cd /usr/local/bemacs
+ln -s emacs-xfree86.xkeys emacs.xkeys
 EOF
 chmod +x tree/DEBIAN/postinst
 
@@ -23,6 +25,8 @@ cat <<EOF >tree/DEBIAN/prerm
 #!/bin/sh
 cd /usr/local/bin
 rm -f bemacs
+cd /usr/local/bemacs
+rm -f emacs.xkeys
 EOF
 chmod +x tree/DEBIAN/prerm
 
