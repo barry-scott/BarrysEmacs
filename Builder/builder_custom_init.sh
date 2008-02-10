@@ -9,6 +9,15 @@ Darwin)
     export RB_CFG_PLATFORM=MacOSX
     ;;
 
+Linux)
+    if [ -e /etc/fedora-release ]
+    then
+        export RB_CFG_PLATFORM=Linux-Fedora
+    elif [ -e /etc/lsb-release -a "$( grep "DISTRIB_ID=Ubuntu" /etc/lsb-release )" == "DISTRIB_ID=Ubuntu" ]
+    then
+        export RB_CFG_PLATFORM=Linux-Ubuntu
+    fi
+    ;;
 *)
     # no need to change
     ;;
