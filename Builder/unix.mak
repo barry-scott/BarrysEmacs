@@ -23,10 +23,19 @@ BEMACS_LIB_DIR=$(RB_WORKINGDIR)/Unix_Kit/MacOSX/bemacs-kit
 BUILD_KIT_DIR=$(RB_WORKINGDIR)/Unix_Kit/MacOSX
 
 else
-BEMACS_DOC_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/BUILD
-BEMACS_LIB_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/ROOT/usr/local/bemacs
-BUILD_KIT_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux
+ifeq  (${RB_CFG_PLATFORM},Linux_Fedora)
+BEMACS_DOC_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/RPM/BUILD
+BEMACS_LIB_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/RPM/ROOT/usr/local/bemacs
+BUILD_KIT_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/RPM
 
+else
+ifeq  (${RB_CFG_PLATFORM},Linux_Ubuntu)
+BEMACS_DOC_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/DPKG/BUILD
+BEMACS_LIB_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/DPKG/ROOT/usr/local/bemacs
+BUILD_KIT_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/DPKG
+
+endif
+endif
 endif
 endif
 endif
@@ -43,7 +52,7 @@ brand:
 
 build_LinuxFC4: build_Linux rpm
 
-build_Linux-Fedora: build_Linux rpm
+build_Linux-Fedora: build_Linux Fedora_rpm
 
 build_Linux-Ubuntu: build_Linux Debian_pkg
 
@@ -116,13 +125,13 @@ MacOSX_pkg:	$(BEMACS_DOC_DIR) $(BEMACS_LIB_DIR)
 	@ echo Info: MacOSX package creation...
 	cd $(BUILD_KIT_DIR); chmod +x ./make-macosx-kit.sh; ./make-macosx-kit.sh
 
-rpm: rpm_$(RB_CFG_PLATFORM)
+Fedora_rpm: Fedora_rpm_$(RB_CFG_PLATFORM)
 
-rpm_LinuxFC4: rpm_Linux
+Fedora_rpm_LinuxFC4: Fedora_rpm_Any
 
-rpm_Linux-Fedora: rpm_Linux
+Fedora_rpm_Linux-Fedora: Fedora_rpm_Any
 
-rpm_Linux:
+Fedora_rpm_Any:
 	@ echo Info: Linux FC4 RPM creation...
 	grep ^macrofiles: /usr/lib/rpm/rpmrc |sed -e s!~/.rpmmacros!$(BUILD_KIT_DIR)/rpmmacros! >$(BUILD_KIT_DIR)/rpmrc
 	echo %_topdir $(BUILD_KIT_DIR) >$(BUILD_KIT_DIR)/rpmmacros

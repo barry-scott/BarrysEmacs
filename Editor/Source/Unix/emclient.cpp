@@ -1,7 +1,7 @@
 //
 //    emclient.cpp
 //
-//    Copyright (c) 1997 Barry A. Scott
+//    Copyright (c) 1997-2008 Barry A. Scott
 //
 #ifdef __GNUC__
 #include <typeinfo>
@@ -21,6 +21,10 @@
 #include <em_stat.h>
 
 #include <pwd.h>
+
+#if defined( __APPLE_CC__ )
+#include "macgetargv.h"
+#endif
 
 bool opt_debug( false );
 #define debug( msg ) do { if( opt_debug ) {std::cerr << msg << std::endl;} } while(0)
@@ -88,8 +92,23 @@ const int TIMEOUT_STARTUP( 30 );
 int main( int argc, char ** argv )
 {
     opt_debug = getenv("BEMACS_CLIENT_DEBUG") != NULL;
+    debug( "Starting emclient" );
+
+#if defined( __APPLE_CC__ )
+    debug( "argc " << argc );
+    if( argc > 1 )
+    {
+        debug( "argv[1] " << argv[1] );
+        if( strncmp( "-psn_", argv[1], 5 ) == 0 )
+        {
+            debug( "calling FTMac_GetArgv" );
+            argc = FTMac_GetArgv( &argv, argv[1] );
+        }
+    }
+#endif
 
     parse_args( argc, argv );
+
     debug("main: calling process_command()");
     if( !process_command() )
     {
@@ -191,7 +210,7 @@ bool process_command()
 {
     EmacsString server_fifo;
 
-{
+    {
     char *fifo_name = getenv("BEMACS_FIFO");
     if( fifo_name == NULL )
         fifo_name = ".bemacs/.emacs_command";
@@ -220,7 +239,7 @@ bool process_command()
     }
 
     server_fifo.append( fifo_name );
-}
+    }
 
 
     EmacsString client_fifo( server_fifo );
@@ -298,7 +317,10 @@ bool process_command()
             }
         }
         if( size < 0 && errno != EAGAIN )
+        {
             error("read", client_fifo);
+            break;
+        }
         sleep(1);
     }
 

@@ -161,15 +161,20 @@ $(edit_obj)dbadd.o : dbadd/dbadd.cpp
 	@ echo Info: Compile dbadd/dbadd.cpp
 	@ $(cpp) $(cc_flags) -o $(edit_obj)dbadd.o dbadd/dbadd.cpp
 
-$(edit_exe)bemacs : $(edit_obj)emclient.o $(edit_obj)em_stat.o $(edit_obj)emstring.o $(edit_obj)stub_rtl.o
+$(edit_exe)bemacs : $(edit_obj)emclient.o $(edit_obj)em_stat.o $(edit_obj)emstring.o $(edit_obj)stub_rtl.o $(os_specific_client_obj_files)
 	@ echo Info: Link $(edit_exe)bemacs
-	$(ld_bintools) -o $(edit_obj)bemacs -g $(edit_obj)emclient.o $(edit_obj)em_stat.o $(edit_obj)emstring.o $(edit_obj)stub_rtl.o $(edit_obj)doprint.o
+	$(ld_bintools) -o $(edit_obj)bemacs -g $(os_specific_client_ld_options) $(edit_obj)emclient.o $(edit_obj)em_stat.o $(edit_obj)emstring.o $(edit_obj)stub_rtl.o $(os_specific_client_obj_files) $(edit_obj)doprint.o
 	cp $(edit_obj)bemacs $(edit_exe)bemacs
 	strip $(edit_exe)bemacs
 
 $(edit_obj)emclient.o : Source/Unix/emclient.cpp
 	@ echo Info: Compile Source/Unix/emclient.cpp
 	@ $(cpp) $(cc_flags) -o $(edit_obj)emclient.o Source/Unix/emclient.cpp
+
+$(edit_obj)macgetargv.o : Source/Unix/macgetargv.cpp
+	@ echo Info: Compile Source/Unix/macgetargv.cpp
+	@ $(cpp) $(cc_flags) -o $(edit_obj)macgetargv.o Source/Unix/macgetargv.cpp
+
 
 $(edit_exe)mll-2-db : $(edit_obj)mll-2-db.o $(db_obj_files)
 	@ echo Info: Link $(edit_exe)mll-2-db

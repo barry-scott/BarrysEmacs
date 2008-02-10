@@ -19,10 +19,10 @@ extern int vertical_bar_width;
 
 
 //--------------------------------------------------------------//
-//                                //
-//   EmacsXtArgs implementation                    //
-//   Friendly way to handle the Args to Xt intensic functions    //
-//                                //
+//                                                              //
+//   EmacsXtArgs implementation                                 //
+//   Friendly way to handle the Args to Xt intensic functions   //
+//                                                              //
 //--------------------------------------------------------------//
 EmacsXtArgs::EmacsXtArgs()
     : num_used(0)
@@ -76,9 +76,9 @@ void EmacsXtArgs::getValues( Widget w )
 }
 
 //------------------------------------------------------//
-//                            //
-//   EmacsMotif_Core implementation            //
-//                            //
+//                                                      //
+//   EmacsMotif_Core implementation                     //
+//                                                      //
 //------------------------------------------------------//
 // create a widget
 EmacsMotif_Core::EmacsMotif_Core( EmacsMotif_Application &app, EmacsMotif_Core &_parent, const EmacsString &name, WidgetClass widget_class )
@@ -332,11 +332,11 @@ void EmacsMotif_Core::install_handler
 
         XtTranslations trans = XtParseTranslationTable
             (
-            "<FocusIn>:    emacs_input_handler()"    "\n"
-            "<Key>:        emacs_input_handler()"    "\n"
-            "<Motion>:    emacs_input_handler()"    "\n"
-            "<BtnDown>:    emacs_input_handler()"    "\n"
-            "<BtnUp>:    emacs_input_handler()"
+            "<FocusIn>: emacs_input_handler()"  "\n"
+            "<Key>:     emacs_input_handler()"  "\n"
+            "<Motion>:  emacs_input_handler()"  "\n"
+            "<BtnDown>: emacs_input_handler()"  "\n"
+            "<BtnUp>:   emacs_input_handler()"
             );
         XtOverrideTranslations( widget, trans );
     }
@@ -544,9 +544,9 @@ void EmacsMotif_Core::wm_protocol_handler( Widget w, XtPointer client_data, XtPo
 }
 
 //------------------------------------------------------//
-//                            //
-//   EmacsMotif_Frame implementation            //
-//                            //
+//                                                      //
+//   EmacsMotif_Frame implementation                    //
+//                                                      //
 //------------------------------------------------------//
 EmacsMotif_Frame::EmacsMotif_Frame( EmacsMotif_Application &app, EmacsMotif_Core &parent, const EmacsString &name )
     : EmacsMotif_Core( app, parent, name, xmFrameWidgetClass )
@@ -570,9 +570,9 @@ void EmacsMotif_Frame::postRealizeInit()
 { }
 
 //------------------------------------------------------//
-//                            //
-//   EmacsMotif_DrawingArea implementation        //
-//                            //
+//                                                      //
+//   EmacsMotif_DrawingArea implementation              //
+//                                                      //
 //------------------------------------------------------//
 EmacsMotif_DrawingArea::EmacsMotif_DrawingArea( EmacsMotif_Application &app, EmacsMotif_Core &parent, const EmacsString &name )
     : EmacsMotif_Core( app, parent, name, xmDrawingAreaWidgetClass )
@@ -597,9 +597,9 @@ void EmacsMotif_DrawingArea::postRealizeInit()
 { }
 
 //------------------------------------------------------//
-//                            //
-//   EmacsMotif_TextLabel implementation        //
-//                            //
+//                                                      //
+//   EmacsMotif_TextLabel implementation                //
+//                                                      //
 //------------------------------------------------------//
 
 EmacsMotif_TextLabel::EmacsMotif_TextLabel( EmacsMotif_Application &app, EmacsMotif_Core &parent, const EmacsString &name, int _length )
@@ -693,9 +693,9 @@ void EmacsMotif_TextLabel::expose( XtPointer , XtPointer event_ )
 }
 
 //------------------------------------------------------//
-//                            //
-//   EmacsMotif_TextLabelFrame implementation        //
-//                            //
+//                                                      //
+//   EmacsMotif_TextLabelFrame implementation           //
+//                                                      //
 //------------------------------------------------------//
 EmacsMotif_TextLabelFrame::EmacsMotif_TextLabelFrame( EmacsMotif_Application &app, EmacsMotif_Core &parent, const EmacsString &name )
     : EmacsMotif_Core( app, parent, name, xmFrameWidgetClass )
@@ -719,9 +719,9 @@ void EmacsMotif_TextLabelFrame::postRealizeInit()
 { }
 
 //------------------------------------------------------//
-//                            //
-//   EmacsMotif_ScrollBar implementation        //
-//                            //
+//                                                      //
+//   EmacsMotif_ScrollBar implementation                //
+//                                                      //
 //------------------------------------------------------//
 EmacsMotif_ScrollBar::EmacsMotif_ScrollBar( EmacsMotif_Application &app, EmacsMotif_Core &parent, const EmacsString &name, int orientation )
     : EmacsMotif_Core( app, parent, name, xmScrollBarWidgetClass )
@@ -962,9 +962,9 @@ void EmacsMotif_ScrollBarHorizontal::setValue( int value )
 
 
 //------------------------------------------------------//
-//                            //
-//   EmacsMotif_Attributes implementation        //
-//                            //
+//                                                      //
+//   EmacsMotif_Attributes implementation               //
+//                                                      //
 //------------------------------------------------------//
 EmacsMotif_Attributes::EmacsMotif_Attributes()
     : gc(NULL)
@@ -1033,9 +1033,9 @@ void EmacsMotif_Attributes::create( EmacsMotif_Application &app, Pixel fg, Pixel
 }
 
 //------------------------------------------------------//
-//                            //
-//   EmacsMotif_AttributeSet implementation        //
-//                            //
+//                                                      //
+//   EmacsMotif_AttributeSet implementation             //
+//                                                      //
 //------------------------------------------------------//
 EmacsMotif_AttributeSet::EmacsMotif_AttributeSet()
 {
@@ -1093,16 +1093,16 @@ void EmacsMotif_AttributeSet::setAttr( int index, EmacsMotif_Attributes &attr )
 }
 
 //==============================================================================//
-//                                        //
-//    UI widgets                                //
-//                                        //
+//                                                                              //
+//    UI widgets                                                                //
+//                                                                              //
 //==============================================================================//
 
 
 //------------------------------------------------------------------------------//
-//                                        //
-//    Status Bar widgets                            //
-//                                        //
+//                                                                              //
+//    Status Bar widgets                                                        //
+//                                                                              //
 //------------------------------------------------------------------------------//
 EmacsMotif_StatusIndicator_LineNumber::EmacsMotif_StatusIndicator_LineNumber( EmacsMotif_Application &app, EmacsMotif_Core &parent )
     : EmacsMotif_TextLabel( app, parent, "line_number_text", 7 )
@@ -1288,7 +1288,7 @@ void EmacsMotif_StatusBar_Form::postRealizeInit()
 {
     EmacsXtArgs args;
 
-    // now that the resizing has happened ask the size of the frames are adjust the offsets
+    // now that the resizing has happened ask the size of the frames and adjust the offsets
     int spacing = 2;
     int offset = 0;
 
@@ -1345,9 +1345,9 @@ void EmacsMotif_StatusBar_Frame::postRealizeInit()
 { }
 
 //------------------------------------------------------------------------------//
-//                                        //
-//    Status Bar widgets                            //
-//                                        //
+//                                                                              //
+//    Status Bar widgets                                                        //
+//                                                                              //
 //------------------------------------------------------------------------------//
 
 EmacsMotif_ToolBar_Button::EmacsMotif_ToolBar_Button
@@ -1530,9 +1530,9 @@ void EmacsMotif_ToolBar_Frame::postRealizeInit()
 { }
 
 //------------------------------------------------------------------------------//
-//                                        //
-//    Drawing Area widgets                            //
-//                                        //
+//                                                                              //
+//    Drawing Area widgets                                                      //
+//                                                                              //
 //------------------------------------------------------------------------------//
 EmacsMotif_Screen_DrawingArea::EmacsMotif_Screen_DrawingArea( EmacsMotif_Application &app, EmacsMotif_Core &parent )
     : EmacsMotif_Core( app, parent, "screen_drawing_area", xmDrawingAreaWidgetClass )
@@ -1604,9 +1604,9 @@ void EmacsMotif_Screen_Frame::postRealizeInit()
 { }
 
 //------------------------------------------------------------------------------//
-//                                        //
-//    Main screen form                                //
-//                                        //
+//                                                                              //
+//    Main screen form                                                          //
+//                                                                              //
 //------------------------------------------------------------------------------//
 EmacsMotif_Screen_Form::EmacsMotif_Screen_Form( EmacsMotif_Application &app, EmacsMotif_Core &parent )
     : EmacsMotif_Core( app, parent, "screen_form", xmFormWidgetClass )
@@ -1705,9 +1705,9 @@ void EmacsMotif_Screen_Form::configureScreenGeometry(void)
     drawing_area_args.setValues( screen.widget );
 }
 //------------------------------------------------------------------------------//
-//                                        //
-//    Main Window widgets                            //
-//                                        //
+//                                                                              //
+//    Main Window widgets                                                       //
+//                                                                              //
 //------------------------------------------------------------------------------//
 EmacsMotif_MainWindow::EmacsMotif_MainWindow( EmacsMotif_Application &app, EmacsMotif_Core &parent )
     : EmacsMotif_Core( app, parent, "main_window", xmMainWindowWidgetClass )
@@ -1934,7 +1934,7 @@ bool EmacsMotif_Application::initApplication( const EmacsString &display_locatio
         STR("user6Underline", user6_underline, "0"),
 
         FGC("user7Foreground", user7_fg, "#ffffff"),
-              BGC("user7Background", user7_bg, "#c0c0c0"),
+        BGC("user7Background", user7_bg, "#c0c0c0"),
         STR("user7Underline", user7_underline, "0"),
 
         FGC("user8Foreground", user8_fg, "#ffffff"),
