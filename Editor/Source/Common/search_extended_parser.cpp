@@ -580,7 +580,7 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_term( EmacsStringStream &p
         if( pattern.atEnd() )
             return new RegularExpressionEndOfLine( *this );
         else
-            parse_repeated_char( ch, pattern );
+            return parse_repeated_char( ch, pattern );
     case '\\':
         {
         // the \ remove the special meaning of ) and | that the pattern may stop on
