@@ -691,17 +691,17 @@ public:
     struct _resources
     {
         Boolean display_scroll_bars;    // True if scroll bars are required
-        Boolean display_status_bar;    // true if the status bar is required
-        Boolean display_tool_bar;    // true if the tool bar is required
-        char *normal_font_name;        // Font for normal text
-        char *special_font_name;    // Font for display-non-printing and C1 controls text
+        Boolean display_status_bar;     // true if the status bar is required
+        Boolean display_tool_bar;       // true if the tool bar is required
+        char *normal_font_name;         // Font for normal text
+        char *special_font_name;        // Font for display-non-printing and C1 controls text
 #ifdef BOLDFONT
-        char *bold_font_name;        // Font for bolded text
+        char *bold_font_name;           // Font for bolded text
 #endif
-        int rows;            // Number of character rows in the window
+        int rows;               // Number of character rows in the window
         int columns;            // Number of character columns in the window
-        Pixel n_fg;            // Foreground for normal text
-        Pixel n_bg;            // Background for normal text
+        Pixel n_fg;             // Foreground for normal text
+        Pixel n_bg;             // Background for normal text
         char *n_underline;
         Pixel ml_fg;            // Foreground for mode line text
         Pixel ml_bg;            // Background for mode line text
@@ -709,65 +709,65 @@ public:
         Pixel hl_fg;            // Foreground for highlighted text
         Pixel hl_bg;            // Background for highlighted text
         char *hl_underline;
-        Pixel c_fg;            // Foreground for cursor
-        Pixel c_bg;            // Background for cursor
+        Pixel c_fg;             // Foreground for cursor
+        Pixel c_bg;             // Background for cursor
         char *c_underline;
-        Pixel word_fg;            // word foreground colour
-        Pixel word_bg;            // word foreground colour
+        Pixel word_fg;          // word foreground colour
+        Pixel word_bg;          // word foreground colour
         char *word_underline;
-        Pixel string1_fg;        // string foreground colour
-        Pixel string1_bg;        // string foreground colour
+        Pixel string1_fg;       // string foreground colour
+        Pixel string1_bg;       // string foreground colour
         char *string1_underline;
-        Pixel string2_fg;        // string foreground colour
-        Pixel string2_bg;        // string foreground colour
+        Pixel string2_fg;       // string foreground colour
+        Pixel string2_bg;       // string foreground colour
         char *string2_underline;
-        Pixel string3_fg;        // string foreground colour
-        Pixel string3_bg;        // string foreground colour
+        Pixel string3_fg;       // string foreground colour
+        Pixel string3_bg;       // string foreground colour
         char *string3_underline;
-        Pixel comment1_fg;        // comment foreground colour
-        Pixel comment1_bg;        // comment foreground colour
+        Pixel comment1_fg;      // comment foreground colour
+        Pixel comment1_bg;      // comment foreground colour
         char *comment1_underline;
-        Pixel comment2_fg;        // comment foreground colour
-        Pixel comment2_bg;        // comment foreground colour
+        Pixel comment2_fg;      // comment foreground colour
+        Pixel comment2_bg;      // comment foreground colour
         char *comment2_underline;
-        Pixel comment3_fg;        // comment foreground colour
-        Pixel comment3_bg;        // comment foreground colour
+        Pixel comment3_fg;      // comment foreground colour
+        Pixel comment3_bg;      // comment foreground colour
         char *comment3_underline;
-        Pixel kw1_fg;            // kw1 foreground colour
-        Pixel kw1_bg;            // kw1 foreground colour
+        Pixel kw1_fg;           // kw1 foreground colour
+        Pixel kw1_bg;           // kw1 foreground colour
         char *kw1_underline;
-        Pixel kw2_fg;            // kw2 foreground colour
-        Pixel kw2_bg;            // kw2 foreground colour
+        Pixel kw2_fg;           // kw2 foreground colour
+        Pixel kw2_bg;           // kw2 foreground colour
         char *kw2_underline;
-        Pixel kw3_fg;            // kw3 foreground colour
-        Pixel kw3_bg;            // kw3 foreground colour
+        Pixel kw3_fg;           // kw3 foreground colour
+        Pixel kw3_bg;           // kw3 foreground colour
         char *kw3_underline;
-        Pixel user1_fg;            // user 1 foreground colour
+        Pixel user1_fg;         // user 1 foreground colour
         Pixel user1_bg;
         char *user1_underline;
-        Pixel user2_fg;            // user 2 foreground colour
+        Pixel user2_fg;         // user 2 foreground colour
         Pixel user2_bg;
         char *user2_underline;
-        Pixel user3_fg;            // user 3 foreground colour
+        Pixel user3_fg;         // user 3 foreground colour
         Pixel user3_bg;
         char *user3_underline;
-        Pixel user4_fg;            // user 4 foreground colour
+        Pixel user4_fg;         // user 4 foreground colour
         Pixel user4_bg;
         char *user4_underline;
-        Pixel user5_fg;            // user 5 foreground colour
+        Pixel user5_fg;         // user 5 foreground colour
         Pixel user5_bg;
         char *user5_underline;
-        Pixel user6_fg;            // user 6 foreground colour
+        Pixel user6_fg;         // user 6 foreground colour
         Pixel user6_bg;
         char *user6_underline;
-        Pixel user7_fg;            // user 7 foreground colour
+        Pixel user7_fg;         // user 7 foreground colour
         Pixel user7_bg;
         char *user7_underline;
-        Pixel user8_fg;            // user 8 foreground colour
+        Pixel user8_fg;         // user 8 foreground colour
         Pixel user8_bg;
         char *user8_underline;
-        char *p_fg;            // Foreground for pointer
-        char *p_bg;            // Background for pointer
+        char *p_fg;             // Foreground for pointer
+        char *p_bg;             // Background for pointer
         int p_shape;            // Pointer shape
     };
     typedef struct _resources Resources;
@@ -816,23 +816,23 @@ public:
     //
     //    Screen control
     //
-    virtual void t_topos(int, int);    // move the cursor to the indicated (row,column); (1,1) is the upper left
-    virtual void t_reset();        // reset terminal (screen is in unkown state, convert it to a known one)
+    virtual void t_topos(int, int);     // move the cursor to the indicated (row,column); (1,1) is the upper left
+    virtual void t_reset();             // reset terminal (screen is in unkown state, convert it to a known one)
     virtual bool t_update_begin();
     virtual void t_update_end();
-    virtual void t_insert_lines(int);    // insert n lines
-    virtual void t_delete_lines(int);    // delete n lines
-    virtual void t_wipe_line(int);    // erase to the end of the line
+    virtual void t_insert_lines(int);   // insert n lines
+    virtual void t_delete_lines(int);   // delete n lines
+    virtual void t_wipe_line(int);      // erase to the end of the line
     virtual bool t_window(void);
-    virtual bool t_window(int);        // set the screen window so that IDline operations only affect the first n lines of the screen
+    virtual bool t_window(int);         // set the screen window so that IDline operations only affect the first n lines of the screen
     virtual void t_display_activity(  unsigned char );
     virtual void t_update_line(EmacsLinePtr oldl, EmacsLinePtr newl, int ln);    // Routine to call to update a line
-    virtual void t_change_attributes();    // Routine to change attributes
+    virtual void t_change_attributes(); // Routine to change attributes
     virtual void t_beep();
     //
     //    Keyboard routines
     //
-    virtual void k_check_for_input();    // check for any input
+    virtual void k_check_for_input();   // check for any input
     virtual void t_wipe_screen();
     virtual void t_flash();
     virtual int k_input_event( unsigned char *, unsigned int );
@@ -846,7 +846,7 @@ public:
 
     void input_char_string( const EmacsString &keys, bool shift );
 public:
-    void getKeyboardFocus();    // get keyboard focus and pop to top of Z order
+    void getKeyboardFocus();            // get keyboard focus and pop to top of Z order
 
     int ToggleCursor();
     void write_region( int width, int height, int x, int y );
@@ -870,7 +870,7 @@ public:
     int last_mouse_x;
     int last_mouse_y;
 private:
-    int mouse_button_state;        // bit mask of pressed buttons
+    int mouse_button_state;             // bit mask of pressed buttons
 };
 
 extern TerminalControl_GUI *theMotifGUI;
