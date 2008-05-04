@@ -63,11 +63,11 @@ void init_dsp( void )
     if( !term_is_terminal )
         return;
 
-     theActiveView->t_select();
-     theActiveView->t_init();
+    theActiveView->t_select();
+    theActiveView->t_init();
 
-     theActiveView->t_select();
-     theActiveView->t_change_attributes();
+    theActiveView->t_select();
+    theActiveView->t_change_attributes();
 
     term_width = theActiveView->t_width;
     term_length = theActiveView->t_length;
@@ -75,8 +75,8 @@ void init_dsp( void )
     screen_garbaged = 1;
     if( complete_reinit )
     {
-         theActiveView->t_reset();
-         theActiveView->t_window( 0 );
+        theActiveView->t_reset();
+        theActiveView->t_window( 0 );
     }
 
 #if BROADCAST
