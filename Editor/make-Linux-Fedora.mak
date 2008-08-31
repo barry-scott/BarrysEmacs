@@ -11,6 +11,7 @@
 ##################################################################################
 CC=/usr/bin/gcc -pipe
 CXX=/usr/bin/g++ -pipe
+STRIP=strip
 
 MOTIF=/usr
 MOTIFINC=$(MOTIF)/include

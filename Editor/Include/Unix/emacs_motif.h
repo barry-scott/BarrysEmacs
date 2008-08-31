@@ -58,9 +58,9 @@ private:
 };
 
 //======================================================================//
-//                                    //
-//    Emacs MENU class                        //
-//                                    //
+//                                                                      //
+//    Emacs MENU class                                                  //
+//                                                                      //
 //======================================================================//
 class EmacsMotifMenuButton;
 class EmacsMotif_ActionItem

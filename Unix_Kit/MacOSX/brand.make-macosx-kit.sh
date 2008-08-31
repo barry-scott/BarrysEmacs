@@ -6,6 +6,9 @@ mkdir tmp/${PKGNAME}
 svn export BarrysEmacs.app tmp/${PKGNAME}/${PKGNAME}.app
 KITDIR=tmp/${PKGNAME}/${PKGNAME}.app/Contents/Resources/bemacs-kit
 DOCDIR=tmp/${PKGNAME}/Documentation
+
+tar czf bemacs-mac-os-x-%(version)s.tar.gz bemacs-kit
+
 cp bemacs-kit/* ${KITDIR}
 mkdir -p ${DOCDIR}/Files
 mv -f ${KITDIR}/*.css ${DOCDIR}/Files

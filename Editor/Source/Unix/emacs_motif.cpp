@@ -1798,7 +1798,7 @@ void EmacsMotif_Shell::postRealizeInit()
         application.dpy, XtWindow( widget ),
         (char *)write_scrolls_bits, write_scrolls_width, write_scrolls_height
         );
-    if (iconPixmap != None)
+    if( iconPixmap != None )
     {
         args.setArg( XmNiconPixmap, iconPixmap );
 
@@ -1825,11 +1825,11 @@ extern char *motif_argv[];
 bool EmacsMotif_Application::initApplication( const EmacsString &display_location )
 {
 
-{
+    {
     const char *class_name = getenv("EMACS_CLASS_NAME");
     if( class_name != NULL )
         emacs_class = class_name;
-}
+    }
 
 #define FGC( name, field, value ) \
     { name, XtCForeground, XtRPixel, sizeof( Pixel ), XtOffset( Resources *, field ), XmRString, const_cast<char *>(value)}
@@ -1854,92 +1854,92 @@ bool EmacsMotif_Application::initApplication( const EmacsString &display_locatio
     {"rows", "Rows", XtRInt, sizeof( int ), XtOffset( Resources *, rows ), XmRImmediate,( caddr_t ) 40},
     {"columns", "Columns", XtRInt, sizeof( int ), XtOffset( Resources *, columns ), XmRImmediate,( caddr_t ) 80},
 
-        BGC("cursorForeground", c_fg, XtDefaultBackground),
-        FGC("cursorBackground", c_bg, XtDefaultForeground),
+    BGC("cursorForeground", c_fg, XtDefaultBackground),
+    FGC("cursorBackground", c_bg, XtDefaultForeground),
 
-        FGC("normalForeground", n_fg, "#000000"),
-        BGC("normalBackground", n_bg, "#ffffff"),
-        STR("normalUnderline", n_underline, "0"),
+    FGC("normalForeground", n_fg, "#000000"),
+    BGC("normalBackground", n_bg, "#ffffff"),
+    STR("normalUnderline", n_underline, "0"),
 
-        FGC("modelineForeground", ml_fg, "#ffffff"),
-        BGC("modelineBackground", ml_bg, "#0000ff"),
-        STR("modelineUnderline", ml_underline, "0"),
+    FGC("modelineForeground", ml_fg, "#ffffff"),
+    BGC("modelineBackground", ml_bg, "#0000ff"),
+    STR("modelineUnderline", ml_underline, "0"),
 
-        FGC("highlightForeground", hl_fg, "#ffffff"),
-        BGC("highlightBackground", hl_bg, "#808080"),
-        STR("highlightUnderline", hl_underline, "0"),
+    FGC("highlightForeground", hl_fg, "#ffffff"),
+    BGC("highlightBackground", hl_bg, "#808080"),
+    STR("highlightUnderline", hl_underline, "0"),
 
-        FGC("wordForeground", word_fg, "#000000"),
-        BGC("wordBackground", word_bg, "#ffffff"),
-        STR("wordUnderline", word_underline, "0"),
+    FGC("wordForeground", word_fg, "#000000"),
+    BGC("wordBackground", word_bg, "#ffffff"),
+    STR("wordUnderline", word_underline, "0"),
 
-        FGC("stringForeground", string1_fg, "#008000"),
-        BGC("stringBackground", string1_bg, "#ffffff"),
-        STR("stringUnderline", string1_underline, "0"),
+    FGC("stringForeground", string1_fg, "#008000"),
+    BGC("stringBackground", string1_bg, "#ffffff"),
+    STR("stringUnderline", string1_underline, "0"),
 
-        FGC("string2Foreground", string2_fg, "#008000"),
-        BGC("string2Background", string2_bg, "#ffffff"),
-        STR("string2Underline", string2_underline, "0"),
+    FGC("string2Foreground", string2_fg, "#008000"),
+    BGC("string2Background", string2_bg, "#ffffff"),
+    STR("string2Underline", string2_underline, "0"),
 
-        FGC("string3Foreground", string3_fg, "#008000"),
-        BGC("string3Background", string3_bg, "#ffffff"),
-        STR("string3Underline", string3_underline, "0"),
+    FGC("string3Foreground", string3_fg, "#008000"),
+    BGC("string3Background", string3_bg, "#ffffff"),
+    STR("string3Underline", string3_underline, "0"),
 
-        FGC("commentForeground", comment1_fg, "#008000"),
-        BGC("commentBackground", comment1_bg, "#ffffff"),
-        STR("commentUnderline", comment1_underline, "0"),
+    FGC("commentForeground", comment1_fg, "#008000"),
+    BGC("commentBackground", comment1_bg, "#ffffff"),
+    STR("commentUnderline", comment1_underline, "0"),
 
-        FGC("comment2Foreground", comment2_fg, "#008000"),
-        BGC("comment2Background", comment2_bg, "#ffffff"),
-        STR("comment2Underline", comment2_underline, "0"),
+    FGC("comment2Foreground", comment2_fg, "#008000"),
+    BGC("comment2Background", comment2_bg, "#ffffff"),
+    STR("comment2Underline", comment2_underline, "0"),
 
-        FGC("comment3Foreground", comment3_fg, "#008000"),
-        BGC("comment3Background", comment3_bg, "#ffffff"),
-        STR("comment3Underline", comment3_underline, "0"),
+    FGC("comment3Foreground", comment3_fg, "#008000"),
+    BGC("comment3Background", comment3_bg, "#ffffff"),
+    STR("comment3Underline", comment3_underline, "0"),
 
-        FGC("keyword1Foreground", kw1_fg, "#0000ff"),
-        BGC("keyword1Background", kw1_bg, "#ffffff"),
-        STR("keyword1Underline", kw1_underline, "0"),
+    FGC("keyword1Foreground", kw1_fg, "#0000ff"),
+    BGC("keyword1Background", kw1_bg, "#ffffff"),
+    STR("keyword1Underline", kw1_underline, "0"),
 
-        FGC("keyword2Foreground", kw2_fg, "#ff0000"),
-        BGC("keyword2Background", kw2_bg, "#ffffff"),
-        STR("keyword2Underline", kw2_underline, "0"),
+    FGC("keyword2Foreground", kw2_fg, "#ff0000"),
+    BGC("keyword2Background", kw2_bg, "#ffffff"),
+    STR("keyword2Underline", kw2_underline, "0"),
 
-        FGC("keyword3Foreground", kw3_fg, "#ff00ff"),
-        BGC("keyword3Background", kw3_bg, "#ffffff"),
-        STR("keyword3Underline", kw3_underline, "0"),
+    FGC("keyword3Foreground", kw3_fg, "#ff00ff"),
+    BGC("keyword3Background", kw3_bg, "#ffffff"),
+    STR("keyword3Underline", kw3_underline, "0"),
 
-        FGC("user1Foreground", user1_fg, "#ff0000"),
-        BGC("user1Background", user1_bg, "#ffffff"),
-        STR("user1Underline", user1_underline, "0"),
+    FGC("user1Foreground", user1_fg, "#ff0000"),
+    BGC("user1Background", user1_bg, "#ffffff"),
+    STR("user1Underline", user1_underline, "0"),
 
-        FGC("user2Foreground", user2_fg, "#00ff00"),
-        BGC("user2Background", user2_bg, "#ffffff"),
-        STR("user2Underline", user2_underline, "0"),
+    FGC("user2Foreground", user2_fg, "#00ff00"),
+    BGC("user2Background", user2_bg, "#ffffff"),
+    STR("user2Underline", user2_underline, "0"),
 
-        FGC("user3Foreground", user3_fg, "#0000ff"),
-        BGC("user3Background", user3_bg, "#ffffff"),
-        STR("user3Underline", user3_underline, "0"),
+    FGC("user3Foreground", user3_fg, "#0000ff"),
+    BGC("user3Background", user3_bg, "#ffffff"),
+    STR("user3Underline", user3_underline, "0"),
 
-        FGC("user4Foreground", user4_fg, "#ffff00"),
-        BGC("user4Background", user4_bg, "#ffffff"),
-        STR("user4Underline", user4_underline, "0"),
+    FGC("user4Foreground", user4_fg, "#ffff00"),
+    BGC("user4Background", user4_bg, "#ffffff"),
+    STR("user4Underline", user4_underline, "0"),
 
-        FGC("user5Foreground", user5_fg, "#ff00ff"),
-        BGC("user5Background", user5_bg, "#ffffff"),
-        STR("user5Underline", user5_underline, "0"),
+    FGC("user5Foreground", user5_fg, "#ff00ff"),
+    BGC("user5Background", user5_bg, "#ffffff"),
+    STR("user5Underline", user5_underline, "0"),
 
-        FGC("user6Foreground", user6_fg, "#00ffff"),
-        BGC("user6Background", user6_bg, "#ffffff"),
-        STR("user6Underline", user6_underline, "0"),
+    FGC("user6Foreground", user6_fg, "#00ffff"),
+    BGC("user6Background", user6_bg, "#ffffff"),
+    STR("user6Underline", user6_underline, "0"),
 
-        FGC("user7Foreground", user7_fg, "#ffffff"),
-        BGC("user7Background", user7_bg, "#c0c0c0"),
-        STR("user7Underline", user7_underline, "0"),
+    FGC("user7Foreground", user7_fg, "#ffffff"),
+    BGC("user7Background", user7_bg, "#c0c0c0"),
+    STR("user7Underline", user7_underline, "0"),
 
-        FGC("user8Foreground", user8_fg, "#ffffff"),
-        BGC("user8Background", user8_bg, "#555555"),
-        STR("user8Underline", user8_underline, "0")
+    FGC("user8Foreground", user8_fg, "#ffffff"),
+    BGC("user8Background", user8_bg, "#555555"),
+    STR("user8Underline", user8_underline, "0")
     };
 
     XtToolkitInitialize();
@@ -2094,7 +2094,7 @@ bool EmacsMotif_Application::initApplication( const EmacsString &display_locatio
         XParseColor(dpy, DefaultColormap( dpy, DefaultScreen(dpy ) ), resources.p_fg, &fgColor );
         XParseColor(dpy, DefaultColormap( dpy, DefaultScreen(dpy ) ), resources.p_bg, &bgColor );
         arrowCursor = XCreateGlyphCursor( dpy, pointerFontStruct->fid, pointerFontStruct->fid,
-            resources.p_shape, resources.p_shape + 1, &fgColor, &bgColor );
+                                            resources.p_shape, resources.p_shape + 1, &fgColor, &bgColor );
         cursors++;
     }
 #  ifdef ACTIVITY

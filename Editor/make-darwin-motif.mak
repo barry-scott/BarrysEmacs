@@ -22,6 +22,8 @@ lddynamic = $(cpp) -g -dynamic -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -
 edit_obj=darwin/obj/
 edit_exe=darwin/exe/
 
+STRIP=true
+
 ld_bintools=$(cpp)
 bemacs_libs=-lX11 $(MOTIF_TOP)/lib/libXm.a -lXt -lXmu -lSM -lICE -lXext -lXp -lX11
 

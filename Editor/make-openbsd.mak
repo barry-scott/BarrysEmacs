@@ -9,6 +9,7 @@
 #                                                                                #
 #                                                                                #
 ##################################################################################
+STRIP=strip
 CC=/usr/bin/gcc -pipe
 CXX=/usr/bin/g++ -pipe
 cc_flags = -g -D_DEBUG -DOLD_STDCXX -IInclude/Unix -IInclude/Common -I/usr/X11R6/include -I/usr/local/include -c

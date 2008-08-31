@@ -1,8 +1,6 @@
 #
 #	make_common.mak common unix make file
 #
-
-
 obj_files = $(os_specific_obj_files) \
  $(edit_obj)abbrev.o \
  $(edit_obj)abspath.o \
@@ -155,7 +153,7 @@ $(edit_exe)dbadd : $(edit_obj)dbadd.o $(db_obj_files)
 	@ echo Info: Link $(edit_exe)dbadd
 	$(ld_bintools) -o $(edit_obj)dbadd -g $(edit_obj)dbadd.o $(db_obj_files)
 	cp $(edit_obj)dbadd $(edit_exe)dbadd
-	strip $(edit_exe)dbadd
+	$(STRIP) $(edit_exe)dbadd
 
 $(edit_obj)dbadd.o : dbadd/dbadd.cpp
 	@ echo Info: Compile dbadd/dbadd.cpp
@@ -165,7 +163,7 @@ $(edit_exe)bemacs : $(edit_obj)emclient.o $(edit_obj)em_stat.o $(edit_obj)emstri
 	@ echo Info: Link $(edit_exe)bemacs
 	$(ld_bintools) -o $(edit_obj)bemacs -g $(os_specific_client_ld_options) $(edit_obj)emclient.o $(edit_obj)em_stat.o $(edit_obj)emstring.o $(edit_obj)stub_rtl.o $(os_specific_client_obj_files) $(edit_obj)doprint.o
 	cp $(edit_obj)bemacs $(edit_exe)bemacs
-	strip $(edit_exe)bemacs
+	$(STRIP) $(edit_exe)bemacs
 
 $(edit_obj)emclient.o : Source/Unix/emclient.cpp
 	@ echo Info: Compile Source/Unix/emclient.cpp
@@ -180,7 +178,7 @@ $(edit_exe)mll-2-db : $(edit_obj)mll-2-db.o $(db_obj_files)
 	@ echo Info: Link $(edit_exe)mll-2-db
 	$(ld_bintools) -o $(edit_obj)mll-2-db -g $(edit_obj)mll-2-db.o $(db_obj_files)
 	cp $(edit_obj)mll-2-db $(edit_exe)mll-2-db
-	strip $(edit_exe)mll-2-db
+	$(STRIP) $(edit_exe)mll-2-db
 
 $(edit_obj)mll-2-db.o : mll2db/mll-2-db.cpp
 	@ echo Info: Compile mll2db/mll-2-db.cpp
@@ -190,7 +188,7 @@ $(edit_exe)dbcreate : $(edit_obj)dbcreate.o $(db_obj_files)
 	@ echo Info: Link $(edit_exe)dbcreate
 	$(ld_bintools) -o $(edit_obj)dbcreate -g $(edit_obj)dbcreate.o $(db_obj_files)
 	cp $(edit_obj)dbcreate $(edit_exe)dbcreate
-	strip $(edit_exe)dbcreate
+	$(STRIP) $(edit_exe)dbcreate
 
 $(edit_obj)dbcreate.o : dbcreate/dbcreate.cpp
 	@ echo Info: Compile dbcreate/dbcreate.cpp
@@ -208,7 +206,7 @@ $(edit_exe)dblist : $(edit_obj)dblist.o $(db_obj_files)
 	@ echo Info: Link $(edit_exe)dblist
 	$(ld_bintools) -o $(edit_obj)dblist -g $(edit_obj)dblist.o $(db_obj_files)
 	cp $(edit_obj)dblist $(edit_exe)dblist
-	strip $(edit_exe)dblist
+	$(STRIP) $(edit_exe)dblist
 
 $(edit_obj)dblist.o : dblist/dblist.cpp
 	@ echo Info: Compile dblist/dblist.cpp
@@ -218,7 +216,7 @@ $(edit_exe)dbprint : $(edit_obj)dbprint.o $(db_obj_files)
 	@ echo Info: Link $(edit_exe)dbprint
 	$(ld_bintools) -o $(edit_obj)dbprint -g $(edit_obj)dbprint.o $(db_obj_files)
 	cp $(edit_obj)dbprint $(edit_exe)dbprint
-	strip $(edit_exe)dbprint
+	$(STRIP) $(edit_exe)dbprint
 
 $(edit_obj)dbprint.o : dbprint/dbprint.cpp
 	@ echo Info: Compile dbprint/dbprint.cpp
@@ -228,7 +226,7 @@ $(edit_exe)dbdel : $(edit_obj)dbdel.o $(db_obj_files)
 	@ echo Info: Link $(edit_exe)dbdel
 	$(ld_bintools) -o $(edit_obj)dbdel -g $(edit_obj)dbdel.o $(db_obj_files)
 	cp $(edit_obj)dbdel $(edit_exe)dbdel
-	strip $(edit_exe)dbdel
+	$(STRIP) $(edit_exe)dbdel
 
 $(edit_obj)dbdel.o : dbdel/dbdel.cpp
 	@ echo Info: Compile dbdel/dbdel.cpp
@@ -252,7 +250,7 @@ $(edit_obj)linux_ld_fix.o : Source/Unix/linux_ld_fix.cpp
 $(edit_exe)bemacs_server_dynamic : $(edit_obj)bemacs_server_dynamic
 	@ echo Info: Build $(edit_exe)bemacs_server_dynamic
 	cp $(edit_obj)bemacs_server_dynamic $(edit_exe)bemacs_server_dynamic
-	strip $(edit_exe)bemacs_server_dynamic
+	$(STRIP) $(edit_exe)bemacs_server_dynamic
 
 $(edit_obj)bemacs_server_static : $(obj_files)
 	@ echo Info: Link $(edit_obj)bemacs_server_static
@@ -260,7 +258,7 @@ $(edit_obj)bemacs_server_static : $(obj_files)
 
 $(edit_exe)bemacs_server_static : $(edit_obj)bemacs_server_static
 	cp $(edit_obj)bemacs_server_static $(edit_exe)bemacs_server_static
-	strip $(edit_exe)bemacs_server_static
+	$(STRIP) $(edit_exe)bemacs_server_static
 
 test: $(edit_obj)motif_test
 
