@@ -8,7 +8,6 @@ template_file_prefix = 'brand.'
 class Error(Exception):
     pass
 
-
 def main( argv ):
     if len(argv) < 3:
         print 'Usage: %s <version-info-file> <wc-path>' % argv[0]
