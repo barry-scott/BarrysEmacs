@@ -682,11 +682,13 @@ int get_char( void )
             //
             //    If we really do something in here...
             //
+#if defined( SUBPROCESSES )
             if( process_channel_interrupts() )
                 //
                 //    then exit the loop.
                 //
                 break;
+#endif
 
             interrupt_key_struck = 0;
             if( wait_for_activity() < 0 )

@@ -6,24 +6,24 @@
 //
 //    OS is chosen on the following symbol
 //
-//    vms        - VAX/VMS
-//    unix        - any old unix
-//    macintosh    - the Apple Macintosh
+//    vms           - VAX/VMS
+//    unix          - any old unix
+//    macintosh     - the Apple Macintosh
 //    _MSDOS        - MS DOS
-//    windows        - MS Windows
+//    windows       - MS Windows
 //
 //    Features are conditional on the following symbols
 //
-//    DB        - database management
+//    DB            - database management
 //    MEMMAP        - directly write the display hardware
-//    REAL_TTY    - there is a real terminal as I/O device
-//    MOUSE        - has a mouse device
-//    INODE        - file system has unix like inodes
-//    subprocesses    - Support subprocesses
-//    ALIGN_ACCESS    - True if the hardware only supports aligned memory
-//    USER_ID        - A system with usernames and the like
+//    REAL_TTY      - there is a real terminal as I/O device
+//    MOUSE         - has a mouse device
+//    INODE         - file system has unix like inodes
+//    SUBPROCESSES  - Support subprocesses
+//    ALIGN_ACCESS  - True if the hardware only supports aligned memory
+//    USER_ID       - A system with usernames and the like
 //    NETWORK_ID    - A system with a network address and name
-//    XTERM        - X interface
+//    XTERM         - X interface
 //
 //
 #define EMACS_VERSION    "%(maturity)s%(major)s.%(minor)s-%(revision)s%(wc_state)s"

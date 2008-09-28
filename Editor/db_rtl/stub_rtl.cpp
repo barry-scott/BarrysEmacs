@@ -86,6 +86,7 @@ void debug_exception(void)
     return;
 }
 
+#ifdef SAVEENVIRONMENT
 void EmacsString::SaveEnvironment()
 { }
 
@@ -95,13 +96,14 @@ void EmacsStringRepresentation::SaveEnvironment()
 void FormatString::SaveEnvironment()
 { }
 
+void EmacsStringTable::SaveEnvironment()
+{ }
+#endif
+
 int emacs_stricmp( const unsigned char *, const unsigned char * )
 {
     return 0;
 }
-void EmacsStringTable::SaveEnvironment()
-{ }
-
 EmacsString get_config_env( const EmacsString &name )
 {
     char *value = getenv( name );

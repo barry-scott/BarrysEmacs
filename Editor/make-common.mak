@@ -1,8 +1,6 @@
 #
 #	make_common.mak common unix make file
 #
-
-
 obj_files = $(os_specific_obj_files) \
  $(edit_obj)abbrev.o \
  $(edit_obj)abspath.o \
@@ -21,7 +19,6 @@ obj_files = $(os_specific_obj_files) \
  $(edit_obj)em_time.o \
  $(edit_obj)emacs.o \
  $(edit_obj)emacs_init.o \
- $(edit_obj)emacs_motif.o \
  $(edit_obj)emacs_proc.o \
  $(edit_obj)emacs_signal.o \
  $(edit_obj)emacsrtl.o \
@@ -51,10 +48,6 @@ obj_files = $(os_specific_obj_files) \
  $(edit_obj)mlispexp.o \
  $(edit_obj)mlisproc.o \
  $(edit_obj)mlprintf.o \
- $(edit_obj)motif_keys.o \
- $(edit_obj)motifcmd.o \
- $(edit_obj)motiftk.o \
- $(edit_obj)motiftrm.o \
  $(edit_obj)ndbm.o \
  $(edit_obj)options.o \
  $(edit_obj)queue.o \
@@ -75,8 +68,8 @@ obj_files = $(os_specific_obj_files) \
  $(edit_obj)undo.o \
  $(edit_obj)unix_ext_func.o \
  $(edit_obj)unix_rtl.o \
- $(edit_obj)unix_trm.o \
  $(edit_obj)unixcomm.o \
+ $(edit_obj)unix_trm.o \
  $(edit_obj)unixfile.o \
  $(edit_obj)variable.o \
  $(edit_obj)varthunk.o \
@@ -262,7 +255,7 @@ $(edit_exe)bemacs_server_static : $(edit_obj)bemacs_server_static
 	cp $(edit_obj)bemacs_server_static $(edit_exe)bemacs_server_static
 	strip $(edit_exe)bemacs_server_static
 
-test: $(edit_obj)motif_test
+motif_test: $(edit_obj)motif_test
 
 motif_test_objs=\
 	$(edit_obj)motif_test.o \
@@ -304,6 +297,10 @@ $(edit_obj)motiftk.o : Source/Unix/motiftk.cpp
 $(edit_obj)motifcmd.o : Source/Unix/motifcmd.cpp
 	@ echo Info: Compile Source/Unix/motifcmd.cpp
 	@ $(cpp) $(cc_flags) -o $(edit_obj)motifcmd.o Source/Unix/motifcmd.cpp
+
+$(edit_obj)emacs_wxwidgets.o : Source/wxWidgets/emacs_wxwidgets.cpp Include/wxWidgets/emacs_wxwidgets.h
+	@ echo Info: Compile Source/wxWidgets/emacs_wxwidgets.cpp
+	@ $(cpp) $(cc_flags) -o $(edit_obj)emacs_wxwidgets.o Source/wxWidgets/emacs_wxwidgets.cpp
 
 $(edit_obj)unix_trm.o : Source/Unix/unix_trm.cpp
 	@ echo Info: Compile Source/Unix/unix_trm.cpp

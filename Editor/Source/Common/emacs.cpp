@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1982-2001
+//    Copyright (c) 1982-2008
 //        Barry A. Scott
 //
 #include <emacs.h>
@@ -40,15 +40,24 @@ extern bool UI_quit_emacs();
 
 extern void init_scheduled_timeout(void);
 extern void restore_scheduled_timeout(void);
-extern void init_dsp(void);    extern void init_memory(void);
-extern void init_lisp(void);    extern void init_abs(void);
-extern void init_srch(void);    extern void init_terminal(const EmacsString &, const EmacsString &);
-extern void restore_db(void);    extern void restore_vms(void);
-extern void init_fncs(void);    extern void init_bf(void);
-extern void init_display(void);    extern void init_undo(void);
-extern void init_key(void);    extern void init_fncs2(void);
-extern void init_var(void);    extern void restore_var(void);
-extern void init_vms(void);    extern void restore_timer(void);
+extern void init_dsp(void);
+extern void init_memory(void);
+extern void init_lisp(void);
+extern void init_abs(void);
+extern void init_srch(void);
+extern void init_terminal(const EmacsString &, const EmacsString &);
+extern void restore_db(void);
+extern void restore_vms(void);
+extern void init_fncs(void);
+extern void init_bf(void);
+extern void init_display(void);
+extern void init_undo(void);
+extern void init_key(void);
+extern void init_fncs2(void);
+extern void init_var(void);
+extern void restore_var(void);
+extern void init_vms(void);
+extern void restore_timer(void);
 extern void init_win(void);
 
 int dbg_flags;
@@ -116,6 +125,7 @@ int emacsMain
     //
     int rv = 0;
     init_memory();
+
 #ifdef SAVE_ENVIRONMENT
     EmacsString full_rest_fn;
     EmacsString cannot_restore_reason;
@@ -139,9 +149,9 @@ int emacsMain
     if( rv > 0 )
     {
         int status;
-        init_display();    // " the core display system
-        init_lisp();    // " the MLisp system
-        init_abs();    // " the current directory name
+        init_display();                         // " the core display system
+        init_lisp();                            // " the MLisp system
+        init_abs();                             // " the current directory name
 #ifdef vms
         vms_restoring_env( full_rest_fn.data() );
 #endif
@@ -155,37 +165,40 @@ int emacsMain
 #endif
         }
 
-//        restore_var();
-        init_srch();        // " the search commands
-        init_terminal( term_type, device );    // Start the primary terminal IO system
+        init_srch();                            // " the search commands
+        init_terminal( term_type, device );     // Start the primary terminal IO system
         init_dsp();
-        EmacsWindowGroup::restore();        // " the window system
+        EmacsWindowGroup::restore();            // " the window system
         restore_timer();
         restore_scheduled_timeout();
-        restore_db();        // Restart the database manager
-        restore_vms();        // Restart the sub-process code
-        EmacsBufferJournal::restore_journal();    // Restore the journal system
+        restore_db();                           // Restart the database manager
+        restore_vms();                          // Restart the sub-process code
+        EmacsBufferJournal::restore_journal();  // Restore the journal system
     }
     else
 #endif
+
     {
-        init_fncs();        // initialise the key bindings
-        init_var();        // " the variables
-        init_bf();        // " the buffer system
+        // init logic without a restore
+        init_fncs();                            // initialise the key bindings
+        init_var();                             // " the variables
+        init_bf();                              // " the buffer system
         init_scheduled_timeout();
-        init_display();        // " the core display system
-        init_terminal( term_type, device );    // Start the primary terminal IO system
+        init_display();                         // " the core display system
+        init_terminal( term_type, device );     // Start the primary terminal IO system
         init_dsp();
-        init_win();        // " the window system
-        init_srch();        // " the search commands
-        init_undo();        // " the undo facility
-        init_lisp();        // " the MLisp system
-        init_abs();        // " the current directory name
-        init_vms();        // " VMS specific commands
-        // The following calls MUST be after init_Macro
-        init_key();        // " commands that deal with options
+        init_win();                             // " the window system
+        init_srch();                            // " the search commands
+        init_undo();                            // " the undo facility
+        init_lisp();                            // " the MLisp system
+        init_abs();                             // " the current directory name
+#if defined( SUBPROCESSES )
+        init_vms();                             // " VMS specific commands
+#endif
+
+        init_key();                             // " commands that deal with options
         current_global_map = global_map;
-        init_fncs2();        // Finish off init of functions
+        init_fncs2();                           // Finish off init of functions
     }
 
     //
@@ -201,7 +214,6 @@ int emacsMain
     //
     //    Exit if the event handler detects an error
     //
-
     if( !emacs_internal_init_done_event() )
         return EXIT_SUCCESS;
 
@@ -217,7 +229,7 @@ int emacsMain
     if( is_restored == 0 )
     {
         gui_error = 1;
-         rv = execute_mlisp_file( EMACS_INIT_PROFILE, 1 );
+        rv = execute_mlisp_file( EMACS_INIT_PROFILE, 1 );
         gui_error = 0;
     }
     else
@@ -232,9 +244,11 @@ int emacsMain
         if( user_interface_hook_proc != NULL )
             rv = execute_bound_saved_environment( user_interface_hook_proc );
             // ignore result of user_interface_hook_proc
+
         if( enter_emacs_proc != NULL )
             rv = execute_bound_saved_environment( enter_emacs_proc );
     }
+
     if( rv == 0 )
         rv = execute_package( command_line_arguments.argument(0).value() );
 
@@ -261,11 +275,12 @@ int emacsMain
             can_exit = true;
             if( mod_exist() )
                 can_exit = get_yes_or_no( 0, u_str("Modified buffers exist, do you really want to exit? ") );
-
+#if defined( SUBPROCESSES )
             if( can_exit
             && ! silently_kill_processes
             && count_processes() )
                 can_exit = get_yes_or_no( 1, u_str("You have processes still on the prowl, shall I chase them down for you? " ) );
+#endif
 #endif
 
         }
@@ -280,7 +295,9 @@ int emacsMain
 
     write_emacs_memory_file();
 
+#if defined( SUBPROCESSES )
     kill_processes();
+#endif
 #ifdef vms
     // check for an exit DCL command, and send it to the mailbox if required
     if( !exit_emacs_dcl_command.isNull() )

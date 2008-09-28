@@ -37,6 +37,12 @@
 # define CPU_TYPE "i386"
 # define KEYBOARD_TYPE KEYBOARD_TYPE_PC
 
+# if defined( __WXMAC__ )
+#  undef SUBPROCESSES
+#  undef SAVE_ENVIRONMENT
+#  undef XWINDOWS
+# endif
+
 #elif defined( __linux__ )
 # define OS_VERSION "linux"
 # define CPU_TYPE "i386"

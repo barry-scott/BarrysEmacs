@@ -17,6 +17,7 @@
 
 //static const char *THIS_FILE = __FILE__;
 
+#if defined( SAVEENVIRONMENT )
 void database::SaveEnvironment()
 { }
 
@@ -26,15 +27,18 @@ void FileParse::SaveEnvironment()
 void DatabaseSearchList::SaveEnvironment()
 { }
 
+void DatabaseSearchListTable::SaveEnvironment()
+{ }
+#endif
+
 EmacsStringTable::EmacsStringTable( int , int )
 { }
+
 EmacsString &EmacsStringTable::get_esc_word_mlisp( EmacsString &result )
 {
     return result;
 }
 
-void DatabaseSearchListTable::SaveEnvironment()
-{ }
 DatabaseSearchList::~DatabaseSearchList()
 { }
 DatabaseSearchListTable DatabaseSearchList::name_table( 8, 8 );

@@ -26,7 +26,7 @@ Linux)
 	(make -e -f make-${RB_CFG_PLATFORM}.mak $* 2>&1 || (sleep 3;kill -HUP $$)) | tee $log_file;;
 
 Darwin)
-	(gnumake -e -f make-darwin-motif.mak $* 2>&1 || kill -HUP $$) | tee $log_file;;
+	(gnumake -e -f make-darwin-wxwidgets.mak $* 2>&1 || kill -HUP $$) | tee $log_file;;
 
 *)
 	echo Do not know now to build on $(uname -s).

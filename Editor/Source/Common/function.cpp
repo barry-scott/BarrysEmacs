@@ -1,4 +1,4 @@
-//    Copyright (c) 1982-1998
+//    Copyright (c) 1982-2008
 //        Barry A. Scott
 //
 #include <emacs.h>
@@ -282,7 +282,9 @@ extern int is_function_command(void);
 //    interrupt-key
 extern int recover_journal(void);
 extern int kill_buffer_command(void);
+# if defined (SUBPROCESSES)
 extern int kill_process(void);
+# endif
 extern int kill_to_end_of_line(void);
 extern int fetch_last_key_struck_command(void);
 extern int left_marker(void);
@@ -295,7 +297,9 @@ extern int list_break_points(void);
 extern int list_buffers(void);
 extern int list_databases(void);
 extern int list_images(void);
+# if defined (SUBPROCESSES)
 extern int list_processes(void);
+# endif
 extern int list_syntax_tables(void);
 extern int execute_mlisp_file_command(void);
 extern int local_bind_to_key(void);
@@ -326,7 +330,9 @@ extern int no_value_command(void);
 extern int page_next_window(void);
 extern int parse_error_messages_in_region(void);
 extern int pause_emacs(void);
+# if defined (SUBPROCESSES)
 extern int pause_process(void);
+# endif
 extern int pop_to_buffer(void);
 extern int preceding_char_command(void);
 extern int prefix_argument_loop(void);
@@ -342,8 +348,8 @@ extern int print_default_command(void);
 extern int process_id(void);
 # endif
 extern int process_key(void);
-extern int process_output(void);
 # if defined (SUBPROCESSES)
+extern int process_output(void);
 extern int process_status(void);
 # endif
 extern int provide_prefix_argument(void);
@@ -377,7 +383,9 @@ extern int remove_local_binding(void);
 extern int rename_macro(void);
 extern int replace_search_text_command(void);
 extern int replace_string_command(void);
+# if defined (SUBPROCESSES)
 extern int resume_process(void);
+# endif
 extern int return_prefix_argument(void);
 extern int return_to_monitor(void);
 extern int right_marker(void);
@@ -397,17 +405,23 @@ extern int self_insert_command(void);
 # if defined (__unix__) && defined (SUBPROCESSES)
 extern int send_eof_to_process(void);
 # endif
+# if defined (SUBPROCESSES)
 extern int send_string_to_process(void);
+# endif
 extern int send_string_to_terminal(void);
 extern int set_command(void);
 extern int set_default_command(void);
+# if defined (SUBPROCESSES)
 extern int set_current_process(void);
+# endif
 extern int set_mark_command(void);
+# if defined (SUBPROCESSES)
 extern int set_process_input_procedure(void);
 extern int set_process_name(void);
 extern int set_process_output_buffer(void);
 extern int set_process_output_procedure(void);
 extern int set_process_termination_proc(void);
+#endif
 extern int setq_command(void);
 extern int setq_array_command(void);
 extern int setq_default_command(void);
@@ -416,7 +430,9 @@ extern int sit_for(void);
 extern int split_current_window(void);
 extern int split_current_window_vertically(void);
 extern int sprintf_cmd(void);
+# if defined (SUBPROCESSES)
 extern int start_dcl_process(void);
+# endif
 extern int start_remembering(void);
 extern int stop_remembering(void);
 extern int string_extract(void);
@@ -449,7 +465,9 @@ extern int use_variables_of_buffer_command(void);
 extern int users_full_name_command(void);
 extern int users_login_name_command(void);
 extern int visit_file_command(void);
+# if defined (SUBPROCESSES)
 extern int wait_for_process_input_request(void);
+# endif
 extern int while_command(void);
 extern int widen_region(void);
 extern int widen_window(void);
@@ -646,7 +664,9 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "current-file-name", current_file_name_command );
     EMACS_NEW BoundName( "current-indent", this_indent_command );
     EMACS_NEW BoundName( "current-line-number", current_line_command );
+# if defined (SUBPROCESSES)
     EMACS_NEW BoundName( "current-process-name", current_process_name );
+# endif
     EMACS_NEW BoundName( "current-syntax-entity", current_syntax_entity );
     EMACS_NEW BoundName( "current-time", current_time );
     EMACS_NEW BoundName( "debug-emacs", debug_emacs );
@@ -719,7 +739,9 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "file-format-string", file_format_string_cmd );
     EMACS_NEW BoundName( "filter-region", filter_region );
     EMACS_NEW BoundName( "following-char", following_char_command );
+# if defined (SUBPROCESSES)
     EMACS_NEW BoundName( "force-exit-process", force_exit_process );
+# endif
     EMACS_NEW BoundName( "forward-balanced-paren-line", forward_paren_bl );
     EMACS_NEW BoundName( "forward-character", forward_character );
     EMACS_NEW BoundName( "forward-paren", forward_paren );
@@ -748,7 +770,9 @@ static void init_fncs_a( void )
     //    interrupt-key
     EMACS_NEW BoundName( "journal-recover", recover_journal );
     EMACS_NEW BoundName( "kill-buffer", kill_buffer_command );
+# if defined (SUBPROCESSES)
     EMACS_NEW BoundName( "kill-process", kill_process );
+# endif
     EMACS_NEW BoundName( "kill-to-end-of-line", kill_to_end_of_line );
     //    new BoundNameset( "lambda", lambda_block );
     EMACS_NEW BoundName( "last-key-struck", fetch_last_key_struck_command );
@@ -762,7 +786,9 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "list-buffers", list_buffers );
     EMACS_NEW BoundName( "list-databases", list_databases );
     EMACS_NEW BoundName( "list-images", list_images );
+# if defined (SUBPROCESSES)
     EMACS_NEW BoundName( "list-processes", list_processes );
+# endif
     EMACS_NEW BoundName( "list-syntax-tables", list_syntax_tables );
     EMACS_NEW BoundName( "load", execute_mlisp_file_command );
     EMACS_NEW BoundName( "local-bind-to-key", local_bind_to_key );
@@ -792,7 +818,9 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "page-next-window", page_next_window );
     EMACS_NEW BoundName( "parse-error-messages-in-region", parse_error_messages_in_region );
     EMACS_NEW BoundName( "pause-emacs", pause_emacs );
+# if defined (SUBPROCESSES)
     EMACS_NEW BoundName( "pause-process", pause_process );
+# endif
     EMACS_NEW BoundName( "pop-to-buffer", pop_to_buffer );
     EMACS_NEW BoundName( "preceding-char", preceding_char_command );
     EMACS_NEW BoundName( "prefix-argument-loop", prefix_argument_loop );
@@ -808,8 +836,8 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "process-id", process_id );
 # endif
     EMACS_NEW BoundName( "process-key", process_key );
-    EMACS_NEW BoundName( "process-output", process_output );
 # if defined (SUBPROCESSES)
+    EMACS_NEW BoundName( "process-output", process_output );
     EMACS_NEW BoundName( "process-status", process_status );
 # endif
     //    new BoundNameset( "progn", progn_block );
@@ -844,7 +872,9 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "rename-macro", rename_macro );
     EMACS_NEW BoundName( "replace-search-text", replace_search_text_command );
     EMACS_NEW BoundName( "replace-string", replace_string_command );
+# if defined (SUBPROCESSES)
     EMACS_NEW BoundName( "resume-process", resume_process );
+# endif
     EMACS_NEW BoundName( "return-prefix-argument", return_prefix_argument );
     EMACS_NEW BoundName( "return-to-monitor", return_to_monitor );
     EMACS_NEW BoundName( "right-marker", right_marker );
@@ -864,17 +894,23 @@ static void init_fncs_a( void )
 # if defined (__unix__) && defined (SUBPROCESSES)
     EMACS_NEW BoundName( "send-eof-to-process", send_eof_to_process );
 # endif
+# if defined (SUBPROCESSES)
     EMACS_NEW BoundName( "send-string-to-process", send_string_to_process );
+# endif
     EMACS_NEW BoundName( "send-string-to-terminal", send_string_to_terminal );
     EMACS_NEW BoundName( "set", set_command );
     EMACS_NEW BoundName( "set-default", set_default_command );
+# if defined (SUBPROCESSES)
     EMACS_NEW BoundName( "set-current-process", set_current_process );
+# endif
     EMACS_NEW BoundName( "set-mark", set_mark_command );
+# if defined (SUBPROCESSES)
     EMACS_NEW BoundName( "set-process-input-procedure", set_process_input_procedure );
     EMACS_NEW BoundName( "set-process-name", set_process_name );
     EMACS_NEW BoundName( "set-process-output-buffer", set_process_output_buffer );
     EMACS_NEW BoundName( "set-process-output-procedure", set_process_output_procedure );
     EMACS_NEW BoundName( "set-process-termination-procedure", set_process_termination_proc );
+# endif
     EMACS_NEW BoundName( "setq", setq_command );
     EMACS_NEW BoundName( "setq-array", setq_array_command );
     EMACS_NEW BoundName( "setq-default", setq_default_command );
@@ -883,8 +919,10 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "split-current-window", split_current_window );
     EMACS_NEW BoundName( "split-current-window-vertically", split_current_window_vertically );
     EMACS_NEW BoundName( "sprintf", sprintf_cmd );
+# if defined (SUBPROCESSES)
     EMACS_NEW BoundName( "start-DCL-process", start_dcl_process );
     EMACS_NEW BoundName( "start-process", start_dcl_process );
+# endif
     EMACS_NEW BoundName( "start-remembering", start_remembering );
     EMACS_NEW BoundName( "stop-remembering", stop_remembering );
     EMACS_NEW BoundName( "string-extract", string_extract );
@@ -917,7 +955,9 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "users-full-name", users_full_name_command );
     EMACS_NEW BoundName( "users-login-name", users_login_name_command );
     EMACS_NEW BoundName( "visit-file", visit_file_command );
+# if defined (SUBPROCESSES)
     EMACS_NEW BoundName( "wait-for-process-input-request", wait_for_process_input_request );
+# endif
     EMACS_NEW BoundName( "while", while_command );
     EMACS_NEW BoundName( "widen-region", widen_region );
     EMACS_NEW BoundName( "widen-window", widen_window );
