@@ -22,6 +22,7 @@ import be_exceptions
 import be_version
 import be_images
 import be_platform_specific
+import be_emacs_panel
 
 import be_config
 
@@ -74,7 +75,7 @@ class BemacsFrame(wx.Frame):
         self.SetMenuBar( self.menu_bar )
 
         # Set the application icon
-        self.SetIcon( be_images.getIcon( 'wb.png') )
+        self.SetIcon( be_images.getIcon( 'bemacs.png') )
 
         # Add tool bar
         t = self.CreateToolBar( name="main",
@@ -108,18 +109,19 @@ class BemacsFrame(wx.Frame):
         else:
             style = wx.SP_LIVE_UPDATE
         self.h_split = wx.SplitterWindow( self, -1, style=style )
-        self.v_split = wx.SplitterWindow( self.h_split, -1, style=style )
 
         # Make sure the splitters can't be removed by setting a minimum size
-        self.v_split.SetMinimumPaneSize( 100 )
         self.h_split.SetMinimumPaneSize( 100 )
 
         # Create the main panels
         self.log_panel = LogCtrlPanel( self.app, self.h_split )
+        self.emacs_panel = be_emacs_panel.EmacsPanel( self.app, self.h_split )
 
         try_wrapper = be_exceptions.TryWrapperFactory( self.app.log )
 
         size = self.GetClientSize()
+
+        self.h_split.SplitHorizontally( self.emacs_panel, self.log_panel, 200 )
 
         # for some unknown reason MENU events get blocked by tree and list controls
         for event_source in [self]:
@@ -162,7 +164,7 @@ class BemacsFrame(wx.Frame):
         str_message =    ((T_("Barry's Emacs version: %s") % ver_str) +
                 '\nwxPython %d.%d.%d.%d %s' % wx.VERSION +
                 '\nPython %d.%d.%d %s %d\n' % sys.version_info +
-                T_('\nCopyright Barry Scott (c) 2003-2008. All rights reserved')
+                T_('\nCopyright Barry Scott (c) 1980-2008. All rights reserved')
                 )
         wx.LogMessage( str_message )
 
@@ -195,7 +197,7 @@ class BemacsFrame(wx.Frame):
         
     #------------------------------------------------------------------------
     def OnActivateApp( self, is_active ):
-        if is_active and self.app.prefs.getView().auto_refresh:
+        if is_active:
             self.refreshFrame()
 
     def OnRefresh( self, event ):
