@@ -329,6 +329,10 @@ int
 FTMac_GetArgv( char ***pargv, char *psn_arg )
 {
         unsigned int psn = strtol( &psn_arg[sizeof("-psn_0_")-1], NULL, 10 );
+
+        std::cerr << "FTMac_GetArgv before InstallStandardEventHandler()" << std::endl;
+        InstallStandardEventHandler( GetApplicationEventTarget() ) ;
+
 	arg_count = 0;
         std::cerr << "FTMac_GetArgv before init_app_name( " << psn << " )" << std::endl;
 	init_app_name( psn );

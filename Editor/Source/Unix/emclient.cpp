@@ -22,9 +22,6 @@
 
 #include <pwd.h>
 
-#if defined( __APPLE_CC__ )
-#include "macgetargv.h"
-#endif
 
 bool opt_debug( false );
 #define debug( msg ) do { if( opt_debug ) {std::cerr << msg << std::endl;} } while(0)
@@ -93,19 +90,6 @@ int main( int argc, char ** argv )
 {
     opt_debug = getenv("BEMACS_CLIENT_DEBUG") != NULL;
     debug( "Starting emclient" );
-
-#if defined( __APPLE_CC__ )
-    debug( "argc " << argc );
-    if( argc > 1 )
-    {
-        debug( "argv[1] " << argv[1] );
-        if( strncmp( "-psn_", argv[1], 5 ) == 0 )
-        {
-            debug( "calling FTMac_GetArgv" );
-            argc = FTMac_GetArgv( &argv, argv[1] );
-        }
-    }
-#endif
 
     parse_args( argc, argv );
 
