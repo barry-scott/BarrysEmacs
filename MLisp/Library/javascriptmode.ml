@@ -147,7 +147,7 @@
 
 (defun
     (JavaScript-high-voltage-on
-	(setq mode-string "Java high voltage")
+	(setq mode-string "JavaScript high voltage")
 	(local-bind-to-key "JavaScript-{" "{")
 	(local-bind-to-key "JavaScript-}" "}")
 	(local-bind-to-key "JavaScript-tab" "\t")
@@ -159,7 +159,7 @@
 )
 (defun
     (JavaScript-high-voltage-off
-	(setq mode-string "Java")
+	(setq mode-string "JavaScript")
 	(local-bind-to-key "self-insert" ";")
 	(local-bind-to-key "self-insert" "{")
 	(local-bind-to-key "self-insert" "\t")
@@ -170,16 +170,16 @@
 )
 (defun
     (JavaScript-mode
-	(setq mode-string "Java")
-	(use-syntax-table "Java")
+	(setq mode-string "JavaScript")
+	(use-syntax-table "JavaScript")
 	(use-local-map "JavaScript-map")
-	(use-abbrev-table "Java")
+	(use-abbrev-table "JavaScript")
 	(novalue)
     )
 )
 (save-excursion
     (temp-use-buffer "~JavaScript-hack~")
-    (use-syntax-table "Java")
+    (use-syntax-table "JavaScript")
     (modify-syntax-table "paren" "(" ")")
     (modify-syntax-table "paren" "{" "}")
     (modify-syntax-table "paren" "[" "]")
@@ -188,6 +188,7 @@
     (modify-syntax-table "prefix" "\\")
     (modify-syntax-table "word" "_$")
     (modify-syntax-table "comment" "//" "\n")
+    (modify-syntax-table "comment" "/*" "*/")
 ; Reserved JavaScript Keywords
     (modify-syntax-table "keyword-1" "boolean")
     (modify-syntax-table "keyword-1" "break")
