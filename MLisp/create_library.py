@@ -199,6 +199,8 @@ library_files =    [
     ('common',    'Library/show-buffer.ml'),
     ('common',    'Library/smart-auto-execute.ml'),
     ('common',    'Library/spawn.ml'),
+    ('common',    'Library/sql-mode.key'),
+    ('common',    'Library/sql-mode.ml'),
     ('common',    'Library/sys_literals.ml'),
     ('common',    'Library/tabs.ml'),
     ('common',    'Library/tags.key'),

@@ -186,6 +186,7 @@
     (modify-syntax-table "word" "_")
     (modify-syntax-table "comment" "#" "\n")
 
+    (modify-syntax-table "keyword-1" "as")
     (modify-syntax-table "keyword-1" "and")
     (modify-syntax-table "keyword-1" "assert")
     (modify-syntax-table "keyword-1" "break")
@@ -214,6 +215,7 @@
     (modify-syntax-table "keyword-1" "return")
     (modify-syntax-table "keyword-1" "try")
     (modify-syntax-table "keyword-1" "while")
+    (modify-syntax-table "keyword-1" "with")
     (modify-syntax-table "keyword-1" "yield")
     
     (modify-syntax-table "keyword-2" "ArithmeticError")

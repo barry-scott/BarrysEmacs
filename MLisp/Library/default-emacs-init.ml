@@ -168,6 +168,8 @@
     (auto-execute "Java-mode" "*.java")
     ; LaTex files
     (auto-execute "latex-mode" "*.tex")
+    ; SQL files
+    (auto-execute "SQL-mode" "*.sql")
 
     ; JavaScript files
     (auto-execute "JavaScript-mode" "*.js")

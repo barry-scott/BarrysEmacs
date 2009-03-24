@@ -79,6 +79,7 @@
 (autoload "sh-mode" "sh-mode")
 (autoload "smart-auto-execute" "smart-auto-execute")
 (autoload "spawn" "spawn")
+(autoload "SQL-mode" "sql-mode")
 (autoload "tab-delete" "tabs")
 (autoload "tab-key" "tabs")
 (autoload "text-mode" "textmode")

@@ -63,6 +63,8 @@ Kit/vc71redist/msvcr71.dll -text
 MLisp/Library/edit-variable.ml -text
 MLisp/Library/makefile-mode.ml -text
 MLisp/Library/smart-auto-execute.ml -text
+MLisp/Library/sql-mode.key -text
+MLisp/Library/sql-mode.ml -text
 PythonBEmacs/be.rc.template -text
 PythonBEmacs/be_common.mak -text
 PythonBEmacs/be_version.py.template -text
