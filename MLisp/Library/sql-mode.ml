@@ -142,7 +142,7 @@
         "lancompiler"   "language"  "large" "last"
         "lateral"   "leading"   "least" "left"
         "length"    "less"  "level" "like"
-        "limit" "listen"    "ln"    "load"
+        "limit" "listen"    "ln"    "load" "loop"
         "local" "localtime" "localtimestamp"    "location"
         "locator"   "lock"  "login" "lower"
         "m" "map"   "match" "matched"
