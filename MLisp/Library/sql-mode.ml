@@ -62,7 +62,7 @@
     (~mode-modify-syntax-table "keyword-1,case-fold"
         "before"    "begin" "bernoulli" "between"
         "binary"    "bit"   "bitvar"
-        "bit_length"    "blob"  "boolean"   "both"
+        "bit_length"    "blob"   "both"
         "breadth"   "by"    "c" "cache"
     )
     (~mode-modify-syntax-table "keyword-1,case-fold"
@@ -107,7 +107,7 @@
         "dynamic_function"  "dynamic_function_code" "each"  "element"
     )
     (~mode-modify-syntax-table "keyword-1,case-fold"
-        "else"  "enable"    "encoding"  "encrypted"
+        "else"  "elsif" "enable"    "encoding"  "encrypted"
         "end"   "end-exec"  "equals"    "escape"
         "every" "except"    "exception" "exclude"
         "excluding" "exclusive" "exec"  "execute"
@@ -134,7 +134,7 @@
         "inner" "inout" "input" "insensitive"
         "insert"    "instance"  "instantiable"  "instead"
         "int"    "intersect" "intersection"
-        "interval"  "into"  "invoker"   "is"
+        "into"  "invoker"   "is"
         "isnull"    "isolation" "iterate"   "join"
     )
     (~mode-modify-syntax-table "keyword-1,case-fold"
@@ -179,10 +179,11 @@
         "prefix"    "preorder"  "prepare"   "prepared"
         "preserve"  "primary"   "prior" "privileges"
         "procedural"    "procedure" "public"    "quote"
+        "perform"
     )
     (~mode-modify-syntax-table "keyword-1,case-fold"
-        "range" "rank"  "read"  "reads"
-        "real"  "reassign"  "recheck"   "recursive"
+        "range" "raise" "rank"  "read"  "reads"
+        "reassign"  "recheck"   "recursive"
         "ref"   "references"    "referencing"   "regr_avgx"
         "regr_avgy" "regr_count"    "regr_intercept"    "regr_r2"
         "regr_slope"    "regr_sxx"  "regr_sxy"  "regr_syy"
@@ -200,7 +201,6 @@
         "scope_catalog" "scope_name"    "scope_schema"  "scroll"
         "search"    "second"    "section"   "security"
         "select"    "self"  "sensitive" "sequence"
-        "serial"
         "serializable"  "server_name"   "session"   "session_user"
         "set"   "setof" "sets"  "share"
         "show"  "similar"   "simple"    "size"
@@ -218,7 +218,7 @@
     (~mode-modify-syntax-table "keyword-1,case-fold"
         "tablespace"    "table_name"    "temp"  "template"
         "temporary" "terminate" "than"  "then"
-        "ties"  "time"  "timestamp" "timezone_hour"
+        "ties"  "timezone_hour"
         "timezone_minute"   "to"    "top_level_count"   "trailing"
         "transaction"   "transactions_committed"    "transactions_rolled_back"  "transaction_active"
         "transform" "transforms"    "translate" "translation"
@@ -237,13 +237,17 @@
         "var_samp"  "verbose"   "view"  "volatile"
         "when"  "whenever"  "where" "width_bucket"
         "window"    "with"  "within"    "without"
-        "work"  "write" "year"  "zone"
+        "work"  "write" "year"
     )
     (~mode-modify-syntax-table "keyword-2,case-fold"
         "text" "integer" "bigint"
-        "null" "bytea"
+        "null" "bytea"   "boolean"
+        "serial" "interval" "timestamp" "time" "zone"
+        "real" "record" "rowtype"
     )
-
+    (~mode-modify-syntax-table "keyword-1,case-fold"
+        "notice" "info" "warning"
+    )
     (define-keymap "SQL-map")
     (define-keymap "SQL-ESC-map")
     (use-local-map "SQL-map")
