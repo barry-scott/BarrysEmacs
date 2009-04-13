@@ -20,7 +20,6 @@ obj_files = $(os_specific_obj_files) \
  $(edit_obj)emacs.o \
  $(edit_obj)emacs_init.o \
  $(edit_obj)emacs_proc.o \
- $(edit_obj)emacs_signal.o \
  $(edit_obj)emacsrtl.o \
  $(edit_obj)emarray.o \
  $(edit_obj)emstring.o \
@@ -64,12 +63,8 @@ obj_files = $(os_specific_obj_files) \
  $(edit_obj)syntax.o \
  $(edit_obj)term.o \
  $(edit_obj)timer.o \
- $(edit_obj)trm_ansi.o \
  $(edit_obj)undo.o \
  $(edit_obj)unix_ext_func.o \
- $(edit_obj)unix_rtl.o \
- $(edit_obj)unixcomm.o \
- $(edit_obj)unix_trm.o \
  $(edit_obj)unixfile.o \
  $(edit_obj)variable.o \
  $(edit_obj)varthunk.o \
@@ -621,7 +616,7 @@ $(edit_obj)window.o : Source/Common/window.cpp
 #                                                                                #
 #                                                                                #
 ##################################################################################
-clean:
+clean::
 	rm -f $(edit_obj)*.o
 	rm -f $(edit_obj)bemacs $(edit_exe)bemacs
 	rm -f $(edit_exe)bemacs_server_dynamic $(edit_obj)bemacs_server_dynamic

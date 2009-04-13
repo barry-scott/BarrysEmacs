@@ -153,4 +153,6 @@ typedef void (*XtInputCallbackProc) (XtPointer, int *, XtInputId * );
 #endif
 
 extern void OutputDebugString( const char *message );
+#ifdef XWINDOWS
 extern int is_motif;
+#endif

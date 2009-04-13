@@ -45,7 +45,6 @@
 #  include    <errno.h>
 #  include    <limits.h>
 
-
 #  ifdef macintosh
 #   include    <fcntl.h>
 #   define O_TEXT    0
@@ -58,19 +57,22 @@
 #  endif
 # endif
 
-# if defined( vms )
+# if defined( PYBEMACS )
+#  include <os_pybemacs.h>
+
+# elif defined( vms )
 #  include <os_vms.h>
 
-#  elif defined( WIN32 )
+# elif defined( WIN32 )
 #  include <os_win.h>
 
-#  elif defined( _MSDOS )
+# elif defined( _MSDOS )
 #  include <os_msdos.h>
 
-#  elif defined( macintosh )
+# elif defined( macintosh )
 #  include <os_mac.h>
 
-#  elif defined( __unix__ )
+# elif defined( __unix__ )
 #  include <os_unix.h>
 
 # else

@@ -49,6 +49,7 @@ void restore_var(void)
     SystemExpression *se = NULL;
     ExpressionRepresentation *ser = NULL;
 
+#if defined( SUBPROCESS )
     //
     // here a a set of VMS specific names which now have
     // neutral or more generally applicable names
@@ -59,6 +60,7 @@ void restore_var(void)
     DefVarRep("default-buffer-RMS-record-attribute", &default_rms_attribute)
     VarRep("current-buffer-RMS-record-attribute", &buffer_rms_attribute)
     VarRep("override-RMS-record-attribute", &rms_attribute_override)
+#endif
     VarRep("fetch-help-database-flags", &get_db_help_flags)
 
     // end of VMS inspired variable
@@ -73,8 +75,10 @@ void restore_var(void)
     VarRep("UI-search-string", &ui_search_string)
     VarRep("UI-replace-string", &ui_replace_string)
 
+#if defined( SUBPROCESS )
     VarRep("shell-buffer-reduction", &dcl_buffer_reduction)
     VarRep("maximum-shell-buffer-size", &maximum_dcl_buffer_size)
+#endif
 
     DefVarRep("default-buffer-end-of-line-style", &default_end_of_line_style)
     VarRep("current-buffer-end-of-line-style", &buffer_end_of_line_style)

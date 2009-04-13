@@ -1,5 +1,5 @@
 //
-//    Copyright 1995 Barry A. Scott
+//    Copyright 1995-2009 Barry A. Scott
 //
 extern bool emacs_internal_init_done_event(void);
 extern void gui_set_dot( int n );

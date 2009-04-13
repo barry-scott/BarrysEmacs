@@ -99,7 +99,10 @@ extern int ui_view_scroll_bars(void);
 extern int ui_view_status_bar(void);
 extern int ui_popup_menu(void);
 # endif
+# if defined( vms )
 extern int vms_load_averages(void);
+# endif
+
 # ifdef XWINDOWS
 extern int motif_XmCheckBox(void);
 extern int motif_XmDestroyDialog(void);
@@ -582,7 +585,9 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "UI-view-status-bar", ui_view_status_bar );
     EMACS_NEW BoundName( "UI-popup-menu", ui_popup_menu );
 # endif
+# if defined( vms )
     EMACS_NEW BoundName( "VMS-load-averages", vms_load_averages );
+# endif
 # ifdef XWINDOWS
     EMACS_NEW BoundName( "XmCheckBox", motif_XmCheckBox );
     EMACS_NEW BoundName( "XmDestroyDialog", motif_XmDestroyDialog );

@@ -1,4 +1,5 @@
-//     Copyright(c ) 1982-1998
+//
+//     Copyright(c ) 1982-2009
 //        Barry A. Scott
 
 #include <emacs.h>
@@ -7,10 +8,75 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
+SystemExpressionRepresentationString compile_command;
+SystemExpressionRepresentationString debug_command;
+SystemExpressionRepresentationString filter_command;
+SystemExpressionRepresentationString execute_command;
+SystemExpressionRepresentationString cli_name;
+
+int saved_buffer_count;
+EmacsBuffer *saved_buffers[SAVED_BUFFER_MAX];
+
+BoundName *enter_emacs_proc;
+BoundName *exit_emacs_proc;
+BoundName *leave_emacs_proc;
+BoundName *return_to_emacs_proc;
+
+#ifndef SUBPROCESSES
+int indent_c_procedure( void )
+{
+    return no_value_command();
+}
+
+int compile_it( void )
+{
+    return no_value_command();
+}
+
+int execute_monitor_command( void )
+{
+    return no_value_command();
+}
+
+int return_to_monitor( void )
+{
+    return no_value_command();
+}
+
+int pause_emacs( void )
+{
+    return 0;
+}
+void filter_through( int n, const EmacsString &command )
+{
+}
+
+#endif
+
+extern void filter_through( int n, const EmacsString &command );
+
+int filter_region( void )
+{
+    if( !bf_cur->b_mark.isSet() )
+    {
+        error( "Mark not set" );
+        return 0;
+    }
+    EmacsString s = getstr( ": filter-region (through command) " );
+    if( !s.isNull() )    // failed to read string
+    {
+        if( !s.isNull() )    // empty string
+            filter_command = s;
+        filter_through( bf_cur->b_mark.to_mark() - dot, filter_command.asString() );
+    }
+    return 0;
+}
+
+#ifdef SUBPROCESSES
 static int tmp_name_count = 1;
 
-#if defined( _WINDOWS )
-# include <win_incl.h>
+# if defined( _WINDOWS )
+#  include <win_incl.h>
 //# include <emacs_process.h>
 extern "C" { int _getpid(void); };
 
@@ -19,16 +85,16 @@ unsigned int getpid()
     return _getpid();
 }
 
-#endif
+# endif
 
-#ifdef __unix__
-#include <unistd.h>
-#endif
+# ifdef __unix__
+#  include <unistd.h>
+# endif
 
-#ifdef vms
-# include <jpidef.h>
-# include <iodef.h>
-# include <dvidef.h>
+# ifdef vms
+#  include <jpidef.h>
+#  include <iodef.h>
+#  include <dvidef.h>
 
 static char *emacs_tmpnam( char *buffer )
 {
@@ -41,7 +107,7 @@ static char *emacs_tmpnam( char *buffer )
 }
 
 
-#else
+# else
 
 static EmacsString emacs_tmpnam()
 {
@@ -68,14 +134,10 @@ static EmacsString emacs_tmpnam()
 
     return EmacsString::null;
 }
+# endif
 
-
-
-#endif
-
-#ifdef __unix__
-# include <emacs_signal.h>
-# ifdef SUBPROCESSES
+# ifdef __unix__
+#  include <emacs_signal.h>
 #  ifndef _BSD
 #   define _BSD
 #   include <sys/wait.h>
@@ -88,7 +150,6 @@ static EmacsString emacs_tmpnam()
 #  include <fcntl.h>
 char *shell(void);
 # endif
-#endif
 
 int indent_c_procedure( void );
 int execute_monitor_command( void );
@@ -97,16 +158,12 @@ int pause_emacs( void );
 int filter_region( void );
 void filter_through(int n, const EmacsString &command );
 
-#ifdef vms
+# ifdef vms
 static int kill_prc(unsigned int *reason_for_exit, unsigned int *subpid);
-#endif
-
-#ifdef vms
 static unsigned short int ichan;
 static unsigned short int ochan;
 static unsigned int subpid;
 
-# if defined(SUBPROCESSES)
 #  define    chk( a ) if( ! VMS_SUCCESS(a) ) return
 
 unsigned char *two_percent = u_str( "%s: %s" );
@@ -142,21 +199,11 @@ static struct exit_handled_block
     &subpid
 };
 # endif
-#endif
 
-#ifdef __unix__
-# ifdef SUBPROCESSES
+# ifdef __unix__
 pid_t subproc_id;
 # endif
-#endif
 
-SystemExpressionRepresentationString compile_command;
-SystemExpressionRepresentationString debug_command;
-SystemExpressionRepresentationString filter_command;
-SystemExpressionRepresentationString execute_command;
-SystemExpressionRepresentationString cli_name;
-
-#if defined( SUBPROCESSES )
 # ifdef vms
 static void exec_bf( const EmacsString &bufname, int display, const EmacsString &input, int erase, ... );
 static void dcl_term(int return_from_monitor);
@@ -168,7 +215,7 @@ static int mbx_ast(int must_read);
 # ifdef __unix__
 static void exec_bf( const EmacsString &bufname, int display, const EmacsString &input, int erase, char *command, ... );
 # endif
-#if defined( _NT )
+# if defined( _NT )
 static void exec_bf
     (
     const EmacsString &bufname,
@@ -177,49 +224,20 @@ static void exec_bf
     int erase,
     ...
     );
-#endif
-#endif
+# endif
 
-int saved_buffer_count;
-EmacsBuffer *saved_buffers[SAVED_BUFFER_MAX];
-
-BoundName *enter_emacs_proc;
-BoundName *exit_emacs_proc;
-BoundName *leave_emacs_proc;
-BoundName *return_to_emacs_proc;
-#ifdef vms
+# ifdef vms
 static int dcl_count = 0;
 static unsigned int sub_pid;
 static int disp_flag;
 static int insert_in_buffer;
-#endif
+# endif
 unsigned int parent_pid;
 
-#ifndef SUBPROCESSES
-int indent_c_procedure( void )
-{
-    return no_value_command();
-}
-
-int compile_it( void )
-{
-    return no_value_command();
-}
-
-int execute_monitor_command( void )
-{
-    return no_value_command();
-}
-
-int return_to_monitor( void )
-{
-    return no_value_command();
-}
-#endif
 
 int pause_emacs( void )
 {
-#ifdef vms
+# ifdef vms
     if( parent_pid == 0 )
     {
         int code = JPI$_OWNER;
@@ -236,10 +254,10 @@ int pause_emacs( void )
         kill_prc( 0, &sub_pid );
         sys$hiber();
     }
-#endif
+# endif
 
 
-#if defined( __unix ) && defined( vms )
+# if defined( __unix ) && defined( vms )
     //
     // See if the user wants to specify a command, fetch it, and send
     // it down the restart mailbox
@@ -257,8 +275,8 @@ int pause_emacs( void )
 
     if( !send_exit_message( pause_command ) )
         error("Unable to send response to bemacs client");
-#endif
-#ifdef vms
+# endif
+# ifdef vms
     rst_dsp();
     journal_pause();
 
@@ -278,7 +296,7 @@ int pause_emacs( void )
     if( ! touched_command_args )
         if( executepackage( gargv[0] ) == 0 )
             read_in_files( gargc, gargv );
-#endif
+# endif
     return 0;
 }
 
@@ -302,9 +320,8 @@ int filter_region( void )
 // pass the region starting at dot and extending for n characters through
 // the command. The old contents of the region is left in the kill
 // buffer
-void filter_through(int n, const EmacsString &command )
+void filter_through( int n, const EmacsString &command )
 {
-#ifdef SUBPROCESSES
     EmacsString tempfile( emacs_tmpnam() );
     if( tempfile.isNull() )
     {
@@ -335,10 +352,9 @@ void filter_through(int n, const EmacsString &command )
     }
     bf_cur->b_modified++;
     EmacsFile::fio_delete( tempfile );
-#endif
 }
 
-#if defined( _NT)
+# if defined( _NT)
 static void exec_bf
     (
     const EmacsString &bufname,
@@ -453,9 +469,9 @@ static void exec_bf
         message( "Done." );
     return;
 }
-#endif
+# endif
 
-#ifdef vms
+# ifdef vms
 static int kill_prc(unsigned int *reason_for_exit, unsigned int *subpid)
 {
     // don't want to kill ourselves!
@@ -464,9 +480,7 @@ static int kill_prc(unsigned int *reason_for_exit, unsigned int *subpid)
 
     return 1;
 }
-#endif
 
-#if defined( SUBPROCESSES ) && defined( vms )
 static void dcl_term(int return_from_monitor)
 {
     sys$dassgn( ichan );
@@ -750,9 +764,10 @@ void exec_bf
         message( "Done." );
     return;
 }
-#endif
-#if defined( SUBPROCESSES ) && defined( __unix__ )
-char   *shell()
+# endif
+
+#if defined( __unix__ )
+char *shell()
 {        // return the name of the users shell
     static char *sh;
     if (!sh)
@@ -836,7 +851,7 @@ static void exec_bf
         bf_cur->erase_bf();
     pipe(fd);
 
-{
+    {
     EmacsPosixSignal sig( SIGCHLD );
     // block now and release as the block ends
     sig.blockSignal();
@@ -868,7 +883,7 @@ static void exec_bf
 
     ReadPipe(fd[0], interactive() && display);
     close(fd[0]);
-}
+    }
 
     while( subproc_id != 0 )
         sleep(1);
@@ -876,9 +891,8 @@ static void exec_bf
     if( interactive() && old.bufferValid())
         theActiveView->window_on( old.buffer() );
 }
-#endif
+# endif
 
-#ifdef SUBPROCESSES
 static EmacsString c_procedure_end("^}");
 int indent_c_procedure( void )
 {
@@ -982,10 +996,12 @@ int return_to_monitor( void )
     return 0;
 }
 # endif
+
 # if defined( __unix__ ) || defined( _WINDOWS )
 int return_to_monitor( void )
 {
     return no_value_command();
 }
 # endif
+
 #endif

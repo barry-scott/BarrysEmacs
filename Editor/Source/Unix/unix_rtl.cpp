@@ -125,7 +125,7 @@ int main( int argc, char **argv )
         if( unix_path[i] == ':' )
             unix_path[i] = PATH_SEP;
 
-{
+    {
     EmacsFile image;
     image.fio_open_using_path( unix_path, argv[0], 0, "" );
     if( !image.fio_is_open() )
@@ -134,7 +134,7 @@ int main( int argc, char **argv )
         return 100;
     }
     image_path = image.fio_getname();
-}
+    }
 
     // find the stat of the path and don't hide links
     struct stat stat_buf;
@@ -343,14 +343,14 @@ void wait_abit(void)
 #else
     FD_ZERO( &rfds );
 #endif
-{
+    {
 #ifdef XWINDOWS
     if (is_motif)
         fd = theMotifGUI->application.dpy_fd;
     else
 #endif
         fd = 1<<0;
-}
+    }
     FD_SET( fd, &rfds );
 
     if (Select (MAXFDS, &rfds, NULL, NULL, &tmo))
@@ -887,7 +887,8 @@ EmacsString os_error_code( unsigned int code )
         return EmacsString( error_string );
 }
 
-#ifdef _DEBUG
+#undef NDEBUG
+#include <assert.h>
 void _emacs_assert( const char *exp, const char *file, unsigned line )
 {
 #if defined( __FreeBSD__ )
@@ -904,7 +905,6 @@ void _emacs_assert( const char *exp, const char *file, unsigned line )
 
 #endif
 }
-#endif
 
 
 void emacs_sleep( int milli_seconds )
