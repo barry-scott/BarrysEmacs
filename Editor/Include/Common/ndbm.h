@@ -79,7 +79,7 @@ private:
     int chkblk( unsigned char buf[PBLKSIZ] );
 
 #if DBG_EXEC
-    void dbg_check_fildes( char *title );
+    void dbg_check_fildes( const char *title );
 #endif
 
 public:

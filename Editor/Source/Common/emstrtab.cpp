@@ -307,7 +307,7 @@ void EmacsStringTable::fillHelpBuffer( const EmacsString &prefix, int nfound )
     // Work out what to prompt with next time round, and what
     // message to spit at the user in the help buffer
     //
-    char *msg;
+    const char *msg;
     if( help )
         msg = "Choose one of the following:\n";
     else

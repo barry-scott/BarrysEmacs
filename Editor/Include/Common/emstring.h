@@ -7,7 +7,7 @@
 //    EmacsString
 //
 //
-#include <string>
+#include <string.h>
 
 class EmacsString;
 class EmacsStringRepresentation;

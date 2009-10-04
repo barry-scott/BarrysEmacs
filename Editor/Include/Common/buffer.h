@@ -409,7 +409,7 @@ public:
     int b_file_access;        // file access
     int b_synch_file_access;    // synch file access
     EmacsBufferJournal *b_journal;
-    int b_journalling : 1;        // True if journalling
+    unsigned int b_journalling : 1;        // True if journalling
 
     static BufferNameTable name_table;
 };

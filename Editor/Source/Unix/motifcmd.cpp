@@ -21,6 +21,7 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 #include <Xm/LabelG.h>
 #include <Xm/CascadeBG.h>
 
+bool debug_selection( false );
 //
 // Own Storage:
 //
@@ -46,6 +47,8 @@ extern int newline_command( void );
 extern int motif_not_running( void );
 extern int region_to_string( void );
 extern int motif_iconic;
+
+static const EmacsString getAtomName( Atom a );
 
 int ui_frame_state()
 {
@@ -124,6 +127,8 @@ static void insert_func
 }
 
 static Atom selection_type = XA_PRIMARY;
+static Atom selection_targets_atom = 0;
+static Atom selection_targets[1];
 
 // Place contents of the primary selection to the current Emacs buffer at dot
 int ui_edit_paste()
@@ -145,7 +150,14 @@ int ui_edit_paste()
     }
 
     selection_type = theMotifGUI->application.clipboardType( clipboard_name );
-    //_dbg_msg( FormatString("ui_edit_paste: selection_type=%d") << int( selection_type ) );
+    if( debug_selection )
+        _dbg_msg( FormatString("ui_edit_paste: selection_type=%s") << getAtomName( selection_type ) );
+
+    if( selection_targets_atom == 0 )
+    {
+        selection_targets_atom = XInternAtom( theMotifGUI->application.dpy, "TARGETS", TRUE );
+        selection_targets[0] = XA_STRING;
+    }
 
     // use XA_CLIPBOARD for KDE/Gnome compatibility
     // use XA_PRIMARY for old middle click compatibility
@@ -177,21 +189,41 @@ static Boolean cvt_proc
     void **value_return, unsigned long *length_return, int *format_return
     )
 {
+    if( debug_selection )
+        _dbg_msg( FormatString("cvt_proc: selection_type=%s sel=%s XA_STRING=%s target=%s")
+            << getAtomName( selection_type ) << getAtomName( *sel )
+            << getAtomName( XA_STRING ) << getAtomName( *target ) );
     // use XA_CLIPBOARD for KDE/Gnome compatibility
     // use XA_PRIMARY for old middle click compatibility
-    if( *sel != selection_type || *target != XA_STRING)
+    if( *sel != selection_type )
         return FALSE;
 
-    *type_return = XA_STRING;
-    *value_return = (void *)selection.sdata();
-    *length_return = selection.length();
-    *format_return = 8;
+    if( *target == XA_STRING )
+    {        
+        *type_return = XA_STRING;
+        *value_return = (void *)selection.sdata();
+        *length_return = selection.length();
+        *format_return = 8;
+        return TRUE;
+    }
 
-    return TRUE;
+    if( *target == selection_targets_atom )
+    {
+        *type_return = selection_targets_atom;
+        *value_return = (void *)selection_targets;
+        *length_return = 1;
+        *format_return = 32;
+        return TRUE;
+    }
+
+    return FALSE;
 }
 
 static void lose_proc( Widget PNOTUSED(w), Atom *sel)
 {
+    if( debug_selection )
+        _dbg_msg( FormatString("lose_proc: selection_type=%s sel=%s")
+                << getAtomName( selection_type ) << getAtomName( *sel ) );
     // use XA_CLIPBOARD for KDE/Gnome compatibility
     // use XA_PRIMARY for old middle click compatibility
     if( *sel == selection_type )
@@ -199,7 +231,10 @@ static void lose_proc( Widget PNOTUSED(w), Atom *sel)
 }
 
 static void done_proc( Widget PNOTUSED(w), Atom *PNOTUSED(sel), Atom *PNOTUSED(target) )
-{ }
+{
+    if( debug_selection )
+        _dbg_msg( FormatString("done_proc") );
+}
 
 // Copy Emacs buffer to X server cut/paste buffer 0.
 int ui_edit_copy()
@@ -216,7 +251,8 @@ int ui_edit_copy()
     }
 
     selection_type = theMotifGUI->application.clipboardType( clipboard_name );
-    //_dbg_msg( FormatString("ui_edit_paste: selection_type=%d") << int( selection_type ) );
+    if( debug_selection )
+        _dbg_msg( FormatString("ui_edit_copy: selection_type=%s") << getAtomName( selection_type ) );
 
     selection = EmacsString::null;
     region_to_string();
@@ -1313,6 +1349,14 @@ int motif_list_tool_bars_command(void)
     theActiveView->window_on( bf_cur );
 
     return 0;
+}
+
+static const EmacsString getAtomName( Atom a )
+{
+    char *c_name = XGetAtomName( theMotifGUI->application.dpy, a );
+    EmacsString name( c_name );
+    XFree( c_name );
+    return name;
 }
 
 #endif

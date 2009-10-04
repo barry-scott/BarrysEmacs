@@ -159,7 +159,7 @@ void SystemExpressionRepresentationBufferJournalled::assign_value( ExpressionRep
             error( "Journalling cannot be enabled on a modified buffer - write out this buffer");
             return;
         }
-        bf_cur->b_journalling = 1;
+        bf_cur->b_journalling = 1u;
     }
     else
     {

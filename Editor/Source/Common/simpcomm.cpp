@@ -368,7 +368,7 @@ int argument_prefix( void )
 
 
 
-static int x_region_to_buffer( char *str, DeleteToWhere_t operation )
+static int x_region_to_buffer( const char *str, DeleteToWhere_t operation )
 {
     if( !bf_cur->b_mark.isSet() )
      {

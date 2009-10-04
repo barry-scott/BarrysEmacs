@@ -168,11 +168,11 @@ int use_syntax_table( void )
 //
 struct ModifySyntaxData
 {
-    char *name;
+    const char *name;
     int value;
     int properties;
-    char *prompt_str1;
-    char *prompt_str2;
+    const char *prompt_str1;
+    const char *prompt_str2;
 };
 
 static ModifySyntaxData modify_syntax_table_init_data[] =

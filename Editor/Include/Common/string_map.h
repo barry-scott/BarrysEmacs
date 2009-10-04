@@ -7,13 +7,13 @@
 class StringMapBase
 {
 protected:
-    StringMapBase( char **_strings, int *_values );
+    StringMapBase( const char **_strings, int *_values );
     virtual ~StringMapBase();
 
     bool map( const EmacsString &key, int &value );
     EmacsString map( int value );
 private:
-    char **strings;
+    const char **strings;
     int *values;
 };
 
@@ -21,7 +21,7 @@ template <class T>
 class StringMap : public StringMapBase
 {
 public:
-    StringMap( char **_strings,  T *_values )
+    StringMap( const char **_strings,  T *_values )
         : StringMapBase( _strings, (int *)_values )
     { }
     virtual ~StringMap() { }
