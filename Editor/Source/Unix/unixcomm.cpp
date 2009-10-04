@@ -114,7 +114,7 @@ static unsigned char cbuffer[BUFSIZ];        // Used for reading mpx file
 ProcessChannelInput *MPX_chan;
 extern int subproc_id;                // The process id of a subprocess started by the old subproc stuff.
 
-char *SIG_names[] = {
+const char *SIG_names[] = {
     "",
     "Hanged",
     "Interrupted",
@@ -137,7 +137,7 @@ char *SIG_names[] = {
     "", "", "", "", "", "", ""
 };
 
-extern char *shell();
+extern const char *shell();
 void stuff_buffer( ProcessChannelInput & );
 extern XtInputId add_select_fd( int, long int, XtInputCallbackProc, XtPointer );
 extern void remove_select_fd( XtInputId );

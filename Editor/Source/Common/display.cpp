@@ -348,18 +348,18 @@ void EmacsView::updateLine
     if( dbg_flags&DBG_CALC_INS_DEL )
     {
         enum {dump_size=30};
-        char *old_line_start = "";
+        const char *old_line_start = "";
         int old_line_len = 0;
         if( !old_line.isNull() )
         {
-            old_line_start = (char *)old_line->line_body;
+            old_line_start = (const char *)old_line->line_body;
             old_line_len = old_line->line_length;
         }
-        char *new_line_start = "";
+        const char *new_line_start = "";
         int new_line_len = 0;
         if( !new_line.isNull() )
         {
-            new_line_start = (char *)new_line->line_body;
+            new_line_start = (const char *)new_line->line_body;
             new_line_len = new_line->line_length;
         }
 
@@ -390,18 +390,18 @@ void EmacsView::moveLine
         EmacsLinePtr &new_line = t_desired_screen[ new_line_num ];
 
         enum {dump_size=30};
-        char *old_line_start = "";
+        const char *old_line_start = "";
         int old_line_len = 0;
         if( !old_line.isNull() )
         {
-            old_line_start = (char *)old_line->line_body;
+            old_line_start = (const char *)old_line->line_body;
             old_line_len = old_line->line_length;
         }
-        char *new_line_start = "";
+        const char *new_line_start = "";
         int new_line_len = 0;
         if( !new_line.isNull() )
         {
-            new_line_start = (char *)new_line->line_body;
+            new_line_start = (const char *)new_line->line_body;
             new_line_len = new_line->line_length;
         }
 
@@ -465,21 +465,21 @@ void EmacsView::dbg_dump_screen( const char *title )
     for( int ln=1; ln<=t_length; ln++ )
     {
         enum {dump_size=30};
-        char *old_line_start = "";
+        const char *old_line_start = "";
         int old_line_len = 0;
         int old_line_hash = 0;
         if( !t_phys_screen[ln].isNull() )
         {
-            old_line_start = (char *)t_phys_screen[ln]->line_body;
+            old_line_start = (const char *)t_phys_screen[ln]->line_body;
             old_line_len = t_phys_screen[ln]->line_length;
             old_line_hash = t_phys_screen[ln]->lineHash();
         }
-        char *new_line_start = "";
+        const char *new_line_start = "";
         int new_line_len = 0;
         int new_line_hash = 0;
         if( !t_desired_screen[ln].isNull() )
         {
-            new_line_start = (char *)t_desired_screen[ln]->line_body;
+            new_line_start = (const char *)t_desired_screen[ln]->line_body;
             new_line_len = t_desired_screen[ln]->line_length;
             new_line_hash = t_desired_screen[ln]->lineHash();
         }

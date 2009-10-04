@@ -7,16 +7,17 @@
 #include    <string.h>
 
 #if defined( __linux__ )
-static char *pty_first_letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+static const char *pty_first_letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 #else
-static char *pty_first_letters = "pqrstuvwxyzPQRST";
+static const char *pty_first_letters = "pqrstuvwxyzPQRST";
 #endif
-static char *pty_second_letters = "0123456789abcdef";
+static const char *pty_second_letters = "0123456789abcdef";
 
 int ptym_open( char *pts_name )
 {
-    int    fdm;
-    char    *ptr1, *ptr2;
+    int fdm;
+    const char *ptr1;
+    const char *ptr2;
 
     strcpy(pts_name, "/dev/ptyXY");
       // array index: 0123456789 (for references in following code)

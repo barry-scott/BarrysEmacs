@@ -7,7 +7,7 @@
 #include <emacs.h>
 #include <string_map.h>
 
-StringMapBase::StringMapBase( char **_strings, int *_values )
+StringMapBase::StringMapBase( const char **_strings, int *_values )
     : strings( _strings )
     , values( _values )
 { }
@@ -18,7 +18,7 @@ StringMapBase::~StringMapBase()
 
 bool StringMapBase::map( const EmacsString &key, int &value )
 {
-    char **p = strings;
+    const char **p = strings;
 
     for( int i=0; ; i += 1 )
     {

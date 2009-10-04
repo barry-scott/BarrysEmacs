@@ -148,7 +148,7 @@ static EmacsString emacs_tmpnam()
 #  include <ctype.h>
 #  include <unistd.h>
 #  include <fcntl.h>
-char *shell(void);
+const char *shell(void);
 # endif
 
 int indent_c_procedure( void );
@@ -213,7 +213,7 @@ static void set_attn(int chan, int func, int (*rtn)(int), int par);
 static int mbx_ast(int must_read);
 # endif
 # ifdef __unix__
-static void exec_bf( const EmacsString &bufname, int display, const EmacsString &input, int erase, char *command, ... );
+static void exec_bf( const EmacsString &bufname, int display, const EmacsString &input, int erase, const char *command, ... );
 # endif
 # if defined( _NT )
 static void exec_bf
@@ -340,7 +340,7 @@ void filter_through( int n, const EmacsString &command )
     exec_bf( bf_cur->b_buf_name, 0, tempfile, 0, command.data(), NULL );
 # endif
 # ifdef __unix__
-    exec_bf( bf_cur->b_buf_name, 0, tempfile, 0, shell (), "-c", command.data(), NULL );
+    exec_bf( bf_cur->b_buf_name, 0, tempfile, 0, shell(), "-c", command.data(), NULL );
 # endif
 # ifdef _NT
     exec_bf( bf_cur->b_buf_name, 0, tempfile, 0, command.data(), NULL );
@@ -813,13 +813,13 @@ static void exec_bf
     int display,
     const EmacsString &input,
     int erase,
-    char *command,
+    const char *command,
     ...
     )
 {
     EmacsBufferRef old( bf_cur );
     int     fd[2];
-    char *args[100];
+    const char *args[100];
     int arg;
     va_list argp;
 
@@ -835,7 +835,7 @@ static void exec_bf
     arg = 1;
     for(;;)
     {
-        char *arg_str = va_arg( argp, char * );
+        const char *arg_str = va_arg( argp, const char * );
 
         if( arg_str == NULL )
             break;
@@ -875,7 +875,7 @@ static void exec_bf
         dup(fd[1]);
         close(fd[1]);
         close(fd[0]);
-        execvp(command, args);
+        execvp( command, (char **)args );
         write(1, "Couldn't execute the program!\n", 30);
         _exit(-1);
     }
@@ -947,7 +947,7 @@ int execute_monitor_command( void )
 # endif
 # ifdef __unix__
     exec_bf( "command execution", 1, "/dev/null", 1,
-        shell (), "-c", execute_command.data(), NULL );
+        shell(), "-c", execute_command.data(), NULL );
 # endif
 # ifdef _NT
     exec_bf( "Command execution", 1, "nul", 1, execute_command.data(), NULL );

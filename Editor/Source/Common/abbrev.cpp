@@ -12,7 +12,7 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 static int hash_abbrev( const EmacsString &s );
 static AbbrevEntry *lookup_abbrev( AbbrevTable *table, const EmacsString &name, int h );
 static void define_abbrev_phrase( AbbrevTable *table, const EmacsString &abbrev, const EmacsString &phrase, BoundName *proc );
-static void define_abbrev( AbbrevTable *table, char *s, int hooked );
+static void define_abbrev( AbbrevTable *table, const char *s, int hooked );
 int define_global_abbrev( void );
 int define_local_abbrev( void );
 int define_hooked_global_abbrev( void );
@@ -118,7 +118,7 @@ static void define_abbrev_phrase
 static void define_abbrev
     (
     AbbrevTable *table,
-    char *s,
+    const char *s,
     int hooked
     )
 {

@@ -32,7 +32,7 @@ extern int match_wild( const EmacsString &, const EmacsString & );
 extern int dbg_flags;
 
 # if DBG_EXEC
-void database::dbg_check_fildes( char *title )
+void database::dbg_check_fildes( const char *title )
 {
     int i;
 

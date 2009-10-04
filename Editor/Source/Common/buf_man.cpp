@@ -214,7 +214,7 @@ int erase_buffer( void )
 //    RMS Attribute (twined with EndOfLineStyle)
 //
 //--------------------------------------------------------------------------------
-static char *rms_attribute_names[] =
+static const char *rms_attribute_names[] =
 {
     "none",
     "binary",
@@ -275,7 +275,7 @@ void SystemExpressionRepresentationBufferFileAttribute::fetch_value()
 //    End of Line style (twined with RMS attribute)
 //
 //--------------------------------------------------------------------------------
-static char *end_of_line_style_names[] =
+static const char *end_of_line_style_names[] =
 {
     "none",
     "binary",
@@ -331,7 +331,7 @@ void SystemExpressionRepresentationBufferEndOfLineStyle::fetch_value()
 //    Buffer Type
 //
 //--------------------------------------------------------------------------------
-static char *buffer_type_names[] =
+static const char *buffer_type_names[] =
 {
     "file",
     "scratch",

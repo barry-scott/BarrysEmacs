@@ -766,7 +766,7 @@ extern void remove_input( XtInputId id );
 
 void start_emacs_server()
 {
-    char *fifo_name = getenv("BEMACS_FIFO");
+    const char *fifo_name = getenv("BEMACS_FIFO");
 
     if( emacs_server_read_fd >= 0 )
         return;
@@ -776,11 +776,11 @@ void start_emacs_server()
 
     if( fifo_name[0] != '/' )
     {
-        char *name = NULL;
-        char *home = getenv( "HOME" );
+        const char *name = NULL;
+        const char *home = getenv( "HOME" );
         if( home != NULL )
         {
-            for( char *p = home; *p; p++ )
+            for( const char *p = home; *p; p++ )
                 if( *p == '/' )
                     name = p;
         }

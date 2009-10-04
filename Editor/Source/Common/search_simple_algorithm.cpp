@@ -111,10 +111,10 @@ void SearchSimpleAlgorithm::search_replace_once( const EmacsString &new_string )
 
     struct flag_bits
 {
-    int beg_of_str : 1;
-    int beg_of_word : 1;
-    int prefix : 1;
-    int last_prefix : 1;
+    unsigned int beg_of_str : 1;
+    unsigned int beg_of_word : 1;
+    unsigned int prefix : 1;
+    unsigned int last_prefix : 1;
 } flags;
 
     unsigned char lc;
@@ -123,7 +123,7 @@ void SearchSimpleAlgorithm::search_replace_once( const EmacsString &new_string )
     {
         int i;
 
-        flags.beg_of_str = 1;
+        flags.beg_of_str = 1u;
         i = sea_loc1;
         flags.beg_of_word = i <= bf_cur->first_character() || !isalpha( bf_cur->char_at(i - 1) );
         while( i < sea_loc2 )
@@ -152,12 +152,12 @@ void SearchSimpleAlgorithm::search_replace_once( const EmacsString &new_string )
                 flags.beg_of_word = 0;
             }
             else
-                flags.beg_of_word = 1;
+                flags.beg_of_word = 1u;
             i++;
         }
     }
 
-    flags.beg_of_str = 1;
+    flags.beg_of_str = 1u;
     flags.prefix = 0;
     flags.beg_of_word = dot <= bf_cur->first_character() || ! isalpha( bf_cur->char_at( dot - 1 ) );
     for( int p = 0; p<new_string.length(); p++ )
@@ -179,11 +179,11 @@ void SearchSimpleAlgorithm::search_replace_once( const EmacsString &new_string )
             flags.beg_of_str = 0;
         }
         else
-            flags.beg_of_word = 1;
+            flags.beg_of_word = 1u;
         if( lc == 92
         && compiled_expression_type != EmacsSearch::sea_type__string
         && !flags.last_prefix )
-            flags.prefix = 1;
+            flags.prefix = 1u;
         else if( lc == '&'
         && compiled_expression_type != EmacsSearch::sea_type__string
         && ! flags.last_prefix )

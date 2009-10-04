@@ -134,15 +134,15 @@ void SearchAdvancedAlgorithm::search_replace_once( const EmacsString &new_string
 
     struct flag_bits
     {
-        int beg_of_str : 1;
-        int beg_of_word : 1;
-        int prefix : 1;
-        int last_prefix : 1;
+        unsigned int beg_of_str : 1;
+        unsigned int beg_of_word : 1;
+        unsigned int prefix : 1;
+        unsigned int last_prefix : 1;
     } flags;
 
     if( replace_case )
     {
-        flags.beg_of_str = 1;
+        flags.beg_of_str = 1u;
         flags.beg_of_word = match_start <= bf_cur->first_character() || !isalpha( bf_cur->char_at( match_start - 1 ) );
 
         for( int i=match_start; i < match_end; i++ )
@@ -173,11 +173,11 @@ void SearchAdvancedAlgorithm::search_replace_once( const EmacsString &new_string
                 flags.beg_of_word = 0;
             }
             else
-                flags.beg_of_word = 1;
+                flags.beg_of_word = 1u;
         }
     }
 
-    flags.beg_of_str = 1;
+    flags.beg_of_str = 1u;
     flags.prefix = 0;
     flags.beg_of_word = dot <= bf_cur->first_character() || ! isalpha( bf_cur->char_at( dot - 1 ) );
 
@@ -200,11 +200,11 @@ void SearchAdvancedAlgorithm::search_replace_once( const EmacsString &new_string
             flags.beg_of_str = 0;
         }
         else
-            flags.beg_of_word = 1;
+            flags.beg_of_word = 1u;
 
         if( lc == '\\'
         && !flags.last_prefix )
-            flags.prefix = 1;
+            flags.prefix = 1u;
 
         else if( flags.last_prefix
         && lc >= '1' && lc <= '9' )

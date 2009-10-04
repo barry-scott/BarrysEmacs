@@ -146,7 +146,7 @@ EmacsString key_to_str( const EmacsString &keys, bool replace_key_names )
 
 int describe_key( void )
 {
-    char *where_bound = "globally";
+    const char *where_bound = "globally";
 
     EmacsString keyp = get_key( current_global_map, ": describe-key " );
     if( keyp.isNull() || ml_err )
