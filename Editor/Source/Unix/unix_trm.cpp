@@ -136,7 +136,7 @@ void TerminalControl_CHAR::t_io_putchar( unsigned char ch )
 void TerminalControl_CHAR::t_change_attributes()
 {
 
-        term_output_buffer_size = OUTPUT_LENGTH -OUTPUT_OVERRUN;
+    term_output_buffer_size = OUTPUT_LENGTH -OUTPUT_OVERRUN;
     t_cur_attributes.c_iflag |= IGNBRK;
     t_cur_attributes.c_iflag &= ~(INLCR|ICRNL|IGNCR|ISTRIP);
     t_cur_attributes.c_oflag &= ~(OPOST);
@@ -150,8 +150,8 @@ void TerminalControl_CHAR::t_change_attributes()
 //    t_cur_attributes.c_lflag |= ICANON;
 //#endif
 
-        t_cur_attributes.c_cc[VMIN] = 1;
-        t_cur_attributes.c_cc[VTIME] = 0;
+    t_cur_attributes.c_cc[VMIN] = 1;
+    t_cur_attributes.c_cc[VTIME] = 0;
 
     int status = tcsetattr( input_channel, TCSADRAIN, &t_cur_attributes );
     if( status == -1 )

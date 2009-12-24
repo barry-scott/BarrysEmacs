@@ -30,6 +30,8 @@ import be_frame
 import be_preferences
 import be_exceptions
 
+import be_editor
+
 AppCallBackEvent, EVT_APP_CALLBACK = wx.lib.newevent.NewEvent()
 
 class BemacsApp(wx.App):
@@ -41,6 +43,7 @@ class BemacsApp(wx.App):
             self.app_dir = startup_dir
 
         self.main_thread = threading.currentThread()
+        self.editor_thread = threading.Thread( name='Editor', target=self.__runEditor, )
 
         self.progress_format = None
         self.progress_values = {}
@@ -207,7 +210,7 @@ class BemacsApp(wx.App):
         self.frame.Show( True )
         self.SetTopWindow( self.frame )
 
-        #self.foregroundProcess( self.frame.tree_panel.initFrame, () )
+        self.foregroundProcess( self.__initEditorThread, () )
         return True
 
     def OnActivateApp( self, event ):
@@ -222,6 +225,9 @@ class BemacsApp(wx.App):
                 self.need_activate_app_action = True
 
     def foregroundProcess( self, function, args ):
+        wx.PostEvent( self, AppCallBackEvent( callback=function, args=args ) )
+
+    def onGuiThread( self, function, args ):
         wx.PostEvent( self, AppCallBackEvent( callback=function, args=args ) )
 
     def OnAppCallBack( self, event ):
@@ -246,6 +252,17 @@ class BemacsApp(wx.App):
             del caller
 
         del stack
+
+    def __initEditorThread( self ):
+        self.editor_thread.start()
+
+    def __runEditor( self ):
+        self.editor = be_editor.BEmacs( self )
+        self.editor.initEditor()
+        self.editor.initEmacsProfile( self.frame.emacs_panel )
+        # stay in processKeys until editor quits
+        rc = self.editor.processKeys()
+        self.log.info( 'processKeys rc %r' % (rc,) )
 
 #--------------------------------------------------------------------------------
 #
@@ -336,3 +353,4 @@ class StdoutLogHandler(logging.Handler):
 
         except:
             self.handleError(record)
+

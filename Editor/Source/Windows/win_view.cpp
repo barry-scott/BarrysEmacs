@@ -1879,7 +1879,7 @@ int init_char_terminal(const EmacsString &/*device*/ )
     return 0;
 }
 
-void CWinemacsView::t_change_attributes(  )
+void CWinemacsView::t_change_attributes()
 {
     if( !t_update_begin() )
         return;

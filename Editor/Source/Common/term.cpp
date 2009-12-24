@@ -96,9 +96,9 @@ void TerminalControl::t_geometry_change()
 }
 
 TerminalControl::TerminalControl()
-    : t_length( 24 )
-    , t_width( 80 )
-    , k_input_is_enabled( theActiveView != NULL ? theActiveView->k_input_is_enabled : false )
+: t_length( 24 )
+, t_width( 80 )
+, k_input_is_enabled( theActiveView != NULL ? theActiveView->k_input_is_enabled : false )
 { }
 
 TerminalControl::~TerminalControl()

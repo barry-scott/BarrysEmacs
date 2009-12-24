@@ -45,27 +45,16 @@ class EmacsPanel(wx.Panel):
 
         self.Bind( wx.EVT_MOUSE_EVENTS, self.OnMouse )
 
-        self.all_lines = ['Emacs Panel']
+        self.all_lines = ['']*30
 
-    def __addLine( self, line ):
-        self.all_lines.append( line + '      ' )
-        self.all_lines = self.all_lines[-6:]
+        self.term_width = 50
+        self.term_length = 6
+        self.font = wx.Font( 12, wx.MODERN, wx.NORMAL, wx.BOLD )
+
 
     def OnPaint( self, event ):
         self.app.log.info( 'EmacsPanel.OnPaint()' )
-        self.__drawPanel()
-
-    def __drawPanel( self ):
-        dc = wx.PaintDC( self )
-        dc.BeginDrawing()
-
-        dc.SetBackgroundMode( wx.SOLID )
-        dc.Clear()
-
-        for index, line in enumerate( self.all_lines ):
-            dc.DrawText( line, 10, 10+(index*20) )
-
-        dc.EndDrawing()
+        self.__drawPanel( wx.PaintDC( self ) )
 
     def OnKeyDown( self, event ):
         event.Skip()
@@ -92,9 +81,10 @@ class EmacsPanel(wx.Panel):
         shift = event.ShiftDown()
         line_parts.append( ' shift: %s' % B(shift) )
 
-        self.__addLine( ''.join( line_parts ) )
+        self.app.log.debug( ''.join( line_parts ) )
         event.Skip()
-        self.__drawPanel()
+
+        self.app.editor.guiEventChar( unichr( char ), shift )
 
     def OnMouse( self, event ):
         if event.Moving():
@@ -139,6 +129,80 @@ class EmacsPanel(wx.Panel):
         shift = event.ShiftDown()
         line_parts.append( ' shift: %s' % B(shift) )
 
-        self.__addLine( ''.join( line_parts ) )
+        self.app.log.debug( ''.join( line_parts ) )
         event.Skip()
-        self.__drawPanel()
+        self.__drawPanel( wx.ClientDC( self ) )
+
+
+    #--------------------------------------------------------------------------------
+    #
+    #   terminal drawing API forwarded from bemacs editor
+    #
+    #--------------------------------------------------------------------------------
+    def __drawPanel( self, dc ):
+        dc.BeginDrawing()
+
+        dc.SetBackgroundMode( wx.SOLID )
+        dc.SetFont( self.font )
+        ch_width, ch_height, ch_decent, ch_leading = dc.GetFullTextExtent( 'M' )
+
+        for index, line in enumerate( self.all_lines ):
+            dc.DrawText( line, 2, 2+(index*ch_height) )
+
+        dc.EndDrawing()
+
+    def termTopos( self, x, y ):
+        print 'QQQ: termTopos( %r, %r )' % (x, y)
+
+    def termReset( self ):
+        print 'QQQ: termReset()'
+
+        dc = wx.ClientDC( self )
+
+        dc.BeginDrawing()
+
+        dc.SetBackgroundMode( wx.SOLID )
+        dc.Clear()
+        dc.EndDrawing()
+
+    def termInit( self ):
+        print 'QQQ: termInit()'
+
+    def termBeep( self ):
+        print 'QQQ: termBeep()'
+
+    def termUpdateBegin( self ):
+        print 'QQQ: termUpdateBegin()'
+
+    def termUpdateEnd( self ):
+        print 'QQQ: termUpdateEnd()'
+        self.__drawPanel( wx.ClientDC( self ) )
+
+    def termUpdateLine( self, old, new, line_num ):
+        print 'QQQ: termUpdateLine( ..., %r )' % (line_num,)
+        print 'QQQ old %r' % (old,)
+        print 'QQQ new %r' % (new,)
+        if new is None:
+            new_line_contents = (' '*self.term_width)
+        else:
+            new_line_contents = new[0] + (' '*(self.term_width-len(new[0])))
+
+        self.all_lines[ line_num-1 ] = new_line_contents
+
+    def termWindow( self, size ):
+        print 'QQQ: termWindow( %r )' % (size,)
+
+    def termInsertMode( self, mode ):
+        print 'QQQ: termInsertMode( %r )' % (mode,)
+
+    def termHighlightMode( self, mode ):
+        print 'QQQ: termHighlightMode( %r )' % (mode,)
+
+    def termInsertLines( self, num_lines ):
+        print 'QQQ: termInsertLines( %r )' % (num_lines,)
+
+    def termDeleteLines( self, num_lines ):
+        print 'QQQ: termDeleteLines( %r )' % (num_lines,)
+
+    def termDisplayActivity( self, ch ):
+        print 'QQQ: termDisplayActivity( %r )' % (ch,)

@@ -68,14 +68,10 @@ public:
     virtual void t_highlight_mode(int);     // set or reset highlighting
     virtual void t_insert_lines(int);       // insert n lines
     virtual void t_delete_lines(int);       // delete n lines
-    virtual void t_blanks(int);             // print n blanks
     virtual void t_select();                // select a terminal for operations
     virtual void t_init();                  // initialize terminal settings
     virtual void t_cleanup();               // clean up terminal settings
     virtual void t_wipe_line(int);          // erase to the end of the line
-    virtual void t_wipe_screen();           // erase the entire screen
-    virtual void t_write_chars(unsigned char *, unsigned char *);        // write characters; either inserting or overwriting according to the current character insert
-    virtual bool t_window(void) { return true; }
     virtual bool t_window(int);             // set the screen window so that IDline operations only affect the first n lines of the screen
     virtual void t_flash();                 // Flash the screen -- not set if this terminal type won't support it.
     virtual void t_display_activity(  unsigned char );

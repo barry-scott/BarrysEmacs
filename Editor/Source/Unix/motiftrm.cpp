@@ -314,19 +314,6 @@ void TerminalControl_GUI::t_wipe_line( int hlmod  )
     t_topos( curs_y, curs_x );
 }
 // Reset the entire screen to the backbround colour
-void TerminalControl_GUI::t_wipe_screen()
-{
-# if DBG_DISPLAY
-    if( dbg_flags & DBG_DISPLAY && dbg_flags & DBG_VERBOSE )
-        _dbg_msg( "wipescreen();" );
-# endif
-
-    XClearWindow( application.dpy, XtWindow( drawing_area->widget ) );
-    CursorExists = 0;
-    if(!InUpdate )
-        ToggleCursor();
-}
-// Reset the entire screen to the backbround colour
 void TerminalControl_GUI::t_reset()
 {
 # if DBG_DISPLAY
@@ -605,11 +592,6 @@ void TerminalControl_GUI::t_update_end()
 // routine is totally under soapplication.ftware control.  Any line with Y coordinate
 // greater than flexlines will not change during an update.  This is really
 // used only during dellines and inslines routines.
-
-bool TerminalControl_GUI::t_window(void)
-{
-    return true;
-}
 
 bool TerminalControl_GUI::t_window( int n )
 {

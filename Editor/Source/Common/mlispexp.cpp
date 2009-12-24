@@ -783,7 +783,7 @@ void SystemExpressionRepresentationStringReadOnly::assign_value( ExpressionRepre
 //
 //
 ExpressionRepresentationMarker::ExpressionRepresentationMarker( Marker *m )
-    : exp_marker( m )
+: exp_marker( m )
 { }
 
 ExpressionRepresentationMarker::~ExpressionRepresentationMarker()

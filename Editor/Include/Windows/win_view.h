@@ -134,7 +134,6 @@ public:
     virtual void t_insert_lines(int);    // insert n lines
     virtual void t_delete_lines(int);    // delete n lines
     virtual void t_wipe_line(int);    // erase to the end of the line
-    virtual bool t_window(void) { return true; }
     virtual bool t_window(int);        // set the screen window so that IDline operations only affect the first n lines of the screen
     virtual void t_display_activity(  unsigned char );
     virtual void t_update_line(EmacsLinePtr oldl, EmacsLinePtr newl, int ln);    // Routine to call to update a line

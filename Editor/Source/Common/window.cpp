@@ -913,7 +913,6 @@ void EmacsWindowGroup::fit_windows_to_screen( EmacsView *new_view )
     //
     if( old_len > view->t_length )
     {
-
         int decrease;
 
         decrease = old_len - view->t_length;
@@ -945,7 +944,6 @@ void EmacsWindowGroup::fit_windows_to_screen( EmacsView *new_view )
     //
     if( old_wid < view->t_width )
     {
-
         int increase;
 
         increase = view->t_width - old_wid;
@@ -968,7 +966,6 @@ void EmacsWindowGroup::fit_windows_to_screen( EmacsView *new_view )
     //
     if( old_wid > view->t_width )
     {
-
         int decrease;
 
         decrease = old_wid - view->t_width;
@@ -1714,10 +1711,13 @@ void EmacsWindowGroup::do_dsp()
         cant_1win_opt = 1;
         last_redisplay_paused = 0;
     }
+
     if( cant_1win_opt )
         cant_1line_opt = redo_modes = 1;
+
     if( redo_modes )
         cant_1line_opt = 1;
+
     if( !cant_1line_opt
     && one_line_valid && ! one_line_start.m_modified
     && one_line_start.m_buf == current_window->w_buf )
@@ -1768,9 +1768,9 @@ void EmacsWindowGroup::do_dsp()
     slow_update = 1;
     one_line_valid = 0;
     if( view->full_upd( cant_ever_opt ) != 0 )
-              slow_update = 1;
-update:
+        slow_update = 1;
 
+update:
     view->update_screen( slow_update );
     if( ml_err )
     {

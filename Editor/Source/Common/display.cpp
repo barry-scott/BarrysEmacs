@@ -159,7 +159,7 @@ void ding( void )
 // DLK routine to make the cursor sit for n/10 secs
 int sit_for( void )
 {
-    return sit_for_inner( getnum(": sit-for ") );
+    return sit_for_inner( getnum( ": sit-for " ) );
 }
 
 int sit_for_inner(int num_chars)
@@ -172,12 +172,14 @@ int sit_for_inner(int num_chars)
         theActiveView->do_dsp();    // Make the screen correct
         theActiveView->t_insert_mode( 0 );
     }
+
     while( num_chars != 0 && input_pending == 0 )
     {
         wait_abit();
 
         num_chars--;
     }
+
     return 0;
 }
 
@@ -249,7 +251,7 @@ void EmacsView::clearline(int row)
 //    update_screen
 //
 //--------------------------------------------------------------------------------
-void EmacsView::update_screen(int slow_update)
+void EmacsView::update_screen( int slow_update )
 {
     t_update_begin();
 

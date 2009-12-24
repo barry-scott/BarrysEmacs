@@ -305,7 +305,7 @@ int process_keys( void )
     next_local_keymap = 0;
 
     for(;;)
-     {
+    {
 #if DBG_ALLOC_CHECK
         // test memory state at the heart of the emacs loop
         if( dbg_flags&DBG_ALLOC_CHECK )
@@ -602,12 +602,13 @@ int get_char( void )
     }
 #endif
 
-{
+    {
     CharElement *char_cell;
-{
-#if    DBG_QUEUE
+    {
+#if DBG_QUEUE
     push_back_queue.queue_validate();
 #endif
+
     if( (char_cell = push_back_queue.queueRemoveFirst()) != NULL )
     {
         remember = 0;
@@ -664,7 +665,6 @@ int get_char( void )
     //
     for(;;)
     {
-
 #if    DBG_QUEUE
         push_back_queue.queue_validate();
 #endif
@@ -734,7 +734,7 @@ int get_char( void )
     }
 having_dequeued_a_char:    // leave this block
     ;
-}
+    }
 
     switch( char_cell->ce_type )
     {
@@ -845,7 +845,7 @@ having_dequeued_a_char:    // leave this block
 #endif
 having_found_char:    // leave this block
     ;
-}
+    }
 
 #if DBG_KEY && DBG_TMP
     if( dbg_flags&DBG_KEY && dbg_flags&DBG_TMP )

@@ -3,21 +3,11 @@
 //
 //    Copyright (c) 1999 Barry A. Scott
 //
-#include <emacs.h>
+#include <string_map.h>
 
-
-
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
-static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
-
-#include <CXX/Extensions.hxx>
-
-#include <strstream>
+#include <sstream>
 #include <algorithm>
 #include <functional>
-
-using std::ostrstream;
 
 Expression convertPyObjectToEmacsExpression( const Py::Object &obj );
 Py::Object convertEmacsExpressionToPyObject( const Expression &expr );
@@ -39,22 +29,22 @@ void init_bemacs_python(void);
 //
 //
 //================================================================================
-class bemacs_variables: public Py::PythonExtension<bemacs_variables>
+class BemacsVariables: public Py::PythonExtension<BemacsVariables>
 {
 // static methods
 public:
     static void init_type()
     {
-            behaviors().name("BEmacs_Variables");
-            behaviors().doc("Access all MLisp variables");
-            behaviors().supportGetattr();
-            behaviors().supportSetattr();
+        behaviors().name("BemacsVariables");
+        behaviors().doc("Access all MLisp variables");
+        behaviors().supportGetattr();
+        behaviors().supportSetattr();
     }
 
 // member methods
 public:
-    bemacs_variables() {}
-    virtual ~bemacs_variables() {}
+    BemacsVariables() {}
+    virtual ~BemacsVariables() {}
 
 private:
     virtual Py::Object getattr( const char *c_name )
@@ -140,17 +130,17 @@ private:
 //================================================================================
 //
 //
-//    bemacs_functions type - allows access to all emacs MLisp variables
+//    BemacsFunctions type - allows access to all emacs MLisp variables
 //
 //
 //================================================================================
-class bemacs_functions: public Py::PythonExtension<bemacs_functions>
+class BemacsFunctions: public Py::PythonExtension<BemacsFunctions>
 {
 // static methods
 public:
     static void init_type()
     {
-            behaviors().name("BEmacs_functions");
+            behaviors().name("BemacsFunctions");
             behaviors().doc("Access all MLisp functions");
             behaviors().supportGetattr();
             behaviors().supportSetattr();
@@ -158,8 +148,8 @@ public:
 
 // member methods
 public:
-    bemacs_functions() {}
-    virtual ~bemacs_functions() {}
+    BemacsFunctions() {}
+    virtual ~BemacsFunctions() {}
 
 private:
     static PyObject *call_bemacs_function( PyObject *self, PyObject *_args )
@@ -274,17 +264,17 @@ private:
 //================================================================================
 //
 //
-//    bemacs_buffer_data type
+//    BemacsBufferData type
 //
 //
 //================================================================================
-class bemacs_buffer_data : public Py::PythonExtension<bemacs_buffer_data>
+class BemacsBufferData : public Py::PythonExtension<BemacsBufferData>
 {
 // static methods
 public:
     static void init_type()
     {
-            behaviors().name("bemacs_buffer");
+            behaviors().name("BemacsBuffer");
             behaviors().doc("bemacs buffer");
             behaviors().supportGetattr();
             behaviors().supportSetattr();
@@ -294,10 +284,10 @@ public:
 
 // member methods
 public:
-    bemacs_buffer_data( EmacsBuffer *_buffer )
+    BemacsBufferData( EmacsBuffer *_buffer )
         : buffer( _buffer )
     {}
-    virtual ~bemacs_buffer_data() {}
+    virtual ~BemacsBufferData() {}
 
 private:
     EmacsBufferRef buffer;
@@ -413,17 +403,17 @@ private:
 //================================================================================
 //
 //
-//    bemacs_buffer_syntax type
+//    BemacsBufferSyntax type
 //
 //
 //================================================================================
-class bemacs_buffer_syntax : public Py::PythonExtension<bemacs_buffer_syntax>
+class BemacsBufferSyntax : public Py::PythonExtension<BemacsBufferSyntax>
 {
 // static methods
 public:
     static void init_type()
     {
-        behaviors().name("bemacs_buffer");
+        behaviors().name("BemacsBuffer");
         behaviors().doc("bemacs buffer");
         behaviors().supportGetattr();
         behaviors().supportSetattr();
@@ -433,10 +423,10 @@ public:
 
 // member methods
 public:
-    bemacs_buffer_syntax( EmacsBuffer *_buffer )
+    BemacsBufferSyntax( EmacsBuffer *_buffer )
     : buffer( _buffer )
     {}
-    virtual ~bemacs_buffer_syntax() {}
+    virtual ~BemacsBufferSyntax() {}
 
 private:
     EmacsBufferRef buffer;
@@ -558,19 +548,19 @@ private:
 //================================================================================
 //
 //
-//    bemacs_buffer type
+//    BemacsBuffer type
 //
 //
 //================================================================================
 extern StringMap<buffer_types> buffer_types_map;
 
-class bemacs_buffer : public Py::PythonExtension<bemacs_buffer>
+class BemacsBuffer : public Py::PythonExtension<BemacsBuffer>
 {
 // static methods
 public:
     static void init_type()
     {
-            behaviors().name("bemacs_buffer");
+            behaviors().name("BemacsBuffer");
             behaviors().doc("bemacs buffer");
             behaviors().supportGetattr();
             behaviors().supportSetattr();
@@ -579,10 +569,10 @@ public:
 
 // member methods
 public:
-    bemacs_buffer( EmacsBuffer *_buffer )
+    BemacsBuffer( EmacsBuffer *_buffer )
         : buffer( _buffer )
     {}
-    virtual ~bemacs_buffer()
+    virtual ~BemacsBuffer()
     {}
 
 private:
@@ -608,12 +598,12 @@ private:
 
         if( name == "data" )
         {
-            result = Py::Object( new bemacs_buffer_data( buffer ) );
+            result = Py::Object( new BemacsBufferData( buffer ) );
         }
         else
         if( name == "syntax" )
         {
-            result = Py::Object( new bemacs_buffer_syntax( buffer ) );
+            result = Py::Object( new BemacsBufferSyntax( buffer ) );
         }
         else
         if( name == "extent" )
@@ -693,17 +683,17 @@ private:
 //================================================================================
 //
 //
-//    bemacs_buffers_dict type
+//    BemacsBuffersDict type
 //
 //
 //================================================================================
-class bemacs_buffers_dict: public Py::PythonExtension<bemacs_buffers_dict>
+class BemacsBuffersDict: public Py::PythonExtension<BemacsBuffersDict>
 {
 // static methods
 public:
     static void init_type()
     {
-            behaviors().name("bemacs_buffers_dict");
+            behaviors().name("BemacsBuffersDict");
             behaviors().doc("buffers dictionary");
             behaviors().supportGetattr();
             behaviors().supportMappingType();
@@ -713,9 +703,9 @@ public:
 
 // member methods
 public:
-    bemacs_buffers_dict()
+    BemacsBuffersDict()
     {}
-    virtual ~bemacs_buffers_dict()
+    virtual ~BemacsBuffersDict()
     {}
 
 private:
@@ -779,7 +769,7 @@ private:
         if( buf == NULL )
             throw Py::ValueError( "subscript unknown" );
 
-        return Py::Object( new bemacs_buffer( buf ) );
+        return Py::Object( new BemacsBuffer( buf ) );
     }
 
     virtual int mapping_ass_subscript( const Py::Object &, const Py::Object & )
@@ -791,17 +781,17 @@ private:
 //================================================================================
 //
 //
-//    bemacs_marker type
+//    BemacsMarker type
 //
 //
 //================================================================================
-class bemacs_marker: public Py::PythonExtension<bemacs_marker>
+class BemacsMarker: public Py::PythonExtension<BemacsMarker>
 {
 // static methods
 public:
     static void init_type()
     {
-            behaviors().name("bemacs_marker");
+            behaviors().name("BemacsMarker");
             behaviors().doc("marker.position, marker.buffer");
             behaviors().supportGetattr();
             behaviors().supportSetattr();
@@ -817,10 +807,10 @@ public:
 
 // member methods
 public:
-    bemacs_marker( Marker *_marker )
+    BemacsMarker( Marker *_marker )
         : marker( *_marker )
     {}
-    virtual ~bemacs_marker() {}
+    virtual ~BemacsMarker() {}
 
 private:
     Marker marker;
@@ -883,17 +873,17 @@ private:
 //================================================================================
 //
 //
-//    bemacs_window_ring type
+//    BemacsWindowRing type
 //
 //
 //================================================================================
-class bemacs_window_ring: public Py::PythonExtension<bemacs_window_ring>
+class BemacsWindowRing: public Py::PythonExtension<BemacsWindowRing>
 {
 // static methods
 public:
     static void init_type()
     {
-            behaviors().name("bemacs_window_ring");
+            behaviors().name("BemacsWindowRing");
             behaviors().doc("bemacs window ring");
             behaviors().supportGetattr();
             behaviors().supportSetattr();
@@ -902,10 +892,10 @@ public:
 
 // member methods
 public:
-    bemacs_window_ring( const Expression &_window_ring )
+    BemacsWindowRing( const Expression &_window_ring )
         : window_ring( _window_ring )
     {}
-    virtual ~bemacs_window_ring() {}
+    virtual ~BemacsWindowRing() {}
 
     const Expression &value() const
     {
@@ -937,17 +927,17 @@ private:
 //================================================================================
 //
 //
-//    bemacs_array type
+//    BemacsArray type
 //
 //
 //================================================================================
-class bemacs_array: public Py::PythonExtension<bemacs_array>
+class BemacsArray: public Py::PythonExtension<BemacsArray>
 {
 // static methods
 public:
     static void init_type()
     {
-            behaviors().name("bemacs_array");
+            behaviors().name("BemacsArray");
             behaviors().doc("bemacs window ring");
             behaviors().supportGetattr();
             behaviors().supportSetattr();
@@ -956,10 +946,10 @@ public:
 
 // member methods
 public:
-    bemacs_array( const Expression &_array )
+    BemacsArray( const Expression &_array )
         : array( _array )
     {}
-    virtual ~bemacs_array() {}
+    virtual ~BemacsArray() {}
 
     const Expression &value() const
     {
@@ -1007,15 +997,15 @@ public:
         //
         // init types used by this module
         //
-        bemacs_variables::init_type();
-        bemacs_functions::init_type();
-        bemacs_marker::init_type();
-        bemacs_window_ring::init_type();
-        bemacs_array::init_type();
-        bemacs_buffers_dict::init_type();
-        bemacs_buffer::init_type();
-        bemacs_buffer_syntax::init_type();
-        bemacs_buffer_data::init_type();
+        BemacsVariables::init_type();
+        BemacsFunctions::init_type();
+        BemacsMarker::init_type();
+        BemacsWindowRing::init_type();
+        BemacsArray::init_type();
+        BemacsBuffersDict::init_type();
+        BemacsBuffer::init_type();
+        BemacsBufferSyntax::init_type();
+        BemacsBufferData::init_type();
 
         //
         //    Add the methods of this module
@@ -1040,9 +1030,9 @@ public:
         //
         Py::Dict module_dictionary( moduleDictionary() );
 
-        module_dictionary["variable"] = Py::Object( new bemacs_variables );
-        module_dictionary["function"] = Py::Object( new bemacs_functions );
-        module_dictionary["buffers"] = Py::Object( new bemacs_buffers_dict );
+        module_dictionary["variable"] = Py::Object( new BemacsVariables );
+        module_dictionary["function"] = Py::Object( new BemacsFunctions );
+        module_dictionary["buffers"] = Py::Object( new BemacsBuffersDict );
     }
 
     Py::Object report_error( const Py::Tuple &args )
@@ -1116,21 +1106,21 @@ Expression convertPyObjectToEmacsExpression( const Py::Object &obj )
         expr = Expression( string );
     }
     else
-    if( bemacs_array::check( obj ) )
+    if( BemacsArray::check( obj ) )
     {
-        bemacs_array *o = static_cast<bemacs_array *>( obj.ptr() );
+        BemacsArray *o = static_cast<BemacsArray *>( obj.ptr() );
         expr = o->value();
     }
     else
-    if( bemacs_window_ring::check( obj ) )
+    if( BemacsWindowRing::check( obj ) )
     {
-        bemacs_window_ring *o = static_cast<bemacs_window_ring *>( obj.ptr() );
+        BemacsWindowRing *o = static_cast<BemacsWindowRing *>( obj.ptr() );
         expr = o->value();
     }
     else
-    if( bemacs_marker::check( obj ) )
+    if( BemacsMarker::check( obj ) )
     {
-        bemacs_marker *o = static_cast<bemacs_marker *>( obj.ptr() );
+        BemacsMarker *o = static_cast<BemacsMarker *>( obj.ptr() );
         expr = o->value();
     }
 
@@ -1160,15 +1150,15 @@ Py::Object convertEmacsExpressionToPyObject( const Expression &expr )
         break;
 
     case ISMARKER:
-        obj = Py::Object( new bemacs_marker( expr.asMarker() ), true );
+        obj = Py::Object( new BemacsMarker( expr.asMarker() ), true );
         break;
 
     case ISWINDOWS:
-        obj = Py::Object( new bemacs_window_ring( expr ), true );
+        obj = Py::Object( new BemacsWindowRing( expr ), true );
         break;
 
     case ISARRAY:
-        obj = Py::Object( new bemacs_array( expr ), true );
+        obj = Py::Object( new BemacsArray( expr ), true );
         break;
 
     default:

@@ -474,11 +474,6 @@ void TerminalControl_wxWidgets::t_wipe_line(int)
 {
 }
 
-bool TerminalControl_wxWidgets::t_window(void)
-{
-    return false;
-}
-
 bool TerminalControl_wxWidgets::t_window(int)
 {
     return false;
@@ -504,10 +499,6 @@ void TerminalControl_wxWidgets::t_beep()
 //    Keyboard routines
 //
 void TerminalControl_wxWidgets::k_check_for_input()
-{
-}
-
-void TerminalControl_wxWidgets::t_wipe_screen()
 {
 }
 

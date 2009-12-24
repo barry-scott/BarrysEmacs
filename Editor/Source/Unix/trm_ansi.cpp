@@ -93,24 +93,6 @@ void TerminalControl_CHAR::t_delete_lines( int n )
     ansi_cur_x = ansi_cur_y = 1;
 }
 
-void TerminalControl_CHAR::t_write_chars( unsigned char *start, unsigned char *end )
-{
-    while (start <= end)
-    {
-        t_io_putchar( *start++);
-        ansi_cur_x++;
-    }
-}
-
-void TerminalControl_CHAR::t_blanks( int n )
-{
-    while (--n >= 0)
-    {
-        t_io_putchar( ' ' );
-        ansi_cur_x++;
-    }
-}
-
 static float baud_factor;
 void TerminalControl_CHAR::pad( int n, float f)
 {
@@ -481,12 +463,6 @@ void TerminalControl_CHAR::t_wipe_line( int line )
     t_topos( line, 0 );
     t_io_print( u_str( "\233K" ));
     PAD (1, 3.);
-}
-
-void TerminalControl_CHAR::t_wipe_screen()
-{
-    t_io_print( u_str( "\2332J" ));
-    PAD (1, 72.);
 }
 
 bool TerminalControl_CHAR::t_window( int n )

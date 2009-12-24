@@ -167,22 +167,39 @@ public:
     virtual ~EmacsView();
 
     int window_on( EmacsBuffer *bf )
-    { return windows.window_on( bf ); }
+    {
+        return windows.window_on( bf );
+    }
+
     EmacsWindow *currentWindow()
-    { return windows.currentWindow(); }
+    {
+        return windows.currentWindow();
+    }
+
     void fit_windows_to_screen( void )
-    { windows.fit_windows_to_screen( this ); }
+    {
+        windows.fit_windows_to_screen( this );
+    }
+
     void do_dsp()
-    { windows.do_dsp(); }
+    {
+        windows.do_dsp();
+    }
+
     int full_upd( int &cant_ever_opt )
-    { return windows.full_upd( cant_ever_opt ); }
+    {
+        return windows.full_upd( cant_ever_opt );
+    }
+
     void set_current_windows( EmacsWindowGroup &group )
-    { windows.set_current_windows( this, group ); }
+    {
+        windows.set_current_windows( this, group );
+    }
 
     void update_screen( int slow_update );
     void setpos( int row, int col );
     void clearline( int row );
-    void copyline(int row);
+    void copyline( int row );
     void dump_str
         (
         bool is_users_current_window,
@@ -208,16 +225,16 @@ public:
 
     void dsputc( int c, int a );
 
-    int curs_x;            // X and Y coordinates of the cursor
-    int curs_y;            // between updates.
-    int current_line;        // current line for writing to the virtual screen.
-    int columns_left;        // number of columns left on the current line
-                    // of the virtual screen.
-    DisplayBody_t *text_cursor;    // pointer into a line object, indicates where
-    DisplayAttr_t *attr_cursor;    // to put the next character
+    int curs_x;                     // X and Y coordinates of the cursor
+    int curs_y;                     // between updates.
+    int current_line;               // current line for writing to the virtual screen.
+    int columns_left;               // number of columns left on the current line
+                                    // of the virtual screen.
+    DisplayBody_t *text_cursor;     // pointer into a line object, indicates where
+    DisplayAttr_t *attr_cursor;     // to put the next character
 
-    int window_size;        // the number of lines on which line Insert Delete
-                    // operations should be done
+    int window_size;                // the number of lines on which line Insert Delete
+                                    // operations should be done
     struct screen_update_command_t
     {
         enum {idc_done,idc_update_line, idc_scroll_up,idc_scroll_down} idc_command;

@@ -62,9 +62,9 @@ extern void init_win(void);
 
 int dbg_flags;
 
-EmacsFile message_file;    // FIO pointer to SYS$OUTPUT
-EmacsFile command_file;    // FIO pointer to SYS$INPUT
-int gui_error = 0;    // true if a message box isrequired for errors
+EmacsFile message_file;     // FIO pointer to SYS$OUTPUT
+EmacsFile command_file;     // FIO pointer to SYS$INPUT
+int gui_error = 0;          // true if a message box is required for errors
 
 extern EmacsString parent_path;
 SystemExpressionRepresentationIntBoolean silently_kill_processes;
