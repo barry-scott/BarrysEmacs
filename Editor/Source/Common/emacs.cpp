@@ -528,11 +528,17 @@ int argv_command( void )
 {                // return the value of argv[i]
     int n = getnum( u_str(": argv index: ") );
     if( ! ml_err )
+    {
         if( n >= command_line_arguments.argumentCount() || n < 0 )
+        {
             error( FormatString("Argv cannot return the %d'th argument, there are only %d") <<
                 n << command_line_arguments.argumentCount() );
+        }
         else
+        {
             ml_value = command_line_arguments.argument(n).value();
+        }
+    }
 
     touched_command_args = true;
     return 0;
@@ -542,11 +548,17 @@ int argIsQualifier_command( void )
 {                // return the value of argv[i]
     int n = getnum( u_str(": arg-is-qualifier index: ") );
     if( ! ml_err )
+    {
         if( n >= command_line_arguments.argumentCount() || n < 0 )
+        {
             error( FormatString("Argv cannot return the %d'th argument, there are only %d") <<
                 n << command_line_arguments.argumentCount() );
+        }
         else
+        {
             ml_value = int( command_line_arguments.argument(n).isQualifier() );
+        }
+    }
 
     touched_command_args = true;
     return 0;
