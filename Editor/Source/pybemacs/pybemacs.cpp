@@ -60,7 +60,6 @@ public:
 
     virtual ~BemacsEditor()
     {
-        std::cout << "~BemacsEditor." << std::endl;
     }
 
     static void init_type(void)
@@ -80,6 +79,15 @@ public:
 
         // Call to make the type ready for use
         behaviors().readyType();
+    }
+
+    void reportException( const char *fn_name, Py::Exception &e )
+    {
+        std::cerr << "Error: " << fn_name << " exception" << std::endl;
+        std::cerr << "type=" << Py::type( e ) << std::endl;
+        std::cerr << "value=" << Py::value( e ) << std::endl;
+        std::cerr << "trace=" << Py::trace( e ) << std::endl;
+        e.clear();
     }
 
     //------------------------------------------------------------
@@ -136,8 +144,7 @@ public:
         }
         catch( Py::Exception &e )
         {
-            e.clear();
-            std::cout << "Error: " << fn_name << " exception" << std::endl;
+            reportException( fn_name, e );
         }
     }
 
@@ -152,13 +159,12 @@ public:
             Py::Callable py_waitForActivity( self.getAttr( fn_name ) );
             Py::Tuple args( 0 );
             Py::Object rc( py_waitForActivity.apply( args ) );
-            Py::Long code( rc ); 
+            Py::Long code( rc );
             return long( code );
         }
         catch( Py::Exception &e )
         {
-            e.clear();
-            std::cout << "Error: " << fn_name << " exception" << std::endl;
+            reportException( fn_name, e );
         }
         return -1;
     }
@@ -177,8 +183,7 @@ public:
         }
         catch( Py::Exception &e )
         {
-            e.clear();
-            std::cout << "Error: " << fn_name << " exception" << std::endl;
+            reportException( fn_name, e );
         }
     }
 
@@ -194,8 +199,7 @@ public:
         }
         catch( Py::Exception &e )
         {
-            e.clear();
-            std::cout << "Error: " << fn_name << " exception" << std::endl;
+            reportException( fn_name, e );
         }
     }
 
@@ -211,8 +215,7 @@ public:
         }
         catch( Py::Exception &e )
         {
-            e.clear();
-            std::cout << "Error: " << fn_name << " exception" << std::endl;
+            reportException( fn_name, e );
         }
     }
 
@@ -228,8 +231,7 @@ public:
         }
         catch( Py::Exception &e )
         {
-            e.clear();
-            std::cout << "Error: " << fn_name << " exception" << std::endl;
+            reportException( fn_name, e );
         }
     }
 
@@ -246,8 +248,7 @@ public:
         }
         catch( Py::Exception &e )
         {
-            e.clear();
-            std::cout << "Error: " << fn_name << " exception" << std::endl;
+            reportException( fn_name, e );
         }
         return false;
     }
@@ -264,8 +265,7 @@ public:
         }
         catch( Py::Exception &e )
         {
-            e.clear();
-            std::cout << "Error: " << fn_name << " exception" << std::endl;
+            reportException( fn_name, e );
         }
     }
 
@@ -308,11 +308,7 @@ public:
         }
         catch( Py::Exception &e )
         {
-            std::cout << "Error: " << fn_name << " exception" << std::endl;
-            std::cout << "type=" << Py::type( e ) << std::endl;
-            std::cout << "value=" << Py::value( e ) << std::endl;
-            std::cout << "trace=" << Py::trace( e ) << std::endl;
-            e.clear();
+            reportException( fn_name, e );
         }
     }
 
@@ -331,8 +327,7 @@ public:
         }
         catch( Py::Exception &e )
         {
-            e.clear();
-            std::cout << "Error: " << fn_name << " exception" << std::endl;
+            reportException( fn_name, e );
         }
         return false;
     }
@@ -350,8 +345,7 @@ public:
         }
         catch( Py::Exception &e )
         {
-            e.clear();
-            std::cout << "Error: " << fn_name << " exception" << std::endl;
+            reportException( fn_name, e );
         }
     }
 
@@ -368,8 +362,7 @@ public:
         }
         catch( Py::Exception &e )
         {
-            e.clear();
-            std::cout << "Error: " << fn_name << " exception" << std::endl;
+            reportException( fn_name, e );
         }
     }
 
@@ -386,8 +379,7 @@ public:
         }
         catch( Py::Exception &e )
         {
-            e.clear();
-            std::cout << "Error: " << fn_name << " exception" << std::endl;
+            reportException( fn_name, e );
         }
     }
 
@@ -404,8 +396,7 @@ public:
         }
         catch( Py::Exception &e )
         {
-            e.clear();
-            std::cout << "Error: " << fn_name << " exception" << std::endl;
+            reportException( fn_name, e );
         }
     }
 
@@ -422,8 +413,7 @@ public:
         }
         catch( Py::Exception &e )
         {
-            e.clear();
-            std::cout << "Error: " << fn_name << " exception" << std::endl;
+            reportException( fn_name, e );
         }
     }
 
@@ -434,7 +424,6 @@ public:
         Py::Boolean shift( args[1] );
 
         std::string ch( py_ch );
-        std::cout << "k_input_char( " << static_cast<int>( ch[0] ) << ", " << shift << " )" << std::endl;
         theActiveView->k_input_char( ch[0], shift );
         return Py::None();
     }
@@ -445,7 +434,6 @@ public:
         Py::Long width( args[0] );
         Py::Long height( args[1] );
 
-        std::cout << "t_geometry_change( " << width << ", " << height << " )" << std::endl;
         theActiveView->t_width = int( long( width ) );
         theActiveView->t_length = int( long( height ) );
         theActiveView->t_geometry_change();
@@ -604,7 +592,7 @@ extern "C" PyObject *PyInit__bemacs()
 
 // symbol required for the debug version
 extern "C" PyObject *PyInit__bemacs_d()
-{ 
+{
     return PyInit__bemacs();
 }
 
@@ -622,7 +610,7 @@ extern "C" void init_bemacs()
 
 // symbol required for the debug version
 extern "C" void init_bemacs_d()
-{ 
+{
     init_bemacs();
 }
 #endif
@@ -660,105 +648,92 @@ public:
     }
 
     // move the cursor to the indicated (row,column); (1,1) is the upper left
-    virtual void t_topos( int row, int column )         
-    { 
-        std::cout << "t_topos( " << row << ", " << column << " )" << std::endl;
+    virtual void t_topos( int row, int column )
+    {
         m_editor.termTopos( row, column );
     }
 
     // reset terminal (screen is in unknown state, convert it to a known one)
     virtual void t_reset()
-    { 
-        std::cout << "t_reset()" << std::endl;
+    {
         m_editor.termReset();
     }
 
     virtual bool t_update_begin()
-    { 
-        std::cout << "t_update_begin()" << std::endl;
+    {
         return m_editor.termUpdateBegin();
     }
 
     virtual void t_update_end()
-    { 
-        std::cout << "t_update_end()" << std::endl;
+    {
         m_editor.termUpdateEnd();
     }
 
     // set or reset character insert mode
     virtual void t_insert_mode( int mode )
-    { 
-        std::cout << "t_insert_mode()" << std::endl;
+    {
         m_editor.termInsertMode( mode );
     }
 
     // set or reset highlighting
     virtual void t_highlight_mode( int mode )
-    { 
-        std::cout << "t_highlight_mode( " << mode << " )" << std::endl;
+    {
         m_editor.termHighlightMode( mode );
     }
 
     // insert n lines
     virtual void t_insert_lines( int n )
-    { 
-        std::cout << "t_insert_lines( " << n << " )" << std::endl;
+    {
         m_editor.termInsertLines( n );
     }
 
     // delete n lines
     virtual void t_delete_lines( int n )
-    { 
-        std::cout << "t_delete_lines( " << n << " )" << std::endl;
+    {
         m_editor.termDeleteLines( n );
     }
 
     // initialize terminal settings
     virtual void t_init()
-    { 
-        std::cout << "t_init()" << std::endl;
+    {
         m_editor.termInit();
     }
 
     // erase to the end of the line
     virtual void t_wipe_line( int n )
-    { 
-        std::cout << "t_wipe_line( " << n << " )" << std::endl;
+    {
     }
 
     // set the screen window so that IDline operations only affect the first n lines of the screen
     virtual bool t_window( int n )
-    { 
-        std::cout << "t_window( " << n << " )" << std::endl;
+    {
         return m_editor.termWindow( n );
     }
 
     // Flash the screen -- not set if this terminal type won't support it.
     virtual void t_flash()
-    { 
-        std::cout << "t_flash()" << std::endl;
+    {
     }
 
     virtual void t_display_activity( unsigned char ch )
-    { 
+    {
         m_editor.termDisplayActivity( ch );
     }
 
     // Routine to call to update a line
     virtual void t_update_line( EmacsLinePtr oldl, EmacsLinePtr newl, int ln )
-    { 
+    {
         m_editor.termUpdateLine( oldl, newl, ln );
     }
 
     // Routine to change attributes
     virtual void t_change_attributes()
-    { 
+    {
         std::cout << "t_change_attributes() why is this needed?" << std::endl;
     }
 
     virtual void t_beep()
-    { 
-        std::cout << "t_beep()" << std::endl;
+    {
         m_editor.termBeep();
     }
 
