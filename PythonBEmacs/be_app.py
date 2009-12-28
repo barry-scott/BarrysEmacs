@@ -42,6 +42,8 @@ class BemacsApp(wx.App):
         if self.app_dir == '':
             self.app_dir = startup_dir
 
+        self.editor = None
+
         self.main_thread = threading.currentThread()
         self.editor_thread = threading.Thread( name='Editor', target=self.__runEditor, )
 
@@ -159,7 +161,7 @@ class BemacsApp(wx.App):
     def log_client_error( self, e, title='Error' ):
         # must run on the main thread
         if not self.isMainThread():
-            self.foregroundProcess( self.log_client_error, (e, title) )
+            self.onGuiThread( self.log_client_error, (e, title) )
             return
 
         self.__last_client_error = []
@@ -172,7 +174,7 @@ class BemacsApp(wx.App):
     def log_error( self, e, title='Error' ):
         # must run on the main thread
         if not self.isMainThread():
-            self.foregroundProcess( self.log_error, (e, title) )
+            self.onGuiThread( self.log_error, (e, title) )
             return
 
         message = str( e )
@@ -210,8 +212,12 @@ class BemacsApp(wx.App):
         self.frame.Show( True )
         self.SetTopWindow( self.frame )
 
-        self.foregroundProcess( self.__initEditorThread, () )
         return True
+
+    # notify app that the emacs panel is ready for use
+    def onEmacsPanelReady( self ):
+        self.log.debug( 'BemacsApp.onEmacsPanelReady()' )
+        self.onGuiThread( self.__initEditorThread, () )
 
     def OnActivateApp( self, event ):
         if self.frame is None:
@@ -223,9 +229,6 @@ class BemacsApp(wx.App):
         else:
             if event.GetActive():
                 self.need_activate_app_action = True
-
-    def foregroundProcess( self, function, args ):
-        wx.PostEvent( self, AppCallBackEvent( callback=function, args=args ) )
 
     def onGuiThread( self, function, args ):
         wx.PostEvent( self, AppCallBackEvent( callback=function, args=args ) )
@@ -254,12 +257,14 @@ class BemacsApp(wx.App):
         del stack
 
     def __initEditorThread( self ):
+        self.log.debug( 'BemacsApp.__initEditorThread()' )
         self.editor_thread.start()
 
     def __runEditor( self ):
+        self.log.debug( 'BemacsApp.__runEditor()' )
         self.editor = be_editor.BEmacs( self )
-        self.editor.initEditor()
         self.editor.initEmacsProfile( self.frame.emacs_panel )
+        
         # stay in processKeys until editor quits
         rc = self.editor.processKeys()
         self.log.info( 'processKeys rc %r' % (rc,) )

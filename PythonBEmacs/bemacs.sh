@@ -1,5 +1,6 @@
 #!/bin/sh
-export PYTHONPATH=$(pwd):$(cd ../Editor/darwin/obj; pwd)
+TARGET=$( ../Editor/os_name.ksh )
+export PYTHONPATH=$(pwd):$(cd ../Editor/${TARGET}/obj; pwd)
 export emacs_library=~/bemacs-kit
 
 if [ "$1" = "--gdb" ]

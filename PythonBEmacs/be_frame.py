@@ -103,25 +103,12 @@ class BemacsFrame(wx.Frame):
         s.SetStatusText( "", BemacsFrame.status_progress )
         s.SetStatusText( T_("Ready"), BemacsFrame.status_action )
 
-        # Create the splitter windows
-        if 'wxMac' in wx.PlatformInfo:
-            style = wx.SP_LIVE_UPDATE | wx.SP_3DSASH
-        else:
-            style = wx.SP_LIVE_UPDATE
-        self.h_split = wx.SplitterWindow( self, -1, style=style )
-
-        # Make sure the splitters can't be removed by setting a minimum size
-        self.h_split.SetMinimumPaneSize( 100 )
-
-        # Create the main panels
-        self.log_panel = LogCtrlPanel( self.app, self.h_split )
-        self.emacs_panel = be_emacs_panel.EmacsPanel( self.app, self.h_split )
+        # Create the main panel
+        self.emacs_panel = be_emacs_panel.EmacsPanel( self.app, self )
 
         try_wrapper = be_exceptions.TryWrapperFactory( self.app.log )
 
         size = self.GetClientSize()
-
-        self.h_split.SplitHorizontally( self.emacs_panel, self.log_panel, 200 )
 
         # for some unknown reason MENU events get blocked by tree and list controls
         for event_source in [self]:
@@ -245,7 +232,7 @@ class LogCtrlPanel(wx.Panel):
     def write( self, string ):
         # only allowed to use GUI objects on the foreground thread
         if not self.app.isMainThread():
-            self.app.foregroundProcess( self.write, (string,) )
+            self.app.onGuiThread( self.write, (string,) )
             return
 
         if string[:6] == 'Error:':
@@ -364,7 +351,7 @@ class StyledLogCtrl(wx.stc.StyledTextCtrl):
     def WriteStyledText( self, text, style ):
         # only allowed to use GUI objects on the foreground thread
         if not self.app.isMainThread():
-            self.app.foregroundProcess( self.WriteStyledText, (text, style) )
+            self.app.onGuiThread( self.WriteStyledText, (text, style) )
             return
 
         self.SetReadOnly(False)
