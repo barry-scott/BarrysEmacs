@@ -584,13 +584,23 @@ void EmacsWindowGroup::del_win( EmacsWindow *w )
     //    current window.
     //
     if( w == current_window )
+    {
         if( w->w_buf != NULL )
+        {
             if( w->w_prev != 0 )
+            {
                 w->w_prev->set_win();
+            }
             else
+            {
                 windows->set_win();
+            }
+        }
         else
+        {
             current_window = w->w_next;
+        }
+    }
 
     //
     //    Free up the windows resources.
@@ -1921,6 +1931,7 @@ int EmacsView::dump_line_from_buffer
     //    same the region will not be highlight.
     //
     if( mode.md_highlight )
+    {
         if( window->isCurrentWindow() )
         {
             // use the buffers mark
@@ -1947,6 +1958,7 @@ int EmacsView::dump_line_from_buffer
                 mark = window->getWindowMark().to_mark();
             }
         }
+    }
 
     //
     //    Setup the region highlight stuff

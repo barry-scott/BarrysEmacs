@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1987-1995
+//    Copyright (c) 1987-2009
 //    Barry A. Scott and nick Emery
 //
 
@@ -123,17 +123,19 @@ void SystemExpressionRepresentationJournalFrequency::assign_value( ExpressionRep
         while( b != 0 )
         {
             if( b->b_journalling )
-            if( b->b_kind == FILEBUFFER && b->b_modified != 0 )
             {
-                error( FormatString("Journalling cannot be enabled on modified file buffer %s") <<
-                    b->b_buf_name );
-                return;
-            }
-            else if( b->unrestrictedSize() != 0 )
-            {
-                error( FormatString("Journalling cannot be enabled on non empty buffer %s") <<
-                    b->b_buf_name );
-                return;
+                if( b->b_kind == FILEBUFFER && b->b_modified != 0 )
+                {
+                    error( FormatString("Journalling cannot be enabled on modified file buffer %s") <<
+                        b->b_buf_name );
+                    return;
+                }
+                else if( b->unrestrictedSize() != 0 )
+                {
+                    error( FormatString("Journalling cannot be enabled on non empty buffer %s") <<
+                        b->b_buf_name );
+                    return;
+                }
             }
             b = b->b_next;
         }
@@ -467,10 +469,16 @@ void EmacsBufferJournal::journal_insert
     EmacsBufferJournal *jnl = bf_cur->b_journal;
 
     if( jnl == NULL )
+    {
         if( ! journal_start() )
+        {
             return;
+        }
         else
+        {
             jnl = bf_cur->b_journal;
+        }
+    }
 
     jnl->insertChars( dot, len, str );
 }
@@ -640,10 +648,16 @@ void EmacsBufferJournal::journal_delete
     EmacsBufferJournal *jnl = bf_cur->b_journal;
 
     if( jnl == NULL )
+    {
         if( ! journal_start() )
+        {
             return;
+        }
         else
+        {
             jnl = bf_cur->b_journal;
+        }
+    }
 
     jnl->deleteChars( dot, len );
 }

@@ -47,11 +47,16 @@ int delete_region_to_buffer( void )
         EmacsBuffer::get_esc_word_mlisp( fn );
 
     if( !fn.isNull() )
+    {
         if( !bf_cur->b_mark.isSet() )
+        {
             error( "Mark not set" );
+        }
         else
+        {
             replace_to_buf( bf_cur->b_mark.to_mark() - dot, fn );
-
+        }
+    }
     return 0;
 }
 

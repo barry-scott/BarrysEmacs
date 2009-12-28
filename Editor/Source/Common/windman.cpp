@@ -518,6 +518,7 @@ void SystemExpressionRepresentationWindowSize::assign_value( ExpressionRepresent
 
     int delta = exp_int - theActiveView->currentWindow()->w_height;
     if( delta != 0 )
+    {
         if( delta > 0 )
         {
             int i;
@@ -532,8 +533,11 @@ void SystemExpressionRepresentationWindowSize::assign_value( ExpressionRepresent
             ml_err = 0;    // we never get an error expanding
         }
         else
+        {
             // shrink can be done directly
             theActiveView->windows.change_window_height( delta );
+        }
+    }
 }
 
 void SystemExpressionRepresentationWindowWidth::fetch_value()
@@ -550,6 +554,7 @@ void SystemExpressionRepresentationWindowWidth::assign_value( ExpressionRepresen
 
     int delta = exp_int - theActiveView->currentWindow()->w_width;
     if( delta != 0 )
+    {
         if( delta > 0 )
         {
             //
@@ -563,8 +568,11 @@ void SystemExpressionRepresentationWindowWidth::assign_value( ExpressionRepresen
             ml_err = 0;    // we never get an error expanding
         }
         else
+        {
             // shrink can be done directly
             theActiveView->windows.change_window_width( delta );
+        }
+    }
 }
 
 void SystemExpressionRepresentationWindowColumn::fetch_value()

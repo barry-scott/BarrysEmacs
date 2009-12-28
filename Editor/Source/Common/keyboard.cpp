@@ -313,10 +313,16 @@ int process_keys( void )
 #endif
 
         if( quitting_emacs != 0 )
+        {
             if( recursive_edit_depth != 0 )
+            {
                 return 0;
+            }
             else
+            {
                 quitting_emacs = 0;
+            }
+        }
 
         if( (next_global_keymap == 0) )
         {

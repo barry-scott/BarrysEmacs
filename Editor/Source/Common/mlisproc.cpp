@@ -824,14 +824,17 @@ int define_external_function( void )
     EmacsString symbol;
     // Collect the image symbol name if it exists
     if( cur_exec->p_nargs > 2 )
+    {
         if( ! string_arg( 3 ) )
         {
             void_result();
             return 0;
         }
         else
+        {
             symbol = ml_value.asString();
-
+        }
+    }
     // Collect the EMACS function name
     if( ! string_arg( 1 ) )
     {
