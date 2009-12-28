@@ -11,7 +11,7 @@
 // is a multiple of sizeof(double) to ensure that double variables are
 // aligned correctly
 //
-const int GUARD_SIZE( 20 );
+const int GUARD_SIZE( 32 );
 
 
 struct queue
@@ -20,10 +20,12 @@ struct queue
     struct queue *prev;
 };
 
+#define BEMACS_PAD_SIZE 0
+
 struct heap_entry
 {
     struct queue q;
-    long int user_size;    // use long int to cause machine independant alignment
+    int user_size;
     enum malloc_block_type user_type;
 #ifdef SAVE_ENVIRONMENT
     EmacsObject *theObject;
@@ -44,6 +46,10 @@ struct heap_entry
     // Unique number for this instances of allocating this block
     int sequence_number;
     unsigned char front_guard[GUARD_SIZE];
+#else
+#if BEMACS_PAD_SIZE > 0
+    char pad[BEMACS_PAD_SIZE];    // after this must be align to 64 bit boundary on x86_64
+#endif
 #endif
     unsigned char user_data[GUARD_SIZE];
 };

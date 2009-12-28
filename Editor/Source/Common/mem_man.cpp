@@ -14,6 +14,7 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 #include <mem_man.h>
 
 #include <new>
+#include <iostream>
 
 //
 //    functions
@@ -218,7 +219,13 @@ void init_memory( void )
     // is a multiple of sizeof(double) to ensure that double variables are
     // aligned correctly
     //
-    emacs_assert( offsetof( struct heap_entry, user_data )%sizeof(double) == 0 );
+    if( offsetof( struct heap_entry, user_data )%sizeof(double) != 0 )
+    {
+        std::cerr << "offsetof( struct heap_entry, user_data ) " << offsetof( struct heap_entry, user_data ) << std::endl;
+        std::cerr << "sizeof( double ) " << sizeof( double ) << std::endl;
+
+        emacs_assert( offsetof( struct heap_entry, user_data )%sizeof(double) == 0 );
+    }
 
     if( all_emacs_memory.next == NULL )
     {
