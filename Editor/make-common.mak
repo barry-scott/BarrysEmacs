@@ -149,7 +149,7 @@ $(edit_obj)dbadd.o : dbadd/dbadd.cpp
 	@ echo Info: Compile dbadd/dbadd.cpp
 	@ $(cpp) $(cc_flags) -o $(edit_obj)dbadd.o dbadd/dbadd.cpp
 
-$(edit_exe)bemacs : $(edit_obj)emclient.o $(edit_obj)em_stat.o $(edit_obj)emstring.o $(edit_obj)stub_rtl.o $(os_specific_client_obj_files)
+$(edit_exe)bemacs : $(edit_obj)emclient.o $(edit_obj)em_stat.o $(edit_obj)emstring.o $(edit_obj)stub_rtl.o $(os_specific_client_obj_files) $(edit_obj)doprint.o
 	@ echo Info: Link $(edit_exe)bemacs
 	$(ld_bintools) -o $(edit_obj)bemacs -g $(os_specific_client_ld_options) $(edit_obj)emclient.o $(edit_obj)em_stat.o $(edit_obj)emstring.o $(edit_obj)stub_rtl.o $(os_specific_client_obj_files) $(edit_obj)doprint.o
 	cp $(edit_obj)bemacs $(edit_exe)bemacs

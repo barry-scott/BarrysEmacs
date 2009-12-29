@@ -179,23 +179,30 @@ EmacsString os_error_code( unsigned int code )
 }
 
 #ifdef _DEBUG
+#undef NDEBUG
+#include <assert.h>
+
 void _emacs_assert( const char *exp, const char *file, unsigned line )
 {
 #if defined( __FreeBSD__ )
     // freebsd assert order
     __assert( "unknown", file, line, exp );
 
-#elif defined( _WIN32 )
-    // windows assert order
-    _assert( exp, file, line );
+#elif defined( __APPLE_CC__ )
+    #if __DARWIN_UNIX03
+        __assert_rtn( __func__, __FILE__, __LINE__, exp );
+    #else /* !__DARWIN_UNIX03 */
+        __assert( exp, __FILE__, __LINE__ );
+    #endif /* __DARWIN_UNIX03 */
 
-#elif defined( __GNUC__ )
-    // apple assert order
+#elif defined( __GNUC__ ) && __GNUC__ >= 3
+    // unix assert order
     __assert( exp, file, line );
 
 #else
     // unix assert order
     __assert( file, line, exp );
+
 #endif
 }
 #endif

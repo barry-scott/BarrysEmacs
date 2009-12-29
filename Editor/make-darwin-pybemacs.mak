@@ -17,6 +17,7 @@ CCCFLAGS=-DPYBEMACS=1 -Wall -fPIC -fexceptions -frtti -I$(PYCXX) -I$(PYCXXSRC) -
 CCFLAGS=-Wall -fPIC -I$(PYCXX) -I$(PYCXX)/Src -I$(PYTHON_FRAMEWORK)/include/python2.6 -g -O0
 LDSHARED=$(CCC) -bundle -g -u _PyMac_Error -framework System $(PYTHON_FRAMEWORK)/Python -framework CoreFoundation -framework Kerberos -framework Security
 LDLIBS=
+ld_bintools=$(cpp)
 
 #
 #	bemacs
@@ -36,7 +37,7 @@ os_specific_obj_files=$(edit_obj)pybemacs.o $(edit_obj)bemacs_python.o $(CXX_OBJ
 # pull in the common bemacs make file
 include make-common.mak
 
-all: $(edit_obj)_bemacs.so
+all: $(edit_obj)_bemacs.so bintools
 
 $(edit_obj)_bemacs.so: $(obj_files)
 	@echo Compile $@
