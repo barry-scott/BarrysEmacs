@@ -132,6 +132,8 @@ public:
 
         if( enter_emacs_proc != NULL )
             execute_bound_saved_environment( enter_emacs_proc );
+
+        return Py::None();
     }
     PYCXX_NOARGS_METHOD_DECL( BemacsEditor, executeEnterHooks )
 
@@ -139,6 +141,8 @@ public:
     {
         if( exit_emacs_proc != NULL )
             execute_bound_saved_environment( exit_emacs_proc );
+
+        return Py::None();
     }
     PYCXX_NOARGS_METHOD_DECL( BemacsEditor, executeExitHooks )
 

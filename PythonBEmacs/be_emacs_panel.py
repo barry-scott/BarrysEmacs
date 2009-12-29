@@ -409,15 +409,6 @@ class EmacsPanel(wx.Panel):
         dc.EndDrawing()
 
     def termTopos( self, y, x ):
-        dc = wx.ClientDC( self )
-
-        dc.BeginDrawing()
-        dc.SetBackgroundMode( wx.SOLID )
-        dc.SetPen( wx.RED_PEN )
-        c_x, c_y = self.__pixelPoint( x, y )
-        dc.DrawLine( c_x, 0, c_x, 200 )
-        dc.EndDrawing()
-
         self.caret.SetSize( (max( 1, self.char_width//5), self.char_length) )
         c_x, c_y = self.__pixelPoint( x, y )
         self.caret.Move( (c_x, c_y) )
