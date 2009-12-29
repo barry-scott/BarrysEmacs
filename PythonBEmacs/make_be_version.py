@@ -12,13 +12,13 @@
 '''
 import sys
 sys.path.append( '../Builder' )
-import be_brand_version
+import brand_version
 
 argv = [
         sys.argv[0],
-        '../Builder/version.info',
-        'be_version.py.template',
+        '../Builder/version_info.txt',
+        '..',
         ]
 
 if __name__ == '__main__':
-    sys.exit( be_brand_version.main( argv ) )
+    sys.exit( brand_version.main( argv ) )

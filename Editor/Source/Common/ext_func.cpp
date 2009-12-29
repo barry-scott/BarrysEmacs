@@ -58,7 +58,7 @@ int list_images( void )
         {
             EmacsExternImage *i = EmacsExternImage::value( index );
             bf_cur->ins_cstr( FormatString("   %-33s 0x%X     %s\n" ) <<
-                i->ef_image << int(i->ef_context) << i->ef_filename );
+                i->ef_image << reinterpret_cast<long long>( i->ef_context ) << i->ef_filename );
         }
     }
     bf_cur->b_modified = 0;

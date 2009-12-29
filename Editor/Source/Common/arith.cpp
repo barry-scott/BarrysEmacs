@@ -50,13 +50,17 @@ int check_args(int min, int max)
     if( ml_err )
         return 1;
     if( p == 0 )
+    {
         if( min != 0 || max != 0 )
         {
             error( "No arguments provided to MLisp function!");
             return 1;
         }
         else
+        {
             return 0;
+        }
+    }
     if( p->p_nargs < min || p->p_nargs > max && min <= max )
     {
         error( FormatString("Too %s arguments to \"%s\"") <<

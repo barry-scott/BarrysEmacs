@@ -27,7 +27,7 @@ class EmacsString;
 #include <ctype.h>
 #include <errno.h>
 #include <os.h>
-
+#include <string.h>
 
 #include <em_gen.h>        // general constants used in emacs
 

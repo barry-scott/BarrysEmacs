@@ -84,10 +84,14 @@ class VersionInfo:
         f.close()
 
     def setSvnVersion( self, wc_path ):
-        pin, pout = os.popen2( 'svnversion -c %s' % wc_path )
+        cmd = 'svnversion -c "%s"' % (wc_path,)
+        #print 'Info: Cmd %r' % (cmd,)
+        pin, pout = os.popen2( cmd )
+
         output = pout.read()
         pout.close()
         pin.close()
+        #print 'Info: Svn version %r' % (output,)
 
         version_string = output.strip().split(':')[-1]
         modifiers = ''

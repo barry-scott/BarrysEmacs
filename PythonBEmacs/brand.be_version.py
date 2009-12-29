@@ -1,7 +1,7 @@
 '''
 
  ====================================================================
- Copyright (c) 2008 Barry A Scott.  All rights reserved.
+ Copyright (c) 2009 Barry A Scott.  All rights reserved.
 
  This software is licensed as described in the file LICENSE.txt,
  which you should have received as part of this distribution.
@@ -11,7 +11,7 @@
 	be_version.py.template
 
 '''
-major = %(MAJOR)s
-minor = %(MINOR)s
-patch = %(PATCH)s
-build = %(BUILD)s
+major = %(major)s
+minor = %(minor)s
+patch = %(patch)s
+build = %(build)s
