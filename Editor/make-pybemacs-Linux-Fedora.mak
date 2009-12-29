@@ -15,18 +15,18 @@ CCFLAGS=-Wall -fPIC -I$(PYCXX) -I$(PYCXX)/Src -I/usr/include/python2.6 -g -O0
 LDSHARED=$(CCC) -shared $(CCCFLAGS)
 LDLIBS=
 
-#
-#	bemacs
-#
 cc_flags =$(CCCFLAGS) -D_DEBUG -IInclude/pybemacs -IInclude/Common -c
 cpp = $(CCC) -ansi -pedantic -Wall -Wno-long-long -frtti -D__std_cpp__ -D__has_bool__
 cc = $(CC) -ansi -pedantic -Wall=pthread
 cppfilt=c++filt
 ld_bintools=$(cpp)
 
-# pull in the common bemacs make file
-include make-common.mak
-
-all: $(edit_obj)_bemacs.so bintools
+#
+#	main targets
+#
+all: pybemacs
 
 install: install_pybemacs_images
+
+# pull in the common bemacs make file
+include make-common.mak

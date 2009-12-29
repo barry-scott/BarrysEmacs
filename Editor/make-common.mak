@@ -87,9 +87,11 @@ obj_files = $(os_specific_obj_files) \
 #                                                                                #
 ##################################################################################
 
-static: $(edit_obj)bemacs_server_static $(edit_exe)bemacs_server_static bintools
+pybemacs: $(edit_obj)_bemacs.so bintools
 
-dynamic: $(edit_obj)bemacs_server_dynamic $(edit_exe)bemacs_server_dynamic bintools
+static: $(edit_exe)bemacs_server_static bintools
+
+dynamic: $(edit_exe)bemacs_server_dynamic bintools
 
 bintools: $(edit_exe)bemacs $(edit_exe)mll-2-db $(edit_exe)dbadd \
 	$(edit_exe)dbcreate $(edit_exe)dblist $(edit_exe)dbdel $(edit_exe)dbprint

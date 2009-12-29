@@ -69,7 +69,10 @@ public:
         behaviors().supportGetattro();
         behaviors().supportSetattro();
 
-        PYCXX_ADD_NOARGS_METHOD( initEditor, "docs for initEditor" );
+        PYCXX_ADD_NOARGS_METHOD( initEditor, "initEditor" );
+        PYCXX_ADD_NOARGS_METHOD( executeEnterHooks, "executeEnterHooks" );
+        PYCXX_ADD_NOARGS_METHOD( executeExitHooks, "executeExitHooks" );
+
         PYCXX_ADD_NOARGS_METHOD( processKeys, "docs for processKeys" );
 
         PYCXX_ADD_VARARGS_METHOD( inputChar, "inputChar( char, shift )" );
@@ -121,7 +124,24 @@ public:
     PYCXX_NOARGS_METHOD_DECL( BemacsEditor, initEditor )
     //------------------------------------------------------------
 
-    //------------------------------------------------------------
+    Py::Object executeEnterHooks( void )
+    {
+        if( user_interface_hook_proc != NULL )
+            execute_bound_saved_environment( user_interface_hook_proc );
+            // ignore result of user_interface_hook_proc
+
+        if( enter_emacs_proc != NULL )
+            execute_bound_saved_environment( enter_emacs_proc );
+    }
+    PYCXX_NOARGS_METHOD_DECL( BemacsEditor, executeEnterHooks )
+
+    Py::Object executeExitHooks( void )
+    {
+        if( exit_emacs_proc != NULL )
+            execute_bound_saved_environment( exit_emacs_proc );
+    }
+    PYCXX_NOARGS_METHOD_DECL( BemacsEditor, executeExitHooks )
+
     Py::Object processKeys( void )
     {
         process_keys();
@@ -625,6 +645,16 @@ SystemExpressionRepresentationString ui_filter_file_list;
 
 SystemExpressionRepresentationString ui_search_string;
 SystemExpressionRepresentationString ui_replace_string;
+
+int ui_edit_copy()
+{
+    return 0;
+}
+
+int ui_edit_paste()
+{
+    return 0;
+}
 
 class TerminalControl_Python: public EmacsView
 {

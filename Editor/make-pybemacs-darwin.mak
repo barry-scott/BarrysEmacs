@@ -17,18 +17,19 @@ CCFLAGS=-Wall -fPIC -I$(PYCXX) -I$(PYCXX)/Src -I$(PYTHON_FRAMEWORK)/include/pyth
 LDSHARED=$(CCC) -bundle -g -u _PyMac_Error -framework System $(PYTHON_FRAMEWORK)/Python -framework CoreFoundation -framework Kerberos -framework Security
 LDLIBS=
 
-#
-#	bemacs
-#
 cc_flags =$(CCCFLAGS) -D_DEBUG -IInclude/pybemacs -IInclude/Common -c
 cpp = $(CCC) -ansi -pedantic -Wall -Wno-long-long -frtti -D__std_cpp__ -D__has_bool__ -DUSING_CARBON
 cc = $(CC) -ansi -pedantic -Wall=pthread
 cppfilt=c++filt
 ld_bintools=$(cpp)
 
+#
+#	main targets
+#
+all: pybemacs
+
+install: install_pybemacs_images
+
 # pull in the common bemacs make file
 include make-common.mak
 
-all: $(edit_obj)_bemacs.so bintools
-
-install: install_pybemacs_images

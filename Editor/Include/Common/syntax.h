@@ -35,7 +35,7 @@ enum Syntax_Invariant
 
 
 //
-// THe syntax byte is divided into two groups:
+// The syntax byte is divided into two groups:
 // 1) bits below SYNTAX_FIRST_FREE used to color the display of data
 // 2) bits from SYNTAX_FIRST_FREE and up used to hold state
 //
@@ -46,32 +46,32 @@ enum Syntax_Invariant
 
 #define B(n) (1 << (n))        // bit n
 
-const int SYNTAX_DULL        (        0  );        // 00 a dull (punctuation) character
-const int SYNTAX_WORD        (      B(1) );        // 02 a word character for ESC-F and friends
+const int SYNTAX_DULL               (        0  );        // 00 a dull (punctuation) character
+const int SYNTAX_WORD               (      B(1) );        // 02 a word character for ESC-F and friends
 
-const int SYNTAX_STRING_SHIFT    (        2  );
-const int SYNTAX_STRING_MASK    ( B(2)+B(3) );        // 0c its a string
-const int SYNTAX_TYPE_STRING1    ( B(2)      );        // 04 its a string type 1
-const int SYNTAX_TYPE_STRING2    (      B(3) );        // 08 its a string type 2
-const int SYNTAX_TYPE_STRING3    ( B(2)+B(3) );        // 0c its a string type 3
+const int SYNTAX_STRING_SHIFT       (        2  );
+const int SYNTAX_STRING_MASK        ( B(2)+B(3) );        // 0c its a string
+const int SYNTAX_TYPE_STRING1       ( B(2)      );        // 04 its a string type 1
+const int SYNTAX_TYPE_STRING2       (      B(3) );        // 08 its a string type 2
+const int SYNTAX_TYPE_STRING3       ( B(2)+B(3) );        // 0c its a string type 3
 
-const int SYNTAX_COMMENT_SHIFT    (        4  );
-const int SYNTAX_COMMENT_MASK    ( B(4)+B(5) );        // 30 its a comment
-const int SYNTAX_TYPE_COMMENT1    ( B(4)      );        // 10 its a comment type 1
-const int SYNTAX_TYPE_COMMENT2    (      B(5) );        // 20 its a comment type 2
-const int SYNTAX_TYPE_COMMENT3    ( B(4)+B(5) );        // 30 its a comment type 3
+const int SYNTAX_COMMENT_SHIFT      (        4  );
+const int SYNTAX_COMMENT_MASK       ( B(4)+B(5) );        // 30 its a comment
+const int SYNTAX_TYPE_COMMENT1      ( B(4)      );        // 10 its a comment type 1
+const int SYNTAX_TYPE_COMMENT2      (      B(5) );        // 20 its a comment type 2
+const int SYNTAX_TYPE_COMMENT3      ( B(4)+B(5) );        // 30 its a comment type 3
 
-const int SYNTAX_KEYWORD_SHIFT    (        6  );
-const int SYNTAX_KEYWORD_MASK    ( B(6)+B(7) );        // c0 its a keyword
-const int SYNTAX_TYPE_KEYWORD1    ( B(6)      );        // 40 its a keyword type 1
-const int SYNTAX_TYPE_KEYWORD2    (      B(7) );        // 80 its a keyword type 2
-const int SYNTAX_TYPE_KEYWORD3    ( B(6)+B(7) );        // c0 its a keyword type 3
+const int SYNTAX_KEYWORD_SHIFT      (        6  );
+const int SYNTAX_KEYWORD_MASK       ( B(6)+B(7) );        // c0 its a keyword
+const int SYNTAX_TYPE_KEYWORD1      ( B(6)      );        // 40 its a keyword type 1
+const int SYNTAX_TYPE_KEYWORD2      (      B(7) );        // 80 its a keyword type 2
+const int SYNTAX_TYPE_KEYWORD3      ( B(6)+B(7) );        // c0 its a keyword type 3
 
-const int SYNTAX_FIRST_FREE    (      B(8) );        // 100
-const int SYNTAX_PREFIX_QUOTE    (      B(8) );        // 100 like \ in C
-const int SYNTAX_BEGIN_PAREN    (      B(9) );        // 200 a begin paren: (<[
-const int SYNTAX_END_PAREN    (     B(10) );        // 400 an end paren: )>]    end
-const int SYNTAX_LAST_BIT    (     B(10) );
+const int SYNTAX_FIRST_FREE         (      B(8) );        // 100
+const int SYNTAX_PREFIX_QUOTE       (      B(8) );        // 100 like \ in C
+const int SYNTAX_BEGIN_PAREN        (      B(9) );        // 200 a begin paren: (<[
+const int SYNTAX_END_PAREN          (     B(10) );        // 400 an end paren: )>]    end
+const int SYNTAX_LAST_BIT           (     B(10) );
 
 #undef B
 

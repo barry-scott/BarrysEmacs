@@ -3,6 +3,8 @@
 #
 #	build emacs for FreeBSD, OpenBSD and Linux
 #
+PYTHON=python
+
 ifeq  (${RB_CFG_PLATFORM},FreeBSD)
 BEMACS_DOC_DIR=$(RB_WORKINGDIR)/Unix_Kit/FreeBSD/pkg
 BEMACS_LIB_DIR=$(RB_WORKINGDIR)/Unix_Kit/FreeBSD/pkg
@@ -46,7 +48,7 @@ usage:
 build: build_$(RB_CFG_PLATFORM)
 
 brand:
-	python brand_version.py version_info.txt ..
+	$(PYTHON) brand_version.py version_info.txt ..
 
 build_LinuxFC4: build_Linux rpm
 
@@ -79,7 +81,7 @@ mlisp:
 	@ echo Info: Copying Mlisp files...
 	cp -f ../MLisp/emacsinit.ml	$(BEMACS_LIB_DIR); chmod ugo=r $(BEMACS_LIB_DIR)/emacsinit.ml
 	cp -f ../MLisp/emacs_profile.ml	$(BEMACS_LIB_DIR); chmod ugo=r $(BEMACS_LIB_DIR)/emacs_profile.ml
-	cd ../MLisp; python create_library.py common,unix,motif $(BEMACS_LIB_DIR)/emacslib $(BEMACS_LIB_DIR)
+	cd ../MLisp; $(PYTHON) create_library.py common,unix,motif $(BEMACS_LIB_DIR)/emacslib $(BEMACS_LIB_DIR)
 
 describe:
 	@ echo Info: Making describe...

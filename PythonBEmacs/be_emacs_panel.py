@@ -1,6 +1,6 @@
 '''
  ====================================================================
- Copyright (c) 2003-2008 Barry A Scott.  All rights reserved.
+ Copyright (c) 2003-2009 Barry A Scott.  All rights reserved.
 
  This software is licensed as described in the file LICENSE.txt,
  which you should have received as part of this distribution.
@@ -25,13 +25,123 @@ import be_platform_specific
 
 import be_config
 
-def B( boolean ):
-    if boolean:
-        return 'T'
-    else:
-        return '_'
+_debug_term_calls = False
 
-_debug_term_calls = True
+def B( n ):
+    return 1 << n
+
+SYNTAX_DULL             = (        0  );        # 000 a dull (punctuation) character
+SYNTAX_WORD             = (      B(1) );        # 002 a word character for ESC-F and friends
+
+SYNTAX_STRING_SHIFT     = (        2  );
+SYNTAX_STRING_MASK      = ( B(2)+B(3) );        # 00c its a string
+SYNTAX_TYPE_STRING1     = ( B(2)      );        # 004 its a string type 1
+SYNTAX_TYPE_STRING2     = (      B(3) );        # 008 its a string type 2
+SYNTAX_TYPE_STRING3     = ( B(2)+B(3) );        # 00c its a string type 3
+
+SYNTAX_COMMENT_SHIFT    = (        4  );
+SYNTAX_COMMENT_MASK     = ( B(4)+B(5) );        # 030 its a comment
+SYNTAX_TYPE_COMMENT1    = ( B(4)      );        # 010 its a comment type 1
+SYNTAX_TYPE_COMMENT2    = (      B(5) );        # 020 its a comment type 2
+SYNTAX_TYPE_COMMENT3    = ( B(4)+B(5) );        # 030 its a comment type 3
+
+SYNTAX_KEYWORD_SHIFT    = (        6  );
+SYNTAX_KEYWORD_MASK     = ( B(6)+B(7) );        # 0c0 its a keyword
+SYNTAX_TYPE_KEYWORD1    = ( B(6)      );        # 040 its a keyword type 1
+SYNTAX_TYPE_KEYWORD2    = (      B(7) );        # 080 its a keyword type 2
+SYNTAX_TYPE_KEYWORD3    = ( B(6)+B(7) );        # 0c0 its a keyword type 3
+
+SYNTAX_FIRST_FREE       = (      B(8) );        # 100
+SYNTAX_PREFIX_QUOTE     = (      B(8) );        # 100 like \ in C
+SYNTAX_BEGIN_PAREN      = (      B(9) );        # 200 a begin paren: (<[
+SYNTAX_END_PAREN        = (     B(10) );        # 400 an end paren: )>]    end
+SYNTAX_LAST_BIT         = (     B(10) );
+
+LINE_ATTR_MODELINE      = SYNTAX_FIRST_FREE     # 100
+LINE_ATTR_USER          = SYNTAX_FIRST_FREE<<1  # 200
+
+LINE_M_ATTR_HIGHLIGHT   = SYNTAX_LAST_BIT       # 400
+LINE_M_ATTR_USER        = LINE_ATTR_USER|(15)   # the 8 user colours
+
+fg_colours = {
+    SYNTAX_DULL:            wx.Colour(  0,  0,  0),
+    LINE_M_ATTR_HIGHLIGHT:  wx.Colour(255,255,255),
+    SYNTAX_WORD:            wx.Colour(  0,  0,  0),
+    SYNTAX_TYPE_STRING1:    wx.Colour(  0,128,  0),
+    SYNTAX_TYPE_STRING2:    wx.Colour(  0,128,  0),
+    SYNTAX_TYPE_STRING3:    wx.Colour(  0,128,  0),
+    SYNTAX_TYPE_COMMENT1:   wx.Colour(  0,128,  0),
+    SYNTAX_TYPE_COMMENT2:   wx.Colour(  0,128,  0),
+    SYNTAX_TYPE_COMMENT3:   wx.Colour(  0,128,  0),
+    SYNTAX_TYPE_KEYWORD1:   wx.Colour(  0,  0,255),
+    SYNTAX_TYPE_KEYWORD2:   wx.Colour(255,  0,  0),
+    SYNTAX_TYPE_KEYWORD3:   wx.Colour(255,  0,  0),
+    LINE_ATTR_MODELINE:     wx.Colour(255,255,128),
+    LINE_ATTR_USER+1:       wx.Colour(255,  0,  0),
+    LINE_ATTR_USER+2:       wx.Colour(  0,255,  0),
+    LINE_ATTR_USER+3:       wx.Colour(  0,  0,255),
+    LINE_ATTR_USER+4:       wx.Colour(255,255,  0),
+    LINE_ATTR_USER+5:       wx.Colour(255,  0,255),
+    LINE_ATTR_USER+6:       wx.Colour(  0,255,255),
+    LINE_ATTR_USER+7:       wx.Colour(255,255,255),
+    LINE_ATTR_USER+8:       wx.Colour(255,255,255),
+    }
+
+bg_colours = {
+    SYNTAX_DULL:            wx.Colour(255,255,255),
+    LINE_M_ATTR_HIGHLIGHT:  wx.Colour(  0,  0,  0),
+    SYNTAX_WORD:            wx.Colour(255,255,255),
+    SYNTAX_TYPE_STRING1:    wx.Colour(255,255,255),
+    SYNTAX_TYPE_STRING2:    wx.Colour(255,255,255),
+    SYNTAX_TYPE_STRING3:    wx.Colour(255,255,255),
+    SYNTAX_TYPE_COMMENT1:   wx.Colour(255,255,255),
+    SYNTAX_TYPE_COMMENT2:   wx.Colour(255,255,255),
+    SYNTAX_TYPE_COMMENT3:   wx.Colour(255,255,255),
+    SYNTAX_TYPE_KEYWORD1:   wx.Colour(255,255,255),
+    SYNTAX_TYPE_KEYWORD2:   wx.Colour(255,255,255),
+    SYNTAX_TYPE_KEYWORD3:   wx.Colour(255,255,255),
+    LINE_ATTR_MODELINE:     wx.Colour(  0,  0,255),
+    LINE_ATTR_USER+1:       wx.Colour(255,255,255),
+    LINE_ATTR_USER+2:       wx.Colour(255,255,255),
+    LINE_ATTR_USER+3:       wx.Colour(255,255,255),
+    LINE_ATTR_USER+4:       wx.Colour(255,255,255),
+    LINE_ATTR_USER+5:       wx.Colour(255,255,255),
+    LINE_ATTR_USER+6:       wx.Colour(255,255,255),
+    LINE_ATTR_USER+7:       wx.Colour(192,192,192),
+    LINE_ATTR_USER+8:       wx.Colour(255,255,255),
+    }
+
+attr_padding = [0]*256
+line_padding = ' '*256
+
+
+special_keys = {
+    wx.WXK_UP:      '\033' '[A',
+    wx.WXK_DOWN:    '\033' '[B',
+    wx.WXK_RIGHT:   '\033' '[C',
+    wx.WXK_LEFT:    '\033' '[D',
+    wx.WXK_HOME:    '\033' '[H',
+    wx.WXK_END:     '\033' '[F',
+    wx.WXK_PAGEUP:  '\033' '[5~',
+    wx.WXK_PAGEDOWN:'\033' '[6~',
+    wx.WXK_F1:      '\033' '[11~',
+    wx.WXK_F2:      '\033' '[12~',
+    wx.WXK_F3:      '\033' '[13~',
+    wx.WXK_F4:      '\033' '[14~',
+    wx.WXK_F5:      '\033' '[15~',
+    wx.WXK_F6:      '\033' '[17~',
+    wx.WXK_F7:      '\033' '[18~',
+    wx.WXK_F8:      '\033' '[19~',
+    wx.WXK_F9:      '\033' '[20~',
+    wx.WXK_F10:     '\033' '[21~',
+    wx.WXK_F11:     '\033' '[23~',
+    wx.WXK_F12:     '\033' '[24~',
+    }
+
+wx_key_names = {}
+for name in dir(wx):
+    if name.startswith( 'WXK_' ):
+        wx_key_names[ getattr( wx, name ) ] = name
 
 class EmacsPanel(wx.Panel):
     def __init__( self, app, parent ):
@@ -48,11 +158,25 @@ class EmacsPanel(wx.Panel):
 
         self.Bind( wx.EVT_MOUSE_EVENTS, self.OnMouse )
 
-        self.all_lines = ['']*100
+        self.all_lines = [' '*256]*100
+        self.all_attrs = [[0]*256]*100
 
         self.first_paint = True
 
-        self.font = wx.Font( 14, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, 'AndaleMono' )
+        # point size and face need to choosen for platform
+        if wx.Platform == '__WXMSW__':
+            face = 'Courier New'
+            point_size = 8
+
+        elif wx.Platform == '__WXMAC__':
+            face = 'Monaco'
+            point_size = 12
+
+        else:
+            face = 'Courier'
+            point_size = 12
+
+        self.font = wx.Font( point_size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, face )
         print 'Font face: %r' % (self.font.GetFaceName(),)
 
         self.caret = wx.Caret( self, (1, 10) )
@@ -73,12 +197,14 @@ class EmacsPanel(wx.Panel):
 
         wx.EVT_SIZE( self, self.OnSize )
 
-
     def __debugTermCalls( self, msg ):
         if _debug_term_calls:
             self.log.debug( 'Debug: Term call %s' % (msg,) )
 
     def __calculateWindowSize( self ):
+        if self.char_width is None:
+            return
+
         self.pixel_width, self.pixel_length = self.GetClientSizeTuple()
         self.term_width = self.pixel_width // self.char_width
         self.term_length = self.pixel_length // self.char_length
@@ -94,6 +220,8 @@ class EmacsPanel(wx.Panel):
         
 
     def __geometryChanged( self ):
+        self.__calculateWindowSize()
+
         if self.app.editor is None:
             self.log.debug( '__geometryChanged no self.app.editor' )
             return
@@ -102,7 +230,6 @@ class EmacsPanel(wx.Panel):
             self.log.debug( '__geometryChanged self.char_width is None' )
             return
 
-        self.__calculateWindowSize()
         self.app.editor.guiGeometryChange( self.term_width, self.term_length )
 
     #--------------------------------------------------------------------------------
@@ -115,8 +242,6 @@ class EmacsPanel(wx.Panel):
         if self.first_paint:
             self.first_paint = False
 
-            self.testFont()
-
             dc = wx.PaintDC( self )
             dc.BeginDrawing()
 
@@ -125,7 +250,10 @@ class EmacsPanel(wx.Panel):
             dc.SetFont( self.font )
 
             self.char_width, self.char_length = dc.GetTextExtent( 'M' )
-            print 'OnPaint first_paint %d.%d' % (self.char_width, self.char_length)
+            print 'OnPaint first_paint M %d.%d' % (self.char_width, self.char_length)
+
+            self.char_width, self.char_length = dc.GetTextExtent( 'i' )
+            print 'OnPaint first_paint i %d.%d' % (self.char_width, self.char_length)
             dc.EndDrawing()
 
             self.__calculateWindowSize()
@@ -133,10 +261,12 @@ class EmacsPanel(wx.Panel):
             # queue up this action until after th rest of GUI init has happend
             self.app.onGuiThread( self.app.onEmacsPanelReady, () )
 
-
+            # pass on?
+            event.Skip()
 
         else:
             self.__drawPanel( wx.PaintDC( self ) )
+            event.Skip()
 
     def OnSize( self, event ):
         self.log.info( 'EmacsPanel.OnSize()' )
@@ -153,6 +283,9 @@ class EmacsPanel(wx.Panel):
         char = event.GetUnicodeKey()
         line_parts = ['"%s" %r' % (unichr( char ), char)]
 
+        key = event.GetKeyCode()
+        line_parts.append( ' key %r' % (key,) )
+
         alt = event.AltDown()
         line_parts.append( ' alt: %s' % B(alt) )
 
@@ -168,10 +301,18 @@ class EmacsPanel(wx.Panel):
         shift = event.ShiftDown()
         line_parts.append( ' shift: %s' % B(shift) )
 
-        self.log.debug( ''.join( line_parts ) )
+        self.log.debug( (''.join( line_parts )).encode( 'utf-8' ) )
         event.Skip()
 
-        self.app.editor.guiEventChar( unichr( char ), shift )
+        if key >= wx.WXK_START:
+            self.log.debug( 'Special key: %d %s' % (key, wx_key_names.get( key, 'unknown' )) )
+            all_chars = special_keys.get( key, '' )
+
+        else:
+            all_chars = unichr( char )
+
+        for ch in all_chars:
+            self.app.editor.guiEventChar( ch, shift )
 
     def OnMouse( self, event ):
         if event.Moving():
@@ -218,7 +359,6 @@ class EmacsPanel(wx.Panel):
 
         self.log.debug( ''.join( line_parts ) )
         event.Skip()
-        self.__drawPanel( wx.ClientDC( self ) )
 
     #--------------------------------------------------------------------------------
     #
@@ -231,15 +371,40 @@ class EmacsPanel(wx.Panel):
         dc.SetBackgroundMode( wx.SOLID )
         dc.SetFont( self.font )
 
+        cur_mode = None
+
         #for ch in ('M',):
         #    for num in range( 1, 16, 1 ):
         #        s = ch * num
         #        x, y = dc.GetTextExtent( s )
         #        print '__drawPanel %24s %3d %d %.2f' % (s, x, y, float(x)/num)
+        for row in range( self.term_length ):
+            line = self.all_lines[ row ]
+            attrs = self.all_attrs[ row ]
 
-        for index, line in enumerate( self.all_lines ):
-            x, y = self.__pixelPoint( 1, index+1 )
-            dc.DrawText( line, x, y )
+            for col in range( self.term_width ):
+                x, y = self.__pixelPoint( col+1, row+1 )
+
+                attr = attrs[col]
+
+                if (attr & LINE_M_ATTR_HIGHLIGHT) != 0:
+                    mode = LINE_M_ATTR_HIGHLIGHT
+
+                elif (attr & LINE_ATTR_MODELINE) != 0:
+                    mode = LINE_ATTR_MODELINE
+
+                elif (attr&LINE_ATTR_USER) != 0:
+                    mode = attr&LINE_M_ATTR_USER
+
+                else:
+                    mode = attr
+
+                if cur_mode != mode:
+                    cur_mode = mode
+                    dc.SetTextBackground( bg_colours[ cur_mode ] ) 
+                    dc.SetTextForeground( fg_colours[ cur_mode ] ) 
+
+                dc.DrawText( line[col], x, y )
 
         dc.EndDrawing()
 
@@ -293,11 +458,14 @@ class EmacsPanel(wx.Panel):
         self.__debugTermCalls( 'old %r' % (old,) )
         self.__debugTermCalls( 'new %r' % (new,) )
         if new is None:
-            new_line_contents = (' '*self.term_width)
+            new_line_contents = ' '*self.term_width
+            new_line_attrs = attr_padding
         else:
-            new_line_contents = new[0] + (' '*(self.term_width-len(new[0])))
+            new_line_contents = new[0] + line_padding[ 0 : self.term_width-len(new[0]) ]
+            new_line_attrs = new[1] + attr_padding[ 0 : self.term_width-len(new[0]) ]
 
         self.all_lines[ line_num-1 ] = new_line_contents
+        self.all_attrs[ line_num-1 ] = new_line_attrs
 
     def termWindow( self, size ):
         self.__debugTermCalls( 'termWindow( %r )' % (size,) )

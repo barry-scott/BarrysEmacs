@@ -42,6 +42,10 @@ extern int shift_right_command(void);
 extern int profile_emacs(void);
 extern int dump_histogram(void);
 # endif
+# if defined( PYBEMACS )
+extern int ui_edit_copy(void);
+extern int ui_edit_paste(void);
+# endif
 # ifdef XWINDOWS
 extern int motif_add_menu_keys_command(void);
 extern int motif_add_menu_proc_command(void);
@@ -528,6 +532,10 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "Python-eval", python_eval_string );
     EMACS_NEW BoundName( "Python-exec", python_exec_string );
 #endif
+# if defined( PYBEMACS )
+    EMACS_NEW BoundName( "UI-edit-copy", ui_edit_copy );
+    EMACS_NEW BoundName( "UI-edit-paste", ui_edit_paste );
+# endif
 # ifdef XWINDOWS
     EMACS_NEW BoundName( "UI-add-menu-keys", motif_add_menu_keys_command );
     EMACS_NEW BoundName( "UI-add-menu-procedure", motif_add_menu_proc_command );

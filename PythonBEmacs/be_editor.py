@@ -7,8 +7,7 @@
 
  ====================================================================
 
-    wb_editor.py
-
+    be_editor.py
     
 
 '''
@@ -40,6 +39,7 @@ class BEmacs(_bemacs.BemacsEditor):
         self.geometryChange( self.window.term_width, self.window.term_length )
         self.log.debug( 'BEmacs.initEmacsProfile() emacs_profile.ml' )
         _bemacs.function.execute_mlisp_file( 'emacs_library:emacs_profile.ml' )
+        self.executeEnterHooks()
 
     def guiEventChar( self, ch, shift ):
         self.__event_queue.put( (self.inputChar, (ch, shift)) )
