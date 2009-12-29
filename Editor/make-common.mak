@@ -113,6 +113,13 @@ install_dynamic_images: dynamic
 	cp -f $(edit_exe)bemacs_server_dynamic $(BUILD_KIT_DIR)/bemacs_server
 	chmod ugo=rx $(BUILD_KIT_DIR)/bemacs_server
 
+install_pybemacs_images: $(edit_obj)_bemacs.so bintools
+	for file in _bemacs.so mll-2-db dbadd dbcreate dblist dbdel dbprint; \
+	do \
+		cp -f $(edit_exe)$$file $(BUILD_KIT_DIR); \
+		chmod ugo=rx $(BUILD_KIT_DIR)/$$file; \
+	done
+
 install_bitmaps:
 	cp -f bitmaps/*.xpm $(BUILD_KIT_DIR)
 	chmod ugo=r $(BUILD_KIT_DIR)/*.xpm
@@ -221,6 +228,44 @@ $(edit_exe)dbdel : $(edit_obj)dbdel.o $(db_obj_files)
 $(edit_obj)dbdel.o : dbdel/dbdel.cpp
 	@ echo Info: Compile dbdel/dbdel.cpp
 	@ $(cpp) $(cc_flags) -o $(edit_obj)dbdel.o dbdel/dbdel.cpp
+
+##################################################################################
+#                                                                                #
+#                                                                                #
+#          _bemacs.so                                                            #
+#                                                                                #
+#                                                                                #
+##################################################################################
+$(edit_obj)_bemacs.so: $(obj_files)
+	@echo Compile $@
+	$(LDSHARED) -o $@ $(obj_files) $(LDLIBS)
+
+$(edit_obj)pybemacs.o: Source/pybemacs/pybemacs.cpp Source/pybemacs/bemacs_python.hpp
+	@echo Compile $@
+	$(cpp) $(cc_flags) -o $@ $<
+
+$(edit_obj)bemacs_python.o: Source/pybemacs/bemacs_python.cpp Source/pybemacs/bemacs_python.hpp
+	@echo Compile $@
+	$(cpp) $(cc_flags) -o $@ $<
+
+$(edit_obj)cxxsupport.o: $(PYCXXSRC)/cxxsupport.cxx
+	@echo Compile $@
+	$(CCC) -c $(CCCFLAGS) -o $@ $<
+
+$(edit_obj)cxx_extensions.o: $(PYCXXSRC)/cxx_extensions.cxx
+	@echo Compile $@
+	$(CCC) -c $(CCCFLAGS) -o $@ $<
+
+$(edit_obj)cxxextensions.o: $(PYCXXSRC)/cxxextensions.c
+	@echo Compile $@
+	$(CC) -c $(CCFLAGS) -o $@ $<
+
+$(edit_obj)IndirectPythonInterface.o: $(PYCXXSRC)/IndirectPythonInterface.cxx
+	@echo Compile $@
+	$(CCC) -c $(CCCFLAGS) -o $@ $< 
+
+clean::
+	rm -f $(edit_exe)_bemacs.so
 
 ##################################################################################
 #                                                                                #
