@@ -31,8 +31,8 @@ Editor/Source/Windows/Resources/win_doc.ico -text
 Editor/Source/Windows/Resources/win_emacs.ico -text
 Editor/make-Linux-Fedora.mak -text
 Editor/make-Linux-Ubuntu.mak -text
-Editor/make-darwin-pybemacs.mak -text
-Editor/make-linux-pybemacs.mak -text
+Editor/make-pybemacs-Linux-Fedora.mak -text
+Editor/make-pybemacs-darwin.mak -text
 HTML/ug_bemacs_doc.gif -text
 HTML/ug_bemacs_folder.gif -text
 HTML/ug_bemacs_icon.gif -text

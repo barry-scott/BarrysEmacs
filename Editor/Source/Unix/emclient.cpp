@@ -195,16 +195,16 @@ bool process_command()
     EmacsString server_fifo;
 
     {
-    char *fifo_name = getenv("BEMACS_FIFO");
+    const char *fifo_name = getenv("BEMACS_FIFO");
     if( fifo_name == NULL )
         fifo_name = ".bemacs/.emacs_command";
     if( fifo_name[0] != '/' )
     {
-        char *name = NULL;
-        char *home = getenv( "HOME" );
+        const char *name = NULL;
+        const char *home = getenv( "HOME" );
         if( home != NULL )
         {
-            for( char *p = home; *p; p++ )
+            for( const char *p = home; *p; p++ )
                 if( *p == '/' )
                     name = p;
         }

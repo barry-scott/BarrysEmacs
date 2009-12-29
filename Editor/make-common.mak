@@ -1,6 +1,13 @@
 #
 #	make_common.mak common unix make file
 #
+CXX_OBJECTS=$(edit_obj)cxxsupport.o \
+$(edit_obj)cxx_extensions.o \
+$(edit_obj)cxxextensions.o \
+$(edit_obj)IndirectPythonInterface.o
+
+pybemacs_specific_obj_files=$(edit_obj)pybemacs.o $(edit_obj)bemacs_python.o $(CXX_OBJECTS)
+
 obj_files = $(os_specific_obj_files) \
  $(edit_obj)abbrev.o \
  $(edit_obj)abspath.o \
@@ -236,9 +243,9 @@ $(edit_obj)dbdel.o : dbdel/dbdel.cpp
 #                                                                                #
 #                                                                                #
 ##################################################################################
-$(edit_obj)_bemacs.so: $(obj_files)
+$(edit_obj)_bemacs.so: $(pybemacs_specific_obj_files) $(obj_files)
 	@echo Compile $@
-	$(LDSHARED) -o $@ $(obj_files) $(LDLIBS)
+	$(LDSHARED) -o $@ $(pybemacs_specific_obj_files) $(obj_files) $(LDLIBS)
 
 $(edit_obj)pybemacs.o: Source/pybemacs/pybemacs.cpp Source/pybemacs/bemacs_python.hpp
 	@echo Compile $@
