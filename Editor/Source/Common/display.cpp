@@ -268,8 +268,6 @@ void EmacsView::update_screen( int slow_update )
         }
     }
 
-    t_highlight_mode( 0 );
-
     if( current_line >= 0
     && t_desired_screen[ current_line ]->line_length <= t_width - columns_left )
         t_desired_screen[ current_line ]->line_length =
@@ -324,7 +322,6 @@ void EmacsView::update_screen( int slow_update )
             }
     }
 
-    t_highlight_mode( 0 );
     if( input_pending == 0 )
         t_topos( curs_y, curs_x );
 
@@ -365,7 +362,7 @@ void EmacsView::updateLine
             new_line_len = new_line->line_length;
         }
 
-        _dbg_msg( FormatString( "        updateLine( %3d:'%.*s'%*s, %3d:'%.*s'%*s, %d )" )
+        _dbg_msg( FormatString( "        updateLine(   %3d:'%.*s'%*s,    %3d:'%.*s'%*s, %d )" )
             << old_line_len
                 << min( old_line_len, dump_size ) << old_line_start
                     << max( dump_size-old_line_len, 0 ) << ""
@@ -420,20 +417,7 @@ void EmacsView::moveLine
     }
 #endif
 
-    int delta = new_line_num - old_line_num;
-
-    if( delta > 0 )
-    {
-        t_window( new_line_num );
-        t_topos( old_line_num, 1 );
-        t_insert_lines( delta );
-    }
-    else
-    {
-        t_window( old_line_num );
-        t_topos( new_line_num, 1 );
-        t_delete_lines( -delta );
-    }
+    t_move_line( old_line_num, new_line_num );
 }
 
 #else

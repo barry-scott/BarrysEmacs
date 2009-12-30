@@ -1,7 +1,7 @@
 #!/bin/sh
 TARGET=$( ../Editor/os_name.ksh )
 export PYTHONPATH=$(pwd):$(cd ../Editor/${TARGET}/obj; pwd)
-export emacs_library=~/bemacs-kit
+export emacs_library=~/pybemacs-kit
 
 if [ "$1" = "--gdb" ]
 then

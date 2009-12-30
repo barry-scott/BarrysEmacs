@@ -68,8 +68,8 @@ class BEmacs(_bemacs.BemacsEditor):
             self.app.debugShowCallers( 5 )
             return -1
 
-    def termTopos( self, x, y ):
-        self.app.onGuiThread( self.window.termTopos, (x, y) )
+    def termTopos( self, y, x ):
+        self.app.onGuiThread( self.window.termTopos, (y, x) )
 
     def termReset( self ):
         self.app.onGuiThread( self.window.termReset, () )
@@ -91,20 +91,8 @@ class BEmacs(_bemacs.BemacsEditor):
     def termUpdateLine( self, old, new, line_num ):
         self.app.onGuiThread( self.window.termUpdateLine, (old, new, line_num) )
 
-    def termWindow( self, size ):
-        self.app.onGuiThread( self.window.termWindow, (size,) )
-
-    def termInsertMode( self, mode ):
-        self.app.onGuiThread( self.window.termInsertMode, (mode,) )
-
-    def termHighlightMode( self, mode ):
-        self.app.onGuiThread( self.window.termHighlightMode, (mode,) )
-
-    def termInsertLines( self, num_lines ):
-        self.app.onGuiThread( self.window.termInsertLines, (num_lines,) )
-
-    def termDeleteLines( self, num_lines ):
-        self.app.onGuiThread( self.window.termDeleteLines, (num_lines,) )
+    def termMoveLine( self, from_line, to_line ):
+        self.app.onGuiThread( self.window.termMoveLine, (from_line, to_line) )
 
     def termDisplayActivity( self, ch ):
         self.app.onGuiThread( self.window.termDisplayActivity, (ch,) )

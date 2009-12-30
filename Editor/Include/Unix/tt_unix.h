@@ -65,7 +65,6 @@ public:
     virtual bool t_update_begin();
     virtual void t_update_end();
     virtual void t_insert_mode(int);        // set or reset character insert mode
-    virtual void t_highlight_mode(int);     // set or reset highlighting
     virtual void t_insert_lines(int);       // insert n lines
     virtual void t_delete_lines(int);       // delete n lines
     virtual void t_select();                // select a terminal for operations

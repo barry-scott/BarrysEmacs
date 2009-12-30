@@ -10,7 +10,7 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
-#if DBG_CALC_INS_DEL
+#if DBG_CALC_INS_DEL && 0
 extern void emacs_sleep( int );
 static void debugSleep()
 {
@@ -40,12 +40,10 @@ void EmacsView::executeInsertDelete()
     // record which old line is updated to the new line
     int update_line_from[ MSCREENLENGTH + 1 ];
 
-{ for( int i=0; i<int(sizeof(update_line_from)/sizeof(update_line_from[0])); i++ )
+    for( int i=0; i<int(sizeof(update_line_from)/sizeof(update_line_from[0])); i++ )
         update_line_from[i] = 0;
-}
 
     // find line that have not moved that match
-{
     for( int line_num=1; line_num <= t_length; line_num++ )
     {
         if( !t_desired_screen[line_num].isNull()
@@ -56,10 +54,8 @@ void EmacsView::executeInsertDelete()
             update_line_from[ line_num ] = line_num;
         }
     }
-}
 
     // start scanning the old lines for the first line
-{
     int old_line_num_start_point = 1;
     for( int new_line_num=1; new_line_num <= t_length; new_line_num++ )
     {
@@ -101,7 +97,6 @@ void EmacsView::executeInsertDelete()
         }
 #endif
     }
-}
 
     //
     // update the lines on the screen
@@ -111,7 +106,6 @@ void EmacsView::executeInsertDelete()
     if( dbg_flags&DBG_CALC_INS_DEL )
         _dbg_msg( "executeInsertDelete: update pass 1" );
 #endif
-{
     // find the lines that need moving down out of the way of an over write
     // scan from bottom to top
     for( int new_line_num=t_length; new_line_num >= 1 ; new_line_num-- )
@@ -127,13 +121,11 @@ void EmacsView::executeInsertDelete()
             updateLine( t_phys_screen[ old_line_num ], t_desired_screen[ new_line_num ], new_line_num );
         }
     }
-}
 #if DBG_CALC_INS_DEL
     if( dbg_flags&DBG_CALC_INS_DEL )
         _dbg_msg( "executeInsertDelete: update pass 2" );
 #endif
 
-{
     // update all the rest of the lines on the screen not covered by the move own pass
     // scan from top to bottom
     EmacsLinePtr empty;
@@ -167,7 +159,6 @@ void EmacsView::executeInsertDelete()
         t_phys_screen[new_line_num] = t_desired_screen[new_line_num];
         t_desired_screen[new_line_num].releaseLine();
     }
-}
 
 #if DBG_CALC_INS_DEL
     if( dbg_flags&DBG_CALC_INS_DEL )

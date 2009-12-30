@@ -7,7 +7,7 @@
 
  ====================================================================
 
-    be_frame.py
+    be_emacs_panel.py
 
     Based on code from pysvn WorkBench
 
@@ -25,7 +25,13 @@ import be_platform_specific
 
 import be_config
 
-_debug_term_calls = False
+_debug_term_calls = True
+
+def T( boolean ):
+    if boolean:
+        return 'T'
+    else:
+        return '_'
 
 def B( n ):
     return 1 << n
@@ -161,7 +167,12 @@ class EmacsPanel(wx.Panel):
         self.all_lines = [' '*256]*100
         self.all_attrs = [[0]*256]*100
 
+        self.dc = None
         self.first_paint = True
+        self.eat_next_char = False
+        self.cursor_x = 1
+        self.cursor_y = 1
+        self.window_size = 0
 
         # point size and face need to choosen for platform
         if wx.Platform == '__WXMSW__':
@@ -185,6 +196,8 @@ class EmacsPanel(wx.Panel):
 
         self.SetCaret( self.caret )
 
+        self.client_padding = 2
+
         # the size of a char on the screen
         self.char_width = None
         self.char_length = None
@@ -195,19 +208,21 @@ class EmacsPanel(wx.Panel):
         self.term_width = None
         self.term_length = None
 
+        self.qqq = 0
+
         wx.EVT_SIZE( self, self.OnSize )
 
     def __debugTermCalls( self, msg ):
         if _debug_term_calls:
-            self.log.debug( 'Debug: Term call %s' % (msg,) )
+            self.log.debug( 'TERM %s' % (msg,) )
 
     def __calculateWindowSize( self ):
         if self.char_width is None:
             return
 
         self.pixel_width, self.pixel_length = self.GetClientSizeTuple()
-        self.term_width = self.pixel_width // self.char_width
-        self.term_length = self.pixel_length // self.char_length
+        self.term_width = (self.pixel_width - 2*self.client_padding) // self.char_width
+        self.term_length = (self.pixel_length - 2*self.client_padding) // self.char_length
 
         self.log.debug( '__calculateWindowSize char: %dpx x %dpx window: %dpx X %dpx -> text window: %d X %d' %
                         (self.char_width, self.char_length
@@ -215,8 +230,8 @@ class EmacsPanel(wx.Panel):
                         ,self.term_width, self.term_length) )
 
     def __pixelPoint( self, x, y ):
-        return  (2 + self.char_width  * (x-1)
-                ,2 + self.char_length * (y-1))
+        return  (self.client_padding + self.char_width  * (x-1)
+                ,self.client_padding + self.char_length * (y-1))
         
 
     def __geometryChanged( self ):
@@ -238,7 +253,10 @@ class EmacsPanel(wx.Panel):
     #
     #--------------------------------------------------------------------------------
     def OnPaint( self, event ):
-        self.log.info( 'EmacsPanel.OnPaint()' )
+        self.log.info( 'EmacsPanel.OnPaint() self.dc %r' % (self.dc,) )
+        if self.dc is not None:
+            return
+
         if self.first_paint:
             self.first_paint = False
 
@@ -274,45 +292,61 @@ class EmacsPanel(wx.Panel):
         event.Skip()
 
     def OnKeyDown( self, event ):
+        key = event.GetKeyCode()
+        shift = event.ShiftDown()
+        self.log.debug( 'OnKeyDown key %r name %r shift %s' % (key, wx_key_names.get( key, 'unknown' ), T( shift )) )
+
+        if key == wx.WXK_F1:
+            self.testF1()
+            return
+
+        if key == wx.WXK_F2:
+            self.testF2()
+            return
+
+        if key == wx.WXK_F3:
+            self.testF3()
+            return
+
+        if key in special_keys:
+            for ch in special_keys.get( key, '' ):
+                self.app.editor.guiEventChar( ch, shift )
+            self.eat_next_char = True
+
         event.Skip()
 
     def OnKeyUp( self, event ):
         event.Skip()
 
     def OnChar( self, event ):
+        if self.eat_next_char:
+            self.eat_next_char = False
+            return
+
         char = event.GetUnicodeKey()
-        line_parts = ['"%s" %r' % (unichr( char ), char)]
+        line_parts = ['"%r" %r' % (unichr( char ), char)]
 
         key = event.GetKeyCode()
         line_parts.append( ' key %r' % (key,) )
 
         alt = event.AltDown()
-        line_parts.append( ' alt: %s' % B(alt) )
+        line_parts.append( ' alt: %s' % T(alt) )
 
         cmd = event.CmdDown()
-        line_parts.append( ' cmd: %s' % B(cmd) )
+        line_parts.append( ' cmd: %s' % T(cmd) )
 
         control = event.ControlDown()
-        line_parts.append( ' control: %s' % B(control) )
+        line_parts.append( ' control: %s' % T(control) )
 
         meta = event.MetaDown()
-        line_parts.append( ' meta: %s' % B(meta) )
+        line_parts.append( ' meta: %s' % T(meta) )
 
         shift = event.ShiftDown()
-        line_parts.append( ' shift: %s' % B(shift) )
+        line_parts.append( ' shift: %s' % T(shift) )
 
         self.log.debug( (''.join( line_parts )).encode( 'utf-8' ) )
-        event.Skip()
 
-        if key >= wx.WXK_START:
-            self.log.debug( 'Special key: %d %s' % (key, wx_key_names.get( key, 'unknown' )) )
-            all_chars = special_keys.get( key, '' )
-
-        else:
-            all_chars = unichr( char )
-
-        for ch in all_chars:
-            self.app.editor.guiEventChar( ch, shift )
+        self.app.editor.guiEventChar( unichr( char ), False )
 
     def OnMouse( self, event ):
         if event.Moving():
@@ -373,11 +407,6 @@ class EmacsPanel(wx.Panel):
 
         cur_mode = None
 
-        #for ch in ('M',):
-        #    for num in range( 1, 16, 1 ):
-        #        s = ch * num
-        #        x, y = dc.GetTextExtent( s )
-        #        print '__drawPanel %24s %3d %d %.2f' % (s, x, y, float(x)/num)
         for row in range( self.term_length ):
             line = self.all_lines[ row ]
             attrs = self.all_attrs[ row ]
@@ -408,12 +437,55 @@ class EmacsPanel(wx.Panel):
 
         dc.EndDrawing()
 
+    def __drawPanel2( self, dc ):
+        dc.BeginDrawing()
+
+        dc.SetBackgroundMode( wx.SOLID )
+        dc.SetFont( self.font )
+
+        cur_mode = None
+
+        for row in range( self.term_length ):
+            line = self.all_lines[ row ]
+            attrs = self.all_attrs[ row ]
+
+            all_text = []
+            all_coord = []
+            all_fg = []
+            all_bg = []
+
+            for col in range( self.term_width ):
+                x, y = self.__pixelPoint( col+1, row+1 )
+
+                attr = attrs[col]
+
+                if (attr & LINE_M_ATTR_HIGHLIGHT) != 0:
+                    mode = LINE_M_ATTR_HIGHLIGHT
+
+                elif (attr & LINE_ATTR_MODELINE) != 0:
+                    mode = LINE_ATTR_MODELINE
+
+                elif (attr&LINE_ATTR_USER) != 0:
+                    mode = attr&LINE_M_ATTR_USER
+
+                else:
+                    mode = attr
+
+                if cur_mode != mode:
+                    cur_mode = mode
+
+                all_text.append( line[col] )
+                all_coord.append( (x, y) )
+                all_fg.append( fg_colours[ cur_mode ] )
+                all_bg.append( bg_colours[ cur_mode ] )
+
+            dc.DrawTextList( all_text, all_coord, all_fg, all_bg )
+        dc.EndDrawing()
+
     def termTopos( self, y, x ):
-        self.caret.SetSize( (max( 1, self.char_width//5), self.char_length) )
-        c_x, c_y = self.__pixelPoint( x, y )
-        self.caret.Move( (c_x, c_y) )
-        if not self.caret.IsVisible():
-            self.caret.Show()
+        self.__debugTermCalls( 'termTopos( y=%d, x=%d)' % (y, x) )
+        self.cursor_x = x
+        self.cursor_y = y
 
     def termReset( self ):
         self.__debugTermCalls( 'termReset()' )
@@ -433,21 +505,49 @@ class EmacsPanel(wx.Panel):
         self.__debugTermCalls( 'termBeep()' )
 
     def termUpdateBegin( self ):
-        self.__debugTermCalls( 'termUpdateBegin()' )
+        self.__debugTermCalls( 'termUpdateBegin() ------------------------------------------------------------' )
+        self.__all_term_ops = []
+
 
     def termUpdateEnd( self ):
-        self.__debugTermCalls( 'termUpdateEnd()' )
-        self.__drawPanel( wx.ClientDC( self ) )
+        self.__debugTermCalls( 'termUpdateEnd() --------------------------------------------------------------' )
 
-    def termUpdateLine( self, old, new, line_num ):
-        self.__debugTermCalls( 'termUpdateLine( ..., %r )' % (line_num,) )
+        self.dc = wx.ClientDC( self )
+        self.dc.BeginDrawing()
 
+        self.dc.SetBackgroundMode( wx.SOLID )
+        self.dc.SetFont( self.font )
+
+        for fn, args in self.__all_term_ops:
+            fn( *args )
+
+        self.dc.EndDrawing()
+        self.dc = None
+
+        self.caret.SetSize( (max( 1, self.char_width//5), self.char_length) )
+        c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
+        self.caret.Move( (c_x, c_y) )
+        if not self.caret.IsVisible():
+            self.caret.Show()
+
+    def termUpdateLine( self, old, new, row ):
+        self.__debugTermCalls( 'termUpdateLine row=%d' % (row,) )
+        self.__all_term_ops.append( (self.__termUpdateLine, (old, new, row)) )
+
+    def __termUpdateLine( self, old, new, row ):
         if self.first_paint:
             # Need to init move of the window
             return
 
-        self.__debugTermCalls( 'old %r' % (old,) )
-        self.__debugTermCalls( 'new %r' % (new,) )
+        if old is not None:
+            self.__debugTermCalls( '__termUpdateLine row=%d old %r' % (row, old[0].rstrip(),) )
+        self.__debugTermCalls( '__termUpdateLine row=%d new %r' % (row, new[0].rstrip(),) )
+        if old == new:
+            self.__debugTermCalls( '__termUpdateLine old and new are the same' )
+            return
+
+        row -= 1
+
         if new is None:
             new_line_contents = ' '*self.term_width
             new_line_attrs = attr_padding
@@ -455,27 +555,74 @@ class EmacsPanel(wx.Panel):
             new_line_contents = new[0] + line_padding[ 0 : self.term_width-len(new[0]) ]
             new_line_attrs = new[1] + attr_padding[ 0 : self.term_width-len(new[0]) ]
 
-        self.all_lines[ line_num-1 ] = new_line_contents
-        self.all_attrs[ line_num-1 ] = new_line_attrs
+        self.all_lines[ row ] = new_line_contents
+        self.all_attrs[ row ] = new_line_attrs
 
-    def termWindow( self, size ):
-        self.__debugTermCalls( 'termWindow( %r )' % (size,) )
+        dc = self.dc
 
-    def termInsertMode( self, mode ):
-        self.__debugTermCalls( 'termInsertMode( %r )' % (mode,) )
+        cur_mode = None
 
-    def termHighlightMode( self, mode ):
-        self.__debugTermCalls( 'termHighlightMode( %r )' % (mode,) )
+        for col in range( self.term_width ):
+            x, y = self.__pixelPoint( col+1, row+1 )
 
-    def termInsertLines( self, num_lines ):
-        self.__debugTermCalls( 'termInsertLines( %r )' % (num_lines,) )
+            attr = new_line_attrs[ col ]
 
-    def termDeleteLines( self, num_lines ):
-        self.__debugTermCalls( 'termDeleteLines( %r )' % (num_lines,) )
+            if (attr & LINE_M_ATTR_HIGHLIGHT) != 0:
+                mode = LINE_M_ATTR_HIGHLIGHT
+
+            elif (attr & LINE_ATTR_MODELINE) != 0:
+                mode = LINE_ATTR_MODELINE
+
+            elif (attr&LINE_ATTR_USER) != 0:
+                mode = attr&LINE_M_ATTR_USER
+
+            else:
+                mode = attr
+
+            if cur_mode != mode:
+                cur_mode = mode
+                dc.SetTextForeground( fg_colours[ cur_mode ] ) 
+                dc.SetTextBackground( bg_colours[ cur_mode ] ) 
+
+            dc.DrawText( new_line_contents[ col ], x, y )
+
+    def termMoveLine( self, from_line, to_line ):
+        self.__debugTermCalls( 'termMoveLine( %r, %r )' % (from_line,to_line) )
+        self.__all_term_ops.append( (self.__termMoveLine, (from_line, to_line)) )
+
+    def __termMoveLine( self, from_line, to_line ):
+        self.__debugTermCalls( '__termMoveLine( %r, %r )' % (from_line,to_line) )
+        if self.first_paint:
+            # Need to init move of the window
+            return
+
+        self.all_lines[ to_line-1 ] = self.all_lines[ from_line-1 ]
+        self.all_lines[ from_line-1 ] = line_padding 
+
+        self.all_attrs[ to_line-1 ] = self.all_attrs[ from_line-1 ]
+        self.all_attrs[ from_line-1 ] = attr_padding
+
+        dst_x, dst_y = self.__pixelPoint( 1, to_line )
+        src_x, src_y = self.__pixelPoint( 1, from_line )
+        width = self.char_width * self.term_width
+        height = self.char_length
+
+        self.__debugTermCalls( '__termMoveLine dst_x %r, dst_y %r, width %r height %r src_x %r src_y %r' %
+                (dst_x, dst_y
+                ,width, height
+                ,src_x, src_y) )
+
+        self.dc.Blit(
+                dst_x + (width/2), dst_y,
+                width/3, height,
+                self.dc,
+                src_x, self.pixel_length - height - src_y,
+                wx.COPY,
+                False, -1, -1
+                )
 
     def termDisplayActivity( self, ch ):
         self.__debugTermCalls( 'termDisplayActivity( %r )' % (ch,) )
-
 
     def testFont( self ):
         dc = wx.ClientDC( self )
@@ -495,5 +642,47 @@ class EmacsPanel(wx.Panel):
                 x1 = dc.GetTextExtent( text1 * i )
                 x2 = dc.GetTextExtent( text2 * i )
                 print float( x1[0] )/float( i*len( text1 ) ), float( x2[0] )/float( i*len( text2 ) )
+
+        dc.EndDrawing()
+
+    def testF1( self ):
+        self.qqq = 0
+        self.testBlit( self.qqq )
+
+    def testF2( self ):
+        self.qqq += 1
+        self.testBlit( self.qqq )
+
+    def testF3( self ):
+        self.qqq -= 1
+        self.testBlit( self.qqq )
+
+    def testBlit( self, n ):
+
+        dc = wx.ClientDC( self )
+
+        dc.BeginDrawing()
+
+        bottom_margin = self.pixel_length - (self.char_length*self.term_length) - self.client_padding
+
+        dst_x, dst_y = 200, 2
+        src_x, src_y = 2, self.char_length*n + bottom_margin
+        width = 100
+        height = self.char_length
+
+
+        self.__debugTermCalls( 'testF1 dst_x %r, dst_y %r, width %r height %r src_x %r src_y %r' %
+                (dst_x, dst_y
+                ,width, height
+                ,src_x, src_y) )
+
+        dc.Blit(
+            dst_x, dst_y,
+            width, height,
+            dc,
+            src_x, src_y,
+            wx.COPY,
+            False, -1, -1
+            )
 
         dc.EndDrawing()

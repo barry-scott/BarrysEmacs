@@ -27,19 +27,6 @@ void TerminalControl_CHAR::PAD( int n, float f )
         if( !term_nopadding ) pad( n, f );
     }
 
-void TerminalControl_CHAR::t_highlight_mode( int on )
-{
-    if (cur_hl == on)
-        return;
-
-    if( on )
-        t_io_printf( "\233%sm", mode_line_rendition.sdata() );
-    else
-        t_io_printf( "\233%sm", window_rendition.sdata() );
-
-    cur_hl = on;
-}
-
 static int cur_ins;
 void TerminalControl_CHAR::t_insert_mode( int on )
 {

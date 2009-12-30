@@ -18,7 +18,6 @@ public:
     virtual bool t_update_begin() { return true; }
     virtual void t_update_end() { }
     virtual void t_insert_mode( int ) { }       // set or reset character insert mode
-    virtual void t_highlight_mode( int ) { }    // set or reset highlighting
     virtual void t_insert_lines( int ) { }      // insert n lines
     virtual void t_delete_lines( int ) { }      // delete n lines
     virtual void t_select() { }                 // select a terminal for operations
@@ -29,6 +28,23 @@ public:
     virtual void t_flash() { }                  // Flash the screen -- not set if this terminal type won't support it.
     virtual void t_geometry_change();
     virtual void t_display_activity( unsigned char ) { }
+    virtual void t_move_line( int old_line_num, int new_line_num )
+    {
+        int delta = new_line_num - old_line_num;
+
+        if( delta > 0 )
+        {
+            t_window( new_line_num );
+            t_topos( old_line_num, 1 );
+            t_insert_lines( delta );
+        }
+        else
+        {
+            t_window( old_line_num );
+            t_topos( new_line_num, 1 );
+            t_delete_lines( -delta );
+        }
+    }
     //
     // costs are expressed as number_affected*mf + ov
     //    cost to insert/delete 1 line: (number of lines left)*ILmf+ILov

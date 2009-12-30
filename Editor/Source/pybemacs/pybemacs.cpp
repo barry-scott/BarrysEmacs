@@ -336,86 +336,18 @@ public:
         }
     }
 
-
-    bool termWindow( int size )
+    void termMoveLine( int from_line, int to_line )
     {
-        static char fn_name[] = "termWindow";
+        static char fn_name[] = "termMoveLine";
         try
         {
             Py::Object self( selfPtr() );
             Py::Callable py_fn( self.getAttr( fn_name ) );
-            Py::Tuple args( 1 );
-            args[0] = Py::Long( size );
-            Py::Boolean rc( py_fn.apply( args ) );
-            return bool( rc );
-        }
-        catch( Py::Exception &e )
-        {
-            reportException( fn_name, e );
-        }
-        return false;
-    }
 
-    void termInsertMode( int mode )
-    {
-        static char fn_name[] = "termInsertMode";
-        try
-        {
-            Py::Object self( selfPtr() );
-            Py::Callable py_fn( self.getAttr( fn_name ) );
-            Py::Tuple args( 1 );
-            args[0] = Py::Long( mode );
-            py_fn.apply( args );
-        }
-        catch( Py::Exception &e )
-        {
-            reportException( fn_name, e );
-        }
-    }
+            Py::Tuple args( 2 );
+            args[0] = Py::Long( from_line );
+            args[1] = Py::Long( to_line );
 
-    void termHighlightMode( int mode )
-    {
-        static char fn_name[] = "termHighlightMode";
-        try
-        {
-            Py::Object self( selfPtr() );
-            Py::Callable py_fn( self.getAttr( fn_name ) );
-            Py::Tuple args( 1 );
-            args[0] = Py::Long( mode );
-            py_fn.apply( args );
-        }
-        catch( Py::Exception &e )
-        {
-            reportException( fn_name, e );
-        }
-    }
-
-    void termInsertLines( int num_lines )
-    {
-        static char fn_name[] = "termInsertLines";
-        try
-        {
-            Py::Object self( selfPtr() );
-            Py::Callable py_fn( self.getAttr( fn_name ) );
-            Py::Tuple args( 1 );
-            args[0] = Py::Long( num_lines );
-            py_fn.apply( args );
-        }
-        catch( Py::Exception &e )
-        {
-            reportException( fn_name, e );
-        }
-    }
-
-    void termDeleteLines( int num_lines )
-    {
-        static char fn_name[] = "termDeleteLines";
-        try
-        {
-            Py::Object self( selfPtr() );
-            Py::Callable py_fn( self.getAttr( fn_name ) );
-            Py::Tuple args( 1 );
-            args[0] = Py::Long( num_lines );
             py_fn.apply( args );
         }
         catch( Py::Exception &e )
@@ -667,6 +599,11 @@ public:
     : EmacsView()
     , m_editor( editor )
     {
+    t_il_mf = 1;
+    t_il_ov = 1;
+    t_ic_ov = MISSINGFEATURE;
+    t_dc_ov = MISSINGFEATURE;
+    t_baud_rate = 1000000;
     }
 
     virtual ~TerminalControl_Python()
@@ -698,33 +635,21 @@ public:
         return m_editor.termUpdateBegin();
     }
 
+    // Routine to call to update a line
+    virtual void t_update_line( EmacsLinePtr oldl, EmacsLinePtr newl, int ln )
+    {
+        m_editor.termUpdateLine( oldl, newl, ln );
+    }
+
+    // set the screen window so that IDline operations only affect the first n lines of the screen
+    virtual void t_move_line( int from_line, int to_line )
+    {
+        m_editor.termMoveLine( from_line, to_line );
+    }
+
     virtual void t_update_end()
     {
         m_editor.termUpdateEnd();
-    }
-
-    // set or reset character insert mode
-    virtual void t_insert_mode( int mode )
-    {
-        m_editor.termInsertMode( mode );
-    }
-
-    // set or reset highlighting
-    virtual void t_highlight_mode( int mode )
-    {
-        m_editor.termHighlightMode( mode );
-    }
-
-    // insert n lines
-    virtual void t_insert_lines( int n )
-    {
-        m_editor.termInsertLines( n );
-    }
-
-    // delete n lines
-    virtual void t_delete_lines( int n )
-    {
-        m_editor.termDeleteLines( n );
     }
 
     // initialize terminal settings
@@ -738,12 +663,6 @@ public:
     {
     }
 
-    // set the screen window so that IDline operations only affect the first n lines of the screen
-    virtual bool t_window( int n )
-    {
-        return m_editor.termWindow( n );
-    }
-
     // Flash the screen -- not set if this terminal type won't support it.
     virtual void t_flash()
     {
@@ -752,12 +671,6 @@ public:
     virtual void t_display_activity( unsigned char ch )
     {
         m_editor.termDisplayActivity( ch );
-    }
-
-    // Routine to call to update a line
-    virtual void t_update_line( EmacsLinePtr oldl, EmacsLinePtr newl, int ln )
-    {
-        m_editor.termUpdateLine( oldl, newl, ln );
     }
 
     // Routine to change attributes
