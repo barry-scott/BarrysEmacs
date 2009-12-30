@@ -613,10 +613,10 @@ class EmacsPanel(wx.Panel):
                 ,src_x, src_y) )
 
         self.dc.Blit(
-                dst_x + (width/2), dst_y,
-                width/3, height,
+                dst_x, dst_y,
+                width, height,
                 self.dc,
-                src_x, self.pixel_length - height - src_y,
+                src_x, src_y,
                 wx.COPY,
                 False, -1, -1
                 )
