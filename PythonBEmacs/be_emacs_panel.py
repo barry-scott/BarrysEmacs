@@ -197,13 +197,14 @@ class EmacsPanel(wx.Panel):
         self.font = wx.Font( point_size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, face )
         print 'Font face: %r' % (self.font.GetFaceName(),)
 
+        self.client_padding = 3
+
         self.caret = wx.Caret( self, (1, 10) )
-        self.caret.Move( (2, 2) )
+        self.caret.Move( (self.client_padding, self.client_padding) )
         self.caret.Hide()
 
         self.SetCaret( self.caret )
 
-        self.client_padding = 3
 
         # the size of a char on the screen
         self.char_width = None
@@ -386,7 +387,70 @@ class EmacsPanel(wx.Panel):
 
     def OnMouse( self, event ):
         if event.Moving():
+            pass
+
+        elif event.IsButton():
+            # Calculate character cell position
+            x, y = event.GetPosition()
+            column = (x - self.client_padding + (self.char_width/2)) // self.char_width + 1;
+            line =   (y - self.client_padding ) // self.char_length + 1;
+
+
+            if event.LeftDown():
+                button = 2
+            elif event.LeftUp():
+                button = 3
+            elif event.MiddleDown():
+                button = 4
+            elif event.MiddleUp():
+                button = 5
+            elif event.RightDown():
+                button = 6
+            elif event.RightUp():
+                button = 7
+
+            mouse = "\x1b[%d;%d;%d;%d&w" % (button, 0, line, column)
+            shift = event.ShiftDown()
+
+            self.log.info( 'Mouse button %r line %r column %r' % (button, line, column) )
+
+            for ch in mouse:
+                self.app.editor.guiEventChar( ch, shift )
+
+
+            wheel = '''
+        // Cygwin Xfree86 uses 4 and 5 to send the mouse wheel turns
+        case Button4:
+        case Button5:
+        {
+            if( event->type == ButtonPress )
+            {
+                int mode = 0;
+                if( event->button == Button5 )
+                    mode |= 1;    // -ive wheel motion
+                if( (event->state & ShiftMask) != 0 )
+                    mode |= 4;    // shift down
+                if( (event->state & ControlMask) != 0 )
+                    mode |= 8;    // ctrl down
+
+                EmacsString mouse( FormatString("\x1b[%d;%d;%d;%d#w")
+                    << mode << 1 << column << line );
+                input_char_string( mouse, event->state & ShiftMask );
+            }
+            return;
+        }
+        default:
+            _dbg_msg( FormatString( "Unexpected mouse button. event->button: %x" ) <<event->button );
+            return;
+        }
+'''
+
+
+
+    def __qqq__OnMouse( self, event ):
+        if event.Moving():
             return
+
 
         button_down = []
         if event.LeftDown():
