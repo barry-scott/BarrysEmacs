@@ -43,14 +43,6 @@ def prerequesitChecks():
 
 def main( args ):
     startup_dir = os.getcwd()
-    if 1:
-        if sys.platform == 'win32':
-            os.chdir( os.environ['USERPROFILE'] )
-            # Fix for wxPython bug on multi-processor machines - limit us to 1 processor
-            #win32process.SetProcessAffinityMask(win32api.GetCurrentProcess(), 1)
-        else:
-            os.chdir( os.environ['HOME'] )
-
     # don't pollute any subprocesses with env vars
     # from packaging processing
     for envvar in ['PYTHONPATH', 'PYTHONHOME', 'PYTHONEXECUTABLE']:

@@ -1,10 +1,10 @@
 //
-//    Copyright (c) 1982-2001
+//    Copyright (c) 1982-2010
 //        Barry A. Scott
 //
 
-const int MSCREENWIDTH( 255 );
-const int MSCREENLENGTH( 100 );
+const int MSCREENWIDTH( 1024 );
+const int MSCREENLENGTH( 512 );
 
 //  If highlighted is true then mode line highlighting is done
 //  If highlight_start is greater then zero then apply region
