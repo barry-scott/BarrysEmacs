@@ -602,8 +602,7 @@ ProgramNode *ProgramNode::number_node( MLispInputStream &input )
             n++;
             buf[ n ] = (unsigned char)c;
         }
-        while( n < 29
-        && (c != '\'' || n == 1 && buf[0] == '\\') );
+        while( n < 29 && (c != '\'' || (n == 1 && buf[0] == '\\')) );
 
         buf[ n ] = 0;
         if( n > 10 )
