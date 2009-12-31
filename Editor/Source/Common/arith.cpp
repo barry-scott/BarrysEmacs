@@ -61,7 +61,7 @@ int check_args(int min, int max)
             return 0;
         }
     }
-    if( p->p_nargs < min || p->p_nargs > max && min <= max )
+    if( p->p_nargs < min || (p->p_nargs > max && min <= max) )
     {
         error( FormatString("Too %s arguments to \"%s\"") <<
             (p->p_nargs < min ? "few" : "many") <<

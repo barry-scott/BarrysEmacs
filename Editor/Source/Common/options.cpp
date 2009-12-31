@@ -987,6 +987,7 @@ int BoundNameAutoLoad::execute(void)
     arg_state = no_arg;
     int rv = execute_mlisp_file( b_module, 0 );
     if( ! ml_err && rv == 0 )
+    {
         if( container->implementation == us )
         {
             error( FormatString("%s was supposed to be defined by autoloading %s, but it was not.") <<
@@ -999,6 +1000,7 @@ int BoundNameAutoLoad::execute(void)
             arg_state = lstate;
             rv = container->execute();
         }
+    }
 
     if( arg_state != prepared_arg )
     {
@@ -1488,6 +1490,7 @@ static void decompile_inner
         current_line = decompile_buffer.length();
 
     if( depth > 1 )
+    {
         if( n == &bound_number_node )
         {
             decompile_put_int( ((ProgramNodeInt *)p)->pa_int );
@@ -1505,6 +1508,7 @@ static void decompile_inner
             decompile_put_str( p->name()->v_name );
             return;
         }
+    }
 
     int i;
 

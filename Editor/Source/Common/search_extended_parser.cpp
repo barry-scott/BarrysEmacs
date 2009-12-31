@@ -587,8 +587,8 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_term( EmacsStringStream &p
         EmacsStringStreamStringEnd raw_pattern( pattern );
         ch = raw_pattern.nextChar();
 
-        if( ch >= 'a' && ch <= 'z'
-        || ch >= 'A' && ch <= 'Z'
+        if( (ch >= 'a' && ch <= 'z')
+        || (ch >= 'A' && ch <= 'Z')
         || ch == '0' )
             switch( ch )
             {

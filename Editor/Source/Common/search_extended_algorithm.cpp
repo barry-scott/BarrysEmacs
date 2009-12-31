@@ -163,8 +163,7 @@ void SearchAdvancedAlgorithm::search_replace_once( const EmacsString &new_string
                 }
                 else
                     if( action == UPPER
-                    || action == FIRST_ALL
-                    && flags.beg_of_word )
+                    || (action == FIRST_ALL && flags.beg_of_word) )
                     {
                         action = DO_NOTHING;
                         break;
@@ -190,12 +189,12 @@ void SearchAdvancedAlgorithm::search_replace_once( const EmacsString &new_string
         && isalpha( lc ) )
         {
             if( islower( lc )
-            &&    (action == UPPER
-                || action == FIRST_ALL
-                && flags.beg_of_word
-                || action == FIRST
-                && flags.beg_of_str) )
-                    lc = (unsigned char)toupper( lc );
+            &&  (action == UPPER
+                || (action == FIRST_ALL && flags.beg_of_word)
+                || (action == FIRST && flags.beg_of_str)) )
+            {
+                lc = (unsigned char)toupper( lc );
+            }
             flags.beg_of_word = 0;
             flags.beg_of_str = 0;
         }

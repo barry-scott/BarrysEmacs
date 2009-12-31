@@ -116,10 +116,9 @@ int undo_more( void )
     {
         while( p->undo_kind != UNDO_BOUNDARY )
         {
-            if( p->undo_kind == UNDO_INSERT
-            && (n_chars_left = n_chars_left - p->undo_len) < 0
-            || p->undo_kind == UNDO_UNDOABLE
-            || n_undone >= UNDO_MAX_REC )
+            if( (p->undo_kind == UNDO_INSERT && (n_chars_left = n_chars_left - p->undo_len) < 0)
+                || p->undo_kind == UNDO_UNDOABLE
+                || n_undone >= UNDO_MAX_REC )
             {
                 error( "Sorry, cannot undo that. What is done is done.");
                 return 0;
