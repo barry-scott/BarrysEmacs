@@ -673,12 +673,6 @@ public:
         m_editor.termDisplayActivity( ch );
     }
 
-    // Routine to change attributes
-    virtual void t_change_attributes()
-    {
-        std::cout << "t_change_attributes() why is this needed?" << std::endl;
-    }
-
     virtual void t_beep()
     {
         m_editor.termBeep();
