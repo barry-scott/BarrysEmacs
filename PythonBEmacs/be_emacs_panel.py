@@ -215,8 +215,6 @@ class EmacsPanel(wx.Panel):
         self.term_width = None
         self.term_length = None
 
-        self.qqq = 0
-
         wx.EVT_SIZE( self, self.OnSize )
 
     def __debugTermCalls1( self, msg ):
@@ -242,6 +240,17 @@ class EmacsPanel(wx.Panel):
 
         self.log.debug( '__calculateWindowSize create editor_bitmap %d x %d' % (self.pixel_width, self.pixel_length) )
         self.editor_bitmap = wx.EmptyBitmap( self.pixel_width, self.pixel_length, -1 )
+
+        dc = wx.MemoryDC()
+        dc.SelectObject( self.editor_bitmap )
+
+        dc.BeginDrawing()
+        dc.SetBackgroundMode( wx.SOLID )
+        dc.SetPen( wx.Pen( bg_colours[ SYNTAX_DULL ] ) )
+        dc.SetPen( wx.Pen( wx.Colour( 255, 0, 0 ) ) )
+        dc.DrawRectangle( 0, 0, self.pixel_width, self.pixel_length )
+        dc.EndDrawing()
+        dc = None
 
     def __pixelPoint( self, x, y ):
         return  (self.client_padding + self.char_width  * (x-1)
