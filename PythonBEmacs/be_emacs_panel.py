@@ -247,7 +247,6 @@ class EmacsPanel(wx.Panel):
         dc.BeginDrawing()
         dc.SetBackgroundMode( wx.SOLID )
         dc.SetPen( wx.Pen( bg_colours[ SYNTAX_DULL ] ) )
-        dc.SetPen( wx.Pen( wx.Colour( 255, 0, 0 ) ) )
         dc.DrawRectangle( 0, 0, self.pixel_width, self.pixel_length )
         dc.EndDrawing()
         dc = None
