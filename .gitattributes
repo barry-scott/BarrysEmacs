@@ -11,6 +11,17 @@ Editor/BEmacsComClient/icon5.ico -text
 Editor/BEmacsComClient/icon6.ico -text
 Editor/BEmacsComClient/icon7.ico -text
 Editor/BEmacsComClient/icon8.ico -text
+Editor/PythonBEmacs/be.rc.template -text
+Editor/PythonBEmacs/be_common.mak -text
+Editor/PythonBEmacs/bemacs.png -text svneol=unset#image/png
+Editor/PythonBEmacs/brand.be_version.py -text
+Editor/PythonBEmacs/linux.mak -text
+Editor/PythonBEmacs/macosx.mak -text
+Editor/PythonBEmacs/toolbar_images/edit.png -text svneol=unset#image/png
+Editor/PythonBEmacs/toolbar_images/editcopy.png -text svneol=unset#image/png
+Editor/PythonBEmacs/toolbar_images/editcut.png -text svneol=unset#image/png
+Editor/PythonBEmacs/toolbar_images/editpaste.png -text svneol=unset#image/png
+Editor/PythonBEmacs/win32.mak -text
 Editor/Source/Windows/Resources/BMP16175.BMP -text
 Editor/Source/Windows/Resources/BMP24826.BMP -text
 Editor/Source/Windows/Resources/BMP28043.BMP -text
@@ -67,17 +78,6 @@ MLisp/Library/makefile-mode.ml -text
 MLisp/Library/smart-auto-execute.ml -text
 MLisp/Library/sql-mode.key -text
 MLisp/Library/sql-mode.ml -text
-PythonBEmacs/be.rc.template -text
-PythonBEmacs/be_common.mak -text
-PythonBEmacs/bemacs.png -text svneol=unset#image/png
-PythonBEmacs/brand.be_version.py -text
-PythonBEmacs/linux.mak -text
-PythonBEmacs/macosx.mak -text
-PythonBEmacs/toolbar_images/edit.png -text svneol=unset#image/png
-PythonBEmacs/toolbar_images/editcopy.png -text svneol=unset#image/png
-PythonBEmacs/toolbar_images/editcut.png -text svneol=unset#image/png
-PythonBEmacs/toolbar_images/editpaste.png -text svneol=unset#image/png
-PythonBEmacs/win32.mak -text
 Unix_Kit/Linux/DPKG/brand.create-dpkg.sh -text
 Unix_Kit/MacOSX/BarrysEmacs.app/Contents/Info.plist -text
 Unix_Kit/MacOSX/BarrysEmacs.app/Contents/MacOS/bemacs_mac -text
