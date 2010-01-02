@@ -161,9 +161,9 @@ $(edit_exe)dbadd : $(edit_obj)dbadd.o $(db_obj_files)
 	cp $(edit_obj)dbadd $(edit_exe)dbadd
 	strip $(edit_exe)dbadd
 
-$(edit_obj)dbadd.o : dbadd/dbadd.cpp
-	@ echo Info: Compile dbadd/dbadd.cpp
-	@ $(cpp) $(cc_flags) -o $(edit_obj)dbadd.o dbadd/dbadd.cpp
+$(edit_obj)dbadd.o : Utilities/dbadd/dbadd.cpp
+	@ echo Info: Compile Utilities/dbadd/dbadd.cpp
+	@ $(cpp) $(cc_flags) -o $(edit_obj)dbadd.o Utilities/dbadd/dbadd.cpp
 
 $(edit_exe)bemacs : $(edit_obj)emclient.o $(edit_obj)em_stat.o $(edit_obj)emstring.o $(edit_obj)stub_rtl.o $(os_specific_client_obj_files) $(edit_obj)doprint.o
 	@ echo Info: Link $(edit_exe)bemacs
@@ -196,17 +196,17 @@ $(edit_exe)dbcreate : $(edit_obj)dbcreate.o $(db_obj_files)
 	cp $(edit_obj)dbcreate $(edit_exe)dbcreate
 	strip $(edit_exe)dbcreate
 
-$(edit_obj)dbcreate.o : dbcreate/dbcreate.cpp
-	@ echo Info: Compile dbcreate/dbcreate.cpp
-	@ $(cpp) $(cc_flags) -o $(edit_obj)dbcreate.o dbcreate/dbcreate.cpp
+$(edit_obj)dbcreate.o : Utilities/dbcreate/dbcreate.cpp
+	@ echo Info: Compile Utilities/dbcreate/dbcreate.cpp
+	@ $(cpp) $(cc_flags) -o $(edit_obj)dbcreate.o Utilities/dbcreate/dbcreate.cpp
 
-$(edit_obj)db_rtl.o : db_rtl/db_rtl.cpp
-	@ echo Info: Compile db_rtl/db_rtl.cpp
-	@ $(cpp) $(cc_flags) -o $(edit_obj)db_rtl.o db_rtl/db_rtl.cpp
+$(edit_obj)db_rtl.o : Utilities/db_rtl/db_rtl.cpp
+	@ echo Info: Compile Utilities/db_rtl/db_rtl.cpp
+	@ $(cpp) $(cc_flags) -o $(edit_obj)db_rtl.o Utilities/db_rtl/db_rtl.cpp
 
-$(edit_obj)stub_rtl.o : db_rtl/stub_rtl.cpp
-	@ echo Info: Compile db_rtl/stub_rtl.cpp
-	@ $(cpp) $(cc_flags) -o $(edit_obj)stub_rtl.o db_rtl/stub_rtl.cpp
+$(edit_obj)stub_rtl.o : Utilities/db_rtl/stub_rtl.cpp
+	@ echo Info: Compile Utilities/db_rtl/stub_rtl.cpp
+	@ $(cpp) $(cc_flags) -o $(edit_obj)stub_rtl.o Utilities/db_rtl/stub_rtl.cpp
 
 $(edit_exe)dblist : $(edit_obj)dblist.o $(db_obj_files)
 	@ echo Info: Link $(edit_exe)dblist
@@ -214,9 +214,9 @@ $(edit_exe)dblist : $(edit_obj)dblist.o $(db_obj_files)
 	cp $(edit_obj)dblist $(edit_exe)dblist
 	strip $(edit_exe)dblist
 
-$(edit_obj)dblist.o : dblist/dblist.cpp
-	@ echo Info: Compile dblist/dblist.cpp
-	@ $(cpp) $(cc_flags) -o $(edit_obj)dblist.o dblist/dblist.cpp
+$(edit_obj)dblist.o : Utilities/dblist/dblist.cpp
+	@ echo Info: Compile Utilities/dblist/dblist.cpp
+	@ $(cpp) $(cc_flags) -o $(edit_obj)dblist.o Utilities/dblist/dblist.cpp
 
 $(edit_exe)dbprint : $(edit_obj)dbprint.o $(db_obj_files)
 	@ echo Info: Link $(edit_exe)dbprint
@@ -224,9 +224,9 @@ $(edit_exe)dbprint : $(edit_obj)dbprint.o $(db_obj_files)
 	cp $(edit_obj)dbprint $(edit_exe)dbprint
 	strip $(edit_exe)dbprint
 
-$(edit_obj)dbprint.o : dbprint/dbprint.cpp
-	@ echo Info: Compile dbprint/dbprint.cpp
-	@ $(cpp) $(cc_flags) -o $(edit_obj)dbprint.o dbprint/dbprint.cpp
+$(edit_obj)dbprint.o : Utilities/dbprint/dbprint.cpp
+	@ echo Info: Compile Utilities/dbprint/dbprint.cpp
+	@ $(cpp) $(cc_flags) -o $(edit_obj)dbprint.o Utilities/dbprint/dbprint.cpp
 
 $(edit_exe)dbdel : $(edit_obj)dbdel.o $(db_obj_files)
 	@ echo Info: Link $(edit_exe)dbdel
@@ -234,9 +234,9 @@ $(edit_exe)dbdel : $(edit_obj)dbdel.o $(db_obj_files)
 	cp $(edit_obj)dbdel $(edit_exe)dbdel
 	strip $(edit_exe)dbdel
 
-$(edit_obj)dbdel.o : dbdel/dbdel.cpp
-	@ echo Info: Compile dbdel/dbdel.cpp
-	@ $(cpp) $(cc_flags) -o $(edit_obj)dbdel.o dbdel/dbdel.cpp
+$(edit_obj)dbdel.o : Utilities/dbdel/dbdel.cpp
+	@ echo Info: Compile Utilities/dbdel/dbdel.cpp
+	@ $(cpp) $(cc_flags) -o $(edit_obj)dbdel.o Utilities/dbdel/dbdel.cpp
 
 ##################################################################################
 #                                                                                #
