@@ -1,7 +1,0 @@
-; em_user_mfc_dll.def : Declares the module parameters for the DLL.
-
-LIBRARY      "EM_USER_MFC_DLL"
-DESCRIPTION  'EM_USER_MFC_DLL Windows Dynamic Link Library'
-
-EXPORTS
-    ; Explicit exports can go here
