@@ -186,9 +186,9 @@ $(edit_exe)mll-2-db : $(edit_obj)mll-2-db.o $(db_obj_files)
 	cp $(edit_obj)mll-2-db $(edit_exe)mll-2-db
 	strip $(edit_exe)mll-2-db
 
-$(edit_obj)mll-2-db.o : mll2db/mll-2-db.cpp
-	@ echo Info: Compile mll2db/mll-2-db.cpp
-	@ $(cpp) $(cc_flags) -o $(edit_obj)mll-2-db.o mll2db/mll-2-db.cpp
+$(edit_obj)mll-2-db.o : Utilities/mll2db/mll-2-db.cpp
+	@ echo Info: Compile Utilities/mll2db/mll-2-db.cpp
+	@ $(cpp) $(cc_flags) -o $(edit_obj)mll-2-db.o Utilities/mll2db/mll-2-db.cpp
 
 $(edit_exe)dbcreate : $(edit_obj)dbcreate.o $(db_obj_files)
 	@ echo Info: Link $(edit_exe)dbcreate
