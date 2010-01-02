@@ -1,5 +1,5 @@
 #
-#	make-darwin-pybemacs.mak
+#	make-pybemacs-Linux-Fedora.mak
 #
 PYCXX_VER=6.2.0
 CCC=g++

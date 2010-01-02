@@ -1,9 +1,9 @@
 #
 #	Mac OS X makefile for WorkBench
 #
-PYTHON=python2.5
+PYTHON=python2.6
 
-all: be_version.py be_images.py
+all: be_images.py
 
 locale/en/LC_MESSAGES/pysvn_workbench.mo:
 	./make-pot-file.sh

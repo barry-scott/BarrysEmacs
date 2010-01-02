@@ -87,11 +87,7 @@ obj_files = $(os_specific_obj_files) \
 #                                                                                #
 ##################################################################################
 
-pybemacs: $(edit_obj)_bemacs.so bintools
-
-static: $(edit_exe)bemacs_server_static bintools
-
-dynamic: $(edit_exe)bemacs_server_dynamic bintools
+pybemacs: $(edit_obj)_bemacs.so be_main bintools
 
 bintools: $(edit_exe)bemacs $(edit_exe)mll-2-db $(edit_exe)dbadd \
 	$(edit_exe)dbcreate $(edit_exe)dblist $(edit_exe)dbdel $(edit_exe)dbprint
@@ -104,25 +100,7 @@ bintools: $(edit_exe)bemacs $(edit_exe)mll-2-db $(edit_exe)dbadd \
 #                                                                                #
 ##################################################################################
 
-install_static_images: static
-	for file in bemacs mll-2-db dbadd dbcreate dblist dbdel dbprint; \
-	do \
-		cp -f $(edit_exe)$$file $(BUILD_KIT_DIR); \
-		chmod ugo=rx $(BUILD_KIT_DIR)/$$file; \
-	done
-	cp -f $(edit_exe)bemacs_server_static $(BUILD_KIT_DIR)/bemacs_server
-	chmod ugo=rx $(BUILD_KIT_DIR)/bemacs_server
-
-install_dynamic_images: dynamic
-	for file in bemacs mll-2-db dbadd dbcreate dblist dbdel dbprint; \
-	do \
-		cp -f $(edit_exe)$$file $(BUILD_KIT_DIR); \
-		chmod ugo=rx $(BUILD_KIT_DIR)/$$file; \
-	done
-	cp -f $(edit_exe)bemacs_server_dynamic $(BUILD_KIT_DIR)/bemacs_server
-	chmod ugo=rx $(BUILD_KIT_DIR)/bemacs_server
-
-install_pybemacs_images: $(edit_obj)_bemacs.so bintools
+install_pybemacs_images: $(edit_obj)_bemacs.so be_main bintools
 	for file in _bemacs.so mll-2-db dbadd dbcreate dblist dbdel dbprint; \
 	do \
 		cp -f $(edit_exe)$$file $(BUILD_KIT_DIR); \
@@ -136,6 +114,16 @@ install_bitmaps:
 install_xkeys:
 	cp -f X11_keymaps/*.xkeys $(BUILD_KIT_DIR)
 	chmod ugo=r $(BUILD_KIT_DIR)/*.xkeys
+
+##################################################################################
+#                                                                                #
+#                                                                                #
+#          be_main                                                               #
+#                                                                                #
+#                                                                                #
+##################################################################################
+be_main:
+	cd PythonBEmacs && make -f macosx.mak clean all
 
 ##################################################################################
 #                                                                                #
@@ -174,11 +162,6 @@ $(edit_exe)bemacs : $(edit_obj)emclient.o $(edit_obj)em_stat.o $(edit_obj)emstri
 $(edit_obj)emclient.o : Source/Unix/emclient.cpp
 	@ echo Info: Compile Source/Unix/emclient.cpp
 	@ $(cpp) $(cc_flags) -o $(edit_obj)emclient.o Source/Unix/emclient.cpp
-
-$(edit_obj)macgetargv.o : Source/Unix/macgetargv.cpp
-	@ echo Info: Compile Source/Unix/macgetargv.cpp
-	@ $(cpp) $(cc_flags) -o $(edit_obj)macgetargv.o Source/Unix/macgetargv.cpp
-
 
 $(edit_exe)mll-2-db : $(edit_obj)mll-2-db.o $(db_obj_files)
 	@ echo Info: Link $(edit_exe)mll-2-db
@@ -283,77 +266,13 @@ clean::
 #                                                                                #
 #                                                                                #
 ##################################################################################
-$(edit_obj)bemacs_server_dynamic : $(obj_files)
-	@ echo Info: Link $(edit_obj)bemacs_server_dynamic
-	$(lddynamic) -o $(edit_obj)bemacs_server_dynamic $(obj_files) $(bemacs_libs)
-
 $(edit_obj)linux_ld_fix.o : Source/Unix/linux_ld_fix.cpp
 	@ echo Info: Compile Source/Unix/linux_ld_fix.cpp
 	@ $(cpp) $(cc_flags) -o $(edit_obj)linux_ld_fix.o Source/Unix/linux_ld_fix.cpp
 
-$(edit_exe)bemacs_server_dynamic : $(edit_obj)bemacs_server_dynamic
-	@ echo Info: Build $(edit_exe)bemacs_server_dynamic
-	cp $(edit_obj)bemacs_server_dynamic $(edit_exe)bemacs_server_dynamic
-	strip $(edit_exe)bemacs_server_dynamic
-
-$(edit_obj)bemacs_server_static : $(obj_files)
-	@ echo Info: Link $(edit_obj)bemacs_server_static
-	$(ldstatic) -Wl,-Bstatic -o $(edit_obj)bemacs_server_static $(obj_files) $(bemacs_libs) 2>&1 | $(cppfilt)
-
-$(edit_exe)bemacs_server_static : $(edit_obj)bemacs_server_static
-	cp $(edit_obj)bemacs_server_static $(edit_exe)bemacs_server_static
-	strip $(edit_exe)bemacs_server_static
-
-motif_test: $(edit_obj)motif_test
-
-motif_test_objs=\
-	$(edit_obj)motif_test.o \
-	$(edit_obj)emstring.o \
-	$(edit_obj)doprint.o
-
-$(edit_obj)motif_test : $(motif_test_objs)
-	@ echo Info: Link $(edit_obj)motif_test
-	$(lddynamic) -o $(edit_obj)motif_test $(motif_test_objs) $(bemacs_libs) 2>&1 |c++filt
-
 $(edit_obj)unix_rtl.o : Source/Unix/unix_rtl.cpp
 	@ echo Info: Compile Source/Unix/unix_rtl.cpp
 	@ $(cpp) $(cc_flags) -o $(edit_obj)unix_rtl.o Source/Unix/unix_rtl.cpp
-
-$(edit_obj)motif_test.o : Source/Unix/motif_test.cpp
-	@ echo Info: Compile Source/Unix/motif_test.cpp
-	@ $(cpp) $(cc_flags) -o $(edit_obj)motif_test.o Source/Unix/motif_test.cpp
-
-$(edit_obj)motiftrm_test.o : Source/Unix/motiftrm.cpp
-	@ echo Info: Compile Source/Unix/motiftrm.cpp
-	@ $(cpp) $(cc_flags) -DMOTIF_TEST -o $(edit_obj)motiftrm_test.o Source/Unix/motiftrm.cpp
-
-$(edit_obj)motiftrm.o : Source/Unix/motiftrm.cpp Include/Unix/emacs_motif.h
-	@ echo Info: Compile Source/Unix/motiftrm.cpp
-	@ $(cpp) $(cc_flags) -o $(edit_obj)motiftrm.o Source/Unix/motiftrm.cpp
-
-$(edit_obj)motif_keys.o : Source/Unix/motif_keys.cpp Include/Unix/motif_keys.h
-	@ echo Info: Compile Source/Unix/motif_keys.cpp
-	@ $(cpp) $(cc_flags) -o $(edit_obj)motif_keys.o Source/Unix/motif_keys.cpp
-
-$(edit_obj)emacs_motif.o : Source/Unix/emacs_motif.cpp Include/Unix/emacs_motif.h
-	@ echo Info: Compile Source/Unix/emacs_motif.cpp
-	@ $(cpp) $(cc_flags) -o $(edit_obj)emacs_motif.o Source/Unix/emacs_motif.cpp
-
-$(edit_obj)motiftk.o : Source/Unix/motiftk.cpp
-	@ echo Info: Compile Source/Unix/motiftk.cpp
-	@ $(cpp) $(cc_flags) -o $(edit_obj)motiftk.o Source/Unix/motiftk.cpp
-
-$(edit_obj)motifcmd.o : Source/Unix/motifcmd.cpp
-	@ echo Info: Compile Source/Unix/motifcmd.cpp
-	@ $(cpp) $(cc_flags) -o $(edit_obj)motifcmd.o Source/Unix/motifcmd.cpp
-
-$(edit_obj)emacs_wxwidgets.o : Source/wxWidgets/emacs_wxwidgets.cpp Include/wxWidgets/emacs_wxwidgets.h
-	@ echo Info: Compile Source/wxWidgets/emacs_wxwidgets.cpp
-	@ $(cpp) $(cc_flags) -o $(edit_obj)emacs_wxwidgets.o Source/wxWidgets/emacs_wxwidgets.cpp
-
-$(edit_obj)unix_trm.o : Source/Unix/unix_trm.cpp
-	@ echo Info: Compile Source/Unix/unix_trm.cpp
-	@ $(cpp) $(cc_flags) -o $(edit_obj)unix_trm.o Source/Unix/unix_trm.cpp
 
 $(edit_obj)abbrev.o : Source/Common/abbrev.cpp
 	@ echo Info: Compile Source/Common/abbrev.cpp
@@ -672,97 +591,5 @@ $(edit_obj)window.o : Source/Common/window.cpp
 ##################################################################################
 clean::
 	rm -f $(edit_obj)*.o
-	rm -f $(edit_obj)bemacs $(edit_exe)bemacs
-	rm -f $(edit_exe)bemacs_server_dynamic $(edit_obj)bemacs_server_dynamic
-	rm -f $(edit_exe)bemacs_server_static $(edit_obj)bemacs_server_static
 	rm -f $(edit_exe)mll-2-db
 	rm -f $(edit_exe)dbadd $(edit_exe)dbcreate $(edit_exe)dblist $(edit_exe)dbdel $(edit_exe)dbprint
-
-##################################################################################
-#                                                                                #
-#                                                                                #
-#          Depend                                                                #
-#                                                                                #
-#                                                                                #
-##################################################################################
-depend:
-	mkdep -D__unix__ $(cc_flags) \
-emacs_init.cpp \
-abbrev.cpp \
-abspath.cpp \
-arith.cpp \
-buffer.cpp \
-caseconv.cpp \
-columns.cpp \
-CommandLine.cpp \
-db_rtl.cpp \
-dbadd.cpp \
-dbcreate.cpp \
-dbdel.cpp \
-dblist.cpp \
-dbman.cpp \
-dbprint.cpp \
-display.cpp \
-doprint.cpp \
-dumpjnl.cpp \
-em_stat.cpp \
-em_time.cpp \
-emacs.cpp \
-emacsrtl.cpp \
-emacs_signal.cpp \
-emarray.cpp \
-emstring.cpp \
-emstrtab.cpp \
-errlog.cpp \
-fileio.cpp \
-fio.cpp \
-function.cpp \
-getdb.cpp \
-getfile.cpp \
-getdirectory.cpp \
-glob_var.cpp \
-gui_input_mode.cpp \
-journal.cpp \
-keyboard.cpp \
-key_names.cpp \
-lispfunc.cpp \
-macros.cpp \
-mem_man.cpp \
-metacomm.cpp \
-minibuf.cpp \
-mlispars.cpp \
-mlispexp.cpp \
-mlisproc.cpp \
-mll-2-db.cpp \
-mlprintf.cpp \
-motifcmd.cpp \
-motiftk.cpp \
-motiftrm.cpp \
-ndbm.cpp \
-options.cpp \
-emacs_proc.cpp \
-queue.cpp \
-save_env.cpp \
-search.cpp \
-search_extended_algorithm.cpp \
-search_extended_parser.cpp \
-search_interface.cpp \
-search_simple_algorithm.cpp \
-search_simple_engine.cpp \
-simpcomm.cpp \
-subproc.cpp \
-syntax.cpp \
-term.cpp \
-timer.cpp \
-trm_ansi.cpp \
-undo.cpp \
-unix_rtl.cpp \
-unix_trm.cpp \
-unixcomm.cpp \
-unixfile.cpp \
-variable.cpp \
-varthunk.cpp \
-windman.cpp \
-window.cpp
-
-# DO NOT DELETE THIS LINE

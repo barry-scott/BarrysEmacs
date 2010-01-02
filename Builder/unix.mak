@@ -50,8 +50,6 @@ build: build_$(BUILDER_CFG_PLATFORM)
 brand:
 	$(PYTHON) brand_version.py version_info.txt ..
 
-build_LinuxFC4: build_Linux rpm
-
 build_Linux-Fedora: build_Linux Fedora_rpm
 
 build_Linux-Ubuntu: build_Linux Debian_pkg
@@ -111,14 +109,14 @@ FreeBSD_pkg:	$(BEMACS_DOC_DIR) $(BEMACS_LIB_DIR) $(BUILD_KIT_DIR)/PLIST.template
 	@ echo Info: FreeBSD package creation...
 	sed $(EDIT_SCRIPT_EXPR) <$(BUILD_KIT_DIR)/PLIST.template >$(BEMACS_LIB_DIR)/PLIST
 	cd $(BUILD_KIT_DIR); cp COMMENT DESC $(BEMACS_LIB_DIR)
-	cd $(BEMACS_DOC_DIR); for docfile in *.css *.htm *.js *.gif; do echo $$docfile >>PLIST; done
+	cd $(BEMACS_DOC_DIR); for docfile in *.css *.html *.js *.gif; do echo $$docfile >>PLIST; done
 	cd $(BEMACS_LIB_DIR); /usr/sbin/pkg_create -o editors/bemacs -f PLIST -d DESC -c COMMENT bemacs.i386.tgz
 
 OpenBSD_pkg:	$(BEMACS_DOC_DIR) $(BEMACS_LIB_DIR) $(BUILD_KIT_DIR)/PLIST.template
 	@ echo Info: OpenBSD package creation...
 	sed $(EDIT_SCRIPT_EXPR) <$(BUILD_KIT_DIR)/PLIST.template >$(BEMACS_LIB_DIR)/PLIST
 	cd $(BUILD_KIT_DIR); cp -f COMMENT DESC $(BEMACS_LIB_DIR)
-	cd $(BEMACS_DOC_DIR); for docfile in *.css *.htm *.js *.gif; do echo $$docfile >>PLIST; done
+	cd $(BEMACS_DOC_DIR); for docfile in *.css *.html *.js *.gif; do echo $$docfile >>PLIST; done
 	cd $(BEMACS_LIB_DIR); /usr/sbin/pkg_create -f PLIST -d DESC -c COMMENT bemacs.i386.tgz
 
 MacOSX_pkg:	$(BEMACS_DOC_DIR) $(BEMACS_LIB_DIR)
@@ -135,7 +133,7 @@ Fedora_rpm_Any:
 	echo %_topdir $(BUILD_KIT_DIR) >$(BUILD_KIT_DIR)/rpmmacros
 	echo BuildRoot: $(BUILD_KIT_DIR)/ROOT >$(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
 	cat $(BUILD_KIT_DIR)/SPECS/bemacs.spec >>$(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
-	cd $(BEMACS_DOC_DIR); for docfile in *.css *.htm *.js *.gif; do echo %doc $$docfile >>$(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec; done
+	cd $(BEMACS_DOC_DIR); for docfile in *.css *.html *.js *.gif; do echo %doc $$docfile >>$(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec; done
 	cd $(BEMACS_LIB_DIR); chmod u+w *
 	rpmbuild --rcfile=/usr/lib/rpm/rpmrc:$(BUILD_KIT_DIR)/rpmrc -bb $(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
 

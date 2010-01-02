@@ -8,14 +8,14 @@ KITDIR=tmp/${PKGNAME}/${PKGNAME}.app/Contents/Resources/bemacs-kit
 DOCDIR=tmp/${PKGNAME}/Documentation
 cp bemacs-kit/* ${KITDIR}
 mkdir -p ${DOCDIR}/Files
-mv -f ${KITDIR}/*.css ${DOCDIR}/Files
-mv -f ${KITDIR}/*.htm ${DOCDIR}/Files
-mv -f ${KITDIR}/*.js  ${DOCDIR}/Files
-mv -f ${KITDIR}/*.gif ${DOCDIR}/Files
+mv -f ${KITDIR}/*.css  ${DOCDIR}/Files
+mv -f ${KITDIR}/*.html ${DOCDIR}/Files
+mv -f ${KITDIR}/*.js   ${DOCDIR}/Files
+mv -f ${KITDIR}/*.gif  ${DOCDIR}/Files
 
 pushd ${DOCDIR}
-ln -s Files/emacs-documentation.htm .
-ln -s Files/bemacs-faq.htm .
+ln -s Files/emacs-documentation.html .
+ln -s Files/bemacs-faq.html .
 popd
 
 hdiutil create -srcfolder tmp/${PKGNAME} tmp/tmp.dmg
