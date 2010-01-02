@@ -26,7 +26,8 @@ import be_platform_specific
 import be_config
 
 _debug_term_calls1 = False
-_debug_term_calls2 = True
+_debug_term_calls2 = False
+_debug_term_input = True
 
 def T( boolean ):
     if boolean:
@@ -141,8 +142,8 @@ special_keys = {
     wx.WXK_F12:         ("\033[31~", "\033[131~", "\033[81~", "\033[181~"),
 
     # enhanced keys
-    wx.WXK_PAGEDOWN:    ("\033[5~",  "\033[105~", "\033[55~", "\033[155~"),
-    wx.WXK_PAGEUP:      ("\033[6~",  "\033[106~", "\033[56~", "\033[156~"),
+    wx.WXK_PAGEUP:      ("\033[5~",  "\033[105~", "\033[55~", "\033[155~"),
+    wx.WXK_PAGEDOWN:    ("\033[6~",  "\033[106~", "\033[56~", "\033[156~"),
     wx.WXK_END:         ("\033[4~",  "\033[104~", "\033[54~", "\033[154~"),
     wx.WXK_HOME:        ("\033[1~",  "\033[101~", "\033[51~", "\033[151~"),
 
@@ -159,6 +160,12 @@ wx_key_names = {}
 for name in dir(wx):
     if name.startswith( 'WXK_' ):
         wx_key_names[ getattr( wx, name ) ] = name
+
+wx_evt_names = {}
+for name in dir(wx):
+    if name.startswith( 'wxEVT_' ):
+        wx_evt_names[ getattr( wx, name ) ] = name
+        print name, getattr( wx, name )
 
 class EmacsPanel(wx.Panel):
     def __init__( self, app, parent ):
@@ -228,6 +235,10 @@ class EmacsPanel(wx.Panel):
 
     def __debugTermCalls2( self, msg ):
         if _debug_term_calls2:
+            self.log.debug( 'TERM %s' % (msg,) )
+
+    def __debugTermInput( self, msg ):
+        if _debug_term_input:
             self.log.debug( 'TERM %s' % (msg,) )
 
     def __calculateWindowSize( self ):
@@ -333,7 +344,7 @@ class EmacsPanel(wx.Panel):
         key = event.GetKeyCode()
         shift = event.ShiftDown()
         ctrl = event.ControlDown()
-        self.log.debug( 'OnKeyDown key %r name %r shift %s' % (key, wx_key_names.get( key, 'unknown' ), T( shift )) )
+        self.__debugTermInput( 'OnKeyDown key %r name %r shift %s' % (key, wx_key_names.get( key, 'unknown' ), T( shift )) )
 
         if key in special_keys:
             trans, shift_trans, ctrl_trans, ctrl_shift_trans = special_keys[ key ]
@@ -387,19 +398,25 @@ class EmacsPanel(wx.Panel):
         shift = event.ShiftDown()
         line_parts.append( ' shift: %s' % T(shift) )
 
-        self.log.debug( (''.join( line_parts )).encode( 'utf-8' ) )
+        self.__debugTermInput( (''.join( line_parts )).encode( 'utf-8' ) )
 
         self.app.editor.guiEventChar( unichr( char ), False )
 
     def OnMouse( self, event ):
+        self.__debugTermInput( 'OnMouse() event_type %r %r' % (event.GetEventType(), wx_evt_names.get( event.GetEventType(), 'unknown' )) )
+
+        # Calculate character cell position
+        x, y = event.GetPosition()
+        column = (x - self.client_padding + (self.char_width/2)) // self.char_width + 1;
+        line =   (y - self.client_padding ) // self.char_length + 1;
+
+        shift = event.ShiftDown()
+        control = event.ControlDown()
+
         if event.Moving():
             pass
 
         elif event.IsButton():
-            # Calculate character cell position
-            x, y = event.GetPosition()
-            column = (x - self.client_padding + (self.char_width/2)) // self.char_width + 1;
-            line =   (y - self.client_padding ) // self.char_length + 1;
 
             if event.LeftDown():
                 button = 2
@@ -418,89 +435,32 @@ class EmacsPanel(wx.Panel):
                 return
 
             mouse = "\x1b[%d;%d;%d;%d&w" % (button, 0, line, column)
-            shift = event.ShiftDown()
 
-            self.log.info( 'Mouse button %r line %r column %r shift %r' % (button, line, column, shift) )
+            self.__debugTermInput( 'Mouse button %r line %r column %r shift %r' % (button, line, column, shift) )
 
             for ch in mouse:
                 self.app.editor.guiEventChar( ch, shift )
 
+        elif event.GetEventType() == wx.wxEVT_MOUSEWHEEL:
+            self.__debugTermInput( 'Mouse Wheel rotation %r delta %r' % (event.GetWheelRotation(), event.GetWheelDelta()) )
 
-            wheel = '''
-        // Cygwin Xfree86 uses 4 and 5 to send the mouse wheel turns
-        case Button4:
-        case Button5:
-        {
-            if( event->type == ButtonPress )
-            {
-                int mode = 0;
-                if( event->button == Button5 )
-                    mode |= 1;    // -ive wheel motion
-                if( (event->state & ShiftMask) != 0 )
-                    mode |= 4;    // shift down
-                if( (event->state & ControlMask) != 0 )
-                    mode |= 8;    // ctrl down
+            rotation = event.GetWheelRotation()
+            if rotation > 0:
+                mode = 0
+            else:
+                mode = 1
 
-                EmacsString mouse( FormatString("\x1b[%d;%d;%d;%d#w")
-                    << mode << 1 << column << line );
-                input_char_string( mouse, event->state & ShiftMask );
-            }
-            return;
-        }
-        default:
-            _dbg_msg( FormatString( "Unexpected mouse button. event->button: %x" ) <<event->button );
-            return;
-        }
-'''
+            if shift:
+                mode |= 4
 
+            if control:
+                mode |= 8
 
+            mouse = "\x1b[%d;%d;%d;%d#w" % (mode, 1, line, column)
 
-    def __qqq__OnMouse( self, event ):
-        if event.Moving():
-            return
-
-
-        button_down = []
-        if event.LeftDown():
-            button_down.append( 'l' )
-        if event.MiddleDown():
-            button_down.append( 'm' )
-        if event.RightDown():
-            button_down.append( 'r' )
-        if event.LeftDClick():
-            button_down.append( 'L' )
-        if event.MiddleDClick():
-            button_down.append( 'M' )
-        if event.RightDClick():
-            button_down.append( 'R' )
-
-        button_up = []
-        if event.LeftUp():
-            button_up.append( 'l' )
-        if event.MiddleUp():
-            button_up.append( 'm' )
-        if event.RightUp():
-            button_up.append( 'r' )
-
-        line_parts = ['Mouse %4d, %4d D: %3s U: %3s' % (event.GetX(), event.GetY(), ''.join( button_down ), ''.join( button_up ))]
-
-        alt = event.AltDown()
-        line_parts.append( ' alt: %s' % B(alt) )
-
-        cmd = event.CmdDown()
-        line_parts.append( ' cmd: %s' % B(cmd) )
-
-        control = event.ControlDown()
-        line_parts.append( ' control: %s' % B(control) )
-
-        meta = event.MetaDown()
-        line_parts.append( ' meta: %s' % B(meta) )
-
-        shift = event.ShiftDown()
-        line_parts.append( ' shift: %s' % B(shift) )
-
-        self.log.debug( ''.join( line_parts ) )
-        event.Skip()
+            for Q in range( abs( rotation ) ):
+                for ch in mouse:
+                    self.app.editor.guiEventChar( ch, False )
 
     #--------------------------------------------------------------------------------
     #
