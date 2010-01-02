@@ -1,38 +1,38 @@
 #
 #	unix.mak
 #
-#	build emacs for FreeBSD, OpenBSD and Linux
+#	build emacs for Mac OS X, FreeBSD, OpenBSD and Linux
 #
 PYTHON=python
 
-ifeq  (${RB_CFG_PLATFORM},FreeBSD)
-BEMACS_DOC_DIR=$(RB_WORKINGDIR)/Unix_Kit/FreeBSD/pkg
-BEMACS_LIB_DIR=$(RB_WORKINGDIR)/Unix_Kit/FreeBSD/pkg
-BUILD_KIT_DIR=$(RB_WORKINGDIR)/Unix_Kit/FreeBSD
+ifeq (${BUILDER_CFG_PLATFORM},FreeBSD)
+BEMACS_DOC_DIR=$(BUILDER_TOP_DIR)/Kits/FreeBSD/pkg
+BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/FreeBSD/pkg
+BUILD_KIT_DIR=$(BUILDER_TOP_DIR)/Kits/FreeBSD
 
 else
-ifeq  (${RB_CFG_PLATFORM},OpenBSD)
-BEMACS_DOC_DIR=$(RB_WORKINGDIR)/Unix_Kit/OpenBSD/pkg
-BEMACS_LIB_DIR=$(RB_WORKINGDIR)/Unix_Kit/OpenBSD/pkg
-BUILD_KIT_DIR=$(RB_WORKINGDIR)/Unix_Kit/OpenBSD
+ifeq (${BUILDER_CFG_PLATFORM},OpenBSD)
+BEMACS_DOC_DIR=$(BUILDER_TOP_DIR)/Kits/OpenBSD/pkg
+BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/OpenBSD/pkg
+BUILD_KIT_DIR=$(BUILDER_TOP_DIR)/Kits/OpenBSD
 
 else
-ifeq  (${RB_CFG_PLATFORM},MacOSX)
-BEMACS_DOC_DIR=$(RB_WORKINGDIR)/Unix_Kit/MacOSX/bemacs-kit
-BEMACS_LIB_DIR=$(RB_WORKINGDIR)/Unix_Kit/MacOSX/bemacs-kit
-BUILD_KIT_DIR=$(RB_WORKINGDIR)/Unix_Kit/MacOSX
+ifeq (${BUILDER_CFG_PLATFORM},MacOSX)
+BEMACS_DOC_DIR=$(BUILDER_TOP_DIR)/Kits/MacOSX/bemacs-kit
+BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/MacOSX/bemacs-kit
+BUILD_KIT_DIR=$(BUILDER_TOP_DIR)/Kits/MacOSX
 
 else
-ifeq  (${RB_CFG_PLATFORM},Linux-Fedora)
-BEMACS_DOC_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/RPM/BUILD
-BEMACS_LIB_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/RPM/ROOT/usr/local/bemacs
-BUILD_KIT_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/RPM
+ifeq (${BUILDER_CFG_PLATFORM},Linux-Fedora)
+BEMACS_DOC_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM/BUILD
+BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM/ROOT/usr/local/bemacs
+BUILD_KIT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM
 
 else
-ifeq  (${RB_CFG_PLATFORM},Linux-Ubuntu)
-BEMACS_DOC_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/DPKG/tree/usr/local/share/doc/bemacs
-BEMACS_LIB_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/DPKG/tree/usr/local/bemacs
-BUILD_KIT_DIR=$(RB_WORKINGDIR)/Unix_Kit/Linux/DPKG
+ifeq (${BUILDER_CFG_PLATFORM},Linux-Ubuntu)
+BEMACS_DOC_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree/usr/local/share/doc/bemacs
+BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree/usr/local/bemacs
+BUILD_KIT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG
 
 endif
 endif
@@ -45,7 +45,7 @@ usage:
 	@ echo "Usage: make -f unix.mak clean"
 	exit 1
 
-build: build_$(RB_CFG_PLATFORM)
+build: build_$(BUILDER_CFG_PLATFORM)
 
 brand:
 	$(PYTHON) brand_version.py version_info.txt ..
@@ -100,8 +100,8 @@ quick_info:
 
 docs:
 	@ echo Info: Copying documentation...
-	cp -f ../Kit/readme.txt $(BEMACS_DOC_DIR);chmod ugo=r $(BEMACS_DOC_DIR)/readme.txt
-	cp -f ../HTML/*.htm $(BEMACS_DOC_DIR); chmod ugo=r $(BEMACS_DOC_DIR)/*.htm
+	cp -f ../Kits/readme.txt $(BEMACS_DOC_DIR);chmod ugo=r $(BEMACS_DOC_DIR)/readme.txt
+	cp -f ../HTML/*.html $(BEMACS_DOC_DIR); chmod ugo=r $(BEMACS_DOC_DIR)/*.html
 	cp -f ../HTML/*.gif $(BEMACS_DOC_DIR); chmod ugo=r $(BEMACS_DOC_DIR)/*.gif
 	cp -f ../HTML/*.css $(BEMACS_DOC_DIR); chmod ugo=r $(BEMACS_DOC_DIR)/*.css
 	cp -f ../HTML/*.js $(BEMACS_DOC_DIR); chmod ugo=r $(BEMACS_DOC_DIR)/*.js
@@ -125,14 +125,12 @@ MacOSX_pkg:	$(BEMACS_DOC_DIR) $(BEMACS_LIB_DIR)
 	@ echo Info: MacOSX package creation...
 	cd $(BUILD_KIT_DIR); chmod +x ./make-macosx-kit.sh; ./make-macosx-kit.sh
 
-Fedora_rpm: Fedora_rpm_$(RB_CFG_PLATFORM)
-
-Fedora_rpm_LinuxFC4: Fedora_rpm_Any
+Fedora_rpm: Fedora_rpm_$(BUILDER_CFG_PLATFORM)
 
 Fedora_rpm_Linux-Fedora: Fedora_rpm_Any
 
 Fedora_rpm_Any:
-	@ echo Info: ${RB_CFG_PLATFORM} RPM creation...
+	@ echo Info: ${BUILDER_CFG_PLATFORM} RPM creation...
 	grep ^macrofiles: /usr/lib/rpm/rpmrc |sed -e s!~/.rpmmacros!$(BUILD_KIT_DIR)/rpmmacros! >$(BUILD_KIT_DIR)/rpmrc
 	echo %_topdir $(BUILD_KIT_DIR) >$(BUILD_KIT_DIR)/rpmmacros
 	echo BuildRoot: $(BUILD_KIT_DIR)/ROOT >$(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
@@ -142,7 +140,7 @@ Fedora_rpm_Any:
 	rpmbuild --rcfile=/usr/lib/rpm/rpmrc:$(BUILD_KIT_DIR)/rpmrc -bb $(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
 
 Debian_pkg:
-	@ echo Info: ${RB_CFG_PLATFORM} DPKG creation...
+	@ echo Info: ${BUILDER_CFG_PLATFORM} DPKG creation...
 	cd ${BUILD_KIT_DIR}; chmod +x ./create-dpkg.sh; ./create-dpkg.sh
 
 clean:

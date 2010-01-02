@@ -1,21 +1,20 @@
 #!/bin/echo Usage: . $0
 
-export RB_WORKINGDIR=$(while [ ! -d Builder ]; do cd ..; done; pwd)
-export RB_CFG_PLATFORM=$(uname -s)
+export BUILDER_CFG_PLATFORM=$(uname -s)
 
-case ${RB_CFG_PLATFORM} in
+case ${BUILDER_CFG_PLATFORM} in
 
 Darwin)
-    export RB_CFG_PLATFORM=MacOSX
+    export BUILDER_CFG_PLATFORM=MacOSX
     ;;
 
 Linux)
     if [ -e /etc/fedora-release ]
     then
-        export RB_CFG_PLATFORM=Linux-Fedora
+        export BUILDER_CFG_PLATFORM=Linux-Fedora
     elif [ -e /etc/lsb-release -a "$( grep "DISTRIB_ID=Ubuntu" /etc/lsb-release )" == "DISTRIB_ID=Ubuntu" ]
     then
-        export RB_CFG_PLATFORM=Linux-Ubuntu
+        export BUILDER_CFG_PLATFORM=Linux-Ubuntu
     fi
     ;;
 *)
@@ -23,5 +22,5 @@ Linux)
     ;;
 esac
 
-echo Info: WorkingDir: ${RB_WORKINGDIR}
-echo Info: Config Platform: ${RB_CFG_PLATFORM}
+echo Info: WorkingDir: ${BUILDER_TOP_DIR}
+echo Info: Config Platform: ${BUILDER_CFG_PLATFORM}
