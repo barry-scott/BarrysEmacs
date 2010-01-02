@@ -165,7 +165,6 @@ wx_evt_names = {}
 for name in dir(wx):
     if name.startswith( 'wxEVT_' ):
         wx_evt_names[ getattr( wx, name ) ] = name
-        print name, getattr( wx, name )
 
 class EmacsPanel(wx.Panel):
     def __init__( self, app, parent ):
