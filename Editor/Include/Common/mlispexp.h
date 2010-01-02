@@ -503,27 +503,18 @@ extern void debug_SER(void);
 class SystemExpressionRepresentationEndOfLineStyle;
 class SystemExpressionRepresentationBufferEndOfLineStyle;
 
-SYS_VAR_PARM( FileAttribute, String, FIO_RMS_Attribute, exp_rms_attr )
+SYS_VAR_PARM( EndOfLineStyle, String, FIO_EOL_Attribute, exp_eol_attr )
     public:
-        friend class SystemExpressionRepresentationEndOfLineStyle;
-        friend class SystemExpressionRepresentationBufferEndOfLineStyle;
-
-        SystemExpressionRepresentationFileAttribute() : SystemExpressionRepresentationString(), exp_rms_attr( FIO_RMS__None ) { }
-        operator FIO_RMS_Attribute() const { return exp_rms_attr; }
-        SystemExpressionRepresentationFileAttribute &operator=( FIO_RMS_Attribute value ) { exp_rms_attr = value; return *this; }
-SYS_VAR_END
-
-SYS_VAR_PARM( EndOfLineStyle, String, SystemExpressionRepresentationFileAttribute &, m_other_rms_attr )
+        SystemExpressionRepresentationEndOfLineStyle() : SystemExpressionRepresentationString(), exp_eol_attr( FIO_EOL__None ) { }
+        operator FIO_EOL_Attribute() const { return exp_eol_attr; }
+        SystemExpressionRepresentationEndOfLineStyle &operator=( FIO_EOL_Attribute value ) { exp_eol_attr = value; return *this; }
 SYS_VAR_END
 
 SYS_VAR( BufferNames, Array ) SYS_VAR_END
 SYS_VAR( AbbrevTable, String ) SYS_EXPR_STRING_OPERATOR_ASSIGN( AbbrevTable ) SYS_VAR_END
-SYS_VAR( BufferFileAttribute, FileAttribute )
-    operator FIO_RMS_Attribute() const { return exp_rms_attr; }
-    SystemExpressionRepresentationBufferFileAttribute &operator=( FIO_RMS_Attribute value ) { exp_rms_attr = value; return *this; }
-SYS_VAR_END
-
-SYS_VAR_ARG( BufferEndOfLineStyle, EndOfLineStyle, SystemExpressionRepresentationFileAttribute &, rms_attr_ )
+SYS_VAR( BufferEndOfLineStyle, EndOfLineStyle )
+    operator FIO_EOL_Attribute() const { return exp_eol_attr; }
+    SystemExpressionRepresentationBufferEndOfLineStyle &operator=( FIO_EOL_Attribute value ) { exp_eol_attr = value; return *this; }
 SYS_VAR_END
 
 SYS_VAR_PARM( BoundName, String, BoundName **, procedure ) SYS_VAR_END

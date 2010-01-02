@@ -12,28 +12,18 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
-#ifdef vms
-#include <fab.h>
-#endif
+SystemExpressionRepresentationEndOfLineStyle end_of_line_style_override( FIO_EOL__None );
+SystemExpressionRepresentationBufferEndOfLineStyle buffer_end_of_line_style;
 
-SystemExpressionRepresentationFileAttribute rms_attribute_override( FIO_RMS__None );
-SystemExpressionRepresentationBufferFileAttribute buffer_rms_attribute;
-SystemExpressionRepresentationFileAttribute default_rms_attribute
+#if defined( __unix__ )
+SystemExpressionRepresentationEndOfLineStyle default_end_of_line_style( FIO_EOL__StreamLF );
 
-#if defined( vms )
-    ( FAB$C_VAR )
-#elif defined( __unix__ )
-    ( FIO_RMS__StreamLF )
 #elif defined( _NT )
-    ( FIO_RMS__StreamCRLF )
-#else
-    #error must have a value for default_rms_attribute
-#endif
-    ;
+SystemExpressionRepresentationEndOfLineStyle default_end_of_line_style( FIO_EOL__StreamCRLF );
 
-SystemExpressionRepresentationEndOfLineStyle default_end_of_line_style( default_rms_attribute );
-SystemExpressionRepresentationEndOfLineStyle end_of_line_style_override( rms_attribute_override );
-SystemExpressionRepresentationBufferEndOfLineStyle buffer_end_of_line_style( buffer_rms_attribute );
+#else
+    #error must have a value for default_end_of_line_style
+#endif
 
 class SortedListOfEmacsStrings
 {
@@ -211,67 +201,6 @@ int erase_buffer( void )
 
 //--------------------------------------------------------------------------------
 //
-//    RMS Attribute (twined with EndOfLineStyle)
-//
-//--------------------------------------------------------------------------------
-static const char *rms_attribute_names[] =
-{
-    "none",
-    "binary",
-    "stream-crlf",
-    "stream-cr",
-    "stream-lf",
-    "crlf",
-    //"cr",        // leave out the Mac "cr" for the time being - its not going to see much use
-    "lf",
-    NULL
-};
-static FIO_RMS_Attribute rms_attribute_values[] =
-{
-    FIO_RMS__None,
-    FIO_RMS__Binary,
-    FIO_RMS__StreamCRLF,
-    FIO_RMS__StreamCR,
-    FIO_RMS__StreamLF,
-    FIO_RMS__StreamCRLF,
-    //FIO_RMS__StreamCR,    // match above list
-    FIO_RMS__StreamLF
-};
-
-StringMap<FIO_RMS_Attribute> rms_attr( rms_attribute_names, rms_attribute_values );
-
-void SystemExpressionRepresentationFileAttribute::assign_value( ExpressionRepresentation *new_value )
-{
-    EmacsString value = new_value->asString();
-
-    if( value.isNull() )
-        return;
-
-    value.toLower();
-
-    if( !rms_attr.map( value, exp_rms_attr ) )
-        error( "Bad buffer end-of-line attribute specified" );
-}
-
-void SystemExpressionRepresentationFileAttribute::fetch_value()
-{
-    exp_string = rms_attr.map( exp_rms_attr );
-}
-
-void SystemExpressionRepresentationBufferFileAttribute::assign_value( ExpressionRepresentation *new_value )
-{
-    SystemExpressionRepresentationFileAttribute::assign_value( new_value );
-    bf_cur->b_rms_attribute = exp_rms_attr;
-}
-
-void SystemExpressionRepresentationBufferFileAttribute::fetch_value()
-{
-    exp_rms_attr = bf_cur->b_rms_attribute;
-    SystemExpressionRepresentationFileAttribute::fetch_value();
-}
-
-//--------------------------------------------------------------------------------
-//
 //    End of Line style (twined with RMS attribute)
 //
 //--------------------------------------------------------------------------------
@@ -283,15 +212,15 @@ static const char *end_of_line_style_names[] =
     "lf",
     NULL
 };
-static FIO_RMS_Attribute end_of_line_style_values[] =
+static FIO_EOL_Attribute end_of_line_style_values[] =
 {
-    FIO_RMS__None,
-    FIO_RMS__Binary,
-    FIO_RMS__StreamCRLF,
-    FIO_RMS__StreamLF,
+    FIO_EOL__None,
+    FIO_EOL__Binary,
+    FIO_EOL__StreamCRLF,
+    FIO_EOL__StreamLF,
 };
 
-StringMap<FIO_RMS_Attribute> end_of_line_style_attr( end_of_line_style_names, end_of_line_style_values );
+StringMap<FIO_EOL_Attribute> end_of_line_style_attr( end_of_line_style_names, end_of_line_style_values );
 
 void SystemExpressionRepresentationEndOfLineStyle::assign_value( ExpressionRepresentation *new_value )
 {
@@ -302,13 +231,13 @@ void SystemExpressionRepresentationEndOfLineStyle::assign_value( ExpressionRepre
 
     value.toLower();
 
-    if( !end_of_line_style_attr.map( value, m_other_rms_attr.exp_rms_attr ) )
+    if( !end_of_line_style_attr.map( value, exp_eol_attr ) )
         error( "Bad buffer end-of-line style specified" );
 }
 
 void SystemExpressionRepresentationEndOfLineStyle::fetch_value()
 {
-    exp_string = end_of_line_style_attr.map( m_other_rms_attr.exp_rms_attr );
+    exp_string = end_of_line_style_attr.map( exp_eol_attr );
 }
 
 //
@@ -317,12 +246,12 @@ void SystemExpressionRepresentationEndOfLineStyle::fetch_value()
 void SystemExpressionRepresentationBufferEndOfLineStyle::assign_value( ExpressionRepresentation *new_value )
 {
     SystemExpressionRepresentationEndOfLineStyle::assign_value( new_value );
-    bf_cur->b_rms_attribute = m_other_rms_attr.exp_rms_attr;
+    bf_cur->b_eol_attribute = exp_eol_attr;
 }
 
 void SystemExpressionRepresentationBufferEndOfLineStyle::fetch_value()
 {
-    m_other_rms_attr.exp_rms_attr = bf_cur->b_rms_attribute;
+    exp_eol_attr = bf_cur->b_eol_attribute;
     SystemExpressionRepresentationEndOfLineStyle::fetch_value();
 }
 

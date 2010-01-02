@@ -834,8 +834,8 @@ static void backup_buffer( EmacsString &fn )
         //
         // copy the old file to the backup file name
         //
-        EmacsFile in( FIO_RMS__Binary );
-        EmacsFile out( FIO_RMS__Binary );
+        EmacsFile in( FIO_EOL__Binary );
+        EmacsFile out( FIO_EOL__Binary );
         int len;
         unsigned char buf[16384];
 
@@ -848,7 +848,7 @@ static void backup_buffer( EmacsString &fn )
         }
 
         // Create the output file
-        if( !out.fio_create(fab.result_spec,0,FIO_STD,EmacsString::null, FIO_RMS__Binary) )
+        if( !out.fio_create(fab.result_spec,0,FIO_STD,EmacsString::null, FIO_EOL__Binary) )
         {
             error( FormatString("Failed to create file for backup %s") <<fab.result_spec );
             return;
@@ -1281,7 +1281,7 @@ int EmacsBuffer::read_file( const EmacsString &fn, int erase, int createnew )
 
     if( fn.isNull() )
     {
-        error (null_file_spec);
+        error( null_file_spec );
         return 0;
     }
 
@@ -1292,7 +1292,7 @@ int EmacsBuffer::read_file( const EmacsString &fn, int erase, int createnew )
     }
 
     // allow * and % to be expanded
-    expand_and_default (fn, EmacsString::null, fullname);
+    expand_and_default( fn, EmacsString::null, fullname );
 
     EmacsFile fd;
 
@@ -1325,7 +1325,7 @@ int EmacsBuffer::read_file( const EmacsString &fn, int erase, int createnew )
                 erase_bf();
             }
 
-            error( FormatString("New file: %s") << fn);
+            error( FormatString("New file: %s") << fn );
 
             b_fname = fullname;
             b_kind = FILEBUFFER;
@@ -1398,7 +1398,7 @@ int EmacsBuffer::read_file( const EmacsString &fn, int erase, int createnew )
         }
 
     if( erase )
-        b_rms_attribute = fd.fio_get_rms_attribute();
+        b_eol_attribute = fd.fio_get_eol_attribute();
 
     // Close  the file, and adjust the pointers
     fd.fio_close();
@@ -1455,8 +1455,8 @@ static EmacsString concoct_name( const EmacsString &fn, const EmacsString &exten
 
     EmacsFile fd;
     // Create the file to check that it is valid, and get its real name
-    if( !fd.fio_create( result, 0, FIO_STD, EmacsString::null, (FIO_RMS_Attribute)(int)default_rms_attribute )
-    && !fd.fio_create( defname, 0, FIO_STD, EmacsString::null, (FIO_RMS_Attribute)(int)default_rms_attribute ) )
+    if( !fd.fio_create( result, 0, FIO_STD, EmacsString::null, (FIO_EOL_Attribute)(int)default_end_of_line_style )
+    && !fd.fio_create( defname, 0, FIO_STD, EmacsString::null, (FIO_EOL_Attribute)(int)default_end_of_line_style ) )
         return defname;
 
     result = fd.fio_getname();
@@ -1480,12 +1480,12 @@ int EmacsBuffer::write_file( const EmacsString &fn, EmacsBuffer::WriteFileOperat
     if( fn.isNull() )
         return 0;
 
-    if( b_rms_attribute == FIO_RMS__None )
-        b_rms_attribute = default_rms_attribute;
+    if( b_eol_attribute == FIO_EOL__None )
+        b_eol_attribute = default_end_of_line_style;
 
-    FIO_RMS_Attribute write_rms_attribute( b_rms_attribute );
-    if( rms_attribute_override != FIO_RMS__None )
-        write_rms_attribute = rms_attribute_override;
+    FIO_EOL_Attribute write_eol_attribute( b_eol_attribute );
+    if( end_of_line_style_override != FIO_EOL__None )
+        write_eol_attribute = end_of_line_style_override;
 
     EmacsFile fd;
     // Open the file, and position to the correct place
@@ -1496,17 +1496,17 @@ int EmacsBuffer::write_file( const EmacsString &fn, EmacsBuffer::WriteFileOperat
         // Open an existing file for appending, or if there is none,
         // create a new file
         //
-        if( !fd.fio_open( fn, 1, EmacsString::null, write_rms_attribute ) )
-            fd.fio_create( fn, nc, FIO_STD, EmacsString::null, write_rms_attribute );
+        if( !fd.fio_open( fn, 1, EmacsString::null, write_eol_attribute ) )
+            fd.fio_create( fn, nc, FIO_STD, EmacsString::null, write_eol_attribute );
         break;
 
     case CHECKPOINT_WRITE:
-        fd.fio_create( fn, nc, FIO_CKP, EmacsString::null, write_rms_attribute );
+        fd.fio_create( fn, nc, FIO_CKP, EmacsString::null, write_eol_attribute );
         break;
 
     case ORDINARY_WRITE:
-        fd.fio_create( fn, nc, FIO_STD, EmacsString::null, write_rms_attribute );
-        b_rms_attribute = write_rms_attribute;
+        fd.fio_create( fn, nc, FIO_STD, EmacsString::null, write_eol_attribute );
+        b_eol_attribute = write_eol_attribute;
         break;
     }
 
@@ -1668,7 +1668,7 @@ bool EmacsFile::fio_open_using_path
     const EmacsString &fn,
     int append,
     const EmacsString &ex,
-    FIO_RMS_Attribute _attr
+    FIO_EOL_Attribute _attr
     )
 {
     //

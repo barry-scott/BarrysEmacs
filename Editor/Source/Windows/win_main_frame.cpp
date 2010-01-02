@@ -288,21 +288,21 @@ afx_msg void CMainFrame::OnUpdateBufferPosition(CCmdUI* pCmdUI)
             return;
         }
 
-        switch( bf_cur->b_rms_attribute )
+        switch( bf_cur->b_eol_attribute )
         {
-        case FIO_RMS__Binary:    // literal read and write no
+        case FIO_EOL__Binary:    // literal read and write no
             pCmdUI->SetText(" BIN");
             break;
-        case FIO_RMS__StreamCRLF:    // MS-DOS/Windows lines
+        case FIO_EOL__StreamCRLF:    // MS-DOS/Windows lines
             pCmdUI->SetText("CRLF");
             break;
-        case FIO_RMS__StreamCR:    // Machintosh lines
+        case FIO_EOL__StreamCR:    // Machintosh lines
             pCmdUI->SetText(" CR ");
             break;
-        case FIO_RMS__StreamLF:// Unix lines
+        case FIO_EOL__StreamLF:// Unix lines
             pCmdUI->SetText(" LF ");
             break;
-        case FIO_RMS__None:        // not known
+        case FIO_EOL__None:        // not known
         default:
             pCmdUI->SetText("UNKN");
             break;

@@ -217,9 +217,9 @@ TerminalControl_FILE::TerminalControl_FILE( const unsigned char *file )
     //    open the (message "...") stream
     //
 #ifdef vms
-    message_file.fio_create( u_str("SYS$OUTPUT"), 0, 0, u_str("emacs.lis"), default_rms_attribute );
+    message_file.fio_create( u_str("SYS$OUTPUT"), 0, 0, u_str("emacs.lis"), default_end_of_line_style );
 #else
-    message_file.fio_open( stdout, default_rms_attribute );
+    message_file.fio_open( stdout, default_end_of_line_style );
 #endif
     if( !message_file.fio_is_open() )
         emacs_exit( errno );
@@ -230,7 +230,7 @@ TerminalControl_FILE::TerminalControl_FILE( const unsigned char *file )
     if( file != NULL && file[0] != '\0' )
         command_file.fio_open( file, 0, EmacsString::null );
     else
-        command_file.fio_open( stdin, FIO_RMS__None );
+        command_file.fio_open( stdin, FIO_EOL__None );
     if( !command_file.fio_is_open() )
         emacs_exit( errno );
 }

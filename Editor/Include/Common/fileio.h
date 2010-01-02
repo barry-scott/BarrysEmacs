@@ -26,32 +26,34 @@ enum FIO_OpenMode
     FIO_WRITE
 };
 
-enum FIO_RMS_Attribute
+enum FIO_EOL_Attribute
 {
-    FIO_RMS__None,        // not known
-    FIO_RMS__Binary,    // literal read and write no
-    FIO_RMS__StreamCRLF,    // MS-DOS/Windows lines
-    FIO_RMS__StreamCR,    // Machintosh lines
-    FIO_RMS__StreamLF    // Unix lines
+    FIO_EOL__None,                      // not known
+    FIO_EOL__Binary,                    // literal read and write no
+    FIO_EOL__StreamCRLF,                // MS-DOS/Windows lines
+    FIO_EOL__StreamCR,                  // Machintosh lines
+    FIO_EOL__StreamLF                   // Unix lines
 };
 
 class EmacsFile
 {
 public:
-    EmacsFile( FIO_RMS_Attribute _attr = FIO_RMS__None );
+    EmacsFile( FIO_EOL_Attribute _attr = FIO_EOL__None );
     virtual ~EmacsFile();
 
-    bool fio_create( const EmacsString &, int, FIO_CreateMode, const EmacsString &, FIO_RMS_Attribute );
-    bool fio_open( const EmacsString &, int, const EmacsString &, FIO_RMS_Attribute attr=FIO_RMS__None );
-    bool fio_open_using_path( const EmacsString &path, const EmacsString &fn, int append, const EmacsString &ex, FIO_RMS_Attribute attr=FIO_RMS__None );
-    bool fio_open( FILE *existing_file, FIO_RMS_Attribute _attr )
+    bool fio_create( const EmacsString &, int, FIO_CreateMode, const EmacsString &, FIO_EOL_Attribute );
+    bool fio_open( const EmacsString &, int, const EmacsString &, FIO_EOL_Attribute attr=FIO_EOL__None );
+    bool fio_open_using_path( const EmacsString &path, const EmacsString &fn, int append, const EmacsString &ex, FIO_EOL_Attribute attr=FIO_EOL__None );
+    bool fio_open( FILE *existing_file, FIO_EOL_Attribute attr )
     {
-        file = existing_file;
-        attr = _attr;
+        m_file = existing_file;
+        m_attr = attr;
         return true;
     }
     bool fio_is_open()
-    { return file != NULL; }
+    {
+        return m_file != NULL;
+    }
 
     int fio_get( unsigned char *, int );
     int fio_get_line( unsigned char *buf, int len );
@@ -68,7 +70,7 @@ public:
     const EmacsString &fio_getname();
     long int fio_getpos();
     void fio_setpos( long int );
-    FIO_RMS_Attribute fio_get_rms_attribute() { return attr; }
+    FIO_EOL_Attribute fio_get_eol_attribute() { return m_attr; }
 
     //
     //    Manipulate files by name
@@ -82,7 +84,7 @@ private:
     int get_fixup_buffer( unsigned char *buf, int len );
 
 
-    EmacsString full_file_name;
-    FILE *file;
-    FIO_RMS_Attribute attr;
+    EmacsString m_full_file_name;
+    FILE *m_file;
+    FIO_EOL_Attribute m_attr;
 };

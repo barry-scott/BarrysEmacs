@@ -385,9 +385,9 @@ private:
 // return one of the keys in the table otherwise NULL
 EmacsString &EmacsStringTable::get_word_interactive( const EmacsString &prompt, const EmacsString &default_value, EmacsString &result )
 {
-    Marker old;                // old position of dot
+    Marker old;                         // old position of dot
 
-    save_windows saved_windows;        // true if windows should be saved
+    save_windows saved_windows;         // true if windows should be saved
 
     Save<int> old_expand( &expand );    // Saved value of expand flag
     Save<int> old_help( &help );        // Saved value of help flag

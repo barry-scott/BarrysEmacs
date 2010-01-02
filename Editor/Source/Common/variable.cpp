@@ -57,9 +57,9 @@ void restore_var(void)
     VarRep("maximum-DCL-buffer-size", &maximum_dcl_buffer_size)
     VarRep("DCL-buffer-reduction", &dcl_buffer_reduction)
 
-    DefVarRep("default-buffer-RMS-record-attribute", &default_rms_attribute)
-    VarRep("current-buffer-RMS-record-attribute", &buffer_rms_attribute)
-    VarRep("override-RMS-record-attribute", &rms_attribute_override)
+    DefVarRep("default-buffer-RMS-record-attribute", &default_end_of_line_style)
+    VarRep("current-buffer-RMS-record-attribute", &buffer_eol_attribute)
+    VarRep("override-RMS-record-attribute", &end_of_line_style_override)
 #endif
     VarRep("fetch-help-database-flags", &get_db_help_flags)
 

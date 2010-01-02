@@ -412,7 +412,7 @@ int write_abbrev_file( void )
         return 0;
 
     EmacsFile f;
-    f.fio_create( fn, 0, FIO_STD, abbreviations, (FIO_RMS_Attribute)(int)default_rms_attribute );
+    f.fio_create( fn, 0, FIO_STD, abbreviations, (FIO_EOL_Attribute)(int)default_end_of_line_style );
     if( !f.fio_is_open() )
          error( FormatString( two_percents ) << fetch_os_error( errno ) << fn );
     else

@@ -20,12 +20,12 @@ public:
     EMACS_OBJECT_FUNCTIONS( EmacsString )
     enum string_type
     {
-        copy,        // make a copy of the string and free on delete
-        free,        // free the malloc'ed string
+        copy,       // make a copy of the string and free on delete
+        free,       // free the malloc'ed string
         keep        // do not free the string
     };
 
-    static const EmacsString null;    // always the empty string
+    static const EmacsString null;      // always the empty string
 
     EmacsString( void );
     EmacsString( const char *string );
@@ -54,6 +54,7 @@ public:
     EmacsString &operator=( const EmacsString &string );
     EmacsString &operator=( const char *string );
     EmacsString &operator=( const unsigned char *string );
+
     //
     //    relational operators
     //
@@ -86,10 +87,10 @@ public:
     //
     //    description of the data
     //
-    const unsigned char *data() const;        // unsigned char data
-    const char *sdata() const;            // signed char data
-    // these two function give unsafe access to the inside of representation
-    unsigned char *dataHack() const;        // unsigned char data
+    const unsigned char *data() const;  // unsigned char data
+    const char *sdata() const;          // signed char data
+                                        // these two function give unsafe access to the inside of representation
+    unsigned char *dataHack() const;    // unsigned char data
     char *sdataHack() const;            // signed char data
     int length() const;
     int isNull() const { return length() == 0; }
@@ -97,25 +98,25 @@ public:
     //
     //    searching primitives
     //
-    int first( char ch, int start_pos=0 ) const;            // index of first ch in string
-    int first( unsigned char ch, int start_pos=0 ) const;        // index of first ch in string
-    int last( char ch, int start_pos=0 ) const;            // index of last ch in string
+    int first( char ch, int start_pos=0 ) const;                // index of first ch in string
+    int first( unsigned char ch, int start_pos=0 ) const;       // index of first ch in string
+    int last( char ch, int start_pos=0 ) const;                 // index of last ch in string
     int last( unsigned char ch, int start_pos=0 ) const;        // index of last ch in string
 
-    int index( char ch, int start_pos=0 ) const;            // find the first ch starting at pos
-    int index( unsigned char ch, int start_pos=0 ) const;        // find the first ch starting at pos
-    int index( const EmacsString &str, int start_pos=0 ) const;    // find the first str starting at pos
+    int index( char ch, int start_pos=0 ) const;                // find the first ch starting at pos
+    int index( unsigned char ch, int start_pos=0 ) const;       // find the first ch starting at pos
+    int index( const EmacsString &str, int start_pos=0 ) const; // find the first str starting at pos
 
-    int commonPrefix( const EmacsString &str ) const;        // length of common prefix case sensitive
-    int caseBlindCommonPrefix( const EmacsString &str ) const;    // length of common prefix case blind
+    int commonPrefix( const EmacsString &str ) const;           // length of common prefix case sensitive
+    int caseBlindCommonPrefix( const EmacsString &str ) const;  // length of common prefix case blind
 
     //
     //    string modifiers
     //
-    void remove( int position, int length );    // remove the chars from position for length chars
-    void remove( int position );            // remove from position to the end of the string
+    void remove( int position, int length );                    // remove the chars from position for length chars
+    void remove( int position );                                // remove from position to the end of the string
 
-    enum { string_growth_room=32 };            // amount of space to allow for growth
+    enum { string_growth_room=32 };                             // amount of space to allow for growth
     EmacsString &append( char ch ) { return append( 1, (const unsigned char *)&ch ); }
     EmacsString &append( const char *str ) { return append( strlen( str ), (const unsigned char *)str ); }
     EmacsString &append( unsigned char ch ) { return append( 1, &ch ); }
@@ -134,13 +135,13 @@ public:
 
     EmacsString &insert( int pos, int length, const unsigned char *data );
 
-    EmacsString operator ()( int first, int last ) const;    // return a substring
+    EmacsString operator ()( int first, int last ) const;       // return a substring
 
     EmacsString &toLower();
     EmacsString &toUpper();
 
-    inline unsigned char operator[]( int index ) const;    // read only
-    inline unsigned char &operator[]( int index );        // read write
+    inline unsigned char operator[]( int index ) const;         // read only
+    inline unsigned char &operator[]( int index );              // read write
 
     int compare( const EmacsString &str2 ) const;
     int compare( const char *str2 ) const;

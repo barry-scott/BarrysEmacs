@@ -35,16 +35,16 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 #endif
 
 
-EmacsFile::EmacsFile( FIO_RMS_Attribute _attr )
-    : full_file_name()
-    , file(NULL)
-    , attr( _attr )
+EmacsFile::EmacsFile( FIO_EOL_Attribute attr )
+: m_full_file_name()
+, m_file( NULL )
+, m_attr( attr )
 { }
 
 EmacsFile::~EmacsFile()
 {
-    if( file != NULL && file != stdin )
-        fclose( file );
+    if( m_file != NULL && m_file != stdin )
+        fclose( m_file );
 }
 
 //
@@ -87,15 +87,15 @@ bool EmacsFile::fio_create
     int PNOTUSED(size),
     FIO_CreateMode PNOTUSED(mode),
     const EmacsString &defnam,
-    FIO_RMS_Attribute _attr
+    FIO_EOL_Attribute attr
     )
 {
-    expand_and_default( name, defnam, full_file_name );
-    file = fopen( full_file_name, "w" BINARY_MODE SHARE_NONE );
+    expand_and_default( name, defnam, m_full_file_name );
+    m_file = fopen( m_full_file_name, "w" BINARY_MODE SHARE_NONE );
 
-    attr = _attr;
+    m_attr = attr;
 
-    return file != NULL;
+    return m_file != NULL;
 }
 
 bool EmacsFile::fio_open
@@ -103,33 +103,33 @@ bool EmacsFile::fio_open
     const EmacsString &name,
     int eof,
     const EmacsString &defnam,
-    FIO_RMS_Attribute _attr
+    FIO_EOL_Attribute attr
     )
 {
-    expand_and_default( name, defnam, full_file_name );
+    expand_and_default( name, defnam, m_full_file_name );
 
-    if( !file_is_regular( full_file_name ) )
+    if( !file_is_regular( m_full_file_name ) )
         return false;
 
     if( eof )
     {
         // open for append
-        file = fopen( full_file_name, "a" BINARY_MODE SHARE_NONE );
-        attr = _attr;
+        m_file = fopen( m_full_file_name, "a" BINARY_MODE SHARE_NONE );
+        m_attr = attr;
     }
     else
         // open for read
-        file = fopen( full_file_name, "r" BINARY_MODE SHARE_READ );
+        m_file = fopen( m_full_file_name, "r" BINARY_MODE SHARE_READ );
 
-    return file != NULL;
+    return m_file != NULL;
 }
 
 int EmacsFile::fio_get( unsigned char *buf, int len )
 {
-    int status = fread( buf, 1, len, file );
-    if( ferror( file ) )
+    int status = fread( buf, 1, len, m_file );
+    if( ferror( m_file ) )
         return -1;
-    if( status == 0 && feof( file ) )
+    if( status == 0 && feof( m_file ) )
         return 0;
 
     status = get_fixup_buffer( buf, status );
@@ -139,10 +139,10 @@ int EmacsFile::fio_get( unsigned char *buf, int len )
 
 int EmacsFile::fio_get_line( unsigned char *buf, int len )
 {
-    fgets( s_str(buf), len, file );
-    if( ferror( file ) )
+    fgets( s_str(buf), len, m_file );
+    if( ferror( m_file ) )
         return -1;
-    if( feof( file ) )
+    if( feof( m_file ) )
         return 0;
 
     return get_fixup_buffer( buf, _str_len( buf ) );
@@ -150,10 +150,10 @@ int EmacsFile::fio_get_line( unsigned char *buf, int len )
 
 int EmacsFile::fio_get_with_prompt( unsigned char *buf, int len, const unsigned char * /*prompt*/ )
 {
-    int status = fread( buf, 1, len, file );
-    if( ferror( file ) )
+    int status = fread( buf, 1, len, m_file );
+    if( ferror( m_file ) )
         return -1;
-    if( status == 0 && feof( file ) )
+    if( status == 0 && feof( m_file ) )
         return -1;
     return status;
 }
@@ -161,11 +161,11 @@ int EmacsFile::fio_get_with_prompt( unsigned char *buf, int len, const unsigned 
 int EmacsFile::fio_put( const unsigned char *buf , int len )
 {
     int written_length = 0;
-    switch( attr )
+    switch( m_attr )
     {
-    case FIO_RMS__StreamCR:
+    case FIO_EOL__StreamCR:
     {
-        // find each LF and output the text followed by a cR
+        // find each LF and output the text followed by a CR
         const unsigned char *from = buf;
         const unsigned char *end = &buf[len];
 
@@ -174,20 +174,20 @@ int EmacsFile::fio_put( const unsigned char *buf , int len )
             const unsigned char *to = (const unsigned char *)memchr( from, '\n', end - from );
             if( to == NULL )
             {
-                int status = fwrite( from, 1, end-from, file );
-                if( ferror( file ) )
+                int status = fwrite( from, 1, end-from, m_file );
+                if( ferror( m_file ) )
                     return -1;
                 written_length += status;
                 break;
             }
 
-            int status = fwrite( from, 1, to-from, file );
-            if( ferror( file ) )
+            int status = fwrite( from, 1, to-from, m_file );
+            if( ferror( m_file ) )
                 return -1;
             written_length += status;
 
-            status = fwrite( "\r", 1, 1, file );
-            if( ferror( file ) )
+            status = fwrite( "\r", 1, 1, m_file );
+            if( ferror( m_file ) )
                 return -1;
             written_length += status;
             from = &to[1];
@@ -195,7 +195,7 @@ int EmacsFile::fio_put( const unsigned char *buf , int len )
     }
         break;
 
-    case FIO_RMS__StreamCRLF:
+    case FIO_EOL__StreamCRLF:
     {
         // find each LF and output the text followed by a cR/LF
         const unsigned char *from = buf;
@@ -206,20 +206,20 @@ int EmacsFile::fio_put( const unsigned char *buf , int len )
             const unsigned char *to = (const unsigned char *)memchr( from, '\n', end - from );
             if( to == NULL )
             {
-                int status = fwrite( from, 1, end-from, file );
-                if( ferror( file ) )
+                int status = fwrite( from, 1, end-from, m_file );
+                if( ferror( m_file ) )
                     return -1;
                 written_length += status;
                 break;
             }
 
-            int status = fwrite( from, 1, to-from, file );
-            if( ferror( file ) )
+            int status = fwrite( from, 1, to-from, m_file );
+            if( ferror( m_file ) )
                 return -1;
             written_length += status;
 
-            status = fwrite( "\r\n", 1, 2, file );
-            if( ferror( file ) )
+            status = fwrite( "\r\n", 1, 2, m_file );
+            if( ferror( m_file ) )
                 return -1;
             written_length += status;
             from = &to[1];
@@ -228,17 +228,18 @@ int EmacsFile::fio_put( const unsigned char *buf , int len )
         break;
 
 
-    case FIO_RMS__Binary:
+    case FIO_EOL__Binary:
         // simply output as is
-    case FIO_RMS__StreamLF:
+    case FIO_EOL__StreamLF:
     {
         // simply output as is
-        int status = fwrite( buf, 1, len, file );
-        if( ferror( file ) )
+        int status = fwrite( buf, 1, len, m_file );
+        if( ferror( m_file ) )
             return -1;
         written_length += status;
     }
         break;
+
     default:
         // cannot happen
         emacs_assert(false);
@@ -266,15 +267,15 @@ int EmacsFile::fio_split_put
 
 bool EmacsFile::fio_close()
 {
-    int status = fclose( file );
-    file = NULL;
+    int status = fclose( m_file );
+    m_file = NULL;
 
     return status == 0;
 }
 
 void EmacsFile::fio_setpos( long int pos )
 {
-    int status = fseek( file, pos, SEEK_SET );
+    int status = fseek( m_file, pos, SEEK_SET );
     if( status != 0 )
     {
         status = errno;
@@ -283,7 +284,7 @@ void EmacsFile::fio_setpos( long int pos )
 
 long int EmacsFile::fio_getpos()
 {
-    return ftell( file );
+    return ftell( m_file );
 }
 
 long int EmacsFile::fio_size()
@@ -291,12 +292,14 @@ long int EmacsFile::fio_size()
     long int cur_pos, end_of_file_pos;
 
     // find the current position
-    cur_pos = ftell( file );
+    cur_pos = ftell( m_file );
 
     // seek to the end of the file
-    if( fseek( file, 0l, SEEK_END ) == 0 )
+    if( fseek( m_file, 0l, SEEK_END ) == 0 )
+    {
         // the current position is the size of the file
-        end_of_file_pos = ftell( file );
+        end_of_file_pos = ftell( m_file );
+    }
     else
     {
         _dbg_msg( "fseek failed!" );
@@ -304,31 +307,31 @@ long int EmacsFile::fio_size()
     }
 
     // seek back to the orginal position
-    fseek( file, cur_pos, SEEK_SET );
+    fseek( m_file, cur_pos, SEEK_SET );
 
     return end_of_file_pos;
 }
 
 const EmacsString &EmacsFile::fio_getname()
 {
-    return full_file_name;
+    return m_full_file_name;
 }
 
 time_t EmacsFile::fio_modify_date()
 {
     EmacsFileStat s;
 
-    if( !s.stat( file ) )
+    if( !s.stat( m_file ) )
         return 0;
 
     return s.data().st_mtime;
 }
 
-time_t EmacsFile::fio_file_modify_date( const EmacsString &file )
+time_t EmacsFile::fio_file_modify_date( const EmacsString &filename )
 {
     EmacsFileStat s;
 
-    if( !s.stat( file ) )
+    if( !s.stat( filename ) )
         return 0;
 
     return s.data().st_mtime;
@@ -339,14 +342,14 @@ int EmacsFile::fio_access_mode()
 {
     EmacsFileStat s;
 
-    s.stat( file );
+    s.stat( m_file );
 
     return (s.data().st_mode&_S_IWRITE) == 0;
 }
 
 int EmacsFile::get_fixup_buffer( unsigned char *buf, int len )
 {
-    if( attr == FIO_RMS__None )
+    if( m_attr == FIO_EOL__None )
     {
         //
         //    this makes a snap judgement of the buffers record type
@@ -359,37 +362,37 @@ int EmacsFile::get_fixup_buffer( unsigned char *buf, int len )
             if( nl_index > 0 )
             {
                 if( buf[nl_index-1] =='\r' )
-                    attr = FIO_RMS__StreamCRLF;
+                    m_attr = FIO_EOL__StreamCRLF;
                 else
-                    attr = FIO_RMS__StreamLF;
+                    m_attr = FIO_EOL__StreamLF;
             }
             else
                 // LF is first char in buffer cannot have a CR before it
-                attr = FIO_RMS__StreamLF;
+                m_attr = FIO_EOL__StreamLF;
         }
         else
         {
             unsigned char *cr_pointer = (unsigned char *)memchr( buf, '\r', len );
             if( cr_pointer != NULL )
-                attr = FIO_RMS__StreamCR;
+                m_attr = FIO_EOL__StreamCR;
         }
     }
 
-    switch( attr )
+    switch( m_attr )
     {
     default:
         // defualt never gets hit...
         emacs_assert( false );
-    case FIO_RMS__None:
+    case FIO_EOL__None:
         // no CR or LF in the buf so return the orginal len
         return len;
 
-    case FIO_RMS__StreamLF:
-    case FIO_RMS__Binary:
+    case FIO_EOL__StreamLF:
+    case FIO_EOL__Binary:
         // no change required
         return len;
 
-    case FIO_RMS__StreamCR:
+    case FIO_EOL__StreamCR:
     {
         // each CR becomes a LF
         for( int i=0; i<len; i++ )
@@ -398,7 +401,7 @@ int EmacsFile::get_fixup_buffer( unsigned char *buf, int len )
         return len;
     }
 
-    case FIO_RMS__StreamCRLF:
+    case FIO_EOL__StreamCRLF:
     {
         // strip CR's from the buf
         unsigned char *end = &buf[ len ];

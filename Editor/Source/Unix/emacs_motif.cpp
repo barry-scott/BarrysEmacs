@@ -1189,22 +1189,22 @@ EmacsMotif_StatusIndicator_RecordType::~EmacsMotif_StatusIndicator_RecordType()
 void EmacsMotif_StatusIndicator_RecordType::update()
 {
     if( bf_cur != NULL )
-        switch( bf_cur->b_rms_attribute )
+        switch( bf_cur->b_eol_attribute )
         {
-        case FIO_RMS__Binary:    // literal read and write no
+        case FIO_EOL__Binary:    // literal read and write no
             EmacsMotif_TextLabel::update("BIN ");
             break;
-        case FIO_RMS__StreamCRLF:    // MS-DOS/Windows lines
+        case FIO_EOL__StreamCRLF:    // MS-DOS/Windows lines
             EmacsMotif_TextLabel::update("CRLF");
             break;
-        case FIO_RMS__StreamCR:    // Machintosh lines
+        case FIO_EOL__StreamCR:    // Machintosh lines
             EmacsMotif_TextLabel::update(" CR ");
             break;
-        case FIO_RMS__StreamLF:// Unix lines
+        case FIO_EOL__StreamLF:// Unix lines
             EmacsMotif_TextLabel::update(" LF ");
             break;
 
-        case FIO_RMS__None:        // not known
+        case FIO_EOL__None:        // not known
         default:
             EmacsMotif_TextLabel::update("UNKN");
         }
