@@ -1,3 +1,0 @@
-#!/bin/sh
-[ "`uname -s`" = "FreeBSD" ] && make -f unix.mak BUILD_OS=freebsd BUILD_DIR=/usr/users/barry/Stable/EmacsV7 BUILD_CFG=release $*
-[ "`uname -s`" = "Linux" ] && make -f unix.mak BUILD_OS=linux BUILD_DIR=/u/barry/Stable/EmacsV7 BUILD_CFG=release $*
