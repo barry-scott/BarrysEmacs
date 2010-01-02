@@ -62,18 +62,18 @@ function loadDocumentSimple( doc, hash )
 
 	if( doc == "ug" )
 		{
-		list_src = "ug_index.htm";
-		body_src = "ug_top.htm";
+		list_src = "ug_index.html";
+		body_src = "ug_top.html";
 		}
 	else if( doc == "pg" )
 		{
-		list_src = "pg_index.htm";
-		body_src = "pg.htm";
+		list_src = "pg_index.html";
+		body_src = "pg.html";
 		}
 	else if( doc == "extn" )
 		{
-		list_src = "extn_index.htm";
-		body_src = "extn_intro.htm";
+		list_src = "extn_index.html";
+		body_src = "extn_intro.html";
 		}
 	else
 		{
@@ -120,7 +120,7 @@ function loadDocumentMLispRef( doc, hash )
 			return false;
 			}
 		list_src = "about:blank";
-		body_src = "fn_front.htm";
+		body_src = "fn_front.html";
 		}
 	else if( doc == "var" )
 		{
@@ -129,7 +129,7 @@ function loadDocumentMLispRef( doc, hash )
 			alert('loadDocumentMLispRef("var") must have a hash parameter');
 			return false;
 			}
-		list_src = "var_list.htm";
+		list_src = "var_list.html";
 		body_src = "about:blank";
 		target_index = list_src;
 		target_anchor = hash;
@@ -141,7 +141,7 @@ function loadDocumentMLispRef( doc, hash )
 			alert('loadDocumentMLispRef("fn") must have a hash parameter');
 			return false;
 			}
-		list_src = "fn_list.htm";
+		list_src = "fn_list.html";
 		body_src = "about:blank";
 		target_index = list_src;
 		target_anchor = hash;
@@ -158,8 +158,8 @@ function loadDocumentMLispRef( doc, hash )
 	d.write('<html>');
 	d.write('<FRAMESET COLS="30%,*">');
 	d.write('<FRAMESET ROWS="80,80,*">');
-	d.write('<FRAME scrolling="no" SRC="functions.htm" NAME="functions" MARGINWIDTH="3" MARGINHEIGHT="3"></FRAME>');
-	d.write('<FRAME scrolling="no" SRC="variables.htm" NAME="variables" MARGINWIDTH="3" MARGINHEIGHT="3"></FRAME>');
+	d.write('<FRAME scrolling="no" SRC="functions.html" NAME="functions" MARGINWIDTH="3" MARGINHEIGHT="3"></FRAME>');
+	d.write('<FRAME scrolling="no" SRC="variables.html" NAME="variables" MARGINWIDTH="3" MARGINHEIGHT="3"></FRAME>');
 	d.write('<FRAME src="'+list_src+'" NAME="list" MARGINWIDTH="3" MARGINHEIGHT="3" SCROLLING="YES"></FRAME>');
 	d.write('</FRAMESET>');
 	d.write('<FRAME SRC="'+body_src+'" NAME="body" MARGINWIDTH="3" MARGINHEIGHT="3" SCROLLING="YES"></FRAME>');

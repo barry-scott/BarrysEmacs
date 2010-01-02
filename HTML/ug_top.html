@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//SoftQuad//DTD HTML 3.2 + extensions for HoTMetaL PRO 3.0(U) 19961211//EN"
+ "hmpro3.dtd">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<TITLE>Barry's Emacs User Guide</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<P><A name="top"></A></P>
+
+<H1><A name="barrysemacsuserguide"></A>Barry's Emacs User Guide</H1>
+
+<P>This document describes the use and customisation of Barry's Emacs display editor:</P>
+
+<UL>
+<LI><A href="ug_intro.html#introduction">Introduction</A> provides an introduction to Barry's Emacs.</LI>
+
+<LI><A href="ug_basicedit.html#top">Basic Editing</A> describes the basic Emacs commands that allow you to enter text, make corrections and save text in a file.</LI>
+
+<LI>Editing Specific File Types describes commands available in Emacs for editing specific file types.</LI>
+
+<LI><A href="ug_specificedit.html#top">Editing Specific File Types</A> describes Emacs' advanced editing facilities.</LI>
+
+<LI><A href="ug_correct.html#top">Correcting Mistakes and Emacs Problems</A> describes how to correct editing mistakes and recover from Emacs problems.</LI>
+
+<LI><A href="ug_customise.html#top">Emacs Simple Customisation</A> describes how to make simple Emacs customisations without a detailed knowledge of the Mock Lisp programming language.</LI>
+
+<LI><A href="ug_packages.html#top">Package And Subsystem Index</A> gives an alphabetically ordered list of all the packages, subsystems and libraries distributed with Barry's Emacs.</LI>
+
+<LI><A href="ug_defaultkeys.html#top">Default Key Bindings</A> gives an alphabetically ordered list of the default Emacs key bindings.</LI>
+</UL>
+
+<UL>
+<LI><A href="#conventions">The conventions section</A> describes the meanings of the different typefaces used in this document.</LI>
+</UL>
+
+<P>There is also other documentation supplied with Barry's Emacs.</P>
+
+<P>Software Version: Barry's Emacs V7.0</P>
+
+<P>Operating System: Windows NT V3.51 or higher
+<BR>
+ FreeBSD V2.2.2 or higher</P>
+
+<P>The Barry's Emacs software and documentation is <B>Copyright <FONT face="Symbol">&atilde;</FONT> 1980-1999 Barry Scott</B>.</P>
+
+<P>This document is intended for all users of Barry's Emacs.</P>
+
+<HR>
+<P><A name="otherdocs"><I><FONT face="Arial" size="4" color="#000080">Other Emacs documentation</FONT></I></A></P>
+
+<P>The Barry's Emacs Programmer's Guide describes how to extend Emacs using the Mock Lisp programming language.</P>
+
+<P>The Barry's Emacs Mock Lisp Reference Manual contains an alphabetically ordered list of all Emacs functions and variables available in the Mock Lisp programming language.</P>
+
+<P>The Barry's Emacs Extensions Reference Manual documents the Emacs extensions (packages, subsystems and libraries) that are distributed with Barry's Emacs.</P>
+
+<HR>
+<P><A name="conventions"><I><FONT face="Arial" size="4" color="#000080">Conventions</FONT></I></A></P>
+
+<P>Throughout this text, key sequences are described as causing specific actions to occur (functions to run, for example). These key sequences are those set up when Emacs is started (they are the default key bindings).</P>
+
+<P>Key sequences are displayed with each key separated by a dash. When using these sequences, do not include the dashes. The dashes are displayed for clarity only.</P>
+
+<P>Many Emacs key sequences use <FONT face="Courier New" size="2">Control</FONT> keys. These are indicated by a caret character (^) appearing in the key sequence. For example, to type the <FONT face="Courier New" size="2">^O</FONT> key sequence, press and hold down the <FONT face="Courier New" size="2">Ctrl</FONT> key and simlutaneously press the <FONT face="Courier New" size="2">O</FONT> key. The special sequence <FONT face="Courier New" size="2">^^</FONT> is used in some Emacs key sequences. To type <FONT face="Courier New" size="2">^^</FONT>, press and hold down the <FONT face="Courier New" size="2">Ctrl</FONT> key, then simultaneously type the <FONT face="Courier New" size="2">^</FONT> key.</P>
+
+<P>Many other Emacs key sequences use <FONT face="Courier New" size="2">Escape</FONT> keys. These are indicated with an <FONT face="Courier New" size="2">ESC-</FONT> in the key sequence. For example, to type the <FONT face="Courier New" size="2">ESC-e</FONT> key sequence, press the key labelled <FONT face="Courier New" size="2">ESC</FONT>, then press the <FONT face="Courier New" size="2">e</FONT> key. Note that <FONT face="Courier New" size="2">ESC-</FONT> key sequences are case-sensitive; this means that <FONT face="Courier New" size="2">ESC-e</FONT> is not the same as <FONT face="Courier New" size="2">ESC-E</FONT>.</P>
+
+<P>Different typefaces used in this book are used to distinguish between normal text and special symbols. These are described as follows:</P>
+
+<CENTER>
+<TABLE border="1">
+<TR>
+<TD><FONT face="Courier New" size="2">Return</FONT></TD>
+<TD>
+<P>The following special keys are displayed as shown:
+<BR>
+</P>
+
+<TABLE cellpadding="5">
+<TR>
+<TD><FONT face="Courier New" size="2">Backspace</FONT></TD>
+<TD><FONT face="Courier New" size="2">Return</FONT></TD>
+<TD><FONT face="Courier New" size="2">Escape</FONT></TD>
+<TD><FONT face="Courier New" size="2">Tab</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT face="Courier New" size="2">Linefeed</FONT></TD>
+<TD><FONT face="Courier New" size="2">Delete</FONT></TD>
+<TD><FONT face="Courier New" size="2">Space</FONT></TD>
+<TD></TD>
+</TR>
+</TABLE>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P><FONT face="Courier New" size="2">This is an example</FONT></P>
+</TD>
+<TD>
+<P>All examples and system displays are displayed in <FONT face="Courier New" size="2">this</FONT> typeface.</P>
+</TD>
+</TR>
+
+<TR>
+<TD>
+<P>execute-mlisp-file</P>
+</TD>
+<TD>
+<P>All keystroke sequences, function names, command names and variable names are displayed in this typeface.</P>
+</TD>
+</TR>
+</TABLE>
+</CENTER>
+</BODY>
+</HTML>
+

@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<HTML>
+<HEAD>
+<TITLE>Variables - U</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<HR>
+<P><A name="UI-filter-file-list"></A><B>UI-filter-file-list</B></P>
+
+<BLOCKQUOTE>
+<P>This variable provides the data for the "List File of Type" part of the Windows File Open and File Save As dialog boxes.</P>
+
+<P>The value is a set of pairs of text lines. The first line of the pair is a description and the second line of the pair is a list of file filters.</P>
+
+<P>For example to have filters for text files (*.txt) and C file (*.c and *.h):</P>
+
+<PRE>
+(setq UI-filter-file-list "Text files\n*.txt\nC files\n*.c;*.h")
+</PRE>
+
+<P><B>Default value:</B></P>
+
+<PRE>
+    "C/C++ Source code\n"
+    "*.c;*.h;*.cpp;*.rc;*.def\n"
+    "MLisp source code\n"
+    "*.ml;*.mlp,*.key\n"
+    "Text Files\n"
+    "*.txt\n"
+    "Ini Files\n"
+    "*.ini;*.sys;*.bat;*.btm\n"
+    "All Files (*.*)\n"
+    "*.*\n"
+</PRE>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_u.html#UI-file-open">command UI-file-open</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="UI-open-file-name"></A><B>UI-open-file-name</B></P>
+
+<BLOCKQUOTE>
+<P>This variable provides the file name for the Windows File Open dialog boxes.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_u.html#UI-file-open">command UI-file-open</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="UI-open-file-readonly"></A><B>UI-open-file-readonly</B></P>
+
+<BLOCKQUOTE>
+<P>This variable provides the setting of the Read only check box for the Windows File Open dialog boxes.</P>
+
+<P><B>Default value:</B> 0</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_u.html#UI-file-open">command UI-file-open</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="UI-save-as-file-name"></A><B>UI-save-as-file-name</B></P>
+
+<BLOCKQUOTE>
+<P>This variable provides the file name for the Windows File Save As dialog box.</P>
+
+<P><B>Default value:</B> ""</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_u.html#UI-file-save-as">UI-file-save-as</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="UI-search-string"></A><B>UI-search-string</B></P>
+
+<BLOCKQUOTE>
+<P>This variable provides the initial "Find what" string for the Windows Find and Find and Replace dialog boxes.</P>
+
+<P>When the dialog box is close UI-search-string will hold the last value of the "Find what" field.</P>
+
+<P><B>Default value:</B> ""</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_u.html#UI-find">command UI-find</A></LI>
+
+<LI><A href="fn_u.html#UI-find-and-replace">command UI-find-and-replace</A></LI>
+
+<LI><A href="#UI-replace-string">UI-replace-string</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="UI-replace-string"></A><B>UI-replace-string</B></P>
+
+<BLOCKQUOTE>
+<P>This variable provides the initial "Replace with" string for the Windows Find and Replace dialog box.</P>
+
+<P>When the dialog box is close UI-replace-string will hold the last value of the "Replace with" field.</P>
+
+<P><B>Default value:</B></P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A href="fn_u.html#UI-find">command UI-find</A></LI>
+
+<LI><A href="fn_u.html#UI-find-and-replace">command UI-find-and-replace</A></LI>
+
+<LI><A href="#UI-search-string">UI-search-string</A></LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="user-colour-1"></A><B>user-colour-1</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>Graphic rendition for any text coloured as 1 by apply-colour-to-region.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="user-colour-2"></A><B>user-colour-2</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>Graphic rendition for any text coloured as 2 by apply-colour-to-region.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="user-colour-3"></A><B>user-colour-3</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>Graphic rendition for any text coloured as 3 by apply-colour-to-region.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="user-colour-4"></A><B>user-colour-4</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>Graphic rendition for any text coloured as 4 by apply-colour-to-region.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="user-colour-5"></A><B>user-colour-5</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>Graphic rendition for any text coloured as 5 by apply-colour-to-region.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="user-colour-6"></A><B>user-colour-6</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>Graphic rendition for any text coloured as 6 by apply-colour-to-region.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="user-colour-7"></A><B>user-colour-7</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>Graphic rendition for any text coloured as 7 by apply-colour-to-region.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="user-colour-8"></A><B>user-colour-8</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>Graphic rendition for any text coloured as 8 by apply-colour-to-region.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="user-interface-hook"></A><B>user-interface-hook</B> &laquo;</P>
+
+<BLOCKQUOTE>
+<P>This variable is intended for use of the shipped Emacs MLisp code only.</P>
+
+<P>The procedure named in this variable is executed:</P>
+
+<UL>
+<LI>after restoring the Emacs environment, or executing the emacs_profile.ml</LI>
+
+<LI>before calling the procedure in the enter-emacs-hook.</LI>
+</UL>
+
+<P>The user-interface-hook is intended to run a procedure that customises the Emacs user interface based on present environment. This cannot be done and saved in environment file and it is a snapshot taken in the past.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="unlink-checkpoint-files"></A><B>unlink-checkpoint-files</B> &laquo; 0</P>
+
+<BLOCKQUOTE>
+<P>Controls the deletion of checkpoint files. If non-zero, Emacs will unlink the corresponding checkpoint file after the master copy of the file is written. This avoids .CKP files from building up, but it does compromise safety a little.</P>
+</BLOCKQUOTE>
+
+<HR>
+</BODY>
+</HTML>
+

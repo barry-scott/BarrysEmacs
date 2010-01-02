@@ -1,0 +1,717 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<HTML>
+<HEAD>
+<TITLE>Functions E*</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<HR>
+<P><A name="edit-macro">(<B>edit-macro</B> <CODE>macro-name</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Takes the body of a named macro and places it in a buffer called Macro edit. The name of the macro is associated with the buffer and appears in the mode line at the bottom of the window. The buffer may be edited just like any other buffer. After the macro body has been edited it may be redefined using <A href="fn_d.html#define-buffer-macro">define-buffer-macro</A>.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_d.html#define-buffer-macro">define-buffer-macro</A></LI>
+<LI><A HREF="fn_d.html#define-keyboard-macro">define-keyboard-macro</A></LI>
+<LI><A HREF="fn_d.html#define-string-macro"></A></LI>
+<LI><A HREF="fn_r.html#rename-macro"></A></LI>
+</UL>
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="emacs-version">(<B>emacs-version</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Returns a string describing the version of Emacs that you are running. For V7.0 of Emacs, the string looks something like:</P>
+
+<PRE>
+X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
+</PRE>
+
+<P>The string contains the version number, the date, time and node where Emacs was made, and who made it.</P>
+
+<P>When reporting bugs or suggestions about Emacs, always quote the version number of Emacs to which the comments refer.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="end-of-file">(<B>end-of-file</B>) ESC-&gt;</A></P>
+
+<BLOCKQUOTE>
+<P>Moves dot to just after the last character in the buffer.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_b.html#beginning-of-file">beginning-of-file</A></LI>
+</UL>
+
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="end-of-line">(<B>end-of-line</B>) ^E</A></P>
+
+<BLOCKQUOTE>
+<P>Moves dot to the end of the line in the current buffer. Dot is placed after the last character on the line. If dot is already at the end of the line, it does not move.</P>
+
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_b.html#beginning-of-line">beginning-of-line</A></LI>
+</UL>
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="end-of-window">(<B>end-of-window</B>) ESC-.</A></P>
+
+<BLOCKQUOTE>
+<P>Moves dot to just after the last character visible in the window.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_b.html#beginning-of-window">beginning-of-window</A></LI>
+<LI><A HREF="fn_l.html#line-to-top-of-window">line-to-top-of-window</A></LI>
+<LI><A HREF="fn_p.html#page-next-window">page-next-window</A></LI>
+</UL>
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="enlarge-window">(<B>enlarge-window</B>) ^X-z</A></P>
+
+<BLOCKQUOTE>
+<P>Makes the current window <CODE>prefix-argument</CODE> lines taller, and the window below (or the one above if there is no window below) <CODE>prefix-argument</CODE> lines shorter. This function cannot be used if there is only one window on the screen.</P>
+
+<P><B>Example:</B> Make the current window twice as high as it is currently:</P>
+
+<PRE>
+(provide-prefix-argument window-size (enlarge-window))
+</PRE>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_d.html#delete-other-windows">delete-other-windows</A></LI>
+<LI><A HREF="fn_d.html#delete-window">delete-window</A></LI>
+<LI><A HREF="fn_e.html#enlarge-window">enlarge-window</A></LI>
+<LI><A HREF="fn_n.html#next-window">next-window</A></LI>
+<LI><A HREF="fn_p.html#previous-window">previous-window</A></LI>
+<LI><A HREF="fn_s.html#shrink-window">shrink-window</A></LI>
+<LI><A HREF="fn_s.html#split-current-window">split-current-window</A></LI>
+<LI><A HREF="fn_s.html#split-current-window-vertically">split-current-window-vertically</A></LI>
+<LI><A HREF="var_w.html#window-size">window-size</A> variable</LI>
+
+</UL>
+
+
+
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="eobp">(<B>eobp</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Returns 1 if dot is at the end of the buffer.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_b.html#bobp">bobp</A></LI>
+</UL>
+
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="eolp">(<B>eolp</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Returns 1 if dot is at the end of a line.</P>
+
+<P><B>Example: </B> Delete next character provided that dot is not already at the end of a line.</P>
+
+
+<PRE>
+        (if (! (eolp))
+            (delete-next-character)
+
+        )                               ; if
+</PRE>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_b.html#bolp">bolp</A></LI>
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="erase-buffer">(<B>erase-buffer</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Deletes all text from the current buffer and sets the buffer as unmodified. No prompt is given asking for confirmation that the buffer should be erased.</P>
+
+<P><B>Example: </B> Delete the content of the current buffer provided that the buffer has not been modified:</P>
+
+<PRE>
+(if (! buffer-is-modified)
+    (erase-buffer)
+)
+
+</PRE>
+
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_e.html#erase-region">erase-region</A></LI>
+<LI><A HREF="fn_d.html#delete-buffer">delete-buffer</A></LI>
+<LI><A HREF="var_b.html#buffer-is-modified">buffer-is-modified</A> variable</LI>
+</UL>
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="erase-region">(<B>erase-region</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Deletes all text between dot and mark in the current buffer. It does not ask to make sure if you really want to do it.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="#erase-buffer">erase-buffer</A></LI>
+</UL>
+
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="ere-looking-at"></A>(<B>ere-looking-at</B> <CODE>regular-expression</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Returns 1 if the given regular expression search string matches the text immediately following dot. This is for use in packages that want to do limited parsing.</P>
+
+<P>If a negative prefix argument is supplied, characters to the left of dot are checked, rather than those to the right.</P>
+
+<P>For example, if dot is at the beginning of a line then:</P>
+
+<PRE>
+(looking-at "\\s*else")
+</PRE>
+
+<P>is true if the line starts with any number of spaces or tabs, followed by "else".  </P>
+
+<P>See <A HREF="fn_e.html#ere-search-forward"><CODE>ere-search-forward</CODE></A> for more information about regular expression searches.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_e.html#ere-search-forward">ere-search-forward</A></LI>
+<LI><A HREF="fn_e.html#ere-search-reverse">ere-search-reverse</A></LI>
+<LI><A HREF="fn_s.html#search-forward">search-forward</A></LI>
+<LI><A HREF="fn_s.html#search-reverse">search-reverse</A></LI>
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="ere-query-replace-string">(<B>ere-query-replace-string</B> <CODE>pattern replacement</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Replaces all occurrences of a pattern with a string, starting at dot and ending at the end of the buffer. For each occurrence of the old string, Emacs requests that the user type a character to indicate whether or not to replace the string. Dot will be positioned just after the found string.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="ere-replace-search-text">(<B>ere-replace-search-text</B> <CODE>replacement</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>This function performs a regular expression replacement of the text matched by the last search operations.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="ere-replace-string">(<B>ere-replace-string</B> <CODE>pattern replacement</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Replaces all occurrences of a regular expression with a string, starting at dot and ending and the end of the buffer. See the Barry's Emacs User's Guide for information on how to specify regular expressions and replacement text.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="ere-search-forward">(<B>ere-search-forward</B> <CODE>pattern</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Searches for a pattern match in the current buffer, moving forwards from dot, stopping at the end of the buffer. Dot is left at the end of the matched string if a match is found, or is unmoved if the string is not found.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="ere-search-reverse">(<B>ere-search-reverse</B> <CODE>string</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Searches for a pattern match in the current buffer, moving backwards from dot, stopping at the beginning of the buffer. Dot is left at the beginning of the matched string if a match is found, or is unmoved if not. See the Barry's Emacs User's Guide for information on how to specify regular expressions.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="error-and-exit">(<B>error-and-exit</B>) ^G (in the Mini-buffer)</A></P>
+
+<BLOCKQUOTE>
+<P>This function is used in the Mini-buffer local keymaps to abort the current input operation. If called directly, this function is the same as exit-emacs.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_h.html#help-and-exit">help-and-exit</A></LI>
+<LI><A HREF="#expand-and-exit">expand-and-exit</A></LI>
+<LI><A HREF="#exit-emacs">exit-emacs</A></LI>
+<LI><A HREF="fn_m.html#Minibuf-local-NS-map">Minibuf-local-NS-map</A></LI>
+<LI><A HREF="fn_m.html#Minibuf-local-map">Minibuf-local-map</A></LI>
+</UL>
+
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="error-message">(<B>error-message</B> <CODE>string-expression...</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Concatenates the supplied string expressions and sends them to the screen as an error message where they will appear in the Mini-buffer. Emacs returns to keyboard level and sounds the terminal's bell.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="error-message-parser">(<B>error-message-parser</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Parses error messages for the parse-error-message-in-region and compile-it commands. This function is the default error message parser supplied with Emacs and is capable of locating error messages for VAX C, PL/I and BLISS.</P>
+
+<!-- [jack Mon May 31 1999] sent mail to barry about error-message-parser -->
+<!--
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_p.html#parse-error-message-in-region">parse-error-message-in-region</A></LI>
+<LI><A HREF="#error-file-name">error-file-name</A></LI>
+<LI><A HREF="#error-line-number">error-line-number</A> variable</LI>
+<LI><A HREF="#error-message-parser">error-message-parser</A> variable</LI>
+<LI><A HREF="#error-start-position">error-start-position</A> variable</LI>
+</UL>
+ -->
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="error-occurred">(<B>error-occurred</B> <CODE>expression...</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Executes the given expressions and ignores their values. If all expressions execute successfully, it returns 0. Otherwise, it returns 1 and all expressions after the one which encountered the error will not be executed.</P>
+
+<P>The text of any error message is available for processing in the string variable <CODE>error-message</CODE>.</P>
+
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="var_e.html#error-message">error-message</A> variable</LI>
+</UL>
+
+
+
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="exchange-dot-and-mark">(<B>exchange-dot-and-mark</B>) ^X-^X</A></P>
+
+<BLOCKQUOTE>
+<P>Sets dot to the current location of the mark and sets the mark at the old position of dot. This is useful for bouncing back and forth between two points in a file, particularly when the two points delimit a region of text that is going to be operated on by a command such as <A HREF="fn_d.html#delete-to-killbuffer">delete-to-killbuffer</A>.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_s.html#set-mark">set-mark</A></LI>
+<LI><A HREF="fn_r.html#region-around-match">region-around-match</A></LI>
+<LI><A HREF="fn_m.html#mark">mark</A></LI>
+</UL>
+
+
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="execute-extended-command">(<B>execute-extended-command</B> <CODE>extended-command</CODE>) ESC-x, Do</A></P>
+
+
+<BLOCKQUOTE>
+<P>Executes the specified extended command.</P>
+
+<P>If called interactively, it prompts for the command to execute. You  can type ESC or space to invoke command completion, or a question mark (?) for a list of valid commands.</P>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="execute-keyboard-macro">(<B>execute-keyboard-macro</B>) ^X-e</A></P>
+
+<BLOCKQUOTE>
+<P>Invokes the currently-defined keyboard macro. This is a remembered sequence of keystrokes.</P>
+
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_d.html#define-keyboard-macro">define-keyboard-macro</A></LI>
+<LI><A HREF="fn_s.html#start-remembering">start-remembering</A></LI>
+<LI><A HREF="fn_s.html#stop-remembering">stop-remembering</A></LI>
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="execute-mlisp-buffer">(<B>execute-mlisp-buffer</B>)</A></P>
+
+<BLOCKQUOTE>
+<P>Parses and compiles the current buffer as a single MLisp expression and executes it. This function is useful when you are testing new functions.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_e.html#execute-mlisp-file">execute-mlisp-file</A></LI>
+<LI><A HREF="fn_e.html#execute-mlisp-line">execute-mlisp-line</A></LI>
+</UL>
+
+
+
+</BLOCKQUOTE>
+
+
+
+
+<HR>
+<P><A name="execute-mlisp-file">(<B>execute-mlisp-file</B> <CODE>filename</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Reads the named file as a series of MLisp expressions and executes them.</P>
+
+<P>The file name given is interpreted relative to the <CODE> EMACS$PATH</CODE> logical name. <CODE>EMACS$PATH</CODE> is defined as a logical name search-list. If the file cannot be located using <CODE>EMACS$PATH</CODE>, a search is made in the database search-list MLisp-library.</P>
+
+<P>The default file type is .ML</P>
+
+<P>To modify <CODE>EMACS$PATH</CODE>, select <B>Edit</B>, <B>Preferences</B>, <B>Directories</B>.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="#execute-mlisp-buffer">execute-mlisp-buffer</A></LI>
+<LI><A HREF="#execute-mlisp-line">execute-mlisp-line</A></LI>
+
+</UL>
+
+
+
+</BLOCKQUOTE>
+
+
+
+<HR>
+<P><A name="execute-mlisp-line">(<B>execute-mlisp-line</B> <CODE>MLisp-expression</CODE>) ESC-ESC</A></P>
+
+<BLOCKQUOTE>
+<P>Prompts for a string in the Mini-buffer, parses it as an MLisp expression, and executes it.</P>
+
+<P>If called from a MLisp program, the command to be executed must be supplied as a string. This provides for dynamic compilation during the execution of a program.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="#execute-mlisp-buffer">execute-mlisp-buffer</A></LI>
+<LI><A HREF="#execute-mlisp-file">execute-mlisp-file</A></LI>
+
+</UL>
+
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="execute-monitor-command">(<B>execute-monitor-command</B> <CODE>DCL-command</CODE>) ^X-!</A></P>
+
+<BLOCKQUOTE>
+<P>Passes the command to the operating system and places the command output into a buffer called <B>Command execution</B>, making that buffer visible in a window. The command that is run cannot read from its standard input, so <CODE>execute-monitor-command</CODE> cannot be used if the command that is run will prompt for information.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_f.html#filter-region">filter-region</A></LI>
+
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="exit-emacs">(<B>exit-emacs</B>) ^C or ESC-^C</A></P>
+
+<BLOCKQUOTE>
+<P>Exits Emacs if the current recursion depth is zero. It will ask for confirmation if there are any buffers that have been modified but not written out.</P>
+
+<P>If the recursion depth is not zero, exit-emacs exits the current recursive edit level.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_r.html#recursive-edit">recursive-edit</A></LI>
+<LI><A HREF="fn_w.html#write-file-exit">write-file-exit</A></LI>
+
+</UL>
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="expand-and-exit">(<B>expand-and-exit</B>) ESC (in the Mini-buffer)</A></P>
+
+<BLOCKQUOTE>
+<P>Causes command completion to occur in the Mini-buffer. If called interactively, this function is the same as exit-emacs.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_h.html#help-and-exit">help-and-exit</A></LI>
+<LI><A HREF="#error-and-exit">error-and-exit</A></LI>
+<LI><A HREF="#exit-emacs">exit-emacs</A></LI>
+<LI><A HREF="fn_m.html#Minibuf-local-NS-map">Minibuf-local-NS-map</A></LI>
+<LI><A HREF="fn_m.html#Minibuf-local-map">Minibuf-local-map</A></LI>
+
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="expand-file-name">(<B>expand-file-name</B> <CODE>file-name</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Returns the fully-expanded file specification of the file name argument.</P>
+
+<P>Wildcards may be specified to obtain a sequence of file names. Call <CODE>expand-file-name</CODE> first with the wildcard file specification. Then call <CODE>expand-file-name</CODE> specifying a null filename until an error occurs.</P>
+
+<P><B>Example:</B> a function to prompt for a file specification and then insert, into the current buffer, the names of all the files that match the specification.</P>
+
+<PRE>
+(defun
+    (insert-filelist
+        spec
+        (setq spec (expand-file-name (get-tty-string "Insert names matching: ")))
+            (while (!= spec "")
+                (insert-string (concat spec "\n"))
+                (setq spec (expand-file-name ""))
+                
+            )
+        )
+    )
+)
+</PRE>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="#expand-file-name-recursive">expand-file-name-recursive</A></LI>
+<LI><A HREF="fn_f.html#file-exists">file-exists</A></LI>
+<LI><A HREF="fn_u.html#unlink-file">unlink-file</A></LI>
+
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="expand-file-name-recursive">(<B>expand-file-name-recursive</B> <CODE>file-name</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Returns the fully-expanded file specification of the file name argument.</P>
+
+<P>Wildcards may be specified to obtain a sequence of file names. Call expand-file-name-recursive first with the wildcard file specification. Then call <CODE>expand-file-name-recursive</CODE> specifying a null filename until an error occurs.</P>
+
+<P><CODE>expand-file-name-recursive</CODE> starts looking for files in the directory specified in <CODE>file-name</CODE>. It then looks in all of the subdirectories under the starting directory.</P>
+
+<P><B>Example:</B> A function prompts for an mlisp function and executes that function on all files that match the given file specification.</P>
+
+<PRE>
+(defun function-on-many-files
+    (
+        ~files (get-tty-file "do function on these files:  ")
+        ~function (get-tty-command "function to execute: ")
+        ~recursive (get-tty-string "recursive? (y/n) [N] ")
+    )
+    
+    ~target
+    (setq ~function (concat "(" ~function ")"))
+    
+    
+    (if (= ~recursive "y") 
+        (setq ~target (expand-file-name-recursive ~files))
+        (setq ~target (expand-file-name ~files))
+    )                           ; if
+    
+    (while (!= ~target "")
+        (save-excursion
+            (visit-file ~target)
+            (beginning-of-file)
+            (sit-for 0)
+            (execute-mlisp-line ~function)
+            (if buffer-is-modified
+                (write-current-file)
+            )           ; if
+            (delete-buffer current-buffer-name)
+            
+            (if (= ~recursive "y")
+                (setq ~target (expand-file-name-recursive ""))
+                (setq ~target (expand-file-name ""))
+            )                   ; if
+            
+        )                       ; save-excursion
+    )                           ; while
+    
+)                               ; defun - function-on-many-files
+</PRE>
+
+
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="#expand-file-name">expand-file-name</A></LI>
+<LI><A HREF="fn_f.html#file-exists">file-exists</A></LI>
+<LI><A HREF="fn_u.html#unlink-file">unlink-file</A></LI>
+
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="expand-mlisp-variable">(<B>expand-mlisp-variable</B> <CODE>variable-name</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Inserts the name of the specified variable in a buffer, using variable name completion.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="#expand-mlisp-word">expand-mlisp-word</A></LI>
+
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+
+<P><A name="expand-mlisp-word">(<B>expand-mlisp-word</B> <CODE>command-name</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Prompts for the name of a command and then inserts the name as text into the current buffer. This is very handy when you are editing an MLisp function. It's useful to bind <CODE>expand-mlisp-word</CODE> to a key for easy access. </P>
+
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="#expand-mlisp-variable">expand-mlisp-variable</A></LI>
+
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="expand-from-string-table">(<B>expand-from-string-table</B> <CODE>prompt word-list-string</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Provides access to the Emacs input expansion mechanism. The function has two parameters: the first is a prompt, the second is a string that contains a space-separated list of words from which the user can select. The result of the function is the selected word. <CODE>
+expand-from-string-table</CODE> allows only one of the words in the list to be returned.</P>
+
+<P><B>Example:</B> A function that prompt for the name of a fruit to insert into the current buffer</P>
+
+<PRE>
+(defun
+    (fruit-picker
+        (insert-string
+            (expand-from-string-table
+                "choose a fruit: "
+                "strawberry apple banana")
+        )
+    )
+    
+)
+</PRE>
+
+<P><B>Example: </B> Prompt for one of the words "exit", "read", "write", "quit".</P>
+
+
+<PRE>
+(expand-from-string-table "Command: " "exit read write quit")</PRE>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="expand-mlisp-word">(<B>expand-mlisp-word</B> <CODE>command-name</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Inserts the name of the specified function in a buffer using variable name completion.</P>
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="extend-database-search-list">(<B>extend-database-search-list</B> <CODE>dbname filename access</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Adds the given database file to the database search list <CODE>dbname</CODE>. If the database is already in the search list, it is left there. Otherwise, the new database is added at the beginning of the database list.</P>
+
+<P>Databases are help or macro libraries.</P>
+
+<P>Access is a bit mask that specifies the type of access required and it is optional. The allowable values of <CODE>access</CODE> are:</P>
+
+<UL>
+<LI>Bit 0: force read-only access</LI>
+
+<LI>Bit 1:  Keep the file open between database accesses</LI>
+
+</UL>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_f.html#fetch-database-entry">fetch-database-entry</A></LI>
+<LI><A HREF="fn_f.html#fetch-help-database-entry">fetch-help-database-entry</A></LI>
+<LI><A HREF="fn_l.html#list-databases">list-databases</A></LI>
+<LI><A HREF="fn_p.html#put-database-entry">put-database-entry</A></LI>
+
+</UL>
+
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="external-function">(<B>external-function</B> <CODE>function file routine</CODE>)</A></P>
+
+<BLOCKQUOTE>
+<P>Declares <CODE>function</CODE> as being provided by <CODE>routine</CODE> in the image <CODE>file</CODE>. This image is dynamically linked into the Emacs process when the function is called.</P>
+</BLOCKQUOTE>
+
+<HR>
+</BODY>
+</HTML>
+

@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<HTML>
+<HEAD>
+<TITLE>Functions G*</TITLE>
+
+<LINK REL="STYLESHEET" HREF="styles.css">
+</HEAD>
+<BODY>
+<HR>
+<P><A name="get-tty-buffer"></A>(<B>get-tty-buffer</B> <CODE>prompt-string [default-value]</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Prompts for a buffer name using command completion and providing help. The function returns the name of the buffer as a string.</P>
+
+<P>The optional <CODE>default-value</CODE> parameter provides the default input.</P>
+
+<P><B>Example</B> To insert a buffer name into the current buffer:</P>
+
+<PRE>
+(insert-string (get-tty-buffer "Save buffer: "))
+</PRE>
+
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="#get-tty-character">get-tty-character</A></LI>
+<LI><A HREF="#get-tty-command">get-tty-command</A></LI>
+<LI><A HREF="#get-tty-file">get-tty-file</A></LI>
+<LI><A HREF="#get-tty-string">get-tty-string</A></LI>
+<LI><A HREF="#get-tty-variable">get-tty-variable</A></LI>
+</UL>
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="get-tty-character"></A>(<B>get-tty-character</B>)</P>
+
+<BLOCKQUOTE>
+<P>Reads a single character from the terminal and returns it as an integer. The cursor is not moved to the message area, but is left in the text window; this  is  useful  when writing things like query-replace and incremental search programs in MLisp.</P>
+
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="#get-tty-buffer">get-tty-buffer</A></LI>
+<LI><A HREF="#get-tty-command">get-tty-command</A></LI>
+<LI><A HREF="#get-tty-file">get-tty-file</A></LI>
+<LI><A HREF="#get-tty-string">get-tty-string</A></LI>
+<LI><A HREF="#get-tty-variable">get-tty-variable</A></LI>
+</UL>
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="get-tty-command"></A>(<B>get-tty-command</B> <CODE>command-name [default-value]</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Prompts for the name of a declared function (using command completion and providing help) and returns the name of the function as a string.</P>
+
+<P>The optional <CODE>default-value</CODE> parameter provides the default input.</P>
+
+<P><B>Example:</B> The <CODE>expand-mlisp-word</CODE> function is simply:</P>
+
+<PRE>
+(insert-string (get-tty-command ": expand-mlisp-word "))
+</PRE>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="#get-tty-buffer">get-tty-buffer</A></LI>
+<LI><A HREF="#get-tty-character">get-tty-character</A></LI>
+<LI><A HREF="#get-tty-file">get-tty-file</A></LI>
+<LI><A HREF="#get-tty-string">get-tty-string</A></LI>
+<LI><A HREF="#get-tty-variable">get-tty-variable</A></LI>
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="get-tty-directory"></A>(<B>get-tty-directory</B> <CODE>prompt [default-value]</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Prompts for a directory name using command completion and providing help. The function returns the name of the directory as a string.</P>
+
+<P>The optional <CODE>default-value</CODE> parameter provides the default input.</P>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="get-tty-file"></A>(<B>get-tty-file</B> <CODE>prompt [default-value]</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Prompts for a file name using command completion and providing help. The function returns the name of the file as a string.</P>
+
+<P>The optional <CODE>default-value</CODE> parameter provides the default input.</P>
+
+
+<P><B>Example: </B>Insert a file name into the buffer:</P>
+
+<PRE>
+(insert-string (get-tty-file "Insert file name: "))
+</PRE>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="#get-tty-buffer">get-tty-buffer</A></LI>
+<LI><A HREF="#get-tty-character">get-tty-character</A></LI>
+<LI><A HREF="#get-tty-command">get-tty-command</A></LI>
+<LI><A HREF="#get-tty-string">get-tty-string</A></LI>
+<LI><A HREF="#get-tty-variable">get-tty-variable</A></LI>
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="get-tty-string"></A>(<B>get-tty-string</B> <CODE>prompt [default-value]</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Reads a string from the terminal using its single string parameter as a prompt. Generally use inside MLisp programs to ask questions.</P>
+
+<P>The optional <CODE>default-value</CODE> parameter provides the default input.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="#get-tty-buffer">get-tty-buffer</A></LI>
+<LI><A HREF="#get-tty-character">get-tty-character</A></LI>
+<LI><A HREF="#get-tty-command">get-tty-command</A></LI>
+<LI><A HREF="#get-tty-file">get-tty-file</A></LI>
+<LI><A HREF="#get-tty-variable">get-tty-variable</A></LI>
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="get-tty-variable"></A>(<B>get-tty-variable</B> <CODE>prompt [default-value]</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Prompts for the name of a declared variable (using command completion and providing help) and returns the name of the variable as a string.</P>
+
+<P>The optional <CODE>default-value</CODE> parameter provides the default input.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="#get-tty-buffer">get-tty-buffer</A></LI>
+<LI><A HREF="#get-tty-character">get-tty-character</A></LI>
+<LI><A HREF="#get-tty-command">get-tty-command</A></LI>
+<LI><A HREF="#get-tty-file">get-tty-file</A></LI>
+<LI><A HREF="#get-tty-string">get-tty-string</A></LI>
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="getenv"></A>(<B>getenv</B> <CODE>env-name</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Returns the value of the named environment symbol.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_p.html#putenv">putenv</A></LI>
+</UL>
+
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="global-binding-of"></A>(<B>global-binding-of</B> <CODE>key-sequence</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Returns the name of the function that the provided key sequence will invoke, using the global keymap.</P>
+
+<P><B>See also:</B></P>
+
+<UL>
+<LI><A HREF="fn_l.html#local-binding-of">local-binding-of</A></LI>
+<LI><A HREF="fn_d.html#describe-bindings">describe-bindings</A></LI>
+</UL>
+
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="goto-character"></A>(<B>goto-character</B> <CODE>expression</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>Moves dot to the specified character position.</P>
+
+<P><B>Example:</B>Go to character position 22:</P>
+
+<PRE>
+(goto-character 22)
+</PRE>
+
+</BLOCKQUOTE>
+
+<HR>
+<P><A name="goto-window-at-x-y"></A>(<B>goto-window-at-x-y</B> <CODE>X-coordinate Y-coordinate</CODE>)</P>
+
+<BLOCKQUOTE>
+<P>This MLisp function is for supporting a mouse-style pointing device. The function takes two arguments, the X and Y co-ordinates of the pointer on the screen.</P>
+
+<P><CODE>goto-window-at-x-y</CODE> performs two operations:</P>
+
+<UL>
+<LI>It changes the current window to be the one at the X and Y co-ordinates. A window is considered to be the mode line of the window, the vertical dividing line to its right and the content region of the window.</LI>
+
+<LI>If the co-ordinates are in the contents of the window, dot is set to the position nearest the co-ordinates, otherwise dot is left unchanged.</LI>
+</UL>
+
+<P><CODE>goto-window-at-x-y</CODE> returns an integer result that tells you which part of a window the co-ordinates are in. The result is one of the following:</P>
+
+<UL>
+<LI>0 -- in the content region of the window</LI>
+
+<LI>1 -- in the mode-line</LI>
+
+<LI>2 -- in the vertical divider</LI>
+
+<LI>3 -- in both the mode-line and the vertical divider</LI>
+</UL>
+</BLOCKQUOTE>
+
+<HR>
+</BODY>
+</HTML>
+
