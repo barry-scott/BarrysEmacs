@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1995-2004 Barry A. Scott
+//    Copyright (c) 1995-2010 Barry A. Scott
 //
 #include <emacsutl.h>
 #include <emobject.h>
@@ -59,18 +59,6 @@ EmacsString::EmacsString( const unsigned char *string )
     check_for_bad_value( _rep );
 }
 
-EmacsString::EmacsString( char *string )
-: _rep( EMACS_NEW EmacsStringRepresentation( copy, 0, strlen( string ), (unsigned char *)string ) )
-{
-    check_for_bad_value( _rep );
-}
-
-EmacsString::EmacsString( unsigned char *string )
-: _rep( EMACS_NEW EmacsStringRepresentation( copy, 0, strlen( (const char *)string ), (unsigned char *)string ) )
-{
-    check_for_bad_value( _rep );
-}
-
 static int wchar_strlen( const wchar_t *string )
 {
     const wchar_t *p = string;
@@ -99,18 +87,6 @@ EmacsString::EmacsString( enum string_type type )
     check_for_bad_value( _rep );
 }
 
-EmacsString::EmacsString( enum string_type type, unsigned char *string )
-: _rep( EMACS_NEW EmacsStringRepresentation( type, _str_len( string )+1, _str_len( string ), string ) )
-{
-    check_for_bad_value( _rep );
-}
-
-EmacsString::EmacsString( enum string_type type, unsigned char *string, int length )
-: _rep( EMACS_NEW EmacsStringRepresentation( type, length+1, length, string ) )
-{
-    check_for_bad_value( _rep );
-}
-
 EmacsString::EmacsString( enum string_type type, const unsigned char *string )
 : _rep( EMACS_NEW EmacsStringRepresentation( type, _str_len( string )+1, _str_len( string ), string ) )
 {
@@ -119,18 +95,6 @@ EmacsString::EmacsString( enum string_type type, const unsigned char *string )
 
 EmacsString::EmacsString( enum string_type type, const unsigned char *string, int length )
 : _rep( EMACS_NEW EmacsStringRepresentation( type, length+1, length, string ) )
-{
-    check_for_bad_value( _rep );
-}
-
-EmacsString::EmacsString( enum string_type type, char *string )
-: _rep( EMACS_NEW EmacsStringRepresentation( type, _str_len( (const unsigned char *)string )+1, _str_len( (const unsigned char *)string ), (unsigned char *)string ) )
-{
-    check_for_bad_value( _rep );
-}
-
-EmacsString::EmacsString( enum string_type type, char *string, int length )
-: _rep( EMACS_NEW EmacsStringRepresentation( type, length+1, length, (unsigned char *)string ) )
 {
     check_for_bad_value( _rep );
 }
@@ -148,12 +112,6 @@ EmacsString::EmacsString( enum string_type type, const char *string, int length 
 }
 
 EmacsString::EmacsString( const std::string &string )
-: _rep( EMACS_NEW EmacsStringRepresentation( copy, 0, string.length(), (unsigned char *)string.c_str() ) )
-{
-    check_for_bad_value( _rep );
-}
-
-EmacsString::EmacsString( std::string &string )
 : _rep( EMACS_NEW EmacsStringRepresentation( copy, 0, string.length(), (unsigned char *)string.c_str() ) )
 {
     check_for_bad_value( _rep );

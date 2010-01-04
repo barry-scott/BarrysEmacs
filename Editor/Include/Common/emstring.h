@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1995-2004 Barry A. Scott
+//    Copyright (c) 1995-2010 Barry A. Scott
 //
 
 //
@@ -30,22 +30,15 @@ public:
     EmacsString( void );
     EmacsString( const char *string );
     EmacsString( const unsigned char *string );
-    EmacsString( char *string );
-    EmacsString( unsigned char *string );
     EmacsString( const wchar_t *string );
     EmacsString( const wchar_t *string, int length );
     EmacsString( enum string_type type );
-    EmacsString( enum string_type type, char *string );
-    EmacsString( enum string_type type, char *string, int length );
     EmacsString( enum string_type type, const char *string );
     EmacsString( enum string_type type, const char *string, int length );
-    EmacsString( enum string_type type, unsigned char *string );
-    EmacsString( enum string_type type, unsigned char *string, int length );
     EmacsString( enum string_type type, const unsigned char *string );
     EmacsString( enum string_type type, const unsigned char *string, int length );
     EmacsString( const EmacsString &string );
     EmacsString( const std::string &string );
-    EmacsString( std::string &string );
 
     EmacsString( EmacsStringRepresentation *rep );
 
