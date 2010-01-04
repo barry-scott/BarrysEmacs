@@ -10,8 +10,8 @@ PYTHON=/usr/bin/python
 PYCXX=../Imports/pycxx-$(PYCXX_VER)
 PYCXXSRC=../Imports/pycxx-$(PYCXX_VER)/Src
 
-CCCFLAGS=-DPYBEMACS=1 -Wall -fPIC -fexceptions -frtti -I$(PYCXX) -I$(PYCXXSRC) -I/usr/include/python2.6 -DNDEBUG -DDARWIN -DPYCXX_PYTHON_2TO3 -g -O0
-CCFLAGS=-Wall -fPIC -I$(PYCXX) -I$(PYCXX)/Src -I/usr/include/python2.6 -g -O0
+CCCFLAGS=-DPYBEMACS=1 -Wall -fPIC -fexceptions -frtti -I$(PYCXX) -I$(PYCXXSRC) -I/usr/include/python${PYTHON_VERSION} -DNDEBUG -DDARWIN -DPYCXX_PYTHON_2TO3 -g -O0
+CCFLAGS=-Wall -fPIC -I$(PYCXX) -I$(PYCXX)/Src -I/usr/include/python${PYTHON_VERSION} -g -O0
 LDSHARED=$(CCC) -shared $(CCCFLAGS)
 LDLIBS=
 

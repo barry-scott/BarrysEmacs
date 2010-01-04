@@ -3,7 +3,7 @@
 #
 #	build emacs for Mac OS X, FreeBSD, OpenBSD and Linux
 #
-PYTHON=python
+PYTHON=python${PYTHON_VERSION}
 
 ifeq (${BUILDER_CFG_PLATFORM},FreeBSD)
 BEMACS_DOC_DIR=$(BUILDER_TOP_DIR)/Kits/FreeBSD/pkg

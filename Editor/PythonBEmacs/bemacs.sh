@@ -9,8 +9,8 @@ then
     echo
     echo "run -u be_main.py " "$@"
     echo
-    gdb python2.6
+    gdb python${PYTHON_VERSION}
 
 else
-    python2.6 -u be_main.py "$@"
+    python${PYTHON_VERSION} -u be_main.py "$@"
 fi
