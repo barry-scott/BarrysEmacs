@@ -5,15 +5,15 @@ PYCXX_VER=6.2.0
 CCC=g++ -arch i386
 CC=gcc -arch i386
 
-PYTHON_FRAMEWORK=/Library/Frameworks/Python.framework/Versions/2.6
+PYTHON_FRAMEWORK=/Library/Frameworks/Python.framework/Versions/${PYTHON_VERSION}
 PYTHON=$(PYTHON_FRAMEWORK)/Resources/Python.app/Contents/MacOS/Python
 
 PYCXX=../Imports/pycxx-$(PYCXX_VER)
 PYCXXSRC=../Imports/pycxx-$(PYCXX_VER)/Src
 
 
-CCCFLAGS=-DPYBEMACS=1 -Wall -fPIC -fexceptions -frtti -I$(PYCXX) -I$(PYCXXSRC) -I$(PYTHON_FRAMEWORK)/include/python2.6 -DNDEBUG -DDARWIN -DPYCXX_PYTHON_2TO3 -g -O0
-CCFLAGS=-Wall -fPIC -I$(PYCXX) -I$(PYCXX)/Src -I$(PYTHON_FRAMEWORK)/include/python2.6 -g -O0
+CCCFLAGS=-DPYBEMACS=1 -Wall -fPIC -fexceptions -frtti -I$(PYCXX) -I$(PYCXXSRC) -I$(PYTHON_FRAMEWORK)/include/python${PYTHON_VERSION} -DNDEBUG -DDARWIN -DPYCXX_PYTHON_2TO3 -g -O0
+CCFLAGS=-Wall -fPIC -I$(PYCXX) -I$(PYCXX)/Src -I$(PYTHON_FRAMEWORK)/include/python${PYTHON_VERSION} -g -O0
 LDSHARED=$(CCC) -bundle -g -u _PyMac_Error -framework System $(PYTHON_FRAMEWORK)/Python -framework CoreFoundation -framework Kerberos -framework Security
 LDLIBS=
 

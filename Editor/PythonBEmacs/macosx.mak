@@ -1,7 +1,7 @@
 #
 #	Mac OS X makefile for WorkBench
 #
-PYTHON=python2.6
+PYTHON=python${PYTHON_VERSION}
 
 all: be_images.py
 
