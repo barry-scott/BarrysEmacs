@@ -144,6 +144,7 @@ key_name LK201_key_names( LK201_key_name_entries, sizeof( LK201_key_name_entries
 
 static key_name_entry PC_key_name_entries[] =
 {
+    // This list must be kept i sorted order
     key_name_entry("csi",                           "\033[" ),
     key_name_entry("ctrl-backspace",                "\033[85~" ),
     key_name_entry("ctrl-delete",                   "\033[53~" ),
@@ -204,6 +205,9 @@ static key_name_entry PC_key_name_entries[] =
     key_name_entry("down",                          "\033[B" ),
     key_name_entry("end",                           "\033[4~" ),
     key_name_entry("f1",                            "\033[17~" ),
+    key_name_entry("f10",                           "\033[28~" ),
+    key_name_entry("f11",                           "\033[29~" ),
+    key_name_entry("f12",                           "\033[31~" ),
     key_name_entry("f2",                            "\033[18~" ),
     key_name_entry("f3",                            "\033[19~" ),
     key_name_entry("f4",                            "\033[20~" ),
@@ -212,9 +216,6 @@ static key_name_entry PC_key_name_entries[] =
     key_name_entry("f7",                            "\033[24~" ),
     key_name_entry("f8",                            "\033[25~" ),
     key_name_entry("f9",                            "\033[26~" ),
-    key_name_entry("f10",                           "\033[28~" ),
-    key_name_entry("f11",                           "\033[29~" ),
-    key_name_entry("f12",                           "\033[31~" ),
     key_name_entry("home",                          "\033[1~" ),
     key_name_entry("insert",                        "\033[2~" ),
     key_name_entry("kp-divide",                     "\033OQ" ),
@@ -283,7 +284,7 @@ static key_name_entry PC_key_name_entries[] =
     key_name_entry("shift-scroll-lock",             "\033[133~" ),
     key_name_entry("shift-up",                      "\033[107~" ),
     key_name_entry("ss3",                           "\033O" ),
-    key_name_entry("up",                "\033[A" )
+    key_name_entry("up",                            "\033[A" )
 };
 key_name PC_key_names( PC_key_name_entries, sizeof( PC_key_name_entries ) );
 

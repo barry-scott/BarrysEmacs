@@ -1,6 +1,7 @@
 //
 //    os_pybemacs.h
 //
+#include    <CXX/WrapPython.h>
 #include    <sys/param.h>
 #include    <dirent.h>
 
@@ -16,31 +17,27 @@
 #elif defined( __FreeBSD__ )
 # define OS_VERSION "FreeBSD"
 # define CPU_TYPE "i386"
-# define KEYBOARD_TYPE KEYBOARD_TYPE_PC
 
 #elif defined( __OpenBSD__ )
 # define OS_VERSION "OpenBSD"
 # define CPU_TYPE "i386"
-# define KEYBOARD_TYPE KEYBOARD_TYPE_PC
 
 #elif defined( __APPLE_CC__ )
 # define OS_VERSION "Mac OS X"
 # define CPU_TYPE "i386"
-# define KEYBOARD_TYPE KEYBOARD_TYPE_PC
 
 #elif defined( __linux__ )
 # define OS_VERSION "linux"
 # define CPU_TYPE "i386"
-# define KEYBOARD_TYPE KEYBOARD_TYPE_PC
 
 #elif defined( __hpux )
 # define OS_VERSION "hpux"
 # if defined( __hppa )
 #  define CPU_TYPE "pa_risc"
-#  define KEYBOARD_TYPE KEYBOARD_TYPE_HP
+
 # else
 #  define CPU_TYPE "m68k"
-#  define KEYBOARD_TYPE KEYBOARD_TYPE_OLD_HP
+
 # endif
 //# undef    TOOLBAR_TOGGLE_BUTTONS    // not working on HP-UX
 # define getws getcwd
@@ -48,7 +45,7 @@
 #elif defined( _AIX )
 # define OS_VERSION "aix"
 # define CPU_TYPE "ppc"
-# define KEYBOARD_TYPE KEYBOARD_TYPE_HP
+
 //#define getws getcwd
 
 #else
@@ -61,9 +58,6 @@
 #define __has_array_new__ 1
 #include <typeinfo>
 #endif
-
-
-#undef KEYBOARD_TYPE
 
 # define O_BINARY 0
 # define REAL_TTY 1
@@ -112,10 +106,6 @@ const int DBG_NO_DBG_MSG    (0x00001000&DBG___ON);  // always defined
 
 #define ROOT_CHAR_POS       0    // root is "/"
 
-#define NETWORK_ID
-extern unsigned char SysnameHacking[20];
-# define SystemName ((unsigned char *) sprintf(SysnameHacking, "%s", sysname ()))
-
 #define BACKUP_EXTENSION    ".bak"
 #define CHECKPOINT_EXTENSION ".ckp"
 
@@ -125,12 +115,3 @@ extern unsigned char SysnameHacking[20];
 #define EMACS_PATH          get_config_env("emacs_path")
 #define EMACS_TMP_PATH      u_str("/tmp")
 #define EMACS_DB_DEFAULT    u_str("")
-
-class EmacsProcess;
-typedef unsigned long XtInputId;
-typedef EmacsProcess *XtPointer;
-typedef void (*XtInputCallbackProc) (XtPointer, int *, XtInputId * );
-#define XtInputReadMask 1
-#define XtInputWriteMask 2
-
-extern void OutputDebugString( const char *message );

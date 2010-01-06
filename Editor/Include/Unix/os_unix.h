@@ -129,10 +129,6 @@ const int DBG_NO_DBG_MSG    (0x00001000&DBG___ON);  // always defined
 
 # define ROOT_CHAR_POS    0    // root is "/"
 
-#define NETWORK_ID
-extern unsigned char SysnameHacking[20];
-# define SystemName ((unsigned char *) sprintf(SysnameHacking, "%s", sysname ()))
-
 #define BACKUP_EXTENSION ".bak"
 #define CHECKPOINT_EXTENSION ".ckp"
 

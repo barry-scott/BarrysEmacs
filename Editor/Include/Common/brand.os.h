@@ -22,7 +22,6 @@
 //    SUBPROCESSES  - Support subprocesses
 //    ALIGN_ACCESS  - True if the hardware only supports aligned memory
 //    USER_ID       - A system with usernames and the like
-//    NETWORK_ID    - A system with a network address and name
 //    XTERM         - X interface
 //
 //
