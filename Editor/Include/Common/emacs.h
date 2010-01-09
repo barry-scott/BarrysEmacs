@@ -1,7 +1,7 @@
 //
 //    emacs.h
 //
-//    Copyright 1986-2006 Barry A. Scott
+//    Copyright 1986-2010 Barry A. Scott
 //
 #if defined( _WIN32 ) && defined( _DEBUG )
 #undef _DEBUG
@@ -28,11 +28,6 @@ class EmacsBufferJournal;
 class EmacsProcess;
 class VariableName;
 class EmacsString;
-
-//
-//    typedefs for fundemental types
-//
-typedef unsigned char EmacsChar_t;
 
 //
 //    externs that need forward declaration

@@ -30,6 +30,7 @@ obj_files = $(os_specific_obj_files) \
  $(edit_obj)emacsrtl.o \
  $(edit_obj)emarray.o \
  $(edit_obj)emstring.o \
+ $(edit_obj)emunicode.o \
  $(edit_obj)emstrtab.o \
  $(edit_obj)errlog.o \
  $(edit_obj)ext_func.o \
@@ -138,6 +139,7 @@ db_obj_files= \
  $(edit_obj)doprint.o \
  $(edit_obj)em_stat.o \
  $(edit_obj)emstring.o \
+ $(edit_obj)emunicode.o \
  $(edit_obj)file_name_compare.o \
  $(edit_obj)ndbm.o \
  $(edit_obj)stub_rtl.o \
@@ -153,9 +155,9 @@ $(edit_obj)dbadd.o : Utilities/dbadd/dbadd.cpp
 	@ echo Info: Compile Utilities/dbadd/dbadd.cpp
 	@ $(cpp) $(cc_flags) -o $(edit_obj)dbadd.o Utilities/dbadd/dbadd.cpp
 
-$(edit_exe)bemacs : $(edit_obj)emclient.o $(edit_obj)em_stat.o $(edit_obj)emstring.o $(edit_obj)stub_rtl.o $(os_specific_client_obj_files) $(edit_obj)doprint.o
+$(edit_exe)bemacs : $(edit_obj)emclient.o $(edit_obj)em_stat.o $(edit_obj)emstring.o $(edit_obj)emunicode.o $(edit_obj)stub_rtl.o $(os_specific_client_obj_files) $(edit_obj)doprint.o
 	@ echo Info: Link $(edit_exe)bemacs
-	$(ld_bintools) -o $(edit_obj)bemacs -g $(os_specific_client_ld_options) $(edit_obj)emclient.o $(edit_obj)em_stat.o $(edit_obj)emstring.o $(edit_obj)stub_rtl.o $(os_specific_client_obj_files) $(edit_obj)doprint.o
+	$(ld_bintools) -o $(edit_obj)bemacs -g $(os_specific_client_ld_options) $(edit_obj)emclient.o $(edit_obj)em_stat.o $(edit_obj)emstring.o $(edit_obj)emunicode.o $(edit_obj)stub_rtl.o $(os_specific_client_obj_files) $(edit_obj)doprint.o
 	cp $(edit_obj)bemacs $(edit_exe)bemacs
 	strip $(edit_exe)bemacs
 
@@ -357,6 +359,10 @@ $(edit_obj)emarray.o : Source/Common/emarray.cpp
 $(edit_obj)emstring.o : Source/Common/emstring.cpp
 	@ echo Info: Compile Source/Common/emstring.cpp
 	@ $(cpp) $(cc_flags) -o $(edit_obj)emstring.o Source/Common/emstring.cpp
+
+$(edit_obj)emunicode.o : Source/Common/emunicode.cpp
+	@ echo Info: Compile Source/Common/emunicode.cpp
+	@ $(cpp) $(cc_flags) -o $(edit_obj)emunicode.o Source/Common/emunicode.cpp
 
 $(edit_obj)emstrtab.o : Source/Common/emstrtab.cpp
 	@ echo Info: Compile Source/Common/emstrtab.cpp

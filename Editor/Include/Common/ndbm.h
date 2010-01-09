@@ -32,7 +32,7 @@ public:
         long calchash();
         int cmpdatum( const datum &other );
 
-        unsigned char *dptr;
+        const unsigned char *dptr;
         int dsize;
         long val1, val2;
     private:

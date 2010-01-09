@@ -1,6 +1,6 @@
 //
 //    emacsutl.h
-//    Copyright (c) 1996 Barry A. Scott
+//    Copyright (c) 1996-2010 Barry A. Scott
 //
 //    Contains the mandatory definitions to configure emacs code
 //
@@ -75,7 +75,7 @@ inline int _str_len( const unsigned char *a )
 #define _str_nicmp( a, b, c ) emacs_strnicmp( a, b, c )
 #define _str_ncpy( a, b, c ) u_str( strncpy( s_str( a ), s_str( b ), c ) )
 #define _str_ncat( a, b, c ) u_str( strncat( s_str( a ), s_str( b ), c ) )
-#define    _str_str( a, b ) u_str( strstr( s_str( a ), s_str( b ) ) )
+#define _str_str( a, b ) u_str( strstr( s_str( a ), s_str( b ) ) )
 #define _str_lwr( a ) emacs_strlwr( a )
 #define _str_upr( a ) emacs_strupr( a )
 

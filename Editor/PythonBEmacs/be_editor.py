@@ -39,6 +39,10 @@ class BEmacs(_bemacs.BemacsEditor):
         self.initEditor()
         self.log.debug( 'BEmacs.initEmacsProfile() geometryChange %r %r' % (self.window.term_width, self.window.term_length) )
         self.geometryChange( self.window.term_width, self.window.term_length )
+
+        self.log.debug( 'TESTING' )
+        self.log.debug( _bemacs.function.char_to_string( 196 ) )
+
         self.log.debug( 'BEmacs.initEmacsProfile() emacs_profile.ml' )
         _bemacs.function.execute_mlisp_file( 'emacs_library:emacs_profile.ml' )
         self.executeEnterHooks()

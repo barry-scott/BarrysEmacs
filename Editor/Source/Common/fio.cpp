@@ -54,11 +54,11 @@ EmacsFile::~EmacsFile()
 int EmacsFile::fio_access( const EmacsString &filename )
 {
     //  6 means read and write, 4 means read
-    int r = access( filename, 6 );
+    int r = access( filename.sdata(), 6 );
     if( r == 0 )
         return 1;
 
-    r = access( filename, 4 );
+    r = access( filename.sdata(), 4 );
     if( r == 0 )
         return -1;
 
@@ -67,7 +67,7 @@ int EmacsFile::fio_access( const EmacsString &filename )
 
 bool EmacsFile::fio_file_exists( const EmacsString &filename )
 {
-    int r = access( filename, 0 );
+    int r = access( filename.sdata(), 0 );
     return r != -1;    // true if the file exists
 }
 
@@ -331,7 +331,7 @@ time_t EmacsFile::fio_file_modify_date( const EmacsString &filename )
 {
     EmacsFileStat s;
 
-    if( !s.stat( filename ) )
+    if( !s.stat( filename.sdata() ) )
         return 0;
 
     return s.data().st_mtime;

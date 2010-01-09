@@ -262,20 +262,19 @@ EmacsString br_get_string_interactive( int breaksp, const EmacsString &prefix, c
     emacs_assert( cur_exec == NULL );
 
     if( command_file.fio_is_open() )
-            //
-            // get the string from the command file
-            //
     {
+        //
+        // get the string from the command file
+        //
         unsigned char lbuf[BUFFERSIZE + 1];
         int read_size;
 
-        read_size = command_file.fio_get_with_prompt( lbuf, sizeof(lbuf), prompt);
+        read_size = command_file.fio_get_with_prompt( lbuf, sizeof(lbuf), prompt.data() );
         if( read_size <= 0 )
         {
             error("No more input available");
             return EmacsString::null;
         }
-
 
         return EmacsString( EmacsString::copy, lbuf, read_size );
     }

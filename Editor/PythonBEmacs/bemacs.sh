@@ -2,6 +2,7 @@
 TARGET=$( ../os_name.ksh )
 export PYTHONPATH=$(pwd):$(cd ../${TARGET}/obj; pwd)
 export emacs_library=~/pybemacs-kit
+export EMACS_CONTROL_STRING_PROCESSING=0
 
 if [ "$1" = "--gdb" ]
 then

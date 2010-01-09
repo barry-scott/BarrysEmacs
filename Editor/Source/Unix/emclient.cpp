@@ -113,12 +113,12 @@ int main( int argc, char ** argv )
             EmacsString app( realPathToBemacs( argv[0] ) ); app.append("_server");
             if( do_not_fork )
             {
-                argv[0] = app.sdataHack();
+                argv[0] = const_cast<char *>( app.sdata() );
                 execvp( argv[0], argv );
             }
             else
             {
-                new_server_argv[0] = app.sdataHack();
+                new_server_argv[0] = const_cast<char *>( app.sdata() );
                 execvp( new_server_argv[0], new_server_argv );
             }
 
@@ -360,7 +360,7 @@ void make_fifo( const EmacsString &fifo )
     EmacsFileStat stats;
 
     off_t bytes_of_data;
-    if( stats.stat( fifo ) )
+    if( stats.stat( fifo.sdata() ) )
     {
         if( !S_ISFIFO( stats.data().st_mode ) )
             error( "Not a FIFO", fifo );
@@ -371,9 +371,9 @@ void make_fifo( const EmacsString &fifo )
     }
 
     std::cerr << "Replacing fifo " << fifo << " contains " << (int)bytes_of_data << " bytes of data." << std::endl;
-    remove( fifo );
+    remove( fifo.sdata() );
 
-    int rc = mkfifo( fifo, S_IRUSR|S_IWUSR );
+    int rc = mkfifo( fifo.sdata(), S_IRUSR|S_IWUSR );
     if( rc != 0 )
         error( "Cannot mkfifo", fifo );
     if( bytes_of_data == 0 )

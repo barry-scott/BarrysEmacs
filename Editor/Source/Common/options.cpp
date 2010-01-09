@@ -652,7 +652,7 @@ static void perform_bind
         switch( ml_value.exp_type() )
         {
         case ISINTEGER:
-            p.append( char( ml_value.asInt() ) );
+            p.append( (unsigned char)( ml_value.asInt() ) );
             break;
         default:
             p = ml_value.asString();

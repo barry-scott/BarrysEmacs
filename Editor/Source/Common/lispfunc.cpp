@@ -462,12 +462,12 @@ int to_col_command( void )
     }
 int char_to_string( void )
     {
-    int n = getnum(": unsigned char-to-string ");
+    int n = getnum(": char-to-string ");
 
-    unsigned char str[2];
-    str[0] = (unsigned char)n; str[1] = '\0';
+    EmacsCharQqq_t str[1];
+    str[0] = (EmacsCharQqq_t)n;
 
-    EmacsString string( str );
+    EmacsString string( EmacsString::copy, str, 1 );
     ml_value = string;
 
     return 0;
@@ -887,9 +887,7 @@ int putenv_command( void )
     else
         value = get_string_mlisp();
 
-    vname.append('=');
-    vname.append( value );
-    putenv( vname.sdataHack() );
+    setenv( vname.sdata(), value.sdata(), 1 );
 
     return 0;
 }

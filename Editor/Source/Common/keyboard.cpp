@@ -1426,14 +1426,14 @@ int convert_key_string_command( void )
 //
 int convert_key_string( const EmacsString &input, EmacsString &output )
 {
-#define    _qq_char( value ) output.append( (unsigned char)(value) )
+#define    _qq_char( value ) output.append( (EmacsCharQqq_t)(value) )
 
-    unsigned char ch;
+    EmacsCharQqq_t ch;
     int len;
     int csi_state = CSI_ST_NORMAL;
-    unsigned char hold[100];
-    unsigned char *hold_get_ptr;
-    unsigned char *hold_put_ptr;
+    EmacsCharQqq_t hold[100];
+    EmacsCharQqq_t *hold_get_ptr;
+    EmacsCharQqq_t *hold_put_ptr;
     int i;
 
     csi_state = CSI_ST_NORMAL;
@@ -1444,7 +1444,7 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
     //    If nothing special is requested just return
     //    the input as the result.
     //
-    if( ! cs_enabled )
+    if( !cs_enabled )
     {
         output = input;
         return 1;
@@ -1456,14 +1456,14 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
         for(;;)
         {
             switch( csi_state)
-        {
+            {
             case CSI_ST_NORMAL:
             {
                 if( cs_attr[ch]&M_CS_CVT_CSI )
                     ch = 0x9b;    // CSI
 
                 switch( ch )
-            {
+                {
                 case 0x1b:
                     csi_state = CSI_ST_ESC;
                     goto quit_loop_1;
@@ -1476,7 +1476,7 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
                 default:
                     _qq_char( ch );
                     goto quit_loop_1;
-            }
+                }
                 break;
             }
             case CSI_ST_ESC:
@@ -1526,17 +1526,20 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
                             }
                             key_num = key_num * 10 + ch - '0';
                         }
-                    {
+
+                        {
                         int key_bank = key_num/50;
                         key_num %= 50;
                         if( key_bank != 0 )
                             key_bank++;
                         _qq_char( 0x80+key_bank );
-                        _qq_char( (unsigned char)(key_num + ' ') );
-                    }
-                    csi_state = CSI_ST_NORMAL;
+                        _qq_char( (EmacsCharQqq_t)(key_num + ' ') );
+
+                        csi_state = CSI_ST_NORMAL;
                         goto quit_loop_1;
-                process_f_keys:
+                        }
+
+                    process_f_keys:
                         ;
                     }
                     else
@@ -1558,7 +1561,7 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
                         }
                         _qq_char( 0x81 );
                         hold_put_ptr = &hold_put_ptr[-1];
-                        _qq_char( (unsigned char)(event_num + 'A') );
+                        _qq_char( (EmacsCharQqq_t)(event_num + 'A') );
                         csi_state = CSI_ST_NORMAL;
                         goto quit_loop_1;
                     }
@@ -1582,16 +1585,17 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
                         }
                         _qq_char( 0x81 );
                         hold_put_ptr = &hold_put_ptr[-1];
-                        _qq_char( (unsigned char)(event_num + 'M') );
+                        _qq_char( (EmacsCharQqq_t)(event_num + 'M') );
                         csi_state = CSI_ST_NORMAL;
                         goto quit_loop_1;
                     }
                     else
+                    {
                         _qq_char( 0x9b );
+                    }
 
-                {
-                    unsigned char par_char;
-                    unsigned char *hold_get_ptr;
+                    EmacsCharQqq_t par_char;
+                    EmacsCharQqq_t *hold_get_ptr;
                     //
                     //    Find out how many parameters are present
                     //
@@ -1603,20 +1607,22 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
                         &&  ! (cs_attr[par_char]&M_CS_PAR_CHAR) )
                             _qq_char( par_char );
                     }
-                }
+
                     _qq_char( ch );
                     csi_state = CSI_ST_NORMAL;
                     goto quit_loop_1;
                 }
+
                 // syntax error in escape sequence
                 _qq_char( 0x9b );
                 hold_get_ptr = &hold[0];
                 while( hold_get_ptr != hold_put_ptr )
                     _qq_char( *hold_get_ptr++ );
+
                 csi_state = CSI_ST_NORMAL;
                 goto quit_loop_1;
             }
-        }
+            }
         }
     quit_loop_1:
             ;
@@ -1630,8 +1636,10 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
     {
         if( csi_state == CSI_ST_ESC )
             _qq_char( 0x1b );
+
         if( csi_state == CSI_ST_CSI )
             _qq_char( 0x9b );
+
         hold_get_ptr = &hold[0];
         while( hold_get_ptr != hold_put_ptr )
             _qq_char( *hold_get_ptr++ );

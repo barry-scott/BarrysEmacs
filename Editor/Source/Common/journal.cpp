@@ -885,7 +885,7 @@ int EmacsBufferJournal::recoverJournal( const EmacsString &journal_file )
     union journal_record *rec;
     EmacsString journal_filename;
 
-    FILE *file = fopen( journal_file, "r" BINARY_MODE );
+    FILE *file = fopen( journal_file.sdata(), "r" BINARY_MODE );
     if( file == NULL )
     {
         error( FormatString("Cannot open journal file %s") << journal_file );

@@ -907,7 +907,7 @@ void time_cancel_timeout(void)
 
 EmacsString get_config_env( const EmacsString &name )
 {
-    char *value = getenv( name );
+    char *value = getenv( name.sdata() );
 
     if( value != NULL )
         return value;

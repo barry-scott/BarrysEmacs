@@ -106,7 +106,7 @@ int emacs_stricmp( const unsigned char *, const unsigned char * )
 }
 EmacsString get_config_env( const EmacsString &name )
 {
-    char *value = getenv( name );
+    char *value = getenv( name.sdata() );
 
     if( value != NULL )
         return value;

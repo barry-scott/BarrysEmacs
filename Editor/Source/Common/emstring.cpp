@@ -5,12 +5,11 @@
 #include <emobject.h>
 #include <emstring.h>
 #include <assert.h>
-
+#include <emunicode.h>
 
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
-
 
 //
 //
@@ -29,7 +28,7 @@ EmacsStringRepresentation *EmacsString::empty_string;
 void EmacsString::init(void)
 {
     // emacs strings rely on the empty_string being setup
-    empty_string = EMACS_NEW EmacsStringRepresentation( keep, 0, 0, (unsigned char *)"" );
+    empty_string = EMACS_NEW EmacsStringRepresentation( keep, 0, 0, (EmacsChar_t *)"" );
     // empty_string must never go away
     empty_string->ref_count += 2;
     // other classes rely on null being setup
@@ -48,7 +47,7 @@ EmacsString::EmacsString( void )
 }
 
 EmacsString::EmacsString( const char *string )
-: _rep( EMACS_NEW EmacsStringRepresentation( keep, 0, strlen( string ), (unsigned char *)string ) )
+: _rep( EMACS_NEW EmacsStringRepresentation( keep, 0, strlen( string ), (EmacsChar_t *)string ) )
 {
     check_for_bad_value( _rep );
 }
@@ -99,6 +98,12 @@ EmacsString::EmacsString( enum string_type type, const unsigned char *string, in
     check_for_bad_value( _rep );
 }
 
+EmacsString::EmacsString( enum string_type type, const EmacsCharQqq_t *string, int length )
+: _rep( EMACS_NEW EmacsStringRepresentation( type, length+1, length, string ) )
+{
+    check_for_bad_value( _rep );
+}
+
 EmacsString::EmacsString( enum string_type type, const char *string )
 : _rep( EMACS_NEW EmacsStringRepresentation( type, _str_len( (const unsigned char *)string )+1, _str_len( (const unsigned char *)string ), (unsigned char *)string ) )
 {
@@ -141,7 +146,7 @@ EmacsString::~EmacsString()
         delete _rep;
 #if DBG_EMSTRING
     // if( this != &null )
-        _rep = NULL;
+        _rep = bad_value;
 #endif
 }
 
@@ -163,53 +168,13 @@ EmacsString &EmacsString::operator=( const EmacsString &string )
     return *this;
 }
 
-EmacsString &EmacsString::operator=( const char *string )
-{
-    check_for_bad_value( _rep );
-#if DBG_EMSTRING
-    emacs_assert( _rep->ref_count > 0 );
-#endif
-    _rep->ref_count--;
-    if( _rep->ref_count == 0 )
-        delete _rep;
-
-    _rep = EMACS_NEW EmacsStringRepresentation( copy, 0, strlen( string ), (const unsigned char *)string );
-    check_for_bad_value( _rep );
-    return *this;
-}
-
-EmacsString &EmacsString::operator=( const unsigned char *string )
-{
-    check_for_bad_value( _rep );
-#if DBG_EMSTRING
-    emacs_assert( _rep->ref_count > 0 );
-#endif
-    _rep->ref_count--;
-    if( _rep->ref_count == 0 )
-        delete _rep;
-
-    _rep = EMACS_NEW EmacsStringRepresentation( copy, 0, _str_len( string ), string );
-    check_for_bad_value( _rep );
-    return *this;
-}
-
 int EmacsString::compare( const EmacsString &str2 ) const
 {
     // is this a compare to self?
     if( _rep == str2._rep )
         return 0;    // yep then we match
 
-    return strcmp( (const char *)data(), (const char *)str2.data() );
-}
-
-int EmacsString::compare( const char *str2 ) const
-{
-    return strcmp( (const char *)data(), str2 );
-}
-
-int EmacsString::compare( const unsigned char *str2 ) const
-{
-    return strcmp( (const char *)data(), (const char *)str2 );
+    return unicode_strcmp( length(), unicode_data(), str2.length(), str2.unicode_data() );
 }
 
 int EmacsString::caseBlindCompare( const EmacsString &str2 ) const
@@ -218,24 +183,14 @@ int EmacsString::caseBlindCompare( const EmacsString &str2 ) const
     if( _rep == str2._rep )
         return 0;    // yep then we match
 
-    return emacs_stricmp( data(), str2.data() );
+    return unicode_stricmp( length(), unicode_data(), str2.length(), str2.unicode_data() );
 }
 
-int EmacsString::caseBlindCompare( const char *str2 ) const
-{
-    return emacs_stricmp( data(), (const unsigned char *)str2 );
-}
-
-int EmacsString::caseBlindCompare( const unsigned char *str2 ) const
-{
-    return emacs_stricmp( data(), str2 );
-}
-
-EmacsString &EmacsString::append( int length, const unsigned char *data )
+EmacsString &EmacsString::append( int length, const EmacsCharQqq_t *_data )
 {
     if( _rep == NULL )
     {
-        _rep = EMACS_NEW EmacsStringRepresentation( copy, string_growth_room, length, data );
+        _rep = EMACS_NEW EmacsStringRepresentation( copy, string_growth_room, length, _data );
         check_for_bad_value( _rep );
     }
     else
@@ -248,17 +203,19 @@ EmacsString &EmacsString::append( int length, const unsigned char *data )
             _rep->alloc_length |= 31;
             _rep->alloc_length++;
 
-            _rep->data = realloc_ustr( _rep->data, _rep->alloc_length );
+            _rep->data = reinterpret_cast<EmacsCharQqq_t *>( EMACS_REALLOC( _rep->data, sizeof( EmacsCharQqq_t )*(_rep->alloc_length), malloc_type_char ) );
         }
-        memcpy( _rep->data + _rep->length, data, length );
+        memcpy( &_rep->data[ _rep->length ], _data, sizeof( EmacsCharQqq_t )*length );
         _rep->length += length;
         _rep->data[ _rep->length ] = '\0';
     }
 
+    check_for_bad_value( _rep );
+
     return *this;
 }
 
-EmacsString &EmacsString::insert( int pos, int length, const unsigned char *data )
+EmacsString &EmacsString::insert( int pos, int length, const EmacsCharQqq_t *_data )
 {
     if( pos < 0 )
     {
@@ -271,7 +228,7 @@ EmacsString &EmacsString::insert( int pos, int length, const unsigned char *data
 
     if( _rep == NULL )
     {
-        _rep = EMACS_NEW EmacsStringRepresentation( copy, string_growth_room, length, data );
+        _rep = EMACS_NEW EmacsStringRepresentation( copy, string_growth_room, length, _data );
         check_for_bad_value( _rep );
     }
     else
@@ -284,46 +241,43 @@ EmacsString &EmacsString::insert( int pos, int length, const unsigned char *data
             _rep->alloc_length |= 31;
             _rep->alloc_length++;
 
-            _rep->data = realloc_ustr( _rep->data, _rep->alloc_length );
+            _rep->data = reinterpret_cast<EmacsCharQqq_t *>( EMACS_REALLOC( _rep->data, sizeof( EmacsCharQqq_t )*(_rep->alloc_length), malloc_type_char ) );
         }
 
-        memmove( _rep->data + pos + length, _rep->data + pos, _rep->length - pos );
-        memcpy( _rep->data + pos, data, length );
+        memmove( &_rep->data[ pos + length ], &_rep->data[ pos ], sizeof( EmacsCharQqq_t )*(_rep->length - pos) );
+        memcpy( &_rep->data[ pos ], _data, sizeof( EmacsCharQqq_t )*length );
         _rep->length += length;
         _rep->data[ _rep->length ] = '\0';
     }
 
+    check_for_bad_value( _rep );
+
     return *this;
 }
 
-EmacsString::operator const unsigned char *() const
+const EmacsCharQqq_t *EmacsString::unicode_data() const
 {
     return _rep->data;
 }
 
-EmacsString::operator const char *() const
+EmacsString::operator const char *()
 {
-    return (const char *)_rep->data;
+    return (const char *)_rep->get_utf8_data();
 }
 
-const unsigned char *EmacsString::data() const
+EmacsString::operator const unsigned char *()
 {
-    return _rep->data;
+    return _rep->get_utf8_data();
 }
 
 const char *EmacsString::sdata() const
 {
-    return (const char *)_rep->data;
+    return (const char *)_rep->get_utf8_data();
 }
 
-unsigned char *EmacsString::dataHack() const
+const unsigned char *EmacsString::data() const
 {
-    return _rep->data;
-}
-
-char *EmacsString::sdataHack() const
-{
-    return (char *)_rep->data;
+    return _rep->get_utf8_data();
 }
 
 int EmacsString::length() const
@@ -333,22 +287,17 @@ int EmacsString::length() const
 
 int EmacsString::first( char ch, int start_pos ) const
 {
-    // index of ch in string
-    const char *p = strchr( sdata()+start_pos, ch );
-    if( p == NULL )
-        return -1;
+    return index( (EmacsCharQqq_t)ch, start_pos );
+}
 
-    return p - sdata();
+int EmacsString::first( unsigned char ch, int start_pos ) const
+{
+    return index( (EmacsCharQqq_t)ch, start_pos );
 }
 
 int EmacsString::index( char ch, int start_pos ) const        // find the first ch starting at pos
 {
-    // index of ch in string
-    void *p = memchr( (void *)(sdata()+start_pos), ch, length()-start_pos );
-    if( p == NULL )
-        return -1;
-
-    return ((const char *)p) - sdata();
+    return index( (EmacsCharQqq_t)ch, start_pos );
 }
 
 int EmacsString::index( unsigned char ch, int start_pos ) const    // find the first ch starting at pos
@@ -356,11 +305,21 @@ int EmacsString::index( unsigned char ch, int start_pos ) const    // find the f
     return index( char( ch ), start_pos );
 }
 
+int EmacsString::index( EmacsCharQqq_t ch, int start_pos ) const        // find the first ch starting at pos
+{
+    // index of ch in string
+    for( int i=start_pos; i<_rep->length; ++i )
+        if( ch == _rep->data[ i ] )
+            return i;
+
+    return -1;
+}
+
 int EmacsString::index( const EmacsString &str, int start_pos ) const    // find the first str starting at pos
 {
     if( str.isNull() )
         return -1;
-    unsigned char first_char = str[0];
+    EmacsCharQqq_t first_char = str[0];
 
     int last_pos = _rep->length - str._rep->length;
     int pos = start_pos;
@@ -373,15 +332,10 @@ int EmacsString::index( const EmacsString &str, int start_pos ) const    // find
         // str cannot fit
         if( pos > last_pos )
             return -1;
-        if( memcmp( str.data(), data() + pos, str.length()  ) == 0 )
+        if( memcmp( str.unicode_data(), &unicode_data()[ pos ], sizeof( EmacsCharQqq_t )*str.length()  ) == 0 )
             return pos;
         pos++;
     }
-}
-
-int EmacsString::first( unsigned char ch, int start_pos ) const
-{
-    return index( (char)ch, start_pos );
 }
 
 int EmacsString::last( char ch, int start_pos ) const
@@ -390,10 +344,9 @@ int EmacsString::last( char ch, int start_pos ) const
     if( _rep == 0 )
         return -1;
 
-    const unsigned char *p = data();
-
-    for( int i=length()-1; i>=start_pos; i-- )
-        if( p[i] == ch )
+    // index of ch in string
+    for( int i=_rep->length - 1; i>=start_pos; --i )
+        if( ch == _rep->data[ i ] )
             return i;
 
     return -1;
@@ -465,8 +418,15 @@ void EmacsString::copy_on_write(void)
 {
     // its writeable if this is the only reference
     if( _rep->ref_count == 1 && _rep->type == free )
-        return;
+    {
+        if( _rep->utf8_data != NULL )
+        {
+            EMACS_FREE( _rep->utf8_data );
+            _rep->utf8_data = NULL;
+        }
 
+        return;
+    }
     // make a copy of the data
     EmacsStringRepresentation *new_rep = EMACS_NEW EmacsStringRepresentation( copy, 0, _rep->length, _rep->data );
 
@@ -495,7 +455,7 @@ EmacsString EmacsString::operator()( int first, int last ) const
         last = length();
     if( last > first )
         // return a substring
-        return EmacsString( copy, data() + first, last-first );
+        return EmacsString( copy, &unicode_data()[ first ], last-first );
 
     return EmacsString::null;
 }
@@ -506,7 +466,7 @@ EmacsString &EmacsString::toLower()
 
     for( int i=0; i<_rep->length; i++ )
         if( isupper( _rep->data[i] ) )
-            _rep->data[i] = (unsigned char)(_rep->data[i] + ('a' - 'A'));
+            _rep->data[i] = (EmacsCharQqq_t)(_rep->data[i] + ('a' - 'A'));
     return *this;
 }
 
@@ -516,38 +476,15 @@ EmacsString &EmacsString::toUpper()
 
     for( int i=0; i<_rep->length; i++ )
         if( islower( _rep->data[i] ) )
-            _rep->data[i] = (unsigned char)(_rep->data[i] + ('A' - 'a'));
+            _rep->data[i] = (EmacsCharQqq_t)(_rep->data[i] + ('A' - 'a'));
     return *this;
 }
 
-EmacsStringRepresentation::EmacsStringRepresentation
-    (
-    enum EmacsString::string_type _type,
-    int _alloc_length,
-    int _length,
-    unsigned char *_data
-    )
-: ref_count(1)
-, type( _type )
-, alloc_length( _alloc_length )
-, length( _length )
-, data( NULL )
-{
-    if( type == EmacsString::copy )
-    {
-        alloc_length = length+1;
-        alloc_length |= 15;
-        alloc_length++;
-
-        data = malloc_ustr( alloc_length );
-        memcpy( data, _data, length );
-        data[length] = 0;
-        type = EmacsString::free;
-    }
-    else
-        data = _data;
-}
-
+//================================================================================
+//
+//  EmacsStringRepresentation
+//
+//================================================================================
 EmacsStringRepresentation::EmacsStringRepresentation
     (
     enum EmacsString::string_type _type,
@@ -558,19 +495,43 @@ EmacsStringRepresentation::EmacsStringRepresentation
 : ref_count(1)
 , type( _type )
 , alloc_length( _alloc_length )
+, length( length_utf8_to_unicode( _length, _data ) )
+, data( NULL )
+, utf8_data( NULL )
+{
+    emacs_assert( _type != EmacsString::free );
+
+    data = reinterpret_cast<EmacsCharQqq_t *>( EMACS_MALLOC( sizeof( EmacsCharQqq_t )*(length+1), malloc_type_char ) );
+    convert_utf8_to_unicode( _data, length, data );
+    data[ length ] = 0;
+    type = EmacsString::free;
+}
+
+EmacsStringRepresentation::EmacsStringRepresentation
+    (
+    enum EmacsString::string_type _type,
+    int _alloc_length,
+    int _length,
+    const EmacsCharQqq_t *_data
+    )
+: ref_count(1)
+, type( _type )
+, alloc_length( _alloc_length )
 , length( _length )
 , data( NULL )
+, utf8_data( NULL )
 {
     if( type == EmacsString::copy )
     {
-        data = malloc_ustr( _length+1 );
-        memcpy( data, _data, length );
-        data[length] = 0;
-        _alloc_length = length + 1;
+        data = reinterpret_cast<EmacsCharQqq_t *>( EMACS_MALLOC( sizeof( EmacsCharQqq_t )*(_length+1), malloc_type_char ) );
+        memcpy( data, _data, sizeof( EmacsCharQqq_t )*length );
+        data[ length ] = 0;
         type = EmacsString::free;
     }
     else
-        data = (unsigned char *)_data;
+    {
+        data = const_cast<EmacsCharQqq_t *>( _data );
+    }
 }
 
 EmacsStringRepresentation::EmacsStringRepresentation
@@ -585,17 +546,17 @@ EmacsStringRepresentation::EmacsStringRepresentation
 , alloc_length( _alloc_length )
 , length( _length )
 , data( NULL )
+, utf8_data( NULL )
 {
     alloc_length = length+1;
     alloc_length |= 15;
     alloc_length++;
 
-    data = malloc_ustr( alloc_length );
-
+    data = reinterpret_cast<EmacsCharQqq_t *>( EMACS_MALLOC( sizeof( EmacsCharQqq_t )*(alloc_length), malloc_type_char ) );
     for( int i=0; i< length; i++ )
-        data[i] = (unsigned char)_data[i];
+        data[i] = _data[i];
 
-    data[length] = 0;
+    data[ length ] = 0;
     type = EmacsString::free;
 }
 
@@ -607,6 +568,25 @@ EmacsStringRepresentation::~EmacsStringRepresentation()
 #if DBG_EMSTRING
     data = NULL;
 #endif
+    if( utf8_data != NULL )
+    {
+        EMACS_FREE( utf8_data );
+        utf8_data = NULL;
+    }
+}
+
+const unsigned char *EmacsStringRepresentation::get_utf8_data()
+{
+
+    if( utf8_data == NULL )
+    {
+        int utf8_length = length_unicode_to_utf8( length, data );
+        utf8_data = malloc_ustr( utf8_length + 1 );
+        convert_unicode_to_utf8( length, data, utf8_data );
+        utf8_data[ utf8_length ] = 0;
+    }
+
+    return utf8_data;
 }
 
 //================================================================================

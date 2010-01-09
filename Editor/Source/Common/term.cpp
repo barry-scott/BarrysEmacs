@@ -205,7 +205,7 @@ public:
 
 int init_file_terminal( const EmacsString &file )
 {
-    theActiveView = new TerminalControl_FILE( file );
+    theActiveView = new TerminalControl_FILE( file.data() );
 
     return 1;
 }

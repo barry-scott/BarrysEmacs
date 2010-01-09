@@ -24,10 +24,10 @@ FileNameCompare *file_name_compare = &file_name_compare_case_sensitive;
 #include <pwd.h>
 const int IS_SUBDIR( 1 );
 
-int get_file_attr( const EmacsString &file, unsigned *attr )
+int get_file_attr( const EmacsString &filename, unsigned *attr )
 {
     EmacsFileStat s;
-    if( s.stat( file ) )
+    if( s.stat( filename.sdata() ) )
     {
         *attr = S_ISDIR(s.data().st_mode);
         return 1;
@@ -50,28 +50,28 @@ int file_is_directory( const EmacsString &file )
     return (attr & IS_SUBDIR) != 0;
 }
 
-int file_is_regular( const EmacsString &file )
+int file_is_regular( const EmacsString &filename )
 {
-    if( file.isNull() )
+    if( filename.isNull() )
         return 0;
 
     EmacsFileStat s;
-    if( s.stat( file ) )
+    if( s.stat( filename.sdata() ) )
         return S_ISREG( s.data().st_mode );
 
     return 0;
 }
 
 FileParse::FileParse()
-    : disk()            // disk:
-    , path()            // /path/
-    , filename()            // name
-    , filetype()            // .type
-    , result_spec()            // full file spec with all fields filled in
-    , wild(0)            // true if any field is wild
-    , filename_maxlen(0)        // how long filename can be
-    , filetype_maxlen(0)        // how long filetype can be
-    , file_case_sensitive(0)    // true if case is important
+: disk()            // disk:
+, path()            // /path/
+, filename()            // name
+, filetype()            // .type
+, result_spec()            // full file spec with all fields filled in
+, wild(0)            // true if any field is wild
+, filename_maxlen(0)        // how long filename can be
+, filetype_maxlen(0)        // how long filetype can be
+, file_case_sensitive(0)    // true if case is important
 { }
 
 void FileParse::init()

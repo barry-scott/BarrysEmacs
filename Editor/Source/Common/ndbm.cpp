@@ -666,7 +666,7 @@ database::datum::datum( database &_db, unsigned char *buf, int n )
 int database::datum::cmpdatum( const datum &d2 )
 {
     int n;
-    register unsigned char  *p1, *p2;
+    register const unsigned char  *p1, *p2;
 
     n = dsize;
     if( n != d2.dsize )
@@ -841,7 +841,7 @@ int database::chkblk( unsigned char buf[database::PBLKSIZ] )
 int database::put_db( const EmacsString &key, unsigned char *content, int contentlen )
 {
     datum keyd(*this);
-    keyd.dptr = key.dataHack();
+    keyd.dptr = key.data();
     keyd.dsize = key.length();
 
     datum value( fetch( keyd ) );
@@ -883,7 +883,7 @@ int database::get_db
 # endif
 
     datum value(*this);
-    value.dptr = key.dataHack();
+    value.dptr = key.data();
     value.dsize = key.length();
 
     value = fetch( value );
@@ -893,13 +893,13 @@ int database::get_db
     int contentlen = (int)value.val2;
     unsigned char *content = malloc_ustr( contentlen );
 
-    // this object now manages the mallocated memory
-    EmacsString new_value( EmacsString::free, content, contentlen );
-
     setup_db();
 
     lseek_val = lseek( db_datf, value.val1, 0 );
     read_size = read( db_datf, content, contentlen );
+
+    EmacsString new_value( EmacsString::copy, content, contentlen );
+    EMACS_FREE( content );
 
 # if DBG_EXEC
     if( dbg_flags&DBG_EXEC )

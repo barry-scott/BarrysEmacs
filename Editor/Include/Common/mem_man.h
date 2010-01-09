@@ -20,7 +20,11 @@ struct queue
     struct queue *prev;
 };
 
+#if DBG_ALLOC_CHECK
+#define BEMACS_PAD_SIZE 4
+#else
 #define BEMACS_PAD_SIZE 0
+#endif
 
 struct heap_entry
 {
@@ -30,6 +34,10 @@ struct heap_entry
 #ifdef SAVE_ENVIRONMENT
     EmacsObject *theObject;
     int ptr_index;
+#endif
+
+#if BEMACS_PAD_SIZE > 0
+    char pad[BEMACS_PAD_SIZE];    // after this must be align to 64 bit boundary on x86_64
 #endif
 
 #if DBG_ALLOC_CHECK
@@ -46,10 +54,6 @@ struct heap_entry
     // Unique number for this instances of allocating this block
     int sequence_number;
     unsigned char front_guard[GUARD_SIZE];
-#else
-#if BEMACS_PAD_SIZE > 0
-    char pad[BEMACS_PAD_SIZE];    // after this must be align to 64 bit boundary on x86_64
-#endif
 #endif
     unsigned char user_data[GUARD_SIZE];
 };

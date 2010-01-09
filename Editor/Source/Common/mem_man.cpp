@@ -178,7 +178,9 @@ bool EmacsObject::isHeapObject() const
 
     // these tests should be all that is required
     if( h->user_type == malloc_type_emacs_object
+#ifdef SAVE_ENVIRONMENT
     &&  h->theObject == this
+#endif
     &&  memcmp( guard_pattern, h->front_guard, GUARD_SIZE ) == 0
     &&  memcmp( guard_pattern, &h->user_data[h->user_size], GUARD_SIZE ) == 0 )
         return true;
@@ -203,7 +205,9 @@ void EmacsObject::objectAllocatedBy( const char *&file, int &line, const EmacsOb
         {
             file = h->fileName;
             line = h->lineNumber;
+#ifdef SAVE_ENVIRONMENT
             object = h->theObject;
+#endif
             break;
         }
 
@@ -774,14 +778,18 @@ static void queue_validate( struct queue *q )
 }
 #endif
 
+#if DBG_ALLOC_CHECK
+#include <iostream>
+#endif
+
 int last_sequence_count = INT_MAX;
 void dump_memory_since()
 {
 #if DBG_ALLOC_CHECK
     char buf[1024];
 
-    sprintf( buf, "Dump memory from sequence %d to %d\n", last_sequence_count, allocation_sequence_number );
-    OutputDebugString( buf );
+    sprintf( buf, "Dump memory from sequence %d to %d", last_sequence_count, allocation_sequence_number );
+    std::cout << buf << std::endl;
 
     struct queue *entry = all_emacs_memory.next;
     while( (void *)entry != (void *)&all_emacs_memory )
@@ -791,7 +799,7 @@ void dump_memory_since()
         if( heap->sequence_number >= last_sequence_count )
         {
             switch( heap->user_type )
-        {
+            {
             case malloc_type_emacs_object:
                 sprintf
                 (
@@ -805,21 +813,22 @@ void dump_memory_since()
             default:
                 sprintf
                 (
-                buf, "{%d} %s(%d) type %d size %d\n",
+                buf, "{%d} %s(%d) type %d size %d",
                     heap->sequence_number,
                     heap->fileName, heap->lineNumber,
                     heap->user_type,
                     int(heap->user_size)
                 );
                 break;
-        }
-            OutputDebugString( buf );
+           }
+           std::cout << buf << std::endl;
+
         }
 
         entry = entry->next;
     }
 
-    OutputDebugString( "Dump memory done ---------------------------------------\n" );
+    std::cout << "Dump memory done ---------------------------------------" << std::endl;
     last_sequence_count = allocation_sequence_number;
 #endif
 }

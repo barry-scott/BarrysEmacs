@@ -7,6 +7,8 @@
 //    EmacsString
 //
 //
+#include <emacsutl.h>
+
 #include <string.h>
 
 class EmacsString;
@@ -32,72 +34,106 @@ public:
     EmacsString( const unsigned char *string );
     EmacsString( const wchar_t *string );
     EmacsString( const wchar_t *string, int length );
+
     EmacsString( enum string_type type );
     EmacsString( enum string_type type, const char *string );
     EmacsString( enum string_type type, const char *string, int length );
     EmacsString( enum string_type type, const unsigned char *string );
     EmacsString( enum string_type type, const unsigned char *string, int length );
-    EmacsString( const EmacsString &string );
+    EmacsString( enum string_type type, const EmacsCharQqq_t *string );
+    EmacsString( enum string_type type, const EmacsCharQqq_t *string, int length );
+
     EmacsString( const std::string &string );
+    EmacsString( const EmacsString &string );
 
     EmacsString( EmacsStringRepresentation *rep );
 
     virtual ~EmacsString();
 
+    EmacsString &operator=( const char *string )
+        { return operator=( EmacsString( string ) ); }
+    EmacsString &operator=( const unsigned char *string )
+        { return operator=( EmacsString( string ) ); }
     EmacsString &operator=( const EmacsString &string );
-    EmacsString &operator=( const char *string );
-    EmacsString &operator=( const unsigned char *string );
 
     //
     //    relational operators
     //
-    bool operator==( const EmacsString &str2 ) const { return compare( str2 ) == 0; }
-    bool operator==( const char *str2 ) const { return compare( str2 ) == 0; }
-    bool operator==( const unsigned char *str2 ) const { return compare( str2 ) == 0; }
-    bool operator!=( const EmacsString &str2 ) const { return compare( str2 ) != 0; }
-    bool operator!=( const char *str2 ) const { return compare( str2 ) != 0; }
-    bool operator!=( const unsigned char *str2 ) const { return compare( str2 ) != 0; }
-    bool operator>( const EmacsString &str2 ) const { return compare( str2 ) > 0; }
-    bool operator>( const char *str2 ) const { return compare( str2 ) > 0; }
-    bool operator>( const unsigned char *str2 ) const { return compare( str2 ) > 0; }
-    bool operator>=( const EmacsString &str2 ) const { return compare( str2 ) >= 0; }
-    bool operator>=( const char *str2 ) const { return compare( str2 ) >= 0; }
-    bool operator>=( const unsigned char *str2 ) const { return compare( str2 ) >= 0; }
-    bool operator<( const EmacsString &str2 ) const { return compare( str2 ) < 0; }
-    bool operator<( const char *str2 ) const { return compare( str2 ) < 0; }
-    bool operator<( const unsigned char *str2 ) const { return compare( str2 ) < 0; }
-    bool operator<=( const EmacsString &str2 ) const { return compare( str2 ) <= 0; }
-    bool operator<=( const char *str2 ) const { return compare( str2 ) <= 0; }
-    bool operator<=( const unsigned char *str2 ) const { return compare( str2 ) <= 0; }
+    bool operator==( const EmacsString &str2 ) const
+        { return compare( str2 ) == 0; }
+    bool operator==( const char *str2 ) const
+        { return compare( EmacsString( str2 ) ) == 0; }
+    bool operator==( const unsigned char *str2 ) const
+        { return compare( EmacsString( str2 ) ) == 0; }
 
+    bool operator!=( const EmacsString &str2 ) const
+        { return compare( str2 ) != 0; }
+    bool operator!=( const char *str2 ) const
+        { return compare( EmacsString( str2 ) ) != 0; }
+    bool operator!=( const unsigned char *str2 ) const
+        { return compare( EmacsString( str2 ) ) != 0; }
+
+    bool operator>( const EmacsString &str2 ) const
+        { return compare( str2 ) > 0; }
+    bool operator>( const char *str2 ) const
+        { return compare( EmacsString( str2 ) ) > 0; }
+    bool operator>( const unsigned char *str2 ) const
+        { return compare( EmacsString( str2 ) ) > 0; }
+
+    bool operator>=( const EmacsString &str2 ) const
+        { return compare( str2 ) >= 0; }
+    bool operator>=( const char *str2 ) const
+        { return compare( EmacsString( str2 ) ) >= 0; }
+    bool operator>=( const unsigned char *str2 ) const
+        { return compare( EmacsString( str2 ) ) >= 0; }
+
+    bool operator<( const EmacsString &str2 ) const
+        { return compare( str2 ) < 0; }
+    bool operator<( const char *str2 ) const
+        { return compare( EmacsString( str2 ) ) < 0; }
+    bool operator<( const unsigned char *str2 ) const
+        { return compare( EmacsString( str2 ) ) < 0; }
+
+    bool operator<=( const EmacsString &str2 ) const
+        { return compare( str2 ) <= 0; }
+    bool operator<=( const char *str2 ) const
+        { return compare( EmacsString( str2 ) ) <= 0; }
+    bool operator<=( const unsigned char *str2 ) const
+        { return compare( EmacsString( str2 ) ) <= 0; }
 
     //
     //    casts
     //
-    operator const unsigned char *() const;
-    operator const char *() const;
+    operator const unsigned char *();
+    operator const char *();
 
     //
     //    description of the data
     //
+    const EmacsCharQqq_t *unicode_data() const; // unsigned char data
+
     const unsigned char *data() const;  // unsigned char data
     const char *sdata() const;          // signed char data
                                         // these two function give unsafe access to the inside of representation
-    unsigned char *dataHack() const;    // unsigned char data
-    char *sdataHack() const;            // signed char data
+
     int length() const;
-    int isNull() const { return length() == 0; }
+    int isNull() const
+        { return length() == 0; }
 
     //
     //    searching primitives
     //
     int first( char ch, int start_pos=0 ) const;                // index of first ch in string
     int first( unsigned char ch, int start_pos=0 ) const;       // index of first ch in string
+    int first( EmacsCharQqq_t ch, int start_pos=0 ) const;      // index of first ch in string
+
     int last( char ch, int start_pos=0 ) const;                 // index of last ch in string
     int last( unsigned char ch, int start_pos=0 ) const;        // index of last ch in string
+    int last( EmacsCharQqq_t ch, int start_pos=0 ) const;       // index of last ch in string
 
     int index( char ch, int start_pos=0 ) const;                // find the first ch starting at pos
     int index( unsigned char ch, int start_pos=0 ) const;       // find the first ch starting at pos
+    int index( EmacsCharQqq_t ch, int start_pos=0 ) const;      // find the first ch starting at pos
     int index( const EmacsString &str, int start_pos=0 ) const; // find the first str starting at pos
 
     int commonPrefix( const EmacsString &str ) const;           // length of common prefix case sensitive
@@ -110,38 +146,71 @@ public:
     void remove( int position );                                // remove from position to the end of the string
 
     enum { string_growth_room=32 };                             // amount of space to allow for growth
-    EmacsString &append( char ch ) { return append( 1, (const unsigned char *)&ch ); }
-    EmacsString &append( const char *str ) { return append( strlen( str ), (const unsigned char *)str ); }
-    EmacsString &append( unsigned char ch ) { return append( 1, &ch ); }
-    EmacsString &append( const unsigned char *str ) { return append( strlen( (const char *)str ), str ); }
-    EmacsString &append( const EmacsString &str ) { return append( str.length(), str.data() ); }
-    EmacsString &append( int ch ) { return append( (char)ch ); }
 
-    EmacsString &append( int length, const unsigned char *data );
+    EmacsString &append( char ch )
+        { return append( EmacsString( copy, &ch, 1 ) ); }
+    EmacsString &append( unsigned char ch )
+        { return append( EmacsString( copy, &ch, 1 ) ); }
+    EmacsString &append( int ch )
+        {
+            EmacsCharQqq_t str[1];
+            str[0] = ch;
+            return append( 1, str );
+        }
 
-    EmacsString &insert( int pos, char ch ) { return insert( pos, 1, (const unsigned char *)&ch ); }
-    EmacsString &insert( int pos, const char *str ) { return insert( pos, strlen( str ), (const unsigned char *)str ); }
-    EmacsString &insert( int pos, unsigned char ch ) { return insert( pos, 1, &ch ); }
-    EmacsString &insert( int pos, const unsigned char *str ) { return insert( pos, strlen( (const char *)str ), str ); }
-    EmacsString &insert( int pos, const EmacsString &str ) { return insert( pos, str.length(), str.data() ); }
-    EmacsString &insert( int pos, int ch ) { return insert( pos, (char)ch ); }
+    EmacsString &append( const char *str )
+        { return append( EmacsString( str ) ); }
+    EmacsString &append( const unsigned char *str )
+        { return append( EmacsString( str ) ); }
+    EmacsString &append( int len, const char *str )
+        { return append( EmacsString( copy, str, len ) ); }
+    EmacsString &append( int len, const unsigned char *str )
+        { return append( EmacsString( copy, str, len ) ); }
+    EmacsString &append( const EmacsString &str )
+        { return append( str.length(), str.unicode_data() ); }
 
-    EmacsString &insert( int pos, int length, const unsigned char *data );
+    EmacsString &append( int length, const EmacsCharQqq_t *data );
+
+    EmacsString &insert( int pos, char ch )
+        { return insert( pos, EmacsString( copy, &ch, 1 ) ); }
+    EmacsString &insert( int pos, unsigned char ch )
+        { return insert( pos, EmacsString( copy, &ch, 1 ) ); }
+    EmacsString &insert( int pos, int ch )
+        {
+            EmacsCharQqq_t str[1];
+            str[0] = ch;
+            return insert( pos, 1, str );
+        }
+
+    EmacsString &insert( int pos, const char *str )
+        { return insert( pos, EmacsString( str ) ); }
+    EmacsString &insert( int pos, const unsigned char *str )
+        { return insert( pos, EmacsString( str ) ); }
+    EmacsString &insert( int pos, const EmacsString &str )
+        { return insert( pos, str.length(), str.unicode_data() ); }
+
+    EmacsString &insert( int pos, int length, const EmacsCharQqq_t *data );
 
     EmacsString operator ()( int first, int last ) const;       // return a substring
 
     EmacsString &toLower();
     EmacsString &toUpper();
 
-    inline unsigned char operator[]( int index ) const;         // read only
-    inline unsigned char &operator[]( int index );              // read write
+    inline EmacsCharQqq_t operator[]( int index ) const;           // read only
+    inline EmacsCharQqq_t &operator[]( int index );                // read write
 
+    int compare( const char *str2 ) const
+        { return compare( EmacsString( str2 ) ); }
+    int compare( const unsigned char *str2 ) const
+        { return compare( EmacsString( str2 ) ); }
     int compare( const EmacsString &str2 ) const;
-    int compare( const char *str2 ) const;
-    int compare( const unsigned char *str2 ) const;
+
+    int caseBlindCompare( const char *str2 ) const
+        { return caseBlindCompare( EmacsString( str2 ) ); }
+    int caseBlindCompare( const EmacsChar_t *str2 ) const
+        { return caseBlindCompare( EmacsString( str2 ) ); }
     int caseBlindCompare( const EmacsString &str2 ) const;
-    int caseBlindCompare( const char *str2 ) const;
-    int caseBlindCompare( const unsigned char *str2 ) const;
+
 private:
     static void init();
 
@@ -164,14 +233,14 @@ public:
         enum EmacsString::string_type _type,
         int _alloc_length,
         int _length,
-        unsigned char *_data
+        const unsigned char *_data
         );
     EmacsStringRepresentation
         (
         enum EmacsString::string_type _type,
         int _alloc_length,
         int _length,
-        const unsigned char *_data
+        const EmacsCharQqq_t *_data
         );
     EmacsStringRepresentation
         (
@@ -183,12 +252,16 @@ public:
     virtual ~EmacsStringRepresentation();
 
     friend class EmacsString;
+
 private:
+    const unsigned char *get_utf8_data();
+
     int ref_count;
     enum EmacsString::string_type type;
     int alloc_length;
     int length;
-    unsigned char *data;
+    EmacsCharQqq_t *data;
+    unsigned char *utf8_data;
 };
 
 inline void EmacsString::check_for_bad_value( EmacsStringRepresentation *rep )
@@ -197,9 +270,12 @@ inline void EmacsString::check_for_bad_value( EmacsStringRepresentation *rep )
         debug_invoke();
     if( rep == bad_value )
         debug_invoke();
+
+    if( _rep->length > 0 )
+        emacs_assert( _rep->data[0] <= 255 );
 }
 
-inline unsigned char EmacsString::operator[]( int index ) const
+inline EmacsCharQqq_t EmacsString::operator[]( int index ) const
 {
     // allow negative index to be relative to the end of the string
     if( index < 0 )
@@ -209,7 +285,7 @@ inline unsigned char EmacsString::operator[]( int index ) const
     return _rep->data[index];
 }
 
-inline unsigned char &EmacsString::operator[]( int index )
+inline EmacsCharQqq_t &EmacsString::operator[]( int index )
 {
     // allow negative index to be relative to the end of the string
     if( index < 0 )
@@ -232,7 +308,7 @@ public:
     FormatString &operator <<( const EmacsString & );
     FormatString &operator <<( const EmacsString * );
     FormatString &operator <<( const char * );
-    FormatString &operator <<( const unsigned char * );
+    FormatString &operator <<( const EmacsChar_t * );
 
 private:
     enum arg_type { argNone, argString, argInt };
@@ -241,7 +317,7 @@ private:
     int next_format_char();
 
     void put( int ch );
-    void put( const unsigned char *chars, unsigned int len );
+    void put( const EmacsChar_t *chars, unsigned int len );
 
     void print_decimal( long int );
     void print_hexadecimal( long int );
