@@ -402,7 +402,7 @@ void EmacsString::remove( int position, int length )
     if( position + length > _rep->length )
         length = _rep->length - position;
 
-    memmove( (void *)&_rep->data[position], (void *)&_rep->data[position+length], _rep->length - (position + length) + 1 );
+    memmove( (void *)&_rep->data[position], (void *)&_rep->data[position+length], (_rep->length - (position + length) + 1) * sizeof( EmacsCharQqq_t ) );
 
     _rep->length -= length;
 }

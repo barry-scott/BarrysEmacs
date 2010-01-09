@@ -82,7 +82,7 @@ int main( int argc, char **argv )
     if( debug_string != NULL )
         dbg_flags = parse_dbg_flags( debug_string );
 
-{
+    {
     bool open_fds[256];
     if( dbg_flags&DBG_PROCESS && dbg_flags&DBG_TMP )
         for( int fd=0; fd<256; fd ++ )
@@ -98,7 +98,7 @@ int main( int argc, char **argv )
         for( int fd=0; fd<256; fd ++ )
             if( open_fds[fd] )
                 _dbg_msg( FormatString("File descriptor %d is open at startup") << fd );
-}
+    }
 
     if( !isFileDescriptorOpen( STDIN_FILENO ) )
     {

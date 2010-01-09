@@ -394,7 +394,7 @@ int execute_package( const EmacsString &package )
     // If Emacs is invoked by any name other than 'emacs' we try to load a
     // package by that name and then execute a command by that name; this
     // is so that things like rmail and dired can be invoked from the
-    // DCL command line.
+    // command line.
     //
     if( package.isNull() )
         return rv;
@@ -406,9 +406,14 @@ int execute_package( const EmacsString &package )
     EmacsString package_filename( FormatString("%s.mlp") << package_name );
     int p = package_name.last( PATH_CH );
     if( p < 0 )
+    {
         p = 0;
+    }
     else
+    {
         p++;
+    }
+
     EmacsString package_command_name( FormatString("%s-com") << package_name( p, INT_MAX ) );
     //
     // See if the function is defined already
@@ -429,7 +434,9 @@ int execute_package( const EmacsString &package )
         minibuf_body.clearMessageBody();
     }
     else
+    {
         return execute_bound_saved_environment( proc );
+    }
 
     return rv;
 }
@@ -446,7 +453,8 @@ int read_in_files(void)
             ml_err = 0;
             if( !command_line_arguments.argument(i).isQualifier() )
             {
-                try{
+                try
+                {
                     // visit file can throw exceptions
                     // if the user is prompted and types ^G
                     visit_file
@@ -497,10 +505,13 @@ int debug_emacs(void)
 #endif
         if( cmd.commonPrefix( "flags=" ) == 6 )
             dbg_flags = parse_dbg_flags( cmd( 6, 999 ) );
+
         else if( cmd.commonPrefix( "msg=" ) == 4 )
             _dbg_msg( FormatString( "debug-emacs %s" ) << cmd );
+
         else if( cmd == "dump_memory_since" )
             dump_memory_since();
+
         else if( cmd == "crash" )
         {
             void (*func)(unsigned int ) = 0;

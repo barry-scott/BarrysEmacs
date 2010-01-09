@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2009 Barry A. Scott
+//  Copyright (c) 2009-2010 Barry A. Scott
 //
 //
 //  pybemacs.cpp
@@ -20,9 +20,14 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 #include <iostream>
 
+extern int execute_package( const EmacsString &package );
+
+
 void qqq()
 {
 }
+
+EmacsString name_arg;
 
 static struct timeval emacs_start_time;
 static EmacsString image_path;
@@ -70,15 +75,17 @@ public:
         behaviors().supportSetattro();
 
         PYCXX_ADD_NOARGS_METHOD( initEditor, "initEditor" );
+        PYCXX_ADD_VARARGS_METHOD( processCommandLine, "processCommandLine" );
+
         PYCXX_ADD_NOARGS_METHOD( executeEnterHooks, "executeEnterHooks" );
         PYCXX_ADD_NOARGS_METHOD( executeExitHooks, "executeExitHooks" );
 
-        PYCXX_ADD_NOARGS_METHOD( processKeys, "docs for processKeys" );
+        PYCXX_ADD_NOARGS_METHOD( processKeys, "processKeys" );
 
         PYCXX_ADD_VARARGS_METHOD( inputChar, "inputChar( char, shift )" );
         PYCXX_ADD_VARARGS_METHOD( geometryChange, "geometryChange( width, height )" );
 
-        PYCXX_ADD_KEYWORDS_METHOD( BemacsEditor_func_keyword, "docs for BemacsEditor_func_keyword" );
+        PYCXX_ADD_KEYWORDS_METHOD( BemacsEditor_func_keyword, "BemacsEditor_func_keyword" );
 
         // Call to make the type ready for use
         behaviors().readyType();
@@ -87,7 +94,7 @@ public:
     void reportException( const char *fn_name, Py::Exception &e )
     {
         std::cerr << "Error: " << fn_name << " exception" << std::endl;
-        std::cerr << "type=" << Py::type( e ) << std::endl;
+        std::cerr << " type=" << Py::type( e ) << std::endl;
         std::cerr << "value=" << Py::value( e ) << std::endl;
         std::cerr << "trace=" << Py::trace( e ) << std::endl;
         e.clear();
@@ -104,7 +111,7 @@ public:
         init_bf();                              // " the buffer system
         init_scheduled_timeout();
         init_display();                         // " the core display system
-        init_python_terminal( *this );           // " the terminal
+        init_python_terminal( *this );          // " the terminal
         init_dsp();
         init_win();                             // " the window system
         init_srch();                            // " the search commands
@@ -122,8 +129,103 @@ public:
         return Py::None();
     }
     PYCXX_NOARGS_METHOD_DECL( BemacsEditor, initEditor )
+
+    //------------------------------------------------------------
+    Py::Object processCommandLine( const Py::Tuple &args )
+    {
+        Py::List py_argv( args[0] );
+
+        char **argv = reinterpret_cast<char **>( EMACS_MALLOC( (py_argv.length()+1) * sizeof( char * ), malloc_type_char ) );
+
+        for( unsigned int argc=0; argc < py_argv.length(); ++argc )
+        {
+            Py::String py_arg( py_argv[ argc ] );
+            std::string std_arg( py_arg.as_std_string( "utf-8" ) );
+
+            char *arg = reinterpret_cast<char *>( EMACS_MALLOC( std_arg.size() + 1, malloc_type_char ) );
+            memcpy( arg, std_arg.c_str(), std_arg.size() );
+            arg[ std_arg.size() ] = 0;
+
+            argv[ argc ] = arg;
+        }
+        argv[ py_argv.length() ] = NULL;
+
+        process_args( py_argv.length(), argv );
+
+        for( int argc=0; argc < py_argv.length(); ++argc )
+        {
+            EMACS_FREE( argv[ argc ] );
+        }
+        EMACS_FREE( argv );
+
+        execute_package( command_line_arguments.argument(0).value() );
+
+        return Py::None();
+    }
+    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, processCommandLine )
+
+    //------------------------------------------------------------
+    void process_args( int argc, char **argv )
+    {
+        command_line_arguments.setArguments( argc, argv );
+        command_line_arguments.setArgument( 0, "emacs", false );
+
+        int arg = 1;
+
+        while( arg<command_line_arguments.argumentCount() )
+        {
+            EmacsArgument argument( command_line_arguments.argument( arg ) );
+
+            if( argument.isQualifier() )
+            {
+                EmacsString str( argument.value() );
+                EmacsString key_string;
+                EmacsString val_string;
+
+                int equal_pos = str.first( '=' );
+                if( equal_pos > 0 )
+                {
+                    key_string = str( 1, equal_pos );
+                    val_string = str( equal_pos+1, str.length() );
+                }
+                else
+                {
+                    key_string = str( 1, str.length() );
+                }
+
+                bool delete_this_arg = true;
+
+                if( key_string.commonPrefix( "package" ) > 2 )
+                {
+                    command_line_arguments.setArgument( 0, val_string, false );
+                }
+                else if( key_string.commonPrefix( "name" ) > 3 )
+                {
+                    name_arg = val_string;
+                }
+                else
+                {
+                    delete_this_arg = false;
+                }
+
+                if( delete_this_arg )
+                {
+                    command_line_arguments.deleteArgument( arg );
+                }
+                else
+                {
+                    arg++;
+                }
+            }
+            else
+            {
+                arg++;
+            }
+        }
+    }
     //------------------------------------------------------------
 
+    //------------------------------------------------------------
     Py::Object executeEnterHooks( void )
     {
         if( user_interface_hook_proc != NULL )
@@ -588,6 +690,28 @@ int ui_edit_copy()
 }
 
 int ui_edit_paste()
+{
+    return 0;
+}
+
+int ui_frame_state()
+{
+    ml_value = Expression( "normal" );
+
+    return 0;
+}
+
+int ui_frame_minimize()
+{
+    return 0;
+}
+
+int ui_frame_restore()
+{
+    return 0;
+}
+
+int ui_add_to_recent_file_list()
 {
     return 0;
 }

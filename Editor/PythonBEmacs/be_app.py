@@ -70,12 +70,29 @@ class BemacsApp(wx.App):
         # Debug settings
         self.__last_client_error = []
 
-        # don't redirect IO into the log window
-        self.__debug_noredirect = '--noredirect' in args
+        self.__debug_noredirect = False
+        self.__debug = False
+        self.__trace = False
 
-        # enable debug messages
-        self.__debug = '--debug' in args
-        self.__trace = '--trace' in args
+        while len(args) > 1:
+            arg = args[ 1 ]
+            if arg == '--noredirect':
+                self.__debug_noredirect = True
+                del args[ 1 ]
+
+            elif arg == '--debug':
+                self.__debug = True
+                del args[ 1 ]
+
+            elif arg == '--trace':
+                self.__trace = True
+                del args[ 1 ]
+
+            elif arg == '--':
+                break
+
+            else:
+                break
 
         self.setupLogging()
 

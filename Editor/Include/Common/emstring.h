@@ -287,11 +287,15 @@ inline EmacsCharQqq_t EmacsString::operator[]( int index ) const
 
 inline EmacsCharQqq_t &EmacsString::operator[]( int index )
 {
+    // assume that the only reason to return a ref is to write to the buffer
+    copy_on_write();
+
     // allow negative index to be relative to the end of the string
     if( index < 0 )
         index += _rep->length;
     emacs_assert( index >= 0 );
     emacs_assert( index < _rep->length );
+
     return _rep->data[index];
 }
 

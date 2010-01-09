@@ -77,8 +77,8 @@ void error( const EmacsString &text )
         if( p == NULL )
         {
             p = EMACS_NEW EmacsBuffer( error_messages_buffer.asString() );
-            p->b_checkpointed = -1;        // turn off checkpointing and
-            p->b_journalling = 0;        // journalling
+            p->b_checkpointed = -1;     // turn off checkpointing and
+            p->b_journalling = 0;       // journalling
         }
 
         p->set_bf();
@@ -86,7 +86,7 @@ void error( const EmacsString &text )
 
         time_t now = time(0);
 
-        EmacsString now_string( EmacsString::copy, (unsigned char *)ctime (&now), 24 );
+        EmacsString now_string( EmacsString::copy, (unsigned char *)ctime( &now ), 24 );
 
         bf_cur->ins_cstr( FormatString("%shandled error at %s\n")
             << EmacsString(in_error_occurred ? "  " : "un" )

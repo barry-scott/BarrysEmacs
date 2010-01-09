@@ -1,6 +1,7 @@
 //
 //     Copyright(c) 1982, 1983, 1984, 1985. 1987
 //        Barry A. Scott and Nick Emery
+//     Copyright(c) 1988-2010
 //
 
 // Simple data base manager routines.
@@ -13,9 +14,9 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 
 
-#define GROW 10            // Size by which to grow search list names
-#define READONLY 1        // Read only access
-#define OPEN 2            // remain open access
+#define GROW 10             // Size by which to grow search list names
+#define READONLY 1          // Read only access
+#define OPEN 2              // remain open access
 
 int extend_database_search_list( void );
 int fetch_database_entry( void );
@@ -32,15 +33,14 @@ SystemExpressionRepresentationIntPositive get_db_help_flags( 7 );    // All info
 
 #ifdef DB
 
-unsigned char *no_such_db_str =  u_str("No such database search list \"%s\"");
-unsigned char *no_help_db_str = u_str("help entry \"%s\" not found in \"%s\"");
-unsigned char *db_empty_str = u_str("Empty database search list \"%s\"");
-unsigned char *key_not_found_str = u_str("Entry \"%s\" not found in \"%s\"");
-
+unsigned char *no_such_db_str =     u_str("No such database search list \"%s\"");
+unsigned char *no_help_db_str =     u_str("help entry \"%s\" not found in \"%s\"");
+unsigned char *db_empty_str =       u_str("Empty database search list \"%s\"");
+unsigned char *key_not_found_str =  u_str("Entry \"%s\" not found in \"%s\"");
 
 DatabaseSearchList::DatabaseSearchList( EmacsString &name )
-    : dbs_name( name )
-    , dbs_size( 0 )
+: dbs_name( name )
+, dbs_size( 0 )
 {
     for( int i=0; i<SEARCH_LEN; i++ )
         dbs_elements[i] = NULL;
@@ -62,7 +62,7 @@ int extend_database_search_list( void )
     if( name.isNull() )
         return 0;
 
-    DatabaseSearchList *p = DatabaseSearchList::find (name);
+    DatabaseSearchList *p = DatabaseSearchList::find( name );
     if( p == NULL )
         p = EMACS_NEW DatabaseSearchList( name );
 
@@ -76,7 +76,7 @@ int extend_database_search_list( void )
         return 0;
 
     EmacsString filename;
-    expand_and_default (content, EMACS_DB_DEFAULT, filename);
+    expand_and_default( content, EMACS_DB_DEFAULT, filename );
 
     for( int i = 0; i < p->dbs_size; i++ )
     {
@@ -93,7 +93,7 @@ int extend_database_search_list( void )
         reopen = arg;
     else
         if( ! interactive() && cur_exec->p_nargs > 2 )
-            reopen = getnum( u_str(": extend-database-search-list (flags) "));
+            reopen = getnum( u_str(": extend-database-search-list (flags) ") );
 
     database *db = EMACS_NEW database;
 
@@ -102,7 +102,7 @@ int extend_database_search_list( void )
     else
     {
 #ifndef __unix__
-                db->db_reopen = (reopen & OPEN) == 0;
+        db->db_reopen = (reopen & OPEN) == 0;
 #endif
         int i = p->dbs_size;
         while( i > 0)
@@ -119,8 +119,6 @@ int extend_database_search_list( void )
     return 0;
 }
 
-
-
 // fetch an entry from a database into the current buffer
 int fetch_database_entry( void )
 {
@@ -136,7 +134,7 @@ int fetch_database_entry( void )
     DatabaseSearchList *dbs = DatabaseSearchList::find( dbname );
     if( dbs == NULL )
     {
-        error( FormatString(no_such_db_str) << dbname);
+        error( FormatString(no_such_db_str) << dbname );
         return 0;
     }
 
@@ -153,7 +151,7 @@ int fetch_database_entry( void )
         if( dbs->dbs_elements[i]->get_db( key, value ) >= 0 )
         {
             bf_cur->ins_cstr( value );
-                        break;
+            break;
         }
     }
 
@@ -177,10 +175,10 @@ int fetch_help_database_entry( void )
     if( dbname.isNull() )
         return 0;
 
-    DatabaseSearchList *dbs = DatabaseSearchList::find (dbname);
+    DatabaseSearchList *dbs = DatabaseSearchList::find( dbname );
     if( dbs == 0 )
     {
-        error( FormatString(no_such_db_str) << dbname);
+        error( FormatString(no_such_db_str) << dbname );
         return 0;
     }
 
@@ -189,6 +187,7 @@ int fetch_help_database_entry( void )
         keys = get_string_interactive( FormatString(": fetch-help-database-entry (list) %s (topic) ") << dbs->dbs_name );
     else
         keys = get_string_mlisp();
+
     if( keys.isNull() )
         return 0;
 
@@ -201,7 +200,7 @@ int fetch_help_database_entry( void )
     }
     cant_1line_opt = 1;
     if( i >= dbs->dbs_size )
-        error( FormatString(no_help_db_str) << keys << dbname);
+        error( FormatString(no_help_db_str) << keys << dbname );
     return 0;
 }
 
@@ -217,22 +216,22 @@ int put_database_entry( void )
     if( dbname.isNull() )
         return 0;
 
-    DatabaseSearchList *dbs = DatabaseSearchList::find (dbname);
+    DatabaseSearchList *dbs = DatabaseSearchList::find( dbname );
     if( dbs == NULL )
     {
-        error( FormatString(no_such_db_str) << dbname);
+        error( FormatString(no_such_db_str) << dbname );
         return 0;
     }
     if( dbs->dbs_size <= 0 )
     {
-        error( FormatString(db_empty_str) << dbs->dbs_name);
+        error( FormatString(db_empty_str) << dbs->dbs_name );
         return 0;
     }
 
     database *dbx = dbs->dbs_elements[0];
     if( dbx->db_rdonly )
     {
-        error( FormatString("\"%s\" is a read-only database.") << dbs->dbs_name);
+        error( FormatString("\"%s\" is a read-only database.") << dbs->dbs_name );
         return 0;
     }
 
@@ -271,27 +270,27 @@ int list_databases( void )
             bf_cur->ins_cstr( db->db_name );
             if( db->db_rdonly || ! db->db_reopen )
             {
-                bf_cur->ins_cstr("    (", 5);
+                bf_cur->ins_cstr( "    (", 5 );
                 if( db->db_rdonly )
                 {
-                    bf_cur->ins_cstr ("read only", 9);
+                    bf_cur->ins_cstr( "read only", 9 );
                     if( ! db->db_reopen )
-                        bf_cur->ins_cstr (", ", 2);
+                        bf_cur->ins_cstr( ", ", 2 );
                 }
                 if( ! db->db_reopen )
-                    bf_cur->ins_cstr ("open", 4);
-                bf_cur->ins_cstr (")", 1);
+                    bf_cur->ins_cstr( "open", 4 );
+                bf_cur->ins_cstr( ")", 1 );
             }
-            bf_cur->ins_cstr ("\n", 1);
+            bf_cur->ins_cstr( "\n", 1 );
         }
-        bf_cur->ins_cstr ("\n", 1);
+        bf_cur->ins_cstr( "\n", 1 );
     }
 
     bf_cur->b_modified = 0;
     bf_cur->b_checkpointed = -1;
-    set_dot (1);
+    set_dot( 1 );
     old.set_bf();
-    theActiveView->window_on (bf_cur);
+    theActiveView->window_on( bf_cur );
 
     return 0;
 }
@@ -305,7 +304,7 @@ int remove_database( void )
 
     if( p->dbs_size <= 0 )
     {
-        error( FormatString(db_empty_str) << p->dbs_name);
+        error( FormatString(db_empty_str) << p->dbs_name );
         return 0;
     }
 
@@ -355,11 +354,11 @@ void restore_db( void )
         {
             database *dbx = p->dbs_elements[i];
 #if defined MLL_DB || defined vms
-                        dbx->db_dirf = 0;
+            dbx->db_dirf = 0;
 #else
-                        dbx->db_dirf = -1;
-                        dbx->db_pagf = -1;
-                        dbx->db_datf = -1;
+            dbx->db_dirf = -1;
+            dbx->db_pagf = -1;
+            dbx->db_datf = -1;
 #endif
         }
         p = p->dbs_next;

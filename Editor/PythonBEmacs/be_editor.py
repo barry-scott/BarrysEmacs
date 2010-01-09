@@ -1,6 +1,6 @@
 '''
  ====================================================================
- Copyright (c) 2009 Barry A Scott.  All rights reserved.
+ Copyright (c) 2009-2010 Barry A Scott.  All rights reserved.
 
  This software is licensed as described in the file LICENSE.txt,
  which you should have received as part of this distribution.
@@ -13,6 +13,7 @@
 '''
 from __future__ import with_statement;
 
+import sys
 import time
 import threading
 
@@ -37,15 +38,22 @@ class BEmacs(_bemacs.BemacsEditor):
 
         # initEditor will start calling termXxx functions - must have windows setup first
         self.initEditor()
-        self.log.debug( 'BEmacs.initEmacsProfile() geometryChange %r %r' % (self.window.term_width, self.window.term_length) )
+        self.log.debug( 'BEmacs.initEmacsProfile() geometryChange %r %r' %
+                            (self.window.term_width, self.window.term_length) )
         self.geometryChange( self.window.term_width, self.window.term_length )
 
         self.log.debug( 'TESTING' )
-        self.log.debug( _bemacs.function.char_to_string( 196 ) )
+        _bemacs.function.debug_emacs( "flags=execfile,ml_error" )
+        _bemacs.function.switch_to_buffer( "error-messages" )
+        _bemacs.function.switch_to_buffer( "main" )
+        _bemacs.variable.error_messages_buffer = "error-messages"
 
         self.log.debug( 'BEmacs.initEmacsProfile() emacs_profile.ml' )
         _bemacs.function.execute_mlisp_file( 'emacs_library:emacs_profile.ml' )
+
         self.executeEnterHooks()
+
+        self.processCommandLine( self.app.args );
 
     def guiEventChar( self, ch, shift ):
         self.__event_queue.put( (self.inputChar, (ch, shift)) )
