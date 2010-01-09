@@ -42,6 +42,9 @@ class BemacsApp(wx.App):
         if self.app_dir == '':
             self.app_dir = startup_dir
 
+        self.__call_gui_result = None
+        self.__call_gui_result_event = threading.Event()
+
         self.editor = None
 
         self.main_thread = threading.currentThread()
@@ -118,8 +121,6 @@ class BemacsApp(wx.App):
         self.need_activate_app_action = False
 
         self.frame = None
-        self.all_diff_frames = []
-        self.all_temp_files = []
 
         wx.App.__init__( self, 0 )
 
@@ -210,14 +211,6 @@ class BemacsApp(wx.App):
             # return False to veto a close
             return False
 
-        # o.k. to exit
-        for temp_file in self.all_temp_files:
-            self.log.info( 'Removing "%s".' % temp_file )
-            try:
-                os.remove( temp_file )
-            except OSError:
-                pass
-
         self.frame.savePreferences()
         self.prefs.writePreferences()
         self.frame = None
@@ -246,6 +239,20 @@ class BemacsApp(wx.App):
         else:
             if event.GetActive():
                 self.need_activate_app_action = True
+
+    def onCloseEditor( self ):
+        self.log.info( 'onCloseEditor()' )
+        self.editor.guiCloseWindow()
+
+    def callGuiFunction( self, function, args ):
+        self.__call_gui_result_event.clear()
+        self.onGuiThread( self.executeCallGuiFunction, (function, args) )
+        self.__call_gui_result_event.wait()
+        return self.__call_gui_result
+
+    def executeCallGuiFunction( self, function, args ):
+        self.__call_gui_result = function( *args )
+        self.__call_gui_result_event.set()
 
     def onGuiThread( self, function, args ):
         wx.PostEvent( self, AppCallBackEvent( callback=function, args=args ) )
@@ -283,8 +290,37 @@ class BemacsApp(wx.App):
         self.editor.initEmacsProfile( self.frame.emacs_panel )
         
         # stay in processKeys until editor quits
-        rc = self.editor.processKeys()
-        self.log.info( 'processKeys rc %r' % (rc,) )
+        while True:
+            rc = self.editor.processKeys()
+            self.log.info( 'processKeys rc %r' % (rc,) )
+
+            mod = self.editor.modifiedFilesExist()
+            if not mod:
+                break
+
+            can_exit = self.callGuiFunction( self.guiYesNoDialog, (False,) );
+            if can_exit:
+                break
+
+        self.onGuiThread( self.quit, () )
+
+    def guiYesNoDialog( self, default ):
+        dlg = wx.MessageDialog(
+                   self.frame,
+                    'Do you really want to quit Emacs?',
+                    'Modifier files exist',
+                    wx.YES_NO | wx.NO_DEFAULT | wx.ICON_EXCLAMATION
+                    )
+        rc = dlg.ShowModal()
+        dlg.Destroy()
+
+        self.log.info( 'guiYesNoDialog %r YES %r' % (rc, wx.ID_YES) )
+
+        return rc == wx.ID_YES
+
+    def quit( self ):
+        self.log.info( 'quit()' )
+        self.frame.Destroy()
 
 #--------------------------------------------------------------------------------
 #

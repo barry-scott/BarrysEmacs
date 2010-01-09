@@ -1,5 +1,7 @@
-//     Copyright (c) 1982-2002
+//
+//     Copyright (c) 1982-2010
 //        Barry A. Scott
+//
 // File IO for Emacs
 //
 
@@ -215,7 +217,7 @@ int apply_auto_execute( void )
         do_auto( file );
 
     return 0;
-}            // of ApplyAutoExecute
+}   // of ApplyAutoExecute
 
 
 // Set up an auto-execute - function interface
@@ -255,7 +257,7 @@ int auto_execute( void )
     auto_list = p;
 
     return 0;
-}            // of AutoExecute
+}   // of AutoExecute
 
 
 int list_auto_executes( void )
@@ -1074,7 +1076,7 @@ int write_named_file( EmacsString &fn )
     cant_1win_opt = 1;
 
     return 0;
-}            // Of WriteNamedFile
+}   //}   // Of WriteNamedFile
 
 
 // Appends to a file
@@ -1463,7 +1465,7 @@ static EmacsString concoct_name( const EmacsString &fn, const EmacsString &exten
     fd.fio_close();
 
     return result;
-}            // Of concoct_name
+}   // Of concoct_name
 
 
 //
@@ -1708,7 +1710,7 @@ bool EmacsFile::fio_open_using_path
     }
 
     return false;
-}            // Of fopenp
+}   // Of fopenp
 
 
 // Returns true if modified buffers exist
@@ -1727,7 +1729,7 @@ bool mod_exist( void )
             b = b->b_next;
 
     return false;
-}            // Of mod_exist
+}   // Of mod_exist
 
 
 // Write all modified buffers; return true iff OK
@@ -1762,7 +1764,7 @@ bool mod_write( void )
     old.set_bf();
 
     return !ml_err && write_errors == 0;
-}            // Of mod_write
+}   // Of mod_write
 
 
 // Deletes all checkpoint file

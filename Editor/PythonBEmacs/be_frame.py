@@ -1,6 +1,6 @@
 '''
  ====================================================================
- Copyright (c) 2003-2008 Barry A Scott.  All rights reserved.
+ Copyright (c) 2003-2010 Barry A Scott.  All rights reserved.
 
  This software is licensed as described in the file LICENSE.txt,
  which you should have received as part of this distribution.
@@ -35,6 +35,8 @@ class BemacsFrame(wx.Frame):
 
     def __init__( self, app ):
         self.app = app
+        self.log = self.app.log
+
         title = T_("Barry's Emacs")
 
         win_prefs = self.app.prefs.getWindow()
@@ -199,9 +201,8 @@ class BemacsFrame(wx.Frame):
         self.log_panel.ClearLog()
 
     def OnCloseWindow( self, event ):
-        if self.app.exitAppNow():
-            self.Destroy()
-
+        self.log.info( 'OnCloseWindow()' )
+        self.app.onCloseEditor()
 
 #--------------------------------------------------------------------------------
 class LogCtrlPanel(wx.Panel):

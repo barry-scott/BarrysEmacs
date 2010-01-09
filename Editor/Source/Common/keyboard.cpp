@@ -1012,7 +1012,7 @@ int recursive_edit( void )
         recursive_edit_depth++;
         redo_modes = cant_1line_opt = cant_1win_opt = 1;
 
-        process_keys ();
+        process_keys();
 
         recursive_edit_depth--;
         cur_exec = oldp;

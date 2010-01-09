@@ -82,6 +82,8 @@ public:
 
         PYCXX_ADD_NOARGS_METHOD( processKeys, "processKeys" );
 
+        PYCXX_ADD_NOARGS_METHOD( modifiedFilesExist, "modifiedFilesExist" );
+
         PYCXX_ADD_VARARGS_METHOD( inputChar, "inputChar( char, shift )" );
         PYCXX_ADD_VARARGS_METHOD( geometryChange, "geometryChange( width, height )" );
 
@@ -250,11 +252,15 @@ public:
 
     Py::Object processKeys( void )
     {
-        process_keys();
-
-        return Py::None();
+        return Py::Long( process_keys() );
     }
     PYCXX_NOARGS_METHOD_DECL( BemacsEditor, processKeys )
+
+    Py::Object modifiedFilesExist( void )
+    {
+        return Py::Boolean( mod_exist() );
+    }
+    PYCXX_NOARGS_METHOD_DECL( BemacsEditor, modifiedFilesExist )
     //------------------------------------------------------------
 
     //------------------------------------------------------------

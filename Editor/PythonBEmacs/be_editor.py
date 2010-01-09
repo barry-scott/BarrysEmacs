@@ -29,7 +29,8 @@ class BEmacs(_bemacs.BemacsEditor):
 
         self.window = None
 
-        self.__event_queue = Queue()
+        self.__quit_editor = False
+        self.__event_queue = Queue( self.log )
 
     def initEmacsProfile( self, window ):
         self.log.debug( 'BEmacs.initEmacsProfile()' )
@@ -43,10 +44,7 @@ class BEmacs(_bemacs.BemacsEditor):
         self.geometryChange( self.window.term_width, self.window.term_length )
 
         self.log.debug( 'TESTING' )
-        _bemacs.function.debug_emacs( "flags=execfile,ml_error" )
-        _bemacs.function.switch_to_buffer( "error-messages" )
-        _bemacs.function.switch_to_buffer( "main" )
-        _bemacs.variable.error_messages_buffer = "error-messages"
+        #_bemacs.variable.error_messages_buffer = "error-messages"
 
         self.log.debug( 'BEmacs.initEmacsProfile() emacs_profile.ml' )
         _bemacs.function.execute_mlisp_file( 'emacs_library:emacs_profile.ml' )
@@ -54,6 +52,12 @@ class BEmacs(_bemacs.BemacsEditor):
         self.executeEnterHooks()
 
         self.processCommandLine( self.app.args );
+
+    def guiCloseWindow( self ):
+        self.__event_queue.put( (self.closeWindow, ()) )
+
+    def closeWindow( self ):
+        self.__quit_editor = True
 
     def guiEventChar( self, ch, shift ):
         self.__event_queue.put( (self.inputChar, (ch, shift)) )
@@ -66,16 +70,19 @@ class BEmacs(_bemacs.BemacsEditor):
 
     def termWaitForActivity( self ):
         try:
-            while True:
-                event_hander_and_args = self.__event_queue.get()
+            event_hander_and_args = self.__event_queue.get()
 
-                while event_hander_and_args is not None:
-                    handler, args = event_hander_and_args
-                    handler( *args )
+            while event_hander_and_args is not None:
+                handler, args = event_hander_and_args
+                handler( *args )
 
-                    event_hander_and_args = self.__event_queue.getNoWait()
+                event_hander_and_args = self.__event_queue.getNoWait()
 
-                return 0
+            if self.__quit_editor:
+                self.__quit_editor = False
+                return -1
+
+            return 0
 
         except Exception, e:
             print 'Error: waitForActivity %s' % (str(e),)
@@ -112,7 +119,9 @@ class BEmacs(_bemacs.BemacsEditor):
         self.app.onGuiThread( self.window.termDisplayActivity, (ch,) )
 
 class Queue:
-    def __init__( self ):
+    def __init__( self, log ):
+        self.log = log
+
         self.__all_items = []
         self.__lock = threading.RLock()
         self.__condition = threading.Condition( self.__lock )
@@ -120,7 +129,8 @@ class Queue:
     def getNoWait( self ):
         with self.__lock:
             if len( self.__all_items ) > 0:
-                return self.get()
+                item = self.get()
+                return item
 
         return None
 
