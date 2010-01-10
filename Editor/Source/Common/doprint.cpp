@@ -31,19 +31,19 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 //
 //
 FormatString::FormatString( EmacsString _format )
-    : format( _format )
-    , result()
-    , next_arg_type( argNone )
-    , next_width_type( argNone )
-    , next_precision_type( argNone )
-    , format_char(0)
-    , pad_char(' ')
-    , width( 0 )
-    , precision( INT_MAX )
-    , left_justify( 0 )
-    , next_format_char_index( 0 )
-    , intArg( 0 )
-    , stringArg()
+: format( _format )
+, result()
+, next_arg_type( argNone )
+, next_width_type( argNone )
+, next_precision_type( argNone )
+, format_char(0)
+, pad_char(' ')
+, width( 0 )
+, precision( INT_MAX )
+, left_justify( 0 )
+, next_format_char_index( 0 )
+, intArg( 0 )
+, stringArg()
 {
     process_format();
 }
@@ -124,7 +124,7 @@ FormatString &FormatString::operator <<( const char *v )
     return *this;
 }
 
-FormatString &FormatString::operator <<( const unsigned char *v )
+FormatString &FormatString::operator <<( const EmacsCharQqq_t *v )
 {
     if( next_width_type == argInt
     && next_precision_type == argInt
@@ -133,7 +133,7 @@ FormatString &FormatString::operator <<( const unsigned char *v )
 
     if( next_arg_type == argString )
     {
-        stringArg = v;
+        stringArg = EmacsString( EmacsString::copy, v );
 
         process_format();
     }
@@ -370,7 +370,7 @@ void FormatString::print_string( const EmacsString &str )
     int limit = min( precision, str.length() );
 
     EmacsString s2( str( 0, limit ) );
-    put( s2.data(), s2.length() );
+    put( s2.unicode_data(), s2.length() );
 
     width -= limit;
     while( width-- > 0 )
@@ -383,20 +383,20 @@ void FormatString::put( int c )
     result.append( (unsigned char)c );
 }
 
-void FormatString::put( const unsigned char *str, unsigned int len )
+void FormatString::put( const EmacsCharQqq_t *str, unsigned int len )
 {
     result.append( len, str );
 }
 
 void FormatString::print_decimal( long int n )
 {
-    unsigned char *p, digits[12];
+    unsigned char digits[12];
     int i;
 
     if( (unsigned long int)n == 0x80000000 )
     {
-        p = u_str( "-2147483648" );
-        put( p, _str_len( p ) );            ;
+        EmacsString value( "-2147483648" );
+        put( value.unicode_data(), value.length() );
         return;
     }
 
@@ -428,13 +428,10 @@ void FormatString::print_decimal( long int n )
 
 void FormatString::print_hexadecimal( long int n )
 {
-    int    i;
-    unsigned char buf[8];
-
-//    emacs_assert( w <= 8 );
+    EmacsCharQqq_t buf[8];
 
     int w = width;
-    for( i=w-1; i >= 0; i--)
+    for( int i=w-1; i >= 0; i--)
     {
         buf[i] = (unsigned char)
             ((n&0xf) >= 10 ? (n&0xf) + 'a' - 10 : (n&0xf) + '0');
@@ -448,13 +445,12 @@ void FormatString::print_hexadecimal( long int n )
 //
 void FormatString::print_octal( long int n )
 {
-    unsigned char    *p, digits[12];
-    int    i;
+    unsigned char digits[12];
 
     if( (unsigned long int)n == 0x80000000 )
     {
-        p=u_str( "-20000000000" );
-        put( p, _str_len( p ) );
+        EmacsString value( "-20000000000" );
+        put( value.unicode_data(), value.length() );
         return;
     }
 
@@ -464,7 +460,7 @@ void FormatString::print_octal( long int n )
         n = -n;
     }
 
-    i = 0;
+    int i = 0;
     do
     {
         digits[i] = (char) ((n % 8) + '0');

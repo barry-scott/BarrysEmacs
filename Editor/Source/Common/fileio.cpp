@@ -421,17 +421,17 @@ int file_name_expand_and_default(void)
 //    format string contains the following escapes
 //
 //    device:\path1\path2\path3\filename.filetype
-//    %<n>ps    - path split        : sets the divide between head and tail of the path    //
-//                    : at position <n>                    //
-//    %pa    - path all        : device:\path1\path2\path3\                //
-//    %ph    - path head        : device:\path1\path2\                    //
-//    %pt    - path tail        : path3\                        //
-//    %pv    - path device        : device:                        //
-//    %pc    - path char        : PATH_CH                        //
-//    %pd    - path directory    : \path1\path2\path3\                    //
-//    %fn    - filename        : filename                        //
-//    %ft    - filetype        : .filetype                        //
-//    %fa    - filename and type    : filename.filetype                    //
+//    %<n>ps - path split           : sets the divide between head and tail of the path //
+//                                  : at position <n>                                   //
+//    %pa    - path all             : device:\path1\path2\path3\                        //
+//    %ph    - path head            : device:\path1\path2\                              //
+//    %pt    - path tail            : path3\                                            //
+//    %pv    - path device          : device:                                           //
+//    %pc    - path char            : PATH_CH                                           //
+//    %pd    - path directory       : \path1\path2\path3\                               //
+//    %fn    - filename             : filename                                          //
+//    %ft    - filetype             : .filetype                                         //
+//    %fa    - filename and type    : filename.filetype                                 //
 //
 //    Path split is needs to take into acount what happends if there are insufficent
 //    path parts to set the split at <n>. THe rule is that head + tail == the full path
@@ -447,8 +447,8 @@ int file_name_expand_and_default(void)
 //    +ive put all in the head. if -ive put it all in the tail
 //
 //    the head is always the root
-//    windows - x:\                            //
-//    unix    - /                            //
+//    windows - x:\                                                                     //
+//    unix    - /                                                                       //
 //
 static void file_format_string_path_split
     (
@@ -507,10 +507,10 @@ EmacsString file_format_string( const EmacsString &format, const FileParse &fab 
 {
     EmacsString result;
 
-    EmacsString path_head( fab.disk );    // the full path
+    EmacsString path_head( fab.disk );      // the full path
     path_head.append( fab.path );
 
-    EmacsString path_tail;            // null
+    EmacsString path_tail;                  // null
 
     EmacsStringIterator format_iterator( format );
 
@@ -1076,7 +1076,7 @@ int write_named_file( EmacsString &fn )
     cant_1win_opt = 1;
 
     return 0;
-}   //}   // Of WriteNamedFile
+}   // Of WriteNamedFile
 
 
 // Appends to a file
@@ -1189,7 +1189,7 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
             if( cur_exec == NULL )
                 p = get_string_interactive(
                     FormatString("Buffer name %s is in use, type a new name or <Enter> to reuse: ")
-                        << bufname);
+                                    << bufname );
             else
                 p = get_string_mlisp();
             if( !p.isNull() )
@@ -1260,7 +1260,6 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
     bf_cur->b_kind = FILEBUFFER;
     bf_cur->b_checkpointfn = EmacsString::null;
     bf_cur->b_checkpointed = checkpoint_frequency ? 0 : -1;
-
 
     //
     // Put the newly created buffer in the window ring, and make

@@ -1,9 +1,10 @@
 //
+//    Copyright (c) 1995-2010 Barry A. Scott
+//
 //    fio.c
 //
-
-#include    <emacs.h>
-
+#include <emacs.h>
+#include <emunicode.h>
 
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -39,6 +40,7 @@ EmacsFile::EmacsFile( FIO_EOL_Attribute attr )
 : m_full_file_name()
 , m_file( NULL )
 , m_attr( attr )
+, m_convert_size( 0 )
 { }
 
 EmacsFile::~EmacsFile()
@@ -248,6 +250,7 @@ int EmacsFile::fio_put( const unsigned char *buf , int len )
     return written_length;
 }
 
+#ifdef vms
 int EmacsFile::fio_split_put
     (
     const unsigned char *buf1, int len1,
@@ -264,6 +267,40 @@ int EmacsFile::fio_split_put
 
     return status1 + status2;
 }
+#endif
+
+//--------------------------------------------------------------------------------
+//
+//  Unicode file io API
+//
+//--------------------------------------------------------------------------------
+int EmacsFile::fio_get( EmacsCharQqq_t *buf, int len )
+{
+    if( m_convert_size <= 0 )
+    {
+        m_convert_size = fio_get( m_convert_buffer, sizeof( m_convert_buffer ) );
+        if( m_convert_buffer <= 0 )
+            return m_convert_size;
+    }
+
+    int utf8_usable_len = 0;
+    int unicode_len = length_utf8_to_unicode(
+            m_convert_size, m_convert_buffer,   // convert these bytes
+            len,                                // upto this number of unicode chars
+            utf8_usable_len );                  // and return the number of bytes required
+
+    
+    // convert
+    convert_utf8_to_unicode( m_convert_buffer, unicode_len, buf );
+
+    // remove converted chars from the buffer
+    m_convert_size -= utf8_usable_len;
+    memmove( m_convert_buffer, m_convert_buffer+utf8_usable_len, m_convert_size );
+
+    return unicode_len;
+}
+
+//--------------------------------------------------------------------------------
 
 bool EmacsFile::fio_close()
 {
@@ -271,20 +308,6 @@ bool EmacsFile::fio_close()
     m_file = NULL;
 
     return status == 0;
-}
-
-void EmacsFile::fio_setpos( long int pos )
-{
-    int status = fseek( m_file, pos, SEEK_SET );
-    if( status != 0 )
-    {
-        status = errno;
-    }
-}
-
-long int EmacsFile::fio_getpos()
-{
-    return ftell( m_file );
 }
 
 long int EmacsFile::fio_size()
@@ -381,14 +404,18 @@ int EmacsFile::get_fixup_buffer( unsigned char *buf, int len )
     switch( m_attr )
     {
     default:
-        // defualt never gets hit...
+        // default never gets hit...
         emacs_assert( false );
+
     case FIO_EOL__None:
         // no CR or LF in the buf so return the orginal len
         return len;
 
-    case FIO_EOL__StreamLF:
     case FIO_EOL__Binary:
+        // no change required
+        return len;
+
+    case FIO_EOL__StreamLF:
         // no change required
         return len;
 

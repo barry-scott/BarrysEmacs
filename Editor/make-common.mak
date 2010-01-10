@@ -231,32 +231,32 @@ $(edit_obj)dbdel.o : Utilities/dbdel/dbdel.cpp
 #                                                                                #
 ##################################################################################
 $(edit_obj)_bemacs.so: $(pybemacs_specific_obj_files) $(obj_files)
-	@echo Compile $@
-	$(LDSHARED) -o $@ $(pybemacs_specific_obj_files) $(obj_files) $(LDLIBS)
+	@echo Info: Compile $@
+	@$(LDSHARED) -o $@ $(pybemacs_specific_obj_files) $(obj_files) $(LDLIBS)
 
 $(edit_obj)pybemacs.o: Source/pybemacs/pybemacs.cpp Source/pybemacs/bemacs_python.hpp
-	@echo Compile $@
-	$(cpp) $(cc_flags) -o $@ $<
+	@echo Info: Compile $<
+	@$(cpp) $(cc_flags) -o $@ $<
 
 $(edit_obj)bemacs_python.o: Source/pybemacs/bemacs_python.cpp Source/pybemacs/bemacs_python.hpp
-	@echo Compile $@
-	$(cpp) $(cc_flags) -o $@ $<
+	@echo Info: Compile $<
+	@$(cpp) $(cc_flags) -o $@ $<
 
 $(edit_obj)cxxsupport.o: $(PYCXXSRC)/cxxsupport.cxx
-	@echo Compile $@
-	$(CCC) -c $(CCCFLAGS) -o $@ $<
+	@echo Info: Compile $<
+	@$(CCC) -c $(CCCFLAGS) -o $@ $<
 
 $(edit_obj)cxx_extensions.o: $(PYCXXSRC)/cxx_extensions.cxx
-	@echo Compile $@
-	$(CCC) -c $(CCCFLAGS) -o $@ $<
+	@echo Info: Compile $<
+	@$(CCC) -c $(CCCFLAGS) -o $@ $<
 
 $(edit_obj)cxxextensions.o: $(PYCXXSRC)/cxxextensions.c
-	@echo Compile $@
-	$(CC) -c $(CCFLAGS) -o $@ $<
+	@echo Info: Compile $<
+	@$(CC) -c $(CCFLAGS) -o $@ $<
 
 $(edit_obj)IndirectPythonInterface.o: $(PYCXXSRC)/IndirectPythonInterface.cxx
-	@echo Compile $@
-	$(CCC) -c $(CCCFLAGS) -o $@ $< 
+	@echo Info: Compile $<
+	@$(CCC) -c $(CCCFLAGS) -o $@ $< 
 
 clean::
 	rm -f $(edit_exe)_bemacs.so

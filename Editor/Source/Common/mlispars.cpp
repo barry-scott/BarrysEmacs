@@ -1,5 +1,5 @@
 //
-//    Copyright( c ) 1982-1996
+//    Copyright( c ) 1982-2010
 //        Barry A. Scott
 //
 
@@ -122,7 +122,7 @@ int MLispBufferInputStream::position()
 
 int MLispBufferInputStream::readCharacter( void )
 {
-    unsigned char c;
+    int c;
 
     if( bufpos > bf_cur->num_characters() )
         // return end of file
@@ -158,8 +158,8 @@ private:
 
 
 MLispStringInputStream::MLispStringInputStream( const EmacsString &_string )
-    : pos( 0 )
-    , string( _string )
+: pos( 0 )
+, string( _string )
 { }
 
 void MLispStringInputStream::setString( const EmacsString &_string )
@@ -204,15 +204,15 @@ private:
 
     int file_size;
     enum { BUF_SIZE = 65536 };
-    unsigned char f_buffer[BUF_SIZE];
-    unsigned char *file_pointer;
+    EmacsCharQqq_t f_buffer[BUF_SIZE];
+    EmacsCharQqq_t *file_pointer;
 };
 
 
 MLispFileInputStream::MLispFileInputStream( const EmacsString &fn )
-    : EmacsFile()    // VC 4.1 bug - do not put fopen here
-    , file_size( 0 )
-    , file_pointer( NULL )
+: EmacsFile()    // VC 4.1 bug - do not put fopen here
+, file_size( 0 )
+, file_pointer( NULL )
 {
     fio_open_using_path( EMACS_PATH, fn, FIO_READ, ".ml" );
 }
@@ -261,8 +261,8 @@ private:
 
 
 MLispLibraryInputStream::MLispLibraryInputStream( const EmacsString &fn )
-    : MLispStringInputStream( EmacsString::null )
-    , is_ok( false )
+: MLispStringInputStream( EmacsString::null )
+, is_ok( false )
 {
 #if defined( DB )
     DatabaseSearchList *dbs;
@@ -393,7 +393,7 @@ EmacsString ProgramNode::parse_name( MLispInputStream &input )
     && ! isspace( c )
     && c != '(' && c != ')' && c != ';' )
     {
-        name.append( (unsigned char)c );
+        name.append( c );
         c = input();
     }
     input.pushBack( c );
@@ -594,13 +594,13 @@ ProgramNode *ProgramNode::number_node( MLispInputStream &input )
 
     if( c == '\'' )
     {
-        unsigned char buf[30];
-        buf[ 0 ] = (unsigned char)input();
+        EmacsCharQqq_t buf[30];
+        buf[ 0 ] = input();
         do
         {
             c = input();
             n++;
-            buf[ n ] = (unsigned char)c;
+            buf[ n ] = c;
         }
         while( n < 29 && (c != '\'' || (n == 1 && buf[0] == '\\')) );
 
@@ -641,7 +641,7 @@ ProgramNode *ProgramNode::number_node( MLispInputStream &input )
                     if( n > 1
                     && buf[0] == '\\' )
                     {
-                        unsigned char *p;
+                        EmacsCharQqq_t *p;
                         p = &buf[1];
                         n = 0;
                         while( isdigit( c = *p++ ) )
@@ -738,7 +738,7 @@ ProgramNode *ProgramNode::string_node( MLispInputStream &input )
                     error( "Closing \"\" missing in keyname escape sequence" );
                     return 0;
                 }
-                key_name.append( (unsigned char)c );
+                key_name.append( c );
                 c = input();
             }
 
@@ -781,7 +781,7 @@ ProgramNode *ProgramNode::string_node( MLispInputStream &input )
             error( "Unterminated string constant" );
             return 0;
         }
-        buf.append( (unsigned char)c );
+        buf.append( c );
     }
 
 #if DBG_ML_PARSE

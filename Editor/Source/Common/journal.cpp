@@ -923,7 +923,7 @@ int EmacsBufferJournal::recoverJournal( const EmacsString &journal_file )
     {
         journal_filename = rec[1].jnl_data.jnl_chars;
 #ifdef vms
-    {
+        {
         struct dsc$descriptor src;
         unsigned int version1;
         unsigned int version2;
@@ -961,13 +961,13 @@ int EmacsBufferJournal::recoverJournal( const EmacsString &journal_file )
             return 0;
         }
 
-    }
+        }
 #else
         visit_file( journal_filename, 1, 1, EmacsString::null );
 #endif
         offset = 1 + JNL_BYTE_TO_REC( rec->jnl_open.jnl_name_length );
-    }
         break;
+    }
 
     case JNL_BUFFERNAME:
     {
@@ -984,8 +984,8 @@ int EmacsBufferJournal::recoverJournal( const EmacsString &journal_file )
         EmacsBuffer::set_bfn( EmacsString( journal_filename ) );
         theActiveView->window_on( bf_cur );
         offset = 1 + JNL_BYTE_TO_REC( rec->jnl_open.jnl_name_length );
-    }
         break;
+    }
 
     default:
     {
@@ -1073,7 +1073,7 @@ int EmacsBufferJournal::validate_journal_buffer(void)
         rec = &jnl_buf[offset];
 
         switch( rec->jnl_open.jnl_type )
-    {
+        {
         case JNL_FILENAME:
             offset = 1 + JNL_BYTE_TO_REC( rec->jnl_open.jnl_name_length );
             break;
@@ -1099,7 +1099,7 @@ int EmacsBufferJournal::validate_journal_buffer(void)
                     rec->jnl_open.jnl_type );
             debug_invoke();
             return 0;
-    }
+        }
     }
 exit_loop:
     return 1;

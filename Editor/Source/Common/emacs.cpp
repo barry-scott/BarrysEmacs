@@ -322,7 +322,7 @@ static void read_emacs_memory_file()
 
     unsigned char combuf[300];
 
-{
+    {
     EmacsFile args;
     if( !args.fio_open( memory, FIO_READ, EmacsString::null ) )
         return;
@@ -353,7 +353,7 @@ static void read_emacs_memory_file()
     }
 
     ml_err = saved_err;
-}
+    }
 
     EmacsFile::fio_delete( memory );
 }

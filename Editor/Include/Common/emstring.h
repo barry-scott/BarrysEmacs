@@ -271,8 +271,9 @@ inline void EmacsString::check_for_bad_value( EmacsStringRepresentation *rep )
     if( rep == bad_value )
         debug_invoke();
 
-    if( _rep->length > 0 )
-        emacs_assert( _rep->data[0] <= 255 );
+//
+//    if( _rep->length > 0 )
+//        emacs_assert( _rep->data[0] <= 255 );
 }
 
 inline EmacsCharQqq_t EmacsString::operator[]( int index ) const
@@ -312,7 +313,7 @@ public:
     FormatString &operator <<( const EmacsString & );
     FormatString &operator <<( const EmacsString * );
     FormatString &operator <<( const char * );
-    FormatString &operator <<( const EmacsChar_t * );
+    FormatString &operator <<( const EmacsCharQqq_t * );
 
 private:
     enum arg_type { argNone, argString, argInt };
@@ -321,7 +322,7 @@ private:
     int next_format_char();
 
     void put( int ch );
-    void put( const EmacsChar_t *chars, unsigned int len );
+    void put( const EmacsCharQqq_t *chars, unsigned int len );
 
     void print_decimal( long int );
     void print_hexadecimal( long int );

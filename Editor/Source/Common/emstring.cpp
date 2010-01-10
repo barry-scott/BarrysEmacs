@@ -98,6 +98,20 @@ EmacsString::EmacsString( enum string_type type, const unsigned char *string, in
     check_for_bad_value( _rep );
 }
 
+size_t strlen( const EmacsCharQqq_t *str )
+{
+    const EmacsCharQqq_t *p = str;
+    while( *p++ != 0 )
+        ;
+    return p - str;
+}
+
+EmacsString::EmacsString( enum string_type type, const EmacsCharQqq_t *string )
+: _rep( EMACS_NEW EmacsStringRepresentation( type, strlen( string )+1, strlen( string ), string ) )
+{
+    check_for_bad_value( _rep );
+}
+
 EmacsString::EmacsString( enum string_type type, const EmacsCharQqq_t *string, int length )
 : _rep( EMACS_NEW EmacsStringRepresentation( type, length+1, length, string ) )
 {

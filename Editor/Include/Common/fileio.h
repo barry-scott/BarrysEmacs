@@ -55,12 +55,23 @@ public:
         return m_file != NULL;
     }
 
+    // Old 8bit chars
     int fio_get( unsigned char *, int );
     int fio_get_line( unsigned char *buf, int len );
     int fio_get_with_prompt( unsigned char *buffer, int size, const unsigned char *prompt );
 
     int fio_put( const unsigned char *, int );
+
+#ifdef vms
     int fio_split_put( const unsigned char *, int, const unsigned char *, int );
+#endif
+
+    // Unicode chars
+    int fio_get( EmacsCharQqq_t *, int );
+    //int fio_get_line( EmacsCharQqq_t *buf, int len );
+    //int fio_get_with_prompt( EmacsCharQqq_t *buffer, int size, const EmacsCharQqq_t *prompt );
+
+    //int fio_put( const EmacsCharQqq_t *, int );
 
     bool fio_close();
 
@@ -68,8 +79,6 @@ public:
     time_t fio_modify_date();
     int fio_access_mode();
     const EmacsString &fio_getname();
-    long int fio_getpos();
-    void fio_setpos( long int );
     FIO_EOL_Attribute fio_get_eol_attribute() { return m_attr; }
 
     //
@@ -82,9 +91,13 @@ public:
 
 private:
     int get_fixup_buffer( unsigned char *buf, int len );
+    int get_fixup_buffer( EmacsCharQqq_t *buf, int len );
 
 
     EmacsString m_full_file_name;
     FILE *m_file;
     FIO_EOL_Attribute m_attr;
+
+    int m_convert_size;
+    unsigned char m_convert_buffer[64];
 };
