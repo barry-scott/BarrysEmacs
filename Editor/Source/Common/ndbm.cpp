@@ -838,9 +838,9 @@ int database::chkblk( unsigned char buf[database::PBLKSIZ] )
     return -1;
 }
 
-int database::put_db( const EmacsString &key, unsigned char *content, int contentlen )
+int database::put_db( const EmacsString &key, const unsigned char *content, int contentlen )
 {
-    datum keyd(*this);
+    datum keyd( *this );
     keyd.dptr = key.data();
     keyd.dsize = key.length();
 

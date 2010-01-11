@@ -1,4 +1,4 @@
-//    Copyright (c) 1982-1995
+//    Copyright (c) 1982-2010
 //        Barry A. Scott
 // Header file for dealing with values returned by mlisp functions
 
@@ -17,14 +17,14 @@ class ExecutionStack;
 class ProgramNode;
 
 class BoundNameInside;
-class  BoundNameMacro;                    // public BoundNameInside
-class  BoundNameAutoLoad;                // public BoundNameInside
+class  BoundNameMacro;                  // public BoundNameInside
+class  BoundNameAutoLoad;               // public BoundNameInside
 class  BoundNameBuiltin;                // public BoundNameInside
-class  BoundNameProcedure;                // public BoundNameInside
-class  BoundNameKeymap;                    // public BoundNameInside
-class  BoundNameExternalFunction;            // public BoundNameInside
+class  BoundNameProcedure;              // public BoundNameInside
+class  BoundNameKeymap;                 // public BoundNameInside
+class  BoundNameExternalFunction;       // public BoundNameInside
 class BoundName;
-class  BoundNameNoDefine;                // public BoundName
+class  BoundNameNoDefine;               // public BoundName
 
 //
 //
@@ -36,9 +36,9 @@ class Binding : public EmacsObject
 public:
     EMACS_OBJECT_FUNCTIONS( Binding )
     // constructors used generally
-    Binding();                        // bind to void
-    Binding( const Expression &exp );            // bind to exp
-    Binding( const Expression &exp, EmacsBuffer *buf );    // bind to exp on buffer
+    Binding();                          // bind to void
+    Binding( const Expression &exp );   // bind to exp
+    Binding( const Expression &exp, EmacsBuffer *buf ); // bind to exp on buffer
     virtual ~Binding();
 
     // constructors used to init emacs - see variable.c
@@ -49,12 +49,12 @@ private:
     friend void restore_var(void);
     Binding( Expression *exp );
 public:
-    Binding *b_inner;        // the next inner binding for the same name
-    Expression *b_exp;        // The value held by this variable
-    EmacsBufferRef b_local_to;    // The buffer that this binding is local to
+    Binding *b_inner;               // the next inner binding for the same name
+    Expression *b_exp;              // The value held by this variable
+    EmacsBufferRef b_local_to;      // The buffer that this binding is local to
 
-    unsigned b_buffer_specific : 1;    // True iff the variable is buffer specific
-    unsigned b_is_default : 1;    // True iff this is the default value entry
+    unsigned b_buffer_specific : 1; // True iff the variable is buffer specific
+    unsigned b_is_default : 1;      // True iff this is the default value entry
 };
 
 //
@@ -79,16 +79,16 @@ public:
     ExecutionStack( int provided=0, int arg=0 );
     virtual ~ExecutionStack();
 
-    ExecutionStack *es_dyn_parent;    // pointer to the dynamically enclosing parent of this execution frame
-    ProgramNode *es_cur_exec;    // the expression being executed at this level
+    ExecutionStack *es_dyn_parent;      // pointer to the dynamically enclosing parent of this execution frame
+    ProgramNode *es_cur_exec;           // the expression being executed at this level
 
-    EmacsString es_cur_name;    // name of the function whoes body is in  es_cur_exec
+    EmacsString es_cur_name;            // name of the function whoes body is in  es_cur_exec
 
-    int es_prefix_argument;        // The argument prefixed to this invocation
-    int es_prefix_argument_provided;// true iff there really was an argument
-                    // prefixed to this invocation.  If there
-                    // wasn't, then the value of PrefixArgument
-                    // will be 1
+    int es_prefix_argument;             // The argument prefixed to this invocation
+    int es_prefix_argument_provided;    // true iff there really was an argument
+                                        // prefixed to this invocation.  If there
+                                        // wasn't, then the value of PrefixArgument
+                                        // will be 1
 };
 
 //
@@ -279,10 +279,10 @@ class EmacsMacroString : public EmacsString
 public:
     EMACS_OBJECT_FUNCTIONS( EmacsMacroString )
     EmacsMacroString()
-        : EmacsString()
+    : EmacsString()
     { }
     EmacsMacroString( const EmacsString &macro )
-        : EmacsString( macro )
+    : EmacsString( macro )
     { }
 
     EmacsMacroString &operator=( const char *str ) { EmacsString::operator=( str ); return *this; }
@@ -295,7 +295,7 @@ class FunctionNameTable : public EmacsStringTable
 public:
     EMACS_OBJECT_FUNCTIONS( FunctionNameTable )
     FunctionNameTable( int init_size, int grow_amount )
-        : EmacsStringTable( init_size, grow_amount )
+    : EmacsStringTable( init_size, grow_amount )
     { }
     virtual ~FunctionNameTable()
     { }

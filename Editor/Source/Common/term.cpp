@@ -357,7 +357,7 @@ void ActivityTimer::timeOut()
     theActiveView->t_display_activity( activity_character );
 }
 
-void set_activity_character( unsigned char it )
+void set_activity_character( EmacsCharQqq_t it )
 {
     if( !activity_indicator )
         return;

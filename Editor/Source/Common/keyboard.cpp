@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1982-2002
+//    Copyright (c) 1982-2010
 //        Barry A. Scott
 //
 
@@ -48,7 +48,7 @@ volatile int input_pending;
 volatile int timer_interrupt_occurred;
 volatile int interrupt_key_struck;
 volatile int pending_channel_io;
-unsigned char activity_character = 'x';
+EmacsCharQqq_t activity_character = 'x';
 BoundNameNoDefine interrupt_block( "interrupt-key", interrupt_emacs );
 SystemExpressionRepresentationIntPositive checkpoint_frequency;
 int end_of_mac;
@@ -345,7 +345,7 @@ int process_keys( void )
             return 0;
         }
 
-        unsigned char c = (unsigned char)ic;
+        EmacsCharQqq_t c = (EmacsCharQqq_t)ic;
 
         can_checkpoint = 0;
         keys_struck.append( c );
@@ -580,7 +580,7 @@ int process_key( void )
 
 // read a character from the keyboard; call the redisplay if needed
 
-static unsigned char parameter_chars[100];
+static EmacsCharQqq_t parameter_chars[100];
 
 int get_char( void )
 {
@@ -593,18 +593,18 @@ int get_char( void )
     if( dbg_flags&DBG_KEY && dbg_flags&DBG_TMP )
     {
         _dbg_msg( "get_char: start" );
-    {
+        {
         QueueIterator<CharElement> next( push_back_queue );
         CharElement *it;
         while( (it = next.next()) != NULL )
             _dbg_msg( FormatString("push_back_queue: %C(0x%x)") << it->ce_char << it->ce_char );
-    }
-    {
+        }
+        {
         QueueIterator<CharElement> next( input_queue );
         CharElement *it;
         while( (it = next.next()) != NULL )
             _dbg_msg( FormatString("input_queue: %C(0x%x)") << it->ce_char << it->ce_char );
-    }
+        }
     }
 #endif
 
@@ -755,8 +755,8 @@ having_dequeued_a_char:    // leave this block
 
         Expression args[2][MAX_ARGS];
 
-        unsigned char *p = &parameter_chars[0];
-        unsigned char *last_p = p;
+        EmacsCharQqq_t *p = &parameter_chars[0];
+        EmacsCharQqq_t *last_p = p;
         int num_params = 0;
 
         while( char_cell->ce_type == CE_TYPE_PAR_SEP
@@ -807,7 +807,7 @@ having_dequeued_a_char:    // leave this block
                 p - last_p        // length of string
                 );
 
-    {
+        {
         EmacsArray a
             (
             1, 2,            // first dimension size
@@ -827,15 +827,17 @@ having_dequeued_a_char:    // leave this block
         // 2, .num_params is always zero
 
         cs_parameters.replace( a );
-    }
+        }
 
         c = char_cell->ce_char;
         break;
     }
+
     case CE_TYPE_FREE_CELL:
         _dbg_msg( "Found a free char cell in get_char" );
         debug_invoke();
         break;
+
     default:
         _dbg_msg( "Found an unknown char cell in get_char" );
         debug_invoke();
@@ -846,7 +848,7 @@ having_dequeued_a_char:    // leave this block
     // insert at tail of queue
     char_cell->ce_type = CE_TYPE_FREE_CELL;
     free_queue.queueInsertAtTail( char_cell );
-#if    DBG_QUEUE
+#if DBG_QUEUE
     free_queue.queue_validate();
 #endif
 having_found_char:    // leave this block
@@ -865,7 +867,7 @@ having_found_char:    // leave this block
     //
     if( remember )
     {
-        key_mem.append( (unsigned char)c );
+        key_mem.append( (EmacsCharQqq_t)c );
 
         if( key_mem.length() >= MEMLEN )
         {
@@ -1050,7 +1052,7 @@ SystemExpressionRepresentationControlString cs_par_sep_string( M_CS_PAR_SEP );
 SystemExpressionRepresentationControlString cs_int_char_string( M_CS_INT_CHAR );
 SystemExpressionRepresentationControlString cs_fin_char_string( M_CS_FIN_CHAR );
 
-unsigned char cs_attr[256];
+unsigned char cs_attr[65536];
 
 void SystemExpressionRepresentationControlString::assign_value( ExpressionRepresentation *new_value )
 {
@@ -1083,7 +1085,7 @@ enum csi_states
     CSI_ST_CSI
 };
 
-CharElement *_q_char( unsigned char value, int type, bool shift )
+CharElement *_q_char( EmacsCharQqq_t value, int type, bool shift )
 {
     CharElement *char_cell;
     //
@@ -1095,7 +1097,7 @@ CharElement *_q_char( unsigned char value, int type, bool shift )
         //    wake up get_char if this is the first char in the list
         //
         char_cell->ce_char = value;
-        char_cell->ce_type = (unsigned char)type;
+        char_cell->ce_type = (EmacsCharQqq_t)type;
         char_cell->ce_shift = shift;
         interlock_inc( &input_pending );
 
@@ -1116,18 +1118,17 @@ void TerminalControl::k_input_char( int character, bool shift )
         return;
 
     static csi_states csi_state( CSI_ST_NORMAL );
-    static unsigned char hold[100];
-    static unsigned char *hold_put_ptr;
+    static EmacsCharQqq_t hold[100];
+    static EmacsCharQqq_t *hold_put_ptr;
 
-    unsigned char ch;
-    ch = (unsigned char)character;
+    EmacsCharQqq_t ch( character );
 
     // do the Ctrl-X swapping
     if( ch == ctl('X') )
-        ch = (unsigned char)swap_ctrl_x_char;
+        ch = swap_ctrl_x_char;
     else
-        if( ch == swap_ctrl_x_char )
-            ch = ctl('X');
+    if( ch == swap_ctrl_x_char )
+        ch = ctl('X');
 
     if( character == debug_break_char )
         debug_invoke();
@@ -1139,7 +1140,7 @@ void TerminalControl::k_input_char( int character, bool shift )
         case CSI_ST_NORMAL:
         {
             if( cs_attr[ch]&M_CS_CVT_CSI )
-                ch    = 0x9b;    // CSI
+                ch = 0x9b;    // CSI
 
             switch( ch )
             {
@@ -1154,10 +1155,12 @@ void TerminalControl::k_input_char( int character, bool shift )
                 hold_put_ptr = &hold[0];
                 return;
             }
-            default:    goto exit_loop;
+            default:
+                goto exit_loop;
             }
             break;
         }
+
         case CSI_ST_ESC:
         {
             if( cs_attr[ch]&M_CS_CVT_8BIT )
@@ -1174,6 +1177,7 @@ void TerminalControl::k_input_char( int character, bool shift )
             }
             break;
         }
+
         case CSI_ST_CSI:
         {
             if( cs_attr[ch]&M_CS_PAR_SEP
@@ -1198,7 +1202,7 @@ void TerminalControl::k_input_char( int character, bool shift )
                 if( ch == '~' && cs_cvt_f_keys )
                 {
                     int key_num;
-                    unsigned char *hold_get_ptr;
+                    EmacsCharQqq_t *hold_get_ptr;
 
                     hold_get_ptr = &hold[0];
                     key_num = 0;
@@ -1212,14 +1216,14 @@ void TerminalControl::k_input_char( int character, bool shift )
                         }
                         key_num = key_num * 10 + ch - '0';
                     }
-                {
+                    {
                     int key_bank = key_num/50;
                     key_num %= 50;
                     if( key_bank != 0 )
                         key_bank++;
-                    _q_char( (unsigned char)(0x80+key_bank), CE_TYPE_CHAR, shift );
-                    _q_char( (unsigned char)(key_num + ' '), CE_TYPE_CHAR, shift );
-                }
+                    _q_char( (EmacsCharQqq_t)(0x80+key_bank), CE_TYPE_CHAR, shift );
+                    _q_char( (EmacsCharQqq_t)(key_num + ' '), CE_TYPE_CHAR, shift );
+                    }
                     csi_state = CSI_ST_NORMAL;
 
 #if    DBG_QUEUE
@@ -1237,7 +1241,7 @@ process_f_keys:
                 && hold_put_ptr[-1] == '&' )
                 {
                     int event_num;
-                    unsigned char *hold_get_ptr;
+                    EmacsCharQqq_t *hold_get_ptr;
 
                     hold_get_ptr = &hold[0];
                     event_num = 0;
@@ -1250,7 +1254,7 @@ process_f_keys:
                     }
                     _q_char( 0x81, CE_TYPE_CHAR, shift );
                     hold_put_ptr--;// lose the "&"
-                    ch = (unsigned char)(event_num + 'A');
+                    ch = (EmacsCharQqq_t)(event_num + 'A');
                     csi_state = CSI_ST_NORMAL;
                 }
                 else
@@ -1261,7 +1265,7 @@ process_f_keys:
                 && hold_put_ptr[-1] == '#' )
                 {
                     int event_num;
-                    unsigned char *hold_get_ptr;
+                    EmacsCharQqq_t *hold_get_ptr;
 
                     hold_get_ptr = &hold[0];
                     event_num = 0;
@@ -1274,15 +1278,15 @@ process_f_keys:
                     }
                     _q_char( 0x81, CE_TYPE_CHAR, shift );
                     hold_put_ptr--;// lose the "&"
-                    ch = (unsigned char)(event_num + 'M');
+                    ch = (EmacsCharQqq_t)(event_num + 'M');
                     csi_state = CSI_ST_NORMAL;
                 }
                 else
                     _q_char( 0x9b, CE_TYPE_CHAR, shift );
 
-            {
-                unsigned char par_char;
-                unsigned char *hold_get_ptr;
+                {
+                EmacsCharQqq_t par_char;
+                EmacsCharQqq_t *hold_get_ptr;
 
                 //
                 //    Find out how many parameters are present
@@ -1302,7 +1306,7 @@ process_f_keys:
                         fin_char = CE_TYPE_CHAR;
                     }
                 }
-            }
+                }
                 _q_char( ch, fin_char, shift );
                 csi_state = CSI_ST_NORMAL;
 #if    DBG_QUEUE
@@ -1312,8 +1316,8 @@ process_f_keys:
                 return;
             }
             // syntax error in escape sequence
-        {
-            unsigned char *hold_get_ptr;
+            {
+            EmacsCharQqq_t *hold_get_ptr;
 
             _q_char( 0x9b, CE_TYPE_CHAR, shift );
             hold_get_ptr = &hold[0];
@@ -1321,7 +1325,7 @@ process_f_keys:
                 _q_char( *hold_get_ptr++, CE_TYPE_CHAR, shift );
             csi_state = CSI_ST_NORMAL;
             goto exit_loop;
-        }
+            }
         }
         }
     }

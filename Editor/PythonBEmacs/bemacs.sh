@@ -8,7 +8,11 @@ if [ "$1" = "--gdb" ]
 then
     shift 1
     echo
-    echo "run -u be_main.py " "$@"
+    echo "run -u be_main.py " "$@" >.gdbinit
+    if [ -e init.gdb ]
+    then
+        cat init.gdb >.gdbinit
+    fi
     echo
     gdb python${PYTHON_VERSION}
 

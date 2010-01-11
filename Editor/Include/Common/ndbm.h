@@ -1,5 +1,6 @@
 //
-//    Copyright (c) 1982-1998
+//    Copyright (c) 1982-2010
+//
 //        Barry A. Scott
 //
 
@@ -47,31 +48,31 @@ public:
     database();
     virtual ~database();
 
-    int put_db( const EmacsString &, unsigned char *,int );
+    int put_db( const EmacsString &key, const unsigned char *value, int length );
     int get_db( const EmacsString &key, EmacsString &value );
     int get_db_help( const EmacsString &key,EmacsString &value );
-    int index_db( const EmacsString &,int (*)(const EmacsString &,unsigned char **));
-    bool open_db( const EmacsString &,int );
+    int index_db( const EmacsString &, int (*)( const EmacsString &, unsigned char ** ) );
+    bool open_db( const EmacsString &, int );
     void close_db();
 
     datum firstkey();
-    datum nextkey(datum &);
-    int delete_key(datum &);
+    datum nextkey( datum & );
+    int delete_key( datum & );
 
 private:
     // functions
     bool reopen_db( int access );
-    long forder(datum &);
-    datum fetch(datum &);
-    int store(datum &);
-    datum firsthash(long);
-    long hashinc(long);
+    long forder( datum & );
+    datum fetch( datum & );
+    int store( datum & );
+    datum firsthash( long );
+    long hashinc( long );
     int setup_db();
     static long getlong( unsigned char *p );
     static void putlong( unsigned char *p, long val );
     static short getshort( unsigned char *p );
     static void putshort( unsigned char *p, short val );
-    void ndbm_access( long  hash );
+    void ndbm_access( long hash );
     int getbit();
     int ndbm_setbit();
     int delitem( unsigned char buf[PBLKSIZ], int n );
@@ -138,19 +139,27 @@ class DatabaseSearchListTable : public EmacsStringTable
 public:
     EMACS_OBJECT_FUNCTIONS( DatabaseSearchListTable )
     DatabaseSearchListTable( int init_size, int grow_amount )
-        : EmacsStringTable( init_size, grow_amount )
+    : EmacsStringTable( init_size, grow_amount )
     { }
     virtual ~DatabaseSearchListTable()
     { }
 
     void add( const EmacsString &key, DatabaseSearchList *value )
-    { EmacsStringTable::add( key, value ); }
+    {
+        EmacsStringTable::add( key, value );
+    }
     DatabaseSearchList *remove( const EmacsString &key )
-    { return (DatabaseSearchList *)EmacsStringTable::remove( key ); }
+    {
+        return (DatabaseSearchList *)EmacsStringTable::remove( key );
+    }
     DatabaseSearchList *find( const EmacsString &key )
-    { return (DatabaseSearchList *)EmacsStringTable::find( key ); }
+    {
+        return (DatabaseSearchList *)EmacsStringTable::find( key );
+    }
     DatabaseSearchList *value( int index )
-    { return (DatabaseSearchList *)EmacsStringTable::value( index ); }
+    {
+        return (DatabaseSearchList *)EmacsStringTable::value( index );
+    }
 };
 
 // maximum number of components in a database search list
@@ -162,7 +171,9 @@ public:
     virtual ~DatabaseSearchList();
 
     static DatabaseSearchList *find( const EmacsString &name )
-    { return name_table.find( name ); }
+    {
+        return name_table.find( name );
+    }
 
     // return one of the keys in the table otherwise NULL
     static DatabaseSearchList *get_word_mlisp()
@@ -183,18 +194,22 @@ public:
 
     // return one of the keys in the table otherwise NULL
     static EmacsString &get_esc_word_mlisp( EmacsString &result )
-    { return name_table.get_esc_word_mlisp( result ); }
+    {
+        return name_table.get_esc_word_mlisp( result );
+    }
     static EmacsString &get_esc_word_interactive( const EmacsString &prompt, EmacsString &result )
-    { return name_table.get_esc_word_interactive( prompt, EmacsString::null, result ); }
+    {
+        return name_table.get_esc_word_interactive( prompt, EmacsString::null, result );
+    }
     static EmacsString &get_esc_word_interactive( const EmacsString &prompt, const EmacsString &default_value, EmacsString &result )
-    { return name_table.get_esc_word_interactive( prompt, default_value, result ); }
-
+    {
+        return name_table.get_esc_word_interactive( prompt, default_value, result );
+    }
 
     enum { SEARCH_LEN = 10 };
     EmacsString dbs_name;
-    int dbs_size;                    // number of components
-    database *dbs_elements [SEARCH_LEN];        // the components
-                            // each is a database from the ndbms package
+    int dbs_size;                           // number of components
+    database *dbs_elements [SEARCH_LEN];    // the components - each is a database from the ndbms package
 
     static DatabaseSearchListTable name_table;
 };

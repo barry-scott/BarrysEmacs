@@ -314,8 +314,6 @@ class BemacsApp(wx.App):
         rc = dlg.ShowModal()
         dlg.Destroy()
 
-        self.log.info( 'guiYesNoDialog %r YES %r' % (rc, wx.ID_YES) )
-
         return rc == wx.ID_YES
 
     def quit( self ):

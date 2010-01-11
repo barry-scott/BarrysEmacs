@@ -19,8 +19,8 @@ enum CE_TYPE_type
 class CharElement : public QueueEntry<CharElement>
 {
 public:
-    unsigned char ce_char;
-    unsigned char ce_type;
+    EmacsCharQqq_t ce_char;
+    int ce_type;
     bool ce_shift;
 };
 const int M_CS_CVT_CSI( 1 );
@@ -79,7 +79,7 @@ public:
     virtual void removeAllBindings( void );
 
 private:
-    BoundName *k_binding[256];
+    BoundName *k_binding[65536];
 };
 
 class KeyMap : public EmacsObject

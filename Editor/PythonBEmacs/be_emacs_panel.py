@@ -1,6 +1,6 @@
 '''
  ====================================================================
- Copyright (c) 2003-2009 Barry A Scott.  All rights reserved.
+ Copyright (c) 2003-2010 Barry A Scott.  All rights reserved.
 
  This software is licensed as described in the file LICENSE.txt,
  which you should have received as part of this distribution.
@@ -124,36 +124,36 @@ bg_colours = {
 
 special_keys = {
 #   Key code            trans         shift_trans ctrl_trans  ctrl_shift_trans
-    wx.WXK_BACK:        ("\x7f",      None,       "\033[85~", None),
-    wx.WXK_TAB:         ("\t",        "\033\t",   "\t",       "\033\t"),
+    wx.WXK_BACK:        (u'\x7f',      None,        u'\033[85~', None),
+    wx.WXK_TAB:         (u'\t',        u'\033\t',   u'\t',       u'\033\t'),
 
     # function keys
-    wx.WXK_F1:          ("\033[17~", "\033[117~", "\033[67~", "\033[167~"),
-    wx.WXK_F2:          ("\033[18~", "\033[118~", "\033[68~", "\033[168~"),
-    wx.WXK_F3:          ("\033[19~", "\033[119~", "\033[69~", "\033[169~"),
-    wx.WXK_F4:          ("\033[20~", "\033[120~", "\033[70~", "\033[170~"),
-    wx.WXK_F5:          ("\033[21~", "\033[121~", "\033[71~", "\033[171~"),
-    wx.WXK_F6:          ("\033[23~", "\033[123~", "\033[73~", "\033[173~"),
-    wx.WXK_F7:          ("\033[24~", "\033[124~", "\033[74~", "\033[174~"),
-    wx.WXK_F8:          ("\033[25~", "\033[125~", "\033[75~", "\033[175~"),
-    wx.WXK_F9:          ("\033[26~", "\033[126~", "\033[76~", "\033[176~"),
-    wx.WXK_F10:         ("\033[28~", "\033[128~", "\033[78~", "\033[178~"),
-    wx.WXK_F11:         ("\033[29~", "\033[129~", "\033[79~", "\033[179~"),
-    wx.WXK_F12:         ("\033[31~", "\033[131~", "\033[81~", "\033[181~"),
+    wx.WXK_F1:          (u'\033[17~', u'\033[117~', u'\033[67~', u'\033[167~'),
+    wx.WXK_F2:          (u'\033[18~', u'\033[118~', u'\033[68~', u'\033[168~'),
+    wx.WXK_F3:          (u'\033[19~', u'\033[119~', u'\033[69~', u'\033[169~'),
+    wx.WXK_F4:          (u'\033[20~', u'\033[120~', u'\033[70~', u'\033[170~'),
+    wx.WXK_F5:          (u'\033[21~', u'\033[121~', u'\033[71~', u'\033[171~'),
+    wx.WXK_F6:          (u'\033[23~', u'\033[123~', u'\033[73~', u'\033[173~'),
+    wx.WXK_F7:          (u'\033[24~', u'\033[124~', u'\033[74~', u'\033[174~'),
+    wx.WXK_F8:          (u'\033[25~', u'\033[125~', u'\033[75~', u'\033[175~'),
+    wx.WXK_F9:          (u'\033[26~', u'\033[126~', u'\033[76~', u'\033[176~'),
+    wx.WXK_F10:         (u'\033[28~', u'\033[128~', u'\033[78~', u'\033[178~'),
+    wx.WXK_F11:         (u'\033[29~', u'\033[129~', u'\033[79~', u'\033[179~'),
+    wx.WXK_F12:         (u'\033[31~', u'\033[131~', u'\033[81~', u'\033[181~'),
 
     # enhanced keys
-    wx.WXK_PAGEUP:      ("\033[5~",  "\033[105~", "\033[55~", "\033[155~"),
-    wx.WXK_PAGEDOWN:    ("\033[6~",  "\033[106~", "\033[56~", "\033[156~"),
-    wx.WXK_END:         ("\033[4~",  "\033[104~", "\033[54~", "\033[154~"),
-    wx.WXK_HOME:        ("\033[1~",  "\033[101~", "\033[51~", "\033[151~"),
+    wx.WXK_PAGEUP:      (u'\033[5~',  u'\033[105~', u'\033[55~', u'\033[155~'),
+    wx.WXK_PAGEDOWN:    (u'\033[6~',  u'\033[106~', u'\033[56~', u'\033[156~'),
+    wx.WXK_END:         (u'\033[4~',  u'\033[104~', u'\033[54~', u'\033[154~'),
+    wx.WXK_HOME:        (u'\033[1~',  u'\033[101~', u'\033[51~', u'\033[151~'),
 
-    wx.WXK_LEFT:        ("\033OD",   None,        "\033[60~", None,),
-    wx.WXK_UP:          ("\033OA",   None,        "\033[57~", None,),
-    wx.WXK_RIGHT:       ("\033OC",   None,        "\033[59~", None,),
-    wx.WXK_DOWN:        ("\033OB",   None,        "\033[58~", None,),
+    wx.WXK_LEFT:        (u'\033OD',   None,         u'\033[60~', None,),
+    wx.WXK_UP:          (u'\033OA',   None,         u'\033[57~', None,),
+    wx.WXK_RIGHT:       (u'\033OC',   None,         u'\033[59~', None,),
+    wx.WXK_DOWN:        (u'\033OB',   None,         u'\033[58~', None,),
 
-    wx.WXK_INSERT:      ("\033[2~",  "\033[102~", "\033[52~", "\033[152~"),
-    wx.WXK_DELETE:      ("\033[3~",  "\033[103~", "\033[53~", "\033[153~"),
+    wx.WXK_INSERT:      (u'\033[2~',  u'\033[102~', u'\033[52~', u'\033[152~'),
+    wx.WXK_DELETE:      (u'\033[3~',  u'\033[103~', u'\033[53~', u'\033[153~'),
     }
 
 wx_key_names = {}
@@ -433,7 +433,7 @@ class EmacsPanel(wx.Panel):
                 self.log.info( 'Uknown button event' )
                 return
 
-            mouse = "\x1b[%d;%d;%d;%d&w" % (button, 0, line, column)
+            mouse = u'\x1b[%d;%d;%d;%d&w' % (button, 0, line, column)
 
             self.__debugTermInput( 'Mouse button %r line %r column %r shift %r' % (button, line, column, shift) )
 
@@ -455,7 +455,7 @@ class EmacsPanel(wx.Panel):
             if control:
                 mode |= 8
 
-            mouse = "\x1b[%d;%d;%d;%d#w" % (mode, 1, line, column)
+            mouse = u'\x1b[%d;%d;%d;%d#w' % (mode, 1, line, column)
 
             for Q in range( abs( rotation ) ):
                 for ch in mouse:

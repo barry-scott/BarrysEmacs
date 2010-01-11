@@ -450,7 +450,7 @@ void window_move
     else
         pos = w->getWindowStart();
     if( n != 0 )
-        w->setWindowStart( scan_bf( '\n', pos, n ) );
+        w->setWindowStart( scan_bf_for_lf( pos, n ) );
     w->w_force = w->w_force + 1;
     cant_1line_opt = 1;
 }

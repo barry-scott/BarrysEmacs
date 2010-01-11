@@ -27,7 +27,7 @@ int dot_col;
 ExecutionStack *execution_root = NULL;
 EmacsMacroString key_mem;
 int last_arg_used;
-unsigned char last_key_struck;
+EmacsCharQqq_t last_key_struck;
 SystemExpressionRepresentationStringReadOnly last_keys_struck;
 MiniBufferBody minibuf_body;
 SystemExpressionRepresentationIntReadOnly previous_command;

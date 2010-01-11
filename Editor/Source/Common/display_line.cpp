@@ -134,7 +134,7 @@ EmacsLine &EmacsLine::operator=( const EmacsLine &in )
     line_next = in.line_next;
     line_drawcost = in.line_drawcost;
     line_length = in.line_length;
-    memcpy( line_body, in.line_body, in.line_length );
+    memcpy( line_body, in.line_body, in.line_length*sizeof( DisplayBody_t ) );
     memcpy( line_attr, in.line_attr, in.line_length*sizeof( DisplayAttr_t ) );
 
     return *this;
@@ -160,8 +160,8 @@ int EmacsLine::calcHashLine()
     }
 
     int h = line_length;
-    unsigned char *t = line_body;
-    unsigned char *l = &line_body[ line_length ];
+    EmacsCharQqq_t *t = line_body;
+    EmacsCharQqq_t *l = &line_body[ line_length ];
 
 #if !MEMMAP
     while( --l > t && l[0] == ' ')

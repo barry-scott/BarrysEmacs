@@ -88,7 +88,7 @@ int end_of_file( void )
 
 int end_of_window( void )
 {
-    set_dot( scan_bf( '\n', theActiveView->currentWindow()->getWindowStart(), theActiveView->currentWindow()->w_height - 2) );
+    set_dot( scan_bf_for_lf( theActiveView->currentWindow()->getWindowStart(), theActiveView->currentWindow()->w_height - 2) );
     end_of_line();
     return 0;
 }            // Of EndOfWindow

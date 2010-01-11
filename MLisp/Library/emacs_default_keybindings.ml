@@ -1,5 +1,5 @@
 ; 
-; EMACS_DEFAULT_KEYBINDINGS.ML for EMACS V4.0
+; EMACS_DEFAULT_KEYBINDINGS.ML for EMACS V8.0
 ;
 ; This file defines all the default key settings that EMACS uses.
 ; 
@@ -11,7 +11,7 @@
 (error-occurred (execute-mlisp-file "escape_sequence_strings"))
 (progn char
     (setq char 0)
-    (while (< char 256)
+    (while (< char 65536)
 	(bind-to-key "self-insert" (char-to-string char))
 	(setq char (+ 1 char))
     )

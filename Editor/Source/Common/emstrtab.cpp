@@ -17,6 +17,10 @@ SystemExpressionRepresentationIntBoolean confirm_expansion_choice( 0 );
 int expand = 0;
 int help = 0;
 
+unsigned char *msg_choose_one = u_str("Choose one of the following:\n");
+unsigned char *msg_ambiguous_choose_one = u_str("Ambiguous, choose one of the following:\n");
+unsigned char *msg_please_use_one = u_str("Please use one of the following words:\n");
+
 EmacsStringTable::EmacsStringTable( int initial_size, int growth )
     : num_entries( 0 )
     , allocated_entries( initial_size )

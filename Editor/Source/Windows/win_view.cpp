@@ -2771,7 +2771,7 @@ void CScrollBarVertical::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* /*pScrol
         if( n > bf_cur->num_characters() )
             n = bf_cur->num_characters() + 1;
         if( n != (bf_cur->num_characters() + 1) )
-            set_dot( scan_bf('\n', n, -1) );
+            set_dot( scan_bf_for_lf(n, -1) );
     }
         break;
     case SB_TOP:
@@ -2787,8 +2787,8 @@ void CScrollBarVertical::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* /*pScrol
         // turn off the shift state before scrolling
         gui_input_shift_state( false );
 
-        set_dot( scan_bf( '\n', dot, scroll ) );
-        win->setWindowStart( scan_bf( '\n', win->getWindowStart(), scroll ) );
+        set_dot( scan_bf_for_lf( dot, scroll ) );
+        win->setWindowStart( scan_bf_for_lf( win->getWindowStart(), scroll ) );
     }
 
     setPosition();

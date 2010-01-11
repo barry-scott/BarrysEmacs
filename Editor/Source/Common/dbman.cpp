@@ -242,7 +242,9 @@ int put_database_entry( void )
         return 0;
 
     bf_cur->gap_to( bf_cur->unrestrictedSize() + 1 );
-    if( dbx->put_db( key, bf_cur->ref_char_at(1), bf_cur->unrestrictedSize() ) < 0 )
+
+    EmacsString content( EmacsString::copy, bf_cur->ref_char_at(1), bf_cur->unrestrictedSize() );
+    if( dbx->put_db( key, content.data(), content.length() ) < 0 )
         error( "Database put failed");
 
     return 0;

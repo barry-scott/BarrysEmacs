@@ -1,4 +1,4 @@
-//    Copyright (c) 1982-1998
+//    Copyright (c) 1982-2010
 //    Barry A. Scott
 //
 
@@ -309,7 +309,7 @@ void SystemExpressionRepresentationPrefixString::fetch_value()
 
 
 // insert character c at position n in the current buffer
-void EmacsBuffer::insert_at( int n, EmacsChar_t c )
+void EmacsBuffer::insert_at( int n, EmacsCharQqq_t c )
 {
     if( b_mode.md_readonly )
     {
@@ -344,7 +344,7 @@ void EmacsBuffer::insert_at( int n, EmacsChar_t c )
 
 void EmacsBuffer::ins_cstr( const EmacsString &s )
 {
-    ins_cstr( s.data(), s.length() );
+    ins_cstr( s.unicode_data(), s.length() );
 }
 
 // Insert the N character string S at dot.
@@ -354,6 +354,16 @@ void EmacsBuffer::ins_cstr( const char *s, int n )
 }
 
 void EmacsBuffer::ins_cstr( const EmacsChar_t *s, int n )
+{
+    for( int i=0; i<n; ++i )
+    {
+        EmacsCharQqq_t ch[1];
+        ch[0] = s[i];
+        ins_cstr( ch, 1 );
+    }
+}
+
+void EmacsBuffer::ins_cstr( const EmacsCharQqq_t *s, int n )
 {
 #if DBG_BUFFER
     if( dbg_flags&DBG_BUFFER )
@@ -376,7 +386,7 @@ void EmacsBuffer::ins_cstr( const EmacsChar_t *s, int n )
     record_insert( dot, n, s );
 
     // point to first EmacsChar_t in the gap
-    memcpy( (void *)&b_base[b_size1], s, n*sizeof(EmacsChar_t) );
+    memcpy( (void *)&b_base[b_size1], (void *)s, n*sizeof( EmacsCharQqq_t ) );
 
     cant_1line_opt = 1;        // assume that there was a \n in the string
 
@@ -542,7 +552,7 @@ void EmacsBuffer::del_back( int n, int k )
 }
 
 
-void EmacsBuffer::bufferExtent( EmacsChar_t *&p1, int &s1, EmacsChar_t *&p2, int &s2 )
+void EmacsBuffer::bufferExtent( EmacsCharQqq_t *&p1, int &s1, EmacsCharQqq_t *&p2, int &s2 )
 {
     p1 = b_base - 1;
     s1 = b_size1;
@@ -563,7 +573,7 @@ void EmacsBuffer::gap_outside_of_range( int left, int right )
 }
 
 // move the gap to position n
-void EmacsBuffer::gap_to(int n)
+void EmacsBuffer::gap_to( int n )
 {
 #if DBG_BUFFER
     if( dbg_flags&DBG_BUFFER )
@@ -587,11 +597,11 @@ void EmacsBuffer::gap_to(int n)
     {
         // moving the gap left (into the first part)
         // which is moving data from part1 into part2
-        EmacsChar_t *p2 = b_base + b_size1;
-        EmacsChar_t *p1 = p2 + b_gap;
+        EmacsCharQqq_t *p2 = b_base + b_size1;
+        EmacsCharQqq_t *p1 = p2 + b_gap;
         // delt is the amount to decrease the size of size1 by
         int delt = b_size1 - (n-1);
-        memmove( (void *)(p1 - delt), (void *)(p2 - delt), delt*sizeof(EmacsChar_t) );
+        memmove( (void *)(p1 - delt), (void *)(p2 - delt), delt*sizeof(EmacsCharQqq_t) );
 
         if( b_syntax.syntax_base != NULL )
         {
@@ -630,12 +640,12 @@ void EmacsBuffer::gap_to(int n)
     {
         // moving the gap right (into the second part)
         // which is moving data from part2 into part1
-        EmacsChar_t *p1 = b_base + b_size1;
-        EmacsChar_t *p2 = p1 + b_gap;
+        EmacsCharQqq_t *p1 = b_base + b_size1;
+        EmacsCharQqq_t *p2 = p1 + b_gap;
         // delt is the amount to increase the size of size1 by
         int delt = (n-1) - b_size1;
 
-        memmove( (void *)p1, (void *)p2, delt*sizeof(EmacsChar_t) );
+        memmove( (void *)p1, (void *)p2, delt*sizeof(EmacsCharQqq_t) );
 
         if( b_syntax.syntax_base != NULL )
         {
@@ -695,7 +705,8 @@ int EmacsBuffer::gap_room(int k)
     b_size += delt;
 
     if( b_base != NULL )
-        b_base = realloc_ustr( b_base, b_size );
+        b_base = (EmacsCharQqq_t *)EMACS_REALLOC( (void *)b_base, b_size*sizeof(EmacsCharQqq_t), malloc_type_char );
+
     if( b_base == NULL )
     {
         b_size = b_gap = b_gap = b_size1 = b_size2 = 0;
@@ -716,10 +727,10 @@ int EmacsBuffer::gap_room(int k)
 
     if( b_size2 != 0 )
     {
-        EmacsChar_t *old_p2_start = b_base + b_size - b_size2 - delt;
-        EmacsChar_t *new_p2_start = b_base + b_size - b_size2;
+        EmacsCharQqq_t *old_p2_start = b_base + b_size - b_size2 - delt;
+        EmacsCharQqq_t *new_p2_start = b_base + b_size - b_size2;
 
-        memmove( (void *)new_p2_start, (void *)old_p2_start, b_size2*sizeof(EmacsChar_t) );
+        memmove( (void *)new_p2_start, (void *)old_p2_start, b_size2*sizeof(EmacsCharQqq_t) );
 
         if( b_syntax.syntax_base != NULL )
         {
@@ -748,7 +759,7 @@ int EmacsBuffer::gap_room(int k)
             m->m_pos = m->m_pos + delt;
             m->m_modified = 1;
         }
-         }
+    }
 
 #if DBG_BUFFER
     if( dbg_flags&DBG_BUFFER )
@@ -858,36 +869,36 @@ bool syntax_buffer_data::initBuffer()
 
 // create a buffer with the given name
 EmacsBuffer::EmacsBuffer( const EmacsString &name )
-    : b_base(NULL)
-    , b_size1( 0 )
-    , b_gap( InitialBufferSize )
-    , b_size2( 0 )
-    , b_syntax(*this)
-    , b_line_valid( 0 )
-    , b_rendition_regions( NULL )
-    , b_buf_name( name )
-    , b_size( InitialBufferSize )
-    , b_ephemeral_dot( 1 )
-    , b_fname("")
-    , b_modified( 0 )
-    , b_backed_up( 0 )
-    , b_checkpointed( checkpoint_frequency ?  0 : -1 )
-    , b_checkpointfn("")
-    , b_next( NULL )
-    , b_markset()
-    , b_mark()
-    , b_gui_input_mode_set_mark( false )
-    , b_kind( SCRATCHBUFFER )
-    , b_mode()
-    , b_eol_attribute( (FIO_EOL_Attribute)(int)default_end_of_line_style )
-    , b_file_time( 0 )
-    , b_synch_file_time( 0 )
-    , b_file_access( 0 )
-    , b_synch_file_access( 0 )
-    , b_journal( 0 )
-    , b_journalling( journalling_frequency != 0 )
+: b_base(NULL)
+, b_size1( 0 )
+, b_gap( InitialBufferSize )
+, b_size2( 0 )
+, b_syntax(*this)
+, b_line_valid( 0 )
+, b_rendition_regions( NULL )
+, b_buf_name( name )
+, b_size( InitialBufferSize )
+, b_ephemeral_dot( 1 )
+, b_fname("")
+, b_modified( 0 )
+, b_backed_up( 0 )
+, b_checkpointed( checkpoint_frequency ?  0 : -1 )
+, b_checkpointfn("")
+, b_next( NULL )
+, b_markset()
+, b_mark()
+, b_gui_input_mode_set_mark( false )
+, b_kind( SCRATCHBUFFER )
+, b_mode()
+, b_eol_attribute( (FIO_EOL_Attribute)(int)default_end_of_line_style )
+, b_file_time( 0 )
+, b_synch_file_time( 0 )
+, b_file_access( 0 )
+, b_synch_file_access( 0 )
+, b_journal( 0 )
+, b_journalling( journalling_frequency != 0 )
 {
-    b_base = (EmacsChar_t *)EMACS_MALLOC( b_size*sizeof(EmacsChar_t), malloc_type_char );
+    b_base = (EmacsCharQqq_t *)EMACS_MALLOC( b_size*sizeof(EmacsCharQqq_t), malloc_type_char );
     if( b_base == NULL )
         b_size = 0;
         // out of memory -- give the error message when
@@ -900,7 +911,7 @@ EmacsBuffer::EmacsBuffer( const EmacsString &name )
 }
 
 // find a buffer with the given name -- returns NULL if no such buffer exists
-EmacsBuffer * EmacsBuffer::find( const EmacsString &name )
+EmacsBuffer *EmacsBuffer::find( const EmacsString &name )
 {
     return name_table.find( name );
 }

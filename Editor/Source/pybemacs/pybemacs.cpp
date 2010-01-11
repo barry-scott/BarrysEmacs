@@ -417,7 +417,7 @@ public:
             attr.append( Py::Long( *values++ ) );
         }
         Py::Tuple t( 2 );
-        t[0] = Py::String( reinterpret_cast<const char *>( line->line_body ), line_length );
+        t[0] = Py::String( line->line_body, line_length );
         t[1] = attr;
 
         return t;
@@ -487,7 +487,7 @@ public:
         Py::String py_ch( args[0] );
         Py::Boolean shift( args[1] );
 
-        std::string ch( py_ch );
+        Py::unicodestring ch( py_ch.as_unicodestring() );
         theActiveView->k_input_char( ch[0], shift );
         return Py::None();
     }

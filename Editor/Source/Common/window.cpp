@@ -13,7 +13,7 @@ int move_dot_to_x_y( void );
 void dest_window_ring( EmacsWindowRing *wr );
 void push_window_ring( void );
 void pop_window_ring( void );
-int scan_bf( unsigned char c, int n, int k );
+int scan_bf_for_lf( int n, int k );
 
 int vertical_bar_width = 1;
 
@@ -1092,7 +1092,7 @@ int EmacsWindowGroup::full_upd( int &cant_ever_opt )
                 if( dumpstate != 0 )
                     set_dot( w->getWindowStart() );
                 else
-                    set_dot( scan_bf( '\n', w->getWindowStart(), w->w_height/2) );
+                    set_dot( scan_bf_for_lf( w->getWindowStart(), w->w_height/2) );
 
                 if( w != current_window )
                     w->setWindowDot( Marker( w->w_buf, dot, 0 ) );
@@ -1112,30 +1112,29 @@ int EmacsWindowGroup::full_upd( int &cant_ever_opt )
                     && scroll_step < (w->w_height / 2) )
                     {
                         int old = w->getWindowStart();
-                        next = scan_bf
+                        next = scan_bf_for_lf
                             (
-                            '\n', old,
+                            old,
                             (( old > dot ) ?
                                 -scroll_step - 1
                              :
                                 int(scroll_step)) );
                         if( dot < next )
                         {
-                            next = scan_bf
+                            next = scan_bf_for_lf
                                 (
-                                '\n',
                                 dot,
                                 -(w->w_height / 2)
                                 );
                         }
                     }
                     else
-                        next = scan_bf( '\n', dot, -(w->w_height/ 2) );
+                        next = scan_bf_for_lf( dot, -(w->w_height/ 2) );
                 }
                     break;
                 case 1:
                 {
-                    next = scan_bf( '\n', dot, -(w->w_height/ 2) );
+                    next = scan_bf_for_lf( dot, -(w->w_height/ 2) );
                     dumpstate++;
                 }
                     break;
@@ -1144,7 +1143,7 @@ int EmacsWindowGroup::full_upd( int &cant_ever_opt )
                 case 4:
                 {
                     int old = w->getWindowStart();
-                    next = scan_bf( '\n', old, 1 );
+                    next = scan_bf_for_lf( old, 1 );
                     if( old < next && next <= dot )
                     {
                         dumpstate = 5;
@@ -1227,11 +1226,11 @@ static EmacsString dump_mode_hscroll( int horz_offset )
 
 void EmacsWindow::dump_mode( int line, int col )
 {
-    unsigned char buf[MSCREENWIDTH+2];
-    unsigned char *p = buf;
-    unsigned char *buf_end = &buf[ w_width ];
+    EmacsCharQqq_t buf[MSCREENWIDTH+2];
+    EmacsCharQqq_t *p = buf;
+    EmacsCharQqq_t *buf_end = &buf[ w_width ];
 
-    const unsigned char *s = bf_cur->b_mode.md_modeformat.data();
+    const EmacsCharQqq_t *s = bf_cur->b_mode.md_modeformat.unicode_data();
     int recurse_depth = recursive_edit_depth - minibuf_depth;
 
     if( mouse_y == line
@@ -1247,7 +1246,7 @@ void EmacsWindow::dump_mode( int line, int col )
         setMouseHitPosition( dot, this );
     }
 
-    unsigned char c;
+    EmacsCharQqq_t c;
 
     int tl = bf_cur->unrestrictedSize();
     int d = this == group->current_window ? dot : getWindowDot().to_mark();
@@ -1353,7 +1352,7 @@ void EmacsWindow::dump_mode( int line, int col )
 void EmacsView::dump_str
     (
     bool is_users_current_window,
-    const unsigned char *s,
+    const EmacsCharQqq_t *s,
     int limit,
     int line, int column,
     int highlight
@@ -1363,10 +1362,11 @@ void EmacsView::dump_str
     bool setcurs = false;
     if( minibuf_body.isPromptBody()
     && is_users_current_window
-    && s == minibuf_body.getBody().data() )
+    && s == minibuf_body.getBody().unicode_data() )
         setcurs = true;
 
-    if( activity_indicator && term_ansi && s == minibuf_body.getBody().data() )
+    // QQQ: s == mini... really compare pointers?
+    if( activity_indicator && term_ansi && s == minibuf_body.getBody().unicode_data() )
     {
         setpos( line, 1 );
         dsputc( activity_character, 0 );
@@ -1424,7 +1424,7 @@ void EmacsView::dump_str
                     if( col <= limit )
                     {
                         dsputc('^', highlight);
-                        // need suport of C1 control codes
+                        // need support of C1 control codes
                         dsputc( (( c < ' ' ) ?  (c & 0x1f) + 0x40 : '?' ), highlight );
                     }
                 }
@@ -1479,7 +1479,7 @@ bool EmacsWindow::dump_win( bool is_users_current_window, int line, int col, boo
     &&    ((n > bf_cur->first_character() && bf_cur->char_at( n - 1 ) != '\n')
         || n < bf_cur->first_character()) )
     {
-        n = n < bf_cur->first_character() ? bf_cur->first_character() : scan_bf( '\n', n, -1 );
+        n = n < bf_cur->first_character() ? bf_cur->first_character() : scan_bf_for_lf( n, -1 );
         setWindowStart( n );
     }
 
@@ -1493,7 +1493,7 @@ bool EmacsWindow::dump_win( bool is_users_current_window, int line, int col, boo
             return 0;
 
         if( n == 1 )
-            group->view->dump_str( is_users_current_window, minibuf_body.getBody().data(), group->view->t_width, line, 1, 0 );
+            group->view->dump_str( is_users_current_window, minibuf_body.getBody().unicode_data(), group->view->t_width, line, 1, 0 );
 
         bool dot_found_now = false;
         int dot_column = 0;
@@ -1654,10 +1654,10 @@ bool EmacsWindow::dump_win( bool is_users_current_window, int line, int col, boo
     return found_dot;
 }
 
-// Scan the current buffer for the k'th occurrence of character c,
+// Scan the current buffer for the k'th occurrence of character LF,
 // starting at position n; k may be negative. Returns the position
 // of the character following the one found
-int scan_bf( unsigned char c, int n, int k )
+int scan_bf_for_lf( int n, int k )
 {
     if( k > 0 )
         while( k != 0 )
@@ -1669,7 +1669,7 @@ int scan_bf( unsigned char c, int n, int k )
                 if( n > bf_cur->num_characters() )
                     return n;
             }
-            while( bf_cur->char_at( n ) != c );
+            while( bf_cur->char_at( n ) != '\n' );
 
             k--;
             if( k != 0 )
@@ -1684,7 +1684,7 @@ int scan_bf( unsigned char c, int n, int k )
                 if( n < bf_cur->first_character() )
                     return bf_cur->first_character();
             }
-            while( bf_cur->char_at( n ) != c );
+            while( bf_cur->char_at( n ) != '\n' );
 
             k++;
         }
@@ -1761,7 +1761,7 @@ void EmacsWindowGroup::do_dsp()
         if( minibuf_body.haveBody() && current_window->w_next == 0 )
         {
             if( n == 1 )
-                view->dump_str( true, minibuf_body.getBody().data(), view->t_width, one_line_line, 1, 0 );
+                view->dump_str( true, minibuf_body.getBody().unicode_data(), view->t_width, one_line_line, 1, 0 );
         }
 
         bool line_wrapped = false;
@@ -1803,7 +1803,7 @@ update:
 // Dump one line from the current buffer starting at character n onto
 // line sline; setting curs_x and curs_y if appropriate
 //
-static unsigned char fake_c1_chars[32] =
+static EmacsCharQqq_t fake_c1_chars[32] =
 {
     '*', '#', 't', 'f', 'c', 'l', 'o', '+',
     'n', 'v', '+', '+', '+', '+', '+', '~',
@@ -1869,7 +1869,7 @@ int EmacsView::dump_line_from_buffer
         int dec_crt : 1;
         int syntax_colouring : 1;
     }
-            flags;
+        flags;
 
     flags.dec_crt = term_deccrt;
     flags.display_non_printing = mode.md_displaynonprinting && flags.dec_crt;
@@ -1881,9 +1881,9 @@ int EmacsView::dump_line_from_buffer
     int col = initial_column;
     int lim = buf->unrestrictedSize() - mode.md_tailclip;
     flags.found_dot = 0;
-    flags.looking_for_mouse =    mouse_y == sline        // on this line
-                &&    mouse_win_ == NULL        // don't look if found in winoow to the left
-                &&    mouse_x >= scolumn;        // x is in this buffers columns
+    flags.looking_for_mouse =   mouse_y == sline    // on this line
+                            &&  mouse_win_ == NULL  // don't look if found in winoow to the left
+                            &&  mouse_x >= scolumn; // x is in this buffers columns
     if( flags.looking_for_mouse
     && mouse_x >= window->w_width + scolumn )
     {
@@ -1963,9 +1963,9 @@ int EmacsView::dump_line_from_buffer
     //
     //    Setup the region highlight stuff
     //
-    int r_start = min( dot, mark );
-    int r_end   = max( dot, mark );
-    int highlight =    r_start <= n && r_end > n ? LINE_M_ATTR_HIGHLIGHT : 0;
+    int r_start     = min( dot, mark );
+    int r_end       = max( dot, mark );
+    int highlight   = r_start <= n && r_end > n ? LINE_M_ATTR_HIGHLIGHT : 0;
 
     // turn markers into ints
     RenditionRegion *rr = buf->b_rendition_regions;
@@ -1996,7 +1996,7 @@ int EmacsView::dump_line_from_buffer
     int dot_column = 0;
 
     bool wrap_lines = mode.md_wrap_lines != 0;
-    unsigned char c = 0;
+    EmacsCharQqq_t c = 0;
     enum char_types_t { init_char, space_char, word_char, other_char } last_char_type = init_char;
     int word_start_col = 0;
     int word_start_pos = 0;
@@ -2137,10 +2137,9 @@ int EmacsView::dump_line_from_buffer
                         dsputc( ' ', highlight );
             }
 
-        {
             // is this a change of char type?
             if( last_char_type != space_char            // the type changed
-            && (col - first_column) < window->w_width )        // within the visible part of the window
+            && (col - first_column) < window->w_width ) // within the visible part of the window
             {
                 // yes remember the place the change occured
                 word_start_pos = n-1;
@@ -2148,7 +2147,6 @@ int EmacsView::dump_line_from_buffer
             }
 
             last_char_type = space_char;
-        }
 
             break;
         }
@@ -2178,6 +2176,7 @@ int EmacsView::dump_line_from_buffer
 
             if( (c >= ' ' && c <= '~')    // printing chars
             || (c >= 128+32 && c <= 254)
+            || (c >= 256)
             )
             {
                 col++;
@@ -2185,63 +2184,63 @@ int EmacsView::dump_line_from_buffer
                 _if_wraped( col )
                     dsputc( c, highlight );
             }
-             else
-            // none printing control characters
-        {
-            if( mode.md_display_c1
-            && c >= 128 && c <= 128+32 )
-            {
-                col++;
-                c &= 0x1f;
-
-                _if_wraped( col )
-                    dsputc( flags.dec_crt ? c : fake_c1_chars[c], highlight );
-            }
             else
-            if( ctl_arrow != 0 && (c & 0x80) == 0 )
+            // none printing control characters
             {
-                if( flags.dec_crt
-                &&
-                    (c == ctl('L')
-                    || c == ctl('M')
-                    || c == ctl('K')
-                    || c == ctl('[')
-                    || c == ctl('I')) )
+                if( mode.md_display_c1
+                && c >= 128 && c <= 128+32 )
                 {
                     col++;
+                    c &= 0x1f;
 
                     _if_wraped( col )
-                        switch( c )
+                        dsputc( flags.dec_crt ? c : fake_c1_chars[c], highlight );
+                }
+                else
+                if( ctl_arrow != 0 && (c & 0x80) == 0 )
+                {
+                    if( flags.dec_crt
+                    &&
+                        (c == ctl('L')
+                        || c == ctl('M')
+                        || c == ctl('K')
+                        || c == ctl('[')
+                        || c == ctl('I')) )
+                    {
+                        col++;
+
+                        _if_wraped( col )
+                            switch( c )
+                            {
+                            case ctl('L'):    dsputc( ctl('c'), highlight ); break;
+                            case ctl('M'):    dsputc( ctl('d'), highlight ); break;
+                            case ctl('K'):    dsputc( ctl('i'), highlight ); break;
+                            case ctl('I'):    dsputc( ctl('b'), highlight ); break;
+                            case ctl('['):    dsputc( ctl('{'), highlight ); break;
+                            }
+                    }
+                    else
+                    {
+                        col = col + 2;
+                        _if_wraped( col )
                         {
-                        case ctl('L'):    dsputc( ctl('c'), highlight ); break;
-                        case ctl('M'):    dsputc( ctl('d'), highlight ); break;
-                        case ctl('K'):    dsputc( ctl('i'), highlight ); break;
-                        case ctl('I'):    dsputc( ctl('b'), highlight ); break;
-                        case ctl('['):    dsputc( ctl('{'), highlight ); break;
+                            dsputc('^', highlight);
+                            dsputc((( c < ' ' ) ? ( c & 0x1f) + 0x40 : '?'), highlight );
                         }
+                    }
                 }
                 else
                 {
-                    col = col + 2;
+                    col = col + 4;
                     _if_wraped( col )
                     {
-                        dsputc('^', highlight);
-                        dsputc((( c < ' ' ) ? ( c & 0x1f) + 0x40 : '?'), highlight );
+                        dsputc( '\\', highlight);
+                        dsputc( '0' + ((c>>6)&7), highlight);
+                        dsputc( '0' + ((c>>3)&7), highlight);
+                        dsputc( '0' + (c&7), highlight);
                     }
                 }
             }
-            else
-            {
-                col = col + 4;
-                _if_wraped( col )
-                {
-                    dsputc( '\\', highlight);
-                    dsputc( '0' + ((c>>6)&7), highlight);
-                    dsputc( '0' + ((c>>3)&7), highlight);
-                    dsputc( '0' + (c&7), highlight);
-                }
-            }
-        }
         }
 
 #undef    _if_wraped

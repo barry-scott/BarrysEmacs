@@ -144,7 +144,7 @@ int parse_erb( int pos, int limit )
         {
             break;
         }
-        int pos = error_line_number == 1 ? 1 : scan_bf('\n', 1, error_line_number - 1);
+        int pos = error_line_number == 1 ? 1 : scan_bf_for_lf( 1, error_line_number - 1 );
         ErrorBlock *new_eb = EMACS_NEW ErrorBlock
                 (
                 erb, error_start_position,

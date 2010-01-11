@@ -44,6 +44,7 @@ class BEmacs(_bemacs.BemacsEditor):
         self.geometryChange( self.window.term_width, self.window.term_length )
 
         self.log.debug( 'TESTING' )
+        _bemacs.function.debug_emacs( 'flags=key' )
         #_bemacs.variable.error_messages_buffer = "error-messages"
 
         self.log.debug( 'BEmacs.initEmacsProfile() emacs_profile.ml' )
@@ -74,18 +75,21 @@ class BEmacs(_bemacs.BemacsEditor):
 
             while event_hander_and_args is not None:
                 handler, args = event_hander_and_args
+                self.log.debug( 'waitForActivity: handler %r' % (handler,) )
+                self.log.debug( 'waitForActivity: args %r' % (args,) )
                 handler( *args )
 
                 event_hander_and_args = self.__event_queue.getNoWait()
 
             if self.__quit_editor:
                 self.__quit_editor = False
+                self.log.debug( 'waitForActivity self.__quit_editor set' )
                 return -1
 
             return 0
 
         except Exception, e:
-            print 'Error: waitForActivity %s' % (str(e),)
+            self.log.exception( 'Error: waitForActivity: %s' % (str(e),) )
             self.app.debugShowCallers( 5 )
             return -1
 

@@ -203,7 +203,7 @@ public:
     void dump_str
         (
         bool is_users_current_window,
-        const unsigned char *s,
+        const EmacsCharQqq_t *s,
         int limit,
         int line, int column,
         int highlight

@@ -16,14 +16,14 @@ enum DeleteToWhere_t
     PrependToBuffer
 };
 
-int self_insert(unsigned char c);
+int self_insert( EmacsCharQqq_t c );
 int self_insert_command( void );
 static void del_to_buf( int n, DeleteToWhere_t where, int doit, const EmacsString &name );
 static void line_move( int up, int n );
 void insert_buffer( const EmacsString &name );
 int left_marker( void );
 int right_marker( void );
-static int left_or_right_marker(int right);
+static int left_or_right_marker( int right );
 
 // Strings
 unsigned char *kill_buffer_str = u_str("Kill buffer");
@@ -34,11 +34,9 @@ unsigned char *mark_not_set_str = u_str("Mark not set");
 
 int beginning_of_line( void )
 {
-    set_dot (scan_bf ('\n', dot, -1));
+    set_dot (scan_bf_for_lf (dot, -1));
     return 0;
-}            // Of BeginningOfLine
-
-
+}
 
 int backward_character( void )
 {
@@ -49,14 +47,12 @@ int backward_character( void )
 
     dot_left (count);
     if( dot < bf_cur->first_character() )
-     {
+    {
         set_dot( bf_cur->first_character() );
         error( "You are at the beginning of the buffer");
     }
     return 0;
-}            // Of BackwardCharacter
-
-
+}
 
 int exit_emacs( void )
 {
@@ -76,9 +72,7 @@ int exit_emacs( void )
     }
 
     return -1;
-}            // Of ExitEmacs
-
-
+}
 
 int delete_next_character( void )
 {
@@ -95,13 +89,11 @@ int delete_next_character( void )
         dot_right (repeat_count);
 
     return 0;
-}            // Of DeleteNextCharacter
-
-
+}
 
 int end_of_line( void )
 {
-    int ndot = scan_bf( '\n', dot ,1 );
+    int ndot = scan_bf_for_lf( dot ,1 );
 
     if( dot != ndot )
     {
@@ -114,9 +106,7 @@ int end_of_line( void )
         }
     }
     return 0;
-}            // Of end_of_line
-
-
+}
 
 int forward_character( void )
 {
@@ -128,22 +118,18 @@ int forward_character( void )
     dot_right (count);
 
     if( dot > bf_cur->num_characters() + 1 )
-     {
+    {
         set_dot (bf_cur->num_characters() + 1);
         error( "You are at the end of the buffer.");
     }
     return 0;
-}            // Of ForwardCharacter
-
-
+}
 
 int illegal_operation( void )
 {
     ml_err = 1;
     return 0;
-}            // Of illegal_operation
-
-
+}
 
 int delete_previous_character( void )
 {
@@ -159,20 +145,16 @@ int delete_previous_character( void )
     dot_left (count);
 
     return 0;
-}            // Of DeletePreviousCharacter
-
-
+}
 
 int newline_and_indent( void )
 {
     int dc = cur_indent();
 
-    self_insert ('\n');
+    self_insert( '\n' );
     to_col (dc);
     return 0;
-}            // Of NewlineAndIndent
-
-
+}
 
 int kill_to_end_of_line( void )
 {
@@ -201,30 +183,26 @@ int kill_to_end_of_line( void )
     while( count > 0 );
 
     return 0;
-}            // Of KillToEndOfLine
-
-
+}
 
 int redraw_display( void )
 {
     screen_garbaged = 1;
     return 0;
-}            // Of RedrawDisplay
-
-
+}
 
 int newline_command( void )
 {
-    self_insert ('\n');
+    self_insert( '\n' );
     return 0;
-}            // Of Newline_command
+}
 
 int current_line_command( void )
 {
     ml_value = current_line_number();
 
     return 0;
-}            // Of CurrentLine_command
+}
 
 int next_line( void )
 {
@@ -233,11 +211,9 @@ int next_line( void )
     if( cur_exec != 0 && cur_exec->p_nargs > 0 )
         count = count * numeric_arg (1);
 
-    line_move (0, count);
+    line_move( 0, count );
     return 0;
-}            // Of NextLine
-
-
+}
 
 int previous_line( void )
 {
@@ -246,13 +222,11 @@ int previous_line( void )
     if( cur_exec != 0 && cur_exec->p_nargs > 0 )
         count = count * numeric_arg (1);
 
-    line_move (1, count);
+    line_move( 1, count );
     return 0;
-}            // Of PreviousLine
+}
 
-
-
-static void line_move ( int up, int n )
+static void line_move( int up, int n )
 {
     static int lastcol;
 
@@ -273,19 +247,18 @@ static void line_move ( int up, int n )
 
     if( last_proc != next_line
     && last_proc != previous_line )
-    lastcol = ((track_eol != 0 && dot < lim && bf_cur->char_at (dot) == '\n') ? 9999 : cur_col() );
+    lastcol = (track_eol != 0 && dot < lim && bf_cur->char_at (dot) == '\n') ? 9999 : cur_col();
 
-    ndot = scan_bf ('\n', dot, n);
+    ndot = scan_bf_for_lf( dot, n );
     while( col < lastcol && ndot < lim )
-     {
-        n = bf_cur->char_at (ndot);
+    {
+        n = bf_cur->char_at( ndot );
         if( n == '\n' )
             break;
         if( n == '\t' )
-            col = ((col - 1) / bf_cur->b_mode.md_tabsize + 1) *
-                bf_cur->b_mode.md_tabsize + 1;
+            col = ((col - 1) / bf_cur->b_mode.md_tabsize + 1) * bf_cur->b_mode.md_tabsize + 1;
         else
-            if( control_character(n) )
+            if( control_character( n ) )
                 col += ctl_arrow != 0 ?
                         (term_deccrt != 0
                         && (n == ctl('k')
@@ -303,86 +276,74 @@ static void line_move ( int up, int n )
         ndot++;
     }
 
-    set_dot (ndot);
+    set_dot( ndot );
     dot_col = col;
     col_valid = 1;
-}            // Of LineMove
-
-
+}
 
 int newline_and_backup( void )
 {
     int larg = arg;
 
     self_insert( '\n' );
-    dot_left (larg);
+    dot_left( larg );
     return 0;
-}            // Of NewlineAndBackup
-
-
+}
 
 int quote_character( void )
 {
     int abbrev = bf_cur->b_mode.md_abbrevon;
 
     bf_cur->b_mode.md_abbrevon = 0;
-    self_insert( (unsigned char)get_char () );
+    self_insert( get_char() );
     bf_cur->b_mode.md_abbrevon = abbrev;
 
     return 0;
-}            // Of QuoteCharacter
-
-
+}
 
 int transpose_characters( void )
 {
     if( dot >= 3 )
-     {
-        unsigned char c = bf_cur->char_at(dot - 1);
+    {
+        EmacsCharQqq_t c = bf_cur->char_at( dot - 1 );
 
-        bf_cur->del_back (dot, 1);
-        bf_cur->insert_at (dot - 2, c);
+        bf_cur->del_back( dot, 1 );
+        bf_cur->insert_at( dot - 2, c );
     }
 
     return 0;
-}            // Of TransposeCharacters
-
-
+}
 
 int argument_prefix( void )
 {
     if( arg_state == no_arg )
-     {
+    {
         arg = 4;
         argument_prefix_cnt = 1;
     }
     else
-     {
+    {
         arg = arg * 4;
         argument_prefix_cnt++;
     }
     arg_state = prepared_arg;
 
     return 0;
-}            // ArgumentPrefix
-
-
+}
 
 static int x_region_to_buffer( const char *str, DeleteToWhere_t operation )
 {
     if( !bf_cur->b_mark.isSet() )
-     {
+    {
         error( mark_not_set_str);
         return 0;
     }
 
-    EmacsString name = getnbstr (str);
-    del_to_buf( bf_cur->b_mark.to_mark() - dot, operation, false, name);
+    EmacsString name = getnbstr( str );
+    del_to_buf( bf_cur->b_mark.to_mark() - dot, operation, false, name );
 
     return 0;
-}            // Of PrependRegionToBuffer
-
-
+}
 
 int copy_region_to_buffer( void )
 {
@@ -399,12 +360,10 @@ int prepend_region_to_buffer( void )
     return x_region_to_buffer( ": prepend-region-to-buffer ", PrependToBuffer );
 }
 
-
-
 int delete_to_kill_buffer( void )
 {
     if( !bf_cur->b_mark.isSet() )
-     {
+    {
         error( mark_not_set_str);
         return 0;
     }
@@ -412,9 +371,7 @@ int delete_to_kill_buffer( void )
     replace_to_buf( bf_cur->b_mark.to_mark() - dot, kill_buffer_str );
 
     return 0;
-}            // Of DeleteToKillBuffer
-
-
+}
 
 int yank_from_kill_buffer( void )
 {
@@ -424,17 +381,17 @@ int yank_from_kill_buffer( void )
     if( input_mode == 1 ) gui_input_mode_before_insert();
 
     if( cur_exec != 0 && cur_exec->p_nargs > 0 )
-        count = count * numeric_arg (1);
+        count = count * numeric_arg( 1 );
 
-    for( i=1; i<=count ; i += 1 )
-        insert_buffer (kill_buffer_str);
+    for( i=1; i<=count ; ++i )
+        insert_buffer( kill_buffer_str );
     return 0;
-}                             // Of YankFromKillBuffer
+}
 
 int minus_command( void )
 {
     if( arg_state == have_arg && argument_prefix_cnt > 0 )
-     {
+    {
         arg = -arg;
         argument_prefix_cnt = -1;
         arg_state = prepared_arg;
@@ -444,9 +401,7 @@ int minus_command( void )
     self_insert_command();
 
     return 0;
-}            // Of Minus
-
-
+}
 
 int meta_minus( void )
 {
@@ -455,21 +410,19 @@ int meta_minus( void )
     arg_state = prepared_arg;
 
     return 0;
-}            // MetaMinus
-
-
+}
 
 int digit_command( void )
 {
     if( arg_state == have_arg )
-     {
+    {
         if( argument_prefix_cnt != 0 )
             arg = 0;
 
         if( arg < 0 || argument_prefix_cnt < 0 )
             arg = arg * 10 - (last_key_struck - '0');
         else
-            arg = arg * 10 + last_key_struck - '0';
+            arg = arg * 10 + (last_key_struck - '0');
 
         argument_prefix_cnt = 0;
         arg_state = prepared_arg;
@@ -479,36 +432,32 @@ int digit_command( void )
     self_insert_command();
 
     return 0;
-}            // Of Digit
-
-
+}
 
 int meta_digit (void)
 {
     if( arg_state == have_arg )
-     {
+    {
         if( argument_prefix_cnt != 0 )
             arg = 0;
 
         if( arg < 0 || argument_prefix_cnt < 0 )
             arg = arg * 10 - (last_key_struck - '0');
         else
-            arg = arg * 10 + last_key_struck - '0';
+            arg = arg * 10 + (last_key_struck - '0');
 
         argument_prefix_cnt = 0;
         arg_state = prepared_arg;
     }
     else
-     {
+    {
         arg = last_key_struck - '0';
         argument_prefix_cnt = 0;
         arg_state = prepared_arg;
     }
 
     return 0;
-}            // Of MetaDigit
-
-
+}
 
 int delete_white_space( void )
 {
@@ -533,16 +482,14 @@ int delete_white_space( void )
         bf_cur->del_frwd (dot, p1);
 
     return 0;
-}            // Of  DeleteWhiteSpace
-
-
+}
 
 int self_insert_command( void )
 {
     return self_insert( last_key_struck );
 }
 
-int self_insert (unsigned char c)
+int self_insert( EmacsCharQqq_t c )
 {
     int p;
     int repeat_count = arg;
@@ -551,19 +498,19 @@ int self_insert (unsigned char c)
 
     if( input_mode == 1 ) gui_input_mode_before_insert();
 
-    if( bf_cur->b_mode.md_abbrevon && ! bf_cur->char_is (c, SYNTAX_WORD)
+    if( bf_cur->b_mode.md_abbrevon && ! bf_cur->char_is( c, SYNTAX_WORD )
     && (p = dot - 1) >= bf_cur->first_character()
-    && bf_cur->char_at_is( p, SYNTAX_WORD) )
+    && bf_cur->char_at_is( p, SYNTAX_WORD ) )
         if( abbrev_expand () != 0 )
             return 0;
 
     do
-     {
+    {
         if( c > ' '
         && ((p = dot) > bf_cur->num_characters() || bf_cur->char_at (p) == '\n') )
             if( p > bf_cur->first_character() && cur_col() > bf_cur->b_mode.md_rightmargin )
-             {
-                unsigned char bfc;
+            {
+                EmacsCharQqq_t bfc;
 
                 if( bf_cur->b_mode.md_auto_fill_proc != 0 )
                   {
@@ -576,13 +523,13 @@ int self_insert (unsigned char c)
                 {
                     while( (p = dot - 1) >= bf_cur->first_character())
                     {
-                        bfc = bf_cur->char_at (p);
+                        bfc = bf_cur->char_at( p );
                         if( bfc == '\n' )
                         {
                             p = 0;
                             break;
                         }
-                        if( !control_character(bfc) )
+                        if( !control_character( bfc ) )
                         {
                             dot_col--;
                             dot--;
@@ -598,7 +545,7 @@ int self_insert (unsigned char c)
                     {
                         delete_white_space ();
                         arg = 1;
-                        bf_cur->insert_at (dot, '\n');
+                        bf_cur->insert_at( dot, '\n' );
                         dot_right (1);
                         to_col (bf_cur->b_mode.md_leftmargin);
                         if( bf_cur->b_mode.md_prefixstring.isNull() )
@@ -608,11 +555,11 @@ int self_insert (unsigned char c)
                 }
             }
         if( bf_cur->b_mode.md_replace
-        &&  bf_cur->char_at (dot) !=  '\n'
+        &&  bf_cur->char_at( dot ) !=  '\n'
         && c != '\n' )
         {
-            bf_cur->del_frwd (dot, 1);
-            bf_cur->insert_at (dot, c);
+            bf_cur->del_frwd( dot, 1 );
+            bf_cur->insert_at( dot, c );
             if( bf_cur->b_modified == 0 )
              {
                 redo_modes = 1;
@@ -621,7 +568,7 @@ int self_insert (unsigned char c)
             bf_cur->b_modified++;
         }
         else
-            bf_cur->insert_at (dot, c);
+            bf_cur->insert_at( dot, c );
 
         dot_right (1);
     }
@@ -648,8 +595,6 @@ int set_mark_command( void )
     return 0;
 }
 
-
-
 int un_set_mark_command( void )
 {
     bf_cur->unset_mark();
@@ -658,8 +603,6 @@ int un_set_mark_command( void )
 
     return 0;
 }
-
-
 
 int left_marker( void )
 {
@@ -671,9 +614,9 @@ int right_marker( void )
     return left_or_right_marker( 1 );
 }
 
-static int left_or_right_marker(int right)
+static int left_or_right_marker( int right )
 {
-    if( ! eval_arg( 1 ) )
+    if( !eval_arg( 1 ) )
         return 0;
 
     if( ml_value.exp_type() != ISMARKER )
@@ -690,8 +633,6 @@ static int left_or_right_marker(int right)
     return 0;
 }
 
-
-
 int exchange_dot_and_mark( void )
 {
     int old_dot = dot;
@@ -699,7 +640,7 @@ int exchange_dot_and_mark( void )
     if( !bf_cur->b_mark.isSet() )
         error( FormatString(no_mark_set_str) << bf_cur->b_buf_name);
     else
-     {
+    {
         set_dot( bf_cur->b_mark.to_mark() );
         bf_cur->set_mark( old_dot, 0, bf_cur->b_gui_input_mode_set_mark );
     }
@@ -707,14 +648,12 @@ int exchange_dot_and_mark( void )
     return 0;
 }
 
-
-
 int erase_region( void )
 {
     if( !bf_cur->b_mark.isSet() )
         error( FormatString(no_mark_set_str) << bf_cur->b_buf_name);
     else
-     {
+    {
         int n = bf_cur->b_mark.to_mark() - dot;
 
         if( n < 0 )
@@ -722,12 +661,11 @@ int erase_region( void )
             n = -n;
             dot_left (n);
         }
-        bf_cur->del_frwd (dot, n);
+        bf_cur->del_frwd( dot, n );
     }
 
     return 0;
 }
-
 
 void replace_to_buf( int n, const EmacsString &name )
 {
@@ -749,7 +687,7 @@ static void del_to_buf
 {
     int p = dot;
     EmacsBuffer *old = bf_cur;
-    EmacsBuffer *kill = EmacsBuffer::find(name);
+    EmacsBuffer *kill = EmacsBuffer::find( name );
 
     if( kill == NULL )
         kill = EMACS_NEW EmacsBuffer( name );
@@ -758,16 +696,16 @@ static void del_to_buf
         kill->erase_bf();
 
     if( n < 0 )
-     {
+    {
         n = -n;
         p = p - n;
     }
     if( p < bf_cur->first_character() )
-     {
+    {
         n = n + p - bf_cur->first_character();
         p = bf_cur->first_character();
     }
-    if( p + n  >  bf_cur->num_characters() + 1 )
+    if( p + n > bf_cur->num_characters() + 1 )
         n = bf_cur->num_characters() + 1 - p;
 
     if( n <= 0 )
@@ -799,7 +737,7 @@ static void del_to_buf
 
     old->set_bf();
     if( del_doner )
-     {
+    {
         bf_cur->del_frwd( p, n );
         set_dot (p);
     }
@@ -811,12 +749,12 @@ void insert_buffer ( const EmacsString &name )
     EmacsBuffer *who = EmacsBuffer::find(name);
 
     if( who == NULL )
-     {
-        error (FormatString("Non-existant buffer: \"%s\"") << name);
+    {
+        error( FormatString("Non-existant buffer: \"%s\"") << name );
         return;
     }
     if( who == bf_cur )
-     {
+    {
         error( "Inserting a buffer into itself.");
         return;
     }
@@ -828,7 +766,7 @@ void insert_buffer ( const EmacsString &name )
 int move_to_comment_column( void )
 {
     bf_cur->b_mode.md_leftmargin = cur_col() == 1 ? 1 : bf_cur->b_mode.md_commentcolumn;
-    to_col (bf_cur->b_mode.md_leftmargin);
+    to_col( bf_cur->b_mode.md_leftmargin );
 
     return 0;
 }
@@ -844,14 +782,12 @@ int widen_region( void )
     return 0;
 }
 
-
-
 int narrow_region( void )
 {
     if( !bf_cur->b_mark.isSet() )
-        error( FormatString(no_mark_set_str) << bf_cur->b_buf_name);
+        error( FormatString(no_mark_set_str) << bf_cur->b_buf_name );
     else
-     {
+    {
         int lo = bf_cur->b_mark.to_mark();
         int hi = dot;
 
@@ -870,8 +806,6 @@ int narrow_region( void )
 
     return 0;
 }
-
-
 
 int save_restriction( void )
 {
@@ -899,15 +833,12 @@ int save_restriction( void )
     return rv;
 }
 
-
-
 //
 // del_chars_in_buffer deletes n characters in the current buffer starting
 // at dot. It takes account of the state of replace-mode so that if you
 // delete characters in the middle of a line, then they are replaced with
 // a space. Characters deleted at the end of a line actually disappear.
 //
-
 int del_chars_in_buffer ( int position, int number_of_characters, int fwd )
 {
     int replace = 0;
@@ -923,20 +854,20 @@ int del_chars_in_buffer ( int position, int number_of_characters, int fwd )
         {
             int i;
 
-            for( i=0; i<=number_of_characters - 1 ; i += 1 )
+            for( i=0; i<=number_of_characters - 1; i += 1 )
             {
-                unsigned char ch = bf_cur->char_at(position + i);
+                EmacsCharQqq_t ch = bf_cur->char_at( position + i );
 
-                bf_cur->del_frwd (position + i, 1);
+                bf_cur->del_frwd( position + i, 1 );
                 if( ch != '\n' )
                 {
                     bf_cur->insert_at (position + i, ' ');
                     replace++;
                 }
             }
-            if( bf_cur->char_at (position + replace) == '\n' )
-             {
-                bf_cur->del_frwd (position, replace);
+            if( bf_cur->char_at( position + replace ) == '\n' )
+            {
+                bf_cur->del_frwd( position, replace );
                 replace = 0;
             }
         }
@@ -944,14 +875,14 @@ int del_chars_in_buffer ( int position, int number_of_characters, int fwd )
         {
             int repl = bf_cur->char_at(position) != '\n';
 
-            for( int i=1; i<number_of_characters ; i++ )
+            for( int i=1; i<number_of_characters; i++ )
             {
-                unsigned char ch = bf_cur->char_at(position - i);
+                EmacsCharQqq_t ch = bf_cur->char_at(position - i);
 
-                bf_cur->del_back (position - i + 1, 1);
+                bf_cur->del_back( position - i + 1, 1 );
                 if( repl && ch != '\n' )
                 {
-                    bf_cur->insert_at (position - i, ' ');
+                    bf_cur->insert_at( position - i, ' ' );
                     replace++;
                 }
             }
@@ -963,9 +894,9 @@ int del_chars_in_buffer ( int position, int number_of_characters, int fwd )
         //  usual delete routines
         //
         if( fwd != 0 )
-            bf_cur->del_frwd (position, number_of_characters);
+            bf_cur->del_frwd( position, number_of_characters );
         else
-            bf_cur->del_back (position, number_of_characters);
+            bf_cur->del_back( position, number_of_characters );
 
     return replace;
 }

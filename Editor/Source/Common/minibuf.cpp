@@ -282,7 +282,7 @@ EmacsString br_get_string_interactive( int breaksp, const EmacsString &prefix, c
     //
     // get the string from the keyboard
     //
-    unsigned char *result = 0;
+    EmacsCharQqq_t *result = 0;
     KeyMap *outermap;
     int outer_dot;
     int window_num = 0;
@@ -318,7 +318,7 @@ EmacsString br_get_string_interactive( int breaksp, const EmacsString &prefix, c
     bf_cur->gap_outside_of_range( 1, bf_cur->unrestrictedSize()+1 );
     EmacsString outer( EmacsString::copy, bf_cur->ref_char_at(1), bf_cur->unrestrictedSize() );
     bf_cur->erase_bf();
-    bf_cur->ins_cstr(prefix);
+    bf_cur->ins_cstr( prefix );
 
     minibuf_depth++;
     recursive_edit();
@@ -329,7 +329,7 @@ EmacsString br_get_string_interactive( int breaksp, const EmacsString &prefix, c
     minibuf->set_bf();
     bf_cur->b_mode.md_keys = outermap;
     bf_cur->insert_at (bf_cur->unrestrictedSize() + 1, 0);
-    set_dot (1);
+    set_dot( 1 );
     bf_cur->ins_cstr( outer );
     set_dot( outer_dot );
     result = ml_err ? 0 : bf_cur->ref_char_at( outer.length() + 1 );
@@ -352,7 +352,9 @@ EmacsString br_get_string_interactive( int breaksp, const EmacsString &prefix, c
 
     if( result == NULL )
         throw EmacsExceptionUserInputAbort();
-    return EmacsString( result );
+
+    EmacsString result_string( EmacsString::copy, result );
+    return result_string;
 }
 
 

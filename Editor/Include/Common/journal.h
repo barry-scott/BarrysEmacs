@@ -1,5 +1,7 @@
 //    Copyright (c) 1987
 //        Barry A. Scott and Nick Emery
+//    Copyright (c) 1988-2010
+//        Barry A. Scott
 
 //    Definition for the journal subsystem
 
@@ -36,7 +38,9 @@ struct jnl_delete
 
 struct jnl_data
 {
-    unsigned char jnl_chars[ sizeof(int) * 4 ];
+    // just larger then the other jnl record types
+    // - is this important?
+    EmacsCharQqq_t jnl_chars[ sizeof(int)*4/sizeof( EmacsCharQqq_t ) ];
 };
 
 const int JNL_BYTE_SIZE( sizeof( struct jnl_data ) );
@@ -47,10 +51,10 @@ inline int JNL_BYTE_TO_REC( int n )
 
 union journal_record
 {
-    struct jnl_open jnl_open;
-    struct jnl_insert jnl_insert;
-    struct jnl_delete jnl_delete;
-    struct jnl_data jnl_data;
+    struct jnl_open     jnl_open;
+    struct jnl_insert   jnl_insert;
+    struct jnl_delete   jnl_delete;
+    struct jnl_data     jnl_data;
 };
 
 const int JNL_BUF_SIZE( 64 );        // this yields a 1k buffer
@@ -68,14 +72,14 @@ public:
 
     static void journal_insert
         (
-        int dot,                // Location in buffer
-        int len,                // Length of insert
-        const unsigned char *str        // data to insert
+        int dot,                    // Location in buffer
+        int len,                    // Length of insert
+        const EmacsCharQqq_t *str   // data to insert
         );
     static void journal_delete
         (
-        int dot,                // Location in buffer
-        int len                    // length of delete
+        int dot,                    // Location in buffer
+        int len                     // length of delete
         );
 
     static int recoverJournal( const EmacsString &journal_file );
@@ -88,14 +92,14 @@ private:
 
     void insertChars
         (
-        int dot,                // Location in buffer
-        int len,                // Length of insert
-        const unsigned char *str        // data to insert
+        int dot,                    // Location in buffer
+        int len,                    // Length of insert
+        const EmacsCharQqq_t *str   // data to insert
         );
     void deleteChars
         (
-        int dot,                // Location in buffer
-        int len                    // length of delete
+        int dot,                    // Location in buffer
+        int len                     // length of delete
         );
 
     void jnl_write_buffer();
@@ -105,16 +109,16 @@ private:
 #endif
 
 private:
-        unsigned jnl_active : 1;
-        unsigned jnl_open : 1;
-        unsigned jnl_flush : 1;
-        unsigned jnl_rab_inuse : 1;
-        unsigned jnl_buf1_current : 1;
+    unsigned jnl_active : 1;
+    unsigned jnl_open : 1;
+    unsigned jnl_flush : 1;
+    unsigned jnl_rab_inuse : 1;
+    unsigned jnl_buf1_current : 1;
     FILE *jnl_file;
     EmacsString jnl_jname;
     int jnl_used;        // records used in the current journal buf
     int jnl_record;        // last record written in the current journal buffer
     union journal_record *jnl_buf;
-    union journal_record jnl_buf1 [JNL_BUF_SIZE];
-    union journal_record jnl_buf2 [JNL_BUF_SIZE];
+    union journal_record jnl_buf1[ JNL_BUF_SIZE ];
+    union journal_record jnl_buf2[ JNL_BUF_SIZE ];
 };

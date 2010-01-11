@@ -7,6 +7,8 @@
 //
 //     Copyright (c) 1982, 1983, 1984, 1985, 1987
 //        Barry A. Scott and Nick Emery
+//     Copyright (c) 1988-2010
+//        Barry A. Scott
 //
 
 #include <emacs.h>
@@ -276,7 +278,7 @@ int dot_is_visible( void )
 
     ml_value = dot >= windowtop
         && dot - (dot  >  bf_cur->num_characters()) <
-    scan_bf( '\n', windowtop, theActiveView->currentWindow()->w_height - 1 );
+    scan_bf_for_lf( windowtop, theActiveView->currentWindow()->w_height - 1 );
 
     return 0;
     }
@@ -491,7 +493,7 @@ int string_to_char( void )
 
 int insert_character( void )
     {
-    self_insert( (unsigned char)getnum (": insert-character ") );
+    self_insert( (EmacsCharQqq_t)getnum (": insert-character ") );
     return 0;
     }
 

@@ -71,7 +71,7 @@ public:
     //int fio_get_line( EmacsCharQqq_t *buf, int len );
     //int fio_get_with_prompt( EmacsCharQqq_t *buffer, int size, const EmacsCharQqq_t *prompt );
 
-    //int fio_put( const EmacsCharQqq_t *, int );
+    int fio_put( const EmacsCharQqq_t *, int );
 
     bool fio_close();
 

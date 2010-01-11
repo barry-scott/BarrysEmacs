@@ -1,6 +1,8 @@
 //
-//    Copyright (c) 1987-2009
+//    Copyright (c) 1987
 //    Barry A. Scott and nick Emery
+//    Copyright (c) 1988-2010
+//    Barry A. Scott
 //
 
 //
@@ -28,7 +30,7 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 SystemExpressionRepresentationJournalFrequency journalling_frequency;
 SystemExpressionRepresentationIntBoolean journal_scratch_buffers( 1 );
 SystemExpressionRepresentationIntBoolean animate_journal_recovery;
-unsigned char journal_fn[MAXPATHLEN+1];
+unsigned char journal_fn[ MAXPATHLEN+1 ];
 int journal_records_written;
 
 // work structure to queue on a timeout
@@ -253,7 +255,7 @@ EmacsBufferJournal *EmacsBufferJournal::journal_start( void )
         //    to make the journal file name. Otherwise use the
         //    buffer name to make a name from.
         //
-    {
+        {
         unsigned char def_name_buf[MAXPATHLEN+1];
 
         if( bf_cur->b_kind == FILEBUFFER )
@@ -285,12 +287,12 @@ EmacsBufferJournal *EmacsBufferJournal::journal_start( void )
 
         expand_and_default( def_name_buf, p, jnl->jnl_jname );
         *_str_rchr( jnl->jnl_jname, ';' ) = '\0';
-    }
+        }
 #else
-    //
-    //    Create a unique journal file
-    //
-    {
+        //
+        //    Create a unique journal file
+        //
+        {
         for( int i='a';; i++ )
         {
             FILE *file;
@@ -305,7 +307,7 @@ EmacsBufferJournal *EmacsBufferJournal::journal_start( void )
             {
                 def_name = "emacs$journal:.ej_";
                 int last_char = def_name.length() - 1;
-                def_name[last_char] = (unsigned char)i;
+                def_name[last_char] = i;
 
                 p = bf_cur->b_fname;
                 open_record->jnl_open.jnl_type = JNL_FILENAME;
@@ -335,11 +337,11 @@ EmacsBufferJournal *EmacsBufferJournal::journal_start( void )
             if( i >= 'z' )
             {
                 error( FormatString("Unable to create a unique journal filename tried %s last") <<
-                    jnl->jnl_jname );
+                                        jnl->jnl_jname );
                 break;
             }
         }
-    }
+        }
 #endif
 
         // w - write, b - binary, c - commit
@@ -352,7 +354,7 @@ EmacsBufferJournal *EmacsBufferJournal::journal_start( void )
         //
         open_record[0].jnl_open.jnl_version = JNL_VERSION;
         open_record[0].jnl_open.jnl_name_length = p.length()+1;
-        _str_cpy( open_record[1].jnl_data.jnl_chars, p.data() );
+        memcpy( open_record[1].jnl_data.jnl_chars, p.unicode_data(), p.length()*sizeof( EmacsCharQqq_t ) );
 
         jnl->jnl_used = 1 + JNL_BYTE_TO_REC(open_record[0].jnl_open.jnl_name_length);
         jnl->jnl_record = 0;
@@ -463,7 +465,7 @@ void EmacsBufferJournal::journal_insert
     (
     int dot,                    // Location in buffer
     int len,                    // Length of insert
-    const unsigned char *str    // data to insert
+    const EmacsCharQqq_t *str   // data to insert
     )
 {
     EmacsBufferJournal *jnl = bf_cur->b_journal;
@@ -487,7 +489,7 @@ void EmacsBufferJournal::insertChars
     (
     int dot,                    // Location in buffer
     int len,                    // Length of insert
-    const unsigned char *str    // data to insert
+    const EmacsCharQqq_t *str   // data to insert
     )
 {
     union journal_record *in_rec;
@@ -511,12 +513,12 @@ void EmacsBufferJournal::insertChars
         (
         &in_rec[1].jnl_data.jnl_chars[in_rec->jnl_insert.jnl_insert_length],
         &str[ written ],
-        writing
+        writing*sizeof( EmacsCharQqq_t )
         );
         in_rec->jnl_insert.jnl_insert_length += writing;
         written = writing;
         jnl_used = jnl_record + 1 +
-                JNL_BYTE_TO_REC( in_rec->jnl_insert.jnl_insert_length );
+                JNL_BYTE_TO_REC( in_rec->jnl_insert.jnl_insert_length * sizeof( EmacsCharQqq_t ) );
     }
 
     while( written < len )
@@ -540,11 +542,11 @@ void EmacsBufferJournal::insertChars
         in_rec->jnl_insert.jnl_dot = dot + written;
         in_rec->jnl_insert.jnl_insert_length = writing;
 
-        memcpy( &in_rec[1].jnl_data.jnl_chars[0], &str[ written ], writing );
+        memcpy( &in_rec[1].jnl_data.jnl_chars[0], &str[ written ], writing * sizeof( EmacsCharQqq_t ) );
 
         written += writing;
         jnl_record = jnl_used;
-        jnl_used += 1 + JNL_BYTE_TO_REC( writing );
+        jnl_used += 1 + JNL_BYTE_TO_REC( writing * sizeof( EmacsCharQqq_t ) );
     }
 #if DBG_JOURNAL
     if( dbg_flags&DBG_JOURNAL )
@@ -921,7 +923,7 @@ int EmacsBufferJournal::recoverJournal( const EmacsString &journal_file )
     {
     case JNL_FILENAME:
     {
-        journal_filename = rec[1].jnl_data.jnl_chars;
+        journal_filename = EmacsString( EmacsString::copy, rec[1].jnl_data.jnl_chars );
 #ifdef vms
         {
         struct dsc$descriptor src;
@@ -971,7 +973,7 @@ int EmacsBufferJournal::recoverJournal( const EmacsString &journal_file )
 
     case JNL_BUFFERNAME:
     {
-        journal_filename = rec[1].jnl_data.jnl_chars;
+        journal_filename = EmacsString( EmacsString::copy, rec[1].jnl_data.jnl_chars );
 
         if( EmacsBuffer::find( journal_filename ) != NULL )
         {
@@ -1037,7 +1039,7 @@ int EmacsBufferJournal::recoverJournal( const EmacsString &journal_file )
                 break;
             default:
                 error( FormatString("Unexpected type of journal record %d encountered") <<
-                    rec->jnl_open.jnl_type );
+                                        rec->jnl_open.jnl_type );
                 break;
             }
             if( rec->jnl_open.jnl_type == JNL_END )

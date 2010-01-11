@@ -26,7 +26,7 @@ int EmacsBuffer::calculateColumn( int buf_pos )
     int p;
     int col;
 
-        p = scan_bf( '\n', dot, -1 );
+        p = scan_bf_for_lf( dot, -1 );
         col = 1;
 
     while( p < buf_pos )
@@ -92,7 +92,7 @@ int cur_indent( void )
     int col;
     int lim;
 
-    p = scan_bf( '\n', dot, -1 );
+    p = scan_bf_for_lf( dot, -1 );
     col = 1;
     lim = bf_cur->num_characters();
     while( p <= lim )

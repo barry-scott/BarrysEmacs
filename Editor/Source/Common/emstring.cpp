@@ -7,6 +7,8 @@
 #include <assert.h>
 #include <emunicode.h>
 
+#include <iostream>
+
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
@@ -39,6 +41,11 @@ void EmacsString::init(void)
 
 const EmacsString EmacsString::null;
 
+void EmacsString::q()
+{
+    std::cout << "EmacsString length " << length() << " utf8 \"" << sdata() << "\"" << std::endl;
+}
+
 EmacsString::EmacsString( void )
 : _rep( empty_string )
 {
@@ -61,6 +68,16 @@ EmacsString::EmacsString( const unsigned char *string )
 static int wchar_strlen( const wchar_t *string )
 {
     const wchar_t *p = string;
+
+    while( *p != 0 )
+        p++;
+
+    return p - string;
+}
+
+static int wchar_strlen( const EmacsCharQqq_t *string )
+{
+    const EmacsCharQqq_t *p = string;
 
     while( *p != 0 )
         p++;
@@ -107,7 +124,7 @@ size_t strlen( const EmacsCharQqq_t *str )
 }
 
 EmacsString::EmacsString( enum string_type type, const EmacsCharQqq_t *string )
-: _rep( EMACS_NEW EmacsStringRepresentation( type, strlen( string )+1, strlen( string ), string ) )
+: _rep( EMACS_NEW EmacsStringRepresentation( type, wchar_strlen( string )+1, wchar_strlen( string ), string ) )
 {
     check_for_bad_value( _rep );
 }

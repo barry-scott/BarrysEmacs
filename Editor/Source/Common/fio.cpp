@@ -300,6 +300,27 @@ int EmacsFile::fio_get( EmacsCharQqq_t *buf, int len )
     return unicode_len;
 }
 
+int EmacsFile::fio_put( const EmacsCharQqq_t *buf, int len )
+{
+    int written_length = 0;
+    while( len > 0 )
+    {
+        int unicode_usable_length = 0;
+        int utf8_length = length_unicode_to_utf8( len, buf, sizeof( m_convert_buffer ), unicode_usable_length );
+
+        convert_unicode_to_utf8( unicode_usable_length, buf, m_convert_buffer );
+        int bytes_written = fio_put( m_convert_buffer, utf8_length );
+        if( bytes_written <= 0 )
+            return bytes_written;
+
+        written_length += unicode_usable_length;
+        len -= unicode_usable_length;
+        buf += unicode_usable_length;
+    }
+
+    return written_length;
+}
+
 //--------------------------------------------------------------------------------
 
 bool EmacsFile::fio_close()

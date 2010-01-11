@@ -906,7 +906,7 @@ int indent_c_procedure( void )
     int nest = 0;
     int spos = pos;
 
-    pos = scan_bf( '\n', pos, 1 );
+    pos = scan_bf_for_lf( pos, 1 );
     while( spos > 1 )
     {
         unsigned char c;
@@ -924,7 +924,7 @@ int indent_c_procedure( void )
 
     if( nest == 0 )
     {
-        set_dot( scan_bf( '\n', spos, -1) );
+        set_dot( scan_bf_for_lf( spos, -1) );
         filter_through( pos - dot, "indent -st" );
     }
     else

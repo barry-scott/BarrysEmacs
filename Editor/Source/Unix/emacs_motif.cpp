@@ -865,7 +865,7 @@ void EmacsMotif_ScrollBarVertical::valueChanged( XtPointer, XtPointer call_data 
         if( n > bf_cur->num_characters() )
             n = bf_cur->num_characters() + 1;
         if( n != (bf_cur->num_characters() + 1) )
-            set_dot( scan_bf('\n', n, -1) );
+            set_dot( scan_bf_for_lf(n, -1) );
     }
         break;
 
@@ -873,8 +873,8 @@ void EmacsMotif_ScrollBarVertical::valueChanged( XtPointer, XtPointer call_data 
 
     if( scroll )
     {
-        set_dot( scan_bf('\n', dot, scroll) );
-        win->setWindowStart( scan_bf('\n', win->getWindowStart(), scroll) );
+        set_dot( scan_bf_for_lf(dot, scroll) );
+        win->setWindowStart( scan_bf_for_lf(win->getWindowStart(), scroll) );
     }
 
     old_window->set_win();

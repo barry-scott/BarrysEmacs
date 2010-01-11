@@ -11,7 +11,7 @@ static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
 
-void record_insert(int dot, int n, unsigned char *s);
+void record_insert(int dot, int n, EmacsCharQqq_t *s);
 void record_delete(int dot, int n);
 int done_is_done( void );
 int undo_boundary( void );
@@ -33,13 +33,11 @@ static int last_undone_c;
 static struct undorec *last_undone;
 static struct undorec *last_undo_rec;
 
-static struct undorec *new_undo (UNDO_type kind, int dot, int len)
+static struct undorec *new_undo( UNDO_type kind, int dot, int len )
 {
-    struct undorec *p;
-    struct undorec *np;
-    p = &undo_rq[ fill_rq ];
+    struct undorec *p = &undo_rq[ fill_rq ];
     fill_rq = (fill_rq + 1) % UNDO_MAX_REC;
-    np = &undo_rq[fill_rq];
+    struct undorec *np = &undo_rq[fill_rq];
     np->undo_kind = UNDO_UNDOABLE;
     p->undo_kind = kind;
     p->undo_buffer = bf_cur;
@@ -52,23 +50,21 @@ static struct undorec *new_undo (UNDO_type kind, int dot, int len)
     return p;
 }
 
-void record_insert(int dot, int n, const unsigned char *s)
+void record_insert( int dot, int n, const EmacsCharQqq_t *s )
 {
     if( bf_cur->b_journalling )
-        EmacsBufferJournal::journal_insert(dot, n, s);
-    new_undo( UNDO_DELETE, dot, n);
+        EmacsBufferJournal::journal_insert( dot, n, s );
+    new_undo( UNDO_DELETE, dot, n );
 }
 
-void record_delete(int dot, int n)
+void record_delete( int dot, int n )
 {
-    int i;
-
     if( bf_cur->b_journalling )
-        EmacsBufferJournal::journal_delete(dot, n);
+        EmacsBufferJournal::journal_delete( dot, n );
     new_undo( UNDO_INSERT, dot, n );
     n_chars_left = n_chars_left - n;
 
-    for( i=1; i<=n; i += 1 )
+    for( int i=1; i<=n; i += 1 )
     {
         undo_cq[ fill_cq ] = bf_cur->char_at( dot );
         fill_cq = (fill_cq + 1) % UNDO_MAX_CHAR;
