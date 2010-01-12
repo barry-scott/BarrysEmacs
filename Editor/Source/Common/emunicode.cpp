@@ -2,7 +2,7 @@
 //    Copyright (c) 2010 Barry A. Scott
 //
 #if defined( UNIT_TEST )
-typedef unsigned int EmacsCharQqq_t;
+typedef unsigned int EmacsChar_t;
 
 #include <cstdlib>
 #include <iostream>
@@ -136,7 +136,7 @@ int length_utf8_to_unicode( int utf8_length, const unsigned char *utf8_data, int
     return length;
 }
 
-void convert_utf8_to_unicode( const unsigned char *utf8_data, int unicode_length, EmacsCharQqq_t *unicode_data )
+void convert_utf8_to_unicode( const unsigned char *utf8_data, int unicode_length, EmacsChar_t *unicode_data )
 {
     while( unicode_length-- > 0 )
     {
@@ -193,7 +193,7 @@ void convert_utf8_to_unicode( const unsigned char *utf8_data, int unicode_length
     }
 }
 
-int length_unicode_to_utf8( int unicode_length, const EmacsCharQqq_t *unicode_data )
+int length_unicode_to_utf8( int unicode_length, const EmacsChar_t *unicode_data )
 {
     int length = 0;
 
@@ -233,7 +233,7 @@ int length_unicode_to_utf8( int unicode_length, const EmacsCharQqq_t *unicode_da
     return length;
 }
 
-int length_unicode_to_utf8( int unicode_length, const EmacsCharQqq_t *unicode_data, int utf8_limit, int &unicode_usable_length )
+int length_unicode_to_utf8( int unicode_length, const EmacsChar_t *unicode_data, int utf8_limit, int &unicode_usable_length )
 {
     int length = 0;
 
@@ -285,7 +285,7 @@ int length_unicode_to_utf8( int unicode_length, const EmacsCharQqq_t *unicode_da
     return length;
 }
 
-void convert_unicode_to_utf8( int unicode_length, const EmacsCharQqq_t *unicode_data, unsigned char *utf8_data )
+void convert_unicode_to_utf8( int unicode_length, const EmacsChar_t *unicode_data, unsigned char *utf8_data )
 {
     for( int i=0; i<unicode_length; --unicode_length )
     {
@@ -337,12 +337,12 @@ void convert_unicode_to_utf8( int unicode_length, const EmacsCharQqq_t *unicode_
     }
 }
 
-int unicode_strcmp( int len1, const EmacsCharQqq_t *str1, int len2, const EmacsCharQqq_t *str2 )
+int unicode_strcmp( int len1, const EmacsChar_t *str1, int len2, const EmacsChar_t *str2 )
 {
     for( int common_length = std::min( len1, len2 ); common_length > 0; --common_length )
     {
-        EmacsCharQqq_t ch1 = *str1++;
-        EmacsCharQqq_t ch2 = *str2++;
+        EmacsChar_t ch1 = *str1++;
+        EmacsChar_t ch2 = *str2++;
 
         if( ch1 != ch2 )
         {
@@ -360,7 +360,7 @@ int unicode_strcmp( int len1, const EmacsCharQqq_t *str1, int len2, const EmacsC
         return 1;
 }
 
-int unicode_stricmp( int len1, const EmacsCharQqq_t *str1, int len2, const EmacsCharQqq_t *str2 )
+int unicode_stricmp( int len1, const EmacsChar_t *str1, int len2, const EmacsChar_t *str2 )
 {
     // QQQ Need case blind compare
     return unicode_strcmp( len1, str1, len2, str2 );
@@ -372,7 +372,7 @@ int pass_count = 0;
 int fail_count = 0;
 
 const int buf_size = 32;
-EmacsCharQqq_t unicode_buffer[ buf_size ];
+EmacsChar_t unicode_buffer[ buf_size ];
 unsigned char utf8_buffer[ buf_size ];
 
 void test_utf8_unicode( const char *title, int str_length, const char *str, int expected_length )
@@ -416,7 +416,7 @@ void test_utf8_unicode( const char *title, int str_length, const char *str, int 
         pass_count++;
 }
 
-void test_unicode_utf8( const char *title, int unicode_length, const EmacsCharQqq_t *unicode_buffer, int expected_length, const char *expected_str )
+void test_unicode_utf8( const char *title, int unicode_length, const EmacsChar_t *unicode_buffer, int expected_length, const char *expected_str )
 {
     bool failed = false;
 

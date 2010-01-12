@@ -1226,11 +1226,11 @@ static EmacsString dump_mode_hscroll( int horz_offset )
 
 void EmacsWindow::dump_mode( int line, int col )
 {
-    EmacsCharQqq_t buf[MSCREENWIDTH+2];
-    EmacsCharQqq_t *p = buf;
-    EmacsCharQqq_t *buf_end = &buf[ w_width ];
+    EmacsChar_t buf[MSCREENWIDTH+2];
+    EmacsChar_t *p = buf;
+    EmacsChar_t *buf_end = &buf[ w_width ];
 
-    const EmacsCharQqq_t *s = bf_cur->b_mode.md_modeformat.unicode_data();
+    const EmacsChar_t *s = bf_cur->b_mode.md_modeformat.unicode_data();
     int recurse_depth = recursive_edit_depth - minibuf_depth;
 
     if( mouse_y == line
@@ -1246,7 +1246,7 @@ void EmacsWindow::dump_mode( int line, int col )
         setMouseHitPosition( dot, this );
     }
 
-    EmacsCharQqq_t c;
+    EmacsChar_t c;
 
     int tl = bf_cur->unrestrictedSize();
     int d = this == group->current_window ? dot : getWindowDot().to_mark();
@@ -1352,7 +1352,7 @@ void EmacsWindow::dump_mode( int line, int col )
 void EmacsView::dump_str
     (
     bool is_users_current_window,
-    const EmacsCharQqq_t *s,
+    const EmacsChar_t *s,
     int limit,
     int line, int column,
     int highlight
@@ -1803,7 +1803,7 @@ update:
 // Dump one line from the current buffer starting at character n onto
 // line sline; setting curs_x and curs_y if appropriate
 //
-static EmacsCharQqq_t fake_c1_chars[32] =
+static EmacsChar_t fake_c1_chars[32] =
 {
     '*', '#', 't', 'f', 'c', 'l', 'o', '+',
     'n', 'v', '+', '+', '+', '+', '+', '~',
@@ -1996,7 +1996,7 @@ int EmacsView::dump_line_from_buffer
     int dot_column = 0;
 
     bool wrap_lines = mode.md_wrap_lines != 0;
-    EmacsCharQqq_t c = 0;
+    EmacsChar_t c = 0;
     enum char_types_t { init_char, space_char, word_char, other_char } last_char_type = init_char;
     int word_start_col = 0;
     int word_start_pos = 0;

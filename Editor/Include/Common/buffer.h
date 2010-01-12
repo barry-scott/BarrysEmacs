@@ -231,7 +231,7 @@ public:
     int write_file( const EmacsString &fn, WriteFileOperation_t appendit );
 
 
-    inline EmacsCharQqq_t char_at( int n )
+    inline EmacsChar_t char_at( int n )
     {
         if( n > b_size1 )
             return b_base[b_gap+n-1];
@@ -239,7 +239,7 @@ public:
             return b_base[n-1];
     }
 
-    inline EmacsCharQqq_t *ref_char_at( int n )
+    inline EmacsChar_t *ref_char_at( int n )
     {
         if( n > b_size1 )
             return &b_base[b_gap+n-1];
@@ -297,26 +297,29 @@ public:
     bool syntax_fill_in_array( int required );
     void syntax_update_buffer( int pos, int len );
 
-    void insert_at( int n, EmacsCharQqq_t c );
+    void insert_at( int n, EmacsChar_t c );
     void ins_cstr( const EmacsString &s );
     void ins_cstr( const EmacsChar_t *s, int n );
-    void ins_cstr( const EmacsCharQqq_t *s, int n );
-    void ins_cstr( const char *s, int n );
+    void ins_cstr( const unsigned char *s, int n );
+    void ins_cstr( const char *s, int n )
+    {
+        ins_cstr( (const unsigned char *)s, n );
+    }
     void insert_buffer( EmacsBuffer *buf );
     void del_frwd( int n, int k );
     void del_back( int n, int k );
-
-    inline void ins_str( const unsigned char *insstr_str )
-    {
-        ins_cstr( insstr_str, strlen( (const char *)insstr_str ) );
-    }
 
     inline void ins_str( const char *insstr_str )
     {
         ins_cstr( (const unsigned char *)insstr_str, strlen( insstr_str ) );
     }
 
-    void bufferExtent( EmacsCharQqq_t *&p1, int &s1, EmacsCharQqq_t *&p2, int &s2 );
+    inline void ins_str( const unsigned char *insstr_str )
+    {
+        ins_cstr( insstr_str, strlen( (const char *)insstr_str ) );
+    }
+
+    void bufferExtent( EmacsChar_t *&p1, int &s1, EmacsChar_t *&p2, int &s2 );
 
     inline int first_character()
     {
@@ -352,7 +355,7 @@ public:
     // ^--b_base
 
 private:
-    EmacsCharQqq_t *b_base;                //  0 points to the beginning of the
+    EmacsChar_t *b_base;                //  0 points to the beginning of the
                                         //    block of storage used to hold the
                                         //    text in the buffer
     int b_size1;                        //  c the number of characters in the

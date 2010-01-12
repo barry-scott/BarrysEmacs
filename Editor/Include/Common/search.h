@@ -62,8 +62,9 @@ public:
 
 
 public:
-    static EmacsChar_t standard_trt[256];    // the identity TRT
-    static EmacsChar_t case_fold_trt[256];    // folds upper to lower case
+    // QQQ: Too small
+    static EmacsChar_t standard_trt[256];       // the identity TRT
+    static EmacsChar_t case_fold_trt[256];      // folds upper to lower case
 
 private:
     friend class EmacsSearch;

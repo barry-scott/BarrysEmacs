@@ -1,5 +1,6 @@
-//    Copyright (c) 1982-1998
+//    Copyright (c) 1982-2010
 //        Barry A. Scott
+//
 // Declarations having to do with Emacs syntax tables
 // A syntax table contains an array of information, one entry per ASCII
 // character.
@@ -80,9 +81,9 @@ const int SYNTAX_MULTI_CHAR_TYPES
     SYNTAX_WORD|SYNTAX_KEYWORD_MASK|SYNTAX_COMMENT_MASK|SYNTAX_STRING_MASK
     );
 
-const int SYNTAX_PROP_CASE_FOLD_MATCH( 1 );    // case blind matching of this entry
-const int SYNTAX_PROP_REGEX_MATCH( 2 );        // entry is a regular expression
-const int SYNTAX_PROP_PAIRED( 4 );        // entry is a paired value (used for string)
+const int SYNTAX_PROP_CASE_FOLD_MATCH( 1 );     // case blind matching of this entry
+const int SYNTAX_PROP_REGEX_MATCH( 2 );         // entry is a regular expression
+const int SYNTAX_PROP_PAIRED( 4 );              // entry is a paired value (used for string)
 
 typedef int SyntaxData_t;
 typedef int SyntaxDepth_t;
@@ -90,20 +91,20 @@ typedef int SyntaxTable_t;
 
 struct SyntaxCharData_t
 {
-    unsigned int data        : 12;
+    unsigned int data               : 12;
     unsigned int outline_visible    :  4;
-    unsigned int table_number    :  8;
-    unsigned int outline_depth    :  8;
+    unsigned int table_number       :  8;
+    unsigned int outline_depth      :  8;
 };
 
 //
 //    syntax_string contains the following information for
 //    the various kinds of syntax.
-//    Kind        Main        Match
-//    begin Paren    "("        ")"
-//    end paren    ")"        "("
-//    keyword[12]    "keyword"    ""
-//    comment        "//"        "\n"
+//    Kind          Main        Match
+//    begin Paren   "("         ")"
+//    end paren     ")"         "("
+//    keyword[12]   "keyword"   ""
+//    comment       "//"        "\n"
 //
 const int SYNTAX_STRING_SIZE( 31 );
 class SyntaxString : public EmacsObject
@@ -131,13 +132,10 @@ public:
     SyntaxString *s_next;
     SyntaxString *s_alt_matching;
 
-    int s_main_len;
-    EmacsChar_t s_main_str[SYNTAX_STRING_SIZE+1];
-
-    int s_match_len;
-    EmacsChar_t s_match_str[SYNTAX_STRING_SIZE+1];
+    EmacsString s_main_str;
+    EmacsString s_match_str;
 private:
-    int looking_at_internal( int pos, int len, const unsigned char *str ) const;
+    int looking_at_internal( int pos, const EmacsString &str ) const;
 };
 
 
@@ -146,19 +144,27 @@ class SyntaxNameTable : public EmacsStringTable
 public:
     EMACS_OBJECT_FUNCTIONS( SyntaxNameTable )
     SyntaxNameTable( int init_size, int grow_amount )
-        : EmacsStringTable( init_size, grow_amount )
+    : EmacsStringTable( init_size, grow_amount )
     { }
     virtual ~SyntaxNameTable()
     { }
 
     void add( const EmacsString &key, SyntaxTable *value )
-    { EmacsStringTable::add( key, value ); }
+    {
+        EmacsStringTable::add( key, value );
+    }
     SyntaxTable *remove( const EmacsString &key )
-    { return (SyntaxTable *)EmacsStringTable::remove( key ); }
+    {
+        return (SyntaxTable *)EmacsStringTable::remove( key );
+    }
     SyntaxTable *find( const EmacsString &key )
-    { return (SyntaxTable *)EmacsStringTable::find( key ); }
+    {
+        return (SyntaxTable *)EmacsStringTable::find( key );
+    }
     SyntaxTable *value( int index )
-    { return (SyntaxTable *)EmacsStringTable::value( index ); }
+    {
+        return (SyntaxTable *)EmacsStringTable::value( index );
+    }
 };
 
 class SyntaxTable : public EmacsObject
@@ -175,7 +181,9 @@ public:
     virtual ~SyntaxTable();
 
     static SyntaxTable *find( const EmacsString &name )
-    { return name_table.find( name ); }
+    {
+        return name_table.find( name );
+    }
 
     // return one of the keys in the table otherwise NULL
     static SyntaxTable * get_word_mlisp()
@@ -197,20 +205,22 @@ public:
 
     // return one of the keys in the table otherwise NULL
     static EmacsString &get_esc_word_mlisp( EmacsString &result )
-    { return name_table.get_esc_word_mlisp( result ); }
+    {
+        return name_table.get_esc_word_mlisp( result );
+    }
     static EmacsString &get_esc_word_interactive( const EmacsString &prompt, EmacsString &result )
-    { return name_table.get_esc_word_interactive( prompt, EmacsString::null, result ); }
+    {
+        return name_table.get_esc_word_interactive( prompt, EmacsString::null, result );
+    }
     static EmacsString &get_esc_word_interactive( const EmacsString &prompt, const EmacsString &default_value, EmacsString &result )
-    { return name_table.get_esc_word_interactive( prompt, default_value, result ); }
+    {
+        return name_table.get_esc_word_interactive( prompt, default_value, result );
+    }
 
-    void modify_table
-        (
-        int type, int properties,
-        const EmacsString &str1, const EmacsString &str2
-        );
+    void modify_table( int type, int properties, const EmacsString &str1, const EmacsString &str2 );
 
     EmacsString s_name;
-    struct entry s_table [256];
+    struct entry s_table[ 256 ];
 
     static SyntaxNameTable name_table;
 private:
@@ -230,15 +240,15 @@ private:
     };
 
     // handlers used by modify_table to deal with type of syntax entry
-    void modify_table_dull_type        // Dull type
+    void modify_table_dull_type             // Dull type
         ( const EmacsString &str1 )
         throw( SyntaxErrorException, SyntaxMemoryException );
 
-    void modify_table_range_type        // range of characters type like word A-Z
+    void modify_table_range_type            // range of characters type like word A-Z
         ( int type, const EmacsString &str1, void (SyntaxTable::*set_func)( int type, int ch ) )
         throw( SyntaxErrorException, SyntaxMemoryException );
 
-    void modify_table_paired_type        // paired strings like comments // to
+    void modify_table_paired_type           // paired strings like comments // to
         ( int type, int properties, const EmacsString &str1, const EmacsString &str2  )
         throw( SyntaxErrorException, SyntaxMemoryException );
 

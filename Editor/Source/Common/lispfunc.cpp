@@ -466,8 +466,8 @@ int char_to_string( void )
     {
     int n = getnum(": char-to-string ");
 
-    EmacsCharQqq_t str[1];
-    str[0] = (EmacsCharQqq_t)n;
+    EmacsChar_t str[1];
+    str[0] = (EmacsChar_t)n;
 
     EmacsString string( EmacsString::copy, str, 1 );
     ml_value = string;
@@ -493,7 +493,7 @@ int string_to_char( void )
 
 int insert_character( void )
     {
-    self_insert( (EmacsCharQqq_t)getnum (": insert-character ") );
+    self_insert( (EmacsChar_t)getnum (": insert-character ") );
     return 0;
     }
 

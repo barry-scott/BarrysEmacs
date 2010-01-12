@@ -124,7 +124,7 @@ FormatString &FormatString::operator <<( const char *v )
     return *this;
 }
 
-FormatString &FormatString::operator <<( const EmacsCharQqq_t *v )
+FormatString &FormatString::operator <<( const EmacsChar_t *v )
 {
     if( next_width_type == argInt
     && next_precision_type == argInt
@@ -383,7 +383,7 @@ void FormatString::put( int c )
     result.append( (unsigned char)c );
 }
 
-void FormatString::put( const EmacsCharQqq_t *str, unsigned int len )
+void FormatString::put( const EmacsChar_t *str, unsigned int len )
 {
     result.append( len, str );
 }
@@ -428,7 +428,7 @@ void FormatString::print_decimal( long int n )
 
 void FormatString::print_hexadecimal( long int n )
 {
-    EmacsCharQqq_t buf[8];
+    EmacsChar_t buf[8];
 
     int w = width;
     for( int i=w-1; i >= 0; i--)

@@ -1789,7 +1789,7 @@ void kill_checkpoint_files( void )
 // Function that initiate checkpointing
 int checkpoint_everything(void)
 {
-    EmacsCharQqq_t saved_activity_char = activity_character;
+    EmacsChar_t saved_activity_char = activity_character;
     int rv = 0;
 
     write_errors = 0;

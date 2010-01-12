@@ -11,7 +11,7 @@ static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
 
-void record_insert(int dot, int n, EmacsCharQqq_t *s);
+void record_insert(int dot, int n, EmacsChar_t *s);
 void record_delete(int dot, int n);
 int done_is_done( void );
 int undo_boundary( void );
@@ -50,7 +50,7 @@ static struct undorec *new_undo( UNDO_type kind, int dot, int len )
     return p;
 }
 
-void record_insert( int dot, int n, const EmacsCharQqq_t *s )
+void record_insert( int dot, int n, const EmacsChar_t *s )
 {
     if( bf_cur->b_journalling )
         EmacsBufferJournal::journal_insert( dot, n, s );

@@ -40,8 +40,8 @@ public:
     EmacsString( enum string_type type, const char *string, int length );
     EmacsString( enum string_type type, const unsigned char *string );
     EmacsString( enum string_type type, const unsigned char *string, int length );
-    EmacsString( enum string_type type, const EmacsCharQqq_t *string );
-    EmacsString( enum string_type type, const EmacsCharQqq_t *string, int length );
+    EmacsString( enum string_type type, const EmacsChar_t *string );
+    EmacsString( enum string_type type, const EmacsChar_t *string, int length );
 
     EmacsString( const std::string &string );
     EmacsString( const EmacsString &string );
@@ -110,7 +110,7 @@ public:
     //
     //    description of the data
     //
-    const EmacsCharQqq_t *unicode_data() const; // unsigned char data
+    const EmacsChar_t *unicode_data() const; // unsigned char data
 
     const unsigned char *data() const;  // unsigned char data
     const char *sdata() const;          // signed char data
@@ -125,15 +125,15 @@ public:
     //
     int first( char ch, int start_pos=0 ) const;                // index of first ch in string
     int first( unsigned char ch, int start_pos=0 ) const;       // index of first ch in string
-    int first( EmacsCharQqq_t ch, int start_pos=0 ) const;      // index of first ch in string
+    int first( EmacsChar_t ch, int start_pos=0 ) const;      // index of first ch in string
 
     int last( char ch, int start_pos=0 ) const;                 // index of last ch in string
     int last( unsigned char ch, int start_pos=0 ) const;        // index of last ch in string
-    int last( EmacsCharQqq_t ch, int start_pos=0 ) const;       // index of last ch in string
+    int last( EmacsChar_t ch, int start_pos=0 ) const;       // index of last ch in string
 
     int index( char ch, int start_pos=0 ) const;                // find the first ch starting at pos
     int index( unsigned char ch, int start_pos=0 ) const;       // find the first ch starting at pos
-    int index( EmacsCharQqq_t ch, int start_pos=0 ) const;      // find the first ch starting at pos
+    int index( EmacsChar_t ch, int start_pos=0 ) const;      // find the first ch starting at pos
     int index( const EmacsString &str, int start_pos=0 ) const; // find the first str starting at pos
 
     int commonPrefix( const EmacsString &str ) const;           // length of common prefix case sensitive
@@ -152,10 +152,10 @@ public:
     EmacsString &append( unsigned char ch )
         { return append( EmacsString( copy, &ch, 1 ) ); }
     EmacsString &append( int ch )
-        { return append( (EmacsCharQqq_t)ch ); }
-    EmacsString &append( EmacsCharQqq_t ch )
+        { return append( (EmacsChar_t)ch ); }
+    EmacsString &append( EmacsChar_t ch )
     {
-        EmacsCharQqq_t str[1];
+        EmacsChar_t str[1];
         str[0] = ch;
         return append( 1, str );
     }
@@ -171,17 +171,17 @@ public:
     EmacsString &append( const EmacsString &str )
         { return append( str.length(), str.unicode_data() ); }
 
-    EmacsString &append( int length, const EmacsCharQqq_t *data );
+    EmacsString &append( int length, const EmacsChar_t *data );
 
     EmacsString &insert( int pos, char ch )
         { return insert( pos, EmacsString( copy, &ch, 1 ) ); }
     EmacsString &insert( int pos, unsigned char ch )
         { return insert( pos, EmacsString( copy, &ch, 1 ) ); }
-    EmacsString &insert( int pos, EmacsCharQqq_t ch )
+    EmacsString &insert( int pos, EmacsChar_t ch )
         { return insert( pos, ch ); }
     EmacsString &insert( int pos, int ch )
         {
-            EmacsCharQqq_t str[1];
+            EmacsChar_t str[1];
             str[0] = ch;
             return insert( pos, 1, str );
         }
@@ -193,15 +193,15 @@ public:
     EmacsString &insert( int pos, const EmacsString &str )
         { return insert( pos, str.length(), str.unicode_data() ); }
 
-    EmacsString &insert( int pos, int length, const EmacsCharQqq_t *data );
+    EmacsString &insert( int pos, int length, const EmacsChar_t *data );
 
     EmacsString operator ()( int first, int last ) const;       // return a substring
 
     EmacsString &toLower();
     EmacsString &toUpper();
 
-    inline EmacsCharQqq_t operator[]( int index ) const;           // read only
-    inline EmacsCharQqq_t &operator[]( int index );                // read write
+    inline EmacsChar_t operator[]( int index ) const;           // read only
+    inline EmacsChar_t &operator[]( int index );                // read write
 
     int compare( const char *str2 ) const
         { return compare( EmacsString( str2 ) ); }
@@ -211,8 +211,8 @@ public:
 
     int caseBlindCompare( const char *str2 ) const
         { return caseBlindCompare( EmacsString( str2 ) ); }
-    int caseBlindCompare( const EmacsChar_t *str2 ) const
-        { return caseBlindCompare( EmacsString( str2 ) ); }
+//    int caseBlindCompare( const EmacsChar_t *str2 ) const
+//        { return caseBlindCompare( EmacsString( str2 ) ); }
     int caseBlindCompare( const EmacsString &str2 ) const;
 
 private:
@@ -246,7 +246,7 @@ public:
         enum EmacsString::string_type _type,
         int _alloc_length,
         int _length,
-        const EmacsCharQqq_t *_data
+        const EmacsChar_t *_data
         );
     EmacsStringRepresentation
         (
@@ -266,7 +266,7 @@ private:
     enum EmacsString::string_type type;
     int alloc_length;
     int length;
-    EmacsCharQqq_t *data;
+    EmacsChar_t *data;
     unsigned char *utf8_data;
 };
 
@@ -282,7 +282,7 @@ inline void EmacsString::check_for_bad_value( EmacsStringRepresentation *rep )
 //        emacs_assert( _rep->data[0] <= 255 );
 }
 
-inline EmacsCharQqq_t EmacsString::operator[]( int index ) const
+inline EmacsChar_t EmacsString::operator[]( int index ) const
 {
     // allow negative index to be relative to the end of the string
     if( index < 0 )
@@ -292,7 +292,7 @@ inline EmacsCharQqq_t EmacsString::operator[]( int index ) const
     return _rep->data[index];
 }
 
-inline EmacsCharQqq_t &EmacsString::operator[]( int index )
+inline EmacsChar_t &EmacsString::operator[]( int index )
 {
     // assume that the only reason to return a ref is to write to the buffer
     copy_on_write();
@@ -319,7 +319,7 @@ public:
     FormatString &operator <<( const EmacsString & );
     FormatString &operator <<( const EmacsString * );
     FormatString &operator <<( const char * );
-    FormatString &operator <<( const EmacsCharQqq_t * );
+    FormatString &operator <<( const EmacsChar_t * );
 
 private:
     enum arg_type { argNone, argString, argInt };
@@ -328,7 +328,7 @@ private:
     int next_format_char();
 
     void put( int ch );
-    void put( const EmacsCharQqq_t *chars, unsigned int len );
+    void put( const EmacsChar_t *chars, unsigned int len );
 
     void print_decimal( long int );
     void print_hexadecimal( long int );

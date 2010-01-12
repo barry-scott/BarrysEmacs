@@ -151,7 +151,7 @@ PyObject *BemacsFunctions::call_bemacs_function( PyObject *self, PyObject *_args
 
         BoundName *fn_binding = BoundName::find( name );
         if( fn_binding == NULL || !fn_binding->isBound() )
-            throw Py::NameError(std_fn_name);
+            throw Py::NameError( std_fn_name );
 
         ProgramNodeNode prog_node( fn_binding, args.size() );
 
@@ -163,7 +163,6 @@ PyObject *BemacsFunctions::call_bemacs_function( PyObject *self, PyObject *_args
             // must new the ProgramNodeExpression as its deleted via the NodeNode d'tor
             prog_node.pa_node[arg] = new ProgramNodeExpression( expr );
         }
-
 
         exec_prog( &prog_node );
         if( ml_err )
@@ -216,13 +215,13 @@ Py::Object BemacsFunctions::getattr( const char *c_name )
 
     // map all "_" in name to "-". This works well as Python uses "_" and MLisp uses "-".
     // thus mode_line_format becomes mode-line-format
-    std::replace_if( std_fn_name.begin(), std_fn_name.end(), std::bind2nd(std::equal_to<char>(), '_'), '-' );
+    std::replace_if( std_fn_name.begin(), std_fn_name.end(), std::bind2nd( std::equal_to<char>(), '_' ), '-' );
 
-    EmacsString name( std_fn_name.c_str() );
+    EmacsString name( std_fn_name );
 
     BoundName *fn_binding = BoundName::find( name );
     if( fn_binding == NULL || !fn_binding->isBound() )
-        throw Py::NameError(std_fn_name);
+        throw Py::NameError( std_fn_name );
 
     static PyMethodDef method_definition =
     {
@@ -234,7 +233,7 @@ Py::Object BemacsFunctions::getattr( const char *c_name )
     PyObject *func = PyCFunction_New
             (
             &method_definition,
-            Py::String( name.sdata() ).ptr()
+            Py::String( std_fn_name.c_str() ).ptr()
             );
 
     return Py::Object( func, true );

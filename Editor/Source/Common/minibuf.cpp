@@ -282,7 +282,7 @@ EmacsString br_get_string_interactive( int breaksp, const EmacsString &prefix, c
     //
     // get the string from the keyboard
     //
-    EmacsCharQqq_t *result = 0;
+    EmacsChar_t *result = 0;
     KeyMap *outermap;
     int outer_dot;
     int window_num = 0;

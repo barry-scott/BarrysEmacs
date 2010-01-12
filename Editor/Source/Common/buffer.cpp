@@ -309,7 +309,7 @@ void SystemExpressionRepresentationPrefixString::fetch_value()
 
 
 // insert character c at position n in the current buffer
-void EmacsBuffer::insert_at( int n, EmacsCharQqq_t c )
+void EmacsBuffer::insert_at( int n, EmacsChar_t c )
 {
     if( b_mode.md_readonly )
     {
@@ -348,22 +348,17 @@ void EmacsBuffer::ins_cstr( const EmacsString &s )
 }
 
 // Insert the N character string S at dot.
-void EmacsBuffer::ins_cstr( const char *s, int n )
-{
-    ins_cstr( (const EmacsChar_t *)s, n );
-}
-
-void EmacsBuffer::ins_cstr( const EmacsChar_t *s, int n )
+void EmacsBuffer::ins_cstr( const unsigned char *s, int n )
 {
     for( int i=0; i<n; ++i )
     {
-        EmacsCharQqq_t ch[1];
+        EmacsChar_t ch[1];
         ch[0] = s[i];
         ins_cstr( ch, 1 );
     }
 }
 
-void EmacsBuffer::ins_cstr( const EmacsCharQqq_t *s, int n )
+void EmacsBuffer::ins_cstr( const EmacsChar_t *s, int n )
 {
 #if DBG_BUFFER
     if( dbg_flags&DBG_BUFFER )
@@ -386,7 +381,7 @@ void EmacsBuffer::ins_cstr( const EmacsCharQqq_t *s, int n )
     record_insert( dot, n, s );
 
     // point to first EmacsChar_t in the gap
-    memcpy( (void *)&b_base[b_size1], (void *)s, n*sizeof( EmacsCharQqq_t ) );
+    memcpy( (void *)&b_base[b_size1], (void *)s, n*sizeof( EmacsChar_t ) );
 
     cant_1line_opt = 1;        // assume that there was a \n in the string
 
@@ -552,7 +547,7 @@ void EmacsBuffer::del_back( int n, int k )
 }
 
 
-void EmacsBuffer::bufferExtent( EmacsCharQqq_t *&p1, int &s1, EmacsCharQqq_t *&p2, int &s2 )
+void EmacsBuffer::bufferExtent( EmacsChar_t *&p1, int &s1, EmacsChar_t *&p2, int &s2 )
 {
     p1 = b_base - 1;
     s1 = b_size1;
@@ -597,11 +592,11 @@ void EmacsBuffer::gap_to( int n )
     {
         // moving the gap left (into the first part)
         // which is moving data from part1 into part2
-        EmacsCharQqq_t *p2 = b_base + b_size1;
-        EmacsCharQqq_t *p1 = p2 + b_gap;
+        EmacsChar_t *p2 = b_base + b_size1;
+        EmacsChar_t *p1 = p2 + b_gap;
         // delt is the amount to decrease the size of size1 by
         int delt = b_size1 - (n-1);
-        memmove( (void *)(p1 - delt), (void *)(p2 - delt), delt*sizeof(EmacsCharQqq_t) );
+        memmove( (void *)(p1 - delt), (void *)(p2 - delt), delt*sizeof(EmacsChar_t) );
 
         if( b_syntax.syntax_base != NULL )
         {
@@ -640,12 +635,12 @@ void EmacsBuffer::gap_to( int n )
     {
         // moving the gap right (into the second part)
         // which is moving data from part2 into part1
-        EmacsCharQqq_t *p1 = b_base + b_size1;
-        EmacsCharQqq_t *p2 = p1 + b_gap;
+        EmacsChar_t *p1 = b_base + b_size1;
+        EmacsChar_t *p2 = p1 + b_gap;
         // delt is the amount to increase the size of size1 by
         int delt = (n-1) - b_size1;
 
-        memmove( (void *)p1, (void *)p2, delt*sizeof(EmacsCharQqq_t) );
+        memmove( (void *)p1, (void *)p2, delt*sizeof(EmacsChar_t) );
 
         if( b_syntax.syntax_base != NULL )
         {
@@ -705,7 +700,7 @@ int EmacsBuffer::gap_room(int k)
     b_size += delt;
 
     if( b_base != NULL )
-        b_base = (EmacsCharQqq_t *)EMACS_REALLOC( (void *)b_base, b_size*sizeof(EmacsCharQqq_t), malloc_type_char );
+        b_base = (EmacsChar_t *)EMACS_REALLOC( (void *)b_base, b_size*sizeof(EmacsChar_t), malloc_type_char );
 
     if( b_base == NULL )
     {
@@ -727,10 +722,10 @@ int EmacsBuffer::gap_room(int k)
 
     if( b_size2 != 0 )
     {
-        EmacsCharQqq_t *old_p2_start = b_base + b_size - b_size2 - delt;
-        EmacsCharQqq_t *new_p2_start = b_base + b_size - b_size2;
+        EmacsChar_t *old_p2_start = b_base + b_size - b_size2 - delt;
+        EmacsChar_t *new_p2_start = b_base + b_size - b_size2;
 
-        memmove( (void *)new_p2_start, (void *)old_p2_start, b_size2*sizeof(EmacsCharQqq_t) );
+        memmove( (void *)new_p2_start, (void *)old_p2_start, b_size2*sizeof(EmacsChar_t) );
 
         if( b_syntax.syntax_base != NULL )
         {
@@ -898,7 +893,7 @@ EmacsBuffer::EmacsBuffer( const EmacsString &name )
 , b_journal( 0 )
 , b_journalling( journalling_frequency != 0 )
 {
-    b_base = (EmacsCharQqq_t *)EMACS_MALLOC( b_size*sizeof(EmacsCharQqq_t), malloc_type_char );
+    b_base = (EmacsChar_t *)EMACS_MALLOC( b_size*sizeof(EmacsChar_t), malloc_type_char );
     if( b_base == NULL )
         b_size = 0;
         // out of memory -- give the error message when

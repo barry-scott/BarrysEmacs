@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1982-2002
+//    Copyright (c) 1982-2010
 //        Barry A. Scott
 //
 
@@ -76,9 +76,9 @@ int SearchSimpleAlgorithm::search( int n, int dot )
 
 int SearchSimpleAlgorithm::looking_at()
 {
-    unsigned char **alt = sea_alternatives;
+    EmacsChar_t **alt = sea_alternatives;
 
-    sea_trt= bf_cur->b_mode.md_foldcase ? case_fold_trt : standard_trt;
+    sea_trt = bf_cur->b_mode.md_foldcase ? case_fold_trt : standard_trt;
 
     if( arg < 0 )
     {
@@ -117,7 +117,7 @@ void SearchSimpleAlgorithm::search_replace_once( const EmacsString &new_string )
     unsigned int last_prefix : 1;
 } flags;
 
-    unsigned char lc;
+    EmacsChar_t lc;
 
     if( replace_case )
     {
@@ -172,7 +172,7 @@ void SearchSimpleAlgorithm::search_replace_once( const EmacsString &new_string )
                 || (action == FIRST_ALL && flags.beg_of_word)
                 || (action == FIRST && flags.beg_of_str)) )
             {
-                lc = (unsigned char)toupper( lc );
+                lc = (EmacsChar_t)toupper( lc );
             }
             flags.beg_of_word = 0;
             flags.beg_of_str = 0;
@@ -189,7 +189,7 @@ void SearchSimpleAlgorithm::search_replace_once( const EmacsString &new_string )
             place( sea_loc1, sea_loc2 );
         else if( flags.last_prefix
         && lc >= '1'
-        && lc < (unsigned char)(sea_nbra + '1') )
+        && lc < (EmacsChar_t)(sea_nbra + '1') )
             place
             (
             sea_bra_slist[ lc - '1' ].to_mark(),
@@ -216,19 +216,19 @@ void SearchSimpleAlgorithm::search_replace_once( const EmacsString &new_string )
 void SearchSimpleAlgorithm::compile( const EmacsString &str, EmacsSearch::sea_type RE )
 {
     int strp = 0;
-    unsigned char c;
-    unsigned char *lastep;
-    unsigned char bracket[MAX_NBRA];
-    unsigned char *bracketp;
+    EmacsChar_t c;
+    EmacsChar_t *lastep;
+    EmacsChar_t bracket[MAX_NBRA];
+    EmacsChar_t *bracketp;
     int cclcnt;
 
     compiled_expression_type = RE;
 
-    unsigned char **alt;
+    EmacsChar_t **alt;
 
     alt = sea_alternatives;
 
-    unsigned char *ep = sea_expbuf;
+    EmacsChar_t *ep = sea_expbuf;
     *alt++ = ep;
     bracketp = &bracket[0];
     if( str.isNull() )
@@ -273,9 +273,9 @@ void SearchSimpleAlgorithm::compile( const EmacsString &str, EmacsSearch::sea_ty
                 case '(':
                     if( sea_nbra >= MAX_NBRA )
                         goto cerror;
-                    *bracketp++ = (unsigned char)sea_nbra;
+                    *bracketp++ = (EmacsChar_t)sea_nbra;
                     *ep++ = CBRA;
-                    *ep++ = (unsigned char)sea_nbra;
+                    *ep++ = (EmacsChar_t)sea_nbra;
                     sea_nbra++;
                     break;
                 case '|':
@@ -307,7 +307,7 @@ void SearchSimpleAlgorithm::compile( const EmacsString &str, EmacsSearch::sea_ty
                 case 'S':    *ep++ = SEA_SYN_NOSTRING; break;
                 case '1': case '2': case '3': case '4': case '5':
                     *ep++ = CBACK;
-                    *ep++ = (unsigned char)(c - '1');
+                    *ep++ = (EmacsChar_t)(c - '1');
                     break;
                 default:
                     *ep++ = CCHR;
@@ -387,7 +387,7 @@ void SearchSimpleAlgorithm::compile( const EmacsString &str, EmacsSearch::sea_ty
                         while( ep[-1] < c )
                         {
                             // This should be reflected in the compiled form
-                            ep[0] = (unsigned char)(ep[-1] + 1);
+                            ep[0] = (EmacsChar_t)(ep[-1] + 1);
                             ep++;
                             cclcnt++;
                             if( ep >= &sea_expbuf[ESIZE ] )
@@ -404,7 +404,7 @@ void SearchSimpleAlgorithm::compile( const EmacsString &str, EmacsSearch::sea_ty
                 }
                 while( c != ']' );
 
-                lastep[1] = (unsigned char)cclcnt;
+                lastep[1] = (EmacsChar_t)cclcnt;
                 break;
 
             default:

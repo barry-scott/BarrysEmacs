@@ -160,8 +160,8 @@ int EmacsLine::calcHashLine()
     }
 
     int h = line_length;
-    EmacsCharQqq_t *t = line_body;
-    EmacsCharQqq_t *l = &line_body[ line_length ];
+    EmacsChar_t *t = line_body;
+    EmacsChar_t *l = &line_body[ line_length ];
 
 #if !MEMMAP
     while( --l > t && l[0] == ' ')

@@ -274,7 +274,7 @@ int EmacsFile::fio_split_put
 //  Unicode file io API
 //
 //--------------------------------------------------------------------------------
-int EmacsFile::fio_get( EmacsCharQqq_t *buf, int len )
+int EmacsFile::fio_get( EmacsChar_t *buf, int len )
 {
     if( m_convert_size <= 0 )
     {
@@ -300,7 +300,7 @@ int EmacsFile::fio_get( EmacsCharQqq_t *buf, int len )
     return unicode_len;
 }
 
-int EmacsFile::fio_put( const EmacsCharQqq_t *buf, int len )
+int EmacsFile::fio_put( const EmacsChar_t *buf, int len )
 {
     int written_length = 0;
     while( len > 0 )

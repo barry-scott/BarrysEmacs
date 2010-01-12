@@ -16,7 +16,7 @@ enum DeleteToWhere_t
     PrependToBuffer
 };
 
-int self_insert( EmacsCharQqq_t c );
+int self_insert( EmacsChar_t c );
 int self_insert_command( void );
 static void del_to_buf( int n, DeleteToWhere_t where, int doit, const EmacsString &name );
 static void line_move( int up, int n );
@@ -305,7 +305,7 @@ int transpose_characters( void )
 {
     if( dot >= 3 )
     {
-        EmacsCharQqq_t c = bf_cur->char_at( dot - 1 );
+        EmacsChar_t c = bf_cur->char_at( dot - 1 );
 
         bf_cur->del_back( dot, 1 );
         bf_cur->insert_at( dot - 2, c );
@@ -489,7 +489,7 @@ int self_insert_command( void )
     return self_insert( last_key_struck );
 }
 
-int self_insert( EmacsCharQqq_t c )
+int self_insert( EmacsChar_t c )
 {
     int p;
     int repeat_count = arg;
@@ -510,7 +510,7 @@ int self_insert( EmacsCharQqq_t c )
         && ((p = dot) > bf_cur->num_characters() || bf_cur->char_at (p) == '\n') )
             if( p > bf_cur->first_character() && cur_col() > bf_cur->b_mode.md_rightmargin )
             {
-                EmacsCharQqq_t bfc;
+                EmacsChar_t bfc;
 
                 if( bf_cur->b_mode.md_auto_fill_proc != 0 )
                   {
@@ -856,7 +856,7 @@ int del_chars_in_buffer ( int position, int number_of_characters, int fwd )
 
             for( i=0; i<=number_of_characters - 1; i += 1 )
             {
-                EmacsCharQqq_t ch = bf_cur->char_at( position + i );
+                EmacsChar_t ch = bf_cur->char_at( position + i );
 
                 bf_cur->del_frwd( position + i, 1 );
                 if( ch != '\n' )
@@ -877,7 +877,7 @@ int del_chars_in_buffer ( int position, int number_of_characters, int fwd )
 
             for( int i=1; i<number_of_characters; i++ )
             {
-                EmacsCharQqq_t ch = bf_cur->char_at(position - i);
+                EmacsChar_t ch = bf_cur->char_at(position - i);
 
                 bf_cur->del_back( position - i + 1, 1 );
                 if( repl && ch != '\n' )

@@ -354,7 +354,7 @@ EmacsBufferJournal *EmacsBufferJournal::journal_start( void )
         //
         open_record[0].jnl_open.jnl_version = JNL_VERSION;
         open_record[0].jnl_open.jnl_name_length = p.length()+1;
-        memcpy( open_record[1].jnl_data.jnl_chars, p.unicode_data(), p.length()*sizeof( EmacsCharQqq_t ) );
+        memcpy( open_record[1].jnl_data.jnl_chars, p.unicode_data(), p.length()*sizeof( EmacsChar_t ) );
 
         jnl->jnl_used = 1 + JNL_BYTE_TO_REC(open_record[0].jnl_open.jnl_name_length);
         jnl->jnl_record = 0;
@@ -465,7 +465,7 @@ void EmacsBufferJournal::journal_insert
     (
     int dot,                    // Location in buffer
     int len,                    // Length of insert
-    const EmacsCharQqq_t *str   // data to insert
+    const EmacsChar_t *str   // data to insert
     )
 {
     EmacsBufferJournal *jnl = bf_cur->b_journal;
@@ -489,7 +489,7 @@ void EmacsBufferJournal::insertChars
     (
     int dot,                    // Location in buffer
     int len,                    // Length of insert
-    const EmacsCharQqq_t *str   // data to insert
+    const EmacsChar_t *str   // data to insert
     )
 {
     union journal_record *in_rec;
@@ -513,12 +513,12 @@ void EmacsBufferJournal::insertChars
         (
         &in_rec[1].jnl_data.jnl_chars[in_rec->jnl_insert.jnl_insert_length],
         &str[ written ],
-        writing*sizeof( EmacsCharQqq_t )
+        writing*sizeof( EmacsChar_t )
         );
         in_rec->jnl_insert.jnl_insert_length += writing;
         written = writing;
         jnl_used = jnl_record + 1 +
-                JNL_BYTE_TO_REC( in_rec->jnl_insert.jnl_insert_length * sizeof( EmacsCharQqq_t ) );
+                JNL_BYTE_TO_REC( in_rec->jnl_insert.jnl_insert_length * sizeof( EmacsChar_t ) );
     }
 
     while( written < len )
@@ -542,11 +542,11 @@ void EmacsBufferJournal::insertChars
         in_rec->jnl_insert.jnl_dot = dot + written;
         in_rec->jnl_insert.jnl_insert_length = writing;
 
-        memcpy( &in_rec[1].jnl_data.jnl_chars[0], &str[ written ], writing * sizeof( EmacsCharQqq_t ) );
+        memcpy( &in_rec[1].jnl_data.jnl_chars[0], &str[ written ], writing * sizeof( EmacsChar_t ) );
 
         written += writing;
         jnl_record = jnl_used;
-        jnl_used += 1 + JNL_BYTE_TO_REC( writing * sizeof( EmacsCharQqq_t ) );
+        jnl_used += 1 + JNL_BYTE_TO_REC( writing * sizeof( EmacsChar_t ) );
     }
 #if DBG_JOURNAL
     if( dbg_flags&DBG_JOURNAL )

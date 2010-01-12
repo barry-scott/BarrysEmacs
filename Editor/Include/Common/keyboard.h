@@ -19,7 +19,7 @@ enum CE_TYPE_type
 class CharElement : public QueueEntry<CharElement>
 {
 public:
-    EmacsCharQqq_t ce_char;
+    EmacsChar_t ce_char;
     int ce_type;
     bool ce_shift;
 };
@@ -61,7 +61,7 @@ private:
     int k_used;
     enum { KEYMAP_SHORT_SIZE = 12 };
 
-    EmacsCharQqq_t k_chars[ KEYMAP_SHORT_SIZE ];
+    EmacsChar_t k_chars[ KEYMAP_SHORT_SIZE ];
     BoundName *k_sbinding[ KEYMAP_SHORT_SIZE ];
 };
 

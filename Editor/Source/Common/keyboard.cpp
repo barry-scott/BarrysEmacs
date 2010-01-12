@@ -47,7 +47,7 @@ volatile int input_pending;
 volatile int timer_interrupt_occurred;
 volatile int interrupt_key_struck;
 volatile int pending_channel_io;
-EmacsCharQqq_t activity_character = 'x';
+EmacsChar_t activity_character = 'x';
 BoundNameNoDefine interrupt_block( "interrupt-key", interrupt_emacs );
 SystemExpressionRepresentationIntPositive checkpoint_frequency;
 int end_of_mac;
@@ -144,7 +144,7 @@ KeyMapLong::KeyMapLong( KeyMapShort *smap )
 BoundName *KeyMapShort::getBinding( int c )
 {
     for( int i=0; i<k_used; i++ )
-        if(( k_chars[i] == (EmacsCharQqq_t)c ) )
+        if(( k_chars[i] == (EmacsChar_t)c ) )
             return k_sbinding[i];
 
     return 0;
@@ -158,7 +158,7 @@ BoundName *KeyMapLong::getBinding( int c )
 BoundName **KeyMapShort::getBindingRef( int c )
 {
     for( int i=0; i<k_used; i++ )
-        if(( k_chars[i] == (EmacsCharQqq_t)c ) )
+        if(( k_chars[i] == (EmacsChar_t)c ) )
             return &k_sbinding[i];
 
     return 0;
@@ -191,7 +191,7 @@ int KeyMapShort::addBinding( int c, BoundName *proc )
 {
     // see if we are replacing an anready bound key
     for( int i=0; i<=k_used - 1; i += 1 )
-        if( k_chars[i] == (EmacsCharQqq_t)c )
+        if( k_chars[i] == (EmacsChar_t)c )
         {
             if( k_sbinding[i] != NULL )
                 free_sexpr_defun( k_sbinding[i] );
@@ -202,7 +202,7 @@ int KeyMapShort::addBinding( int c, BoundName *proc )
     // see if the kmap has room
     if( k_used < KEYMAP_SHORT_SIZE )
     {
-        k_chars[k_used] = (EmacsCharQqq_t)c;
+        k_chars[k_used] = (EmacsChar_t)c;
         k_sbinding[k_used] = proc;
         k_used++;
         return 1;
@@ -228,7 +228,7 @@ void KeyMap::removeBinding( int c )
 void KeyMapShort::removeBinding( int c )
 {
     for( int i=0; i<k_used; i++ )
-        if( k_chars[i] == (EmacsCharQqq_t)c )
+        if( k_chars[i] == (EmacsChar_t)c )
         {
             free_sexpr_defun( k_sbinding[i] );
             k_used--;
@@ -344,7 +344,7 @@ int process_keys( void )
             return 0;
         }
 
-        EmacsCharQqq_t c = (EmacsCharQqq_t)ic;
+        EmacsChar_t c = (EmacsChar_t)ic;
 
         can_checkpoint = 0;
         keys_struck.append( c );
@@ -524,7 +524,7 @@ int process_key( void )
             can_checkpoint = 0;
             break;
         }
-        EmacsCharQqq_t c = (EmacsCharQqq_t)ic;
+        EmacsChar_t c = (EmacsChar_t)ic;
 
         keys_struck.append( c );
         last_keys_struck = keys_struck;
@@ -579,7 +579,7 @@ int process_key( void )
 
 // read a character from the keyboard; call the redisplay if needed
 
-static EmacsCharQqq_t parameter_chars[100];
+static EmacsChar_t parameter_chars[100];
 
 int get_char( void )
 {
@@ -754,8 +754,8 @@ having_dequeued_a_char:    // leave this block
 
         Expression args[2][MAX_ARGS];
 
-        EmacsCharQqq_t *p = &parameter_chars[0];
-        EmacsCharQqq_t *last_p = p;
+        EmacsChar_t *p = &parameter_chars[0];
+        EmacsChar_t *last_p = p;
         int num_params = 0;
 
         while( char_cell->ce_type == CE_TYPE_PAR_SEP
@@ -866,7 +866,7 @@ having_found_char:    // leave this block
     //
     if( remember )
     {
-        key_mem.append( (EmacsCharQqq_t)c );
+        key_mem.append( (EmacsChar_t)c );
 
         if( key_mem.length() >= MEMLEN )
         {
@@ -1084,7 +1084,7 @@ enum csi_states
     CSI_ST_CSI
 };
 
-CharElement *_q_char( EmacsCharQqq_t value, int type, bool shift )
+CharElement *_q_char( EmacsChar_t value, int type, bool shift )
 {
     CharElement *char_cell;
     //
@@ -1096,7 +1096,7 @@ CharElement *_q_char( EmacsCharQqq_t value, int type, bool shift )
         //    wake up get_char if this is the first char in the list
         //
         char_cell->ce_char = value;
-        char_cell->ce_type = (EmacsCharQqq_t)type;
+        char_cell->ce_type = (EmacsChar_t)type;
         char_cell->ce_shift = shift;
         interlock_inc( &input_pending );
 
@@ -1117,10 +1117,10 @@ void TerminalControl::k_input_char( int character, bool shift )
         return;
 
     static csi_states csi_state( CSI_ST_NORMAL );
-    static EmacsCharQqq_t hold[100];
-    static EmacsCharQqq_t *hold_put_ptr;
+    static EmacsChar_t hold[100];
+    static EmacsChar_t *hold_put_ptr;
 
-    EmacsCharQqq_t ch( character );
+    EmacsChar_t ch( character );
 
     // do the Ctrl-X swapping
     if( ch == ctl('X') )
@@ -1201,7 +1201,7 @@ void TerminalControl::k_input_char( int character, bool shift )
                 if( ch == '~' && cs_cvt_f_keys )
                 {
                     int key_num;
-                    EmacsCharQqq_t *hold_get_ptr;
+                    EmacsChar_t *hold_get_ptr;
 
                     hold_get_ptr = &hold[0];
                     key_num = 0;
@@ -1220,8 +1220,8 @@ void TerminalControl::k_input_char( int character, bool shift )
                     key_num %= 50;
                     if( key_bank != 0 )
                         key_bank++;
-                    _q_char( (EmacsCharQqq_t)(0x80+key_bank), CE_TYPE_CHAR, shift );
-                    _q_char( (EmacsCharQqq_t)(key_num + ' '), CE_TYPE_CHAR, shift );
+                    _q_char( (EmacsChar_t)(0x80+key_bank), CE_TYPE_CHAR, shift );
+                    _q_char( (EmacsChar_t)(key_num + ' '), CE_TYPE_CHAR, shift );
                     }
                     csi_state = CSI_ST_NORMAL;
 
@@ -1240,7 +1240,7 @@ process_f_keys:
                 && hold_put_ptr[-1] == '&' )
                 {
                     int event_num;
-                    EmacsCharQqq_t *hold_get_ptr;
+                    EmacsChar_t *hold_get_ptr;
 
                     hold_get_ptr = &hold[0];
                     event_num = 0;
@@ -1253,7 +1253,7 @@ process_f_keys:
                     }
                     _q_char( 0x81, CE_TYPE_CHAR, shift );
                     hold_put_ptr--;// lose the "&"
-                    ch = (EmacsCharQqq_t)(event_num + 'A');
+                    ch = (EmacsChar_t)(event_num + 'A');
                     csi_state = CSI_ST_NORMAL;
                 }
                 else
@@ -1264,7 +1264,7 @@ process_f_keys:
                 && hold_put_ptr[-1] == '#' )
                 {
                     int event_num;
-                    EmacsCharQqq_t *hold_get_ptr;
+                    EmacsChar_t *hold_get_ptr;
 
                     hold_get_ptr = &hold[0];
                     event_num = 0;
@@ -1277,15 +1277,15 @@ process_f_keys:
                     }
                     _q_char( 0x81, CE_TYPE_CHAR, shift );
                     hold_put_ptr--;// lose the "&"
-                    ch = (EmacsCharQqq_t)(event_num + 'M');
+                    ch = (EmacsChar_t)(event_num + 'M');
                     csi_state = CSI_ST_NORMAL;
                 }
                 else
                     _q_char( 0x9b, CE_TYPE_CHAR, shift );
 
                 {
-                EmacsCharQqq_t par_char;
-                EmacsCharQqq_t *hold_get_ptr;
+                EmacsChar_t par_char;
+                EmacsChar_t *hold_get_ptr;
 
                 //
                 //    Find out how many parameters are present
@@ -1316,7 +1316,7 @@ process_f_keys:
             }
             // syntax error in escape sequence
             {
-            EmacsCharQqq_t *hold_get_ptr;
+            EmacsChar_t *hold_get_ptr;
 
             _q_char( 0x9b, CE_TYPE_CHAR, shift );
             hold_get_ptr = &hold[0];
@@ -1429,14 +1429,14 @@ int convert_key_string_command( void )
 //
 int convert_key_string( const EmacsString &input, EmacsString &output )
 {
-#define    _qq_char( value ) output.append( (EmacsCharQqq_t)(value) )
+#define    _qq_char( value ) output.append( (EmacsChar_t)(value) )
 
-    EmacsCharQqq_t ch;
+    EmacsChar_t ch;
     int len;
     int csi_state = CSI_ST_NORMAL;
-    EmacsCharQqq_t hold[100];
-    EmacsCharQqq_t *hold_get_ptr;
-    EmacsCharQqq_t *hold_put_ptr;
+    EmacsChar_t hold[100];
+    EmacsChar_t *hold_get_ptr;
+    EmacsChar_t *hold_put_ptr;
     int i;
 
     csi_state = CSI_ST_NORMAL;
@@ -1536,7 +1536,7 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
                         if( key_bank != 0 )
                             key_bank++;
                         _qq_char( 0x80+key_bank );
-                        _qq_char( (EmacsCharQqq_t)(key_num + ' ') );
+                        _qq_char( (EmacsChar_t)(key_num + ' ') );
 
                         csi_state = CSI_ST_NORMAL;
                         goto quit_loop_1;
@@ -1564,7 +1564,7 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
                         }
                         _qq_char( 0x81 );
                         hold_put_ptr = &hold_put_ptr[-1];
-                        _qq_char( (EmacsCharQqq_t)(event_num + 'A') );
+                        _qq_char( (EmacsChar_t)(event_num + 'A') );
                         csi_state = CSI_ST_NORMAL;
                         goto quit_loop_1;
                     }
@@ -1588,7 +1588,7 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
                         }
                         _qq_char( 0x81 );
                         hold_put_ptr = &hold_put_ptr[-1];
-                        _qq_char( (EmacsCharQqq_t)(event_num + 'M') );
+                        _qq_char( (EmacsChar_t)(event_num + 'M') );
                         csi_state = CSI_ST_NORMAL;
                         goto quit_loop_1;
                     }
@@ -1597,8 +1597,8 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
                         _qq_char( 0x9b );
                     }
 
-                    EmacsCharQqq_t par_char;
-                    EmacsCharQqq_t *hold_get_ptr;
+                    EmacsChar_t par_char;
+                    EmacsChar_t *hold_get_ptr;
                     //
                     //    Find out how many parameters are present
                     //

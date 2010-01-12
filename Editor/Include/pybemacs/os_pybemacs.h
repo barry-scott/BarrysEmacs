@@ -119,7 +119,4 @@ const int DBG_NO_DBG_MSG    (0x00001000&DBG___ON);  // always defined
 //
 //    typedefs for fundemental types
 //
-typedef unsigned char EmacsChar_t;
-
-// place holder to allow development of a emacs string unicode API
-typedef PY_UNICODE_TYPE EmacsCharQqq_t;
+typedef PY_UNICODE_TYPE EmacsChar_t;

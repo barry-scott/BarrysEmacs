@@ -40,7 +40,7 @@ struct jnl_data
 {
     // just larger then the other jnl record types
     // - is this important?
-    EmacsCharQqq_t jnl_chars[ sizeof(int)*4/sizeof( EmacsCharQqq_t ) ];
+    EmacsChar_t jnl_chars[ sizeof(int)*4/sizeof( EmacsChar_t ) ];
 };
 
 const int JNL_BYTE_SIZE( sizeof( struct jnl_data ) );
@@ -74,7 +74,7 @@ public:
         (
         int dot,                    // Location in buffer
         int len,                    // Length of insert
-        const EmacsCharQqq_t *str   // data to insert
+        const EmacsChar_t *str   // data to insert
         );
     static void journal_delete
         (
@@ -94,7 +94,7 @@ private:
         (
         int dot,                    // Location in buffer
         int len,                    // Length of insert
-        const EmacsCharQqq_t *str   // data to insert
+        const EmacsChar_t *str   // data to insert
         );
     void deleteChars
         (

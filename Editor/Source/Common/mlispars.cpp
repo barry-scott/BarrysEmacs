@@ -204,8 +204,8 @@ private:
 
     int file_size;
     enum { BUF_SIZE = 65536 };
-    EmacsCharQqq_t f_buffer[BUF_SIZE];
-    EmacsCharQqq_t *file_pointer;
+    EmacsChar_t f_buffer[BUF_SIZE];
+    EmacsChar_t *file_pointer;
 };
 
 
@@ -594,7 +594,7 @@ ProgramNode *ProgramNode::number_node( MLispInputStream &input )
 
     if( c == '\'' )
     {
-        EmacsCharQqq_t buf[30];
+        EmacsChar_t buf[30];
         buf[ 0 ] = input();
         do
         {
@@ -641,7 +641,7 @@ ProgramNode *ProgramNode::number_node( MLispInputStream &input )
                     if( n > 1
                     && buf[0] == '\\' )
                     {
-                        EmacsCharQqq_t *p;
+                        EmacsChar_t *p;
                         p = &buf[1];
                         n = 0;
                         while( isdigit( c = *p++ ) )

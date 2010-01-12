@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1982-2001
+//    Copyright (c) 1982-2010
 //        Barry A. Scott
 //
 // Emacs routines to deal with syntax tables
@@ -34,7 +34,7 @@ SyntaxNameTable SyntaxTable::name_table( 8, 8 );
 SyntaxTable global_syntax_table("global-syntax-table");
 
 SyntaxTable::SyntaxTable( const EmacsString &name )
-    : s_name( name )
+: s_name( name )
 {
     name_table.add( name, this );
 
@@ -81,28 +81,22 @@ SyntaxTable::~SyntaxTable()
 }
 
 SyntaxString::SyntaxString()
-    : s_kind( 0 )
-    , s_properties( 0 )
-    , s_next( NULL )
-    , s_alt_matching( NULL )
-    , s_main_len( 0 )
-    , s_match_len( 0 )
+: s_kind( 0 )
+, s_properties( 0 )
+, s_next( NULL )
+, s_alt_matching( NULL )
+, s_main_str()
+, s_match_str()
 { }
 
-SyntaxString::SyntaxString
-    (
-    int _kind, int _properties,
-    const EmacsString &_main, const EmacsString &_match
-    )
-    : s_kind( _kind )
-    , s_properties( _properties )
-    , s_next(NULL)
-    , s_alt_matching(NULL)
-    , s_main_len( _main.length() )
-    , s_match_len( _match.length() )
+SyntaxString::SyntaxString( int _kind, int _properties, const EmacsString &_main, const EmacsString &_match )
+: s_kind( _kind )
+, s_properties( _properties )
+, s_next(NULL)
+, s_alt_matching(NULL)
+, s_main_str( _main )
+, s_match_str( _match )
 {
-    _str_ncpy( s_main_str, _main.data(), s_main_len );
-    _str_ncpy( s_match_str, _match.data(), s_match_len );
 }
 
 SyntaxString::~SyntaxString()
@@ -122,10 +116,8 @@ SyntaxString &SyntaxString::operator=( const SyntaxString &old )
     s_properties = old.s_properties;
     s_next = NULL;
     s_alt_matching = NULL;
-    s_main_len = old.s_main_len;
-    s_match_len = old.s_match_len;
-    memcpy( s_main_str, old.s_main_str, sizeof( s_main_str ) );
-    memcpy( s_match_str, old.s_match_str, sizeof( s_match_str ) );
+    s_main_str = old.s_main_str;
+    s_match_str = old.s_match_str;
 
     return *this;
 }
@@ -177,52 +169,52 @@ struct ModifySyntaxData
 
 static ModifySyntaxData modify_syntax_table_init_data[] =
 {
-{"comment",        SYNTAX_TYPE_COMMENT1,    0,
-                " (comment-begin) ",    " (comment-end) "},
-{"comment-1",        SYNTAX_TYPE_COMMENT1,    0,
-                " (comment-begin) ",    " (comment-end) "},
-{"comment-2",        SYNTAX_TYPE_COMMENT2,    0,
-                " (comment-begin) ",    " (comment-end) "},
-{"comment-3",        SYNTAX_TYPE_COMMENT3,    0,
-                " (comment-begin) ",    " (comment-end) "},
-{"dull",        SYNTAX_DULL,        0,
-                " (character-set) ",    ""},
-{"keyword-1",        SYNTAX_TYPE_KEYWORD1,    0,
-                " (keyword) ",        ""},
-{"keyword-1,case-fold",    SYNTAX_TYPE_KEYWORD1,    SYNTAX_PROP_CASE_FOLD_MATCH,
-                " (keyword) ",        ""},
-{"keyword-2",        SYNTAX_TYPE_KEYWORD2,    0,
-                " (keyword) ",        ""},
-{"keyword-2,case-fold",    SYNTAX_TYPE_KEYWORD2,    SYNTAX_PROP_CASE_FOLD_MATCH,
-                " (keyword) ",        ""},
-{"keyword-3",        SYNTAX_TYPE_KEYWORD3,    0,
-                " (keyword) ",        ""},
-{"keyword-3,case-fold",    SYNTAX_TYPE_KEYWORD3,    SYNTAX_PROP_CASE_FOLD_MATCH,
-                " (keyword) ",        ""},
-{"paren",        SYNTAX_BEGIN_PAREN,    0,
-                " (open-paren) ",    " (close-paren) "},
-{"prefix",        SYNTAX_PREFIX_QUOTE,    0,
-                " (character-set) ",    ""},
-{"string",        SYNTAX_TYPE_STRING1,    0,
-                " (character-set) ",    ""},
-{"string,paired",    SYNTAX_TYPE_STRING1,    SYNTAX_PROP_PAIRED,
-                " (string-begin) ",    " (string-end) "},
-{"string-1",        SYNTAX_TYPE_STRING1,    0,
-                " (character-set) ",    ""},
-{"string-1,paired",    SYNTAX_TYPE_STRING1,    SYNTAX_PROP_PAIRED,
-                " (string-begin) ",    " (string-end) "},
-{"string-2",        SYNTAX_TYPE_STRING2,    0,
-                " (character-set) ",    ""},
-{"string-2,paired",    SYNTAX_TYPE_STRING2,    SYNTAX_PROP_PAIRED,
-                " (string-begin) ",    " (string-end) "},
-{"string-3",        SYNTAX_TYPE_STRING3,    0,
-                " (character-set) ",    ""},
-{"string-3,paired",    SYNTAX_TYPE_STRING3,    SYNTAX_PROP_PAIRED,
-                " (string-begin) ",    " (string-end) "},
-{"word",        SYNTAX_WORD,        0,
-                " (character-set) ",    ""},
-{NULL,            0,            0,
-                NULL,            NULL}
+{"comment",                 SYNTAX_TYPE_COMMENT1,   0,
+                            " (comment-begin) ",    " (comment-end) "},
+{"comment-1",               SYNTAX_TYPE_COMMENT1,   0,
+                            " (comment-begin) ",    " (comment-end) "},
+{"comment-2",               SYNTAX_TYPE_COMMENT2,   0,
+                            " (comment-begin) ",    " (comment-end) "},
+{"comment-3",               SYNTAX_TYPE_COMMENT3,   0,
+                            " (comment-begin) ",    " (comment-end) "},
+{"dull",                    SYNTAX_DULL,            0,
+                            " (character-set) ",    ""},
+{"keyword-1",               SYNTAX_TYPE_KEYWORD1,    0,
+                            " (keyword) ",          ""},
+{"keyword-1,case-fold",     SYNTAX_TYPE_KEYWORD1,    SYNTAX_PROP_CASE_FOLD_MATCH,
+                            " (keyword) ",          ""},
+{"keyword-2",               SYNTAX_TYPE_KEYWORD2,    0,
+                            " (keyword) ",          ""},
+{"keyword-2,case-fold",     SYNTAX_TYPE_KEYWORD2,    SYNTAX_PROP_CASE_FOLD_MATCH,
+                            " (keyword) ",          ""},
+{"keyword-3",               SYNTAX_TYPE_KEYWORD3,    0,
+                            " (keyword) ",          ""},
+{"keyword-3,case-fold",     SYNTAX_TYPE_KEYWORD3,    SYNTAX_PROP_CASE_FOLD_MATCH,
+                            " (keyword) ",          ""},
+{"paren",                   SYNTAX_BEGIN_PAREN,     0,
+                            " (open-paren) ",       " (close-paren) "},
+{"prefix",                  SYNTAX_PREFIX_QUOTE,    0,
+                            " (character-set) ",    ""},
+{"string",                  SYNTAX_TYPE_STRING1,    0,
+                            " (character-set) ",    ""},
+{"string,paired",           SYNTAX_TYPE_STRING1,    SYNTAX_PROP_PAIRED,
+                            " (string-begin) ",     " (string-end) "},
+{"string-1",                SYNTAX_TYPE_STRING1,    0,
+                            " (character-set) ",    ""},
+{"string-1,paired",         SYNTAX_TYPE_STRING1,    SYNTAX_PROP_PAIRED,
+                            " (string-begin) ",     " (string-end) "},
+{"string-2",                SYNTAX_TYPE_STRING2,    0,
+                            " (character-set) ",    ""},
+{"string-2,paired",         SYNTAX_TYPE_STRING2,    SYNTAX_PROP_PAIRED,
+                            " (string-begin) ",     " (string-end) "},
+{"string-3",                SYNTAX_TYPE_STRING3,    0,
+                            " (character-set) ",    ""},
+{"string-3,paired",         SYNTAX_TYPE_STRING3,    SYNTAX_PROP_PAIRED,
+                            " (string-begin) ",     " (string-end) "},
+{"word",                    SYNTAX_WORD,            0,
+                            " (character-set) ",    ""},
+{NULL,                      0,                      0,
+                            NULL,                   NULL}
 };
 
 class ModifySyntaxTablePromptData : public EmacsStringTable
@@ -235,7 +227,7 @@ public:
 };
 
 ModifySyntaxTablePromptData::ModifySyntaxTablePromptData()
-    : EmacsStringTable( 8, 1 )
+: EmacsStringTable( 8, 1 )
 {
     for( int i=0; modify_syntax_table_init_data[i].name != NULL; i++ )
     {
@@ -287,11 +279,7 @@ int modify_syntax_table( void )
     return 0;
 }
 
-void SyntaxTable::modify_table
-    (
-    int type, int properties,
-    const EmacsString &str1, const EmacsString &str2
-    )
+void SyntaxTable::modify_table( int type, int properties, const EmacsString &str1, const EmacsString &str2 )
 {
     try
     {
@@ -396,7 +384,7 @@ void SyntaxTable::modify_table_dull_type( const EmacsString &str1 )
                     // remove the other paren
                     if( cur->s_kind == SYNTAX_BEGIN_PAREN
                     || cur->s_kind == SYNTAX_END_PAREN )
-                        modify_table( SYNTAX_DULL, 0, cur->s_match_str, "" );
+                        modify_table( SYNTAX_DULL, 0, cur->s_match_str, EmacsString::null );
 
                     delete cur;
                     cur = next;
@@ -453,9 +441,7 @@ void SyntaxTable::modify_table_paired_type( int type, int properties, const Emac
 {
     SyntaxString *syn_str = NULL;
 
-    if( str1.isNull()
-    || str1.length() > int(sizeof( syn_str->s_main_str )-1)
-    || str2.length() > int(sizeof( syn_str->s_match_str )-1) )
+    if( str1.isNull() )
         throw SyntaxErrorException();
 
     syn_str = EMACS_NEW SyntaxString( type, properties, str1, str2 );
@@ -503,9 +489,8 @@ void SyntaxTable::add_syntax_string_to_table( int ch, SyntaxString *syn_str )
 
         // if this is the same type as a prevous entry replace it
         if( cur->s_kind == syn_str->s_kind
-        && _str_cmp( cur->s_main_str, syn_str->s_main_str ) == 0 )
+        && cur->s_main_str == syn_str->s_main_str )
         {
-
             *ptr = syn_str;
             syn_str->s_next = cur->s_next;
             EMACS_FREE( cur );
@@ -533,20 +518,20 @@ void SyntaxTable::add_paired_syntax_string_to_table( int ch, SyntaxString *syn_s
         }
 
         // if its an exact duplicate comment entry free the new one
-        if( _str_cmp( cur->s_main_str, syn_str->s_main_str ) == 0
-        && _str_cmp( cur->s_match_str, syn_str->s_match_str ) == 0 )
+        if( cur->s_main_str == syn_str->s_main_str
+        && cur->s_match_str == syn_str->s_match_str )
         {
             delete syn_str;
             return;
         }
 
         // if its a duplicate main_str then walk the alt chain
-        if( _str_cmp( cur->s_main_str, syn_str->s_main_str ) == 0 )
+        if( cur->s_main_str == syn_str->s_main_str )
         {
             SyntaxString *alt = cur->s_alt_matching;
             while( alt != NULL )
             {
-                if( _str_cmp( alt->s_match_str, syn_str->s_match_str ) == 0 )
+                if( alt->s_match_str == syn_str->s_match_str )
                 {
                     EMACS_FREE( syn_str );
                     return;
@@ -567,7 +552,6 @@ void SyntaxTable::add_paired_syntax_string_to_table( int ch, SyntaxString *syn_s
 int modify_syntax_entry( void )
 {
     static const EmacsString syntax_error( "Bogus modify-syntax-table directive.  [TP{}Cc]" );
-    EmacsChar_t str1[3], str2[3];
 
     EmacsString p = getstr( ": modify-syntax-entry " );
     if( p.isNull() )
@@ -583,26 +567,24 @@ int modify_syntax_entry( void )
     switch( p[0] )
     {
     case ' ':
-    case '-':    syntax.modify_table( SYNTAX_DULL, 0, p(5, INT_MAX ), "" );
-            break;
-    case 'w':    syntax.modify_table( SYNTAX_WORD, 0, p(5, INT_MAX ), "" );
-            break;
-    case '(':    str1[0] = p[5];    str2[0] = p[1];
-            str1[1] = '\0'; str2[1] = '\0';
-            syntax.modify_table( SYNTAX_BEGIN_PAREN, 0, str1, str2 );
-            break;
-    case ')':    str2[0] = p[5];    str1[0] = p[1];
-            str2[1] = '\0'; str1[1] = '\0';
-            syntax.modify_table( SYNTAX_BEGIN_PAREN, 0, str1, str2 );
-            break;
-    case '"':    str1[0] = p[5];
-            str1[1] = '\0';
-            syntax.modify_table( SYNTAX_TYPE_STRING1, 0, str1, "" );
-            break;
-    case '\\':    str1[0] = p[5];
-            str1[1] = '\0';
-            syntax.modify_table( SYNTAX_PREFIX_QUOTE, 0, str1, "" );
-            break;
+    case '-':
+        syntax.modify_table( SYNTAX_DULL, 0, p(5, INT_MAX ), "" );
+        break;
+    case 'w':
+        syntax.modify_table( SYNTAX_WORD, 0, p(5, INT_MAX ), "" );
+        break;
+    case '(':
+        syntax.modify_table( SYNTAX_BEGIN_PAREN, 0, p( 5, 6 ), p( 1, 2 ) );
+        break;
+    case ')':
+        syntax.modify_table( SYNTAX_BEGIN_PAREN, 0, p( 1, 2 ), p( 5, 6 ) );
+        break;
+    case '"':
+        syntax.modify_table( SYNTAX_TYPE_STRING1, 0, p( 5, 6 ), EmacsString::null );
+        break;
+    case '\\':
+        syntax.modify_table( SYNTAX_PREFIX_QUOTE, 0, p( 5, 6 ), EmacsString::null );
+        break;
     default:
         error( syntax_error );
         return 0;
@@ -611,31 +593,28 @@ int modify_syntax_entry( void )
     // if this is comment...
     if( p[2] == '{' || p[3] == '}' )
     {
-        int i;
-
         // start off with null begin and end comment strings
-        str1[0] = '\0';
-        str2[0] = '\0';
+        EmacsString str1;
+        EmacsString str2;
 
         //
         // search for an existing comment entry to get the
         // other string from. Note that the old style syntax
         // table only works with a single comment defined
         //
-        for( i=0; i<256; i++ )
+        for( int i=0; i<256; i++ )
             if( bf_cur->char_is( i, SYNTAX_TYPE_COMMENT1 ) )
             {
-                SyntaxString *cur;
+                SyntaxString *cur = syntax.s_table[i].s_strings;
 
-                cur = syntax.s_table[i].s_strings;
                 while( cur )
                 {
-                    if( cur->s_kind == SYNTAX_TYPE_COMMENT1 )
-                    if( cur->s_main_len <= 2
-                    && cur->s_match_len <= 2 )
+                    if( cur->s_kind == SYNTAX_TYPE_COMMENT1
+                    && cur->s_main_str.length() <= 2
+                    && cur->s_match_str.length() <= 2 )
                     {
-                        _str_cpy( str1, cur->s_main_str );
-                        _str_cpy( str2, cur->s_match_str );
+                        str1 = cur->s_main_str;
+                        str2 = cur->s_match_str;
                     }
 
                     cur = cur->s_next;
@@ -644,16 +623,14 @@ int modify_syntax_entry( void )
             }
         if( p[2] == '{' )
         {
-            str1[0] = p[5];
-            str1[1] = p[4];
-            str1[2] = '\0';
+            str1 = p( 5, 6 );
+            str1.append( p[4] );
             syntax.modify_table( SYNTAX_TYPE_COMMENT1, 0, str1, str2 );
         }
         else
         {
-            str2[0] = p[5];
-            str2[1] = p[4];
-            str2[2] = '\0';
+            str2 = p( 5, 6 );
+            str2.append( p[4] );
             syntax.modify_table( SYNTAX_TYPE_COMMENT1, 0, str1, str2 );
         }
     }
@@ -764,7 +741,7 @@ static int paren_scan(int stop_at_newline, int forw)
                         while( cur != NULL )
                         {
                             if( cur->s_kind & (SYNTAX_BEGIN_PAREN|SYNTAX_END_PAREN)
-                            && cur->s_match_len == 1 )
+                            && cur->s_match_str.length() == 1 )
                             {
                                 parenstack[ paren_level ] = cur->s_match_str[0];
                                 break;
@@ -836,7 +813,7 @@ static int paren_scan(int stop_at_newline, int forw)
                         while( cur != NULL )
                         {
                             if( cur->s_kind & (SYNTAX_BEGIN_PAREN|SYNTAX_END_PAREN)
-                            && cur->s_match_len == 1 )
+                            && cur->s_match_str.length() == 1 )
                             {
                                 parenstack[ paren_level ] = cur->s_match_str[0];
                                 break;
@@ -1241,7 +1218,7 @@ static int scan_comment( int i, SyntaxString *comment )
 
 bool SyntaxString::last_is_word( const SyntaxTable &table ) const
 {
-    EmacsChar_t last_char = s_main_str[s_main_len-1];
+    EmacsChar_t last_char = s_main_str[-1];
     return (table.s_table[ last_char ].s_kind&SYNTAX_WORD) != 0;
 }
 
@@ -1250,14 +1227,14 @@ bool SyntaxString::last_is_word( const SyntaxTable &table ) const
 //
 int SyntaxString::looking_at_main( int pos ) const
 {
-    return looking_at_internal( pos, s_main_len, s_main_str );
+    return looking_at_internal( pos, s_main_str );
 }
 
 int SyntaxString::looking_at_match( int pos ) const
 {
     for( const SyntaxString *alt = this; alt != NULL; alt = alt->s_alt_matching )
     {
-        int len = alt->looking_at_internal( pos, alt->s_match_len, alt->s_match_str );
+        int len = alt->looking_at_internal( pos, alt->s_match_str );
         if( len > 0 )
             return len;
     }
@@ -1265,8 +1242,10 @@ int SyntaxString::looking_at_match( int pos ) const
     return 0;
 }
 
-int SyntaxString::looking_at_internal( int pos, int len, const EmacsChar_t *str ) const
+int SyntaxString::looking_at_internal( int pos, const EmacsString &str ) const
 {
+    int len = str.length();
+
     switch( s_properties )
     {
     default:
@@ -1576,11 +1555,11 @@ bool EmacsBuffer::syntax_fill_in_array( int required )
                     {
                         bool last_is_word = keyword->last_is_word( *b_mode.md_syntax );
 
-                        if( pos + keyword->s_main_len <= unrestrictedSize()
-                        && !(last_is_word && char_at_is( pos+keyword->s_main_len, SYNTAX_WORD ))
+                        if( pos + keyword->s_main_str.length() <= unrestrictedSize()
+                        && !(last_is_word && char_at_is( pos+keyword->s_main_str.length(), SYNTAX_WORD ))
                         && keyword->looking_at_main( pos ) )
                         {
-                            for( int i=0; i<keyword->s_main_len; i++, pos++ )
+                            for( int i=0; i<keyword->s_main_str.length(); i++, pos++ )
                                 set_syntax_at( pos, (SyntaxData_t)keyword->s_kind );
                             pos--;
                             break;
@@ -1763,11 +1742,11 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
                     {
                         bool last_is_word = keyword->last_is_word( *b_mode.md_syntax );
 
-                        if( pos + keyword->s_main_len <= unrestrictedSize()
-                        && !(last_is_word && char_at_is( pos+keyword->s_main_len, SYNTAX_WORD ))
+                        if( pos + keyword->s_main_str.length() <= unrestrictedSize()
+                        && !(last_is_word && char_at_is( pos+keyword->s_main_str.length(), SYNTAX_WORD ))
                         && keyword->looking_at_main( pos ) )
                         {
-                            for( int i=0; i<keyword->s_main_len; i++, pos++ )
+                            for( int i=0; i<keyword->s_main_str.length(); i++, pos++ )
                                 set_syntax_at( pos, (EmacsChar_t)keyword->s_kind );
                             pos--;
                             break;

@@ -67,11 +67,11 @@ public:
 #endif
 
     // Unicode chars
-    int fio_get( EmacsCharQqq_t *, int );
-    //int fio_get_line( EmacsCharQqq_t *buf, int len );
-    //int fio_get_with_prompt( EmacsCharQqq_t *buffer, int size, const EmacsCharQqq_t *prompt );
+    int fio_get( EmacsChar_t *, int );
+    //int fio_get_line( EmacsChar_t *buf, int len );
+    //int fio_get_with_prompt( EmacsChar_t *buffer, int size, const EmacsChar_t *prompt );
 
-    int fio_put( const EmacsCharQqq_t *, int );
+    int fio_put( const EmacsChar_t *, int );
 
     bool fio_close();
 
@@ -91,7 +91,7 @@ public:
 
 private:
     int get_fixup_buffer( unsigned char *buf, int len );
-    int get_fixup_buffer( EmacsCharQqq_t *buf, int len );
+    int get_fixup_buffer( EmacsChar_t *buf, int len );
 
 
     EmacsString m_full_file_name;

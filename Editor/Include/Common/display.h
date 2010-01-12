@@ -15,7 +15,7 @@ const int LINE_ATTR_USER( SYNTAX_FIRST_FREE<<1 );           // 200
 const int LINE_M_ATTR_HIGHLIGHT( SYNTAX_LAST_BIT );         // 400
 const int LINE_M_ATTR_USER( LINE_ATTR_USER|(15) );          // the 8 user colours
 
-typedef EmacsCharQqq_t DisplayBody_t;
+typedef EmacsChar_t DisplayBody_t;
 typedef unsigned short DisplayAttr_t;
 
 class EmacsLine : public EmacsObject
