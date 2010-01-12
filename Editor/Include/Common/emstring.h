@@ -152,11 +152,13 @@ public:
     EmacsString &append( unsigned char ch )
         { return append( EmacsString( copy, &ch, 1 ) ); }
     EmacsString &append( int ch )
-        {
-            EmacsCharQqq_t str[1];
-            str[0] = ch;
-            return append( 1, str );
-        }
+        { return append( (EmacsCharQqq_t)ch ); }
+    EmacsString &append( EmacsCharQqq_t ch )
+    {
+        EmacsCharQqq_t str[1];
+        str[0] = ch;
+        return append( 1, str );
+    }
 
     EmacsString &append( const char *str )
         { return append( EmacsString( str ) ); }
@@ -175,6 +177,8 @@ public:
         { return insert( pos, EmacsString( copy, &ch, 1 ) ); }
     EmacsString &insert( int pos, unsigned char ch )
         { return insert( pos, EmacsString( copy, &ch, 1 ) ); }
+    EmacsString &insert( int pos, EmacsCharQqq_t ch )
+        { return insert( pos, ch ); }
     EmacsString &insert( int pos, int ch )
         {
             EmacsCharQqq_t str[1];
