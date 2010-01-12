@@ -61,8 +61,8 @@ private:
     int k_used;
     enum { KEYMAP_SHORT_SIZE = 12 };
 
-    unsigned char k_chars [KEYMAP_SHORT_SIZE];
-    BoundName *k_sbinding [KEYMAP_SHORT_SIZE];
+    EmacsCharQqq_t k_chars[ KEYMAP_SHORT_SIZE ];
+    BoundName *k_sbinding[ KEYMAP_SHORT_SIZE ];
 };
 
 class KeyMapLong : public KeyMapInside

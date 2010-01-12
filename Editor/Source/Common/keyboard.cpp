@@ -16,7 +16,6 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 KeyMap *define_keymap( const EmacsString &name );
 int process_key( void );
 int get_char( void );
-BoundName **lookup_keys( KeyMap *kmap, unsigned char *keys, int len );
 int start_remembering( void );
 int stop_remembering( void );
 void exec_str( const EmacsString &s );
@@ -145,7 +144,7 @@ KeyMapLong::KeyMapLong( KeyMapShort *smap )
 BoundName *KeyMapShort::getBinding( int c )
 {
     for( int i=0; i<k_used; i++ )
-        if(( k_chars[i] == (unsigned char)c ) )
+        if(( k_chars[i] == (EmacsCharQqq_t)c ) )
             return k_sbinding[i];
 
     return 0;
@@ -159,7 +158,7 @@ BoundName *KeyMapLong::getBinding( int c )
 BoundName **KeyMapShort::getBindingRef( int c )
 {
     for( int i=0; i<k_used; i++ )
-        if(( k_chars[i] == (unsigned char)c ) )
+        if(( k_chars[i] == (EmacsCharQqq_t)c ) )
             return &k_sbinding[i];
 
     return 0;
@@ -192,7 +191,7 @@ int KeyMapShort::addBinding( int c, BoundName *proc )
 {
     // see if we are replacing an anready bound key
     for( int i=0; i<=k_used - 1; i += 1 )
-        if( k_chars[i] == (unsigned char)c )
+        if( k_chars[i] == (EmacsCharQqq_t)c )
         {
             if( k_sbinding[i] != NULL )
                 free_sexpr_defun( k_sbinding[i] );
@@ -203,7 +202,7 @@ int KeyMapShort::addBinding( int c, BoundName *proc )
     // see if the kmap has room
     if( k_used < KEYMAP_SHORT_SIZE )
     {
-        k_chars[k_used] = (unsigned char)c;
+        k_chars[k_used] = (EmacsCharQqq_t)c;
         k_sbinding[k_used] = proc;
         k_used++;
         return 1;
@@ -229,7 +228,7 @@ void KeyMap::removeBinding( int c )
 void KeyMapShort::removeBinding( int c )
 {
     for( int i=0; i<k_used; i++ )
-        if( k_chars[i] == (unsigned char)c )
+        if( k_chars[i] == (EmacsCharQqq_t)c )
         {
             free_sexpr_defun( k_sbinding[i] );
             k_used--;
@@ -525,7 +524,7 @@ int process_key( void )
             can_checkpoint = 0;
             break;
         }
-        unsigned char c = (unsigned char)ic;
+        EmacsCharQqq_t c = (EmacsCharQqq_t)ic;
 
         keys_struck.append( c );
         last_keys_struck = keys_struck;
