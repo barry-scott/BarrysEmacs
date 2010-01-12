@@ -369,7 +369,7 @@ int EmacsString::index( const EmacsString &str, int start_pos ) const    // find
     }
 }
 
-int EmacsString::last( char ch, int start_pos ) const
+int EmacsString::last( EmacsChar_t ch, int start_pos ) const
 {
     // index of ch in string
     if( _rep == 0 )
@@ -382,12 +382,6 @@ int EmacsString::last( char ch, int start_pos ) const
 
     return -1;
 }
-
-int EmacsString::last( unsigned char ch, int start_pos ) const
-{
-    return last( (char)ch, start_pos );
-}
-
 
 //
 //    returns the length of the prefix common to both strings

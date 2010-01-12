@@ -125,15 +125,21 @@ public:
     //
     int first( char ch, int start_pos=0 ) const;                // index of first ch in string
     int first( unsigned char ch, int start_pos=0 ) const;       // index of first ch in string
-    int first( EmacsChar_t ch, int start_pos=0 ) const;      // index of first ch in string
+    int first( EmacsChar_t ch, int start_pos=0 ) const;         // index of first ch in string
 
-    int last( char ch, int start_pos=0 ) const;                 // index of last ch in string
-    int last( unsigned char ch, int start_pos=0 ) const;        // index of last ch in string
-    int last( EmacsChar_t ch, int start_pos=0 ) const;       // index of last ch in string
+    int last( char ch, int start_pos=0 ) const                  // index of last ch in string
+    {
+        return last( (EmacsChar_t)ch, start_pos );
+    }
+    int last( unsigned char ch, int start_pos=0 ) const         // index of last ch in string
+    {
+        return last( (EmacsChar_t)ch, start_pos );
+    }
+    int last( EmacsChar_t ch, int start_pos=0 ) const;          // index of last ch in string
 
     int index( char ch, int start_pos=0 ) const;                // find the first ch starting at pos
     int index( unsigned char ch, int start_pos=0 ) const;       // find the first ch starting at pos
-    int index( EmacsChar_t ch, int start_pos=0 ) const;      // find the first ch starting at pos
+    int index( EmacsChar_t ch, int start_pos=0 ) const;         // find the first ch starting at pos
     int index( const EmacsString &str, int start_pos=0 ) const; // find the first str starting at pos
 
     int commonPrefix( const EmacsString &str ) const;           // length of common prefix case sensitive
