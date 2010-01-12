@@ -1124,9 +1124,9 @@ void TerminalControl::k_input_char( int character, bool shift )
 
     // do the Ctrl-X swapping
     if( ch == ctl('X') )
-        ch = swap_ctrl_x_char;
+        ch = (EmacsChar_t)swap_ctrl_x_char;
     else
-    if( ch == swap_ctrl_x_char )
+    if( ch == (EmacsChar_t)swap_ctrl_x_char )
         ch = ctl('X');
 
     if( character == debug_break_char )

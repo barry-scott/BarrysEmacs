@@ -349,7 +349,7 @@ void SyntaxTable::modify_table_dull_type( const EmacsString &str1 )
     int i = 0;
     while( i < str1.length() )
     {
-        int lim;
+        EmacsChar_t lim;
 
         EmacsChar_t c = str1[i++];
 
@@ -413,7 +413,7 @@ void SyntaxTable::modify_table_range_type( int type, const EmacsString &str1, vo
     int i=0;
     while( i < str1.length() )
     {
-        int lim;
+        EmacsChar_t lim;
 
         EmacsChar_t c = str1[i++];
         if( i < str1.length() && str1[i] == '-' )

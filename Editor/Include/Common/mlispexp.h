@@ -233,7 +233,7 @@ public:
 
     virtual ExpressionType exp_type(void) const { return ISINTEGER; }
 
-     virtual int asInt(void) const { return exp_int; }
+    virtual int asInt(void) const { return exp_int; }
     virtual EmacsString asString() const;
 
 protected:
@@ -263,7 +263,7 @@ public:
 
     virtual ExpressionType exp_type(void) const { return ISINTEGER; }
 
-     virtual int asInt(void) const { return exp_int; }
+    virtual int asInt(void) const { return exp_int; }
     virtual EmacsString asString() const;
     virtual void assign_value( ExpressionRepresentation *new_value );
 

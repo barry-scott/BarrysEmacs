@@ -148,7 +148,7 @@ void convert_utf8_to_unicode( const unsigned char *utf8_data, int unicode_length
         else if( (ch&0xe0) == 0xc0 )
         {
             *unicode_data++ = ((ch&0x1f) <<  6) |
-                                (utf8_data[0])&0x3f;
+                                ((utf8_data[0])&0x3f);
             utf8_data += 1;
         }
         else if( (ch&0xf0) == 0xe0 )
@@ -296,38 +296,38 @@ void convert_unicode_to_utf8( int unicode_length, const EmacsChar_t *unicode_dat
         }
         else if( uni_ch <= 0x000007ff )
         {
-            *utf8_data++ = 0xc0 | (uni_ch>>6)&0x1f;
-            *utf8_data++ = 0x80 | (uni_ch)&0x3f;
+            *utf8_data++ = 0xc0 | ((uni_ch>>6)&0x1f);
+            *utf8_data++ = 0x80 | ((uni_ch)&0x3f);
         }
         else if( uni_ch <= 0x0000ffff )
         {
-            *utf8_data++ = 0xe0 | (uni_ch>>12)&0x0f;
-            *utf8_data++ = 0x80 | (uni_ch>>6)&0x3f;
-            *utf8_data++ = 0x80 | (uni_ch)&0x3f;
+            *utf8_data++ = 0xe0 | ((uni_ch>>12)&0x0f);
+            *utf8_data++ = 0x80 | ((uni_ch>>6)&0x3f);
+            *utf8_data++ = 0x80 | ((uni_ch)&0x3f);
         }
         else if( uni_ch <= 0x001fffff )
         {
-            *utf8_data++ = 0xf0 | (uni_ch>>18)&0x07;
-            *utf8_data++ = 0x80 | (uni_ch>>12)&0x3f;
-            *utf8_data++ = 0x80 | (uni_ch>>6)&0x3f;
-            *utf8_data++ = 0x80 | (uni_ch)&0x3f;
+            *utf8_data++ = 0xf0 | ((uni_ch>>18)&0x07);
+            *utf8_data++ = 0x80 | ((uni_ch>>12)&0x3f);
+            *utf8_data++ = 0x80 | ((uni_ch>>6)&0x3f);
+            *utf8_data++ = 0x80 | ((uni_ch)&0x3f);
         }
         else if( uni_ch <= 0x03ffffff )
         {
-            *utf8_data++ = 0xf8 | (uni_ch>>24)&0x03;
-            *utf8_data++ = 0x80 | (uni_ch>>18)&0x3f;
-            *utf8_data++ = 0x80 | (uni_ch>>12)&0x3f;
-            *utf8_data++ = 0x80 | (uni_ch>>6)&0x3f;
-            *utf8_data++ = 0x80 | (uni_ch)&0x3f;
+            *utf8_data++ = 0xf8 | ((uni_ch>>24)&0x03);
+            *utf8_data++ = 0x80 | ((uni_ch>>18)&0x3f);
+            *utf8_data++ = 0x80 | ((uni_ch>>12)&0x3f);
+            *utf8_data++ = 0x80 | ((uni_ch>>6)&0x3f);
+            *utf8_data++ = 0x80 | ((uni_ch)&0x3f);
         }
         else if( uni_ch <= 0x7fffffff )
         {
-            *utf8_data++ = 0xfc | (uni_ch>>30)&0x01;
-            *utf8_data++ = 0x80 | (uni_ch>>24)&0x3f;
-            *utf8_data++ = 0x80 | (uni_ch>>18)&0x3f;
-            *utf8_data++ = 0x80 | (uni_ch>>12)&0x3f;
-            *utf8_data++ = 0x80 | (uni_ch>>6)&0x3f;
-            *utf8_data++ = 0x80 | (uni_ch)&0x3f;
+            *utf8_data++ = 0xfc | ((uni_ch>>30)&0x01);
+            *utf8_data++ = 0x80 | ((uni_ch>>24)&0x3f);
+            *utf8_data++ = 0x80 | ((uni_ch>>18)&0x3f);
+            *utf8_data++ = 0x80 | ((uni_ch>>12)&0x3f);
+            *utf8_data++ = 0x80 | ((uni_ch>>6)&0x3f);
+            *utf8_data++ = 0x80 | ((uni_ch)&0x3f);
         }
         else
         {
