@@ -14,7 +14,94 @@ typedef unsigned int EmacsChar_t;
 #endif
 
 #include <emunicode.h>
+
 #include <algorithm>
+#include <map>
+
+#include <em_unicode_data.h>
+
+typedef std::map<EmacsChar_t, EmacsChar_t> EmacsCharToCharMap;
+
+EmacsCharToCharMap __to_upper;
+EmacsCharToCharMap __to_lower;
+EmacsCharToCharMap __to_title;
+EmacsCharToCharMap __casefold;
+
+void init_unicode()
+{
+    for( struct unicode_data *p = unicode_init_to_upper; p->code_point != 0; ++p )
+    {
+        __to_upper[ p->code_point ] = p->replacement;
+    }
+    for( struct unicode_data *p = unicode_init_to_lower; p->code_point != 0; ++p )
+    {
+        __to_lower[ p->code_point ] = p->replacement;
+    }
+    for( struct unicode_data *p = unicode_init_to_title; p->code_point != 0; ++p )
+    {
+        __to_title[ p->code_point ] = p->replacement;
+    }
+    for( struct unicode_data *p = unicode_init_casefold; p->code_point != 0; ++p )
+    {
+        __casefold[ p->code_point ] = p->replacement;
+    }
+}
+
+bool unicode_is_upper( EmacsChar_t code_point )
+{
+    return __to_upper.count( code_point ) > 0;
+}
+
+EmacsChar_t unicode_to_upper( EmacsChar_t code_point )
+{
+    EmacsCharToCharMap::iterator i = __to_upper.find( code_point );
+    if( i == __to_upper.end() )
+        return code_point;
+    else
+        return i->second;
+}
+
+bool unicode_is_lower( EmacsChar_t code_point )
+{
+    return __to_lower.count( code_point ) > 0;
+}
+
+EmacsChar_t unicode_to_lower( EmacsChar_t code_point )
+{
+    EmacsCharToCharMap::iterator i = __to_lower.find( code_point );
+    if( i == __to_lower.end() )
+        return code_point;
+    else
+        return i->second;
+}
+
+bool unicode_is_title( EmacsChar_t code_point )
+{
+    return __to_title.count( code_point ) > 0;
+}
+
+EmacsChar_t unicode_to_title( EmacsChar_t code_point )
+{
+    EmacsCharToCharMap::iterator i = __to_title.find( code_point );
+    if( i == __to_title.end() )
+        return code_point;
+    else
+        return i->second;
+}
+
+bool unicode_is_casefold( EmacsChar_t code_point )
+{
+    return __casefold.count( code_point ) > 0;
+}
+
+EmacsChar_t unicode_casefold( EmacsChar_t code_point )
+{
+    EmacsCharToCharMap::iterator i = __casefold.find( code_point );
+    if( i == __casefold.end() )
+        return code_point;
+    else
+        return i->second;
+}
 
 //
 //   UCS-4 range (hex.)           UTF-8 octet sequence (binary)

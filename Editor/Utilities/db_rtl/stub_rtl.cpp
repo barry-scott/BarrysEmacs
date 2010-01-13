@@ -100,10 +100,6 @@ void EmacsStringTable::SaveEnvironment()
 { }
 #endif
 
-int emacs_stricmp( const unsigned char *, const unsigned char * )
-{
-    return 0;
-}
 EmacsString get_config_env( const EmacsString &name )
 {
     char *value = getenv( name.sdata() );

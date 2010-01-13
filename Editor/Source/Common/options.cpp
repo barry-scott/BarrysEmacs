@@ -288,24 +288,26 @@ static void scan_map_inner
     )
 {
     struct key_scan_history hist;
-    BoundName *b;
-    int c, c2;
+    EmacsChar_t c;
+    EmacsChar_t c2;
 
     hist.hist_prev = history;
     hist.hist_this = kmap;
 
     int last_char = keys.length();
-    keys.append( (unsigned char)0 );
+    keys.append( 0 );
 
     c = 0;
     while( c <= 255 )
     {
         c2 = c + 1;
-        if( (b = kmap->getBinding( c )) != NULL
+        BoundName *b = kmap->getBinding( c );
+
+        if( b != NULL
         && (! fold_case || ! isupper(c)
-            || (b != kmap->getBinding( (unsigned char)tolower((unsigned char)c) ))) )
+            || (b != kmap->getBinding( tolower( c ) ))) )
         {
-            keys[last_char] = (unsigned char)c;
+            keys[last_char] = c;
 
             while( c2 < 256
             && (kmap->getBinding( c2 ) == b) )
@@ -334,22 +336,21 @@ static void describe1
     int range
     )
 {
-    EmacsString s;
     int len = keys.length();
 
-    s = key_to_str( keys, arg == 1 );
+    EmacsString s = key_to_str( keys, arg == 1 );
     bf_cur->ins_cstr( s );
 
     int indent = s.length();
 
     if( range > 1 )
     {
-        keys[ len - 1 ] = (unsigned char)(keys[ len - 1 ] + range - 1);
+        keys[ len - 1 ] = keys[ len - 1 ] + range - 1;
         bf_cur->ins_cstr( "..", 2 );
         s = key_to_str( keys, arg == 1 );
         bf_cur->ins_cstr( s );
         indent = indent + s.length() + 2;
-        keys[len - 1] = (unsigned char)(keys[ len - 1 ] - range - 1);
+        keys[len - 1] = keys[ len - 1 ] - range - 1;
     }
 
     bf_cur->ins_cstr( "                                ", 32 - min( indent, 31 ) );

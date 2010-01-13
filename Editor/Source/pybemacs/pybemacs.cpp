@@ -45,6 +45,7 @@ extern void init_lisp( void );
 extern void init_abs( void );
 extern void init_key( void );
 extern void init_fncs2( void );
+extern void init_unicode( void );
 
 class BemacsEditor;
 
@@ -106,6 +107,7 @@ public:
     Py::Object initEditor( void )
     {
         init_memory();
+        init_unicode();
         init_display();                         // " the core display system
 
         init_fncs();                            // initialise the key bindings

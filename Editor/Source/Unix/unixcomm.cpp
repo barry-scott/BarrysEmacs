@@ -1260,6 +1260,19 @@ int list_processes(void)
     return 0;
 }
 
+static unsigned char * savestr( const unsigned char *s )
+{
+    if( s == NULL )
+        // return a nul string
+        return savestr( u_str("") );
+
+    // copy the string
+    int size = _str_len( s ) + 1;
+    unsigned char *ret = malloc_ustr( size );
+    _str_cpy( ret, s );
+    return ret;
+}
+
 //
 // Send a string to the process as input
 //

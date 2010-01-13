@@ -34,65 +34,6 @@ _dbg_fn_trace::~_dbg_fn_trace()
     s_call_depth = m_call_depth;
 }
 
-int emacs_stricmp( const unsigned char *str1, const unsigned char *str2 )
-{
-    while( *str1 != '\0' && (toupper(*str1) == toupper(*str2)) )
-    { str1++; str2++; }
-
-    if( *str1 == *str2 )
-        return 0;
-    if( toupper(*str1) < toupper(*str2) )
-        return -1;
-    else
-        return 1;
-}
-
-int emacs_strnicmp( const unsigned char *str1, const unsigned char *str2, int maxchar )
-{
-    maxchar--;
-    while(                        // while
-        maxchar > 0                // inside the limit
-        && *str1 != 0                // and the string has not finished
-        && (toupper(*str1) == toupper(*str2)) )    // and there is a match
-        { maxchar--; str1++; str2++; }    // step on
-
-    // figure out the result
-    if( *str1 == *str2 )
-        return 0;
-    if( toupper(*str1) < toupper(*str2) )
-        return -1;
-    else
-        return 1;
-}
-
-unsigned char *emacs_strlwr( unsigned char *str )
-{
-    unsigned char *s = str;
-
-    while( *s )
-    {
-        if( isupper( *s ) )
-            *s = (unsigned char)tolower( *s );
-        s++;
-    }
-
-    return str;
-}
-
-unsigned char *emacs_strupr( unsigned char *str )
-{
-    unsigned char *s = str;
-
-    while( *s )
-    {
-        if( islower( *s ) )
-            *s = (unsigned char)toupper( *s );
-        s++;
-    }
-
-    return str;
-}
-
 #ifdef vms
 void _dbg_msg( EmacsString fmt, ... )
 {
@@ -106,7 +47,6 @@ void _dbg_msg( EmacsString fmt, ... )
     DSC_SZ( str, buf.sdata() );
     lib$put_output( &str );
 }
-#endif
 
 // save a string in managed memory
 unsigned char * savestr( const unsigned char *s )
@@ -121,3 +61,4 @@ unsigned char * savestr( const unsigned char *s )
     _str_cpy( ret, s );
     return ret;
 }
+#endif

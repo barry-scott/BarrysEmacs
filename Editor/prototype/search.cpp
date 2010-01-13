@@ -513,7 +513,7 @@ void SearchGlobals::search_replace_once( const EmacsString &new_string, SearchGl
                 && flags.beg_of_word
                 || action == FIRST
                 && flags.beg_of_str) )
-                    lc = (unsigned char)toupper( lc );
+                    lc = toupper( lc );
             flags.beg_of_word = 0;
             flags.beg_of_str = 0;
         }

@@ -104,7 +104,7 @@ EmacsString::EmacsString( enum string_type type )
 }
 
 EmacsString::EmacsString( enum string_type type, const unsigned char *string )
-: _rep( EMACS_NEW EmacsStringRepresentation( type, _str_len( string )+1, _str_len( string ), string ) )
+: _rep( EMACS_NEW EmacsStringRepresentation( type, strlen( (const char *)string )+1, strlen( (const char *)string ), string ) )
 {
     check_for_bad_value( _rep );
 }
@@ -136,7 +136,7 @@ EmacsString::EmacsString( enum string_type type, const EmacsChar_t *string, int 
 }
 
 EmacsString::EmacsString( enum string_type type, const char *string )
-: _rep( EMACS_NEW EmacsStringRepresentation( type, _str_len( (const unsigned char *)string )+1, _str_len( (const unsigned char *)string ), (unsigned char *)string ) )
+: _rep( EMACS_NEW EmacsStringRepresentation( type, strlen( (const char *)string )+1, strlen( (const char *)string ), (unsigned char *)string ) )
 {
     check_for_bad_value( _rep );
 }

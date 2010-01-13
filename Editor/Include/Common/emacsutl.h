@@ -46,12 +46,6 @@ extern void *emacs_realloc( void *p, int new_size, enum malloc_block_type );
 extern void emacs_free( void *p );
 extern void emacs_check_malloc_block( void *p );
 
-extern unsigned char *emacs_strlwr( unsigned char * );
-extern unsigned char *emacs_strupr( unsigned char * );
-extern int emacs_stricmp( const unsigned char *str1, const unsigned char *str2 );
-extern int emacs_strnicmp( const unsigned char *str1, const unsigned char *str2, int maxchar );
-extern unsigned char emacs_toupper( unsigned char ch );
-extern unsigned char emacs_tolower( unsigned char ch );
 
 extern EmacsString get_config_env( const EmacsString & );
 
@@ -60,35 +54,26 @@ extern EmacsString get_config_env( const EmacsString & );
 
 #define ctl( ch ) (ch & 0x9f)
 
-inline int _str_len( const unsigned char *a )
-{
-    return strlen( s_str( a ) );
-}
-
 #define _str_cat( a, b ) u_str( strcat( s_str( a ), s_str( b ) ) )
 #define _str_chr( a, b ) u_str( strchr( s_str( a ), b ) )
 #define _str_rchr( a, b ) u_str( strrchr( s_str( a ), b ) )
 #define _str_cmp( a, b ) strcmp( s_str( a ), s_str( b ) )
-#define _str_icmp( a, b ) emacs_stricmp( a, b )
 #define _str_cpy( a, b ) u_str( strcpy( s_str( a ), s_str( b ) ) )
 #define _str_ncmp( a, b, c ) strncmp( s_str( a ), s_str( b ), c )
-#define _str_nicmp( a, b, c ) emacs_strnicmp( a, b, c )
 #define _str_ncpy( a, b, c ) u_str( strncpy( s_str( a ), s_str( b ), c ) )
 #define _str_ncat( a, b, c ) u_str( strncat( s_str( a ), s_str( b ), c ) )
 #define _str_str( a, b ) u_str( strstr( s_str( a ), s_str( b ) ) )
-#define _str_lwr( a ) emacs_strlwr( a )
-#define _str_upr( a ) emacs_strupr( a )
 
 # if DBG_ALLOC_CHECK
-#  define    EMACS_MALLOC(a,t)    emacs_malloc(a,t,THIS_FILE,__LINE__)
-#  define    EMACS_FREE(a)        emacs_free(a)
+#  define    EMACS_MALLOC(a,t)      emacs_malloc(a,t,THIS_FILE,__LINE__)
+#  define    EMACS_FREE(a)          emacs_free(a)
 
-#  define    EMACS_REALLOC(a,b,t)    emacs_realloc(a,b,t,THIS_FILE,__LINE__)
+#  define    EMACS_REALLOC(a,b,t)   emacs_realloc(a,b,t,THIS_FILE,__LINE__)
 # else
-#  define    EMACS_MALLOC(a,t)    emacs_malloc(a,t)
-#  define    EMACS_FREE(a)        emacs_free(a)
+#  define    EMACS_MALLOC(a,t)      emacs_malloc(a,t)
+#  define    EMACS_FREE(a)          emacs_free(a)
 
-#  define    EMACS_REALLOC(a,b,t)    emacs_realloc(a,b,t)
+#  define    EMACS_REALLOC(a,b,t)   emacs_realloc(a,b,t)
 # endif
 
 #define realloc_ustr(a,b) ((unsigned char *)EMACS_REALLOC(a,b,malloc_type_char))

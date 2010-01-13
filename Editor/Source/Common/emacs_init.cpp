@@ -75,8 +75,8 @@ EmacsInitialisation::~EmacsInitialisation()
 
 void EmacsInitialisation::setup_version_string()
 {
-    const unsigned char *build_time_string = (const unsigned char *)ctime( &most_recent_built_module );
+    const char *build_time_string = ctime( &most_recent_built_module );
     // build a version string with that data and time in it
     version_string = EMACS_VERSION " of Emacs Copyright Barry A. Scott (c) ";
-    version_string.append( EmacsString( EmacsString::keep, build_time_string, _str_len( build_time_string )-1 ) );
+    version_string.append( EmacsString( EmacsString::copy, u_str(build_time_string), strlen( build_time_string )-1 ) );
 }

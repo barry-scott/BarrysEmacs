@@ -147,7 +147,7 @@ int EmacsFile::fio_get_line( unsigned char *buf, int len )
     if( feof( m_file ) )
         return 0;
 
-    return get_fixup_buffer( buf, _str_len( buf ) );
+    return get_fixup_buffer( buf, strlen( (const char *)buf ) );
 }
 
 int EmacsFile::fio_get_with_prompt( unsigned char *buf, int len, const unsigned char * /*prompt*/ )

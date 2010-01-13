@@ -275,7 +275,7 @@ int abbrev_expand( void )
             &&    (pos == 0
                 || (upper_count > 1 && (pos > 1 && isspace( a->abbrev_phrase[ pos-1 ] ))))
             )
-                self_insert( (unsigned char)toupper( ch ) );
+                self_insert( toupper( ch ) );
             else
                 self_insert( ch );
         }

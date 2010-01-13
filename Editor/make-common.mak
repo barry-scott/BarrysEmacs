@@ -360,9 +360,13 @@ $(edit_obj)emstring.o : Source/Common/emstring.cpp
 	@ echo Info: Compile Source/Common/emstring.cpp
 	@ $(cpp) $(cc_flags) -o $(edit_obj)emstring.o Source/Common/emstring.cpp
 
-$(edit_obj)emunicode.o : Source/Common/emunicode.cpp
+$(edit_obj)emunicode.o : Source/Common/emunicode.cpp Include/Common/em_unicode_data.h
 	@ echo Info: Compile Source/Common/emunicode.cpp
 	@ $(cpp) $(cc_flags) -o $(edit_obj)emunicode.o Source/Common/emunicode.cpp
+
+Include/Common/em_unicode_data.h : make_unicode_data.py
+	@ echo Info: Make Include/Common/em_unicode_data.h
+	@ $(PYTHON) make_unicode_data.py $(UCDDIR)/UnicodeData.txt $(UCDDIR)/CaseFolding.txt Include/Common/em_unicode_data.h
 
 $(edit_obj)emstrtab.o : Source/Common/emstrtab.cpp
 	@ echo Info: Compile Source/Common/emstrtab.cpp

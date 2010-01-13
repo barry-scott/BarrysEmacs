@@ -198,8 +198,3 @@ extern int child_changed;
 extern void change_msgs (void);
 # endif
 #endif
-
-unsigned char *savestr( const unsigned char *s );
-
-//int do_print( const unsigned char *, va_list *, unsigned char *, int );
-//int do_print( const EmacsString , va_list *, EmacsString & );
