@@ -156,7 +156,7 @@ public:
 
         process_args( py_argv.length(), argv );
 
-        for( int argc=0; argc < py_argv.length(); ++argc )
+        for( size_t argc=0; argc < py_argv.length(); ++argc )
         {
             EMACS_FREE( argv[ argc ] );
         }

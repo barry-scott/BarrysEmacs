@@ -61,7 +61,7 @@ static void case_convertion( int first, int last, case_op &op )
         }
         else
         {
-            if( isalpha( c ) && op.convert( isupper( c ) != 0, is_first_letter ) )
+            if( isalpha( c ) && op.convert( unicode_is_upper( c ) != 0, is_first_letter ) )
             {
                 bf_cur->insert_at( first - 1, (unsigned char)(c^0x20) );
                 bf_cur->del_frwd( first, 1 );
@@ -101,7 +101,7 @@ static int case_string( case_op &op )
             is_first_letter = true;
         else
         {
-            if( isalpha( c ) && op.convert( isupper( c ) != 0, is_first_letter ) )
+            if( isalpha( c ) && op.convert( unicode_is_upper( c ) != 0, is_first_letter ) )
                 *p = (unsigned char)(c ^ 0x20);
 
             is_first_letter = false;

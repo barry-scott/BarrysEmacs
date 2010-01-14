@@ -236,7 +236,7 @@ int abbrev_expand( void )
             n++;
             break;
         }
-        if( isupper( bf_cur->char_at( n ) ) )
+        if( unicode_is_upper( bf_cur->char_at( n ) ) )
             upper_count++;
         }
 
@@ -270,12 +270,12 @@ int abbrev_expand( void )
         for( pos=0; pos < a->abbrev_phrase.length(); pos++ )
         {
             unsigned char ch = a->abbrev_phrase[ pos ];
-            if( islower( ch )
+            if( unicode_is_lower( ch )
             && upper_count != 0
             &&    (pos == 0
                 || (upper_count > 1 && (pos > 1 && isspace( a->abbrev_phrase[ pos-1 ] ))))
             )
-                self_insert( toupper( ch ) );
+                self_insert( unicode_to_upper( ch ) );
             else
                 self_insert( ch );
         }

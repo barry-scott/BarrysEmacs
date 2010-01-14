@@ -19,8 +19,8 @@ def main( argv ):
     for line in ucd:
         parts = line.strip().split(';')
         code = parts[0]
-        upper = parts[12]
-        lower = parts[13]
+        lower = parts[12]
+        upper = parts[13]
         title = parts[14]
         if len(upper) > 0:
             to_upper[ code ] = upper

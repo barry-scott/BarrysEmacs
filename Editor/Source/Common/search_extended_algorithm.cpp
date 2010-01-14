@@ -151,7 +151,7 @@ void SearchAdvancedAlgorithm::search_replace_once( const EmacsString &new_string
 
             if( isalpha( lc ) )
             {
-                if( isupper( lc ) )
+                if( unicode_is_upper( lc ) )
                 {
                     if( flags.beg_of_str )
                         action = FIRST;
@@ -188,12 +188,12 @@ void SearchAdvancedAlgorithm::search_replace_once( const EmacsString &new_string
         if( action != DO_NOTHING
         && isalpha( lc ) )
         {
-            if( islower( lc )
+            if( unicode_is_lower( lc )
             &&  (action == UPPER
                 || (action == FIRST_ALL && flags.beg_of_word)
                 || (action == FIRST && flags.beg_of_str)) )
             {
-                lc = (unsigned char)toupper( lc );
+                lc = (unsigned char)unicode_to_upper( lc );
             }
             flags.beg_of_word = 0;
             flags.beg_of_str = 0;

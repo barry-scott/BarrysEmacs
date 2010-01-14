@@ -222,7 +222,7 @@ bool FileParse::sys_parse( const EmacsString &name, const EmacsString &def )
     {
         // get the override parameter - defaults to let emacs decide
         char disk_name[2];
-        disk_name[0] = (char)toupper( disk[0] );
+        disk_name[0] = (char)unicode_to_upper( disk[0] );
         disk_name[1] = '\0';
         file_parsing_override = get_file_parsing_override( disk_name, 0 );
 

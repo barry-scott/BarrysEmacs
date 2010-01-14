@@ -31,6 +31,8 @@ class EmacsString;
 
 #include <em_gen.h>        // general constants used in emacs
 
+#include <emunicode.h>
+
 //
 //    extern functions of global interest
 //

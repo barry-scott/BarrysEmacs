@@ -490,7 +490,7 @@ EmacsString &EmacsString::toLower()
     copy_on_write();
 
     for( int i=0; i<_rep->length; i++ )
-        if( isupper( _rep->data[i] ) )
+        if( unicode_is_upper( _rep->data[i] ) )
             _rep->data[i] = (EmacsChar_t)(_rep->data[i] + ('a' - 'A'));
     return *this;
 }
@@ -500,7 +500,7 @@ EmacsString &EmacsString::toUpper()
     copy_on_write();
 
     for( int i=0; i<_rep->length; i++ )
-        if( islower( _rep->data[i] ) )
+        if( unicode_is_lower( _rep->data[i] ) )
             _rep->data[i] = (EmacsChar_t)(_rep->data[i] + ('A' - 'a'));
     return *this;
 }

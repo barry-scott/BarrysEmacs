@@ -10,12 +10,12 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 int emacs_stricmp( const unsigned char *str1, const unsigned char *str2 )
 {
-    while( *str1 != '\0' && (toupper(*str1) == toupper(*str2)) )
+    while( *str1 != '\0' && (unicode_to_upper(*str1) == unicode_to_upper(*str2)) )
     { str1++; str2++; }
 
     if( *str1 == *str2 )
         return 0;
-    if( toupper(*str1) < toupper(*str2) )
+    if( unicode_to_upper(*str1) < unicode_to_upper(*str2) )
         return -1;
     else
         return 1;

@@ -304,8 +304,8 @@ static void scan_map_inner
         BoundName *b = kmap->getBinding( c );
 
         if( b != NULL
-        && (! fold_case || ! isupper(c)
-            || (b != kmap->getBinding( tolower( c ) ))) )
+        && (! fold_case || ! unicode_is_upper(c)
+            || (b != kmap->getBinding( unicode_to_lower( c ) ))) )
         {
             keys[last_char] = c;
 

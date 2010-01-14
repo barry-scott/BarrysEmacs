@@ -105,7 +105,7 @@ int chdir_and_set_global_record( const EmacsString &dirname )
         return ret;
 
 #ifdef _MSDOS
-    int drive = toupper( path2[0] ) - 'A' + 1;
+    int drive = unicode_to_upper( path2[0] ) - 'A' + 1;
     ret = _chdrive( drive );
     if( ret < 0 )
         return ret;
