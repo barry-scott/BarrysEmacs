@@ -30,7 +30,6 @@ import be_frame
 import be_preferences
 import be_exceptions
 
-import be_editor
 
 AppCallBackEvent, EVT_APP_CALLBACK = wx.lib.newevent.NewEvent()
 
@@ -42,13 +41,46 @@ class BemacsApp(wx.App):
         if self.app_dir == '':
             self.app_dir = startup_dir
 
+        self.__debug_noredirect = False
+        self.__debug = False
+        self.__trace = False
+        self.__wx_raw_debug = False
+
+        while len(args) > 1:
+            arg = args[ 1 ]
+            if arg == '--noredirect':
+                self.__debug_noredirect = True
+                del args[ 1 ]
+
+            elif arg == '--debug':
+                self.__debug = True
+                del args[ 1 ]
+
+            elif arg == '--trace':
+                self.__trace = True
+                del args[ 1 ]
+
+            elif arg == '--wx-raw-debug':
+                self.__wx_raw_debug = True
+                del args[ 1 ]
+
+            elif arg == '--':
+                break
+
+            else:
+                break
+
         self.__call_gui_result = None
         self.__call_gui_result_event = threading.Event()
 
         self.editor = None
 
         self.main_thread = threading.currentThread()
-        self.editor_thread = threading.Thread( name='Editor', target=self.__runEditor, )
+        if self.__wx_raw_debug:
+            self.editor_thread = None
+            self.editor = FakeEditor()
+        else:
+            self.editor_thread = threading.Thread( name='Editor', target=self.__runEditor )
 
         self.progress_format = None
         self.progress_values = {}
@@ -72,30 +104,6 @@ class BemacsApp(wx.App):
 
         # Debug settings
         self.__last_client_error = []
-
-        self.__debug_noredirect = False
-        self.__debug = False
-        self.__trace = False
-
-        while len(args) > 1:
-            arg = args[ 1 ]
-            if arg == '--noredirect':
-                self.__debug_noredirect = True
-                del args[ 1 ]
-
-            elif arg == '--debug':
-                self.__debug = True
-                del args[ 1 ]
-
-            elif arg == '--trace':
-                self.__trace = True
-                del args[ 1 ]
-
-            elif arg == '--':
-                break
-
-            else:
-                break
 
         self.setupLogging()
 
@@ -282,9 +290,14 @@ class BemacsApp(wx.App):
 
     def __initEditorThread( self ):
         self.log.debug( 'BemacsApp.__initEditorThread()' )
+        if self.__wx_raw_debug:
+            return
+
         self.editor_thread.start()
 
     def __runEditor( self ):
+        import be_editor
+
         self.log.debug( 'BemacsApp.__runEditor()' )
         self.editor = be_editor.BEmacs( self )
         self.editor.initEmacsProfile( self.frame.emacs_panel )
@@ -409,4 +422,21 @@ class StdoutLogHandler(logging.Handler):
 
         except:
             self.handleError(record)
+
+
+class FakeEditor:
+    def __init__( self ):
+        pass
+
+    def guiCloseWindow( self, *args, **kwds ):
+        pass
+
+    def guiGeometryChange( self, *args, **kwds ):
+        pass
+
+    def guiEventChar( self, *args, **kwds ):
+        pass
+
+    def guiGeometryChange( self, *args, **kwds ):
+        pass
 
