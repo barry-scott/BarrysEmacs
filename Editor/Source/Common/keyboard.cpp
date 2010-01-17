@@ -79,200 +79,54 @@ static int keystrokes;        // The number of keystrokes since the last checkpo
 static int can_checkpoint;    // True iff we are allowed to checkpoint now.
 
 KeyMap::KeyMap( const EmacsString &name )
-    : k_name( name )
+: k_name( name )
+, k_default_binding( NULL )
+, k_binding()
 {
-    k_map = EMACS_NEW KeyMapShort;
 }
 
 KeyMap::~KeyMap()
 {
-    delete k_map;
-}
-
-KeyMapInside::KeyMapInside()
-{ }
-
-KeyMapInside::~KeyMapInside()
-{ }
-
-BoundName *KeyMap::getBinding( int c )
-{
-    return k_map->getBinding( c );
-}
-
-BoundName **KeyMap::getBindingRef( int c )
-{
-    return k_map->getBindingRef( c );
-}
-
-KeyMapShort::KeyMapShort()
-    : k_used(0)
-{ }
-
-KeyMapShort::~KeyMapShort()
-{
     removeAllBindings();
-}
-
-KeyMapLong::~KeyMapLong()
-{
-    removeAllBindings();
-}
-
-KeyMapLong::KeyMapLong( KeyMapShort *smap )
-{
-    // initialise long kmap prevent crash in save-env/restore-env
-    memset( k_binding, 0, sizeof(k_binding) );
-
-    // move bindings from short to long format
-    for( int i=0; i<KeyMapShort::KEYMAP_SHORT_SIZE; i++ )
-    {
-        // transfer binding
-        addBinding
-        (
-        smap->k_chars[i],
-        smap->k_sbinding[i]
-        );
-        // remove from the short map - so ~KeyMapShort will not delete them
-        smap->k_sbinding[i] = NULL;
-    }
 }
 
 //
 //    routines to process keymaps
 //
-BoundName *KeyMapShort::getBinding( int c )
+BoundName *KeyMap::getBinding( EmacsChar_t c )
 {
-    for( int i=0; i<k_used; i++ )
-        if(( k_chars[i] == (EmacsChar_t)c ) )
-            return k_sbinding[i];
-
-    return 0;
+    EmacsCharToBoundName_t::iterator i = k_binding.find( c );
+    if( i == k_binding.end() )
+        return k_default_binding;
+    else
+        return i->second;
 }
 
-BoundName *KeyMapLong::getBinding( int c )
+void KeyMap::addBinding( EmacsChar_t c, BoundName *proc )
 {
-    return k_binding[c];
+    removeBinding( c );
+    k_binding[ c ] = proc;
 }
 
-BoundName **KeyMapShort::getBindingRef( int c )
+void KeyMap::removeBinding( EmacsChar_t c )
 {
-    for( int i=0; i<k_used; i++ )
-        if(( k_chars[i] == (EmacsChar_t)c ) )
-            return &k_sbinding[i];
-
-    return 0;
-}
-
-BoundName **KeyMapLong::getBindingRef( int c )
-{
-    return &k_binding[c];
-}
-
-void KeyMap::addBinding( int c, BoundName *b )
-{
-    if( k_map->addBinding( c, b ) )
-        return;
-
-    // addBinding fails if a short map is full
-
-    // copy short map into  new long map
-    KeyMapLong *lmap = EMACS_NEW KeyMapLong( (KeyMapShort *)k_map );
-    // delete the old map
-    delete k_map;
-    // install the new map
-    k_map = lmap;
-    // now do the bind
-    k_map->addBinding( c, b );
-}
-
-// return true if the binding was possible
-int KeyMapShort::addBinding( int c, BoundName *proc )
-{
-    // see if we are replacing an anready bound key
-    for( int i=0; i<=k_used - 1; i += 1 )
-        if( k_chars[i] == (EmacsChar_t)c )
-        {
-            if( k_sbinding[i] != NULL )
-                free_sexpr_defun( k_sbinding[i] );
-            k_sbinding[i] = proc;
-            return 1;
-        }
-
-    // see if the kmap has room
-    if( k_used < KEYMAP_SHORT_SIZE )
-    {
-        k_chars[k_used] = (EmacsChar_t)c;
-        k_sbinding[k_used] = proc;
-        k_used++;
-        return 1;
-    }
-
-    return 0;
-}
-
-int KeyMapLong::addBinding( int c, BoundName *proc )
-{
-    if( k_binding[c] != NULL )
-        free_sexpr_defun( k_binding[c] );
-
-    k_binding[c] = proc;
-    return 1;
-}
-
-void KeyMap::removeBinding( int c )
-{
-    k_map->removeBinding( c );
-}
-
-void KeyMapShort::removeBinding( int c )
-{
-    for( int i=0; i<k_used; i++ )
-        if( k_chars[i] == (EmacsChar_t)c )
-        {
-            free_sexpr_defun( k_sbinding[i] );
-            k_used--;
-            for( ; i<k_used; i++ )
-            {
-                k_chars[i] = k_chars[i+1];
-                k_sbinding[i] = k_sbinding[i+1];
-            }
-            break;
-        }
-}
-
-void KeyMapLong::removeBinding( int c )
-{
+    EmacsCharToBoundName_t::iterator i = k_binding.find( c );
     if( k_binding[c] != NULL )
     {
-        free_sexpr_defun( k_binding[c] );
-        k_binding[c] = NULL;
+        free_sexpr_defun( i->second );
+        k_binding.erase( i );
     }
 }
 
-void KeyMap::removeAllBindings(void)
+void KeyMap::removeAllBindings()
 {
-    k_map->removeAllBindings();
+    while( !k_binding.empty() )
+    {
+        EmacsCharToBoundName_t::iterator i( k_binding.begin() );
+        free_sexpr_defun( i->second );
+        k_binding.erase( i );
+    }
 }
-
-void KeyMapShort::removeAllBindings(void)
-{
-    // free up any sexpr
-    for( int i=0; i<k_used; i++ )
-        free_sexpr_defun( k_sbinding[i] );
-
-    k_used = 0;
-}
-
-void KeyMapLong::removeAllBindings()
-{
-    // free up any sexpr
-    for( int i=0; i<256; i++ )
-        if( k_binding[i] != NULL )
-            free_sexpr_defun( k_binding[i] );
-    memset( k_binding, 0, sizeof( k_binding ) );
-}
-
 
 KeyMap *define_keymap( const EmacsString &name )
 {
@@ -886,30 +740,43 @@ having_found_char:    // leave this block
 
 
 // Given a keystroke sequence look up the bound_name that it is bound to
-BoundName **lookup_keys
-    (
-    KeyMap *kmap,
-    EmacsString keys
-    )
+BoundName *lookup_boundname_keys( KeyMap *kmap, EmacsString keys )
 {
-    int key_index = 0;
-    int len = keys.length();
-
-    while( kmap != 0 && (len = len - 1) >= 0 )
+    for( int key_index=0; key_index<keys.length(); ++key_index )
     {
-        if( len == 0 )
-            return kmap->getBindingRef( keys[key_index] );
+        if( kmap == NULL )
+            break;
 
-        BoundName *b = kmap->getBinding( keys[key_index] );
-        // if possible get the next keymap
-        if( b == NULL
-        || (kmap = b->getKeyMap()) == NULL )
-            break;    // not possible so exit the loop
+        BoundName *b = kmap->getBinding( keys[ key_index ] );
+        if( b == NULL )
+            break;
 
-        key_index++;
+        if( key_index == (keys.length()-1) )
+            return b;
+
+        // get the next keymap
+        kmap = b->getKeyMap();
     }
 
-    return 0;
+    return NULL;
+}
+
+KeyMap *lookup_keymap_keys( KeyMap *kmap, EmacsString keys )
+{
+    for( int key_index=0; key_index < (keys.length()-1); ++key_index )
+    {
+        if( kmap == NULL )
+            return NULL;
+
+        BoundName *b = kmap->getBinding( keys[ key_index ] );
+        if( b == NULL )
+            break;
+
+        // get the next keymap
+        kmap = b->getKeyMap();
+    }
+
+    return kmap;
 }
 
 int start_remembering( void )

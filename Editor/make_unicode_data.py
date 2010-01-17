@@ -12,6 +12,8 @@ def main( argv ):
     # uncode data
     ucd = open( argv[1], 'r' )
 
+    alphabetic = set()
+    numeric = set()
     to_upper = {}
     to_lower = {}
     to_title = {}
@@ -19,9 +21,15 @@ def main( argv ):
     for line in ucd:
         parts = line.strip().split(';')
         code = parts[0]
+        category = parts[1]
         lower = parts[12]
         upper = parts[13]
         title = parts[14]
+
+        if category.startswith( 'L' ):
+            alphabetic.add( code )
+        if category.startswith( 'N' ):
+            numeric.add( code )
         if len(upper) > 0:
             to_upper[ code ] = upper
         if len(lower) > 0:
@@ -29,6 +37,8 @@ def main( argv ):
         if len(title) > 0:
             to_title[ code ] = title
 
+    print 'alphabetic',len(alphabetic)
+    print 'numeric',len(numeric)
     print 'to_upper',len(to_upper)
     print 'to_lower',len(to_lower)
     print 'to_title',len(to_title)
@@ -60,6 +70,11 @@ def main( argv ):
 '''//
 //  written by %s on %s
 //
+struct unicode_category
+{
+    unsigned int code_point;
+};
+
 struct unicode_data
 {
     unsigned int code_point;
@@ -67,6 +82,20 @@ struct unicode_data
 };
 
 ''' % (argv[0], time.strftime( '%Y-%d-%m %H:%M:%S' )) )
+
+    cxx.write( 'struct unicode_category unicode_init_alphabetic[ %d ] = {\n' % (len(alphabetic)+1,))
+    for code in sorted( alphabetic ):
+        cxx.write( '    {0x%s},\n' % (code,) )
+
+    cxx.write( '    {0x0000}\n' )
+    cxx.write( '};\n\n' )
+
+    cxx.write( 'struct unicode_category unicode_init_numeric[ %d ] = {\n' % (len(numeric)+1,))
+    for code in sorted( numeric ):
+        cxx.write( '    {0x%s},\n' % (code,) )
+
+    cxx.write( '    {0x0000}\n' )
+    cxx.write( '};\n\n' )
 
     cxx.write( 'struct unicode_data unicode_init_to_upper[ %d ] = {\n' % (len(to_upper)+1,))
     for code, value in sorted( to_upper.items() ):

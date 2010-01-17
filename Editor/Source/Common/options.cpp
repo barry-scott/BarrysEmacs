@@ -1,5 +1,7 @@
 //    Copyright (c) 1982-1994
 //        Barry A. Scott and Nick Emery
+//    Copyright (c) 1995-2010
+//        Barry A. Scott
 //
 // A random assortment of commands: help facilities, macros, key bindings
 // and package loading.
@@ -59,7 +61,7 @@ static int trace_larg;
 BoundName *trace_proc;
 BoundName *break_proc;
 BoundName *error_proc;
-unsigned int last_auto_keymap;    // Index of last auto keymap
+unsigned int last_auto_keymap;          // Index of last auto keymap
 static EmacsString decompile_buffer;    // The Trace back buffer
 SystemExpressionRepresentationStringReadOnly current_function;
 SystemExpressionRepresentationStringReadOnly current_break;
@@ -95,54 +97,57 @@ EmacsString key_to_str( const EmacsString &keys, bool replace_key_names )
     {
         EmacsString value;
         int matched = 0;
-        unsigned char ch;
+        EmacsChar_t ch;
 
         if( replace_key_names )
             matched = PC_key_names.keyNameOfValue( keys( i, INT_MAX ), value );
+
         if( matched > 0 )
         {
             buf.append( value );
             i = i + matched - 1;
         }
         else
-    {
-        if( buf.length() > 100 )
-            return u_str("[long key sequence]");
-        if( (ch = keys[i]) == ctl('[') )
         {
-            buf.append( "ESC" );
-        }
-        else
-        {
-            if( ch <= 31 )
+            if( buf.length() > 100 )
+                return u_str("[long key sequence]");
+
+            if( (ch = keys[i]) == ctl('[') )
             {
-                buf.append( '^' );
-                buf.append( (unsigned char)(ch + '@') );
-            }
-            else if( (ch >= 32 && ch <= 126)
-            || (ch >= 161 && ch <= 254) )
-                buf.append( ch );
-            else if( ch == 127 )
-            {
-                buf.append( "^?" );
+                buf.append( "ESC" );
             }
             else
             {
-                buf.append( '\\' );
-                buf.append( (unsigned char)(((ch>>6)&7) + '0') );
-                buf.append( (unsigned char)(((ch>>3)&7) + '0') );
-                buf.append( (unsigned char)((ch&7) + '0') );
+                // QQQ - does not work for unicode
+                if( ch <= 31 )
+                {
+                    buf.append( '^' );
+                    buf.append( (EmacsChar_t)(ch + '@') );
+                }
+                else
+                if( (ch >= 32 && ch <= 126)
+                || (ch >= 161 && ch <= 254) )
+                    buf.append( ch );
+                else
+                if( ch == 127 )
+                {
+                    buf.append( "^?" );
+                }
+                else
+                {
+                    buf.append( '\\' );
+                    buf.append( (EmacsChar_t)(((ch>>6)&7) + '0') );
+                    buf.append( (EmacsChar_t)(((ch>>3)&7) + '0') );
+                    buf.append( (EmacsChar_t)((ch&7) + '0') );
+                }
             }
         }
-    }
         if( i < (keys.length()-1) )
             buf.append( '-' );
     }
 
     return buf;
 }
-
-
 
 int describe_key( void )
 {
@@ -155,22 +160,19 @@ int describe_key( void )
         return 0;
     }
 
-    BoundName **p = lookup_keys( bf_cur->b_mode.md_keys, keyp );
-    if( p != NULL && p[0] == NULL )
-        p = NULL;
-    if( p != NULL )
+    BoundName *b = lookup_boundname_keys( bf_cur->b_mode.md_keys, keyp );
+    if( b != NULL )
         where_bound = "locally";
     else
-        p = lookup_keys( current_global_map, keyp );
+        b = lookup_boundname_keys( current_global_map, keyp );
 
-    if( p == NULL || p[0] == NULL )
+    if( b == NULL )
     {
         error( FormatString("%s is not bound to anything") << key_to_str( keyp ) );
         return 0;
     }
 
     EmacsString mlisp;
-    BoundName *b = p[0];
 
     if( b->b_proc_name == sexpr_defun )
         mlisp = decompile( b->getProcedure(), 1, 0, 1 );
@@ -184,8 +186,7 @@ int describe_key( void )
                 key_to_str( keyp ) <<
                 where_bound <<
                 type <<
-                (!mlisp.isNull() ? mlisp : b->b_proc_name)
-            );
+                (!mlisp.isNull() ? mlisp : b->b_proc_name) );
 
     if( interactive() )
     {
@@ -198,7 +199,6 @@ int describe_key( void )
     return 0;
 }
 
-
 int local_binding_of( void )
 {
     return binding_of_inner( 1 );
@@ -209,12 +209,10 @@ int global_binding_of( void )
     return binding_of_inner( 0 );
 }
 
-static int binding_of_inner(int local_bind)
+static int binding_of_inner( int local_bind )
 {
     unsigned char *func_name;
     KeyMap *kmap;
-    BoundName *b;
-    BoundName **ref_b;
 
     if( local_bind )
     {
@@ -231,14 +229,13 @@ static int binding_of_inner(int local_bind)
     if( key.isNull() || ml_err )
         return 0;
 
-    ref_b = lookup_keys( kmap, ml_value.asString() );
-    if( ref_b == NULL || ref_b[0] == NULL )
+    BoundName *b = lookup_boundname_keys( kmap, ml_value.asString() );
+    if( b == NULL )
     {
         ml_value = EmacsString("nothing");
         return 0;
     }
 
-    b = ref_b[0];
     if( b->b_proc_name == sexpr_defun )
     {
         EmacsString str = decompile( b->getProcedure(), 1, 0, 1 );
@@ -254,8 +251,6 @@ static int binding_of_inner(int local_bind)
 
     return 0;
 }
-
-
 
 //
 // Recursively scan a keymap tree. It gets passed a pointer to a map and a
@@ -274,7 +269,7 @@ void scan_map
     )
 {
     EmacsString keys;
-    if( kmap != 0 )
+    if( kmap != NULL )
         scan_map_inner( kmap, proc, 0, keys, fold_case );
 }
 
@@ -288,8 +283,6 @@ static void scan_map_inner
     )
 {
     struct key_scan_history hist;
-    EmacsChar_t c;
-    EmacsChar_t c2;
 
     hist.hist_prev = history;
     hist.hist_this = kmap;
@@ -297,19 +290,22 @@ static void scan_map_inner
     int last_char = keys.length();
     keys.append( 0 );
 
-    c = 0;
+    // QQQ - not unicode safe
+
+    EmacsChar_t c = 0;
     while( c <= 255 )
     {
-        c2 = c + 1;
+        EmacsChar_t c2 = c + 1;
+
         BoundName *b = kmap->getBinding( c );
 
         if( b != NULL
-        && (! fold_case || ! unicode_is_upper(c)
+        && (! fold_case || ! unicode_is_upper( c )
             || (b != kmap->getBinding( unicode_to_lower( c ) ))) )
         {
             keys[last_char] = c;
 
-            while( c2 < 256
+            while( c2 <= 255
             && (kmap->getBinding( c2 ) == b) )
                 c2++;
             proc( b, keys, c2 - c );
@@ -374,7 +370,8 @@ int describe_bindings( void )
 
     bf_cur->ins_str("Global Bindings (" );
     bf_cur->ins_cstr( current_global_map->k_name );
-    bf_cur->ins_str("):\nKey                Binding\n"
+    bf_cur->ins_str( "):\n"
+        "Key                Binding\n"
         "---                -------\n" );
 
     scan_map( current_global_map, describe1, 1 );
@@ -393,9 +390,8 @@ int describe_bindings( void )
     return 0;
 }
 
-
-
 static EmacsString msg_not_allowed("Not allowed to define a macro while remembering.");
+
 int define_keyboard_macro( void )
 {
     if( remembering != 0 )
@@ -421,8 +417,6 @@ int define_keyboard_macro( void )
     return 0;
 }
 
-
-
 int define_string_macro( void )
 {
     if( remembering != 0 )
@@ -446,8 +440,6 @@ int define_string_macro( void )
     return 0;
 }
 
-
-
 int bind_to_key( void )
 {
     return bind_to_key_inner( 0 );
@@ -458,7 +450,7 @@ int local_bind_to_key( void )
     return bind_to_key_inner( 1 );
 }
 
-static int bind_to_key_inner(int local_bind)
+static int bind_to_key_inner( int local_bind )
 {
     EmacsString string;
     BoundName *b = NULL;
@@ -534,33 +526,11 @@ static int bind_to_key_inner(int local_bind)
     return 0;
 }
 
-
-
 void free_sexpr_defun( BoundName *b )
 {
     if( b != NULL && b->b_proc_name == sexpr_defun )
         delete b;
 }
-
-int remove_binding( void )
-{
-    BoundName **ref_b;    // bound_name
-
-    EmacsString c = get_key( current_global_map, u_str(": remove-binding ") );
-    if( c.length() > 0 && ! ml_err )
-    {
-        ref_b = lookup_keys( current_global_map, ml_value.asString() );
-        if( ref_b != NULL && ref_b[0] != NULL )
-        {
-            free_sexpr_defun( ref_b[0] );
-            ref_b[0] = NULL;
-        }
-    }
-    void_result ();
-    return 0;
-}
-
-
 
 int use_global_map( void )
 {
@@ -577,8 +547,6 @@ int use_global_map( void )
 
     return 0;
 }
-
-
 
 int use_local_map( void )
 {
@@ -653,7 +621,7 @@ static void perform_bind
         switch( ml_value.exp_type() )
         {
         case ISINTEGER:
-            p.append( (unsigned char)( ml_value.asInt() ) );
+            p.append( (EmacsChar_t)( ml_value.asInt() ) );
             break;
         default:
             p = ml_value.asString();
@@ -692,8 +660,7 @@ static void perform_bind
     int i;
     for( i=0; i<=level-2; i++ )
     {
-        unsigned char ch;
-        ch = p[i];
+        EmacsChar_t ch( p[i] );
         b = k->getBinding( ch );
         if( b == NULL || b->getKeyMap() == NULL )
         {
@@ -712,27 +679,44 @@ static void perform_bind
     void_result();
 }
 
+int remove_binding( void )
+{
+    // QQQ - is c and ml_value.asString() the same? If not what is the difference?
+    EmacsString c = get_key( current_global_map, u_str(": remove-binding ") );
+    if( c.length() > 0 && !ml_err )
+    {
+        EmacsString keys( ml_value.asString() );
+        if( keys.isNull() )
+            return 0;
+
+        KeyMap *kmap = lookup_keymap_keys( current_global_map, keys );
+        if( kmap != NULL )
+            kmap->removeBinding( keys[-1] );
+    }
+    void_result ();
+    return 0;
+}
+
 int remove_local_binding( void )
 {
-
+    // QQQ - is c and ml_value.asString() the same? If not what is the difference?
     initialize_local_map();
     EmacsString c = get_key( bf_cur->b_mode.md_keys, u_str(": remove-local-binding ") );
-    if( !c.isNull() && ! ml_err )
+    if( !c.isNull() && !ml_err )
     {
-        BoundName **ref_b = lookup_keys( bf_cur->b_mode.md_keys, ml_value.asString() );
-        if( ref_b != NULL && ref_b[0] != NULL )
-        {
-            free_sexpr_defun( ref_b[0] );
-            ref_b[0] = NULL;
-        }
+        EmacsString keys( ml_value.asString() );
+        if( keys.isNull() )
+            return 0;
+
+        KeyMap *kmap = lookup_keymap_keys( current_global_map, keys );
+        if( kmap != NULL )
+            kmap->removeBinding( keys[-1] );
     }
 
     void_result();
 
     return 0;
 }
-
-
 
 int remove_all_local_bindings( void )
 {
@@ -789,8 +773,6 @@ int execute_extended_command( void )
     return rv;
 }
 
-
-
 int define_keymap_command( void )
 {
     EmacsString mapname = getnbstr( ": define-keymap " );
@@ -798,8 +780,6 @@ int define_keymap_command( void )
     define_keymap( mapname );
     return 0;
 }
-
-
 
 int auto_load( void )
 {
@@ -1395,7 +1375,7 @@ static void decompile_put_str( EmacsString str )
 
 static void decompile_put_char( int ch )
 {
-    decompile_buffer.append( (unsigned char)ch );
+    decompile_buffer.append( (EmacsChar_t)ch );
 }
 
 static void decompile_put_int( int i )
@@ -1418,22 +1398,22 @@ static void decompile_string( EmacsString &str )
         {
             unsigned char *x;
             switch( ch )
-        {
-            case ctl('J'):    x = u_str("\\n"); break;
-            case ctl('H'):    x = u_str("\\b"); break;
-            case ctl('M'):    x = u_str("\\r"); break;
-            case ctl('I'):    x = u_str("\\t"); break;
-            case ctl('['):    x = u_str("\\e"); break;
-            case 127:    x = u_str("\\^?"); break;
+            {
+            case ctl('J'):  x = u_str("\\n"); break;
+            case ctl('H'):  x = u_str("\\b"); break;
+            case ctl('M'):  x = u_str("\\r"); break;
+            case ctl('I'):  x = u_str("\\t"); break;
+            case ctl('['):  x = u_str("\\e"); break;
+            case 127:       x = u_str("\\^?"); break;
             default:
             {
                 x = buf;
                 buf[0] = '\\';
                 buf[1] = '^';
-                buf[2] = (unsigned char)(ch + '@');
+                buf[2] = (EmacsChar_t)(ch + '@');
                 buf[3] = 0;
             }
-        }
+            }
 
             decompile_put_str( x );
         }

@@ -5,6 +5,7 @@
 // A syntax table contains an array of information, one entry per ASCII
 // character.
 
+#include <map>
 
 // Syntax data for a char splits between alternatives and invariant
 // types.
@@ -44,39 +45,40 @@ enum Syntax_Invariant
 // a second set for the marking of characters in the buffer.
 //
 // SYNTAX_PREFIX_QUOTE\|SYNTAX_BEGIN_PAREN\|SYNTAX_END_PAREN\|SYNTAX_FIRST_FREE\|SYNTAX_LAST_BIT
+typedef int SyntaxKind_t;
 
 #define B(n) (1 << (n))        // bit n
 
-const int SYNTAX_DULL               (        0  );        // 00 a dull (punctuation) character
-const int SYNTAX_WORD               (      B(1) );        // 02 a word character for ESC-F and friends
+const SyntaxKind_t SYNTAX_DULL              (        0  );      // 00 a dull (punctuation) character
+const SyntaxKind_t SYNTAX_WORD              (      B(1) );      // 02 a word character for ESC-F and friends
 
-const int SYNTAX_STRING_SHIFT       (        2  );
-const int SYNTAX_STRING_MASK        ( B(2)+B(3) );        // 0c its a string
-const int SYNTAX_TYPE_STRING1       ( B(2)      );        // 04 its a string type 1
-const int SYNTAX_TYPE_STRING2       (      B(3) );        // 08 its a string type 2
-const int SYNTAX_TYPE_STRING3       ( B(2)+B(3) );        // 0c its a string type 3
+const SyntaxKind_t SYNTAX_STRING_SHIFT      (        2  );
+const SyntaxKind_t SYNTAX_STRING_MASK       ( B(2)+B(3) );      // 0c its a string
+const SyntaxKind_t SYNTAX_TYPE_STRING1      ( B(2)      );      // 04 its a string type 1
+const SyntaxKind_t SYNTAX_TYPE_STRING2      (      B(3) );      // 08 its a string type 2
+const SyntaxKind_t SYNTAX_TYPE_STRING3      ( B(2)+B(3) );      // 0c its a string type 3
 
-const int SYNTAX_COMMENT_SHIFT      (        4  );
-const int SYNTAX_COMMENT_MASK       ( B(4)+B(5) );        // 30 its a comment
-const int SYNTAX_TYPE_COMMENT1      ( B(4)      );        // 10 its a comment type 1
-const int SYNTAX_TYPE_COMMENT2      (      B(5) );        // 20 its a comment type 2
-const int SYNTAX_TYPE_COMMENT3      ( B(4)+B(5) );        // 30 its a comment type 3
+const SyntaxKind_t SYNTAX_COMMENT_SHIFT     (        4  );
+const SyntaxKind_t SYNTAX_COMMENT_MASK      ( B(4)+B(5) );      // 30 its a comment
+const SyntaxKind_t SYNTAX_TYPE_COMMENT1     ( B(4)      );      // 10 its a comment type 1
+const SyntaxKind_t SYNTAX_TYPE_COMMENT2     (      B(5) );      // 20 its a comment type 2
+const SyntaxKind_t SYNTAX_TYPE_COMMENT3     ( B(4)+B(5) );      // 30 its a comment type 3
 
-const int SYNTAX_KEYWORD_SHIFT      (        6  );
-const int SYNTAX_KEYWORD_MASK       ( B(6)+B(7) );        // c0 its a keyword
-const int SYNTAX_TYPE_KEYWORD1      ( B(6)      );        // 40 its a keyword type 1
-const int SYNTAX_TYPE_KEYWORD2      (      B(7) );        // 80 its a keyword type 2
-const int SYNTAX_TYPE_KEYWORD3      ( B(6)+B(7) );        // c0 its a keyword type 3
+const SyntaxKind_t SYNTAX_KEYWORD_SHIFT     (        6  );
+const SyntaxKind_t SYNTAX_KEYWORD_MASK      ( B(6)+B(7) );      // c0 its a keyword
+const SyntaxKind_t SYNTAX_TYPE_KEYWORD1     ( B(6)      );      // 40 its a keyword type 1
+const SyntaxKind_t SYNTAX_TYPE_KEYWORD2     (      B(7) );      // 80 its a keyword type 2
+const SyntaxKind_t SYNTAX_TYPE_KEYWORD3     ( B(6)+B(7) );      // c0 its a keyword type 3
 
-const int SYNTAX_FIRST_FREE         (      B(8) );        // 100
-const int SYNTAX_PREFIX_QUOTE       (      B(8) );        // 100 like \ in C
-const int SYNTAX_BEGIN_PAREN        (      B(9) );        // 200 a begin paren: (<[
-const int SYNTAX_END_PAREN          (     B(10) );        // 400 an end paren: )>]    end
-const int SYNTAX_LAST_BIT           (     B(10) );
+const SyntaxKind_t SYNTAX_FIRST_FREE        (      B(8) );      // 100
+const SyntaxKind_t SYNTAX_PREFIX_QUOTE      (      B(8) );      // 100 like \ in C
+const SyntaxKind_t SYNTAX_BEGIN_PAREN       (      B(9) );      // 200 a begin paren: (<[
+const SyntaxKind_t SYNTAX_END_PAREN         (     B(10) );      // 400 an end paren: )>]    end
+const SyntaxKind_t SYNTAX_LAST_BIT          (     B(10) );
 
 #undef B
 
-const int SYNTAX_MULTI_CHAR_TYPES
+const SyntaxKind_t SYNTAX_MULTI_CHAR_TYPES
     (
     SYNTAX_WORD|SYNTAX_KEYWORD_MASK|SYNTAX_COMMENT_MASK|SYNTAX_STRING_MASK
     );
@@ -127,7 +129,7 @@ public:
     bool first_is_word() const;
     bool last_is_word( const SyntaxTable &table ) const;
 
-    int s_kind;
+    SyntaxKind_t s_kind;
     int s_properties;
     SyntaxString *s_next;
     SyntaxString *s_alt_matching;
@@ -167,15 +169,10 @@ public:
     }
 };
 
+
 class SyntaxTable : public EmacsObject
 {
 public:
-    struct entry
-    {
-        int s_kind;
-        SyntaxString *s_strings;
-    };
-
     EMACS_OBJECT_FUNCTIONS( SyntaxTable )
     SyntaxTable( const EmacsString &name );
     virtual ~SyntaxTable();
@@ -219,11 +216,21 @@ public:
 
     void modify_table( int type, int properties, const EmacsString &str1, const EmacsString &str2 );
 
-    EmacsString s_name;
-    struct entry s_table[ 256 ];
+    SyntaxKind_t getSyntaxKind( EmacsChar_t ch ) const;
+    void eraseSyntaxKind( EmacsChar_t ch );
 
+    SyntaxString *getSyntaxStrings( EmacsChar_t ch ) const;
+    void eraseSyntaxStrings( EmacsChar_t ch );
+
+    EmacsString s_name;
     static SyntaxNameTable name_table;
 private:
+    typedef std::map< EmacsChar_t, SyntaxKind_t >   EmacsCharToSyntaxKind_t;
+    typedef std::map< EmacsChar_t, SyntaxString * > EmacsCharToSyntaxString_t;
+
+    EmacsCharToSyntaxKind_t     s_kind;
+    EmacsCharToSyntaxString_t   s_strings;
+
     class SyntaxException
     {
     public:
@@ -240,16 +247,17 @@ private:
     };
 
     // handlers used by modify_table to deal with type of syntax entry
-    void modify_table_dull_type             // Dull type
-        ( const EmacsString &str1 )
+
+    // Dull type
+    void modify_table_dull_type( const EmacsString &str1 )
         throw( SyntaxErrorException, SyntaxMemoryException );
 
-    void modify_table_range_type            // range of characters type like word A-Z
-        ( int type, const EmacsString &str1, void (SyntaxTable::*set_func)( int type, int ch ) )
+    // range of characters type like word A-Z
+    void modify_table_range_type( int type, const EmacsString &str1, void (SyntaxTable::*set_func)( int type, int ch ) )
         throw( SyntaxErrorException, SyntaxMemoryException );
 
-    void modify_table_paired_type           // paired strings like comments // to
-        ( int type, int properties, const EmacsString &str1, const EmacsString &str2  )
+    // paired strings like comments // to
+    void modify_table_paired_type( int type, int properties, const EmacsString &str1, const EmacsString &str2  )
         throw( SyntaxErrorException, SyntaxMemoryException );
 
     void modify_table_set_simple_type( int type, int ch );

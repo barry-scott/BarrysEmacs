@@ -249,12 +249,12 @@ public:
 
     inline bool char_is( int ch, int prop )
     {
-        return (b_mode.md_syntax->s_table[ch].s_kind & prop) != 0;
+        return (b_mode.md_syntax->getSyntaxKind( ch ) & prop) != 0;
     }
 
     inline bool char_at_is( int pos, int prop )
     {
-        return (b_mode.md_syntax->s_table[char_at( pos )].s_kind & prop) != 0;
+        return (b_mode.md_syntax->getSyntaxKind( char_at( pos ) ) & prop) != 0;
     }
 
     inline SyntaxData_t syntax_at( int n )

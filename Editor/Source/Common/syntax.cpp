@@ -35,49 +35,55 @@ SyntaxTable global_syntax_table("global-syntax-table");
 
 SyntaxTable::SyntaxTable( const EmacsString &name )
 : s_name( name )
+, s_kind()
+, s_strings()
 {
     name_table.add( name, this );
 
     if( this == &global_syntax_table )
     {
-        static struct entry dull_c =
-        {
-            SYNTAX_DULL, NULL
-        };
-        static struct entry word_c =
-        {
-            SYNTAX_WORD, NULL
-        };
-
+        // QQQ - not unicode safe
         for( int i=0; i<=255; i++ )
-            global_syntax_table.s_table[i] =
-                isalnum( i ) ? word_c : dull_c;
-
-        return;
-    }
-
-    for( int i=0; i<256; i++ )
-    {
-        SyntaxString *old_entry, **new_entry;
-
-        s_table[i].s_kind = global_syntax_table.s_table[i].s_kind;
-        old_entry = global_syntax_table.s_table[i].s_strings;
-        new_entry = &s_table[i].s_strings;
-        *new_entry = NULL;
-
-        while( old_entry != NULL )
-        {
-            *new_entry = EMACS_NEW SyntaxString( *old_entry );
-            old_entry = old_entry->s_next;
-            new_entry = &(*new_entry)->s_next;
-        }
-        *new_entry = NULL;
+            if( isalnum( i ) )
+                global_syntax_table.s_kind[i] = SYNTAX_WORD;
     }
 }
 
 SyntaxTable::~SyntaxTable()
 {
     name_table.remove( s_name );
+}
+
+SyntaxKind_t SyntaxTable::getSyntaxKind( EmacsChar_t ch ) const
+{
+    EmacsCharToSyntaxKind_t::const_iterator i = s_kind.find( ch );
+    if( i == s_kind.end() )
+        return SYNTAX_DULL;
+    else
+        return i->second;
+}
+
+void SyntaxTable::eraseSyntaxKind( EmacsChar_t ch )
+{
+    EmacsCharToSyntaxKind_t::iterator i = s_kind.find( ch );
+    if( i != s_kind.end() )
+        s_kind.erase( i );
+}
+
+SyntaxString* SyntaxTable::getSyntaxStrings( EmacsChar_t ch ) const
+{
+    EmacsCharToSyntaxString_t::const_iterator i = s_strings.find( ch );
+    if( i == s_strings.end() )
+        return NULL;
+    else
+        return i->second;
+}
+
+void SyntaxTable::eraseSyntaxStrings( EmacsChar_t ch )
+{
+    EmacsCharToSyntaxString_t::iterator i = s_strings.find( ch );
+    if( i != s_strings.end() )
+        s_strings.erase( i );
 }
 
 SyntaxString::SyntaxString()
@@ -370,12 +376,12 @@ void SyntaxTable::modify_table_dull_type( const EmacsString &str1 )
         for( int ch=c; ch<=lim; ch++ )
         {
             // this test prevents a recursive loop
-            if( s_table[ch].s_kind != SYNTAX_DULL )
+            if( getSyntaxKind( ch ) != SYNTAX_DULL )
             {
-                s_table[ch].s_kind = SYNTAX_DULL;
+                eraseSyntaxKind( ch );  // sets to DULL
 
-                SyntaxString *cur = s_table[ch].s_strings;
-                s_table[ch].s_strings = NULL;
+                SyntaxString *cur = getSyntaxStrings( ch );
+                eraseSyntaxStrings( ch );
 
                 while( cur != NULL )
                 {
@@ -396,7 +402,7 @@ void SyntaxTable::modify_table_dull_type( const EmacsString &str1 )
 
 void SyntaxTable::modify_table_set_simple_type( int type, int ch )
 {
-    s_table[ch].s_kind |= type;
+    s_kind[ ch ] = getSyntaxKind( ch ) | type;
 }
 
 void SyntaxTable::modify_table_set_paired_type( int type, int ch )
@@ -472,10 +478,11 @@ void SyntaxTable::add_syntax_string_to_table( int ch, SyntaxString *syn_str )
         return;
     }
 
-    s_table[ch].s_kind |= syn_str->s_kind;
+    s_kind[ ch ] = getSyntaxKind( ch ) | syn_str->s_kind;
 
     // insert this entry into the s_strings list
-    SyntaxString **ptr = &s_table[ch].s_strings;
+    SyntaxString *ptr_in_map = getSyntaxStrings( ch );
+    SyntaxString **ptr = &ptr_in_map;
     for(;;)
     {
         SyntaxString *cur = *ptr;
@@ -498,14 +505,16 @@ void SyntaxTable::add_syntax_string_to_table( int ch, SyntaxString *syn_str )
         }
         ptr = &cur->s_next;
     }
+    s_strings[ ch ] = ptr_in_map;
 }
 
 void SyntaxTable::add_paired_syntax_string_to_table( int ch, SyntaxString *syn_str )
 {
-    s_table[ch].s_kind |= syn_str->s_kind;
+    s_kind[ ch ] = getSyntaxKind( ch ) | syn_str->s_kind;
 
     // insert this entry into the s_strings list
-    SyntaxString **ptr = &s_table[ch].s_strings;
+    SyntaxString *ptr_in_map = getSyntaxStrings( ch );
+    SyntaxString **ptr = &ptr_in_map;
     for(;;)
     {
         SyntaxString *cur = *ptr;
@@ -522,7 +531,7 @@ void SyntaxTable::add_paired_syntax_string_to_table( int ch, SyntaxString *syn_s
         && cur->s_match_str == syn_str->s_match_str )
         {
             delete syn_str;
-            return;
+            break;
         }
 
         // if its a duplicate main_str then walk the alt chain
@@ -534,6 +543,7 @@ void SyntaxTable::add_paired_syntax_string_to_table( int ch, SyntaxString *syn_s
                 if( alt->s_match_str == syn_str->s_match_str )
                 {
                     EMACS_FREE( syn_str );
+                    s_strings[ ch ] = ptr_in_map;
                     return;
                 }
                 alt = alt->s_alt_matching;
@@ -541,11 +551,12 @@ void SyntaxTable::add_paired_syntax_string_to_table( int ch, SyntaxString *syn_s
             // add to alt chain
             syn_str->s_alt_matching = cur->s_alt_matching;
             cur->s_alt_matching = syn_str;
-            return;
+            break;
         }
 
         ptr = &cur->s_next;
     }
+    s_strings[ ch ] = ptr_in_map;
 }
 
 // old style syntax table modification interface
@@ -602,10 +613,11 @@ int modify_syntax_entry( void )
         // other string from. Note that the old style syntax
         // table only works with a single comment defined
         //
+        // QQQ - not unicode safe
         for( int i=0; i<256; i++ )
             if( bf_cur->char_is( i, SYNTAX_TYPE_COMMENT1 ) )
             {
-                SyntaxString *cur = syntax.s_table[i].s_strings;
+                SyntaxString *cur = syntax.getSyntaxStrings( i );
 
                 while( cur )
                 {
@@ -721,7 +733,7 @@ static int paren_scan(int stop_at_newline, int forw)
                     return 0;
             }
             c = bf_cur->char_at( dot - 1 );
-            k = s->s_table[c].s_kind;
+            k = s->getSyntaxKind( c );
             sc = bf_cur->syntax_at( dot - 1 );
 
             if( stop_at_newline && c == '\n' && paren_level == 0 )
@@ -736,7 +748,7 @@ static int paren_scan(int stop_at_newline, int forw)
                         error( "Too many unmatched parenthesis" );
                     else
                     {
-                        SyntaxString *cur = s->s_table[c].s_strings;
+                        SyntaxString *cur = s->getSyntaxStrings( c );
 
                         while( cur != NULL )
                         {
@@ -786,8 +798,8 @@ static int paren_scan(int stop_at_newline, int forw)
                     return 0;
             }
             c = bf_cur->char_at( dot - 1 );
-            k = s->s_table[c].s_kind;
-            if( s->s_table[p_c].s_kind&SYNTAX_PREFIX_QUOTE )
+            k = s->getSyntaxKind( c );
+            if( s->getSyntaxKind( p_c )&SYNTAX_PREFIX_QUOTE )
                 k = SYNTAX_WORD;
             if( ((! in_string) || (c == matching_quote))
             && (k&SYNTAX_STRING_MASK) != 0 )
@@ -808,7 +820,7 @@ static int paren_scan(int stop_at_newline, int forw)
                         error( "Too many unmatched parenthesis" );
                     else
                     {
-                        SyntaxString *cur = s->s_table[c].s_strings;
+                        SyntaxString *cur = s->getSyntaxStrings( c );
 
                         while( cur != NULL )
                         {
@@ -875,7 +887,6 @@ int forward_paren( void )
 // Function to dump syntax table to buffer in human-readable format
 int dump_syntax_table( void )
 {
-    int j;
     EmacsBufferRef old( bf_cur );
 
     SyntaxTable *p = getword( SyntaxTable::, ": dump-syntax-table " );
@@ -884,17 +895,18 @@ int dump_syntax_table( void )
 
     EmacsBuffer::scratch_bfn( "Syntax table", interactive() );
     bf_cur->ins_cstr( FormatString("Syntax table: %s\n") << p->s_name );
-    bf_cur->ins_str("Character    Syntatic Characteristics\n"
+    bf_cur->ins_str(
+        "Character       Syntatic Characteristics\n"
         "----------------------------------------\n" );
 
     int i = 0;
     while( i < 256 )
     {
-        j = i;
+        int j = i;
         while( j < 255
-        && p->s_table[i].s_kind == p->s_table[j+1].s_kind
-        && p->s_table[i].s_strings == NULL
-        && p->s_table[j+1].s_strings == NULL )
+        && p->getSyntaxKind( i ) == p->getSyntaxKind( j+1 )
+        && p->getSyntaxStrings( i ) == NULL
+        && p->getSyntaxStrings( j+1 ) == NULL )
             j++;
 
         EmacsString char_range;
@@ -914,35 +926,35 @@ int dump_syntax_table( void )
 
 
         EmacsString syntax_kinds;
-        if( p->s_table[i].s_kind == SYNTAX_DULL )
+        if( p->getSyntaxKind( i ) == SYNTAX_DULL )
             syntax_kinds = "Dull";
-        if( p->s_table[i].s_kind&SYNTAX_WORD )
+        if( p->getSyntaxKind( i )&SYNTAX_WORD )
             syntax_kinds = "Word";
-        if( p->s_table[i].s_kind&SYNTAX_BEGIN_PAREN )
+        if( p->getSyntaxKind( i )&SYNTAX_BEGIN_PAREN )
         {
             if( !syntax_kinds.isNull() )
                 syntax_kinds.append( ", " );
             syntax_kinds.append( "Open paren" );
         }
-        if( p->s_table[i].s_kind&SYNTAX_END_PAREN )
+        if( p->getSyntaxKind( i )&SYNTAX_END_PAREN )
         {
             if( !syntax_kinds.isNull() )
                 syntax_kinds.append( ", " );
             syntax_kinds.append( "Close paren" );
         }
-        if( p->s_table[i].s_kind&SYNTAX_COMMENT_MASK )
+        if( p->getSyntaxKind( i )&SYNTAX_COMMENT_MASK )
         {
             if( !syntax_kinds.isNull() )
                 syntax_kinds.append( ", " );
             syntax_kinds.append( "Comment");
         }
-        if( p->s_table[i].s_kind&SYNTAX_STRING_MASK )
+        if( p->getSyntaxKind( i )&SYNTAX_STRING_MASK )
         {
             if( !syntax_kinds.isNull() )
                 syntax_kinds.append( ", " );
             syntax_kinds.append( "String");
         }
-        if( p->s_table[i].s_kind&SYNTAX_PREFIX_QUOTE )
+        if( p->getSyntaxKind( i )&SYNTAX_PREFIX_QUOTE )
         {
             if( !syntax_kinds.isNull() )
                 syntax_kinds.append( ", " );
@@ -952,7 +964,7 @@ int dump_syntax_table( void )
         bf_cur->ins_cstr( FormatString("%13s   %s\n") << char_range << syntax_kinds );
 
         EmacsString syntax_details;
-        SyntaxString *cur = p->s_table[i].s_strings;
+        SyntaxString *cur = p->getSyntaxStrings( i );
         while( cur != NULL )
         {
             switch( cur->s_kind )
@@ -1178,7 +1190,7 @@ int syntax_loc( void )
         else
         if( bf_cur->char_is( c, SYNTAX_COMMENT_MASK ) )
         {
-            SyntaxString *cur = bf_cur->b_mode.md_syntax->s_table[c].s_strings;
+            SyntaxString *cur = bf_cur->b_mode.md_syntax->getSyntaxStrings( c );
             while( cur != NULL )
             {
                 if( (cur->s_kind&SYNTAX_COMMENT_MASK) != 0
@@ -1219,7 +1231,7 @@ static int scan_comment( int i, SyntaxString *comment )
 bool SyntaxString::last_is_word( const SyntaxTable &table ) const
 {
     EmacsChar_t last_char = s_main_str[-1];
-    return (table.s_table[ last_char ].s_kind&SYNTAX_WORD) != 0;
+    return (table.getSyntaxKind( last_char )&SYNTAX_WORD) != 0;
 }
 
 //
@@ -1477,7 +1489,7 @@ bool EmacsBuffer::syntax_fill_in_array( int required )
     for( ; pos<=limit; pos++ )
     {
         EmacsChar_t c = char_at(pos);
-        struct SyntaxTable::entry *entry = &b_mode.md_syntax->s_table[c];
+        SyntaxKind_t kind = b_mode.md_syntax->getSyntaxKind( c );
 
         if( c == '\n' )
             cant_1line_opt = 1;
@@ -1488,7 +1500,7 @@ bool EmacsBuffer::syntax_fill_in_array( int required )
         _dbg_msg( FormatString("state: %s, pos: %d, s_kind: %s, c: %C, s: %s")
                 << state_to_string( state )
                 << pos
-                << syntax_bits_as_string( entry->s_kind )
+                << syntax_bits_as_string( kind )
                 << c
                 << syntax_bits_as_string( syntax_at( pos ) ) );
 #endif
@@ -1499,9 +1511,9 @@ bool EmacsBuffer::syntax_fill_in_array( int required )
             && (syntax_at( pos )&SYNTAX_MULTI_CHAR_TYPES) == 0 )
                 return true;
 
-            if( entry->s_kind&SYNTAX_COMMENT_MASK )
+            if( kind&SYNTAX_COMMENT_MASK )
             {
-                comment = entry->s_strings;
+                comment = b_mode.md_syntax->getSyntaxStrings( c );
                 while( comment != NULL )
                 {
                     int len;
@@ -1520,9 +1532,9 @@ bool EmacsBuffer::syntax_fill_in_array( int required )
                 }
             }
 
-            if( entry->s_kind&SYNTAX_STRING_MASK )
+            if( kind&SYNTAX_STRING_MASK )
             {
-                string = entry->s_strings;
+                string = b_mode.md_syntax->getSyntaxStrings( c );
                 while( string != NULL )
                 {
                     int len;
@@ -1544,10 +1556,10 @@ bool EmacsBuffer::syntax_fill_in_array( int required )
             //
             // a keyword may start each time a word to nonword OR nonword to word boundary is crossed
             //
-            if( entry->s_kind&SYNTAX_KEYWORD_MASK
-            && !(((entry->s_kind&SYNTAX_WORD) != 0) && ((syntax_at(pos-1)&SYNTAX_WORD) != 0)) )
+            if( kind&SYNTAX_KEYWORD_MASK
+            && !(((kind&SYNTAX_WORD) != 0) && ((syntax_at( pos-1 )&SYNTAX_WORD) != 0)) )
             {
-                SyntaxString *keyword = entry->s_strings;
+                SyntaxString *keyword = b_mode.md_syntax->getSyntaxStrings( c );
 
                 while( keyword != NULL )
                 {
@@ -1573,7 +1585,7 @@ bool EmacsBuffer::syntax_fill_in_array( int required )
                     goto for_loop_end;
             }
 
-            if( entry->s_kind&SYNTAX_WORD )
+            if( kind&SYNTAX_WORD )
                 set_syntax_at( pos, SYNTAX_WORD );
             else
                 set_syntax_at( pos, SYNTAX_DULL );
@@ -1663,8 +1675,8 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
     int limit = s->syntax_valid;
     for( ; pos<=limit; pos++ )
     {
-        EmacsChar_t c = char_at(pos);
-        struct SyntaxTable::entry *entry = &b_mode.md_syntax->s_table[c];
+        EmacsChar_t c = char_at( pos );
+        SyntaxKind_t kind = b_mode.md_syntax->getSyntaxKind( c );
 
         if( c == '\n' )
             cant_1line_opt = 1;
@@ -1675,7 +1687,7 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
         _dbg_msg( FormatString("state: %s, pos: %d, s_kind: %s, c: %C, s: %s")
                 << state_to_string( state )
                 << pos
-                << syntax_bits_as_string( entry->s_kind )
+                << syntax_bits_as_string( kind )
                 << c
                 << syntax_bits_as_string( syntax_at( pos ) ) );
 #endif
@@ -1686,9 +1698,9 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
             && (syntax_at( pos )&SYNTAX_MULTI_CHAR_TYPES) == 0 )
                 return;
 
-            if( entry->s_kind&SYNTAX_COMMENT_MASK )
+            if( kind&SYNTAX_COMMENT_MASK )
             {
-                comment = entry->s_strings;
+                comment = b_mode.md_syntax->getSyntaxStrings( c );
                 while( comment != NULL )
                 {
                     int len;
@@ -1707,9 +1719,9 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
                 }
             }
 
-            if( entry->s_kind&SYNTAX_STRING_MASK )
+            if( kind&SYNTAX_STRING_MASK )
             {
-                string = entry->s_strings;
+                string = b_mode.md_syntax->getSyntaxStrings( c );
                 while( string != NULL )
                 {
                     int len;
@@ -1731,10 +1743,10 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
             //
             // a keyword may start each time a word to nonword OR nonword to word boundary is crossed
             //
-            if( (entry->s_kind&SYNTAX_KEYWORD_MASK) != 0
-            && !(((entry->s_kind&SYNTAX_WORD) != 0) && ((syntax_at(pos-1)&SYNTAX_WORD) != 0)) )
+            if( (kind&SYNTAX_KEYWORD_MASK) != 0
+            && !(((kind&SYNTAX_WORD) != 0) && ((syntax_at(pos-1)&SYNTAX_WORD) != 0)) )
             {
-                SyntaxString *keyword = entry->s_strings;
+                SyntaxString *keyword = b_mode.md_syntax->getSyntaxStrings( c );
 
                 while( keyword != NULL )
                 {
@@ -1760,7 +1772,7 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
                     goto for_loop_end;
             }
 
-            if( entry->s_kind&SYNTAX_WORD )
+            if( kind&SYNTAX_WORD )
                 set_syntax_at( pos, SYNTAX_WORD );
             else
                 set_syntax_at( pos, SYNTAX_DULL );

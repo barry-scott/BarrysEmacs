@@ -16,19 +16,27 @@ typedef unsigned int EmacsChar_t;
 #include <emunicode.h>
 
 #include <algorithm>
-#include <map>
 
 #include <em_unicode_data.h>
 
-typedef std::map<EmacsChar_t, EmacsChar_t> EmacsCharToCharMap;
 
-EmacsCharToCharMap __to_upper;
-EmacsCharToCharMap __to_lower;
-EmacsCharToCharMap __to_title;
-EmacsCharToCharMap __casefold;
+EmacsCharToCharMap_t __to_upper;
+EmacsCharToCharMap_t __to_lower;
+EmacsCharToCharMap_t __to_title;
+EmacsCharToCharMap_t __casefold;
+EmacsCharCategorySet_t __alphabetic;
+EmacsCharCategorySet_t __numeric;
 
 void init_unicode()
 {
+    for( struct unicode_category *p = unicode_init_numeric; p->code_point != 0; ++p )
+    {
+        __numeric.insert( p->code_point );
+    }
+    for( struct unicode_category *p = unicode_init_alphabetic; p->code_point != 0; ++p )
+    {
+        __alphabetic.insert( p->code_point );
+    }
     for( struct unicode_data *p = unicode_init_to_upper; p->code_point != 0; ++p )
     {
         __to_upper[ p->code_point ] = p->replacement;
@@ -47,6 +55,36 @@ void init_unicode()
     }
 }
 
+bool unicode_is_num( EmacsChar_t code_point )
+{
+    return __numeric.count( code_point ) != 0;
+}
+
+EmacsCharCategorySet_t::const_iterator getNumericBegin()
+{
+    return __numeric.begin();
+}
+
+EmacsCharCategorySet_t::const_iterator getNumericEnd()
+{
+    return __numeric.end();
+}
+
+bool unicode_is_alpha( EmacsChar_t code_point )
+{
+    return __alphabetic.count( code_point ) != 0;
+}
+
+EmacsCharCategorySet_t::const_iterator getAlphabeticBegin()
+{
+    return __alphabetic.begin();
+}
+
+EmacsCharCategorySet_t::const_iterator getAlphabeticEnd()
+{
+    return __alphabetic.end();
+}
+
 bool unicode_is_upper( EmacsChar_t code_point )
 {
     return __to_upper.count( code_point ) > 0;
@@ -54,7 +92,7 @@ bool unicode_is_upper( EmacsChar_t code_point )
 
 EmacsChar_t unicode_to_upper( EmacsChar_t code_point )
 {
-    EmacsCharToCharMap::iterator i = __to_upper.find( code_point );
+    EmacsCharToCharMap_t::iterator i = __to_upper.find( code_point );
     if( i == __to_upper.end() )
         return code_point;
     else
@@ -68,7 +106,7 @@ bool unicode_is_lower( EmacsChar_t code_point )
 
 EmacsChar_t unicode_to_lower( EmacsChar_t code_point )
 {
-    EmacsCharToCharMap::iterator i = __to_lower.find( code_point );
+    EmacsCharToCharMap_t::iterator i = __to_lower.find( code_point );
     if( i == __to_lower.end() )
         return code_point;
     else
@@ -82,7 +120,7 @@ bool unicode_is_title( EmacsChar_t code_point )
 
 EmacsChar_t unicode_to_title( EmacsChar_t code_point )
 {
-    EmacsCharToCharMap::iterator i = __to_title.find( code_point );
+    EmacsCharToCharMap_t::iterator i = __to_title.find( code_point );
     if( i == __to_title.end() )
         return code_point;
     else
@@ -96,7 +134,7 @@ bool unicode_is_casefold( EmacsChar_t code_point )
 
 EmacsChar_t unicode_casefold( EmacsChar_t code_point )
 {
-    EmacsCharToCharMap::iterator i = __casefold.find( code_point );
+    EmacsCharToCharMap_t::iterator i = __casefold.find( code_point );
     if( i == __casefold.end() )
         return code_point;
     else
