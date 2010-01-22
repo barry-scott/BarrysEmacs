@@ -331,9 +331,9 @@ private:
     enum arg_type { argNone, argString, argInt };
 
     void process_format();
-    int next_format_char();
+    EmacsChar_t next_format_char();
 
-    void put( int ch );
+    void put( EmacsChar_t );
     void put( const EmacsChar_t *chars, unsigned int len );
 
     void print_decimal( long int );
@@ -347,8 +347,8 @@ private:
     arg_type next_arg_type;
     arg_type next_width_type;
     arg_type next_precision_type;
-    char format_char;
-    char pad_char;
+    EmacsChar_t format_char;
+    EmacsChar_t pad_char;
 
     int width;
     int precision;

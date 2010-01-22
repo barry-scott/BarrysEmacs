@@ -111,7 +111,7 @@ void KeyMap::addBinding( EmacsChar_t c, BoundName *proc )
 void KeyMap::removeBinding( EmacsChar_t c )
 {
     EmacsCharToBoundName_t::iterator i = k_binding.find( c );
-    if( k_binding[c] != NULL )
+    if( i != k_binding.end() )
     {
         free_sexpr_defun( i->second );
         k_binding.erase( i );

@@ -11,7 +11,7 @@
 (error-occurred (execute-mlisp-file "escape_sequence_strings"))
 (progn char
     (setq char 0)
-    (while (< char 65536)
+    (while (< char 512)
 	(bind-to-key "self-insert" (char-to-string char))
 	(setq char (+ 1 char))
     )

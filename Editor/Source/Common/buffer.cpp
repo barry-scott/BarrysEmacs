@@ -768,7 +768,7 @@ int EmacsBuffer::gap_room(int k)
 
 ModeSpecific::ModeSpecific()
     : md_abbrev( NULL )
-    , md_syntax( &global_syntax_table )
+    , md_syntax( global_syntax_table )
     , md_rightmargin( (int)default_right_margin )
     , md_leftmargin( (int)default_left_margin )
     , md_commentcolumn( (int)default_comment_column )

@@ -135,7 +135,7 @@ extern SystemExpressionRepresentationIntPositive checkpoint_frequency;
 extern FileAutoMode *auto_list;
 extern BoundName *checkpoint_proc;
 extern SystemExpressionRepresentationIntBoolean force_redisplay;
-extern SyntaxTable global_syntax_table;
+extern SyntaxTable *global_syntax_table;
 extern AbbrevTable global_abbrev;
 extern EmacsBuffer *buffers;
 extern volatile int interrupt_key_struck;

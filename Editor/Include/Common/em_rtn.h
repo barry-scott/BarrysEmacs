@@ -45,7 +45,7 @@ extern void void_result( void );
 extern BoundName *lookup_boundname_keys( KeyMap *kmap, EmacsString keys );
 extern KeyMap *lookup_keymap_keys( KeyMap *kmap, EmacsString keys );
 extern KeyMap *define_keymap( const EmacsString &name );
-extern void scan_map( KeyMap *kmap, void (*proc)( BoundName *b, EmacsString &keys, int range ), int fold_case );
+extern void scan_map( KeyMap *kmap, void (*proc)( BoundName *b, EmacsString &keys, int range ), bool fold_case );
 extern EmacsString key_to_str( const EmacsString &keys, bool replace_key_names=true );
 extern int forward_word( void );
 extern int backward_word( void );

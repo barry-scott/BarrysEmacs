@@ -18,7 +18,7 @@ typedef unsigned int EmacsChar_t;
 #include <algorithm>
 
 #include <em_unicode_data.h>
-
+#include <iostream>
 
 EmacsCharToCharMap_t __to_upper;
 EmacsCharToCharMap_t __to_lower;
@@ -31,27 +31,39 @@ void init_unicode()
 {
     for( struct unicode_category *p = unicode_init_numeric; p->code_point != 0; ++p )
     {
-        __numeric.insert( p->code_point );
+        if( (sizeof( EmacsChar_t ) == 2 && p->code_point <= 65535)
+        || sizeof( EmacsChar_t ) >= 4 )
+            __numeric.insert( p->code_point );
     }
     for( struct unicode_category *p = unicode_init_alphabetic; p->code_point != 0; ++p )
     {
-        __alphabetic.insert( p->code_point );
+        if( (sizeof( EmacsChar_t ) == 2 && p->code_point <= 65535)
+        || sizeof( EmacsChar_t ) >= 4 )
+            __alphabetic.insert( p->code_point );
     }
     for( struct unicode_data *p = unicode_init_to_upper; p->code_point != 0; ++p )
     {
-        __to_upper[ p->code_point ] = p->replacement;
+        if( (sizeof( EmacsChar_t ) == 2 && p->code_point <= 65535 && p->replacement <= 65535 )
+        || sizeof( EmacsChar_t ) >= 4 )
+            __to_upper[ p->code_point ] = p->replacement;
     }
     for( struct unicode_data *p = unicode_init_to_lower; p->code_point != 0; ++p )
     {
-        __to_lower[ p->code_point ] = p->replacement;
+        if( (sizeof( EmacsChar_t ) == 2 && p->code_point <= 65535 && p->replacement <= 65535 )
+        || sizeof( EmacsChar_t ) >= 4 )
+            __to_lower[ p->code_point ] = p->replacement;
     }
     for( struct unicode_data *p = unicode_init_to_title; p->code_point != 0; ++p )
     {
-        __to_title[ p->code_point ] = p->replacement;
+        if( (sizeof( EmacsChar_t ) == 2 && p->code_point <= 65535 && p->replacement <= 65535 )
+        || sizeof( EmacsChar_t ) >= 4 )
+            __to_title[ p->code_point ] = p->replacement;
     }
     for( struct unicode_data *p = unicode_init_casefold; p->code_point != 0; ++p )
     {
-        __casefold[ p->code_point ] = p->replacement;
+        if( (sizeof( EmacsChar_t ) == 2 && p->code_point <= 65535 && p->replacement <= 65535 )
+        || sizeof( EmacsChar_t ) >= 4 )
+            __casefold[ p->code_point ] = p->replacement;
     }
 }
 

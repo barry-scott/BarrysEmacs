@@ -1,5 +1,5 @@
-//    Copyright (c) 1982-1993
-//      Barry A. Scott and nick Emery
+//    Copyright (c) 1984-2010
+//      Barry A. Scott
 
 //
 //    doprint.c
@@ -15,6 +15,17 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
+inline bool control_character( int c)
+{
+    if( c >= 0x0000 && c <= 0x001f )
+        return true;
+    if( c == 0x007f )
+        return true;
+    if( c >= 0x0080 && c <= 0x009f )
+        return true;
+
+    return false;
+}
 
 //
 //  The only format characters used by emacs are
@@ -141,10 +152,10 @@ FormatString &FormatString::operator <<( const EmacsChar_t *v )
     return *this;
 }
 
-int FormatString::next_format_char()
+EmacsChar_t FormatString::next_format_char()
 {
     if( next_format_char_index >= format.length() )
-        return -1;
+        return 0;
 
     return format[next_format_char_index++];
 }
@@ -153,21 +164,19 @@ extern EmacsString os_error_code( unsigned int code );
 
 void FormatString::process_format()
 {
-    int    ch;
-
     // finish off the last arg found
     if( next_arg_type != argNone )
     {
         switch( format_char )
         {
         case 'c':
-            put( (char) intArg );
+            put( intArg );
             break;
 
         case 'C':    // ensure are in a printable char
         {
-            char ch = (char) intArg;
-            if( ch < ' ' || ch >= '\177' )
+            EmacsChar_t ch = intArg;
+            if( control_character( ch ) )
                 ch = '.';
             put( ch );
         }
@@ -278,7 +287,8 @@ void FormatString::process_format()
     left_justify = 0;
 
     // process upto the next arg
-    while( (ch = next_format_char()) >= 0 )
+    EmacsChar_t ch;
+    while( (ch = next_format_char()) > 0 )
     {
         if( ch != '%' )
         {
@@ -330,7 +340,7 @@ void FormatString::process_format()
 
         format_char = (char)ch;
         switch( ch )
-    {
+        {
         case -1:    // end of format string
             return;
         case '%':
@@ -355,7 +365,7 @@ void FormatString::process_format()
 
         default:
             throw EmacsInternalError( "FormatString - unknown format char" );
-    }
+        }
     }
 }
 
@@ -378,9 +388,9 @@ void FormatString::print_string( const EmacsString &str )
 }
 
 
-void FormatString::put( int c )
+void FormatString::put( EmacsChar_t c )
 {
-    result.append( (unsigned char)c );
+    result.append( c );
 }
 
 void FormatString::put( const EmacsChar_t *str, unsigned int len )
@@ -390,8 +400,7 @@ void FormatString::put( const EmacsChar_t *str, unsigned int len )
 
 void FormatString::print_decimal( long int n )
 {
-    unsigned char digits[12];
-    int i;
+    EmacsChar_t digits[12];
 
     if( (unsigned long int)n == 0x80000000 )
     {
@@ -406,7 +415,7 @@ void FormatString::print_decimal( long int n )
         n = -n;
     }
 
-    i = 0;
+    int i = 0;
     do
     {
         digits[i] = (char) ((n % 10) + '0');

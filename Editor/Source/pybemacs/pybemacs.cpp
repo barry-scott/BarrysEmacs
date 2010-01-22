@@ -46,6 +46,7 @@ extern void init_abs( void );
 extern void init_key( void );
 extern void init_fncs2( void );
 extern void init_unicode( void );
+extern void init_syntax( void );
 
 class BemacsEditor;
 
@@ -108,6 +109,7 @@ public:
     {
         init_memory();
         init_unicode();
+        init_syntax();
         init_display();                         // " the core display system
 
         init_fncs();                            // initialise the key bindings

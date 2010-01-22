@@ -23,15 +23,15 @@ int describe_key( void );
 int local_binding_of( void );
 int global_binding_of( void );
 static int binding_of_inner(int local_bind);
-void scan_map( KeyMap *kmap, void (*proc)( BoundName *b, EmacsString &keys, int range ), int fold_case );
-static void scan_map_inner( KeyMap *kmap, void (*proc)( BoundName *b, EmacsString &keys, int range ), struct key_scan_history *history, EmacsString keys, int fold_case );
+void scan_map( KeyMap *kmap, void (*proc)( BoundName *b, EmacsString &keys, int range ), bool fold_case );
+static void scan_map_inner( KeyMap *kmap, void (*proc)( BoundName *b, EmacsString &keys, int range ), struct key_scan_history *history, EmacsString keys, bool fold_case );
 static void describe1( BoundName *b, EmacsString &keys, int range );
 int describe_bindings( void );
 int define_keyboard_macro( void );
 int define_string_macro( void );
 int bind_to_key( void );
 int local_bind_to_key( void );
-static int bind_to_key_inner(int local_bind);
+static int bind_to_key_inner( bool local_bind );
 int remove_binding( void );
 int use_global_map( void );
 int use_local_map( void );
@@ -125,21 +125,24 @@ EmacsString key_to_str( const EmacsString &keys, bool replace_key_names )
                     buf.append( (EmacsChar_t)(ch + '@') );
                 }
                 else
-                if( (ch >= 32 && ch <= 126)
-                || (ch >= 161 && ch <= 254) )
-                    buf.append( ch );
+                if( ch == ' ' )
+                {
+                    buf.append( "SP" );
+                }
                 else
                 if( ch == 127 )
                 {
                     buf.append( "^?" );
                 }
                 else
+                if( (ch >= 0x80 && ch <= 0x9f)
+                || ch == 0xff )
                 {
-                    buf.append( '\\' );
-                    buf.append( (EmacsChar_t)(((ch>>6)&7) + '0') );
-                    buf.append( (EmacsChar_t)(((ch>>3)&7) + '0') );
-                    buf.append( (EmacsChar_t)((ch&7) + '0') );
+                    buf.append( "\\x" );
+                    buf.append( FormatString("%x") << ch );
                 }
+                else
+                    buf.append( ch );
             }
         }
         if( i < (keys.length()-1) )
@@ -265,7 +268,7 @@ void scan_map
     (
     KeyMap *kmap,
     void (*proc)( BoundName *b, EmacsString &keys, int range ),
-    int fold_case
+    bool fold_case
     )
 {
     EmacsString keys;
@@ -279,7 +282,7 @@ static void scan_map_inner
     void (*proc)( BoundName *b, EmacsString &keys, int range ),
     struct key_scan_history *history,
     EmacsString keys,        // get a copy not a ref - important
-    int fold_case
+    bool fold_case
     )
 {
     struct key_scan_history hist;
@@ -293,30 +296,36 @@ static void scan_map_inner
     // QQQ - not unicode safe
 
     EmacsChar_t c = 0;
-    while( c <= 255 )
+    while( c <= 512 )
     {
         EmacsChar_t c2 = c + 1;
 
         BoundName *b = kmap->getBinding( c );
 
-        if( b != NULL
-        && (! fold_case || ! unicode_is_upper( c )
-            || (b != kmap->getBinding( unicode_to_lower( c ) ))) )
+        if( !fold_case
+        || !unicode_is_upper( c )
+        || (b != kmap->getBinding( unicode_to_lower( c ) )) )
         {
             keys[last_char] = c;
 
-            while( c2 <= 255
-            && (kmap->getBinding( c2 ) == b) )
+            while( c2 < 512
+            && (kmap->getBinding( c2 ) == b)
+            && (c < c2 && !(c2 == 0x20 || c2 == 0xa0 || c2 == 0x7f || c2 == 0x80 || c2 == 0xff || c2 == 0x100)) )
                 c2++;
-            proc( b, keys, c2 - c );
-            if( b->getKeyMap() != NULL )
+
+            if( b != NULL || kmap == current_global_map )
             {
-                struct key_scan_history *h;
-                h = history;
-                while( h != 0 && h->hist_this != kmap )
-                    h = h->hist_prev;
-                if( h == 0 )
-                    scan_map_inner( b->getKeyMap(), proc, &hist, keys, fold_case );
+                proc( b, keys, c2 - c );
+                if( b != NULL && b->getKeyMap() != NULL )
+                {
+                    struct key_scan_history *h = history;
+
+                    while( h != NULL && h->hist_this != kmap )
+                        h = h->hist_prev;
+
+                    if( h == NULL )
+                        scan_map_inner( b->getKeyMap(), proc, &hist, keys, fold_case );
+                }
             }
         }
         c = c2;
@@ -342,14 +351,20 @@ static void describe1
     if( range > 1 )
     {
         keys[ len - 1 ] = keys[ len - 1 ] + range - 1;
-        bf_cur->ins_cstr( "..", 2 );
+        bf_cur->ins_cstr( " .. ", 4 );
         s = key_to_str( keys, arg == 1 );
         bf_cur->ins_cstr( s );
-        indent = indent + s.length() + 2;
-        keys[len - 1] = keys[ len - 1 ] - range - 1;
+        indent = indent + s.length() + 4;
+        keys[ len - 1 ] = keys[ len - 1 ] - range - 1;
     }
 
     bf_cur->ins_cstr( "                                ", 32 - min( indent, 31 ) );
+
+    if( b == NULL )
+    {
+        bf_cur->ins_cstr( "<unbound>" );
+    }
+    else
     if( b->b_proc_name == sexpr_defun )
     {
         EmacsString str = decompile( b->getProcedure(), 1, 0, 1 );
@@ -371,18 +386,18 @@ int describe_bindings( void )
     bf_cur->ins_str("Global Bindings (" );
     bf_cur->ins_cstr( current_global_map->k_name );
     bf_cur->ins_str( "):\n"
-        "Key                Binding\n"
-        "---                -------\n" );
+        "Key                             Binding\n"
+        "---                             -------\n" );
 
-    scan_map( current_global_map, describe1, 1 );
+    scan_map( current_global_map, describe1, false );
 
-    if( local_map != 0 )
+    if( local_map != NULL )
     {
         bf_cur->ins_str( "\nLocal bindings (" );
         bf_cur->ins_cstr( local_map->k_name );
         bf_cur->ins_str( "):\n" );
 
-        scan_map( local_map, describe1, 0 );
+        scan_map( local_map, describe1, false );
     }
 
     beginning_of_file();
@@ -442,15 +457,15 @@ int define_string_macro( void )
 
 int bind_to_key( void )
 {
-    return bind_to_key_inner( 0 );
+    return bind_to_key_inner( false );
 }
 
 int local_bind_to_key( void )
 {
-    return bind_to_key_inner( 1 );
+    return bind_to_key_inner( true );
 }
 
-static int bind_to_key_inner( int local_bind )
+static int bind_to_key_inner( bool local_bind )
 {
     EmacsString string;
     BoundName *b = NULL;
@@ -658,7 +673,7 @@ static void perform_bind
     //
     int level = p.length();
     int i;
-    for( i=0; i<=level-2; i++ )
+    for( i=0; i<level-1; i++ )
     {
         EmacsChar_t ch( p[i] );
         b = k->getBinding( ch );
@@ -681,40 +696,30 @@ static void perform_bind
 
 int remove_binding( void )
 {
-    // QQQ - is c and ml_value.asString() the same? If not what is the difference?
-    EmacsString c = get_key( current_global_map, u_str(": remove-binding ") );
-    if( c.length() > 0 && !ml_err )
+    EmacsString keys = get_key( current_global_map, u_str(": remove-binding ") );
+    if( !keys.isNull() && !ml_err )
     {
-        EmacsString keys( ml_value.asString() );
-        if( keys.isNull() )
-            return 0;
-
         KeyMap *kmap = lookup_keymap_keys( current_global_map, keys );
         if( kmap != NULL )
             kmap->removeBinding( keys[-1] );
     }
+
     void_result ();
     return 0;
 }
 
 int remove_local_binding( void )
 {
-    // QQQ - is c and ml_value.asString() the same? If not what is the difference?
     initialize_local_map();
-    EmacsString c = get_key( bf_cur->b_mode.md_keys, u_str(": remove-local-binding ") );
-    if( !c.isNull() && !ml_err )
+    EmacsString keys = get_key( bf_cur->b_mode.md_keys, u_str(": remove-local-binding ") );
+    if( !keys.isNull() && !ml_err )
     {
-        EmacsString keys( ml_value.asString() );
-        if( keys.isNull() )
-            return 0;
-
-        KeyMap *kmap = lookup_keymap_keys( current_global_map, keys );
+        KeyMap *kmap = lookup_keymap_keys( bf_cur->b_mode.md_keys, keys );
         if( kmap != NULL )
             kmap->removeBinding( keys[-1] );
     }
 
     void_result();
-
     return 0;
 }
 
@@ -1394,7 +1399,7 @@ static void decompile_string( EmacsString &str )
     {
         int ch;
         ch = str[i];
-        if( ch < ' ' )
+        if( ch < ' ' || ch == 0x7f )
         {
             unsigned char *x;
             switch( ch )

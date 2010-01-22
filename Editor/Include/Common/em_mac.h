@@ -45,9 +45,16 @@ inline void dot_left( int n )
     set_dot( dot - n );
 }
 
-inline int control_character( int c)
+inline bool control_character( int c)
 {
-    return (c & 0x7F) < ' ' || (c & 0x7f) == 0x7F;
+    if( c >= 0x0000 && c <= 0x001f )
+        return true;
+    if( c == 0x007f )
+        return true;
+    if( c >= 0x0080 && c <= 0x009f )
+        return true;
+
+    return false;
 }
 
 //

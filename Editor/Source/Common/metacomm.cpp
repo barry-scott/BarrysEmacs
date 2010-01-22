@@ -284,8 +284,8 @@ static void apropos_command_inner( const EmacsString &keyword, KeyMap *local_map
         apropos_keys = "";
         apropos_target = BoundName::find( *word );
 
-        scan_map( current_global_map, apropos_helper, 1 );
-        scan_map( local_map, apropos_helper, 1 );
+        scan_map( current_global_map, apropos_helper, true );
+        scan_map( local_map, apropos_helper, true );
 
         EmacsString buf;
         if( !apropos_keys.isNull() )
@@ -298,7 +298,7 @@ static void apropos_command_inner( const EmacsString &keyword, KeyMap *local_map
 }
 
 int apropos_variable( void )
-{                // ^X-?
+{
     EmacsString keyword;
     EmacsBufferRef old( bf_cur );
     keyword = getnbstr( u_str(": apropos-variable keyword: ") );

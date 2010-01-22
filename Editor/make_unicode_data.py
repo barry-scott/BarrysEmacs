@@ -21,7 +21,7 @@ def main( argv ):
     for line in ucd:
         parts = line.strip().split(';')
         code = parts[0]
-        category = parts[1]
+        category = parts[2]
         lower = parts[12]
         upper = parts[13]
         title = parts[14]

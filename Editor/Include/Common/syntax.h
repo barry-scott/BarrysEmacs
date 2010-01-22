@@ -4,8 +4,9 @@
 // Declarations having to do with Emacs syntax tables
 // A syntax table contains an array of information, one entry per ASCII
 // character.
-
+//
 #include <map>
+#include <list>
 
 // Syntax data for a char splits between alternatives and invariant
 // types.
@@ -108,6 +109,9 @@ struct SyntaxCharData_t
 //    keyword[12]   "keyword"   ""
 //    comment       "//"        "\n"
 //
+class SyntaxString;
+typedef std::list< SyntaxString > SyntaxStringList_t;
+
 const int SYNTAX_STRING_SIZE( 31 );
 class SyntaxString : public EmacsObject
 {
@@ -131,8 +135,7 @@ public:
 
     SyntaxKind_t s_kind;
     int s_properties;
-    SyntaxString *s_next;
-    SyntaxString *s_alt_matching;
+    SyntaxStringList_t s_alt_matching;
 
     EmacsString s_main_str;
     EmacsString s_match_str;
@@ -175,7 +178,10 @@ class SyntaxTable : public EmacsObject
 public:
     EMACS_OBJECT_FUNCTIONS( SyntaxTable )
     SyntaxTable( const EmacsString &name );
+    SyntaxTable( const EmacsString &name, const SyntaxTable &other );
     virtual ~SyntaxTable();
+
+    void q( void );
 
     static SyntaxTable *find( const EmacsString &name )
     {
@@ -219,14 +225,16 @@ public:
     SyntaxKind_t getSyntaxKind( EmacsChar_t ch ) const;
     void eraseSyntaxKind( EmacsChar_t ch );
 
-    SyntaxString *getSyntaxStrings( EmacsChar_t ch ) const;
+    bool hasSyntaxStrings( EmacsChar_t ch ) const;
+    const SyntaxStringList_t &getSyntaxStrings( EmacsChar_t ch ) const;
+    SyntaxStringList_t &getSyntaxStrings( EmacsChar_t ch );
     void eraseSyntaxStrings( EmacsChar_t ch );
 
     EmacsString s_name;
     static SyntaxNameTable name_table;
 private:
-    typedef std::map< EmacsChar_t, SyntaxKind_t >   EmacsCharToSyntaxKind_t;
-    typedef std::map< EmacsChar_t, SyntaxString * > EmacsCharToSyntaxString_t;
+    typedef std::map< EmacsChar_t, SyntaxKind_t >       EmacsCharToSyntaxKind_t;
+    typedef std::map< EmacsChar_t, SyntaxStringList_t > EmacsCharToSyntaxString_t;
 
     EmacsCharToSyntaxKind_t     s_kind;
     EmacsCharToSyntaxString_t   s_strings;
@@ -264,8 +272,8 @@ private:
     void modify_table_set_paired_type( int type, int ch );
 
     // add any type of syntax string
-    void add_syntax_string_to_table( int ch, SyntaxString *str );
+    void add_syntax_string_to_table( int ch, const SyntaxString &str );
 
     // add a paired syntax string to the table
-    void add_paired_syntax_string_to_table( int ch, SyntaxString *str );
+    void add_paired_syntax_string_to_table( int ch, const SyntaxString &str );
 };
