@@ -6,7 +6,7 @@ export RB_CFG_PLATFORM=$(uname -s)
 case ${RB_CFG_PLATFORM} in
 
 Darwin)
-    export MACOSX_DEPLOYMENT_TARGET=10.4
+    export MACOSX_DEPLOYMENT_TARGET=10.5
     echo Info: MACOSX_DEPLOYMENT_TARGET ${MACOSX_DEPLOYMENT_TARGET}
     export RB_CFG_PLATFORM=MacOSX
     ;;
