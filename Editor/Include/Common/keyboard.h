@@ -1,4 +1,4 @@
-//    Copyright (c) 1982-1997
+//    Copyright (c) 1982-2010
 //        Barry A. Scott
 // key to procedure mapping table definitions
 //

@@ -113,8 +113,6 @@ int BemacsVariables::setattr( const char *c_name, const Py::Object &value )
     return 0;
 }
 
-
-
 //================================================================================
 //
 //

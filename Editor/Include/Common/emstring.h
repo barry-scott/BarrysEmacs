@@ -233,7 +233,8 @@ private:
     static EmacsStringRepresentation *bad_value;
     inline void check_for_bad_value( EmacsStringRepresentation *rep );
 
-    void q();   // print string for debug
+public:
+    void q() const;   // print string for debug
 };
 
 class EmacsStringRepresentation : public EmacsObject

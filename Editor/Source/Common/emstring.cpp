@@ -41,9 +41,17 @@ void EmacsString::init(void)
 
 const EmacsString EmacsString::null;
 
-void EmacsString::q()
+void EmacsString::q() const
 {
-    std::cout << "EmacsString length " << length() << " utf8 \"" << sdata() << "\"" << std::endl;
+    EmacsString qstr( *this );
+
+    std::cout << "EmacsString length " << qstr.length() << " utf8 \"" << qstr.sdata() << "\"" << std::endl;
+    std::cout << "            data " << std::hex;
+    for( int i=0; i<qstr._rep->length; i++ )
+    {
+        std::cout << " 0x" << qstr._rep->data[i];
+    }
+    std::cout << std::dec << std::endl;
 }
 
 EmacsString::EmacsString( void )

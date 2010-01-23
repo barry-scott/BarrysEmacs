@@ -1,8 +1,10 @@
 //
 //    key_names.h
 //
-//    Copyright (c) 1997 Barry A. Scott
+//    Copyright (c) 1997-2010 Barry A. Scott
 //
+typedef std::map< EmacsString, EmacsString >    KeysMapping_t;
+
 class key_name_entry
 {
 public:
@@ -16,26 +18,27 @@ public:
 class key_name
 {
 public:
-    key_name( key_name_entry *_key_names, int sizeof_key_names )
-        : key_names( _key_names )
-        , num_key_names( sizeof_key_names/sizeof( key_name_entry ) )
-        , key_compressed_built( -1 )
-    { }
-    ~key_name()
-    { }
+    key_name( key_name_entry *_key_names, int sizeof_key_names );
+    key_name();
+    virtual ~key_name();
+
+    void addMapping( const EmacsString &name, const EmacsString &keys );
 
     // return the value of a named key
     EmacsString valueOfKeyName( const EmacsString &keyname );
+
     // return the name of the key that best matches the chars in keyname
     // and return the number of chars matched
     int keyNameOfValue( const EmacsString &chars, EmacsString &keyname);
 
 private:
-    void build_key_values();
+    void buildCompressedMapping();
 
-    key_name_entry *key_names;
-    const int num_key_names;
-    int key_compressed_built;
+    KeysMapping_t name_to_keys;
+    KeysMapping_t keys_to_name;
+
+    KeysMapping_t name_to_compressed_keys;
+    KeysMapping_t compressed_keys_to_name;
 };
 
 extern key_name LK201_key_names;

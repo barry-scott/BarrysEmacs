@@ -88,6 +88,7 @@ public:
 
         PYCXX_ADD_VARARGS_METHOD( inputChar, "inputChar( char, shift )" );
         PYCXX_ADD_VARARGS_METHOD( geometryChange, "geometryChange( width, height )" );
+        PYCXX_ADD_VARARGS_METHOD( setKeysMapping, "setKeysMapping( keys_mapping )" );
 
         PYCXX_ADD_KEYWORDS_METHOD( BemacsEditor_func_keyword, "BemacsEditor_func_keyword" );
 
@@ -508,6 +509,26 @@ public:
         return Py::None();
     }
     PYCXX_VARARGS_METHOD_DECL( BemacsEditor, geometryChange )
+
+    Py::Object setKeysMapping( const Py::Tuple &args )
+    {
+        Py::Dict keys_mapping( args[0] );
+        Py::List all_keys( keys_mapping.keys() );
+
+        for( size_t i=0; i < all_keys.size(); ++i )
+        {
+            Py::String py_key( all_keys[ i ] );
+            Py::String py_value( keys_mapping[ py_key ] );
+
+            EmacsString key( EmacsString::copy, py_key.unicode_data(), py_key.size() );
+            EmacsString value( EmacsString::copy, py_value.unicode_data(), py_value.size() );
+
+            PC_key_names.addMapping( key, value );
+        }
+
+        return Py::None();
+    }
+    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, setKeysMapping )
 
     //------------------------------------------------------------
     Py::Object BemacsEditor_func_keyword( const Py::Tuple &args, const Py::Dict &kwds )

@@ -39,6 +39,7 @@ class BEmacs(_bemacs.BemacsEditor):
 
         # initEditor will start calling termXxx functions - must have windows setup first
         self.initEditor()
+        self.setKeysMapping( self.window.getKeysMapping() )
         self.log.debug( 'BEmacs.initEmacsProfile() geometryChange %r %r' %
                             (self.window.term_width, self.window.term_length) )
         self.geometryChange( self.window.term_width, self.window.term_length )

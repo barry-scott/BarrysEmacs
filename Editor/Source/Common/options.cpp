@@ -95,16 +95,16 @@ EmacsString key_to_str( const EmacsString &keys, bool replace_key_names )
 
     for( int i=0; i<keys.length(); i++ )
     {
-        EmacsString value;
+        EmacsString name;
         int matched = 0;
         EmacsChar_t ch;
 
         if( replace_key_names )
-            matched = PC_key_names.keyNameOfValue( keys( i, INT_MAX ), value );
+            matched = PC_key_names.keyNameOfValue( keys( i, INT_MAX ), name );
 
         if( matched > 0 )
         {
-            buf.append( value );
+            buf.append( name );
             i = i + matched - 1;
         }
         else

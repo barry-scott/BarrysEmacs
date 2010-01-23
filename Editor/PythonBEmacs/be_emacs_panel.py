@@ -122,38 +122,184 @@ bg_colours = {
     LINE_ATTR_USER+8:       wx.Colour(255,255,255),
     }
 
+keys_mapping = {
+    u'csi':                         u'\033[',
+    u'backspace':                   u'\x7f',
+    u'ctrl-backspace':              u'\033[85~',
+    u'ctrl-delete':                 u'\033[53~',
+    u'ctrl-down':                   u'\033[58~',
+    u'ctrl-end':                    u'\033[54~',
+    u'ctrl-f1':                     u'\033[67~',
+    u'ctrl-f10':                    u'\033[78~',
+    u'ctrl-f11':                    u'\033[79~',
+    u'ctrl-f12':                    u'\033[81~',
+    u'ctrl-f2':                     u'\033[68~',
+    u'ctrl-f3':                     u'\033[69~',
+    u'ctrl-f4':                     u'\033[70~',
+    u'ctrl-f5':                     u'\033[71~',
+    u'ctrl-f6':                     u'\033[73~',
+    u'ctrl-f7':                     u'\033[74~',
+    u'ctrl-f8':                     u'\033[75~',
+    u'ctrl-f9':                     u'\033[76~',
+    u'ctrl-home':                   u'\033[51~',
+    u'ctrl-insert':                 u'\033[52~',
+    u'ctrl-left':                   u'\033[60~',
+    u'ctrl-mouse-wheel-neg':        u'\033[9#w',
+    u'ctrl-mouse-wheel-pos':        u'\033[8#w',
+    u'ctrl-page-down':              u'\033[56~',
+    u'ctrl-page-up':                u'\033[55~',
+    u'ctrl-pause':                  u'\033[84~',
+    u'ctrl-print-screen':           u'\033[82~',
+    u'ctrl-right':                  u'\033[59~',
+    u'ctrl-scroll-lock':            u'\033[83~',
+    u'ctrl-shift-delete':           u'\033[153~',
+    u'ctrl-shift-down':             u'\033[158~',
+    u'ctrl-shift-end':              u'\033[154~',
+    u'ctrl-shift-f1':               u'\033[167~',
+    u'ctrl-shift-f10':              u'\033[178~',
+    u'ctrl-shift-f11':              u'\033[179~',
+    u'ctrl-shift-f12':              u'\033[181~',
+    u'ctrl-shift-f2':               u'\033[168~',
+    u'ctrl-shift-f3':               u'\033[169~',
+    u'ctrl-shift-f4':               u'\033[170~',
+    u'ctrl-shift-f5':               u'\033[171~',
+    u'ctrl-shift-f6':               u'\033[173~',
+    u'ctrl-shift-f7':               u'\033[174~',
+    u'ctrl-shift-f8':               u'\033[175~',
+    u'ctrl-shift-f9':               u'\033[176~',
+    u'ctrl-shift-home':             u'\033[151~',
+    u'ctrl-shift-insert':           u'\033[152~',
+    u'ctrl-shift-left':             u'\033[160~',
+    u'ctrl-shift-mouse-wheel-neg':  u'\033[13#w',
+    u'ctrl-shift-mouse-wheel-pos':  u'\033[12#w',
+    u'ctrl-shift-page-down':        u'\033[156~',
+    u'ctrl-shift-page-up':          u'\033[155~',
+    u'ctrl-shift-pause':            u'\033[184~',
+    u'ctrl-shift-print-screen':     u'\033[182~',
+    u'ctrl-shift-right':            u'\033[159~',
+    u'ctrl-shift-scroll-lock':      u'\033[183~',
+    u'ctrl-shift-up':               u'\033[157~',
+    u'ctrl-up':                     u'\033[57~',
+    u'delete':                      u'\033[3~',
+    u'down':                        u'\033[B',
+    u'end':                         u'\033[4~',
+    u'f1':                          u'\033[17~',
+    u'f10':                         u'\033[28~',
+    u'f11':                         u'\033[29~',
+    u'f12':                         u'\033[31~',
+    u'f2':                          u'\033[18~',
+    u'f3':                          u'\033[19~',
+    u'f4':                          u'\033[20~',
+    u'f5':                          u'\033[21~',
+    u'f6':                          u'\033[23~',
+    u'f7':                          u'\033[24~',
+    u'f8':                          u'\033[25~',
+    u'f9':                          u'\033[26~',
+    u'home':                        u'\033[1~',
+    u'insert':                      u'\033[2~',
+    u'kp-divide':                   u'\033OQ',
+    u'kp-dot':                      u'\033On',
+    u'kp-enter':                    u'\033OM',
+    u'kp-minus':                    u'\033OS',
+    u'kp-multiple':                 u'\033OR',
+    u'kp-plus':                     u'\033Ol',
+    u'kp0':                         u'\033Op',
+    u'kp1':                         u'\033Oq',
+    u'kp2':                         u'\033Or',
+    u'kp3':                         u'\033Os',
+    u'kp4':                         u'\033Ot',
+    u'kp5':                         u'\033Ou',
+    u'kp6':                         u'\033Ov',
+    u'kp7':                         u'\033Ow',
+    u'kp8':                         u'\033Ox',
+    u'kp9':                         u'\033Oy',
+    u'left':                        u'\033[D',
+    u'menu':                        u'\202',
+    u'mouse':                       u'\033[&w',
+    u'mouse-1-down':                u'\033[2&w',
+    u'mouse-1-up':                  u'\033[3&w',
+    u'mouse-2-down':                u'\033[4&w',
+    u'mouse-2-up':                  u'\033[5&w',
+    u'mouse-3-down':                u'\033[6&w',
+    u'mouse-3-up':                  u'\033[7&w',
+    u'mouse-4-down':                u'\033[8&w',
+    u'mouse-4-up':                  u'\033[9&w',
+    u'mouse-wheel':                 u'\033[#w',
+    u'mouse-wheel-neg':             u'\033[1#w',
+    u'mouse-wheel-pos':             u'\033[0#w',
+    u'num-lock':                    u'\033OP',
+    u'page-down':                   u'\033[6~',
+    u'page-up':                     u'\033[5~',
+    u'pause':                       u'\033[34~',
+    u'print-screen':                u'\033[32~',
+    u'right':                       u'\033[C',
+    u'scroll-lock':                 u'\033[33~',
+    u'shift-delete':                u'\033[103~',
+    u'shift-down':                  u'\033[108~',
+    u'shift-end':                   u'\033[104~',
+    u'shift-f1':                    u'\033[117~',
+    u'shift-f10':                   u'\033[128~',
+    u'shift-f11':                   u'\033[129~',
+    u'shift-f12':                   u'\033[131~',
+    u'shift-f2':                    u'\033[118~',
+    u'shift-f3':                    u'\033[119~',
+    u'shift-f4':                    u'\033[120~',
+    u'shift-f5':                    u'\033[121~',
+    u'shift-f6':                    u'\033[123~',
+    u'shift-f7':                    u'\033[124~',
+    u'shift-f8':                    u'\033[125~',
+    u'shift-f9':                    u'\033[126~',
+    u'shift-home':                  u'\033[101~',
+    u'shift-insert':                u'\033[102~',
+    u'shift-kp-plus':               u'\033Om',
+    u'shift-left':                  u'\033[110~',
+    u'shift-mouse-wheel-neg':       u'\033[5#w',
+    u'shift-mouse-wheel-pos':       u'\033[4#w',
+    u'shift-page-down':             u'\033[106~',
+    u'shift-page-up':               u'\033[105~',
+    u'shift-pause':                 u'\033[134~',
+    u'shift-print-screen':          u'\033[132~',
+    u'shift-right':                 u'\033[109~',
+    u'shift-scroll-lock':           u'\033[133~',
+    u'shift-up':                    u'\033[107~',
+    u'ss3':                         u'\033O',
+    u'up':                          u'\033[A',
+    u'tab':                         u'\t',
+    u'shift-tab':                   u'\033\t',
+}
+
 special_keys = {
-#   Key code            trans         shift_trans ctrl_trans  ctrl_shift_trans
-    wx.WXK_BACK:        (u'\x7f',      None,        u'\033[85~', None),
-    wx.WXK_TAB:         (u'\t',        u'\033\t',   u'\t',       u'\033\t'),
+#   Key code            trans           shift_trans         ctrl_trans          ctrl_shift_trans
+    wx.WXK_BACK:        (u'backspace',  u'backspace',       u'ctrl-backspace',  u'ctrl-backspace'),
+    wx.WXK_TAB:         (u'tab',        u'shift-tab',       u'tab',             u'shift-tab'),
 
     # function keys
-    wx.WXK_F1:          (u'\033[17~', u'\033[117~', u'\033[67~', u'\033[167~'),
-    wx.WXK_F2:          (u'\033[18~', u'\033[118~', u'\033[68~', u'\033[168~'),
-    wx.WXK_F3:          (u'\033[19~', u'\033[119~', u'\033[69~', u'\033[169~'),
-    wx.WXK_F4:          (u'\033[20~', u'\033[120~', u'\033[70~', u'\033[170~'),
-    wx.WXK_F5:          (u'\033[21~', u'\033[121~', u'\033[71~', u'\033[171~'),
-    wx.WXK_F6:          (u'\033[23~', u'\033[123~', u'\033[73~', u'\033[173~'),
-    wx.WXK_F7:          (u'\033[24~', u'\033[124~', u'\033[74~', u'\033[174~'),
-    wx.WXK_F8:          (u'\033[25~', u'\033[125~', u'\033[75~', u'\033[175~'),
-    wx.WXK_F9:          (u'\033[26~', u'\033[126~', u'\033[76~', u'\033[176~'),
-    wx.WXK_F10:         (u'\033[28~', u'\033[128~', u'\033[78~', u'\033[178~'),
-    wx.WXK_F11:         (u'\033[29~', u'\033[129~', u'\033[79~', u'\033[179~'),
-    wx.WXK_F12:         (u'\033[31~', u'\033[131~', u'\033[81~', u'\033[181~'),
+    wx.WXK_F1:          (u'f1',         u'shift-f1',        u'ctrl-f1',         u'ctrl-shift-f1'),
+    wx.WXK_F2:          (u'f2',         u'shift-f2',        u'ctrl-f2',         u'ctrl-shift-f2'),
+    wx.WXK_F3:          (u'f3',         u'shift-f3',        u'ctrl-f3',         u'ctrl-shift-f3'),
+    wx.WXK_F4:          (u'f4',         u'shift-f4',        u'ctrl-f4',         u'ctrl-shift-f4'),
+    wx.WXK_F5:          (u'f5',         u'shift-f5',        u'ctrl-f5',         u'ctrl-shift-f5'),
+    wx.WXK_F6:          (u'f6',         u'shift-f6',        u'ctrl-f6',         u'ctrl-shift-f6'),
+    wx.WXK_F7:          (u'f7',         u'shift-f7',        u'ctrl-f7',         u'ctrl-shift-f7'),
+    wx.WXK_F8:          (u'f8',         u'shift-f8',        u'ctrl-f8',         u'ctrl-shift-f8'),
+    wx.WXK_F9:          (u'f9',         u'shift-f9',        u'ctrl-f9',         u'ctrl-shift-f9'),
+    wx.WXK_F10:         (u'f10',        u'shift-f10',       u'ctrl-f10',        u'ctrl-shift-f10'),
+    wx.WXK_F11:         (u'f11',        u'shift-f11',       u'ctrl-f11',        u'ctrl-shift-f11'),
+    wx.WXK_F12:         (u'f12',        u'shift-f12',       u'ctrl-f12',        u'ctrl-shift-f12'),
 
     # enhanced keys
-    wx.WXK_PAGEUP:      (u'\033[5~',  u'\033[105~', u'\033[55~', u'\033[155~'),
-    wx.WXK_PAGEDOWN:    (u'\033[6~',  u'\033[106~', u'\033[56~', u'\033[156~'),
-    wx.WXK_END:         (u'\033[4~',  u'\033[104~', u'\033[54~', u'\033[154~'),
-    wx.WXK_HOME:        (u'\033[1~',  u'\033[101~', u'\033[51~', u'\033[151~'),
+    wx.WXK_PAGEUP:      (u'page-up',    u'shift-page-up',   u'ctrl-page-up',    u'ctrl-shift-page-up'),
+    wx.WXK_PAGEDOWN:    (u'page-down',  u'shift-page-down', u'ctrl-page-down',  u'ctrl-shift-page-down'),
+    wx.WXK_END:         (u'end',        u'shift-end',       u'ctrl-end',        u'ctrl-shift-end'),
+    wx.WXK_HOME:        (u'home',       u'shift-home',      u'ctrl-home',       u'ctrl-shift-home'),
 
-    wx.WXK_LEFT:        (u'\033OD',   None,         u'\033[60~', None,),
-    wx.WXK_UP:          (u'\033OA',   None,         u'\033[57~', None,),
-    wx.WXK_RIGHT:       (u'\033OC',   None,         u'\033[59~', None,),
-    wx.WXK_DOWN:        (u'\033OB',   None,         u'\033[58~', None,),
+    wx.WXK_LEFT:        (u'left',       u'left',            u'ctrl-left',       u'ctrl-left'),
+    wx.WXK_UP:          (u'up',         u'up',              u'ctrl-up',         u'ctrl-up'),
+    wx.WXK_RIGHT:       (u'right',      u'right',           u'ctrl-right',      u'ctrl-right'),
+    wx.WXK_DOWN:        (u'down',       u'down',            u'ctrl-down',       u'ctrl-down'),
 
-    wx.WXK_INSERT:      (u'\033[2~',  u'\033[102~', u'\033[52~', u'\033[152~'),
-    wx.WXK_DELETE:      (u'\033[3~',  u'\033[103~', u'\033[53~', u'\033[153~'),
+    wx.WXK_INSERT:      (u'insert',     u'shift-insert',    u'ctrl-insert',     u'ctrl-shift-insert'),
+    wx.WXK_DELETE:      (u'delete',     u'shift-delete',    u'ctrl-delete',     u'ctrl-shift-delete'),
     }
 
 wx_key_names = {}
@@ -214,7 +360,6 @@ class EmacsPanel(wx.Panel):
         self.caret.Hide()
 
         self.SetCaret( self.caret )
-
 
         # the size of a char on the screen
         self.char_width = None
@@ -334,6 +479,9 @@ class EmacsPanel(wx.Panel):
             self.log.debug( 'EmacsPanel.OnPaint() Nothing to do' )
             event.Skip()
 
+    def getKeysMapping( self ):
+        return keys_mapping
+
     def OnSize( self, event ):
         self.log.debug( 'EmacsPanel.OnSize()' )
         self.__geometryChanged()
@@ -348,22 +496,28 @@ class EmacsPanel(wx.Panel):
         if key in special_keys:
             trans, shift_trans, ctrl_trans, ctrl_shift_trans = special_keys[ key ]
 
-            if ctrl and shift and ctrl_shift_trans is not None:
+            if ctrl and shift:
                 translation = ctrl_shift_trans
                 shift = False
 
-            elif ctrl and ctrl_trans is not None:
+            elif ctrl:
                 translation = ctrl_trans
 
-            elif shift and shift_trans is not None:
+            elif shift:
                 translation = shift_trans
                 shift = False
 
             else:
                 translation = trans
 
+            print '1 translation %r' % (translation,)
+
+            translation = keys_mapping[ translation ]
+            print '2 translation %r' % (translation,)
+
             for ch in translation:
                 self.app.editor.guiEventChar( ch, shift )
+
             self.eat_next_char = True
 
         event.Skip()

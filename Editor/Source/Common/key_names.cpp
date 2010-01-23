@@ -142,6 +142,7 @@ static key_name_entry LK201_key_name_entries[] =
 
 key_name LK201_key_names( LK201_key_name_entries, sizeof( LK201_key_name_entries ) );
 
+#if 0
 static key_name_entry PC_key_name_entries[] =
 {
     // This list must be kept i sorted order
@@ -287,69 +288,103 @@ static key_name_entry PC_key_name_entries[] =
     key_name_entry("up",                            "\033[A" )
 };
 key_name PC_key_names( PC_key_name_entries, sizeof( PC_key_name_entries ) );
+#else
+key_name PC_key_names;
+#endif
+
+key_name::key_name( key_name_entry *_key_names, int sizeof_key_names )
+: name_to_keys()
+, keys_to_name()
+, name_to_compressed_keys()
+, compressed_keys_to_name()
+{
+    for( size_t i=0; i<sizeof_key_names/sizeof( key_name_entry ); ++i )
+    {
+        addMapping( _key_names[i].name, _key_names[i].value );
+    }
+}
+
+key_name::key_name()
+: name_to_keys()
+, keys_to_name()
+, name_to_compressed_keys()
+, compressed_keys_to_name()
+{
+}
+
+key_name::~key_name()
+{
+}
+
+void key_name::addMapping( const EmacsString &name, const EmacsString &keys )
+{
+    EmacsString compressed_keys;
+
+    name_to_keys[ name ] = keys;
+    keys_to_name[ keys ] = name;
+}
+
+void key_name::buildCompressedMapping()
+{
+    // build the compressed map on demand
+    if( name_to_compressed_keys.empty() )
+    {
+        for( KeysMapping_t::const_iterator i = name_to_keys.begin();
+                i != name_to_keys.end();
+                    ++i )
+        {
+            EmacsString compressed_keys;
+            convert_key_string( i->second, compressed_keys );
+            name_to_compressed_keys[ i->first ] = compressed_keys;
+            compressed_keys_to_name[ compressed_keys ] = i->first;
+        }
+    }
+}
 
 EmacsString key_name::valueOfKeyName( const EmacsString &key )
 {
-    int lo = 0;
-    int hi = num_key_names-1;
+    buildCompressedMapping();
 
-    for(;;)
+    KeysMapping_t::const_iterator i = name_to_compressed_keys.find( key );
+    if( i != name_to_compressed_keys.end() )
     {
-        int mid = (lo + hi) / 2;
-        key_name_entry *entry = &key_names[ mid ];
-        int match = key.compare( entry->name );
-
-        if( match == 0 )
-            return entry->value;
-        if( lo >= hi )
-            break;
-        if( match < 0 )
-            hi = mid - 1;
-        else
-            lo = mid + 1;
+        return i->second;
     }
 
     return EmacsString::null;
-}
-
-void key_name::build_key_values( void )
-{
-    for( int i=0; i<num_key_names; i++ )
-    {
-        key_name_entry *entry = &key_names[ i ];
-
-        convert_key_string
-            (
-            entry->value,
-            entry->compressed_value
-            );
-    }
-
-    key_compressed_built = cs_modified;
 }
 
 //
 //    Look for the longest key value that matches at the start of the
 //    chars vector.
 //
-int key_name::keyNameOfValue( const EmacsString &chars, EmacsString &value)
+int key_name::keyNameOfValue( const EmacsString &chars, EmacsString &name )
 {
-    static key_name_entry worst_entry( "", "" );
-    key_name_entry *best_entry = &worst_entry;
+    buildCompressedMapping();
 
-    if( cs_modified != key_compressed_built )
-        build_key_values();
+    int longest_match_length = 0;
+    KeysMapping_t::const_iterator best_match = name_to_compressed_keys.end();
+    KeysMapping_t::const_iterator i = name_to_compressed_keys.begin();
 
-    for( int i=0; i<num_key_names; i++ )
+    while( i != name_to_compressed_keys.end() )
     {
-        key_name_entry *entry = &key_names[ i ];
+        EmacsString compressed_keys( i->second );
+        int match_length = compressed_keys.commonPrefix( chars );
 
-        if( entry->compressed_value.length() > best_entry->compressed_value.length()
-        && entry->compressed_value.commonPrefix( chars ) == entry->compressed_value.length() )
-            best_entry = entry;
+        if( compressed_keys.length() == match_length
+        && match_length > longest_match_length )
+        {
+            best_match = i;
+            longest_match_length = match_length;
+        }
+        ++i;
     }
 
-    value = best_entry->name;
+    if( best_match == name_to_compressed_keys.end() )
+    {
+        return 0;
+    }
 
-    return best_entry->compressed_value.length();
+    name = best_match->first;
+    return best_match->second.length();
 }
