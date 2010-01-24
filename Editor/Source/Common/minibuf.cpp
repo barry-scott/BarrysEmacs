@@ -122,7 +122,7 @@ int str_to_int (const EmacsString &answer)
     int n = 0;
     int neg = 0;
 
-    while( index < len && isspace( answer[index] ) )
+    while( index < len && unicode_is_space( answer[index] ) )
         index++;
 
     // Allow on and true to mean 1 and off and false to mean 0
@@ -140,11 +140,11 @@ int str_to_int (const EmacsString &answer)
     // Convert from text to numeric
     for( ; index < len; index++ )
     {
-        if( isdigit( answer[index] ) )
+        if( unicode_is_digit( answer[index] ) )
             n = (n * 10) + answer[index] - '0';
         else if( answer[ index ] == '-' )
                 neg = !neg;
-        else if( !isspace( answer[ index ] ) && answer[ index ] != '+' )
+        else if( !unicode_is_space( answer[ index ] ) && answer[ index ] != '+' )
         {
             error( FormatString("Malformed integer: \"%s\"") << answer );
             return 0;

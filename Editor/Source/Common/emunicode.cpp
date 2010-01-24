@@ -90,7 +90,29 @@ void init_unicode()
     }
 }
 
-bool unicode_is_num( EmacsChar_t code_point )
+bool unicode_is_space( EmacsChar_t code_point )
+{
+    switch( code_point )
+    {
+    case ' ':
+    case '\t':
+    case '\n':
+    case '\v':
+    case '\f':
+    case '\r':
+        return true;
+
+    default:
+        return false;
+    }
+}
+
+bool unicode_is_digit( EmacsChar_t code_point )
+{
+    return code_point >= '0' && code_point <= '9';
+}
+
+bool unicode_is_numeric( EmacsChar_t code_point )
 {
     return __numeric.count( code_point ) != 0;
 }
@@ -105,7 +127,7 @@ EmacsCharCategorySet_t::const_iterator getNumericEnd()
     return __numeric.end();
 }
 
-bool unicode_is_alpha( EmacsChar_t code_point )
+bool unicode_is_alphabetic( EmacsChar_t code_point )
 {
     return __alphabetic.count( code_point ) != 0;
 }

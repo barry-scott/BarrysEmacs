@@ -1261,7 +1261,7 @@ void EmacsWindow::dump_mode( int line, int col )
         {
             EmacsString str;
             int width = 0;
-            while( isdigit( c = *s++ ) )
+            while( unicode_is_digit( c = *s++ ) )
                 width = width * 10 + (c - '0');
             if( c == 0 )
                 break;

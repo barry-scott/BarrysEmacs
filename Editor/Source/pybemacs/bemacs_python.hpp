@@ -1,7 +1,7 @@
 //
 //    bemacs_python.cpp
 //
-//    Copyright (c) 1999-2009 Barry A. Scott
+//    Copyright (c) 1999-2010 Barry A. Scott
 //
 #include "CXX/Objects.hxx"
 #include "CXX/Extensions.hxx"
@@ -271,3 +271,69 @@ private:
     virtual Py::Object getattr( const char *c_name );
     virtual int setattr( const char *c_name, Py::Object /*value*/ );
 };
+
+//--------------------------------------------------------------------------------
+//
+//  PythonAllowThreads provides a exception safe
+//  wrapper for the C idiom:
+//
+//  Py_BEGIN_ALLOW_THREADS
+//  ...Do some blocking I/O operation...
+//  Py_END_ALLOW_THREADS
+//
+//  IN C++ use PythonAllowThreads in main code:
+//  {
+//      PythonAllowThreads main_permission;
+//      ...Do some blocking I/O operation that may throw
+//  } // allow d'tor grabs the lock
+//
+//  In C++ use PythonDisallowThreads in callback code:
+//  {
+//      PythonDisallowThreads permission( main_permission );
+//      ... Python operations that may throw
+//  } // allow d'tor to release the lock
+//
+//--------------------------------------------------------------------------------
+class PythonAllowThreads;
+class PythonDisallowThreads;
+
+class BemacsEditorAccessControl
+{
+public:
+    friend class PythonAllowThreads;
+    friend class PythonDisallowThreads;
+
+    BemacsEditorAccessControl();
+    ~BemacsEditorAccessControl();
+
+private:
+    void allowOtherThreads();
+    void allowThisThread();
+
+    PyThreadState *m_saved_thread_state;
+};
+
+class PythonAllowThreads
+{
+public:
+    // calls allowOtherThreads()
+    PythonAllowThreads( BemacsEditorAccessControl &control );
+    // calls allowThisThread() if necessary
+    ~PythonAllowThreads();
+
+private:
+    BemacsEditorAccessControl &m_control;
+};
+
+class PythonDisallowThreads
+{
+public:
+    // calls allowThisThread()
+    PythonDisallowThreads( BemacsEditorAccessControl &control );
+    // calls allowOtherThreads() if necessary
+    ~PythonDisallowThreads();
+private:
+    BemacsEditorAccessControl &m_control;
+};
+
+extern BemacsEditorAccessControl editor_access_control;

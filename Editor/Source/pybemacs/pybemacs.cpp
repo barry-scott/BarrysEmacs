@@ -4,8 +4,6 @@
 //
 //  pybemacs.cpp
 //
-//  This module defines a single function.
-//
 #include <emacs.h>
 
 #include "bemacs_python.hpp"
@@ -52,6 +50,8 @@ class BemacsEditor;
 
 void init_python_terminal( BemacsEditor &editor );
 
+BemacsEditorAccessControl editor_access_control;
+
 class BemacsEditor: public Py::PythonClass< BemacsEditor >
 {
 public:
@@ -90,8 +90,6 @@ public:
         PYCXX_ADD_VARARGS_METHOD( geometryChange, "geometryChange( width, height )" );
         PYCXX_ADD_VARARGS_METHOD( setKeysMapping, "setKeysMapping( keys_mapping )" );
 
-        PYCXX_ADD_KEYWORDS_METHOD( BemacsEditor_func_keyword, "BemacsEditor_func_keyword" );
-
         // Call to make the type ready for use
         behaviors().readyType();
     }
@@ -105,33 +103,38 @@ public:
         e.clear();
     }
 
+
     //------------------------------------------------------------
     Py::Object initEditor( void )
     {
-        init_memory();
-        init_unicode();
-        init_syntax();
-        init_display();                         // " the core display system
+        {
+            PythonAllowThreads permission( editor_access_control );
 
-        init_fncs();                            // initialise the key bindings
-        init_var();                             // " the variables
-        init_bf();                              // " the buffer system
-        init_scheduled_timeout();
-        init_display();                         // " the core display system
-        init_python_terminal( *this );          // " the terminal
-        init_dsp();
-        init_win();                             // " the window system
-        init_srch();                            // " the search commands
-        init_undo();                            // " the undo facility
-        init_lisp();                            // " the MLisp system
-        init_abs();                             // " the current directory name
-        init_key();                             // " commands that deal with options
-        current_global_map = global_map;
+            init_memory();
+            init_unicode();
+            init_syntax();
+            init_display();                         // " the core display system
 
-        init_fncs2();                           // Finish off init of functions
+            init_fncs();                            // initialise the key bindings
+            init_var();                             // " the variables
+            init_bf();                              // " the buffer system
+            init_scheduled_timeout();
+            init_display();                         // " the core display system
+            init_python_terminal( *this );          // " the terminal
+            init_dsp();
+            init_win();                             // " the window system
+            init_srch();                            // " the search commands
+            init_undo();                            // " the undo facility
+            init_lisp();                            // " the MLisp system
+            init_abs();                             // " the current directory name
+            init_key();                             // " commands that deal with options
+            current_global_map = global_map;
 
-        EmacsWorkItem::enableWorkQueue( true );
-        start_async_io();
+            init_fncs2();                           // Finish off init of functions
+
+            EmacsWorkItem::enableWorkQueue( true );
+            start_async_io();
+        }
 
         return Py::None();
     }
@@ -157,15 +160,18 @@ public:
         }
         argv[ py_argv.length() ] = NULL;
 
-        process_args( py_argv.length(), argv );
-
-        for( size_t argc=0; argc < py_argv.length(); ++argc )
         {
-            EMACS_FREE( argv[ argc ] );
-        }
-        EMACS_FREE( argv );
+            PythonAllowThreads permission( editor_access_control );
+            process_args( py_argv.length(), argv );
 
-        execute_package( command_line_arguments.argument(0).value() );
+            for( size_t argc=0; argc < py_argv.length(); ++argc )
+            {
+                EMACS_FREE( argv[ argc ] );
+            }
+            EMACS_FREE( argv );
+
+            execute_package( command_line_arguments.argument(0).value() );
+        }
 
         return Py::None();
     }
@@ -235,21 +241,26 @@ public:
     //------------------------------------------------------------
     Py::Object executeEnterHooks( void )
     {
-        if( user_interface_hook_proc != NULL )
-            execute_bound_saved_environment( user_interface_hook_proc );
-            // ignore result of user_interface_hook_proc
+        {
+            PythonAllowThreads permission( editor_access_control );
+            if( user_interface_hook_proc != NULL )
+                execute_bound_saved_environment( user_interface_hook_proc );
+                // ignore result of user_interface_hook_proc
 
-        if( enter_emacs_proc != NULL )
-            execute_bound_saved_environment( enter_emacs_proc );
-
+            if( enter_emacs_proc != NULL )
+                execute_bound_saved_environment( enter_emacs_proc );
+        }
         return Py::None();
     }
     PYCXX_NOARGS_METHOD_DECL( BemacsEditor, executeEnterHooks )
 
     Py::Object executeExitHooks( void )
     {
-        if( exit_emacs_proc != NULL )
-            execute_bound_saved_environment( exit_emacs_proc );
+        {
+            PythonAllowThreads permission( editor_access_control );
+            if( exit_emacs_proc != NULL )
+                execute_bound_saved_environment( exit_emacs_proc );
+        }
 
         return Py::None();
     }
@@ -257,13 +268,27 @@ public:
 
     Py::Object processKeys( void )
     {
-        return Py::Long( process_keys() );
+        int rc;
+
+        {
+            PythonAllowThreads permission( editor_access_control );
+            rc = process_keys();
+        }
+
+        return Py::Long( rc );
     }
     PYCXX_NOARGS_METHOD_DECL( BemacsEditor, processKeys )
 
     Py::Object modifiedFilesExist( void )
     {
-        return Py::Boolean( mod_exist() );
+        bool rc;
+
+        {
+            PythonAllowThreads permission( editor_access_control );
+            rc = mod_exist();
+        }
+
+        return Py::Boolean( rc );
     }
     PYCXX_NOARGS_METHOD_DECL( BemacsEditor, modifiedFilesExist )
     //------------------------------------------------------------
@@ -271,6 +296,8 @@ public:
     //------------------------------------------------------------
     void termCheckForInput()
     {
+        PythonDisallowThreads permission( editor_access_control );
+
         static char fn_name[] = "termCheckForInput";
         try
         {
@@ -288,6 +315,8 @@ public:
     //------------------------------------------------------------
     int termWaitForActivity( void )
     {
+        PythonDisallowThreads permission( editor_access_control );
+
         static char fn_name[] = "termWaitForActivity";
 
         try
@@ -308,6 +337,8 @@ public:
 
     void termTopos( int x, int y )
     {
+        PythonDisallowThreads permission( editor_access_control );
+
         static char fn_name[] = "termTopos";
         try
         {
@@ -326,6 +357,8 @@ public:
 
     void termReset( void )
     {
+        PythonDisallowThreads permission( editor_access_control );
+
         static char fn_name[] = "termReset";
         try
         {
@@ -342,6 +375,8 @@ public:
 
     void termInit( void )
     {
+        PythonDisallowThreads permission( editor_access_control );
+
         static char fn_name[] = "termInit";
         try
         {
@@ -358,6 +393,8 @@ public:
 
     void termBeep( void )
     {
+        PythonDisallowThreads permission( editor_access_control );
+
         static char fn_name[] = "termBeep";
         try
         {
@@ -374,6 +411,8 @@ public:
 
     bool termUpdateBegin( void )
     {
+        PythonDisallowThreads permission( editor_access_control );
+
         static char fn_name[] = "termUpdateBegin";
         try
         {
@@ -392,6 +431,8 @@ public:
 
     void termUpdateEnd( void )
     {
+        PythonDisallowThreads permission( editor_access_control );
+
         static char fn_name[] = "termUpdateEnd";
         try
         {
@@ -430,6 +471,8 @@ public:
 
     void termUpdateLine( EmacsLinePtr oldl, EmacsLinePtr newl, int ln )
     {
+        PythonDisallowThreads permission( editor_access_control );
+
         static char fn_name[] = "termUpdateLine";
         try
         {
@@ -451,6 +494,8 @@ public:
 
     void termMoveLine( int from_line, int to_line )
     {
+        PythonDisallowThreads permission( editor_access_control );
+
         static char fn_name[] = "termMoveLine";
         try
         {
@@ -471,6 +516,8 @@ public:
 
     void termDisplayActivity( unsigned char ch )
     {
+        PythonDisallowThreads permission( editor_access_control );
+
         static char fn_name[] = "termDisplayActivity";
         try
         {
@@ -490,22 +537,36 @@ public:
     Py::Object inputChar( const Py::Tuple &args )
     {
         Py::String py_ch( args[0] );
-        Py::Boolean shift( args[1] );
+        Py::Boolean py_shift( args[1] );
 
-        Py::unicodestring ch( py_ch.as_unicodestring() );
-        theActiveView->k_input_char( ch[0], shift );
+        EmacsString ch( EmacsString::copy, py_ch.unicode_data(), py_ch.size() );
+        bool shift = py_shift;
+
+        {
+            PythonAllowThreads permission( editor_access_control );
+
+            theActiveView->k_input_char( ch[0], shift );
+        }
+
         return Py::None();
     }
     PYCXX_VARARGS_METHOD_DECL( BemacsEditor, inputChar )
 
     Py::Object geometryChange( const Py::Tuple &args )
     {
-        Py::Long width( args[0] );
-        Py::Long height( args[1] );
+        Py::Long py_width( args[0] );
+        Py::Long py_height( args[1] );
+        int width = int( long( py_width ) );
+        int height = int( long( py_height ) );
 
-        theActiveView->t_width = int( long( width ) );
-        theActiveView->t_length = int( long( height ) );
-        theActiveView->t_geometry_change();
+        {
+            PythonAllowThreads permission( editor_access_control );
+
+            theActiveView->t_width = width;
+            theActiveView->t_length = height;
+            theActiveView->t_geometry_change();
+        }
+
         return Py::None();
     }
     PYCXX_VARARGS_METHOD_DECL( BemacsEditor, geometryChange )
@@ -523,6 +584,7 @@ public:
             EmacsString key( EmacsString::copy, py_key.unicode_data(), py_key.size() );
             EmacsString value( EmacsString::copy, py_value.unicode_data(), py_value.size() );
 
+            // Do not need to allow threads here as this is fast operation
             PC_key_names.addMapping( key, value );
         }
 
@@ -531,25 +593,11 @@ public:
     PYCXX_VARARGS_METHOD_DECL( BemacsEditor, setKeysMapping )
 
     //------------------------------------------------------------
-    Py::Object BemacsEditor_func_keyword( const Py::Tuple &args, const Py::Dict &kwds )
-    {
-        std::cout << "BemacsEditor_func_keyword Called with " << args.length() << " normal arguments." << std::endl;
-        Py::List names( kwds.keys() );
-        std::cout << "and with " << names.length() << " keyword arguments:" << std::endl;
-        for( Py::List::size_type i=0; i< names.length(); i++ )
-        {
-            Py::String name( names[i] );
-            std::cout << "    " << name << std::endl;
-        }
-        return Py::None();
-    }
-    PYCXX_KEYWORDS_METHOD_DECL( BemacsEditor, BemacsEditor_func_keyword )
-
     Py::Object getattro( const Py::String &name_ )
     {
         std::string name( name_.as_std_string( "utf-8" ) );
 
-        if( name == "value" )
+        if( name == "value" )   // QQQ placeholder
         {
             return m_value;
         }
@@ -563,7 +611,7 @@ public:
     {
         std::string name( name_.as_std_string( "utf-8" ) );
 
-        if( name == "value" )
+        if( name == "value" )   // QQQ placeholder
         {
             m_value = value;
             return 0;
@@ -600,7 +648,7 @@ public:
         //
         //    Add the methods of this module
         //
-        add_varargs_method( "call_function", &BemacsModule::call_bemacs_function, "call bemasc function" );
+        add_varargs_method( "call_function", &BemacsModule::call_bemacs_function, "call bemacs function" );
         add_varargs_method( "report_error", &BemacsModule::report_error,
             "report_error\n"
             "\n"
@@ -628,7 +676,7 @@ public:
         args.verify_length(1);
         Py::String error_message( args[0] );
 
-        return Py::Object();
+        return Py::None();
     }
 
     Py::Object call_bemacs_function( const Py::Tuple &args )
@@ -652,8 +700,12 @@ public:
             prog_node.pa_node[arg-1] = new ProgramNodeExpression( expr );
         }
 
+        {
+            PythonAllowThreads permission( editor_access_control );
 
-        exec_prog( &prog_node );
+            exec_prog( &prog_node );
+        }
+
         if( ml_err )
         {
             ml_err = 0;
@@ -1128,3 +1180,4 @@ void _emacs_assert( const char *exp, const char *file, unsigned line )
 
 #endif
 }
+

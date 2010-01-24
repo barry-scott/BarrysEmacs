@@ -931,7 +931,7 @@ SystemExpressionRepresentationControlString cs_par_sep_string( M_CS_PAR_SEP );
 SystemExpressionRepresentationControlString cs_int_char_string( M_CS_INT_CHAR );
 SystemExpressionRepresentationControlString cs_fin_char_string( M_CS_FIN_CHAR );
 
-unsigned char cs_attr[65536];
+unsigned char cs_attr[256];
 
 void SystemExpressionRepresentationControlString::assign_value( ExpressionRepresentation *new_value )
 {
@@ -942,16 +942,18 @@ void SystemExpressionRepresentationControlString::assign_value( ExpressionRepres
     //
     //    init this bit position to zero
     //
-{
     for( int i=0; i<=255; i += 1 )
         cs_attr[i] &= ~mask;
-}
+
     //
     //    set the bit for the chars specified
     //
-
     for( int i=0; i<value.length(); i++ )
-        cs_attr[ value[i] ] |= mask;
+    {
+        EmacsChar_t index = value[i];
+        if( index < 256 )
+            cs_attr[ value[i] ] |= mask;
+    }
 }
 
 void SystemExpressionRepresentationControlString::fetch_value()

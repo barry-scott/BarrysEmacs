@@ -6,7 +6,10 @@ $(edit_obj)cxx_extensions.o \
 $(edit_obj)cxxextensions.o \
 $(edit_obj)IndirectPythonInterface.o
 
-pybemacs_specific_obj_files=$(edit_obj)pybemacs.o $(edit_obj)bemacs_python.o $(CXX_OBJECTS)
+pybemacs_specific_obj_files=$(edit_obj)pybemacs.o \
+$(edit_obj)bemacs_python.o \
+$(edit_obj)python_thread_control.o \
+$(CXX_OBJECTS)
 
 obj_files = $(os_specific_obj_files) \
  $(edit_obj)abbrev.o \
@@ -239,6 +242,10 @@ $(edit_obj)pybemacs.o: Source/pybemacs/pybemacs.cpp Source/pybemacs/bemacs_pytho
 	@$(cpp) $(cc_flags) -o $@ $<
 
 $(edit_obj)bemacs_python.o: Source/pybemacs/bemacs_python.cpp Source/pybemacs/bemacs_python.hpp
+	@echo Info: Compile $<
+	@$(cpp) $(cc_flags) -o $@ $<
+
+$(edit_obj)python_thread_control.o: Source/pybemacs/python_thread_control.cpp Source/pybemacs/bemacs_python.hpp
 	@echo Info: Compile $<
 	@$(cpp) $(cc_flags) -o $@ $<
 

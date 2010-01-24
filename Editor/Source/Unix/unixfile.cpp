@@ -197,7 +197,7 @@ static int fullpath( const EmacsString &in_path, EmacsString &out_path)
 
             while( s < s_len )
             {
-                if( braces ? in_path[s] == '}' : !isalnum( in_path[s] ) )
+                if( braces ? in_path[s] == '}' : !unicode_is_alphabetic_numeric( in_path[s] ) )
                     break;
                 else
                     s++;

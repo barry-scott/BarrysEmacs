@@ -760,7 +760,7 @@ int fullpath( unsigned char *nm, unsigned char * buf)
             register int braces = *s == '{';
             register unsigned char  *value;
             while( (*d++ = *s) != 0 )
-                if (braces ? *s == '}' : !isalnum (*s))
+                if (braces ? *s == '}' : !unicode_is_alphabetic_numeric (*s))
                     break;
                 else
                     s++;

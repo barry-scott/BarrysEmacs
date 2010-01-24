@@ -273,7 +273,7 @@ int abbrev_expand( void )
             if( unicode_is_lower( ch )
             && upper_count != 0
             &&    (pos == 0
-                || (upper_count > 1 && (pos > 1 && isspace( a->abbrev_phrase[ pos-1 ] ))))
+                || (upper_count > 1 && (pos > 1 && unicode_is_space( a->abbrev_phrase[ pos-1 ] ))))
             )
                 self_insert( unicode_to_upper( ch ) );
             else

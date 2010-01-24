@@ -1577,10 +1577,8 @@ int fetch_var( VariableName *nm, int *iresp, EmacsString *cresp, EmacsString &er
             *iresp = var;
         else
         {
-            static unsigned char buf [20];
             EmacsString number( FormatString("%d") << var );
-            _str_cpy( buf, number.data() );
-            *cresp = buf;
+            *cresp = number;
         }
     }
         break;
@@ -1663,11 +1661,11 @@ void SystemExpressionRepresentationPrefixArgumentProvided::fetch_value(void)
 }
 
 ExecutionStack::ExecutionStack(int provided, int arg )
-    : es_dyn_parent( execution_root )
-    , es_cur_exec( cur_exec )
-    , es_cur_name( current_function.asString() )
-    , es_prefix_argument( arg )
-    , es_prefix_argument_provided( provided )
+: es_dyn_parent( execution_root )
+, es_cur_exec( cur_exec )
+, es_cur_name( current_function.asString() )
+, es_prefix_argument( arg )
+, es_prefix_argument_provided( provided )
 {
     execution_root = this;
 }

@@ -1,5 +1,7 @@
 //    Copyright (c) 1982-1993
 //    Barry A. Scott and nick Emery
+//    Copyright (c) 1994-2010
+//    Barry A. Scott
 //
 
 // Support routines for the undo facility
@@ -21,10 +23,10 @@ void undo_de_ref_buf( EmacsBuffer *b );
 void init_undo( void );
 
 // The undo records
-static struct undorec undo_rq[UNDO_MAX_REC+1];
+static struct undorec undo_rq[ UNDO_MAX_REC+1 ];
 
 // And the characters associated with them
-static unsigned char undo_cq[UNDO_MAX_CHAR+1];
+static EmacsChar_t undo_cq[ UNDO_MAX_CHAR+1 ];
 static int fill_rq;
 static int fill_cq;
 static int n_undone;
@@ -156,7 +158,7 @@ int undo_more( void )
                 chars = chars -len;
                 if( chars < 0 )
                 {
-                    bf_cur->ins_cstr( &undo_cq[0], len + chars);
+                    bf_cur->ins_cstr( &undo_cq[0], len + chars );
                     len = -chars;
                     chars = chars + UNDO_MAX_CHAR;
                 }

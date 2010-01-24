@@ -342,7 +342,7 @@ ProgramNode *ProgramNode::parse_node( MLispInputStream &input )
     {
         do
             c = input();
-        while( c >= 0 && isspace( c ) );
+        while( c >= 0 && unicode_is_space( c ) );
 
         if( c != ';' )
             break;
@@ -359,7 +359,7 @@ ProgramNode *ProgramNode::parse_node( MLispInputStream &input )
     if( c == '"' )
         return string_node( input );
     input.pushBack( c );
-    if(c == '\'' || c == '-' || isdigit( c ) )
+    if(c == '\'' || c == '-' || unicode_is_digit( c ) )
         return number_node( input );
     else
         return name_node( input );
@@ -387,10 +387,10 @@ EmacsString ProgramNode::parse_name( MLispInputStream &input )
 
     do
         c = input();
-    while( isspace( c ) );
+    while( unicode_is_space( c ) );
 
     while( c > 0
-    && ! isspace( c )
+    && ! unicode_is_space( c )
     && c != '(' && c != ')' && c != ';' )
     {
         name.append( c );
@@ -449,7 +449,7 @@ ProgramNode *ProgramNode::paren_node( MLispInputStream &input )
         {
             do
                 c = input();
-            while( c >= 0 && isspace( c ) );
+            while( c >= 0 && unicode_is_space( c ) );
 
             if( c != ';' )
                 break;
@@ -466,7 +466,7 @@ ProgramNode *ProgramNode::paren_node( MLispInputStream &input )
         || c == '"'
         || c == '\''
         || c == '-'
-        || isdigit( c ) )
+        || unicode_is_digit( c ) )
             input.pushBack( c );
         else
         {
@@ -493,7 +493,7 @@ ProgramNode *ProgramNode::paren_node( MLispInputStream &input )
             //
             do
                 c = input();
-            while( c >= 0 && isspace( c ) );
+            while( c >= 0 && unicode_is_space( c ) );
             if( c != '(' )
             {
                 error( "Syntax error in new-style defun -- incorrect arg list" );
@@ -626,7 +626,7 @@ ProgramNode *ProgramNode::number_node( MLispInputStream &input )
             {
                 if( n == 2
                 && buf[0] == '\\'
-                && ! isdigit( buf[1] ) )
+                && ! unicode_is_digit( buf[1] ) )
                     switch( buf[1] )
                 {
                     case 'n': n = 10; break;    // LF
@@ -644,7 +644,7 @@ ProgramNode *ProgramNode::number_node( MLispInputStream &input )
                         EmacsChar_t *p;
                         p = &buf[1];
                         n = 0;
-                        while( isdigit( c = *p++ ) )
+                        while( unicode_is_digit( c = *p++ ) )
                             n = n * 8 + c - '0';
                         if( c != 0 )
                         {
@@ -671,7 +671,7 @@ ProgramNode *ProgramNode::number_node( MLispInputStream &input )
         }
         if( c == '0' )
             base = 8;
-        while( isdigit( c ) )
+        while( unicode_is_digit( c ) )
         {
             n = n * base + c - '0';
             c = input();
@@ -873,7 +873,7 @@ int ProgramNode::execute_mlisp_stream( MLispInputStream &input )
         int c;
         do
             c = input();
-        while( c >= 0 && isspace( c ) );
+        while( c >= 0 && unicode_is_space( c ) );
 
         input.pushBack( c );
     }

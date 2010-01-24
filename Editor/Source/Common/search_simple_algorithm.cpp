@@ -125,10 +125,10 @@ void SearchSimpleAlgorithm::search_replace_once( const EmacsString &new_string )
 
         flags.beg_of_str = 1u;
         i = sea_loc1;
-        flags.beg_of_word = i <= bf_cur->first_character() || !isalpha( bf_cur->char_at(i - 1) );
+        flags.beg_of_word = i <= bf_cur->first_character() || !unicode_is_alphabetic( bf_cur->char_at(i - 1) );
         while( i < sea_loc2 )
         {
-            if( isalpha( lc = bf_cur->char_at( i ) ) )
+            if( unicode_is_alphabetic( lc = bf_cur->char_at( i ) ) )
             {
                 if( unicode_is_upper( lc ) )
                 {
@@ -158,14 +158,14 @@ void SearchSimpleAlgorithm::search_replace_once( const EmacsString &new_string )
 
     flags.beg_of_str = 1u;
     flags.prefix = 0;
-    flags.beg_of_word = dot <= bf_cur->first_character() || ! isalpha( bf_cur->char_at( dot - 1 ) );
+    flags.beg_of_word = dot <= bf_cur->first_character() || ! unicode_is_alphabetic( bf_cur->char_at( dot - 1 ) );
     for( int p = 0; p<new_string.length(); p++ )
     {
         lc = new_string[p];
         flags.last_prefix = flags.prefix;
         flags.prefix = 0;
         if( action != DO_NOTHING
-        && isalpha( lc ) )
+        && unicode_is_alphabetic( lc ) )
         {
             if( unicode_is_lower( lc )
             &&  (action == UPPER

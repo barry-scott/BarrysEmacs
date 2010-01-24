@@ -184,15 +184,14 @@ int sprintf_cmd(void)
 //
 static void print_decimal( EmacsString &output, long int n, int w )
 {
-    unsigned char digits[12];
-    int i, used;
+    EmacsChar_t digits[12];
 
     if( (unsigned long int)n == 0x80000000 )
     {
         output.append( "-2147483648" );
     }
 
-    used = 0;
+    int used = 0;
     if( n < 0 )
     {
         output.append( '-' );
@@ -200,10 +199,10 @@ static void print_decimal( EmacsString &output, long int n, int w )
         used++;
     }
 
-    i = 0;
+    int i = 0;
     do
     {
-        digits[i] = (char) ((n % 10) + '0');
+        digits[i] = (EmacsChar_t) ((n % 10) + '0');
         n = n / 10;
         i++;
     }
@@ -224,13 +223,12 @@ static void print_decimal( EmacsString &output, long int n, int w )
 
 static void print_hexadecimal( EmacsString &output, unsigned long int n, int w )
 {
-    int    i;
-    char digits[8];
+    int i;
+    EmacsChar_t digits[8];
 
     for( i=0; n != 0; i++)
     {
-        digits[i] = (unsigned char)
-            ((n&0xf) >= 10 ? (n&0xf) + 'a' - 10 : (n&0xf) + '0');
+        digits[i] = (EmacsChar_t)((n&0xf) >= 10 ? (n&0xf) + 'a' - 10 : (n&0xf) + '0');
         n >>= 4;
     }
 
@@ -256,7 +254,7 @@ static void print_octal
     int w
     )
 {
-    unsigned char digits[12];
+    EmacsChar_t digits[12];
     int    i;
 
     if( (unsigned long int)n == 0x80000000 )
@@ -273,7 +271,7 @@ static void print_octal
     i = 0;
     do
     {
-        digits[i] = (char) ((n % 8) + '0');
+        digits[i] = (EmacsChar_t) ((n % 8) + '0');
         n = n / 8;
         i++;
     }
@@ -288,4 +286,3 @@ static void print_octal
     while( i-- )
         output.append( digits[i] );
 }
-

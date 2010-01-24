@@ -143,13 +143,13 @@ void SearchAdvancedAlgorithm::search_replace_once( const EmacsString &new_string
     if( replace_case )
     {
         flags.beg_of_str = 1u;
-        flags.beg_of_word = match_start <= bf_cur->first_character() || !isalpha( bf_cur->char_at( match_start - 1 ) );
+        flags.beg_of_word = match_start <= bf_cur->first_character() || !unicode_is_alphabetic( bf_cur->char_at( match_start - 1 ) );
 
         for( int i=match_start; i < match_end; i++ )
         {
-            unsigned char lc = bf_cur->char_at( i );
+            EmacsChar_t lc( bf_cur->char_at( i ) );
 
-            if( isalpha( lc ) )
+            if( unicode_is_alphabetic_numeric( lc ) )
             {
                 if( unicode_is_upper( lc ) )
                 {
@@ -178,22 +178,22 @@ void SearchAdvancedAlgorithm::search_replace_once( const EmacsString &new_string
 
     flags.beg_of_str = 1u;
     flags.prefix = 0;
-    flags.beg_of_word = dot <= bf_cur->first_character() || ! isalpha( bf_cur->char_at( dot - 1 ) );
+    flags.beg_of_word = dot <= bf_cur->first_character() || ! unicode_is_alphabetic( bf_cur->char_at( dot - 1 ) );
 
     for( int p = 0; p<new_string.length(); p++ )
     {
-        unsigned char lc = new_string[p];
+        EmacsChar_t lc( new_string[p] );
         flags.last_prefix = flags.prefix;
         flags.prefix = 0;
         if( action != DO_NOTHING
-        && isalpha( lc ) )
+        && unicode_is_alphabetic_numeric( lc ) )
         {
             if( unicode_is_lower( lc )
             &&  (action == UPPER
                 || (action == FIRST_ALL && flags.beg_of_word)
                 || (action == FIRST && flags.beg_of_str)) )
             {
-                lc = (unsigned char)unicode_to_upper( lc );
+                lc = unicode_to_upper( lc );
             }
             flags.beg_of_word = 0;
             flags.beg_of_str = 0;
@@ -444,7 +444,7 @@ RegularExpressionCharSet::~RegularExpressionCharSet()
 
 bool RegularExpressionCharSet::matchTerm( int pos, int &end_pos )
 {
-    unsigned char ch( bf_cur->char_at( pos ) );
+    EmacsChar_t ch( bf_cur->char_at( pos ) );
 
     if( pos > bf_cur->num_characters() )
         return false;
@@ -486,7 +486,7 @@ RegularExpressionNotCharSet::~RegularExpressionNotCharSet()
 
 bool RegularExpressionNotCharSet::matchTerm( int pos, int &end_pos )
 {
-    unsigned char ch( bf_cur->char_at( pos ) );
+    EmacsChar_t ch( bf_cur->char_at( pos ) );
 
     if( pos > bf_cur->num_characters() )
         return false;

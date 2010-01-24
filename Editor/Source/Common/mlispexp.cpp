@@ -703,20 +703,20 @@ int SystemExpressionRepresentationString::asInt() const
     const EmacsChar_t *p = exp_string.unicode_data();
     int neg = 0;
 
-    while( isspace( *p ) )
+    while( unicode_is_space( *p ) )
         p++;
 
     if( *p == '+' || *p == '-' )
     {
         neg = *p++ == '-';
     }
-    while( isspace( *p ) )
+    while( unicode_is_space( *p ) )
         p++;
 
     int n = 0;
-    while( isdigit( *p ) || isspace( *p ) )
+    while( unicode_is_digit( *p ) || unicode_is_space( *p ) )
     {
-        if( isdigit( *p ) )
+        if( unicode_is_digit( *p ) )
             n = n * 10 + *p - '0';
         p++;
     }
@@ -732,20 +732,20 @@ int ExpressionRepresentationString::asInt() const
     const EmacsChar_t *p = exp_string.unicode_data();
     int neg = 0;
 
-    while( isspace( *p ) )
+    while( unicode_is_space( *p ) )
         p++;
 
     if( *p == '+' || *p == '-' )
     {
         neg = *p++ == '-';
     }
-    while( isspace( *p ) )
+    while( unicode_is_space( *p ) )
         p++;
 
     int n = 0;
-    while( isdigit( *p ) || isspace( *p ) )
+    while( unicode_is_digit( *p ) || unicode_is_space( *p ) )
     {
-        if( isdigit( *p ) )
+        if( unicode_is_digit( *p ) )
             n = n * 10 + *p - '0';
         p++;
     }

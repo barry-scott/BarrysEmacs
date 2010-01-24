@@ -1,7 +1,7 @@
 //
 //    Emacs_python.cpp
 //
-//    Copyright (c) 1999-2009 Barry A. Scott
+//    Copyright (c) 1999-2010 Barry A. Scott
 //
 #include <emacs.h>
 
@@ -162,7 +162,10 @@ PyObject *BemacsFunctions::call_bemacs_function( PyObject *self, PyObject *_args
             prog_node.pa_node[arg] = new ProgramNodeExpression( expr );
         }
 
-        exec_prog( &prog_node );
+        {
+            PythonAllowThreads permission( editor_access_control );
+            exec_prog( &prog_node );
+        }
         if( ml_err )
         {
             ml_err = 0;

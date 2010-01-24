@@ -223,8 +223,6 @@ static void apropos_helper
         apropos_keys.append( ".." );
         s = key_to_str( keys );
         apropos_keys = s;
-
-//        keys[len - 1] = (unsigned char)(keys[len - 1] - range - 1);
     }
 }
 

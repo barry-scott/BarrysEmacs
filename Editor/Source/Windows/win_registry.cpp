@@ -546,7 +546,7 @@ EmacsWinColour & EmacsWinColour::assign( const EmacsString &str )
 
         // collect the number
         num = 0;
-        while( *p && isdigit( *p ) )
+        while( *p && unicode_is_digit( *p ) )
             num = num*10 + *p++ - '0';
 
         // figure out what the number represents

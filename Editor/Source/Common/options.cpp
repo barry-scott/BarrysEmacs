@@ -1391,8 +1391,6 @@ static void decompile_put_int( int i )
 
 static void decompile_string( EmacsString &str )
 {
-    unsigned char buf[4];
-
     int len = str.length();
 
     for( int i=0; i<len; i++ )
@@ -1402,7 +1400,7 @@ static void decompile_string( EmacsString &str )
         if( ch < ' ' || ch == 0x7f )
         {
 
-            unsigned char *x;
+            EmacsString x;
 
             // QQQ - not unicode safe
             switch( ch )
@@ -1415,11 +1413,8 @@ static void decompile_string( EmacsString &str )
             case 127:       x = u_str("\\^?"); break;
             default:
             {
-                x = buf;
-                buf[0] = '\\';
-                buf[1] = '^';
-                buf[2] = (EmacsChar_t)(ch + '@');
-                buf[3] = 0;
+                x.append( "\\^" );
+                x.append( (EmacsChar_t)(ch + '@') );
             }
             }
 
@@ -1445,9 +1440,9 @@ static EmacsString decompile
 {
     // Set up the string stream
     if( p == NULL )
-        return "";
+        return EmacsString::null;
 
-    decompile_buffer = "";
+    decompile_buffer = EmacsString::null;
 
     if( larg != 1 )
     {

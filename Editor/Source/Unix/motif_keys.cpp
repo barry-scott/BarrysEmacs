@@ -302,11 +302,11 @@ int EmacsMotifKeySymMap::gettoken( int &integer_result, EmacsString &string_resu
         return -1;
     }
 
-    if( isalpha( c ) )
+    if( unicode_is_alphabetic( c ) )
     {
         // === Name (Alpha followed by alphanumerics) ===
         ds.append( c );
-        while ((c = kf_getch()) >= 0  &&  (c == '_' || isalnum(c)))
+        while ((c = kf_getch()) >= 0  &&  (c == '_' || unicode_is_alphabetic_numeric(c)))
             ds.append( c );
 
         if( c < 0 )

@@ -235,7 +235,7 @@ extern SystemExpressionRepresentationString ui_save_as_file_name;
 extern SystemExpressionRepresentationString ui_search_string;
 extern SystemExpressionRepresentationString ui_replace_string;
 extern SystemExpressionRepresentationInt ui_open_file_readonly;
-extern unsigned char cs_attr[65536];
+extern unsigned char cs_attr[256];
 extern BoundName *trace_proc;
 extern BoundName *break_proc;
 extern BoundName *error_proc;
