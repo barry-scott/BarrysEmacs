@@ -419,8 +419,8 @@ EmacsString get_key_interactive( KeyMap *kmap, const EmacsString &prompt )
     {
         minibuf_body.setPromptBody( minibuf_text );
 
-        unsigned char c;
-        if( (c = (unsigned char)get_char()) == '\007' )
+        EmacsChar_t c( get_char() );
+        if( c == '\007' )
         {
             error( "Aborted.");
             return EmacsString::null;
@@ -441,7 +441,7 @@ EmacsString get_key_interactive( KeyMap *kmap, const EmacsString &prompt )
             if( c < ' ' )
             {
                 minibuf_text.append( '^' );
-                minibuf_text.append( (unsigned char)((c & 037) + 0100) );
+                minibuf_text.append( (EmacsChar_t)((c & 037) + 0100) );
             }
             else
                     {
@@ -477,7 +477,7 @@ EmacsString get_key_mlisp()
     EmacsString output;
     if( ml_value.exp_type() != ISSTRING )
     {
-        output.append( (unsigned char)ml_value.asInt() );
+        output.append( (EmacsChar_t)ml_value.asInt() );
     }
     else
     if( convert_key_string( ml_value.asString(), output ) == 0 )

@@ -269,7 +269,7 @@ int abbrev_expand( void )
         int pos;
         for( pos=0; pos < a->abbrev_phrase.length(); pos++ )
         {
-            unsigned char ch = a->abbrev_phrase[ pos ];
+            EmacsChar_t ch = a->abbrev_phrase[ pos ];
             if( unicode_is_lower( ch )
             && upper_count != 0
             &&    (pos == 0
@@ -350,21 +350,22 @@ int dump_abbreviation_tables( void )
 
     bf_cur->ins_cstr( FormatString("  Table: %s\n\n") << table->abbrev_name );
 
-    bf_cur->ins_str( "  Abbreviation    Phrase                          Hook\n"
-             "  ------------    ------                          ----\n" );
+    bf_cur->ins_str( 
+            "  Abbreviation    Phrase                          Hook\n"
+            "  ------------    ------                          ----\n" );
 
     for( int i=0; i<AbbrevTable::ABBREVSIZE; i++ )
     {
         AbbrevEntry *p = table->abbrev_table[i ];
         while( p != 0 )
         {
-            const unsigned char *hook;
+            const unsigned char *hook = u_str("");
 
-            hook = u_str("");
             if( p->abbrev_expansion_hook != NULL )
                 hook = p->abbrev_expansion_hook->b_proc_name ;
+
             bf_cur->ins_cstr( FormatString("  %-15s %-31s %s\n") <<
-                p->abbrev_abbrev << p->abbrev_phrase << hook );
+                                p->abbrev_abbrev << p->abbrev_phrase << hook );
 
             p = p->abbrev_next;
         }
@@ -431,6 +432,7 @@ static int read_abbrevs
     int report
     )
 {
+    // QQQ - unicode - needs to read in unicode and process
     int len;
     unsigned char buf[500];
     unsigned char *p;

@@ -1401,7 +1401,10 @@ static void decompile_string( EmacsString &str )
         ch = str[i];
         if( ch < ' ' || ch == 0x7f )
         {
+
             unsigned char *x;
+
+            // QQQ - not unicode safe
             switch( ch )
             {
             case ctl('J'):  x = u_str("\\n"); break;

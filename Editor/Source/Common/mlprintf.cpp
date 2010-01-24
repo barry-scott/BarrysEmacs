@@ -30,9 +30,11 @@ static void print_octal( EmacsString &, long int, int );
 int sprintf_cmd(void)
 {
     EmacsString output;
-    unsigned char    ch;
+    EmacsChar_t ch;
 
-    int    width, precision, left_justify;
+    int width;
+    int precision;
+    int left_justify;
 
     int arg = 1;
 
@@ -99,7 +101,7 @@ int sprintf_cmd(void)
             precision = 9999;
 
         switch( ch )
-    {
+        {
         case '%':
             output.append( '%' );
             continue;

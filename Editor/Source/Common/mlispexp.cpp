@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1995 Barry A. Scott
+//    Copyright (c) 1995-2010 Barry A. Scott
 //
 
 //
@@ -20,8 +20,8 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 //
 //
 VariableName::VariableName( const EmacsString &name, Binding *binding )
-    : v_name( name )
-    , v_binding( binding )
+: v_name( name )
+, v_binding( binding )
 {
     define();
 }
@@ -196,46 +196,46 @@ void VariableName::popBinding()
 //
 //
 Binding::Binding( const Expression &exp )
-    : b_inner( NULL )
-    , b_exp( EMACS_NEW Expression( exp ) )
-    , b_local_to( NULL )
-    , b_buffer_specific( 0 )
-    , b_is_default( 0 )
+: b_inner( NULL )
+, b_exp( EMACS_NEW Expression( exp ) )
+, b_local_to( NULL )
+, b_buffer_specific( 0 )
+, b_is_default( 0 )
 { }
 
 Binding::Binding( const Expression &exp, EmacsBuffer *buf )
-    : b_inner( NULL )
-    , b_exp( EMACS_NEW Expression( exp ) )
-    , b_local_to( buf )
-    , b_buffer_specific( 1 )
-    , b_is_default( 0 )
+: b_inner( NULL )
+, b_exp( EMACS_NEW Expression( exp ) )
+, b_local_to( buf )
+, b_buffer_specific( 1 )
+, b_is_default( 0 )
 { }
 
 // used by restore_var only
 Binding::Binding( Expression *exp )
-    : b_inner( NULL )
-    , b_exp( exp )
-    , b_local_to( NULL )
-    , b_buffer_specific( 0 )
-    , b_is_default( 0 )
+: b_inner( NULL )
+, b_exp( exp )
+, b_local_to( NULL )
+, b_buffer_specific( 0 )
+, b_is_default( 0 )
 { }
 
 Binding::Binding( SystemExpression *exp, int is_default )
-    : b_inner( NULL )
-    , b_exp( exp )
-    , b_local_to( NULL )
-    , b_buffer_specific( 0 )
-    , b_is_default( is_default )
+: b_inner( NULL )
+, b_exp( exp )
+, b_local_to( NULL )
+, b_buffer_specific( 0 )
+, b_is_default( is_default )
 {
     emacs_assert( exp != NULL );
 }
 
 Binding::Binding( SystemExpression *exp, Binding *default_value )
-    : b_inner( default_value )
-    , b_exp( exp )
-    , b_local_to( NULL )
-    , b_buffer_specific( 0 )
-    , b_is_default( 0 )
+: b_inner( default_value )
+, b_exp( exp )
+, b_local_to( NULL )
+, b_buffer_specific( 0 )
+, b_is_default( 0 )
 {
     emacs_assert( exp != NULL );
 }
@@ -256,7 +256,7 @@ Expression::~Expression()
 }
 
 Expression::Expression()
-    : data( NULL )
+: data( NULL )
 { }
 
 Expression::Expression( int i )
@@ -304,7 +304,7 @@ Expression::Expression( Expression *e )
 }
 #endif
 Expression::Expression( ExpressionRepresentation *system_expression )
-    : data( system_expression )
+: data( system_expression )
 {
 //    data->add_ref();
 }
@@ -432,7 +432,7 @@ EmacsWindowRing * Expression::asWindows() const
 //
 //
 SystemExpression::SystemExpression( ExpressionRepresentation *system_expression )
-    : Expression( system_expression )
+: Expression( system_expression )
 {
 }
 
@@ -492,7 +492,7 @@ ExpressionRepresentation *SystemExpression::getRepresentation(void) const
 //
 //
 ExpressionRepresentation::ExpressionRepresentation()
-    : ref_count(0)
+: ref_count(0)
 { }
 
 ExpressionRepresentation::~ExpressionRepresentation()
@@ -552,7 +552,7 @@ int ExpressionRepresentation::remove_ref()
 //
 //
 ExpressionRepresentationInt::ExpressionRepresentationInt( int i )
-    : exp_int( i )
+: exp_int( i )
 { }
 
 EmacsString ExpressionRepresentationInt::asString() const
@@ -571,7 +571,7 @@ ExpressionRepresentationInt::~ExpressionRepresentationInt(void)
 //
 //
 SystemExpressionRepresentationInt::SystemExpressionRepresentationInt( int i )
-    : exp_int( i )
+: exp_int( i )
 { }
 
 SystemExpressionRepresentationInt::~SystemExpressionRepresentationInt()
@@ -601,7 +601,7 @@ SystemExpressionRepresentationInt &SystemExpressionRepresentationInt::operator=(
 //
 //
 SystemExpressionRepresentationIntReadOnly::SystemExpressionRepresentationIntReadOnly( int i )
-    : SystemExpressionRepresentationInt( i )
+: SystemExpressionRepresentationInt( i )
 { }
 
 SystemExpressionRepresentationIntReadOnly::~SystemExpressionRepresentationIntReadOnly()
@@ -618,7 +618,7 @@ void SystemExpressionRepresentationIntReadOnly::assign_value( ExpressionRepresen
 //
 //
 SystemExpressionRepresentationIntPositive::SystemExpressionRepresentationIntPositive( int i )
-    : SystemExpressionRepresentationInt( i )
+: SystemExpressionRepresentationInt( i )
 { }
 
 SystemExpressionRepresentationIntPositive::~SystemExpressionRepresentationIntPositive()
@@ -647,7 +647,7 @@ SystemExpressionRepresentationDisplayBoolean::~SystemExpressionRepresentationDis
 { }
 
 SystemExpressionRepresentationIntBoolean::SystemExpressionRepresentationIntBoolean( int i )
-    : SystemExpressionRepresentationInt( i )
+: SystemExpressionRepresentationInt( i )
 { }
 
 SystemExpressionRepresentationIntBoolean::~SystemExpressionRepresentationIntBoolean()
@@ -669,7 +669,7 @@ void SystemExpressionRepresentationIntBoolean::assign_value( ExpressionRepresent
 //
 //
 ExpressionRepresentationString::ExpressionRepresentationString( const EmacsString &str )
-    : exp_string( str )
+: exp_string( str )
 { }
 
 ExpressionRepresentationString::~ExpressionRepresentationString()
@@ -681,11 +681,11 @@ ExpressionRepresentationString::~ExpressionRepresentationString()
 //
 //
 SystemExpressionRepresentationString::SystemExpressionRepresentationString()
-    : exp_string()
+: exp_string()
 { }
 
 SystemExpressionRepresentationString::SystemExpressionRepresentationString( const EmacsString &rep )
-    : exp_string( rep )
+: exp_string( rep )
 { }
 
 SystemExpressionRepresentationString::~SystemExpressionRepresentationString()
@@ -700,7 +700,7 @@ void SystemExpressionRepresentationString::assign_value( ExpressionRepresentatio
 
 int SystemExpressionRepresentationString::asInt() const
 {
-    const unsigned char *p = exp_string.data();
+    const EmacsChar_t *p = exp_string.unicode_data();
     int neg = 0;
 
     while( isspace( *p ) )
@@ -729,7 +729,7 @@ int SystemExpressionRepresentationString::asInt() const
 
 int ExpressionRepresentationString::asInt() const
 {
-    const unsigned char *p = exp_string.data();
+    const EmacsChar_t *p = exp_string.unicode_data();
     int neg = 0;
 
     while( isspace( *p ) )
@@ -762,14 +762,14 @@ int ExpressionRepresentationString::asInt() const
 //
 //
 SystemExpressionRepresentationStringReadOnly::SystemExpressionRepresentationStringReadOnly()
-    : SystemExpressionRepresentationString()
+: SystemExpressionRepresentationString()
 { }
 
 SystemExpressionRepresentationStringReadOnly::~SystemExpressionRepresentationStringReadOnly()
 { }
 
 SystemExpressionRepresentationStringReadOnly::SystemExpressionRepresentationStringReadOnly( const EmacsString &rep )
-    : SystemExpressionRepresentationString( rep )
+: SystemExpressionRepresentationString( rep )
 { }
 
 void SystemExpressionRepresentationStringReadOnly::assign_value( ExpressionRepresentation * /*new_value*/ )
@@ -812,7 +812,7 @@ Marker * ExpressionRepresentationMarker::asMarker() const
 //
 //
 ExpressionRepresentationArray::ExpressionRepresentationArray( EmacsArray &a )
-    : exp_array( a )
+: exp_array( a )
 { }
 
 ExpressionRepresentationArray::~ExpressionRepresentationArray()
@@ -829,7 +829,7 @@ EmacsArray & ExpressionRepresentationArray::asArray()
 //
 //
 SystemExpressionRepresentationArray::SystemExpressionRepresentationArray()
-    : exp_array()
+: exp_array()
 { }
 
 SystemExpressionRepresentationArray::~SystemExpressionRepresentationArray()
@@ -852,7 +852,7 @@ void SystemExpressionRepresentationArray::replace( EmacsArray &a )
 //
 //
 ExpressionRepresentationWindowRing::ExpressionRepresentationWindowRing( EmacsWindowRing *w )
-    : exp_windows( w )
+: exp_windows( w )
 {
     w->wr_ref_count++;
 }
@@ -868,11 +868,11 @@ ExpressionRepresentationWindowRing::~ExpressionRepresentationWindowRing()
 //
 //
 SystemExpressionRepresentationWindowRing::SystemExpressionRepresentationWindowRing(void)
-    : exp_windows( NULL )
+: exp_windows( NULL )
 { }
 
 SystemExpressionRepresentationWindowRing::SystemExpressionRepresentationWindowRing( EmacsWindowRing *w )
-    : exp_windows( w )
+: exp_windows( w )
 {
     w->wr_ref_count++;
 }
