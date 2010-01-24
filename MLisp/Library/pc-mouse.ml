@@ -76,13 +76,13 @@
 	(setq mouse-double-click-time 300)
     )
     
-    (bind-to-key "mouse-1-down" "\(mouse-1-down)")
-    (bind-to-key "mouse-1-up" "\(mouse-1-up)")
-    (bind-to-key "mouse-motion" "\(mouse)")
-    (bind-to-key "mouse-2-down" "\(mouse-2-down)")
-    (bind-to-key "mouse-2-up" "\(mouse-2-up)")
-    (bind-to-key "mouse-3-down" "\(mouse-3-down)")
-    (bind-to-key "mouse-3-up" "\(mouse-3-up)")
+    (bind-to-key "mouse-1-down" "\[mouse-1-down]")
+    (bind-to-key "mouse-1-up" "\[mouse-1-up]")
+    (bind-to-key "mouse-motion" "\[mouse]")
+    (bind-to-key "mouse-2-down" "\[mouse-2-down]")
+    (bind-to-key "mouse-2-up" "\[mouse-2-up]")
+    (bind-to-key "mouse-3-down" "\[mouse-3-down]")
+    (bind-to-key "mouse-3-up" "\[mouse-3-up]")
     
     ;
     ; mouse-wheel bindings
@@ -120,10 +120,10 @@
 	"\[ctrl-shift-mouse-wheel-neg]"
     )
 
-    ;    (bind-to-key "mouse-cut" "\(mouse-2-down)")
-    ;    (bind-to-key "mouse-up" "\(mouse-2-up)")
-    ;    (bind-to-key "mouse-paste" "\(mouse-3-down)")
-    ;    (bind-to-key "mouse-up" "\(mouse-3-up)")
+    ;    (bind-to-key "mouse-cut" "\[mouse-2-down]")
+    ;    (bind-to-key "mouse-up" "\[mouse-2-up]")
+    ;    (bind-to-key "mouse-paste" "\[mouse-3-down]")
+    ;    (bind-to-key "mouse-up" "\[mouse-3-up]")
 )
 
 (defun mouse-off()
