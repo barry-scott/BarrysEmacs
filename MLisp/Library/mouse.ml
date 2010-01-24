@@ -54,20 +54,20 @@
     
     ;	Set up the default bindings for the mouse buttons
     
-    (bind-to-key "mouse-pos" "\(mouse-1-down)")
-    (bind-to-key "mouse-up" "\(mouse-1-up)")
-    (bind-to-key "mouse-cut" "\(mouse-2-down)")
-    (bind-to-key "mouse-up" "\(mouse-2-up)")
-    (bind-to-key "mouse-paste" "\(mouse-3-down)")
-    (bind-to-key "mouse-up" "\(mouse-3-up)")
-    (bind-to-key "mouse-moved" "\201K")
+    (bind-to-key "mouse-pos" "\[mouse-1-down]")
+    (bind-to-key "mouse-up" "\[mouse-1-up]")
+    (bind-to-key "mouse-cut" "\[mouse-2-down]")
+    (bind-to-key "mouse-up" "\[mouse-2-up]")
+    (bind-to-key "mouse-paste" "\[mouse-3-down]")
+    (bind-to-key "mouse-up" "\[mouse-3-up]")
+    (bind-to-key "mouse-moved" "\201K") ; QQQ
     
     ;	Set up the default bindings for local COPY/PASTE
     
     (bind-to-key "accept-region" "\e[!x")
     (bind-to-key "accept-region" "\e[(")
-    (bind-to-key "mouse-local-copy" "\^X\(mouse-2-down)")
-    (bind-to-key "mouse-local-paste" "\^X\(mouse-3-down)")
+    (bind-to-key "mouse-local-copy" "\^X\[mouse-2-down]")
+    (bind-to-key "mouse-local-paste" "\^X\[mouse-3-down]")
     (bind-to-key "local-copy-region" "\^Xc")
     (bind-to-key "local-paste" "\^X\^Y")
 )

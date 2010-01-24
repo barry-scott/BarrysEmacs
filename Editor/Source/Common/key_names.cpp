@@ -50,6 +50,7 @@ key_name_entry::key_name_entry( const key_name_entry &from )
 , compressed_value()
     {}
 
+#if defined( EMACS_LK201_KEYBOARD_SUPPORT )
 static key_name_entry LK201_key_name_entries[] =
 {
     key_name_entry("comma",                         "\033Ol" ),
@@ -141,8 +142,11 @@ static key_name_entry LK201_key_name_entries[] =
 };
 
 key_name LK201_key_names( LK201_key_name_entries, sizeof( LK201_key_name_entries ) );
+#endif
 
-#if 0
+#if defined( PYBEMACS )
+key_name PC_key_names;
+#else
 static key_name_entry PC_key_name_entries[] =
 {
     // This list must be kept i sorted order
@@ -288,8 +292,6 @@ static key_name_entry PC_key_name_entries[] =
     key_name_entry("up",                            "\033[A" )
 };
 key_name PC_key_names( PC_key_name_entries, sizeof( PC_key_name_entries ) );
-#else
-key_name PC_key_names;
 #endif
 
 key_name::key_name( key_name_entry *_key_names, int sizeof_key_names )

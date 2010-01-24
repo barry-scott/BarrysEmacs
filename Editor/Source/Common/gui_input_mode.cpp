@@ -1,3 +1,6 @@
+//    Copyright (c) 1982-2010
+//        Barry A. Scott
+//
 #include <emacs.h>
 
 #undef THIS_FILE

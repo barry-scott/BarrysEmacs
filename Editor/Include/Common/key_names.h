@@ -41,5 +41,7 @@ private:
     KeysMapping_t compressed_keys_to_name;
 };
 
+#if defined( EMACS_LK201_KEYBOARD_SUPPORT )
 extern key_name LK201_key_names;
+#endif
 extern key_name PC_key_names;

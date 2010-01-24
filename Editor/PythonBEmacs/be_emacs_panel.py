@@ -76,7 +76,7 @@ LINE_M_ATTR_USER        = LINE_ATTR_USER|(15)   # the 8 user colours
 
 fg_colours = {
     SYNTAX_DULL:            wx.Colour(  0,  0,  0),
-    LINE_M_ATTR_HIGHLIGHT:  wx.Colour(255,255,255),
+    LINE_M_ATTR_HIGHLIGHT:  wx.Colour(  0,  0,  0),
     SYNTAX_WORD:            wx.Colour(  0,  0,  0),
     SYNTAX_TYPE_STRING1:    wx.Colour(  0,128,  0),
     SYNTAX_TYPE_STRING2:    wx.Colour(  0,128,  0),
@@ -100,7 +100,7 @@ fg_colours = {
 
 bg_colours = {
     SYNTAX_DULL:            wx.Colour(255,255,255),
-    LINE_M_ATTR_HIGHLIGHT:  wx.Colour(  0,  0,  0),
+    LINE_M_ATTR_HIGHLIGHT:  wx.Colour(255,204,102),
     SYNTAX_WORD:            wx.Colour(255,255,255),
     SYNTAX_TYPE_STRING1:    wx.Colour(255,255,255),
     SYNTAX_TYPE_STRING2:    wx.Colour(255,255,255),
@@ -127,6 +127,7 @@ prefix_key =        u'\uef01'
 prefix_mouse =      u'\uef02'
 prefix_menu =       u'\uef03'
 key_base =          0xef20
+
 
 keys_mapping = {
     u'default':                     default_binding,
@@ -284,7 +285,7 @@ keys_mapping = {
 
 special_keys = {
 #   Key code            trans           shift_trans         ctrl_trans          ctrl_shift_trans
-    wx.WXK_BACK:        (u'backspace',  u'backspace',       u'ctrl-backspace',  u'ctrl-backspace'),
+    wx.WXK_BACK:        (u'backspace',  None,               u'ctrl-backspace',  None),
     wx.WXK_TAB:         (u'tab',        u'shift-tab',       u'tab',             u'shift-tab'),
 
     # function keys
@@ -307,10 +308,10 @@ special_keys = {
     wx.WXK_END:         (u'end',        u'shift-end',       u'ctrl-end',        u'ctrl-shift-end'),
     wx.WXK_HOME:        (u'home',       u'shift-home',      u'ctrl-home',       u'ctrl-shift-home'),
 
-    wx.WXK_LEFT:        (u'left',       u'left',            u'ctrl-left',       u'ctrl-left'),
-    wx.WXK_UP:          (u'up',         u'up',              u'ctrl-up',         u'ctrl-up'),
-    wx.WXK_RIGHT:       (u'right',      u'right',           u'ctrl-right',      u'ctrl-right'),
-    wx.WXK_DOWN:        (u'down',       u'down',            u'ctrl-down',       u'ctrl-down'),
+    wx.WXK_LEFT:        (u'left',       None,               u'ctrl-left',       None),
+    wx.WXK_UP:          (u'up',         None,               u'ctrl-up',         None),
+    wx.WXK_RIGHT:       (u'right',      None,               u'ctrl-right',      None),
+    wx.WXK_DOWN:        (u'down',       None,               u'ctrl-down',       None),
 
     wx.WXK_INSERT:      (u'insert',     u'shift-insert',    u'ctrl-insert',     u'ctrl-shift-insert'),
     wx.WXK_DELETE:      (u'delete',     u'shift-delete',    u'ctrl-delete',     u'ctrl-shift-delete'),
@@ -510,24 +511,21 @@ class EmacsPanel(wx.Panel):
         if key in special_keys:
             trans, shift_trans, ctrl_trans, ctrl_shift_trans = special_keys[ key ]
 
-            if ctrl and shift:
+            if ctrl and shift and ctrl_shift_trans is not None:
                 translation = ctrl_shift_trans
                 shift = False
 
             elif ctrl:
                 translation = ctrl_trans
 
-            elif shift:
+            elif shift and shift_trans is not None:
                 translation = shift_trans
                 shift = False
 
             else:
                 translation = trans
 
-            print '1 translation %r' % (translation,)
-
             translation = keys_mapping[ translation ]
-            print '2 translation %r' % (translation,)
 
             for ch in translation:
                 self.app.editor.guiEventChar( ch, shift )

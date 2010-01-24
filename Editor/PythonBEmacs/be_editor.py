@@ -45,7 +45,7 @@ class BEmacs(_bemacs.BemacsEditor):
         self.geometryChange( self.window.term_width, self.window.term_length )
 
         self.log.debug( 'TESTING' )
-        _bemacs.function.debug_emacs( 'flags=key' )
+        #_bemacs.function.debug_emacs( 'flags=key,exec,tmp' )
         #_bemacs.variable.error_messages_buffer = "error-messages"
 
         self.log.debug( 'BEmacs.initEmacsProfile() emacs_profile.ml' )

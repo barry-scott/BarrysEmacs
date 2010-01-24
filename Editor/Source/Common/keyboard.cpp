@@ -12,7 +12,6 @@ static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
 
-
 KeyMap *define_keymap( const EmacsString &name );
 int process_key( void );
 int get_char( void );
@@ -36,7 +35,11 @@ extern void record_keystoke_history( const EmacsString &keys, BoundName *proc );
 //    Global Data definitions
 //
 SystemExpressionRepresentationInt input_mode;
+#if defined( EMACS_LK201_KEYBOARD_SUPPORT )
 SystemExpressionRepresentationIntBoolean keyboard_emulates_lk201_keypad( 1 );
+#else
+SystemExpressionRepresentationIntBoolean keyboard_emulates_lk201_keypad( 0 );
+#endif
 
 SystemExpressionRepresentationIntBoolean activity_indicator;
 EmacsMacroString macro_replay_body;
@@ -435,7 +438,7 @@ int process_key( void )
 
 static EmacsChar_t parameter_chars[100];
 
-int get_char( void )
+static int _get_char( void )
 {
     int c = -1;
     int i;
@@ -696,7 +699,8 @@ having_dequeued_a_char:    // leave this block
         debug_invoke();
     }
 
-    if( input_mode == 1 ) gui_input_shift_state( char_cell->ce_shift );
+    if( input_mode == 1 )
+        gui_input_shift_state( char_cell->ce_shift );
 
     // insert at tail of queue
     char_cell->ce_type = CE_TYPE_FREE_CELL;
@@ -738,6 +742,15 @@ having_found_char:    // leave this block
     return c;
 }
 
+int get_char( void )
+{
+    int ch = _get_char();
+#if DBG_KEY && DBG_TMP
+    if( dbg_flags&DBG_KEY && dbg_flags&DBG_TMP )
+        _dbg_msg( FormatString("get_char() return %C(0x%x)") << ch << ch );
+#endif
+    return ch;
+}
 
 // Given a keystroke sequence look up the bound_name that it is bound to
 BoundName *lookup_boundname_keys( KeyMap *kmap, EmacsString keys )

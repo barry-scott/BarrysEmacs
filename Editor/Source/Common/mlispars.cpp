@@ -724,12 +724,18 @@ ProgramNode *ProgramNode::string_node( MLispInputStream &input )
                 c = c & 037;
             break;
         }
+#if defined( EMACS_LK201_KEYBOARD_SUPPORT )
         case '(':    // LK201 key names
+#endif
         case '[':    // PC key names
         {
             EmacsString key_name;
 
+#if defined( EMACS_LK201_KEYBOARD_SUPPORT )
             int final_char = c == '(' ? ')' : ']';
+#else
+            int final_char = ']';
+#endif
             c = input();
             while( c != final_char )
             {
@@ -742,12 +748,16 @@ ProgramNode *ProgramNode::string_node( MLispInputStream &input )
                 c = input();
             }
 
+#if defined( EMACS_LK201_KEYBOARD_SUPPORT )
             EmacsString translation
                 (
                 final_char == ')' ?
                     LK201_key_names.valueOfKeyName( key_name ) :
                     PC_key_names.valueOfKeyName( key_name )
                 );
+#else
+            EmacsString translation( PC_key_names.valueOfKeyName( key_name ) );
+#endif
             if( translation.isNull() )
             {
                 error( FormatString("Unknown keyname %s in string") << key_name );

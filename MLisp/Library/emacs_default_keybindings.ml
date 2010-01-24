@@ -132,8 +132,9 @@
 (bind-to-key "help-key" "\^_")
 (bind-to-key "interrupt-key" "\^G")
 
-(execute-mlisp-file "lk201")
-
+(if keyboard-emulates-lk201-keypad
+    (execute-mlisp-file "lk201")
+)
 
 ;
 ; Set up the Mini-buffer keymaps

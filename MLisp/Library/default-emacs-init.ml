@@ -87,7 +87,7 @@
 	    (execute-mlisp-file "pc-keyboard")	; PC keyboard handling
 	    (execute-mlisp-file "pc-mouse")	; mouse support
 	    (if (!= operating-system-name "window")
-		(bind-to-key "mouse-paste-primary" "\(mouse-2-down)")
+		(bind-to-key "mouse-paste-primary" "\[mouse-2-down]")
 	    )
 	)
     )
