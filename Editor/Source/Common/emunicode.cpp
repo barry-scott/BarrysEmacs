@@ -24,8 +24,13 @@ EmacsCharToCharMap_t __to_upper;
 EmacsCharToCharMap_t __to_lower;
 EmacsCharToCharMap_t __to_title;
 EmacsCharToCharMap_t __casefold;
+
 EmacsCharCategorySet_t __alphabetic;
 EmacsCharCategorySet_t __numeric;
+
+EmacsCharCategorySet_t __is_upper;
+EmacsCharCategorySet_t __is_lower;
+EmacsCharCategorySet_t __is_title;
 
 void init_unicode()
 {
@@ -40,6 +45,24 @@ void init_unicode()
         if( (sizeof( EmacsChar_t ) == 2 && p->code_point <= 65535)
         || sizeof( EmacsChar_t ) >= 4 )
             __alphabetic.insert( p->code_point );
+    }
+    for( struct unicode_category *p = unicode_init_is_upper; p->code_point != 0; ++p )
+    {
+        if( (sizeof( EmacsChar_t ) == 2 && p->code_point <= 65535)
+        || sizeof( EmacsChar_t ) >= 4 )
+            __is_upper.insert( p->code_point );
+    }
+    for( struct unicode_category *p = unicode_init_is_lower; p->code_point != 0; ++p )
+    {
+        if( (sizeof( EmacsChar_t ) == 2 && p->code_point <= 65535)
+        || sizeof( EmacsChar_t ) >= 4 )
+            __is_lower.insert( p->code_point );
+    }
+    for( struct unicode_category *p = unicode_init_is_title; p->code_point != 0; ++p )
+    {
+        if( (sizeof( EmacsChar_t ) == 2 && p->code_point <= 65535)
+        || sizeof( EmacsChar_t ) >= 4 )
+            __is_title.insert( p->code_point );
     }
     for( struct unicode_data *p = unicode_init_to_upper; p->code_point != 0; ++p )
     {
@@ -99,6 +122,11 @@ EmacsCharCategorySet_t::const_iterator getAlphabeticEnd()
 
 bool unicode_is_upper( EmacsChar_t code_point )
 {
+    return __is_upper.count( code_point ) > 0;
+}
+
+bool unicode_has_upper_translation( EmacsChar_t code_point )
+{
     return __to_upper.count( code_point ) > 0;
 }
 
@@ -113,6 +141,11 @@ EmacsChar_t unicode_to_upper( EmacsChar_t code_point )
 
 bool unicode_is_lower( EmacsChar_t code_point )
 {
+    return __is_lower.count( code_point ) > 0;
+}
+
+bool unicode_has_lower_translation( EmacsChar_t code_point )
+{
     return __to_lower.count( code_point ) > 0;
 }
 
@@ -126,6 +159,11 @@ EmacsChar_t unicode_to_lower( EmacsChar_t code_point )
 }
 
 bool unicode_is_title( EmacsChar_t code_point )
+{
+    return __is_title.count( code_point ) > 0;
+}
+
+bool unicode_has_title_translation( EmacsChar_t code_point )
 {
     return __to_title.count( code_point ) > 0;
 }

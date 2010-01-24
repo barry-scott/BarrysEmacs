@@ -17,19 +17,33 @@ def main( argv ):
     to_upper = {}
     to_lower = {}
     to_title = {}
+    is_upper = set()
+    is_lower = set()
+    is_title = set()
 
     for line in ucd:
         parts = line.strip().split(';')
         code = parts[0]
         category = parts[2]
-        lower = parts[12]
-        upper = parts[13]
+        upper = parts[12]
+        lower = parts[13]
         title = parts[14]
 
-        if category.startswith( 'L' ):
+        if category.startswith( 'Lu' ):
             alphabetic.add( code )
+            is_upper.add( code )
+
+        if category.startswith( 'Ll' ):
+            alphabetic.add( code )
+            is_lower.add( code )
+
+        if category.startswith( 'Lt' ):
+            alphabetic.add( code )
+            is_title.add( code )
+
         if category.startswith( 'N' ):
             numeric.add( code )
+
         if len(upper) > 0:
             to_upper[ code ] = upper
         if len(lower) > 0:
@@ -42,6 +56,9 @@ def main( argv ):
     print 'to_upper',len(to_upper)
     print 'to_lower',len(to_lower)
     print 'to_title',len(to_title)
+    print 'is_upper',len(is_upper)
+    print 'is_lower',len(is_lower)
+    print 'is_title',len(is_title)
 
     ucd.close()
 
@@ -92,6 +109,27 @@ struct unicode_data
 
     cxx.write( 'struct unicode_category unicode_init_numeric[ %d ] = {\n' % (len(numeric)+1,))
     for code in sorted( numeric ):
+        cxx.write( '    {0x%s},\n' % (code,) )
+
+    cxx.write( '    {0x0000}\n' )
+    cxx.write( '};\n\n' )
+
+    cxx.write( 'struct unicode_category unicode_init_is_upper[ %d ] = {\n' % (len(is_upper)+1,))
+    for code in sorted( is_upper ):
+        cxx.write( '    {0x%s},\n' % (code,) )
+
+    cxx.write( '    {0x0000}\n' )
+    cxx.write( '};\n\n' )
+
+    cxx.write( 'struct unicode_category unicode_init_is_lower[ %d ] = {\n' % (len(is_lower)+1,))
+    for code in sorted( is_lower ):
+        cxx.write( '    {0x%s},\n' % (code,) )
+
+    cxx.write( '    {0x0000}\n' )
+    cxx.write( '};\n\n' )
+
+    cxx.write( 'struct unicode_category unicode_init_is_title[ %d ] = {\n' % (len(is_title)+1,))
+    for code in sorted( is_title ):
         cxx.write( '    {0x%s},\n' % (code,) )
 
     cxx.write( '    {0x0000}\n' )

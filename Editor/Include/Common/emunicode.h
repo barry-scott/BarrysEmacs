@@ -39,15 +39,18 @@ inline bool unicode_is_alphabetic_numeric( EmacsChar_t code_point )
 }
 
 extern bool unicode_is_upper( EmacsChar_t code_point );
+extern bool unicode_has_upper_translation( EmacsChar_t code_point );
 extern EmacsChar_t unicode_to_upper( EmacsChar_t code_point );
 
 extern bool unicode_is_lower( EmacsChar_t code_point );
+extern bool unicode_has_lower_translation( EmacsChar_t code_point );
 extern EmacsChar_t unicode_to_lower( EmacsChar_t code_point );
 
 extern bool unicode_is_title( EmacsChar_t code_point );
+extern bool unicode_has_title_translation( EmacsChar_t code_point );
 extern EmacsChar_t unicode_to_title( EmacsChar_t code_point );
 
-extern bool unicode_is_casefold( EmacsChar_t code_point );
+extern bool unicode_has_casefold_translation( EmacsChar_t code_point );
 extern EmacsChar_t unicode_casefold( EmacsChar_t code_point );
 
 #endif // __EMUNICODE_H__
