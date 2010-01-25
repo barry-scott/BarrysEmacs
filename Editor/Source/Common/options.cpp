@@ -626,9 +626,6 @@ static void perform_bind
     BoundName *name
     )
 {
-    BoundName *b;
-    KeyMap *k;
-
     EmacsString p;
 
     try
@@ -656,7 +653,7 @@ static void perform_bind
     //
     if( tbl[0] == NULL )
     {
-        b = autodefinekeymap();
+        BoundName *b = autodefinekeymap();
         if( b == NULL )
             return;
         tbl[0] = b->getKeyMap();
@@ -665,8 +662,7 @@ static void perform_bind
     //
     // init the keymap pointer
     //
-    k = tbl[0];
-    b = NULL;
+    KeyMap *k = tbl[0];
     //
     // create the the keymap path if required and
     // leave k pointing at the last keymap.
@@ -676,12 +672,14 @@ static void perform_bind
     for( i=0; i<level-1; i++ )
     {
         EmacsChar_t ch( p[i] );
-        b = k->getBinding( ch );
+        BoundName *b = k->getBinding( ch );
+
         if( b == NULL || b->getKeyMap() == NULL )
         {
             b = autodefinekeymap();
             if( b == NULL )
                 return;
+
             k->addBinding( ch, b );
         }
 

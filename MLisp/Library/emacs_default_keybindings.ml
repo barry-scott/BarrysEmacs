@@ -9,13 +9,10 @@
 
 (use-global-map "default-global-keymap")
 (error-occurred (execute-mlisp-file "escape_sequence_strings"))
-(progn char
-    (setq char 0)
-    (while (< char 512)
-	(bind-to-key "self-insert" (char-to-string char))
-	(setq char (+ 1 char))
-    )
-)
+
+; default to self insert for every thing
+(bind-to-key "self-insert" "\[default]")
+
 (define-keymap "ESC-prefix")
 (define-keymap "^X-prefix")
 (bind-to-key "ESC-prefix" "\e")
@@ -161,4 +158,3 @@
     (local-bind-to-key "help-and-exit" "?")
 )
 (error-occurred (delete-buffer "setup-default-keybindings"))
-

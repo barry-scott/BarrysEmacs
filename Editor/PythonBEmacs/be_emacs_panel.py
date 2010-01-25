@@ -127,160 +127,188 @@ prefix_key =        u'\uef01'
 prefix_mouse =      u'\uef02'
 prefix_menu =       u'\uef03'
 key_base =          0xef20
+mouse_base =        0xef20
 
+def __nextKeyMapping():
+    global key_base
+    mapping = prefix_key + unichr( key_base )
+    key_base += 1
+    return mapping
+
+def __nextMouseMapping():
+    global mouse_base
+    mapping = prefix_mouse + unichr( mouse_base )
+    mouse_base += 1
+    return mapping
 
 keys_mapping = {
     u'default':                     default_binding,
     u'key-prefix':                  prefix_key,
     u'mouse-prefix':                prefix_mouse,
     u'menu-prefix':                 prefix_menu,
+    u'menu':                        prefix_menu,
 
-    u'csi':                         u'\033[',
-    u'backspace':                   u'\x7f',
-    u'menu':                        u'\uef03',
-    u'mouse':                       u'\033[&w',
-    u'mouse-1-down':                u'\033[2&w',
-    u'mouse-1-up':                  u'\033[3&w',
-    u'mouse-2-down':                u'\033[4&w',
-    u'mouse-2-up':                  u'\033[5&w',
-    u'mouse-3-down':                u'\033[6&w',
-    u'mouse-3-up':                  u'\033[7&w',
-    u'mouse-4-down':                u'\033[8&w',
-    u'mouse-4-up':                  u'\033[9&w',
-    u'mouse-wheel':                 u'\033[#w',
-    u'mouse-wheel-neg':             u'\033[1#w',
-    u'mouse-wheel-pos':             u'\033[0#w',
-    u'ctrl-mouse-wheel-neg':        u'\033[9#w',
-    u'ctrl-mouse-wheel-pos':        u'\033[8#w',
-    u'ctrl-shift-mouse-wheel-neg':  u'\033[13#w',
-    u'ctrl-shift-mouse-wheel-pos':  u'\033[12#w',
-    u'shift-mouse-wheel-neg':       u'\033[5#w',
-    u'shift-mouse-wheel-pos':       u'\033[4#w',
     u'ss3':                         u'\033O',
+    u'csi':                         u'\033[',
+
     u'tab':                         u'\t',
+    u'shift-tab':                   __nextKeyMapping(),
 
-    u'ctrl-backspace':              prefix_key + u'\uef20',
-    u'ctrl-delete':                 prefix_key + u'\uef21',
-    u'ctrl-down':                   prefix_key + u'\uef22',
-    u'ctrl-end':                    prefix_key + u'\uef23',
-    u'ctrl-left':                   prefix_key + u'\uef32',
-    u'ctrl-page-down':              prefix_key + u'\uef33',
-    u'ctrl-page-up':                prefix_key + u'\uef34',
-    u'ctrl-right':                  prefix_key + u'\uef37',
-    u'ctrl-shift-delete':           prefix_key + u'\uef39',
-    u'ctrl-shift-down':             prefix_key + u'\uef3a',
-    u'ctrl-shift-end':              prefix_key + u'\uef3b',
-    u'ctrl-shift-left':             prefix_key + u'\uef4a',
-    u'ctrl-shift-right':            prefix_key + u'\uef4f',
-    u'ctrl-shift-up':               prefix_key + u'\uef51',
-    u'ctrl-up':                     prefix_key + u'\uef52',
-    u'delete':                      prefix_key + u'\uef53',
-    u'down':                        prefix_key + u'\uef54',
-    u'end':                         prefix_key + u'\uef55',
-    u'left':                        prefix_key + u'\uef74',
-    u'right':                       prefix_key + u'\uef7a',
-    u'shift-delete':                prefix_key + u'\uef7c',
-    u'shift-down':                  prefix_key + u'\uef7d',
-    u'shift-left':                  prefix_key + u'\uef8e',
-    u'shift-page-down':             prefix_key + u'\uef8f',
-    u'shift-page-up':               prefix_key + u'\uef90',
-    u'shift-right':                 prefix_key + u'\uef93',
-    u'shift-up':                    prefix_key + u'\uef95',
-    u'up':                          prefix_key + u'\uef96',
+    u'backspace':                   u'\x7f',
+    u'ctrl-backspace':              __nextKeyMapping(),
 
-    u'ctrl-f1':                     prefix_key + u'\uef24',
-    u'ctrl-f12':                    prefix_key + u'\uef25',
-    u'ctrl-f2':                     prefix_key + u'\uef26',
-    u'ctrl-f3':                     prefix_key + u'\uef27',
-    u'ctrl-f4':                     prefix_key + u'\uef28',
-    u'ctrl-f5':                     prefix_key + u'\uef29',
-    u'ctrl-f6':                     prefix_key + u'\uef2a',
-    u'ctrl-f7':                     prefix_key + u'\uef2b',
-    u'ctrl-f8':                     prefix_key + u'\uef2c',
-    u'ctrl-f9':                     prefix_key + u'\uef2d',
-    u'ctrl-f10':                    prefix_key + u'\uef2e',
-    u'ctrl-f11':                    prefix_key + u'\uef2f',
-    u'ctrl-home':                   prefix_key + u'\uef30',
-    u'ctrl-insert':                 prefix_key + u'\uef31',
-    u'ctrl-pause':                  prefix_key + u'\uef35',
-    u'ctrl-print-screen':           prefix_key + u'\uef36',
-    u'ctrl-scroll-lock':            prefix_key + u'\uef38',
-    u'ctrl-shift-f1':               prefix_key + u'\uef3c',
-    u'ctrl-shift-f2':               prefix_key + u'\uef3d',
-    u'ctrl-shift-f3':               prefix_key + u'\uef3e',
-    u'ctrl-shift-f4':               prefix_key + u'\uef3f',
-    u'ctrl-shift-f5':               prefix_key + u'\uef40',
-    u'ctrl-shift-f6':               prefix_key + u'\uef41',
-    u'ctrl-shift-f7':               prefix_key + u'\uef42',
-    u'ctrl-shift-f8':               prefix_key + u'\uef43',
-    u'ctrl-shift-f9':               prefix_key + u'\uef44',
-    u'ctrl-shift-f10':              prefix_key + u'\uef45',
-    u'ctrl-shift-f11':              prefix_key + u'\uef46',
-    u'ctrl-shift-f12':              prefix_key + u'\uef47',
-    u'ctrl-shift-home':             prefix_key + u'\uef48',
-    u'ctrl-shift-insert':           prefix_key + u'\uef49',
-    u'ctrl-shift-page-down':        prefix_key + u'\uef4b',
-    u'ctrl-shift-page-up':          prefix_key + u'\uef4c',
-    u'ctrl-shift-pause':            prefix_key + u'\uef4d',
-    u'ctrl-shift-print-screen':     prefix_key + u'\uef4e',
-    u'ctrl-shift-scroll-lock':      prefix_key + u'\uef50',
-    u'f1':                          prefix_key + u'\uef56',
-    u'f2':                          prefix_key + u'\uef57',
-    u'f3':                          prefix_key + u'\uef58',
-    u'f4':                          prefix_key + u'\uef59',
-    u'f5':                          prefix_key + u'\uef5a',
-    u'f6':                          prefix_key + u'\uef5b',
-    u'f7':                          prefix_key + u'\uef5c',
-    u'f8':                          prefix_key + u'\uef5d',
-    u'f9':                          prefix_key + u'\uef5e',
-    u'f10':                         prefix_key + u'\uef5f',
-    u'f11':                         prefix_key + u'\uef60',
-    u'f12':                         prefix_key + u'\uef61',
-    u'home':                        prefix_key + u'\uef62',
-    u'insert':                      prefix_key + u'\uef63',
-    u'page-down':                   prefix_key + u'\uef76',
-    u'page-up':                     prefix_key + u'\uef77',
-    u'pause':                       prefix_key + u'\uef78',
-    u'print-screen':                prefix_key + u'\uef79',
-    u'scroll-lock':                 prefix_key + u'\uef7b',
-    u'shift-end':                   prefix_key + u'\uef7e',
-    u'shift-f1':                    prefix_key + u'\uef7f',
-    u'shift-f10':                   prefix_key + u'\uef80',
-    u'shift-f11':                   prefix_key + u'\uef81',
-    u'shift-f12':                   prefix_key + u'\uef82',
-    u'shift-f2':                    prefix_key + u'\uef83',
-    u'shift-f3':                    prefix_key + u'\uef84',
-    u'shift-f4':                    prefix_key + u'\uef85',
-    u'shift-f5':                    prefix_key + u'\uef86',
-    u'shift-f6':                    prefix_key + u'\uef87',
-    u'shift-f7':                    prefix_key + u'\uef88',
-    u'shift-f8':                    prefix_key + u'\uef89',
-    u'shift-f9':                    prefix_key + u'\uef8a',
-    u'shift-home':                  prefix_key + u'\uef8b',
-    u'shift-insert':                prefix_key + u'\uef8c',
-    u'shift-kp-plus':               prefix_key + u'\uef8d',
-    u'shift-pause':                 prefix_key + u'\uef91',
-    u'shift-print-screen':          prefix_key + u'\uef92',
-    u'shift-scroll-lock':           prefix_key + u'\uef94',
-    u'shift-tab':                   prefix_key + u'\uef97',
+    u'mouse-1-down':                __nextMouseMapping(),
+    u'mouse-1-up':                  __nextMouseMapping(),
+    u'mouse-2-down':                __nextMouseMapping(),
+    u'mouse-2-up':                  __nextMouseMapping(),
+    u'mouse-3-down':                __nextMouseMapping(),
+    u'mouse-3-up':                  __nextMouseMapping(),
+    u'mouse-4-down':                __nextMouseMapping(),
+    u'mouse-4-up':                  __nextMouseMapping(),
 
-    u'kp-divide':                   prefix_key + u'\uef64',
-    u'kp-dot':                      prefix_key + u'\uef65',
-    u'kp-enter':                    prefix_key + u'\uef66',
-    u'kp-minus':                    prefix_key + u'\uef67',
-    u'kp-multiple':                 prefix_key + u'\uef68',
-    u'kp-plus':                     prefix_key + u'\uef69',
-    u'kp0':                         prefix_key + u'\uef6a',
-    u'kp1':                         prefix_key + u'\uef6b',
-    u'kp2':                         prefix_key + u'\uef6c',
-    u'kp3':                         prefix_key + u'\uef6d',
-    u'kp4':                         prefix_key + u'\uef6e',
-    u'kp5':                         prefix_key + u'\uef6f',
-    u'kp6':                         prefix_key + u'\uef70',
-    u'kp7':                         prefix_key + u'\uef71',
-    u'kp8':                         prefix_key + u'\uef72',
-    u'kp9':                         prefix_key + u'\uef73',
-    u'num-lock':                    prefix_key + u'\uef75',
+    u'mouse-motion':                __nextMouseMapping(),
+
+    u'mouse-wheel-neg':             __nextMouseMapping(),
+    u'ctrl-mouse-wheel-neg':        __nextMouseMapping(),
+    u'shift-mouse-wheel-neg':       __nextMouseMapping(),
+    u'ctrl-shift-mouse-wheel-neg':  __nextMouseMapping(),
+
+    u'mouse-wheel-pos':             __nextMouseMapping(),
+    u'ctrl-mouse-wheel-pos':        __nextMouseMapping(),
+    u'shift-mouse-wheel-pos':       __nextMouseMapping(),
+    u'ctrl-shift-mouse-wheel-pos':  __nextMouseMapping(),
+
+    u'insert':                      __nextKeyMapping(),
+    u'ctrl-insert':                 __nextKeyMapping(),
+    u'shift-insert':                __nextKeyMapping(),
+    u'ctrl-shift-insert':           __nextKeyMapping(),
+
+    u'delete':                      __nextKeyMapping(),
+    u'ctrl-delete':                 __nextKeyMapping(),
+    u'shift-delete':                __nextKeyMapping(),
+    u'ctrl-shift-delete':           __nextKeyMapping(),
+
+    u'home':                        __nextKeyMapping(),
+    u'ctrl-home':                   __nextKeyMapping(),
+    u'shift-home':                  __nextKeyMapping(),
+    u'ctrl-shift-home':             __nextKeyMapping(),
+
+    u'end':                         __nextKeyMapping(),
+    u'ctrl-end':                    __nextKeyMapping(),
+    u'shift-end':                   __nextKeyMapping(),
+    u'ctrl-shift-end':              __nextKeyMapping(),
+
+    u'up':                          __nextKeyMapping(),
+    u'ctrl-up':                     __nextKeyMapping(),
+    u'shift-up':                    __nextKeyMapping(),
+    u'ctrl-shift-up':               __nextKeyMapping(),
+
+    u'down':                        __nextKeyMapping(),
+    u'ctrl-down':                   __nextKeyMapping(),
+    u'shift-down':                  __nextKeyMapping(),
+    u'ctrl-shift-down':             __nextKeyMapping(),
+
+    u'left':                        __nextKeyMapping(),
+    u'ctrl-left':                   __nextKeyMapping(),
+    u'shift-left':                  __nextKeyMapping(),
+    u'ctrl-shift-left':             __nextKeyMapping(),
+
+    u'right':                       __nextKeyMapping(),
+    u'ctrl-right':                  __nextKeyMapping(),
+    u'shift-right':                 __nextKeyMapping(),
+    u'ctrl-shift-right':            __nextKeyMapping(),
+
+    u'page-down':                   __nextKeyMapping(),
+    u'ctrl-page-down':              __nextKeyMapping(),
+    u'shift-page-down':             __nextKeyMapping(),
+    u'ctrl-shift-page-down':        __nextKeyMapping(),
+
+    u'page-up':                     __nextKeyMapping(),
+    u'ctrl-page-up':                __nextKeyMapping(),
+    u'shift-page-up':               __nextKeyMapping(),
+    u'ctrl-shift-page-up':          __nextKeyMapping(),
+
+    u'f1':                          __nextKeyMapping(),
+    u'ctrl-f1':                     __nextKeyMapping(),
+    u'shift-f1':                    __nextKeyMapping(),
+    u'ctrl-shift-f1':               __nextKeyMapping(),
+
+    u'f2':                          __nextKeyMapping(),
+    u'ctrl-f2':                     __nextKeyMapping(),
+    u'shift-f2':                    __nextKeyMapping(),
+    u'ctrl-shift-f2':               __nextKeyMapping(),
+
+    u'f3':                          __nextKeyMapping(),
+    u'ctrl-f3':                     __nextKeyMapping(),
+    u'shift-f3':                    __nextKeyMapping(),
+    u'ctrl-shift-f3':               __nextKeyMapping(),
+
+    u'f4':                          __nextKeyMapping(),
+    u'ctrl-f4':                     __nextKeyMapping(),
+    u'shift-f4':                    __nextKeyMapping(),
+    u'ctrl-shift-f4':               __nextKeyMapping(),
+
+    u'f5':                          __nextKeyMapping(),
+    u'ctrl-f5':                     __nextKeyMapping(),
+    u'shift-f5':                    __nextKeyMapping(),
+    u'ctrl-shift-f5':               __nextKeyMapping(),
+
+    u'f6':                          __nextKeyMapping(),
+    u'ctrl-f6':                     __nextKeyMapping(),
+    u'shift-f6':                    __nextKeyMapping(),
+    u'ctrl-shift-f6':               __nextKeyMapping(),
+
+    u'f7':                          __nextKeyMapping(),
+    u'ctrl-f7':                     __nextKeyMapping(),
+    u'shift-f7':                    __nextKeyMapping(),
+    u'ctrl-shift-f7':               __nextKeyMapping(),
+
+    u'f8':                          __nextKeyMapping(),
+    u'ctrl-f8':                     __nextKeyMapping(),
+    u'shift-f8':                    __nextKeyMapping(),
+    u'ctrl-shift-f8':               __nextKeyMapping(),
+
+    u'f9':                          __nextKeyMapping(),
+    u'ctrl-f9':                     __nextKeyMapping(),
+    u'shift-f9':                    __nextKeyMapping(),
+    u'ctrl-shift-f9':               __nextKeyMapping(),
+
+    u'f10':                         __nextKeyMapping(),
+    u'ctrl-f10':                    __nextKeyMapping(),
+    u'shift-f10':                   __nextKeyMapping(),
+    u'ctrl-shift-f10':              __nextKeyMapping(),
+
+    u'f11':                         __nextKeyMapping(),
+    u'ctrl-f11':                    __nextKeyMapping(),
+    u'shift-f11':                   __nextKeyMapping(),
+    u'ctrl-shift-f11':              __nextKeyMapping(),
+
+    u'f12':                         __nextKeyMapping(),
+    u'ctrl-f12':                    __nextKeyMapping(),
+    u'shift-f12':                   __nextKeyMapping(),
+    u'ctrl-shift-f12':              __nextKeyMapping(),
+
+    u'pause':                       __nextKeyMapping(),
+    u'print-screen':                __nextKeyMapping(),
+    u'scroll-lock':                 __nextKeyMapping(),
+
+    u'kp-divide':                   __nextKeyMapping(),
+    u'kp-dot':                      __nextKeyMapping(),
+    u'kp-enter':                    __nextKeyMapping(),
+    u'kp-minus':                    __nextKeyMapping(),
+    u'kp-multiple':                 __nextKeyMapping(),
+    u'kp-plus':                     __nextKeyMapping(),
+    u'kp0':                         __nextKeyMapping(),
+    u'kp1':                         __nextKeyMapping(),
+    u'kp2':                         __nextKeyMapping(),
+    u'kp3':                         __nextKeyMapping(),
+    u'kp4':                         __nextKeyMapping(),
+    u'kp5':                         __nextKeyMapping(),
+    u'kp6':                         __nextKeyMapping(),
+    u'kp7':                         __nextKeyMapping(),
+    u'kp8':                         __nextKeyMapping(),
+    u'kp9':                         __nextKeyMapping(),
+    u'num-lock':                    __nextKeyMapping(),
 }
 
 special_keys = {
@@ -568,7 +596,8 @@ class EmacsPanel(wx.Panel):
         self.app.editor.guiEventChar( unichr( char ), False )
 
     def OnMouse( self, event ):
-        self.__debugTermInput( 'OnMouse() event_type %r %r' % (event.GetEventType(), wx_evt_names.get( event.GetEventType(), 'unknown' )) )
+        self.__debugTermInput( 'OnMouse() event_type %r %r' %
+                                (event.GetEventType(), wx_evt_names.get( event.GetEventType(), 'unknown' )) )
 
         # Calculate character cell position
         x, y = event.GetPosition()
@@ -578,54 +607,70 @@ class EmacsPanel(wx.Panel):
         shift = event.ShiftDown()
         control = event.ControlDown()
 
+        translation = None
+
         if event.Moving():
             pass
 
         elif event.IsButton():
 
             if event.LeftDown():
-                button = 2
+                translation = keys_mapping["mouse-1-down"]
+
             elif event.LeftUp():
-                button = 3
+                translation = keys_mapping["mouse-1-up"]
+
             elif event.MiddleDown():
-                button = 4
+                translation = keys_mapping["mouse-2-down"]
+
             elif event.MiddleUp():
-                button = 5
+                translation = keys_mapping["mouse-2-up"]
+
             elif event.RightDown():
-                button = 6
+                translation = keys_mapping["mouse-3-down"]
+
             elif event.RightUp():
-                button = 7
+                translation = keys_mapping["mouse-3-up"]
+
             else:
                 self.log.info( 'Uknown button event' )
                 return
 
-            mouse = u'\x1b[%d;%d;%d;%d&w' % (button, 0, line, column)
+            self.__debugTermInput( 'Mouse shift %r line %r column %r' % (shift, line, column) )
 
-            self.__debugTermInput( 'Mouse button %r line %r column %r shift %r' % (button, line, column, shift) )
-
-            for ch in mouse:
-                self.app.editor.guiEventChar( ch, shift )
+            self.app.editor.guiEventMouse( translation, shift, [line, column] );
 
         elif event.GetEventType() == wx.wxEVT_MOUSEWHEEL:
             self.__debugTermInput( 'Mouse Wheel rotation %r delta %r' % (event.GetWheelRotation(), event.GetWheelDelta()) )
 
             rotation = event.GetWheelRotation()
-            if rotation > 0:
-                mode = 0
+
+            if shift and control:
+                if rotation < 0:
+                    translation = keys_mapping["ctrl-shift-mouse-wheel-neg"]
+                else:
+                    translation = keys_mapping["ctrl-shift-mouse-wheel-pos"]
+
+            elif shift:
+                if rotation < 0:
+                    translation = keys_mapping["shift-mouse-wheel-neg"]
+                else:
+                    translation = keys_mapping["shift-mouse-wheel-pos"]
+
+            elif control:
+                if rotation < 0:
+                    translation = keys_mapping["ctrl-mouse-wheel-neg"]
+                else:
+                    translation = keys_mapping["ctrl-mouse-wheel-pos"]
+
             else:
-                mode = 1
+                if rotation < 0:
+                    translation = keys_mapping["mouse-wheel-neg"]
+                else:
+                    translation = keys_mapping["mouse-wheel-pos"]
 
-            if shift:
-                mode |= 4
+            self.app.editor.guiEventMouse( translation, shift, [abs(rotation), line, column] );
 
-            if control:
-                mode |= 8
-
-            mouse = u'\x1b[%d;%d;%d;%d#w' % (mode, 1, line, column)
-
-            for Q in range( abs( rotation ) ):
-                for ch in mouse:
-                    self.app.editor.guiEventChar( ch, False )
 
     #--------------------------------------------------------------------------------
     #

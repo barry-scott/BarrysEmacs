@@ -87,6 +87,8 @@ public:
         PYCXX_ADD_NOARGS_METHOD( modifiedFilesExist, "modifiedFilesExist" );
 
         PYCXX_ADD_VARARGS_METHOD( inputChar, "inputChar( char, shift )" );
+        PYCXX_ADD_VARARGS_METHOD( inputMouse, "inputMouse( keys, shift, all_params )" );
+
         PYCXX_ADD_VARARGS_METHOD( geometryChange, "geometryChange( width, height )" );
         PYCXX_ADD_VARARGS_METHOD( setKeysMapping, "setKeysMapping( keys_mapping )" );
 
@@ -551,6 +553,34 @@ public:
         return Py::None();
     }
     PYCXX_VARARGS_METHOD_DECL( BemacsEditor, inputChar )
+
+    Py::Object inputMouse( const Py::Tuple &args )
+    {
+        Py::String py_keys( args[0] );
+        Py::Boolean py_shift( args[1] );
+        Py::List py_all_params( args[2] );
+
+        EmacsString keys( EmacsString::copy, py_keys.unicode_data(), py_keys.size() );
+        bool shift = py_shift;
+        std::vector<int> all_params;
+
+        for( size_t i=0; i<py_all_params.size(); i++ )
+        {
+            Py::Long py_param( py_all_params[ i ] );
+            long param( py_param );
+
+            all_params.push_back( param );
+        }
+
+        {
+            PythonAllowThreads permission( editor_access_control );
+
+            theActiveView->k_input_mouse( keys, shift, all_params );
+        }
+
+        return Py::None();
+    }
+    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, inputMouse )
 
     Py::Object geometryChange( const Py::Tuple &args )
     {

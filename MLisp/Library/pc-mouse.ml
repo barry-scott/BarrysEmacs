@@ -78,7 +78,7 @@
     
     (bind-to-key "mouse-1-down" "\[mouse-1-down]")
     (bind-to-key "mouse-1-up" "\[mouse-1-up]")
-    (bind-to-key "mouse-motion" "\[mouse]")
+    (bind-to-key "mouse-motion" "\[mouse-motion]")
     (bind-to-key "mouse-2-down" "\[mouse-2-down]")
     (bind-to-key "mouse-2-up" "\[mouse-2-up]")
     (bind-to-key "mouse-3-down" "\[mouse-3-down]")

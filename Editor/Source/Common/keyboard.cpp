@@ -62,7 +62,7 @@ KeyMap *global_map;
 KeyMap *minibuf_local_ns_map;
 KeyMap *minibuf_local_map;
 
-CharElement char_cells[CHARACTER_QUEUE_SIZE];
+CharElement char_cells[ CHARACTER_QUEUE_SIZE ];
 
 QueueHeader<CharElement> free_queue;
 QueueHeader<CharElement> push_back_queue;
@@ -80,6 +80,9 @@ int EmacsWorkItem::queued_while_disabled = 0;
 
 static int keystrokes;        // The number of keystrokes since the last checkpoint.
 static int can_checkpoint;    // True iff we are allowed to checkpoint now.
+
+static bool default_key_set( false );
+static EmacsChar_t default_key;
 
 KeyMap::KeyMap( const EmacsString &name )
 : k_name( name )
@@ -107,22 +110,54 @@ BoundName *KeyMap::getBinding( EmacsChar_t c )
 
 void KeyMap::addBinding( EmacsChar_t c, BoundName *proc )
 {
+    if( !default_key_set )
+    {
+        EmacsString default_value( PC_key_names.valueOfKeyName( "default" ) );
+        if( default_value.length() == 1 )
+        {
+            default_key = default_value[0];
+            default_key_set = true;
+        }
+    }
+
     removeBinding( c );
-    k_binding[ c ] = proc;
+
+    if( default_key_set && c == default_key )
+    {
+        k_default_binding = proc;
+    }
+    else
+    {
+        k_binding[ c ] = proc;
+    }
 }
 
 void KeyMap::removeBinding( EmacsChar_t c )
 {
-    EmacsCharToBoundName_t::iterator i = k_binding.find( c );
-    if( i != k_binding.end() )
+    if( default_key_set && c == default_key )
     {
-        free_sexpr_defun( i->second );
-        k_binding.erase( i );
+        free_sexpr_defun( k_default_binding );
+        k_default_binding = NULL;
+    }
+    else
+    {
+        EmacsCharToBoundName_t::iterator i = k_binding.find( c );
+        if( i != k_binding.end() )
+        {
+            free_sexpr_defun( i->second );
+            k_binding.erase( i );
+        }
     }
 }
 
 void KeyMap::removeAllBindings()
 {
+    if( k_default_binding != NULL )
+    {
+            free_sexpr_defun( k_default_binding );
+            k_default_binding = NULL;
+    }
+
     while( !k_binding.empty() )
     {
         EmacsCharToBoundName_t::iterator i( k_binding.begin() );
@@ -1244,6 +1279,19 @@ exit_loop:
     input_queue.queue_validate();
     free_queue.queue_validate();
 #endif
+}
+
+#include <iostream>
+
+void TerminalControl::k_input_mouse( const EmacsString &keys, bool shift, const std::vector<int> &all_params )
+{
+    std::cout << "k_input_mouse:" << std::endl;
+    keys.q();
+    std::cout << "    shift " << shift << std::endl;
+    for( size_t i=0; i < all_params.size(); i++ )
+    {
+        std::cout << "   param[ " << i << " ] = " << all_params[ i ] << std::endl;
+    }
 }
 
 void TerminalControl::k_interrupt_emacs()

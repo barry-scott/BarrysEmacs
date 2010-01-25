@@ -64,6 +64,9 @@ class BEmacs(_bemacs.BemacsEditor):
     def guiEventChar( self, ch, shift ):
         self.__event_queue.put( (self.inputChar, (ch, shift)) )
 
+    def guiEventMouse( self, keys, shift, all_params ):
+        self.__event_queue.put( (self.inputMouse, (keys, shift, all_params)) )
+
     def guiGeometryChange( self, width, length ):
         self.__event_queue.put( (self.geometryChange, (width, length)) )
 

@@ -1,10 +1,12 @@
 //
-//    Copyright (c) 1982-1998
+//    Copyright (c) 1982-2010
 //        Barry A. Scott
 //
+#include <vector>
 
 const int TT_STRUCT_VERSION( 3 );
 const int K_CHAR_SIZE( 80 );
+
 class TerminalControl
 {
 public:
@@ -75,13 +77,15 @@ public:
     //
     virtual void k_input_enable();              // start input
     virtual void k_input_disable();             // stop input
-    virtual void k_input_char( int, bool );     // pass new charater to Emacs
+    virtual void k_input_char( int ch, bool shoft );     // pass new charater to Emacs
     virtual void k_input_char_string( const unsigned char *keys, bool );        // pass new charaters to Emacs
     virtual void k_input_char_string( const char *keys, bool shift)
     {
         k_input_char_string( (const unsigned char *)keys, shift );
     }
 
+    // pass new mouse event to Emacs
+    virtual void k_input_mouse( const EmacsString &keys, bool shift, const std::vector<int> &all_params );
     virtual int k_input_event( unsigned char *, unsigned int ) { return 0; }    // Pointer and other "smart" input
     virtual void k_check_for_input() { }        // check for any input
     virtual void t_io_putchar( unsigned char ) { }

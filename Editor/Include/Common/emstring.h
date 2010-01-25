@@ -294,8 +294,10 @@ inline EmacsChar_t EmacsString::operator[]( int index ) const
     // allow negative index to be relative to the end of the string
     if( index < 0 )
         index += _rep->length;
+
     emacs_assert( index >= 0 );
     emacs_assert( index < _rep->length );
+
     return _rep->data[index];
 }
 
