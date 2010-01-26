@@ -12,7 +12,11 @@ PYCXX=../Imports/pycxx-$(PYCXX_VER)
 PYCXXSRC=../Imports/pycxx-$(PYCXX_VER)/Src
 UCDDIR=../Imports/ucd
 
-CCCFLAGS=-DPYBEMACS=1 -Wall -fPIC -fexceptions -frtti -I$(PYCXX) -I$(PYCXXSRC) -I$(PYTHON_FRAMEWORK)/include/python${PYTHON_VERSION} -DNDEBUG -DDARWIN -DPYCXX_PYTHON_2TO3 -g -O0
+CCCFLAGS=-DPYBEMACS=1 -Wall -fPIC -fexceptions -frtti -I$(PYCXX) -I$(PYCXXSRC) -I$(PYTHON_FRAMEWORK)/include/python${PYTHON_VERSION} \
+"-DOS_NAME=\"MacOSX\"" "-DUI_TYPE=\"python\"" \
+-DNDEBUG -DDARWIN -DPYCXX_PYTHON_2TO3 \
+-g -O0
+
 CCFLAGS=-Wall -fPIC -I$(PYCXX) -I$(PYCXX)/Src -I$(PYTHON_FRAMEWORK)/include/python${PYTHON_VERSION} -g -O0
 LDSHARED=$(CCC) -bundle -g -u _PyMac_Error -framework System $(PYTHON_FRAMEWORK)/Python -framework CoreFoundation -framework Kerberos -framework Security
 LDLIBS=

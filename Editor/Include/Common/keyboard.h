@@ -3,6 +3,7 @@
 // key to procedure mapping table definitions
 //
 #include <map>
+#include <vector>
 
 // Bit mask values for mouse-enable
 const int MOUSE_BUTTON_EVENTS( 1 );
@@ -13,18 +14,42 @@ enum CE_TYPE_type
 {
     CE_TYPE_FREE_CELL=0,
     CE_TYPE_CHAR,
-    CE_TYPE_PAR_CHAR,
-    CE_TYPE_PAR_SEP,
-    CE_TYPE_FIN_CHAR
+
+    CE_TYPE_PAR_CHAR,   // for parsed ESC/CSI sequences
+    CE_TYPE_PAR_SEP,    // for parsed ESC/CSI sequences
+    CE_TYPE_FIN_CHAR,   // for parsed ESC/CSI sequences
+
+    CE_TYPE_PARM_LIST_FIN_CHAR
 };
 
 class CharElement : public QueueEntry<CharElement>
 {
 public:
-    EmacsChar_t ce_char;
-    int ce_type;
-    bool ce_shift;
+    void set( EmacsChar_t ch, CE_TYPE_type type, bool shift )
+    {
+        ce_char = ch;
+        ce_type = type;
+        ce_shift = shift;
+        ce_all_params.clear();
+    }
+
+    void set( EmacsChar_t ch, CE_TYPE_type type, bool shift, std::vector<int> all_params )
+    {
+        ce_char = ch;
+        ce_type = type;
+        ce_shift = shift;
+        ce_all_params = all_params;
+    }
+
+    ~CharElement()
+    {}
+
+    EmacsChar_t         ce_char;
+    CE_TYPE_type        ce_type;
+    bool                ce_shift;
+    std::vector<int>    ce_all_params;
 };
+
 const int M_CS_CVT_CSI( 1 );
 const int M_CS_CVT_8BIT( 2 );
 const int M_CS_PAR_CHAR( 4 );

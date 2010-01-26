@@ -144,11 +144,11 @@ private:
 
         EMACS_OBJECT_FUNCTIONS( Array )
 
-        int ref_count;                // number of referances to this structure
-        int dimensions;                // number of dimensions
-        int lower_bound[ ARRAY_MAX_DIMENSION ];    // value of the lower bound
-        int size[ ARRAY_MAX_DIMENSION ];    // number of elements in this dimension
-        int total_size;                // total number of elements in the array
+        int ref_count;                          // number of referances to this structure
+        int dimensions;                         // number of dimensions
+        int lower_bound[ ARRAY_MAX_DIMENSION ]; // value of the lower bound
+        int size[ ARRAY_MAX_DIMENSION ];        // number of elements in this dimension
+        int total_size;                         // total number of elements in the array
 
         Expression *values;
     };
@@ -163,11 +163,11 @@ public:
     EmacsArray &operator=( EmacsArray & );
 
 
-    void create();                    // create the array now
-    void addDimension( int low, int high );        // add a dimension
-    int dimensions() const;                // return number of dimensions
-    Expression &operator()(int a);            // one dim array - range checked
-    Expression &operator()(int a, int b);        // two dim array - range checked
+    void create();                              // create the array now
+    void addDimension( int low, int high );     // add a dimension
+    int dimensions() const;                     // return number of dimensions
+    Expression &operator()(int a);              // one dim array - range checked
+    Expression &operator()(int a, int b);       // two dim array - range checked
 
     int array_index( unsigned int arg );
 

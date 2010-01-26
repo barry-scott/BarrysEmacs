@@ -296,7 +296,7 @@ static void scan_map_inner
     // QQQ - not unicode safe
 
     EmacsChar_t c = 0;
-    while( c <= 512 )
+    while( c <= 65534 )
     {
         EmacsChar_t c2 = c + 1;
 
@@ -308,7 +308,7 @@ static void scan_map_inner
         {
             keys[last_char] = c;
 
-            while( c2 < 512
+            while( c2 <= 65534
             && (kmap->getBinding( c2 ) == b)
             && (c < c2 && !(c2 == 0x20 || c2 == 0xa0 || c2 == 0x7f || c2 == 0x80 || c2 == 0xff || c2 == 0x100)) )
                 c2++;
@@ -379,8 +379,6 @@ static void describe1
 
 int describe_bindings( void )
 {
-    KeyMap *local_map;
-    local_map = bf_cur->b_mode.md_keys;
     EmacsBuffer::scratch_bfn( EmacsString("Help"), 1 );
 
     bf_cur->ins_str("Global Bindings (" );
@@ -391,7 +389,9 @@ int describe_bindings( void )
 
     scan_map( current_global_map, describe1, false );
 
-    if( local_map != NULL )
+    KeyMap *local_map = bf_cur->b_mode.md_keys;
+
+    if( local_map != NULL && local_map != current_global_map )
     {
         bf_cur->ins_str( "\nLocal bindings (" );
         bf_cur->ins_cstr( local_map->k_name );

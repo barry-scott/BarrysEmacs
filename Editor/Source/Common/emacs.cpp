@@ -68,7 +68,8 @@ int gui_error = 0;          // true if a message box is required for errors
 
 extern EmacsString parent_path;
 SystemExpressionRepresentationIntBoolean silently_kill_processes;
-SystemExpressionRepresentationStringReadOnly operating_system_name( EmacsString( (const unsigned char *)OS_NAME ) );
+SystemExpressionRepresentationStringReadOnly ui_type( UI_TYPE );
+SystemExpressionRepresentationStringReadOnly operating_system_name( OS_NAME );
 SystemExpressionRepresentationStringReadOnly operating_system_version
 #ifdef OS_VERSION
     ( OS_VERSION )

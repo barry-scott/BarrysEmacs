@@ -1,16 +1,16 @@
 ;
-;	pc-mouse.ml
+;   pc-mouse.ml
 ; 
-;	Copyright (c) 1998-2001 Barry A. Scott
+;   Copyright (c) 1998-2010 Barry A. Scott
 ;
-;	23-Mar-1998	Convert into pc-mouse.ml
+;   23-Mar-1998	Convert into pc-mouse.ml
 ; 
-;	25-Sep-1987	J.A.Lomicka
+;   25-Sep-1987	J.A.Lomicka
 ;
-;	This mouse package requires V5 of VAX Emacs, which supports
-;	the built-in goto-wondow-at-x-y and has full support
-;	for CSI sequences.  By itself, it provides support for
-;	VWS V3.2 terminal emulator and compatible terminals.
+;   This mouse package requires V5 of VAX Emacs, which supports
+;   the built-in goto-wondow-at-x-y and has full support
+;   for CSI sequences.  By itself, it provides support for
+;   VWS V3.2 terminal emulator and compatible terminals.
 ;
 
 ; 
@@ -63,15 +63,15 @@
 )
 
 (defun mouse-mode()
-    ;	Enable the control-string parser for parsing of
-    ;	escape sequences.  Convert F-keys and mouse sequences to single
-    ;	keystrokes.
+    ;   Enable the control-string parser for parsing of
+    ;   escape sequences.  Convert F-keys and mouse sequences to single
+    ;   keystrokes.
     (if (! control-string-processing)
 	(error-message
 	    "Control String Processing must be enable for the Mouse package to work.")
     )
     
-    ;	Set up the default bindings for the mouse buttons
+    ;   Set up the default bindings for the mouse buttons
     (if (= mouse-double-click-time 0)
 	(setq mouse-double-click-time 300)
     )
@@ -130,38 +130,48 @@
     (setq mouse-enable 0)
 )
 
-;	The routine mouse-parameters is used to get the parameters out
-;	of the CSI argument string and put them in the caller's variables
-;	"mousex", "mousey", and "mouseevent".  This provides a central
-;	place where mouse parameters are obtained from their corresponding
-;	parameters, and inherently defines a hook that can be used to
-;	accomodate other kinds of terminals.  (Load this package, then
-;	redefine mouse-parameters to get the parameters correctly for the
-;	foreign terminal.)
+;   The routine mouse-parameters is used to get the parameters out
+;   of the CSI argument string and put them in the caller's variables
+;   "mousex", "mousey", and "mouseevent".  This provides a central
+;   place where mouse parameters are obtained from their corresponding
+;   parameters, and inherently defines a hook that can be used to
+;   accomodate other kinds of terminals.  (Load this package, then
+;   redefine mouse-parameters to get the parameters correctly for the
+;   foreign terminal.)
 
 (defun mouse-parameters()
     x y event
-    (setq y (+ (fetch-array control-string-parameters 1 3)))
-    (setq x (+ (fetch-array control-string-parameters 1 4)))
-    (setq event (+ (fetch-array control-string-parameters 1 1)))
+
+    (if (= user-interface-type "python")
+        (progn
+            (setq y (fetch-array control-string-parameters 1))
+            (setq x (fetch-array control-string-parameters 2))
+            (setq event 0)
+        )
+        (progn
+            (setq y (+ (fetch-array control-string-parameters 1 3)))
+            (setq x (+ (fetch-array control-string-parameters 1 4)))
+            (setq event (+ (fetch-array control-string-parameters 1 1)))
+        )
+    )
     (if (is-bound mousey)
-	(setq mousey y)
+        (setq mousey y)
     )
     (if (is-bound mousex)
-	(setq mousex x)
+        (setq mousex x)
     )
     (if (is-bound mouseevent)
-	(setq mouseevent event)
+        (setq mouseevent event)
     )
     (if (is-bound mouse-second-click)
-	(setq mouse-second-click 
-	    (&
-		(mouse-double-click mouse-1-up-time)
-		(= x ~saved-mousex)
-		(= y ~saved-mousey)
-		(= (| event 1) (| ~saved-mouseevent 1))
-	    )
-	)
+        (setq mouse-second-click 
+            (&
+                (mouse-double-click mouse-1-up-time)
+                (= x ~saved-mousex)
+                (= y ~saved-mousey)
+                (= (| event 1) (| ~saved-mouseevent 1))
+            )
+        )
     )
 )
 
@@ -169,10 +179,10 @@
     (< (- elapse-time ~down-time) mouse-double-click-time)
 )
 
-;	The routine mouse-reposition is used to position the cursor at
-;	the location the user specified in the last mouse click.  Also
-;	performed is any set-up action needed to provide the scrolling and
-;	mode bar movements of mouse-finish-scroll.
+;   The routine mouse-reposition is used to position the cursor at
+;   the location the user specified in the last mouse click.  Also
+;   performed is any set-up action needed to provide the scrolling and
+;   mode bar movements of mouse-finish-scroll.
 
 (defun mouse-reposition( x y event)
     placecode
@@ -187,13 +197,13 @@
     )
 )
 
-;	The routine mouse-finish-scrolling is used to complete the
-;	scrolling and mode bar movements that were initiated in
-;	a call to mouse-reposition.
+;   The routine mouse-finish-scrolling is used to complete the
+;   scrolling and mode bar movements that were initiated in
+;   a call to mouse-reposition.
 
 (defun mouse-finish-scroll( c r)
     (~mouse-log (concat "mouse-finish-scroll( " c " " r " )"))
-    (if (= ~saved-mouseplace 0);	Started in text, scroll text in window
+    (if (= ~saved-mouseplace 0);   Started in text, scroll text in window
 	(error-occurred
 	    (scroll-one-line-up (- ~saved-mousey r))
 	)
@@ -259,12 +269,12 @@
     (setq ~saved-mousey r)
 )
 
-;	The routine mouse-up is used as the action routine to respond to
-;	a button-up that finishes a scrolling operation. Normally
-;	it is associated with button 1, but it checks to make sure that
-;	the most recent event (defined by the most recent call to
-;	mouse-reposition) was a down event on whatever button it
-;	is bound to, so it could be moved to any button-up key binding.
+;   The routine mouse-up is used as the action routine to respond to
+;   a button-up that finishes a scrolling operation. Normally
+;   it is associated with button 1, but it checks to make sure that
+;   the most recent event (defined by the most recent call to
+;   mouse-reposition) was a down event on whatever button it
+;   is bound to, so it could be moved to any button-up key binding.
 
 (defun mouse-up() mousex mousey mouseevent
     (mouse-parameters)
@@ -274,9 +284,9 @@
     (setq ~saved-mouseevent mouseevent)
 )
 
-;	The routine "mouse-cut" is used as the action routine for a
-;	down-strike that marks the opposite end of a region and copies
-;	or cuts the region to the kill buffer.
+;   The routine "mouse-cut" is used as the action routine for a
+;   down-strike that marks the opposite end of a region and copies
+;   or cuts the region to the kill buffer.
 (defun mouse-cut()  mousex mousey mouseevent mouse-second-click
     (mouse-parameters)
     (execute-extended-command favorite-set-mark); Use user preference
@@ -319,11 +329,11 @@
 )
 
 
-(defun copy-to-killbuffer( );	Missing from basic command set
+(defun copy-to-killbuffer( );   Missing from basic command set
     (copy-region-to-buffer "Kill buffer")
 )
 
-(defun v5bug-yank();		There is a bug in (ex-ext-cmd "yank..")
+(defun v5bug-yank();   	There is a bug in (ex-ext-cmd "yank..")
     (yank-buffer "Kill buffer")
 )
 
@@ -698,8 +708,8 @@
 	    (goto-character ~end)
 	    
 	    ; update the colouring
-	    ;	    (apply-colour-to-region 1 (+ (buffer-size) 1) 0)
-	    ;	    (apply-colour-to-region ~start ~end 1)		
+	    ;       (apply-colour-to-region 1 (+ (buffer-size) 1) 0)
+	    ;       (apply-colour-to-region ~start ~end 1)		
 	)
     )
     (~mouse-log (concat "mouse-position-update done"))

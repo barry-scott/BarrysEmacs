@@ -192,8 +192,8 @@ int process_keys( void )
 {
     EmacsString keys_struck;
 
-    next_global_keymap = 0;
-    next_local_keymap = 0;
+    next_global_keymap = NULL;
+    next_local_keymap = NULL;
 
     for(;;)
     {
@@ -267,8 +267,10 @@ int process_keys( void )
                     record_keystoke_history( last_keys_struck.asString(), p );
                 }
 
+                //std::cout << "process_keys:272 char 0x" << std::hex << c << std::dec << " execute " << p->b_proc_name.sdata() << std::endl;
                 if( p->execute() < 0 )
                     return 0;
+
                 if( arg_state != have_arg )
                     previous_command = int(this_command);
                 //
@@ -311,8 +313,11 @@ int process_keys( void )
                     record_keystoke_history( last_keys_struck.asString(), p );
                 }
                 if( p->IsAKeyMap() || lmap == NULL )
+                {
+                    //std::cout << "process_keys:318 char 0x" << std::hex << c << std::dec << " execute " << p->b_proc_name.sdata() << std::endl;
                     if( p->execute() < 0 )
                         return 0;
+                }
                 if( arg_state != have_arg )
                     previous_command = int(this_command);
                 if( next_local_keymap != NULL )
@@ -434,8 +439,11 @@ int process_key( void )
             last_key_struck = c;
             if( !b->IsAKeyMap() )
                 this_command = last_key_struck;
+
+            //std::cout << "process_key:445 char 0x" << std::hex << c << std::dec << " execute " << b->b_proc_name.sdata() << std::endl;
             if( b->execute() < 0 )
                 break;
+
             if( arg_state != have_arg )
                 previous_command = int(this_command);
         }
@@ -525,7 +533,7 @@ static int _get_char( void )
             macro_replay_next = -1;
             return -1;
         }
-        c = macro_replay_body[macro_replay_next++];
+        c = macro_replay_body[ macro_replay_next++ ];
         goto having_found_char;
     }
 
@@ -638,6 +646,29 @@ having_dequeued_a_char:    // leave this block
     case CE_TYPE_CHAR:
         c = char_cell->ce_char;
         break;
+
+    case CE_TYPE_PARM_LIST_FIN_CHAR:
+    {
+        int num_params = char_cell->ce_all_params.size();
+
+        EmacsArray a( 0, num_params + 1 );
+
+        // element 1,0 is the number of params
+        a( 0 ) = num_params+1;
+
+        // row 1 has the parameter strings
+        for( int i=0; i<=num_params; i++ )
+        {
+            a( i+1 ) = char_cell->ce_all_params[i];
+        }
+
+        cs_parameters.replace( a );
+
+        c = char_cell->ce_char;
+        break;
+
+    }
+
     case CE_TYPE_PAR_CHAR:
     case CE_TYPE_PAR_SEP:
     case CE_TYPE_FIN_CHAR:
@@ -661,14 +692,14 @@ having_dequeued_a_char:    // leave this block
                 args[0][ num_params ] = EmacsString
                         (
                         EmacsString::copy,
-                        last_p,            // address of string
-                        p - last_p        // length of string
+                        last_p,                 // address of string
+                        p - last_p              // length of string
                         );
                 args[1][ num_params ] = EmacsString
                         (
                         EmacsString::copy,
                         &char_cell->ce_char,    // address of string
-                        1            // length of string
+                        1                       // length of string
                         );
                 last_p = p;
                 num_params++;
@@ -685,7 +716,7 @@ having_dequeued_a_char:    // leave this block
 
             interlock_dec( &input_pending );
             if( (char_cell = input_queue.queueRemoveFirst()) == NULL )
-                return get_char();    // cannot happen error
+                return get_char();              // cannot happen error
         }
 
         //
@@ -694,15 +725,15 @@ having_dequeued_a_char:    // leave this block
         args[0][ num_params ] = EmacsString
                 (
                 EmacsString::copy,
-                last_p,            // address of string
-                p - last_p        // length of string
+                last_p,             // address of string
+                p - last_p          // length of string
                 );
 
         {
         EmacsArray a
             (
-            1, 2,            // first dimension size
-            0, num_params + 1    // second dimension size
+            1, 2,                   // first dimension size
+            0, num_params + 1       // second dimension size
             );
 
         // element 1,0 is the number of params
@@ -1001,7 +1032,7 @@ enum csi_states
     CSI_ST_CSI
 };
 
-CharElement *_q_char( EmacsChar_t value, int type, bool shift )
+CharElement *_q_char( EmacsChar_t value, CE_TYPE_type type, bool shift )
 {
     CharElement *char_cell;
     //
@@ -1012,9 +1043,32 @@ CharElement *_q_char( EmacsChar_t value, int type, bool shift )
         //
         //    wake up get_char if this is the first char in the list
         //
-        char_cell->ce_char = value;
-        char_cell->ce_type = (EmacsChar_t)type;
-        char_cell->ce_shift = shift;
+        char_cell->set( value, type, shift );
+        interlock_inc( &input_pending );
+
+        // insert at tail of queue
+        input_queue.queueInsertAtTail( char_cell );
+
+        conditional_wake();
+
+        return char_cell;
+    }
+
+    return 0;
+}
+
+CharElement *_q_char( EmacsChar_t value, CE_TYPE_type type, bool shift, std::vector<int> all_params )
+{
+    CharElement *char_cell;
+    //
+    //    queue the char
+    //
+    if( (char_cell = free_queue.queueRemoveFirst()) != NULL )
+    {
+        //
+        //    wake up get_char if this is the first char in the list
+        //
+        char_cell->set( value, type, shift, all_params );
         interlock_inc( &input_pending );
 
         // insert at tail of queue
@@ -1113,7 +1167,7 @@ void TerminalControl::k_input_char( int character, bool shift )
             }
             if( cs_attr[ch]&M_CS_FIN_CHAR )
             {
-                int fin_char;
+                CE_TYPE_type fin_char;
 
                 if( ch == '~' && cs_cvt_f_keys )
                 {
@@ -1285,13 +1339,11 @@ exit_loop:
 
 void TerminalControl::k_input_mouse( const EmacsString &keys, bool shift, const std::vector<int> &all_params )
 {
-    std::cout << "k_input_mouse:" << std::endl;
-    keys.q();
-    std::cout << "    shift " << shift << std::endl;
-    for( size_t i=0; i < all_params.size(); i++ )
+    for( int i=0; i<keys.length()-1; i++ )
     {
-        std::cout << "   param[ " << i << " ] = " << all_params[ i ] << std::endl;
+        _q_char( keys[0], CE_TYPE_CHAR, shift );
     }
+    _q_char( keys[-1], CE_TYPE_PARM_LIST_FIN_CHAR, shift, all_params );
 }
 
 void TerminalControl::k_interrupt_emacs()

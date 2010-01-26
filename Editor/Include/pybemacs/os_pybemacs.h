@@ -9,7 +9,6 @@
 
 //#define _POSIX_SOURCE 1        // we are a posix app
 
-#define OS_NAME "unix"
 #if defined( __osf__ )
 # define OS_VERSION "osf1"
 # define CPU_TYPE "AXP"
@@ -96,13 +95,13 @@ const int DBG_NO_DBG_MSG    (0x00001000&DBG___ON);  // always defined
 #define DBG_VERBOSE         (0x20000000&DBG___ON)   // for more of one of the other types of debug info
 #define DBG_TMP             (0x40000000&DBG___ON)   // for temporary debug situations
 
-#define MEMMAP      1
-#define INODE       1
+#define MEMMAP              1
+#define INODE               1
 
-#define PATH_CH     '/'
-#define PATH_STR    "/"
-#define PATH_SEP    ' '
-#define ALL_FILES   "*"
+#define PATH_CH             '/'
+#define PATH_STR            "/"
+#define PATH_SEP            ' '
+#define ALL_FILES           "*"
 
 #define ROOT_CHAR_POS       0    // root is "/"
 

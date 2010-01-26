@@ -614,26 +614,26 @@ class EmacsPanel(wx.Panel):
 
         elif event.IsButton():
 
-            if event.LeftDown():
+            if event.LeftDown() or event.LeftDClick():
                 translation = keys_mapping["mouse-1-down"]
 
             elif event.LeftUp():
                 translation = keys_mapping["mouse-1-up"]
 
-            elif event.MiddleDown():
+            elif event.MiddleDown() or event.MiddleDClick():
                 translation = keys_mapping["mouse-2-down"]
 
             elif event.MiddleUp():
                 translation = keys_mapping["mouse-2-up"]
 
-            elif event.RightDown():
+            elif event.RightDown() or event.RightDClick():
                 translation = keys_mapping["mouse-3-down"]
 
             elif event.RightUp():
                 translation = keys_mapping["mouse-3-up"]
 
             else:
-                self.log.info( 'Uknown button event' )
+                self.log.info( 'Unknown button event: %r' % (event.GetButton(),) )
                 return
 
             self.__debugTermInput( 'Mouse shift %r line %r column %r' % (shift, line, column) )
@@ -723,7 +723,7 @@ class EmacsPanel(wx.Panel):
         self.dc = None
         self.RefreshRect( (0, 0, self.pixel_width, self.pixel_length), False )
 
-        self.caret.SetSize( (max( 1, self.char_width//5), self.char_length) )
+        self.caret.SetSize( (max( 2, self.char_width//5), self.char_length) )
         c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
         self.caret.Move( (c_x, c_y) )
         if not self.caret.IsVisible():
