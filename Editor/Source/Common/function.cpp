@@ -43,6 +43,7 @@ extern int profile_emacs(void);
 extern int dump_histogram(void);
 # endif
 # if defined( PYBEMACS )
+extern int ui_python_hook(void);
 extern int ui_edit_copy(void);
 extern int ui_edit_paste(void);
 extern int ui_frame_state(void);
@@ -537,6 +538,7 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "Python-exec", python_exec_string );
 #endif
 # if defined( PYBEMACS )
+    EMACS_NEW BoundName( "UI-python-hook", ui_python_hook );
     EMACS_NEW BoundName( "UI-edit-copy", ui_edit_copy );
     EMACS_NEW BoundName( "UI-edit-paste", ui_edit_paste );
     EMACS_NEW BoundName( "UI-frame-state", ui_frame_state );

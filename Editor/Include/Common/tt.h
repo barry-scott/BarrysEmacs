@@ -23,7 +23,7 @@ public:
     virtual void t_insert_lines( int ) { }      // insert n lines
     virtual void t_delete_lines( int ) { }      // delete n lines
     virtual void t_select() { }                 // select a terminal for operations
-    virtual void t_init() { }                  // initialize terminal settings
+    virtual void t_init() { }                   // initialize terminal settings
     virtual void t_cleanup();                   // clean up terminal settings
     virtual void t_wipe_line( int ) { }         // erase to the end of the line
     virtual bool t_window( int ) { return false; }    // set the screen window so that IDline operations only affect the first n lines of the screen
@@ -88,6 +88,15 @@ public:
     virtual void k_input_mouse( const EmacsString &keys, bool shift, const std::vector<int> &all_params );
     virtual int k_input_event( unsigned char *, unsigned int ) { return 0; }    // Pointer and other "smart" input
     virtual void k_check_for_input() { }        // check for any input
+
+    //
+    // User Interface routines
+    //
+    virtual void t_user_interface_hook() { }
+
+    //
+    // Support for TTY terminals
+    //
     virtual void t_io_putchar( unsigned char ) { }
     virtual void t_io_print( const unsigned char * ) { }
     virtual void t_io_printf( const char *, ... );

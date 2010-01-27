@@ -16,11 +16,12 @@ static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
 
-int check_args(int min, int max);
-int eval_arg(int n);
-EmacsWindowRing * window_arg(int n);
-int numeric_arg(int n);
-int string_arg(int n);
+int check_args( int min, int max );
+int eval_arg( int n );
+EmacsWindowRing * window_arg( int n );
+int numeric_arg( int n );
+int string_arg( int n );
+
 int add_command( void );
 int not_command( void );
 int subtract_command( void );
@@ -42,7 +43,7 @@ int greater_equal_command( void );
 // check that we were given at least min and at most max arguments.
 // Returns true iff there was an error.
 
-int check_args(int min, int max)
+int check_args( int min, int max )
 {
     ProgramNode *p;
 
@@ -72,7 +73,7 @@ int check_args(int min, int max)
 }
 
 // Evaluate the n th argument. Returns true if the evaluation was successful
-int eval_arg(int n)
+int eval_arg( int n )
 {
     if( ml_err )
         return 0;
@@ -98,7 +99,7 @@ int eval_arg(int n)
 }
 
 // Evaluate and return the n th window argument
-EmacsWindowRing * window_arg(int n)
+EmacsWindowRing * window_arg( int n )
 {
     if( !eval_arg( n ) )
         return 0;
@@ -114,7 +115,7 @@ EmacsWindowRing * window_arg(int n)
 }
 
 // Evaluate and return the n th numeric argument
-int numeric_arg(int n)
+int numeric_arg( int n )
 {
     if( !eval_arg( n ) )
         return 0;
@@ -137,7 +138,7 @@ int numeric_arg(int n)
 // Evaluate and return the n th string argument in ml_value (returns
 // true if all is well)
 //
-int string_arg(int n)
+int string_arg( int n )
 {
     if( !eval_arg( n ) )
         return 0;
@@ -158,7 +159,7 @@ int string_arg(int n)
 class arith_op
 {
 public:
-        virtual ~arith_op() {};
+    virtual ~arith_op() {};
     virtual int action( int a, int b ) = 0;
 };
 

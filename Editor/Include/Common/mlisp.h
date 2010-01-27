@@ -146,12 +146,12 @@ class EmacsExternFunction : public EmacsObject
 public:
     EMACS_OBJECT_FUNCTIONS( EmacsExternFunction )
     EmacsExternFunction( const EmacsString &name, EmacsExternImage *image )
-        : ef_funcname( name )
-        , ef_image( image )
-        , ef_c_function( NULL )
-        , ef_cpp_function( NULL )
-        , ef_restore_count( 0 )
-        , ef_context( NULL )
+    : ef_funcname( name )
+    , ef_image( image )
+    , ef_c_function( NULL )
+    , ef_cpp_function( NULL )
+    , ef_restore_count( 0 )
+    , ef_context( NULL )
     { }
 
     EmacsString ef_funcname;    // Name of function to be called
@@ -416,9 +416,9 @@ class ProgramNode : public EmacsObject
 protected:
     EMACS_OBJECT_FUNCTIONS( ProgramNode )
     ProgramNode( BoundName *proc )
-        : p_proc( proc )
-        , p_active(1)
-        , p_nargs( 0 )
+    : p_proc( proc )
+    , p_active( 1 )
+    , p_nargs( 0 )
     { }
 public:
     virtual ~ProgramNode() { }
@@ -453,8 +453,8 @@ class ProgramNodeInt : public ProgramNode
 public:
     EMACS_OBJECT_FUNCTIONS( ProgramNodeInt )
     ProgramNodeInt( int number )
-        : ProgramNode( &bound_number_node )
-        , pa_int( number )
+    : ProgramNode( &bound_number_node )
+    , pa_int( number )
     { }
     virtual ~ProgramNodeInt() { }
 
@@ -469,8 +469,8 @@ class ProgramNodeString : public ProgramNode
 public:
     EMACS_OBJECT_FUNCTIONS( ProgramNodeString )
     ProgramNodeString( const EmacsString &str )
-        : ProgramNode( &bound_string_node )
-        , pa_string( str )
+    : ProgramNode( &bound_string_node )
+    , pa_string( str )
     { }
 
     virtual ~ProgramNodeString() { }
@@ -486,8 +486,8 @@ class ProgramNodeExpression : public ProgramNode
 public:
     EMACS_OBJECT_FUNCTIONS( ProgramNodeExpression )
     ProgramNodeExpression( Expression &expr )
-        : ProgramNode( &bound_expression_node )
-        , pa_value( expr )
+    : ProgramNode( &bound_expression_node )
+    , pa_value( expr )
     { }
 
     virtual ~ProgramNodeExpression() { }
@@ -503,8 +503,8 @@ class ProgramNodeVariable : public ProgramNode
 public:
     EMACS_OBJECT_FUNCTIONS( ProgramNodeVariable )
     ProgramNodeVariable( VariableName *name )
-        : ProgramNode( &bound_variable_node )
-        , pa_name( name )
+    : ProgramNode( &bound_variable_node )
+    , pa_name( name )
     { }
     virtual ~ProgramNodeVariable() { }
     virtual VariableName *name() const { return pa_name; }
@@ -542,7 +542,7 @@ class VariableNameTable : public EmacsStringTable
 public:
     EMACS_OBJECT_FUNCTIONS( VariableNameTable )
     VariableNameTable( int init_size, int grow_amount )
-        : EmacsStringTable( init_size, grow_amount )
+    : EmacsStringTable( init_size, grow_amount )
     { }
     virtual ~VariableNameTable()
     { }
@@ -550,11 +550,17 @@ public:
     void add( const EmacsString &key, VariableName *value )
     { EmacsStringTable::add( key, value ); }
     VariableName *remove( const EmacsString &key )
-    { return (VariableName *)EmacsStringTable::remove( key ); }
+    {
+        return (VariableName *)EmacsStringTable::remove( key );
+    }
     VariableName *find( const EmacsString &key )
-    { return (VariableName *)EmacsStringTable::find( key ); }
+    {
+        return (VariableName *)EmacsStringTable::find( key );
+    }
     VariableName *value( int index )
-    { return (VariableName *)EmacsStringTable::value( index ); }
+    {
+        return (VariableName *)EmacsStringTable::value( index );
+    }
 };
 
 class VariableName : public EmacsObject
@@ -589,7 +595,6 @@ public:
     {
         return v_binding != NULL;
     }
-
 
     bool declareGlobal();
     bool declareBufferSpecific();

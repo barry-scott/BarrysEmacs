@@ -19,6 +19,7 @@ import threading
 
 import _bemacs
 
+import wx
 
 class BEmacs(_bemacs.BemacsEditor):
     def __init__( self, app ):
@@ -31,6 +32,8 @@ class BEmacs(_bemacs.BemacsEditor):
 
         self.__quit_editor = False
         self.__event_queue = Queue( self.log )
+
+        self.__gui_result_event = threading.Event()
 
     def initEmacsProfile( self, window ):
         self.log.debug( 'BEmacs.initEmacsProfile()' )
@@ -70,6 +73,52 @@ class BEmacs(_bemacs.BemacsEditor):
     def guiGeometryChange( self, width, length ):
         self.__event_queue.put( (self.geometryChange, (width, length)) )
 
+    #--------------------------------------------------------------------------------
+    def getGuiResult( self ):
+        self.__gui_result_event.clear()
+        self.__gui_result_event.wait()
+        result = self.__gui_result
+        self.__gui_result = None
+        return result
+
+    def setGuiResult( self, result ):
+        self.__gui_result = result
+        self.__gui_result_event.set()
+
+    def hookUserInterface( self, *args ):
+        print 'hookUserInterface( %r )' % (args,)
+
+        cmd = args[0]
+        if cmd == 'test1':
+            self.app.onGuiThread( self.uiHookTest1, () )
+            return self.getGuiResult()
+
+        elif cmd == 'test2' and len(args) == 3:
+            self.app.onGuiThread( self.uiHookTest2, (str( args[1] ), str( args[2] )) )
+            return self.getGuiResult()
+
+        return None
+
+    def uiHookTest1( self ):
+        self.setGuiResult( 99 )
+
+    def uiHookTest2( self, text1, text2 ):
+        dlg = wx.MessageDialog(
+                    self.window,
+                    text1,
+                    text2,
+                    wx.YES_NO | wx.NO_DEFAULT | wx.ICON_EXCLAMATION
+                    )
+        rc = dlg.ShowModal()
+        dlg.Destroy()
+
+        if rc == wx.ID_YES:
+            self.setGuiResult( 'yes' )
+        else:
+            self.setGuiResult( 'no' )
+
+
+    #--------------------------------------------------------------------------------
     def termCheckForInput( self ):
         pass
 

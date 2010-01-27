@@ -296,6 +296,42 @@ public:
     //------------------------------------------------------------
 
     //------------------------------------------------------------
+    void hookUserInterface()
+    {
+        PythonDisallowThreads permission( editor_access_control );
+
+        static char fn_name[] = "hookUserInterface";
+        try
+        {
+            Py::Object self( selfPtr() );
+            Py::Callable py_fn( self.getAttr( fn_name ) );
+
+            Py::Tuple all_args( cur_exec->p_nargs );
+
+            for( int i=1; i<=cur_exec->p_nargs; i++ )
+            {
+                {
+                    PythonAllowThreads permission( editor_access_control );
+
+                    if( !eval_arg( i ) )
+                        return;
+                }
+
+                Py::Object arg( convertEmacsExpressionToPyObject( ml_value ) );
+                all_args[ i-1 ] = arg;
+            }
+
+            Py::Object result( py_fn.apply( all_args ) );
+
+            ml_value = convertPyObjectToEmacsExpression( result );
+        }
+        catch( Py::Exception &e )
+        {
+            reportException( fn_name, e );
+        }
+    }
+
+    //------------------------------------------------------------
     void termCheckForInput()
     {
         PythonDisallowThreads permission( editor_access_control );
@@ -855,6 +891,18 @@ public:
         m_editor.termCheckForInput();
     }
 
+    //
+    //  User Interface routines
+    //
+    virtual void t_user_interface_hook()
+    {
+        m_editor.hookUserInterface();
+    }
+
+    //
+    //  Screen routines
+    //
+
     // move the cursor to the indicated (row,column); (1,1) is the upper left
     virtual void t_topos( int row, int column )
     {
@@ -1211,3 +1259,11 @@ void _emacs_assert( const char *exp, const char *file, unsigned line )
 #endif
 }
 
+int ui_python_hook()
+{
+    if( check_args( 1, 0 ) )
+        return 0;
+
+    theActiveView->t_user_interface_hook();
+    return 0;
+}

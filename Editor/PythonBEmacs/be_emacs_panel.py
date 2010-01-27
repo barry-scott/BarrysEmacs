@@ -677,6 +677,14 @@ class EmacsPanel(wx.Panel):
     #   terminal drawing API forwarded from bemacs editor
     #
     #--------------------------------------------------------------------------------
+    def hookUserInterface( self, *args ):
+        self.editor.hookUserInterface( *args )
+
+    #--------------------------------------------------------------------------------
+    #
+    #   terminal drawing API forwarded from bemacs editor
+    #
+    #--------------------------------------------------------------------------------
     def termTopos( self, y, x ):
         self.__debugTermCalls1( 'termTopos( y=%d, x=%d)' % (y, x) )
         self.cursor_x = x
