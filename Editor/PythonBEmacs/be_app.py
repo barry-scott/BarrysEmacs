@@ -437,6 +437,9 @@ class FakeEditor:
     def guiEventChar( self, *args, **kwds ):
         pass
 
+    def guiEventMouse( self, *args, **kwds ):
+        pass
+
     def guiGeometryChange( self, *args, **kwds ):
         pass
 
