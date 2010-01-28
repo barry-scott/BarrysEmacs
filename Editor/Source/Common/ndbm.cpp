@@ -1,5 +1,5 @@
 //
-//     Copyright (c) 1982-1996
+//     Copyright (c) 1982-2010
 //        Barry A, Scott
 //
 
@@ -70,11 +70,11 @@ public:
 protected:
     enum ByteOrder
     {
-        LSB_InLowAddress,    // so called little endian 80x86, VAX, Alpha
-        LSB_InHighAddress        // so called big endian HP-PA, 68K
+        LSB_InLowAddress,       // so called little endian 80x86, VAX, Alpha
+        LSB_InHighAddress       // so called big endian HP-PA, 68K
     };
     byteOrderIndependantInt( int wantLSB_InLowAddress )
-        : byte_order( wantLSB_InLowAddress ? LSB_InLowAddress : LSB_InHighAddress )
+    : byte_order( wantLSB_InLowAddress ? LSB_InLowAddress : LSB_InHighAddress )
     { }
     ~byteOrderIndependantInt()
     { }
@@ -94,8 +94,8 @@ private:
 };
 
 shortInt::shortInt( bool LSB_InLowAddress, unsigned char *base, int index )
-    : byteOrderIndependantInt( LSB_InLowAddress )
-    , sp( base + index*sizeof(short) )
+: byteOrderIndependantInt( LSB_InLowAddress )
+, sp( base + index*sizeof(short) )
 { }
 
 int shortInt::get(int index)
@@ -148,17 +148,17 @@ private:
 };
 
 longInt::longInt( bool LSB_InLowAddress, unsigned char *base, int index )
-    : byteOrderIndependantInt( LSB_InLowAddress )
-    , lp( base + index*sizeof(long) )
+: byteOrderIndependantInt( LSB_InLowAddress )
+, lp( base + index*sizeof(int) )
 { }
 
 int longInt::get(int index)
 {
-    unsigned char *p = lp + index*sizeof(long);
+    unsigned char *p = lp + index*sizeof(int);
 
     if( has_LSB_InLowAddress() )
     {
-        long value = p[0] << 0;
+        int value = p[0] << 0;
         value |= p[1] << 8;
         value |= p[2] << 16;
         value |= p[3] << 24;
@@ -167,7 +167,7 @@ int longInt::get(int index)
     }
     else
     {
-        long value = p[3] << 0;
+        int value = p[3] << 0;
         value |= p[2] << 8;
         value |= p[1] << 16;
         value |= p[0] << 24;
@@ -178,7 +178,7 @@ int longInt::get(int index)
 
 int longInt::set( int value, int index )
 {
-    unsigned char *p = lp + index*sizeof(long);
+    unsigned char *p = lp + index*sizeof(int);
 
     if( has_LSB_InLowAddress() )
     {
@@ -195,7 +195,7 @@ int longInt::set( int value, int index )
         p[0] = (unsigned char)(value>>24);
     }
 
-    return (long)value;
+    return (int)value;
 }
 
 bool database::open_db( const EmacsString &file, int access )
@@ -258,11 +258,11 @@ void database::close_db()
 }
 
 database::database()
-    : db_name()
-    , dirnm()
-    , datnm()
-    , pagnm()
-    , databaseUsesLSB_byteOrdering( true )
+: db_name()
+, dirnm()
+, datnm()
+, pagnm()
+, databaseUsesLSB_byteOrdering( true )
 { }
 
 database::~database()
@@ -337,9 +337,9 @@ int database::setup_db()
     return 0;
 }
 
-long database::forder( datum &key )
+int database::forder( datum &key )
 {
-    long    hash;
+    int hash;
 
     hash = key.calchash();
     for( hmask = 0;; hmask = ( hmask << 1 ) + 1 )
@@ -354,14 +354,13 @@ long database::forder( datum &key )
 
 database::datum database::fetch( datum &key )
 {
-    int i;
 # if DBG_EXEC && 0
     if( dbg_flags&DBG_EXEC )
         _dbg_msg("fetch( %d, %s )\n\r", key, db_name.sdata() );
 # endif
 
     ndbm_access( key.calchash() );
-    for( i = 0;; i ++ )
+    for( int i = 0;; i ++ )
     {
         datum item( *this, pagbuf, i );
 
@@ -438,7 +437,7 @@ int database::store( datum &key )
         }
 
         // split
-        if( key.dsize + 2*sizeof( long ) + 2 * sizeof( short ) >= PBLKSIZ )
+        if( key.dsize + 2*sizeof( int ) + 2 * sizeof( short ) >= PBLKSIZ )
             return -1;
 
         clrbuf( ovfbuf, PBLKSIZ );
@@ -475,17 +474,14 @@ database::datum database::firstkey()
 
 database::datum database::nextkey( datum &key )
 {
-    int i;
     datum bitem(*this);
     datum item(*this);
-    long hash;
-    int f;
 
-    hash = key.calchash();
+    int hash = key.calchash();
     ndbm_access( hash );
-    f = 1;
+    int f = 1;
 
-    for( i = 0;; i ++ )
+    for( int i = 0;; i ++ )
     {
         item = datum( *this, pagbuf, i );
         if( item.dptr == 0 )
@@ -509,9 +505,8 @@ database::datum database::nextkey( datum &key )
     return firsthash( hash );
 }
 
-database::datum database::firsthash( long hash )
+database::datum database::firsthash( int hash )
 {
-    int i;
     datum item(*this);
     datum bitem(*this);
 
@@ -519,7 +514,7 @@ database::datum database::firsthash( long hash )
     {
         ndbm_access( hash );
         bitem = datum( *this, pagbuf, 0 );
-        for( i = 0;; i ++ )
+        for( int i = 0;; i ++ )
         {
             item = datum( *this, pagbuf, i );
             if( item.dptr == 0 )
@@ -535,7 +530,7 @@ database::datum database::firsthash( long hash )
     }
 }
 
-void database::ndbm_access( long hash )
+void database::ndbm_access( int hash )
 {
     for( hmask = 0;; hmask = (hmask << 1) + 1 )
     {
@@ -560,22 +555,19 @@ void database::ndbm_access( long hash )
 
 int database::getbit()
 {
-    long bn;
-    long b, i, n;
-
     if( bitno > maxbno )
         return 0;
-    n = bitno % BYTESIZ;
-    bn = bitno / BYTESIZ;
-    i = bn % DBLKSIZ;
-    b = bn / DBLKSIZ;
+    int n = bitno % BYTESIZ;
+    int bn = bitno / BYTESIZ;
+    int i = bn % DBLKSIZ;
+    int b = bn / DBLKSIZ;
     if( b != olddirb )
     {
         clrbuf( dirbuf, DBLKSIZ );
 
         setup_db();
 
-        lseek( db_dirf, ( long ) b * DBLKSIZ, 0 );
+        lseek( db_dirf, (int)b * DBLKSIZ, 0 );
         read( db_dirf, dirbuf, DBLKSIZ );
 
         olddirb = b;
@@ -589,9 +581,6 @@ int database::getbit()
 
 int database::ndbm_setbit()
 {
-    long bn;
-    long i, n, b;
-
     if( db_rdonly )
         return -1;
 
@@ -601,30 +590,30 @@ int database::ndbm_setbit()
         getbit();
     }
 
-    n = bitno % BYTESIZ;
-    bn = bitno / BYTESIZ;
-    i = bn % DBLKSIZ;
-    b = bn / DBLKSIZ;
+    int n = bitno % BYTESIZ;
+    int bn = bitno / BYTESIZ;
+    int i = bn % DBLKSIZ;
+    int b = bn / DBLKSIZ;
     dirbuf[i] |= 1 << n;
 
     setup_db();
 
-    lseek( db_dirf,( long ) b * DBLKSIZ, 0 );
+    lseek( db_dirf, (int)b * DBLKSIZ, 0 );
     write( db_dirf, dirbuf, DBLKSIZ );
 
     return 0;
 }
 
 database::datum::datum( database &_db )
-    : dptr( NULL)
-    , dsize( 0)
-    , val1( 0)
-    , val2( 0)
-    , db(_db)
+: dptr( NULL)
+, dsize( 0)
+, val1( 0)
+, val2( 0)
+, db(_db)
 { }
 
 database::datum::datum( database &_db, const datum &d )
-    : db( _db )
+: db( _db )
 {
     operator=( d );
 }
@@ -640,7 +629,7 @@ database::datum &database::datum::operator=( const datum &d )
 }
 
 database::datum::datum( database &_db, unsigned char *buf, int n )
-    : db( _db )
+: db( _db )
 {
     shortInt sp( db.databaseUsesLSB_byteOrdering, buf );
 
@@ -659,8 +648,8 @@ database::datum::datum( database &_db, unsigned char *buf, int n )
     val1 = l_i_p.get(0);
     val2 = l_i_p.get(1);
 
-    dptr = buf + sp[n + 1] + 2*sizeof( long );
-    dsize = t - sp[n + 1] - 2*sizeof( long );
+    dptr = buf + sp[n + 1] + 2*sizeof( int );
+    dsize = t - sp[n + 1] - 2*sizeof( int );
 }
 
 int database::datum::cmpdatum( const datum &d2 )
@@ -691,7 +680,7 @@ static int hitab[16] =
     61, 57, 53, 49, 45, 41, 37, 33,
     29, 25, 21, 17, 13, 9, 5, 1,
 };
-static long hltab[64]=
+static int hltab[64]=
 {
     06100151277L, 06106161736L, 06452611562L, 05001724107L,
     02614772546L, 04120731531L, 04665262210L, 07347467531L,
@@ -711,12 +700,10 @@ static long hltab[64]=
     04723077174L, 03642763134L, 05750130273L, 03655541561L,
 };
 
-long database::hashinc( long hash )
+int database::hashinc( int hash )
 {
-    long    bit;
-
     hash &= hmask;
-    bit = hmask + 1;
+    int bit = hmask + 1;
     for( ;; )
     {
         bit >>= 1;
@@ -728,9 +715,9 @@ long database::hashinc( long hash )
     }
 }
 
-long database::datum::calchash()
+int database::datum::calchash()
 {
-    long hashl = 0;
+    int hashl = 0;
     int hashi = 0;
 
     for( int i = 0; i < dsize; i++ )
@@ -783,7 +770,7 @@ int database::additem( unsigned char buf[database::PBLKSIZ], datum &item )
     if( sp[0] > 0 )
         i1 = sp[sp[0] + 1 - 1];
 
-    i1 -= item.dsize + 2*sizeof( long );
+    i1 -= item.dsize + 2*sizeof( int );
     int i2 = ( sp[0] + 2 ) * sizeof( short );
     if( i1 <= i2 )
         return -1;
@@ -794,7 +781,7 @@ int database::additem( unsigned char buf[database::PBLKSIZ], datum &item )
     l_i_p.set( (int)item.val1, 0 );
     l_i_p.set( (int)item.val2, 1 );
 
-    unsigned char *p = &buf[ i1 + 2*sizeof( long ) ];
+    unsigned char *p = &buf[ i1 + 2*sizeof( int ) ];
     for( i2 = 0; i2 < item.dsize; i2++ )
         *p++ = item.dptr[i2];
 
@@ -824,7 +811,6 @@ int database::chkblk( unsigned char buf[database::PBLKSIZ] )
 {
     databaseUsesLSB_byteOrdering = true;
     shortInt sp( databaseUsesLSB_byteOrdering, buf );
-
 
     if( chkblkHelper( sp ) )
         return 0;

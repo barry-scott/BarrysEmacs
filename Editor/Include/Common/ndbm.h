@@ -21,7 +21,7 @@ class database : public EmacsObject
 public:
     enum { PBLKSIZ = 4096 };    // Page block size
     enum { DBLKSIZ = 4096 };    // directory block size
-    enum { BYTESIZ = 8 };        // bits per byte
+    enum { BYTESIZ = 8 };       // bits per byte
     class datum
     {
     public:
@@ -30,12 +30,12 @@ public:
         datum( database &, const datum &);
         datum &operator=( const datum & );
 
-        long calchash();
+        int calchash();
         int cmpdatum( const datum &other );
 
         const unsigned char *dptr;
         int dsize;
-        long val1, val2;
+        int val1, val2;
     private:
         database &db;
     };
@@ -62,17 +62,17 @@ public:
 private:
     // functions
     bool reopen_db( int access );
-    long forder( datum & );
+    int forder( datum & );
     datum fetch( datum & );
     int store( datum & );
-    datum firsthash( long );
-    long hashinc( long );
+    datum firsthash( int );
+    int hashinc( int );
     int setup_db();
-    static long getlong( unsigned char *p );
-    static void putlong( unsigned char *p, long val );
+    static int getlong( unsigned char *p );
+    static void putlong( unsigned char *p, int val );
     static short getshort( unsigned char *p );
     static void putshort( unsigned char *p, short val );
-    void ndbm_access( long hash );
+    void ndbm_access( int hash );
     int getbit();
     int ndbm_setbit();
     int delitem( unsigned char buf[PBLKSIZ], int n );
@@ -95,12 +95,12 @@ private:
     int db_dirf;
     int db_pagf;
     int db_datf;
-    long bitno;
-    long maxbno;
-    long blkno;
-    long hmask;
-    long oldpagb;
-    long olddirb;
+    int bitno;
+    int maxbno;
+    int blkno;
+    int hmask;
+    int oldpagb;
+    int olddirb;
     unsigned char pagbuf[PBLKSIZ];
     unsigned char dirbuf[DBLKSIZ];
     EmacsString dirnm;
@@ -114,7 +114,7 @@ private:
 struct database_entry
 {
     unsigned char *dbe_name;
-    long int dbe_position;
+    int dbe_position;
     int dbe_length;
 };
 
