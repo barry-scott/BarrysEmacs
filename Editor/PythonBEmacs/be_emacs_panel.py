@@ -9,8 +9,6 @@
 
     be_emacs_panel.py
 
-    Based on code from pysvn WorkBench
-
 '''
 import sys
 import wx
@@ -383,26 +381,20 @@ class EmacsPanel(wx.Panel):
         # point size and face need to choosen for platform
         if wx.Platform == '__WXMSW__':
             face = 'Courier New'
-            point_size = 8
+            point_size = 9
 
         elif wx.Platform == '__WXMAC__':
             face = 'Monaco'
-            point_size = 12
+            point_size = 14
 
         else:
             face = 'Courier'
-            point_size = 12
+            point_size = 14
 
         self.font = wx.Font( point_size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, face )
         print 'Font face: %r' % (self.font.GetFaceName(),)
 
         self.client_padding = 3
-
-        self.caret = wx.Caret( self, (1, 10) )
-        self.caret.Move( (self.client_padding, self.client_padding) )
-        self.caret.Hide()
-
-        self.SetCaret( self.caret )
 
         # the size of a char on the screen
         self.char_width = None
@@ -514,6 +506,16 @@ class EmacsPanel(wx.Panel):
             dc.SetBackgroundMode( wx.SOLID )
 
             dc.DrawBitmap( self.editor_bitmap, 0, 0, False )
+
+            c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
+
+            # alpha blend the cursor
+            dc.SetBackgroundMode( wx.TRANSPARENT )
+            cursor_colour = wx.Colour( 0, 0, 0, 92 )
+            dc.SetPen( wx.Pen( cursor_colour ) )
+            dc.SetBrush( wx.Brush( cursor_colour ) )
+            dc.DrawRectangle( c_x, c_y, self.char_width, self.char_length )
+
             dc.EndDrawing()
 
             dc = None
@@ -731,11 +733,7 @@ class EmacsPanel(wx.Panel):
         self.dc = None
         self.RefreshRect( (0, 0, self.pixel_width, self.pixel_length), False )
 
-        self.caret.SetSize( (max( 2, self.char_width//5), self.char_length) )
         c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
-        self.caret.Move( (c_x, c_y) )
-        if not self.caret.IsVisible():
-            self.caret.Show()
 
     def __executeTermOperations( self ):
         all_term_ops = self.__all_term_ops
