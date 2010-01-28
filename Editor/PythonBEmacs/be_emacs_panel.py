@@ -472,6 +472,7 @@ class EmacsPanel(wx.Panel):
     #
     #--------------------------------------------------------------------------------
     def OnPaint( self, event ):
+        self.SetFocus()
         if self.first_paint:
             self.log.debug( 'EmacsPanel.OnPaint() first paint' )
             self.first_paint = False
