@@ -602,6 +602,10 @@ class EmacsPanel(wx.Panel):
         self.__debugTermInput( 'OnMouse() event_type %r %r' %
                                 (event.GetEventType(), wx_evt_names.get( event.GetEventType(), 'unknown' )) )
 
+        if self.char_width is None:
+            event.Skip()
+            return
+
         # Calculate character cell position
         x, y = event.GetPosition()
         column = (x - self.client_padding + (self.char_width/2)) // self.char_width + 1;
