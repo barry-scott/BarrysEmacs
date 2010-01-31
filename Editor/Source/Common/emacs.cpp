@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1982-2008
+//    Copyright (c) 1982-2010
 //        Barry A. Scott
 //
 #include <emacs.h>
@@ -20,11 +20,14 @@ int argc_command( void );
 int argv_command( void );
 int argIsQualifier_command( void );
 int emacs_version( void );
+#if !defined( PYBEMACS )
+#pragma message( "Defining emacsMain" )
 int emacsMain( const EmacsString &rest_fn, const EmacsString &device, const EmacsString &term_type );
 static void read_emacs_memory_file();
 static void write_emacs_memory_file();
-int execute_package( const EmacsString &package );
 int read_in_files(void);
+#endif
+int execute_package( const EmacsString &package );
 
 #ifdef vms
 extern vms_restore_fail( int, unsigned char * );
@@ -98,6 +101,7 @@ bool touched_command_args = false;
 
 BoundName *user_interface_hook_proc;
 
+#if !defined( PYBEMACS )
 //============================================================
 //
 // emacs main routine
@@ -388,6 +392,130 @@ static void write_emacs_memory_file()
 }
 
 
+int read_in_files(void)
+{
+    int done_any_visiting = 0;
+    int saved_err = 0;
+
+    if( ! touched_command_args )
+        for( int i=1; i<command_line_arguments.argumentCount(); i++ )
+        {
+            saved_err = saved_err || ml_err;
+            ml_err = 0;
+            if( !command_line_arguments.argument(i).isQualifier() )
+            {
+                try
+                {
+                    // visit file can throw exceptions
+                    // if the user is prompted and types ^G
+                    visit_file
+                    (
+                    EmacsString( command_line_arguments.argument(i).value() ),
+                    1, 1,
+                    parent_path
+                    );
+                }
+                catch( EmacsException )
+                {
+                    // no need to clean up
+                }
+            }
+            done_any_visiting = 1;
+        }
+
+    touched_command_args = true;
+    ml_err = ml_err || saved_err;
+    return done_any_visiting;
+}
+
+extern int ui_frame_to_foreground(void);
+
+void EmacsCommandLineServerWorkItem::workAction()
+{
+    // come to the fore
+    ui_frame_to_foreground();
+
+    // save the current directory as the previous
+    previous_directory = current_directory.asString();
+
+    // first change directory
+    chdir_and_set_global_record( command_current_directory );
+
+    EmacsString full_command_line("emacs ");
+    full_command_line.append( command_line );
+
+    command_line_arguments.setArguments( full_command_line );
+
+    int arg=1;
+    while( arg<command_line_arguments.argumentCount() )
+    {
+        EmacsArgument argument( command_line_arguments.argument( arg ) );
+
+        if( argument.isQualifier() )
+        {
+            EmacsString str( argument.value() );
+            EmacsString key_string;
+            EmacsString val_string;
+
+            int equal_pos = str.first( '=' );
+            if( equal_pos > 0 )
+            {
+                key_string = str( 1, equal_pos );
+                val_string = str( equal_pos+1, str.length() );
+            }
+            else
+            {
+                int colon_pos = str.first( ':' );
+                if( colon_pos > 0 )
+                {
+                    key_string = str( 1, colon_pos );
+                    val_string = str( colon_pos+1, str.length() );
+                }
+                else
+                    key_string = str( 1, str.length() );
+            }
+
+            bool delete_this_arg = true;
+
+            if( key_string.commonPrefix( "package" ) > 2 )
+            {
+                command_line_arguments.setArgument( 0, val_string, false );
+            }
+            else
+                delete_this_arg = false;
+
+            if( delete_this_arg )
+                command_line_arguments.deleteArgument( arg );
+            else
+                arg++;
+        }
+        else
+            arg++;
+    }
+
+
+    // try the package
+    touched_command_args = false;
+    int rv = execute_package( command_line_arguments.argument(0).value() );
+
+    // if the the package did not touch the args read in files
+    if( rv == 0 && !touched_command_args )
+        read_in_files();
+
+    // revert back to the previous directory
+    // the package may have changed previous directory.
+    // ignore it if its blank
+    if( !previous_directory.isNull() )
+    {
+        EmacsString new_prev = current_directory.asString();
+        chdir_and_set_global_record( previous_directory.asString() );
+
+        // save package current dir in previous dir
+        previous_directory = new_prev;
+    }
+}
+#endif
+
 int execute_package( const EmacsString &package )
 {
     int rv = 0;
@@ -440,42 +568,6 @@ int execute_package( const EmacsString &package )
     }
 
     return rv;
-}
-
-int read_in_files(void)
-{
-    int done_any_visiting = 0;
-    int saved_err = 0;
-
-    if( ! touched_command_args )
-        for( int i=1; i<command_line_arguments.argumentCount(); i++ )
-        {
-            saved_err = saved_err || ml_err;
-            ml_err = 0;
-            if( !command_line_arguments.argument(i).isQualifier() )
-            {
-                try
-                {
-                    // visit file can throw exceptions
-                    // if the user is prompted and types ^G
-                    visit_file
-                    (
-                    EmacsString( command_line_arguments.argument(i).value() ),
-                    1, 1,
-                    parent_path
-                    );
-                }
-                catch( EmacsException )
-                {
-                    // no need to clean up
-                }
-            }
-            done_any_visiting = 1;
-        }
-
-    touched_command_args = true;
-    ml_err = ml_err || saved_err;
-    return done_any_visiting;
 }
 
 void emacs_exit(int code)
@@ -690,92 +782,4 @@ void EmacsCommandLineServerWorkItem::newCommandLine
     }
 
     addItem();
-}
-
-
-extern int ui_frame_to_foreground(void);
-
-void EmacsCommandLineServerWorkItem::workAction()
-{
-    // come to the fore
-    ui_frame_to_foreground();
-
-    // save the current directory as the previous
-    previous_directory = current_directory.asString();
-
-    // first change directory
-    chdir_and_set_global_record( command_current_directory );
-
-    EmacsString full_command_line("emacs ");
-    full_command_line.append( command_line );
-
-    command_line_arguments.setArguments( full_command_line );
-
-    int arg=1;
-    while( arg<command_line_arguments.argumentCount() )
-    {
-        EmacsArgument argument( command_line_arguments.argument( arg ) );
-
-        if( argument.isQualifier() )
-        {
-            EmacsString str( argument.value() );
-            EmacsString key_string;
-            EmacsString val_string;
-
-            int equal_pos = str.first( '=' );
-            if( equal_pos > 0 )
-            {
-                key_string = str( 1, equal_pos );
-                val_string = str( equal_pos+1, str.length() );
-            }
-            else
-            {
-                int colon_pos = str.first( ':' );
-                if( colon_pos > 0 )
-                {
-                    key_string = str( 1, colon_pos );
-                    val_string = str( colon_pos+1, str.length() );
-                }
-                else
-                    key_string = str( 1, str.length() );
-            }
-
-            bool delete_this_arg = true;
-
-            if( key_string.commonPrefix( "package" ) > 2 )
-            {
-                command_line_arguments.setArgument( 0, val_string, false );
-            }
-            else
-                delete_this_arg = false;
-
-            if( delete_this_arg )
-                command_line_arguments.deleteArgument( arg );
-            else
-                arg++;
-        }
-        else
-            arg++;
-    }
-
-
-    // try the package
-    touched_command_args = false;
-    int rv = execute_package( command_line_arguments.argument(0).value() );
-
-    // if the the package did not touch the args read in files
-    if( rv == 0 && !touched_command_args )
-        read_in_files();
-
-    // revert back to the previous directory
-    // the package may have changed previous directory.
-    // ignore it if its blank
-    if( !previous_directory.isNull() )
-    {
-        EmacsString new_prev = current_directory.asString();
-        chdir_and_set_global_record( previous_directory.asString() );
-
-        // save package current dir in previous dir
-        previous_directory = new_prev;
-    }
 }

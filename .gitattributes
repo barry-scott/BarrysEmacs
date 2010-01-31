@@ -22,6 +22,7 @@ Editor/PythonBEmacs/toolbar_images/editcopy.png -text svneol=unset#image/png
 Editor/PythonBEmacs/toolbar_images/editcut.png -text svneol=unset#image/png
 Editor/PythonBEmacs/toolbar_images/editpaste.png -text svneol=unset#image/png
 Editor/PythonBEmacs/win32.mak -text
+Editor/PythonBemacs.sln -text
 Editor/Source/Windows/Resources/BMP16175.BMP -text
 Editor/Source/Windows/Resources/BMP24826.BMP -text
 Editor/Source/Windows/Resources/BMP28043.BMP -text
@@ -40,10 +41,12 @@ Editor/Source/Windows/Resources/toolbar_view.bmp -text
 Editor/Source/Windows/Resources/toolbar_window.bmp -text
 Editor/Source/Windows/Resources/win_doc.ico -text
 Editor/Source/Windows/Resources/win_emacs.ico -text
+Editor/build.cmd -text
 Editor/make-Linux-Fedora.mak -text
 Editor/make-Linux-Ubuntu.mak -text
 Editor/make-pybemacs-Linux-Fedora.mak -text
 Editor/make-pybemacs-darwin.mak -text
+Editor/make-pybemacs-win32.mak -text
 HTML/ug_bemacs_doc.gif -text
 HTML/ug_bemacs_folder.gif -text
 HTML/ug_bemacs_icon.gif -text

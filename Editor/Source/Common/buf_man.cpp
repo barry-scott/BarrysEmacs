@@ -18,7 +18,7 @@ SystemExpressionRepresentationBufferEndOfLineStyle buffer_end_of_line_style;
 #if defined( __unix__ )
 SystemExpressionRepresentationEndOfLineStyle default_end_of_line_style( FIO_EOL__StreamLF );
 
-#elif defined( _NT )
+#elif defined( WIN32 )
 SystemExpressionRepresentationEndOfLineStyle default_end_of_line_style( FIO_EOL__StreamCRLF );
 
 #else

@@ -1006,34 +1006,6 @@ void CWinemacsApp::OnUpdateOptionsPrinting(CCmdUI* /*pCmdUI*/)
 }
 
 
-EmacsString os_error_code( unsigned int code )
-{
-    char msg[1024];
-
-    int size = FormatMessage
-        (
-        FORMAT_MESSAGE_FROM_SYSTEM,
-        NULL,
-        code,
-        MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),
-        (LPTSTR) &msg,
-        sizeof( msg ) - 1,
-        NULL
-        );
-    if( size == 0 )
-        return EmacsString( FormatString( "Win32 error code: 0x%x" ) << code );
-
-    // lose a trailing \r\n
-    if( size > 0 && msg[size-1] == '\n' )
-        size--;
-    if( size > 0 && msg[size-1] == '\r' )
-        size--;
-
-    msg[size] = 0;
-
-    return EmacsString( FormatString( "%s (0x%x)" ) << EmacsString(msg) << code );
-}
-
 extern int ui_file_save_as(void);
 
 bool UI_mod_write( bool ask_before_save )

@@ -40,7 +40,9 @@ void do_release( Expression *e );
 int star_define_function( void );
 int define_function( void );
 static int define_function_inner(BoundName *proc);
+#if defined( CALL_BACK )
 int define_external_function( void );
+#endif
 static int exec_variable( void );
 int setq_command( void );
 int setq_default_command( void );
@@ -800,6 +802,7 @@ static int define_function_inner(BoundName *proc)
 }
 
 
+#if defined( CALL_BACK )
 int define_external_function( void )
 {
 
@@ -914,6 +917,7 @@ int define_external_function( void )
 
     return 0;
 }
+#endif
 
 //
 //    (use-buffer-variables "buffer-name" s-expr)

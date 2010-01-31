@@ -5,17 +5,15 @@
 // control the warning messages of the compiler
 #define BROADCAST 0
 #define CHECK_POINTER_SUPPORT   0
-#define SUBPROCESSES 1
+//#define SUBPROCESSES 1
 #define DB 1
-#define CALL_BACK 1
-#define SAVE_ENVIRONMENT
+//#define CALL_BACK 1
 
 // only turn on Python if its a MSVC60 build
 //#if _MSC_VER == 1200
 // #define EMACS_PYTHON_EXTENSION 1        // compile in python extension support
 // #define EMACS_PYTHON_EXTENSION_THREADED 0    // Using the threaded version if true
 //#endif
-#define OS_NAME "Windows"
 
 #if _MSC_VER == 1200
 #pragma warning( disable: 4710 )
@@ -89,3 +87,7 @@ extern unsigned char *get_tmp_path(void);
 #define COMMIT_MODE "c"
 
 #define    ALL_FILES "*"
+
+#include <io.h>
+
+typedef unsigned short EmacsChar_t;

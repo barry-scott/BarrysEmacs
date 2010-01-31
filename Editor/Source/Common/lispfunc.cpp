@@ -889,7 +889,11 @@ int putenv_command( void )
     else
         value = get_string_mlisp();
 
+#ifdef WIN32
+    _putenv_s( vname.sdata(), value.sdata() );
+#else
     setenv( vname.sdata(), value.sdata(), 1 );
+#endif
 
     return 0;
 }

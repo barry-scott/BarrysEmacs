@@ -2,67 +2,13 @@
 //    os_pybemacs.h
 //
 #include    <CXX/WrapPython.h>
-#include    <sys/param.h>
-#include    <dirent.h>
 
 #define DB 1
 
-//#define _POSIX_SOURCE 1        // we are a posix app
-
-#if defined( __osf__ )
-# define OS_VERSION "osf1"
-# define CPU_TYPE "AXP"
-
-#elif defined( __FreeBSD__ )
-# define OS_VERSION "FreeBSD"
-# define CPU_TYPE "i386"
-
-#elif defined( __OpenBSD__ )
-# define OS_VERSION "OpenBSD"
-# define CPU_TYPE "i386"
-
-#elif defined( __APPLE_CC__ )
-# define OS_VERSION "Mac OS X"
-# define CPU_TYPE "i386"
-
-#elif defined( __linux__ )
-# define OS_VERSION "linux"
-# define CPU_TYPE "i386"
-
-#elif defined( __hpux )
-# define OS_VERSION "hpux"
-# if defined( __hppa )
-#  define CPU_TYPE "pa_risc"
-
-# else
-#  define CPU_TYPE "m68k"
-
-# endif
-//# undef    TOOLBAR_TOGGLE_BUTTONS    // not working on HP-UX
-# define getws getcwd
-
-#elif defined( _AIX )
-# define OS_VERSION "aix"
-# define CPU_TYPE "ppc"
-
-#else
-#error Which unix is this?
+#if _MSC_VER == 1200
+#pragma warning( disable: 4710 )
 #endif
 
-#ifdef __GNUC__
-// GNU C++ has array new BUT we have to avoid it as the code generator crashes in related code.
-#define __has_array_new__ 1
-#include <typeinfo>
-#endif
-
-# define O_BINARY 0
-# define REAL_TTY 1
-
-# define MAXFDS 64
-
-#ifndef MAXNAMLEN
-# define MAXNAMLEN MAXPATHLEN
-#endif
 
 // debug flag bits
 #define DBG__OFF            0x00000000
@@ -92,25 +38,50 @@ const int DBG_NO_DBG_MSG    (0x00001000&DBG___ON);  // always defined
 #define DBG_VERBOSE         (0x20000000&DBG___ON)   // for more of one of the other types of debug info
 #define DBG_TMP             (0x40000000&DBG___ON)   // for temporary debug situations
 
-#define MEMMAP              1
-#define INODE               1
+#define MEMMAP      1
+#define INODE       0
+#define MOUSE       1
 
-#define PATH_CH             '/'
-#define PATH_STR            "/"
-#define PATH_SEP            ' '
-#define ALL_FILES           "*"
+const char PATH_CH( '\\' );
+#define PATH_STR "\\"
+const char PATH_ALT_CH( '/' );
+#define PATH_ALT_STR "/"
+const char PATH_SEP( ';' );
 
-#define ROOT_CHAR_POS       0    // root is "/"
+#if defined(_NT)
+const int MAXNAMLEN( _MAX_PATH );
+const int MAXPATHLEN( _MAX_PATH );
+#else
+const int MAXNAMLEN( 8+1+3 );
+const int MAXPATHLEN( _MAX_PATH );
+#endif
 
-#define BACKUP_EXTENSION    ".bak"
+const int ROOT_CHAR_POS( 2 );    // root is "x:\\"
+
+#define BACKUP_EXTENSION ".bak"
 #define CHECKPOINT_EXTENSION ".ckp"
 
-#define EMACS_INIT_PROFILE  u_str("emacs_profile.ml")
-#define MEMORY_FILE_STR     u_str("emacs_memory:.emacs_mem")
-#define MEMORY_FILE_ARG     0
+#define EMACS_INIT_PROFILE  EmacsString("emacs_profile.ml")
+#define MEMORY_FILE_STR     get_config_env("emacs_memory")
+const int MEMORY_FILE_ARG( 0 );
 #define EMACS_PATH          get_config_env("emacs_path")
-#define EMACS_TMP_PATH      u_str("/tmp")
-#define EMACS_DB_DEFAULT    u_str("")
+extern unsigned char *get_tmp_path(void);
+#define EMACS_TMP_PATH      get_tmp_path()
+#ifdef MLL_DB
+#define EMACS_DB_DEFAULT    ".mll"
+#else
+#define EMACS_DB_DEFAULT    ""
+#endif
+
+#define TEXT_MODE "t"
+#define BINARY_MODE "b"
+#define COMMIT_MODE "c"
+
+#define    ALL_FILES "*"
+
+#include <io.h>
+
+#define EXPORT_SYMBOL __declspec( dllexport )
 
 //
 //    typedefs for fundemental types

@@ -591,12 +591,12 @@ Py::Object BemacsBuffer::getattr( const char *c_name )
     else
     if( name == "file_time" )
     {
-        result = Py::Int( buffer->b_file_time );
+        result = Py::LongLong( buffer->b_file_time );
     }
     else
     if( name == "file_synchonise_time" )
     {
-        result = Py::Int( buffer->b_synch_file_time );
+        result = Py::LongLong( buffer->b_synch_file_time );
     }
     else
     if( name == "file_permissions" )

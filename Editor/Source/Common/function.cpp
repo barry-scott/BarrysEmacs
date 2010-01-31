@@ -1,4 +1,5 @@
-//    Copyright (c) 1982-2008
+//
+//    Copyright (c) 1982-2010
 //        Barry A. Scott
 //
 #include <emacs.h>
@@ -258,7 +259,10 @@ extern int expand_file_name(void);
 extern int expand_file_name_recursive(void);
 extern int expand_from_string_table(void);
 extern int extend_database_search_list(void);
+#if defined( CALL_BACK )
 extern int define_external_function(void);
+extern int list_images(void);
+#endif
 extern int fetch_array_command(void);
 extern int fetch_database_entry(void);
 extern int fetch_help_database_entry(void);
@@ -308,7 +312,6 @@ extern int list_auto_executes (void);
 extern int list_break_points(void);
 extern int list_buffers(void);
 extern int list_databases(void);
-extern int list_images(void);
 # if defined (SUBPROCESSES)
 extern int list_processes(void);
 # endif
@@ -752,7 +755,10 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "expand-file-name-recursive", expand_file_name_recursive );
     EMACS_NEW BoundName( "expand-from-string-table", expand_from_string_table );
     EMACS_NEW BoundName( "extend-database-search-list", extend_database_search_list );
+#if defined( CALL_BACK )
     EMACS_NEW BoundName( "external-function", define_external_function );
+    EMACS_NEW BoundName( "list-images", list_images );
+#endif
     EMACS_NEW BoundName( "fetch-array", fetch_array_command );
     EMACS_NEW BoundName( "fetch-database-entry", fetch_database_entry );
     EMACS_NEW BoundName( "fetch-help-database-entry", fetch_help_database_entry );
@@ -808,7 +814,6 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "list-breakpoints", list_break_points );
     EMACS_NEW BoundName( "list-buffers", list_buffers );
     EMACS_NEW BoundName( "list-databases", list_databases );
-    EMACS_NEW BoundName( "list-images", list_images );
 # if defined (SUBPROCESSES)
     EMACS_NEW BoundName( "list-processes", list_processes );
 # endif

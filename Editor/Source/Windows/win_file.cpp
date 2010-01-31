@@ -39,7 +39,7 @@ int file_is_directory( const EmacsString &file )
 {
     unsigned attr = 0;
 
-    attr = (unsigned)GetFileAttributes( file );
+    attr = (unsigned)GetFileAttributes( file.sdata() );
     if( attr == (unsigned)-1 )
         return 0;
 
@@ -47,15 +47,15 @@ int file_is_directory( const EmacsString &file )
 }
 
 FileParse::FileParse()
-    : disk()            // disk: or //server/service
-    , path()            // /path/
-    , filename()            // name
-    , filetype()            // .type
-    , result_spec()            // full file spec with all fields filled in
-    , wild(0)            // true if any field is wild
-    , filename_maxlen(0)        // how long filename can be
-    , filetype_maxlen(0)        // how long filetype can be
-    , file_case_sensitive(0)    // true if case is important
+: disk()            // disk: or //server/service
+, path()            // /path/
+, filename()            // name
+, filetype()            // .type
+, result_spec()            // full file spec with all fields filled in
+, wild(0)            // true if any field is wild
+, filename_maxlen(0)        // how long filename can be
+, filetype_maxlen(0)        // how long filetype can be
+, file_case_sensitive(0)    // true if case is important
 { }
 
 void FileParse::init()
@@ -571,15 +571,15 @@ EmacsString FileFind::next()
 
 
 FileFindWindowsNT::FileFindWindowsNT( const EmacsString &_files, bool _return_all_directories )
-    : FileFindInternal( _return_all_directories )
-    , state( all_done )    // assume all done
-    , handle( INVALID_HANDLE_VALUE )
-    , case_sensitive(0)
-    , root_path()
-    , full_filename()
+: FileFindInternal( _return_all_directories )
+, state( all_done )    // assume all done
+, handle( INVALID_HANDLE_VALUE )
+, case_sensitive(0)
+, root_path()
+, full_filename()
 {
     char file_name_buffer[ MAX_PATH ];
-    int len = (int)GetFullPathName( _files, MAX_PATH, file_name_buffer, NULL );
+    int len = (int)GetFullPathName( _files.sdata(), MAX_PATH, file_name_buffer, NULL );
     if( len == 0 )
         return;
 

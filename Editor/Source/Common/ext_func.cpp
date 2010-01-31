@@ -19,10 +19,10 @@ unsigned int call_back_len;
 EmacsStringTable EmacsExternImage::name_table;
 
 EmacsExternImage::EmacsExternImage( const EmacsString &image, const EmacsString &filename )
-    : ref_count(0)
-    , ef_image( image )
-    , ef_filename( filename )
-    , ef_os_info( make_EmacsExternImageOsInfo() )
+: ref_count(0)
+, ef_image( image )
+, ef_filename( filename )
+, ef_os_info( make_EmacsExternImageOsInfo() )
 {
     add( image, this );
 }
@@ -51,7 +51,8 @@ int list_images( void )
         bf_cur->ins_str( u_str("No images in use.\n") );
     else
     {
-        bf_cur->ins_str("   Image Name\t\t\t     Context Value  Filename\n"
+        bf_cur->ins_str(
+            "   Image Name\t\t\t     Context Value  Filename\n"
             "   ----- ----\t\t\t     ------- -----  --------\n" );
 
         for( int index=0; index<num_images; index++ )

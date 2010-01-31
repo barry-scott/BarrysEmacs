@@ -112,6 +112,8 @@ const int DBG_NO_DBG_MSG    (0x00001000&DBG___ON);  // always defined
 #define EMACS_TMP_PATH      u_str("/tmp")
 #define EMACS_DB_DEFAULT    u_str("")
 
+#define EXPORT_SYMBOL
+
 //
 //    typedefs for fundemental types
 //

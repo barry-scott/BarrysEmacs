@@ -113,8 +113,3 @@ extern void _emacs_assert(const char *, const char *, unsigned);
 #else
 #define emacs_assert(exp) ((void)0)
 #endif
-
-#ifndef __has_bool__
-enum { false=0, true=1 };
-typedef int bool;
-#endif

@@ -71,7 +71,6 @@
 #endif
 
 #ifdef __GNUC__
-#define __has_bool__ 1
 // GNU C++ has array new BUT we have to avoid it as the code generator crashes in related code.
 #define __has_array_new__ 1
 #include <typeinfo>

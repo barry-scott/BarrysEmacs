@@ -109,6 +109,13 @@ EmacsString get_config_env( const EmacsString &name )
 
     return EmacsString::null;
 }
+
+EmacsString get_device_name_translation( const EmacsString &name )
+{
+    return name;
+}
+
+
 //
 //
 //    EmacsInitialisation
@@ -194,6 +201,25 @@ void _emacs_assert( const char *exp, const char *file, unsigned line )
 #elif defined( __GNUC__ ) && __GNUC__ >= 3
     // unix assert order
     __assert( exp, file, line );
+
+#elif defined( WIN32 )
+    // taken for assert.h of msvc90
+    {
+    wchar_t w_exp[1024];
+    wchar_t w_file[1024];
+
+    const char *p=exp;
+    wchar_t *wp = &w_exp[0];
+    while( *p != 0 )
+        *wp++ = *p++;
+
+    p = file;
+    wp = &w_file[0];
+    while( *p != 0 )
+        *wp++ = *p++;
+
+    _wassert( w_exp, w_file, line );
+    }
 
 #else
     // unix assert order

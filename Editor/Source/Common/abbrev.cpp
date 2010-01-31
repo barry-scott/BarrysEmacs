@@ -1,7 +1,9 @@
+//
 //    Copyright (c) 1982-1993
 //        Barry A. Scott and Nick Emery
+//    Copyright (c) 1994-2010
+//        Barry A. Scott
 //
-
 #include <emacs.h>
 
 #undef THIS_FILE
@@ -36,17 +38,17 @@ EmacsString two_percents("%s: %s");
 EmacsString abbreviations(".abbreviations");
 
 AbbrevEntry::AbbrevEntry()
-    : abbrev_next( NULL )           // the next pair in this chain
-    , abbrev_abbrev()               // the abbreviation
-    , abbrev_phrase()               // the expanded phrase
-    , abbrev_hash(0)                // abbrev_abbrev hashed
-    , abbrev_expansion_hook(NULL)   // BoundName
+: abbrev_next( NULL )           // the next pair in this chain
+, abbrev_abbrev()               // the abbreviation
+, abbrev_phrase()               // the expanded phrase
+, abbrev_hash(0)                // abbrev_abbrev hashed
+, abbrev_expansion_hook(NULL)   // BoundName
 { }
 
 
 AbbrevTable::AbbrevTable( EmacsString name )
-    : abbrev_name( name )           // the name of this abbrev table
-    , abbrev_number_defined(0)      // the number of abbrevs defined in this
+: abbrev_name( name )           // the name of this abbrev table
+, abbrev_number_defined(0)      // the number of abbrevs defined in this
                                     // abbrev table
 {
     for(int i=0; i<ABBREVSIZE; i++ )

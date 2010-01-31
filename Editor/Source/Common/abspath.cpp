@@ -32,7 +32,7 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
-#ifdef _NT
+#ifdef WIN32
 #include <win_incl.h>
 #include <direct.h>
 #endif
@@ -104,13 +104,7 @@ int chdir_and_set_global_record( const EmacsString &dirname )
     if( ret < 0 )
         return ret;
 
-#ifdef _MSDOS
-    int drive = unicode_to_upper( path2[0] ) - 'A' + 1;
-    ret = _chdrive( drive );
-    if( ret < 0 )
-        return ret;
-#endif
-#ifdef _WINDOWS
+#ifdef win32
     int len = path2.length();
     // leave a single PATH_CH
     if( len > (ROOT_CHAR_POS+1) )

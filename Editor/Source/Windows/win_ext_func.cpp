@@ -3,7 +3,7 @@
 //
 #include <emacs.h>
 
-#include <win_emacs.h>
+#include <windows.h>
 
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -29,17 +29,6 @@ extern EmacsExternImageOsInfo *make_EmacsExternImageOsInfo()
     return new EmacsExternImageOsInfo_ForWindows();
 }
 
-
-//
-// copied from afxdll_.h - which we cannot include here!
-//
-#if 0
-extern HINSTANCE AFXAPI AfxLoadLibrary(LPCTSTR lpszModuleName);
-extern BOOL AFXAPI AfxFreeLibrary(HINSTANCE hInstLib);
-#else
-#define AfxLoadLibrary LoadLibrary
-#define AfxFreeLibrary FreeLibrary
-#endif
 
 EmacsCallBackStatus Emacs_UserCallBackFunctions( EmacsCallBackFunctions function, ... );
 
@@ -119,7 +108,7 @@ bool EmacsExternImageOsInfo_ForWindows::isLoaded()
 bool EmacsExternImageOsInfo_ForWindows::load( const EmacsString &_file )
 {
     file = _file;
-    module = AfxLoadLibrary( file );
+    module = LoadLibrary( file );
     if( module == NULL )
     {
         error( FormatString("Unable to load external function from %s") << file );
@@ -132,7 +121,7 @@ bool EmacsExternImageOsInfo_ForWindows::load( const EmacsString &_file )
 bool EmacsExternImageOsInfo_ForWindows::unload()
 {
     if( module != NULL )
-        if( !AfxFreeLibrary( module ) )
+        if( !FreeLibrary( module ) )
         {
             error( FormatString("Unable to unload external functions from %s") << file );
             return false;

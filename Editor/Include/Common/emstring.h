@@ -32,8 +32,14 @@ public:
     EmacsString( void );
     EmacsString( const char *string );
     EmacsString( const unsigned char *string );
+
+    EmacsString( const EmacsChar_t *string );
+    EmacsString( const EmacsChar_t *string, int length );
+
+#if defined( NEED_EMSTRING_WCHAR_T )
     EmacsString( const wchar_t *string );
     EmacsString( const wchar_t *string, int length );
+#endif
 
     EmacsString( enum string_type type );
     EmacsString( enum string_type type, const char *string );
@@ -255,6 +261,7 @@ public:
         int _length,
         const EmacsChar_t *_data
         );
+#if defined( NEED_EMSTRING_WCHAR_T )
     EmacsStringRepresentation
         (
         enum EmacsString::string_type _type,
@@ -262,6 +269,7 @@ public:
         int _length,
         const wchar_t *_data
         );
+#endif
     virtual ~EmacsStringRepresentation();
 
     friend class EmacsString;

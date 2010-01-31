@@ -12,9 +12,9 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
-#include <pwd.h>
-#include <unistd.h>
-#include <time.h>
+//#include <pwd.h>
+//#include <unistd.h>
+//#include <time.h>
 
 #include <iostream>
 
@@ -27,7 +27,6 @@ void qqq()
 
 EmacsString name_arg;
 
-static struct timeval emacs_start_time;
 static EmacsString image_path;
 
 extern void init_fncs( void );
@@ -59,10 +58,7 @@ public:
     : Py::PythonClass< BemacsEditor >::PythonClass( self, args, kwds )
     , m_value( "default value" )
     {
-        // record the start time
-        gettimeofday( &emacs_start_time, NULL );
         EmacsInitialisation::setup_version_string();
-
     }
 
     virtual ~BemacsEditor()
@@ -806,7 +802,7 @@ extern "C" PyObject *PyInit__bemacs_d()
 #else
 static BemacsModule *bemacs_module = NULL;
 
-extern "C" void init_bemacs()
+extern "C" EXPORT_SYMBOL void init_bemacs()
 {
 #if defined(PY_WIN32_DELAYLOAD_PYTHON_DLL)
     Py::InitialisePythonIndirectPy::Interface();
@@ -816,7 +812,7 @@ extern "C" void init_bemacs()
 }
 
 // symbol required for the debug version
-extern "C" void init_bemacs_d()
+extern "C" EXPORT_SYMBOL void init_bemacs_d()
 {
     init_bemacs();
 }
@@ -984,165 +980,6 @@ int wait_for_activity(void)
 }
 
 
-void emacs_sleep( int milli_seconds )
-{
-    struct timespec request;
-    request.tv_sec = milli_seconds/1000;        // seconds
-    request.tv_nsec = (milli_seconds%1000)*1000000;    // convert milli to nano
-    int rc = nanosleep( &request, NULL );
-    if( rc == 0 )
-        return;
-    emacs_assert( errno == EINTR );
-}
-
-void _dbg_msg( const EmacsString &msg )
-{
-    fprintf( stderr, "%s", msg.sdata() );
-    if( msg[-1] != '\n' )
-        fprintf( stderr, "\n" );
-    fflush( stderr );
-}
-
-int interlock_dec( volatile int *cell )
-{
-    (*cell)--;
-    if( *cell == 0 )
-        return 0;
-    if( *cell < 0 )
-        return -1;
-    else
-        return 1;
-}
-
-int interlock_inc( volatile int *cell )
-{
-    (*cell)++;
-    if( *cell == 0 )
-        return 0;
-    if( *cell < 0 )
-        return -1;
-    else
-        return 1;
-}
-
-void conditional_wake(void)
-{
-    return;
-}
-
-void wait_abit(void)
-{
-}
-
-int elapse_time()
-{
-    struct timeval now;
-    gettimeofday( &now, NULL );
-
-    //
-    //    calculate the time since startup in mSec.
-    //    we ignore the usec part of the start time
-    //    (assuming its 0)
-    //
-    int elapse_time = (int)(now.tv_sec - emacs_start_time.tv_sec);
-    elapse_time *= 1000;
-    elapse_time += (int)(now.tv_usec/1000);
-
-    return elapse_time;
-}
-
-
-extern void init_memory();
-
-void EmacsInitialisation::os_specific_init()
-{
-    init_memory();
-#ifdef SAVE_ENVIRONMENT
-    //
-    //    Create the save environment object at the earlest opertunity
-    //
-    EmacsSaveRestoreEnvironmentObject = EMACS_NEW EmacsSaveRestoreEnvironment;
-#endif
-}
-
-EmacsString get_user_full_name()
-{
-    uid_t uid = geteuid();
-    struct passwd *pw = getpwuid( uid );
-
-    if( pw == NULL )
-        return EmacsString::null;
-    else
-        return EmacsString( pw->pw_gecos );
-}
-
-EmacsString users_login_name()
-{
-    uid_t uid = geteuid();
-    struct passwd *pw = getpwuid( uid );
-
-    if( pw == NULL )
-        return EmacsString::null;
-
-    return EmacsString( pw->pw_name );
-}
-
-
-EmacsString get_system_name()
-{
-    char system_name[256];
-    if( gethostname( system_name, sizeof( system_name ) ) == 0 )
-        return EmacsString( system_name );
-    else
-        return EmacsString::null;
-}
-
-void fatal_error( int code )
-{
-    printf("\nFatal Error %d\n", code );
-    exit(1);
-}
-
-EmacsDateTime EmacsDateTime::now(void)
-{
-    EmacsDateTime now;
-
-
-    struct timeval t;
-    gettimeofday(  &t, NULL );
-
-    now.time_value = double( t.tv_usec ) / 1000000.0;
-    now.time_value += double( t.tv_sec );
-
-    return now;
-}
-
-EmacsString EmacsDateTime::asString(void) const
-{
-    double int_part, frac_part;
-
-    frac_part = modf( time_value, &int_part );
-    frac_part *= 1000.0;
-
-    time_t clock = int( int_part );
-    int milli_sec = int( frac_part );
-
-    struct tm *tm = localtime( &clock );
-
-    return FormatString("%4d-%2d-%2d %2d:%2d:%2d.%3.3d")
-        << tm->tm_year + 1900 << tm->tm_mon + 1 << tm->tm_mday
-        << tm->tm_hour << tm->tm_min << tm->tm_sec << milli_sec;
-}
-
-EmacsString os_error_code( unsigned int code )
-{
-    const char *error_string = strerror( code );
-    if( error_string == NULL )
-        return EmacsString( FormatString("Unix error code %d") << code );
-    else
-        return EmacsString( error_string );
-}
-
 bool emacs_internal_init_done_event(void)
 {
     return true;
@@ -1162,102 +999,6 @@ int init_char_terminal( const EmacsString & )
     return 0;
 }
 
-const int TIMER_TICK_VALUE( 50 );
-static void( *timeout_handler )(void );
-struct timeval timeout_time;
-
-void time_schedule_timeout( void( *time_handle_timeout )(void ), const EmacsDateTime &when  )
-{
-    int delta = int( EmacsDateTime::now().asDouble() - when.asDouble() );
-
-    struct timezone tzp;
-    gettimeofday( &timeout_time, &tzp  );
-
-    timeout_time.tv_sec += delta/1000;
-    timeout_time.tv_usec +=( delta%1000 )*1000;
-    if( timeout_time.tv_usec > 1000000  )
-        {
-            timeout_time.tv_sec += 1;
-            timeout_time.tv_usec -= 1000000;
-        }
-    timeout_handler = time_handle_timeout;
-}
-
-void time_cancel_timeout(void)
-{
-    timeout_time.tv_sec = 0;
-    timeout_time.tv_usec = 0;
-    timeout_handler = NULL;
-}
-
-EmacsString get_config_env( const EmacsString &name )
-{
-    char *value = getenv( name.sdata() );
-
-    if( value != NULL )
-        return value;
-
-    static EmacsString env_emacs_path(  "emacs_user: emacs_library:" );
-    if( name == "emacs_path" )
-        return env_emacs_path;
-
-    static EmacsString env_emacs_user(  "HOME:/bemacs" );
-    if( name == "emacs_user" )
-        return env_emacs_user;
-
-    static EmacsString env_emacs_library(  image_path );
-    if( name == "emacs_library" )
-        return env_emacs_library;
-
-    static EmacsString env_sys_login(  "HOME:/" );
-    if( name == "sys_login" )
-        return env_sys_login;
-
-    return EmacsString::null;
-}
-
-void debug_invoke(void)
-{
-    return;
-}
-
-void debug_SER(void)
-{
-    return;
-}
-
-void debug_exception(void)
-{
-    return;
-}
-
-
-#undef NDEBUG
-#include <assert.h>
-
-void _emacs_assert( const char *exp, const char *file, unsigned line )
-{
-#if defined( __FreeBSD__ )
-    // freebsd assert order
-    __assert( "unknown", file, line, exp );
-
-#elif defined( __APPLE_CC__ )
-    #if __DARWIN_UNIX03
-        __assert_rtn( __func__, __FILE__, __LINE__, exp );
-    #else /* !__DARWIN_UNIX03 */
-        __assert( exp, __FILE__, __LINE__ );
-    #endif /* __DARWIN_UNIX03 */
-
-#elif defined( __GNUC__ ) && __GNUC__ >= 3
-    // unix assert order
-    __assert( exp, file, line );
-
-#else
-    // unix assert order
-    __assert( file, line, exp );
-
-#endif
-}
 
 int ui_python_hook()
 {

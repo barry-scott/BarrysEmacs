@@ -73,19 +73,10 @@ EmacsString::EmacsString( const unsigned char *string )
     check_for_bad_value( _rep );
 }
 
+#if defined( NEED_EMSTRING_WCHAR_T )
 static int wchar_strlen( const wchar_t *string )
 {
     const wchar_t *p = string;
-
-    while( *p != 0 )
-        p++;
-
-    return p - string;
-}
-
-static int wchar_strlen( const EmacsChar_t *string )
-{
-    const EmacsChar_t *p = string;
 
     while( *p != 0 )
         p++;
@@ -104,6 +95,30 @@ EmacsString::EmacsString( const wchar_t *string, int length )
 {
     check_for_bad_value( _rep );
 }
+#endif
+
+static int EmacsChar_strlen( const EmacsChar_t *string )
+{
+    const EmacsChar_t *p = string;
+
+    while( *p != 0 )
+        p++;
+
+    return p - string;
+}
+
+EmacsString::EmacsString( const EmacsChar_t *string )
+: _rep( EMACS_NEW EmacsStringRepresentation( copy, 0, EmacsChar_strlen( string ), string ) )
+{
+    check_for_bad_value( _rep );
+}
+
+EmacsString::EmacsString( const EmacsChar_t *string, int length )
+: _rep( EMACS_NEW EmacsStringRepresentation( copy, 0, length, string ) )
+{
+    check_for_bad_value( _rep );
+}
+
 
 EmacsString::EmacsString( enum string_type type )
 : _rep( EMACS_NEW EmacsStringRepresentation( type, 0, 0, u_str("") ) )
@@ -132,7 +147,7 @@ size_t strlen( const EmacsChar_t *str )
 }
 
 EmacsString::EmacsString( enum string_type type, const EmacsChar_t *string )
-: _rep( EMACS_NEW EmacsStringRepresentation( type, wchar_strlen( string )+1, wchar_strlen( string ), string ) )
+: _rep( EMACS_NEW EmacsStringRepresentation( type, EmacsChar_strlen( string )+1, EmacsChar_strlen( string ), string ) )
 {
     check_for_bad_value( _rep );
 }
@@ -540,12 +555,13 @@ EmacsStringRepresentation::EmacsStringRepresentation
     type = EmacsString::free;
 }
 
+#if defined( NEED_EMSTRING_WCHAR_T )
 EmacsStringRepresentation::EmacsStringRepresentation
     (
     enum EmacsString::string_type _type,
     int _alloc_length,
     int _length,
-    const EmacsChar_t *_data
+    const wchar_t *_data
     )
 : ref_count(1)
 , type( _type )
@@ -554,25 +570,25 @@ EmacsStringRepresentation::EmacsStringRepresentation
 , data( NULL )
 , utf8_data( NULL )
 {
-    if( type == EmacsString::copy )
-    {
-        data = reinterpret_cast<EmacsChar_t *>( EMACS_MALLOC( sizeof( EmacsChar_t )*(_length+1), malloc_type_char ) );
-        memcpy( data, _data, sizeof( EmacsChar_t )*length );
-        data[ length ] = 0;
-        type = EmacsString::free;
-    }
-    else
-    {
-        data = const_cast<EmacsChar_t *>( _data );
-    }
+    alloc_length = length+1;
+    alloc_length |= 15;
+    alloc_length++;
+
+    data = reinterpret_cast<EmacsChar_t *>( EMACS_MALLOC( sizeof( EmacsChar_t )*(alloc_length), malloc_type_char ) );
+    for( int i=0; i< length; i++ )
+        data[i] = _data[i];
+
+    data[ length ] = 0;
+    type = EmacsString::free;
 }
+#endif
 
 EmacsStringRepresentation::EmacsStringRepresentation
     (
     enum EmacsString::string_type _type,
     int _alloc_length,
     int _length,
-    const wchar_t *_data
+    const EmacsChar_t *_data
     )
 : ref_count(1)
 , type( _type )
