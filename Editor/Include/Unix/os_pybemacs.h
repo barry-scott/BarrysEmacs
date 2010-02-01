@@ -9,46 +9,6 @@
 
 //#define _POSIX_SOURCE 1        // we are a posix app
 
-#if defined( __osf__ )
-# define OS_VERSION "osf1"
-# define CPU_TYPE "AXP"
-
-#elif defined( __FreeBSD__ )
-# define OS_VERSION "FreeBSD"
-# define CPU_TYPE "i386"
-
-#elif defined( __OpenBSD__ )
-# define OS_VERSION "OpenBSD"
-# define CPU_TYPE "i386"
-
-#elif defined( __APPLE_CC__ )
-# define OS_VERSION "Mac OS X"
-# define CPU_TYPE "i386"
-
-#elif defined( __linux__ )
-# define OS_VERSION "linux"
-# define CPU_TYPE "i386"
-
-#elif defined( __hpux )
-# define OS_VERSION "hpux"
-# if defined( __hppa )
-#  define CPU_TYPE "pa_risc"
-
-# else
-#  define CPU_TYPE "m68k"
-
-# endif
-//# undef    TOOLBAR_TOGGLE_BUTTONS    // not working on HP-UX
-# define getws getcwd
-
-#elif defined( _AIX )
-# define OS_VERSION "aix"
-# define CPU_TYPE "ppc"
-
-#else
-#error Which unix is this?
-#endif
-
 #ifdef __GNUC__
 // GNU C++ has array new BUT we have to avoid it as the code generator crashes in related code.
 #define __has_array_new__ 1

@@ -5,90 +5,9 @@
 #include    <dirent.h>
 
 #define DB 1
-#define XWINDOWS 1
-#define SUBPROCESSES 1
-#define SAVE_ENVIRONMENT
-
-//#define _POSIX_SOURCE 1        // we are a posix app
-
-#define KEYBOARD_TYPE_DEFAULT 0
-#define KEYBOARD_TYPE_PC 1
-#define KEYBOARD_TYPE_HP 2
-#define KEYBOARD_TYPE_OLD_HP 3
-
-#define    TOOLBAR_TOGGLE_BUTTONS    1    // defined if this unix supports tool bar toggle buttons
-#define OS_NAME "unix"
-#if defined( __osf__ )
-# define OS_VERSION "osf1"
-# define CPU_TYPE "AXP"
-
-#elif defined( __FreeBSD__ )
-# define OS_VERSION "FreeBSD"
-# define CPU_TYPE "i386"
-# define KEYBOARD_TYPE KEYBOARD_TYPE_PC
-
-#elif defined( __OpenBSD__ )
-# define OS_VERSION "OpenBSD"
-# define CPU_TYPE "i386"
-# define KEYBOARD_TYPE KEYBOARD_TYPE_PC
-
-#elif defined( __APPLE_CC__ )
-# define OS_VERSION "Mac OS X"
-# define CPU_TYPE "i386"
-# define KEYBOARD_TYPE KEYBOARD_TYPE_PC
-
-# if defined( __WXMAC__ )
-#  undef SUBPROCESSES
-#  undef SAVE_ENVIRONMENT
-#  undef XWINDOWS
-# endif
-
-#elif defined( __linux__ )
-# define OS_VERSION "linux"
-# define CPU_TYPE "i386"
-# define KEYBOARD_TYPE KEYBOARD_TYPE_PC
-
-#elif defined( __hpux )
-# define OS_VERSION "hpux"
-# if defined( __hppa )
-#  define CPU_TYPE "pa_risc"
-#  define KEYBOARD_TYPE KEYBOARD_TYPE_HP
-# else
-#  define CPU_TYPE "m68k"
-#  define KEYBOARD_TYPE KEYBOARD_TYPE_OLD_HP
-# endif
-//# undef    TOOLBAR_TOGGLE_BUTTONS    // not working on HP-UX
-# define getws getcwd
-
-#elif defined( _AIX )
-# define OS_VERSION "aix"
-# define CPU_TYPE "ppc"
-# define KEYBOARD_TYPE KEYBOARD_TYPE_HP
-//#define getws getcwd
-
-#else
-#error Which unix is this?
-#endif
-
-#ifdef __GNUC__
-// GNU C++ has array new BUT we have to avoid it as the code generator crashes in related code.
-#define __has_array_new__ 1
-#include <typeinfo>
-#endif
 
 
-#if !defined(KEYBOARD_TYPE)
-#define KEYBOARD_TYPE KEYBOARD_TYPE_DEFAULT
-#endif
-
-# define O_BINARY 0
-# define REAL_TTY 1
-
-# define MAXFDS 64
-
-#ifndef MAXNAMLEN
-# define MAXNAMLEN MAXPATHLEN
-#endif
+#define O_BINARY 0
 
 // debug flag bits
 #define DBG__OFF            0x00000000
@@ -118,36 +37,27 @@ const int DBG_NO_DBG_MSG    (0x00001000&DBG___ON);  // always defined
 #define DBG_VERBOSE         (0x20000000&DBG___ON)   // for more of one of the other types of debug info
 #define DBG_TMP             (0x40000000&DBG___ON)   // for temporary debug situations
 
-# define MEMMAP 1
-# define INODE    1
+# define MEMMAP             1
+# define INODE              1
 
-# define PATH_CH    '/'
-# define PATH_STR "/"
-# define PATH_SEP ' '
-# define ALL_FILES "*"
+# define PATH_CH            '/'
+# define PATH_STR           "/"
+# define PATH_SEP           ' '
+# define ALL_FILES          "*"
 
-# define ROOT_CHAR_POS    0    // root is "/"
+# define ROOT_CHAR_POS      0    // root is "/"
 
-#define BACKUP_EXTENSION ".bak"
+#define BACKUP_EXTENSION    ".bak"
 #define CHECKPOINT_EXTENSION ".ckp"
 
-#define EMACS_INIT_PROFILE    u_str("emacs_profile.ml")
-#define MEMORY_FILE_STR        u_str("emacs_memory:.emacs_mem")
-#define MEMORY_FILE_ARG        0
-#define EMACS_PATH        get_config_env("emacs_path")
-#define    EMACS_TMP_PATH        u_str("/tmp")
-#define    EMACS_DB_DEFAULT    u_str("")
+#define EMACS_INIT_PROFILE  u_str("emacs_profile.ml")
+#define MEMORY_FILE_STR     u_str("emacs_memory:.emacs_mem")
+#define MEMORY_FILE_ARG     0
+#define EMACS_PATH          get_config_env("emacs_path")
+#define EMACS_TMP_PATH      u_str("/tmp")
+#define EMACS_DB_DEFAULT    u_str("")
 
-#ifndef XWINDOWS
-class EmacsProcess;
-typedef unsigned long XtInputId;
-typedef EmacsProcess *XtPointer;
-typedef void (*XtInputCallbackProc) (XtPointer, int *, XtInputId * );
-#define XtInputReadMask 1
-#define XtInputWriteMask 2
-#endif
 
 extern void OutputDebugString( const char *message );
-#ifdef XWINDOWS
-extern int is_motif;
-#endif
+
+typedef unsigned short EmacsChar_t;
