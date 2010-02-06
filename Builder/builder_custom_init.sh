@@ -6,6 +6,7 @@ case ${BUILDER_CFG_PLATFORM} in
 
 Darwin)
     export BUILDER_CFG_PLATFORM=MacOSX
+    export PYTHON=python${PYTHON_VERSION}
     ;;
 
 Linux)
@@ -18,6 +19,7 @@ Linux)
         export BUILDER_CFG_PLATFORM=Linux-Ubuntu
 
     fi
+    export PYTHON=python${PYTHON_VERSION}
     ;;
 *)
     # no need to change
