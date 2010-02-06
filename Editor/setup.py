@@ -19,7 +19,7 @@ class Setup:
         self.platform = args[0]
         del args[0]
 
-        self.__makefile = open( args[0], 'w' )
+        self.__makefile = open( args[0], 'wt' )
         del args[0]
 
         while len(args) > 0:
@@ -34,12 +34,7 @@ class Setup:
 
     def makePrint( self, line ):
         self.__makefile.write( line )
-
-        if self.platform == 'win32':
-            self.__makefile.write( '\r\n' )
-
-        else:
-            self.__makefile.write( '\n' )
+        self.__makefile.write( '\n' )
 
     def setupCompile( self ):
         if self.platform == 'win32':
