@@ -2,6 +2,7 @@
 BEmacsClassMoniker/BEmacsClassMoniker.aps -text
 BEmacsClassMoniker/RES/ICON1.ICO -text
 Builder/Win32.mak -text
+Builder/build.cmd -text
 Builder/builder_custom_init.cmd eol=crlf
 Editor/BEmacsComClient/icon1.ico -text
 Editor/BEmacsComClient/icon2.ico -text
@@ -11,9 +12,9 @@ Editor/BEmacsComClient/icon5.ico -text
 Editor/BEmacsComClient/icon6.ico -text
 Editor/BEmacsComClient/icon7.ico -text
 Editor/BEmacsComClient/icon8.ico -text
-Editor/PythonBEmacs/be.rc.template -text
 Editor/PythonBEmacs/be_common.mak -text
 Editor/PythonBEmacs/bemacs.png -text svneol=unset#image/png
+Editor/PythonBEmacs/brand.be.rc -text
 Editor/PythonBEmacs/brand.be_version.py -text
 Editor/PythonBEmacs/linux.mak -text
 Editor/PythonBEmacs/macosx.mak -text

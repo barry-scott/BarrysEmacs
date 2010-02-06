@@ -398,26 +398,3 @@ class WindowPreferences(PreferenceSection):
         set_option.set( 'height', self.frame_size.GetHeight() )
         set_option.set( 'maximized', self.maximized )
         set_option.set( 'zoom', self.zoom )
-
-if __name__ == '__main__':
-    class FakeApp:
-        def __init__( self ):
-            self.log = self
-
-        def info( self, message ):
-            print 'Info:',message
-
-        def error( self, message ):
-            print 'Error:',message
-
-        def getCredentials( self ):
-            pass
-
-    import wb_subversion_provider
-
-    # Register all supported source control providers
-    wb_subversion_provider.registerProvider()
-
-    p = Preferences( FakeApp(), '/tmp/t.xml', '/tmp/t.ini' )
-    pprint.pprint( p.pref_data.all_sections )
-    p.writePreferences()

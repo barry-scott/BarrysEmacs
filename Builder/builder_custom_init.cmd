@@ -10,4 +10,7 @@ if %MSVC_VERSION% == 90 (
     call "%VS90COMNTOOLS%vsvars32.bat"
     @echo %__e%
 )
+
+set MEINC_INSTALLER_DIR=%BUILDER_TOP_DIR%\Imports\MEINC_Installer-7.1.0-py26-win32
+set PYTHON=c:\python26\python
 PATH c:\svn;%PATH%

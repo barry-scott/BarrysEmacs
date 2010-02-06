@@ -1,7 +1,7 @@
 #
 #	win32.mak WorkBench
 #
-all: run build_app
+all: be.ico run build_app
 
 
 APPNAME=be
@@ -18,14 +18,7 @@ SOURCES= \
 	be_main.py \
 	be_platform_specific.py \
 	be_platform_win32_specific.py \
-	be_preferences.py \
-	be_version.py
-
-be.rc: be.rc.template ..\Builder\version.info
-	$(PYTHON) -u ..\Builder\brand_version.py ..\Builder\version.info be.rc.template
-
-be_version.py: be_version.py.template ..\Builder\version.info
-	$(PYTHON) -u ..\Builder\brand_version.py ..\Builder\version.info be_version.py.template
+	be_preferences.py
 
 IMAGES = \
 	toolbar_images/editcopy.png \
@@ -34,10 +27,11 @@ IMAGES = \
 	bemacs.png
 
 
+be.ico: ..\Source\Windows\Resources\win_emacs.ico
+	copy ..\Source\Windows\Resources\win_emacs.ico be.ico >NUL
+
 be_images.py: make_be_images.py $(IMAGES)
 	$(PYTHON) -u make_be_images.py be_images.py $(IMAGES) 
-
-PYCHECKER_OPTIONS=--no-shadobeuiltin
 
 check: checkstop
 
@@ -56,8 +50,6 @@ $(SCRIPT_NAME): win32.mak
 clean::
 	if exist *.pyc del *.pyc
 	if exist bin rmdir bin /s /q
-	if exist be_version.py del be_version.py
 	if exist be_images.py del be_images.py
 
-!include <pychecker.mak>
 !include <meinc_installer.mak>
