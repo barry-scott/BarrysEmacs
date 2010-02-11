@@ -51,6 +51,8 @@ void init_python_terminal( BemacsEditor &editor );
 
 BemacsEditorAccessControl editor_access_control;
 
+extern EmacsString env_emacs_library;
+
 class BemacsEditor: public Py::PythonClass< BemacsEditor >
 {
 public:
@@ -59,6 +61,9 @@ public:
     , m_value( "default value" )
     {
         EmacsInitialisation::setup_version_string();
+
+        Py::String py_emacs_library( args[0] );
+        env_emacs_library = py_emacs_library.as_std_string( "utf-8" );
     }
 
     virtual ~BemacsEditor()

@@ -41,6 +41,8 @@ class BemacsApp(wx.App):
         if self.app_dir == '':
             self.app_dir = startup_dir
 
+        self.emacs_library_dir = os.path.abspath( os.path.join( self.app_dir, 'emacs_library' ) )
+
         self.__debug_noredirect = False
         self.__debug = False
         self.__trace = False
@@ -332,6 +334,30 @@ class BemacsApp(wx.App):
     def quit( self ):
         self.log.info( 'quit()' )
         self.frame.Destroy()
+
+    def BringWindowToFront( self ):
+        try: # it's possible for this event to come when the frame is closed
+            pass
+            #self.GetTopWindow().Raise()
+        except:
+            pass
+
+    def MacOpenFile( self, filename ):
+        # Called for files droped on dock icon, or opened via finders context menu
+        print filename
+        print "%s dropped on app"%(filename) #code to load filename goes here.
+        self.editor.guiOpenFile( filename )
+        self.BringWindowToFront()
+
+    def MacReopenApp( self ):
+        # Called when the doc icon is clicked, and ???
+        self.BringWindowToFront()
+
+    def MacNewFile( self ):
+        pass
+    
+    def MacPrintFile( self, file_path ):
+        pass
 
 #--------------------------------------------------------------------------------
 #

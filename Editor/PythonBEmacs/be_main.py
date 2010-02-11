@@ -20,7 +20,7 @@ import locale
 if( os.environ.get( 'BEMACS_STDOUT_LOG', None )
 or (sys.platform == 'darwin' and '--noredirect' not in sys.argv) ):
     try:
-        sys.stdout = file( os.environ.get( 'BEMACS_STDOUT_LOG', '/tmp/workbench.tmp' ), 'w' )
+        sys.stdout = open( os.environ.get( 'BEMACS_STDOUT_LOG', '/tmp/bemacs.tmp' ), 'w', 0 )
         sys.stderr = sys.stdout
         print "Barry's Emacs starting"
         sys.stdout.flush()
@@ -43,6 +43,10 @@ def prerequesitChecks():
 
 def main( args ):
     startup_dir = os.getcwd()
+    print 'startup_dir %r' % (startup_dir,)
+    print 'args %r' % (args,)
+    sys.stdout.flush()
+
     # don't pollute any subprocesses with env vars
     # from packaging processing
     for envvar in ['PYTHONPATH', 'PYTHONHOME', 'PYTHONEXECUTABLE']:

@@ -11,5 +11,4 @@ check:
 	$(PYTHON) -c "import be_pychecker;import be_main;be_pychecker.report()"
 
 clean::
-	rm -f be_version.py
 	rm -f be_images.py

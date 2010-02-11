@@ -32,7 +32,7 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 static struct timeval emacs_start_time;
 
-static EmacsString image_path;
+EmacsString env_emacs_library;
 
 const int TIMER_TICK_VALUE( 50 );
 static void( *timeout_handler )(void );
@@ -171,19 +171,18 @@ EmacsString get_config_env( const EmacsString &name )
     if( value != NULL )
         return value;
 
-    static EmacsString env_emacs_path(  "emacs_user: emacs_library:" );
+    static EmacsString env_emacs_path( "emacs_user: emacs_library:" );
     if( name == "emacs_path" )
         return env_emacs_path;
 
-    static EmacsString env_emacs_user(  "HOME:/bemacs" );
+    static EmacsString env_emacs_user( "HOME:/bemacs" );
     if( name == "emacs_user" )
         return env_emacs_user;
 
-    static EmacsString env_emacs_library(  image_path );
     if( name == "emacs_library" )
         return env_emacs_library;
 
-    static EmacsString env_sys_login(  "HOME:/" );
+    static EmacsString env_sys_login( "HOME:/" );
     if( name == "sys_login" )
         return env_sys_login;
 

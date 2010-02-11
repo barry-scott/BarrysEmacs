@@ -73,7 +73,7 @@ $(BEMACS_LIB_DIR)::
 
 editor:
 	@ echo Info: Building BEmacs images...
-	cd ../Editor; PATH=.:$$PATH; export BUILD_KIT_DIR=$(BEMACS_LIB_DIR); ./build install
+	cd ../Editor; PATH=.:$$PATH; export BUILD_KIT_DIR=$(BEMACS_LIB_DIR); ./build.sh all
 
 mlisp:
 	@ echo Info: Copying Mlisp files...
@@ -142,6 +142,6 @@ Debian_pkg:
 	cd ${BUILD_KIT_DIR}; chmod +x ./create-dpkg.sh; ./create-dpkg.sh
 
 clean:
-	cd ../Editor; PATH=.:$$PATH; export BUILD_KIT_DIR=$(BEMACS_LIB_DIR); ./build clean
+	cd ../Editor; PATH=.:$$PATH; export BUILD_KIT_DIR=$(BEMACS_LIB_DIR); ./build.sh clean
 	rm -rf $(BEMACS_DOC_DIR)
 	rm -rf $(BEMACS_LIB_DIR)

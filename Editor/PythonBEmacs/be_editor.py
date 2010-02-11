@@ -23,7 +23,7 @@ import wx
 
 class BEmacs(_bemacs.BemacsEditor):
     def __init__( self, app ):
-        _bemacs.BemacsEditor.__init__( self )
+        _bemacs.BemacsEditor.__init__( self, app.emacs_library_dir )
 
         self.app = app
         self.log = app.log
@@ -64,6 +64,9 @@ class BEmacs(_bemacs.BemacsEditor):
     def closeWindow( self ):
         self.__quit_editor = True
 
+    def openFile( self, filename ):
+        _bemacs.functions.visit_file( filename )
+
     def guiEventChar( self, ch, shift ):
         self.__event_queue.put( (self.inputChar, (ch, shift)) )
 
@@ -72,6 +75,9 @@ class BEmacs(_bemacs.BemacsEditor):
 
     def guiGeometryChange( self, width, length ):
         self.__event_queue.put( (self.geometryChange, (width, length)) )
+
+    def guiOpenFile( self, filename ):
+        self.__event_queue.put( (self.openFile, (filename,)) )
 
     #--------------------------------------------------------------------------------
     def getGuiResult( self ):

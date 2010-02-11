@@ -13,6 +13,7 @@ Editor/BEmacsComClient/icon6.ico -text
 Editor/BEmacsComClient/icon7.ico -text
 Editor/BEmacsComClient/icon8.ico -text
 Editor/PythonBEmacs/be_common.mak -text
+Editor/PythonBEmacs/bemacs.icns -text
 Editor/PythonBEmacs/bemacs.png -text svneol=unset#image/png
 Editor/PythonBEmacs/brand.be.rc -text
 Editor/PythonBEmacs/brand.be_version.py -text
@@ -59,7 +60,6 @@ HTML/ug_windows.gif -text
 Kits/Linux/DPKG/brand.create-dpkg.sh -text
 Kits/MacOSX/BarrysEmacs.app/Contents/Info.plist -text
 Kits/MacOSX/BarrysEmacs.app/Contents/MacOS/bemacs_mac -text
-Kits/MacOSX/BarrysEmacs.app/Contents/Resources/bemacs.icns -text
 Kits/Windows/brand.copy-setup.cmd -text
 Kits/Windows/vc6redist/50comupd.exe -text
 Kits/Windows/vc6redist/ADVPACK.DLL -text
