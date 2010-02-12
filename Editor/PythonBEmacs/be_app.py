@@ -43,9 +43,8 @@ class BemacsApp(wx.App):
 
         self.emacs_library_dir = os.path.abspath( os.path.join( self.app_dir, 'emacs_library' ) )
 
-        self.__debug_noredirect = False
-        self.__debug = False
-        self.__trace = False
+        self.__debug_noredirect = True
+        self.__debug = True
         self.__wx_raw_debug = False
 
         while len(args) > 1:
@@ -56,10 +55,6 @@ class BemacsApp(wx.App):
 
             elif arg == '--debug':
                 self.__debug = True
-                del args[ 1 ]
-
-            elif arg == '--trace':
-                self.__trace = True
                 del args[ 1 ]
 
             elif arg == '--wx-raw-debug':
@@ -151,40 +146,30 @@ class BemacsApp(wx.App):
 
     def setupLogging( self ):
         self.log = logging.getLogger( 'BEmacs' )
-        self.trace = logging.getLogger( 'Bemacs.Trace' )
 
         if self.__debug:
             self.log.setLevel( logging.DEBUG )
         else:
             self.log.setLevel( logging.INFO )
 
-        if self.__trace:
-            self.trace.setLevel( logging.INFO )
+
+        if self.isStdIoRedirect():
+            log_filename = be_platform_specific.getLogFilename()
+            # keep 10 logs of 100K each
+            handler = RotatingFileHandler( log_filename, 'a', 100*1024, 10 )
+            formatter = logging.Formatter( '%(asctime)s %(levelname)s %(message)s' )
+            handler.setFormatter( formatter )
+            self.log.addHandler( handler )
+
         else:
-            self.trace.setLevel( logging.CRITICAL )
-
-        log_filename = be_platform_specific.getLogFilename()
-        # keep 10 logs of 100K each
-        handler = RotatingFileHandler( log_filename, 'a', 100*1024, 10 )
-        formatter = logging.Formatter( '%(asctime)s %(levelname)s %(message)s' )
-        handler.setFormatter( formatter )
-        self.log.addHandler( handler )
-
-        if not self.isStdIoRedirect():
             handler = StdoutLogHandler()
             formatter = logging.Formatter( '%(asctime)s %(levelname)s %(message)s' )
             handler.setFormatter( formatter )
             self.log.addHandler( handler )
 
-            handler = StdoutLogHandler()
-            formatter = logging.Formatter( '%(asctime)s %(levelname)s %(message)s' )
-            handler.setFormatter( formatter )
-            self.trace.addHandler( handler )
-
         self.log.info( T_("Barry's Emacs starting") )
 
         self.log.debug( 'debug enabled' )
-        self.trace.info( 'trace enabled' )
 
     def log_client_error( self, e, title='Error' ):
         # must run on the main thread
@@ -344,8 +329,8 @@ class BemacsApp(wx.App):
 
     def MacOpenFile( self, filename ):
         # Called for files droped on dock icon, or opened via finders context menu
-        print filename
-        print "%s dropped on app"%(filename) #code to load filename goes here.
+        self.log.info( 'MacOpenFile( %s )' % (filename,) )
+        print "%s dropped on app" % (filename,) #code to load filename goes here.
         self.editor.guiOpenFile( filename )
         self.BringWindowToFront()
 

@@ -65,7 +65,12 @@ class BEmacs(_bemacs.BemacsEditor):
         self.__quit_editor = True
 
     def openFile( self, filename ):
-        _bemacs.functions.visit_file( filename )
+        self.log.info( 'openFile( %s ) start' % (filename,) )
+        try:
+            _bemacs.function.visit_file( filename )
+        except Exception, e:
+            self.log.error( 'openFile - %s' % (e,) )
+        self.log.info( 'openFile done' )
 
     def guiEventChar( self, ch, shift ):
         self.__event_queue.put( (self.inputChar, (ch, shift)) )
@@ -77,6 +82,7 @@ class BEmacs(_bemacs.BemacsEditor):
         self.__event_queue.put( (self.geometryChange, (width, length)) )
 
     def guiOpenFile( self, filename ):
+        self.log.info( 'guiOpenFile %s' % (filename,) )
         self.__event_queue.put( (self.openFile, (filename,)) )
 
     #--------------------------------------------------------------------------------

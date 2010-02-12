@@ -361,12 +361,14 @@ class EmacsPanel(wx.Panel):
         self.app = app
         self.log = app.log
 
-        self.Bind( wx.EVT_PAINT, self.OnPaint )
-        self.Bind( wx.EVT_KEY_DOWN, self.OnKeyDown )
-        self.Bind( wx.EVT_KEY_UP, self.OnKeyUp )
-        self.Bind( wx.EVT_CHAR, self.OnChar )
+        self.tw = be_exceptions.TryWrapperFactory( self.log )
 
-        self.Bind( wx.EVT_MOUSE_EVENTS, self.OnMouse )
+        self.Bind( wx.EVT_PAINT, self.tw( self.OnPaint ) )
+        self.Bind( wx.EVT_KEY_DOWN, self.tw( self.OnKeyDown ) )
+        self.Bind( wx.EVT_KEY_UP, self.tw( self.OnKeyUp ) )
+        self.Bind( wx.EVT_CHAR, self.tw( self.OnChar ) )
+
+        self.Bind( wx.EVT_MOUSE_EVENTS, self.tw( self.OnMouse ) )
 
         self.dc = None
         self.first_paint = True
@@ -685,7 +687,7 @@ class EmacsPanel(wx.Panel):
     #
     #--------------------------------------------------------------------------------
     def hookUserInterface( self, *args ):
-        self.editor.hookUserInterface( *args )
+        self.tw( self.editor.hookUserInterface )( *args )
 
     #--------------------------------------------------------------------------------
     #
