@@ -43,7 +43,7 @@ class BemacsApp(wx.App):
 
         self.emacs_library_dir = os.path.abspath( os.path.join( self.app_dir, 'emacs_library' ) )
 
-        self.__debug_noredirect = True
+        self.__debug_noredirect = False
         self.__debug = True
         self.__wx_raw_debug = False
 
@@ -151,7 +151,6 @@ class BemacsApp(wx.App):
             self.log.setLevel( logging.DEBUG )
         else:
             self.log.setLevel( logging.INFO )
-
 
         if self.isStdIoRedirect():
             log_filename = be_platform_specific.getLogFilename()

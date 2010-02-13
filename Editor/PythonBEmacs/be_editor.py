@@ -68,9 +68,14 @@ class BEmacs(_bemacs.BemacsEditor):
         self.log.info( 'openFile( %s ) start' % (filename,) )
         try:
             _bemacs.function.visit_file( filename )
+            # force a redraw
+            self.inputChar( -1, False );
+
+            self.log.info( 'openFile done' )
+
         except Exception, e:
             self.log.error( 'openFile - %s' % (e,) )
-        self.log.info( 'openFile done' )
+
 
     def guiEventChar( self, ch, shift ):
         self.__event_queue.put( (self.inputChar, (ch, shift)) )

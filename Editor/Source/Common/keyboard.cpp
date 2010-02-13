@@ -632,7 +632,16 @@ static int _get_char( void )
         if( (char_cell = input_queue.queueRemoveFirst()) != NULL )
         {
             interlock_dec( &input_pending );
-            goto having_dequeued_a_char;
+            if( char_cell->ce_type == CE_TYPE_DO_DSP )
+            {
+                // just do_dsp();
+                char_cell->ce_type = CE_TYPE_FREE_CELL;
+                free_queue.queueInsertAtTail( char_cell );
+            }
+            else
+            {
+                goto having_dequeued_a_char;
+            }
         }
 
         theActiveView->do_dsp();
@@ -1084,6 +1093,13 @@ CharElement *_q_char( EmacsChar_t value, CE_TYPE_type type, bool shift, std::vec
 
 void TerminalControl::k_input_char( int character, bool shift )
 {
+    if( character == -1 )
+    {
+        // the special call do_dsp signature
+        _q_char( 0, CE_TYPE_DO_DSP, false );
+        return;
+    }
+
     if( !k_input_is_enabled )
         return;
 

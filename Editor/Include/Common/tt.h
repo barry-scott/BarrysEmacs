@@ -62,7 +62,7 @@ public:
     virtual void t_change_width( int ) { }        // Routine to call when changing width
     virtual void t_update_line( EmacsLinePtr oldl, EmacsLinePtr newl, int ln );    // Routine to call to update a line
     virtual void t_change_attributes() { }        // Routine to change attributes
-    int t_baud_rate;                // buad rate of terminal
+    int t_baud_rate;                // baud rate of terminal
     virtual void t_beep() { }
 
 

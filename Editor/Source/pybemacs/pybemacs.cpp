@@ -575,16 +575,29 @@ public:
     //------------------------------------------------------------
     Py::Object inputChar( const Py::Tuple &args )
     {
-        Py::String py_ch( args[0] );
+        int ch;
+
+        Py::Object py_arg( args[0] );
+        if( py_arg.isString() )
+        {
+            Py::String py_ch( py_arg );
+            EmacsString e_ch( EmacsString::copy, py_ch.unicode_data(), py_ch.size() );
+            ch = e_ch[0];
+        }
+        else
+        {
+            Py::Long py_ch( py_arg );
+            ch = py_ch.as_long();
+        }
+
         Py::Boolean py_shift( args[1] );
 
-        EmacsString ch( EmacsString::copy, py_ch.unicode_data(), py_ch.size() );
         bool shift = py_shift;
 
         {
             PythonAllowThreads permission( editor_access_control );
 
-            theActiveView->k_input_char( ch[0], shift );
+            theActiveView->k_input_char( ch, shift );
         }
 
         return Py::None();

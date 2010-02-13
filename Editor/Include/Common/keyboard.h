@@ -13,6 +13,8 @@ const int CHARACTER_QUEUE_SIZE( 4000 );
 enum CE_TYPE_type
 {
     CE_TYPE_FREE_CELL=0,
+    CE_TYPE_DO_DSP,     // Signal that do_dsp() needs to be called
+
     CE_TYPE_CHAR,
 
     CE_TYPE_PAR_CHAR,   // for parsed ESC/CSI sequences

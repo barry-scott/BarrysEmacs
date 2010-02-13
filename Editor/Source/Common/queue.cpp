@@ -145,8 +145,8 @@ int QueueImplementation::queue_insert( QueueImplementation *q )
 //
 QueueImplementation *QueueImplementation::queue_remove(void)
 {
-
     // return NULL on already removed
+    // this is used to indicate that a queue header is empty as well
     if( _next == NULL || _next == this )
         return NULL;
 
