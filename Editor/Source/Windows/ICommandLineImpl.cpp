@@ -55,15 +55,15 @@ BOOL EmacsIsEqualGUID(REFGUID rguid1, REFGUID rguid2)
 STDMETHODIMP CCommandLine::InterfaceSupportsErrorInfo(REFIID riid)
 {
     static const IID* arr[] =
-{
+    {
         &IID_ICommandLine,
-};
+    };
 
     for (int i=0;i<sizeof(arr)/sizeof(arr[0]);i++)
-{
+    {
         if (EmacsIsEqualGUID(*arr[i],riid))
             return S_OK;
-}
+    }
     return S_FALSE;
 }
 
@@ -74,8 +74,8 @@ class WindowsEmacsCommandLineServerWorkItem : public EmacsCommandLineServerWorkI
 {
 public:
     WindowsEmacsCommandLineServerWorkItem()
-        : EmacsCommandLineServerWorkItem()
-        , event( CreateEvent( NULL, TRUE, FALSE, NULL ) )    // Manual reset, not signalled event
+    : EmacsCommandLineServerWorkItem()
+    , event( CreateEvent( NULL, TRUE, FALSE, NULL ) )    // Manual reset, not signalled event
     { }
 
     virtual ~WindowsEmacsCommandLineServerWorkItem()
@@ -244,7 +244,6 @@ void revoke_rot_registration(void)
 STDMETHODIMP CCommandLine::GetProcessId(long *id)
 {
     AFX_MANAGE_STATE(AfxGetStaticModuleState())
-
 
     *id = GetCurrentProcessId();
 

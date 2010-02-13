@@ -92,60 +92,60 @@ STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv)
 
 STDAPI DllRegisterServer(void)
 {
-	//::MessageBox( NULL, "BEmacs Moniker is being registered", "BEmacs Moniker Setup", MB_OK );
+    //::MessageBox( NULL, "BEmacs Moniker is being registered", "BEmacs Moniker Setup", MB_OK );
 
-	char dll_file_name[256];
-	GetModuleFileName( _Module.m_hInst, dll_file_name, sizeof( dll_file_name ) );
+    char dll_file_name[256];
+    GetModuleFileName( _Module.m_hInst, dll_file_name, sizeof( dll_file_name ) );
 
-	char *p = dll_file_name;
-	char *file_name_start = p;
-	while( *p )
-		if( *p++ == '\\' )
-			file_name_start = p;
+    char *p = dll_file_name;
+    char *file_name_start = p;
+    while( *p )
+        if( *p++ == '\\' )
+            file_name_start = p;
 
-	strcpy( file_name_start, "BEmacsServer.exe" );
+    strcpy( file_name_start, "BEmacsServer.exe" );
 
 
-	PROCESS_INFORMATION proc_info;
-	STARTUPINFO start_info;
+    PROCESS_INFORMATION proc_info;
+    STARTUPINFO start_info;
 
-	start_info.cb = sizeof( start_info );
+    start_info.cb = sizeof( start_info );
 
-	start_info.lpReserved = 0;
-	start_info.lpDesktop = 0;
-	start_info.lpTitle = 0;
-	start_info.dwX = 0;
-	start_info.dwY = 0;
-	start_info.dwXSize = 0;
-	start_info.dwYSize = 0;
-	start_info.dwXCountChars = 0;
-	start_info.dwYCountChars = 0;
-	start_info.dwFillAttribute = 0;
-	start_info.dwFlags = 0;
-	start_info.wShowWindow = 0;
-	start_info.cbReserved2 = 0;
-	start_info.lpReserved2 = 0;
-	start_info.hStdInput = 0;
-	start_info.hStdOutput = 0;
-	start_info.hStdError = 0;
+    start_info.lpReserved = 0;
+    start_info.lpDesktop = 0;
+    start_info.lpTitle = 0;
+    start_info.dwX = 0;
+    start_info.dwY = 0;
+    start_info.dwXSize = 0;
+    start_info.dwYSize = 0;
+    start_info.dwXCountChars = 0;
+    start_info.dwYCountChars = 0;
+    start_info.dwFillAttribute = 0;
+    start_info.dwFlags = 0;
+    start_info.wShowWindow = 0;
+    start_info.cbReserved2 = 0;
+    start_info.lpReserved2 = 0;
+    start_info.hStdInput = 0;
+    start_info.hStdOutput = 0;
+    start_info.hStdError = 0;
 
-	BOOL status = ::CreateProcess
-		(
-		dll_file_name,
-		"emacs /regserver",
-		NULL,
-		NULL,
-		false,
-		0,
-		NULL,
-		NULL,
-		&start_info,
-		&proc_info
-		);
-	if( status )
-		::WaitForSingleObject( proc_info.hProcess, INFINITE );
-	else
-		::MessageBox( NULL, dll_file_name, "Failed to register BEmacsServer", MB_OK );
+    BOOL status = ::CreateProcess
+        (
+        dll_file_name,
+        "emacs /regserver",
+        NULL,
+        NULL,
+        false,
+        0,
+        NULL,
+        NULL,
+        &start_info,
+        &proc_info
+        );
+    if( status )
+        ::WaitForSingleObject( proc_info.hProcess, INFINITE );
+    else
+        ::MessageBox( NULL, dll_file_name, "Failed to register BEmacsServer", MB_OK );
 
 #ifdef _MERGE_PROXYSTUB
     HRESULT hRes = PrxDllRegisterServer();
@@ -161,60 +161,60 @@ STDAPI DllRegisterServer(void)
 
 STDAPI DllUnregisterServer(void)
 {
-	//::MessageBox( NULL, "BEmacs Moniker is being unregistered", "BEmacs Moniker uninstall", MB_OK );
+    //::MessageBox( NULL, "BEmacs Moniker is being unregistered", "BEmacs Moniker uninstall", MB_OK );
 
-	char dll_file_name[256];
-	GetModuleFileName( _Module.m_hInst, dll_file_name, sizeof( dll_file_name ) );
+    char dll_file_name[256];
+    GetModuleFileName( _Module.m_hInst, dll_file_name, sizeof( dll_file_name ) );
 
-	char *p = dll_file_name;
-	char *file_name_start = p;
-	while( *p )
-		if( *p++ == '\\' )
-			file_name_start = p;
+    char *p = dll_file_name;
+    char *file_name_start = p;
+    while( *p )
+        if( *p++ == '\\' )
+            file_name_start = p;
 
-	strcpy( file_name_start, "BEmacsServer.exe" );
+    strcpy( file_name_start, "BEmacsServer.exe" );
 
 
-	PROCESS_INFORMATION proc_info;
-	STARTUPINFO start_info;
+    PROCESS_INFORMATION proc_info;
+    STARTUPINFO start_info;
 
-	start_info.cb = sizeof( start_info );
+    start_info.cb = sizeof( start_info );
 
-	start_info.lpReserved = 0;
-	start_info.lpDesktop = 0;
-	start_info.lpTitle = 0;
-	start_info.dwX = 0;
-	start_info.dwY = 0;
-	start_info.dwXSize = 0;
-	start_info.dwYSize = 0;
-	start_info.dwXCountChars = 0;
-	start_info.dwYCountChars = 0;
-	start_info.dwFillAttribute = 0;
-	start_info.dwFlags = 0;
-	start_info.wShowWindow = 0;
-	start_info.cbReserved2 = 0;
-	start_info.lpReserved2 = 0;
-	start_info.hStdInput = 0;
-	start_info.hStdOutput = 0;
-	start_info.hStdError = 0;
+    start_info.lpReserved = 0;
+    start_info.lpDesktop = 0;
+    start_info.lpTitle = 0;
+    start_info.dwX = 0;
+    start_info.dwY = 0;
+    start_info.dwXSize = 0;
+    start_info.dwYSize = 0;
+    start_info.dwXCountChars = 0;
+    start_info.dwYCountChars = 0;
+    start_info.dwFillAttribute = 0;
+    start_info.dwFlags = 0;
+    start_info.wShowWindow = 0;
+    start_info.cbReserved2 = 0;
+    start_info.lpReserved2 = 0;
+    start_info.hStdInput = 0;
+    start_info.hStdOutput = 0;
+    start_info.hStdError = 0;
 
-	BOOL status = ::CreateProcess
-		(
-		dll_file_name,
-		"emacs /unregserver",
-		NULL,
-		NULL,
-		false,
-		0,
-		NULL,
-		NULL,
-		&start_info,
-		&proc_info
-		);
-	if( status )
-		::WaitForSingleObject( proc_info.hProcess, INFINITE );
-	else
-		::MessageBox( NULL, dll_file_name, "Failed to unregister BEmacsServer", MB_OK );
+    BOOL status = ::CreateProcess
+        (
+        dll_file_name,
+        "emacs /unregserver",
+        NULL,
+        NULL,
+        false,
+        0,
+        NULL,
+        NULL,
+        &start_info,
+        &proc_info
+        );
+    if( status )
+        ::WaitForSingleObject( proc_info.hProcess, INFINITE );
+    else
+        ::MessageBox( NULL, dll_file_name, "Failed to unregister BEmacsServer", MB_OK );
 
 #ifdef _MERGE_PROXYSTUB
     PrxDllUnregisterServer();
