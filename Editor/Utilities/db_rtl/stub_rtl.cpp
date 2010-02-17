@@ -112,7 +112,7 @@ EmacsString get_config_env( const EmacsString &name )
 
 EmacsString get_device_name_translation( const EmacsString &name )
 {
-    return name;
+    return EmacsString::null;
 }
 
 

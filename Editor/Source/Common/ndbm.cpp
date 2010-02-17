@@ -201,9 +201,9 @@ int longInt::set( int value, int index )
 bool database::open_db( const EmacsString &file, int access )
 {
     EmacsFileStat statb;
-# if DBG_EXEC && 0
+# if DBG_EXEC
     if( dbg_flags&DBG_EXEC )
-        _dbg_msg( FormatString("open_db( %s, %d )" << file.sdata() << access );
+        _dbg_msg( FormatString("open_db( %s, %d )") << file << access );
 # endif
 
     db_name = file;
@@ -211,10 +211,13 @@ bool database::open_db( const EmacsString &file, int access )
     expand_and_default( file, ".pag", pagnm );
     expand_and_default( file, ".dat", datnm );
 
-# if DBG_EXEC && 0
-    _dbg_msg( FormatString("open_db() dirnm %s") << dirnm );
-    _dbg_msg( FormatString("open_db() pagnm %s") << pagnm );
-    _dbg_msg( FormatString("open_db() datnm %s") << datnm );
+# if DBG_EXEC
+    if( dbg_flags&DBG_EXEC )
+    {
+        _dbg_msg( FormatString("open_db() dirnm %s") << dirnm );
+        _dbg_msg( FormatString("open_db() pagnm %s") << pagnm );
+        _dbg_msg( FormatString("open_db() datnm %s") << datnm );
+    }
 # endif
 
     return reopen_db( access );
@@ -222,7 +225,7 @@ bool database::open_db( const EmacsString &file, int access )
 
 bool database::reopen_db( int access )
 {
-# if DBG_EXEC && 0
+# if DBG_EXEC
     if( dbg_flags&DBG_EXEC )
         _dbg_msg("reopen_db()");
 # endif
@@ -354,9 +357,9 @@ int database::forder( datum &key )
 
 database::datum database::fetch( datum &key )
 {
-# if DBG_EXEC && 0
+# if DBG_EXEC
     if( dbg_flags&DBG_EXEC )
-        _dbg_msg("fetch( %d, %s )\n\r", key, db_name.sdata() );
+        _dbg_msg( FormatString("fetch( ..., %s )\n\r") << db_name );
 # endif
 
     ndbm_access( key.calchash() );
@@ -374,12 +377,11 @@ database::datum database::fetch( datum &key )
 
 int database::delete_key( datum &key )
 {
-    int i;
-
     if( db_rdonly )
         return -1;
+
     ndbm_access( key.calchash() );
-    for( i = 0;; i ++ )
+    for( int i = 0;; i ++ )
     {
         datum item( *this, pagbuf, i );
 
@@ -404,7 +406,6 @@ int database::delete_key( datum &key )
 
 int database::store( datum &key )
 {
-    int i;
     unsigned char ovfbuf[PBLKSIZ];
 
     if( setup_db() < 0 )
@@ -413,6 +414,8 @@ int database::store( datum &key )
         return - 1;
     for(;;)
     {
+        int i;
+
         ndbm_access( key.calchash() );
         for( i = 0;; i ++ )
         {
@@ -474,8 +477,8 @@ database::datum database::firstkey()
 
 database::datum database::nextkey( datum &key )
 {
-    datum bitem(*this);
-    datum item(*this);
+    datum bitem( *this );
+    datum item( *this );
 
     int hash = key.calchash();
     ndbm_access( hash );

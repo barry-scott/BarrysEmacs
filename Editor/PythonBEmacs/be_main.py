@@ -17,7 +17,7 @@ import locale
 
 # help debug when stdout goes nowhere useful
 # Mac OS X and Windows are the main problems
-if( os.environ.get( 'BEMACS_STDOUT_LOG', None )
+if( os.environ.get( 'BEMACS_STDOUT_LOG', None ) is not None
 or (sys.platform == 'darwin' and '--noredirect' not in sys.argv) ):
     try:
         sys.stdout = open( os.environ.get( 'BEMACS_STDOUT_LOG', '/tmp/bemacs.tmp' ), 'w', 0 )

@@ -32,8 +32,6 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 static struct timeval emacs_start_time;
 
-EmacsString env_emacs_library;
-
 const int TIMER_TICK_VALUE( 50 );
 static void( *timeout_handler )(void );
 struct timeval timeout_time;

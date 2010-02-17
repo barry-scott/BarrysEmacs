@@ -51,7 +51,7 @@ void init_python_terminal( BemacsEditor &editor );
 
 BemacsEditorAccessControl editor_access_control;
 
-extern EmacsString env_emacs_library;
+EmacsString env_emacs_library;
 
 class BemacsEditor: public Py::PythonClass< BemacsEditor >
 {

@@ -1,12 +1,11 @@
 #
-#	win32.mak WorkBench
+#	win32.mak bemacs
 #
 all: be.ico run build_app
 
 
 APPNAME=be
 APPTYPE=run_w		# run or run_w
-
 PYTHONPATH=$(BEMACS_PYTHONPATH)
 
 SOURCES= \

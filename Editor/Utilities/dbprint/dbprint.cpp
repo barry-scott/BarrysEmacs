@@ -15,22 +15,27 @@ int main(int argc,char **argv)
 {
     database db;
 
-    if (argc != 3) {
+    if (argc != 3)
+    {
         printf ("Usage: %s database key\n", argv[0]);
-        exit (1);
-}
+        return 1;
+    }
+
     if( !db.open_db( argv[1], 1 ) )
     {
         printf ("Data base not found\n");
-        exit (1);
+        return 1;
     }
 
     EmacsString contents;
     if( db.get_db( argv[2], contents ) < 0)
+    {
         printf ("Not found\n");
+    }
     else
     {
         write( 1, contents.data(), contents.length() );
     }
+
     return 0;
 }
