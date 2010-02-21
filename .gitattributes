@@ -14,6 +14,7 @@ Editor/BEmacsComClient/icon6.ico -text
 Editor/BEmacsComClient/icon7.ico -text
 Editor/BEmacsComClient/icon8.ico -text
 Editor/PythonBEmacs.sln -text
+Editor/PythonBEmacs/bemacs-win32.cmd -text
 Editor/PythonBEmacs/bemacs.icns -text
 Editor/PythonBEmacs/bemacs.png -text svneol=unset#image/png
 Editor/PythonBEmacs/toolbar_images/edit.png -text svneol=unset#image/png

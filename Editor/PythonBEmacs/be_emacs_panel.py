@@ -12,7 +12,6 @@
 '''
 import sys
 import wx
-import wx.stc
 import logging
 
 import be_ids
