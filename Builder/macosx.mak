@@ -24,12 +24,12 @@ editor:
 	@ echo Info: Building BEmacs application...
 	cd ../Editor/PythonBEmacs; PATH=.:$$PATH; ./build.sh --package
 	@ echo Info: Copy db utils...
-	cp ../Editor/darwin/obj-utils/dbadd $(BEMACS_LIB_DIR)
-	cp ../Editor/darwin/obj-utils/dbcreate $(BEMACS_LIB_DIR)
-	cp ../Editor/darwin/obj-utils/dbdel $(BEMACS_LIB_DIR)
-	cp ../Editor/darwin/obj-utils/dbprint $(BEMACS_LIB_DIR)
-	cp ../Editor/darwin/obj-utils/dblist $(BEMACS_LIB_DIR)
-	cp ../Editor/darwin/obj-utils/mll2db $(BEMACS_LIB_DIR)
+	cp ../Editor/obj-utils/dbadd $(BEMACS_LIB_DIR)
+	cp ../Editor/obj-utils/dbcreate $(BEMACS_LIB_DIR)
+	cp ../Editor/obj-utils/dbdel $(BEMACS_LIB_DIR)
+	cp ../Editor/obj-utils/dbprint $(BEMACS_LIB_DIR)
+	cp ../Editor/obj-utils/dblist $(BEMACS_LIB_DIR)
+	cp ../Editor/obj-utils/mll2db $(BEMACS_LIB_DIR)
 
 mlisp:
 	@ echo Info: Copying Mlisp files...

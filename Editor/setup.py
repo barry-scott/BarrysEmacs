@@ -1,3 +1,6 @@
+#
+#   Copyright (c) 2010 Barry A. Scott
+#
 import os
 import sys
 
@@ -344,8 +347,8 @@ class Win32CompilerMSVC90(Compiler):
     def setupUtilities( self ):
         self._addVar( 'PYTHON',         sys.executable )
 
-        self._addVar( 'EDIT_OBJ',       r'win32\obj-utils' )
-        self._addVar( 'EDIT_EXE',       r'win32\exe-utils' )
+        self._addVar( 'EDIT_OBJ',       r'obj-utils' )
+        self._addVar( 'EDIT_EXE',       r'exe-utils' )
         self._addVar( 'CCCFLAGS',
                                         r'/Zi /MT /EHsc '
                                         r'-IInclude\Common -IInclude\Windows '
@@ -358,8 +361,8 @@ class Win32CompilerMSVC90(Compiler):
     def setupPythonEmacs( self ):
         self._addVar( 'PYTHON',         sys.executable )
 
-        self._addVar( 'EDIT_OBJ',       r'win32\obj-pybemacs' )
-        self._addVar( 'EDIT_EXE',       r'win32\exe-pybemacs' )
+        self._addVar( 'EDIT_OBJ',       r'obj-pybemacs' )
+        self._addVar( 'EDIT_EXE',       r'exe-pybemacs' )
         self._addVar( 'CCCFLAGS',
                                         r'/Zi /MT /EHsc '
                                         r'-DPYBEMACS=1 '
@@ -464,8 +467,8 @@ class MacOsxCompilerGCC(CompilerGCC):
     def setupUtilities( self ):
         self._addVar( 'PYTHON',         sys.executable )
 
-        self._addVar( 'EDIT_OBJ',       'darwin/obj-utils' )
-        self._addVar( 'EDIT_EXE',       'darwin/exe-utils' )
+        self._addVar( 'EDIT_OBJ',       'obj-utils' )
+        self._addVar( 'EDIT_EXE',       'exe-utils' )
         self._addVar( 'CCCFLAGS',
                                         '-g  '
                                         '-Wall -fPIC -fexceptions -frtti '
@@ -479,8 +482,8 @@ class MacOsxCompilerGCC(CompilerGCC):
     def setupPythonEmacs( self ):
         self._addVar( 'PYTHON',         sys.executable )
 
-        self._addVar( 'EDIT_OBJ',       'darwin/obj-pybemacs' )
-        self._addVar( 'EDIT_EXE',       'darwin/exe-pybemacs' )
+        self._addVar( 'EDIT_OBJ',       'obj-pybemacs' )
+        self._addVar( 'EDIT_EXE',       'exe-pybemacs' )
 
         self._addFromEnv( 'PYTHON_VERSION' )
         self._addVar( 'PYTHONDIR',      '/Library/Frameworks/Python.framework/Versions/%(PYTHON_VERSION)s' )
@@ -516,8 +519,8 @@ class LinuxCompilerGCC(CompilerGCC):
     def setupUtilities( self ):
         self._addVar( 'PYTHON',         sys.executable )
 
-        self._addVar( 'EDIT_OBJ',       'linux/obj-utils' )
-        self._addVar( 'EDIT_EXE',       'linux/exe-utils' )
+        self._addVar( 'EDIT_OBJ',       'obj-utils' )
+        self._addVar( 'EDIT_EXE',       'exe-utils' )
         self._addVar( 'CCCFLAGS',
                                         '-g  '
                                         '-Wall -fPIC -fexceptions -frtti '
@@ -532,8 +535,8 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'PYTHON',         sys.executable )
 
 
-        self._addVar( 'EDIT_OBJ',       'linux/obj-pybemacs' )
-        self._addVar( 'EDIT_EXE',       'linux/exe-pybemacs' )
+        self._addVar( 'EDIT_OBJ',       'obj-pybemacs' )
+        self._addVar( 'EDIT_EXE',       'exe-pybemacs' )
 
         self._addFromEnv( 'PYTHON_VERSION' )
         self._addVar( 'PYTHON_INCLUDE', '/usr/include/python%(PYTHON_VERSION)s' )
@@ -647,7 +650,6 @@ class PythonExtension(Target):
 
         for source in self.all_sources:
             source.generateMakefile()
-
 
 class Source(Target):
     def __init__( self, compiler, src_filename, all_dependencies=None ):

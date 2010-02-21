@@ -52,13 +52,13 @@ editor: kitdir "$(KITROOT)\be.exe"
 	msdev bemacs.dsw /make "BEmacsClassMoniker - Win32 Release MinDependency"
 !endif
 	echo Info: Copying images...
-	copy  "$(BUILDER_TOP_DIR)\Editor\win32\obj-pybemacs\_bemacs.pyd" "$(KITROOT)" >NUL
-	copy  "$(BUILDER_TOP_DIR)\Editor\win32\obj-utils\dbadd.exe" "$(KITROOT)" >NUL
-	copy  "$(BUILDER_TOP_DIR)\Editor\win32\obj-utils\dbcreate.exe" "$(KITROOT)" >NUL
-	copy  "$(BUILDER_TOP_DIR)\Editor\win32\obj-utils\dbdel.exe" "$(KITROOT)" >NUL
-	copy  "$(BUILDER_TOP_DIR)\Editor\win32\obj-utils\dblist.exe" "$(KITROOT)" >NUL
-	copy  "$(BUILDER_TOP_DIR)\Editor\win32\obj-utils\dbprint.exe" "$(KITROOT)" >NUL
-	copy  "$(BUILDER_TOP_DIR)\Editor\win32\obj-utils\mll2db.exe" "$(KITROOT)" >NUL
+	copy  "$(BUILDER_TOP_DIR)\Editor\obj-pybemacs\_bemacs.pyd" "$(KITROOT)" >NUL
+	copy  "$(BUILDER_TOP_DIR)\Editor\obj-utils\dbadd.exe" "$(KITROOT)" >NUL
+	copy  "$(BUILDER_TOP_DIR)\Editor\obj-utils\dbcreate.exe" "$(KITROOT)" >NUL
+	copy  "$(BUILDER_TOP_DIR)\Editor\obj-utils\dbdel.exe" "$(KITROOT)" >NUL
+	copy  "$(BUILDER_TOP_DIR)\Editor\obj-utils\dblist.exe" "$(KITROOT)" >NUL
+	copy  "$(BUILDER_TOP_DIR)\Editor\obj-utils\dbprint.exe" "$(KITROOT)" >NUL
+	copy  "$(BUILDER_TOP_DIR)\Editor\obj-utils\mll2db.exe" "$(KITROOT)" >NUL
 
 	rem copy  "$(BUILDER_TOP_DIR)\Editor\editor\$(BUILDER_CFG_BUILD_TYPE)\editor.exe" "$(KITROOT)\BEmacsServer.exe" >NUL
 	rem copy  "$(BUILDER_TOP_DIR)\Editor\BEmacsComClient\$(BUILDER_CFG_BUILD_TYPE)\BEmacsComClient.exe" "$(KITROOT)\BEmacs.exe" >NUL
