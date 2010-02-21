@@ -82,6 +82,7 @@
 
     ~file
     ~files
+    ~start-filename
     ~start-directory
     
     ~start-pos ~end-pos
@@ -156,6 +157,7 @@
 	(setq ~files (string-extract ~multi-files ~start-pos ~end-pos))
 	(setq ~start-pos (+ ~end-pos 1))
 
+        (setq ~start-filename (file-format-string "%fa" ~files))
 
 	(while
 	    (progn
@@ -170,7 +172,7 @@
 		(!= ~file "")
 	    )
 	    ; do
-	    (if (~grep-include-file ~file ~start-directory)
+	    (if (~grep-include-file ~file ~start-directory ~start-filename)
 		(~grep-one-file ~file)
 	    )
 	    (end-of-file)
@@ -416,7 +418,7 @@
 )
 
 (defun
-    ~grep-include-file(~file ~start-directory)
+    ~grep-include-file(~file ~start-directory ~start-filename)
     ~include
     (setq ~include 1)
     
@@ -469,7 +471,12 @@
 		(setq ~pattern (string-extract ~list ~start-pos ~end-pos))
 		(setq ~start-pos (+ ~end-pos 1))
 		
-		(setq ~include (! (match-wild ~filename ~pattern)))
+		(setq ~include
+                    (|
+                        (= ~filename ~start-filename)
+                        (! (match-wild ~filename ~pattern))
+                    )
+                )
 	    )
 	)
     )
