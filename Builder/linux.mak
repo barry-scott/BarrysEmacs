@@ -45,27 +45,34 @@ $(BEMACS_LIB_DIR)::
 editor:
 	@ echo Info: Building BEmacs images...
 	cd ../Editor; PATH=.:$$PATH; export BUILD_KIT_DIR=$(BEMACS_LIB_DIR); ./build.sh all
+	@ echo Info: Copy db utils...
+	cp ../Editor/obj-utils/dbadd $(BEMACS_LIB_DIR)
+	cp ../Editor/obj-utils/dbcreate $(BEMACS_LIB_DIR)
+	cp ../Editor/obj-utils/dbdel $(BEMACS_LIB_DIR)
+	cp ../Editor/obj-utils/dbprint $(BEMACS_LIB_DIR)
+	cp ../Editor/obj-utils/dblist $(BEMACS_LIB_DIR)
+	cp ../Editor/obj-utils/mll2db $(BEMACS_LIB_DIR)
 
 mlisp:
 	@ echo Info: Copying Mlisp files...
 	cp -f ../MLisp/emacsinit.ml	$(BEMACS_LIB_DIR); chmod ugo=r $(BEMACS_LIB_DIR)/emacsinit.ml
 	cp -f ../MLisp/emacs_profile.ml	$(BEMACS_LIB_DIR); chmod ugo=r $(BEMACS_LIB_DIR)/emacs_profile.ml
-	cd ../MLisp; $(PYTHON) create_library.py common,unix,motif $(BEMACS_LIB_DIR)/emacslib $(BEMACS_LIB_DIR)
+	cd ../MLisp; $(PYTHON) create_library.py common,unix $(BEMACS_LIB_DIR)/emacslib $(BEMACS_LIB_DIR)
 
 describe:
 	@ echo Info: Making describe...
 	@ $(BEMACS_LIB_DIR)/dbcreate $(BEMACS_LIB_DIR)/emacsdesc -c
-	@ $(BEMACS_LIB_DIR)/mll-2-db ../Describe/em_desc.mll $(BEMACS_LIB_DIR)/emacsdesc
+	@ $(BEMACS_LIB_DIR)/mll2db ../Describe/em_desc.mll $(BEMACS_LIB_DIR)/emacsdesc
 
 language:
 	@ echo Info: Making language...
 	@ $(BEMACS_LIB_DIR)/dbcreate $(BEMACS_LIB_DIR)/emacslang -c
-	@ $(BEMACS_LIB_DIR)/mll-2-db ../Language/language.mll $(BEMACS_LIB_DIR)/emacslang
+	@ $(BEMACS_LIB_DIR)/mll2db ../Language/language.mll $(BEMACS_LIB_DIR)/emacslang
 
 quick_info:
 	@ echo Info: Making quick info...
 	@ $(BEMACS_LIB_DIR)/dbcreate $(BEMACS_LIB_DIR)/emacs_qinfo_c -c
-	@ $(BEMACS_LIB_DIR)/mll-2-db ../Describe/qi_cc.mll $(BEMACS_LIB_DIR)/emacs_qinfo_c
+	@ $(BEMACS_LIB_DIR)/mll2db ../Describe/qi_cc.mll $(BEMACS_LIB_DIR)/emacs_qinfo_c
 
 docs:
 	@ echo Info: Copying documentation...
