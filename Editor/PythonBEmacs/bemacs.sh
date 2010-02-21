@@ -1,8 +1,6 @@
 #!/bin/sh
-TARGET=$( ../os_name.ksh )
-export PYTHONPATH=$(pwd):$(cd ../${TARGET}/obj-pybemacs; pwd)
-export emacs_library=~/pybemacs-kit
-export EMACS_CONTROL_STRING_PROCESSING=0
+export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/PythonBEmacs:${BUILDER_TOP_DIR}/Editor/obj-pybemacs
+export emacs_library=${BUILDER_TOP_DIR}/Kits/MacOSX/pkg/be_main.app/Contents/Resources/emacs_library
 
 if [ "$1" = "--gdb" ]
 then

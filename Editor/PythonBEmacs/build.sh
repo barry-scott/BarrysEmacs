@@ -12,7 +12,7 @@ rm -rf build ${DIST_DIR}
 
 mkdir ${DIST_DIR}
 export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/darwin/obj-pybemacs
-python2.6 setup.py py2app --dist-dir  ${DIST_DIR} --no-strip 2>&1 | tee a.log
+python2.6 setup-macosx.py py2app --dist-dir  ${DIST_DIR} --no-strip 2>&1 | tee a.log
 
 mkdir ${DIST_DIR}/be_main.app/Contents/Resources/emacs_library
 mkdir ${DIST_DIR}/be_main.app/Contents/Resources/documentation
