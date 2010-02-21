@@ -1,6 +1,6 @@
 ; 
 ; grep.ml
-;   Copyright (c) 1993-2005 Barry A. Scott
+;   Copyright (c) 1993-2010 Barry A. Scott
 ; 
 ; Grep for emacs that does not depend on any external programs
 ; and offers the full power of Emacs regular expressions
@@ -82,6 +82,7 @@
 
     ~file
     ~files
+    ~start-directory
     
     ~start-pos ~end-pos
 
@@ -154,17 +155,22 @@
 	)
 	(setq ~files (string-extract ~multi-files ~start-pos ~end-pos))
 	(setq ~start-pos (+ ~end-pos 1))
+
+
 	(while
 	    (progn
 		(if ~option-recursive
 		    (setq ~file (expand-file-name-recursive ~files))
 		    (setq ~file (expand-file-name ~files))
 		)
+                (if (= ~start-directory "")
+                    (setq ~start-directory (file-format-string "%pd" ~file))
+                )
 		(setq ~files "")
 		(!= ~file "")
 	    )
 	    ; do
-	    (if (~grep-include-file ~file)
+	    (if (~grep-include-file ~file ~start-directory)
 		(~grep-one-file ~file)
 	    )
 	    (end-of-file)
@@ -410,7 +416,7 @@
 )
 
 (defun
-    ~grep-include-file(~file)
+    ~grep-include-file(~file ~start-directory)
     ~include
     (setq ~include 1)
     
@@ -436,7 +442,17 @@
 		(setq ~dirname (concat ~path-sep (string-extract ~list ~start-pos ~end-pos) ~path-sep))
 		(setq ~start-pos (+ ~end-pos 1))
 		
-	        (setq ~include (= -1 (string-index-of-first ~directories ~dirname)))
+	        (setq ~include
+                    (|
+                        ; include the start dir always
+                        (= ~start-directory ~directories)
+                        ; only exclude if the last dir is in the exclude list
+                        (!=
+                            (string-index-of-last ~directories ~dirname)
+                            (- (length ~directories) (length ~dirname))
+                        )
+                    )
+                )
 	    )
 
 	    (setq ~start-pos 0)
