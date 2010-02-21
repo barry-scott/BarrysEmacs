@@ -26,7 +26,6 @@ Editor/PythonBEmacs/toolbar_images/editcopy.png -text svneol=unset#image/png
 Editor/PythonBEmacs/toolbar_images/editcut.png -text svneol=unset#image/png
 Editor/PythonBEmacs/toolbar_images/editpaste.png -text svneol=unset#image/png
 Editor/PythonBEmacs/win32.mak -text
-Editor/PythonBemacs.sln -text
 Editor/Source/Windows/Resources/BMP16175.BMP -text
 Editor/Source/Windows/Resources/BMP24826.BMP -text
 Editor/Source/Windows/Resources/BMP28043.BMP -text
