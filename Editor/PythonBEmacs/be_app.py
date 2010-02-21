@@ -80,7 +80,7 @@ class BemacsApp(wx.App):
         self.main_thread = threading.currentThread()
         if self.__wx_raw_debug:
             self.editor_thread = None
-            self.editor = FakeEditor()
+            self.editor = FakeEditor( self )
         else:
             self.editor_thread = threading.Thread( name='Editor', target=self.__runEditor )
 
@@ -449,21 +449,40 @@ class StdoutLogHandler(logging.Handler):
             self.handleError( record )
 
 class FakeEditor:
-    def __init__( self ):
-        pass
+    def __init__( self, app ):
+        self.app = app
+        self.count = 0
 
     def guiCloseWindow( self, *args, **kwds ):
-        pass
+        self.app.onGuiThread( self.app.quit, () )
 
     def guiGeometryChange( self, *args, **kwds ):
         pass
 
     def guiEventChar( self, *args, **kwds ):
-        pass
+        p = self.app.frame.emacs_panel
+
+        self.count += 1
+
+        text = '  %d guiEventChar called' % (self.count,)
+        attr = [0] * len(text)
+
+        new = (text, attr)
+
+        p.termUpdateBegin()
+        p.termUpdateLine( None, new, 1 )
+        p.termUpdateEnd()
 
     def guiEventMouse( self, *args, **kwds ):
-        pass
+        p = self.app.frame.emacs_panel
 
-    def guiGeometryChange( self, *args, **kwds ):
-        pass
+        self.count += 1
 
+        text = '  %d guiEventMouse called' % (self.count,)
+        attr = [0] * len(text)
+
+        new = (text, attr)
+
+        p.termUpdateBegin()
+        p.termUpdateLine( None, new, 1 )
+        p.termUpdateEnd()
