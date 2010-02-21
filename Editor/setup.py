@@ -12,7 +12,7 @@ class Setup:
     def __init__( self, argv ):
         args = argv[1:]
         if len(args) < 2:
-            raise ValueError( 'Usage: setup.py <auto|win32|macosx|linux> <makefile>' )
+            raise ValueError( 'Usage: setup.py win32|macosx|linux> <makefile>' )
 
         self.opt_debug = False
 
@@ -526,6 +526,7 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
                                         '-DDARWIN '
                                         '-D%(DEBUG)s' )
+        self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
     def setupPythonEmacs( self ):
         self._addVar( 'PYTHON',         sys.executable )
