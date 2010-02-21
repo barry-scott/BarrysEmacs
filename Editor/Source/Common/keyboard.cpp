@@ -666,7 +666,7 @@ having_dequeued_a_char:    // leave this block
         a( 0 ) = num_params+1;
 
         // row 1 has the parameter strings
-        for( int i=0; i<=num_params; i++ )
+        for( int i=0; i<num_params; i++ )
         {
             a( i+1 ) = char_cell->ce_all_params[i];
         }

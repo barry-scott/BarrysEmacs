@@ -4,8 +4,8 @@
     (setq ~teach-mode-line-format mode-line-format)
     (if (file-exists "sys$help:emacs.cbi")
 	(progn (visit-file "sys$help:emacs.cbi"))
-	(file-exists "emacs$library:emacs.cbi")
-	(progn (visit-file "emacs$library:emacs.cbi"))
+	(file-exists "emacs_library:emacs.cbi")
+	(progn (visit-file "emacs_library:emacs.cbi"))
 	(progn
 	    (switch-to-buffer "Teach error")
 	    (insert-string "No help available today")

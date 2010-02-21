@@ -18,7 +18,7 @@
     (setq-default ~language-convert-keyword "(progn)")
     (setq-default language-keyword-case "as template")
     (error-occurred
-	(extend-database-search-list "language" "emacs$library:emacslang"
+	(extend-database-search-list "language" "emacs_library:emacslang"
 	    (if (is-bound library-access)
 		library-access
 		0

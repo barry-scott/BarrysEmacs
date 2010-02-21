@@ -35,12 +35,12 @@ The steps that are executed when returning to a paused Emacs are specifically no
 Emacs restores the specified environment file and initialisation continues from step 4.</LI>
 
 <LI>If /norestore qualifier is specified, Emacs executes the file
-<FONT face="Courier New" size="2">emacs$library:emacs_profile.ml</FONT> as a series of Mock Lisp (MLisp) expressions.</LI>
+<FONT face="Courier New" size="2">emacs_library:emacs_profile.ml</FONT> as a series of Mock Lisp (MLisp) expressions.</LI>
 
-<LI><FONT face="Courier New" size="2">emacs$library:emacs_profile.ml</FONT> causes the
+<LI><FONT face="Courier New" size="2">emacs_library:emacs_profile.ml</FONT> causes the
 file <FONT face="Courier New" size="2">sys$login:emacsinit.ml</FONT> to be executed as a
 series of MLisp expressions. If this file does not exist emacs searches the directories
-named in <FONT face="Courier New" size="2">emacs$path</FONT> for <FONT face="Courier New" size="2">emacsinit.ml</FONT>
+named in <FONT face="Courier New" size="2">emacs_path</FONT> for <FONT face="Courier New" size="2">emacsinit.ml</FONT>
 and executes the first one found instead.</LI>
 
 <LI>If the variable <FONT face="Courier New" size="2">user-interface-hook</FONT> contains the name of an MLisp function,
@@ -76,9 +76,9 @@ the files that were displayed on the screen when Emacs last exited completely.
 This information is maintained in the emacs memory file. The contents of this 
 file are private to Emacs, and should never be altered or edited. If the file 
 does not exist, no files will be automatically visited. Under Unix the Emacs 
-memory file is named <FONT face="Courier New" size="2">emacs$memory:.emacs_mem</FONT>. 
+memory file is named <FONT face="Courier New" size="2">emacs_memory:.emacs_mem</FONT>. 
 Under Windows the Emacs memory file is named 
-<FONT face="Courier New" size="2">emacs$memory:__emacs_.mem</FONT>.</LI>
+<FONT face="Courier New" size="2">emacs_memory:__emacs_.mem</FONT>.</LI>
 
 <LI>Emacs now calls its display processor to display the screen, and then calls 
 its keyboard processor to process keyboard commands.</LI>
@@ -90,7 +90,7 @@ its keyboard processor to process keyboard commands.</LI>
 <H2><a name="emacsinitfles">Emacs Initialisation Files</a></H2>
 
 <P>An initialisation file is an MLisp program which is executed whenever you start Emacs. 
-Emacs looks for an initialisation file using the file name emacs$path:emacsinit.ml or the MLisp program EMACSINIT.</P>
+Emacs looks for an initialisation file using the file name emacs_path:emacsinit.ml or the MLisp program EMACSINIT.</P>
 
 <P>An initialisation file can ask you questions and do things, as well as just setting up commands for later use.</P>
 

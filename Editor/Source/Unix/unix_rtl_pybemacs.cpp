@@ -29,6 +29,7 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 #include <math.h>
 
+extern EmacsString env_emacs_library;
 
 static struct timeval emacs_start_time;
 

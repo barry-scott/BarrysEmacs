@@ -54,7 +54,7 @@
     (error-occurred
 	(setq
 	    library-access
-	    (getenv "EMACS$LIBRARY_ACCESS")
+	    (getenv "EMACS_LIBRARY_ACCESS")
 	)
     )
     (setq library-access 0)
@@ -62,14 +62,14 @@
 (error-occurred
     (extend-database-search-list 
 	"MLisp-library"
-	"emacs$library:emacslib"
+	"emacs_library:emacslib"
 	(if (= operating-system-name "VMS") library_access 3)
     )
 )
 (error-occurred
     (extend-database-search-list
 	"describe"
-	"emacs$library:emacsdesc"
+	"emacs_library:emacsdesc"
 	(if (= operating-system-name "VMS") library_access 3)
     )
 )
@@ -99,7 +99,7 @@
 	(error-occurred
 	    (setq
 		library-access
-		(getenv "EMACS$LIBRARY_ACCESS")
+		(getenv "EMACS_LIBRARY_ACCESS")
 	    )
 	)
 	(error-occurred

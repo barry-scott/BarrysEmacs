@@ -53,7 +53,7 @@ extern int lib$find_image_symbol
     ( struct dsc$descriptor *a, struct dsc$descriptor *b, int * );
 
 #include <em_mess.h>
-#define EMACS__INCOMPTERM EMACS$_INCOMPTERM
+#define EMACS__INCOMPTERM EMACS__INCOMPTERM
 #else
 #define EMACS__INCOMPTERM 1
 #endif

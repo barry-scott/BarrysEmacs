@@ -629,7 +629,7 @@
 
 <P>checkpoint-buffers writes each buffer to its own checkpoint file. The file used has the same file name as the buffer name with an extension of <FONT face="Courier New" size="2">.CKP</FONT> All checkpoint files are written to the default directory by default. For non-file buffers, the buffer name is used and the extension <FONT face="Courier New" size="2">.CKP</FONT> is added to make a file name; if this results in a file name with incorrect syntax, <FONT face="Courier New" size="2">CHECKPNT.CKP</FONT> is used as the file name.</P>
 
-<P>If you do not want checkpoint files written to the default directory, you can define the logical name Emacs$CHECKPOINT as the location for your checkpoint files. If this logical name is defined before Emacs is started, Emacs will write all checkpoint files to this directory rather than to the default directory.</P>
+<P>If you do not want checkpoint files written to the default directory, you can define the logical name Emacs_CHECKPOINT as the location for your checkpoint files. If this logical name is defined before Emacs is started, Emacs will write all checkpoint files to this directory rather than to the default directory.</P>
 
 <P>When it is time to recover files after a system crash, simply rename the checkpoint files to their original file names.</P>
 
@@ -643,13 +643,13 @@
 
 <P>When it is time to recover files after a system crash, simply use the <FONT face="Courier New" size="2">journal-recover</FONT> command, specifying the name of the journal file to recover.</P>
 
-<P>All the journal files that Emacs writes are kept in the directory Emacs$JOURNAL: For each buffer that had journalling enabled and had not been saved, there will be a journal file in Emacs$JOURNAL:.</P>
+<P>All the journal files that Emacs writes are kept in the directory Emacs_JOURNAL: For each buffer that had journalling enabled and had not been saved, there will be a journal file in Emacs_JOURNAL:.</P>
 
 <P>For buffers with associated files, the journal name will be based on the file name. For example, the file LOGIN.COM will have a journal file named LOGIN.COM_Emacs_JOURNAL.</P>
 
 <P>For buffers without associated files, the journal has a slightly different name. For example, the buffer <FONT face="Courier New" size="2">Kill buffer</FONT> will have a journal called KILL_BUFFER.BUFFER_Emacs_JOURNAL0000.</P>
 
-<P>journal-recover prompts for the name of the journal file, which must be in Emacs$JOURNAL:. Emacs will check that the journal file is valid before attempting to apply it. For a file, Emacs checks that the version number of the file is the same as the journal was recorded for. For a buffer, Emacs checks that the buffer does not exist. These checks ensure that using <FONT face="Courier New" size="2">journal-recover</FONT> will not damage your data.</P>
+<P>journal-recover prompts for the name of the journal file, which must be in Emacs_JOURNAL:. Emacs will check that the journal file is valid before attempting to apply it. For a file, Emacs checks that the version number of the file is the same as the journal was recorded for. For a buffer, Emacs checks that the buffer does not exist. These checks ensure that using <FONT face="Courier New" size="2">journal-recover</FONT> will not damage your data.</P>
 
 <P>Emacs deletes a journal file whenever the proper file is saved. Journal files are also deleted when Emacs exits.</P>
 

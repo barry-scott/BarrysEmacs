@@ -8,7 +8,7 @@
 
 	    (delete-other-windows)
 
-	    (extend-database-search-list "describe" "emacs$library:emacsdesc")
+	    (extend-database-search-list "describe" "emacs_library:emacsdesc")
 	    (fetch-database-entry "describe"  (concat "C" ~helpchar-variable))
 
 	    (use-local-map "~helpchar-view-prefix")

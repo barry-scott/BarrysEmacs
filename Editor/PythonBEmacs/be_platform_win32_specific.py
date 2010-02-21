@@ -18,8 +18,7 @@ SHGFP_TYPE_CURRENT = 0
 SHGFP_TYPE_DEFAULT = 1
 
 def getApplicationDir():
-    app_folder = shell.SHGetFolderPath( 0, shellcon.CSIDL_APPDATA,
-                0, SHGFP_TYPE_CURRENT )
+    app_folder = shell.SHGetFolderPath( 0, shellcon.CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT )
     return os.path.join( app_folder, 'Bemacs' )
 
 def getLocalePath( app ):

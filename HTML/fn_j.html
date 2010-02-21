@@ -12,11 +12,11 @@
 <BLOCKQUOTE>
 <P>Recovers a file or buffer after a system crash or other disaster.</P>
 
-<P>All the journal files that Emacs write are kept in the directory EMACS$JOURNAL:</P>
+<P>All the journal files that Emacs write are kept in the directory EMACS_JOURNAL:</P>
 
 <P>There is a journal file for each buffer that has journaling enabled and has not been saved. For buffers with associated files the journal name is based on the name of file. For buffers without associated files the journal has a name that is based on the buffer name.</P>
 
-<P>If no journal filename parameter is supplied, <CODE>journal-recover</CODE> prompts for the name of the journal file, which must be in EMACS$JOURNAL:</P>
+<P>If no journal filename parameter is supplied, <CODE>journal-recover</CODE> prompts for the name of the journal file, which must be in EMACS_JOURNAL:</P>
 
 <P>Emacs checks that the journal file is valid before attempting to apply it.</P>
 

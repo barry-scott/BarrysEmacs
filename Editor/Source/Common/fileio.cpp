@@ -49,8 +49,8 @@ EmacsString file_format_string( const EmacsString &format, const FileParse &fab 
 bool file_read_veto( const EmacsString &filename );
 
 // Static strings including error messages
-static EmacsString ckp_ext( "EMACS$CHECKPOINT:.CKP" );
-static EmacsString defname( "EMACS$CHECKPOINT:CHECKPNT.CKP" );
+static EmacsString ckp_ext( "EMACS_CHECKPOINT:.CKP" );
+static EmacsString defname( "EMACS_CHECKPOINT:CHECKPNT.CKP" );
 static EmacsString perror_str( "%s: %s" );
 static EmacsString null_file_spec( "You must specify a file name" );
 

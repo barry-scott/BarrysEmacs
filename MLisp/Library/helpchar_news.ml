@@ -11,7 +11,7 @@
 		)
 		(if
 		    (error-occurred
-			(insert-file "EMACS$LIBRARY:EMACSNEWS.TXT")
+			(insert-file "EMACS_LIBRARY:EMACSNEWS.TXT")
 		    )
 		    (error-message "No news is available.")
 		)

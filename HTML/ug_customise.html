@@ -75,9 +75,9 @@
 
 <P>You use the <FONT face="Courier New" size="2">ESC-x save-environment</FONT> command to save the current environment in an Emacs environment file. <FONT face="Courier New" size="2">save-environment</FONT> asks for the name of the file you want to create. Press <FONT face="Courier New" size="2">return</FONT> to get the default filename.</P>
 
-<P>You use the <FONT face="Courier New" size="2">/restore</FONT> command qualifier on the Emacs command to make Emacs restore an environment. This qualifier is implicitly applied when it is not present on the command line. By default, Emacs restores the environment file from <FONT face="Courier New" size="2">emacs$user:</FONT></P>
+<P>You use the <FONT face="Courier New" size="2">/restore</FONT> command qualifier on the Emacs command to make Emacs restore an environment. This qualifier is implicitly applied when it is not present on the command line. By default, Emacs restores the environment file from <FONT face="Courier New" size="2">emacs_user:</FONT></P>
 
-<P>Each operating system uses a different name for the default Emacs environment file. This allows you use share your emacs$user directory between different operating systems.</P>
+<P>Each operating system uses a different name for the default Emacs environment file. This allows you use share your emacs_user directory between different operating systems.</P>
 
 <TABLE cellpadding="2">
 <THEAD>
@@ -90,27 +90,27 @@
 <TBODY>
 <TR>
 <TD>Windows NT</TD>
-<TD>emacs$user:emacs7_nt.env</TD>
+<TD>emacs_user:emacs7_nt.env</TD>
 </TR>
 
 <TR>
 <TD>Windows 95</TD>
-<TD>emacs$user:emacs7_95.env</TD>
+<TD>emacs_user:emacs7_95.env</TD>
 </TR>
 
 <TR>
 <TD>FreeBSD</TD>
-<TD>emacs$user:emacs7_FreeBSD_i386.emacs_environment</TD>
+<TD>emacs_user:emacs7_FreeBSD_i386.emacs_environment</TD>
 </TR>
 
 <TR>
 <TD>HP-UX</TD>
-<TD>emacs$user:emacs7_hpux_pa_risc.emacs_environment</TD>
+<TD>emacs_user:emacs7_hpux_pa_risc.emacs_environment</TD>
 </TR>
 
 <TR>
 <TD>AIX</TD>
-<TD>emacs$user:emacs7_aix_ppc.emacs_environment</TD>
+<TD>emacs_user:emacs7_aix_ppc.emacs_environment</TD>
 </TR>
 </TBODY>
 </TABLE>
@@ -277,7 +277,7 @@ keys   as   they   appear   on   a   PC   keyboard.   Use
 
 <P>In addition to making functions accessible to <FONT face="Courier New" size="2">ESC-x</FONT>, the library may bind some functions to key sequences. This is done by the library loading another file called <FONT face="Courier New" size="2">libraryname.key</FONT>, where <FONT face="Courier New" size="2">libraryname</FONT> is the name of the library being loaded.</P>
 
-<P>This separation of functions from key bindings allows you to define your own bindings for functions in the library that will override the default bindings. To do this, make a private copy of the <FONT face="Courier New" size="2">.key</FONT> file, edit it to make your own bindings, then put the modified in your <FONT face="Courier New" size="2">emacs$user</FONT> directory or in your personal emacslib database file.</P>
+<P>This separation of functions from key bindings allows you to define your own bindings for functions in the library that will override the default bindings. To do this, make a private copy of the <FONT face="Courier New" size="2">.key</FONT> file, edit it to make your own bindings, then put the modified in your <FONT face="Courier New" size="2">emacs_user</FONT> directory or in your personal emacslib database file.</P>
 
 <P>Some libraries are loaded automatically in the course of executing certain functions. You will not normally notice this. For example, the <FONT face="Courier New" size="2">process</FONT> library is automatically loaded when you use the <FONT face="Courier New" size="2">shell</FONT> function for the first time. This facility is known as autoloading. Autoloading is used to make library functions available without you having to know how to load the library; autoloading also saves space in Emacs by loading libraries only when you need them.</P>
 

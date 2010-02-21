@@ -955,7 +955,7 @@ ANAMEWITHCAPITALLETTERS
 <UL>
 <LI>If the MLisp is located in a buffer in Emacs, make the buffer current and use the <CODE>ESC-x execute-mlisp-buffer</CODE> command. This command takes the Mlisp expressions in the buffer, compiles and executes them.</LI>
 
-<LI>If the MLisp is in a file, you can use the <CODE>ESC-x execute-mlisp-file</CODE> command. If no file type has been specified, then .ML is assumed. This command first searches for the specified file using the EMACS$PATH logical name. If no file is found, then a search is made in the database <CODE>MLisp-library</CODE> (if the file type is .ML, this is first removed). If no module is found in the database with the specified name, an error message is displayed. 
+<LI>If the MLisp is in a file, you can use the <CODE>ESC-x execute-mlisp-file</CODE> command. If no file type has been specified, then .ML is assumed. This command first searches for the specified file using the EMACS_PATH logical name. If no file is found, then a search is made in the database <CODE>MLisp-library</CODE> (if the file type is .ML, this is first removed). If no module is found in the database with the specified name, an error message is displayed. 
 
 <P>When the file has been opened, all the MLisp expressions contained in the file are read in, compiled, and executed.</P>
 </LI>

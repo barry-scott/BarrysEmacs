@@ -16,7 +16,7 @@
 	~info-^n-help-flag
     )
     (setq info-root-file "emacsroot")
-    (setq info-default-directory "emacs$info:")
+    (setq info-default-directory "emacs_info:")
     (setq ~info-current-file "")
     (setq ~info-current-node "")
     (defun

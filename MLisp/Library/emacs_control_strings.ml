@@ -37,13 +37,13 @@
 ; 
 ;   Set the following true to enable the above processing.
 ; 
-;   The logical name emacs$control_string_processing is looked
+;   The logical name emacs_control_string_processing is looked
 ;   to provide a way to turn off control-string-processing.
 ; 
 (progn value
     (if
 	(error-occurred
-	    (setq value (+ (getenv "EMACS$CONTROL_STRING_PROCESSING")))
+	    (setq value (+ (getenv "EMACS_CONTROL_STRING_PROCESSING")))
 	)
 	(setq control-string-processing 1)
 	(setq control-string-processing value)

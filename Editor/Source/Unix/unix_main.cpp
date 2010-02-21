@@ -101,7 +101,7 @@ int main( int argc, char **argv )
     struct utsname uname_data;
     int status = uname( &uname_data );
 
-    default_environment_file = "emacs$user:emacs7_" OS_VERSION "_";
+    default_environment_file = "emacs_user:emacs7_" OS_VERSION "_";
     if( status != -1 )
     {
         default_environment_file.append( uname_data.release );

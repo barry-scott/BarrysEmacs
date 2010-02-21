@@ -58,7 +58,7 @@ END_MESSAGE_MAP()
 
 CWinemacsApp::CWinemacsApp()
     : CWinApp("Barry's Emacs")
-    , restore_arg("emacs$user:")
+    , restore_arg("emacs_user:")
     , package_arg("emacs")
     , m_tick(false)
 {
@@ -376,11 +376,11 @@ BOOL CWinemacsApp::InitInstance()
     }
 
     if( is_windows_nt )
-        default_environment_file = "emacs$user:emacs7_nt.env";
+        default_environment_file = "emacs_user:emacs7_nt.env";
     else if( is_windows_95 )
-        default_environment_file = "emacs$user:emacs7_95.env";
+        default_environment_file = "emacs_user:emacs7_95.env";
     else
-        default_environment_file = "emacs$user:emacs7_32.env";
+        default_environment_file = "emacs_user:emacs7_32.env";
 
     return TRUE;
 }
@@ -417,7 +417,7 @@ afx_msg void CWinemacsApp::OnEmacsHelp()
     EmacsString html_file;
     expand_and_default
         (
-        "emacs$library:..\\documentation\\emacs-documentation.htm",
+        "emacs_library:..\\documentation\\emacs-documentation.htm",
         EmacsString::null,
         html_file
         );

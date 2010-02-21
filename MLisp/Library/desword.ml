@@ -1,6 +1,6 @@
 (progn
 library-access
-(if (error-occurred (setq library-access (getenv "EMACS$LIBRARY_ACCESS")))
+(if (error-occurred (setq library-access (getenv "EMACS_LIBRARY_ACCESS")))
     (setq library-access 0)
 )
 (execute-mlisp-file "describe_word_list.database")
@@ -11,7 +11,7 @@ library-access
 )
 (error-occurred
     (extend-database-search-list "subr-names"
-	(concat "emacs$user:subrnames") library-access
+	(concat "emacs_user:subrnames") library-access
     )
 )
 

@@ -26,15 +26,15 @@
 </UL>
 
 <UL>
-<LI><FONT face="Courier New" size="2">emacs$path:emacsinit.ml</FONT> -- Alternative location for the emacsinit.ml file.</LI>
+<LI><FONT face="Courier New" size="2">emacs_path:emacsinit.ml</FONT> -- Alternative location for the emacsinit.ml file.</LI>
 </UL>
 
 <UL>
-<LI><FONT face="Courier New" size="2">emacs$user:emacs7_nt.env</FONT> -- This file contains your private saved Emacs environment saved under Windows NT.</LI>
+<LI><FONT face="Courier New" size="2">emacs_user:emacs7_nt.env</FONT> -- This file contains your private saved Emacs environment saved under Windows NT.</LI>
 </UL>
 
 <UL>
-<LI><FONT face="Courier New" size="2">emacs$user:emacs7_95.env</FONT> -- This file contains your private saved Emacs environment saved under Windows 95.</LI>
+<LI><FONT face="Courier New" size="2">emacs_user:emacs7_95.env</FONT> -- This file contains your private saved Emacs environment saved under Windows 95.</LI>
 </UL>
 
 <UL>
@@ -47,16 +47,16 @@
 
 <UL>
 <LI>
-<P><FONT face="Courier New" size="2">emacs$library:emacs_profile.ml</FONT> -- This file is the Emacs system start-up file. It is executed as a series of MLisp expressions every time Emacs is started with the <FONT face="Courier New" size="2">/norestore</FONT> qualifier.</P>
+<P><FONT face="Courier New" size="2">emacs_library:emacs_profile.ml</FONT> -- This file is the Emacs system start-up file. It is executed as a series of MLisp expressions every time Emacs is started with the <FONT face="Courier New" size="2">/norestore</FONT> qualifier.</P>
 </LI>
 </UL>
 
 <UL>
-<LI><FONT face="Courier New" size="2">emacs$library:emacslib</FONT> -- This file is a database containing all the MLisp programs and libraries supplied with Emacs.</LI>
+<LI><FONT face="Courier New" size="2">emacs_library:emacslib</FONT> -- This file is a database containing all the MLisp programs and libraries supplied with Emacs.</LI>
 </UL>
 
 <UL>
-<LI><FONT face="Courier New" size="2">emacs$library:emacslang</FONT> -- This is the Emacs language template database for use with <FONT face="Courier New" size="2">c-mode</FONT> and <FONT face="Courier New" size="2">bliss-mode</FONT>. The default templates are in this file. See Editing Programs for more information on language-specific editing.</LI>
+<LI><FONT face="Courier New" size="2">emacs_library:emacslang</FONT> -- This is the Emacs language template database for use with <FONT face="Courier New" size="2">c-mode</FONT> and <FONT face="Courier New" size="2">bliss-mode</FONT>. The default templates are in this file. See Editing Programs for more information on language-specific editing.</LI>
 </UL>
 
 <UL>
@@ -66,12 +66,12 @@
 <HR>
 <H2><A name="emacslogicalnames"></A>Emacs Logical Names</H2>
 
-<P>Emacs uses a number of logical names. These names point to directories. For example, the logical name <FONT face="Courier New" size="2">emacs$user</FONT> points to the users emacs library directory. A file in there called <FONT face="Courier New" size="2">profile.ml</FONT> could be referred to as follows:</P>
+<P>Emacs uses a number of logical names. These names point to directories. For example, the logical name <FONT face="Courier New" size="2">emacs_user</FONT> points to the users emacs library directory. A file in there called <FONT face="Courier New" size="2">profile.ml</FONT> could be referred to as follows:</P>
 
 <TABLE width="60%">
 <TR>
 <TD></TD>
-<TD><FONT face="Courier New" size="2">emacs$user:profile.ml</FONT></TD>
+<TD><FONT face="Courier New" size="2">emacs_user:profile.ml</FONT></TD>
 </TR>
 </TABLE>
 
@@ -88,37 +88,37 @@
 </UL>
 
 <UL>
-<LI><FONT face="Courier New" size="2">emacs$user</FONT> -- This is your personal emacs directory. Under Windows NT it defaults to <FONT face="Courier New" size="2">sys$login:\bemacs</FONT>.</LI>
+<LI><FONT face="Courier New" size="2">emacs_user</FONT> -- This is your personal emacs directory. Under Windows NT it defaults to <FONT face="Courier New" size="2">sys$login:\bemacs</FONT>.</LI>
 </UL>
 
 <UL>
-<LI><FONT face="Courier New" size="2">emacs$checkpoint</FONT> -- Emacs writes all checkpoint files to the directory specified by this logical name.</LI>
+<LI><FONT face="Courier New" size="2">emacs_checkpoint</FONT> -- Emacs writes all checkpoint files to the directory specified by this logical name.</LI>
 </UL>
 
 <UL>
-<LI><FONT face="Courier New" size="2">emacs$info</FONT> -- This name is used by the INFO subsystem to access its database.</LI>
+<LI><FONT face="Courier New" size="2">emacs_info</FONT> -- This name is used by the INFO subsystem to access its database.</LI>
 </UL>
 
 <UL>
-<LI><FONT face="Courier New" size="2">emacs$journal</FONT> -- Points to the directory that Emacs uses to store journal files.</LI>
+<LI><FONT face="Courier New" size="2">emacs_journal</FONT> -- Points to the directory that Emacs uses to store journal files.</LI>
 </UL>
 
 <UL>
-<LI><FONT face="Courier New" size="2">emacs$library</FONT> -- Is used to access files and databases nessesary to run emacs. For example it contains: emacsinit.ml, emacs_profile.ml and the supplied libraries and packages.</LI>
+<LI><FONT face="Courier New" size="2">emacs_library</FONT> -- Is used to access files and databases nessesary to run emacs. For example it contains: emacsinit.ml, emacs_profile.ml and the supplied libraries and packages.</LI>
 </UL>
 
 <UL>
-<LI><FONT face="Courier New" size="2">emacs$local_library</FONT> -- This optional logical name may be used to point at a local library of emacs programs and library files.</LI>
+<LI><FONT face="Courier New" size="2">emacs_local_library</FONT> -- This optional logical name may be used to point at a local library of emacs programs and library files.</LI>
 </UL>
 
 <UL>
-<LI><FONT face="Courier New" size="2">emacs$memory</FONT> -- Points to the location of the Emacs memory file. By default, this is the current directory. Define <FONT face="Courier New" size="2">emacs$memory</FONT> to be the null device to disable memory files. <FONT face="Courier New" size="2">NUL</FONT> is the name of the null device on Windows.</LI>
+<LI><FONT face="Courier New" size="2">emacs_memory</FONT> -- Points to the location of the Emacs memory file. By default, this is the current directory. Define <FONT face="Courier New" size="2">emacs_memory</FONT> to be the null device to disable memory files. <FONT face="Courier New" size="2">NUL</FONT> is the name of the null device on Windows.</LI>
 </UL>
 
 <UL>
-<LI><FONT face="Courier New" size="2">emacs$path</FONT> -- This name is used when Emacs attempts to load an MLisp library from a file. Emacs automatically sets the value of this logical name. 
+<LI><FONT face="Courier New" size="2">emacs_path</FONT> -- This name is used when Emacs attempts to load an MLisp library from a file. Emacs automatically sets the value of this logical name. 
 
-<P>Its value is typically <FONT face="Courier New" size="2">.;emacs$user:;emacs$library:</FONT>. If <FONT face="Courier New" size="2">emacs$local_library</FONT> has been defined then <FONT face="Courier New" size="2">emacs$path</FONT> is <FONT face="Courier New" size="2">.;emacs$user:;emacs$local_library;emacs$library:</FONT>.</P>
+<P>Its value is typically <FONT face="Courier New" size="2">.;emacs_user:;emacs_library:</FONT>. If <FONT face="Courier New" size="2">emacs_local_library</FONT> has been defined then <FONT face="Courier New" size="2">emacs_path</FONT> is <FONT face="Courier New" size="2">.;emacs_user:;emacs_local_library;emacs_library:</FONT>.</P>
 </LI>
 </UL>
 

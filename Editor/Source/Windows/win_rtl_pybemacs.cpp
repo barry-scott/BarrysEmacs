@@ -19,6 +19,9 @@ int is_windows_nt;
 
 unsigned long main_thread_id;
 
+extern EmacsString env_emacs_library;
+
+
 void EmacsInitialisation::os_specific_init()
 {
 }
@@ -91,10 +94,27 @@ unsigned char *get_tmp_path(void)
 
 EmacsString get_config_env( const EmacsString &name )
 {
-    char *env = getenv( name.sdata() );
-    if( env == NULL )
-        env = "";
-    return env;
+    char *value = getenv( name.sdata() );
+
+    if( value != NULL )
+        return value;
+
+    static EmacsString env_emacs_path( "emacs_user:;emacs_library:" );
+    if( name == "emacs_path" )
+        return env_emacs_path;
+
+    static EmacsString env_emacs_user( "HOME:/bemacs" );
+    if( name == "emacs_user" )
+        return env_emacs_user;
+
+    if( name == "emacs_library" )
+        return env_emacs_library;
+
+    static EmacsString env_sys_login( "HOME:/" );
+    if( name == "sys_login" )
+        return env_sys_login;
+
+    return EmacsString::null;
 }
 
 int put_config_env( const EmacsString &name, const EmacsString &value )

@@ -73,13 +73,13 @@ CDirOpt::CDirOpt(CWnd* pParent /*=NULL*/)
     m_sys_scratch = get_device_name_translation( "sys$scratch" ).sdata();
     if( m_sys_scratch == "" )
         m_sys_scratch = s_str(get_tmp_path());
-    m_emacs_journal = get_device_name_translation( "emacs$journal" ).sdata();
+    m_emacs_journal = get_device_name_translation( "emacs_journal" ).sdata();
     if( m_emacs_journal == "" )
         m_emacs_journal = m_sys_scratch;
-    m_emacs_checkpoint = get_device_name_translation( "emacs$checkpoint" ).sdata();
+    m_emacs_checkpoint = get_device_name_translation( "emacs_checkpoint" ).sdata();
     if( m_emacs_checkpoint == "" )
         m_emacs_checkpoint = ".\\";
-    m_emacs_library = get_device_name_translation( "emacs$library" ).sdata();
+    m_emacs_library = get_device_name_translation( "emacs_library" ).sdata();
     if( m_emacs_library == "" )
     {
         m_emacs_library = theApp.m_pszHelpFilePath;
@@ -87,8 +87,8 @@ CDirOpt::CDirOpt(CWnd* pParent /*=NULL*/)
                 m_emacs_library.ReverseFind( '\\' ) )
                      + "\\Library";
     }
-    m_emacs_local_library = get_device_name_translation( "emacs$local_library" ).sdata();
-    m_emacs_user_library = get_device_name_translation( "emacs$user" ).sdata();
+    m_emacs_local_library = get_device_name_translation( "emacs_local_library" ).sdata();
+    m_emacs_user_library = get_device_name_translation( "emacs_user" ).sdata();
     m_sys_login = get_device_name_translation( "sys$login" ).sdata();
     if( m_sys_login == "" )
     {
@@ -121,23 +121,23 @@ void CDirOpt::save_options()
     theApp.WriteProfileString( "Environment", "Emacs_Path", m_emacs_path );
     theApp.WriteProfileString( "DeviceNames", "Sys$Login", m_sys_login );
     theApp.WriteProfileString( "DeviceNames", "Sys$Scratch", m_sys_scratch );
-    theApp.WriteProfileString( "DeviceNames", "Emacs$Checkpoint", m_emacs_checkpoint );
-    theApp.WriteProfileString( "DeviceNames", "Emacs$Journal", m_emacs_journal );
+    theApp.WriteProfileString( "DeviceNames", "Emacs_Checkpoint", m_emacs_checkpoint );
+    theApp.WriteProfileString( "DeviceNames", "Emacs_Journal", m_emacs_journal );
     theApp.WriteProfileString( "Environment", "Emacs_Memory", m_emacs_memory );
-    theApp.WriteProfileString( "DeviceNames", "Emacs$User", m_emacs_user_library );
-    theApp.WriteProfileString( "DeviceNames", "Emacs$Library", m_emacs_library );
-    theApp.WriteProfileString( "DeviceNames", "Emacs$Local_Library", m_emacs_local_library );
+    theApp.WriteProfileString( "DeviceNames", "Emacs_User", m_emacs_user_library );
+    theApp.WriteProfileString( "DeviceNames", "emacs_Library", m_emacs_library );
+    theApp.WriteProfileString( "DeviceNames", "Emacs_Local_Library", m_emacs_local_library );
 }
 
 void CDirOpt::set_emacs_path()
 {
     m_emacs_path = ".";
     if( m_emacs_user_library != "" )
-        m_emacs_path += ";emacs$user:";
+        m_emacs_path += ";emacs_user:";
     if( m_emacs_local_library != "" )
-        m_emacs_path += ";emacs$local_library:";
+        m_emacs_path += ";emacs_local_library:";
     if( m_emacs_library != "" )
-        m_emacs_path += ";emacs$library:";
+        m_emacs_path += ";emacs_library:";
 }
 
 void CDirOpt::DoDataExchange(CDataExchange* pDX)

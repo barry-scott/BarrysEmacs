@@ -4405,10 +4405,10 @@ DESCRIPTION
     used  to  load  "emacsinit.ml" from your home directory when EMACS
     starts up.
 
-    The  file  name  given  is  interpreted relative to the EMACS$PATH
+    The  file  name  given  is  interpreted relative to the EMACS_PATH
     logical  name.  This should be set up to contain a comma separated
     list  of  device/directory  specification  used  to search for the
-    file.  If  the  file  cannot  be  located using EMACS$PATH, then a
+    file.  If  the  file  cannot  be  located using EMACS_PATH, then a
     search is made in the database search list "MLisp-library".
 
     The default file type is .ML
@@ -4697,8 +4697,8 @@ SYNOPSIS
 EXAMPLE
     (external-function
 	"sys$fao"
-	"emacs$share:emacs_sys_shr"
-	"emacs$sys$fao"
+	"emacs_share:emacs_sys_shr"
+	"emacs_sys$fao"
     )
 
 SEE ALSO
@@ -5643,7 +5643,7 @@ DESCRIPTION
     crash or other disaster.
 
     All the  journal  files that Emacs write are kept in the directory
-    EMACS$JOURNAL: For each buffer that had journaling enabled and had
+    EMACS_JOURNAL: For each buffer that had journaling enabled and had
     not been saved there will be an Emacs  journal file.
 
     For buffers  with  associated files the journal name will be based
@@ -5655,7 +5655,7 @@ DESCRIPTION
     journal called KILL-BUFFER.BUFFER_EMACS_JOURNAL.
 
     journal-recover prompts  for  the  name of the journal file, which
-    must be in EMACS$JOURNAL:.  Emacs will check that the journal file
+    must be in EMACS_JOURNAL:.  Emacs will check that the journal file
     is  valid  before attempting to apply it.  For a file Emacs checks
     that the versions number of the file is the same as the journal was
     recorded  for.  For a buffer Emacs checks that the buffer does not
@@ -9085,7 +9085,7 @@ SYNOPSIS
     (sys$setprn prcnam)
 
 EXAMPLE
-    (sys$setprn (concat "Emacs$" (getenv "TT")))
+    (sys$setprn (concat "Emacs_" (getenv "TT")))
 
 SEE ALSO
     sys$fao
@@ -10678,9 +10678,9 @@ VARIABLE NAME
 DESCRIPTION
     WARNING.  The  value  of this variable must only be changed in the
     file   EMACS_CONTROL_STRINGS.ML.   If  you  wish  to  change  this
-    parameter make a copy of EMACS$LIBRARY:EMACS_CONTROL_STRINGS.ML in
-    your  EMACS$PATH:.   Then  rebuild  your  Emacs  environment  with
-    EMACS$LIBRARY:EMACS_SAVE_ENVIRONMENT.COM.
+    parameter make a copy of EMACS_LIBRARY:EMACS_CONTROL_STRINGS.ML in
+    your  EMACS_PATH:.   Then  rebuild  your  Emacs  environment  with
+    EMACS_LIBRARY:EMACS_SAVE_ENVIRONMENT.COM.
 
     Also see control-string-processing for general information.
 
@@ -10718,9 +10718,9 @@ VARIABLE NAME
 DESCRIPTION
     WARNING.  The  value  of this variable must only be changed in the
     file   EMACS_CONTROL_STRINGS.ML.   If  you  wish  to  change  this
-    parameter make a copy of EMACS$LIBRARY:EMACS_CONTROL_STRINGS.ML in
-    your  EMACS$PATH:.   Then  rebuild  your  Emacs  environment  with
-    EMACS$LIBRARY:EMACS_SAVE_ENVIRONMENT.COM.
+    parameter make a copy of EMACS_LIBRARY:EMACS_CONTROL_STRINGS.ML in
+    your  EMACS_PATH:.   Then  rebuild  your  Emacs  environment  with
+    EMACS_LIBRARY:EMACS_SAVE_ENVIRONMENT.COM.
 
     Also see control-string-processing for general information.
 
@@ -10753,9 +10753,9 @@ VARIABLE NAME
 DESCRIPTION
     WARNING.  The  value  of this variable must only be changed in the
     file   EMACS_CONTROL_STRINGS.ML.   If  you  wish  to  change  this
-    parameter make a copy of EMACS$LIBRARY:EMACS_CONTROL_STRINGS.ML in
-    your  EMACS$PATH:.   Then  rebuild  your  Emacs  environment  with
-    EMACS$LIBRARY:EMACS_SAVE_ENVIRONMENT.COM.
+    parameter make a copy of EMACS_LIBRARY:EMACS_CONTROL_STRINGS.ML in
+    your  EMACS_PATH:.   Then  rebuild  your  Emacs  environment  with
+    EMACS_LIBRARY:EMACS_SAVE_ENVIRONMENT.COM.
 
     Also see control-string-processing for general information.
 
@@ -10785,9 +10785,9 @@ VARIABLE NAME
 DESCRIPTION
     WARNING.  The  value  of this variable must only be changed in the
     file   EMACS_CONTROL_STRINGS.ML.   If  you  wish  to  change  this
-    parameter make a copy of EMACS$LIBRARY:EMACS_CONTROL_STRINGS.ML in
-    your  EMACS$PATH:.   Then  rebuild  your  Emacs  environment  with
-    EMACS$LIBRARY:EMACS_SAVE_ENVIRONMENT.COM.
+    parameter make a copy of EMACS_LIBRARY:EMACS_CONTROL_STRINGS.ML in
+    your  EMACS_PATH:.   Then  rebuild  your  Emacs  environment  with
+    EMACS_LIBRARY:EMACS_SAVE_ENVIRONMENT.COM.
 
     Also see control-string-processing for general information.
 
@@ -10817,9 +10817,9 @@ VARIABLE NAME
 DESCRIPTION
     WARNING.  The  value  of this variable must only be changed in the
     file   EMACS_CONTROL_STRINGS.ML.   If  you  wish  to  change  this
-    parameter make a copy of EMACS$LIBRARY:EMACS_CONTROL_STRINGS.ML in
-    your  EMACS$PATH:.   Then  rebuild  your  Emacs  environment  with
-    EMACS$LIBRARY:EMACS_SAVE_ENVIRONMENT.COM.
+    parameter make a copy of EMACS_LIBRARY:EMACS_CONTROL_STRINGS.ML in
+    your  EMACS_PATH:.   Then  rebuild  your  Emacs  environment  with
+    EMACS_LIBRARY:EMACS_SAVE_ENVIRONMENT.COM.
 
     Also see control-string-processing for general information.
 
@@ -10847,9 +10847,9 @@ VARIABLE NAME
 DESCRIPTION
     WARNING.  The  value  of this variable must only be changed in the
     file   EMACS_CONTROL_STRINGS.ML.   If  you  wish  to  change  this
-    parameter make a copy of EMACS$LIBRARY:EMACS_CONTROL_STRINGS.ML in
-    your  EMACS$PATH:.   Then  rebuild  your  Emacs  environment  with
-    EMACS$LIBRARY:EMACS_SAVE_ENVIRONMENT.COM.
+    parameter make a copy of EMACS_LIBRARY:EMACS_CONTROL_STRINGS.ML in
+    your  EMACS_PATH:.   Then  rebuild  your  Emacs  environment  with
+    EMACS_LIBRARY:EMACS_SAVE_ENVIRONMENT.COM.
 
     Also see control-string-processing for general information.
 
@@ -10912,9 +10912,9 @@ VARIABLE NAME
 DESCRIPTION
     WARNING.  The  value  of this variable must only be changed in the
     file   EMACS_CONTROL_STRINGS.ML.   If  you  wish  to  change  this
-    parameter make a copy of EMACS$LIBRARY:EMACS_CONTROL_STRINGS.ML in
-    your  EMACS$PATH:.   Then  rebuild  your  Emacs  environment  with
-    EMACS$LIBRARY:EMACS_SAVE_ENVIRONMENT.COM.
+    parameter make a copy of EMACS_LIBRARY:EMACS_CONTROL_STRINGS.ML in
+    your  EMACS_PATH:.   Then  rebuild  your  Emacs  environment  with
+    EMACS_LIBRARY:EMACS_SAVE_ENVIRONMENT.COM.
 
     Also see control-string-processing for general information.
 
@@ -10942,9 +10942,9 @@ VARIABLE NAME
 DESCRIPTION
     WARNING.  The  value  of this variable must only be changed in the
     file   EMACS_CONTROL_STRINGS.ML.   If  you  wish  to  change  this
-    parameter make a copy of EMACS$LIBRARY:EMACS_CONTROL_STRINGS.ML in
-    your  EMACS$PATH:.   Then  rebuild  your  Emacs  environment  with
-    EMACS$LIBRARY:EMACS_SAVE_ENVIRONMENT.COM.
+    parameter make a copy of EMACS_LIBRARY:EMACS_CONTROL_STRINGS.ML in
+    your  EMACS_PATH:.   Then  rebuild  your  Emacs  environment  with
+    EMACS_LIBRARY:EMACS_SAVE_ENVIRONMENT.COM.
 
     Also see control-string-processing for general information.
 
@@ -10972,9 +10972,9 @@ VARIABLE NAME
 DESCRIPTION
     WARNING.  The  value  of this variable must only be changed in the
     file   EMACS_CONTROL_STRINGS.ML.   If  you  wish  to  change  this
-    parameter make a copy of EMACS$LIBRARY:EMACS_CONTROL_STRINGS.ML in
-    your  EMACS$PATH:.   Then  rebuild  your  Emacs  environment  with
-    EMACS$LIBRARY:EMACS_SAVE_ENVIRONMENT.COM.
+    parameter make a copy of EMACS_LIBRARY:EMACS_CONTROL_STRINGS.ML in
+    your  EMACS_PATH:.   Then  rebuild  your  Emacs  environment  with
+    EMACS_LIBRARY:EMACS_SAVE_ENVIRONMENT.COM.
 
     This variable  is the master control for all of the control string
     processing.   Only  when  control-string-processing is ON will any

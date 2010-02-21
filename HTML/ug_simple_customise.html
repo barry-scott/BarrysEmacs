@@ -135,17 +135,17 @@ system you would normally set this to point to your temporary directory, often
 <CODE>c:\temp</CODE></TD>
 </TR>
 <TR>
-<TD VALIGN="TOP"><KBD><B>Emacs$User</B></KBD></TD>
+<TD VALIGN="TOP"><KBD><B>Emacs_User</B></KBD></TD>
 <TD VALIGN="TOP">This is your personal Emacs directory. Under Windows NT it
 defaults to <CODE>sys$login:\bemacs</CODE></TD>
 </TR>
 <TR>
-<TD VALIGN="TOP"><KBD><B>Emacs$Local_Library</B></KBD></TD>
+<TD VALIGN="TOP"><KBD><B>Emacs_Local_Library</B></KBD></TD>
 <TD VALIGN="TOP"> This optional logical name may be used to point to a local
 library of Emacs programs and library files.</TD>
 </TR>
 <TR>
-<TD VALIGN="TOP"><KBD><B>Emacs$Journal</B></KBD></TD>
+<TD VALIGN="TOP"><KBD><B>Emacs_Journal</B></KBD></TD>
 <TD VALIGN="TOP">Emacs writes all journal files to the directory specified by
 this logical name.<BR>
 <BR>
@@ -157,7 +157,7 @@ See Barry's Emacs User Guide for
 journalling.</A></TD>
 </TR>
 <TR>
-<TD VALIGN="TOP"><KBD><B>Emacs$Checkpoint</B></KBD></TD>
+<TD VALIGN="TOP"><KBD><B>Emacs_Checkpoint</B></KBD></TD>
 <TD VALIGN="TOP">Emacs writes all checkpoint files to the directory specified
 by this logical name.<BR>
 <BR>
@@ -172,16 +172,16 @@ See Barry's Emacs User Guide for
 checkpointing</A>.</TD>
 </TR>
 <TR>
-<TD VALIGN="TOP"><KBD><B>Emacs$Memory</B></KBD></TD>
+<TD VALIGN="TOP"><KBD><B>Emacs_Memory</B></KBD></TD>
 <TD VALIGN="TOP">Points to the location of the Emacs memory file. By default,
-this is the current directory. Define emacs$memory to be the null device to
+this is the current directory. Define emacs_memory to be the null device to
 disable memory files. NUL is the name of the null device on Windows.</TD>
 </TR>
 <TR>
-<TD VALIGN="TOP"><KBD><B>Emacs$Path</B></KBD></TD>
+<TD VALIGN="TOP"><KBD><B>Emacs_Path</B></KBD></TD>
 <TD VALIGN="TOP"> This name is used when Emacs attempts to load an MLisp
 library from a file. Emacs automatically sets the value of this logical name.
-Its value is typically <CODE>.;emacs$user:;emacs$library:</CODE></TD>
+Its value is typically <CODE>.;emacs_user:;emacs_library:</CODE></TD>
 </TR>
 </TABLE>
 </TD>
@@ -312,18 +312,18 @@ of the following:</P>
  
 <P>When Emacs starts up, it does the following:</P>
 <OL>
-<LI>Looks in the directory pointed to by the logical Emacs$User for the file
+<LI>Looks in the directory pointed to by the logical Emacs_User for the file
 Emacsinit.ml. If the file is there, Emacs executes the commands in it.</LI>
-<LI>If Emacs cannot find Emacsinit.ml in Emacs$User, it looks for the default
-Emacsinit.ml, which is in Emacs$Library.</LI>
+<LI>If Emacs cannot find Emacsinit.ml in Emacs_User, it looks for the default
+Emacsinit.ml, which is in emacs_Library.</LI>
 </OL>
  
-<P>You can change Emacs' behaviour by editing Emacsinit.ml in Emacs$Library. 
+<P>You can change Emacs' behaviour by editing Emacsinit.ml in emacs_Library. 
 </P>
  
-<P>If you do not already have a copy of <KBD>Emacs$User:Emacsinit.ml</KBD>, the
-best way to start is to copy <KBD>Emacs$Library:Emacsinit.ml</KBD> to
-<KBD>Emacs$User:Emacsinit.ml</KBD>. You can then add your own customisations to
+<P>If you do not already have a copy of <KBD>Emacs_User:Emacsinit.ml</KBD>, the
+best way to start is to copy <KBD>emacs_Library:Emacsinit.ml</KBD> to
+<KBD>Emacs_User:Emacsinit.ml</KBD>. You can then add your own customisations to
 the bottom of the file.</P>
 <HR WIDTH="50%" ALIGN="LEFT">
 <H2><A NAME="settingavariable"></A>Setting a variable</H2>

@@ -22,17 +22,17 @@
 
 <P>The image SYS$SHARE:EMACSSHR.EXE is a callable interface to Emacs that allows you to access Emacs from a program.</P>
 
-<P>EMACSSHR tries to access the Emacs running in the subprocess described by the logical name EMACS$PROCESSNAME. If this logical name does not exist, EMACSSHR uses the default Emacs subprocess name. If the target Emacs subprocess does not exist, EMACSSHR creates the subprocess and starts Emacs in the subprocess. Otherwise, it simply attaches to the specified Emacs as usual.</P>
+<P>EMACSSHR tries to access the Emacs running in the subprocess described by the logical name EMACS_PROCESSNAME. If this logical name does not exist, EMACSSHR uses the default Emacs subprocess name. If the target Emacs subprocess does not exist, EMACSSHR creates the subprocess and starts Emacs in the subprocess. Otherwise, it simply attaches to the specified Emacs as usual.</P>
 
 <P>The following sections describe the various entry points in EMACSSHR.</P>
 
-<H3>EMACS$EMACS</H3>
+<H3>EMACS_EMACS</H3>
 
 <P>This interface is the simplest entry point to EMACSSHR. You specify the address of a string descriptor as the only argument, and EMACSSHR treats the string as a DCL command line. The command is parsed in the usual way, and then the arguments are passed to the appropriate Emacs image.</P>
 
-<H3>EMACS$EDIT</H3>
+<H3>EMACS_EDIT</H3>
 
-<P>EMACSSHR conforms to the calling standards for callable VMS MAIL images. EMACSSHR has an appropriate universal symbol, EMACS$EDIT, which is the callable entry point for callable VMS MAIL. EMACS$EDIT takes the following parameters:</P>
+<P>EMACSSHR conforms to the calling standards for callable VMS MAIL images. EMACSSHR has an appropriate universal symbol, EMACS_EDIT, which is the callable entry point for callable VMS MAIL. EMACS_EDIT takes the following parameters:</P>
 
 <P><B>INFILE</B></P>
 
@@ -46,9 +46,9 @@
 
 <P>The address of a descriptor containing the name of the Emacs package to be run to edit the file. If this parameter is omitted, the default package Emacs is invoked.</P>
 
-<H3>EMACS$UTILITY</H3>
+<H3>EMACS_UTILITY</H3>
 
-<P>The EMACS$UTILITY entry point in EMACSSHR provides access to all of the functionality of the Emacs command interface. This entry point takes the following parameters:</P>
+<P>The EMACS_UTILITY entry point in EMACSSHR provides access to all of the functionality of the Emacs command interface. This entry point takes the following parameters:</P>
 
 <P><B>PROCESSNAME</B></P>
 
@@ -84,7 +84,7 @@
 
 <P><B>RETADR</B></P>
 
-<P>The address of a string descriptor that EMACS$UTILITY fills with any information returned from Emacs when it exits or pauses.</P>
+<P>The address of a string descriptor that EMACS_UTILITY fills with any information returned from Emacs when it exits or pauses.</P>
 
 <HR align="LEFT" size="2" color="#800080">
 <A name="P1385_76148"></A> 

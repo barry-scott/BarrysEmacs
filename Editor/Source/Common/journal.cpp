@@ -270,7 +270,7 @@ EmacsBufferJournal *EmacsBufferJournal::journal_start( void )
 
             sys$filescan( &src, items, 0 );
 
-            _str_cpy( def_name_buf, "emacs$journal:" );
+            _str_cpy( def_name_buf, "emacs_journal:" );
             _str_ncat( def_name_buf, items[0].a_addr, min(39-14,items[0].w_length) );
             _str_cat( def_name_buf, "_emacs_journal;" );
 
@@ -279,7 +279,7 @@ EmacsBufferJournal *EmacsBufferJournal::journal_start( void )
         }
         else
         {
-            _str_cpy( def_name_buf, "emacs$journal:.buffer_emacs_journal" );
+            _str_cpy( def_name_buf, "emacs_journal:.buffer_emacs_journal" );
 
             p = concoct_filename( bf_cur->b_buf_name );
             open_record->jnl_open.jnl_type = JNL_BUFFERNAME;
@@ -305,7 +305,7 @@ EmacsBufferJournal *EmacsBufferJournal::journal_start( void )
             EmacsString def_name;
             if( bf_cur->b_kind == FILEBUFFER )
             {
-                def_name = "emacs$journal:.ej_";
+                def_name = "emacs_journal:.ej_";
                 int last_char = def_name.length() - 1;
                 def_name[last_char] = i;
 
@@ -314,7 +314,7 @@ EmacsBufferJournal *EmacsBufferJournal::journal_start( void )
             }
             else
             {
-                def_name ="emacs$journal:.ej_";
+                def_name ="emacs_journal:.ej_";
                 int last_char = def_name.length() - 1;
                 def_name[last_char] = (unsigned char)i;
 

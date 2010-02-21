@@ -74,10 +74,10 @@
 #define BACKUP_EXTENSION ".BAK"
 #define CHECKPOINT_EXTENSION ".CKP"
 
-#define EMACS_INIT_PROFILE    u_str("emacs$library:emacs_profile.ml")
-#define MEMORY_FILE_STR        u_str("emacs$memory:emacs.memory")
+#define EMACS_INIT_PROFILE    u_str("emacs_library:emacs_profile.ml")
+#define MEMORY_FILE_STR        u_str("emacs_memory:emacs.memory")
 #define MEMORY_FILE_ARG        0
-#define EMACS_PATH        u_str("emacs$path:")
+#define EMACS_PATH        u_str("emacs_path:")
 #define    EMACS_TMP_PATH        u_str("sys$scratch:")
 #define EMACS_DB_DEFAULT    u_str("SYS$DISK:[].TLB")
 

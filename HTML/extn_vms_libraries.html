@@ -24,7 +24,7 @@
 <!--<P><I><B>CMS, An Interface to DEC/CMS </B></I> CMS DEC/CMS interface</P>-->
 <P>The CMS library of functions provide an interface to the Code Management System (DEC/CMS) from within Emacs. The CMS library functions are analogous to their equivalents in the CMS application.</P>
 
-<P>The functions are not bound to any keys by default. If you do want to bind the functions, create a file called CMS.KEY containing your bindings in your EMACS$PATH. The CMS library will load this file when you load the CMS library.</P>
+<P>The functions are not bound to any keys by default. If you do want to bind the functions, create a file called CMS.KEY containing your bindings in your EMACS_PATH. The CMS library will load this file when you load the CMS library.</P>
 
 <P>Most CMS library functions have an alternate form when passed a prefix argument: some commands will prompt for input in the Mini-buffer; others will display a form which you can fill in to modify the default action of the command. When you have completed the forms, use the exit-emacs command to execute the command. To abort the form, use the ^C command.</P>
 
@@ -437,7 +437,7 @@
 <BLOCKQUOTE>
 <P>Checks the word that dot is in against the thesaurus. If the word is found in the thesaurus, a list of possible alternatives is displayed in the Electronic Thesaurus buffer. If the word is not found, an error message is displayed. THESAURUS.KEY</P>
 
-<P>There are no default key bindings for these functions, but you can define your own bindings by creating a file called THESAURUS.KEY in your EMACS$PATH. The file should contain appropriate MLisp commands to bind the thesaurus functions to the desired key bindings. The THESAURUS library will attempt to load this file automatically when you load the THESAURUS library.</P>
+<P>There are no default key bindings for these functions, but you can define your own bindings by creating a file called THESAURUS.KEY in your EMACS_PATH. The file should contain appropriate MLisp commands to bind the thesaurus functions to the desired key bindings. The THESAURUS library will attempt to load this file automatically when you load the THESAURUS library.</P>
 </BLOCKQUOTE>
 
 <HR>

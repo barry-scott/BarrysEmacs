@@ -576,7 +576,7 @@ class EmacsPanel(wx.Panel):
             return
 
         char = event.GetUnicodeKey()
-        line_parts = ['"%r" %r' % (unichr( char ), char)]
+        line_parts = ['OnChar "%r" %r' % (unichr( char ), char)]
 
         key = event.GetKeyCode()
         line_parts.append( ' key %r' % (key,) )

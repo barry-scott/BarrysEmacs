@@ -28,7 +28,7 @@
 		
 		(error-occurred (kill-process Python-debugger-process))
 		
-		(setq cli-name (concat Python-debugger-python " " (file-name "emacs$library:bemacs_python_debugger.py") " " Python-debugger-main-module))
+		(setq cli-name (concat Python-debugger-python " " (file-name "emacs_library:bemacs_python_debugger.py") " " Python-debugger-main-module))
 		(start-DCL-process Python-debugger-process)
 		
 		(pop-to-buffer Python-debugger-output-buffer)

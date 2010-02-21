@@ -1,7 +1,7 @@
-(if (error-occurred (setq library-access (getenv "EMACS$LIBRARY_ACCESS")))
+(if (error-occurred (setq library-access (getenv "EMACS_LIBRARY_ACCESS")))
     (setq library-access 0))
 
-(extend-database-search-list "describe" "emacs$library:emacsdesc" library-access)
+(extend-database-search-list "describe" "emacs_library:emacsdesc" library-access)
 
 (defun
     (describe-command word

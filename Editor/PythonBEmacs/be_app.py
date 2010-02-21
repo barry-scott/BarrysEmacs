@@ -46,11 +46,16 @@ class BemacsApp(wx.App):
         self.__debug_noredirect = False
         self.__debug = True
         self.__wx_raw_debug = False
+        self.__log_stdout = False
 
         while len(args) > 1:
             arg = args[ 1 ]
             if arg == '--noredirect':
                 self.__debug_noredirect = True
+                del args[ 1 ]
+
+            elif arg == '--log-stdout':
+                self.__log_stdout = True
                 del args[ 1 ]
 
             elif arg == '--debug':
@@ -134,9 +139,6 @@ class BemacsApp(wx.App):
         wx.EVT_ACTIVATE_APP( self, try_wrapper( self.OnActivateApp ) )
         EVT_APP_CALLBACK( self, try_wrapper( self.OnAppCallBack ) )
 
-    def isStdIoRedirect( self ):
-        return not self.__debug_noredirect
-
     def eventWrapper( self, function ):
         return EventScheduling( self, function )
 
@@ -152,16 +154,16 @@ class BemacsApp(wx.App):
         else:
             self.log.setLevel( logging.INFO )
 
-        if self.isStdIoRedirect():
-            log_filename = be_platform_specific.getLogFilename()
-            # keep 10 logs of 100K each
-            handler = RotatingFileHandler( log_filename, 'a', 100*1024, 10 )
+        if self.__log_stdout:
+            handler = StdoutLogHandler()
             formatter = logging.Formatter( '%(asctime)s %(levelname)s %(message)s' )
             handler.setFormatter( formatter )
             self.log.addHandler( handler )
 
         else:
-            handler = StdoutLogHandler()
+            log_filename = be_platform_specific.getLogFilename()
+            # keep 10 logs of 100K each
+            handler = RotatingFileHandler( log_filename, 'a', 100*1024, 10 )
             formatter = logging.Formatter( '%(asctime)s %(levelname)s %(message)s' )
             handler.setFormatter( formatter )
             self.log.addHandler( handler )
@@ -284,22 +286,34 @@ class BemacsApp(wx.App):
     def __runEditor( self ):
         import be_editor
 
-        self.log.debug( 'BemacsApp.__runEditor()' )
-        self.editor = be_editor.BEmacs( self )
-        self.editor.initEmacsProfile( self.frame.emacs_panel )
-        
-        # stay in processKeys until editor quits
-        while True:
-            rc = self.editor.processKeys()
-            self.log.info( 'processKeys rc %r' % (rc,) )
+        try:
 
-            mod = self.editor.modifiedFilesExist()
-            if not mod:
-                break
+            self.log.debug( 'BemacsApp.__runEditor()' )
+            self.editor = be_editor.BEmacs( self )
+            self.editor.initEmacsProfile( self.frame.emacs_panel )
+            
+            # stay in processKeys until editor quits
+            while True:
+                rc = self.editor.processKeys()
+                self.log.info( 'processKeys rc %r' % (rc,) )
 
-            can_exit = self.callGuiFunction( self.guiYesNoDialog, (False,) );
-            if can_exit:
-                break
+                mod = self.editor.modifiedFilesExist()
+                if not mod:
+                    break
+
+                can_exit = self.callGuiFunction( self.guiYesNoDialog, (False,) );
+                if can_exit:
+                    break
+        except Exception, e:
+            self.log.exception( 'editor exception' )
+            dlg = wx.MessageDialog(
+                       self.frame,
+                        'Editor Exception',
+                        str(e),
+                        wx.ICON_EXCLAMATION
+                        )
+            rc = dlg.ShowModal()
+            dlg.Destroy()
 
         self.onGuiThread( self.quit, () )
 
@@ -426,13 +440,13 @@ class StdoutLogHandler(logging.Handler):
 
     def emit( self, record ):
         try:
-            msg = self.format(record) + '\n'
+            msg = self.format( record ) + '\n'
 
-            sys.__stdout__.write( msg )
+            sys.stdout.write( msg )
+            sys.stdout.flush()
 
         except:
-            self.handleError(record)
-
+            self.handleError( record )
 
 class FakeEditor:
     def __init__( self ):
