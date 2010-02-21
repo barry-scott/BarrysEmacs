@@ -499,10 +499,7 @@ class EmacsPanel(wx.Panel):
             # queue up this action until after th rest of GUI init has happend
             self.app.onGuiThread( self.app.onEmacsPanelReady, () )
 
-            # pass on?
-            event.Skip()
-
-        elif self.editor_bitmap is not None:
+        if self.editor_bitmap is not None:
             self.log.debug( 'EmacsPanel.OnPaint() editor_bitmap' )
             dc  = wx.PaintDC( self )
             dc.BeginDrawing()
@@ -572,6 +569,8 @@ class EmacsPanel(wx.Panel):
 
     def OnChar( self, event ):
         if self.eat_next_char:
+            self.__debugTermInput( 'OnChar eat_next_char' )
+
             self.eat_next_char = False
             return
 
