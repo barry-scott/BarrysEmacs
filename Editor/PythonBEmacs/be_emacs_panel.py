@@ -483,6 +483,7 @@ class EmacsPanel(wx.Panel):
             dc.BeginDrawing()
 
             dc.SetBackgroundMode( wx.SOLID )
+            dc.SetBackground( wx.Brush( bg_colours[ SYNTAX_DULL ] ) )
             dc.Clear()
             dc.SetFont( self.font )
 
@@ -499,8 +500,9 @@ class EmacsPanel(wx.Panel):
             # queue up this action until after th rest of GUI init has happend
             self.app.onGuiThread( self.app.onEmacsPanelReady, () )
 
-        if self.editor_bitmap is not None:
+        elif self.editor_bitmap is not None:
             self.log.debug( 'EmacsPanel.OnPaint() editor_bitmap' )
+
             dc  = wx.PaintDC( self )
             dc.BeginDrawing()
             dc.SetBackgroundMode( wx.SOLID )
