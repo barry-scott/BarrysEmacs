@@ -383,8 +383,6 @@ class EmacsPanel(wx.Panel):
         # point size and face need to choosen for platform
         if wx.Platform == '__WXMSW__':
             face = 'Courier New'
-            # windows assumes 75dpi the other 100dpi
-            point_size = 14 * 75 / 100
 
         elif wx.Platform == '__WXMAC__':
             face = 'Monaco'
