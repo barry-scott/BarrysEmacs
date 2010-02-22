@@ -308,8 +308,8 @@ class BemacsApp(wx.App):
             self.log.exception( 'editor exception' )
             dlg = wx.MessageDialog(
                        self.frame,
-                        'Editor Exception',
                         str(e),
+                        'Editor Exception',
                         wx.ICON_EXCLAMATION
                         )
             rc = dlg.ShowModal()
