@@ -56,11 +56,11 @@ class BemacsDatabaseTools:
 
 
     def create( self, lib_name ):
-        self._run_command( '%s %s -c' % (self.__dbcreate, lib_name) )
+        self._run_command( '"%s" "%s" -c' % (self.__dbcreate, lib_name) )
 
     def add( self, lib_name, filename ):
         basename = os.path.basename( filename )
-        self._run_command( '%s %s %s <%s' % (self.__dbadd, lib_name, basename, filename ) )
+        self._run_command( '"%s" "%s" "%s" <"%s"' % (self.__dbadd, lib_name, basename, filename ) )
 
 
 library_files =    [
