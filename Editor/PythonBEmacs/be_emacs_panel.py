@@ -479,6 +479,7 @@ class EmacsPanel(wx.Panel):
             self.first_paint = False
 
             dc = wx.PaintDC( self )
+
             dc.BeginDrawing()
 
             dc.SetBackgroundMode( wx.SOLID )
@@ -502,7 +503,21 @@ class EmacsPanel(wx.Panel):
         elif self.editor_bitmap is not None:
             self.log.debug( 'EmacsPanel.OnPaint() editor_bitmap' )
 
-            dc  = wx.PaintDC( self )
+            if wx.Platform == '__WXMAC__':
+                pdc = wx.PaintDC( self )
+                dc = wx.GCDC( pdc )
+                has_transparent = True
+
+            elif wx.Platform == '__WXMSW__':
+                pdc = wx.PaintDC( self )
+                dc = wx.GCDC( pdc )
+                has_transparent = True
+
+            elif wx.Platform == '__WXGTK__':
+                pdc = wx.PaintDC( self )
+                dc = wx.GCDC( pdc )
+                has_transparent = True
+
             dc.BeginDrawing()
             dc.SetBackgroundMode( wx.SOLID )
 
@@ -510,7 +525,7 @@ class EmacsPanel(wx.Panel):
 
             c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
 
-            if wx.Platform == '__WXMAC__':
+            if has_transparent:
                 # alpha blend the cursor
                 dc.SetBackgroundMode( wx.TRANSPARENT )
                 cursor_colour = wx.Colour( 0, 0, 0, 92 )
