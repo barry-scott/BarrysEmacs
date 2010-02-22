@@ -471,6 +471,7 @@ class FakeEditor:
 
         p.termUpdateBegin()
         p.termUpdateLine( None, new, 1 )
+        p.termTopos( 1, 7 )
         p.termUpdateEnd()
 
     def guiEventMouse( self, *args, **kwds ):
@@ -485,4 +486,5 @@ class FakeEditor:
 
         p.termUpdateBegin()
         p.termUpdateLine( None, new, 1 )
+        p.termTopos( 1, 10 )
         p.termUpdateEnd()
