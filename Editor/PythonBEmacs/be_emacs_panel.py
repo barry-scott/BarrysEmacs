@@ -354,7 +354,7 @@ for name in dir(wx):
 
 class EmacsPanel(wx.Panel):
     def __init__( self, app, parent ):
-        wx.Panel.__init__( self, parent, -1 )
+        wx.Panel.__init__( self, parent, -1, style=wx.WANTS_CHARS )
         app.log.debug( 'EmacsPanel.__init__()' )
 
         self.app = app
@@ -379,18 +379,18 @@ class EmacsPanel(wx.Panel):
         self.cursor_y = 1
         self.window_size = 0
 
+        point_size = 14
         # point size and face need to choosen for platform
         if wx.Platform == '__WXMSW__':
             face = 'Courier New'
-            point_size = 9
+            # windows assumes 75dpi the other 100dpi
+            point_size = 14 * 75 / 100
 
         elif wx.Platform == '__WXMAC__':
             face = 'Monaco'
-            point_size = 14
 
         else:
             face = 'Courier'
-            point_size = 14
 
         self.font = wx.Font( point_size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, face )
         print 'Font face: %r' % (self.font.GetFaceName(),)
@@ -503,20 +503,8 @@ class EmacsPanel(wx.Panel):
         elif self.editor_bitmap is not None:
             self.log.debug( 'EmacsPanel.OnPaint() editor_bitmap' )
 
-            if wx.Platform == '__WXMAC__':
-                pdc = wx.PaintDC( self )
-                dc = wx.GCDC( pdc )
-                has_transparent = True
-
-            elif wx.Platform == '__WXMSW__':
-                pdc = wx.PaintDC( self )
-                dc = wx.GCDC( pdc )
-                has_transparent = True
-
-            elif wx.Platform == '__WXGTK__':
-                pdc = wx.PaintDC( self )
-                dc = wx.GCDC( pdc )
-                has_transparent = True
+            pdc = wx.PaintDC( self )
+            dc = wx.GCDC( pdc )
 
             dc.BeginDrawing()
             dc.SetBackgroundMode( wx.SOLID )
@@ -525,21 +513,12 @@ class EmacsPanel(wx.Panel):
 
             c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
 
-            if has_transparent:
-                # alpha blend the cursor
-                dc.SetBackgroundMode( wx.TRANSPARENT )
-                cursor_colour = wx.Colour( 0, 0, 0, 92 )
-                dc.SetPen( wx.Pen( cursor_colour ) )
-                dc.SetBrush( wx.Brush( cursor_colour ) )
-                dc.DrawRectangle( c_x, c_y, self.char_width, self.char_length )
-
-            else:
-                dc.SetBackgroundMode( wx.SOLID )
-                cursor_colour = wx.Colour( 128, 128, 128, 0 )
-                dc.SetPen( wx.Pen( cursor_colour ) )
-                dc.SetBrush( wx.Brush( cursor_colour, wx.TRANSPARENT ) )
-                dc.DrawRectangle( c_x, c_y, self.char_width, self.char_length )
-                
+            # alpha blend the cursor
+            dc.SetBackgroundMode( wx.TRANSPARENT )
+            cursor_colour = wx.Colour( 0, 0, 0, 64 )
+            dc.SetPen( wx.Pen( cursor_colour ) )
+            dc.SetBrush( wx.Brush( cursor_colour ) )
+            dc.DrawRectangle( c_x, c_y, self.char_width, self.char_length )
 
             dc.EndDrawing()
 

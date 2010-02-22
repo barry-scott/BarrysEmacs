@@ -78,32 +78,31 @@ class BemacsFrame(wx.Frame):
         # Set the application icon
         self.SetIcon( be_images.getIcon( 'bemacs.png') )
 
-        if False:
-            # Add tool bar
-            t = self.CreateToolBar( name="main",
-                                    style=wx.TB_HORIZONTAL ) # | wx.NO_BORDER | wx.TB_TEXT )
+        # Add tool bar
+        t = self.CreateToolBar( name="main",
+                                style=wx.TB_HORIZONTAL ) # | wx.NO_BORDER | wx.TB_TEXT )
 
-            bitmap_size = (32, 32)
-            t.SetToolBitmapSize( bitmap_size )
-            t.AddSimpleTool( be_ids.id_SP_EditCut,
-                be_images.getBitmap( 'toolbar_images/editcut.png', bitmap_size ),
-                T_('Cut Files and Folders'), T_('Cut Files and Folders') )
-            t.AddSimpleTool( be_ids.id_SP_EditCopy,
-                be_images.getBitmap( 'toolbar_images/editcopy.png', bitmap_size ),
-                T_('Copy Files and Folders'), T_('Copy Files and Folders') )
-            t.AddSimpleTool( be_ids.id_SP_EditPaste,
-                be_images.getBitmap( 'toolbar_images/editpaste.png', bitmap_size ),
-                T_('Paste Files and Folders'), T_('Paste Files and Folders') )
+        bitmap_size = (32, 32)
+        t.SetToolBitmapSize( bitmap_size )
+        t.AddSimpleTool( be_ids.id_SP_EditCut,
+            be_images.getBitmap( 'toolbar_images/editcut.png', bitmap_size ),
+            T_('Cut Files and Folders'), T_('Cut Files and Folders') )
+        t.AddSimpleTool( be_ids.id_SP_EditCopy,
+            be_images.getBitmap( 'toolbar_images/editcopy.png', bitmap_size ),
+            T_('Copy Files and Folders'), T_('Copy Files and Folders') )
+        t.AddSimpleTool( be_ids.id_SP_EditPaste,
+            be_images.getBitmap( 'toolbar_images/editpaste.png', bitmap_size ),
+            T_('Paste Files and Folders'), T_('Paste Files and Folders') )
 
-            t.Realize()
+        t.Realize()
 
-            # Add the status bar
-            s = self.CreateStatusBar()
-            s.SetFieldsCount( BemacsFrame.status_num_fields )
-            s.SetStatusWidths( BemacsFrame.status_widths )
-            s.SetStatusText( T_("Barry's Emacs"), BemacsFrame.status_general )
-            s.SetStatusText( "", BemacsFrame.status_progress )
-            s.SetStatusText( T_("Ready"), BemacsFrame.status_action )
+        # Add the status bar
+        s = self.CreateStatusBar()
+        s.SetFieldsCount( BemacsFrame.status_num_fields )
+        s.SetStatusWidths( BemacsFrame.status_widths )
+        s.SetStatusText( T_("Barry's Emacs"), BemacsFrame.status_general )
+        s.SetStatusText( "", BemacsFrame.status_progress )
+        s.SetStatusText( T_("Ready"), BemacsFrame.status_action )
 
         # Create the main panel
         self.emacs_panel = be_emacs_panel.EmacsPanel( self.app, self )
