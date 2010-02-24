@@ -6,14 +6,15 @@
 PYTHON=python${PYTHON_VERSION}
 
 ifeq (${BUILDER_CFG_PLATFORM},Linux-Fedora)
-BEMACS_DOC_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM/BUILD
-BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM/ROOT/usr/local/bemacs
+BEMACS_DOC_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM/ROOT/usr/local/share/doc/bemacs
+BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM/ROOT/usr/local/lib/bemacs
+BEMACS_BIN_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM/ROOT/usr/local/bin
 BUILD_KIT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM
 
 else
 ifeq (${BUILDER_CFG_PLATFORM},Linux-Ubuntu)
 BEMACS_DOC_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree/usr/local/share/doc/bemacs
-BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree/usr/local/bemacs
+BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree/usr/local/lib/bemacs
 BUILD_KIT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG
 
 endif
@@ -33,7 +34,7 @@ build_Linux-Fedora: build_Linux # Fedora_rpm
 
 build_Linux-Ubuntu: build_Linux # Debian_pkg
 
-build_Linux: brand $(BEMACS_DOC_DIR) $(BEMACS_LIB_DIR) editor mlisp describe language quick_info docs
+build_Linux: brand $(BEMACS_DOC_DIR) $(BEMACS_LIB_DIR) $(BEMACS_BIN_DIR) editor bemacs mlisp describe language quick_info docs
 	@ echo Info: Linux kitting
 
 $(BEMACS_DOC_DIR)::
@@ -42,16 +43,24 @@ $(BEMACS_DOC_DIR)::
 $(BEMACS_LIB_DIR)::
 	 if [ ! -e $@ ]; then mkdir -p $@; fi
 
+$(BEMACS_BIN_DIR)::
+	 if [ ! -e $@ ]; then mkdir -p $@; fi
+
 editor:
 	@ echo Info: Building BEmacs images...
-	cd ../Editor; PATH=.:$$PATH; export BUILD_KIT_DIR=$(BEMACS_LIB_DIR); ./build.sh all
+	cd ../Editor && ./build.sh all
 	@ echo Info: Copy db utils...
-	cp ../Editor/obj-utils/dbadd $(BEMACS_LIB_DIR)
-	cp ../Editor/obj-utils/dbcreate $(BEMACS_LIB_DIR)
-	cp ../Editor/obj-utils/dbdel $(BEMACS_LIB_DIR)
-	cp ../Editor/obj-utils/dbprint $(BEMACS_LIB_DIR)
-	cp ../Editor/obj-utils/dblist $(BEMACS_LIB_DIR)
-	cp ../Editor/obj-utils/mll2db $(BEMACS_LIB_DIR)
+	cp ../Editor/obj-utils/dbadd	$(BEMACS_BIN_DIR)
+	cp ../Editor/obj-utils/dbcreate $(BEMACS_BIN_DIR)
+	cp ../Editor/obj-utils/dbdel	$(BEMACS_BIN_DIR)
+	cp ../Editor/obj-utils/dbprint	$(BEMACS_BIN_DIR)
+	cp ../Editor/obj-utils/dblist	$(BEMACS_BIN_DIR)
+	cp ../Editor/obj-utils/mll2db	$(BEMACS_BIN_DIR)
+
+
+bemacs:
+	@ copy Info: Copy PythonBEmacs...
+	cd ../Editor/PythonBEmacs && ./build-linux.sh ${BEMACS_BIN_DIR}
 
 mlisp:
 	@ echo Info: Copying Mlisp files...
