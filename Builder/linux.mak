@@ -49,6 +49,7 @@ $(BEMACS_BIN_DIR)::
 editor:
 	@ echo Info: Building BEmacs images...
 	cd ../Editor && ./build.sh all
+	cp ../Editor/obj-pybemacs/_bemacs.so ${BEMACS_BIN_DIR}
 	@ echo Info: Copy db utils...
 	cp ../Editor/obj-utils/dbadd	$(BEMACS_BIN_DIR)
 	cp ../Editor/obj-utils/dbcreate $(BEMACS_BIN_DIR)
@@ -59,14 +60,14 @@ editor:
 
 
 bemacs:
-	@ copy Info: Copy PythonBEmacs...
+	@ echo Info: Copy PythonBEmacs...
 	cd ../Editor/PythonBEmacs && ./build-linux.sh ${BEMACS_BIN_DIR}
 
 mlisp:
 	@ echo Info: Copying Mlisp files...
 	cp -f ../MLisp/emacsinit.ml	$(BEMACS_LIB_DIR); chmod ugo=r $(BEMACS_LIB_DIR)/emacsinit.ml
 	cp -f ../MLisp/emacs_profile.ml	$(BEMACS_LIB_DIR); chmod ugo=r $(BEMACS_LIB_DIR)/emacs_profile.ml
-	cd ../MLisp; $(PYTHON) create_library.py common,unix $(BEMACS_LIB_DIR)/emacslib $(BEMACS_LIB_DIR)
+	cd ../MLisp; $(PYTHON) create_library.py common,unix $(BEMACS_LIB_DIR)/emacslib $(BEMACS_BIN_DIR)
 
 describe:
 	@ echo Info: Making describe...
