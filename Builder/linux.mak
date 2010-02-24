@@ -6,6 +6,7 @@
 PYTHON=python${PYTHON_VERSION}
 
 ifeq (${BUILDER_CFG_PLATFORM},Linux-Fedora)
+BEMACS_ROOT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM/ROOT
 BEMACS_DOC_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM/ROOT/usr/local/share/doc/bemacs
 BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM/ROOT/usr/local/lib/bemacs
 BEMACS_BIN_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM/ROOT/usr/local/bin
