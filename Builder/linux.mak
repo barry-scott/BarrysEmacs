@@ -62,7 +62,7 @@ editor:
 
 bemacs:
 	@ echo Info: Copy PythonBEmacs...
-	cd ../Editor/PythonBEmacs && ./build-linux.sh ${BEMACS_BIN_DIR} ${BEMACS_LIB_DIR}
+	cd ../Editor/PythonBEmacs && ./build-linux.sh ${BEMACS_ROOT_DIR} ${BEMACS_BIN_DIR} ${BEMACS_LIB_DIR}
 
 mlisp:
 	@ echo Info: Copying Mlisp files...
