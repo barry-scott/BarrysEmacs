@@ -1,10 +1,17 @@
 #!/bin/sh
+ROOT_DIR=${1:? Root dir}
 BIN_DIR=${1:? Bin dir}
+LIB_DIR=${2:? Lib dir}
+
 ${PYTHON} make_be_images.py
 
-cp be_*.py ${BIN_DIR}
+cp be_*.py ${ROOT_DIR}${LIB_DIR}
 
-echo "#!$( which ${PYTHON} )" >${BIN_DIR}/bemacs
-cat ${BIN_DIR}/be_main.py >>${BIN_DIR}/bemacs
-rm ${BIN_DIR}/be_main.py
+cat <<EOF >${ROOT_DIR}${BIN_DIR}/bemacs
+#!$( which ${PYTHON} )
+import sys
+sys.path.insert( 0, "${LIB_DIR}" )
+import be_main
+sys.exit( be_main.main( sys.argv ) )
+EOF
 chmod +x ${BIN_DIR}/bemacs
