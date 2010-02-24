@@ -70,18 +70,18 @@ mlisp:
 
 describe:
 	@ echo Info: Making describe...
-	@ $(BEMACS_LIB_DIR)/dbcreate $(BEMACS_LIB_DIR)/emacsdesc -c
-	@ $(BEMACS_LIB_DIR)/mll2db ../Describe/em_desc.mll $(BEMACS_LIB_DIR)/emacsdesc
+	@ $(BEMACS_BIN_DIR)/dbcreate $(BEMACS_LIB_DIR)/emacsdesc -c
+	@ $(BEMACS_BIN_DIR)/mll2db ../Describe/em_desc.mll $(BEMACS_LIB_DIR)/emacsdesc
 
 language:
 	@ echo Info: Making language...
-	@ $(BEMACS_LIB_DIR)/dbcreate $(BEMACS_LIB_DIR)/emacslang -c
-	@ $(BEMACS_LIB_DIR)/mll2db ../Language/language.mll $(BEMACS_LIB_DIR)/emacslang
+	@ $(BEMACS_BIN_DIR)/dbcreate $(BEMACS_LIB_DIR)/emacslang -c
+	@ $(BEMACS_BIN_DIR)/mll2db ../Language/language.mll $(BEMACS_LIB_DIR)/emacslang
 
 quick_info:
 	@ echo Info: Making quick info...
-	@ $(BEMACS_LIB_DIR)/dbcreate $(BEMACS_LIB_DIR)/emacs_qinfo_c -c
-	@ $(BEMACS_LIB_DIR)/mll2db ../Describe/qi_cc.mll $(BEMACS_LIB_DIR)/emacs_qinfo_c
+	@ $(BEMACS_BIN_DIR)/dbcreate $(BEMACS_LIB_DIR)/emacs_qinfo_c -c
+	@ $(BEMACS_BIN_DIR)/mll2db ../Describe/qi_cc.mll $(BEMACS_LIB_DIR)/emacs_qinfo_c
 
 docs:
 	@ echo Info: Copying documentation...
@@ -110,6 +110,7 @@ Debian_pkg:
 	cd ${BUILD_KIT_DIR}; chmod +x ./create-dpkg.sh; ./create-dpkg.sh
 
 clean:
-	cd ../Editor; PATH=.:$$PATH; export BUILD_KIT_DIR=$(BEMACS_LIB_DIR); ./build.sh clean
+	cd ../Editor && ./build.sh clean
 	rm -rf $(BEMACS_DOC_DIR)
 	rm -rf $(BEMACS_LIB_DIR)
+	rm -rf $(BEMACS_BIN_DIR)
