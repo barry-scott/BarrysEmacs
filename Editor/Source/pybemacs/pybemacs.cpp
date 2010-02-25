@@ -66,7 +66,7 @@ public:
         Py::String py_emacs_user( args[0] );
         env_emacs_user = py_emacs_user.as_std_string( "utf-8" );
 
-        Py::String py_emacs_library( args[0] );
+        Py::String py_emacs_library( args[1] );
         env_emacs_library = py_emacs_library.as_std_string( "utf-8" );
     }
 

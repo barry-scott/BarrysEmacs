@@ -28,7 +28,7 @@ def getLocalePath( app ):
 def getNullDevice():
     return '/dev/null'
 
-def _setupPlatformSpecific( argv0 ):
+def setupPlatformSpecific_( argv0 ):
     global app_dir
 
     if argv0.startswith( '/' ):

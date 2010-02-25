@@ -32,7 +32,7 @@ def getLocalePath( app ):
 def getNullDevice():
     return 'NUL'
 
-def _setupPlatformSpecific( argv0 ):
+def setupPlatformSpecific_( argv0 ):
     if argv0.startswith( '/' ):
         app_dir = os.path.dirname( argv0 )
 

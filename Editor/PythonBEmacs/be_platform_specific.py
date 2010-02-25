@@ -29,7 +29,7 @@ def getLogFilename():
     return os.path.join( getUserDir(), 'Bemacs.log' )
 
 def setupPlatform( argv0 ):
-    _setupPlatformSpecific( argv0 )
+    setupPlatformSpecific_( argv0 )
 
     user_dir = getUserDir()
     if not os.path.exists( user_dir ):

@@ -18,7 +18,6 @@ import be_ids
 import be_exceptions
 import be_version
 import be_images
-import be_platform_specific
 
 import be_config
 

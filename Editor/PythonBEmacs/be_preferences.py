@@ -1,6 +1,6 @@
 '''
  ====================================================================
- Copyright (c) 2003-2008 Barry A Scott.  All rights reserved.
+ Copyright (c) 2003-2010 Barry A Scott.  All rights reserved.
 
  This software is licensed as described in the file LICENSE.txt,
  which you should have received as part of this distribution.
@@ -26,8 +26,6 @@ import xml.sax.saxutils
 
 import wx
 
-import be_platform_specific
-
 class ParseError(Exception):
     def __init__( self, value ):
         self.value = value
@@ -40,10 +38,9 @@ class ParseError(Exception):
 
 
 class Preferences:
-    def __init__( self, app, pref_filename, old_pref_filename ):
+    def __init__( self, app, pref_filename ):
         self.app = app
         self.pref_filename = pref_filename
-        self.old_pref_filename = old_pref_filename
 
         self.pref_data = None
 
@@ -56,7 +53,7 @@ class Preferences:
 
     def readPreferences( self ):
         try:
-            self.pref_data = PreferenceData( self.app.log, self.pref_filename, self.old_pref_filename )
+            self.pref_data = PreferenceData( self.app.log, self.pref_filename )
         except ParseError, e:
             self.app.log.error( str(e) )
             return
@@ -106,15 +103,12 @@ class Preferences:
             self.app.log.error( 'write preferences: %s' % e )
 
 class PreferenceData:
-    def __init__( self, log, xml_pref_filename, ini_pref_filename ):
+    def __init__( self, log, xml_pref_filename ):
         self.all_sections = {}
 
         if os.path.exists( xml_pref_filename ):
             log.info( 'Reading preferences from %s' % xml_pref_filename )
             self.__readXml( xml_pref_filename )
-        else:
-            log.info( 'Reading preferences from %s' % ini_pref_filename )
-            self.__readIni( ini_pref_filename )
 
     def __readXml( self, xml_pref_filename ):
         try:
@@ -130,7 +124,7 @@ class PreferenceData:
         except xml.parsers.expat.ExpatError, e:
             raise ParseError( str(e) )
 
-        prefs = dom.getElementsByTagName( 'workbench-preferences' )[0]
+        prefs = dom.getElementsByTagName( 'bemacs-preferences' )[0]
 
         self.__parseXmlChildren( prefs, self.all_sections )
 
@@ -166,37 +160,6 @@ class PreferenceData:
                 all_text.append( child.nodeValue )
 
         return ''.join( all_text )
-
-    def __readIni( self, pref_filename ):
-        pref_data = ConfigParser.RawConfigParser()
-        pref_data.read( pref_filename )
-
-        for section_name in pref_data.sections():
-            section_dict = {}
-            self.all_sections[ section_name ] = section_dict
-
-            for option_name in pref_data.options( section_name ):
-                option_name_parts = option_name.split('_')
-
-                if option_name_parts[-1][0] in '0123456789':
-                    option_name_prefix = '_'.join( option_name_parts[:-1] )
-                    option_name_index = int(option_name_parts[-1])
-
-                    section_dict.setdefault( option_name_index, {} )
-                    section_dict[ option_name_index ][ option_name_prefix ]  = pref_data.get( section_name, option_name )
-                else:
-                    section_dict[ option_name ] = pref_data.get( section_name, option_name )
-
-        for section_name, num_items_name, list_name in [
-                    ('Bookmarks','num_bookmarks','bookmark'),
-                    ('Projects' ,'num_projects','project')]:
-            if self.has_section( section_name ):
-                section = self.all_sections[ section_name ]
-                section_list = []
-                num_items = int( section[ num_items_name ] )
-                for index in range( 1, num_items+1 ):
-                    section_list.append( section.pop( index ) )
-                section[ list_name ] = section_list
 
     def __getElem( self, element_path ):
         node = self._dom
@@ -260,9 +223,9 @@ class PreferenceData:
 
     def write( self, f ):
         f.write( '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' )
-        f.write( '<workbench-preferences>\n' )
+        f.write( '<bemacs-preferences>\n' )
         self.__writeDictionary( f, self.all_sections, 4 )
-        f.write( '</workbench-preferences>\n' )
+        f.write( '</bemacs-preferences>\n' )
 
     def __writeDictionary( self, f, d, indent ):
         all_key_names = d.keys()

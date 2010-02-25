@@ -17,6 +17,8 @@ import sys
 import time
 import threading
 
+import be_platform_specific
+
 import _bemacs
 
 import wx

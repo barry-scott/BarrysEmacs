@@ -103,23 +103,22 @@ class BemacsApp(wx.App):
 
         self.setupLogging()
 
-        self.log.info( 'app_name %s app_dir %s' % (self.app_name, self.app_dir) )
         self.log.info( 'locale_path %s' % locale_path )
-        self.log.info( 'find %r' % gettext.find( 'pysvn_workbench', locale_path ) )
+        self.log.info( 'find %r' % gettext.find( 'bemacs', locale_path ) )
         self.log.info( 'info %r' % self.translation.info() )
         self.log.info( T_("Barry's Emacs") )
+
+        self.log.info( 'emacs_user %s' % be_platform_specific.getUserDir() )
+        self.log.info( 'emacs_library %s' % be_platform_specific.getLibraryDir() )
 
         if '--test' in args:
             self.prefs = be_preferences.Preferences(
                     self,
-                    be_platform_specific.getPreferencesFilename() + '.test',
-                    be_platform_specific.getOldPreferencesFilename() + '.test' )
-
+                    be_platform_specific.getPreferencesFilename() + '.test' )
         else:
             self.prefs = be_preferences.Preferences(
                     self,
-                    be_platform_specific.getPreferencesFilename(),
-                    be_platform_specific.getOldPreferencesFilename() )
+                    be_platform_specific.getPreferencesFilename() )
 
         self.lock_ui = 0
         self.need_activate_app_action = False
@@ -281,8 +280,8 @@ class BemacsApp(wx.App):
         import be_editor
 
         try:
-
             self.log.debug( 'BemacsApp.__runEditor()' )
+
             self.editor = be_editor.BEmacs( self )
             self.editor.initEmacsProfile( self.frame.emacs_panel )
             
