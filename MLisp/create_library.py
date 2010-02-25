@@ -5,10 +5,12 @@
 #    %2 - library name
 #    %3 - path to tools
 #
-import sys, os, string
+import sys
+import os
+import subprocess
 
 def main():
-    file_sets = string.split( sys.argv[1], ',' )
+    file_sets = sys.argv[1].split( ',' )
     lib_name = sys.argv[2]
     tool_path = sys.argv[3]
 
@@ -39,28 +41,32 @@ class BemacsDatabaseTools:
         if not os.path.exists( self.__dbadd ):
             raise ValueError, 'Missing tool %s' % self.__dbadd
 
-    def _run_command( self, command ):
-        #print command
-        pipe = os.popen( command + ' 2>&1' )
-        while 1:
-            # read a line from the process
-            log_line = pipe.readline()
-            # see if end of file
-            if log_line == '':                
-                break
+    def _run_command( self, cmd, filename=None ):
+        if filename is None:
+            stdin = subprocess.PIPE
+        else:
+            stdin = open( filename, 'r' )
 
-            # write to console
-            sys.stdout.write( log_line )
+        proc = subprocess.Popen(
+                    cmd,
+                    shell=False,
+                    stdin=stdin,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    )
 
-        status = pipe.close()
+        output = proc.stdout.read()
+        rc = proc.wait()
+        if output != '':
+            sys.stdout.write( output )
 
 
     def create( self, lib_name ):
-        self._run_command( '"%s" "%s" -c' % (self.__dbcreate, lib_name) )
+        self._run_command( [self.__dbcreate, lib_name, '-c'] )
 
     def add( self, lib_name, filename ):
         basename = os.path.basename( filename )
-        self._run_command( '"%s" "%s" "%s" <"%s"' % (self.__dbadd, lib_name, basename, filename ) )
+        self._run_command( [self.__dbadd, lib_name, basename], filename )
 
 
 library_files =    [
