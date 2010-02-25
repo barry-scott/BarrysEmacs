@@ -125,10 +125,7 @@ int put_config_env( const EmacsString &name, const EmacsString &value )
 
 EmacsString get_device_name_translation( const EmacsString &name )
 {
-    char *env = getenv( name.sdata() );
-	if( env == NULL )
-        env = "";
-    return env;
+    return get_config_env( name );
 }
 
 int get_file_parsing_override( const char *disk, int def_override )

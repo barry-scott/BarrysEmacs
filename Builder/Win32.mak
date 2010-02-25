@@ -60,13 +60,13 @@ editor: kitdir "$(KITROOT)\be.exe"
 	copy  "$(BUILDER_TOP_DIR)\Editor\obj-utils\dbprint.exe" "$(KITROOT)" >NUL
 	copy  "$(BUILDER_TOP_DIR)\Editor\obj-utils\mll2db.exe" "$(KITROOT)" >NUL
 
-	rem copy  "$(BUILDER_TOP_DIR)\Editor\editor\$(BUILDER_CFG_BUILD_TYPE)\editor.exe" "$(KITROOT)\BEmacsServer.exe" >NUL
-	rem copy  "$(BUILDER_TOP_DIR)\Editor\BEmacsComClient\$(BUILDER_CFG_BUILD_TYPE)\BEmacsComClient.exe" "$(KITROOT)\BEmacs.exe" >NUL
-	rem copy  "$(BUILDER_TOP_DIR)\Editor\BEmacsComClient\$(BUILDER_CFG_BUILD_TYPE)\BEmacsComClient.exe" "$(KITROOT)\BEmacsWait.exe" >NUL
-	rem python  "$(BUILDER_TOP_DIR)\Editor\BEmacsComClient\make_bemacs_cmd.py" make "$(KITROOT)\BEmacsWait.exe" main /wait
-	rem copy  "$(BUILDER_TOP_DIR)\Editor\BEmacsComClient\$(BUILDER_CFG_BUILD_TYPE)\BEmacsComClient.exe" "$(KITROOT)\vss-view.exe" >NUL
-	rem python  "$(BUILDER_TOP_DIR)\Editor\BEmacsComClient\make_bemacs_cmd.py" make "$(KITROOT)\vss-view.exe" main /package=vss-view
-	rem copy  "$(BUILDER_TOP_DIR)\BEmacsClassMoniker\ReleaseMinDependency\BEmacsClassMoniker.dll" "$(KITROOT)" >NUL
+	rem copy   "$(BUILDER_TOP_DIR)\Editor\editor\$(BUILDER_CFG_BUILD_TYPE)\editor.exe" "$(KITROOT)\BEmacsServer.exe" >NUL
+	rem copy   "$(BUILDER_TOP_DIR)\Editor\BEmacsComClient\$(BUILDER_CFG_BUILD_TYPE)\BEmacsComClient.exe" "$(KITROOT)\BEmacs.exe" >NUL
+	rem copy   "$(BUILDER_TOP_DIR)\Editor\BEmacsComClient\$(BUILDER_CFG_BUILD_TYPE)\BEmacsComClient.exe" "$(KITROOT)\BEmacsWait.exe" >NUL
+	rem python "$(BUILDER_TOP_DIR)\Editor\BEmacsComClient\make_bemacs_cmd.py" make "$(KITROOT)\BEmacsWait.exe" main /wait
+	rem copy   "$(BUILDER_TOP_DIR)\Editor\BEmacsComClient\$(BUILDER_CFG_BUILD_TYPE)\BEmacsComClient.exe" "$(KITROOT)\vss-view.exe" >NUL
+	rem python "$(BUILDER_TOP_DIR)\Editor\BEmacsComClient\make_bemacs_cmd.py" make "$(KITROOT)\vss-view.exe" main /package=vss-view
+	rem copy   "$(BUILDER_TOP_DIR)\BEmacsClassMoniker\ReleaseMinDependency\BEmacsClassMoniker.dll" "$(KITROOT)" >NUL
 
 mlisp:
 	echo Info: Copying Mlisp files...

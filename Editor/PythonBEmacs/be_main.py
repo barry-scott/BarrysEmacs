@@ -28,6 +28,10 @@ or (sys.platform == 'darwin' and '--noredirect' not in sys.argv) ):
     except EnvironmentError:
         pass
 
+elif sys.platform.startswith( 'win' ):
+    sys.stdout = open( 'nul', 'w', 0 )
+    sys.stderr = sys.stdout
+
 # make sure that we get 2.8 and not an earlier version
 try:
     import wxversion

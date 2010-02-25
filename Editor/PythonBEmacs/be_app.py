@@ -42,6 +42,7 @@ class BemacsApp(wx.App):
             self.app_dir = startup_dir
 
         self.emacs_library_dir = os.path.abspath( os.path.join( self.app_dir, 'emacs_library' ) )
+        self.emacs_library_dir = os.environ.get( 'BEMACS_EMACS_LIBRARY', self.emacs_library_dir )
 
         self.__debug_noredirect = False
         self.__debug = True
