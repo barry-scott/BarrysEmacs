@@ -282,6 +282,9 @@ int put_config_env( const EmacsString &name, const EmacsString &value )
     return putenv( buf.sdataHack() );
 }
 
+extern EmacsString env_emacs_user;
+extern EmacsString env_emacs_library;
+
 EmacsString get_config_env( const EmacsString &name )
 {
     char *value = getenv( name );
@@ -293,11 +296,9 @@ EmacsString get_config_env( const EmacsString &name )
     if( name == "emacs_path" )
         return env_emacs_path;
 
-    static EmacsString env_emacs_user(  "HOME:/bemacs" );
     if( name == "emacs_user" )
         return env_emacs_user;
 
-    static EmacsString env_emacs_library(  image_path );
     if( name == "emacs_library" )
         return env_emacs_library;
 

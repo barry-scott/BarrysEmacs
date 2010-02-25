@@ -15,6 +15,10 @@ import sys
 import os
 import locale
 
+#
+#   set a working STDOUT before loading most modules
+#
+
 # help debug when stdout goes nowhere useful
 # Mac OS X and Windows are the main problems
 if( os.environ.get( 'BEMACS_STDOUT_LOG', None ) is not None
@@ -29,7 +33,11 @@ or (sys.platform == 'darwin' and '--noredirect' not in sys.argv) ):
         pass
 
 elif sys.platform.startswith( 'win' ):
-    sys.stdout = open( 'nul', 'w', 0 )
+    sys.stdout = open( os.environ.get( 'BEMACS_STDOUT_LOG', 'nul' ), 'w' )
+    sys.stderr = sys.stdout
+
+elif 'BEMACS_STDOUT_LOG' in os.environ:
+    sys.stdout = open( os.environ[ 'BEMACS_STDOUT_LOG' ], 'w', 0 )
     sys.stderr = sys.stdout
 
 # make sure that we get 2.8 and not an earlier version
@@ -61,7 +69,7 @@ def main( args ):
     initLocale()
 
     # Create the win application and start its message loop
-    app = be_app.BemacsApp( startup_dir, args )
+    app = be_app.BemacsApp( args )
 
     if not prerequesitChecks():
         return 1
@@ -83,6 +91,7 @@ def initLocale():
 
         if encoding is None:
             encoding = 'UTF-8'
+
         if encoding.lower() == 'utf':
             encoding = 'UTF-8'
 

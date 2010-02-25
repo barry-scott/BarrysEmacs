@@ -34,15 +34,10 @@ import be_exceptions
 AppCallBackEvent, EVT_APP_CALLBACK = wx.lib.newevent.NewEvent()
 
 class BemacsApp(wx.App):
-    def __init__( self, startup_dir, args ):
+    def __init__( self, args ):
         self.args = args
-        self.app_name = os.path.basename( args[0] )
-        self.app_dir = os.path.dirname( args[0] )
-        if self.app_dir == '':
-            self.app_dir = startup_dir
 
-        self.emacs_library_dir = os.path.abspath( os.path.join( self.app_dir, 'emacs_library' ) )
-        self.emacs_library_dir = os.environ.get( 'BEMACS_EMACS_LIBRARY', self.emacs_library_dir )
+        be_platform_specific.setupPlatform( args[0] )
 
         self.__debug_noredirect = False
         self.__debug = True
@@ -87,8 +82,6 @@ class BemacsApp(wx.App):
 
         self.progress_format = None
         self.progress_values = {}
-
-        be_platform_specific.setupPlatform()
 
         locale_path = be_platform_specific.getLocalePath( self )
         self.translation = gettext.translation(

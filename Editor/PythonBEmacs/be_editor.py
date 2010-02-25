@@ -23,7 +23,9 @@ import wx
 
 class BEmacs(_bemacs.BemacsEditor):
     def __init__( self, app ):
-        _bemacs.BemacsEditor.__init__( self, app.emacs_library_dir )
+        _bemacs.BemacsEditor.__init__( self,
+                be_platform_specific.getUserDir(),
+                be_platform_specific.getLibraryDir() )
 
         self.app = app
         self.log = app.log

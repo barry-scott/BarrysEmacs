@@ -23,18 +23,14 @@ else:
     from be_platform_unix_specific import *
 
 def getPreferencesFilename():
-    return os.path.join( getApplicationDir(), 'Bemacs.xml' )
-
-def getOldPreferencesFilename():
-    return os.path.join( getApplicationDir(), 'Bemacs.ini' )
+    return os.path.join( getUserDir(), 'Bemacs.xml' )
 
 def getLogFilename():
-    return os.path.join( getApplicationDir(), 'Bemacs.log' )
+    return os.path.join( getUserDir(), 'Bemacs.log' )
 
-def getLastCheckinMessageFilename():
-    return os.path.join( getApplicationDir(), 'log_message.txt' )
+def setupPlatform( argv0 ):
+    _setupPlatformSpecific( argv0 )
 
-def setupPlatform():
-    app_dir = getApplicationDir()
-    if not os.path.exists( app_dir ):
-        os.makedirs( app_dir )
+    user_dir = getUserDir()
+    if not os.path.exists( user_dir ):
+        os.makedirs( user_dir )

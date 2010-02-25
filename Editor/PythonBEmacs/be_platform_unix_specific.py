@@ -1,6 +1,6 @@
 '''
  ====================================================================
- Copyright (c) 2008 Barry A Scott.  All rights reserved.
+ Copyright (c) 2008-2010 Barry A Scott.  All rights reserved.
 
  This software is licensed as described in the file LICENSE.txt,
  which you should have received as part of this distribution.
@@ -13,11 +13,36 @@
 '''
 import os
 
-def getApplicationDir():
-    return os.path.join( os.environ['HOME'], 'bemacs' )
+app_dir = None
+library_dir = None
+
+def getUserDir():
+    return os.environ.get( 'BEMACS_USER', os.path.join( os.environ['HOME'], 'bemacs' ) )
+
+def getLibraryDir():
+    return os.environ.get( 'BEMACS_LIBRARY', library_dir )
 
 def getLocalePath( app ):
-    return os.path.join( app.app_dir, 'locale' )
+    return os.path.join( app_dir, 'locale' )
 
 def getNullDevice():
     return '/dev/null'
+
+def _setupPlatformSpecific( argv0 ):
+    global app_dir
+
+    if argv0.startswith( '/' ):
+        app_dir = os.path.dirname( argv0 )
+
+    elif '/' in app_dir:
+            app_dir = os.path.dirname( os.path.abspath( argv0 ) )
+
+    else:
+        for folder in [p.strip() for s in os.environ.get( 'PATH', '' ).split( ':' )]:
+            app_path = os.path.abspath( os.path.join( folder, argv0 ) )
+            if os.path.exists( app_path ):
+                app_dir = os.path.dirname( app_path )
+                break
+
+    if app_dir == '':
+        app_dir = os.getcwd()

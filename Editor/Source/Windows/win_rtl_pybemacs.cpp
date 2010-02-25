@@ -19,8 +19,8 @@ int is_windows_nt;
 
 unsigned long main_thread_id;
 
+extern EmacsString env_emacs_user;
 extern EmacsString env_emacs_library;
-
 
 void EmacsInitialisation::os_specific_init()
 {
@@ -103,7 +103,6 @@ EmacsString get_config_env( const EmacsString &name )
     if( name == "emacs_path" )
         return env_emacs_path;
 
-    static EmacsString env_emacs_user( "HOME:/bemacs" );
     if( name == "emacs_user" )
         return env_emacs_user;
 
