@@ -36,7 +36,7 @@ def setupPlatformSpecific_( argv0 ):
     if argv0.startswith( '/' ):
         app_dir = os.path.dirname( argv0 )
 
-    elif '/' in app_dir:
+    elif '/' in argv0:
             app_dir = os.path.dirname( os.path.abspath( argv0 ) )
 
     else:
