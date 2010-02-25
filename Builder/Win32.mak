@@ -41,8 +41,8 @@ editor: kitdir "$(KITROOT)\be.exe"
 
 "$(KITROOT)\be.exe":
 	@echo Info: Build Editor $(BUILDER_CFG_BUILD_TYPE)
-	cd $(BUILDER_TOP_DIR)\editor && .\build
-	cd $(BUILDER_TOP_DIR)\editor\PythonBEmacs && .\build
+	cd $(BUILDER_TOP_DIR)\editor && .\build-win32
+	cd $(BUILDER_TOP_DIR)\editor\PythonBEmacs && .\build-win32
 
 !if "$(MSVC_VERSION)" == "71"
 	devenv bemacs.sln /build $(BUILDER_CFG_BUILD_TYPE) /project bemacs 
@@ -90,5 +90,5 @@ quick_info:
 	"$(KITROOT)\mll2db" "$(BUILDER_TOP_DIR)\describe\qi_cc.mll" "$(KITROOT)\emacs_library\emacs_qinfo_c"
 
 clean:
-	cd $(BUILDER_TOP_DIR)\editor && .\build clean
+	cd $(BUILDER_TOP_DIR)\editor && .\build-win32 clean
 	if exist $(KITROOT) rmdir /s /q  $(KITROOT)

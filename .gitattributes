@@ -17,6 +17,7 @@ Editor/PythonBEmacs.sln -text
 Editor/PythonBEmacs/bemacs-win32.cmd -text
 Editor/PythonBEmacs/bemacs.icns -text
 Editor/PythonBEmacs/bemacs.png -text svneol=unset#image/png
+Editor/PythonBEmacs/build-win32.cmd -text
 Editor/PythonBEmacs/toolbar_images/edit.png -text svneol=unset#image/png
 Editor/PythonBEmacs/toolbar_images/editcopy.png -text svneol=unset#image/png
 Editor/PythonBEmacs/toolbar_images/editcut.png -text svneol=unset#image/png
@@ -39,7 +40,6 @@ Editor/Source/Windows/Resources/toolbar_view.bmp -text
 Editor/Source/Windows/Resources/toolbar_window.bmp -text
 Editor/Source/Windows/Resources/win_doc.ico -text
 Editor/Source/Windows/Resources/win_emacs.ico -text
-Editor/build.cmd -text
 Editor/make-Linux-Fedora.mak -text
 Editor/make-Linux-Ubuntu.mak -text
 Editor/make-pybemacs-Linux-Fedora.mak -text

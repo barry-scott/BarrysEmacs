@@ -49,7 +49,7 @@ $(BEMACS_BIN_DIR)::
 
 editor:
 	@ echo Info: Building BEmacs images...
-	cd ../Editor && ./build.sh all
+	cd ../Editor && ./build-linux.sh all
 	cp ../Editor/obj-pybemacs/_bemacs.so ${BEMACS_LIB_DIR}
 	@ echo Info: Copy db utils...
 	cp ../Editor/obj-utils/dbadd	$(BEMACS_BIN_DIR)
