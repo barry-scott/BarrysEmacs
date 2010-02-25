@@ -50,7 +50,7 @@ $(BEMACS_BIN_DIR)::
 editor:
 	@ echo Info: Building BEmacs images...
 	cd ../Editor && ./build.sh all
-	cp ../Editor/obj-pybemacs/_bemacs.so ${BEMACS_BIN_DIR}
+	cp ../Editor/obj-pybemacs/_bemacs.so ${BEMACS_LIB_DIR}
 	@ echo Info: Copy db utils...
 	cp ../Editor/obj-utils/dbadd	$(BEMACS_BIN_DIR)
 	cp ../Editor/obj-utils/dbcreate $(BEMACS_BIN_DIR)
@@ -113,6 +113,4 @@ Debian_pkg:
 
 clean:
 	cd ../Editor && ./build.sh clean
-	rm -rf $(BEMACS_DOC_DIR)
-	rm -rf $(BEMACS_LIB_DIR)
-	rm -rf $(BEMACS_BIN_DIR)
+	rm -rf $(BEMACS_ROOT_DIR)
