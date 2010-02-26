@@ -47,12 +47,12 @@ int file_is_directory( const EmacsString &file )
 }
 
 FileParse::FileParse()
-: disk()            // disk: or //server/service
-, path()            // /path/
-, filename()            // name
-, filetype()            // .type
-, result_spec()            // full file spec with all fields filled in
-, wild(0)            // true if any field is wild
+: disk()                    // disk: or //server/service
+, path()                    // /path/
+, filename()                // name
+, filetype()                // .type
+, result_spec()             // full file spec with all fields filled in
+, wild(0)                   // true if any field is wild
 , filename_maxlen(0)        // how long filename can be
 , filetype_maxlen(0)        // how long filetype can be
 , file_case_sensitive(0)    // true if case is important
@@ -60,11 +60,6 @@ FileParse::FileParse()
 
 void FileParse::init()
 {
-    disk = EmacsString::null;
-    path = EmacsString::null;
-    filename = EmacsString::null;
-    filetype = EmacsString::null;
-    result_spec = EmacsString::null;
 }
 
 FileParse::~FileParse()
@@ -104,6 +99,7 @@ device_loop:
         // leave the device name as it is
         //
         EmacsString new_value = get_device_name_translation( disk );
+
         if( new_value.isNull() )
             disk.append( ":" );
         else

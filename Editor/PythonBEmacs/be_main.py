@@ -21,8 +21,8 @@ import locale
 
 # help debug when stdout goes nowhere useful
 # Mac OS X and Windows are the main problems
-if( os.environ.get( 'BEMACS_STDOUT_LOG', None ) is not None
-or (sys.platform == 'darwin' and '--noredirect' not in sys.argv) ):
+if sys.platform == 'darwin' and '--noredirect' not in sys.argv:
+    print 'qqq2'
     try:
         sys.stdout = open( os.environ.get( 'BEMACS_STDOUT_LOG', '/tmp/bemacs.tmp' ), 'w', 0 )
         sys.stderr = sys.stdout
@@ -32,7 +32,7 @@ or (sys.platform == 'darwin' and '--noredirect' not in sys.argv) ):
     except EnvironmentError:
         pass
 
-elif sys.platform.startswith( 'win' ):
+elif sys.platform.startswith( 'win' ) and '--noredirect' not in sys.argv:
     sys.stdout = open( os.environ.get( 'BEMACS_STDOUT_LOG', 'nul' ), 'w' )
     sys.stderr = sys.stdout
 

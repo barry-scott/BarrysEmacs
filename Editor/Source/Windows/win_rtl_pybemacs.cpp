@@ -57,7 +57,20 @@ void DebugPrintf( const EmacsString &text )
     if( buf[-1] != '\n' )
         buf.append( "\n" );
 
-    //OutputDebugString( buf );
+    static FILE *debug_file = NULL;
+
+    if( debug_file == NULL )
+    {
+        char *filename = getenv( "BEMACS_DEBUG_LOG" );
+        if( filename != NULL )
+            debug_file = fopen( filename, "w" );
+    }
+
+    if( debug_file != NULL )
+    {
+        fputs( buf.sdata(), debug_file );
+        fflush( debug_file );
+    }
 }
 
 #ifdef _DEBUG

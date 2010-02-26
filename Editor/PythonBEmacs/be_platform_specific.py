@@ -26,7 +26,7 @@ def getPreferencesFilename():
     return os.path.join( getUserDir(), 'Bemacs.xml' )
 
 def getLogFilename():
-    return os.path.join( getUserDir(), 'Bemacs.log' )
+    return os.environ.get( 'BEMACS_GUI_LOG', os.path.join( getUserDir(), 'Bemacs.log' ) )
 
 def setupPlatform( argv0 ):
     setupPlatformSpecific_( argv0 )

@@ -3,7 +3,6 @@ BEmacsClassMoniker/BEmacsClassMoniker.aps -text
 BEmacsClassMoniker/RES/ICON1.ICO -text
 Builder/Win32.mak -text
 Builder/build-win32.cmd -text
-Builder/build.cmd -text
 Builder/builder_custom_init.cmd eol=crlf
 Editor/BEmacsComClient/icon1.ico -text
 Editor/BEmacsComClient/icon2.ico -text
