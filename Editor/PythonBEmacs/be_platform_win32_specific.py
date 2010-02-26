@@ -33,10 +33,12 @@ def getNullDevice():
     return 'NUL'
 
 def setupPlatformSpecific_( argv0 ):
-    if argv0.startswith( '/' ):
+    global app_dir
+
+    if argv0[1:3] ==':\\':
         app_dir = os.path.dirname( argv0 )
 
-    elif '/' in argv0:
+    elif '\\' in argv0:
             app_dir = os.path.dirname( os.path.abspath( argv0 ) )
 
     else:
@@ -45,6 +47,3 @@ def setupPlatformSpecific_( argv0 ):
             if os.path.exists( app_path ):
                 app_dir = os.path.dirname( app_path )
                 break
-
-    if app_dir == '':
-        app_dir = os.getcwd()
