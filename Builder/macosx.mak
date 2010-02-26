@@ -66,6 +66,6 @@ MacOSX_pkg:
 	#cd $(BUILD_KIT_DIR); chmod +x ./make-macosx-kit.sh; ./make-macosx-kit.sh
 
 clean:
-	cd ../Editor && export BUILD_KIT_DIR="$(BEMACS_LIB_DIR)"; ./build.sh clean
+	cd ../Editor && export BUILD_KIT_DIR="$(BEMACS_LIB_DIR)"; ./build-macosx.sh clean
 	rm -rf "$(BEMACS_DOC_DIR)"
 	rm -rf "$(BEMACS_LIB_DIR)"
