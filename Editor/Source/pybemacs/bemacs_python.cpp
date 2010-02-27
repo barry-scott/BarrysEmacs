@@ -925,10 +925,19 @@ Expression convertPyObjectToEmacsExpression( const Py::Object &obj )
         expr = Expression( int( long( Py::Int( obj ) ) ) );
     }
     else
-    if( obj.isString() )
+    if( obj.isUnicode() )
     {
         Py::String str( obj );
-        EmacsString string( EmacsString::copy, PyString_AsString( str.ptr() ), str.size() );
+        EmacsString string( EmacsString::copy, str.unicode_data(), str.size() );
+        expr = Expression( string );
+    }
+    else
+    if( obj.isString() )
+    {
+        Py::Bytes str( obj );
+        Py::String uni( str.decode( "utf-8" ) );
+
+        EmacsString string( EmacsString::copy, uni.unicode_data(), uni.size() );
         expr = Expression( string );
     }
     else
@@ -966,8 +975,7 @@ Py::Object convertEmacsExpressionToPyObject( const Expression &expr )
     case ISSTRING:
         {
         EmacsString string( expr.asString() );
-
-        obj = Py::String( string.sdata(), string.length() );
+        obj = Py::String( reinterpret_cast<const Py_UNICODE *>( string.unicode_data() ), string.length() );
         }
         break;
 

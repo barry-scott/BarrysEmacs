@@ -332,6 +332,8 @@ public:
         }
         catch( Py::Exception &e )
         {
+            ml_value = Expression();
+
             reportException( fn_name, e );
         }
     }
@@ -850,38 +852,6 @@ SystemExpressionRepresentationString ui_filter_file_list;
 
 SystemExpressionRepresentationString ui_search_string;
 SystemExpressionRepresentationString ui_replace_string;
-
-int ui_edit_copy()
-{
-    return 0;
-}
-
-int ui_edit_paste()
-{
-    return 0;
-}
-
-int ui_frame_state()
-{
-    ml_value = Expression( "normal" );
-
-    return 0;
-}
-
-int ui_frame_minimize()
-{
-    return 0;
-}
-
-int ui_frame_restore()
-{
-    return 0;
-}
-
-int ui_add_to_recent_file_list()
-{
-    return 0;
-}
 
 class TerminalControl_Python: public EmacsView
 {

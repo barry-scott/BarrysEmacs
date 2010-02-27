@@ -191,6 +191,7 @@ library_files =    [
     ('common',    'Library/pc-mouse.ml'),
     ('common',    'Library/process.key'),
     ('common',    'Library/process.ml'),
+    ('common',    'Library/pybemacs-ui.ml'),
     ('common',    'Library/python-console.ml'),
     ('common',    'Library/python-mode.key'),
     ('common',    'Library/python-mode.ml'),

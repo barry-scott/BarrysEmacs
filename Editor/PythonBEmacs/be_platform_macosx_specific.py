@@ -16,10 +16,17 @@ import os
 app_dir = None
 
 def getUserDir():
-    return os.environ.get( 'BEMACS_USER', os.path.join( os.environ['HOME'], 'bemacs' ) )
+    folder = os.environ.get( 'BEMACS_EMACS_USER', os.path.join( os.environ['HOME'], 'bemacs' ) )
+    assert folder is not None
+    return folder
 
 def getLibraryDir():
-    return os.environ.get( 'BEMACS_LIBRARY', os.path.join( app_dir, 'emacs_library' ) )
+    assert app_dir is not None
+    folder = os.environ.get( 'BEMACS_EMACS_LIBRARY', os.path.join( app_dir, 'emacs_library' ) )
+    print 'getLibraryDir() -> %s' % (folder,)
+    assert folder is not None
+    assert os.path.exists( folder )
+    return folder
 
 def getLocalePath( app ):
     return os.path.join( app_dir, 'locale' )
@@ -42,3 +49,5 @@ def setupPlatformSpecific_( argv0 ):
             if os.path.exists( app_path ):
                 app_dir = os.path.abspath( os.path.dirname( app_path ) )
                 break
+
+    assert app_dir is not None

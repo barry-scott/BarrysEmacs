@@ -39,6 +39,16 @@ class BEmacs(_bemacs.BemacsEditor):
 
         self.__gui_result_event = threading.Event()
 
+        self.__clipboard_data = None
+
+        self.hook_ui_handlers = {
+            "edit-copy":    self.uiHookEditCopy,
+            "edit-paste":   self.uiHookEditPaste,
+            "test1":        self.uiHookTest1,
+            "test2":        self.uiHookTest2,
+            }
+
+
     def initEmacsProfile( self, window ):
         self.log.debug( 'BEmacs.initEmacsProfile()' )
         assert window is not None
@@ -95,6 +105,73 @@ class BEmacs(_bemacs.BemacsEditor):
         self.__event_queue.put( (self.openFile, (filename,)) )
 
     #--------------------------------------------------------------------------------
+    def uiHookTest1( self, cmd ):
+        self.setGuiResultSuccess( 99 )
+
+    def uiHookTest2( self, cmd, text1, text2 ):
+        dlg = wx.MessageDialog(
+                    self.window,
+                    unicode(text1),
+                    unicode(text2),
+                    wx.YES_NO | wx.NO_DEFAULT | wx.ICON_EXCLAMATION
+                    )
+        rc = dlg.ShowModal()
+        dlg.Destroy()
+
+        if rc == wx.ID_YES:
+            self.setGuiResultSuccess( 'yes' )
+        else:
+            self.setGuiResultSuccess( 'no' )
+
+
+    def uiHookEditCopy( self, cmd, text ):
+        self.__clipboard_data = wx.TextDataObject()
+        self.__clipboard_data.SetText( text )
+        if wx.TheClipboard.Open():
+            wx.TheClipboard.SetData( self.__clipboard_data )
+            wx.TheClipboard.Close()
+            self.setGuiResultSuccess( None )
+
+        else:
+            self.setGuiResultError( ValueError( 'failed to set data on clipboard' ) )
+
+    def uiHookEditPaste( self, cmd ):
+        success = False
+        do = wx.TextDataObject()
+        if wx.TheClipboard.Open():
+            success = wx.TheClipboard.GetData( do )
+            wx.TheClipboard.Close()
+
+        if success:
+            text = do.GetText().replace( '\r', '\n' )
+            self.setGuiResultSuccess( text )
+
+        else:
+            self.setGuiResultError( ValueError( 'clipboard is empty' ) )
+
+    def hookUserInterface( self, *args ):
+        self.log.debug( 'hookUserInterface( %r )' % (args,) )
+        cmd = args[0]
+        if cmd in self.hook_ui_handlers:
+            self.log.debug( 'hookUserInterface calling handler' )
+            self.app.onGuiThread( self.hook_ui_handlers[ cmd ], args )
+            self.log.debug( 'hookUserInterface waiting for result' )
+
+            error, value = self.getGuiResult()
+
+            self.log.debug( 'hookUserInterface error %r value %r' % (error, value) )
+
+            if error is not None:
+                self.log.debug( 'hookUserInterface handler error return' )
+                raise error
+
+            else:
+                self.log.debug( 'hookUserInterface handler normal return' )
+                return value
+
+        else:
+            raise ValueError( 'Unknown command %r' % (cmd,) )
+
     def getGuiResult( self ):
         self.__gui_result_event.clear()
         self.__gui_result_event.wait()
@@ -102,42 +179,13 @@ class BEmacs(_bemacs.BemacsEditor):
         self.__gui_result = None
         return result
 
-    def setGuiResult( self, result ):
-        self.__gui_result = result
+    def setGuiResultSuccess( self, result ):
+        self.__gui_result = (None, result)
         self.__gui_result_event.set()
 
-    def hookUserInterface( self, *args ):
-        print 'hookUserInterface( %r )' % (args,)
-
-        cmd = args[0]
-        if cmd == 'test1':
-            self.app.onGuiThread( self.uiHookTest1, () )
-            return self.getGuiResult()
-
-        elif cmd == 'test2' and len(args) == 3:
-            self.app.onGuiThread( self.uiHookTest2, (str( args[1] ), str( args[2] )) )
-            return self.getGuiResult()
-
-        return None
-
-    def uiHookTest1( self ):
-        self.setGuiResult( 99 )
-
-    def uiHookTest2( self, text1, text2 ):
-        dlg = wx.MessageDialog(
-                    self.window,
-                    text1,
-                    text2,
-                    wx.YES_NO | wx.NO_DEFAULT | wx.ICON_EXCLAMATION
-                    )
-        rc = dlg.ShowModal()
-        dlg.Destroy()
-
-        if rc == wx.ID_YES:
-            self.setGuiResult( 'yes' )
-        else:
-            self.setGuiResult( 'no' )
-
+    def setGuiResultError( self, error ):
+        self.__gui_result = (error, None)
+        self.__gui_result_event.set()
 
     #--------------------------------------------------------------------------------
     def termCheckForInput( self ):

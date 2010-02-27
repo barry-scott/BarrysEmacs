@@ -45,12 +45,6 @@ extern int dump_histogram(void);
 # endif
 # if defined( PYBEMACS )
 extern int ui_python_hook(void);
-extern int ui_edit_copy(void);
-extern int ui_edit_paste(void);
-extern int ui_frame_state(void);
-extern int ui_frame_restore(void);
-extern int ui_frame_minimize(void);
-extern int ui_add_to_recent_file_list(void);
 # endif
 # ifdef XWINDOWS
 extern int motif_add_menu_keys_command(void);
@@ -542,12 +536,6 @@ static void init_fncs_a( void )
 #endif
 # if defined( PYBEMACS )
     EMACS_NEW BoundName( "UI-python-hook", ui_python_hook );
-    EMACS_NEW BoundName( "UI-edit-copy", ui_edit_copy );
-    EMACS_NEW BoundName( "UI-edit-paste", ui_edit_paste );
-    EMACS_NEW BoundName( "UI-frame-state", ui_frame_state );
-    EMACS_NEW BoundName( "UI-frame-minimize", ui_frame_minimize );
-    EMACS_NEW BoundName( "UI-frame-restore", ui_frame_restore );
-    EMACS_NEW BoundName( "UI-add-to-recent-file-list", ui_add_to_recent_file_list );
 # endif
 # ifdef XWINDOWS
     EMACS_NEW BoundName( "UI-add-menu-keys", motif_add_menu_keys_command );
