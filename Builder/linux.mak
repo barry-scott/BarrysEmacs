@@ -112,5 +112,5 @@ Debian_pkg:
 	cd ${BUILD_KIT_DIR}; chmod +x ./create-dpkg.sh; ./create-dpkg.sh
 
 clean:
-	cd ../Editor && ./build.sh clean
+	cd ../Editor && ./build-linux.sh clean
 	rm -rf $(BEMACS_ROOT_DIR)
