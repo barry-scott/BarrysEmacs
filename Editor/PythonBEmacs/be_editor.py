@@ -25,13 +25,9 @@ import wx
 
 class BEmacs(_bemacs.BemacsEditor):
     def __init__( self, app ):
-        print 'qqq-editor-1', _bemacs
-        print 'qqq-editor-1', be_platform_specific.getUserDir()
-        print 'qqq-editor-1', be_platform_specific.getLibraryDir()
         _bemacs.BemacsEditor.__init__( self,
                 be_platform_specific.getUserDir(),
                 be_platform_specific.getLibraryDir() )
-        print 'qqq-editor-2'
 
         self.app = app
         self.log = app.log

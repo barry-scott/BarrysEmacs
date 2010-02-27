@@ -17,10 +17,10 @@ app_dir = None
 library_dir = None
 
 def getUserDir():
-    return os.environ.get( 'BEMACS_USER', os.path.join( os.environ['HOME'], 'bemacs' ) )
+    return os.environ.get( 'BEMACS_EMACS_USER', os.path.join( os.environ['HOME'], 'bemacs' ) )
 
 def getLibraryDir():
-    return os.environ.get( 'BEMACS_LIBRARY', library_dir )
+    return os.environ.get( 'BEMACS_EMACS_LIBRARY', library_dir )
 
 def getLocalePath( app ):
     return os.path.join( app_dir, 'locale' )
@@ -46,3 +46,5 @@ def setupPlatformSpecific_( argv0 ):
 
     if app_dir == '':
         app_dir = os.getcwd()
+
+# build will add definition of library_dir

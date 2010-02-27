@@ -18,7 +18,7 @@ setup(
                         'plist':
                             dict(
                                 CFBundleDocumentTypes=
-                                    [dict(  CFBundleTypeExtensions=["qqq"],
+                                    [dict(  CFBundleTypeExtensions=["ml"],
                                             CFBundleTypeName="Text Document",
                                             CFBundleTypeRole="Editor")
                                     ,dict(  CFBundleTypeExtensions=["txt"],

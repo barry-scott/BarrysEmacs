@@ -17,3 +17,6 @@ import be_main
 sys.exit( be_main.main( sys.argv ) )
 EOF
 chmod +x ${ROOT_BIN_DIR}/bemacs
+
+cat <<EOF >>${ROOT_LIB_DIR}/be_platform_unix_specific.py
+library_dir = "${LIB_DIR}"

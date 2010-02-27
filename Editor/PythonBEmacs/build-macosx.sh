@@ -11,7 +11,7 @@ fi
 rm -rf build ${DIST_DIR}
 
 mkdir ${DIST_DIR}
-python2.6 make-images.py
+python2.6 make_be_images.py
 export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/obj-pybemacs
 python2.6 setup-macosx.py py2app --dist-dir  ${DIST_DIR} --no-strip 2>&1 | tee a.log
 

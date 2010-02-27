@@ -22,15 +22,8 @@ import locale
 # help debug when stdout goes nowhere useful
 # Mac OS X and Windows are the main problems
 if sys.platform == 'darwin' and '--noredirect' not in sys.argv:
-    print 'qqq2'
-    try:
-        sys.stdout = open( os.environ.get( 'BEMACS_STDOUT_LOG', '/tmp/bemacs.tmp' ), 'w', 0 )
-        sys.stderr = sys.stdout
-        print "Barry's Emacs starting"
-        sys.stdout.flush()
-
-    except EnvironmentError:
-        pass
+    sys.stdout = open( os.environ.get( 'BEMACS_STDOUT_LOG', '/dev/null' ), 'w', 0 )
+    sys.stderr = sys.stdout
 
 elif sys.platform.startswith( 'win' ) and '--noredirect' not in sys.argv:
     sys.stdout = open( os.environ.get( 'BEMACS_STDOUT_LOG', 'nul' ), 'w' )
@@ -54,11 +47,6 @@ def prerequesitChecks():
     return 1
 
 def main( args ):
-    startup_dir = os.getcwd()
-    print 'startup_dir %r' % (startup_dir,)
-    print 'args %r' % (args,)
-    sys.stdout.flush()
-
     # don't pollute any subprocesses with env vars
     # from packaging processing
     for envvar in ['PYTHONPATH', 'PYTHONHOME', 'PYTHONEXECUTABLE']:
