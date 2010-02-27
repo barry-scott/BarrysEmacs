@@ -607,9 +607,7 @@
 (defun mouse-motion()
     mousex mousey mouseevent
     
-    (setq mousey (+ (fetch-array control-string-parameters 1 3)))
-    (setq mousex (+ (fetch-array control-string-parameters 1 4)))
-    (setq mouseevent (+ (fetch-array control-string-parameters 1 1)))
+    (mouse-parameters)
     
     (if ~mouse-drag-active
 	(progn

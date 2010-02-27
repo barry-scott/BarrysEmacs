@@ -618,11 +618,14 @@ class EmacsPanel(wx.Panel):
 
         translation = None
 
-        if event.Moving():
-            pass
+        if event.Dragging():
+            self.__debugTermInput( 'Mouse drag shift %r line %r column %r' % (shift, line, column) )
+
+            translation = keys_mapping["mouse-motion"]
+
+            self.app.editor.guiEventMouse( translation, shift, [line, column] );
 
         elif event.IsButton():
-
             if event.LeftDown() or event.LeftDClick():
                 translation = keys_mapping["mouse-1-down"]
 
