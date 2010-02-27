@@ -136,27 +136,35 @@ class BEmacs(_bemacs.BemacsEditor):
             self.setGuiResultError( ValueError( 'failed to set data on clipboard' ) )
 
     def uiHookEditPaste( self, cmd ):
+        self.log.debug( 'uiHookEditPaste' )
         success = False
         do = wx.TextDataObject()
         if wx.TheClipboard.Open():
+            self.log.debug( 'uiHookEditPaste clip open' )
             success = wx.TheClipboard.GetData( do )
+            self.log.debug( 'uiHookEditPaste getdata %r' % (success,) )
             wx.TheClipboard.Close()
 
         if success:
-            text = do.GetText().replace( '\r', '\n' )
+            text = do.GetText().replace( '\r\n', '\n' ).replace( '\r', '\n' )
+            self.log.debug( 'uiHookEditPaste text %r' % (text,) )
             self.setGuiResultSuccess( text )
+            self.log.debug( 'uiHookEditPaste setGuiResultSuccess' )
 
         else:
             self.setGuiResultError( ValueError( 'clipboard is empty' ) )
+            self.log.debug( 'uiHookEditPaste setGuiResultError' )
 
     def hookUserInterface( self, *args ):
         self.log.debug( 'hookUserInterface( %r )' % (args,) )
         cmd = args[0]
         if cmd in self.hook_ui_handlers:
+            self.initGuiResult()
+
             self.log.debug( 'hookUserInterface calling handler' )
             self.app.onGuiThread( self.hook_ui_handlers[ cmd ], args )
-            self.log.debug( 'hookUserInterface waiting for result' )
 
+            self.log.debug( 'hookUserInterface waiting for result' )
             error, value = self.getGuiResult()
 
             self.log.debug( 'hookUserInterface error %r value %r' % (error, value) )
@@ -172,8 +180,10 @@ class BEmacs(_bemacs.BemacsEditor):
         else:
             raise ValueError( 'Unknown command %r' % (cmd,) )
 
-    def getGuiResult( self ):
+    def initGuiResult( self ):
         self.__gui_result_event.clear()
+
+    def getGuiResult( self ):
         self.__gui_result_event.wait()
         result = self.__gui_result
         self.__gui_result = None
