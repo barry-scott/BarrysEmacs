@@ -7,7 +7,7 @@
 
  ====================================================================
 
-    wb_app.py
+    be_app.py
 
     Based on code from pysvn WorkBench
 
@@ -76,9 +76,12 @@ class BemacsApp(wx.App):
         self.main_thread = threading.currentThread()
         if self.__wx_raw_debug:
             self.editor_thread = None
+            self.command_line_thread = None
             self.editor = FakeEditor( self )
+
         else:
             self.editor_thread = threading.Thread( name='Editor', target=self.__runEditor )
+            self.command_line_thread = threading.Thread( name='CommandLine', target=self.__runCommandLineHandler )
 
         self.progress_format = None
         self.progress_values = {}
@@ -217,6 +220,7 @@ class BemacsApp(wx.App):
     def onEmacsPanelReady( self ):
         self.log.debug( 'BemacsApp.onEmacsPanelReady()' )
         self.onGuiThread( self.__initEditorThread, () )
+        self.onGuiThread( self.__initCommandLineThread, () )
 
     def OnActivateApp( self, event ):
         if self.frame is None:
@@ -269,6 +273,77 @@ class BemacsApp(wx.App):
 
         del stack
 
+    def guiReportException( self, body, title ):
+        dlg = wx.MessageDialog(
+                   self.frame,
+                    body,
+                    title,
+                    wx.ICON_EXCLAMATION
+                    )
+        rc = dlg.ShowModal()
+        dlg.Destroy()
+
+    #--------------------------------------------------------------------------------
+    def __initCommandLineThread( self ):
+        self.log.debug( 'BemacsApp.__initCommandLineThread()' )
+        if self.__wx_raw_debug:
+            return
+
+        self.command_line_thread.start()
+
+    def __runCommandLineHandler( self ):
+        try:
+            self.__commandLineHandler()
+
+        except Exception, e:
+            self.log.exception( 'command line exception' )
+
+            self.callGuiFunction( self.guiReportException, (str(e), 'Command line Exception') )
+
+    def __commandLineHandler( self ):
+        import pwd
+        import select
+
+        fifo_name = os.environ.get( 'BEMACS_FIFO', '.bemacs/.emacs_command' )
+
+        if fifo_name.startswith( '/' ):
+            server_fifo = fifo_name
+
+        else:
+            e = pwd.getpwuid( os.geteuid() )
+
+            server_fifo = '/tmp/%s/%s' % (e.pw_name, fifo_name)
+
+        client_fifo = '%s_response' % (server_fifo,)
+
+        server_fifo += '_test'
+        client_fifo += '_test'
+
+        emacs_server_read_fd = os.open( server_fifo, os.O_RDONLY|os.O_NONBLOCK );
+        if emacs_server_read_fd < 0:
+            return
+
+        emacs_server_write_fd = os.open( server_fifo, os.O_WRONLY|os.O_NONBLOCK );
+        if emacs_server_write_fd < 0:
+            return
+
+        while True:
+            r, w, x = select.select( [emacs_server_read_fd], [], [], 1.0 )
+            if emacs_server_read_fd in r:
+                command_line = os.read( emacs_server_read_fd, 16384 )
+                if len( command_line ) > 0:
+                    self.onGuiThread( self.guiCommandLineHandler, (command_line,) )
+
+                emacs_client_write_fd = os.open( client_fifo, os.O_WRONLY|os.O_NONBLOCK );
+                if emacs_client_write_fd < 0:
+                    return
+
+                os.write( emacs_client_write_fd, ' ' )
+
+    def guiCommandLineHandler( self, command_line ):
+        self.log.info( 'CommandLine: %r' % (command_line,) )
+
+    #--------------------------------------------------------------------------------
     def __initEditorThread( self ):
         self.log.debug( 'BemacsApp.__initEditorThread()' )
         if self.__wx_raw_debug:
@@ -297,16 +372,12 @@ class BemacsApp(wx.App):
                 can_exit = self.callGuiFunction( self.guiYesNoDialog, (False,) );
                 if can_exit:
                     break
+
         except Exception, e:
             self.log.exception( 'editor exception' )
-            dlg = wx.MessageDialog(
-                       self.frame,
-                        str(e),
-                        'Editor Exception',
-                        wx.ICON_EXCLAMATION
-                        )
-            rc = dlg.ShowModal()
-            dlg.Destroy()
+
+            self.callGuiFunction( self.guiReportException, (str(e), 'Editor Exception') )
+
 
         self.onGuiThread( self.quit, () )
 
