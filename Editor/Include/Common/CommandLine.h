@@ -10,60 +10,77 @@ class EmacsArgument
 {
     friend class EmacsCommandLine;
 private:
-    EmacsArgument( bool _is_qualifier, const EmacsString &_value)
-        : is_qualifier( _is_qualifier )
-        , arg_value( _value )
+    EmacsArgument( bool is_qualifier, const EmacsString &value)
+    : m_is_qualifier( is_qualifier )
+    , m_arg_value( value )
     {}
+
+    EmacsArgument( const EmacsArgument &other )
+    : m_is_qualifier( other.m_is_qualifier )
+    , m_arg_value( other.m_arg_value )
+    {}
+
+    EmacsArgument &operator=( const EmacsArgument &other )
+    {
+        m_is_qualifier = other.m_is_qualifier;
+        m_arg_value = other.m_arg_value;
+
+        return *this;
+    }
+
 public:
-    bool isQualifier() const { return is_qualifier; }
-    const EmacsString &value() const { return arg_value; }
+    bool isQualifier() const { return m_is_qualifier; }
+    const EmacsString &value() const { return m_arg_value; }
+
 private:
-    bool is_qualifier;
-    EmacsString arg_value;
+    bool m_is_qualifier;
+    EmacsString m_arg_value;
 };
 
 class EmacsCommandLine
 {
 public:
     EmacsCommandLine();
+    EmacsCommandLine( const EmacsCommandLine &other );
     void setArguments( int argc, char **argv );
     void setArguments( const EmacsString &command_line );
 
-    EmacsCommandLine &operator=( EmacsCommandLine &new_command_line );
+    EmacsCommandLine &operator=( const EmacsCommandLine &new_command_line );
 
     void deleteArgument( int n );
     void setArgument( int n, const EmacsString &new_value, bool is_qual=false );
 
+    void addArgument( const EmacsString &value );
+
     int argumentCount() const;
     const EmacsArgument &argument( int n ) const;
+
 private:
     void deleteArguments();
-    void moveArguments( EmacsCommandLine &new_command_line );
+    void moveArguments( const EmacsCommandLine &new_command_line );
 
-    void addArgument( EmacsString &value );
 
     enum {MAX_ARGUMENTS = 1024};
-    int count;
-    EmacsArgument *arguments[MAX_ARGUMENTS];
-    bool no_more_qualifers;
+    int             m_count;
+    EmacsArgument  *m_arguments[MAX_ARGUMENTS];
+    bool            m_no_more_qualifers;
 };
 
 class EmacsCommandLineServerWorkItem : public EmacsWorkItem
 {
 public:
     EmacsCommandLineServerWorkItem()
-        : EmacsWorkItem()
-        , command_current_directory()
-        , command_line()
+    : EmacsWorkItem()
+    , m_command_line()
     {}
     virtual ~EmacsCommandLineServerWorkItem()
     {}
 
-    void newCommandLine( const EmacsString &_current_directory, const EmacsString &_command_line );
+    void newCommandLine( const EmacsString &current_directory, const EmacsCommandLine &new_command_line );
 
 protected:
     virtual void workAction(void);
 
-    EmacsString command_current_directory;
-    EmacsString command_line;
+    EmacsString         m_command_current_directory;
+    EmacsCommandLine    m_command_line;
 };

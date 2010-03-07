@@ -307,6 +307,41 @@ keys_mapping = {
     u'num-lock':                    __nextKeyMapping(),
 }
 
+cmd_to_ctrl_map = {
+    ord('@'):   0,
+    ord('a'):   1,
+    ord('b'):   2,
+    ord('c'):   3,
+    ord('d'):   4,
+    ord('e'):   5,
+    ord('f'):   6,
+    ord('g'):   7,
+    ord('h'):   8,
+    ord('i'):   9,
+    ord('j'):   10,
+    ord('k'):   11,
+    ord('l'):   12,
+    ord('m'):   13,
+    ord('n'):   14,
+    ord('o'):   15,
+    ord('p'):   16,
+    ord('q'):   17,
+    ord('r'):   18,
+    ord('s'):   19,
+    ord('t'):   20,
+    ord('u'):   21,
+    ord('v'):   22,
+    ord('w'):   23,
+    ord('x'):   24,
+    ord('y'):   25,
+    ord('z'):   26,
+    ord('['):   27,
+    ord('\\'):  28,
+    ord(']'):   29,
+    ord('^'):   30,
+    ord('_'):   31,
+    }
+
 special_keys = {
 #   Key code            trans           shift_trans         ctrl_trans          ctrl_shift_trans
     wx.WXK_BACK:        (u'backspace',  None,               u'ctrl-backspace',  None),
@@ -537,6 +572,13 @@ class EmacsPanel(wx.Panel):
         key = event.GetKeyCode()
         shift = event.ShiftDown()
         ctrl = event.ControlDown()
+
+        # map cmd into ctrl
+        if wx.Platform == '__WXMAC__':
+            cmd = event.ControlDown()
+            if cmd:
+                ctrl = True
+
         self.__debugTermInput( 'OnKeyDown key %r name %r shift %s' % (key, wx_key_names.get( key, 'unknown' ), T( shift )) )
 
         if key in special_keys:
@@ -597,6 +639,12 @@ class EmacsPanel(wx.Panel):
         line_parts.append( ' shift: %s' % T(shift) )
 
         self.__debugTermInput( (''.join( line_parts )).encode( 'utf-8' ) )
+
+        if( wx.Platform == '__WXMAC__'
+        and cmd
+        and char in cmd_to_ctrl_map ):
+            print 'mapped %d to %d' % (char, cmd_to_ctrl_map[ char ])
+            char = cmd_to_ctrl_map[ char ]
 
         self.app.editor.guiEventChar( unichr( char ), False )
 

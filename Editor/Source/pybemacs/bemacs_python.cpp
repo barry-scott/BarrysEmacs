@@ -974,8 +974,8 @@ Py::Object convertEmacsExpressionToPyObject( const Expression &expr )
 
     case ISSTRING:
         {
-        EmacsString string( expr.asString() );
-        obj = Py::String( reinterpret_cast<const Py_UNICODE *>( string.unicode_data() ), string.length() );
+        EmacsString str( expr.asString() );
+        obj = Py::String( reinterpret_cast<const Py_UNICODE *>( str.unicode_data() ), str.length() );
         }
         break;
 

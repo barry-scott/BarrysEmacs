@@ -116,7 +116,7 @@ extern int write_this( const EmacsString &fname );
 extern int process_keys( void );
 extern int executepackage( const EmacsString & );
 extern bool error_messages_available();
-extern int read_in_files( int, unsigned char ** );
+extern int read_in_files( void );
 extern bool send_exit_message( const EmacsString & );
 int region_around_match( int n );
 extern void read_restart_message( int set_gargs );

@@ -1683,7 +1683,7 @@ void EmacsWorkItem::addItem()
     work_queue.queueInsertAtTail( this );
 }
 
-bool EmacsWorkItem::enableWorkQueue( bool enable)
+bool EmacsWorkItem::enableWorkQueue( bool enable )
 {
     bool result = enabled;
 

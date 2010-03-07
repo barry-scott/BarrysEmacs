@@ -14,6 +14,7 @@
 from __future__ import with_statement;
 
 import sys
+import os
 import time
 import threading
 
@@ -70,7 +71,7 @@ class BEmacs(_bemacs.BemacsEditor):
 
         self.executeEnterHooks()
 
-        self.processCommandLine( self.app.args );
+        self.clientCommand( os.getcwd(), ['emacs'] + self.app.args[1:] );
 
     def guiCloseWindow( self ):
         self.__event_queue.put( (self.closeWindow, ()) )
@@ -90,6 +91,14 @@ class BEmacs(_bemacs.BemacsEditor):
         except Exception, e:
             self.log.error( 'openFile - %s' % (e,) )
 
+
+    def guiClientCommand( self, command_directory, command_args ):
+        self.__event_queue.put( (self.clientCommand, (command_directory, command_args)) )
+
+    def clientCommand( self, command_directory, command_args ):
+        assert len(command_args) > 0
+
+        self.newCommandLine( command_directory, command_args )
 
     def guiEventChar( self, ch, shift ):
         self.__event_queue.put( (self.inputChar, (ch, shift)) )

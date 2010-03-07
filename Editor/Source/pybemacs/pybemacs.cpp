@@ -49,6 +49,8 @@ class BemacsEditor;
 
 void init_python_terminal( BemacsEditor &editor );
 
+EmacsCommandLineServerWorkItem emacs_command_line_work_item;
+
 BemacsEditorAccessControl editor_access_control;
 
 EmacsString env_emacs_library;
@@ -82,7 +84,7 @@ public:
         behaviors().supportSetattro();
 
         PYCXX_ADD_NOARGS_METHOD( initEditor, "initEditor" );
-        PYCXX_ADD_VARARGS_METHOD( processCommandLine, "processCommandLine" );
+        PYCXX_ADD_VARARGS_METHOD( newCommandLine, "newCommandLine( current_directory, list_of_arg_strings )" );
 
         PYCXX_ADD_NOARGS_METHOD( executeEnterHooks, "executeEnterHooks" );
         PYCXX_ADD_NOARGS_METHOD( executeExitHooks, "executeExitHooks" );
@@ -148,102 +150,30 @@ public:
     PYCXX_NOARGS_METHOD_DECL( BemacsEditor, initEditor )
 
     //------------------------------------------------------------
-    Py::Object processCommandLine( const Py::Tuple &args )
+    Py::Object newCommandLine( const Py::Tuple &args )
     {
-        Py::List py_argv( args[0] );
+        Py::String py_cwd( args[0] );
+        Py::List py_argv( args[1] );
 
-        char **argv = reinterpret_cast<char **>( EMACS_MALLOC( (py_argv.length()+1) * sizeof( char * ), malloc_type_char ) );
+        if( py_argv.length() < 0 )
+            throw Py::ValueError( "arg 2 list cannot be empty" );
+
+        EmacsString current_directory( py_cwd.as_std_string( "utf-8" ) );
+
+        EmacsCommandLine new_command_line;
 
         for( unsigned int argc=0; argc < py_argv.length(); ++argc )
         {
             Py::String py_arg( py_argv[ argc ] );
             std::string std_arg( py_arg.as_std_string( "utf-8" ) );
-
-            char *arg = reinterpret_cast<char *>( EMACS_MALLOC( std_arg.size() + 1, malloc_type_char ) );
-            memcpy( arg, std_arg.c_str(), std_arg.size() );
-            arg[ std_arg.size() ] = 0;
-
-            argv[ argc ] = arg;
+            new_command_line.addArgument( std_arg );
         }
-        argv[ py_argv.length() ] = NULL;
 
-        {
-            PythonAllowThreads permission( editor_access_control );
-            process_args( py_argv.length(), argv );
-
-            for( size_t argc=0; argc < py_argv.length(); ++argc )
-            {
-                EMACS_FREE( argv[ argc ] );
-            }
-            EMACS_FREE( argv );
-
-            execute_package( command_line_arguments.argument(0).value() );
-        }
+        emacs_command_line_work_item.newCommandLine( current_directory, new_command_line );
 
         return Py::None();
     }
-    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, processCommandLine )
-
-    //------------------------------------------------------------
-    void process_args( int argc, char **argv )
-    {
-        command_line_arguments.setArguments( argc, argv );
-        command_line_arguments.setArgument( 0, "emacs", false );
-
-        int arg = 1;
-
-        while( arg<command_line_arguments.argumentCount() )
-        {
-            EmacsArgument argument( command_line_arguments.argument( arg ) );
-
-            if( argument.isQualifier() )
-            {
-                EmacsString str( argument.value() );
-                EmacsString key_string;
-                EmacsString val_string;
-
-                int equal_pos = str.first( '=' );
-                if( equal_pos > 0 )
-                {
-                    key_string = str( 1, equal_pos );
-                    val_string = str( equal_pos+1, str.length() );
-                }
-                else
-                {
-                    key_string = str( 1, str.length() );
-                }
-
-                bool delete_this_arg = true;
-
-                if( key_string.commonPrefix( "package" ) > 2 )
-                {
-                    command_line_arguments.setArgument( 0, val_string, false );
-                }
-                else if( key_string.commonPrefix( "name" ) > 3 )
-                {
-                    name_arg = val_string;
-                }
-                else
-                {
-                    delete_this_arg = false;
-                }
-
-                if( delete_this_arg )
-                {
-                    command_line_arguments.deleteArgument( arg );
-                }
-                else
-                {
-                    arg++;
-                }
-            }
-            else
-            {
-                arg++;
-            }
-        }
-    }
-    //------------------------------------------------------------
+    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, newCommandLine )
 
     //------------------------------------------------------------
     Py::Object executeEnterHooks( void )
@@ -999,4 +929,36 @@ int ui_python_hook()
 
     theActiveView->t_user_interface_hook();
     return 0;
+}
+
+void EmacsCommandLineServerWorkItem::workAction()
+{
+    // save the current directory as the previous
+    previous_directory = current_directory.asString();
+
+    // first change directory
+    chdir_and_set_global_record( m_command_current_directory );
+
+    // set the command line arguments
+    command_line_arguments = m_command_line;
+
+    // try the package
+    touched_command_args = false;
+    int rv = execute_package( command_line_arguments.argument(0).value() );
+
+    // if the the package did not touch the args read in files
+    if( rv == 0 && !touched_command_args )
+        read_in_files();
+
+    // revert back to the previous directory
+    // the package may have changed previous directory.
+    // ignore it if its blank
+    if( !previous_directory.isNull() )
+    {
+        EmacsString new_prev = current_directory.asString();
+        chdir_and_set_global_record( previous_directory.asString() );
+
+        // save package current dir in previous dir
+        previous_directory = new_prev;
+    }
 }

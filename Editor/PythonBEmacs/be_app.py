@@ -330,9 +330,9 @@ class BemacsApp(wx.App):
         while True:
             r, w, x = select.select( [emacs_server_read_fd], [], [], 1.0 )
             if emacs_server_read_fd in r:
-                command_line = os.read( emacs_server_read_fd, 16384 )
-                if len( command_line ) > 0:
-                    self.onGuiThread( self.guiCommandLineHandler, (command_line,) )
+                client_command = os.read( emacs_server_read_fd, 16384 )
+                if len( client_command ) > 0:
+                    self.onGuiThread( self.guiClientCommandHandler, (client_command,) )
 
                 emacs_client_write_fd = os.open( client_fifo, os.O_WRONLY|os.O_NONBLOCK );
                 if emacs_client_write_fd < 0:
@@ -340,8 +340,12 @@ class BemacsApp(wx.App):
 
                 os.write( emacs_client_write_fd, ' ' )
 
-    def guiCommandLineHandler( self, command_line ):
-        self.log.info( 'CommandLine: %r' % (command_line,) )
+    def guiClientCommandHandler( self, client_command ):
+        self.log.info( 'client_command: %r' % (client_command,) )
+        all_client_args = [part.decode('utf-8') for part in client_command.split( '\x00' )]
+        command_directory = all_client_args[0]
+        command_args = all_client_args[1:]
+        self.editor.guiClientCommand( command_directory, command_args )
 
     #--------------------------------------------------------------------------------
     def __initEditorThread( self ):

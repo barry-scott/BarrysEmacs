@@ -1,7 +1,7 @@
 //
 //    emclient.cpp
 //
-//    Copyright (c) 1997-2008 Barry A. Scott
+//    Copyright (c) 1997-2010 Barry A. Scott
 //
 #ifdef __GNUC__
 #include <typeinfo>
@@ -178,11 +178,9 @@ void parse_args( int argc, char **argv )
         }
 
         if( arg != 1 )
-            command[command_size++] = ' ';
-        command[command_size++] = '"';
+            command[command_size++] = '\x00';
         strcpy( &command[command_size], argv[arg] );
         command_size += strlen( argv[arg] );
-        command[command_size++] = '"';
     }
 }
 
@@ -359,7 +357,7 @@ void make_fifo( const EmacsString &fifo )
 {
     EmacsFileStat stats;
 
-    off_t bytes_of_data;
+    off_t bytes_of_data = 0;
     if( stats.stat( fifo.sdata() ) )
     {
         if( !S_ISFIFO( stats.data().st_mode ) )

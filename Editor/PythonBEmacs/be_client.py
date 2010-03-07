@@ -1,19 +1,17 @@
-'''
- ====================================================================
- Copyright (c) 2010 Barry A Scott.  All rights reserved.
+#!/usr/bin/python
+#
+# ====================================================================
+# Copyright (c) 2010 Barry A Scott.  All rights reserved.
+#
+# This software is licensed as described in the file LICENSE.txt,
+# which you should have received as part of this distribution.
+#
+# ====================================================================
+#
+#
+#    be_client.py
+#
 
- This software is licensed as described in the file LICENSE.txt,
- which you should have received as part of this distribution.
-
- ====================================================================
-
-
-    be_client.py
-
-
-    Based on code from pysvn WorkBench
-
-'''
 import sys
 import os
 import types
@@ -42,22 +40,36 @@ class ClientBase:
         self.all_command_elements = []
 
         self.opt_debug = 'BEAMCS_CLIENT_DEBUG' in os.environ
+        self.opt_name = None
         self.opt_wait = False
 
     def main( self, argv ):
         try:
-            self.parseArgsIntoCommandElements( argv )
+            self.__parseArgsIntoCommandElements( argv )
 
             if not self.processCommand():
                 self.startBemacsServer()
 
-                self.processCommand()
+                while not self.processCommand():
+                    time.sleep( 0.1 )
+
+            self.bringTofront()
 
         except ClientError, e:
             print 'Error: %s' % (str(e),)
 
-    def parseArgsIntoCommandElements( self, _argv ):
+    def startBemacsServer( self ):
+        raise NotImplementedError()
+
+    def bringTofront( self ):
+        raise NotImplementedError()
+
+    def __parseArgsIntoCommandElements( self, _argv ):
         self.all_command_elements.append( os.getcwd() )
+        # set the package name
+        self.all_command_elements.append( 'emacs' )
+
+        self.process_qualifers = True
 
         argv = iter( _argv )
 
@@ -70,21 +82,77 @@ class ClientBase:
             except StopIteration:
                 break
 
-            name = self.__getName( arg )
-
             try:
-                if name == '--name':
-                    self.opt_name = self.__getValue( arg, argv )
+                if self.isQualifier( arg ):
+                    if self.isNoMoreQualifiers( arg ):
+                        self.process_qualifers = False
 
-                elif arg == '--wait':
-                    self.opt_wait = True
-                    self.all_command_elements.append( arg )
+                    else:
+                        name = self.getArgQualifierName( arg )
+
+                        if name == 'name':
+                            self.opt_name = self.getArgValue( arg, argv )
+
+                        elif name == 'wait':
+                            self.opt_wait = True
+                            self.all_command_elements.append( arg )
+
+                        elif name == 'package':
+                            self.all_command_elements[1] = self.getArgValue( arg, argv )
 
                 else:
                     self.all_command_elements.append( arg )
 
             except StopIteration:
                 raise ClientError( '%s requires a value' % (arg,) )
+
+    def processCommand( self ):
+        raise NotImplementedError()
+
+    def _getCommandString( self ):
+        all_byte_elements = []
+        for element in self.all_command_elements:
+            if type(element) == types.UnicodeType:
+                all_byte_elements.append( element.encode( 'utf-8' ) )
+
+            else:
+                all_byte_elements.append( element )
+
+        return '\x00'.join( all_byte_elements )
+
+
+    def getArgQualifierName( self, arg ):
+        raise NotImplementedError()
+
+    def getArgValue( self, arg, argv ):
+        raise NotImplementedError()
+
+class ClientPosix(ClientBase):
+    def __init__( self ):
+        ClientBase.__init__( self )
+
+    def isQualifier( self, arg ):
+        if not self.process_qualifers:
+            return False
+
+        return arg.startswith( '--' )
+
+    def isNoMoreQualifiers( self, name ):
+        return name == '--'
+
+    def getArgQualifierName( self, arg ):
+        if '=' in arg:
+            arg, value = arg.split( '=', 1 )
+
+        return arg[2:]
+
+    def getArgValue( self, arg, argv ):
+        if '=' in arg:
+            arg, value = arg.split( '=', 1 )
+            return value
+
+        else:
+            return argv.next()
 
     def processCommand( self ):
         fifo_name = os.environ.get( 'BEMACS_FIFO', '.bemacs/.emacs_command' )
@@ -108,18 +176,17 @@ class ClientBase:
         if not os.path.exists( fifo_dir ):
             os.makedirs( fifo_dir )
 
-        self.makeFifo( server_fifo )
-        self.makeFifo( client_fifo )
+        self.__makeFifo( server_fifo )
+        self.__makeFifo( client_fifo )
 
-        fd_command = os.open( server_fifo, os.O_WRONLY|os.O_NONBLOCK )
-        if fd_command < 0:
+        try:
+            fd_command = os.open( server_fifo, os.O_WRONLY|os.O_NONBLOCK )
+        except OSError:
             return False
 
         fd_response = os.open( client_fifo, os.O_RDONLY|os.O_NONBLOCK )
-        if fd_response < 0:
-            return False
 
-        cmd = self.__getCommandString()
+        cmd = self._getCommandString()
         size = os.write( fd_command, cmd )
         if size != len(cmd):
             raise ClientError( 'write to command fifo failed' )
@@ -130,7 +197,11 @@ class ClientBase:
 
         try:
             while True:
-                response = os.read( fd_response, 16384 )
+                try:
+                    response = os.read( fd_response, 16384 )
+                except OSError:
+                    response = ''
+
                 if response == ' ':
                     seen_ack = True
                     if not self.opt_wait:
@@ -140,7 +211,7 @@ class ClientBase:
                     if response[0] == 'R':
                         break
 
-                time.sleep( 1.0 )
+                time.sleep( 0.1 )
 
             if len(response) > 1:
                 print response[1:]
@@ -150,18 +221,7 @@ class ClientBase:
         except IOError:
             return False
 
-    def __getCommandString( self ):
-        all_byte_elements = []
-        for element in self.all_command_elements:
-            if type(element) == types.UnicodeType:
-                all_byte_elements.append( element.encode( 'utf-8' ) )
-
-            else:
-                all_byte_elements.append( element )
-
-        return '\x00'.join( all_byte_elements )
-
-    def makeFifo( self, fifo_name ):
+    def __makeFifo( self, fifo_name ):
         if os.path.exists( fifo_name ):
             stats = os.stat( fifo_name )
             if not stat.S_ISFIFO( stats.st_mode ):
@@ -174,35 +234,47 @@ class ClientBase:
 
         os.mkfifo( fifo_name, stat.S_IRUSR|stat.S_IWUSR )
 
-    def __getName( self, arg ):
-        if '=' in arg:
-            arg, value = arg.split( '=', 1 )
 
-        return arg
+class ClientMacOsX(ClientPosix):
+    def __init__( self ):
+        ClientPosix.__init__( self )
 
-    def __getValue( self, arg, argv ):
-        if '=' in arg:
-            arg, value = arg.split( '=', 1 )
-            return value
+    def startBemacsServer( self ):
+        os.system( '/usr/bin/open -b org.barrys-emacs.bemacs' )
 
-        else:
-            return argv.next()
+    def bringTofront( self ):
+        self.startBemacsServer()
 
+class ClientUnix(ClientPosix):
+    def __init__( self ):
+        ClientPosix.__init__( self )
+
+    def startBemacsServer( self ):
+        print 'TBD start bemacs server'
 
 class ClientWindows(ClientBase):
     def __init__( self ):
         ClientBase.__init__( self )
 
-class ClientMacOsX(ClientBase):
-    def __init__( self ):
-        ClientBase.__init__( self )
+    def isQualifier( self, arg ):
+        return name.startswith( '/' )
 
-class ClientUnix(ClientBase):
-    def __init__( self ):
-        ClientBase.__init__( self )
+    def isNoMoreQualifiers( self, name ):
+        return False
 
+    def getArgQualifierName( self, arg ):
+        if ':' in arg:
+            arg, value = arg.split( ':', 1 )
 
+        return arg
 
+    def getArgValue( self, arg, argv ):
+        if ':' in arg:
+            arg, value = arg.split( ':', 1 )
+            return value
+
+        else:
+            return argv.next()
 
 if __name__ == '__main__':
     sys.exit( main( sys.argv ) )

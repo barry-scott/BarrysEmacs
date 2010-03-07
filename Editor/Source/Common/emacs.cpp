@@ -392,42 +392,6 @@ static void write_emacs_memory_file()
 }
 
 
-int read_in_files(void)
-{
-    int done_any_visiting = 0;
-    int saved_err = 0;
-
-    if( ! touched_command_args )
-        for( int i=1; i<command_line_arguments.argumentCount(); i++ )
-        {
-            saved_err = saved_err || ml_err;
-            ml_err = 0;
-            if( !command_line_arguments.argument(i).isQualifier() )
-            {
-                try
-                {
-                    // visit file can throw exceptions
-                    // if the user is prompted and types ^G
-                    visit_file
-                    (
-                    EmacsString( command_line_arguments.argument(i).value() ),
-                    1, 1,
-                    parent_path
-                    );
-                }
-                catch( EmacsException )
-                {
-                    // no need to clean up
-                }
-            }
-            done_any_visiting = 1;
-        }
-
-    touched_command_args = true;
-    ml_err = ml_err || saved_err;
-    return done_any_visiting;
-}
-
 extern int ui_frame_to_foreground(void);
 
 void EmacsCommandLineServerWorkItem::workAction()
@@ -515,6 +479,42 @@ void EmacsCommandLineServerWorkItem::workAction()
     }
 }
 #endif
+
+int read_in_files(void)
+{
+    int done_any_visiting = 0;
+    int saved_err = 0;
+
+    if( !touched_command_args )
+        for( int i=1; i<command_line_arguments.argumentCount(); i++ )
+        {
+            saved_err = saved_err || ml_err;
+            ml_err = 0;
+            if( !command_line_arguments.argument( i ).isQualifier() )
+            {
+                try
+                {
+                    // visit file can throw exceptions
+                    // if the user is prompted and types ^G
+                    visit_file
+                    (
+                    EmacsString( command_line_arguments.argument( i ).value() ),
+                    1, 1,
+                    parent_path
+                    );
+                }
+                catch( EmacsException )
+                {
+                    // no need to clean up
+                }
+            }
+            done_any_visiting = 1;
+        }
+
+    touched_command_args = true;
+    ml_err = ml_err || saved_err;
+    return done_any_visiting;
+}
 
 int execute_package( const EmacsString &package )
 {
@@ -769,16 +769,15 @@ int parse_dbg_flags( const EmacsString &flags )
 //
 EmacsString g_initialCurrentDirectory;
 
-void EmacsCommandLineServerWorkItem::newCommandLine
-    ( const EmacsString &_current_directory, const EmacsString &_command_line )
+void EmacsCommandLineServerWorkItem::newCommandLine( const EmacsString &current_directory, const EmacsCommandLine &new_command_line )
 {
-    command_current_directory = _current_directory;
-    command_line = _command_line;
+    m_command_current_directory = current_directory;
+    m_command_line = new_command_line;
 
     if( g_initialCurrentDirectory.isNull() )
     {
         //_dbg_msg( FormatString("newCommandLine: setting g_initialCurrentDirectory to %s") << command_current_directory );
-        g_initialCurrentDirectory = command_current_directory;
+        g_initialCurrentDirectory = m_command_current_directory;
     }
 
     addItem();

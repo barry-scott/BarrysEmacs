@@ -1,82 +1,72 @@
 //
 //    CommandLine.h
 //
-//    Copyright (c) 1997-2006 Barry A. Scott
+//    Copyright (c) 1997-2010 Barry A. Scott
 //
 #include <emacs.h>
 
 // transfer the command line from new_command_line to this object
 EmacsCommandLine::EmacsCommandLine()
-    : count(0)
-    , no_more_qualifers( false )
+: m_count(0)
+, m_no_more_qualifers( false )
 {
     for( int arg=0; arg<MAX_ARGUMENTS; arg++ )
-        arguments[arg] = NULL;
+    {
+        m_arguments[ arg ] = NULL;
+    }
 }
 
 //
 //    Take a Unix style command line
 //
-
 void EmacsCommandLine::setArguments( int argc, char **argv )
 {
     deleteArguments();
-    no_more_qualifers = false;
+    m_no_more_qualifers = false;
 
     if( argc > MAX_ARGUMENTS )
         argc = MAX_ARGUMENTS;
 
     for( int arg = 0; arg < argc; arg++ )
     {
-        EmacsString str( argv[arg] );
+        EmacsString str( argv[ arg ] );
         addArgument( str );
     }
 }
 
-
 void EmacsCommandLine::setArguments( const EmacsString &command_line )
 {
     deleteArguments();
-    no_more_qualifers = false;
-
-    bool skip_spaces = true;
-    bool in_quote = false;
+    m_no_more_qualifers = false;
 
     EmacsString value;
 
     for( int pos=0, len=command_line.length(); pos < len; pos++ )
     {
-        unsigned char ch = command_line[pos];
+        EmacsChar_t ch = command_line[ pos ];
 
-        if( ch == ' ' && !in_quote )
+        if( ch == 0 )
         {
-            if( !skip_spaces )
-            {
-                skip_spaces = true;
-                addArgument( value );
-                value = EmacsString::null;
-            }
+            addArgument( value );
+            value = EmacsString::null;
         }
         else
         {
-            skip_spaces = false;
-            if( ch == '"' )
-                in_quote = !in_quote;
-            else
-                value.append( ch );
+            value.append( ch );
         }
     }
+
     if( !value.isNull() )
+    {
         addArgument( value );
+    }
 }
 
-
-
-void EmacsCommandLine::addArgument( EmacsString &value )
+void EmacsCommandLine::addArgument( const EmacsString &value )
 {
     if( value == "--" )
     {
-        no_more_qualifers = true;
+        m_no_more_qualifers = true;
         return;
     }
 
@@ -87,15 +77,15 @@ void EmacsCommandLine::addArgument( EmacsString &value )
         value[0] == '+' ||
         value[0] == '-';
 
-    arguments[count] = new EmacsArgument( is_qual && !no_more_qualifers, value );
-    count++;
+    m_arguments[ m_count ] = new EmacsArgument( is_qual && !m_no_more_qualifers, value );
+    m_count++;
 }
 
-
-EmacsCommandLine &EmacsCommandLine::operator=( EmacsCommandLine &new_command_line )
+EmacsCommandLine &EmacsCommandLine::operator=( const EmacsCommandLine &new_command_line )
 {
     // must not assign to self
-    emacs_assert( this != &new_command_line );
+    if( this == &new_command_line )
+        return *this;
 
     deleteArguments();
     moveArguments( new_command_line );
@@ -105,59 +95,58 @@ EmacsCommandLine &EmacsCommandLine::operator=( EmacsCommandLine &new_command_lin
 
 void EmacsCommandLine::deleteArgument( int arg )
 {
-    emacs_assert( arg < count );
+    emacs_assert( arg < m_count );
 
-    delete arguments[arg];
+    delete m_arguments[ arg ];
 
-    int i; for( i=arg; i<count; i++ )
-        arguments[i] = arguments[i+1];
+    int i; for( i=arg; i<m_count; i++ )
+        m_arguments[i] = m_arguments[i+1];
 
-    arguments[i] = NULL;
-    count--;
+    m_arguments[i] = NULL;
+    m_count--;
 }
 
 void EmacsCommandLine::setArgument( int arg, const EmacsString &new_value, bool is_qual )
 {
-    emacs_assert( arg < count );
+    emacs_assert( arg < m_count );
 
-     arguments[arg]->arg_value = new_value;
-    arguments[arg]->is_qualifier = is_qual;
+    m_arguments[ arg ]->m_arg_value = new_value;
+    m_arguments[ arg ]->m_is_qualifier = is_qual;
 }
 
 int EmacsCommandLine::argumentCount() const
 {
-    return count;
+    return m_count;
 }
 
 const EmacsArgument &EmacsCommandLine::argument( int n ) const
 {
-    emacs_assert( n < count );
-    emacs_assert( arguments[n] != NULL );
+    emacs_assert( n < m_count );
+    emacs_assert( m_arguments[n] != NULL );
 
-    return *arguments[n];
+    return *m_arguments[n];
 }
 
 void EmacsCommandLine::deleteArguments()
 {
-    for( int arg=0; arg<MAX_ARGUMENTS; arg++ )
+    for( int arg=0; arg<m_count; arg++ )
     {
-        delete arguments[arg];
-        arguments[arg] = NULL;
+        delete m_arguments[ arg ];
+        m_arguments[ arg ] = NULL;
     }
 
-    count = 0;
+    m_count = 0;
 }
 
-void EmacsCommandLine::moveArguments( EmacsCommandLine &new_command_line )
+void EmacsCommandLine::moveArguments( const EmacsCommandLine &other )
 {
-    emacs_assert( count == 0 );
+    emacs_assert( this != &other );
+    emacs_assert( m_count == 0 );
 
-    count = new_command_line.count;
-    new_command_line.count = 0;
+    m_count = other.m_count;
 
-    for( int arg=0; arg<MAX_ARGUMENTS; arg++ )
+    for( int arg=0; arg<m_count; arg++ )
     {
-        arguments[arg] = new_command_line.arguments[arg];
-        new_command_line.arguments[arg] = NULL;
+        m_arguments[ arg ] = new EmacsArgument( *other.m_arguments[ arg ] );
     }
 }

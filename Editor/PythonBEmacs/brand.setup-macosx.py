@@ -6,6 +6,20 @@
 
 from setuptools import setup
 
+
+bemacs_doc_types = ['ml', 'mlp']
+
+editor_doc_types = [
+    'txt',
+    'c', 'h', 'cxx', 'hxx', 'cpp', 'hpp',
+    'py',
+    'html', 'htm', 'css', 'js',
+    'java',
+    'mak',
+    'sh',
+    'cmd', 'bat',
+    ]
+
 setup(
     app =           ['be_main.py'],
     data_files =    [],
@@ -18,11 +32,11 @@ setup(
                         'plist':
                             dict(
                                 CFBundleDocumentTypes=
-                                    [dict(  CFBundleTypeExtensions=["ml"],
-                                            CFBundleTypeName="Text Document",
+                                    [dict(  CFBundleTypeExtensions=bemacs_doc_types,
+                                            CFBundleTypeName="Barry's Emacs Document",
                                             CFBundleTypeRole="Editor")
-                                    ,dict(  CFBundleTypeExtensions=["txt"],
-                                            CFBundleTypeName="Text Document",
+                                    ,dict(  CFBundleTypeExtensions=editor_doc_types,
+                                            CFBundleTypeName="Document",
                                             CFBundleTypeRole="Editor"),],
                                 CFBundleIdentifier='org.barrys-emacs.bemacs',
                                 CFBundleName="Barry's Emacs",
