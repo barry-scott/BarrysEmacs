@@ -88,35 +88,35 @@
     ; mouse-wheel bindings
     ; 
     (bind-to-key
-	"(scroll-one-line-down (* mouse-wheel-multiplier (fetch-array  control-string-parameters 1 2)))"
+	"(scroll-one-line-down (* mouse-wheel-multiplier (mouse-wheel-amount)))"
 	"\[mouse-wheel-pos]"
     )
     (bind-to-key
-	"(scroll-one-line-up (* mouse-wheel-multiplier (fetch-array  control-string-parameters 1 2)))"
+	"(scroll-one-line-up (* mouse-wheel-multiplier (mouse-wheel-amount)))"
 	"\[mouse-wheel-neg]"
     )
     (bind-to-key
-	"(previous-line (* mouse-wheel-multiplier (fetch-array  control-string-parameters 1 2)))"
+	"(previous-line (* mouse-wheel-multiplier (mouse-wheel-amount)))"
 	"\[shift-mouse-wheel-pos]"
     )
     (bind-to-key
-	"(next-line (* mouse-wheel-multiplier (fetch-array  control-string-parameters 1 2)))"
+	"(next-line (* mouse-wheel-multiplier (mouse-wheel-amount)))"
 	"\[shift-mouse-wheel-neg]"
     )
     (bind-to-key
-	"(previous-page (fetch-array  control-string-parameters 1 2))"
+	"(previous-page (mouse-wheel-amount))"
 	"\[ctrl-mouse-wheel-pos]"
     )
     (bind-to-key
-	"(next-page (fetch-array  control-string-parameters 1 2))"
+	"(next-page (mouse-wheel-amount))"
 	"\[ctrl-mouse-wheel-neg]"
     )
     (bind-to-key
-	"(previous-page (fetch-array  control-string-parameters 1 2))"
+	"(previous-page (mouse-wheel-amount))"
 	"\[ctrl-shift-mouse-wheel-pos]"
     )
     (bind-to-key
-	"(next-page (fetch-array  control-string-parameters 1 2))"
+	"(next-page (mouse-wheel-amount))"
 	"\[ctrl-shift-mouse-wheel-neg]"
     )
 
@@ -128,7 +128,17 @@
 
 (defun mouse-off()
     (setq mouse-enable 0)
+
 )
+
+(defun mouse-wheel-amount()
+    (if
+        (= user-interface-type "python")
+        (fetch-array control-string-parameters 1)
+        (fetch-array control-string-parameters 1 2)
+    )
+)
+    
 
 ;   The routine mouse-parameters is used to get the parameters out
 ;   of the CSI argument string and put them in the caller's variables
