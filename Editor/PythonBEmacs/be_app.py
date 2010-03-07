@@ -14,6 +14,7 @@
 '''
 import sys
 import os
+import stat
 import types
 import logging
 import tempfile
@@ -36,6 +37,7 @@ AppCallBackEvent, EVT_APP_CALLBACK = wx.lib.newevent.NewEvent()
 class BemacsApp(wx.App):
     def __init__( self, args ):
         self.args = args
+        self.opt_name = None
 
         be_platform_specific.setupPlatform( args[0] )
 
@@ -316,15 +318,26 @@ class BemacsApp(wx.App):
 
         client_fifo = '%s_response' % (server_fifo,)
 
-        server_fifo += '_test'
-        client_fifo += '_test'
+        if self.opt_name is not None:
+            server_fifo += '_' + self.opt_name
+            client_fifo += '_' + self.opt_name
 
-        emacs_server_read_fd = os.open( server_fifo, os.O_RDONLY|os.O_NONBLOCK );
-        if emacs_server_read_fd < 0:
+        fifo_dir = os.path.dirname( server_fifo )
+
+        if not os.path.exists( fifo_dir ):
+            os.makedirs( fifo_dir )
+
+        self.__makeFifo( server_fifo )
+        self.__makeFifo( client_fifo )
+
+        try:
+            emacs_server_read_fd = os.open( server_fifo, os.O_RDONLY|os.O_NONBLOCK );
+        except OSError:
             return
 
-        emacs_server_write_fd = os.open( server_fifo, os.O_WRONLY|os.O_NONBLOCK );
-        if emacs_server_write_fd < 0:
+        try:
+            emacs_server_write_fd = os.open( server_fifo, os.O_WRONLY|os.O_NONBLOCK );
+        except OSError:
             return
 
         while True:
@@ -346,6 +359,19 @@ class BemacsApp(wx.App):
         command_directory = all_client_args[0]
         command_args = all_client_args[1:]
         self.editor.guiClientCommand( command_directory, command_args )
+
+    def __makeFifo( self, fifo_name ):
+        if os.path.exists( fifo_name ):
+            stats = os.stat( fifo_name )
+            if not stat.S_ISFIFO( stats.st_mode ):
+                print 'Error: %s is not a fifo' % (fifo_name,)
+
+            elif stats.st_size == 0:
+                return
+
+            os.remove( fifo_name )
+
+        os.mkfifo( fifo_name, stat.S_IRUSR|stat.S_IWUSR )
 
     #--------------------------------------------------------------------------------
     def __initEditorThread( self ):
