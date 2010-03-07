@@ -358,7 +358,14 @@ class BemacsApp(wx.App):
         all_client_args = [part.decode('utf-8') for part in client_command.split( '\x00' )]
         command_directory = all_client_args[0]
         command_args = all_client_args[1:]
+
+        self.bringToFront()
+
         self.editor.guiClientCommand( command_directory, command_args )
+
+    def bringToFront( self ):
+        if wx.Platform == '__WXGTK__':
+            self.guiYesNoDialog()
 
     def __makeFifo( self, fifo_name ):
         if os.path.exists( fifo_name ):
