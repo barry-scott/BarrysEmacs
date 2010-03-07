@@ -155,7 +155,7 @@ class ClientPosix(ClientBase):
             return argv.next()
 
     def processCommand( self ):
-        fifo_name = os.environ.get( 'BEMACS_FIFO', '.bemacs/.emacs_command' )
+        fifo_name = os.environ.get( 'BEMACS_FIFO', '.bemacs8/.emacs_command' )
 
         if fifo_name.startswith( '/' ):
             server_fifo = fifo_name
