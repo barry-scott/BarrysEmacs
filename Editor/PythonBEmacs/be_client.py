@@ -252,6 +252,36 @@ class ClientUnix(ClientPosix):
     def startBemacsServer( self ):
         print 'TBD start bemacs server'
 
+    def startBemacsServer( self ):
+        argv0 = sys.argv[0]
+
+        if argv0.startswith( '/' ):
+            app_dir = os.path.dirname( argv0 )
+
+        elif '/' in argv0:
+            app_dir = os.path.dirname( os.path.abspath( argv0 ) )
+
+        else:
+            for folder in [p.strip() for s in os.environ.get( 'PATH', '' ).split( ':' )]:
+                app_path = os.path.abspath( os.path.join( folder, argv0 ) )
+                if os.path.exists( app_path ):
+                    app_dir = os.path.dirname( app_path )
+                    break
+
+        if app_dir == '':
+            app_dir = os.getcwd()
+
+        server_path = os.path.join( app_dir, 'bemacs_server' )
+
+        if os.fork() == 0:
+            os.execl( server_path, server_path )
+
+    def bringTofront( self ):
+        pass
+
+
+
+
 class ClientWindows(ClientBase):
     def __init__( self ):
         ClientBase.__init__( self )
