@@ -34,11 +34,11 @@ def setupPlatformSpecific_( argv0 ):
     if argv0.startswith( '/' ):
         app_dir = os.path.dirname( argv0 )
 
-    elif '/' in app_dir:
+    elif '/' in argv0:
             app_dir = os.path.dirname( os.path.abspath( argv0 ) )
 
     else:
-        for folder in [p.strip() for s in os.environ.get( 'PATH', '' ).split( ':' )]:
+        for folder in [s.strip() for s in os.environ.get( 'PATH', '' ).split( ':' )]:
             app_path = os.path.abspath( os.path.join( folder, argv0 ) )
             if os.path.exists( app_path ):
                 app_dir = os.path.dirname( app_path )

@@ -1,6 +1,6 @@
 #!/bin/sh
 export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/PythonBEmacs:${BUILDER_TOP_DIR}/Editor/obj-pybemacs
-export emacs_library=${BUILDER_TOP_DIR}/Kits/Linux/RPM/ROOT/usr/local/bemacs
+export BEMACS_EMACS_LIBRARY=${BUILDER_TOP_DIR}/Kits/Linux/RPM/ROOT/usr/local/lib/bemacs
 
 if [ "$1" = "--gdb" ]
 then
