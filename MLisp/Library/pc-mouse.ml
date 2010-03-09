@@ -327,7 +327,7 @@
 
     (mouse-parameters)
     (mouse-reposition mousex mousey mouseevent)
-    (UI-edit-paste "clipboard")
+    (UI-edit-paste)
 )
 
 (defun mouse-paste-primary()
@@ -335,7 +335,7 @@
 
     (mouse-parameters)
     (mouse-reposition mousex mousey mouseevent)
-    (UI-edit-paste "primary")
+    (UI-edit-paste 1)
 )
 
 

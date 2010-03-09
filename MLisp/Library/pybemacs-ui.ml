@@ -7,9 +7,9 @@
     )
 )
 
-(defun UI-edit-paste()
+(defun UI-edit-paste(~primary 0)
     (error-occurred
-        (insert-string (UI-python-hook "edit-paste"))
+        (insert-string (UI-python-hook "edit-paste" ~primary))
     )
 )
 

@@ -144,11 +144,12 @@ class BEmacs(_bemacs.BemacsEditor):
         else:
             self.setGuiResultError( ValueError( 'failed to set data on clipboard' ) )
 
-    def uiHookEditPaste( self, cmd ):
-        self.log.debug( 'uiHookEditPaste' )
+    def uiHookEditPaste( self, cmd, use_primary=False ):
+        self.log.debug( 'uiHookEditPaste use_primary=%r' % (use_primary,) )
         success = False
         do = wx.TextDataObject()
         if wx.TheClipboard.Open():
+            wx.TheClipboard.UsePrimarySelection( use_primary )
             self.log.debug( 'uiHookEditPaste clip open' )
             success = wx.TheClipboard.GetData( do )
             self.log.debug( 'uiHookEditPaste getdata %r' % (success,) )
