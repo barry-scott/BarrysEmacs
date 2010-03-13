@@ -245,7 +245,7 @@ class ClientMacOsX(ClientPosix):
 
     def startBemacsServer( self ):
         if self.opt_start_app:
-            os.system( '/usr/bin/open -b org.barrys-emacs.bemacs' )
+            os.system( '/usr/bin/open -b org.barrys-emacs.bemacs-devel' )
 
     def bringTofront( self ):
         self.startBemacsServer()

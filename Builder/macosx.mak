@@ -63,7 +63,7 @@ docs:
 
 MacOSX_pkg:
 	@ echo Info: MacOSX package creation...
-	#cd $(BUILD_KIT_DIR); chmod +x ./make-macosx-kit.sh; ./make-macosx-kit.sh
+	cd ../Kits/MacOSX; sh ./make-macosx-kit.sh
 
 clean:
 	cd ../Editor && export BUILD_KIT_DIR="$(BEMACS_LIB_DIR)"; ./build-macosx.sh clean
