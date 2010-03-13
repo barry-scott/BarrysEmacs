@@ -309,18 +309,19 @@ public:
             all_args[ 2 ] = Py::String( "Barry's Emacs" );
             all_args[ 3 ] = Py::String( prompt.asPyString() );
 
-            Py::Object result( py_fn.apply( all_args ) );
+            Py::Boolean result( py_fn.apply( all_args ) );
 
-            ml_value = convertPyObjectToEmacsExpression( result );
+            return result.isTrue() ? 1 : 0;
         }
         catch( Py::Exception &e )
         {
             ml_value = Expression();
 
             reportException( fn_name, e );
+
+            return 0;
         }
 
-        return 0;
     } 
 
     //------------------------------------------------------------
