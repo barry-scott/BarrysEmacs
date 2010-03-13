@@ -1,7 +1,6 @@
 import sys
 import os
 import time
-import pysvn
 
 template_file_prefix = 'brand.'
 
@@ -18,7 +17,11 @@ def main( argv ):
         vi.setSvnVersion( argv[2] )
         vi.parseVersionInfo( argv[1] )
 
-        finder = Finder( vi )
+        if vi.is_svn_wc:
+            finder = SvnWcFinder( vi )
+        else:
+            finder = FileFinder( vi )
+
         finder.findAndBrandFiles( argv[2] )
 
     except Error, e:
@@ -27,8 +30,27 @@ def main( argv ):
 
     return 0
 
-class Finder:
+class FileFinder:
     def __init__( self, vi ):
+        self.__vi = vi
+
+    def findAndBrandFiles( self, path ):
+        print 'findAndBrandFiles',path
+        all_files = os.listdir( path )
+
+        for filename in all_files:
+            #print base
+            if filename.startswith( template_file_prefix ):
+                self.__vi.brandOneFile( os.path.join( path, filename ) )
+
+        for filename in all_files:
+            full_path = os.path.join( path, filename )
+            if os.path.isdir( full_path ):
+                self.findAndBrandFiles( full_path )
+
+class SvnWcFinder:
+    def __init__( self, vi ):
+        import pysvn
         self.__client = pysvn.Client()
         self.__vi = vi
 
@@ -66,6 +88,8 @@ class VersionInfo:
         self.__info['date'] = time.strftime( '%Y-%m-%d', now )
         self.__info['time'] = time.strftime( '%H:%M:%S', now )
 
+        self.is_svn_wc = True
+
     def parseVersionInfo( self, filename ):
         f = file( filename )
         for line in f:
@@ -88,6 +112,11 @@ class VersionInfo:
         if os.path.exists( svn_meta_dir ):
             cmd = 'svnversion -c "%s" >svn_version.dat' % (wc_path,)
             os.system( cmd )
+
+            self.is_svn_wc = True
+
+        else:
+            self.is_svn_wc = False
 
         output = open( 'svn_version.dat', 'r' ).read()
 
