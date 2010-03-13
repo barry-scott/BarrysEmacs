@@ -97,6 +97,14 @@ EmacsString::EmacsString( const wchar_t *string, int length )
 }
 #endif
 
+
+#if defined( PYBEMACS )
+EmacsString::EmacsString( const Py::String &str )
+: _rep( EMACS_NEW EmacsStringRepresentation( copy, 0, str.size(), str.unicode_data() ) )
+{
+}
+#endif
+
 static int EmacsChar_strlen( const EmacsChar_t *string )
 {
     const EmacsChar_t *p = string;
@@ -313,6 +321,13 @@ const EmacsChar_t *EmacsString::unicode_data() const
 {
     return _rep->data;
 }
+
+#if defined( PYBEMACS )
+Py::Object EmacsString::asPyString() const
+{
+    return Py::String( unicode_data(), length() );
+}
+#endif
 
 EmacsString::operator const char *()
 {

@@ -225,12 +225,13 @@ class BemacsApp(wx.App):
         self.onGuiThread( self.__initCommandLineThread, () )
 
     def OnActivateApp( self, event ):
-        if self.frame is None:
+        if self.editor is None:
             # too early or too late
             return
 
         if self.lock_ui == 0:
-            self.frame.OnActivateApp( event.GetActive() )
+            if event.GetActive():
+                self.editor.guiHasFocus()
         else:
             if event.GetActive():
                 self.need_activate_app_action = True
@@ -402,7 +403,7 @@ class BemacsApp(wx.App):
                 if not mod:
                     break
 
-                can_exit = self.callGuiFunction( self.guiYesNoDialog, (False,) );
+                can_exit = self.callGuiFunction( self.guiYesNoDialog, (False, 'Modifier files exist', 'Do you really want to quit Emacs?') );
                 if can_exit:
                     break
 
@@ -414,11 +415,11 @@ class BemacsApp(wx.App):
 
         self.onGuiThread( self.quit, () )
 
-    def guiYesNoDialog( self, default ):
+    def guiYesNoDialog( self, default, title, message ):
         dlg = wx.MessageDialog(
                    self.frame,
-                    'Do you really want to quit Emacs?',
-                    'Modifier files exist',
+                    message,
+                    title,
                     wx.YES_NO | wx.NO_DEFAULT | wx.ICON_EXCLAMATION
                     )
         rc = dlg.ShowModal()

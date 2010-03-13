@@ -43,12 +43,12 @@ class BEmacs(_bemacs.BemacsEditor):
         self.__clipboard_data = None
 
         self.hook_ui_handlers = {
-            "edit-copy":    self.uiHookEditCopy,
-            "edit-paste":   self.uiHookEditPaste,
-            "test1":        self.uiHookTest1,
-            "test2":        self.uiHookTest2,
+            "edit-copy":        self.uiHookEditCopy,
+            "edit-paste":       self.uiHookEditPaste,
+            "yes-no-dialog":    self.uiHookYesNoDialog,
+            "test1":            self.uiHookTest1,
+            "test2":            self.uiHookTest2,
             }
-
 
     def initEmacsProfile( self, window ):
         self.log.debug( 'BEmacs.initEmacsProfile()' )
@@ -92,6 +92,11 @@ class BEmacs(_bemacs.BemacsEditor):
             self.log.error( 'openFile - %s' % (e,) )
 
 
+    #--------------------------------------------------------------------------------
+    def guiHasFocus( self ):
+        self.__event_queue.put( (self.hasFocus, ()) )
+
+    #--------------------------------------------------------------------------------
     def guiClientCommand( self, command_directory, command_args ):
         self.__event_queue.put( (self.clientCommand, (command_directory, command_args)) )
 
@@ -100,6 +105,7 @@ class BEmacs(_bemacs.BemacsEditor):
 
         self.newCommandLine( command_directory, command_args )
 
+    #--------------------------------------------------------------------------------
     def guiEventChar( self, ch, shift ):
         self.__event_queue.put( (self.inputChar, (ch, shift)) )
 
@@ -164,6 +170,10 @@ class BEmacs(_bemacs.BemacsEditor):
         else:
             self.setGuiResultError( ValueError( 'clipboard is empty' ) )
             self.log.debug( 'uiHookEditPaste setGuiResultError' )
+
+    def uiHookYesNoDialog( self, cmd, default, title, message ):
+        result = self.app.guiYesNoDialog( default, title, message )
+        self.setGuiResultSuccess( result )
 
     def hookUserInterface( self, *args ):
         self.log.debug( 'hookUserInterface( %r )' % (args,) )

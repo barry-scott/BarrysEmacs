@@ -36,6 +36,10 @@ public:
     EmacsString( const EmacsChar_t *string );
     EmacsString( const EmacsChar_t *string, int length );
 
+#if defined( PYBEMACS )
+    EmacsString( const Py::String &str );
+#endif
+
 #if defined( NEED_EMSTRING_WCHAR_T )
     EmacsString( const wchar_t *string );
     EmacsString( const wchar_t *string, int length );
@@ -121,6 +125,10 @@ public:
     const unsigned char *data() const;  // unsigned char data
     const char *sdata() const;          // signed char data
                                         // these two function give unsafe access to the inside of representation
+
+#if defined( PYBEMACS )
+    Py::Object asPyString() const;
+#endif
 
     int length() const;
     int isNull() const

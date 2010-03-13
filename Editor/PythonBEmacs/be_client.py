@@ -42,6 +42,7 @@ class ClientBase:
         self.opt_debug = 'BEAMCS_CLIENT_DEBUG' in os.environ
         self.opt_name = None
         self.opt_wait = False
+        self.opt_start_app = True
 
     def main( self, argv ):
         try:
@@ -99,6 +100,9 @@ class ClientBase:
 
                         elif name == 'package':
                             self.all_command_elements[1] = self.getArgValue( arg, argv )
+
+                        elif name == 'nostart':
+                            self.opt_start_app = False
 
                 else:
                     self.all_command_elements.append( arg )
@@ -240,7 +244,8 @@ class ClientMacOsX(ClientPosix):
         ClientPosix.__init__( self )
 
     def startBemacsServer( self ):
-        os.system( '/usr/bin/open -b org.barrys-emacs.bemacs' )
+        if self.opt_start_app:
+            os.system( '/usr/bin/open -b org.barrys-emacs.bemacs' )
 
     def bringTofront( self ):
         self.startBemacsServer()
@@ -278,8 +283,6 @@ class ClientUnix(ClientPosix):
 
     def bringTofront( self ):
         pass
-
-
 
 
 class ClientWindows(ClientBase):

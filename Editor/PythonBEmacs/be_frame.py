@@ -160,7 +160,7 @@ class BemacsFrame(wx.Frame):
             self.app.savePreferences()
 
         self.list_panel.updateHandler()
-        self.refreshFrame()
+        self.app.refreshFrame()
 
     def OnSize( self, event ):
         if not self.IsMaximized():
@@ -181,21 +181,6 @@ class BemacsFrame(wx.Frame):
         win_prefs.zoom = self.log_panel.GetZoom()
         
     #------------------------------------------------------------------------
-    def OnActivateApp( self, is_active ):
-        if is_active:
-            self.refreshFrame()
-
-    def OnRefresh( self, event ):
-        self.app.log.debug( 'OnRefresh()' )
-        self.refreshFrame()
-
-    def refreshFrame( self ):
-        self.app.log.debug( 'BemacsFrame.refreshFrame()' )
-
-    #------------------------------------------------------------------------
-    def OnCmdClearLog( self, event ):
-        self.log_panel.ClearLog()
-
     def OnCloseWindow( self, event ):
         self.log.info( 'OnCloseWindow()' )
         self.app.onCloseEditor()

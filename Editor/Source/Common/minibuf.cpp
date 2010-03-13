@@ -535,6 +535,7 @@ BooleanWordsNameTable::BooleanWordsNameTable()
 BooleanWordsNameTable::~BooleanWordsNameTable()
 { }
 
+#if !defined( PYBEMACS )
 int get_yes_or_no( int yes, const EmacsString &prompt )
 {
     int answer;
@@ -560,6 +561,7 @@ int get_yes_or_no( int yes, const EmacsString &prompt )
 #endif
     return answer == 0 || answer == 1 ? answer : yes;
 }
+#endif
 
 
 //--------------------------------------------------------------------------------

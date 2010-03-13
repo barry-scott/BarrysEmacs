@@ -2,6 +2,7 @@
 //    os_pybemacs.h
 //
 #include    <CXX/WrapPython.h>
+#include    <CXX/Objects.hxx>
 #include    <sys/param.h>
 #include    <dirent.h>
 

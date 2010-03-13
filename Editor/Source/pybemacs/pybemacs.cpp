@@ -20,6 +20,7 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 extern int execute_package( const EmacsString &package );
 
+extern SystemExpressionRepresentationIntBoolean synchronise_buffers_on_focus;
 
 void qqq()
 {
@@ -50,6 +51,17 @@ class BemacsEditor;
 void init_python_terminal( BemacsEditor &editor );
 
 EmacsCommandLineServerWorkItem emacs_command_line_work_item;
+
+class SynchroniseFilesWorkItem : public EmacsWorkItem
+{
+public:
+    virtual void workAction(void)
+    {
+        synchronise_files();
+    }
+};
+
+SynchroniseFilesWorkItem synchronise_files_work_item;
 
 BemacsEditorAccessControl editor_access_control;
 
@@ -98,6 +110,8 @@ public:
 
         PYCXX_ADD_VARARGS_METHOD( geometryChange, "geometryChange( width, height )" );
         PYCXX_ADD_VARARGS_METHOD( setKeysMapping, "setKeysMapping( keys_mapping )" );
+
+        PYCXX_ADD_VARARGS_METHOD( hasFocus, "hasFocus()" );
 
         // Call to make the type ready for use
         behaviors().readyType();
@@ -148,6 +162,16 @@ public:
         return Py::None();
     }
     PYCXX_NOARGS_METHOD_DECL( BemacsEditor, initEditor )
+
+    //------------------------------------------------------------
+    Py::Object hasFocus( const Py::Tuple &args )
+    {
+        if( synchronise_buffers_on_focus )
+            synchronise_files_work_item.addItem();
+
+        return Py::None();
+    }
+    PYCXX_VARARGS_METHOD_DECL( BemacsEditor,hasFocus )
 
     //------------------------------------------------------------
     Py::Object newCommandLine( const Py::Tuple &args )
@@ -267,6 +291,37 @@ public:
             reportException( fn_name, e );
         }
     }
+
+    int yesNoDialog( int yes, const EmacsString &prompt )
+    {
+        PythonDisallowThreads permission( editor_access_control );
+
+        static char fn_name[] = "hookUserInterface";
+        try
+        {
+            Py::Object self( selfPtr() );
+            Py::Callable py_fn( self.getAttr( fn_name ) );
+
+            Py::Tuple all_args( 4 );
+
+            all_args[ 0 ] = Py::String( "yes-no-dialog" );
+            all_args[ 1 ] = Py::Boolean( yes != 0 );
+            all_args[ 2 ] = Py::String( "Barry's Emacs" );
+            all_args[ 3 ] = Py::String( prompt.asPyString() );
+
+            Py::Object result( py_fn.apply( all_args ) );
+
+            ml_value = convertPyObjectToEmacsExpression( result );
+        }
+        catch( Py::Exception &e )
+        {
+            ml_value = Expression();
+
+            reportException( fn_name, e );
+        }
+
+        return 0;
+    } 
 
     //------------------------------------------------------------
     void termCheckForInput()
@@ -517,7 +572,7 @@ public:
         if( py_arg.isString() )
         {
             Py::String py_ch( py_arg );
-            EmacsString e_ch( EmacsString::copy, py_ch.unicode_data(), py_ch.size() );
+            EmacsString e_ch( py_ch );
             ch = e_ch[0];
         }
         else
@@ -546,7 +601,7 @@ public:
         Py::Boolean py_shift( args[1] );
         Py::List py_all_params( args[2] );
 
-        EmacsString keys( EmacsString::copy, py_keys.unicode_data(), py_keys.size() );
+        EmacsString keys( py_keys );
         bool shift = py_shift;
         std::vector<int> all_params;
 
@@ -597,8 +652,8 @@ public:
             Py::String py_key( all_keys[ i ] );
             Py::String py_value( keys_mapping[ py_key ] );
 
-            EmacsString key( EmacsString::copy, py_key.unicode_data(), py_key.size() );
-            EmacsString value( EmacsString::copy, py_value.unicode_data(), py_value.size() );
+            EmacsString key( py_key );
+            EmacsString value( py_value );
 
             // Do not need to allow threads here as this is fast operation
             PC_key_names.addMapping( key, value );
@@ -817,6 +872,11 @@ public:
         m_editor.hookUserInterface();
     }
 
+    int t_yesNoDialog( int yes, const EmacsString &prompt )
+    {
+        return m_editor.yesNoDialog( yes, prompt );
+    }
+
     //
     //  Screen routines
     //
@@ -891,6 +951,11 @@ void init_python_terminal( BemacsEditor &editor )
     theActiveView = new TerminalControl_Python( editor );
 }
 
+TerminalControl_Python *thePythonActiveView()
+{
+    return dynamic_cast< TerminalControl_Python * >( theActiveView );
+}
+
 int ui_frame_to_foreground(void)
 {
     return 0;
@@ -898,7 +963,7 @@ int ui_frame_to_foreground(void)
 
 int wait_for_activity(void)
 {
-    return reinterpret_cast<TerminalControl_Python *>( theActiveView )->m_editor.termWaitForActivity();
+    return thePythonActiveView()->m_editor.termWaitForActivity();
 }
 
 
@@ -927,8 +992,13 @@ int ui_python_hook()
     if( check_args( 1, 0 ) )
         return 0;
 
-    theActiveView->t_user_interface_hook();
+    thePythonActiveView()->t_user_interface_hook();
     return 0;
+}
+
+int get_yes_or_no( int yes, const EmacsString &prompt )
+{
+    return thePythonActiveView()->t_yesNoDialog( yes, prompt );
 }
 
 void EmacsCommandLineServerWorkItem::workAction()
