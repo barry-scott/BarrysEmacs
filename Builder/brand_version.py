@@ -55,6 +55,7 @@ class SvnWcFinder:
         self.__vi = vi
 
     def findAndBrandFiles( self, path ):
+        import pysvn
         #print 'findAndBrandFiles:',path
         all_status = self.__client.status( path, recurse=False )
         for status in all_status:
