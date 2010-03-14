@@ -5,8 +5,8 @@
 #
 PYTHON=python${PYTHON_VERSION}
 
-BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/MacOSX/pkg/Barry's Emacs.app/Contents/Resources/emacs_library
-BEMACS_DOC_DIR=$(BUILDER_TOP_DIR)/Kits/MacOSX/pkg/Barry's Emacs.app/Contents/Resources/documentation
+BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/MacOSX/pkg/Barry's Emacs-Devel.app/Contents/Resources/emacs_library
+BEMACS_DOC_DIR=$(BUILDER_TOP_DIR)/Kits/MacOSX/pkg/Barry's Emacs-Devel.app/Contents/Resources/documentation
 
 usage:
 	@ echo "Usage: make -f macosx.mak build"
@@ -69,3 +69,5 @@ clean:
 	cd ../Editor && export BUILD_KIT_DIR="$(BEMACS_LIB_DIR)"; ./build-macosx.sh clean
 	rm -rf "$(BEMACS_DOC_DIR)"
 	rm -rf "$(BEMACS_LIB_DIR)"
+	rm -rf ../Kits/MacOSX/tmp
+	rm -rf ../Kits/MacOSX/pkg
