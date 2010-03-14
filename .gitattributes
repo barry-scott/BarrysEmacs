@@ -52,8 +52,6 @@ HTML/ug_screen.gif -text
 HTML/ug_start_menu.gif -text
 HTML/ug_windows.gif -text
 Kits/Linux/DPKG/brand.create-dpkg.sh -text
-Kits/MacOSX/BarrysEmacs.app/Contents/Info.plist -text
-Kits/MacOSX/BarrysEmacs.app/Contents/MacOS/bemacs_mac -text
 Kits/Windows/brand.copy-setup.cmd -text
 Kits/Windows/vc6redist/50comupd.exe -text
 Kits/Windows/vc6redist/ADVPACK.DLL -text

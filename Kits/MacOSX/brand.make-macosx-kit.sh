@@ -25,6 +25,8 @@ text = f.read()
 f.close()
 
 text = text.replace( 'org.barrys-emacs.bemacs-devel', 'org.barrys-emacs.bemacs' )
+text = text.replace( 'Emacs-Devel', 'Emacs' )
+
 f = open( "tmp/${PKGNAME}/bemacs", 'w' )
 f.write( text )
 f.close()
