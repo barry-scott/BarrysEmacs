@@ -63,36 +63,46 @@
 	    (temp-use-buffer "~inc-search-key-hack")
 	    (define-keymap "~incsquotemap")
 	    (define-keymap "~incsearchmap")
+
+            (define-keymap "~incsearchmap-key-prefix")
+            (define-keymap "~incsearchmap-mouse-prefix")
+            (define-keymap "~incsearchmap-menu-prefix")
+
+            (use-local-map "~incsearchmap-key-prefix")
+            (local-bind-to-key "~ins-exit" "\[default]")
+
+            (use-local-map "~incsearchmap-mouse-prefix")
+            (local-bind-to-key "~ins-exit" "\[default]")
+
+            (use-local-map "~incsearchmap-menu-prefix")
+            (local-bind-to-key "~ins-exit" "\[default]")
+
 	    (use-local-map "~incsquotemap")
-	    (setq ~key 0)
-	    (while (< ~key 256)
-		(local-bind-to-key "~ins-normal-char" ~key)
-		(setq ~key (+ 1 ~key))
-	    )
+            (local-bind-to-key "~ins-normal-char" "\[default]")
+
 	    (use-local-map "~incsearchmap")
+            (local-bind-to-key "~ins-normal-char" "\[default]")
 	    (setq ~key 0)
 	    ; C0 controls
 	    (while (< ~key 32)
 		(local-bind-to-key "~ins-exit" ~key)
 		(setq ~key (+ 1 ~key))
 	    )
+            (local-bind-to-key "~ins-exit" 127)
+
 	    ; tab is normal
 	    (local-bind-to-key "~ins-normal-char" "\t")
-	    ; G0 chars
-	    (while (< ~key 127)
-		(local-bind-to-key "~ins-normal-char" ~key)
-		(setq ~key (+ 1 ~key))
-	    )
+
 	    ; DEL + C1 controls
+	    (setq ~key 128)
 	    (while (< ~key 160)
 		(local-bind-to-key "~ins-exit" ~key)
 		(setq ~key (+ 1 ~key))
 	    )
-	    ; G1 chars
-	    (while (< ~key 256)
-		(local-bind-to-key "~ins-normal-char" ~key)
-		(setq ~key (+ 1 ~key))
-	    )
+            (local-bind-to-key "~incsearchmap-key-prefix" "\[key-prefix]")
+            (local-bind-to-key "~incsearchmap-mouse-prefix" "\[mouse-prefix]")
+            (local-bind-to-key "~incsearchmap-menu-prefix" "\[menu-prefix]")
+
 	    ;
 	    ; setup key binds from parameters.
 	    ; arg n is the name of the functions required and arg n+1 is
@@ -120,6 +130,7 @@
 	);	end of save-excursion
     )
 );	end of setup-incsearch
+
 (defun 
     (setup-more-incsearch ~key ~arg-num ~arg
 	(save-excursion

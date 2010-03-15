@@ -96,6 +96,25 @@ KeyMap::~KeyMap()
     removeAllBindings();
 }
 
+void KeyMap::q() const
+{
+    std::cout << "KeyMap " << k_name.sdata() << std::endl;
+    if( k_default_binding != NULL )
+    {
+        std::cout << "    default: " << k_default_binding->b_proc_name.sdata() << std::endl;
+    }
+
+    for( EmacsCharToBoundName_t::const_iterator it=k_binding.begin();
+        it != k_binding.end();
+            ++it )
+    {
+        EmacsChar_t key = it->first;
+        BoundName *b = it->second;
+
+        std::cout << "    key " << std::hex << key << ": " << b->b_proc_name.sdata() << std::endl;
+    }
+}
+
 //
 //    routines to process keymaps
 //

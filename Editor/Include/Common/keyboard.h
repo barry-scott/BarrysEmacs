@@ -75,6 +75,8 @@ public:
     void removeAllBindings( void );
 
     EmacsString k_name;
+
+    void q() const;
 private:
     
     BoundName *k_default_binding;

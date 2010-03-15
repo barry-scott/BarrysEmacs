@@ -39,7 +39,13 @@ class BemacsApp(wx.App):
         self.args = args
         self.opt_name = None
 
+        self.startup_dir = os.getcwd()
+
         be_platform_specific.setupPlatform( args[0] )
+
+        # on the Mac the app's cwd is the resource folder
+        if wx.Platform == '__WXMAC__':
+            os.chdir( os.environ['HOME'] )
 
         self.__debug_noredirect = False
         self.__debug = True

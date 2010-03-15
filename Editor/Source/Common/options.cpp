@@ -379,6 +379,9 @@ static void describe1
 
 int describe_bindings( void )
 {
+    // get local_map before setting the Help buffer
+    KeyMap *local_map = bf_cur->b_mode.md_keys;
+
     EmacsBuffer::scratch_bfn( EmacsString("Help"), 1 );
 
     bf_cur->ins_str("Global Bindings (" );
@@ -388,8 +391,6 @@ int describe_bindings( void )
         "---                             -------\n" );
 
     scan_map( current_global_map, describe1, false );
-
-    KeyMap *local_map = bf_cur->b_mode.md_keys;
 
     if( local_map != NULL && local_map != current_global_map )
     {

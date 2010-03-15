@@ -321,7 +321,7 @@ public:
     BoundName( const EmacsString &name, const EmacsMacroString &macro_body );
     BoundName( const EmacsString &name, const EmacsString &module_name );
     BoundName( const EmacsString &name, int (*builtin_function)(void) );
-     BoundName( const EmacsString &name, ProgramNode *mlisp_body );
+    BoundName( const EmacsString &name, ProgramNode *mlisp_body );
     BoundName( const EmacsString &name, KeyMap *keymap );
     BoundName( const EmacsString &name, EmacsExternFunction *external_function );
 
@@ -375,15 +375,15 @@ public:
     int canDelete(void) const;
     int execute(void);
 
-    const char*commandTypeName() const;
+    const char *commandTypeName() const;
 
     static int rename_macro(void);
 
     EmacsString b_proc_name;    // 04 the name to which this procedure or macro is bound
 
-    unsigned b_active : 1;        // 0c true iff this (macro) is active --
-                    // prevents recursive macro calls
-    unsigned b_break : 1;        // 0e true iff execution of this fuinction should case a break point
+    unsigned b_active : 1;      // 0c true iff this (macro) is active --
+                                // prevents recursive macro calls
+    unsigned b_break : 1;       // 0e true iff execution of this fuinction should case a break point
 private:
     BoundNameInside *implementation;    // the implementation of this Name
 
