@@ -44,7 +44,7 @@ class BemacsFrame(wx.Frame):
             extra_style = wx.MAXIMIZE
 
         wx.Frame.__init__(self, None, -1, title,
-                win_prefs.frame_position,
+                (-1, -1),
                 win_prefs.frame_size,
                 wx.DEFAULT_FRAME_STYLE|extra_style )
 
@@ -52,7 +52,7 @@ class BemacsFrame(wx.Frame):
         # problem on OSX with incorrect first size event saving the
         # wrong size in the preferences
         wx.CallAfter( self.SetSize, win_prefs.frame_size )
-        
+
         self.menu_edit = wx.Menu()
 
         if wx.Platform != '__WXMAC__':
@@ -183,4 +183,5 @@ class BemacsFrame(wx.Frame):
     #------------------------------------------------------------------------
     def OnCloseWindow( self, event ):
         self.log.info( 'OnCloseWindow()' )
+        self.app.savePreferences()
         self.app.onCloseEditor()
