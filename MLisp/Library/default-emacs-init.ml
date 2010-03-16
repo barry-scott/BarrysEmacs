@@ -137,6 +137,7 @@
     ; 
     (bind-to-key "tab-key" "\^I")		; smart tab key
     (bind-to-key "tab-delete" "\e\^I")		; smart tab delete
+    (bind-to-key "tab-delete" "\[shift-tab]")	; smart tab delete
     (bind-to-key "minibuf" "\e\e")		; use the minibuffer to eval things
     (bind-to-key "case-capitalize" "\eC")	; capitalise region or word
     (bind-to-key "case-lower" "\el")		; lower case region of word
