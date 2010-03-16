@@ -95,23 +95,23 @@ public:
         behaviors().supportGetattro();
         behaviors().supportSetattro();
 
-        PYCXX_ADD_NOARGS_METHOD( initEditor, "initEditor" );
-        PYCXX_ADD_VARARGS_METHOD( newCommandLine, "newCommandLine( current_directory, list_of_arg_strings )" );
+        PYCXX_ADD_NOARGS_METHOD( initEditor, py_initEditor, "initEditor" );
+        PYCXX_ADD_VARARGS_METHOD( newCommandLine, py_newCommandLine, "newCommandLine( current_directory, list_of_arg_strings )" );
 
-        PYCXX_ADD_NOARGS_METHOD( executeEnterHooks, "executeEnterHooks" );
-        PYCXX_ADD_NOARGS_METHOD( executeExitHooks, "executeExitHooks" );
+        PYCXX_ADD_NOARGS_METHOD( executeEnterHooks, py_executeEnterHooks, "executeEnterHooks" );
+        PYCXX_ADD_NOARGS_METHOD( executeExitHooks, py_executeExitHooks, "executeExitHooks" );
 
-        PYCXX_ADD_NOARGS_METHOD( processKeys, "processKeys" );
+        PYCXX_ADD_NOARGS_METHOD( processKeys, py_processKeys, "processKeys" );
 
-        PYCXX_ADD_NOARGS_METHOD( modifiedFilesExist, "modifiedFilesExist" );
+        PYCXX_ADD_NOARGS_METHOD( modifiedFilesExist, py_modifiedFilesExist, "modifiedFilesExist" );
 
-        PYCXX_ADD_VARARGS_METHOD( inputChar, "inputChar( char, shift )" );
-        PYCXX_ADD_VARARGS_METHOD( inputMouse, "inputMouse( keys, shift, all_params )" );
+        PYCXX_ADD_VARARGS_METHOD( inputChar, py_inputChar, "inputChar( char, shift )" );
+        PYCXX_ADD_VARARGS_METHOD( inputMouse, py_inputMouse, "inputMouse( keys, shift, all_params )" );
 
-        PYCXX_ADD_VARARGS_METHOD( geometryChange, "geometryChange( width, height )" );
-        PYCXX_ADD_VARARGS_METHOD( setKeysMapping, "setKeysMapping( keys_mapping )" );
+        PYCXX_ADD_VARARGS_METHOD( geometryChange, py_geometryChange, "geometryChange( width, height )" );
+        PYCXX_ADD_VARARGS_METHOD( setKeysMapping, py_setKeysMapping, "setKeysMapping( keys_mapping )" );
 
-        PYCXX_ADD_VARARGS_METHOD( hasFocus, "hasFocus()" );
+        PYCXX_ADD_VARARGS_METHOD( hasFocus, py_hasFocus, "hasFocus()" );
 
         // Call to make the type ready for use
         behaviors().readyType();
@@ -128,7 +128,7 @@ public:
 
 
     //------------------------------------------------------------
-    Py::Object initEditor( void )
+    Py::Object py_initEditor( void )
     {
         {
             PythonAllowThreads permission( editor_access_control );
@@ -161,20 +161,20 @@ public:
 
         return Py::None();
     }
-    PYCXX_NOARGS_METHOD_DECL( BemacsEditor, initEditor )
+    PYCXX_NOARGS_METHOD_DECL( BemacsEditor, py_initEditor )
 
     //------------------------------------------------------------
-    Py::Object hasFocus( const Py::Tuple &args )
+    Py::Object py_hasFocus( const Py::Tuple &args )
     {
         if( synchronise_buffers_on_focus )
             synchronise_files_work_item.addItem();
 
         return Py::None();
     }
-    PYCXX_VARARGS_METHOD_DECL( BemacsEditor,hasFocus )
+    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, py_hasFocus )
 
     //------------------------------------------------------------
-    Py::Object newCommandLine( const Py::Tuple &args )
+    Py::Object py_newCommandLine( const Py::Tuple &args )
     {
         Py::String py_cwd( args[0] );
         Py::List py_argv( args[1] );
@@ -197,10 +197,10 @@ public:
 
         return Py::None();
     }
-    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, newCommandLine )
+    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, py_newCommandLine )
 
     //------------------------------------------------------------
-    Py::Object executeEnterHooks( void )
+    Py::Object py_executeEnterHooks( void )
     {
         {
             PythonAllowThreads permission( editor_access_control );
@@ -213,9 +213,9 @@ public:
         }
         return Py::None();
     }
-    PYCXX_NOARGS_METHOD_DECL( BemacsEditor, executeEnterHooks )
+    PYCXX_NOARGS_METHOD_DECL( BemacsEditor, py_executeEnterHooks )
 
-    Py::Object executeExitHooks( void )
+    Py::Object py_executeExitHooks( void )
     {
         {
             PythonAllowThreads permission( editor_access_control );
@@ -225,9 +225,9 @@ public:
 
         return Py::None();
     }
-    PYCXX_NOARGS_METHOD_DECL( BemacsEditor, executeExitHooks )
+    PYCXX_NOARGS_METHOD_DECL( BemacsEditor, py_executeExitHooks )
 
-    Py::Object processKeys( void )
+    Py::Object py_processKeys( void )
     {
         int rc;
 
@@ -238,9 +238,9 @@ public:
 
         return Py::Long( rc );
     }
-    PYCXX_NOARGS_METHOD_DECL( BemacsEditor, processKeys )
+    PYCXX_NOARGS_METHOD_DECL( BemacsEditor, py_processKeys )
 
-    Py::Object modifiedFilesExist( void )
+    Py::Object py_modifiedFilesExist( void )
     {
         bool rc;
 
@@ -251,7 +251,7 @@ public:
 
         return Py::Boolean( rc );
     }
-    PYCXX_NOARGS_METHOD_DECL( BemacsEditor, modifiedFilesExist )
+    PYCXX_NOARGS_METHOD_DECL( BemacsEditor, py_modifiedFilesExist )
     //------------------------------------------------------------
 
     //------------------------------------------------------------
@@ -565,7 +565,7 @@ public:
     }
 
     //------------------------------------------------------------
-    Py::Object inputChar( const Py::Tuple &args )
+    Py::Object py_inputChar( const Py::Tuple &args )
     {
         int ch;
 
@@ -594,9 +594,9 @@ public:
 
         return Py::None();
     }
-    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, inputChar )
+    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, py_inputChar )
 
-    Py::Object inputMouse( const Py::Tuple &args )
+    Py::Object py_inputMouse( const Py::Tuple &args )
     {
         Py::String py_keys( args[0] );
         Py::Boolean py_shift( args[1] );
@@ -622,9 +622,9 @@ public:
 
         return Py::None();
     }
-    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, inputMouse )
+    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, py_inputMouse )
 
-    Py::Object geometryChange( const Py::Tuple &args )
+    Py::Object py_geometryChange( const Py::Tuple &args )
     {
         Py::Long py_width( args[0] );
         Py::Long py_height( args[1] );
@@ -641,9 +641,9 @@ public:
 
         return Py::None();
     }
-    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, geometryChange )
+    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, py_geometryChange )
 
-    Py::Object setKeysMapping( const Py::Tuple &args )
+    Py::Object py_setKeysMapping( const Py::Tuple &args )
     {
         Py::Dict keys_mapping( args[0] );
         Py::List all_keys( keys_mapping.keys() );
@@ -662,7 +662,7 @@ public:
 
         return Py::None();
     }
-    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, setKeysMapping )
+    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, py_setKeysMapping )
 
     //------------------------------------------------------------
     Py::Object getattro( const Py::String &name_ )
