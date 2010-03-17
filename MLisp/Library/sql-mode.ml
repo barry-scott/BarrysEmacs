@@ -252,7 +252,7 @@
     (define-keymap "SQL-ESC-map")
     (use-local-map "SQL-map")
     (local-bind-to-key "SQL-ESC-map" "\e")
-    (error-occurred (execute-mlisp-file "SQL-mode.key"))
+    (error-occurred (execute-mlisp-file "sql-mode.key"))
     (kill-buffer "~SQL-hack")
 )
 (novalue)
