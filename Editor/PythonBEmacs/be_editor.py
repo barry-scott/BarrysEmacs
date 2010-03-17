@@ -141,6 +141,7 @@ class BEmacs(_bemacs.BemacsEditor):
 
     def uiHookSetWindowTitle( self, cmd, title ):
         self.app.setWindowTitle( title )
+        self.setGuiResultSuccess( None )
 
     def uiHookEditCopy( self, cmd, text ):
         self.__clipboard_data = wx.TextDataObject()
