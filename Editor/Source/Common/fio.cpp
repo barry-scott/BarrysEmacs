@@ -41,12 +41,15 @@ EmacsFile::EmacsFile( FIO_EOL_Attribute attr )
 , m_file( NULL )
 , m_attr( attr )
 , m_convert_size( 0 )
+, m_convert_buffer( new unsigned char[ CONVERT_BUFFER_SIZE ] )
 { }
 
 EmacsFile::~EmacsFile()
 {
     if( m_file != NULL && m_file != stdin )
         fclose( m_file );
+
+    delete m_convert_buffer;
 }
 
 //
@@ -276,11 +279,13 @@ int EmacsFile::fio_split_put
 //--------------------------------------------------------------------------------
 int EmacsFile::fio_get( EmacsChar_t *buf, int len )
 {
-    if( m_convert_size <= 0 )
+    if( m_convert_size < CONVERT_BUFFER_SIZE )
     {
-        m_convert_size = fio_get( m_convert_buffer, sizeof( m_convert_buffer ) );
-        if( m_convert_buffer <= 0 )
-            return m_convert_size;
+        int size = fio_get( m_convert_buffer + m_convert_size, CONVERT_BUFFER_SIZE - m_convert_size );
+        if( size <= 0 )
+            return size;
+
+        m_convert_size += size;
     }
 
     int utf8_usable_len = 0;
@@ -306,7 +311,7 @@ int EmacsFile::fio_put( const EmacsChar_t *buf, int len )
     while( len > 0 )
     {
         int unicode_usable_length = 0;
-        int utf8_length = length_unicode_to_utf8( len, buf, sizeof( m_convert_buffer ), unicode_usable_length );
+        int utf8_length = length_unicode_to_utf8( len, buf, CONVERT_BUFFER_SIZE, unicode_usable_length );
 
         convert_unicode_to_utf8( unicode_usable_length, buf, m_convert_buffer );
         int bytes_written = fio_put( m_convert_buffer, utf8_length );

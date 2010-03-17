@@ -99,5 +99,6 @@ private:
     FIO_EOL_Attribute m_attr;
 
     int m_convert_size;
-    unsigned char m_convert_buffer[64];
+    enum { CONVERT_BUFFER_SIZE = 1024 * 1024 };
+    unsigned char *m_convert_buffer;
 };
