@@ -191,6 +191,7 @@ class ClientPosix(ClientBase):
         fd_response = os.open( client_fifo, os.O_RDONLY|os.O_NONBLOCK )
 
         cmd = self._getCommandString()
+        print repr(cmd)
         size = os.write( fd_command, cmd )
         if size != len(cmd):
             raise ClientError( 'write to command fifo failed' )

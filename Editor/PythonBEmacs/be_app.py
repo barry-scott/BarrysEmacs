@@ -461,6 +461,9 @@ class BemacsApp(wx.App):
     def MacPrintFile( self, file_path ):
         pass
 
+    def setWindowTitle( self, title ):
+        self.frame.SetTitle( title )
+
 #--------------------------------------------------------------------------------
 #
 #    RotatingFileHandler - based on python lib class

@@ -322,7 +322,32 @@ public:
             return 0;
         }
 
-    } 
+    }
+
+    void setWindowTitle( const EmacsString &title )
+    {
+        PythonDisallowThreads permission( editor_access_control );
+
+        static char fn_name[] = "hookUserInterface";
+        try
+        {
+            Py::Object self( selfPtr() );
+            Py::Callable py_fn( self.getAttr( fn_name ) );
+
+            Py::Tuple all_args( 2 );
+
+            all_args[ 0 ] = Py::String( "set-window-title" );
+            all_args[ 1 ] = Py::String( title.asPyString() );
+
+            py_fn.apply( all_args );
+        }
+        catch( Py::Exception &e )
+        {
+            ml_value = Expression();
+
+            reportException( fn_name, e );
+        }
+    }
 
     //------------------------------------------------------------
     void termCheckForInput()
@@ -878,6 +903,11 @@ public:
         return m_editor.yesNoDialog( yes, prompt );
     }
 
+    void t_setWindowTitle( const EmacsString &title )
+    {
+        m_editor.setWindowTitle( title );
+    }
+
     //
     //  Screen routines
     //
@@ -975,6 +1005,22 @@ bool emacs_internal_init_done_event(void)
 
 void UI_update_window_title( void )
 {
+    EmacsString title( "Barry's Emacs - " );
+
+    EmacsString home( getenv("HOME") );
+    EmacsString cwd( current_directory.asString() );
+
+    if( cwd.commonPrefix( home ) == home.length() )
+    {
+        title.append( "~/" );
+        cwd.remove( 0, home.length() );
+        if( cwd.length() > 0 && cwd[0] == '/'  )
+            cwd.remove( 0, 1 );
+        title.append( cwd );
+    }
+    title.append( cwd );
+
+    thePythonActiveView()->t_setWindowTitle( title );
 }
 
 int init_gui_terminal( const EmacsString & )

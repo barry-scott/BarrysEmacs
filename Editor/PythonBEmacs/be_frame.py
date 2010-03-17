@@ -149,7 +149,7 @@ class BemacsFrame(wx.Frame):
         str_message =    ((T_("Barry's Emacs version: %s") % ver_str) +
                 '\nwxPython %d.%d.%d.%d %s' % wx.VERSION +
                 '\nPython %d.%d.%d %s %d\n' % sys.version_info +
-                T_('\nCopyright Barry Scott (c) 1980-2008. All rights reserved')
+                T_('\nCopyright Barry Scott (c) 1980-2010. All rights reserved')
                 )
         wx.LogMessage( str_message )
 

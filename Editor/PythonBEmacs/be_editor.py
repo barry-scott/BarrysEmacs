@@ -46,6 +46,7 @@ class BEmacs(_bemacs.BemacsEditor):
             "edit-copy":        self.uiHookEditCopy,
             "edit-paste":       self.uiHookEditPaste,
             "yes-no-dialog":    self.uiHookYesNoDialog,
+            "set-window-title": self.uiHookSetWindowTitle,
             "test1":            self.uiHookTest1,
             "test2":            self.uiHookTest2,
             }
@@ -138,6 +139,8 @@ class BEmacs(_bemacs.BemacsEditor):
         else:
             self.setGuiResultSuccess( 'no' )
 
+    def uiHookSetWindowTitle( self, cmd, title ):
+        self.app.setWindowTitle( title )
 
     def uiHookEditCopy( self, cmd, text ):
         self.__clipboard_data = wx.TextDataObject()
