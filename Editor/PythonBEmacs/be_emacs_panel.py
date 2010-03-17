@@ -422,7 +422,9 @@ class EmacsPanel(wx.Panel):
             face = 'Monaco'
 
         else:
-            face = 'Courier'
+            #face = 'Courier'
+            face = 'Liberation Mono'
+            point_size = 11
 
         self.font = wx.Font( point_size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, face )
         print 'Font face: %r' % (self.font.GetFaceName(),)
@@ -729,8 +731,9 @@ class EmacsPanel(wx.Panel):
                 else:
                     translation = keys_mapping["mouse-wheel-pos"]
 
-            self.app.editor.guiEventMouse( translation, shift, [abs(rotation), line, column] );
-
+            # on F8 with an ASUS USB mouse the wheel sends -120 or 120 not -1 or 1
+            #self.app.editor.guiEventMouse( translation, shift, [abs(rotation), line, column] );
+            self.app.editor.guiEventMouse( translation, shift, [1, line, column] );
 
     #--------------------------------------------------------------------------------
     #
