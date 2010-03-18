@@ -2,6 +2,7 @@
 //    os_pybemacs.h
 //
 #include    <CXX/WrapPython.h>
+#include    <CXX/Objects.hxx>
 
 #define DB 1
 

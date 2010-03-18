@@ -1007,7 +1007,12 @@ void UI_update_window_title( void )
 {
     EmacsString title( "Barry's Emacs - " );
 
+#if defined( WIN32 )
+    EmacsString home( getenv("USERPROFILE") );
+#else
     EmacsString home( getenv("HOME") );
+#endif
+
     EmacsString cwd( current_directory.asString() );
 
     if( cwd.commonPrefix( home ) == home.length() )
