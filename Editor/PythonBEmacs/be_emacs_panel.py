@@ -775,7 +775,7 @@ class EmacsPanel(wx.Panel):
         self.__debugTermCalls2( '__termUpdateBegin() ----------------------------------------------------------' )
 
     def termUpdateEnd( self ):
-        self.__debugTermCalls2( 'termUpdateEnd() --------------------------------------------------------------' )
+        self.__debugTermCalls2( 'termUpdateEnd() start --------------------------------------------------------' )
         if self.editor_bitmap is None:
             self.__debugTermCalls2( 'termUpdateEnd editor_bitmap is None' )
             return
@@ -795,6 +795,9 @@ class EmacsPanel(wx.Panel):
         self.RefreshRect( (0, 0, self.pixel_width, self.pixel_length), False )
 
         c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
+
+        self.__debugTermCalls2( 'termUpdateEnd() done ---------------------------------------------------------' )
+
 
     def __executeTermOperations( self ):
         all_term_ops = self.__all_term_ops
@@ -833,35 +836,103 @@ class EmacsPanel(wx.Panel):
         new_line_length = len( new_line_contents )
         old_line_length = len( old_line_contents )
 
-        for col in range( len( new_line_contents ) ):
-            x, y = self.__pixelPoint( col+1, row )
+        if True or wx.Platform == '__WXMAC__':
+            for col in range( len( new_line_contents ) ):
+                x, y = self.__pixelPoint( col+1, row )
 
-            new_attr = new_line_attrs[ col ]
-            new_ch = new_line_contents[ col ]
-            if( old_line_contents <= col
-            and old_line_contents[ col ] == new_ch
-            and old_line_attrs[ col ] == attr ):
-                continue
+                new_attr = new_line_attrs[ col ]
+                new_ch = new_line_contents[ col ]
+                if( col < len(old_line_contents)
+                and old_line_contents[ col ] == new_ch
+                and old_line_attrs[ col ] == new_attr ):
+                    continue
 
-            if cur_attr != new_attr:
-                if (new_attr & LINE_M_ATTR_HIGHLIGHT) != 0:
-                    mode = LINE_M_ATTR_HIGHLIGHT
+                if cur_attr != new_attr:
+                    if (new_attr & LINE_M_ATTR_HIGHLIGHT) != 0:
+                        mode = LINE_M_ATTR_HIGHLIGHT
 
-                elif (new_attr & LINE_ATTR_MODELINE) != 0:
-                    mode = LINE_ATTR_MODELINE
+                    elif (new_attr & LINE_ATTR_MODELINE) != 0:
+                        mode = LINE_ATTR_MODELINE
 
-                elif (new_attr & LINE_ATTR_USER) != 0:
-                    mode = new_attr&LINE_M_ATTR_USER
+                    elif (new_attr & LINE_ATTR_USER) != 0:
+                        mode = new_attr&LINE_M_ATTR_USER
 
-                else:
-                    mode = new_attr
+                    else:
+                        mode = new_attr
 
-                if cur_mode != mode:
-                    cur_mode = mode
-                    self.dc.SetTextForeground( fg_colours[ cur_mode ] ) 
-                    self.dc.SetTextBackground( bg_colours[ cur_mode ] )
+                    if cur_mode != mode:
+                        cur_mode = mode
+                        self.dc.SetTextForeground( fg_colours[ cur_mode ] ) 
+                        self.dc.SetTextBackground( bg_colours[ cur_mode ] )
 
-            self.dc.DrawText( new_ch, x, y )
+                self.dc.DrawText( new_ch, x, y )
+
+        else:
+            draw_chars = []
+            draw_cols = []
+            draw_modes = []
+
+            for col in range( len( new_line_contents ) ):
+                new_attr = new_line_attrs[ col ]
+                new_ch = new_line_contents[ col ]
+                if( col < len(old_line_contents) 
+                and old_line_contents[ col ] == new_ch
+                and old_line_attrs[ col ] == new_attr ):
+                    continue
+
+                if cur_attr != new_attr:
+                    if (new_attr & LINE_M_ATTR_HIGHLIGHT) != 0:
+                        mode = LINE_M_ATTR_HIGHLIGHT
+
+                    elif (new_attr & LINE_ATTR_MODELINE) != 0:
+                        mode = LINE_ATTR_MODELINE
+
+                    elif (new_attr & LINE_ATTR_USER) != 0:
+                        mode = new_attr&LINE_M_ATTR_USER
+
+                    else:
+                        mode = new_attr
+
+                draw_chars.append( new_ch )
+                draw_cols.append( col )
+                draw_modes.append( mode )
+
+            print draw_chars
+            print draw_cols
+            print draw_modes
+
+            cur_mode = None
+            start = 0
+            draw_last = len(draw_modes) - 1
+            while start <= draw_last:
+                end = start + 1
+
+                while end <= draw_last:
+                    print 'q1 start %d end %d len %d' % (start, end, draw_last)
+                    if( draw_modes[ start ] != draw_modes[ end ]
+                    or end == draw_last ):
+                        print 'q2 start %d end %d len %d' % (start, end, draw_last)
+    
+                        if cur_mode != draw_modes[ start ]:
+                            cur_mode = draw_modes[ start ]
+                            self.dc.SetTextForeground( fg_colours[ cur_mode ] ) 
+                            self.dc.SetTextBackground( bg_colours[ cur_mode ] )
+
+                        x, y = self.__pixelPoint( draw_cols[ start ] + 1, row )
+
+                        print 'drawtext %d %d %s' % (x ,y ,''.join( draw_chars[ start:end+1 ] ))
+
+                        self.dc.DrawText( ''.join( draw_chars[ start:end+1 ] ), x, y )
+                        start = end
+
+                        if end == draw_last:
+                            break
+
+                    else:
+                        end += 1
+
+                if start == draw_last:
+                    break
 
         remaining_width = self.term_width - new_line_length
         if remaining_width > 0:
@@ -869,6 +940,9 @@ class EmacsPanel(wx.Panel):
             self.dc.SetBrush( wx.Brush( bg_colours[ SYNTAX_DULL ] ) )
             x, y = self.__pixelPoint( new_line_length+1, row )
             self.dc.DrawRectangle( x, y, remaining_width*self.char_width, self.char_length )
+
+        self.__debugTermCalls2( '__termUpdateLine %d done' % (row,) )
+
 
     def termMoveLine( self, from_line, to_line ):
         self.__debugTermCalls1( 'termMoveLine( %r, %r )' % (from_line,to_line) )

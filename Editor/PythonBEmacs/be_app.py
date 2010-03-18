@@ -260,11 +260,14 @@ class BemacsApp(wx.App):
         wx.PostEvent( self, AppCallBackEvent( callback=function, args=args ) )
 
     def OnAppCallBack( self, event ):
+        self.log.debug( 'OnAppCallBack func %s start' % (event.callback.__name__,) )
         try:
             event.callback( *event.args )
         except:
             self.log.exception( 'OnAppCallBack<%s.%s>\n' %
                 (event.callback.__module__, event.callback.__name__ ) )
+
+        self.log.debug( 'OnAppCallBack func %s done' % (event.callback.__name__,) )
 
     def debugShowCallers( self, depth ):
         if not self.__debug:
@@ -302,14 +305,21 @@ class BemacsApp(wx.App):
 
     def __runCommandLineHandler( self ):
         try:
-            self.__commandLineHandler()
+            if wx.Platform in ['__WXMAC__', '__WXGTK__']:
+                self.__posixCommandLineHandler()
+
+            elif wx.Platform in ['__WXMSW__']:
+                self.__windowsCommandLineHandler()
 
         except Exception, e:
             self.log.exception( 'command line exception' )
 
             self.callGuiFunction( self.guiReportException, (str(e), 'Command line Exception') )
 
-    def __commandLineHandler( self ):
+    def __windowsCommandLineHandler( self ):
+        pass
+
+    def __posixCommandLineHandler( self ):
         import pwd
         import select
 
