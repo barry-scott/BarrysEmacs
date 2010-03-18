@@ -1018,7 +1018,10 @@ void UI_update_window_title( void )
             cwd.remove( 0, 1 );
         title.append( cwd );
     }
-    title.append( cwd );
+    else
+    {
+        title.append( cwd );
+    }
 
     thePythonActiveView()->t_setWindowTitle( title );
 }
