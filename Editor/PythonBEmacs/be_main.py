@@ -21,13 +21,15 @@ import locale
 
 # help debug when stdout goes nowhere useful
 # Mac OS X and Windows are the main problems
-if sys.platform == 'darwin' and '--noredirect' not in sys.argv:
-    sys.stdout = open( os.environ.get( 'BEMACS_STDOUT_LOG', '/dev/null' ), 'w', 0 )
-    sys.stderr = sys.stdout
+if sys.platform == 'darwin':
+    if '--noredirect' not in sys.argv:
+        sys.stdout = open( os.environ.get( 'BEMACS_STDOUT_LOG', '/dev/null' ), 'w', 0 )
+        sys.stderr = sys.stdout
 
-elif sys.platform.startswith( 'win' ) and '--noredirect' not in sys.argv:
-    sys.stdout = open( os.environ.get( 'BEMACS_STDOUT_LOG', 'nul' ), 'w' )
-    sys.stderr = sys.stdout
+elif sys.platform.startswith( 'win' ):
+    if '--noredirect' not in sys.argv:
+        sys.stdout = open( os.environ.get( 'BEMACS_STDOUT_LOG', 'nul' ), 'w' )
+        sys.stderr = sys.stdout
 
 elif 'BEMACS_STDOUT_LOG' in os.environ:
     sys.stdout = open( os.environ[ 'BEMACS_STDOUT_LOG' ], 'w', 0 )
