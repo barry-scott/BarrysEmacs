@@ -139,7 +139,7 @@ class ClientPosix(ClientBase):
         if not self.process_qualifers:
             return False
 
-        return arg.startswith( '--' )
+        return arg.startswith( '-' )
 
     def isNoMoreQualifiers( self, name ):
         return name == '--'
