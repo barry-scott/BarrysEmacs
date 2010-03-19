@@ -732,8 +732,10 @@ class EmacsPanel(wx.Panel):
                     translation = keys_mapping["mouse-wheel-pos"]
 
             # on F8 with an ASUS USB mouse the wheel sends -120 or 120 not -1 or 1
-            #self.app.editor.guiEventMouse( translation, shift, [abs(rotation), line, column] );
-            self.app.editor.guiEventMouse( translation, shift, [1, line, column] );
+            if wx.Platform == '__WXGTK__':
+                rotation = 1
+
+            self.app.editor.guiEventMouse( translation, shift, [abs(rotation), line, column] );
 
     #--------------------------------------------------------------------------------
     #
@@ -836,7 +838,7 @@ class EmacsPanel(wx.Panel):
         new_line_length = len( new_line_contents )
         old_line_length = len( old_line_contents )
 
-        if True or wx.Platform == '__WXMAC__':
+        if False and wx.Platform == '__WXMAC__':
             for col in range( len( new_line_contents ) ):
                 x, y = self.__pixelPoint( col+1, row )
 
@@ -897,21 +899,35 @@ class EmacsPanel(wx.Panel):
                 draw_cols.append( col )
                 draw_modes.append( mode )
 
-            print draw_chars
-            print draw_cols
-            print draw_modes
+            draw_modes.append( None )
+            draw_cols.append( 10000000 )
+
+            qqq_row = 1
+            if row == qqq_row:
+                print 'X:      ',''.join( [('%2d'%i)[0] for i in range(60)] )
+                print 'X:      ',''.join( [('%2d'%i)[1] for i in range(60)] )
+
+                print 'X:      "%s"'%new_line_contents
+                print 'X:      "%s"'%''.join( draw_chars )
+                print 'X:',draw_cols
+                print 'X:',draw_modes
 
             cur_mode = None
             start = 0
             draw_last = len(draw_modes) - 1
-            while start <= draw_last:
+            while start < draw_last:
                 end = start + 1
 
                 while end <= draw_last:
-                    print 'q1 start %d end %d len %d' % (start, end, draw_last)
+                    if row == 40:
+                        print 'q1 start %2d end %2d len %2d' % (start, end, draw_last),
+                        print 'mode', draw_modes[ start ], draw_modes[ end ],
+                        print 'cols', draw_cols[ end-1 ], draw_cols[ end ]
+
                     if( draw_modes[ start ] != draw_modes[ end ]
-                    or end == draw_last ):
-                        print 'q2 start %d end %d len %d' % (start, end, draw_last)
+                    or draw_cols[ end-1 ]+1 != draw_cols[ end ] ):
+                        if row == 40:
+                            print 'q2 start %d end %d len %d' % (start, end, draw_last)
     
                         if cur_mode != draw_modes[ start ]:
                             cur_mode = draw_modes[ start ]
@@ -920,10 +936,13 @@ class EmacsPanel(wx.Panel):
 
                         x, y = self.__pixelPoint( draw_cols[ start ] + 1, row )
 
-                        print 'drawtext %d %d %s' % (x ,y ,''.join( draw_chars[ start:end+1 ] ))
+                        if row == qqq_row:
+                            print 'Y:%2d %2d %s"%s"' % (draw_cols[ start ], row, ' '*draw_cols[ start ], ''.join( draw_chars[ start:end+1 ] ))
 
-                        self.dc.DrawText( ''.join( draw_chars[ start:end+1 ] ), x, y )
+                        self.dc.DrawText( ''.join( draw_chars[ start:end ] ), x, y )
                         start = end
+
+                        end += 1
 
                         if end == draw_last:
                             break
