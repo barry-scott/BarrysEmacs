@@ -838,10 +838,8 @@ class EmacsPanel(wx.Panel):
         new_line_length = len( new_line_contents )
         old_line_length = len( old_line_contents )
 
-        if False and wx.Platform == '__WXMAC__':
+        if True or wx.Platform == '__WXMAC__':
             for col in range( len( new_line_contents ) ):
-                x, y = self.__pixelPoint( col+1, row )
-
                 new_attr = new_line_attrs[ col ]
                 new_ch = new_line_contents[ col ]
                 if( col < len(old_line_contents)
@@ -866,6 +864,8 @@ class EmacsPanel(wx.Panel):
                         cur_mode = mode
                         self.dc.SetTextForeground( fg_colours[ cur_mode ] ) 
                         self.dc.SetTextBackground( bg_colours[ cur_mode ] )
+
+                x, y = self.__pixelPoint( col+1, row )
 
                 self.dc.DrawText( new_ch, x, y )
 
