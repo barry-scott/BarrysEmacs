@@ -648,8 +648,8 @@ class EmacsPanel(wx.Panel):
         cmd = event.CmdDown()
         line_parts.append( ' cmd: %s' % T(cmd) )
 
-        control = event.ControlDown()
-        line_parts.append( ' control: %s' % T(control) )
+        ctrl = event.ControlDown()
+        line_parts.append( ' control: %s' % T(ctrl) )
 
         meta = event.MetaDown()
         line_parts.append( ' meta: %s' % T(meta) )
@@ -667,8 +667,8 @@ class EmacsPanel(wx.Panel):
 
         if( wx.Platform == '__WXGTK__'
         and ctrl
-        and char in (ord( '[' ), ord( '\\' ), ord( ']' )):
-            char = char & 0x1f
+        and char in cmd_to_ctrl_map):
+            char = cmd_to_ctrl_map[ char ]
 
         self.app.editor.guiEventChar( unichr( char ), False )
 
