@@ -582,18 +582,21 @@ class FakeEditor:
         self.app = app
         self.count = 0
 
+    def __debugEditor( self, msg ):
+        self.app.log.debug( 'EDIT %s' % (msg,) )
+
     def guiCloseWindow( self, *args, **kwds ):
         self.app.onGuiThread( self.app.quit, () )
 
     def guiGeometryChange( self, *args, **kwds ):
         pass
 
-    def guiEventChar( self, *args, **kwds ):
+    def guiEventChar( self, char, shift ):
         p = self.app.frame.emacs_panel
 
         self.count += 1
 
-        text = '  %d guiEventChar called' % (self.count,)
+        text = '  %d guiEventChar( %r, %r ) called' % (self.count, char, shift)
         attr = [0] * len(text)
 
         new = (text, attr)
@@ -602,6 +605,12 @@ class FakeEditor:
         p.termUpdateLine( None, new, 1 )
         p.termTopos( 1, 7 )
         p.termUpdateEnd()
+
+        if char == 'c':
+            self.app.onGuiThread( self.uiHookEditCopy, ('edit-copy', 'a'*30000) )
+
+        elif char == 'v':
+            self.app.onGuiThread( self.uiHookEditPaste, ('edit-paste',) )
 
     def guiEventMouse( self, *args, **kwds ):
         p = self.app.frame.emacs_panel
@@ -617,3 +626,29 @@ class FakeEditor:
         p.termUpdateLine( None, new, 1 )
         p.termTopos( 1, 10 )
         p.termUpdateEnd()
+
+    def uiHookEditCopy( self, cmd, text ):
+        self.__clipboard_data = wx.TextDataObject()
+        self.__clipboard_data.SetText( text )
+        if wx.TheClipboard.Open():
+            wx.TheClipboard.SetData( self.__clipboard_data )
+            wx.TheClipboard.Close()
+
+    def uiHookEditPaste( self, cmd, use_primary=False ):
+        self.__debugEditor( 'uiHookEditPaste use_primary=%r' % (use_primary,) )
+        success = False
+        do = wx.TextDataObject()
+        if wx.TheClipboard.Open():
+            wx.TheClipboard.UsePrimarySelection( use_primary )
+            self.__debugEditor( 'uiHookEditPaste clip open' )
+            success = wx.TheClipboard.GetData( do )
+            self.__debugEditor( 'uiHookEditPaste getdata %r' % (success,) )
+            wx.TheClipboard.Close()
+
+        if success:
+            text = do.GetText().replace( '\r\n', '\n' ).replace( '\r', '\n' )
+            self.__debugEditor( 'uiHookEditPaste text %r' % (text,) )
+
+        else:
+            self.__debugEditor( 'uiHookEditPaste setGuiResultError' )
+
