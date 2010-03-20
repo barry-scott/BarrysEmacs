@@ -415,21 +415,10 @@ class EmacsPanel(wx.Panel):
         self.cursor_y = 1
         self.window_size = 0
 
-        point_size = 14
-        # point size and face need to choosen for platform
-        if wx.Platform == '__WXMSW__':
-            face = 'Courier New'
+        font_pref = self.app.prefs.getFont()
 
-        elif wx.Platform == '__WXMAC__':
-            face = 'Monaco'
-
-        else:
-            #face = 'Courier'
-            face = 'Liberation Mono'
-            point_size = 11
-
-        self.font = wx.Font( point_size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, face )
-        print 'Font face: %r' % (self.font.GetFaceName(),)
+        self.font = wx.Font( font_pref.point_size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, font_pref.face )
+        self.log.info( 'Font face: %r' % (self.font.GetFaceName(),) )
 
         self.client_padding = 3
 
@@ -669,6 +658,9 @@ class EmacsPanel(wx.Panel):
         and ctrl
         and char in cmd_to_ctrl_map):
             char = cmd_to_ctrl_map[ char ]
+
+        if ctrl and char == ord( ' ' ):
+            char = 0
 
         self.app.editor.guiEventChar( unichr( char ), False )
 

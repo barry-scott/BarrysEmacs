@@ -12,6 +12,8 @@
 '''
 import wx
 
+id_exit = wx.NewId()
+
 id_SP_EditCut = wx.NewId()
 id_SP_EditCopy = wx.NewId()
 id_SP_EditPaste = wx.NewId()

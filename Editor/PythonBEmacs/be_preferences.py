@@ -10,8 +10,6 @@
 
     be_preferences.py
 
-    Based on pysvn Workbench
-
 '''
 import pprint
 
@@ -47,6 +45,7 @@ class Preferences:
         # all the preference section handles get created here
         self.pref_handlers = {}
         self.pref_handlers['Window'] = WindowPreferences( self.app )
+        self.pref_handlers['Font'] = FontPreferences( self.app )
 
         # read preferences into the handlers
         self.readPreferences()
@@ -72,8 +71,7 @@ class Preferences:
             if self.pref_handlers.has_key( section_name ):
                 return self.pref_handlers[ section_name ]
 
-        raise AttributeError, '%s has no attribute %s' % (self.__class__.__name__, name )
-
+        raise AttributeError( '%s has no attribute %s' % (self.__class__.__name__, name ) )
 
     def writePreferences( self ):
         try:
@@ -361,3 +359,32 @@ class WindowPreferences(PreferenceSection):
         set_option.set( 'height', self.frame_size.GetHeight() )
         set_option.set( 'maximized', self.maximized )
         set_option.set( 'zoom', self.zoom )
+
+class FontPreferences(PreferenceSection):
+    def __init__( self, app ):
+        PreferenceSection.__init__( self, 'Font' )
+        self.app = app
+
+        self.point_size = 14
+        # point size and face need to choosen for platform
+        if wx.Platform == '__WXMSW__':
+            self.face = 'Courier New'
+
+        elif wx.Platform == '__WXMAC__':
+            self.face = 'Monaco'
+
+        else:
+            #face = 'Courier'
+            self.face = 'Liberation Mono'
+            self.point_size = 11
+
+    def readPreferences( self, pref_data ):
+        get_option = GetOption( pref_data, self.section_name )
+        self.face = get_option.getstr( 'face' )
+        self.point_size = get_option.getint( 'point_size' )
+
+    def writePreferences( self, pref_data ):
+        set_option = SetOption( pref_data, self.section_name )
+
+        set_option.set( 'face', self.face )
+        set_option.set( 'point_size', self.point_size )

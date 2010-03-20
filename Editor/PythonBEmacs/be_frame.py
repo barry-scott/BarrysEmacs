@@ -21,6 +21,7 @@ import be_exceptions
 import be_version
 import be_images
 import be_emacs_panel
+import be_preferences_dialog
 
 import be_config
 
@@ -60,8 +61,16 @@ class BemacsFrame(wx.Frame):
         else:
             self.menu_file = self.menu_edit
 
+        if wx.Platform == '__WXMAC__':
+            # maps Cmd-Q to exit
+            id_exit = wx.ID_EXIT
+
+        else:
+            id_exit = be_ids.id_exit
+
+
         self.menu_file.Append( wx.ID_PREFERENCES, T_("&Preferences..."), T_("Preferences") )
-        self.menu_file.Append( wx.ID_EXIT, T_("E&xit"), T_("Exit the application") )
+        self.menu_file.Append( id_exit, T_("E&xit"), T_("Exit the application") )
 
         self.menu_help = wx.Menu()
         self.menu_help.Append( wx.ID_ABOUT, T_("&About..."), T_("About the application") )
@@ -115,7 +124,7 @@ class BemacsFrame(wx.Frame):
             # Set up the event handlers
             wx.EVT_MENU( event_source, wx.ID_ABOUT, tw( self.OnCmdAbout ) )
             wx.EVT_MENU( event_source, wx.ID_PREFERENCES, tw( self.OnCmdPreferences ) )
-            wx.EVT_MENU( event_source, wx.ID_EXIT, tw( self.OnCmdExit ) )
+            wx.EVT_MENU( event_source, id_exit, tw( self.OnCmdExit ) )
 
         wx.EVT_SIZE( self, tw( self.OnSize ) )
         wx.EVT_MOVE( self, tw( self.OnMove ) )
@@ -154,13 +163,12 @@ class BemacsFrame(wx.Frame):
         wx.LogMessage( str_message )
 
     def OnCmdPreferences( self, event ):
-        pref_dialog = wb_preferences_dialog.PreferencesDialog( self, self.app )
+        pref_dialog = be_preferences_dialog.PreferencesDialog( self, self.app )
         rc = pref_dialog.ShowModal()
         if rc == wx.ID_OK:
             self.app.savePreferences()
 
-        self.list_panel.updateHandler()
-        self.app.refreshFrame()
+        self.log.error( 'Need to tell editor to change font' )
 
     def OnSize( self, event ):
         if not self.IsMaximized():
