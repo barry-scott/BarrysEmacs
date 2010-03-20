@@ -45,7 +45,10 @@ class BemacsApp(wx.App):
 
         # on the Mac the app's cwd is the resource folder
         if wx.Platform == '__WXMAC__':
-            os.chdir( os.environ['HOME'] )
+            if 'PWD' in os.environ:
+                os.chdir( os.environ['PWD'] )
+            else:
+                os.chdir( os.environ['HOME'] )
 
         self.__debug_noredirect = False
         self.__debug = True
@@ -69,6 +72,11 @@ class BemacsApp(wx.App):
             elif arg == '--wx-raw-debug':
                 self.__wx_raw_debug = True
                 del args[ 1 ]
+
+            elif arg == '--start-dir' and len(args) > 2:
+                os.chdir( args[2]  )
+                del args[1]
+                del args[1]                
 
             elif arg == '--':
                 break
@@ -122,14 +130,9 @@ class BemacsApp(wx.App):
         self.log.info( 'emacs_user %s' % be_platform_specific.getUserDir() )
         self.log.info( 'emacs_library %s' % be_platform_specific.getLibraryDir() )
 
-        if '--test' in args:
-            self.prefs = be_preferences.Preferences(
-                    self,
-                    be_platform_specific.getPreferencesFilename() + '.test' )
-        else:
-            self.prefs = be_preferences.Preferences(
-                    self,
-                    be_platform_specific.getPreferencesFilename() )
+        self.prefs = be_preferences.Preferences(
+                self,
+                be_platform_specific.getPreferencesFilename() )
 
         self.lock_ui = 0
         self.need_activate_app_action = False
