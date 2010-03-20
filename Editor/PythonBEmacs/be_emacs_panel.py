@@ -586,7 +586,7 @@ class EmacsPanel(wx.Panel):
             if cmd:
                 ctrl = True
 
-        self.__debugTermKey( 'OnKeyDown key %r name %r shift %s' % (key, wx_key_names.get( key, 'unknown' ), T( shift )) )
+        self.__debugTermKey( 'OnKeyDown key %r name %r ctrl %s shift %s' % (key, wx_key_names.get( key, 'unknown' ), T( ctrl ), T( shift )) )
 
         if key in special_keys:
             trans, shift_trans, ctrl_trans, ctrl_shift_trans = special_keys[ key ]
@@ -615,6 +615,12 @@ class EmacsPanel(wx.Panel):
         event.Skip()
 
     def OnKeyUp( self, event ):
+        key = event.GetKeyCode()
+        shift = event.ShiftDown()
+        ctrl = event.ControlDown()
+
+        self.__debugTermKey( 'OnKeyUp key %r name %r ctrl %s shift %s' % (key, wx_key_names.get( key, 'unknown' ), T( ctrl ), T( shift )) )
+
         event.Skip()
 
     def OnChar( self, event ):
