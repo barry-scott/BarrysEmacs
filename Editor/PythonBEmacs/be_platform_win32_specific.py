@@ -21,7 +21,7 @@ app_dir = None
 
 def getUserDir():
     app_folder = shell.SHGetFolderPath( 0, shellcon.CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT )
-    return os.environ.get( 'BEMACS_USER', os.path.join( app_folder, 'Bemacs' ) )
+    return os.environ.get( 'BEMACS_USER', os.path.join( app_folder, 'bemacs' ) )
 
 def getLibraryDir():
     return os.environ.get( 'BEMACS_EMACS_LIBRARY', os.path.join( app_dir, 'emacs_library' ) )

@@ -57,7 +57,10 @@ class BemacsApp(wx.App):
 
         while len(args) > 1:
             arg = args[ 1 ]
-            if arg == '--noredirect':
+            if arg.startswith( '-psn_' ):
+                del args[ 1 ]
+
+            elif arg == '--noredirect':
                 self.__debug_noredirect = True
                 del args[ 1 ]
 
@@ -122,13 +125,14 @@ class BemacsApp(wx.App):
 
         self.setupLogging()
 
-        self.log.info( 'locale_path %s' % locale_path )
-        self.log.info( 'find %r' % gettext.find( 'bemacs', locale_path ) )
-        self.log.info( 'info %r' % self.translation.info() )
+        self.log.info( 'startup_dir %s' % (self.startup_dir,) )
+        self.log.info( 'locale_path %s' % (locale_path,) )
+        self.log.info( 'find %r' % (gettext.find( 'bemacs', locale_path ),) )
+        self.log.info( 'info %r' % (self.translation.info(),) )
         self.log.info( T_("Barry's Emacs") )
 
-        self.log.info( 'emacs_user %s' % be_platform_specific.getUserDir() )
-        self.log.info( 'emacs_library %s' % be_platform_specific.getLibraryDir() )
+        self.log.info( 'emacs_user %s' % (be_platform_specific.getUserDir(),) )
+        self.log.info( 'emacs_library %s' % (be_platform_specific.getLibraryDir(),) )
 
         self.prefs = be_preferences.Preferences(
                 self,
@@ -154,7 +158,7 @@ class BemacsApp(wx.App):
         return self.main_thread is threading.currentThread()
 
     def setupLogging( self ):
-        self.log = logging.getLogger( 'BEmacs' )
+        self.log = logging.getLogger( 'bemacs' )
 
         if self.__debug:
             self.log.setLevel( logging.DEBUG )

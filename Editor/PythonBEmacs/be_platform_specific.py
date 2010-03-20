@@ -23,10 +23,10 @@ else:
     from be_platform_unix_specific import *
 
 def getPreferencesFilename():
-    return os.path.join( getUserDir(), 'Bemacs.xml' )
+    return os.path.join( getUserDir(), 'bemacs.xml' )
 
 def getLogFilename():
-    return os.environ.get( 'BEMACS_GUI_LOG', os.path.join( getUserDir(), 'Bemacs.log' ) )
+    return os.environ.get( 'BEMACS_GUI_LOG', os.path.join( getUserDir(), 'bemacs.log' ) )
 
 def setupPlatform( argv0 ):
     setupPlatformSpecific_( argv0 )

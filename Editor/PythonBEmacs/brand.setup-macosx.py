@@ -29,6 +29,8 @@ setup(
         {'py2app':
             {
             'argv_emulation':
+                False,
+            'no_chdir':
                 True,
             'iconfile':
                 'bemacs.icns',
