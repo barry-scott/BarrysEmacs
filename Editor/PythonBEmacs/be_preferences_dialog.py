@@ -96,9 +96,11 @@ class FontPage(PagePanel):
     def initControls( self ):
         p = self.app.prefs.getFont()
 
-        self.static_text1 = wx.StaticText( self, -1, T_('Editor: '), style=wx.ALIGN_RIGHT)
+        self.face = p.face
+        self.point_size = p.point_size
 
-        self.static_text2 = wx.StaticText( self, -1, T_('Edit Arguments: '), style=wx.ALIGN_RIGHT)
+        self.static_text1 = wx.StaticText( self, -1, T_('Font: '), style=wx.ALIGN_RIGHT)
+        self.static_text2 = wx.StaticText( self, -1, '%s %d' % (self.face, self.point_size), style=wx.ALIGN_RIGHT)
 
         self.btn_select_font = wx.Button( self, -1, T_(' Select Font... '))
 
@@ -106,12 +108,8 @@ class FontPage(PagePanel):
         self.grid_sizer.AddGrowableCol( 1 )
 
         self.grid_sizer.Add( self.static_text1, 1, wx.EXPAND|wx.ALL, 3 )
-        self.grid_sizer.Add( (1, 1), 0, wx.EXPAND )
+        self.grid_sizer.Add( self.static_text2, 0, wx.EXPAND )
         self.grid_sizer.Add( self.btn_select_font, 1, wx.EXPAND|wx.ALL, 3 )
-
-        self.grid_sizer.Add( self.static_text2, 1, wx.EXPAND|wx.ALL, 3 )
-        self.grid_sizer.Add( (1, 1), 0, wx.EXPAND )
-        self.grid_sizer.Add( (1, 1), 0, wx.EXPAND )
 
         wx.EVT_BUTTON( self, self.btn_select_font.GetId(), self.onSelectFont )
 
@@ -119,13 +117,15 @@ class FontPage(PagePanel):
 
     def savePreferences( self ):
         p = self.app.prefs.getFont()
+        p.face = self.face
+        p.point_size = self.point_size
 
     def validate( self ):
         valid = True
 
         if not valid:
             wx.MessageBox(
-                T_('You must enter a valid editor executable'),
+                T_('You must enter a valid something'),
                 T_('Warning'),
                 wx.OK | wx.ICON_EXCLAMATION,
                 self )
@@ -135,23 +135,24 @@ class FontPage(PagePanel):
 
     def onSelectFont( self, *args ):
         data = wx.FontData()
-        p = self.app.prefs.getFont()
-        font = wx.Font( p.point_size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, p.face )
+        font = wx.Font( self.point_size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, self.face )
 
         data.SetInitialFont( font )
 
         dlg = wx.FontDialog( self, data )
         rc = dlg.ShowModal()
-        self.app.log.info( 'ShowModal %r' % (rc,) )
-
         if rc == wx.ID_OK:
             data = dlg.GetFontData()
             font = data.GetChosenFont()
-            colour = data.GetColour()
+            self.face = font.GetFaceName()
+            self.point_size = font.GetPointSize()
 
-            self.app.log.info('You selected: "%s", %d points, color %s' %
-                               (font.GetFaceName(), font.GetPointSize(),
-                                colour.Get()))
+            self.app.log.info( 'Face: %r' % (self.face,) )
+            self.app.log.info( 'PointSize: %r' % (self.point_size,) )
+
+            label = '%s %d' % (self.face, self.point_size)
+            self.app.log.info( 'Label: %s' % (label,) )
+            self.static_text2.SetLabel( label )
 
 class ToolbarPage(PagePanel):
     id_exclude = wx.NewId()
