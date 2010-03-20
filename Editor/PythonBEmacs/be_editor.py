@@ -58,22 +58,22 @@ class BEmacs(_bemacs.BemacsEditor):
             self.log.debug( 'EDITOR %s' % (msg,) )
 
     def initEmacsProfile( self, window ):
-        self.log.__debugEditor( 'BEmacs.initEmacsProfile()' )
+        self.__debugEditor( 'BEmacs.initEmacsProfile()' )
         assert window is not None
         self.window = window
 
         # initEditor will start calling termXxx functions - must have windows setup first
         self.initEditor()
         self.setKeysMapping( self.window.getKeysMapping() )
-        self.log.__debugEditor( 'BEmacs.initEmacsProfile() geometryChange %r %r' %
+        self.__debugEditor( 'BEmacs.initEmacsProfile() geometryChange %r %r' %
                             (self.window.term_width, self.window.term_length) )
         self.geometryChange( self.window.term_width, self.window.term_length )
 
-        self.log.__debugEditor( 'TESTING' )
+        self.__debugEditor( 'TESTING' )
         #_bemacs.function.debug_emacs( 'flags=key,exec,tmp' )
         #_bemacs.variable.error_messages_buffer = "error-messages"
 
-        self.log.__debugEditor( 'BEmacs.initEmacsProfile() emacs_profile.ml' )
+        self.__debugEditor( 'BEmacs.initEmacsProfile() emacs_profile.ml' )
         _bemacs.function.execute_mlisp_file( 'emacs_library:emacs_profile.ml' )
 
         self.executeEnterHooks()
@@ -161,50 +161,50 @@ class BEmacs(_bemacs.BemacsEditor):
             self.setGuiResultError( ValueError( 'failed to set data on clipboard' ) )
 
     def uiHookEditPaste( self, cmd, use_primary=False ):
-        self.log.__debugEditor( 'uiHookEditPaste use_primary=%r' % (use_primary,) )
+        self.__debugEditor( 'uiHookEditPaste use_primary=%r' % (use_primary,) )
         success = False
         do = wx.TextDataObject()
         if wx.TheClipboard.Open():
             wx.TheClipboard.UsePrimarySelection( use_primary )
-            self.log.__debugEditor( 'uiHookEditPaste clip open' )
+            self.__debugEditor( 'uiHookEditPaste clip open' )
             success = wx.TheClipboard.GetData( do )
-            self.log.__debugEditor( 'uiHookEditPaste getdata %r' % (success,) )
+            self.__debugEditor( 'uiHookEditPaste getdata %r' % (success,) )
             wx.TheClipboard.Close()
 
         if success:
             text = do.GetText().replace( '\r\n', '\n' ).replace( '\r', '\n' )
-            self.log.__debugEditor( 'uiHookEditPaste text %r' % (text,) )
+            self.__debugEditor( 'uiHookEditPaste text %r' % (text,) )
             self.setGuiResultSuccess( text )
-            self.log.__debugEditor( 'uiHookEditPaste setGuiResultSuccess' )
+            self.__debugEditor( 'uiHookEditPaste setGuiResultSuccess' )
 
         else:
             self.setGuiResultError( ValueError( 'clipboard is empty' ) )
-            self.log.__debugEditor( 'uiHookEditPaste setGuiResultError' )
+            self.__debugEditor( 'uiHookEditPaste setGuiResultError' )
 
     def uiHookYesNoDialog( self, cmd, default, title, message ):
         result = self.app.guiYesNoDialog( default, title, message )
         self.setGuiResultSuccess( result )
 
     def hookUserInterface( self, *args ):
-        self.log.__debugEditor( 'hookUserInterface( %r )' % (args,) )
+        self.__debugEditor( 'hookUserInterface( %r )' % (args,) )
         cmd = args[0]
         if cmd in self.hook_ui_handlers:
             self.initGuiResult()
 
-            self.log.__debugEditor( 'hookUserInterface calling handler' )
+            self.__debugEditor( 'hookUserInterface calling handler' )
             self.app.onGuiThread( self.hook_ui_handlers[ cmd ], args )
 
-            self.log.__debugEditor( 'hookUserInterface waiting for result' )
+            self.__debugEditor( 'hookUserInterface waiting for result' )
             error, value = self.getGuiResult()
 
-            self.log.__debugEditor( 'hookUserInterface error %r value %r' % (error, value) )
+            self.__debugEditor( 'hookUserInterface error %r value %r' % (error, value) )
 
             if error is not None:
-                self.log.__debugEditor( 'hookUserInterface handler error return' )
+                self.__debugEditor( 'hookUserInterface handler error return' )
                 raise error
 
             else:
-                self.log.__debugEditor( 'hookUserInterface handler normal return' )
+                self.__debugEditor( 'hookUserInterface handler normal return' )
                 return value
 
         else:
@@ -237,15 +237,15 @@ class BEmacs(_bemacs.BemacsEditor):
 
             while event_hander_and_args is not None:
                 handler, args = event_hander_and_args
-                self.log.__debugEditor( 'waitForActivity: handler %r' % (handler,) )
-                self.log.__debugEditor( 'waitForActivity: args %r' % (args,) )
+                self.__debugEditor( 'waitForActivity: handler %r' % (handler,) )
+                self.__debugEditor( 'waitForActivity: args %r' % (args,) )
                 handler( *args )
 
                 event_hander_and_args = self.__event_queue.getNoWait()
 
             if self.__quit_editor:
                 self.__quit_editor = False
-                self.log.__debugEditor( 'waitForActivity self.__quit_editor set' )
+                self.__debugEditor( 'waitForActivity self.__quit_editor set' )
                 return -1
 
             return 0
@@ -262,7 +262,7 @@ class BEmacs(_bemacs.BemacsEditor):
         self.app.onGuiThread( self.window.termReset, () )
 
     def termInit( self ):
-        self.log.__debugEditor( 'BEmacs.termInit() window %r' % (self.window,) )
+        self.__debugEditor( 'BEmacs.termInit() window %r' % (self.window,) )
         self.app.onGuiThread( self.window.termInit, () )
 
     def termBeep( self ):

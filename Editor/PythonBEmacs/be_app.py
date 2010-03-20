@@ -238,7 +238,7 @@ class BemacsApp(wx.App):
 
     # notify app that the emacs panel is ready for use
     def onEmacsPanelReady( self ):
-        self.log.__debugApp( 'BemacsApp.onEmacsPanelReady()' )
+        self.__debugApp( 'BemacsApp.onEmacsPanelReady()' )
         self.onGuiThread( self.__initEditorThread, () )
         self.onGuiThread( self.__initCommandLineThread, () )
 
@@ -272,14 +272,14 @@ class BemacsApp(wx.App):
         wx.PostEvent( self, AppCallBackEvent( callback=function, args=args ) )
 
     def OnAppCallBack( self, event ):
-        self.log.__debugApp( 'OnAppCallBack func %s start' % (event.callback.__name__,) )
+        self.__debugApp( 'OnAppCallBack func %s start' % (event.callback.__name__,) )
         try:
             event.callback( *event.args )
         except:
             self.log.exception( 'OnAppCallBack<%s.%s>\n' %
                 (event.callback.__module__, event.callback.__name__ ) )
 
-        self.log.__debugApp( 'OnAppCallBack func %s done' % (event.callback.__name__,) )
+        self.__debugApp( 'OnAppCallBack func %s done' % (event.callback.__name__,) )
 
     def debugShowCallers( self, depth ):
         if not self.__debug:
@@ -292,7 +292,7 @@ class BemacsApp(wx.App):
 
             caller = stack[ index ]
             filename = os.path.basename( caller[1] )
-            self.log.__debugApp( 'File: %s:%d, Function: %s' % (filename, caller[2], caller[3]) )
+            self.__debugApp( 'File: %s:%d, Function: %s' % (filename, caller[2], caller[3]) )
             del caller
 
         del stack
@@ -309,7 +309,7 @@ class BemacsApp(wx.App):
 
     #--------------------------------------------------------------------------------
     def __initCommandLineThread( self ):
-        self.log.__debugApp( 'BemacsApp.__initCommandLineThread()' )
+        self.__debugApp( 'BemacsApp.__initCommandLineThread()' )
         if self.__wx_raw_debug:
             return
 
@@ -407,7 +407,7 @@ class BemacsApp(wx.App):
 
     #--------------------------------------------------------------------------------
     def __initEditorThread( self ):
-        self.log.__debugApp( 'BemacsApp.__initEditorThread()' )
+        self.__debugApp( 'BemacsApp.__initEditorThread()' )
         if self.__wx_raw_debug:
             return
 
@@ -417,7 +417,7 @@ class BemacsApp(wx.App):
         import be_editor
 
         try:
-            self.log.__debugApp( 'BemacsApp.__runEditor()' )
+            self.__debugApp( 'BemacsApp.__runEditor()' )
 
             self.editor = be_editor.BEmacs( self )
             self.editor.initEmacsProfile( self.frame.emacs_panel )
