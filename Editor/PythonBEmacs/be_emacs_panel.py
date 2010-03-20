@@ -25,6 +25,7 @@ _debug_term_calls1 = False
 _debug_term_calls2 = False
 _debug_term_key = True
 _debug_term_mouse = False
+_debug_panel = False
 
 def T( boolean ):
     if boolean:
@@ -460,6 +461,11 @@ class EmacsPanel(wx.Panel):
         if _debug_term_mouse:
             self.log.debug( 'TERM %s' % (msg,) )
 
+    def __debugPanel( self, msg ):
+        if _debug_panel:
+            self.log.debug( 'PANEL %s' % (msg,) )
+
+
     def __calculateWindowSize( self ):
         if self.char_width is None:
             return
@@ -468,12 +474,12 @@ class EmacsPanel(wx.Panel):
         self.term_width  = min( MSCREENWIDTH,  (self.pixel_width  - 2*self.client_padding) // self.char_width )
         self.term_length = min( MSCREENLENGTH, (self.pixel_length - 2*self.client_padding) // self.char_length )
 
-        self.log.debug( '__calculateWindowSize char: %dpx x %dpx window: %dpx X %dpx -> text window: %d X %d' %
+        self.__debugPanel( '__calculateWindowSize char: %dpx x %dpx window: %dpx X %dpx -> text window: %d X %d' %
                         (self.char_width, self.char_length
                         ,self.pixel_width, self.pixel_length
                         ,self.term_width, self.term_length) )
 
-        self.log.debug( '__calculateWindowSize create editor_bitmap %d x %d' % (self.pixel_width, self.pixel_length) )
+        self.__debugPanel( '__calculateWindowSize create editor_bitmap %d x %d' % (self.pixel_width, self.pixel_length) )
         self.editor_bitmap = wx.EmptyBitmap( self.pixel_width, self.pixel_length, -1 )
 
         dc = wx.MemoryDC()
@@ -496,11 +502,11 @@ class EmacsPanel(wx.Panel):
         self.__calculateWindowSize()
 
         if self.app.editor is None:
-            self.log.debug( '__geometryChanged no self.app.editor' )
+            self.__debugPanel( '__geometryChanged no self.app.editor' )
             return
 
         if self.char_width is None:
-            self.log.debug( '__geometryChanged self.char_width is None' )
+            self.__debugPanel( '__geometryChanged self.char_width is None' )
             return
 
 
@@ -514,7 +520,7 @@ class EmacsPanel(wx.Panel):
     def OnPaint( self, event ):
         self.SetFocus()
         if self.first_paint:
-            self.log.debug( 'EmacsPanel.OnPaint() first paint' )
+            self.__debugPanel( 'EmacsPanel.OnPaint() first paint' )
             self.first_paint = False
 
             dc = wx.PaintDC( self )
@@ -527,10 +533,10 @@ class EmacsPanel(wx.Panel):
             dc.SetFont( self.font )
 
             self.char_width, self.char_length = dc.GetTextExtent( 'M' )
-            self.log.debug( 'OnPaint first_paint M %d.%d' % (self.char_width, self.char_length) )
+            self.__debugPanel( 'OnPaint first_paint M %d.%d' % (self.char_width, self.char_length) )
 
             self.char_width, self.char_length = dc.GetTextExtent( 'i' )
-            self.log.debug( 'OnPaint first_paint i %d.%d' % (self.char_width, self.char_length) )
+            self.__debugPanel( 'OnPaint first_paint i %d.%d' % (self.char_width, self.char_length) )
             dc.EndDrawing()
             dc = None
 
@@ -540,7 +546,7 @@ class EmacsPanel(wx.Panel):
             self.app.onGuiThread( self.app.onEmacsPanelReady, () )
 
         elif self.editor_bitmap is not None:
-            self.log.debug( 'EmacsPanel.OnPaint() editor_bitmap' )
+            self.__debugPanel( 'EmacsPanel.OnPaint() editor_bitmap' )
 
             pdc = wx.PaintDC( self )
             dc = wx.GCDC( pdc )
@@ -564,14 +570,14 @@ class EmacsPanel(wx.Panel):
             dc = None
 
         else:
-            self.log.debug( 'EmacsPanel.OnPaint() Nothing to do' )
+            self.__debugPanel( 'EmacsPanel.OnPaint() Nothing to do' )
             event.Skip()
 
     def getKeysMapping( self ):
         return keys_mapping
 
     def OnSize( self, event ):
-        self.log.debug( 'EmacsPanel.OnSize()' )
+        self.__debugPanel( 'EmacsPanel.OnSize()' )
         self.__geometryChanged()
         event.Skip()
 
