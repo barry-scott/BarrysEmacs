@@ -864,9 +864,13 @@ class EmacsPanel(wx.Panel):
                         cur_mode = mode
                         self.dc.SetTextForeground( fg_colours[ cur_mode ] ) 
                         self.dc.SetTextBackground( bg_colours[ cur_mode ] )
+                        self.dc.SetPen( wx.Pen( bg_colours[ cur_mode ] ) )
+                        self.dc.SetBrush( wx.Brush( bg_colours[ cur_mode ] ) )
 
                 x, y = self.__pixelPoint( col+1, row )
 
+                # draw text may not fill the rectange of the char leaving lines on the screen
+                self.dc.DrawRectangle( x, y, self.char_width, self.char_length )
                 self.dc.DrawText( new_ch, x, y )
 
         else:
