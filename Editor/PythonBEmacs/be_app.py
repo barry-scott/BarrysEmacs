@@ -267,14 +267,14 @@ class BemacsApp(wx.App):
         wx.PostEvent( self, AppCallBackEvent( callback=function, args=args ) )
 
     def OnAppCallBack( self, event ):
-        self.log.debug( 'OnAppCallBack func %s start' % (event.callback.__name__,) )
+        #self.log.debug( 'OnAppCallBack func %s start' % (event.callback.__name__,) )
         try:
             event.callback( *event.args )
         except:
             self.log.exception( 'OnAppCallBack<%s.%s>\n' %
                 (event.callback.__module__, event.callback.__name__ ) )
 
-        self.log.debug( 'OnAppCallBack func %s done' % (event.callback.__name__,) )
+        #self.log.debug( 'OnAppCallBack func %s done' % (event.callback.__name__,) )
 
     def debugShowCallers( self, depth ):
         if not self.__debug:

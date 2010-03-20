@@ -23,7 +23,8 @@ import be_config
 
 _debug_term_calls1 = False
 _debug_term_calls2 = False
-_debug_term_input = True
+_debug_term_key = True
+_debug_term_mouse = False
 
 def T( boolean ):
     if boolean:
@@ -451,8 +452,12 @@ class EmacsPanel(wx.Panel):
         if _debug_term_calls2:
             self.log.debug( 'TERM %s' % (msg,) )
 
-    def __debugTermInput( self, msg ):
-        if _debug_term_input:
+    def __debugTermKey( self, msg ):
+        if _debug_term_key:
+            self.log.debug( 'TERM %s' % (msg,) )
+
+    def __debugTermMouse( self, msg ):
+        if _debug_term_mouse:
             self.log.debug( 'TERM %s' % (msg,) )
 
     def __calculateWindowSize( self ):
@@ -581,7 +586,7 @@ class EmacsPanel(wx.Panel):
             if cmd:
                 ctrl = True
 
-        self.__debugTermInput( 'OnKeyDown key %r name %r shift %s' % (key, wx_key_names.get( key, 'unknown' ), T( shift )) )
+        self.__debugTermKey( 'OnKeyDown key %r name %r shift %s' % (key, wx_key_names.get( key, 'unknown' ), T( shift )) )
 
         if key in special_keys:
             trans, shift_trans, ctrl_trans, ctrl_shift_trans = special_keys[ key ]
@@ -614,7 +619,7 @@ class EmacsPanel(wx.Panel):
 
     def OnChar( self, event ):
         if self.eat_next_char:
-            self.__debugTermInput( 'OnChar eat_next_char' )
+            self.__debugTermKey( 'OnChar eat_next_char' )
 
             self.eat_next_char = False
             return
@@ -640,7 +645,7 @@ class EmacsPanel(wx.Panel):
         shift = event.ShiftDown()
         line_parts.append( ' shift: %s' % T(shift) )
 
-        self.__debugTermInput( (''.join( line_parts )).encode( 'utf-8' ) )
+        self.__debugTermKey( (''.join( line_parts )).encode( 'utf-8' ) )
 
         if( wx.Platform == '__WXMAC__'
         and cmd
@@ -651,7 +656,7 @@ class EmacsPanel(wx.Panel):
         self.app.editor.guiEventChar( unichr( char ), False )
 
     def OnMouse( self, event ):
-        self.__debugTermInput( 'OnMouse() event_type %r %r' %
+        self.__debugTermMouse( 'OnMouse() event_type %r %r' %
                                 (event.GetEventType(), wx_evt_names.get( event.GetEventType(), 'unknown' )) )
 
         if self.char_width is None:
@@ -669,7 +674,7 @@ class EmacsPanel(wx.Panel):
         translation = None
 
         if event.Dragging():
-            self.__debugTermInput( 'Mouse drag shift %r line %r column %r' % (shift, line, column) )
+            self.__debugTermMouse( 'Mouse drag shift %r line %r column %r' % (shift, line, column) )
 
             translation = keys_mapping["mouse-motion"]
 
@@ -698,12 +703,12 @@ class EmacsPanel(wx.Panel):
                 self.log.info( 'Unknown button event: %r' % (event.GetButton(),) )
                 return
 
-            self.__debugTermInput( 'Mouse shift %r line %r column %r' % (shift, line, column) )
+            self.__debugTermMouse( 'Mouse shift %r line %r column %r' % (shift, line, column) )
 
             self.app.editor.guiEventMouse( translation, shift, [line, column] );
 
         elif event.GetEventType() == wx.wxEVT_MOUSEWHEEL:
-            self.__debugTermInput( 'Mouse Wheel rotation %r delta %r' % (event.GetWheelRotation(), event.GetWheelDelta()) )
+            self.__debugTermMouse( 'Mouse Wheel rotation %r delta %r' % (event.GetWheelRotation(), event.GetWheelDelta()) )
 
             rotation = event.GetWheelRotation()
 
