@@ -665,6 +665,11 @@ class EmacsPanel(wx.Panel):
             print 'mapped %d to %d' % (char, cmd_to_ctrl_map[ char ])
             char = cmd_to_ctrl_map[ char ]
 
+        if( wx.Platform == '__WXGTK__'
+        and ctrl
+        and char in (ord( '[' ), ord( '\\' ), ord( ']' )):
+            char = char & 0x1f
+
         self.app.editor.guiEventChar( unichr( char ), False )
 
     def OnMouse( self, event ):
