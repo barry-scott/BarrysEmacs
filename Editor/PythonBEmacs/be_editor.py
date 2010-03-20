@@ -11,7 +11,7 @@
     
 
 '''
-from __future__ import with_statement;
+from __future__ import with_statement
 
 import sys
 import os
@@ -72,7 +72,7 @@ class BEmacs(_bemacs.BemacsEditor):
 
         self.executeEnterHooks()
 
-        self.clientCommand( os.getcwd(), ['emacs'] + self.app.args[1:] );
+        self.clientCommand( os.getcwd(), ['emacs'] + self.app.args[1:] )
 
     def guiCloseWindow( self ):
         self.__event_queue.put( (self.closeWindow, ()) )
@@ -85,7 +85,7 @@ class BEmacs(_bemacs.BemacsEditor):
         try:
             _bemacs.function.visit_file( filename )
             # force a redraw
-            self.inputChar( -1, False );
+            self.inputChar( -1, False )
 
             self.log.info( 'openFile done' )
 
