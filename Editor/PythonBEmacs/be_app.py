@@ -255,7 +255,7 @@ class BemacsApp(wx.App):
                 self.need_activate_app_action = True
 
     def onCloseEditor( self ):
-        self.log.info( 'onCloseEditor()' )
+        self.log.debug( 'onCloseEditor()' )
         self.editor.guiCloseWindow()
 
     def callGuiFunction( self, function, args ):
@@ -495,7 +495,7 @@ class BemacsApp(wx.App):
                 os.write( emacs_client_write_fd, ' ' )
 
     def guiClientCommandHandler( self, client_command ):
-        self.log.info( 'client_command: %r' % (client_command,) )
+        self.log.debug( 'client_command: %r' % (client_command,) )
         all_client_args = [part.decode('utf-8') for part in client_command.split( '\x00' )]
         command_directory = all_client_args[0]
         command_args = all_client_args[1:]
@@ -537,7 +537,7 @@ class BemacsApp(wx.App):
             # stay in processKeys until editor quits
             while True:
                 rc = self.editor.processKeys()
-                self.log.info( 'processKeys rc %r' % (rc,) )
+                self.log.debug( 'processKeys rc %r' % (rc,) )
 
                 mod = self.editor.modifiedFilesExist()
                 if not mod:
@@ -568,7 +568,7 @@ class BemacsApp(wx.App):
         return rc == wx.ID_YES
 
     def quit( self ):
-        self.log.info( 'quit()' )
+        self.log.debug( 'quit()' )
         self.frame.Destroy()
 
     def BringWindowToFront( self ):
@@ -580,8 +580,7 @@ class BemacsApp(wx.App):
 
     def MacOpenFile( self, filename ):
         # Called for files droped on dock icon, or opened via finders context menu
-        self.log.info( 'MacOpenFile( %s )' % (filename,) )
-        print "%s dropped on app" % (filename,) #code to load filename goes here.
+        self.log.debug( 'MacOpenFile( %s )' % (filename,) )
         self.editor.guiOpenFile( filename )
         self.BringWindowToFront()
 
@@ -693,7 +692,6 @@ class FakeEditor:
     def __init__( self, app ):
         self.app = app
         self.count = 0
-
     def __debugEditor( self, msg ):
         self.app.log.debug( 'EDIT %s' % (msg,) )
 
