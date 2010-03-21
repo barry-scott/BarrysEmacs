@@ -38,7 +38,7 @@ class ClientBase:
     def __init__( self ):
         self.all_command_elements = []
 
-        self.opt_debug = 'BEAMCS_CLIENT_DEBUG' in os.environ
+        self.opt_debug = 'BEMACS_CLIENT_DEBUG' in os.environ
         self.opt_name = None
         self.opt_wait = False
         self.opt_start_app = True
