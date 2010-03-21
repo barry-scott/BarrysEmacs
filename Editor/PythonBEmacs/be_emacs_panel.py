@@ -23,7 +23,7 @@ import be_config
 
 _debug_term_calls1 = False
 _debug_term_calls2 = False
-_debug_term_key = True
+_debug_term_key = False
 _debug_term_mouse = False
 _debug_panel = False
 
@@ -719,7 +719,7 @@ class EmacsPanel(wx.Panel):
         elif event.GetEventType() == wx.wxEVT_MOUSEWHEEL:
             self.__debugTermMouse( 'Mouse Wheel rotation %r delta %r' % (event.GetWheelRotation(), event.GetWheelDelta()) )
 
-            rotation = event.GetWheelRotation()
+            rotation = event.GetWheelRotation() / event.GetWheelDelta()
 
             if shift and control:
                 if rotation < 0:
