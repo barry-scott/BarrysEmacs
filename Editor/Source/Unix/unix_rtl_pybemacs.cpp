@@ -224,6 +224,8 @@ void EmacsInitialisation::os_specific_init()
     //
     EmacsSaveRestoreEnvironmentObject = EMACS_NEW EmacsSaveRestoreEnvironment;
 #endif
+
+    gettimeofday( &emacs_start_time, NULL );
 }
 
 //
