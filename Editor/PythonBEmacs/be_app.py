@@ -80,7 +80,7 @@ class BemacsApp(wx.App):
             elif arg == '--start-dir' and len(args) > 2:
                 os.chdir( args[2]  )
                 del args[1]
-                del args[1]                
+                del args[1]
 
             elif arg == '--':
                 break
@@ -110,7 +110,7 @@ class BemacsApp(wx.App):
         self.translation = gettext.translation(
                 'bemacs',
                 locale_path,
-                # language defaults 
+                # language defaults
                 fallback=True )
 
         import __builtin__
@@ -326,10 +326,117 @@ class BemacsApp(wx.App):
         except Exception, e:
             self.log.exception( 'command line exception' )
 
-            self.callGuiFunction( self.guiReportException, (str(e), 'Command line Exception') )
+            self.onGuiThread( self.guiReportException, (str(e), 'Command line Exception') )
 
     def __windowsCommandLineHandler( self ):
-        pass
+        self.log.info( '__windowsCommandLineHandler()' )
+
+        import ctypes
+
+        PIPE_UNLIMITED_INSTANCES = 255
+        PIPE_ACCESS_DUPLEX = 3
+        PIPE_TYPE_MESSAGE = 4
+        FILE_FLAG_OVERLAPPED = 0x40000000
+        INFINITE = -1
+        ERROR_PIPE_CONNECTED = 535
+        WAIT_OBJECT_0 = 0
+
+        class OVERLAPPED(ctypes.Structure):
+            _fields_ =  [('status', ctypes.c_uint)
+                        ,('transfered', ctypes.c_uint)
+                        ,('offset', ctypes.c_ulonglong)
+                        ,('hevent', ctypes.c_uint)]
+
+        self.__h_wait_stop = ctypes.windll.kernel32.CreateEventW( None, 0, 0, None )
+
+        # We need to use overlapped IO for this, so we dont block when
+        # waiting for a client to connect.  This is the only effective way
+        # to handle either a client connection, or a service stop request.
+        self.__overlapped = OVERLAPPED( 0, 0, 0, 0 )
+
+        # And create an event to be used in the OVERLAPPED object.
+        self.__overlapped.hevent = ctypes.windll.kernel32.CreateEventW( None, 0, 0, None )
+
+        # We create our named pipe.
+        pipe_name = "\\\\.\\pipe\\Barry's Emacs"
+
+        h_pipe = ctypes.windll.kernel32.CreateNamedPipeA(
+                        pipe_name,                  #  __in      LPCTSTR lpName,
+                        PIPE_ACCESS_DUPLEX
+                        | FILE_FLAG_OVERLAPPED,     #  __in      DWORD dwOpenMode,
+                        PIPE_TYPE_MESSAGE,          #  __in      DWORD dwPipeMode,
+                        PIPE_UNLIMITED_INSTANCES,   #  __in      DWORD nMaxInstances,
+                        0,                          #  __in      DWORD nOutBufferSize,
+                        0,                          #  __in      DWORD nInBufferSize,
+                        100,                        #  __in      DWORD nDefaultTimeOut, (100ms)
+                        None                        #  __in_opt  LPSECURITY_ATTRIBUTES lpSecurityAttributes
+                        )
+
+        # Loop accepting and processing connections
+        while True:
+            hr = ctypes.windll.kernel32.ConnectNamedPipe( h_pipe, ctypes.byref( self.__overlapped ) )
+            if hr == ERROR_PIPE_CONNECTED:
+                # Client is fast, and already connected - signal event
+                ctypes.windll.kernel32.SetEvent( self.__overlapped.hevent )
+
+            # Wait for either a connection, or a service stop request.
+            wait_handles_t = ctypes.c_uint * 2
+            wait_handles = wait_handles_t( self.__h_wait_stop, self.__overlapped.hevent )
+
+            rc = ctypes.windll.kernel32.WaitForMultipleObjects( 2, ctypes.byref( wait_handles ), 0, INFINITE )
+            if rc == WAIT_OBJECT_0:
+                # Stop event
+                break
+
+            else:
+                # Pipe event - read the data, and write it back.
+                # (We only handle a max of 255 characters for this sample)
+                buf_size = ctypes.c_uint( 1024 )
+                buf_client = ctypes.create_string_buffer( buf_size.value )
+                hr = ctypes.windll.kernel32.ReadFile( h_pipe, buf_client, buf_size, ctypes.byref( buf_size ), None )
+                client_command = buf_client.raw[:buf_size.value]
+
+                reply = ctypes.create_string_buffer( 32 )
+
+                if client_command[0] == 'p':
+                    reply.value = 'p%d' % (os.getpid(),)
+
+                else:
+                    self.onGuiThread( self.guiClientCommandHandler, (client_command[1:],) )
+                    reply.value = ' '
+
+                reply_size = ctypes.c_uint( len( reply.value ) )
+
+                hr = ctypes.windll.kernel32.WriteFile( h_pipe, reply, reply_size, ctypes.byref( reply_size ), None )
+
+                # And disconnect from the client.
+                ctypes.windll.kernel32.DisconnectNamedPipe( h_pipe )
+
+
+    def __getLastErrorMessage( self ):
+        import ctypes
+
+        err = ctypes.windll.kernel32.GetLastError()
+
+        FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000
+        FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200
+
+        errmsg_size = ctypes.c_int( 256 )
+        errmsg = ctypes.create_string_buffer( errmsg_size.value + 1 )
+
+        rc = ctypes.windll.kernel32.FormatMessageA(
+            FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS, # __in      DWORD dwFlags,
+            None,           # __in_opt  LPCVOID lpSource,
+            err,            # __in      DWORD dwMessageId,
+            0,              # __in      DWORD dwLanguageId,
+            errmsg,         # __out     LPTSTR lpBuffer,
+            errmsg_size,    # __in      DWORD nSize,
+            None            # __in_opt  va_list *Arguments
+            )
+        if rc == 0:
+            return 'error 0x%8.8x' % (err,)
+
+        return errmsg.value
 
     def __posixCommandLineHandler( self ):
         import pwd
@@ -371,10 +478,15 @@ class BemacsApp(wx.App):
 
         while True:
             r, w, x = select.select( [emacs_server_read_fd], [], [], 1.0 )
+            reply = ' '
             if emacs_server_read_fd in r:
                 client_command = os.read( emacs_server_read_fd, 16384 )
                 if len( client_command ) > 0:
-                    self.onGuiThread( self.guiClientCommandHandler, (client_command,) )
+                    if client_command[0] == 'p':
+                        reply = 'p%d' % (os.getpid(),)
+
+                    else:
+                        self.onGuiThread( self.guiClientCommandHandler, (client_command[1:],) )
 
                 emacs_client_write_fd = os.open( client_fifo, os.O_WRONLY|os.O_NONBLOCK );
                 if emacs_client_write_fd < 0:
@@ -421,7 +533,7 @@ class BemacsApp(wx.App):
 
             self.editor = be_editor.BEmacs( self )
             self.editor.initEmacsProfile( self.frame.emacs_panel )
-            
+
             # stay in processKeys until editor quits
             while True:
                 rc = self.editor.processKeys()
@@ -479,7 +591,7 @@ class BemacsApp(wx.App):
 
     def MacNewFile( self ):
         pass
-    
+
     def MacPrintFile( self, file_path ):
         pass
 

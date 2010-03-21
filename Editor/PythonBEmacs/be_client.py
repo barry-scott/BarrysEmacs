@@ -15,7 +15,6 @@
 import sys
 import os
 import types
-import pwd
 import stat
 import time
 
@@ -159,6 +158,8 @@ class ClientPosix(ClientBase):
             return argv.next()
 
     def processCommand( self ):
+        import pwd
+
         fifo_name = os.environ.get( 'BEMACS_FIFO', '.bemacs8/.emacs_command' )
 
         if fifo_name.startswith( '/' ):
@@ -290,8 +291,10 @@ class ClientWindows(ClientBase):
     def __init__( self ):
         ClientBase.__init__( self )
 
+        self.editor_pid = 0
+
     def isQualifier( self, arg ):
-        return name.startswith( '/' )
+        return arg.startswith( '/' )
 
     def isNoMoreQualifiers( self, name ):
         return False
@@ -309,6 +312,122 @@ class ClientWindows(ClientBase):
 
         else:
             return argv.next()
+
+    def processCommand( self ):
+        import ctypes
+
+        reply = self.__sendCommand( 'p' )
+        if reply is None:
+            return False
+
+        pid = int( reply[1:] )
+        print 'Pid: %d' % (pid,)
+
+        rc = ctypes.windll.user32.AllowSetForegroundWindow( pid )
+        print 'AllowSetForegroundWindow Rc=%d' % (rc,)
+
+        cmd = self._getCommandString()
+        print repr(cmd)
+
+        reply = self.__sendCommand( 'c' + cmd )
+        print repr(reply)
+        return reply is not None
+
+    def __sendCommand( self, cmd ):
+        import ctypes
+
+        pipe_name = "\\\\.\\pipe\\Barry's Emacs"
+
+        buf_size = ctypes.c_int( 128 )
+        buf_result = ctypes.create_string_buffer( buf_size.value )
+
+        rc = ctypes.windll.kernel32.CallNamedPipeA(
+                pipe_name,
+                cmd,
+                len(cmd),
+                buf_result,
+                buf_size,
+                ctypes.byref( buf_size ),
+                0
+                )
+        if rc == 0:
+            err = ctypes.windll.kernel32.GetLastError()
+
+            FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000
+            FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200
+
+            errmsg_size = ctypes.c_int( 256 )
+            errmsg = ctypes.create_string_buffer( errmsg_size.value + 1 )
+
+            rc = ctypes.windll.kernel32.FormatMessageA(
+                FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS, # __in      DWORD dwFlags,
+                None,           # __in_opt  LPCVOID lpSource,
+                err,            # __in      DWORD dwMessageId,
+                0,              # __in      DWORD dwLanguageId,
+                errmsg,         # __out     LPTSTR lpBuffer,
+                errmsg_size,    # __in      DWORD nSize,
+                None            # __in_opt  va_list *Arguments
+                )
+            print 'Error',rc, err,repr(errmsg.value)
+            return None
+
+        else:
+            print 'Result',rc, buf_size,repr(buf_result.raw[:buf_size.value])
+            return buf_result.raw[:buf_size.value]
+
+    def __getLastErrorMessage( self ):
+        import ctypes
+
+        err = ctypes.windll.kernel32.GetLastError()
+
+        FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000
+        FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200
+
+        errmsg_size = ctypes.c_int( 256 )
+        errmsg = ctypes.create_string_buffer( errmsg_size.value + 1 )
+
+        rc = ctypes.windll.kernel32.FormatMessageA(
+            FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS, # __in      DWORD dwFlags,
+            None,           # __in_opt  LPCVOID lpSource,
+            err,            # __in      DWORD dwMessageId,
+            0,              # __in      DWORD dwLanguageId,
+            errmsg,         # __out     LPTSTR lpBuffer,
+            errmsg_size,    # __in      DWORD nSize,
+            None            # __in_opt  va_list *Arguments
+            )
+        if rc == 0:
+            return 'error 0x%8.8x' % (err,)
+
+        return errmsg.value
+
+
+
+    def startBemacsServer( self ):
+        argv0 = sys.argv[0]
+
+        if argv0.lower().startswith( 'c:\\' ):
+            app_dir = os.path.dirname( argv0 )
+
+        elif '\\' in argv0:
+            app_dir = os.path.dirname( os.path.abspath( argv0 ) )
+
+        else:
+            app_dir = ''
+            for folder in [s.strip() for s in os.environ.get( 'PATH', '' ).split( ';' )]:
+                app_path = os.path.abspath( os.path.join( folder, argv0 ) )
+                if os.path.exists( app_path ):
+                    app_dir = os.path.dirname( app_path )
+                    break
+
+        if app_dir == '':
+            app_dir = os.getcwd()
+
+        server_path = os.path.join( app_dir, 'bemacs_server' )
+
+        print 'server_path',server_path
+
+    def bringTofront( self ):
+        pass
 
 if __name__ == '__main__':
     sys.exit( main( sys.argv ) )
