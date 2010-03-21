@@ -640,7 +640,7 @@
 (defun mouse-position-update( ~assume-moved )
     ~moved
     (setq ~moved (| ~assume-moved (!= mousex ~saved-mousex) (!= mousey ~saved-mousey)))
-    
+
     (~mouse-log (concat "mouse-position-update moved=" ~moved))
     
     ; has the mouse moved?
@@ -712,9 +712,9 @@
 		(~mouse-log (concat "mouse-position-update ~start=" (+ ~start) " ~end=" (+ ~end)))
 		
 	    )
-	    (goto-character ~start) (set-mark 1)
+	    (goto-character ~start)
+            (set-mark 1)
 	    (goto-character ~end)
-	    
 	    ; update the colouring
 	    ;       (apply-colour-to-region 1 (+ (buffer-size) 1) 0)
 	    ;       (apply-colour-to-region ~start ~end 1)		
