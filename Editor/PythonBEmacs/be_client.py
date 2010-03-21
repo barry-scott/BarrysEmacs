@@ -192,7 +192,6 @@ class ClientPosix(ClientBase):
         fd_response = os.open( client_fifo, os.O_RDONLY|os.O_NONBLOCK )
 
         cmd = self._getCommandString()
-        print repr(cmd)
         size = os.write( fd_command, cmd )
         if size != len(cmd):
             raise ClientError( 'write to command fifo failed' )
@@ -321,16 +320,12 @@ class ClientWindows(ClientBase):
             return False
 
         pid = int( reply[1:] )
-        print 'Pid: %d' % (pid,)
 
         rc = ctypes.windll.user32.AllowSetForegroundWindow( pid )
-        print 'AllowSetForegroundWindow Rc=%d' % (rc,)
 
         cmd = self._getCommandString()
-        print repr(cmd)
 
         reply = self.__sendCommand( 'c' + cmd )
-        print repr(reply)
         return reply is not None
 
     def __sendCommand( self, cmd ):
@@ -368,11 +363,10 @@ class ClientWindows(ClientBase):
                 errmsg_size,    # __in      DWORD nSize,
                 None            # __in_opt  va_list *Arguments
                 )
-            print 'Error',rc, err,repr(errmsg.value)
+            print 'Error:',rc, err,repr(errmsg.value)
             return None
 
         else:
-            print 'Result',rc, buf_size,repr(buf_result.raw[:buf_size.value])
             return buf_result.raw[:buf_size.value]
 
     def __getLastErrorMessage( self ):
@@ -424,7 +418,7 @@ class ClientWindows(ClientBase):
 
         server_path = os.path.join( app_dir, 'bemacs_server' )
 
-        print 'server_path',server_path
+        print 'Debug: server_path',server_path
 
     def bringTofront( self ):
         pass
