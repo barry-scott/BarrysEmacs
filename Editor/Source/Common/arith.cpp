@@ -255,8 +255,8 @@ static int compare_command( op_compare &op )
     if( !eval_arg( 1 ) )
         return 0;
 
-    EmacsString left_str;    // left string operand to a comparison operator
-    int left_int = 0;    // left integer operand to a comparison operator
+    EmacsString left_str;   // left string operand to a comparison operator
+    int left_int = 0;       // left integer operand to a comparison operator
 
     ExpressionType left_type = ml_value.exp_type();
     switch( left_type )
@@ -266,9 +266,11 @@ static int compare_command( op_compare &op )
         left_int = ml_value.asInt();
         left_type = ISINTEGER;
         break;
+
     case ISSTRING:
         left_str = ml_value.asString();
         break;
+
     default:
         error( "Illegal operand to comparison operator");
         return 0;
@@ -280,6 +282,8 @@ static int compare_command( op_compare &op )
     ExpressionType right_type = ml_value.exp_type();
 
     int right_int = 0;
+    EmacsString right_str;
+
     switch( right_type )
     {
     case ISINTEGER:
@@ -288,13 +292,20 @@ static int compare_command( op_compare &op )
             left_int = atoi( left_str );
             left_type = ISINTEGER;
         }
-        right_int = ml_value.asInt();
+        else
+        {
+            right_int = ml_value.asInt();
+        }
         break;
 
     case ISSTRING:
         if( left_type != ISSTRING )
         {
             right_int = ml_value.asInt();
+        }
+        else
+        {
+            right_str = ml_value.asString();
         }
         break;
 
@@ -305,8 +316,11 @@ static int compare_command( op_compare &op )
             left_type = ISINTEGER;
         }
         else
+        {
             right_int = ml_value.asInt();
+        }
         break;
+
     default:
         break;
     }
@@ -316,9 +330,11 @@ static int compare_command( op_compare &op )
     case ISINTEGER:
         ml_value = op.compare( left_int, right_int );
         break;
+
     case ISSTRING:
-        ml_value = op.compare( left_str, ml_value.asString() );
+        ml_value = op.compare( left_str, right_str );
         break;
+
     default:
         break;
     }

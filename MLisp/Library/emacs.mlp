@@ -27,8 +27,6 @@
         ~wait
         ~restore
 
-        ;(motif-version)
-
         (synchronise-files)
 
         ;;;(switch-to-buffer "Testing Arg handling")
@@ -96,10 +94,14 @@
                             ~filename-pattern
 
                             (setq ~filename-pattern (argv ~arg))
-                            (if (length (expand-file-name ~filename-pattern))
-                                (while (length (setq ~filename (expand-file-name ~filename-pattern)))
-                                    (setq ~filename-pattern "")
-                                    (~emacs-com-visit-file ~filename)
+                            (setq ~filename (expand-file-name ~filename-pattern))
+                            (if (length ~filename)
+                                (progn
+                                    (while (length ~filename)
+                                        (setq ~filename-pattern "")
+                                        (~emacs-com-visit-file ~filename)
+                                        (setq ~filename (expand-file-name ~filename-pattern))
+                                    )
                                 )
                                 (~emacs-com-visit-file ~filename-pattern)
                             )
@@ -133,19 +135,27 @@
 
 (defun
     ~emacs-com-visit-file(~filename)
+
+    ~index-start
+
+    (debug-emacs)
+
+    (if (= operating-system-name "Windows")
+        (setq ~index-start 2)
+        (setq ~index-start 0)
+    )
+
     ;;;(get-tty-string (concat "~emacs-com-visit-file " ~filename))
-    (if (>= (string-index-of-first ~filename ":") 0)
+    (if (>= (string-index-of-string ~filename ":" ~index-start) 0)
         (progn
-            ~index-start
             ~index-first
             ~index-next
             
-            (if (= operating-system-name "Windows")
-                (setq ~index-start (string-index-of-first ~filename ":"))
-                (setq ~index-start 0)
-            )
             (setq ~index-first (string-index-of-string ~filename ":" (+ 1 ~index-start)))
             (setq ~index-next (string-index-of-string ~filename ":" (+ 1 ~index-first)))
+
+            ;;;(get-tty-string (concat "indices start " ~index-start " first " ~index-first " next " ~index-next))
+
             (if (< ~index-first 0)
                 (setq ~index-first (length ~filename))
             )

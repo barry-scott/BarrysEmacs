@@ -352,7 +352,7 @@ class Win32CompilerMSVC90(Compiler):
         self._addVar( 'CCCFLAGS',
                                         r'/Zi /MT /EHsc '
                                         r'-IInclude\Common -IInclude\Windows '
-                                        r'"-DOS_NAME=\"windows\"" "-DOS_VERSION=\"win32\"" '
+                                        r'"-DOS_NAME=\"Windows\"" "-DOS_VERSION=\"win32\"" '
                                         r'"-DCPU_TYPE=\"i386\"" "-DUI_TYPE=\"console\"" '
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
                                         r'-U_DEBUG '
@@ -368,7 +368,7 @@ class Win32CompilerMSVC90(Compiler):
                                         r'-DPYBEMACS=1 '
                                         r'-IInclude\Common -IInclude\Windows '
                                         r'-DPYCXX_PYTHON_2TO3 -I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
-                                        r'"-DOS_NAME=\"windows\"" "-DOS_VERSION=\"win32\"" '
+                                        r'"-DOS_NAME=\"Windows\"" "-DOS_VERSION=\"win32\"" '
                                         r'"-DCPU_TYPE=\"i386\"" "-DUI_TYPE=\"python\"" '
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
                                         r'-U_DEBUG '
