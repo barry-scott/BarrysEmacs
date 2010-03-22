@@ -364,10 +364,10 @@ special_keys = {
     wx.WXK_F12:         (u'f12',        u'shift-f12',       u'ctrl-f12',        u'ctrl-shift-f12'),
 
     # enhanced keys
-    wx.WXK_PAGEUP:      (u'page-up',    u'shift-page-up',   u'ctrl-page-up',    u'ctrl-shift-page-up'),
-    wx.WXK_PAGEDOWN:    (u'page-down',  u'shift-page-down', u'ctrl-page-down',  u'ctrl-shift-page-down'),
-    wx.WXK_END:         (u'end',        u'shift-end',       u'ctrl-end',        u'ctrl-shift-end'),
-    wx.WXK_HOME:        (u'home',       u'shift-home',      u'ctrl-home',       u'ctrl-shift-home'),
+    wx.WXK_PAGEUP:      (u'page-up',    None,               u'ctrl-page-up',    None),
+    wx.WXK_PAGEDOWN:    (u'page-down',  None,               u'ctrl-page-down',  None),
+    wx.WXK_END:         (u'end',        None,               u'ctrl-end',        None),
+    wx.WXK_HOME:        (u'home',       None,               u'ctrl-home',       None),
 
     wx.WXK_LEFT:        (u'left',       None,               u'ctrl-left',       None),
     wx.WXK_UP:          (u'up',         None,               u'ctrl-up',         None),
@@ -453,7 +453,6 @@ class EmacsPanel(wx.Panel):
     def __debugPanel( self, msg ):
         if _debug_panel:
             self.log.debug( 'PANEL %s' % (msg,) )
-
 
     def __calculateWindowSize( self ):
         if self.char_width is None:
