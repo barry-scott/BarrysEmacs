@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 case ${BUILDER_CFG_PLATFORM:? run builder_init} in
 Linux-Fedora)
     cd ${BUILDER_TOP_DIR}/Kits/Linux/RPM/ROOT
@@ -14,4 +14,4 @@ Linux-Ubuntu)
 esac
 
 tar czf /tmp/bemacs-tmp.tar.gz usr
-tar xzf /tmp/bemacs-tmp.tar.gz -C /
+sudo tar xzf /tmp/bemacs-tmp.tar.gz -C /
