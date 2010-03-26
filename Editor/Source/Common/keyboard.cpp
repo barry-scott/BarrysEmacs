@@ -35,12 +35,6 @@ extern void record_keystoke_history( const EmacsString &keys, BoundName *proc );
 //    Global Data definitions
 //
 SystemExpressionRepresentationInt input_mode;
-#if defined( EMACS_LK201_KEYBOARD_SUPPORT )
-SystemExpressionRepresentationIntBoolean keyboard_emulates_lk201_keypad( 1 );
-#else
-SystemExpressionRepresentationIntBoolean keyboard_emulates_lk201_keypad( 0 );
-#endif
-
 SystemExpressionRepresentationIntBoolean activity_indicator;
 EmacsMacroString macro_replay_body;
 int macro_replay_next = -1;

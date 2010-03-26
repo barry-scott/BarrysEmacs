@@ -13,11 +13,6 @@
 ;   VWS V3.2 terminal emulator and compatible terminals.
 ;
 
-; 
-; must turn this on before the rest of the file is parsed
-; 
-(setq control-string-convert-mouse 1)
-
 (declare-global
     mouse-double-click-time	; time in mSec for the double click interval
 
@@ -63,14 +58,6 @@
 )
 
 (defun mouse-mode()
-    ;   Enable the control-string parser for parsing of
-    ;   escape sequences.  Convert F-keys and mouse sequences to single
-    ;   keystrokes.
-    (if (! control-string-processing)
-	(error-message
-	    "Control String Processing must be enable for the Mouse package to work.")
-    )
-    
     ;   Set up the default bindings for the mouse buttons
     (if (= mouse-double-click-time 0)
 	(setq mouse-double-click-time 300)

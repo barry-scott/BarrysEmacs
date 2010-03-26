@@ -79,7 +79,7 @@
 	    ; set up keyboard handling for a PC style keyboard and mouse
 	    ; 
 	    (setq input-mode 1)			; turn on GUI input style
-	    (setq keyboard-emulates-lk201-keypad 0); turn off the keypad VT100 mode
+
 	    ; Ctrl-X will work as documented
 	    ; after the swap as pc-keyboard
 	    ; has smart Ctrl-X handling

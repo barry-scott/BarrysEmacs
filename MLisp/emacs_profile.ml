@@ -69,7 +69,7 @@
 ;
 (execute-mlisp-file "pybemacs-ui")
 
-(execute-mlisp-file "emacs_control_strings")
+;(execute-mlisp-file "emacs_control_strings")
 (execute-mlisp-file "emacs_default_autoloads")
 (execute-mlisp-file "emacs_default_keybindings")
 

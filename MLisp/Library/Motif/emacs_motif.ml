@@ -419,9 +419,9 @@
     (motif-find
 	(error-occurred (XmDestroyDialog "Find"))
 	(if (! (XmIsDialog "Find"))
-	    (XmFormDialog "Find" "\(menu)MFf" 490 80
-		(XmPushButtonUser "Forward" "\(menu)MFf" 15 12 80 -1)
-		(XmPushButtonUser "Backward" "\(menu)MFb" 110 12 80 -1)
+	    (XmFormDialog "Find" "\[menu]MFf" 490 80
+		(XmPushButtonUser "Forward" "\[menu]MFf" 15 12 80 -1)
+		(XmPushButtonUser "Backward" "\[menu]MFb" 110 12 80 -1)
 		(XmPushButtonCancel "Close" 205 12 80 -1)
 		(XmRowColumn -1 -1 -1 -1 0 3 XmHORIZONTAL XmPACK_TIGHT
 		    (XmLabel -1 -1 "Search for:")
@@ -439,11 +439,11 @@
     (motif-find-and-replace
 	(error-occurred (XmDestroyDialog "Find and Replace"))
 	(if (! (XmIsDialog "Find and Replace"))
-	    (XmFormDialog "Find and Replace" "\(menu)MFf" 490 125
-		(XmPushButtonUser "Forward" "\(menu)MFf" 15 12 80 -1)
-		(XmPushButtonUser "Backward" "\(menu)MFb" 110 12 80 -1)
-		(XmPushButtonUser "Replace" "\(menu)MFr" 205 12 80 -1)
-		(XmPushButtonUser "Replace All" "\(menu)MFa" 300 12 80 -1)
+	    (XmFormDialog "Find and Replace" "\[menu]MFf" 490 125
+		(XmPushButtonUser "Forward" "\[menu]MFf" 15 12 80 -1)
+		(XmPushButtonUser "Backward" "\[menu]MFb" 110 12 80 -1)
+		(XmPushButtonUser "Replace" "\[menu]MFr" 205 12 80 -1)
+		(XmPushButtonUser "Replace All" "\[menu]MFa" 300 12 80 -1)
 		(XmPushButtonCancel "Close" 395 12 80 -1)
 		(XmRowColumn -1 -1 -1 -1 0 1 XmVERTICAL XmPACK_COLUMN
 		    (XmRowColumn -1 -1 -1 -1 0 3 XmHORIZONTAL XmPACK_TIGHT
@@ -511,7 +511,7 @@
 	(message "Replace all " ~motif-find-string " with " ~motif-replace-string)
     )
 )
-(bind-to-key "motif-do-find-forward" "\(menu)MFf")
-(bind-to-key "motif-do-find-backward" "\(menu)MFb")
-(bind-to-key "motif-do-find-replace-one" "\(menu)MFr")
-(bind-to-key "motif-do-find-replace-all" "\(menu)MFa")
+(bind-to-key "motif-do-find-forward" "\[menu]MFf")
+(bind-to-key "motif-do-find-backward" "\[menu]MFb")
+(bind-to-key "motif-do-find-replace-one" "\[menu]MFr")
+(bind-to-key "motif-do-find-replace-all" "\[menu]MFa")

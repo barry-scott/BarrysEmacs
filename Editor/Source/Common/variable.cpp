@@ -177,7 +177,6 @@ void restore_var(void)
     VarRep("journal-frequency", &journalling_frequency )
     VarRep("journal-scratch-buffers", &journal_scratch_buffers )
     VarRep("keyboard-input-available", &keyboard_input_pending )
-    VarRep("keyboard-emulates-lk201-keypad", &keyboard_emulates_lk201_keypad )
     VarRep("keystroke-history-buffer", &keystroke_history_buffer )
 { EMACS_NEW VariableName( "last-expression", EMACS_NEW Binding( &last_expression ) ); }
     VarRep("last-keys-struck", &last_keys_struck)

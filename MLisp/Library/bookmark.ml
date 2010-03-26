@@ -74,7 +74,7 @@
     (progn
 	(UI-add-menu "BS" 300 "Boo&kmark" 10 "&Set bookmark here...")
 	(UI-add-menu "-" 300 "Boo&kmark" 20 "-")
-	(bind-to-key "UI-set-bookmark" "\(menu)BS")
-	(bind-to-key "UI-goto-bookmark" "\(menu)BG")
+	(bind-to-key "UI-set-bookmark" "\[menu]BS")
+	(bind-to-key "UI-goto-bookmark" "\[menu]BG")
     )
 )
