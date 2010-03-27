@@ -103,6 +103,9 @@ class ClientBase:
                         elif name == 'nostart':
                             self.opt_start_app = False
 
+                        else:
+                            self.all_command_elements.append( arg )
+
                 else:
                     self.all_command_elements.append( arg )
 

@@ -229,7 +229,23 @@ class BEmacs(_bemacs.BemacsEditor):
 
     #--------------------------------------------------------------------------------
     def termCheckForInput( self ):
-        pass
+        try:
+            event_hander_and_args = self.__event_queue.getNoWait()
+
+            while event_hander_and_args is not None:
+                handler, args = event_hander_and_args
+                self.__debugEditor( 'checkForInput: handler %r' % (handler,) )
+                self.__debugEditor( 'checkForInput: args %r' % (args,) )
+                handler( *args )
+
+                event_hander_and_args = self.__event_queue.getNoWait()
+
+            return 0
+
+        except Exception, e:
+            self.log.exception( 'Error: checkForInput: %s' % (str(e),) )
+            self.app.debugShowCallers( 5 )
+            return -1
 
     def termWaitForActivity( self ):
         try:

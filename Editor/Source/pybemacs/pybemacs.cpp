@@ -931,6 +931,7 @@ public:
     TerminalControl_Python( BemacsEditor &editor )
     : EmacsView()
     , m_editor( editor )
+    , m_check_input_count( CHECK_FOR_INPUT_INTERVAL )
     {
     t_il_mf = 1;
     t_il_ov = 1;
@@ -948,7 +949,12 @@ public:
     //
     virtual void k_check_for_input()   // check for any input
     {
-        m_editor.termCheckForInput();
+        m_check_input_count--;
+        if( m_check_input_count <= 0 )
+        {
+            m_check_input_count = CHECK_FOR_INPUT_INTERVAL;
+            m_editor.termCheckForInput();
+        }
     }
 
     //
@@ -1034,6 +1040,8 @@ public:
     }
 
     BemacsEditor &m_editor;
+    int m_check_input_count;
+    enum { CHECK_FOR_INPUT_INTERVAL = 100 };    // check for input every CHECK_FOR_INPUT_INTERVAL calls
 };
 
 
