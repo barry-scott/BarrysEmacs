@@ -273,7 +273,9 @@ class BEmacs(_bemacs.BemacsEditor):
         return True
 
     def termUpdateEnd( self ):
-        self.app.onGuiThread( self.window.termUpdateEnd, () )
+        status_bar_values = self.getStatusBarValues()
+        
+        self.app.onGuiThread( self.window.termUpdateEnd, (status_bar_values,) )
 
     def termUpdateLine( self, old, new, line_num ):
         self.app.onGuiThread( self.window.termUpdateLine, (old, new, line_num) )

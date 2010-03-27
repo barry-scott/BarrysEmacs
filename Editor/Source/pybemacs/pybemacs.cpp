@@ -111,6 +111,7 @@ public:
         PYCXX_ADD_VARARGS_METHOD( geometryChange, py_geometryChange, "geometryChange( width, height )" );
         PYCXX_ADD_VARARGS_METHOD( setKeysMapping, py_setKeysMapping, "setKeysMapping( keys_mapping )" );
 
+        PYCXX_ADD_VARARGS_METHOD( getStatusBarValues, py_getStatusBarValues, "getStatusBarValues()" );
         PYCXX_ADD_VARARGS_METHOD( hasFocus, py_hasFocus, "hasFocus()" );
 
         // Call to make the type ready for use
@@ -172,6 +173,66 @@ public:
         return Py::None();
     }
     PYCXX_VARARGS_METHOD_DECL( BemacsEditor, py_hasFocus )
+
+    //------------------------------------------------------------
+    Py::Object py_getStatusBarValues( const Py::Tuple &args )
+    {
+        Py::Dict all_values;
+
+        // line number
+        int value = 1;
+        if( bf_cur != NULL )
+            for( int n=1; n<=dot - 1; n += 1 )
+                if( bf_cur->char_at (n) == '\n' )
+                    value++;
+        if( value > 9999999 )
+            value = 9999999;
+
+        all_values[ "line" ] = Py::Long( value );
+
+        // column
+        value = 1;
+        if( bf_cur != NULL )
+            value = cur_col();
+
+        if( value > 9999 )
+            value = 9999;
+
+        all_values[ "column" ] = Py::Long( value );
+
+        // read only
+        all_values[ "readonly" ] = Py::Boolean( bf_cur != NULL && bf_cur->b_mode.md_readonly );
+
+        // overstrike
+        all_values[ "overstrike" ] = Py::Boolean( bf_cur != NULL && bf_cur->b_mode.md_replace );
+
+        // record type
+        const char *record_type = "unknown";
+        if( bf_cur != NULL )
+            switch( bf_cur->b_eol_attribute )
+            {
+            case FIO_EOL__Binary:       // literal read and write no
+                record_type = "binary";
+                break;
+            case FIO_EOL__StreamCRLF:   // MS-DOS/Windows lines
+                record_type = "crlf";
+                break;
+            case FIO_EOL__StreamCR:     // Machintosh lines
+                record_type = "cr";
+                break;
+            case FIO_EOL__StreamLF:     // Unix lines
+                record_type = "lf";
+                break;
+
+            default:
+                break;
+            }
+
+        all_values[ "eol" ] = Py::String( record_type );
+
+        return all_values;
+    }
+    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, py_getStatusBarValues );
 
     //------------------------------------------------------------
     Py::Object py_newCommandLine( const Py::Tuple &args )

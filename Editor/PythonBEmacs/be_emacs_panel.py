@@ -789,7 +789,7 @@ class EmacsPanel(wx.Panel):
     def __termUpdateBegin( self ):
         self.__debugTermCalls2( '__termUpdateBegin() ----------------------------------------------------------' )
 
-    def termUpdateEnd( self ):
+    def termUpdateEnd( self, status_bar_values ):
         self.__debugTermCalls2( 'termUpdateEnd() start --------------------------------------------------------' )
         if self.editor_bitmap is None:
             self.__debugTermCalls2( 'termUpdateEnd editor_bitmap is None' )
@@ -811,8 +811,9 @@ class EmacsPanel(wx.Panel):
 
         c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
 
-        self.__debugTermCalls2( 'termUpdateEnd() done ---------------------------------------------------------' )
+        self.app.setStatus( status_bar_values )
 
+        self.__debugTermCalls2( 'termUpdateEnd() done ---------------------------------------------------------' )
 
     def __executeTermOperations( self ):
         all_term_ops = self.__all_term_ops

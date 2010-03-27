@@ -26,11 +26,15 @@ import be_preferences_dialog
 import be_config
 
 class BemacsFrame(wx.Frame):
-    status_general = 0
-    status_progress = 1
-    status_action = 2
-    status_num_fields = 3
-    status_widths = [-1, 150, -2]
+    status_spacer = 0
+    status_readonly = 1
+    status_overstrike = 2
+    status_eol = 3
+    status_line = 4
+    status_column = 5
+    status_num_fields = 6
+    status_widths = [-1, 40, 40, 30, 60, 50]
+    status_styles = [wx.SB_FLAT, wx.SB_RAISED, wx.SB_RAISED, wx.SB_RAISED, wx.SB_RAISED, wx.SB_RAISED]
 
     def __init__( self, app ):
         self.app = app
@@ -108,9 +112,14 @@ class BemacsFrame(wx.Frame):
         s = self.CreateStatusBar()
         s.SetFieldsCount( BemacsFrame.status_num_fields )
         s.SetStatusWidths( BemacsFrame.status_widths )
-        s.SetStatusText( T_("Barry's Emacs"), BemacsFrame.status_general )
-        s.SetStatusText( "", BemacsFrame.status_progress )
-        s.SetStatusText( T_("Ready"), BemacsFrame.status_action )
+        s.SetStatusStyles( BemacsFrame.status_styles )
+
+        s.SetStatusText( "", BemacsFrame.status_spacer )
+        s.SetStatusText( "", BemacsFrame.status_readonly )
+        s.SetStatusText( "", BemacsFrame.status_overstrike )
+        s.SetStatusText( "", BemacsFrame.status_eol )
+        s.SetStatusText( "", BemacsFrame.status_line )
+        s.SetStatusText( "", BemacsFrame.status_column )
 
         # Create the main panel
         self.emacs_panel = be_emacs_panel.EmacsPanel( self.app, self )
@@ -132,14 +141,13 @@ class BemacsFrame(wx.Frame):
         wx.EVT_CLOSE( self, tw( self.OnCloseWindow ) )
 
     # Status bar settings
-    def setStatus( self, text ):
-        self.GetStatusBar().SetStatusText( text, BemacsFrame.status_general )
-
-    def setProgress( self, text ):
-        self.GetStatusBar().SetStatusText( text, BemacsFrame.status_progress )
-
-    def setAction( self, text ):
-        self.GetStatusBar().SetStatusText( text, BemacsFrame.status_action )
+    def setStatus( self, all_values ):
+        s = self.GetStatusBar()
+        s.SetStatusText( {True: 'READ', False: ''}[ all_values['readonly'] ], BemacsFrame.status_readonly )
+        s.SetStatusText( {True: 'OVER', False: 'INS'}[ all_values['overstrike'] ], BemacsFrame.status_overstrike )
+        s.SetStatusText( all_values['eol'].upper(), BemacsFrame.status_eol )
+        s.SetStatusText( '%07d' % all_values['line'], BemacsFrame.status_line )
+        s.SetStatusText( '%04d' % all_values['column'], BemacsFrame.status_column )
 
     def savePreferences( self ):
         win_prefs = self.app.prefs.getWindow()

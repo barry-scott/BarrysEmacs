@@ -212,6 +212,10 @@ class BemacsApp(wx.App):
 
         wx.MessageBox( message, title, style=wx.OK|wx.ICON_ERROR );
 
+    def setStatus( self, all_values ):
+        if self.frame is not None:
+            self.frame.setStatus( all_values )
+
     def refreshFrame( self ):
         self.frame.refreshFrame()
 
