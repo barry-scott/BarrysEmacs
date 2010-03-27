@@ -14,11 +14,6 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
-
-#ifdef vms
-#include <fscndef.h>
-#include <descrip.h>
-#endif
 #ifdef __unix__
 #include <unistd.h>
 #include <fcntl.h>
@@ -30,7 +25,7 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 SystemExpressionRepresentationJournalFrequency journalling_frequency;
 SystemExpressionRepresentationIntBoolean journal_scratch_buffers( 1 );
 SystemExpressionRepresentationIntBoolean animate_journal_recovery;
-unsigned char journal_fn[ MAXPATHLEN+1 ];
+
 int journal_records_written;
 
 // work structure to queue on a timeout
@@ -62,7 +57,7 @@ void JournalTimer::timeOut()
     journal_flush_request.addItem();
 }
 
-static void start_journal_timer( void )
+static void startJournalTimer( void )
 {
     if( journalling_frequency == 0 )
         return;
@@ -70,7 +65,7 @@ static void start_journal_timer( void )
     journal_timer.scheduleTimeOut( journalling_frequency );
 }
 
-static void stop_journal_timer( void )
+static void stopJournalTimer( void )
 {
     journal_timer.cancelTimeOut();
 }
@@ -97,7 +92,7 @@ void SystemExpressionRepresentationJournalFrequency::assign_value( ExpressionRep
         EmacsBuffer *b;
 
         journalling_frequency = 0;
-        stop_journal_timer();
+        stopJournalTimer();
 
         b = buffers;
         while( b != 0 )
@@ -111,43 +106,44 @@ void SystemExpressionRepresentationJournalFrequency::assign_value( ExpressionRep
         }
     }
     else
-       {
-       //
-       //    Only check if journalling is being turn on. Changes
-       //    of timer interval do not require the modified buffer
-       //    checks.
-       //
-       if( exp_int == 0 )
     {
-        EmacsBuffer *b;
-
-        b = buffers;
-        while( b != 0 )
+        //
+        //    Only check if journalling is being turn on. Changes
+        //    of timer interval do not require the modified buffer
+        //    checks.
+        //
+        if( exp_int == 0 )
         {
-            if( b->b_journalling )
+            EmacsBuffer *b;
+
+            b = buffers;
+            while( b != 0 )
             {
-                if( b->b_kind == FILEBUFFER && b->b_modified != 0 )
+                if( b->b_journalling )
                 {
-                    error( FormatString("Journalling cannot be enabled on modified file buffer %s") <<
-                        b->b_buf_name );
-                    return;
+                    if( b->b_kind == FILEBUFFER && b->b_modified != 0 )
+                    {
+                        error( FormatString("Journalling cannot be enabled on modified file buffer %s") <<
+                            b->b_buf_name );
+                        return;
+                    }
+                    else if( b->unrestrictedSize() != 0 )
+                    {
+                        error( FormatString("Journalling cannot be enabled on non empty buffer %s") <<
+                            b->b_buf_name );
+                        return;
+                    }
                 }
-                else if( b->unrestrictedSize() != 0 )
-                {
-                    error( FormatString("Journalling cannot be enabled on non empty buffer %s") <<
-                        b->b_buf_name );
-                    return;
-                }
+                b = b->b_next;
             }
-            b = b->b_next;
         }
-    }
 
         exp_int = value;
-        stop_journal_timer();    // Stop if its running
-        start_journal_timer();    // Start at new interval
-        }
+        stopJournalTimer();     // Stop if its running
+        startJournalTimer();    // Start at new interval
+    }
 }
+
 void SystemExpressionRepresentationJournalFrequency::fetch_value()
 { }
 
@@ -182,32 +178,28 @@ void SystemExpressionRepresentationBufferJournalled::fetch_value(void)
 
 
 EmacsBufferJournal::EmacsBufferJournal()
-    : jnl_active(0)
-    , jnl_open(0)
-    , jnl_flush(0)
-    , jnl_rab_inuse(0)
-    , jnl_buf1_current(0)
-    , jnl_file(NULL)
-    , jnl_jname("")
-    , jnl_used(0)        // records used in the current journal buf
-    , jnl_record(0)        // last record written in the current journal buffer
+: m_jnl_active( 0 )
+, m_jnl_open( 0 )
+, m_jnl_flush( 0 )
+, m_jnl_file( NULL )
+, m_jnl_jname()
+, m_jnl_used( 0 )             // records used in the current journal buf
+, m_jnl_record( 0 )           // last record written in the current journal buffer
 {
-    jnl_buf = NULL;
-    memset( jnl_buf1, sizeof( jnl_buf1 ), 0 );
-    memset( jnl_buf2, sizeof( jnl_buf2 ), 0 );
+    memset( m_jnl_buf, 0, sizeof( m_jnl_buf ) );
 }
 
 EmacsBufferJournal::~EmacsBufferJournal()
 {
-    if( jnl_file != NULL )
-        fclose( jnl_file );
+    if( m_jnl_file != NULL )
+        fclose( m_jnl_file );
     // and delete the file as its not needed
-    if( jnl_jname.length() > 0 )
-        remove( jnl_jname );
+    if( m_jnl_jname.length() > 0 )
+        remove( m_jnl_jname );
 
 }
 
-EmacsBufferJournal *EmacsBufferJournal::journal_start( void )
+EmacsBufferJournal *EmacsBufferJournal::_journalStart( void )
 {
     //
     //    First confirm that journalling is allowed on this buffer
@@ -223,8 +215,10 @@ EmacsBufferJournal *EmacsBufferJournal::journal_start( void )
     //
     || (bf_cur->b_kind == SCRATCHBUFFER && !journal_scratch_buffers))
         return NULL;
-    if( bf_cur->b_journal != 0 )        // already started
+
+    if( bf_cur->b_journal != NULL )     // already started
         return bf_cur->b_journal;
+
     if( bf_cur->b_modified != 0 )
     {
         error( FormatString("Cannot start a journal on modified buffer %s") << bf_cur->b_buf_name );
@@ -244,88 +238,41 @@ EmacsBufferJournal *EmacsBufferJournal::journal_start( void )
         if( jnl == NULL )
             break;
 
-        jnl->jnl_active = 1;
-        jnl->jnl_open = 1;
-        jnl->jnl_buf1_current = 1;
-        open_record = jnl->jnl_buf = &jnl->jnl_buf1[0];
+        jnl->m_jnl_active = 1;
+        jnl->m_jnl_open = 1;
+        open_record = &jnl->m_jnl_buf[0];
 
-#ifdef vms
-        //
-        //    If this is a file buffer use the filename to
-        //    to make the journal file name. Otherwise use the
-        //    buffer name to make a name from.
-        //
-        {
-        unsigned char def_name_buf[MAXPATHLEN+1];
-
-        if( bf_cur->b_kind == FILEBUFFER )
-        {
-            struct dsc$descriptor src;
-            struct fscn_def items[2];
-
-            memset( items, 0, sizeof( items ) );
-            items[0].w_item_code = FSCN$_TYPE;
-
-            DSC_SZ( src, bf_cur->b_fname );
-
-            sys$filescan( &src, items, 0 );
-
-            _str_cpy( def_name_buf, "emacs_journal:" );
-            _str_ncat( def_name_buf, items[0].a_addr, min(39-14,items[0].w_length) );
-            _str_cat( def_name_buf, "_emacs_journal;" );
-
-            p = bf_cur->b_fname;
-            open_record->jnl_open.jnl_type = JNL_FILENAME;
-        }
-        else
-        {
-            _str_cpy( def_name_buf, "emacs_journal:.buffer_emacs_journal" );
-
-            p = concoct_filename( bf_cur->b_buf_name );
-            open_record->jnl_open.jnl_type = JNL_BUFFERNAME;
-        }
-
-        expand_and_default( def_name_buf, p, jnl->jnl_jname );
-        *_str_rchr( jnl->jnl_jname, ';' ) = '\0';
-        }
-#else
         //
         //    Create a unique journal file
         //
         {
-        for( int i='a';; i++ )
+        for( int i=0;; i++ )
         {
-            FILE *file;
-
             //
             //    If this is a file buffer use the filename to
             //    to make the journal file name. Otherwise use the
             //    buffer name to make a name from.
             //
-            EmacsString def_name;
             if( bf_cur->b_kind == FILEBUFFER )
             {
-                def_name = "emacs_journal:.ej_";
-                int last_char = def_name.length() - 1;
-                def_name[last_char] = i;
-
                 p = bf_cur->b_fname;
                 open_record->jnl_open.jnl_type = JNL_FILENAME;
             }
             else
             {
-                def_name ="emacs_journal:.ej_";
-                int last_char = def_name.length() - 1;
-                def_name[last_char] = (unsigned char)i;
-
-                p = concoct_filename( bf_cur->b_buf_name );
+                p = _concoctFilename( bf_cur->b_buf_name );
                 open_record->jnl_open.jnl_type = JNL_BUFFERNAME;
             }
 
-            expand_and_default( def_name, p, jnl->jnl_jname );
+            EmacsString jfilename;
+            expand_and_default( "emacs_journal:", p, jfilename );
+            if( i == 0 )
+                jnl->m_jnl_jname = FormatString( "%s.bj~") << jfilename;
+            else
+                jnl->m_jnl_jname = FormatString( "%s.%d.bj~") << jfilename << i;
 
             // see if this file exist
-            file = fopen( jnl->jnl_jname, "r" );
+            FILE *file = fopen( jnl->m_jnl_jname, "r" );
 
             // no then we have the file name we need
             if( file == NULL )
@@ -334,30 +281,29 @@ EmacsBufferJournal *EmacsBufferJournal::journal_start( void )
             // close and loop around
             fclose( file );
 
-            if( i >= 'z' )
+            if( i >= 200 )
             {
                 error( FormatString("Unable to create a unique journal filename tried %s last") <<
-                                        jnl->jnl_jname );
+                                        jnl->m_jnl_jname );
                 break;
             }
         }
         }
-#endif
 
         // w - write, b - binary, c - commit
-        jnl->jnl_file = fopen( jnl->jnl_jname, "w" BINARY_MODE COMMIT_MODE );
-        if( jnl->jnl_file == NULL )
+        jnl->m_jnl_file = fopen( jnl->m_jnl_jname, "w" BINARY_MODE COMMIT_MODE );
+        if( jnl->m_jnl_file == NULL )
             break;
 
         //
         //    setup the open record into the journal
         //
         open_record[0].jnl_open.jnl_version = JNL_VERSION;
-        open_record[0].jnl_open.jnl_name_length = p.length()+1;
-        memcpy( open_record[1].jnl_data.jnl_chars, p.unicode_data(), p.length()*sizeof( EmacsChar_t ) );
+        open_record[0].jnl_open.jnl_name_length = p.length();
+        jnlCharsCopy( open_record[1].jnl_data.jnl_chars, p.unicode_data(), p.length() );
 
-        jnl->jnl_used = 1 + JNL_BYTE_TO_REC(open_record[0].jnl_open.jnl_name_length);
-        jnl->jnl_record = 0;
+        jnl->m_jnl_used = 1 + jnlCharsToRecords( open_record[0].jnl_open.jnl_name_length );
+        jnl->m_jnl_record = 0;
         bf_cur->b_journal = jnl;
 
         return jnl;
@@ -374,7 +320,7 @@ EmacsBufferJournal *EmacsBufferJournal::journal_start( void )
     return NULL;
 }
 
-EmacsString EmacsBufferJournal::concoct_filename( EmacsString &in )
+EmacsString EmacsBufferJournal::_concoctFilename( EmacsString &in )
 {
     const int FILE_NAME_SIZE(31);
     EmacsString out;
@@ -399,17 +345,17 @@ EmacsString EmacsBufferJournal::concoct_filename( EmacsString &in )
 
 void EmacsBufferJournal::journal_pause( void )
 {
-    stop_journal_timer();
-    flush_journals();
+    stopJournalTimer();
+    _flushJournals();
 }
 
 void EmacsBufferJournal::journal_flush( void )
 {
-    flush_journals();
-    start_journal_timer();
+    _flushJournals();
+    startJournalTimer();
 }
 
-void EmacsBufferJournal::flush_journals( void )
+void EmacsBufferJournal::_flushJournals( void )
 {
     EmacsBuffer *b;
 
@@ -420,8 +366,8 @@ void EmacsBufferJournal::flush_journals( void )
 
         if( (jnl = b->b_journal) != NULL )
         {
-            jnl->jnl_flush = 1;
-            jnl->jnl_write_buffer();
+            jnl->m_jnl_flush = 1;
+            jnl->jnlWriteBuffer();
         }
         b = b->b_next;
     }
@@ -429,16 +375,14 @@ void EmacsBufferJournal::flush_journals( void )
 
 //
 //    Call this routine when Emacs exits to get rid of all the
-//    out journal files.
+//    open journal files.
 //
 void EmacsBufferJournal::journal_exit( void )
 {
-    EmacsBuffer *b;
+    stopJournalTimer();
 
-    stop_journal_timer();
-
-    b = buffers;
-    while( b != 0 )
+    EmacsBuffer *b = buffers;
+    while( b != NULL )
     {
         delete b->b_journal;
         b->b_journal = NULL;
@@ -448,17 +392,15 @@ void EmacsBufferJournal::journal_exit( void )
 
 void EmacsBufferJournal::restore_journal( void )
 {
-    EmacsBuffer *b;
-
-    b = buffers;
-    while( b != 0 )
+    EmacsBuffer *b = buffers;
+    while( b != NULL )
     {
         delete b->b_journal;
         b->b_journal = NULL;
         b = b->b_next;
     }
-    stop_journal_timer();    // Stop if its running
-    start_journal_timer();    // Start at new interval
+    stopJournalTimer();       // Stop if its running
+    startJournalTimer();      // Start at new interval
 }
 
 void EmacsBufferJournal::journal_insert
@@ -472,7 +414,7 @@ void EmacsBufferJournal::journal_insert
 
     if( jnl == NULL )
     {
-        if( ! journal_start() )
+        if( !_journalStart() )
         {
             return;
         }
@@ -489,36 +431,31 @@ void EmacsBufferJournal::insertChars
     (
     int dot,                    // Location in buffer
     int len,                    // Length of insert
-    const EmacsChar_t *str   // data to insert
+    const EmacsChar_t *str      // data to insert
     )
 {
-    union journal_record *in_rec;
-    int free;
-    int writing;
-    int written;
-
 #if DBG_JOURNAL
     if( dbg_flags&DBG_JOURNAL )
-        validate_journal_buffer( jnl );
+        _validateJournalBuffer( jnl );
 #endif
-    written = 0;
+    union journal_record *in_rec = &m_jnl_buf[m_jnl_record];
+    int free = JNL_BUF_NUM_RECORDS - m_jnl_used;
+    int written = 0;
 
-    in_rec = &jnl_buf[jnl_record];
     if( in_rec->jnl_insert.jnl_type == JNL_INSERT
     && in_rec->jnl_insert.jnl_dot + in_rec->jnl_insert.jnl_insert_length == dot
-    && (free = JNL_BUF_SIZE - jnl_used) > 0 )
+    && free > 0 )
     {
-        writing = min( len, free*(int)JNL_BYTE_SIZE );
-        memcpy
-        (
-        &in_rec[1].jnl_data.jnl_chars[in_rec->jnl_insert.jnl_insert_length],
-        &str[ written ],
-        writing*sizeof( EmacsChar_t )
-        );
+        int writing = min( len, free*(int)JNL_BYTE_SIZE );
+        jnlCharsCopy
+            (
+            &in_rec[1].jnl_data.jnl_chars[in_rec->jnl_insert.jnl_insert_length],
+            &str[ written ],
+            writing
+            );
         in_rec->jnl_insert.jnl_insert_length += writing;
         written = writing;
-        jnl_used = jnl_record + 1 +
-                JNL_BYTE_TO_REC( in_rec->jnl_insert.jnl_insert_length * sizeof( EmacsChar_t ) );
+        m_jnl_used = m_jnl_record + 1 + jnlCharsToRecords( in_rec->jnl_insert.jnl_insert_length );
     }
 
     while( written < len )
@@ -529,57 +466,55 @@ void EmacsBufferJournal::insertChars
         //    two slots. One for the insert record and
         //    one for the bytes of data.
         //
-        free = JNL_BUF_SIZE - jnl_used - 1;
+        free = JNL_BUF_NUM_RECORDS - m_jnl_used - 1;
         if( free < 1 )
         {
-            jnl_write_buffer();
-            free = JNL_BUF_SIZE - jnl_used - 1;
+            jnlWriteBuffer();
+            free = JNL_BUF_NUM_RECORDS - m_jnl_used - 1;
         }
-        in_rec = &jnl_buf[jnl_used];
+        in_rec = &m_jnl_buf[ m_jnl_used ];
 
-        writing = min( len - written, free*(int)JNL_BYTE_SIZE );
+        int writing = min( len - written, jnlRecordsToChars( free ) );
         in_rec->jnl_insert.jnl_type = JNL_INSERT;
         in_rec->jnl_insert.jnl_dot = dot + written;
         in_rec->jnl_insert.jnl_insert_length = writing;
 
-        memcpy( &in_rec[1].jnl_data.jnl_chars[0], &str[ written ], writing * sizeof( EmacsChar_t ) );
+        jnlCharsCopy( &in_rec[1].jnl_data.jnl_chars[0], &str[ written ], writing );
 
         written += writing;
-        jnl_record = jnl_used;
-        jnl_used += 1 + JNL_BYTE_TO_REC( writing * sizeof( EmacsChar_t ) );
+        m_jnl_record = m_jnl_used;
+        m_jnl_used += 1 + jnlCharsToRecords( writing );
     }
 #if DBG_JOURNAL
     if( dbg_flags&DBG_JOURNAL )
-        validate_journal_buffer( jnl );
+        _validateJournalBuffer( jnl );
 #endif
 }
 
-void EmacsBufferJournal::find_previous_record()
+void EmacsBufferJournal::_findPreviousRecord()
 {
-    union journal_record *rec;
-    int offset = 0;
-
-    rec = &jnl_buf[ jnl_record ];
+    union journal_record *rec = &m_jnl_buf[ m_jnl_record ];
     rec->jnl_open.jnl_type = JNL_END;
 
-    while( offset < jnl_record )
+    int offset = 0;
+    while( offset < m_jnl_record )
     {
         int add_to_offset = 0;
 
-        rec = &jnl_buf[offset];
+        rec = &m_jnl_buf[ offset ];
 
         switch( rec->jnl_open.jnl_type )
         {
         case JNL_FILENAME:
-            add_to_offset = 1 + JNL_BYTE_TO_REC( rec->jnl_open.jnl_name_length );
+            add_to_offset = 1 + jnlCharsToRecords( rec->jnl_open.jnl_name_length );
             break;
 
         case JNL_BUFFERNAME:
-            add_to_offset = 1 + JNL_BYTE_TO_REC( rec->jnl_open.jnl_name_length );
+            add_to_offset = 1 + jnlCharsToRecords( rec->jnl_open.jnl_name_length );
             break;
 
         case JNL_INSERT:
-            add_to_offset = 1 + JNL_BYTE_TO_REC( rec->jnl_insert.jnl_insert_length );
+            add_to_offset = 1 + jnlCharsToRecords( rec->jnl_insert.jnl_insert_length );
             break;
 
         case JNL_DELETE:
@@ -599,31 +534,31 @@ void EmacsBufferJournal::find_previous_record()
             rec->jnl_open.jnl_type = JNL_END;
             goto exit_loop;
         }
-        if( offset + add_to_offset >= jnl_record )
+        if( offset + add_to_offset >= m_jnl_record )
             break;
 
         offset += add_to_offset;
     }
 exit_loop:
-    jnl_record = offset;
-    jnl_used = offset;
+    m_jnl_record = offset;
+    m_jnl_used = offset;
 
     switch( rec->jnl_open.jnl_type )
     {
     case JNL_FILENAME:
-        jnl_used = 1 + JNL_BYTE_TO_REC( rec->jnl_open.jnl_name_length );
+        m_jnl_used = 1 + jnlCharsToRecords( rec->jnl_open.jnl_name_length );
         break;
 
     case JNL_BUFFERNAME:
-        jnl_used = 1 + JNL_BYTE_TO_REC( rec->jnl_open.jnl_name_length );
+        m_jnl_used = 1 + jnlCharsToRecords( rec->jnl_open.jnl_name_length );
         break;
 
     case JNL_INSERT:
-        jnl_used += 1 + JNL_BYTE_TO_REC( rec->jnl_insert.jnl_insert_length );
+        m_jnl_used += 1 + jnlCharsToRecords( rec->jnl_insert.jnl_insert_length );
         break;
 
     case JNL_DELETE:
-        jnl_used += 1;
+        m_jnl_used += 1;
         break;
 
     case JNL_END:
@@ -651,7 +586,7 @@ void EmacsBufferJournal::journal_delete
 
     if( jnl == NULL )
     {
-        if( ! journal_start() )
+        if( !_journalStart() )
         {
             return;
         }
@@ -666,17 +601,15 @@ void EmacsBufferJournal::journal_delete
 
 void EmacsBufferJournal::deleteChars( int dot, int len )
 {
-    union journal_record *del_rec;
-
 #if DBG_JOURNAL
     if( dbg_flags&DBG_JOURNAL )
-        validate_journal_buffer( jnl );
+        _validateJournalBuffer( jnl );
 #endif
 
     //
     //    See if this delete merges with the last record
     //
-    del_rec = &jnl_buf[jnl_record];
+    union journal_record *del_rec = &m_jnl_buf[m_jnl_record];
 
     switch( del_rec->jnl_open.jnl_type)
     {
@@ -689,7 +622,7 @@ void EmacsBufferJournal::deleteChars( int dot, int len )
             del_rec->jnl_delete.jnl_length += len;
 #if DBG_JOURNAL
             if( dbg_flags&DBG_JOURNAL )
-                validate_journal_buffer( jnl );
+                _validateJournalBuffer( jnl );
 #endif
             return;
         }
@@ -702,7 +635,7 @@ void EmacsBufferJournal::deleteChars( int dot, int len )
             del_rec->jnl_delete.jnl_length += len;
 #if DBG_JOURNAL
             if( dbg_flags&DBG_JOURNAL )
-                validate_journal_buffer( jnl );
+                _validateJournalBuffer( jnl );
 #endif
             return;
         }
@@ -713,31 +646,31 @@ void EmacsBufferJournal::deleteChars( int dot, int len )
         //    See if this is a delete from the end of the
         //    last insert
         //
-        if( del_rec->jnl_insert.jnl_dot + del_rec->jnl_insert.jnl_insert_length ==
-            dot + len )
+        if( del_rec->jnl_insert.jnl_dot + del_rec->jnl_insert.jnl_insert_length == dot + len )
         {
             // this is delete that is shorter then the insert
             if( del_rec->jnl_insert.jnl_insert_length > len )
             {
                 del_rec->jnl_insert.jnl_insert_length -= len;
-                jnl_used = jnl_record + 1 +
-                    JNL_BYTE_TO_REC( del_rec->jnl_insert.jnl_insert_length );
+                m_jnl_used = m_jnl_record + 1 +
+                    jnlCharsToRecords( del_rec->jnl_insert.jnl_insert_length );
 #if DBG_JOURNAL
                 if( dbg_flags&DBG_JOURNAL )
-                    validate_journal_buffer( jnl );
+                    _validateJournalBuffer( jnl );
 #endif
                 return;
             }
+
             // This is an insert that is the same size as the delete.
             // Make this insert record go away and backup in the buffer
             //
             if( del_rec->jnl_insert.jnl_insert_length == len )
             {
                 del_rec->jnl_open.jnl_type = JNL_END;
-                find_previous_record();
+                _findPreviousRecord();
 #if DBG_JOURNAL
                 if( dbg_flags&DBG_JOURNAL )
-                    validate_journal_buffer( jnl );
+                    _validateJournalBuffer( jnl );
 #endif
                 return;
             }
@@ -745,11 +678,11 @@ void EmacsBufferJournal::deleteChars( int dot, int len )
             // Remove this insert record and issue a delete for
             // the remaining length
             //
-            find_previous_record();
+            _findPreviousRecord();
             journal_delete( dot, len - del_rec->jnl_insert.jnl_insert_length );
 #if DBG_JOURNAL
             if( dbg_flags&DBG_JOURNAL )
-                validate_journal_buffer( jnl );
+                _validateJournalBuffer( jnl );
 #endif
             return;
         }
@@ -763,50 +696,50 @@ void EmacsBufferJournal::deleteChars( int dot, int len )
     //    See if there is room in the buffer for a
     //    delete record
     //
-    if( JNL_BUF_SIZE - jnl_used < 1 )
-        jnl_write_buffer();
+    if( JNL_BUF_NUM_RECORDS - m_jnl_used < 1 )
+        jnlWriteBuffer();
 
-    del_rec = &jnl_buf[jnl_used];
+    del_rec = &m_jnl_buf[m_jnl_used];
 
     del_rec->jnl_delete.jnl_type = JNL_DELETE;
     del_rec->jnl_delete.jnl_del_dot = dot;
     del_rec->jnl_delete.jnl_length = len;
 
-    jnl_record = jnl_used;
-    jnl_used += 1;
+    m_jnl_record = m_jnl_used;
+    m_jnl_used += 1;
 
 #if DBG_JOURNAL
     if( dbg_flags&DBG_JOURNAL )
-        validate_journal_buffer( jnl );
+        _validateJournalBuffer( jnl );
 #endif
     return;
 }
 
-void EmacsBufferJournal::jnl_write_buffer()
+void EmacsBufferJournal::jnlWriteBuffer()
 {
     union journal_record *buf;
     int status;
 
-    if( jnl_file == NULL )
+    if( m_jnl_file == NULL )
         return;
 
-    buf = jnl_buf;
+    buf = m_jnl_buf;
 
-    if( jnl_used == 0
-    && jnl_flush )
+    if( m_jnl_used == 0 && m_jnl_flush )
     {
         // flush the buffers
-        fflush( jnl_file );
+        fflush( m_jnl_file );
+
         // update the file info on disk
-        close( dup( fileno( jnl_file ) ) );
+        close( dup( fileno( m_jnl_file ) ) );
         return;
     }
 
     //
     //    Tack on an END record if the buffer is not full
     //
-    if( jnl_used != JNL_BUF_SIZE )
-        buf[ jnl_used ].jnl_insert.jnl_type = JNL_END;
+    if( m_jnl_used != JNL_BUF_NUM_RECORDS )
+        buf[ m_jnl_used ].jnl_insert.jnl_type = JNL_END;
 
     //
     //    See if a flush is required after this write
@@ -817,8 +750,8 @@ void EmacsBufferJournal::jnl_write_buffer()
     //    Write the journal records. The write_ast routine will
     //    check_ the flush flag.
     //
-    status = fwrite( buf, JNL_BYTE_SIZE, JNL_BUF_SIZE, jnl_file );
-    if( status != JNL_BUF_SIZE )
+    status = fwrite( buf, JNL_BYTE_SIZE, JNL_BUF_NUM_RECORDS, m_jnl_file );
+    if( status != JNL_BUF_NUM_RECORDS )
     {
         error( FormatString("error writing journal for %s status code %x") <<
             bf_cur->b_buf_name << errno );
@@ -829,42 +762,28 @@ void EmacsBufferJournal::jnl_write_buffer()
     //    flush the buffers to the disk
     //
     // flush the buffers
-    fflush( jnl_file );
+    fflush( m_jnl_file );
     // update the file info on disk
-    close( dup( fileno( jnl_file ) ) );
+    close( dup( fileno( m_jnl_file ) ) );
 
 #if DBG_JOURNAL
-    jnl_used = JNL_BUF_SIZE;
-    if( !validate_journal_buffer( jnl ) )
+    if( !_validateJournalBuffer() )
     {
         // close the file
-        fclose( jnl_file );
-        jnl_file = NULL;
-        _str_cpy( jnl_jname, "" );
+        fclose( m_jnl_file );
+        m_jnl_file = NULL;
+        m_jnl_jname = "";
     }
 #endif
 
-    //
-    //    Switch to the other buffer
-    //
-    jnl_used = 0;
-    jnl_record = 0;
-    if( jnl_buf1_current )
-    {
-        jnl_buf1_current = 0;
-        buf = jnl_buf2;
-    }
-    else
-    {
-        jnl_buf1_current = 1;
-        buf = jnl_buf1;
-    }
-    jnl_buf = buf;
 
     //
     //    initialise the buffer to a known good state, empty
     //
-    memset( buf, JNL_END, sizeof( jnl_buf1 ) );
+    m_jnl_used = 0;
+    m_jnl_record = 0;
+
+    memset( m_jnl_buf, JNL_END, sizeof( m_jnl_buf ) );
 }
 
 int recover_journal( void )
@@ -883,7 +802,7 @@ int recover_journal( void )
 
 int EmacsBufferJournal::recoverJournal( const EmacsString &journal_file )
 {
-    union journal_record buf[JNL_BUF_SIZE];
+    union journal_record buf[JNL_BUF_NUM_RECORDS];
     union journal_record *rec;
     EmacsString journal_filename;
 
@@ -900,7 +819,7 @@ int EmacsBufferJournal::recoverJournal( const EmacsString &journal_file )
     //    to be recovered.
     //
     int offset = 0;
-    int status = fread( buf, JNL_BYTE_SIZE, JNL_BUF_SIZE, file );
+    int status = fread( buf, JNL_BYTE_SIZE, JNL_BUF_NUM_RECORDS, file );
     if( status == 0 || feof( file ) || ferror( file ) )
     {
         error( "Unable to read the first record from the journal" );
@@ -924,50 +843,8 @@ int EmacsBufferJournal::recoverJournal( const EmacsString &journal_file )
     case JNL_FILENAME:
     {
         journal_filename = EmacsString( EmacsString::copy, rec[1].jnl_data.jnl_chars );
-#ifdef vms
-        {
-        struct dsc$descriptor src;
-        unsigned int version1;
-        unsigned int version2;
-        int i;
-        struct fscn_def items[2];
-
-        memset( items, 0, sizeof( items ) );
-        items[0].w_item_code = FSCN$_VERSION;
-
-        DSC_SZ( src, journal_filename );
-
-        sys$filescan( &src, items, 0 );
-        version1 = 0;
-        for( i=1; i<=items[0].w_length - 1; i++ )
-            version1 = version1*10 +
-                items[0].a_addr[i] - '0';
-
-        visit_file( u_str(";0"), 1, 1, &journal_filename[0] );
-
-        DSC_SZ( src, bf_cur->b_fname );
-
-        sys$filescan( &src, items, 0 );
-        version2 = 0;
-        for( i=1; i<=items[0].w_length - 1; i++ )
-            version2 = version2*10 +
-                items[0].a_addr[i] - '0';
-
-        if( version1 != version2 )
-        {
-            error( "File to be recovered has been superseded by %s",
-                bf_cur->b_fname );
-
-            // tidy up and exit
-            fclose( file );
-            return 0;
-        }
-
-        }
-#else
         visit_file( journal_filename, 1, 1, EmacsString::null );
-#endif
-        offset = 1 + JNL_BYTE_TO_REC( rec->jnl_open.jnl_name_length );
+        offset = 1 + jnlCharsToRecords( rec->jnl_open.jnl_name_length );
         break;
     }
 
@@ -985,7 +862,7 @@ int EmacsBufferJournal::recoverJournal( const EmacsString &journal_file )
         }
         EmacsBuffer::set_bfn( EmacsString( journal_filename ) );
         theActiveView->window_on( bf_cur );
-        offset = 1 + JNL_BYTE_TO_REC( rec->jnl_open.jnl_name_length );
+        offset = 1 + jnlCharsToRecords( rec->jnl_open.jnl_name_length );
         break;
     }
 
@@ -1008,7 +885,7 @@ int EmacsBufferJournal::recoverJournal( const EmacsString &journal_file )
         //
         //    Action all the records in the block
         //
-        while( offset < JNL_BUF_SIZE )
+        while( offset < JNL_BUF_NUM_RECORDS )
         {
             if( animate_journal_recovery != 0 )
                 sit_for_inner( 0 );
@@ -1023,7 +900,7 @@ int EmacsBufferJournal::recoverJournal( const EmacsString &journal_file )
                 rec[1].jnl_data.jnl_chars,
                 rec->jnl_insert.jnl_insert_length
                 );
-                offset += 1 + JNL_BYTE_TO_REC( rec->jnl_insert.jnl_insert_length );
+                offset += 1 + jnlCharsToRecords( rec->jnl_insert.jnl_insert_length );
                 break;
 
             case JNL_DELETE:
@@ -1047,9 +924,9 @@ int EmacsBufferJournal::recoverJournal( const EmacsString &journal_file )
         }
 
         offset = 0;
-        status = fread( buf, JNL_BYTE_SIZE, JNL_BUF_SIZE, file );
+        status = fread( buf, JNL_BYTE_SIZE, JNL_BUF_NUM_RECORDS, file );
     }
-    while( !(status != JNL_BUF_SIZE || feof( file ) || ferror( file )) );
+    while( !(status != JNL_BUF_NUM_RECORDS || feof( file ) || ferror( file )) );
 
     if( !feof( file ) )
         error( "Unable to read a record from the journal" );
@@ -1065,27 +942,27 @@ int EmacsBufferJournal::recoverJournal( const EmacsString &journal_file )
 }
 
 #if DBG_JOURNAL
-int EmacsBufferJournal::validate_journal_buffer(void)
+int EmacsBufferJournal::_validateJournalBuffer(void)
 {
     union journal_record *rec;
     int offset = 0;
 
-    while( offset < jnl_used )
+    while( offset < m_jnl_used )
     {
-        rec = &jnl_buf[offset];
+        rec = &m_jnl_buf[offset];
 
         switch( rec->jnl_open.jnl_type )
         {
         case JNL_FILENAME:
-            offset = 1 + JNL_BYTE_TO_REC( rec->jnl_open.jnl_name_length );
+            offset = 1 + jnlCharsToRecords( rec->jnl_open.jnl_name_length );
             break;
 
         case JNL_BUFFERNAME:
-            offset = 1 + JNL_BYTE_TO_REC( rec->jnl_open.jnl_name_length );
+            offset = 1 + jnlCharsToRecords( rec->jnl_open.jnl_name_length );
             break;
 
         case JNL_INSERT:
-            offset += 1 + JNL_BYTE_TO_REC( rec->jnl_insert.jnl_insert_length );
+            offset += 1 + jnlCharsToRecords( rec->jnl_insert.jnl_insert_length );
             break;
 
         case JNL_DELETE:
