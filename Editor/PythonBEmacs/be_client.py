@@ -191,7 +191,8 @@ class ClientPosix(ClientBase):
 
         fd_response = os.open( client_fifo, os.O_RDONLY|os.O_NONBLOCK )
 
-        cmd = self._getCommandString()
+        cmd = 'C'+self._getCommandString()
+
         size = os.write( fd_command, cmd )
         if size != len(cmd):
             raise ClientError( 'write to command fifo failed' )
@@ -315,7 +316,7 @@ class ClientWindows(ClientBase):
     def processCommand( self ):
         import ctypes
 
-        reply = self.__sendCommand( 'p' )
+        reply = self.__sendCommand( 'P' )
         if reply is None:
             return False
 
@@ -325,7 +326,7 @@ class ClientWindows(ClientBase):
 
         cmd = self._getCommandString()
 
-        reply = self.__sendCommand( 'c' + cmd )
+        reply = self.__sendCommand( 'C' + cmd )
         return reply is not None
 
     def __sendCommand( self, cmd ):

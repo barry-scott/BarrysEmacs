@@ -402,12 +402,15 @@ class BemacsApp(wx.App):
 
                 reply = ctypes.create_string_buffer( 32 )
 
-                if client_command[0] == 'p':
+                if client_command[0] == 'P':
                     reply.value = 'p%d' % (os.getpid(),)
 
-                else:
+                elif client_command[0] == 'C':
                     self.onGuiThread( self.guiClientCommandHandler, (client_command[1:],) )
                     reply.value = ' '
+
+                else:
+                    reply.value = 'R'+'Unknown client command'
 
                 reply_size = ctypes.c_uint( len( reply.value ) )
 
@@ -415,7 +418,6 @@ class BemacsApp(wx.App):
 
                 # And disconnect from the client.
                 ctypes.windll.kernel32.DisconnectNamedPipe( h_pipe )
-
 
     def __getLastErrorMessage( self ):
         import ctypes
@@ -484,19 +486,19 @@ class BemacsApp(wx.App):
             r, w, x = select.select( [emacs_server_read_fd], [], [], 1.0 )
             reply = ' '
             if emacs_server_read_fd in r:
+                reply = 'R' 'Unknown client command'
+
                 client_command = os.read( emacs_server_read_fd, 16384 )
                 if len( client_command ) > 0:
-                    if client_command[0] == 'p':
-                        reply = 'p%d' % (os.getpid(),)
-
-                    else:
+                    if client_command[0] == 'C':
                         self.onGuiThread( self.guiClientCommandHandler, (client_command[1:],) )
+                        reply = ' '                        
 
                 emacs_client_write_fd = os.open( client_fifo, os.O_WRONLY|os.O_NONBLOCK );
                 if emacs_client_write_fd < 0:
                     return
 
-                os.write( emacs_client_write_fd, ' ' )
+                os.write( emacs_client_write_fd, reply )
 
     def guiClientCommandHandler( self, client_command ):
         self.log.debug( 'client_command: %r' % (client_command,) )
