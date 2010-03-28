@@ -38,7 +38,6 @@ struct jnl_delete
 };
 
 
-
 const int JNL_NUM_CHARS_PER_RECORD( sizeof(int)*4/sizeof( EmacsChar_t ) );
 
 struct jnl_data
@@ -72,7 +71,8 @@ union journal_record
     struct jnl_data     jnl_data;
 };
 
-const int JNL_BUF_NUM_RECORDS( 16384/JNL_BYTE_SIZE );
+const int JNL_BUF_NUM_RECORDS( 2048/JNL_BYTE_SIZE );
+const int JNL_MAX_NAME_LENGTH( (JNL_BUF_NUM_RECORDS-1) * JNL_NUM_CHARS_PER_RECORD );
 
 class EmacsBufferJournal : public EmacsObject
 {

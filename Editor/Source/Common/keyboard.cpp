@@ -611,6 +611,10 @@ static int _get_char( void )
             interrupt_key_struck = 0;
             if( wait_for_activity() < 0 )
                 return -1;     // we are quitting emacs
+
+            // check for timeouts
+            time_call_timeout_handler();
+
 #if    DBG_QUEUE
             push_back_queue.queue_validate();
 #endif

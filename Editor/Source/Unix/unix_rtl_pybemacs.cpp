@@ -32,43 +32,6 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 extern EmacsString env_emacs_user;
 extern EmacsString env_emacs_library;
 
-static struct timeval emacs_start_time;
-
-const int TIMER_TICK_VALUE( 50 );
-static void( *timeout_handler )(void );
-struct timeval timeout_time;
-
-void time_schedule_timeout( void( *time_handle_timeout )(void ), const EmacsDateTime &time  )
-{
-    struct timezone tzp;
-    gettimeofday( &timeout_time, &tzp  );
-    double delta = time.asDouble();
-
-    timeout_time.tv_sec += int(delta);
-    timeout_time.tv_usec += int(delta*1000000)%1000000;
-    if( timeout_time.tv_usec > 1000000  )
-    {
-        timeout_time.tv_sec += 1;
-        timeout_time.tv_usec -= 1000000;
-    }
-    timeout_handler = time_handle_timeout;
-}
-
-double getTimeoutTime()
-{
-    if( timeout_handler == NULL )
-        return 0.0;
-
-    return double( timeout_time.tv_sec ) + (double( timeout_time.tv_usec ) / double( 1000000 ));
-}
-
-void time_cancel_timeout(void)
-{
-    timeout_time.tv_sec = 0;
-    timeout_time.tv_usec = 0;
-    timeout_handler = NULL;
-}
-
 void wait_abit(void)
 {
 }
@@ -206,25 +169,6 @@ void OutputDebugString( const char *message )
     printf( "Debug: %s\n", message );
 }
 
-
-int elapse_time()
-{
-    struct timeval now;
-    gettimeofday( &now, NULL );
-
-    //
-    //    calculate the time since startup in mSec.
-    //    we ignore the usec part of the start time
-    //    (assuming its 0)
-    //
-    int elapse_time = (int)(now.tv_sec - emacs_start_time.tv_sec);
-    elapse_time *= 1000;
-    elapse_time += (int)(now.tv_usec/1000);
-
-    return elapse_time;
-}
-
-
 extern void init_memory();
 
 void EmacsInitialisation::os_specific_init()
@@ -236,8 +180,6 @@ void EmacsInitialisation::os_specific_init()
     //
     EmacsSaveRestoreEnvironmentObject = EMACS_NEW EmacsSaveRestoreEnvironment;
 #endif
-
-    gettimeofday( &emacs_start_time, NULL );
 }
 
 //
@@ -247,7 +189,6 @@ EmacsDateTime EmacsDateTime::now(void)
 {
     EmacsDateTime now;
 
-
     struct timeval t;
     gettimeofday(  &t, NULL );
 
@@ -255,23 +196,6 @@ EmacsDateTime EmacsDateTime::now(void)
     now.time_value += double( t.tv_sec );
 
     return now;
-}
-
-EmacsString EmacsDateTime::asString(void) const
-{
-    double int_part, frac_part;
-
-    frac_part = modf( time_value, &int_part );
-    frac_part *= 1000.0;
-
-    time_t clock = int( int_part );
-    int milli_sec = int( frac_part );
-
-    struct tm *tm = localtime( &clock );
-
-    return FormatString("%4d-%2d-%2d %2d:%2d:%2d.%3.3d")
-        << tm->tm_year + 1900 << tm->tm_mon + 1 << tm->tm_mday
-        << tm->tm_hour << tm->tm_min << tm->tm_sec << milli_sec;
 }
 
 EmacsString os_error_code( unsigned int code )

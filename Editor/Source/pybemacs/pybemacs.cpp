@@ -900,6 +900,8 @@ public:
         {
             m_check_input_count = CHECK_FOR_INPUT_INTERVAL;
             m_editor.termCheckForInput();
+            // check for timeouts
+            time_call_timeout_handler();
         }
     }
 
@@ -1007,11 +1009,11 @@ int ui_frame_to_foreground(void)
     return 0;
 }
 
-extern double getTimeoutTime();
+extern double time_getTimeoutTime();
 
 int wait_for_activity(void)
 {
-    return thePythonActiveView()->m_editor.termWaitForActivity( getTimeoutTime() );
+    return thePythonActiveView()->m_editor.termWaitForActivity( time_getTimeoutTime() );
 }
 
 

@@ -250,6 +250,7 @@ class BEmacs(_bemacs.BemacsEditor):
     def termWaitForActivity( self, wait_until_time ):
         try:
             wait_timeout = wait_until_time - time.time()
+            self.__debugEditor( 'termWaitForActivity %r' % (wait_timeout,) )
             if wait_timeout <= 0:
                 event_hander_and_args = self.__event_queue.getNoWait()
             else:
@@ -324,10 +325,16 @@ class Queue:
 
     def get( self, timeout=None ):
         with self.__condition:
-            while len( self.__all_items ) == 0:
-                self.__condition.wait( timeout )
+            if timeout is None:
+                while len( self.__all_items ) == 0:
+                    self.__condition.wait()
 
-            return self.__all_items.pop( 0 )
+            else:
+                if len( self.__all_items ) == 0:
+                    self.__condition.wait( timeout )
+
+            if len( self.__all_items ) != 0:
+                return self.__all_items.pop( 0 )
 
     def put( self, item ):
         with self.__condition:

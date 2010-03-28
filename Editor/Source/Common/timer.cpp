@@ -12,6 +12,53 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 QueueHeader<TimerEntry> timer_queue;
 
+EmacsDateTime emacs_start_time;
+static void( *timeout_handler )(void );
+static EmacsDateTime timeout_time;
+
+int elapse_time()
+{
+    //
+    //    calculate the time since startup in mSec.
+    //    we ignore the usec part of the start time
+    //    (assuming its 0)
+    //
+    double elapse_time = EmacsDateTime::now().asDouble() - emacs_start_time.asDouble();  // Seconds
+    elapse_time *= 1000;    // to ms
+
+    return elapse_time;
+}
+
+void time_schedule_timeout( void( *time_handle_timeout )(void ), const EmacsDateTime &time  )
+{
+    timeout_time = time;
+    timeout_handler = time_handle_timeout;
+}
+
+double time_getTimeoutTime()
+{
+    if( timeout_handler == NULL )
+        return 0.0;
+
+    return timeout_time.asDouble();
+}
+
+void time_call_timeout_handler()
+{
+    if( timeout_handler == NULL )
+        return;
+
+    if( timeout_time <= EmacsDateTime::now() )
+    {
+        timeout_handler();
+    }
+}
+
+void time_cancel_timeout(void)
+{
+    timeout_handler = NULL;
+}
+
 void restore_timer(void)
 {
     TimerTrace("restore_timer");

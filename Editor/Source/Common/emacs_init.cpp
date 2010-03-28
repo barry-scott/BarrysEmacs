@@ -12,6 +12,8 @@ time_t EmacsInitialisation::most_recent_built_module = 0;
 
 EmacsString version_string;
 
+extern EmacsDateTime emacs_start_time;
+
 EmacsInitialisation::EmacsInitialisation( const char *date_and_time, const char * /*file_name*/ )
 {
     char month_str[80];
@@ -21,8 +23,8 @@ EmacsInitialisation::EmacsInitialisation( const char *date_and_time, const char 
     time_parts.tm_isdst = -1;    // mktime must work out if DST is active or not
 
     sscanf( date_and_time, "%s %d %d %d:%d:%d",
-        month_str, &time_parts.tm_mday, &time_parts.tm_year,
-        &time_parts.tm_hour, &time_parts.tm_min, &time_parts.tm_sec );
+                month_str, &time_parts.tm_mday, &time_parts.tm_year,
+                &time_parts.tm_hour, &time_parts.tm_min, &time_parts.tm_sec );
     time_parts.tm_year -= 1900;
 
     if( strcmp( month_str, "Jan" ) == 0 ) time_parts.tm_mon = 0;
@@ -66,8 +68,9 @@ EmacsInitialisation::EmacsInitialisation( const char *date_and_time, const char 
 
         // create the null string
         EmacsString::init();
-    }
 
+        emacs_start_time = EmacsDateTime::now();
+    }
 }
 
 EmacsInitialisation::~EmacsInitialisation()

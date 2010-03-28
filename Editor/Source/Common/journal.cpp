@@ -257,11 +257,22 @@ EmacsBufferJournal *EmacsBufferJournal::_journalStart( void )
             {
                 p = bf_cur->b_fname;
                 open_record->jnl_open.jnl_type = JNL_FILENAME;
+                if( p.length() > JNL_MAX_NAME_LENGTH )
+                {
+                    error( FormatString("Unable to create journal becuase file name is longer then %d") << JNL_MAX_NAME_LENGTH );
+                    return NULL;
+                }
+
             }
             else
             {
                 p = _concoctFilename( bf_cur->b_buf_name );
                 open_record->jnl_open.jnl_type = JNL_BUFFERNAME;
+                if( p.length() > JNL_MAX_NAME_LENGTH )
+                {
+                    error( FormatString("Unable to create journal becuase bufer name is longer then %d") << JNL_MAX_NAME_LENGTH );
+                    return NULL;
+                }
             }
 
             EmacsString jfilename;
@@ -739,7 +750,10 @@ void EmacsBufferJournal::jnlWriteBuffer()
     //    Tack on an END record if the buffer is not full
     //
     if( m_jnl_used != JNL_BUF_NUM_RECORDS )
+    {
         buf[ m_jnl_used ].jnl_insert.jnl_type = JNL_END;
+        m_jnl_used++;
+    }
 
     //
     //    See if a flush is required after this write
@@ -842,7 +856,7 @@ int EmacsBufferJournal::recoverJournal( const EmacsString &journal_file )
     {
     case JNL_FILENAME:
     {
-        journal_filename = EmacsString( EmacsString::copy, rec[1].jnl_data.jnl_chars );
+        journal_filename = EmacsString( EmacsString::copy, rec[1].jnl_data.jnl_chars, rec[0].jnl_open.jnl_name_length );
         visit_file( journal_filename, 1, 1, EmacsString::null );
         offset = 1 + jnlCharsToRecords( rec->jnl_open.jnl_name_length );
         break;
@@ -850,7 +864,7 @@ int EmacsBufferJournal::recoverJournal( const EmacsString &journal_file )
 
     case JNL_BUFFERNAME:
     {
-        journal_filename = EmacsString( EmacsString::copy, rec[1].jnl_data.jnl_chars );
+        journal_filename = EmacsString( EmacsString::copy, rec[1].jnl_data.jnl_chars, rec[0].jnl_open.jnl_name_length );
 
         if( EmacsBuffer::find( journal_filename ) != NULL )
         {

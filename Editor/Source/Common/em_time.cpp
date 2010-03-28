@@ -12,8 +12,24 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 void process_timer_interrupts( void );
 int schedule_procedure( void );
 
-
 QueueHeader<ProcTimerEntry> timer_list_head;
+
+EmacsString EmacsDateTime::asString(void) const
+{
+    double int_part, frac_part;
+
+    frac_part = modf( time_value, &int_part );
+    frac_part *= 1000.0;
+
+    time_t clock = int( int_part );
+    int milli_sec = int( frac_part );
+
+    struct tm *tm = localtime( &clock );
+
+    return FormatString("%4d-%2d-%2d %2d:%2d:%2d.%3.3d")
+        << tm->tm_year + 1900 << tm->tm_mon + 1 << tm->tm_mday
+        << tm->tm_hour << tm->tm_min << tm->tm_sec << milli_sec;
+}
 
 //
 //    Routine to field a Timer interrupt.

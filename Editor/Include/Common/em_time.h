@@ -1,49 +1,67 @@
 //
 //    em_timer.h
-//    emacs V6.0
-//    Author: Barry A. Scott
-//    Copyright (c) 1993-2006
+//    
+//    Copyright (c) 1993-2010 Barry A. Scott
 //
 class EmacsDateTime
 {
 public:
     EmacsDateTime()
-        : time_value( 0.0 )
+    : time_value( 0.0 )
     { }
     EmacsDateTime( const EmacsDateTime &dueTime )
-        : time_value( dueTime.time_value )
+    : time_value( dueTime.time_value )
     { }
     EmacsDateTime( double interval )
-        : time_value( now().time_value + interval )
+    : time_value( now().time_value + interval )
     { }
 
     virtual ~EmacsDateTime() { };
 
     EmacsDateTime &operator =( const EmacsDateTime &time )
-    { time_value = time.time_value; return *this; }
+    {
+        time_value = time.time_value;
+        return *this;
+    }
 
     EmacsDateTime &operator +=( double interval )
-    { time_value += interval; return *this; }
+    { 
+        time_value += interval;
+        return *this;
+    }
 
     bool operator ==( const EmacsDateTime &time ) const
-    { return time_value == time.time_value; }
+    {
+        return time_value == time.time_value;
+    }
+
     bool operator !=( const EmacsDateTime &time ) const
-    { return time_value != time.time_value; }
+    {
+        return time_value != time.time_value;
+    }
     bool operator  <( const EmacsDateTime &time ) const
-    { return time_value  < time.time_value; }
+    {
+        return time_value  < time.time_value;
+    }
     bool operator <=( const EmacsDateTime &time ) const
-    { return time_value <= time.time_value; }
+    {
+        return time_value <= time.time_value;
+    }
     bool operator  >( const EmacsDateTime &time ) const
-    { return time_value  > time.time_value; }
+    {
+        return time_value  > time.time_value;
+    }
     bool operator >=( const EmacsDateTime &time ) const
-    { return time_value >= time.time_value; }
+    { 
+        return time_value >= time.time_value;
+    }
 
     EmacsString asString() const;
     double asDouble() const { return time_value; }
 
-    static EmacsDateTime now();        // implement in OS specfic code
+    static EmacsDateTime now();         // implement in OS specfic code
 private:
-    double time_value;        // in seconds
+    double time_value;                  // in seconds
 };
 
 class EmacsTimer : public EmacsObject
@@ -69,7 +87,6 @@ public:
 
     static void handle_timeout( void );
 private:
-
     EmacsDateTime due_time;
     bool is_scheduled;
 };
@@ -77,7 +94,7 @@ private:
 
 // Timer queue structures
 class ProcTimer : public EmacsTimer
-{                    // Timer List structure
+{
 public:
     EMACS_OBJECT_FUNCTIONS( ProcTimer )
 
@@ -116,6 +133,7 @@ public:
 // routines that support the timer sub system
 extern void time_schedule_timeout( void (*time_handle_timeout)(void), const EmacsDateTime &due_time );
 extern void time_cancel_timeout(void);
+extern void time_call_timeout_handler();
 
 #if DBG_TIMER
 #define TimerTrace( s ) do \
