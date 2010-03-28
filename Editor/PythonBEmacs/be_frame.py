@@ -33,7 +33,7 @@ class BemacsFrame(wx.Frame):
     status_line = 4
     status_column = 5
     status_num_fields = 6
-    status_widths = [-1, 40, 40, 30, 60, 50]
+    status_widths = [-1, 45, 45, 40, 80, 60]
     status_styles = [wx.SB_FLAT, wx.SB_RAISED, wx.SB_RAISED, wx.SB_RAISED, wx.SB_RAISED, wx.SB_RAISED]
 
     def __init__( self, app ):

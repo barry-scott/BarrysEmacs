@@ -44,7 +44,7 @@ def setupPlatformSpecific_( argv0 ):
                 app_dir = os.path.dirname( app_path )
                 break
 
-    if app_dir == '':
+    if app_dir == None:
         app_dir = os.getcwd()
 
 # build will add definition of library_dir
