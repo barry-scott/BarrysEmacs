@@ -54,6 +54,14 @@ void time_schedule_timeout( void( *time_handle_timeout )(void ), const EmacsDate
     timeout_handler = time_handle_timeout;
 }
 
+double getTimeoutTime()
+{
+    if( timeout_handler == NULL )
+        return 0.0;
+
+    return double( timeout_time.tv_sec ) + (double( timeout_time.tv_usec ) / double( 1000000 ));
+}
+
 void time_cancel_timeout(void)
 {
     timeout_time.tv_sec = 0;

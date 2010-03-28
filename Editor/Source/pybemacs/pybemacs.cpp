@@ -118,7 +118,7 @@ public:
         behaviors().readyType();
     }
 
-    void reportException( const char *fn_name, Py::Exception &e )
+    void reportException( const std::string &fn_name, Py::Exception &e )
     {
         std::cerr << "Error: " << fn_name << " exception" << std::endl;
         std::cerr << " type=" << Py::type( e ) << std::endl;
@@ -320,12 +320,9 @@ public:
     {
         PythonDisallowThreads permission( editor_access_control );
 
-        static char fn_name[] = "hookUserInterface";
+        static std::string fn_name( "hookUserInterface" );
         try
         {
-            Py::Object self( selfPtr() );
-            Py::Callable py_fn( self.getAttr( fn_name ) );
-
             Py::Tuple all_args( cur_exec->p_nargs );
 
             for( int i=1; i<=cur_exec->p_nargs; i++ )
@@ -341,7 +338,7 @@ public:
                 all_args[ i-1 ] = arg;
             }
 
-            Py::Object result( py_fn.apply( all_args ) );
+            Py::Object result( self().callMemberFunction( fn_name, all_args ) );
 
             ml_value = convertPyObjectToEmacsExpression( result );
         }
@@ -357,20 +354,14 @@ public:
     {
         PythonDisallowThreads permission( editor_access_control );
 
-        static char fn_name[] = "hookUserInterface";
+        static std::string fn_name( "hookUserInterface" );
         try
         {
-            Py::Object self( selfPtr() );
-            Py::Callable py_fn( self.getAttr( fn_name ) );
-
-            Py::Tuple all_args( 4 );
-
-            all_args[ 0 ] = Py::String( "yes-no-dialog" );
-            all_args[ 1 ] = Py::Boolean( yes != 0 );
-            all_args[ 2 ] = Py::String( "Barry's Emacs" );
-            all_args[ 3 ] = Py::String( prompt.asPyString() );
-
-            Py::Boolean result( py_fn.apply( all_args ) );
+            Py::Boolean result( callOnSelf( fn_name, 
+                                    Py::String( "yes-no-dialog" ),
+                                    Py::Boolean( yes != 0 ),
+                                    Py::String( "Barry's Emacs" ),
+                                    Py::String( prompt.asPyString() ) ) );
 
             return result.isTrue() ? 1 : 0;
         }
@@ -389,18 +380,12 @@ public:
     {
         PythonDisallowThreads permission( editor_access_control );
 
-        static char fn_name[] = "hookUserInterface";
+        static std::string fn_name( "hookUserInterface" );
         try
         {
-            Py::Object self( selfPtr() );
-            Py::Callable py_fn( self.getAttr( fn_name ) );
-
-            Py::Tuple all_args( 2 );
-
-            all_args[ 0 ] = Py::String( "set-window-title" );
-            all_args[ 1 ] = Py::String( title.asPyString() );
-
-            py_fn.apply( all_args );
+            callOnSelf( fn_name,
+                        Py::String( "set-window-title" ),
+                        Py::String( title.asPyString() ) );
         }
         catch( Py::Exception &e )
         {
@@ -415,13 +400,10 @@ public:
     {
         PythonDisallowThreads permission( editor_access_control );
 
-        static char fn_name[] = "termCheckForInput";
+        static std::string fn_name( "termCheckForInput" );
         try
         {
-            Py::Object self( selfPtr() );
-            Py::Callable py_fn( self.getAttr( fn_name ) );
-            Py::Tuple args( 0 );
-            py_fn.apply( args );
+            callOnSelf( fn_name );
         }
         catch( Py::Exception &e )
         {
@@ -430,19 +412,16 @@ public:
     }
 
     //------------------------------------------------------------
-    int termWaitForActivity( void )
+    int termWaitForActivity( double wait_until_time )
     {
         PythonDisallowThreads permission( editor_access_control );
 
-        static char fn_name[] = "termWaitForActivity";
+        static std::string fn_name( "termWaitForActivity" );
 
         try
         {
-            Py::Object self( selfPtr() );
-            Py::Callable py_waitForActivity( self.getAttr( fn_name ) );
-            Py::Tuple args( 0 );
-            Py::Object rc( py_waitForActivity.apply( args ) );
-            Py::Long code( rc );
+            Py::Long code( callOnSelf( fn_name, Py::Float( wait_until_time ) ) );
+
             return long( code );
         }
         catch( Py::Exception &e )
@@ -456,15 +435,10 @@ public:
     {
         PythonDisallowThreads permission( editor_access_control );
 
-        static char fn_name[] = "termTopos";
+        static std::string fn_name( "termTopos" );
         try
         {
-            Py::Object self( selfPtr() );
-            Py::Callable py_fn( self.getAttr( fn_name ) );
-            Py::Tuple args( 2 );
-            args[0] = Py::Long( x );
-            args[1] = Py::Long( y );
-            py_fn.apply( args );
+            callOnSelf( fn_name, Py::Long( x ), Py::Long( y ) );
         }
         catch( Py::Exception &e )
         {
@@ -476,13 +450,10 @@ public:
     {
         PythonDisallowThreads permission( editor_access_control );
 
-        static char fn_name[] = "termReset";
+        static std::string fn_name( "termReset" );
         try
         {
-            Py::Object self( selfPtr() );
-            Py::Callable py_fn( self.getAttr( fn_name ) );
-            Py::Tuple args( 0 );
-            py_fn.apply( args );
+            callOnSelf( fn_name );
         }
         catch( Py::Exception &e )
         {
@@ -494,13 +465,10 @@ public:
     {
         PythonDisallowThreads permission( editor_access_control );
 
-        static char fn_name[] = "termInit";
+        static std::string fn_name( "termInit" );
         try
         {
-            Py::Object self( selfPtr() );
-            Py::Callable py_fn( self.getAttr( fn_name ) );
-            Py::Tuple args( 0 );
-            py_fn.apply( args );
+            callOnSelf( fn_name );
         }
         catch( Py::Exception &e )
         {
@@ -512,13 +480,10 @@ public:
     {
         PythonDisallowThreads permission( editor_access_control );
 
-        static char fn_name[] = "termBeep";
+        static std::string fn_name( "termBeep" );
         try
         {
-            Py::Object self( selfPtr() );
-            Py::Callable py_fn( self.getAttr( fn_name ) );
-            Py::Tuple args( 0 );
-            py_fn.apply( args );
+            callOnSelf( fn_name );
         }
         catch( Py::Exception &e )
         {
@@ -530,13 +495,10 @@ public:
     {
         PythonDisallowThreads permission( editor_access_control );
 
-        static char fn_name[] = "termUpdateBegin";
+        static std::string fn_name( "termUpdateBegin" );
         try
         {
-            Py::Object self( selfPtr() );
-            Py::Callable py_fn( self.getAttr( fn_name ) );
-            Py::Tuple args( 0 );
-            Py::Boolean rc( py_fn.apply( args ) );
+            Py::Boolean rc( callOnSelf( fn_name ) );
             return bool( rc );
         }
         catch( Py::Exception &e )
@@ -550,13 +512,10 @@ public:
     {
         PythonDisallowThreads permission( editor_access_control );
 
-        static char fn_name[] = "termUpdateEnd";
+        static std::string fn_name( "termUpdateEnd" );
         try
         {
-            Py::Object self( selfPtr() );
-            Py::Callable py_fn( self.getAttr( fn_name ) );
-            Py::Tuple args( 0 );
-            py_fn.apply( args );
+            callOnSelf( fn_name );
         }
         catch( Py::Exception &e )
         {
@@ -590,18 +549,13 @@ public:
     {
         PythonDisallowThreads permission( editor_access_control );
 
-        static char fn_name[] = "termUpdateLine";
+        static std::string fn_name( "termUpdateLine" );
         try
         {
-            Py::Object self( selfPtr() );
-            Py::Callable py_fn( self.getAttr( fn_name ) );
-
-            Py::Tuple args( 3 );
-            args[0] = convertEmacsLine( oldl );
-            args[1] = convertEmacsLine( newl );
-            args[2] = Py::Long( ln );
-
-            py_fn.apply( args );
+            callOnSelf( fn_name,
+                convertEmacsLine( oldl ),
+                convertEmacsLine( newl ),
+                Py::Long( ln ) );
         }
         catch( Py::Exception &e )
         {
@@ -613,17 +567,12 @@ public:
     {
         PythonDisallowThreads permission( editor_access_control );
 
-        static char fn_name[] = "termMoveLine";
+        static std::string fn_name( "termMoveLine" );
         try
         {
-            Py::Object self( selfPtr() );
-            Py::Callable py_fn( self.getAttr( fn_name ) );
-
-            Py::Tuple args( 2 );
-            args[0] = Py::Long( from_line );
-            args[1] = Py::Long( to_line );
-
-            py_fn.apply( args );
+            callOnSelf( fn_name,
+                        Py::Long( from_line ),
+                        Py::Long( to_line ) );
         }
         catch( Py::Exception &e )
         {
@@ -635,14 +584,10 @@ public:
     {
         PythonDisallowThreads permission( editor_access_control );
 
-        static char fn_name[] = "termDisplayActivity";
+        static std::string fn_name( "termDisplayActivity" );
         try
         {
-            Py::Object self( selfPtr() );
-            Py::Callable py_fn( self.getAttr( fn_name ) );
-            Py::Tuple args( 1 );
-            args[0] = Py::Long( ch );
-            py_fn.apply( args );
+            callOnSelf( fn_name, Py::Long( ch ) );
         }
         catch( Py::Exception &e )
         {
@@ -780,6 +725,7 @@ public:
         }
     }
 
+    //--------------------------------------------------------------------------------
     Py::String m_value;
 };
 
@@ -1061,9 +1007,11 @@ int ui_frame_to_foreground(void)
     return 0;
 }
 
+extern double getTimeoutTime();
+
 int wait_for_activity(void)
 {
-    return thePythonActiveView()->m_editor.termWaitForActivity();
+    return thePythonActiveView()->m_editor.termWaitForActivity( getTimeoutTime() );
 }
 
 

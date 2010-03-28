@@ -246,10 +246,14 @@ class BEmacs(_bemacs.BemacsEditor):
             self.log.exception( 'Error: checkForInput: %s' % (str(e),) )
             self.app.debugShowCallers( 5 )
             return -1
-
-    def termWaitForActivity( self ):
+ 
+    def termWaitForActivity( self, wait_until_time ):
         try:
-            event_hander_and_args = self.__event_queue.get()
+            wait_timeout = wait_until_time - time.time()
+            if wait_timeout <= 0:
+                event_hander_and_args = self.__event_queue.getNoWait()
+            else:
+                event_hander_and_args = self.__event_queue.get(  wait_timeout )
 
             while event_hander_and_args is not None:
                 handler, args = event_hander_and_args
@@ -318,10 +322,10 @@ class Queue:
 
         return None
 
-    def get( self ):
+    def get( self, timeout=None ):
         with self.__condition:
             while len( self.__all_items ) == 0:
-                self.__condition.wait()
+                self.__condition.wait( timeout )
 
             return self.__all_items.pop( 0 )
 
