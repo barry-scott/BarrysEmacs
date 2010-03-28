@@ -1016,6 +1016,12 @@ int wait_for_activity(void)
     return thePythonActiveView()->m_editor.termWaitForActivity( time_getTimeoutTime() );
 }
 
+void wait_abit(void)
+{
+    // wait 100ms - used for timing sit-for
+    EmacsDateTime timeout( 0.100 );
+    thePythonActiveView()->m_editor.termWaitForActivity( timeout.asDouble() );
+}
 
 bool emacs_internal_init_done_event(void)
 {

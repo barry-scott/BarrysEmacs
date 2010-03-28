@@ -12,7 +12,8 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 QueueHeader<TimerEntry> timer_queue;
 
-EmacsDateTime emacs_start_time;
+EmacsDateTime emacs_start_time( EmacsDateTime::now() );
+
 static void( *timeout_handler )(void );
 static EmacsDateTime timeout_time;
 

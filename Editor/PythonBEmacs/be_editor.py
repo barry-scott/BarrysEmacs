@@ -25,6 +25,7 @@ import _bemacs
 import wx
 
 _debug_editor = False
+_debug_queue = False
 
 class BEmacs(_bemacs.BemacsEditor):
     def __init__( self, app ):
@@ -254,7 +255,7 @@ class BEmacs(_bemacs.BemacsEditor):
             if wait_timeout <= 0:
                 event_hander_and_args = self.__event_queue.getNoWait()
             else:
-                event_hander_and_args = self.__event_queue.get(  wait_timeout )
+                event_hander_and_args = self.__event_queue.get( wait_timeout )
 
             while event_hander_and_args is not None:
                 handler, args = event_hander_and_args
@@ -315,6 +316,10 @@ class Queue:
         self.__lock = threading.RLock()
         self.__condition = threading.Condition( self.__lock )
 
+    def __debugQueue( self, msg ):
+        if _debug_queue:
+            self.log.debug( 'QUEUE %s' % (msg,) )
+
     def getNoWait( self ):
         with self.__lock:
             if len( self.__all_items ) > 0:
@@ -324,6 +329,8 @@ class Queue:
         return None
 
     def get( self, timeout=None ):
+        self.__debugQueue( 'Queue.get( %r )' % (timeout,) )
+
         with self.__condition:
             if timeout is None:
                 while len( self.__all_items ) == 0:
@@ -333,8 +340,12 @@ class Queue:
                 if len( self.__all_items ) == 0:
                     self.__condition.wait( timeout )
 
+            self.__debugQueue( 'Queue.get( %r )' % (timeout,) )
             if len( self.__all_items ) != 0:
                 return self.__all_items.pop( 0 )
+
+            else:
+                return None
 
     def put( self, item ):
         with self.__condition:

@@ -32,10 +32,6 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 extern EmacsString env_emacs_user;
 extern EmacsString env_emacs_library;
 
-void wait_abit(void)
-{
-}
-
 void debug_invoke(void)
 {
     return;
