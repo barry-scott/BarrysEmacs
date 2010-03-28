@@ -746,7 +746,7 @@ static void del_to_buf
 // insert the contents of the named buffer at the current position
 void insert_buffer ( const EmacsString &name )
 {
-    EmacsBuffer *who = EmacsBuffer::find(name);
+    EmacsBuffer *who = EmacsBuffer::find( name );
 
     if( who == NULL )
     {

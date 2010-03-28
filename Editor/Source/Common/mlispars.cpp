@@ -1,5 +1,5 @@
 //
-//    Copyright( c ) 1982-2010
+//    Copyright (c) 1982-2010
 //        Barry A. Scott
 //
 
@@ -725,10 +725,14 @@ ProgramNode *ProgramNode::string_node( MLispInputStream &input )
             break;
         }
         case '[':    // PC key names
+        case '(':
         {
             EmacsString key_name;
 
             int final_char = ']';
+            if( c == '(' )
+                final_char = ')';
+
             c = input();
             while( c != final_char )
             {
@@ -741,20 +745,22 @@ ProgramNode *ProgramNode::string_node( MLispInputStream &input )
                 c = input();
             }
 
+            if( final_char == ')' )
+            {
+                error( FormatString("reserved keyname \\(%s) in string") << key_name );
+                return 0;
+            }
+
             EmacsString translation( PC_key_names.valueOfKeyName( key_name ) );
             if( translation.isNull() )
             {
-                error( FormatString("Unknown keyname %s in string") << key_name );
+                error( FormatString("Unknown keyname \\[%s] in string") << key_name );
                 return 0;
             }
 
             buf.append( translation );
             continue;
         }
-
-        case '(':
-            error( "reserved key sequence used \(name)" );
-            return 0;
 
         default:
         {
