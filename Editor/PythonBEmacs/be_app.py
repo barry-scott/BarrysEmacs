@@ -32,6 +32,7 @@ import be_preferences
 import be_exceptions
 
 _debug_app = False
+_debug_callback = False
 
 AppCallBackEvent, EVT_APP_CALLBACK = wx.lib.newevent.NewEvent()
 
@@ -155,6 +156,11 @@ class BemacsApp(wx.App):
         if _debug_app:
             self.log.debug( 'APP %s' % (msg,) )
 
+    def __debugCallback( self, msg ):
+        if _debug_callback:
+            self.log.debug( 'CALLBACK %s' % (msg,) )
+
+
     def eventWrapper( self, function ):
         return EventScheduling( self, function )
 
@@ -178,6 +184,7 @@ class BemacsApp(wx.App):
 
         else:
             log_filename = be_platform_specific.getLogFilename()
+            print 'log_filename',log_filename
             # keep 10 logs of 100K each
             handler = RotatingFileHandler( log_filename, 'a', 100*1024, 10 )
             formatter = logging.Formatter( '%(asctime)s %(levelname)s %(message)s' )
@@ -244,7 +251,6 @@ class BemacsApp(wx.App):
     def onEmacsPanelReady( self ):
         self.__debugApp( 'BemacsApp.onEmacsPanelReady()' )
         self.onGuiThread( self.__initEditorThread, () )
-        self.onGuiThread( self.__initCommandLineThread, () )
 
     def OnActivateApp( self, event ):
         if self.editor is None:
@@ -276,14 +282,14 @@ class BemacsApp(wx.App):
         wx.PostEvent( self, AppCallBackEvent( callback=function, args=args ) )
 
     def OnAppCallBack( self, event ):
-        self.__debugApp( 'OnAppCallBack func %s start' % (event.callback.__name__,) )
+        self.__debugCallback( 'OnAppCallBack func %s start' % (event.callback.__name__,) )
         try:
             event.callback( *event.args )
         except:
             self.log.exception( 'OnAppCallBack<%s.%s>\n' %
                 (event.callback.__module__, event.callback.__name__ ) )
 
-        self.__debugApp( 'OnAppCallBack func %s done' % (event.callback.__name__,) )
+        self.__debugCallback( 'OnAppCallBack func %s done' % (event.callback.__name__,) )
 
     def debugShowCallers( self, depth ):
         if not self.__debug:
@@ -445,6 +451,7 @@ class BemacsApp(wx.App):
         return errmsg.value
 
     def __posixCommandLineHandler( self ):
+        self.__debugApp( '__posixCommandLineHandler' )
         import pwd
         import select
 
@@ -474,14 +481,17 @@ class BemacsApp(wx.App):
 
         try:
             emacs_server_read_fd = os.open( server_fifo, os.O_RDONLY|os.O_NONBLOCK );
-        except OSError:
+        except OSError, e:
+            self.log.error( 'Failed to open %s for read' % (server_fifo,) )
             return
 
         try:
             emacs_server_write_fd = os.open( server_fifo, os.O_WRONLY|os.O_NONBLOCK );
         except OSError:
+            self.log.error( 'Failed to open %s for write' % (server_fifo,) )
             return
 
+        self.__debugApp( '__posixCommandLineHandler before read loop' )
         while True:
             r, w, x = select.select( [emacs_server_read_fd], [], [], 1.0 )
             reply = ' '
@@ -489,6 +499,7 @@ class BemacsApp(wx.App):
                 reply = 'R' 'Unknown client command'
 
                 client_command = os.read( emacs_server_read_fd, 16384 )
+                self.__debugApp( '__posixCommandLineHandler command %r' % (client_command,) )
                 if len( client_command ) > 0:
                     if client_command[0] == 'C':
                         self.onGuiThread( self.guiClientCommandHandler, (client_command[1:],) )
@@ -498,16 +509,18 @@ class BemacsApp(wx.App):
                 if emacs_client_write_fd < 0:
                     return
 
+                self.__debugApp( '__posixCommandLineHandler response %r' % (reply,) )
                 os.write( emacs_client_write_fd, reply )
 
     def guiClientCommandHandler( self, client_command ):
-        self.log.debug( 'client_command: %r' % (client_command,) )
         all_client_args = [part.decode('utf-8') for part in client_command.split( '\x00' )]
         command_directory = all_client_args[0]
         command_args = all_client_args[1:]
 
         self.frame.Raise()
 
+        self.__debugApp( 'guiClientCommandHandler: command_directory %r' % (command_directory,) )
+        self.__debugApp( 'guiClientCommandHandler: command_args %r' % (command_args,) )
         self.editor.guiClientCommand( command_directory, command_args )
 
     def __makeFifo( self, fifo_name ):
@@ -539,6 +552,10 @@ class BemacsApp(wx.App):
 
             self.editor = be_editor.BEmacs( self )
             self.editor.initEmacsProfile( self.frame.emacs_panel )
+
+            # now that emacs has init'ed and processed any command line
+            # the command line handler can be started
+            self.onGuiThread( self.__initCommandLineThread, () )
 
             # stay in processKeys until editor quits
             while True:

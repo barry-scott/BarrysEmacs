@@ -109,6 +109,9 @@ class BEmacs(_bemacs.BemacsEditor):
         self.__event_queue.put( (self.clientCommand, (command_directory, command_args)) )
 
     def clientCommand( self, command_directory, command_args ):
+        self.log.info( 'clientCommand dir  %r' % (command_directory,) )
+        self.log.info( 'clientCommand args %r' % (command_args,) )
+
         assert len(command_args) > 0
 
         self.newCommandLine( command_directory, command_args )

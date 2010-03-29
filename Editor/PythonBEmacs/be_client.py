@@ -18,6 +18,12 @@ import types
 import stat
 import time
 
+_debug_client = False
+
+def debugClient( msg ):
+    if _debug_client:
+        print 'Debug: %s' % (msg,)
+
 class ClientError(Exception):
     def __init__( self, text ):
         Exception.__init__( self, text )
@@ -161,6 +167,7 @@ class ClientPosix(ClientBase):
             return argv.next()
 
     def processCommand( self ):
+        debugClient( 'processCommand' )
         import pwd
 
         fifo_name = os.environ.get( 'BEMACS_FIFO', '.bemacs8/.emacs_command' )
@@ -196,6 +203,8 @@ class ClientPosix(ClientBase):
 
         cmd = 'C'+self._getCommandString()
 
+        debugClient( 'processCommand command %r' % (cmd,) )
+
         size = os.write( fd_command, cmd )
         if size != len(cmd):
             raise ClientError( 'write to command fifo failed' )
@@ -208,8 +217,11 @@ class ClientPosix(ClientBase):
             while True:
                 try:
                     response = os.read( fd_response, 16384 )
+
                 except OSError:
                     response = ''
+
+                debugClient( 'processCommand response %r' % (response,) )
 
                 if response == ' ':
                     seen_ack = True
@@ -249,10 +261,13 @@ class ClientMacOsX(ClientPosix):
         ClientPosix.__init__( self )
 
     def startBemacsServer( self ):
+        debugClient( 'startBemacsServer' )
+
         if self.opt_start_app:
             os.system( '/usr/bin/open -b org.barrys-emacs.bemacs-devel' )
 
     def bringTofront( self ):
+        debugClient( 'bringTofront' )
         self.startBemacsServer()
 
 class ClientUnix(ClientPosix):
@@ -260,9 +275,8 @@ class ClientUnix(ClientPosix):
         ClientPosix.__init__( self )
 
     def startBemacsServer( self ):
-        print 'TBD start bemacs server'
+        debugClient( 'startBemacsServer' )
 
-    def startBemacsServer( self ):
         argv0 = sys.argv[0]
 
         if argv0.startswith( '/' ):
