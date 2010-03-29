@@ -1013,7 +1013,12 @@ extern double time_getTimeoutTime();
 
 int wait_for_activity(void)
 {
-    return thePythonActiveView()->m_editor.termWaitForActivity( time_getTimeoutTime() );
+    double timeout = time_getTimeoutTime();
+    if( timeout == 0.0 )
+    {
+        timeout = EmacsDateTime( 60.0 ).asDouble();
+    }
+    return thePythonActiveView()->m_editor.termWaitForActivity( timeout );
 }
 
 void wait_abit(void)
