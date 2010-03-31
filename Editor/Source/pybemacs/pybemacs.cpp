@@ -12,10 +12,6 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
-//#include <pwd.h>
-//#include <unistd.h>
-//#include <time.h>
-
 #include <iostream>
 
 extern int execute_package( const EmacsString &package );
@@ -989,7 +985,7 @@ public:
 
     BemacsEditor &m_editor;
     int m_check_input_count;
-    enum { CHECK_FOR_INPUT_INTERVAL = 100 };    // check for input every CHECK_FOR_INPUT_INTERVAL calls
+    enum { CHECK_FOR_INPUT_INTERVAL = 100000 };    // check for input every CHECK_FOR_INPUT_INTERVAL calls (about every 100ms)
 };
 
 
