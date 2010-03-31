@@ -449,6 +449,8 @@ class EmacsPanel(wx.Panel):
         self.dc.EndDrawing()
         self.dc = None
 
+        self.__geometryChanged()
+
         self.RefreshRect( (0, 0, self.pixel_width, self.pixel_length), True )
 
     def __initFromPreferences( self ):
