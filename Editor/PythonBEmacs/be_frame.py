@@ -175,6 +175,7 @@ class BemacsFrame(wx.Frame):
         rc = pref_dialog.ShowModal()
         if rc == wx.ID_OK:
             self.app.savePreferences()
+            self.emacs_panel.newPreferences()
 
         self.log.error( 'Need to tell editor to change font' )
 

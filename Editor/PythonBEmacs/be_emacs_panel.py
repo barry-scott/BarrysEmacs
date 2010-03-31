@@ -415,10 +415,7 @@ class EmacsPanel(wx.Panel):
         self.cursor_y = 1
         self.window_size = 0
 
-        font_pref = self.app.prefs.getFont()
-
-        self.font = wx.Font( font_pref.point_size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, font_pref.face )
-        self.log.info( 'Font face: %r' % (self.font.GetFaceName(),) )
+        self.font = None
 
         self.client_padding = 3
 
@@ -433,6 +430,32 @@ class EmacsPanel(wx.Panel):
         self.term_length = None
 
         wx.EVT_SIZE( self, self.OnSize )
+
+        self.__initFromPreferences()
+
+    def newPreferences( self ):
+        self.__initFromPreferences()
+
+        self.dc = wx.MemoryDC()
+        self.dc.SelectObject( self.editor_bitmap )
+
+        self.dc.BeginDrawing()
+
+        self.dc.SetBackgroundMode( wx.SOLID )
+        self.dc.SetFont( self.font )
+
+        self.__initFont( self.dc )
+
+        self.dc.EndDrawing()
+        self.dc = None
+
+        self.RefreshRect( (0, 0, self.pixel_width, self.pixel_length), True )
+
+    def __initFromPreferences( self ):
+        font_pref = self.app.prefs.getFont()
+
+        self.font = wx.Font( font_pref.point_size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, font_pref.face )
+        self.log.info( 'Font face: %r' % (self.font.GetFaceName(),) )
 
     def __debugTermCalls1( self, msg ):
         if _debug_term_calls1:
@@ -505,6 +528,15 @@ class EmacsPanel(wx.Panel):
     #   Event handlers
     #
     #--------------------------------------------------------------------------------
+    def __initFont( self, dc ):
+        dc.SetFont( self.font )
+
+        self.char_width, self.char_length = dc.GetTextExtent( 'i' )
+        self.__debugPanel( 'OnPaint first_paint i %d.%d' % (self.char_width, self.char_length) )
+
+        self.char_width, self.char_length = dc.GetTextExtent( 'M' )
+        self.__debugPanel( 'OnPaint first_paint M %d.%d' % (self.char_width, self.char_length) )
+
     def OnPaint( self, event ):
         self.SetFocus()
         if self.first_paint:
@@ -518,19 +550,15 @@ class EmacsPanel(wx.Panel):
             dc.SetBackgroundMode( wx.SOLID )
             dc.SetBackground( wx.Brush( bg_colours[ SYNTAX_DULL ] ) )
             dc.Clear()
-            dc.SetFont( self.font )
 
-            self.char_width, self.char_length = dc.GetTextExtent( 'M' )
-            self.__debugPanel( 'OnPaint first_paint M %d.%d' % (self.char_width, self.char_length) )
+            self.__initFont( dc )
 
-            self.char_width, self.char_length = dc.GetTextExtent( 'i' )
-            self.__debugPanel( 'OnPaint first_paint i %d.%d' % (self.char_width, self.char_length) )
             dc.EndDrawing()
             dc = None
 
             self.__calculateWindowSize()
 
-            # queue up this action until after th rest of GUI init has happend
+            # queue up this action until after the rest of GUI init has happend
             self.app.onGuiThread( self.app.onEmacsPanelReady, () )
 
         elif self.editor_bitmap is not None:
