@@ -29,17 +29,17 @@ SystemExpressionRepresentationString global_mode_string;
 SystemExpressionRepresentationIntBoolean pop_up_windows( 1 );
 SystemExpressionRepresentationIntPositive split_height_threshold( 20 );
 
-static int mouse_x;        // The X screen coordinate of the mouse
-static int mouse_y;        // The Y screen coordinate of the mouse
+static int mouse_x;             // The X screen coordinate of the mouse
+static int mouse_y;             // The Y screen coordinate of the mouse
 
-static int use_time;        // A counter used to set the time of last use
-                // of a window: for selecting the LRU window
+static int use_time;            // A counter used to set the time of last use
+                                // of a window: for selecting the LRU window
 
 // Move dot to the buffer and character corresponding to some absolute X
 // and Y coordinate.
 static int mouse_hit;
-static EmacsWindow *mouse_win_;    // The window corresponding to (mouse_x,mouse_y)
-static int mouse_dot_;        // The character position corresponding to (mouse_x,mouse_y)
+static EmacsWindow *mouse_win_; // The window corresponding to (mouse_x,mouse_y)
+static int mouse_dot_;          // The character position corresponding to (mouse_x,mouse_y)
 
 const int MOUSE_ON_MODELINE( 1 );
 const int MOUSE_ON_VERTICAL( 2 );
@@ -53,7 +53,7 @@ static EmacsString getWindowDescription( EmacsWindow *window )
     if( window != NULL )
         return window->getDescription();
     else
-        return EmacsString("<window NULL>");
+        return EmacsString( "<window NULL>" );
 }
 
 #else
@@ -128,7 +128,8 @@ int goto_window_at_x_y( void )
         }
     }
 
-    M_dbg_msg( FormatString( "goto_window_at_x_y  mouse_hit=%d mouse_win=%s mouse_dot_=%d" ) << mouse_hit << getWindowDescription(mouse_win_) << mouse_hit );
+    M_dbg_msg( FormatString( "goto_window_at_x_y  mouse_hit=%d mouse_win=%s mouse_dot_=%d" )
+                << mouse_hit << getWindowDescription(mouse_win_) << mouse_hit );
 
     ml_value = mouse_hit;
 
@@ -177,48 +178,48 @@ int window_dimensions(void)
     return 0;
 }
 
-int EmacsWindow::last_used_window_id(0);
+int EmacsWindow::last_used_window_id( 0 );
 
 
 EmacsWindow::EmacsWindow( EmacsWindowGroup &_group )
-    : w_next(NULL)
-    , w_prev(NULL)
-    , w_right(NULL)
-    , w_left(NULL)
-    , w_buf(NULL)
-    , w_height(0)
-    , w_width(0)
-    , w_lastuse(0)
-    , w_force(0)
-    , w_horizontal_scroll(1)
-    , w_user_horizontal_scrolled(false)
-    , w_window_id( ++last_used_window_id )
-    , w_start_()
-    , w_dot_()
-    , w_mark_()
-    , w_gui_input_mode_set_mark_(false)
-    , group( &_group )
+: w_next( NULL )
+, w_prev( NULL )
+, w_right( NULL )
+, w_left( NULL )
+, w_buf( NULL )
+, w_height( 0 )
+, w_width( 0 )
+, w_lastuse( 0 )
+, w_force( 0 )
+, w_horizontal_scroll( 1 )
+, w_user_horizontal_scrolled( false )
+, w_window_id( ++last_used_window_id )
+, w_start_()
+, w_dot_()
+, w_mark_()
+, w_gui_input_mode_set_mark_( false )
+, group( &_group )
 {
 }
 
 EmacsWindow::EmacsWindow( EmacsWindow &w, EmacsWindowGroup &_group )
-    : w_next(NULL)
-    , w_prev(NULL)
-    , w_right(NULL)
-    , w_left(NULL)
-    , w_buf( w.w_buf )
-    , w_height( w.w_height )
-    , w_width( w.w_width)
-    , w_lastuse( w.w_lastuse )
-    , w_force( w.w_force )
-    , w_horizontal_scroll( w.w_horizontal_scroll )
-    , w_user_horizontal_scrolled(false)
-    , w_window_id( ++last_used_window_id )
-    , w_start_( w.w_start_ )
-    , w_dot_( w.w_dot_ )
-    , w_mark_( w.w_mark_ )
-    , w_gui_input_mode_set_mark_(false)
-    , group( &_group )
+: w_next( NULL )
+, w_prev( NULL )
+, w_right( NULL )
+, w_left( NULL )
+, w_buf( w.w_buf )
+, w_height( w.w_height )
+, w_width( w.w_width)
+, w_lastuse( w.w_lastuse )
+, w_force( w.w_force )
+, w_horizontal_scroll( w.w_horizontal_scroll )
+, w_user_horizontal_scrolled( false )
+, w_window_id( ++last_used_window_id )
+, w_start_( w.w_start_ )
+, w_dot_( w.w_dot_ )
+, w_mark_( w.w_mark_ )
+, w_gui_input_mode_set_mark_( false )
+, group( &_group )
 {
 }
 
@@ -433,7 +434,7 @@ EmacsWindow *EmacsWindow::split_win_horz()
 
 EmacsWindow *EmacsWindow::split_win_vert()
 {
-    if( w_width <= 3 )
+    if( (w_width - vertical_bar_width) < 1 )
     {
         error( "You cannot have windows smaller than 1 column wide." );
         return this;
@@ -2324,8 +2325,8 @@ EmacsWindowGroup::EmacsWindowGroup( EmacsView *_view )
     , view( _view )
     , one_line_start()
     , one_line_valid(false)
-    , one_line_line(0)
-    , MB_line(0)
+    , one_line_line( 0 )
+    , MB_line( 0 )
     , current_window( NULL )
     , current_buffer()
     , buffer_is_visible( 0 )
@@ -2356,8 +2357,8 @@ EmacsWindowGroup::EmacsWindowGroup( EmacsWindowGroup &from )
     : view( from.view )
     , one_line_start()
     , one_line_valid(false)
-    , one_line_line(0)
-    , MB_line(0)
+    , one_line_line( 0 )
+    , MB_line( 0 )
 {
     header.queueInsertAtTail( this );
 
@@ -2370,11 +2371,11 @@ EmacsWindowGroup::EmacsWindowGroup( SavedEmacsView & )
     , view( NULL )
     , one_line_start()
     , one_line_valid(false)
-    , one_line_line(0)
-    , MB_line(0)
-    , current_window(NULL)
+    , one_line_line( 0 )
+    , MB_line( 0 )
+    , current_window( NULL )
     , current_buffer()
-    , buffer_is_visible(0)
+    , buffer_is_visible( 0 )
 {
     header.queueInsertAtTail( this );
 }
@@ -2452,16 +2453,16 @@ QueueHeader<EmacsView> EmacsView::header;
 #pragma warning( disable: 4355 )
 #endif
 EmacsView::EmacsView()
-    : TerminalControl()
-    , QueueEntry<EmacsView>()
-    , curs_x(1)
-    , curs_y(1)
-    , current_line(-1)
-    , columns_left(-1)
-    , text_cursor(NULL)
-    , attr_cursor(NULL)
-    , window_size(0)
-    , windows( this )
+: TerminalControl()
+, QueueEntry<EmacsView>()
+, curs_x( 1 )
+, curs_y( 1 )
+, current_line( -1 )
+, columns_left( -1 )
+, text_cursor( NULL )
+, attr_cursor( NULL )
+, window_size( 0 )
+, windows( this )
 {
     // allow us to be found
     header.queueInsertAtTail( this );
@@ -2481,4 +2482,121 @@ void EmacsView::dsputc( int c, int a )
         *text_cursor++ = (DisplayBody_t)(c);
         *attr_cursor++ = (DisplayAttr_t)(a);
     }
+}
+
+
+    EmacsWindow *findWindowsById( int windows_id );
+
+
+EmacsWindow *EmacsView::findWindowsById( int windows_id )
+{
+    EmacsWindow *w = windows.windows;
+    while( w != NULL )
+    {
+        if( w->w_window_id == windows_id )
+            return w;
+        w = w->w_next;
+    }
+
+    return NULL;
+}
+
+void TerminalControl::k_input_scroll_set_horz( int window_id, int position )
+{
+    EmacsWindow *win = theActiveView->findWindowsById( window_id );
+    if( win == NULL )
+        return;
+
+    win->w_horizontal_scroll = max( position, 0 );
+
+    cant_1line_opt = 1;
+    redo_modes = 1;
+
+    theActiveView->windows.do_dsp();
+}
+
+void TerminalControl::k_input_scroll_change_horz( int window_id, int change )
+{
+    EmacsWindow *win = theActiveView->findWindowsById( window_id );
+    if( win == NULL )
+        return;
+
+    win->w_horizontal_scroll = max( win->w_horizontal_scroll + change, 0 );
+
+    cant_1line_opt = 1;
+    redo_modes = 1;
+
+    theActiveView->windows.do_dsp();
+}
+
+void TerminalControl::k_input_scroll_set_vert( int window_id, int position )
+{
+    EmacsWindow *win = theActiveView->findWindowsById( window_id );
+    if( win == NULL )
+        return;
+
+    EmacsWindow *old_window = theActiveView->windows.currentWindow();
+    win->set_win();
+
+    int n = position+1;
+    if( n < 1 )
+        n = 1;
+    if( n > bf_cur->num_characters() )
+        n = bf_cur->num_characters() + 1;
+    if( n != (bf_cur->num_characters() + 1) )
+        set_dot( scan_bf_for_lf( n, -1 ) );
+
+    old_window->set_win();
+
+    int old_scroll_step = scroll_step;
+    scroll_step = 1;
+        theActiveView->windows.do_dsp();
+    scroll_step = old_scroll_step;
+}
+
+void TerminalControl::k_input_scroll_change_vert( int window_id, int change )
+{
+    EmacsWindow *win = theActiveView->findWindowsById( window_id );
+    if( win == NULL )
+        return;
+
+    EmacsWindow *old_window = theActiveView->windows.currentWindow();
+    win->set_win();
+
+    int scroll = 0;
+
+    switch( change )
+    {
+    case +1:
+        scroll += 1;
+        break;
+
+    case -1:
+        scroll -= 2;
+        break;
+
+    case +2:
+        scroll += win->w_height * 4 / 5;
+        break;
+
+    case -2:
+        scroll -= win->w_height * 4 / 5;
+        break;
+
+    default:
+        break;
+    }
+
+    if( scroll )
+    {
+        set_dot( scan_bf_for_lf( dot, scroll ) );
+        win->setWindowStart( scan_bf_for_lf( win->getWindowStart(), scroll ) );
+    }
+
+    old_window->set_win();
+
+    int old_scroll_step = scroll_step;
+    scroll_step = 1;
+        theActiveView->windows.do_dsp();
+    scroll_step = old_scroll_step;
 }

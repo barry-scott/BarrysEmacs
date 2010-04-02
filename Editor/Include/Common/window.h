@@ -1,4 +1,4 @@
-//    Copyright (c) 1982-2005
+//    Copyright (c) 1982-2010
 //    Barry A. Scott
 
 
@@ -30,12 +30,12 @@ public:
     EmacsWindow *w_prev;            // preceeding window
     EmacsWindow *w_right;           // preceeding window
     EmacsWindow *w_left;            // preceeding window
-    EmacsBuffer *w_buf;        // buffer tied to this window
-    int w_height;            // number of screen lines devoted to this window; includes space for the mode line
-    int w_width;            // number of columns used
-    int w_lastuse;            // sequence counter for LRU window finding
-    int w_force;            // true iff the value of start MUST be used on the next redisplay
-    int w_horizontal_scroll;    // horizontal offset into start  of winodw
+    EmacsBuffer *w_buf;             // buffer tied to this window
+    int w_height;                   // number of screen lines devoted to this window; includes space for the mode line
+    int w_width;                    // number of columns used
+    int w_lastuse;                  // sequence counter for LRU window finding
+    int w_force;                    // true iff the value of start MUST be used on the next redisplay
+    int w_horizontal_scroll;        // horizontal offset into start  of winodw
     bool w_user_horizontal_scrolled;// true if the scroll bars where used to since last update
 
     //
@@ -43,7 +43,7 @@ public:
     //
     EmacsWindow *split_win_horz();
     EmacsWindow *split_win_vert();
-    void set_win();                // called when the user sets the window
+    void set_win();                 // called when the user sets the window
     void set_win_internal();        // called when emacs needs to changes buffers
     void tie_win( EmacsBuffer *b );
 
@@ -79,16 +79,18 @@ public:
     bool getWindowGuiInputModeSetMark() const;
 
     EmacsString getDescription() const;
+    const int w_window_id;          // Unique ID for this window instance
+
 private:
-    const int w_window_id;        // used for diagnostic messages
     static int last_used_window_id;
+
     void dump_mode( int line, int col );
     // return true if dot is missed in the current window
     bool dump_win( bool is_users_current_window, int line, int col, bool can_move );
 
-    Marker w_start_;        // start character position in the tied buffer of the display
-    Marker w_dot_;            // value of "dot" for this window
-    Marker w_mark_;            // value of "mark" for this window if it is not current
+    Marker w_start_;                // start character position in the tied buffer of the display
+    Marker w_dot_;                  // value of "dot" for this window
+    Marker w_mark_;                 // value of "mark" for this window if it is not current
     bool w_gui_input_mode_set_mark_;// true if gui input mode set the mark
     EmacsWindowGroup *group;
 };
@@ -266,7 +268,11 @@ private:
 #ifdef DBG_CALC_INS_DEL
     void dbg_dump_screen( const char *title );
 #endif
+
+
 public:
+    EmacsWindow *findWindowsById( int windows_id );
+
     EmacsWindowGroup windows;
 
 private:

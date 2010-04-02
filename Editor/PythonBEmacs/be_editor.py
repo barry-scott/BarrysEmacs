@@ -130,6 +130,20 @@ class BEmacs(_bemacs.BemacsEditor):
         self.log.info( 'guiOpenFile %s' % (filename,) )
         self.__event_queue.put( (self.openFile, (filename,)) )
 
+    def guiScrollChangeHorz( self, window_id, change ):
+        self.__event_queue.put( (self.scrollChangeHorz, (window_id, change) ) )
+
+    def guiScrollSetHorz( self, window_id, position ):
+        self.__event_queue.put( (self.scrollSetHorz, (window_id, position) ) )
+
+    def guiScrollChangeVert( self, window_id, change ):
+        self.log.error( 'guiScrollChangeVert( %r, %r )' % (window_id, change) )
+        self.__event_queue.put( (self.scrollChangeVert, (window_id, change) ) )
+
+    def guiScrollSetVert( self, window_id, position ):
+        self.log.error( 'guiScrollSetVert( %r, %r )' % (window_id, position) )
+        self.__event_queue.put( (self.scrollSetVert, (window_id, position) ) )
+
     #--------------------------------------------------------------------------------
     def uiHookTest1( self, cmd ):
         self.setGuiResultSuccess( 99 )
@@ -297,10 +311,8 @@ class BEmacs(_bemacs.BemacsEditor):
         self.app.onGuiThread( self.window.termUpdateBegin, () )
         return True
 
-    def termUpdateEnd( self ):
-        status_bar_values = self.getStatusBarValues()
-        
-        self.app.onGuiThread( self.window.termUpdateEnd, (status_bar_values,) )
+    def termUpdateEnd( self, all_status_bar_values, all_horz_scroll_bars, all_vert_scroll_bars ):
+        self.app.onGuiThread( self.window.termUpdateEnd, (all_status_bar_values, all_horz_scroll_bars, all_vert_scroll_bars) )
 
     def termUpdateLine( self, old, new, line_num ):
         self.app.onGuiThread( self.window.termUpdateLine, (old, new, line_num) )

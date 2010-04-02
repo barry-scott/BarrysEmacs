@@ -21,10 +21,11 @@ import be_images
 
 import be_config
 
-_debug_term_calls1 = False
+_debug_term_calls1 = True
 _debug_term_calls2 = False
 _debug_term_key = False
 _debug_term_mouse = False
+_debug_term_scroll = True
 _debug_panel = False
 
 def T( boolean ):
@@ -405,6 +406,8 @@ class EmacsPanel(wx.Panel):
 
         self.Bind( wx.EVT_MOUSE_EVENTS, self.tw( self.OnMouse ) )
 
+        self.Bind( wx.EVT_SCROLL, self.tw( self.OnScroll ) )
+
         self.dc = None
         self.first_paint = True
         self.__all_term_ops = []
@@ -414,6 +417,12 @@ class EmacsPanel(wx.Panel):
         self.cursor_x = 1
         self.cursor_y = 1
         self.window_size = 0
+
+        self.all_vert_scroll_bars = []
+        self.all_horz_scroll_bars = []
+
+        self.map_vert_scroll_bar_to_window_id = {}
+        self.map_horz_scroll_bar_to_window_id = {}
 
         self.font = None
 
@@ -474,6 +483,10 @@ class EmacsPanel(wx.Panel):
     def __debugTermMouse( self, msg ):
         if _debug_term_mouse:
             self.log.debug( 'TERM %s' % (msg,) )
+
+    def __debugTermScroll( self, msg ):
+        if _debug_term_scroll:
+            self.log.debug( 'SCROLL %s' % (msg,) )
 
     def __debugPanel( self, msg ):
         if _debug_panel:
@@ -780,6 +793,67 @@ class EmacsPanel(wx.Panel):
 
             self.app.editor.guiEventMouse( translation, shift, [abs(rotation), line, column] );
 
+    def OnScroll( self, event ):
+        bar_id = event.GetId()
+        if bar_id in self.map_horz_scroll_bar_to_window_id:
+            self.OnScrollHorz( event )
+
+        elif bar_id in self.map_vert_scroll_bar_to_window_id:
+            self.OnScrollVert( event )
+
+        else:
+            assert False, 'OnScroll called with bar that is not mapped'
+
+    def OnScrollHorz( self, event ):
+        win_id = self.map_horz_scroll_bar_to_window_id[ event.GetId() ]
+        etype = event.GetEventType()
+        self.__debugTermScroll( 'OnScrollHorz win_id %d event_type %r %r' %
+                                (win_id, etype, wx_evt_names.get( etype, 'unknown')) )
+
+        if etype == wx.wxEVT_SCROLL_LINEDOWN:
+            self.app.editor.guiScrollChangeHorz( win_id, +1 )
+
+        elif etype == wx.wxEVT_SCROLL_LINEUP:
+            self.app.editor.guiScrollChangeHorz( win_id, -1 )
+
+        if etype == wx.wxEVT_SCROLL_PAGEDOWN:
+            self.app.editor.guiScrollChangeHorz( win_id, +4 )
+
+        elif etype == wx.wxEVT_SCROLL_PAGEUP:
+            self.app.editor.guiScrollChangeHorz( win_id, -4 )
+
+        elif( etype == wx.wxEVT_SCROLL_THUMBRELEASE
+        or etype == wx.wxEVT_SCROLL_THUMBTRACK ):
+            self.app.editor.guiScrollSetHorz( win_id, event.GetPosition() )
+
+        event.Skip()
+
+    def OnScrollVert( self, event ):
+        win_id = self.map_vert_scroll_bar_to_window_id[ event.GetId() ]
+        etype = event.GetEventType()
+        self.__debugTermScroll( 'OnScrollVert win_id %d event_type %r %r' %
+                                (win_id, etype, wx_evt_names.get( etype, 'unknown')) )
+
+        if etype == wx.wxEVT_SCROLL_LINEDOWN:
+            self.log.error( 'calling guiScrollChangeVert...' )
+            self.app.editor.guiScrollChangeVert( win_id, +1 )
+
+        elif etype == wx.wxEVT_SCROLL_LINEUP:
+            self.app.editor.guiScrollChangeVert( win_id, -1 )
+
+        if etype == wx.wxEVT_SCROLL_PAGEDOWN:
+            self.app.editor.guiScrollChangeVert( win_id, +2 )
+
+        elif etype == wx.wxEVT_SCROLL_PAGEUP:
+            self.app.editor.guiScrollChangeVert( win_id, -2 )
+
+        elif( etype == wx.wxEVT_SCROLL_THUMBRELEASE
+        or etype == wx.wxEVT_SCROLL_THUMBTRACK ):
+            self.app.editor.guiScrollSetVert( win_id, event.GetPosition() )
+
+
+        event.Skip()
+
     #--------------------------------------------------------------------------------
     #
     #   terminal drawing API forwarded from bemacs editor
@@ -819,11 +893,14 @@ class EmacsPanel(wx.Panel):
     def __termUpdateBegin( self ):
         self.__debugTermCalls2( '__termUpdateBegin() ----------------------------------------------------------' )
 
-    def termUpdateEnd( self, status_bar_values ):
-        self.__debugTermCalls2( 'termUpdateEnd() start --------------------------------------------------------' )
+    def termUpdateEnd( self, all_status_bar_values, all_horz_scroll_bars, all_vert_scroll_bars ):
+        self.__debugTermCalls1( 'termUpdateEnd() start --------------------------------------------------------' )
         if self.editor_bitmap is None:
-            self.__debugTermCalls2( 'termUpdateEnd editor_bitmap is None' )
+            self.__debugTermCalls1( 'termUpdateEnd editor_bitmap is None' )
             return
+
+        self.__debugTermCalls1( 'termUpdateEnd() all_horz_scroll_bars %r' % (all_horz_scroll_bars,) )
+        self.__debugTermCalls1( 'termUpdateEnd() all_vert_scroll_bars %r' % (all_vert_scroll_bars,) )
 
         self.dc = wx.MemoryDC()
         self.dc.SelectObject( self.editor_bitmap )
@@ -841,9 +918,65 @@ class EmacsPanel(wx.Panel):
 
         c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
 
-        self.app.setStatus( status_bar_values )
+        self.app.setStatus( all_status_bar_values )
 
-        self.__debugTermCalls2( 'termUpdateEnd() done ---------------------------------------------------------' )
+        #--- vert_scroll -----------------------------------------------------------
+        for index, bar_info in enumerate( all_vert_scroll_bars ):
+            if len( self.all_vert_scroll_bars ) <= index:
+                self.all_vert_scroll_bars.append( wx.ScrollBar( self, wx.NewId(), style=wx.SB_VERTICAL ) )
+
+            bar = self.all_vert_scroll_bars[ index ]
+            if bar_info is None:
+                bar.Show( False )
+                self.__debugTermCalls1( 'termUpdateEnd: h scroll hode %d' % (index,) )
+
+            else:
+                win_id, x, y, width, height, pos, total = bar_info
+                self.map_vert_scroll_bar_to_window_id[ bar.GetId() ] = win_id
+
+                x, y = self.__pixelPoint( x+1, y+1 )
+
+                bar.SetScrollbar( pos-1, 1, total, 10 )
+                bar.SetSize( (self.char_width * width, self.char_length * height) )
+                bar.SetPosition( (x, y) )
+                bar.Show( True )
+                self.__debugTermCalls1( 'termUpdateEnd: h scroll show %d' % (index,) )
+
+        index += 1
+        while index < len( self.all_vert_scroll_bars ):
+            self.all_vert_scroll_bars[ index ].Show( False )
+            self.__debugTermCalls1( 'termUpdateEnd: h scroll hode %d' % (index,) )
+            index += 1
+
+        #--- horz_scroll -----------------------------------------------------------
+        for index, bar_info in enumerate( all_horz_scroll_bars ):
+            if len( self.all_horz_scroll_bars ) <= index:
+                self.all_horz_scroll_bars.append( wx.ScrollBar( self, wx.NewId(), style=wx.SB_HORIZONTAL ) )
+
+            bar = self.all_horz_scroll_bars[ index ]
+            if bar_info is None:
+                bar.Show( False )
+                self.__debugTermCalls1( 'termUpdateEnd: v scroll hode %d' % (index,) )
+
+            else:
+                win_id, x, y, width, height, pos = bar_info
+                self.map_horz_scroll_bar_to_window_id[ bar.GetId() ] = win_id
+
+                x, y = self.__pixelPoint( x+1, y+1 )
+
+                bar.SetScrollbar( pos-1, 1, 256, 10 )
+                bar.SetSize( (self.char_width * width, self.char_length * height) )
+                bar.SetPosition( (x, y) )
+                bar.Show( True )
+                self.__debugTermCalls1( 'termUpdateEnd: v scroll show %d' % (index,) )
+
+        index += 1
+        while index < len( self.all_horz_scroll_bars ):
+            self.all_horz_scroll_bars[ index ].Show( False )
+            self.__debugTermCalls1( 'termUpdateEnd: v scroll hode %d' % (index,) )
+            index += 1
+
+        self.__debugTermCalls1( 'termUpdateEnd() done ---------------------------------------------------------' )
 
     def __executeTermOperations( self ):
         all_term_ops = self.__all_term_ops
@@ -853,7 +986,7 @@ class EmacsPanel(wx.Panel):
             fn( *args )
 
     def termUpdateLine( self, old, new, row ):
-        self.__debugTermCalls1( 'termUpdateLine row=%d' % (row,) )
+        self.__debugTermCalls2( 'termUpdateLine row=%d' % (row,) )
         if old != new:
             self.__all_term_ops.append( (self.__termUpdateLine, (old, new, row)) )
 

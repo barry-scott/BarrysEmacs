@@ -42,6 +42,8 @@ extern void init_fncs2( void );
 extern void init_unicode( void );
 extern void init_syntax( void );
 
+extern int vertical_bar_width;
+
 class BemacsEditor;
 
 void init_python_terminal( BemacsEditor &editor );
@@ -70,6 +72,8 @@ public:
     BemacsEditor( Py::PythonClassInstance *self, Py::Tuple &args, Py::Dict &kwds )
     : Py::PythonClass< BemacsEditor >::PythonClass( self, args, kwds )
     , m_value( "default value" )
+    , m_display_scroll_bars( true )
+    , m_display_status_bar( true )
     {
         EmacsInitialisation::setup_version_string();
 
@@ -104,10 +108,14 @@ public:
         PYCXX_ADD_VARARGS_METHOD( inputChar, py_inputChar, "inputChar( char, shift )" );
         PYCXX_ADD_VARARGS_METHOD( inputMouse, py_inputMouse, "inputMouse( keys, shift, all_params )" );
 
+        PYCXX_ADD_VARARGS_METHOD( scrollChangeVert, py_scrollChangeVert, "scrollChangeVert( win_id, change )" );
+        PYCXX_ADD_VARARGS_METHOD( scrollChangeHorz, py_scrollChangeHorz, "scrollChangeHorz( win_id, change )" );
+        PYCXX_ADD_VARARGS_METHOD( scrollSetVert, py_scrollSetVert, "scrollSetVert( win_id, value )" );
+        PYCXX_ADD_VARARGS_METHOD( scrollSetHorz, py_scrollSetHorz, "scrollSetHorz( win_id, value )" );
+
         PYCXX_ADD_VARARGS_METHOD( geometryChange, py_geometryChange, "geometryChange( width, height )" );
         PYCXX_ADD_VARARGS_METHOD( setKeysMapping, py_setKeysMapping, "setKeysMapping( keys_mapping )" );
 
-        PYCXX_ADD_VARARGS_METHOD( getStatusBarValues, py_getStatusBarValues, "getStatusBarValues()" );
         PYCXX_ADD_VARARGS_METHOD( hasFocus, py_hasFocus, "hasFocus()" );
 
         // Call to make the type ready for use
@@ -169,66 +177,6 @@ public:
         return Py::None();
     }
     PYCXX_VARARGS_METHOD_DECL( BemacsEditor, py_hasFocus )
-
-    //------------------------------------------------------------
-    Py::Object py_getStatusBarValues( const Py::Tuple &args )
-    {
-        Py::Dict all_values;
-
-        // line number
-        int value = 1;
-        if( bf_cur != NULL )
-            for( int n=1; n<=dot - 1; n += 1 )
-                if( bf_cur->char_at (n) == '\n' )
-                    value++;
-        if( value > 9999999 )
-            value = 9999999;
-
-        all_values[ "line" ] = Py::Long( value );
-
-        // column
-        value = 1;
-        if( bf_cur != NULL )
-            value = cur_col();
-
-        if( value > 9999 )
-            value = 9999;
-
-        all_values[ "column" ] = Py::Long( value );
-
-        // read only
-        all_values[ "readonly" ] = Py::Boolean( bf_cur != NULL && bf_cur->b_mode.md_readonly );
-
-        // overstrike
-        all_values[ "overstrike" ] = Py::Boolean( bf_cur != NULL && bf_cur->b_mode.md_replace );
-
-        // record type
-        const char *record_type = "unknown";
-        if( bf_cur != NULL )
-            switch( bf_cur->b_eol_attribute )
-            {
-            case FIO_EOL__Binary:       // literal read and write no
-                record_type = "binary";
-                break;
-            case FIO_EOL__StreamCRLF:   // MS-DOS/Windows lines
-                record_type = "crlf";
-                break;
-            case FIO_EOL__StreamCR:     // Machintosh lines
-                record_type = "cr";
-                break;
-            case FIO_EOL__StreamLF:     // Unix lines
-                record_type = "lf";
-                break;
-
-            default:
-                break;
-            }
-
-        all_values[ "eol" ] = Py::String( record_type );
-
-        return all_values;
-    }
-    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, py_getStatusBarValues );
 
     //------------------------------------------------------------
     Py::Object py_newCommandLine( const Py::Tuple &args )
@@ -508,10 +456,136 @@ public:
     {
         PythonDisallowThreads permission( editor_access_control );
 
+        Py::Dict all_status_values;
+
+        if( m_display_status_bar )
+        {
+
+            // line number
+            int value = 1;
+            if( bf_cur != NULL )
+                for( int n=1; n<=dot - 1; n += 1 )
+                    if( bf_cur->char_at (n) == '\n' )
+                        value++;
+            if( value > 9999999 )
+                value = 9999999;
+
+            all_status_values[ "line" ] = Py::Long( value );
+
+            // column
+            value = 1;
+            if( bf_cur != NULL )
+                value = cur_col();
+
+            if( value > 9999 )
+                value = 9999;
+
+            all_status_values[ "column" ] = Py::Long( value );
+
+            // read only
+            all_status_values[ "readonly" ] = Py::Boolean( bf_cur != NULL && bf_cur->b_mode.md_readonly );
+
+            // overstrike
+            all_status_values[ "overstrike" ] = Py::Boolean( bf_cur != NULL && bf_cur->b_mode.md_replace );
+
+            // record type
+            const char *record_type = "unknown";
+            if( bf_cur != NULL )
+                switch( bf_cur->b_eol_attribute )
+                {
+                case FIO_EOL__Binary:       // literal read and write no
+                    record_type = "binary";
+                    break;
+                case FIO_EOL__StreamCRLF:   // MS-DOS/Windows lines
+                    record_type = "crlf";
+                    break;
+                case FIO_EOL__StreamCR:     // Machintosh lines
+                    record_type = "cr";
+                    break;
+                case FIO_EOL__StreamLF:     // Unix lines
+                    record_type = "lf";
+                    break;
+
+                default:
+                    break;
+                }
+
+            all_status_values[ "eol" ] = Py::String( record_type );
+        }
+
+        Py::List horz_scroll_bar;
+        Py::List vert_scroll_bar;
+
+        if( m_display_scroll_bars )
+        {
+            EmacsWindow *w = theActiveView->windows.windows;
+
+            int x = 0;
+            int y = 0;
+
+            EmacsWindow *old_window = theActiveView->windows.currentWindow();
+            EmacsBufferRef old( bf_cur );
+
+            // while windows and not the minibuffer window and there are scroll bars left
+            while( w != NULL && w->w_next != NULL )
+            {
+                if( w->w_height > 5 )
+                {
+                    w->set_win();
+                    vert_scroll_bar.append(
+                            Py::TupleN(
+                                Py::Long( w->w_window_id ),
+                                // x, y
+                                Py::Long( x + w->w_width ), Py::Long( y+1 ),
+                                // width, height
+                                Py::Long( vertical_bar_width ), Py::Long( w->w_height-1-2 ),
+                                // pos, total
+                                Py::Long( dot ), Py::Long( bf_cur->num_characters() ) ) );
+                }
+                else
+                {
+                    vert_scroll_bar.append( Py::None() );
+                }
+
+                if( w->w_width > 20 )
+                {
+                    horz_scroll_bar.append(
+                            Py::TupleN(
+                                Py::Long( w->w_window_id ),
+                                // x, y
+                                Py::Long( x + w->w_width - 10 ), Py::Long( y + w->w_height - 1 ),
+                                // width, height
+                                Py::Long( 10 ), Py::Long( 1 ),
+                                // pos
+                                Py::Long( w->w_horizontal_scroll ) ) );
+                }
+                else
+                {
+                    horz_scroll_bar.append( Py::None() );
+                }
+
+                //
+                // adjust x and y
+                //
+                if( w->w_right != NULL )
+                    // next is beside this one
+                    x += w->w_width + vertical_bar_width;
+                else
+                    // next is below this one
+                    x = 0, y += w->w_height;
+
+                // step to the next window
+                w = w->w_next;
+            }
+
+            old_window->set_win();
+            old.set_bf();
+        }
+
         static std::string fn_name( "termUpdateEnd" );
         try
         {
-            callOnSelf( fn_name );
+            callOnSelf( fn_name, all_status_values, horz_scroll_bar, vert_scroll_bar );
         }
         catch( Py::Exception &e )
         {
@@ -623,6 +697,71 @@ public:
     }
     PYCXX_VARARGS_METHOD_DECL( BemacsEditor, py_inputChar )
 
+    //------------------------------------------------------------
+    Py::Object py_scrollChangeVert( const Py::Tuple &args )
+    {
+        Py::Long py_window_id( args[0] );
+        Py::Long py_value( args[1] );
+
+        long window_id( py_window_id );
+        long value( py_value );
+        {
+            PythonAllowThreads permission( editor_access_control );
+
+            theActiveView->k_input_scroll_change_vert( window_id, value );
+        }
+        return Py::None();
+    }
+    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, py_scrollChangeVert )
+
+    Py::Object py_scrollChangeHorz( const Py::Tuple &args )
+    {
+        Py::Long py_window_id( args[0] );
+        Py::Long py_value( args[1] );
+
+        long window_id( py_window_id );
+        long value( py_value );
+        {
+            PythonAllowThreads permission( editor_access_control );
+
+            theActiveView->k_input_scroll_change_horz( window_id, value );
+        }
+        return Py::None();
+    }
+    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, py_scrollChangeHorz )
+
+    Py::Object py_scrollSetVert( const Py::Tuple &args )
+    {
+        Py::Long py_window_id( args[0] );
+        Py::Long py_value( args[1] );
+
+        long window_id( py_window_id );
+        long value( py_value );
+        {
+            PythonAllowThreads permission( editor_access_control );
+
+            theActiveView->k_input_scroll_set_vert( window_id, value );
+        }
+        return Py::None();
+    }
+    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, py_scrollSetVert )
+
+    Py::Object py_scrollSetHorz( const Py::Tuple &args )
+    {
+        Py::Long py_window_id( args[0] );
+        Py::Long py_value( args[1] );
+
+        long window_id( py_window_id );
+        long value( py_value );
+        {
+            PythonAllowThreads permission( editor_access_control );
+
+            theActiveView->k_input_scroll_set_horz( window_id, value );
+        }
+        return Py::None();
+    }
+    PYCXX_VARARGS_METHOD_DECL( BemacsEditor, py_scrollSetHorz )
+
     Py::Object py_inputMouse( const Py::Tuple &args )
     {
         Py::String py_keys( args[0] );
@@ -661,7 +800,7 @@ public:
         {
             PythonAllowThreads permission( editor_access_control );
 
-            theActiveView->t_width = width;
+            theActiveView->t_width = width - vertical_bar_width;
             theActiveView->t_length = height;
             theActiveView->t_geometry_change();
         }
@@ -723,6 +862,8 @@ public:
 
     //--------------------------------------------------------------------------------
     Py::String m_value;
+    bool m_display_scroll_bars;
+    bool m_display_status_bar;
 };
 
 class BemacsModule: public Py::ExtensionModule<BemacsModule>
@@ -875,11 +1016,13 @@ public:
     , m_editor( editor )
     , m_check_input_count( CHECK_FOR_INPUT_INTERVAL )
     {
-    t_il_mf = 1;
-    t_il_ov = 1;
-    t_ic_ov = MISSINGFEATURE;
-    t_dc_ov = MISSINGFEATURE;
-    t_baud_rate = 1000000;
+        t_il_mf = 1;
+        t_il_ov = 1;
+        t_ic_ov = MISSINGFEATURE;
+        t_dc_ov = MISSINGFEATURE;
+        t_baud_rate = 1000000;
+
+        vertical_bar_width = 2;
     }
 
     virtual ~TerminalControl_Python()
@@ -954,7 +1097,7 @@ public:
 
     virtual void t_update_end()
     {
-        m_editor.termUpdateEnd();
+       m_editor.termUpdateEnd();
     }
 
     // initialize terminal settings

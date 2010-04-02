@@ -88,6 +88,10 @@ public:
     virtual void k_input_mouse( const EmacsString &keys, bool shift, const std::vector<int> &all_params );
     virtual int k_input_event( unsigned char *, unsigned int ) { return 0; }    // Pointer and other "smart" input
     virtual void k_check_for_input() { }        // check for any input
+    virtual void k_input_scroll_change_vert( int window_id, int change );
+    virtual void k_input_scroll_change_horz( int window_id, int change );
+    virtual void k_input_scroll_set_vert( int window_id, int position );
+    virtual void k_input_scroll_set_horz( int window_id, int position );
 
     //
     // User Interface routines

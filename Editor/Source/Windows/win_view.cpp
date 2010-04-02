@@ -114,92 +114,92 @@ private:
 
 static conv_key_entry convert_entries[] =
 {
-//  key_code    lk201  enh     always  translation  shift_tran  ctrl_tran   ctrl_shift_tran
-//  --------    -----  ---     ------  -----------  ----------  ---------       ---------------
-    VK_BACK,    false, false,  false,  "\x7f",      NULL,       "\033[85~", NULL,
-    VK_TAB,     false, false,  true,   "\t",        "\033\t",   "\t",       "\033\t",
-    VK_CLEAR,   true,  false,  false,  "\033Ou",    NULL,       NULL,       NULL,
-    VK_PAUSE,   false, false,  false,  "\033[34~",  "\033[134~","\033[84~", "\033[184~",
+//    key_code    lk201  enh     always  translation      shift_tran      ctrl_tran       ctrl_shift_tran
+//    --------        -----  ---     ------  -----------      ----------      ---------       ---------------
+    VK_BACK,    false, false,  false,  "\x7f",        NULL,        "\033[85~",    NULL,
+    VK_TAB,        false, false,  true,   "\t",        "\033\t",    "\t",        "\033\t",
+    VK_CLEAR,    true,  false,  false,  "\033Ou",    NULL,        NULL,        NULL,
+    VK_PAUSE,    false, false,  false,  "\033[34~",    "\033[134~",    "\033[84~",    "\033[184~",
 
     // kp0 to kp9 when num-lock is on
-    VK_NUMPAD0, true,  false,  false,  "\033Op",    NULL,       NULL,       NULL,
-    VK_NUMPAD1, true,  false,  false,  "\033Oq",    NULL,       NULL,       NULL,
-    VK_NUMPAD2, true,  false,  false,  "\033Or",    NULL,       NULL,       NULL,
-    VK_NUMPAD3, true,  false,  false,  "\033Os",    NULL,       NULL,       NULL,
-    VK_NUMPAD4, true,  false,  false,  "\033Ot",    NULL,       NULL,       NULL,
-    VK_NUMPAD5, true,  false,  false,  "\033Ou",    NULL,       NULL,       NULL,
-    VK_NUMPAD6, true,  false,  false,  "\033Ov",    NULL,       NULL,       NULL,
-    VK_NUMPAD7, true,  false,  false,  "\033Ow",    NULL,       NULL,       NULL,
-    VK_NUMPAD8, true,  false,  false,  "\033Ox",    NULL,       NULL,       NULL,
-    VK_NUMPAD9, true,  false,  false,  "\033Oy",    NULL,       NULL,       NULL,
-    VK_DECIMAL, true,  false,  false,  "\033On",    NULL,       NULL,       NULL,
+    VK_NUMPAD0,    true,  false,  false,  "\033Op",    NULL,        NULL,        NULL,
+    VK_NUMPAD1,    true,  false,  false,  "\033Oq",    NULL,        NULL,        NULL,
+    VK_NUMPAD2,    true,  false,  false,  "\033Or",    NULL,        NULL,        NULL,
+    VK_NUMPAD3,    true,  false,  false,  "\033Os",    NULL,        NULL,        NULL,
+    VK_NUMPAD4,    true,  false,  false,  "\033Ot",    NULL,        NULL,        NULL,
+    VK_NUMPAD5,    true,  false,  false,  "\033Ou",    NULL,        NULL,        NULL,
+    VK_NUMPAD6,    true,  false,  false,  "\033Ov",    NULL,        NULL,        NULL,
+    VK_NUMPAD7,    true,  false,  false,  "\033Ow",    NULL,        NULL,        NULL,
+    VK_NUMPAD8,    true,  false,  false,  "\033Ox",    NULL,        NULL,        NULL,
+    VK_NUMPAD9,    true,  false,  false,  "\033Oy",    NULL,        NULL,        NULL,
+    VK_DECIMAL,    true,  false,  false,  "\033On",    NULL,        NULL,        NULL,
 
     // kp0 to kp9 when num-lock is off
-    VK_INSERT,  true,  false,  false,  "\033Op",    NULL,       NULL,       NULL,
-    VK_END,     true,  false,  false,  "\033Oq",    NULL,       NULL,       NULL,
-    VK_DOWN,    true,  false,  false,  "\033Or",    NULL,       NULL,       NULL,
-    VK_NEXT,    true,  false,  false,  "\033Os",    NULL,       NULL,       NULL,
-    VK_LEFT,    true,  false,  false,  "\033Ot",    NULL,       NULL,       NULL,
+    VK_INSERT,    true,  false,  false,  "\033Op",    NULL,        NULL,        NULL,
+    VK_END,        true,  false,  false,  "\033Oq",    NULL,        NULL,        NULL,
+    VK_DOWN,    true,  false,  false,  "\033Or",    NULL,        NULL,        NULL,
+    VK_NEXT,    true,  false,  false,  "\033Os",    NULL,        NULL,        NULL,
+    VK_LEFT,    true,  false,  false,  "\033Ot",    NULL,        NULL,        NULL,
     // kp5
-    VK_RIGHT,   true,  false,  false,  "\033Ov",    NULL,       NULL,       NULL,
-    VK_HOME,    true,  false,  false,  "\033Ow",    NULL,       NULL,       NULL,
-    VK_UP,      true,  false,  false,  "\033Ox",    NULL,       NULL,       NULL,
-    VK_PRIOR,   true,  false,  false,  "\033Oy",    NULL,       NULL,       NULL,
-    VK_DELETE,  true,  false,  false,  "\033On",    NULL,       NULL,       NULL,
+    VK_RIGHT,    true,  false,  false,  "\033Ov",    NULL,        NULL,        NULL,
+    VK_HOME,    true,  false,  false,  "\033Ow",    NULL,        NULL,        NULL,
+    VK_UP,        true,  false,  false,  "\033Ox",    NULL,        NULL,        NULL,
+    VK_PRIOR,    true,  false,  false,  "\033Oy",    NULL,        NULL,        NULL,
+    VK_DELETE,    true,  false,  false,  "\033On",    NULL,        NULL,        NULL,
 
-    VK_MULTIPLY,true,  false,  false,  "\033OR",    NULL,       NULL,       NULL,
-    VK_ADD,     true,  false,  false,  "\033Ol",    "\033Om",   NULL,       NULL,
-    VK_SUBTRACT,true,  false,  false,  "\033OS",    NULL,       NULL,       NULL,
-    VK_DIVIDE,  true,  true,   false,  "\033OQ",    NULL,       NULL,       NULL,
+    VK_MULTIPLY,    true,  false,  false,  "\033OR",    NULL,        NULL,        NULL,
+    VK_ADD,        true,  false,  false,  "\033Ol",    "\033Om",    NULL,        NULL,
+    VK_SUBTRACT,    true,  false,  false,  "\033OS",    NULL,        NULL,        NULL,
+    VK_DIVIDE,    true,  true,   false,  "\033OQ",    NULL,        NULL,        NULL,
 
     // function keys
-    VK_F1,      false, false,  false,  "\033[17~",  "\033[117~", "\033[67~",  "\033[167~",
-    VK_F2,      false, false,  false,  "\033[18~",  "\033[118~", "\033[68~",  "\033[168~",
-    VK_F3,      false, false,  false,  "\033[19~",  "\033[119~", "\033[69~",  "\033[169~",
-    VK_F4,      false, false,  false,  "\033[20~",  "\033[120~", "\033[70~",  "\033[170~",
-    VK_F5,      false, false,  false,  "\033[21~",  "\033[121~", "\033[71~",  "\033[171~",
-    VK_F6,      false, false,  false,  "\033[23~",  "\033[123~", "\033[73~",  "\033[173~",
-    VK_F7,      false, false,  false,  "\033[24~",  "\033[124~", "\033[74~",  "\033[174~",
-    VK_F8,      false, false,  false,  "\033[25~",  "\033[125~", "\033[75~",  "\033[175~",
-    VK_F9,      false, false,  false,  "\033[26~",  "\033[126~", "\033[76~",  "\033[176~",
-    VK_F10,     false, false,  false,  "\033[28~",  "\033[128~", "\033[78~",  "\033[178~",
-    VK_F11,     false, false,  false,  "\033[29~",  "\033[129~", "\033[79~",  "\033[179~",
-    VK_F12,     false, false,  false,  "\033[31~",  "\033[131~", "\033[81~",  "\033[181~",
-    VK_F13,     false, false,  false,  "\033_I",    "\033[O",    NULL,        NULL,
-    VK_F14,     false, false,  false,  "\033_J",    "\033[P",    NULL,        NULL,
-    VK_F15,     false, false,  false,  "\033_K",    "\033[Q",    NULL,        NULL,
-    VK_F16,     false, false,  false,  "\033_L",    "\033[R",    NULL,        NULL,
-    VK_SCROLL,  false, false,  false,  "\033[33~",  "\033[133~", "\033[83~", "\033[183~",
+    VK_F1,        false, false,  false,  "\033[17~",    "\033[117~",    "\033[67~",    "\033[167~",
+    VK_F2,        false, false,  false,  "\033[18~",    "\033[118~",    "\033[68~",    "\033[168~",
+    VK_F3,        false, false,  false,  "\033[19~",    "\033[119~",    "\033[69~",    "\033[169~",
+    VK_F4,        false, false,  false,  "\033[20~",    "\033[120~",    "\033[70~",    "\033[170~",
+    VK_F5,        false, false,  false,  "\033[21~",    "\033[121~",    "\033[71~",    "\033[171~",
+    VK_F6,        false, false,  false,  "\033[23~",    "\033[123~",    "\033[73~",    "\033[173~",
+    VK_F7,        false, false,  false,  "\033[24~",    "\033[124~",    "\033[74~",    "\033[174~",
+    VK_F8,        false, false,  false,  "\033[25~",    "\033[125~",    "\033[75~",    "\033[175~",
+    VK_F9,        false, false,  false,  "\033[26~",    "\033[126~",    "\033[76~",    "\033[176~",
+    VK_F10,        false, false,  false,  "\033[28~",    "\033[128~",    "\033[78~",    "\033[178~",
+    VK_F11,        false, false,  false,  "\033[29~",    "\033[129~",    "\033[79~",    "\033[179~",
+    VK_F12,        false, false,  false,  "\033[31~",    "\033[131~",    "\033[81~",    "\033[181~",
+    VK_F13,        false, false,  false,  "\033_I",    "\033[O",    NULL,        NULL,
+    VK_F14,        false, false,  false,  "\033_J",    "\033[P",    NULL,        NULL,
+    VK_F15,        false, false,  false,  "\033_K",    "\033[Q",    NULL,        NULL,
+    VK_F16,        false, false,  false,  "\033_L",    "\033[R",    NULL,        NULL,
+    VK_SCROLL,    false, false,  false,  "\033[33~",    "\033[133~",    "\033[83~","\033[183~",
 
     // enhanced keys
-    VK_PRIOR,   false, true,   false,  "\033[5~",   "\033[105~",  "\033[55~",  "\033[155~",
-    VK_NEXT,    false, true,   false,  "\033[6~",   "\033[106~",  "\033[56~",  "\033[156~",
-    VK_END,     false, true,   false,  "\033[4~",   "\033[104~",  "\033[54~",  "\033[154~",
-    VK_HOME,    false, true,   false,  "\033[1~",   "\033[101~",  "\033[51~",  "\033[151~",
+    VK_PRIOR,    false, true,   false,  "\033[5~",    "\033[105~",    "\033[55~",    "\033[155~",
+    VK_NEXT,    false, true,   false,  "\033[6~",    "\033[106~",    "\033[56~",    "\033[156~",
+    VK_END,        false, true,   false,  "\033[4~",    "\033[104~",    "\033[54~",    "\033[154~",
+    VK_HOME,    false, true,   false,  "\033[1~",    "\033[101~",    "\033[51~",    "\033[151~",
 
-    VK_LEFT,    false, true,   false,  "\033OD",  "\033[110~",  "\033[60~",  "\033[160~",
-    VK_UP,      false, true,   false,  "\033OA",  "\033[107~",  "\033[57~",  "\033[157~",
-    VK_RIGHT,   false, true,   false,  "\033OC",  "\033[109~",  "\033[59~",  "\033[159~",
-    VK_DOWN,    false, true,   false,  "\033OB",  "\033[108~",  "\033[58~",  "\033[158~",
+    VK_LEFT,    false, true,   false,  "\033OD",    "\033[110~",    "\033[60~",    "\033[160~",
+    VK_UP,        false, true,   false,  "\033OA",    "\033[107~",    "\033[57~",    "\033[157~",
+    VK_RIGHT,    false, true,   false,  "\033OC",    "\033[109~",    "\033[59~",    "\033[159~",
+    VK_DOWN,    false, true,   false,  "\033OB",    "\033[108~",    "\033[58~",    "\033[158~",
 
-    VK_INSERT,  false, true,   true,  "\033[2~",  "\033[102~",  "\033[52~",  "\033[152~",
-    VK_DELETE,  false, true,   true,  "\033[3~",  "\033[103~",  "\033[53~",  "\033[153~",
+    VK_INSERT,    false, true,   true,  "\033[2~",    "\033[102~",    "\033[52~",    "\033[152~",
+    VK_DELETE,    false, true,   true,  "\033[3~",    "\033[103~",    "\033[53~",    "\033[153~",
 
     // keypad keys when num_lock is off and no lk201 emulation
-    VK_PRIOR,   false, false,  false,  "\033[5~",  "\033[105~",  "\033[55~",  "\033[155~",
-    VK_NEXT,    false, false,  false,  "\033[6~",  "\033[106~",  "\033[56~",  "\033[156~",
-    VK_END,     false, false,  false,  "\033[4~",  "\033[104~",  "\033[54~",  "\033[154~",
-    VK_HOME,    false, false,  false,  "\033[1~",  "\033[101~",  "\033[51~",  "\033[151~",
+    VK_PRIOR,    false, false,  false,  "\033[5~",    "\033[105~",    "\033[55~",    "\033[155~",
+    VK_NEXT,    false, false,  false,  "\033[6~",    "\033[106~",    "\033[56~",    "\033[156~",
+    VK_END,        false, false,  false,  "\033[4~",    "\033[104~",    "\033[54~",    "\033[154~",
+    VK_HOME,    false, false,  false,  "\033[1~",    "\033[101~",    "\033[51~",    "\033[151~",
 
-    VK_LEFT,    false, false,  false,  "\033OD",  "\033[110~",  "\033[60~",  "\033[160~",
-    VK_UP,      false, false,  false,  "\033OA",  "\033[107~",  "\033[57~",  "\033[157~",
-    VK_RIGHT,   false, false,  false,  "\033OC",  "\033[109~",  "\033[59~",  "\033[159~",
-    VK_DOWN,    false, false,  false,  "\033OB",  "\033[108~",  "\033[58~",  "\033[158~",
+    VK_LEFT,    false, false,  false,  "\033OD",    "\033[110~",    "\033[60~",    "\033[160~",
+    VK_UP,        false, false,  false,  "\033OA",    "\033[107~",    "\033[57~",    "\033[157~",
+    VK_RIGHT,    false, false,  false,  "\033OC",    "\033[109~",    "\033[59~",    "\033[159~",
+    VK_DOWN,    false, false,  false,  "\033OB",    "\033[108~",    "\033[58~",    "\033[158~",
 
-    VK_INSERT,  false, false,  true,  "\033[2~",  "\033[102~",  "\033[52~",  "\033[152~",
-    VK_DELETE,  false, false,  true,  "\033[3~",  "\033[103~",  "\033[53~",  "\033[153~",
+    VK_INSERT,    false, false,  true,  "\033[2~",    "\033[102~",    "\033[52~",    "\033[152~",
+    VK_DELETE,    false, false,  true,  "\033[3~",    "\033[103~",    "\033[53~",    "\033[153~",
 
-    VK_NUMLOCK, true,  true,   false,  "\033OP",    NULL,       NULL,       NULL
+    VK_NUMLOCK,    true,  true,   false,  "\033OP",    NULL,        NULL,        NULL
 };
 
 const conv_keys convert_keys( convert_entries, sizeof( convert_entries ) );
@@ -1879,7 +1879,7 @@ int init_char_terminal(const EmacsString &/*device*/ )
     return 0;
 }
 
-void CWinemacsView::t_change_attributes()
+void CWinemacsView::t_change_attributes(  )
 {
     if( !t_update_begin() )
         return;
@@ -2771,7 +2771,7 @@ void CScrollBarVertical::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* /*pScrol
         if( n > bf_cur->num_characters() )
             n = bf_cur->num_characters() + 1;
         if( n != (bf_cur->num_characters() + 1) )
-            set_dot( scan_bf_for_lf(n, -1) );
+            set_dot( scan_bf('\n', n, -1) );
     }
         break;
     case SB_TOP:
@@ -2787,8 +2787,8 @@ void CScrollBarVertical::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* /*pScrol
         // turn off the shift state before scrolling
         gui_input_shift_state( false );
 
-        set_dot( scan_bf_for_lf( dot, scroll ) );
-        win->setWindowStart( scan_bf_for_lf( win->getWindowStart(), scroll ) );
+        set_dot( scan_bf( '\n', dot, scroll ) );
+        win->setWindowStart( scan_bf( '\n', win->getWindowStart(), scroll ) );
     }
 
     setPosition();
