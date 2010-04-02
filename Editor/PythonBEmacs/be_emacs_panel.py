@@ -21,11 +21,11 @@ import be_images
 
 import be_config
 
-_debug_term_calls1 = True
+_debug_term_calls1 = False
 _debug_term_calls2 = False
 _debug_term_key = False
 _debug_term_mouse = False
-_debug_term_scroll = True
+_debug_term_scroll = False
 _debug_panel = False
 
 def T( boolean ):
@@ -835,7 +835,6 @@ class EmacsPanel(wx.Panel):
                                 (win_id, etype, wx_evt_names.get( etype, 'unknown')) )
 
         if etype == wx.wxEVT_SCROLL_LINEDOWN:
-            self.log.error( 'calling guiScrollChangeVert...' )
             self.app.editor.guiScrollChangeVert( win_id, +1 )
 
         elif etype == wx.wxEVT_SCROLL_LINEUP:

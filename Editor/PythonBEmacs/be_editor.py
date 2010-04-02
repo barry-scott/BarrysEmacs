@@ -137,11 +137,9 @@ class BEmacs(_bemacs.BemacsEditor):
         self.__event_queue.put( (self.scrollSetHorz, (window_id, position) ) )
 
     def guiScrollChangeVert( self, window_id, change ):
-        self.log.error( 'guiScrollChangeVert( %r, %r )' % (window_id, change) )
         self.__event_queue.put( (self.scrollChangeVert, (window_id, change) ) )
 
     def guiScrollSetVert( self, window_id, position ):
-        self.log.error( 'guiScrollSetVert( %r, %r )' % (window_id, position) )
         self.__event_queue.put( (self.scrollSetVert, (window_id, position) ) )
 
     #--------------------------------------------------------------------------------
