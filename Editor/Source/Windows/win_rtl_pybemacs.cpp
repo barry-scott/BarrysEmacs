@@ -85,10 +85,6 @@ void emacs_sleep( int milli_seconds )
     //Sleep( milli_seconds );
 }
 
-void wait_abit( void )
-{
-}
-
 unsigned char *get_tmp_path(void)
 {
     static unsigned char tmp_path[MAXPATHLEN];
@@ -231,11 +227,6 @@ void conditional_wake(void)
     return;
 }
 
-int elapse_time()
-{
-    return GetTickCount();
-}
-
 EmacsDateTime EmacsDateTime::now(void)
 {
     EmacsDateTime now;
@@ -253,66 +244,6 @@ EmacsDateTime EmacsDateTime::now(void)
     now.time_value += double( file_time.dwLowDateTime );
     now.time_value /= 10000000.0;
     return now;
-}
-
-EmacsString EmacsDateTime::asString(void) const
-{
-    double time( time_value );
-
-    time *= 10000000.0;
-    double low_16 = fmod( time, double(65536) );
-    time = time / 65536;
-    double high_16 = fmod( time, double(65536) );
-    time = time / 65536;
-
-    FILETIME file_time;
-    file_time.dwLowDateTime = int(high_16) << 16;
-    file_time.dwLowDateTime |= int(low_16);
-    file_time.dwHighDateTime = int(time);
-
-    FILETIME local_file_time;
-    FileTimeToLocalFileTime( &file_time, &local_file_time );
-
-    SYSTEMTIME sys_time;
-    FileTimeToSystemTime( &local_file_time, &sys_time );
-
-    return FormatString("%4d-%2d-%2d %2d:%2d:%2d.%3.3d")
-        << sys_time.wYear << sys_time.wMonth << sys_time.wDay
-        << sys_time.wHour << sys_time.wMinute << sys_time.wSecond << sys_time.wMilliseconds;
-}
-
-
-static void (*timeout_handle)(void);
-
-void time_schedule_timeout( void (*time_handle_timeout)(void), const EmacsDateTime &time )
-{
-    timeout_handle = time_handle_timeout;
-
-    EmacsDateTime now( EmacsDateTime::now() );
-    double d_delta = time.asDouble() - now.asDouble();
-    // convert from Seconds units to mS units
-    d_delta *= 1000.0;
-    int i_delta = int(d_delta);
-    // just in case it took a while to ask
-    if( i_delta < 1 )
-        // force to a positive delta
-        i_delta = 100;
-
-    // QQQ how to implement
-
-    //    start the timer
-    //UINT status = theApp.m_pMainWnd->SetTimer( 'A', i_delta, NULL );
-    //if( status == 0 )
-    //{
-    //    TRACE("Failed to allocate timer\n");
-    //    return;
-    //}
-}
-
-void time_cancel_timeout(void)
-{
-    // QQQ how to implement
-    //theApp.m_pMainWnd->KillTimer( 'A' );
 }
 
 EmacsString os_error_code( unsigned int code )
