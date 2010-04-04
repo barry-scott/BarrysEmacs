@@ -401,7 +401,7 @@ EmacsString &EmacsStringTable::get_word_interactive( const EmacsString &prompt, 
     //
     EmacsString current_string( default_value );
 
-    for(;;)
+    while( quitting_emacs == 0 )
     {
         help = expand = 0;
         int nfound = 0;

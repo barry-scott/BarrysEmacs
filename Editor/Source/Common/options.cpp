@@ -745,6 +745,9 @@ int execute_extended_command( void )
     if( p == NULL )
         return 0;
 
+    if( quitting_emacs != 0 )
+        return 0;
+
     int rv = p->execute();
 
     if( interactive() && ! ml_err && ml_value.exp_type() != ISVOID )
