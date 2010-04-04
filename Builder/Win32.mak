@@ -69,7 +69,7 @@ editor: kitdir "$(KITROOT)\be.exe"
 
 mlisp:
 	echo Info: Copying Mlisp files...
-	cd $(BUILDER_TOP_DIR)\mlisp && python create_library.py common,windows $(KITROOT)\emacs_library\emacslib $(KITROOT)
+	cd $(BUILDER_TOP_DIR)\mlisp && python create_library.py common $(KITROOT)\emacs_library\emacslib $(KITROOT)
 	cd $(BUILDER_TOP_DIR)\mlisp && copy emacs_profile.ml $(KITROOT)\emacs_library
 	cd $(BUILDER_TOP_DIR)\mlisp && copy emacsinit.ml $(KITROOT)\emacs_library
 

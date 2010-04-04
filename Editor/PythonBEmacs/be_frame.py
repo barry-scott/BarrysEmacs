@@ -13,6 +13,7 @@
 
 '''
 import sys
+import os
 import wx
 import logging
 
@@ -22,6 +23,7 @@ import be_version
 import be_images
 import be_emacs_panel
 import be_preferences_dialog
+import be_platform_specific
 
 import be_config
 
@@ -58,13 +60,6 @@ class BemacsFrame(wx.Frame):
         # wrong size in the preferences
         wx.CallAfter( self.SetSize, win_prefs.frame_size )
 
-        self.menu_edit = wx.Menu()
-
-        if wx.Platform != '__WXMAC__':
-            self.menu_file = wx.Menu()
-        else:
-            self.menu_file = self.menu_edit
-
         if wx.Platform == '__WXMAC__':
             # maps Cmd-Q to exit
             id_exit = wx.ID_EXIT
@@ -72,16 +67,29 @@ class BemacsFrame(wx.Frame):
         else:
             id_exit = be_ids.id_exit
 
+        self.menu_keys_to_id = {}
+        self.menu_id_to_keys = {}
+
+        self.menu_file = wx.Menu()
+        self.menu_edit = wx.Menu()
+        self.menu_help = wx.Menu()
+
+        self.addEmacsMenu( self.menu_file, 'fo', T_('Open') )
+
+        self.addEmacsMenu( self.menu_edit, 'ec', T_('Copy') )
+        self.addEmacsMenu( self.menu_edit, 'ex', T_('Cut') )
+        self.addEmacsMenu( self.menu_edit, 'ev', T_('Paste') )
 
         self.menu_file.Append( wx.ID_PREFERENCES, T_("&Preferences..."), T_("Preferences") )
         self.menu_file.Append( id_exit, T_("E&xit"), T_("Exit the application") )
 
-        self.menu_help = wx.Menu()
+        id_help_docs = wx.NewId()
+
+        self.menu_help.Append( id_help_docs, T_('Documentation...') )
         self.menu_help.Append( wx.ID_ABOUT, T_("&About..."), T_("About the application") )
 
         self.menu_bar = wx.MenuBar()
-        if wx.Platform != '__WXMAC__':
-            self.menu_bar.Append( self.menu_file, T_("&File") )
+        self.menu_bar.Append( self.menu_file, T_("&File") )
         self.menu_bar.Append( self.menu_edit, T_("&Edit") )
         self.menu_bar.Append( self.menu_help, T_("&Help") )
 
@@ -96,13 +104,13 @@ class BemacsFrame(wx.Frame):
 
         bitmap_size = (32, 32)
         t.SetToolBitmapSize( bitmap_size )
-        t.AddSimpleTool( be_ids.id_SP_EditCut,
+        t.AddSimpleTool( self.getEmacsMenuId( 'ex' ),
             be_images.getBitmap( 'toolbar_images/editcut.png', bitmap_size ),
             T_('Cut Files and Folders'), T_('Cut Files and Folders') )
-        t.AddSimpleTool( be_ids.id_SP_EditCopy,
+        t.AddSimpleTool( self.getEmacsMenuId( 'ec' ),
             be_images.getBitmap( 'toolbar_images/editcopy.png', bitmap_size ),
             T_('Copy Files and Folders'), T_('Copy Files and Folders') )
-        t.AddSimpleTool( be_ids.id_SP_EditPaste,
+        t.AddSimpleTool( self.getEmacsMenuId( 'ev' ),
             be_images.getBitmap( 'toolbar_images/editpaste.png', bitmap_size ),
             T_('Paste Files and Folders'), T_('Paste Files and Folders') )
 
@@ -128,17 +136,32 @@ class BemacsFrame(wx.Frame):
 
         size = self.GetClientSize()
 
-        # for some unknown reason MENU events get blocked by tree and list controls
-        for event_source in [self]:
-            # Set up the event handlers
-            wx.EVT_MENU( event_source, wx.ID_ABOUT, tw( self.OnCmdAbout ) )
-            wx.EVT_MENU( event_source, wx.ID_PREFERENCES, tw( self.OnCmdPreferences ) )
-            wx.EVT_MENU( event_source, id_exit, tw( self.OnCmdExit ) )
+        # Set up the event handlers
+        wx.EVT_MENU( self, wx.ID_ABOUT, tw( self.OnCmdAbout ) )
+        wx.EVT_MENU( self, wx.ID_PREFERENCES, tw( self.OnCmdPreferences ) )
+        wx.EVT_MENU( self, id_exit, tw( self.OnCmdExit ) )
+        wx.EVT_MENU( self, id_help_docs, tw( self.OnHelpDocumentation ) )
 
         wx.EVT_SIZE( self, tw( self.OnSize ) )
         wx.EVT_MOVE( self, tw( self.OnMove ) )
         
         wx.EVT_CLOSE( self, tw( self.OnCloseWindow ) )
+
+    def addEmacsMenu( self, menu, keys, title ):
+        menu_id = wx.NewId()
+        wx.EVT_MENU( self, menu_id, self.OnEmacsMenu )
+
+        self.menu_id_to_keys[ menu_id ] = be_emacs_panel.prefix_menu + keys
+        self.menu_keys_to_id[ keys ] = menu_id
+
+        menu.Append( menu_id, title )
+
+    def getEmacsMenuId( self, keys ):
+        return self.menu_keys_to_id[ keys ]
+
+    def OnEmacsMenu( self, event ):
+        for ch in self.menu_id_to_keys[ event.GetId() ]:
+            self.app.editor.guiEventChar( ch, False )
 
     # Status bar settings
     def setStatus( self, all_values ):
@@ -178,6 +201,16 @@ class BemacsFrame(wx.Frame):
             self.emacs_panel.newPreferences()
 
         self.log.error( 'Need to tell editor to change font' )
+
+    def OnHelpDocumentation( self, event ):
+        if '__WXMAC__' in wx.Platform:
+            os.system( "open '%s'" % (be_platform_specific.getDocUserGuide(),) )
+
+        elif '__WXGTK__' in wx.Platform:
+            os.system( "gnome-open '%s'" % (be_platform_specific.getDocUserGuide(),) )
+
+        elif '__WXMSW__' in wx.Platform:
+            os.system( 'start "%s"' % (be_platform_specific.getDocUserGuide(),) )
 
     def OnSize( self, event ):
         if not self.IsMaximized():

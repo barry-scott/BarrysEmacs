@@ -23,13 +23,15 @@ def getUserDir():
 def getLibraryDir():
     assert app_dir is not None
     folder = os.environ.get( 'BEMACS_EMACS_LIBRARY', os.path.join( app_dir, 'emacs_library' ) )
-    print 'getLibraryDir() -> %s' % (folder,)
     assert folder is not None
     assert os.path.exists( folder )
     return folder
 
 def getLocalePath( app ):
     return os.path.join( app_dir, 'locale' )
+
+def getDocUserGuide():
+    return os.path.join( app_dir, 'documentation/emacs-documentation.html' )
 
 def getNullDevice():
     return '/dev/null'

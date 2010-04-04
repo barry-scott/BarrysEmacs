@@ -15,6 +15,7 @@ import os
 
 app_dir = None
 library_dir = None
+doc_dir = None
 
 def getUserDir():
     return os.environ.get( 'BEMACS_EMACS_USER', os.path.join( os.environ['HOME'], 'bemacs' ) )
@@ -24,6 +25,9 @@ def getLibraryDir():
 
 def getLocalePath( app ):
     return os.path.join( app_dir, 'locale' )
+
+def getDocUserGuide():
+    return os.path.join( doc_dir, 'emacs-documentation.html' )
 
 def getNullDevice():
     return '/dev/null'
@@ -48,3 +52,4 @@ def setupPlatformSpecific_( argv0 ):
         app_dir = os.getcwd()
 
 # build will add definition of library_dir
+# build will add definition of doc_dir

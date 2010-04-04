@@ -1,7 +1,7 @@
 ; 
 ; pc-keyboard.ml
 ; 
-; Barry A. Scott (c) 1997-2006
+; Barry A. Scott (c) 1997-2010
 ; 
 ; bind keys on a PC style keyboard to functions that
 ; match the behaviour defined by Windows interface.
@@ -125,3 +125,13 @@
 ; Function keys
 
 (bind-to-key "help" "\[f1]")
+
+
+; 
+; Menu binding
+; 
+(bind-to-key "visit-file"       "\[menu]fo")
+
+(bind-to-key "PC-edit-cut"      "\[menu]ex")
+(bind-to-key "PC-edit-copy"     "\[menu]ec")
+(bind-to-key "UI-edit-paste"    "\[menu]ev")

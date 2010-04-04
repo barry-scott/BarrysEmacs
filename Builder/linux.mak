@@ -64,13 +64,13 @@ editor:
 
 bemacs:
 	@ echo Info: Copy PythonBEmacs...
-	cd ../Editor/PythonBEmacs && ./build-linux.sh ${BEMACS_ROOT_DIR} ${BEMACS_BIN_DIR} ${BEMACS_LIB_DIR}
+	cd ../Editor/PythonBEmacs && ./build-linux.sh ${BEMACS_ROOT_DIR} ${BEMACS_BIN_DIR} ${BEMACS_LIB_DIR} ${BEMACS_DOC_DIR}
 
 mlisp:
 	@ echo Info: Copying Mlisp files...
 	cp -f ../MLisp/emacsinit.ml	$(BEMACS_LIB_DIR); chmod ugo=r $(BEMACS_LIB_DIR)/emacsinit.ml
 	cp -f ../MLisp/emacs_profile.ml	$(BEMACS_LIB_DIR); chmod ugo=r $(BEMACS_LIB_DIR)/emacs_profile.ml
-	cd ../MLisp; $(PYTHON) create_library.py common,unix $(BEMACS_LIB_DIR)/emacslib $(BEMACS_BIN_DIR)
+	cd ../MLisp; $(PYTHON) create_library.py common $(BEMACS_LIB_DIR)/emacslib $(BEMACS_BIN_DIR)
 
 describe:
 	@ echo Info: Making describe...
