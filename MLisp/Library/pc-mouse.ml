@@ -137,17 +137,19 @@
 ;   foreign terminal.)
 
 (defun mouse-parameters()
-    x y event
+    x y event shift
 
     (if (= user-interface-type "python")
         (progn
             (setq y (fetch-array control-string-parameters 1))
             (setq x (fetch-array control-string-parameters 2))
+            (setq shift (fetch-array control-string-parameters 3))
             (setq event 0)
         )
         (progn
             (setq y (+ (fetch-array control-string-parameters 1 3)))
             (setq x (+ (fetch-array control-string-parameters 1 4)))
+            (set shift 0)
             (setq event (+ (fetch-array control-string-parameters 1 1)))
         )
     )
@@ -159,6 +161,9 @@
     )
     (if (is-bound mouseevent)
         (setq mouseevent event)
+    )
+    (if (is-bound mouseshift)
+        (setq mouseshift shift)
     )
     (if (is-bound mouse-second-click)
         (setq mouse-second-click 
@@ -337,11 +342,11 @@
 
 (defun
     (mouse-1-down
-	mousex mousey mouseevent mouse-second-click
+	mousex mousey mouseevent mouseshift mouse-second-click
 	
 	(mouse-parameters)
 	(~mouse-log (concat "mouse-1-down x:"
-			mousex " y:" mousey " event:" mouseevent " second:" mouse-second-click))
+			mousex " y:" mousey " event:" mouseevent " shift:" mouseshift " second:" mouse-second-click))
 	
 	(setq ~last-mouse-1-down-hooked-double-click 0)
 	
@@ -404,8 +409,10 @@
 		    (setq mouse-multi-click-count 0)
 		)
 		(setq mouse-mode mouse-multi-click-count)
-		(if (= mouse-multi-click-count 0)
-		    (setq mouse-region-start (setq mouse-region-end (dot))))
+		(if
+                    (& (= mouse-multi-click-count 0) (= mouseshift 0))
+		    (setq mouse-region-start (setq mouse-region-end (dot)))
+                )
 		(mouse-position-update 1)
 	    )
 	)
@@ -414,7 +421,7 @@
 
 (defun
     (mouse-1-up
-	mousex mousey mouseevent
+	mousex mousey mouseevent mouseshift
 	
 	; 
 	; Start the double-click timer
@@ -492,7 +499,7 @@
 	
 	(mouse-parameters)
 	(~mouse-log (concat "mouse-2-down x:" mousex " y:" mousey))
-	
+
 	(setq ~saved-mousex mousex)
 	(setq ~saved-mousey mousey)
     )
@@ -540,7 +547,7 @@
 		~new-dot
 		
 		(goto-window-at-x-y mousex mousey 0 ~new-dot)
-		
+
 		(if
 		    (error-occurred (mark))	; mark is not set
 		    0
@@ -714,7 +721,7 @@
 
 (defun
     ~mouse-log (~msg)
-    
+
     (if ~mouse-debug
 	(save-window-excursion old-gui
 	    (setq input-mode 0)

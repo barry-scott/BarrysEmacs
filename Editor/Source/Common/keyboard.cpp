@@ -673,6 +673,7 @@ having_dequeued_a_char:    // leave this block
         c = char_cell->ce_char;
         break;
 
+    // passed in by the pybemacs UI
     case CE_TYPE_PARM_LIST_FIN_CHAR:
     {
         int num_params = char_cell->ce_all_params.size();

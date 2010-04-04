@@ -104,7 +104,8 @@ int goto_window_at_x_y( void )
     if( ml_err )
         return 0;
 
-    M_dbg_fn_trace( FormatString( "goto_window_at_x_y  X=%d, Y=%d GUI=%d ret_dot=%d" ) << mouse_x << mouse_y << gui_mode_goto << int(return_dot) );
+    M_dbg_fn_trace( FormatString( "goto_window_at_x_y  X=%d, Y=%d GUI=%d ret_dot=%d" )
+                        << mouse_x << mouse_y << gui_mode_goto << int(return_dot) );
 
     mouse_hit = 0;
     setMouseHitPosition( 0, NULL );

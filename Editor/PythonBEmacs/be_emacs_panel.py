@@ -756,7 +756,7 @@ class EmacsPanel(wx.Panel):
 
             self.__debugTermMouse( 'Mouse shift %r line %r column %r' % (shift, line, column) )
 
-            self.app.editor.guiEventMouse( translation, shift, [line, column] );
+            self.app.editor.guiEventMouse( translation, shift, [line, column, shift] );
 
         elif event.GetEventType() == wx.wxEVT_MOUSEWHEEL:
             self.__debugTermMouse( 'Mouse Wheel rotation %r delta %r' % (event.GetWheelRotation(), event.GetWheelDelta()) )

@@ -93,8 +93,8 @@ bool gui_input_mode_before_delete()
 #endif
     bool result = false;
 
-    if( bf_cur->b_mark.isSet()            // have a mark
-    && bf_cur->b_gui_input_mode_set_mark )        // owned by GUI input
+    if( bf_cur->b_mark.isSet()                          // have a mark
+    && bf_cur->b_gui_input_mode_set_mark )              // owned by GUI input
     {
         if( (bf_cur->b_mark.to_mark() - dot) != 0 )    // with a region that is not empty
         {
