@@ -36,7 +36,7 @@ SystemExpressionRepresentationIntPositive mouse_enable( 1 );
 SystemExpressionRepresentationIntBoolean term_ansi( 1 );
 SystemExpressionRepresentationIntBoolean term_app_keypad( 1 );
 SystemExpressionRepresentationIntBoolean term_avo;
-SystemExpressionRepresentationIntBoolean term_deccrt;
+SystemExpressionRepresentationIntBoolean term_deccrt( 1 );
 SystemExpressionRepresentationIntBoolean term_deccrt2;
 SystemExpressionRepresentationIntBoolean term_deccrt3;
 SystemExpressionRepresentationIntBoolean term_deccrt4;

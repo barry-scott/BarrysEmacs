@@ -442,8 +442,7 @@ void FormatString::print_hexadecimal( long int n )
     int w = width;
     for( int i=w-1; i >= 0; i--)
     {
-        buf[i] = (unsigned char)
-            ((n&0xf) >= 10 ? (n&0xf) + 'a' - 10 : (n&0xf) + '0');
+        buf[i] = (EmacsChar_t)((n&0xf) >= 10 ? (n&0xf) + 'a' - 10 : (n&0xf) + '0');
         n >>= 4;
     }
     put( buf, w );

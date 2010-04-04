@@ -29,6 +29,16 @@ SystemExpressionRepresentationString global_mode_string;
 SystemExpressionRepresentationIntBoolean pop_up_windows( 1 );
 SystemExpressionRepresentationIntPositive split_height_threshold( 20 );
 
+const int CHAR_END_OF_FILE( 0x25c6 );   // unicode Black Diamond
+const int CHAR_HT( 0x2409 );            // unicode Tab HT
+const int CHAR_HT_FILL( 0x00b7 );       // unicode Middle Dot
+const int CHAR_NL( 0x2424 );            // unicode Newline NL
+const int CHAR_CR( 0x240d );            // unicode Newline CR
+const int CHAR_FF( 0x240c );            // unicode Form Feed FF
+const int CHAR_VT( 0x240b );            // unicode Vertical Tab VT
+const int CHAR_LINE_TRUNCATED( 0x2190 );// unicode Right Arrow
+const int CHAR_LINE_WRAPPED( 0x2199 );  // unicode South west Arrow
+
 static int mouse_x;             // The X screen coordinate of the mouse
 static int mouse_y;             // The Y screen coordinate of the mouse
 
@@ -1375,7 +1385,9 @@ void EmacsView::dump_str
         col = 2;
     }
     else
+    {
         setpos( line, column ); // setup things to update line line
+    }
 
     for( int i=0; i<limit; i++ )
     {
@@ -1401,8 +1413,7 @@ void EmacsView::dump_str
                 if( term_deccrt
                 && (c == ctl( 'L')
                 || c == ctl( 'M')
-                || c == ctl( 'K')
-                || c == ctl( '[')) )
+                || c == ctl( 'K')) )
                 {
                     col++;
 
@@ -1410,13 +1421,11 @@ void EmacsView::dump_str
                         switch( c )
                         {
                         case ctl('L'):
-                            dsputc( ctl('c'), highlight ); break;
+                            dsputc( CHAR_FF, highlight ); break;
                         case ctl('M'):
-                            dsputc( ctl('d'), highlight ); break;
+                            dsputc( CHAR_CR, highlight ); break;
                         case ctl('K'):
-                            dsputc( ctl('i'), highlight ); break;
-                        case ctl('['):
-                            dsputc( ctl('['), highlight ); break;
+                            dsputc( CHAR_VT, highlight ); break;
                         }
                 }
                 else
@@ -2088,7 +2097,7 @@ int EmacsView::dump_line_from_buffer
             if( mode.md_display_eof
             && n - 1 == lim
             && flags.dec_crt )
-                dsputc( ctl('@'), highlight );
+                dsputc( 0x25c6, highlight );
 
             n++;
             c = ctl('J');
@@ -2113,7 +2122,7 @@ int EmacsView::dump_line_from_buffer
         case ctl('J'):    // Newline
             if( flags.display_non_printing )
                 if( col >= first_column - 1 )
-                    dsputc( ctl('H'), highlight );
+                    dsputc( CHAR_NL, highlight );
 
             goto dump_line_from_buffer_loop;
 
@@ -2125,11 +2134,11 @@ int EmacsView::dump_line_from_buffer
             if( flags.display_non_printing )
             {
                 _if_wraped( old_col + 1 )
-                    dsputc( ctl('B'), highlight );
+                    dsputc( CHAR_HT, highlight );
 
                 for( int i=old_col + 2; i<=col; i += 1 )
                     _if_wraped( i )
-                        dsputc( ctl('^'), highlight );
+                        dsputc( CHAR_HT_FILL, highlight );
             }
             else
             {
@@ -2148,7 +2157,6 @@ int EmacsView::dump_line_from_buffer
             }
 
             last_char_type = space_char;
-
             break;
         }
 
@@ -2164,8 +2172,8 @@ int EmacsView::dump_line_from_buffer
                 char_type = other_char;
 
             // is this a change of char type?
-            if( last_char_type != char_type                // the type changed
-            && (col - first_column) < window->w_width )        // within the visible part of the window
+            if( last_char_type != char_type                 // the type changed
+            && (col - first_column) < window->w_width )     // within the visible part of the window
             {
                 // yes remember the place the change occured
                 word_start_pos = n-1;
@@ -2177,7 +2185,8 @@ int EmacsView::dump_line_from_buffer
 
             if( (c >= ' ' && c <= '~')    // printing chars
             || (c >= 128+32 && c <= 254)
-            || (c >= 256)
+            || (c >= 256 && c < 0xef00)
+            || (c >= 0xf100)
             )
             {
                 col++;
@@ -2198,14 +2207,13 @@ int EmacsView::dump_line_from_buffer
                         dsputc( flags.dec_crt ? c : fake_c1_chars[c], highlight );
                 }
                 else
-                if( ctl_arrow != 0 && (c & 0x80) == 0 )
+                if( ctl_arrow != 0 && c <= 0x001f )
                 {
                     if( flags.dec_crt
                     &&
                         (c == ctl('L')
                         || c == ctl('M')
                         || c == ctl('K')
-                        || c == ctl('[')
                         || c == ctl('I')) )
                     {
                         col++;
@@ -2213,11 +2221,10 @@ int EmacsView::dump_line_from_buffer
                         _if_wraped( col )
                             switch( c )
                             {
-                            case ctl('L'):    dsputc( ctl('c'), highlight ); break;
-                            case ctl('M'):    dsputc( ctl('d'), highlight ); break;
-                            case ctl('K'):    dsputc( ctl('i'), highlight ); break;
-                            case ctl('I'):    dsputc( ctl('b'), highlight ); break;
-                            case ctl('['):    dsputc( ctl('{'), highlight ); break;
+                            case ctl('L'):    dsputc( CHAR_FF, highlight ); break;
+                            case ctl('M'):    dsputc( CHAR_CR, highlight ); break;
+                            case ctl('K'):    dsputc( CHAR_VT, highlight ); break;
+                            case ctl('I'):    dsputc( CHAR_HT, highlight ); break;
                             }
                     }
                     else
@@ -2232,13 +2239,13 @@ int EmacsView::dump_line_from_buffer
                 }
                 else
                 {
-                    col = col + 4;
+                    col = col + 6;
                     _if_wraped( col )
                     {
-                        dsputc( '\\', highlight);
-                        dsputc( '0' + ((c>>6)&7), highlight);
-                        dsputc( '0' + ((c>>3)&7), highlight);
-                        dsputc( '0' + (c&7), highlight);
+                        EmacsString repr( FormatString("\\x%4.4x") << c );
+
+                        for( int i=0; i<repr.length(); i++ )
+                            dsputc( repr[i], highlight );
                     }
                 }
             }
@@ -2260,20 +2267,20 @@ dump_line_from_buffer_loop:
     //    The line is longer then "w_width"
     //    or the cursor is on column "w_width" + 1
     //
-    if(    col - first_column > window->w_width        // a long line
-    ||    dot_column - first_column >= window->w_width    // cursor off screen
-    ||    c != ctl('J')                    // wrap line
+    if( col - first_column > window->w_width        // a long line
+    || dot_column - first_column >= window->w_width // cursor off screen
+    || c != ctl('J')                                // wrap line
     )
     {
         int col_for_end_marker = 1;
-        if( wrap_lines                    // wrap lines
-        && word_start_col > first_column )        // and something added to this line
+        if( wrap_lines                              // wrap lines
+        && word_start_col > first_column )          // and something added to this line
         {
             n = word_start_pos;
             col_for_end_marker = col - word_start_col - 1;
 
-            if( dot_column - first_column == window->w_width )    // cursor at edge screen
-                col_for_end_marker++;                // the world is one column narrower in this case
+            if( dot_column - first_column == window->w_width )  // cursor at edge screen
+                col_for_end_marker++;                           // the world is one column narrower in this case
 
             for( int i = col_for_end_marker; i>0; i-- )
             {
@@ -2286,7 +2293,7 @@ dump_line_from_buffer_loop:
 
         highlight = r_start <= n && r_end > n ? LINE_M_ATTR_HIGHLIGHT : 0;
         if( flags.dec_crt )
-            text_cursor[-col_for_end_marker] = (DisplayBody_t)(wrap_lines ? ctl('Z') : ctl('@'));
+            text_cursor[-col_for_end_marker] = (DisplayBody_t)(wrap_lines ? CHAR_LINE_WRAPPED : CHAR_LINE_TRUNCATED);
         else
             text_cursor[-col_for_end_marker] = (DisplayBody_t)(wrap_lines ? '\\' : '$');
         attr_cursor[-col_for_end_marker] = (DisplayAttr_t)highlight;
