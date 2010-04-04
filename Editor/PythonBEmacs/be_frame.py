@@ -200,17 +200,22 @@ class BemacsFrame(wx.Frame):
             self.app.savePreferences()
             self.emacs_panel.newPreferences()
 
-        self.log.error( 'Need to tell editor to change font' )
-
     def OnHelpDocumentation( self, event ):
+        user_guide = be_platform_specific.getDocUserGuide()
+        if not os.path.exists( user_guide ):
+            self.log.error( 'Expected user guide %r to exist' % (user_guide,) )
+            return
+
         if '__WXMAC__' in wx.Platform:
-            os.system( "open '%s'" % (be_platform_specific.getDocUserGuide(),) )
+            os.system( 'open "%s"' % (user_guide,) )
 
         elif '__WXGTK__' in wx.Platform:
-            os.system( "gnome-open '%s'" % (be_platform_specific.getDocUserGuide(),) )
+            os.system( "gnome-open '%s'" % (user_guide,) )
 
         elif '__WXMSW__' in wx.Platform:
-            os.system( 'start "%s"' % (be_platform_specific.getDocUserGuide(),) )
+            os.system( 'start "%s"' % (user_guide,) )
+
+
 
     def OnSize( self, event ):
         if not self.IsMaximized():
