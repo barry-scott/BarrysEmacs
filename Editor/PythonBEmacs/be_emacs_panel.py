@@ -424,6 +424,8 @@ class EmacsPanel(wx.Panel):
         self.map_vert_scroll_bar_to_window_id = {}
         self.map_horz_scroll_bar_to_window_id = {}
 
+        self.__mouse_button_state = set()
+
         self.font = None
 
         self.client_padding = 3
@@ -438,7 +440,7 @@ class EmacsPanel(wx.Panel):
         self.term_width = None
         self.term_length = None
 
-        wx.EVT_SIZE( self, self.OnSize )
+        self.Bind( wx.EVT_SIZE, self.tw( self.OnSize ) )
 
         self.__initFromPreferences()
 
@@ -734,21 +736,30 @@ class EmacsPanel(wx.Panel):
         elif event.IsButton():
             if event.LeftDown() or event.LeftDClick():
                 translation = keys_mapping["mouse-1-down"]
+                self.__mouse_button_state.add( 1 )
 
             elif event.LeftUp():
-                translation = keys_mapping["mouse-1-up"]
+                if 1 in self.__mouse_button_state:
+                    translation = keys_mapping["mouse-1-up"]
+                    self.__mouse_button_state.remove( 1 )
 
             elif event.MiddleDown() or event.MiddleDClick():
                 translation = keys_mapping["mouse-2-down"]
+                self.__mouse_button_state.add( 2 )
 
             elif event.MiddleUp():
-                translation = keys_mapping["mouse-2-up"]
+                if 2 in self.__mouse_button_state:
+                    translation = keys_mapping["mouse-2-up"]
+                    self.__mouse_button_state.remove( 2 )
 
             elif event.RightDown() or event.RightDClick():
                 translation = keys_mapping["mouse-3-down"]
+                self.__mouse_button_state.add( 3 )
 
             elif event.RightUp():
-                translation = keys_mapping["mouse-3-up"]
+                if 3 in self.__mouse_button_state:
+                    translation = keys_mapping["mouse-3-up"]
+                    self.__mouse_button_state.remove( 3 )
 
             else:
                 self.log.info( 'Unknown button event: %r' % (event.GetButton(),) )
@@ -756,7 +767,8 @@ class EmacsPanel(wx.Panel):
 
             self.__debugTermMouse( 'Mouse shift %r line %r column %r' % (shift, line, column) )
 
-            self.app.editor.guiEventMouse( translation, shift, [line, column, shift] );
+            if translation is not None:
+                self.app.editor.guiEventMouse( translation, shift, [line, column, shift] );
 
         elif event.GetEventType() == wx.wxEVT_MOUSEWHEEL:
             self.__debugTermMouse( 'Mouse Wheel rotation %r delta %r' % (event.GetWheelRotation(), event.GetWheelDelta()) )
