@@ -442,6 +442,8 @@ class EmacsPanel(wx.Panel):
 
         self.Bind( wx.EVT_SIZE, self.tw( self.OnSize ) )
 
+        self.__pending_geometryChanged = False
+
         self.__initFromPreferences()
 
     def newPreferences( self ):
@@ -527,6 +529,8 @@ class EmacsPanel(wx.Panel):
         
 
     def __geometryChanged( self ):
+        self.__pending_geometryChanged = False
+
         self.__calculateWindowSize()
 
         if self.app.editor is None:
@@ -536,7 +540,6 @@ class EmacsPanel(wx.Panel):
         if self.char_width is None:
             self.__debugPanel( '__geometryChanged self.char_width is None' )
             return
-
 
         self.app.editor.guiGeometryChange( self.term_width, self.term_length )
 
@@ -611,7 +614,11 @@ class EmacsPanel(wx.Panel):
 
     def OnSize( self, event ):
         self.__debugPanel( 'EmacsPanel.OnSize()' )
-        self.__geometryChanged()
+
+        if not self.__pending_geometryChanged:
+            self.__pending_geometryChanged = True
+            self.app.onGuiThread( self.__geometryChanged, () )
+
         event.Skip()
 
     def OnKeyDown( self, event ):
@@ -898,14 +905,19 @@ class EmacsPanel(wx.Panel):
         self.__debugTermCalls1( 'termBeep()' )
 
     def termUpdateBegin( self ):
-        self.__debugTermCalls1( 'termUpdateBegin() ------------------------------------------------------------' )
+        self.__debugPanel( 'termUpdateBegin() ------------------------------------------------------------' )
+
+        # discard any ops that have not been processed
+        self.__debugPanel( 'num ops %d' % (len(self.__all_term_ops),) )
+        self.__all_term_ops = []
+
         self.__all_term_ops.append( (self.__termUpdateBegin, ()) )
 
     def __termUpdateBegin( self ):
         self.__debugTermCalls2( '__termUpdateBegin() ----------------------------------------------------------' )
 
     def termUpdateEnd( self, all_status_bar_values, all_horz_scroll_bars, all_vert_scroll_bars ):
-        self.__debugTermCalls1( 'termUpdateEnd() start --------------------------------------------------------' )
+        self.__debugPanel( 'termUpdateEnd() start --------------------------------------------------------' )
         if self.editor_bitmap is None:
             self.__debugTermCalls1( 'termUpdateEnd editor_bitmap is None' )
             return
@@ -988,6 +1000,9 @@ class EmacsPanel(wx.Panel):
             index += 1
 
         self.__debugTermCalls1( 'termUpdateEnd() done ---------------------------------------------------------' )
+
+    def isTermUpdatePending( self ):
+        return len(self.__all_term_ops) > 0
 
     def __executeTermOperations( self ):
         all_term_ops = self.__all_term_ops

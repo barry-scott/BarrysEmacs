@@ -306,10 +306,12 @@ class BEmacs(_bemacs.BemacsEditor):
         self.app.onGuiThread( self.window.termBeep, () )
 
     def termUpdateBegin( self ):
+        self.__debugEditor( 'termUpdateBegin' )
         self.app.onGuiThread( self.window.termUpdateBegin, () )
         return True
 
     def termUpdateEnd( self, all_status_bar_values, all_horz_scroll_bars, all_vert_scroll_bars ):
+        self.__debugEditor( 'termUpdateEnd' )
         self.app.onGuiThread( self.window.termUpdateEnd, (all_status_bar_values, all_horz_scroll_bars, all_vert_scroll_bars) )
 
     def termUpdateLine( self, old, new, line_num ):
