@@ -1,8 +1,0 @@
-#!/bin/sh
-exec >/tmp/be.tmp 2>&1
-if [ "$DISPLAY" == "" ]
-then
-	export DISPLAY=:0.0
-fi
-osascript -e 'activate application "x11"'
-~/bemacs-kit/bemacs "$@"
