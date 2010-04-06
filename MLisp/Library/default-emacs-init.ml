@@ -242,11 +242,5 @@
 	    ; turn on the mouse
 	    (mouse-on)
 	)
-	(if (= operating-system-name "Windows")
-	    (progn
-		; make the window fill the frame
-		(UI-window-maximize)
-	    )
-	)
     )
 )
