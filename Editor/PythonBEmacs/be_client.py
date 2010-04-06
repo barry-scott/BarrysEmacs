@@ -415,6 +415,7 @@ class ClientWindows(ClientBase):
 
 
     def startBemacsServer( self ):
+        debugClient( 'startBemacsServer()' )
         argv0 = sys.argv[0]
 
         if argv0.lower().startswith( 'c:\\' ):
@@ -434,9 +435,11 @@ class ClientWindows(ClientBase):
         if app_dir == '':
             app_dir = os.getcwd()
 
-        server_path = os.path.join( app_dir, 'bemacs_server' )
+        server_path = os.path.join( app_dir, 'bemacs_server.exe' )
 
-        print 'Debug: server_path',server_path
+        debugClient( 'server_path %s' % (server_path,) )
+
+        os.system( server_path )
 
     def bringTofront( self ):
         pass

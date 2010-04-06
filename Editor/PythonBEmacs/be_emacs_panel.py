@@ -23,7 +23,7 @@ import be_config
 
 _debug_term_calls1 = False
 _debug_term_calls2 = False
-_debug_term_key = False
+_debug_term_key = True
 _debug_term_mouse = False
 _debug_term_scroll = False
 _debug_panel = False

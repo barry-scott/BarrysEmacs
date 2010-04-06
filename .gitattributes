@@ -57,6 +57,7 @@ Editor/PythonBEmacs/toolbar_images/window_split_horiz.png -text svneol=unset#ima
 Editor/PythonBEmacs/toolbar_images/window_split_vert.png -text svneol=unset#image/png
 Editor/PythonBEmacs/toolbar_images/window_tile_horiz.png -text svneol=unset#image/png
 Editor/PythonBEmacs/toolbar_images/window_tile_vert.png -text svneol=unset#image/png
+Editor/PythonBEmacs/win32-client.mak -text
 Editor/Source/Windows/Resources/BMP16175.BMP -text
 Editor/Source/Windows/Resources/BMP24826.BMP -text
 Editor/Source/Windows/Resources/BMP28043.BMP -text

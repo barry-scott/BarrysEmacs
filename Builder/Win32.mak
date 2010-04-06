@@ -43,14 +43,6 @@ editor: kitdir "$(KITROOT)\be.exe"
 	@echo Info: Build Editor $(BUILDER_CFG_BUILD_TYPE)
 	cd $(BUILDER_TOP_DIR)\editor && .\build-win32
 	cd $(BUILDER_TOP_DIR)\editor\PythonBEmacs && .\build-win32
-
-!if "$(MSVC_VERSION)" == "71"
-	devenv bemacs.sln /build $(BUILDER_CFG_BUILD_TYPE) /project bemacs 
-	devenv bemacs.sln /build "Release MinDependency" /project BEmacsClassMoniker
-!else if "$(MSVC_VERSION)" == "60"
-	msdev bemacs.dsw /make "bemacs - Win32 $(BUILDER_CFG_BUILD_TYPE)"
-	msdev bemacs.dsw /make "BEmacsClassMoniker - Win32 Release MinDependency"
-!endif
 	echo Info: Copying images...
 	copy  "$(BUILDER_TOP_DIR)\Editor\obj-utils\dbadd.exe" "$(KITROOT)" >NUL
 	copy  "$(BUILDER_TOP_DIR)\Editor\obj-utils\dbcreate.exe" "$(KITROOT)" >NUL
@@ -58,14 +50,6 @@ editor: kitdir "$(KITROOT)\be.exe"
 	copy  "$(BUILDER_TOP_DIR)\Editor\obj-utils\dblist.exe" "$(KITROOT)" >NUL
 	copy  "$(BUILDER_TOP_DIR)\Editor\obj-utils\dbprint.exe" "$(KITROOT)" >NUL
 	copy  "$(BUILDER_TOP_DIR)\Editor\obj-utils\mll2db.exe" "$(KITROOT)" >NUL
-
-	rem copy   "$(BUILDER_TOP_DIR)\Editor\editor\$(BUILDER_CFG_BUILD_TYPE)\editor.exe" "$(KITROOT)\BEmacsServer.exe" >NUL
-	rem copy   "$(BUILDER_TOP_DIR)\Editor\BEmacsComClient\$(BUILDER_CFG_BUILD_TYPE)\BEmacsComClient.exe" "$(KITROOT)\BEmacs.exe" >NUL
-	rem copy   "$(BUILDER_TOP_DIR)\Editor\BEmacsComClient\$(BUILDER_CFG_BUILD_TYPE)\BEmacsComClient.exe" "$(KITROOT)\BEmacsWait.exe" >NUL
-	rem python "$(BUILDER_TOP_DIR)\Editor\BEmacsComClient\make_bemacs_cmd.py" make "$(KITROOT)\BEmacsWait.exe" main /wait
-	rem copy   "$(BUILDER_TOP_DIR)\Editor\BEmacsComClient\$(BUILDER_CFG_BUILD_TYPE)\BEmacsComClient.exe" "$(KITROOT)\vss-view.exe" >NUL
-	rem python "$(BUILDER_TOP_DIR)\Editor\BEmacsComClient\make_bemacs_cmd.py" make "$(KITROOT)\vss-view.exe" main /package=vss-view
-	rem copy   "$(BUILDER_TOP_DIR)\BEmacsClassMoniker\ReleaseMinDependency\BEmacsClassMoniker.dll" "$(KITROOT)" >NUL
 
 mlisp:
 	echo Info: Copying Mlisp files...

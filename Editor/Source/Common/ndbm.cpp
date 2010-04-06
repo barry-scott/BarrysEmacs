@@ -34,6 +34,7 @@ extern int dbg_flags;
 # if DBG_EXEC
 void database::dbg_check_fildes( const char *title )
 {
+#if defined( CHECK_FILEDES )
     int i;
 
     printf("\n\rDBG: check fildes - %s\n\r", title );
@@ -53,6 +54,7 @@ void database::dbg_check_fildes( const char *title )
         else
             printf("%d\tclosed\t%d\n\r", i, errno );
     }
+#endif
 }
 # endif
 

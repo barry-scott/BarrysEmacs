@@ -45,9 +45,8 @@ void _dbg_msg( const EmacsString &msg )
     }
 
     msg2.append( msg );
-    msg2.append("\n");
     // and log to debug terminal
-    DebugPrintf( msg2 );
+    printf( msg2 );
 }
 
 void DebugPrintf( const EmacsString &text )
