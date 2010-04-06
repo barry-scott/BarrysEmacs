@@ -68,23 +68,68 @@ class BemacsFrame(wx.Frame):
             id_exit = be_ids.id_exit
 
         self.menu_keys_to_id = {}
+        self.menu_keys_to_title = {}
         self.menu_id_to_keys = {}
 
         self.menu_file = wx.Menu()
         self.menu_edit = wx.Menu()
+        self.menu_edit_advanced = wx.Menu()
+        self.menu_view = wx.Menu()
+        self.menu_macro = wx.Menu()
+        self.menu_build = wx.Menu()
+        self.menu_tool = wx.Menu()
+        self.menu_buffer = wx.Menu()
         self.menu_window = wx.Menu()
         self.menu_help = wx.Menu()
 
         self.addEmacsMenu( self.menu_file, 'fo', T_('Open') )
 
-        self.addEmacsMenu( self.menu_window, 'wo', T_('Delete Other') )
-        self.addEmacsMenu( self.menu_window, 'wt', T_('Delete This') )
-        self.addEmacsMenu( self.menu_window, 'wh', T_('Split Horizontal') )
-        self.addEmacsMenu( self.menu_window, 'wv', T_('Delete Vertical') )
-
         self.addEmacsMenu( self.menu_edit, 'ec', T_('Copy') )
         self.addEmacsMenu( self.menu_edit, 'ex', T_('Cut') )
         self.addEmacsMenu( self.menu_edit, 'ev', T_('Paste') )
+
+        self.menu_edit.AppendSeparator()
+        self.addEmacsMenu( self.menu_edit, 'ea', T_('Select All') )
+
+        self.menu_edit.AppendSeparator()
+        self.addEmacsMenu( self.menu_edit, 'eg', T_('Goto Line...') )
+
+        self.menu_edit.AppendSeparator()
+        self.menu_edit.AppendSubMenu( self.menu_edit_advanced, T_('Advanced...') )
+
+        self.addEmacsMenu( self.menu_edit_advanced, 'cu', T_('Case Upper') )
+        self.addEmacsMenu( self.menu_edit_advanced, 'cl', T_('Case Lower') )
+        self.addEmacsMenu( self.menu_edit_advanced, 'cc', T_('Case Capitalise') )
+        self.addEmacsMenu( self.menu_edit_advanced, 'ci', T_('Case Invert') )
+        self.menu_edit_advanced.AppendSeparator()
+        self.addEmacsMenu( self.menu_edit_advanced, 'ri', T_('Indent Region') )
+        self.addEmacsMenu( self.menu_edit_advanced, 'rI', T_('Undent Region') )
+        self.menu_edit_advanced.AppendSeparator()
+        self.addEmacsMenu( self.menu_edit_advanced, 'rn', T_('Narrow Region') )
+        self.addEmacsMenu( self.menu_edit_advanced, 'rw', T_('Widen Region') )
+
+        self.addEmacsMenu( self.menu_view, 'vw', T_('View white space') )
+        self.addEmacsMenu( self.menu_view, 'vl', T_('Wrap long lines') )
+
+        self.addEmacsMenu( self.menu_macro, 'mr', T_('Record') )
+        self.addEmacsMenu( self.menu_macro, 'ms', T_('Stop Recording') )
+        self.addEmacsMenu( self.menu_macro, 'mp', T_('Run') )
+
+        self.addEmacsMenu( self.menu_build, 'bc', T_('Compile') )
+        self.addEmacsMenu( self.menu_build, 'bn', T_('Next Error') )
+        self.addEmacsMenu( self.menu_build, 'bp', T_('Previous Error') )
+
+        self.addEmacsMenu( self.menu_tool, 'tg', T_('Grep in files...') )
+        self.addEmacsMenu( self.menu_tool, 'tb', T_('Grep in buffers...') )
+        self.addEmacsMenu( self.menu_tool, 'tc', T_('Grep current buffer...') )
+
+        self.addEmacsMenu( self.menu_buffer, 'bs', T_('Switch to buffer...') )
+        self.addEmacsMenu( self.menu_buffer, 'bl', T_('List buffers') )
+
+        self.addEmacsMenu( self.menu_window, 'wh', T_('Split Horizontal') )
+        self.addEmacsMenu( self.menu_window, 'wv', T_('Delete Vertical') )
+        self.addEmacsMenu( self.menu_window, 'wo', T_('Delete Other') )
+        self.addEmacsMenu( self.menu_window, 'wt', T_('Delete This') )
 
         self.menu_file.Append( wx.ID_PREFERENCES, T_("&Preferences..."), T_("Preferences") )
         self.menu_file.Append( id_exit, T_("E&xit"), T_("Exit the application") )
@@ -97,6 +142,11 @@ class BemacsFrame(wx.Frame):
         self.menu_bar = wx.MenuBar()
         self.menu_bar.Append( self.menu_file, T_("&File") )
         self.menu_bar.Append( self.menu_edit, T_("&Edit") )
+        self.menu_bar.Append( self.menu_view, T_("&View") )
+        self.menu_bar.Append( self.menu_macro, T_("&Macro") )
+        self.menu_bar.Append( self.menu_build, T_("Buil&d") )
+        self.menu_bar.Append( self.menu_tool, T_("&Tool") )
+        self.menu_bar.Append( self.menu_buffer, T_("&Buffer") )
         self.menu_bar.Append( self.menu_window, T_("&Window") )
         self.menu_bar.Append( self.menu_help, T_("&Help") )
 
@@ -109,33 +159,36 @@ class BemacsFrame(wx.Frame):
         t = self.CreateToolBar( name="main",
                                 style=wx.TB_HORIZONTAL ) # | wx.NO_BORDER | wx.TB_TEXT )
 
-        bitmap_size = (32, 32)
-        t.SetToolBitmapSize( bitmap_size )
-        t.AddSimpleTool( self.getEmacsMenuId( 'ex' ),
-            be_images.getBitmap( 'toolbar_images/editcut.png', bitmap_size ),
-            T_('Cut Files and Folders'), T_('Cut Files and Folders') )
-        t.AddSimpleTool( self.getEmacsMenuId( 'ec' ),
-            be_images.getBitmap( 'toolbar_images/editcopy.png', bitmap_size ),
-            T_('Copy Files and Folders'), T_('Copy Files and Folders') )
-        t.AddSimpleTool( self.getEmacsMenuId( 'ev' ),
-            be_images.getBitmap( 'toolbar_images/editpaste.png', bitmap_size ),
-            T_('Paste Files and Folders'), T_('Paste Files and Folders') )
+        self.toolbar_bitmap_size = (32, 32)
+        t.SetToolBitmapSize( self.toolbar_bitmap_size )
+        self.addEmacsToolbar( t, 'ex', 'toolbar_images/editcut.png' )
+        self.addEmacsToolbar( t, 'ec', 'toolbar_images/editcopy.png' )
+        self.addEmacsToolbar( t, 'ev', 'toolbar_images/editpaste.png' )
 
-        t.AddSimpleTool( self.getEmacsMenuId( 'wo' ),
-            be_images.getBitmap( 'toolbar_images/window_del_other.png', bitmap_size ),
-            T_('Windows delete others'), T_('Windows delete others') )
+        self.toolbar_bitmap_size = (16, 16)
+        t.AddSeparator()
+        self.addEmacsToolbar( t, 'wo', 'toolbar_images/window_del_other.png' )
+        self.addEmacsToolbar( t, 'wt', 'toolbar_images/window_del_this.png' )
+        self.addEmacsToolbar( t, 'wh', 'toolbar_images/window_split_horiz.png' )
+        self.addEmacsToolbar( t, 'wv', 'toolbar_images/window_split_vert.png' )
 
-        t.AddSimpleTool( self.getEmacsMenuId( 'wt' ),
-            be_images.getBitmap( 'toolbar_images/window_del_this.png', bitmap_size ),
-            T_('Windows delete this'), T_('Windows delete this') )
+        t.AddSeparator()
+        self.addEmacsToolbar( t, 'cu', 'toolbar_images/case_upper.png' )
+        self.addEmacsToolbar( t, 'cl', 'toolbar_images/case_lower.png' )
+        self.addEmacsToolbar( t, 'cc', 'toolbar_images/case_capitalise.png' )
+        self.addEmacsToolbar( t, 'ci', 'toolbar_images/case_invert.png' )
 
-        t.AddSimpleTool( self.getEmacsMenuId( 'wh' ),
-            be_images.getBitmap( 'toolbar_images/window_split_horiz.png', bitmap_size ),
-            T_('Windows split horizontal'), T_('Windows split horizontal') )
+        t.AddSeparator()
+        self.addEmacsToolbar( t, 'mr', 'toolbar_images/macro_record.png' )
+        self.addEmacsToolbar( t, 'ms', 'toolbar_images/macro_stop.png' )
+        self.addEmacsToolbar( t, 'mp', 'toolbar_images/macro_play.png' )
 
-        t.AddSimpleTool( self.getEmacsMenuId( 'wv' ),
-            be_images.getBitmap( 'toolbar_images/window_split_vert.png', bitmap_size ),
-            T_('Windows split vertical'), T_('Windows split vertical') )
+        t.AddSeparator()
+        self.addEmacsToolbar( t, 'vw', 'toolbar_images/view_white_space.png' )
+        self.addEmacsToolbar( t, 'vl', 'toolbar_images/view_wrap_long.png' )
+
+        t.AddSeparator()
+        self.addEmacsToolbar( t, 'tg', 'toolbar_images/tools_grep.png' )
 
         t.Realize()
 
@@ -176,11 +229,19 @@ class BemacsFrame(wx.Frame):
 
         self.menu_id_to_keys[ menu_id ] = be_emacs_panel.prefix_menu + keys
         self.menu_keys_to_id[ keys ] = menu_id
+        self.menu_keys_to_title[ keys ] = title
 
         menu.Append( menu_id, title )
 
     def getEmacsMenuId( self, keys ):
         return self.menu_keys_to_id[ keys ]
+
+    def addEmacsToolbar( self, t, keys, image ):
+        t.AddSimpleTool( self.getEmacsMenuId( keys ),
+                        be_images.getBitmap( image, self.toolbar_bitmap_size ),
+                        self.menu_keys_to_title[ keys ],
+                        self.menu_keys_to_title[ keys ] )
+    #------------------------------------------------------------
 
     def OnEmacsMenu( self, event ):
         for ch in self.menu_id_to_keys[ event.GetId() ]:

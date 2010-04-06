@@ -130,8 +130,56 @@
 ; 
 ; Menu binding
 ; 
+
+; File
 (bind-to-key "visit-file"       "\[menu]fo")
 
+; Edit
+(bind-to-key "new-undo"					    "\[menu]eu")
 (bind-to-key "PC-edit-cut"      "\[menu]ex")
 (bind-to-key "PC-edit-copy"     "\[menu]ec")
 (bind-to-key "UI-edit-paste"    "\[menu]ev")
+(bind-to-key "(setq case-fold-search (! case-fold-search))" "\[menu]eS")
+(bind-to-key "(setq replace-case (! replace-case))"	    "\[menu]eR")
+(bind-to-key "goto-line"    				    "\[menu]eg")
+(bind-to-key "PC-select-all"                                "\[menu]ea")
+; Edit Advanced...
+(bind-to-key "delete-white-space"			    "\[menu]cw")
+(bind-to-key "case-upper"				    "\[menu]cu")
+(bind-to-key "case-lower"				    "\[menu]cl")
+(bind-to-key "case-capitalize"				    "\[menu]cc")
+(bind-to-key "case-invert"				    "\[menu]ci")
+; Edit Region...
+(bind-to-key "replace-tabs-with-spaces-in-buffer"	    "\[menu]rT")
+(bind-to-key "indent-region" 				    "\[menu]ri")
+(bind-to-key "undent-region" 				    "\[menu]rI")
+(bind-to-key "narrow-region" 				    "\[menu]rn")
+(bind-to-key "widen-region" 				    "\[menu]rw")
+; View
+(bind-to-key "(setq display-non-printing-characters (! display-non-printing-characters))" 
+                                                            "\[menu]vw")
+(bind-to-key "(setq wrap-long-lines (! wrap-long-lines))"   "\[menu]vl")
+; Macro
+(bind-to-key "start-remembering" 			    "\[menu]mr")
+(bind-to-key "stop-remembering" 			    "\[menu]ms")
+(bind-to-key "execute-keyboard-macro" 			    "\[menu]mp")
+; Buffer
+(bind-to-key "switch-to-buffer"				    "\[menu]bs")
+(bind-to-key "list-buffers"				    "\[menu]bl")
+(bind-to-key "erase-buffer"				    "\[menu]be")
+; Window
+(bind-to-key "split-current-window" 			    "\[menu]wh")
+(bind-to-key "split-current-window-vertically"	 	    "\[menu]wv")
+(bind-to-key "delete-other-windows"			    "\[menu]wo")
+(bind-to-key "delete-window"				    "\[menu]wt")
+; Build
+(bind-to-key "compile-it" 				    "\[menu]bc")
+(bind-to-key "next-error" 				    "\[menu]bn")
+(bind-to-key "previous-error" 				    "\[menu]bp")
+; Tools
+(bind-to-key "grep-in-files"				    "\[menu]tg")
+(bind-to-key "grep-in-buffers"				    "\[menu]tb")
+(bind-to-key "grep-current-buffer"			    "\[menu]tc")
+(bind-to-key "shell" 					    "\[menu]ts")
+(bind-to-key "filter-region"				    "\[menu]rf")
+(bind-to-key "(filter-region \"sort\")" 		    "\[menu]rs")
