@@ -72,9 +72,15 @@ class BemacsFrame(wx.Frame):
 
         self.menu_file = wx.Menu()
         self.menu_edit = wx.Menu()
+        self.menu_window = wx.Menu()
         self.menu_help = wx.Menu()
 
         self.addEmacsMenu( self.menu_file, 'fo', T_('Open') )
+
+        self.addEmacsMenu( self.menu_window, 'wo', T_('Delete Other') )
+        self.addEmacsMenu( self.menu_window, 'wt', T_('Delete This') )
+        self.addEmacsMenu( self.menu_window, 'wh', T_('Split Horizontal') )
+        self.addEmacsMenu( self.menu_window, 'wv', T_('Delete Vertical') )
 
         self.addEmacsMenu( self.menu_edit, 'ec', T_('Copy') )
         self.addEmacsMenu( self.menu_edit, 'ex', T_('Cut') )
@@ -91,6 +97,7 @@ class BemacsFrame(wx.Frame):
         self.menu_bar = wx.MenuBar()
         self.menu_bar.Append( self.menu_file, T_("&File") )
         self.menu_bar.Append( self.menu_edit, T_("&Edit") )
+        self.menu_bar.Append( self.menu_window, T_("&Window") )
         self.menu_bar.Append( self.menu_help, T_("&Help") )
 
         self.SetMenuBar( self.menu_bar )
@@ -113,6 +120,22 @@ class BemacsFrame(wx.Frame):
         t.AddSimpleTool( self.getEmacsMenuId( 'ev' ),
             be_images.getBitmap( 'toolbar_images/editpaste.png', bitmap_size ),
             T_('Paste Files and Folders'), T_('Paste Files and Folders') )
+
+        t.AddSimpleTool( self.getEmacsMenuId( 'wo' ),
+            be_images.getBitmap( 'toolbar_images/window_del_other.png', bitmap_size ),
+            T_('Windows delete others'), T_('Windows delete others') )
+
+        t.AddSimpleTool( self.getEmacsMenuId( 'wt' ),
+            be_images.getBitmap( 'toolbar_images/window_del_this.png', bitmap_size ),
+            T_('Windows delete this'), T_('Windows delete this') )
+
+        t.AddSimpleTool( self.getEmacsMenuId( 'wh' ),
+            be_images.getBitmap( 'toolbar_images/window_split_horiz.png', bitmap_size ),
+            T_('Windows split horizontal'), T_('Windows split horizontal') )
+
+        t.AddSimpleTool( self.getEmacsMenuId( 'wv' ),
+            be_images.getBitmap( 'toolbar_images/window_split_vert.png', bitmap_size ),
+            T_('Windows split vertical'), T_('Windows split vertical') )
 
         t.Realize()
 
