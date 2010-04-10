@@ -184,7 +184,6 @@ class BemacsApp(wx.App):
 
         else:
             log_filename = be_platform_specific.getLogFilename()
-            print 'log_filename',log_filename
             # keep 10 logs of 100K each
             handler = RotatingFileHandler( log_filename, 'a', 100*1024, 10 )
             formatter = logging.Formatter( '%(asctime)s %(levelname)s %(message)s' )
