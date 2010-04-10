@@ -106,346 +106,6 @@ int SearchSimpleAlgorithm::search_execute( int fflag, int addr )
     while( search_exp_info[*exp].match_width == 0 )
         exp += search_exp_info[*exp].compile_size;
 
-#if 0
-    EmacsChar_t *trtp = sea_trt;
-
-    if( exp[0] == CCHR
-    && sea_alternatives[1] == 0 )
-    {
-        EmacsChar_t *s_g_e = sea_expbuf;
-        int search_type = 0;
-        EmacsChar_t first_c = exp[1];    // fast check for first character
-        EmacsChar_t last_c = first_c;
-        int last_c_offset=0;
-
-        //
-        //    Walk the express looking for the last char that
-        //    is a fixed offset from the first char.
-        //
-        i = 0;
-        while( search_exp_info[*exp].match_width >= 0 )
-        {
-            if( *exp == CCHR )
-            {
-                last_c_offset = i;
-                last_c = exp[1];
-            }
-            if( search_exp_info[*exp].match_width == 1 )
-                i++;
-            if( search_exp_info[*exp].compile_size <= 0 )
-                break;
-            exp += search_exp_info[*exp].compile_size;
-        }
-
-        //
-        //    The factors that effect the search algorithm
-        //    optimisations are
-        //
-        //    o    forward or backward search    bit 0
-        //    o    upcase char folding required    bit 1
-        //    o    char is greater then 127    bit 2
-        //
-        first_c = trtp[ first_c ];
-        last_c = trtp[ last_c ];
-        if( fflag )
-            search_type = SEARCH_FORWARD;
-        if( bf_cur->b_mode.md_foldcase )
-        {
-            // Need a simple test for multinational letter
-            if( first_c > 127 || last_c > 127 )
-                search_type |= SEARCH_USETRT;
-            else if( (first_c >= 'a' && first_c <= 'z')
-            && (last_c >= 'a' && last_c <= 'z') )
-                search_type |= SEARCH_CASEFOLD;
-            else if( (first_c >= 'a' && first_c <= 'z')
-            || (last_c >= 'a' && last_c <= 'z') )
-                search_type |= SEARCH_USETRT;
-        }
-
-        switch( search_type )
-        {
-        case SEARCH_FORWARD:
-        {
-            // assume that we are starting in the S1 region
-            EmacsChar_t *cp = bf_cur->ref_char_at( p1 );
-            // number of chars to look for the first char in
-            int numchars = bf_cur->num_characters() - last_c_offset;
-            if( numchars > bf_cur->b_size1 )
-                numchars = bf_cur->b_size1 - last_c_offset;
-
-            numchars -= p1 - 1;
-
-            // look in S1
-            if( --numchars >= 0 )
-                do
-                {
-                    if( *cp == first_c
-                    && cp[ last_c_offset ] == last_c )
-                    {
-                        if( search_advance( p1, s_g_e, 0, 0 ) )
-                        {
-                            sea_loc1 = p1;
-                            return sea_loc2 - sea_loc1;
-                        }
-
-                        if( ml_err ) return -1;
-                    }
-                    cp++; p1++;
-                }
-                while( --numchars >= 0 );
-
-            // look over the gap
-            int limit = bf_cur->b_size1;
-            if( limit > bf_cur->num_characters() )
-                limit = bf_cur->num_characters();
-
-            while( p1 <= limit )
-            {
-                if( search_advance( p1, s_g_e, 0, 0 ) )
-                {
-                    sea_loc1 = p1;
-                    return sea_loc2 - sea_loc1;
-                }
-                p1++;
-            }
-
-            // look in S2 region
-            numchars = bf_cur->num_characters() - (p1 - 1) - last_c_offset;
-            cp = bf_cur->ref_char_at( p1 );
-
-            if( --numchars >= 0 )
-                do
-                {
-                    if( *cp == first_c
-                    && cp[ last_c_offset ] == last_c )
-                    {
-                        if( search_advance( p1, s_g_e, 0, 0 ) )
-                        {
-                            sea_loc1 = p1;
-                            return sea_loc2 - sea_loc1;
-                        }
-
-                        if( ml_err ) return -1;
-                    }
-                    cp++; p1++;
-                }
-                while( --numchars >= 0 );
-
-            return -1;
-        }
-
-        case SEARCH_FORWARD|SEARCH_CASEFOLD:
-        {
-            // assume that we are starting in the S1 region
-            EmacsChar_t *cp = bf_cur->ref_char_at( p1 );
-            // number of chars to look for the first char in
-            int numchars = bf_cur->num_characters() - last_c_offset;
-            if( numchars > bf_cur->b_size1 )
-                numchars = bf_cur->b_size1 - last_c_offset;
-
-            numchars -= p1 - 1;
-
-            // look in S1 for match
-            if( --numchars >= last_c_offset )
-                do
-                {
-                    // match upper and lower case
-                    if( (EmacsChar_t)(*cp | 0x20) == first_c
-                    && (EmacsChar_t)(cp[last_c_offset]|0x20) == last_c)
-                    {
-                        if( search_advance( p1, s_g_e, 0, 0 ) )
-                        {
-                            sea_loc1 = p1;
-                            return sea_loc2 - sea_loc1;
-                        }
-
-                        if( ml_err ) return -1;
-                    }
-                    cp++; p1++;
-                }
-                while( --numchars >= 0 );
-
-            // look over the gap
-            int limit = bf_cur->b_size1;
-            if( limit > bf_cur->num_characters() )
-                limit = bf_cur->num_characters();
-
-            while( p1 <= limit )
-            {
-                if( search_advance( p1, s_g_e, 0, 0 ) )
-                {
-                    sea_loc1 = p1;
-                    return sea_loc2 - sea_loc1;
-                }
-                p1++;
-            }
-
-            // look in S2 region
-            numchars = bf_cur->num_characters() - (p1 - 1) - last_c_offset;
-            cp = bf_cur->ref_char_at( p1 );
-
-            if( --numchars >= 0 )
-            do
-            {
-                if( (EmacsChar_t)(*cp | 0x20) == first_c
-                && (EmacsChar_t)(cp[ last_c_offset ]|0x20) == last_c)
-                {
-                    if( search_advance( p1, s_g_e, 0, 0 ) )
-                    {
-                        sea_loc1 = p1;
-                        return sea_loc2 - sea_loc1;
-                    }
-
-                    if( ml_err ) return -1;
-                }
-                cp++; p1++;
-            }
-            while( --numchars >= 0 );
-
-            return -1;
-        }
-
-        case SEARCH_FORWARD|SEARCH_USETRT:
-        {
-            // assume that we are starting in the S1 region
-            EmacsChar_t *cp = bf_cur->ref_char_at( p1 );
-            // number of chars to look for the first char in
-            int numchars = bf_cur->num_characters() - last_c_offset;
-            if( numchars > bf_cur->b_size1 )
-                numchars = bf_cur->b_size1 - last_c_offset;
-
-            numchars -= p1 - 1;
-
-            // look in S1 for match
-            if( --numchars >= 0 )
-                do
-                {
-                    if( trtp[*cp] == first_c
-                    && trtp[ cp[last_c_offset] ] == last_c )
-                    {
-                        if( search_advance( p1, s_g_e, 0, 0 ) )
-                        {
-                            sea_loc1 = p1;
-                            return sea_loc2 - sea_loc1;
-                        }
-
-                        if( ml_err ) return -1;
-                    }
-                    cp++; p1++;
-                }
-                while( --numchars >= 0 );
-
-            // look over the gap
-            int limit = bf_cur->b_size1;
-            if( limit > bf_cur->num_characters() )
-                limit = bf_cur->num_characters();
-
-            while( p1 <= limit )
-            {
-                if( search_advance( p1, s_g_e, 0, 0 ) )
-                {
-                    sea_loc1 = p1;
-                    return sea_loc2 - sea_loc1;
-                }
-                p1++;
-            }
-
-            // look in S2 region
-            numchars = bf_cur->num_characters() - (p1 - 1) - last_c_offset;
-            cp = bf_cur->ref_char_at( p1 );
-
-            if( --numchars >= 0 )
-                do
-                {
-                    if( trtp [*cp] == first_c
-                    && trtp[ cp[ last_c_offset ] ] == last_c )
-                    {
-                        if( search_advance( p1, s_g_e, 0, 0 ) )
-                        {
-                            sea_loc1 = p1;
-                            return sea_loc2 - sea_loc1;
-                        }
-
-                        if( ml_err ) return -1;
-                    }
-                    cp++; p1++;
-                }
-                while( --numchars >= 0 );
-
-            // not found
-            return -1;
-        }
-
-        case SEARCH_BACKWARD:
-        {
-            int firstchar = bf_cur->first_character();
-
-            do
-            {
-                if( bf_cur->char_at( p1 ) == first_c
-                && bf_cur->char_at( p1+last_c_offset ) == last_c )
-                    if( search_advance( p1, s_g_e, 0, 0 ) )
-                    {
-                        sea_loc1 = p1;
-                        return (sea_loc2 - sea_loc1);
-                    }
-                    else
-                        if( ml_err ) return -1;
-                p1--;
-            }
-            while( p1 >= firstchar );
-            return -1;
-        }
-
-        case SEARCH_BACKWARD|SEARCH_CASEFOLD:
-        {
-            int firstchar = bf_cur->first_character();
-
-            do
-            {
-                // match upper and lower case
-                if( (EmacsChar_t)(bf_cur->char_at( p1 ) | 0x20) == first_c
-                && (EmacsChar_t)(bf_cur->char_at( p1+last_c_offset )|0x20) == last_c )
-                    if( search_advance( p1, s_g_e, 0, 0 ) )
-                    {
-                        sea_loc1 = p1;
-                        return (sea_loc2 - sea_loc1);
-                    }
-                    else
-                        if( ml_err ) return -1;
-                p1--;
-            }
-            while( p1 >= firstchar );
-            return -1;
-        }
-
-        case SEARCH_BACKWARD|SEARCH_USETRT:
-        {
-            int firstchar = bf_cur->first_character();
-
-            do
-            {
-                if( trtp[bf_cur->char_at (p1)] == first_c
-                && trtp[ bf_cur->char_at( p1+last_c_offset ) ] == last_c )
-                    if( search_advance( p1, s_g_e, 0, 0 ) )
-                    {
-                        sea_loc1 = p1;
-                        return (sea_loc2 - sea_loc1);
-                    }
-                    else
-                        if( ml_err ) return -1;
-                p1--;
-            }
-            while( p1 >= firstchar );
-            return -1;
-        }
-
-        default:
-            break;
-        }
-    }
-#endif
-
     // regular algorithm
     int numchars = bf_cur->num_characters();
     int firstchar = bf_cur->first_character();
@@ -490,7 +150,6 @@ int SearchSimpleAlgorithm::search_advance
 #define SYN_INCLUDE    (syn_include && (b->syntax_at(lp)&syn_include) == 0)
 
     int curlp;
-    EmacsChar_t *trtp = sea_trt;
     EmacsChar_t ch;
     int numchars = bf_cur->num_characters();
     int firstchar = bf_cur->first_character();
@@ -516,8 +175,16 @@ int SearchSimpleAlgorithm::search_advance
         case CCHR:
             if( SYN_EXCLUDE || SYN_INCLUDE )
                 return 0;
-            if( trtp[*ep++] != trtp[b->char_at(lp)] )
-                return 0;
+            if( sea_case_fold )
+            {
+                if( unicode_casefold( *ep++ ) != unicode_casefold( b->char_at(lp) ) )
+                    return 0;
+            }
+            else
+            {
+                if( *ep++ != b->char_at(lp) )
+                    return 0;
+            }
             lp++;
             break;
 
@@ -770,10 +437,21 @@ int SearchSimpleAlgorithm::search_advance
             if( SYN_EXCLUDE || SYN_INCLUDE )
                 return 0;
             curlp = lp;
-            ch = trtp[*ep];
-            while( lp <= numchars
-            && trtp[bf_cur->char_at(lp)] == ch )
-                lp++;
+            if( sea_case_fold )
+            {
+                ch = unicode_casefold( *ep );
+                while( lp <= numchars
+                && unicode_casefold( bf_cur->char_at( lp ) ) == ch )
+                    lp++;
+            }
+            else
+            {
+                ch = *ep;
+                while( lp <= numchars
+                && bf_cur->char_at( lp ) == ch )
+                    lp++;
+            }
+
             lp++;
             ep++;
             do
@@ -843,11 +521,20 @@ int SearchSimpleAlgorithm::backref( int i, int lp )
 
 int SearchSimpleAlgorithm::cclass( EmacsChar_t *char_set, int c, int af )
 {
-    EmacsChar_t *trtp = sea_trt;
-
     int n = *char_set++;
-    while( (n = n - 1) != 0 )
-        if( trtp[*char_set++] == trtp[c] )
-            return af;
+
+    if( sea_case_fold )
+    {
+        while( (n = n - 1) != 0 )
+            if( unicode_casefold( *char_set++ ) == unicode_casefold( c ) )
+                return af;
+    }
+    else
+    {
+        while( (n = n - 1) != 0 )
+            if( *char_set++ == c )
+                return af;
+    }
+
     return !af;
 }

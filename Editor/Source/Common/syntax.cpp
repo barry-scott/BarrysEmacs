@@ -512,7 +512,7 @@ void SyntaxTable::modify_table_paired_type( int type, int properties, const Emac
 
     // if case fold and first char is a letter
     if( properties&SYNTAX_PROP_CASE_FOLD_MATCH
-    && SearchImplementation::case_fold_trt[ch] == SearchImplementation::case_fold_trt[ch^0x20] )
+    && unicode_is_alphabetic( ch ) )
     {
         SyntaxString *syn_str2 = EMACS_NEW SyntaxString( type, properties, str1, str2 );
         if( syn_str2 == NULL )
@@ -1343,11 +1343,9 @@ int SyntaxString::looking_at_internal( int pos, const EmacsString &str ) const
         // match last to first on the basis that doing that
         // will cause a mismatch fastest
         //
-
-        EmacsChar_t *trt = SearchImplementation::case_fold_trt;
         pos += len-1;
         for( int i=len-1; i>=0; i--, pos-- )
-            if( trt[bf_cur->char_at( pos )] != trt[str[i]] )
+            if( unicode_casefold( bf_cur->char_at( pos ) ) != unicode_casefold( str[i] ) )
                 return 0;
     }
         break;

@@ -18,11 +18,11 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 //
 //
 SearchSimpleAlgorithm::SearchSimpleAlgorithm()
-    : SearchImplementation()
-    , sea_loc1(0)
-    , sea_loc2(0)
-    , sea_nbra(0)
-    , sea_trt(NULL)
+: SearchImplementation()
+, sea_loc1( 0 )
+, sea_loc2( 0 )
+, sea_nbra( 0 )
+, sea_case_fold( false )
 { }
 
 SearchSimpleAlgorithm::~SearchSimpleAlgorithm()
@@ -44,7 +44,7 @@ bool SearchSimpleAlgorithm::is_compatible( EmacsSearch::sea_type type )
 int SearchSimpleAlgorithm::search( int n, int dot )
 {
     int pos = dot;
-    sea_trt = bf_cur->b_mode.md_foldcase ? case_fold_trt : standard_trt;
+    sea_case_fold = bf_cur->b_mode.md_foldcase;
 
     while( ! ml_err && n != 0 )
         if( n < 0 )
@@ -78,7 +78,7 @@ int SearchSimpleAlgorithm::looking_at()
 {
     EmacsChar_t **alt = sea_alternatives;
 
-    sea_trt = bf_cur->b_mode.md_foldcase ? case_fold_trt : standard_trt;
+    sea_case_fold = bf_cur->b_mode.md_foldcase;
 
     if( arg < 0 )
     {

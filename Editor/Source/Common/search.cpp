@@ -13,8 +13,6 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 
 EmacsSearch sea_glob;
-EmacsChar_t SearchImplementation::standard_trt[256];    // the identity TRT
-EmacsChar_t SearchImplementation::case_fold_trt[256];    // folds upper to lower case
 
 //
 // If true then replace and query-replace will
@@ -312,14 +310,14 @@ int char_compare_command( void )
     int a = numeric_arg( 1 );
     int b = numeric_arg( 2 );
 
-    if( a < 0 || a > 256 || b < 0 || b > 256 )
+    if( a < 0 || b < 0 )
     {
-        error( "c= expects its arguments to be character values between 0 and 255" );
+        error( "c= expects its arguments to be character values" );
         return 0;
     }
 
     if( bf_cur->b_mode.md_foldcase )
-        ml_value = SearchImplementation::case_fold_trt[a] == SearchImplementation::case_fold_trt[b];
+        ml_value = unicode_casefold( a ) == unicode_casefold( b );
     else
         ml_value = a == b;
 
@@ -329,15 +327,5 @@ int char_compare_command( void )
 
 void init_srch( void )
 {
-    unsigned i;
-
-    //
-    // initialize the search package, mostly just sets up translation tables
-    //
-    for( i=0; i<=255; i += 1 )
-        SearchImplementation::standard_trt[i] = SearchImplementation::case_fold_trt[i] = (EmacsChar_t)i;
-    for( i='A'; i<='Z'; i += 1 )
-        SearchImplementation::case_fold_trt[i] = (EmacsChar_t)(i + ( 'a' - 'A' ));
-
     last_search_string = EmacsString::null;
 }

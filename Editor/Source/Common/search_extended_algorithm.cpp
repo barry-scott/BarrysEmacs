@@ -77,7 +77,7 @@ void SearchAdvancedAlgorithm::setCaseFolding( bool enabled )
 EmacsChar_t SearchAdvancedAlgorithm::caseFold( EmacsChar_t ch ) const
 {
     if( m_case_fold )
-        return case_fold_trt[ ch ];
+        return unicode_casefold( ch );
 
     return ch;
 }

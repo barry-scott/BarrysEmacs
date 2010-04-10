@@ -80,7 +80,7 @@ private:
     int sea_loc1;                                   // The buffer position of the first character of the most recently found string
     int sea_loc2;                                   // The buffer position of the character following the most recently found string
     int sea_nbra;                                   // The number of meta-brackets in the most recently compiled RE
-    EmacsChar_t *sea_trt;                           // The current translation table
+    bool sea_case_fold;                             // True if case blind compare
 
 private:
     EmacsSearch::sea_type compiled_expression_type;
