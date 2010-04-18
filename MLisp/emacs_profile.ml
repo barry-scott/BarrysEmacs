@@ -79,7 +79,7 @@
 ; 
 (defun
     (~load-emacs_default_user_interface
-        (execute-mlisp-file "emacs_default_user_interface")
+        (novalue)
     )
 )
 (setq user-interface-hook "~load-emacs_default_user_interface")
