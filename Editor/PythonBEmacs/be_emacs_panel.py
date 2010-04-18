@@ -564,7 +564,7 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
 
             self._debugSpeed( 'DrawBitmap() start' )
             dc.DrawBitmap( self.editor_bitmap, 0, 0, False )
-            self._debugSpeed( 'DrawBitmap() end' )
+            self._debugSpeed( 'DrawBitmap() end %d x %d' % (self.pixel_width, self.pixel_length) )
 
             c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
 
