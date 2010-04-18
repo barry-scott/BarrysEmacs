@@ -484,8 +484,6 @@ class ClientWindows(ClientBase):
                         ctypes.byref( s_info ),    # LPSTARTUPINFO lpStartupInfo,
                         ctypes.byref( p_info )     # LPPROCESS_INFORMATION lpProcessInformation
                         )
-        print 'rc = %r' % (rc,)
-
 
     def bringTofront( self ):
         pass
