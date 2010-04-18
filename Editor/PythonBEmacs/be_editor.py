@@ -19,19 +19,19 @@ import time
 import threading
 
 import be_platform_specific
+import be_debug
 
 import _bemacs
 
 import wx
 
-_debug_editor = True
-_debug_queue = False
-
-class BEmacs(_bemacs.BemacsEditor):
+class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
     def __init__( self, app ):
         _bemacs.BemacsEditor.__init__( self,
                 be_platform_specific.getUserDir(),
                 be_platform_specific.getLibraryDir() )
+
+        be_debug.EmacsDebugMixin.__init__( self )
 
         self.app = app
         self.log = app.log
@@ -54,27 +54,23 @@ class BEmacs(_bemacs.BemacsEditor):
             "test2":            self.uiHookTest2,
             }
 
-    def __debugEditor( self, msg ):
-        if _debug_editor:
-            self.log.debug( 'EDITOR %s' % (msg,) )
-
     def initEmacsProfile( self, window ):
-        self.__debugEditor( 'BEmacs.initEmacsProfile()' )
+        self._debugEditor( 'BEmacs.initEmacsProfile()' )
         assert window is not None
         self.window = window
 
         # initEditor will start calling termXxx functions - must have windows setup first
         self.initEditor()
         self.setKeysMapping( self.window.getKeysMapping() )
-        self.__debugEditor( 'BEmacs.initEmacsProfile() geometryChange %r %r' %
+        self._debugEditor( 'BEmacs.initEmacsProfile() geometryChange %r %r' %
                             (self.window.term_width, self.window.term_length) )
         self.geometryChange( self.window.term_width, self.window.term_length )
 
-        self.__debugEditor( 'TESTING' )
+        self._debugEditor( 'TESTING' )
         #_bemacs.function.debug_emacs( 'flags=key,exec,tmp,ml_error' )
         #_bemacs.variable.error_messages_buffer = "error-messages"
 
-        self.__debugEditor( 'BEmacs.initEmacsProfile() emacs_profile.ml' )
+        self._debugEditor( 'BEmacs.initEmacsProfile() emacs_profile.ml' )
         _bemacs.function.execute_mlisp_file( 'emacs_library:emacs_profile.ml' )
 
         self.executeEnterHooks()
@@ -177,50 +173,50 @@ class BEmacs(_bemacs.BemacsEditor):
             self.setGuiResultError( ValueError( 'failed to set data on clipboard' ) )
 
     def uiHookEditPaste( self, cmd, use_primary=False ):
-        self.__debugEditor( 'uiHookEditPaste use_primary=%r' % (use_primary,) )
+        self._debugEditor( 'uiHookEditPaste use_primary=%r' % (use_primary,) )
         success = False
         do = wx.TextDataObject()
         if wx.TheClipboard.Open():
             wx.TheClipboard.UsePrimarySelection( use_primary )
-            self.__debugEditor( 'uiHookEditPaste clip open' )
+            self._debugEditor( 'uiHookEditPaste clip open' )
             success = wx.TheClipboard.GetData( do )
-            self.__debugEditor( 'uiHookEditPaste getdata %r' % (success,) )
+            self._debugEditor( 'uiHookEditPaste getdata %r' % (success,) )
             wx.TheClipboard.Close()
 
         if success:
             text = do.GetText().replace( '\r\n', '\n' ).replace( '\r', '\n' )
-            self.__debugEditor( 'uiHookEditPaste text %r' % (text,) )
+            self._debugEditor( 'uiHookEditPaste text %r' % (text,) )
             self.setGuiResultSuccess( text )
-            self.__debugEditor( 'uiHookEditPaste setGuiResultSuccess' )
+            self._debugEditor( 'uiHookEditPaste setGuiResultSuccess' )
 
         else:
             self.setGuiResultError( ValueError( 'clipboard is empty' ) )
-            self.__debugEditor( 'uiHookEditPaste setGuiResultError' )
+            self._debugEditor( 'uiHookEditPaste setGuiResultError' )
 
     def uiHookYesNoDialog( self, cmd, default, title, message ):
         result = self.app.guiYesNoDialog( default, title, message )
         self.setGuiResultSuccess( result )
 
     def hookUserInterface( self, *args ):
-        self.__debugEditor( 'hookUserInterface( %r )' % (args,) )
+        self._debugEditor( 'hookUserInterface( %r )' % (args,) )
         cmd = args[0]
         if cmd in self.hook_ui_handlers:
             self.initGuiResult()
 
-            self.__debugEditor( 'hookUserInterface calling handler' )
+            self._debugEditor( 'hookUserInterface calling handler' )
             self.app.onGuiThread( self.hook_ui_handlers[ cmd ], args )
 
-            self.__debugEditor( 'hookUserInterface waiting for result' )
+            self._debugEditor( 'hookUserInterface waiting for result' )
             error, value = self.getGuiResult()
 
-            self.__debugEditor( 'hookUserInterface error %r value %r' % (error, value) )
+            self._debugEditor( 'hookUserInterface error %r value %r' % (error, value) )
 
             if error is not None:
-                self.__debugEditor( 'hookUserInterface handler error return' )
+                self._debugEditor( 'hookUserInterface handler error return' )
                 raise error
 
             else:
-                self.__debugEditor( 'hookUserInterface handler normal return' )
+                self._debugEditor( 'hookUserInterface handler normal return' )
                 return value
 
         else:
@@ -250,8 +246,8 @@ class BEmacs(_bemacs.BemacsEditor):
 
             while event_hander_and_args is not None:
                 handler, args = event_hander_and_args
-                self.__debugEditor( 'checkForInput: handler %r' % (handler,) )
-                self.__debugEditor( 'checkForInput: args %r' % (args,) )
+                self._debugEditor( 'checkForInput: handler %r' % (handler,) )
+                self._debugEditor( 'checkForInput: args %r' % (args,) )
                 handler( *args )
 
                 event_hander_and_args = self.__event_queue.getNoWait()
@@ -266,7 +262,7 @@ class BEmacs(_bemacs.BemacsEditor):
     def termWaitForActivity( self, wait_until_time ):
         try:
             wait_timeout = wait_until_time - time.time()
-            self.__debugEditor( 'termWaitForActivity %r' % (wait_timeout,) )
+            self._debugEditor( 'termWaitForActivity %r' % (wait_timeout,) )
             if wait_timeout <= 0:
                 event_hander_and_args = self.__event_queue.getNoWait()
             else:
@@ -274,15 +270,15 @@ class BEmacs(_bemacs.BemacsEditor):
 
             while event_hander_and_args is not None:
                 handler, args = event_hander_and_args
-                self.__debugEditor( 'waitForActivity: handler %r' % (handler,) )
-                self.__debugEditor( 'waitForActivity: args %r' % (args,) )
+                self._debugEditor( 'waitForActivity: handler %r' % (handler,) )
+                self._debugEditor( 'waitForActivity: args %r' % (args,) )
                 handler( *args )
 
                 event_hander_and_args = self.__event_queue.getNoWait()
 
             if self.__quit_editor:
                 self.__quit_editor = False
-                self.__debugEditor( 'waitForActivity self.__quit_editor set' )
+                self._debugEditor( 'waitForActivity self.__quit_editor set' )
                 return -1
 
             return 0
@@ -299,19 +295,19 @@ class BEmacs(_bemacs.BemacsEditor):
         self.app.onGuiThread( self.window.termReset, () )
 
     def termInit( self ):
-        self.__debugEditor( 'BEmacs.termInit() window %r' % (self.window,) )
+        self._debugEditor( 'BEmacs.termInit() window %r' % (self.window,) )
         self.app.onGuiThread( self.window.termInit, () )
 
     def termBeep( self ):
         self.app.onGuiThread( self.window.termBeep, () )
 
     def termUpdateBegin( self ):
-        self.__debugEditor( 'termUpdateBegin' )
+        self._debugEditor( 'termUpdateBegin' )
         self.app.onGuiThread( self.window.termUpdateBegin, () )
         return True
 
     def termUpdateEnd( self, all_status_bar_values, all_horz_scroll_bars, all_vert_scroll_bars ):
-        self.__debugEditor( 'termUpdateEnd' )
+        self._debugEditor( 'termUpdateEnd' )
         self.app.onGuiThread( self.window.termUpdateEnd, (all_status_bar_values, all_horz_scroll_bars, all_vert_scroll_bars) )
 
     def termUpdateLine( self, old, new, line_num ):
@@ -323,17 +319,15 @@ class BEmacs(_bemacs.BemacsEditor):
     def termDisplayActivity( self, ch ):
         self.app.onGuiThread( self.window.termDisplayActivity, (ch,) )
 
-class Queue:
+class Queue(be_debug.EmacsDebugMixin):
     def __init__( self, log ):
+        be_debug.EmacsDebugMixin.__init__( self )
+
         self.log = log
 
         self.__all_items = []
         self.__lock = threading.RLock()
         self.__condition = threading.Condition( self.__lock )
-
-    def __debugQueue( self, msg ):
-        if _debug_queue:
-            self.log.debug( 'QUEUE %s' % (msg,) )
 
     def getNoWait( self ):
         with self.__lock:
@@ -344,7 +338,7 @@ class Queue:
         return None
 
     def get( self, timeout=None ):
-        self.__debugQueue( 'Queue.get( %r )' % (timeout,) )
+        self._debugQueue( 'Queue.get( %r )' % (timeout,) )
 
         with self.__condition:
             if timeout is None:
@@ -355,7 +349,7 @@ class Queue:
                 if len( self.__all_items ) == 0:
                     self.__condition.wait( timeout )
 
-            self.__debugQueue( 'Queue.get( %r )' % (timeout,) )
+            self._debugQueue( 'Queue.get( %r )' % (timeout,) )
             if len( self.__all_items ) != 0:
                 return self.__all_items.pop( 0 )
 

@@ -30,14 +30,14 @@ import be_platform_specific
 import be_frame
 import be_preferences
 import be_exceptions
-
-_debug_app = False
-_debug_callback = False
+import be_debug
 
 AppCallBackEvent, EVT_APP_CALLBACK = wx.lib.newevent.NewEvent()
 
-class BemacsApp(wx.App):
+class BemacsApp(wx.App, be_debug.EmacsDebugMixin):
     def __init__( self, args ):
+        be_debug.EmacsDebugMixin.__init__( self )
+
         self.args = args
         self.opt_name = None
 
@@ -70,8 +70,10 @@ class BemacsApp(wx.App):
                 self.__log_stdout = True
                 del args[ 1 ]
 
-            elif arg == '--debug':
+            elif arg == '--debug' and len(args) > 2:
                 self.__debug = True
+                be_debug.setDebug( args[2] )
+                del args[ 1 ]
                 del args[ 1 ]
 
             elif arg == '--wx-raw-debug':
@@ -151,15 +153,6 @@ class BemacsApp(wx.App):
 
         wx.EVT_ACTIVATE_APP( self, try_wrapper( self.OnActivateApp ) )
         EVT_APP_CALLBACK( self, try_wrapper( self.OnAppCallBack ) )
-
-    def __debugApp( self, msg ):
-        if _debug_app:
-            self.log.debug( 'APP %s' % (msg,) )
-
-    def __debugCallback( self, msg ):
-        if _debug_callback:
-            self.log.debug( 'CALLBACK %s' % (msg,) )
-
 
     def eventWrapper( self, function ):
         return EventScheduling( self, function )
@@ -248,7 +241,7 @@ class BemacsApp(wx.App):
 
     # notify app that the emacs panel is ready for use
     def onEmacsPanelReady( self ):
-        self.__debugApp( 'BemacsApp.onEmacsPanelReady()' )
+        self._debugApp( 'BemacsApp.onEmacsPanelReady()' )
         self.onGuiThread( self.__initEditorThread, () )
 
     def OnActivateApp( self, event ):
@@ -281,14 +274,14 @@ class BemacsApp(wx.App):
         wx.PostEvent( self, AppCallBackEvent( callback=function, args=args ) )
 
     def OnAppCallBack( self, event ):
-        self.__debugCallback( 'OnAppCallBack func %s start' % (event.callback.__name__,) )
+        self._debugCallback( 'OnAppCallBack func %s start' % (event.callback.__name__,) )
         try:
             event.callback( *event.args )
         except:
             self.log.exception( 'OnAppCallBack<%s.%s>\n' %
                 (event.callback.__module__, event.callback.__name__ ) )
 
-        self.__debugCallback( 'OnAppCallBack func %s done' % (event.callback.__name__,) )
+        self._debugCallback( 'OnAppCallBack func %s done' % (event.callback.__name__,) )
 
     def debugShowCallers( self, depth ):
         if not self.__debug:
@@ -301,7 +294,7 @@ class BemacsApp(wx.App):
 
             caller = stack[ index ]
             filename = os.path.basename( caller[1] )
-            self.__debugApp( 'File: %s:%d, Function: %s' % (filename, caller[2], caller[3]) )
+            self._debugApp( 'File: %s:%d, Function: %s' % (filename, caller[2], caller[3]) )
             del caller
 
         del stack
@@ -318,7 +311,7 @@ class BemacsApp(wx.App):
 
     #--------------------------------------------------------------------------------
     def __initCommandLineThread( self ):
-        self.__debugApp( 'BemacsApp.__initCommandLineThread()' )
+        self._debugApp( 'BemacsApp.__initCommandLineThread()' )
         if self.__wx_raw_debug:
             return
 
@@ -450,7 +443,7 @@ class BemacsApp(wx.App):
         return errmsg.value
 
     def __posixCommandLineHandler( self ):
-        self.__debugApp( '__posixCommandLineHandler' )
+        self._debugApp( '__posixCommandLineHandler' )
         import pwd
         import select
 
@@ -490,7 +483,7 @@ class BemacsApp(wx.App):
             self.log.error( 'Failed to open %s for write' % (server_fifo,) )
             return
 
-        self.__debugApp( '__posixCommandLineHandler before read loop' )
+        self._debugApp( '__posixCommandLineHandler before read loop' )
         while True:
             r, w, x = select.select( [emacs_server_read_fd], [], [], 1.0 )
             reply = ' '
@@ -498,7 +491,7 @@ class BemacsApp(wx.App):
                 reply = 'R' 'Unknown client command'
 
                 client_command = os.read( emacs_server_read_fd, 16384 )
-                self.__debugApp( '__posixCommandLineHandler command %r' % (client_command,) )
+                self._debugApp( '__posixCommandLineHandler command %r' % (client_command,) )
                 if len( client_command ) > 0:
                     if client_command[0] == 'C':
                         self.onGuiThread( self.guiClientCommandHandler, (client_command[1:],) )
@@ -508,7 +501,7 @@ class BemacsApp(wx.App):
                 if emacs_client_write_fd < 0:
                     return
 
-                self.__debugApp( '__posixCommandLineHandler response %r' % (reply,) )
+                self._debugApp( '__posixCommandLineHandler response %r' % (reply,) )
                 os.write( emacs_client_write_fd, reply )
 
     def guiClientCommandHandler( self, client_command ):
@@ -518,8 +511,8 @@ class BemacsApp(wx.App):
 
         self.frame.Raise()
 
-        self.__debugApp( 'guiClientCommandHandler: command_directory %r' % (command_directory,) )
-        self.__debugApp( 'guiClientCommandHandler: command_args %r' % (command_args,) )
+        self._debugApp( 'guiClientCommandHandler: command_directory %r' % (command_directory,) )
+        self._debugApp( 'guiClientCommandHandler: command_args %r' % (command_args,) )
         self.editor.guiClientCommand( command_directory, command_args )
 
     def __makeFifo( self, fifo_name ):
@@ -537,7 +530,7 @@ class BemacsApp(wx.App):
 
     #--------------------------------------------------------------------------------
     def __initEditorThread( self ):
-        self.__debugApp( 'BemacsApp.__initEditorThread()' )
+        self._debugApp( 'BemacsApp.__initEditorThread()' )
         if self.__wx_raw_debug:
             return
 
@@ -547,7 +540,7 @@ class BemacsApp(wx.App):
         import be_editor
 
         try:
-            self.__debugApp( 'BemacsApp.__runEditor()' )
+            self._debugApp( 'BemacsApp.__runEditor()' )
 
             self.editor = be_editor.BEmacs( self )
             self.editor.initEmacsProfile( self.frame.emacs_panel )
@@ -710,12 +703,12 @@ class StdoutLogHandler(logging.Handler):
         except:
             self.handleError( record )
 
-class FakeEditor:
+class FakeEditor(be_debug.EmacsDebugMixin):
     def __init__( self, app ):
+        be_debug.EmacsDebugMixin.__init__( self )
+
         self.app = app
         self.count = 0
-    def __debugEditor( self, msg ):
-        self.app.log.debug( 'EDIT %s' % (msg,) )
 
     def guiCloseWindow( self, *args, **kwds ):
         self.app.onGuiThread( self.app.quit, () )
@@ -767,20 +760,20 @@ class FakeEditor:
             wx.TheClipboard.Close()
 
     def uiHookEditPaste( self, cmd, use_primary=False ):
-        self.__debugEditor( 'uiHookEditPaste use_primary=%r' % (use_primary,) )
+        self._debugEditor( 'uiHookEditPaste use_primary=%r' % (use_primary,) )
         success = False
         do = wx.TextDataObject()
         if wx.TheClipboard.Open():
             wx.TheClipboard.UsePrimarySelection( use_primary )
-            self.__debugEditor( 'uiHookEditPaste clip open' )
+            self._debugEditor( 'uiHookEditPaste clip open' )
             success = wx.TheClipboard.GetData( do )
-            self.__debugEditor( 'uiHookEditPaste getdata %r' % (success,) )
+            self._debugEditor( 'uiHookEditPaste getdata %r' % (success,) )
             wx.TheClipboard.Close()
 
         if success:
             text = do.GetText().replace( '\r\n', '\n' ).replace( '\r', '\n' )
-            self.__debugEditor( 'uiHookEditPaste text %r' % (text,) )
+            self._debugEditor( 'uiHookEditPaste text %r' % (text,) )
 
         else:
-            self.__debugEditor( 'uiHookEditPaste setGuiResultError' )
+            self._debugEditor( 'uiHookEditPaste setGuiResultError' )
 

@@ -18,16 +18,9 @@ import be_ids
 import be_exceptions
 import be_version
 import be_images
+import be_debug
 
 import be_config
-
-_debug_term_calls1 = False
-_debug_term_calls2 = False
-_debug_term_key = True
-_debug_term_mouse = False
-_debug_term_scroll = False
-_debug_panel = False
-
 def T( boolean ):
     if boolean:
         return 'T'
@@ -389,13 +382,15 @@ for name in dir(wx):
     if name.startswith( 'wxEVT_' ):
         wx_evt_names[ getattr( wx, name ) ] = name
 
-class EmacsPanel(wx.Panel):
+class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
     def __init__( self, app, parent ):
         wx.Panel.__init__( self, parent, -1, style=wx.WANTS_CHARS )
-        app.log.debug( 'EmacsPanel.__init__()' )
+        be_debug.EmacsDebugMixin.__init__( self )
 
         self.app = app
         self.log = app.log
+
+        self._debugPanel( '__init__()' )
 
         self.tw = be_exceptions.TryWrapperFactory( self.log )
 
@@ -472,30 +467,6 @@ class EmacsPanel(wx.Panel):
         self.font = wx.Font( font_pref.point_size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, font_pref.face )
         self.log.info( 'Font face: %r' % (self.font.GetFaceName(),) )
 
-    def __debugTermCalls1( self, msg ):
-        if _debug_term_calls1:
-            self.log.debug( 'TERM %s' % (msg,) )
-
-    def __debugTermCalls2( self, msg ):
-        if _debug_term_calls2:
-            self.log.debug( 'TERM %s' % (msg,) )
-
-    def __debugTermKey( self, msg ):
-        if _debug_term_key:
-            self.log.debug( 'TERM %s' % (msg,) )
-
-    def __debugTermMouse( self, msg ):
-        if _debug_term_mouse:
-            self.log.debug( 'TERM %s' % (msg,) )
-
-    def __debugTermScroll( self, msg ):
-        if _debug_term_scroll:
-            self.log.debug( 'SCROLL %s' % (msg,) )
-
-    def __debugPanel( self, msg ):
-        if _debug_panel:
-            self.log.debug( 'PANEL %s' % (msg,) )
-
     def __calculateWindowSize( self ):
         if self.char_width is None:
             return
@@ -504,12 +475,12 @@ class EmacsPanel(wx.Panel):
         self.term_width  = min( MSCREENWIDTH,  (self.pixel_width  - 2*self.client_padding) // self.char_width )
         self.term_length = min( MSCREENLENGTH, (self.pixel_length - 2*self.client_padding) // self.char_length )
 
-        self.__debugPanel( '__calculateWindowSize char: %dpx x %dpx window: %dpx X %dpx -> text window: %d X %d' %
+        self._debugPanel( '__calculateWindowSize char: %dpx x %dpx window: %dpx X %dpx -> text window: %d X %d' %
                         (self.char_width, self.char_length
                         ,self.pixel_width, self.pixel_length
                         ,self.term_width, self.term_length) )
 
-        self.__debugPanel( '__calculateWindowSize create editor_bitmap %d x %d' % (self.pixel_width, self.pixel_length) )
+        self._debugPanel( '__calculateWindowSize create editor_bitmap %d x %d' % (self.pixel_width, self.pixel_length) )
         self.editor_bitmap = wx.EmptyBitmap( self.pixel_width, self.pixel_length, -1 )
 
         dc = wx.MemoryDC()
@@ -534,11 +505,11 @@ class EmacsPanel(wx.Panel):
         self.__calculateWindowSize()
 
         if self.app.editor is None:
-            self.__debugPanel( '__geometryChanged no self.app.editor' )
+            self._debugPanel( '__geometryChanged no self.app.editor' )
             return
 
         if self.char_width is None:
-            self.__debugPanel( '__geometryChanged self.char_width is None' )
+            self._debugPanel( '__geometryChanged self.char_width is None' )
             return
 
         self.app.editor.guiGeometryChange( self.term_width, self.term_length )
@@ -552,15 +523,16 @@ class EmacsPanel(wx.Panel):
         dc.SetFont( self.font )
 
         self.char_width, self.char_length = dc.GetTextExtent( 'i' )
-        self.__debugPanel( 'OnPaint first_paint i %d.%d' % (self.char_width, self.char_length) )
+        self._debugPanel( 'OnPaint first_paint i %d.%d' % (self.char_width, self.char_length) )
 
         self.char_width, self.char_length = dc.GetTextExtent( 'M' )
-        self.__debugPanel( 'OnPaint first_paint M %d.%d' % (self.char_width, self.char_length) )
+        self._debugPanel( 'OnPaint first_paint M %d.%d' % (self.char_width, self.char_length) )
 
     def OnPaint( self, event ):
+        self._debugSpeed( 'OnPaint() begin' )
         self.SetFocus()
         if self.first_paint:
-            self.__debugPanel( 'EmacsPanel.OnPaint() first paint' )
+            self._debugPanel( 'EmacsPanel.OnPaint() first paint' )
             self.first_paint = False
 
             dc = wx.PaintDC( self )
@@ -582,7 +554,7 @@ class EmacsPanel(wx.Panel):
             self.app.onGuiThread( self.app.onEmacsPanelReady, () )
 
         elif self.editor_bitmap is not None:
-            self.__debugPanel( 'EmacsPanel.OnPaint() editor_bitmap' )
+            self._debugPanel( 'EmacsPanel.OnPaint() editor_bitmap' )
 
             pdc = wx.PaintDC( self )
             dc = wx.GCDC( pdc )
@@ -590,7 +562,9 @@ class EmacsPanel(wx.Panel):
             dc.BeginDrawing()
             dc.SetBackgroundMode( wx.SOLID )
 
+            self._debugSpeed( 'DrawBitmap() start' )
             dc.DrawBitmap( self.editor_bitmap, 0, 0, False )
+            self._debugSpeed( 'DrawBitmap() end' )
 
             c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
 
@@ -606,14 +580,16 @@ class EmacsPanel(wx.Panel):
             dc = None
 
         else:
-            self.__debugPanel( 'EmacsPanel.OnPaint() Nothing to do' )
+            self._debugPanel( 'EmacsPanel.OnPaint() Nothing to do' )
             event.Skip()
+
+        self._debugSpeed( 'OnPaint() end' )
 
     def getKeysMapping( self ):
         return keys_mapping
 
     def OnSize( self, event ):
-        self.__debugPanel( 'EmacsPanel.OnSize()' )
+        self._debugPanel( 'EmacsPanel.OnSize()' )
 
         if not self.__pending_geometryChanged:
             self.__pending_geometryChanged = True
@@ -632,7 +608,7 @@ class EmacsPanel(wx.Panel):
             if cmd:
                 ctrl = True
 
-        self.__debugTermKey( 'OnKeyDown key %r name %r ctrl %s shift %s' % (key, wx_key_names.get( key, 'unknown' ), T( ctrl ), T( shift )) )
+        self._debugTermKey( 'OnKeyDown key %r name %r ctrl %s shift %s' % (key, wx_key_names.get( key, 'unknown' ), T( ctrl ), T( shift )) )
 
         if key in special_keys:
             trans, shift_trans, ctrl_trans, ctrl_shift_trans = special_keys[ key ]
@@ -665,13 +641,13 @@ class EmacsPanel(wx.Panel):
         shift = event.ShiftDown()
         ctrl = event.ControlDown()
 
-        self.__debugTermKey( 'OnKeyUp key %r name %r ctrl %s shift %s' % (key, wx_key_names.get( key, 'unknown' ), T( ctrl ), T( shift )) )
+        self._debugTermKey( 'OnKeyUp key %r name %r ctrl %s shift %s' % (key, wx_key_names.get( key, 'unknown' ), T( ctrl ), T( shift )) )
 
         event.Skip()
 
     def OnChar( self, event ):
         if self.eat_next_char:
-            self.__debugTermKey( 'OnChar eat_next_char' )
+            self._debugTermKey( 'OnChar eat_next_char' )
 
             self.eat_next_char = False
             return
@@ -697,7 +673,7 @@ class EmacsPanel(wx.Panel):
         shift = event.ShiftDown()
         line_parts.append( ' shift: %s' % T(shift) )
 
-        self.__debugTermKey( (''.join( line_parts )).encode( 'utf-8' ) )
+        self._debugTermKey( (''.join( line_parts )).encode( 'utf-8' ) )
 
         if( wx.Platform == '__WXMAC__'
         and cmd
@@ -713,10 +689,11 @@ class EmacsPanel(wx.Panel):
         if ctrl and char == ord( ' ' ):
             char = 0
 
+        self._debugSpeed( 'OnChar( %r )' % unichr( char ), True )
         self.app.editor.guiEventChar( unichr( char ), False )
 
     def OnMouse( self, event ):
-        self.__debugTermMouse( 'OnMouse() event_type %r %r' %
+        self._debugTermMouse( 'OnMouse() event_type %r %r' %
                                 (event.GetEventType(), wx_evt_names.get( event.GetEventType(), 'unknown' )) )
 
         if self.char_width is None:
@@ -734,7 +711,7 @@ class EmacsPanel(wx.Panel):
         translation = None
 
         if event.Dragging():
-            self.__debugTermMouse( 'Mouse drag shift %r line %r column %r' % (shift, line, column) )
+            self._debugTermMouse( 'Mouse drag shift %r line %r column %r' % (shift, line, column) )
 
             translation = keys_mapping["mouse-motion"]
 
@@ -772,13 +749,13 @@ class EmacsPanel(wx.Panel):
                 self.log.info( 'Unknown button event: %r' % (event.GetButton(),) )
                 return
 
-            self.__debugTermMouse( 'Mouse shift %r line %r column %r' % (shift, line, column) )
+            self._debugTermMouse( 'Mouse shift %r line %r column %r' % (shift, line, column) )
 
             if translation is not None:
                 self.app.editor.guiEventMouse( translation, shift, [line, column, shift] );
 
         elif event.GetEventType() == wx.wxEVT_MOUSEWHEEL:
-            self.__debugTermMouse( 'Mouse Wheel rotation %r delta %r' % (event.GetWheelRotation(), event.GetWheelDelta()) )
+            self._debugTermMouse( 'Mouse Wheel rotation %r delta %r' % (event.GetWheelRotation(), event.GetWheelDelta()) )
 
             rotation = event.GetWheelRotation() / event.GetWheelDelta()
 
@@ -826,7 +803,7 @@ class EmacsPanel(wx.Panel):
     def OnScrollHorz( self, event ):
         win_id = self.map_horz_scroll_bar_to_window_id[ event.GetId() ]
         etype = event.GetEventType()
-        self.__debugTermScroll( 'OnScrollHorz win_id %d event_type %r %r' %
+        self._debugTermScroll( 'OnScrollHorz win_id %d event_type %r %r' %
                                 (win_id, etype, wx_evt_names.get( etype, 'unknown')) )
 
         if etype == wx.wxEVT_SCROLL_LINEDOWN:
@@ -850,7 +827,7 @@ class EmacsPanel(wx.Panel):
     def OnScrollVert( self, event ):
         win_id = self.map_vert_scroll_bar_to_window_id[ event.GetId() ]
         etype = event.GetEventType()
-        self.__debugTermScroll( 'OnScrollVert win_id %d event_type %r %r' %
+        self._debugTermScroll( 'OnScrollVert win_id %d event_type %r %r' %
                                 (win_id, etype, wx_evt_names.get( etype, 'unknown')) )
 
         if etype == wx.wxEVT_SCROLL_LINEDOWN:
@@ -886,12 +863,12 @@ class EmacsPanel(wx.Panel):
     #
     #--------------------------------------------------------------------------------
     def termTopos( self, y, x ):
-        self.__debugTermCalls1( 'termTopos( y=%d, x=%d)' % (y, x) )
+        self._debugTermCalls1( 'termTopos( y=%d, x=%d)' % (y, x) )
         self.cursor_x = x
         self.cursor_y = y
 
     def termReset( self ):
-        self.__debugTermCalls1( 'termReset()' )
+        self._debugTermCalls1( 'termReset()' )
         #self.__all_term_ops = [(self.__termReset, ())]
         #self.RefreshRect( (0,0,self.pixel_width,self.pixel_length), True )
 
@@ -899,31 +876,33 @@ class EmacsPanel(wx.Panel):
         self.dc.Clear()
 
     def termInit( self ):
-        self.__debugTermCalls1( 'termInit()' )
+        self._debugTermCalls1( 'termInit()' )
 
     def termBeep( self ):
-        self.__debugTermCalls1( 'termBeep()' )
+        self._debugTermCalls1( 'termBeep()' )
 
     def termUpdateBegin( self ):
-        self.__debugPanel( 'termUpdateBegin() ------------------------------------------------------------' )
+        self._debugSpeed( 'termUpdateBegin()' )
+        self._debugPanel( 'termUpdateBegin() ------------------------------------------------------------' )
 
         # discard any ops that have not been processed
-        self.__debugPanel( 'num ops %d' % (len(self.__all_term_ops),) )
+        self._debugPanel( 'num ops %d' % (len(self.__all_term_ops),) )
         self.__all_term_ops = []
 
         self.__all_term_ops.append( (self.__termUpdateBegin, ()) )
 
     def __termUpdateBegin( self ):
-        self.__debugTermCalls2( '__termUpdateBegin() ----------------------------------------------------------' )
+        self._debugTermCalls2( '__termUpdateBegin() ----------------------------------------------------------' )
 
     def termUpdateEnd( self, all_status_bar_values, all_horz_scroll_bars, all_vert_scroll_bars ):
-        self.__debugPanel( 'termUpdateEnd() start --------------------------------------------------------' )
+        self._debugSpeed( 'termUpdateEnd() begin' )
+        self._debugPanel( 'termUpdateEnd() start --------------------------------------------------------' )
         if self.editor_bitmap is None:
-            self.__debugTermCalls1( 'termUpdateEnd editor_bitmap is None' )
+            self._debugTermCalls1( 'termUpdateEnd editor_bitmap is None' )
             return
 
-        self.__debugTermCalls1( 'termUpdateEnd() all_horz_scroll_bars %r' % (all_horz_scroll_bars,) )
-        self.__debugTermCalls1( 'termUpdateEnd() all_vert_scroll_bars %r' % (all_vert_scroll_bars,) )
+        self._debugTermCalls1( 'termUpdateEnd() all_horz_scroll_bars %r' % (all_horz_scroll_bars,) )
+        self._debugTermCalls1( 'termUpdateEnd() all_vert_scroll_bars %r' % (all_vert_scroll_bars,) )
 
         self.dc = wx.MemoryDC()
         self.dc.SelectObject( self.editor_bitmap )
@@ -937,7 +916,6 @@ class EmacsPanel(wx.Panel):
 
         self.dc.EndDrawing()
         self.dc = None
-        self.RefreshRect( (0, 0, self.pixel_width, self.pixel_length), False )
 
         c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
 
@@ -951,7 +929,7 @@ class EmacsPanel(wx.Panel):
             bar = self.all_vert_scroll_bars[ index ]
             if bar_info is None:
                 bar.Show( False )
-                self.__debugTermCalls1( 'termUpdateEnd: h scroll hode %d' % (index,) )
+                self._debugTermCalls1( 'termUpdateEnd: h scroll hode %d' % (index,) )
 
             else:
                 win_id, x, y, width, height, pos, total = bar_info
@@ -963,12 +941,12 @@ class EmacsPanel(wx.Panel):
                 bar.SetSize( (self.char_width * width, self.char_length * height) )
                 bar.SetPosition( (x, y) )
                 bar.Show( True )
-                self.__debugTermCalls1( 'termUpdateEnd: h scroll show %d' % (index,) )
+                self._debugTermCalls1( 'termUpdateEnd: h scroll show %d' % (index,) )
 
         index += 1
         while index < len( self.all_vert_scroll_bars ):
             self.all_vert_scroll_bars[ index ].Show( False )
-            self.__debugTermCalls1( 'termUpdateEnd: h scroll hode %d' % (index,) )
+            self._debugTermCalls1( 'termUpdateEnd: h scroll hode %d' % (index,) )
             index += 1
 
         #--- horz_scroll -----------------------------------------------------------
@@ -979,7 +957,7 @@ class EmacsPanel(wx.Panel):
             bar = self.all_horz_scroll_bars[ index ]
             if bar_info is None:
                 bar.Show( False )
-                self.__debugTermCalls1( 'termUpdateEnd: v scroll hode %d' % (index,) )
+                self._debugTermCalls1( 'termUpdateEnd: v scroll hode %d' % (index,) )
 
             else:
                 win_id, x, y, width, height, pos = bar_info
@@ -991,15 +969,19 @@ class EmacsPanel(wx.Panel):
                 bar.SetSize( (self.char_width * width, self.char_length * height) )
                 bar.SetPosition( (x, y) )
                 bar.Show( True )
-                self.__debugTermCalls1( 'termUpdateEnd: v scroll show %d' % (index,) )
+                self._debugTermCalls1( 'termUpdateEnd: v scroll show %d' % (index,) )
 
         index += 1
         while index < len( self.all_horz_scroll_bars ):
             self.all_horz_scroll_bars[ index ].Show( False )
-            self.__debugTermCalls1( 'termUpdateEnd: v scroll hode %d' % (index,) )
+            self._debugTermCalls1( 'termUpdateEnd: v scroll hode %d' % (index,) )
             index += 1
 
-        self.__debugTermCalls1( 'termUpdateEnd() done ---------------------------------------------------------' )
+
+        self.RefreshRect( (0, 0, self.pixel_width, self.pixel_length), False )
+
+        self._debugTermCalls1( 'termUpdateEnd() done ---------------------------------------------------------' )
+        self._debugSpeed( 'termUpdateEnd() end' )
 
     def isTermUpdatePending( self ):
         return len(self.__all_term_ops) > 0
@@ -1012,14 +994,14 @@ class EmacsPanel(wx.Panel):
             fn( *args )
 
     def termUpdateLine( self, old, new, row ):
-        self.__debugTermCalls2( 'termUpdateLine row=%d' % (row,) )
+        self._debugTermCalls2( 'termUpdateLine row=%d' % (row,) )
         if old != new:
             self.__all_term_ops.append( (self.__termUpdateLine, (old, new, row)) )
 
     def __termUpdateLine( self, old, new, row ):
         if old is not None:
-            self.__debugTermCalls2( '__termUpdateLine row=%d old %r' % (row, old[0].rstrip(),) )
-        self.__debugTermCalls2( '__termUpdateLine row=%d new %r' % (row, new[0].rstrip(),) )
+            self._debugTermCalls2( '__termUpdateLine row=%d old %r' % (row, old[0].rstrip(),) )
+        self._debugTermCalls2( '__termUpdateLine row=%d new %r' % (row, new[0].rstrip(),) )
 
         if new is None:
             new_line_contents = ''
@@ -1167,15 +1149,15 @@ class EmacsPanel(wx.Panel):
             x, y = self.__pixelPoint( new_line_length+1, row )
             self.dc.DrawRectangle( x, y, remaining_width*self.char_width, self.char_length )
 
-        self.__debugTermCalls2( '__termUpdateLine %d done' % (row,) )
+        self._debugTermCalls2( '__termUpdateLine %d done' % (row,) )
 
 
     def termMoveLine( self, from_line, to_line ):
-        self.__debugTermCalls1( 'termMoveLine( %r, %r )' % (from_line,to_line) )
+        self._debugTermCalls1( 'termMoveLine( %r, %r )' % (from_line,to_line) )
         self.__all_term_ops.append( (self.__termMoveLine, (from_line, to_line)) )
 
     def __termMoveLine( self, from_line, to_line ):
-        self.__debugTermCalls2( '__termMoveLine( %r, %r )' % (from_line,to_line) )
+        self._debugTermCalls2( '__termMoveLine( %r, %r )' % (from_line,to_line) )
         if self.first_paint:
             # Need to init move of the window
             return
@@ -1185,7 +1167,7 @@ class EmacsPanel(wx.Panel):
         width = self.char_width * self.term_width
         height = self.char_length
 
-        self.__debugTermCalls2( '__termMoveLine dst_x %r, dst_y %r, width %r height %r src_x %r src_y %r' %
+        self._debugTermCalls2( '__termMoveLine dst_x %r, dst_y %r, width %r height %r src_x %r src_y %r' %
                 (dst_x, dst_y
                 ,width, height
                 ,src_x, src_y) )
@@ -1200,4 +1182,4 @@ class EmacsPanel(wx.Panel):
                 )
 
     def termDisplayActivity( self, ch ):
-        self.__debugTermCalls1( 'termDisplayActivity( %r )' % (ch,) )
+        self._debugTermCalls1( 'termDisplayActivity( %r )' % (ch,) )
