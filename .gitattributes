@@ -1,18 +1,8 @@
 * text=auto !eol
-BEmacsClassMoniker/BEmacsClassMoniker.aps -text
-BEmacsClassMoniker/RES/ICON1.ICO -text
 Builder/Win32.mak -text
 Builder/build-win32.cmd -text
 Builder/builder_custom_init.cmd eol=crlf
 Builder/local-install-linux.sh -text
-Editor/BEmacsComClient/icon1.ico -text
-Editor/BEmacsComClient/icon2.ico -text
-Editor/BEmacsComClient/icon3.ico -text
-Editor/BEmacsComClient/icon4.ico -text
-Editor/BEmacsComClient/icon5.ico -text
-Editor/BEmacsComClient/icon6.ico -text
-Editor/BEmacsComClient/icon7.ico -text
-Editor/BEmacsComClient/icon8.ico -text
 Editor/PythonBEmacs.sln -text
 Editor/PythonBEmacs/bemacs.icns -text
 Editor/PythonBEmacs/bemacs.png -text svneol=unset#image/png
