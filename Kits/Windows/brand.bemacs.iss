@@ -51,11 +51,11 @@ begin
 end;
 
 [Setup]
-AppName=Barry's Emacs
+AppName=Barry's Emacs 8
 AppVerName=Barry's Emacs %(maturity)s%(major)s.%(minor)s
 AppCopyright=Copyright (C) 1991-%(year)s Barry A. Scott
-DefaultDirName={pf}\Barry Scott\Barry's Emacs
-DefaultGroupName=Barry's Emacs
+DefaultDirName={pf}\Barry Scott\Barry's Emacs 8
+DefaultGroupName=Barry's Emacs 8
 UninstallDisplayIcon={app}\bemacs.exe
 ChangesAssociations=yes
 DisableStartupPrompt=yes
@@ -95,26 +95,28 @@ Source: "..\..\HTML\*.gif";  DestDir: "{app}\Documentation";
 Source: "..\..\HTML\*.js";   DestDir: "{app}\Documentation";
 
 Source: "kitfiles\bemacs.exe"; DestDir: "{app}"
+Source: "kitfiles\bemacs.exe.manifest"; DestDir: "{app}"
 Source: "kitfiles\bemacs_server.exe"; DestDir: "{app}"
+Source: "kitfiles\bemacs_server.exe.manifest"; DestDir: "{app}"
+Source: "kitfiles\support\*"; DestDir: "{app}\support"
 
 [Icons]
 Name: "{group}\Barry's Emacs"; Filename: "{app}\bemacs.exe"
 Name: "{group}\Barry's Emacs Server"; Filename: "{app}\BEmacsServer.exe"
-Name: "{group}\Barry's Emacs without Restore"; Filename: "{app}\BEmacsServer.exe"; Parameters: "/norestore"
-Name: "{group}\Documentation"; Filename: "{app}\Documentation\emacs-documentation.htm"
-Name: "{group}\FAQ"; Filename: "{app}\documentation\bemacs-faq.htm"
+Name: "{group}\Documentation"; Filename: "{app}\Documentation\emacs-documentation.html"
+Name: "{group}\FAQ"; Filename: "{app}\documentation\bemacs-faq.html"
 Name: "{group}\Readme"; Filename: "{app}\bemacs.exe"; Parameters: """{app}\readme.txt"""
 Name: "{group}\Barry's Emacs Web Site"; Filename: "http://www.barrys-emacs.org";
 
 ;
 ;    Add an Emacs icon to the Desktop
 ;
-Name: "{commondesktop}\Barry's Emacs"; Filename: "{app}\bemacs.exe"; Tasks: "option_desktop_icon"
+Name: "{commondesktop}\Barry's Emacs 8"; Filename: "{app}\bemacs.exe"; Tasks: "option_desktop_icon"
 
 ;
 ;    Add an Emacs icon to the Start menu
 ;
-Name: "{commonstartmenu}\Barry's Emacs"; Filename: "{app}\bemacs.exe"; Tasks: "option_start_menu_icon"
+Name: "{commonstartmenu}\Barry's Emacs 8"; Filename: "{app}\bemacs.exe"; Tasks: "option_start_menu_icon"
 
 [Registry]
 Root: HKCR; Subkey: "BarrysEmacsCommand"; ValueType: string; ValueData: "BEmacs Command"; Flags: uninsdeletekey
@@ -150,14 +152,14 @@ Root: HKCR; Subkey: "BarrysEmacsDocumentV\DefaultIcon"; ValueType: string; Value
 ;
 
 ; option_edit_with_bemacs
-Root: HKCR; Subkey: "*\shell\Edit with Barry's Emacs"; ValueType: string; ValueData: "Edit with &Barry's Emacs"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "*\shell\Edit with Barry's Emacs\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
+Root: HKCR; Subkey: "*\shell\Edit with Barry's Emacs 8"; ValueType: string; ValueData: "Edit with &Barry's Emacs 8"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "*\shell\Edit with Barry's Emacs 8\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
 
-Root: HKCR; Subkey: "Drive\shell\Barry's Emacs Here"; ValueType: string; ValueData: "Barry's Emacs &Here"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "Drive\shell\Barry's Emacs Here\command"; ValueType: string; ValueData: "{app}\bemacs.exe /package=shell-chdir-here ""%%1\.."""
+Root: HKCR; Subkey: "Drive\shell\Barry's Emacs Here 8"; ValueType: string; ValueData: "Barry's Emacs 8 &Here"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "Drive\shell\Barry's Emacs Here 8\command"; ValueType: string; ValueData: "{app}\bemacs.exe /package=shell-chdir-here ""%%1\.."""
 
-Root: HKCR; Subkey: "Directory\shell\Barry's Emacs Here"; ValueType: string; ValueData: "Barry's Emacs &Here"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "Directory\shell\Barry's Emacs Here\command"; ValueType: string; ValueData: "{app}\bemacs.exe /package=shell-chdir-here ""%%1"""
+Root: HKCR; Subkey: "Directory\shell\Barry's Emacs Here 8"; ValueType: string; ValueData: "Barry's Emacs &Here"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "Directory\shell\Barry's Emacs Here 8\command"; ValueType: string; ValueData: "{app}\bemacs.exe /package=shell-chdir-here ""%%1"""
 
 ;
 ; have emacs open .ML files and .MLP files

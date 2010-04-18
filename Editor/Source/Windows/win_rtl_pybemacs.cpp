@@ -230,11 +230,34 @@ EmacsDateTime EmacsDateTime::now(void)
 {
     EmacsDateTime now;
 
-    SYSTEMTIME sys_time;
-    FILETIME file_time;
+    static double epoch = 0;
 
-    GetSystemTime( &sys_time );
-    SystemTimeToFileTime( &sys_time, &file_time );
+    if( epoch == 0 )
+    {
+        SYSTEMTIME s_epoch;
+        s_epoch.wYear = 1970;
+        s_epoch.wMonth = 1;
+        s_epoch.wDayOfWeek = 0;
+        s_epoch.wDay = 1;
+        s_epoch.wHour = 0;
+        s_epoch.wMinute = 0;
+        s_epoch.wSecond = 0;
+        s_epoch.wMilliseconds = 0;
+
+        FILETIME f_epoch;
+
+        SystemTimeToFileTime( &s_epoch, &f_epoch );
+
+        // a file time is in 100nS units
+        epoch = double( f_epoch.dwHighDateTime );
+        epoch *= 65536;
+        epoch *= 65536;
+        epoch += double( f_epoch.dwLowDateTime );
+        epoch /= 10000000.0;
+    }
+
+    FILETIME file_time;
+    GetSystemTimeAsFileTime( &file_time );
 
     // a file time is in 100nS units
     now.time_value = double( file_time.dwHighDateTime );
@@ -242,6 +265,10 @@ EmacsDateTime EmacsDateTime::now(void)
     now.time_value *= 65536;
     now.time_value += double( file_time.dwLowDateTime );
     now.time_value /= 10000000.0;
+
+    // convert to python compatible time
+    now.time_value -= epoch;
+
     return now;
 }
 

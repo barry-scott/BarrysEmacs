@@ -260,6 +260,8 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
             return -1
  
     def termWaitForActivity( self, wait_until_time ):
+        self._debugQueue( 'termWaitForActivity( %r )' % (wait_until_time,) )
+
         try:
             wait_timeout = wait_until_time - time.time()
             self._debugEditor( 'termWaitForActivity %r' % (wait_timeout,) )
@@ -339,6 +341,10 @@ class Queue(be_debug.EmacsDebugMixin):
 
     def get( self, timeout=None ):
         self._debugQueue( 'Queue.get( %r )' % (timeout,) )
+
+        if timeout is not None:
+            if timeout > 10000:
+                raise ValueError( 'Timeout too big' )
 
         with self.__condition:
             if timeout is None:

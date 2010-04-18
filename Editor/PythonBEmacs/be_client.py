@@ -17,12 +17,17 @@ import os
 import types
 import stat
 import time
+import math
 
-_debug_client = True
+_debug_client = False
 
 def debugClient( msg ):
     if _debug_client:
-        print 'Debug: %s' % (msg,)
+        now = time.time()
+        frac = math.modf( now )[0]        
+        local_now = time.localtime( now )
+        prefix = '%s.%03d' % (time.strftime( '%Y-%m-%d %H:%M:%S', local_now ), int( frac*1000 ))
+        print '%s CLIENT %s' % (prefix, msg)
 
 class ClientError(Exception):
     def __init__( self, text ):
@@ -349,6 +354,8 @@ class ClientWindows(ClientBase):
     def __sendCommand( self, cmd ):
         import ctypes
 
+        debugClient( '__sendCommand %r' % (cmd,) )
+
         pipe_name = "\\\\.\\pipe\\Barry's Emacs"
 
         buf_size = ctypes.c_int( 128 )
@@ -365,32 +372,18 @@ class ClientWindows(ClientBase):
                 )
         if rc == 0:
             err = ctypes.windll.kernel32.GetLastError()
+            if err == 2:
+                return None
 
-            FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000
-            FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200
-
-            errmsg_size = ctypes.c_int( 256 )
-            errmsg = ctypes.create_string_buffer( errmsg_size.value + 1 )
-
-            rc = ctypes.windll.kernel32.FormatMessageA(
-                FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS, # __in      DWORD dwFlags,
-                None,           # __in_opt  LPCVOID lpSource,
-                err,            # __in      DWORD dwMessageId,
-                0,              # __in      DWORD dwLanguageId,
-                errmsg,         # __out     LPTSTR lpBuffer,
-                errmsg_size,    # __in      DWORD nSize,
-                None            # __in_opt  va_list *Arguments
-                )
-            print 'Error:',rc, err,repr(errmsg.value)
+            errmsg  = self.__getErrorMessage( err )
+            print 'Error:', rc, err, repr(errmsg)
             return None
 
         else:
             return buf_result.raw[:buf_size.value]
 
-    def __getLastErrorMessage( self ):
+    def __getErrorMessage( self, err ):
         import ctypes
-
-        err = ctypes.windll.kernel32.GetLastError()
 
         FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000
         FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200
@@ -415,6 +408,7 @@ class ClientWindows(ClientBase):
 
 
     def startBemacsServer( self ):
+        import ctypes
         debugClient( 'startBemacsServer()' )
         argv0 = sys.argv[0]
 
@@ -437,9 +431,61 @@ class ClientWindows(ClientBase):
 
         server_path = os.path.join( app_dir, 'bemacs_server.exe' )
 
+        if not os.path.exists( server_path ):
+            raise ClientError( 'Expected to find BEmacs Server in %s' % (server_path,) )
+
         debugClient( 'server_path %s' % (server_path,) )
 
-        os.system( server_path )
+        cmd_line = ctypes.create_string_buffer( 128 )
+        cmd_line.value = ''
+
+        class STARTUPINFO(ctypes.Structure):
+            _fields_ =  [('cb',                 ctypes.c_uint)
+                        ,('lpReserved',         ctypes.c_wchar_p)
+                        ,('lpDesktop',          ctypes.c_wchar_p)
+                        ,('lpTitle',            ctypes.c_wchar_p)
+                        ,('dwX',                ctypes.c_uint)
+                        ,('dwY',                ctypes.c_uint)
+                        ,('dwXSize',            ctypes.c_uint)
+                        ,('dwYSize',            ctypes.c_uint)
+                        ,('dwXCountChars',      ctypes.c_uint)
+                        ,('dwYCountChars',      ctypes.c_uint)
+                        ,('dwFillAttribute',    ctypes.c_uint)
+                        ,('dwFlags',            ctypes.c_uint)
+                        ,('wShowWindow',        ctypes.c_ushort)
+                        ,('cbReserved2',        ctypes.c_ushort)
+                        ,('lpReserved2',        ctypes.c_void_p)
+                        ,('hStdInput',          ctypes.c_void_p)
+                        ,('hStdOutput',         ctypes.c_void_p)
+                        ,('hStdError',          ctypes.c_void_p)]
+
+
+        class PROCESS_INFORMATION(ctypes.Structure):
+            _fields_ =  [('hProcess',           ctypes.c_void_p)
+                        ,('hThread',            ctypes.c_void_p)
+                        ,('dwProcessId',        ctypes.c_uint)
+                        ,('dwThreadId',         ctypes.c_uint)]
+
+
+        s_info = STARTUPINFO()
+        s_info.cb = ctypes.sizeof( s_info )
+
+        p_info = PROCESS_INFORMATION( None, None, 0, 0 )
+
+        rc = ctypes.windll.kernel32.CreateProcessW(
+                        unicode( server_path ),     # LPCTSTR lpApplicationName,
+                        ctypes.byref( cmd_line ),  # LPTSTR lpCommandLine,
+                        None,                       # LPSECURITY_ATTRIBUTES lpProcessAttributes,
+                        None,                       # LPSECURITY_ATTRIBUTES lpThreadAttributes,
+                        False,                      # BOOL bInheritHandles,
+                        0,                          # DWORD dwCreationFlags,
+                        None,                       # LPVOID lpEnvironment,
+                        None,                       # LPCTSTR lpCurrentDirectory,
+                        ctypes.byref( s_info ),    # LPSTARTUPINFO lpStartupInfo,
+                        ctypes.byref( p_info )     # LPPROCESS_INFORMATION lpProcessInformation
+                        )
+        print 'rc = %r' % (rc,)
+
 
     def bringTofront( self ):
         pass

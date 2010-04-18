@@ -530,7 +530,9 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
 
     def OnPaint( self, event ):
         self._debugSpeed( 'OnPaint() begin' )
-        self.SetFocus()
+
+        self.SetFocusIgnoringChildren()
+
         if self.first_paint:
             self._debugPanel( 'EmacsPanel.OnPaint() first paint' )
             self.first_paint = False
@@ -976,7 +978,6 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
             self.all_horz_scroll_bars[ index ].Show( False )
             self._debugTermCalls1( 'termUpdateEnd: v scroll hode %d' % (index,) )
             index += 1
-
 
         self.RefreshRect( (0, 0, self.pixel_width, self.pixel_length), False )
 

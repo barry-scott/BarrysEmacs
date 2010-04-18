@@ -331,7 +331,7 @@ class BemacsApp(wx.App, be_debug.EmacsDebugMixin):
             self.onGuiThread( self.guiReportException, (str(e), 'Command line Exception') )
 
     def __windowsCommandLineHandler( self ):
-        self.log.info( '__windowsCommandLineHandler()' )
+        self._debugApp( '__windowsCommandLineHandler()' )
 
         import ctypes
 
@@ -376,27 +376,37 @@ class BemacsApp(wx.App, be_debug.EmacsDebugMixin):
 
         # Loop accepting and processing connections
         while True:
+            self._debugApp( '__windowsCommandLineHandler loop top' )
+
             hr = ctypes.windll.kernel32.ConnectNamedPipe( h_pipe, ctypes.byref( self.__overlapped ) )
             if hr == ERROR_PIPE_CONNECTED:
                 # Client is fast, and already connected - signal event
                 ctypes.windll.kernel32.SetEvent( self.__overlapped.hevent )
 
+            self._debugApp( '__windowsCommandLineHandler connected to named pipe' )
+
             # Wait for either a connection, or a service stop request.
             wait_handles_t = ctypes.c_uint * 2
             wait_handles = wait_handles_t( self.__h_wait_stop, self.__overlapped.hevent )
 
+            self._debugApp( '__windowsCommandLineHandler WaitForMultipleObjects...' )
             rc = ctypes.windll.kernel32.WaitForMultipleObjects( 2, ctypes.byref( wait_handles ), 0, INFINITE )
+
             if rc == WAIT_OBJECT_0:
+                self._debugApp( '__windowsCommandLineHandler Stop event' )
                 # Stop event
                 break
 
             else:
+                self._debugApp( '__windowsCommandLineHandler data ready for read' )
+
                 # Pipe event - read the data, and write it back.
-                # (We only handle a max of 255 characters for this sample)
-                buf_size = ctypes.c_uint( 1024 )
+                buf_size = ctypes.c_uint( 32768 )
                 buf_client = ctypes.create_string_buffer( buf_size.value )
                 hr = ctypes.windll.kernel32.ReadFile( h_pipe, buf_client, buf_size, ctypes.byref( buf_size ), None )
                 client_command = buf_client.raw[:buf_size.value]
+
+                self._debugApp( '__windowsCommandLineHandler read command %r' % (client_command,) )
 
                 reply = ctypes.create_string_buffer( 32 )
 
@@ -416,6 +426,7 @@ class BemacsApp(wx.App, be_debug.EmacsDebugMixin):
 
                 # And disconnect from the client.
                 ctypes.windll.kernel32.DisconnectNamedPipe( h_pipe )
+                self._debugApp( '__windowsCommandLineHandler Disconnected named pipe' )
 
     def __getLastErrorMessage( self ):
         import ctypes
@@ -519,7 +530,7 @@ class BemacsApp(wx.App, be_debug.EmacsDebugMixin):
         if os.path.exists( fifo_name ):
             stats = os.stat( fifo_name )
             if not stat.S_ISFIFO( stats.st_mode ):
-                print 'Error: %s is not a fifo' % (fifo_name,)
+                self.log.error( '%s is not a fifo' % (fifo_name,) )
 
             elif stats.st_size == 0:
                 return

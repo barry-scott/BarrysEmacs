@@ -11,20 +11,27 @@
     be_platform_win32_specific.py
 
 '''
-from win32com.shell import shell, shellcon
 import os
+import ctypes
 
 SHGFP_TYPE_CURRENT = 0
 SHGFP_TYPE_DEFAULT = 1
 
+CSIDL_APPDATA = 0x001A
+
+MAX_PATH = 260
+
 app_dir = None
 
 def getUserDir():
-    app_folder = shell.SHGetFolderPath( 0, shellcon.CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT )
-    return os.environ.get( 'BEMACS_USER', os.path.join( app_folder, 'bemacs' ) )
+    app_folder = ctypes.create_unicode_buffer( MAX_PATH + 1 )
+    ctypes.windll.shell32.SHGetFolderPathW( 0, CSIDL_APPDATA, None, SHGFP_TYPE_CURRENT, ctypes.byref( app_folder ) )
+    user_dir = os.environ.get( 'BEMACS_USER', os.path.join( app_folder.value, 'bemacs' ) )
+    return user_dir
 
 def getLibraryDir():
-    return os.environ.get( 'BEMACS_EMACS_LIBRARY', os.path.join( app_dir, 'emacs_library' ) )
+    lib_dir = os.environ.get( 'BEMACS_EMACS_LIBRARY', os.path.join( app_dir, 'emacs_library' ) )
+    return lib_dir
 
 def getDocUserGuide():
     return os.path.join( app_dir, 'documentation/emacs-documentation.html' )
