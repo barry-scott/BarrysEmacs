@@ -11,7 +11,8 @@
 #
 #################################################################################
 
-KITROOT=$(BUILDER_TOP_DIR)\kit\win32
+KITSRC=$(BUILDER_TOP_DIR)\Kits\Windows
+KITROOT=$(KITSRC)\kitfiles
 
 #
 build: brand kitdir editor mlisp describe quick_info language inno_kit
@@ -22,7 +23,6 @@ brand:
 kitdir:
 	if not exist $(KITROOT) mkdir $(KITROOT)
 	if not exist $(KITROOT)\emacs_library mkdir $(KITROOT)\emacs_library
-	if not exist $(KITROOT)\documentation mkdir $(KITROOT)\Documentation
 
 inno_kit: $(KITROOT)\Output\setup.exe
 
@@ -30,26 +30,26 @@ inno_kit: $(KITROOT)\Output\setup.exe
 #	Rule to run INNO's IDE to allow debugging of the installation
 #
 inno_debug:
-	"c:\Program Files\Inno Setup 4\Compil32.exe" ..\kit\bemacs.iss
+	"c:\Program Files\Inno Setup 5\Compil32.exe" $(KITSRC)\bemacs.iss
 
-$(KITROOT)\Output\setup.exe: ..\kit\bemacs.iss
-	copy ..\kit\msvc$(MSVC_VERSION)_system_files.iss ..\kit\msvc_system_files.iss
-	"c:\Program Files\Inno Setup 4\ISCC.exe" ..\kit\bemacs.iss
-	..\kit\copy-setup.cmd ..\kit\Output\setup.exe ..\kit
+$(KITROOT)\Output\setup.exe: $(KITSRC)\bemacs.iss
+	copy $(KITSRC)\msvc$(MSVC_VERSION)_system_files.iss $(KITSRC)\msvc_system_files.iss
+	"c:\Program Files\Inno Setup 5\ISCC.exe" $(KITSRC)\bemacs.iss
+	$(KITSRC)\copy-setup.cmd $(KITSRC)\Output\setup.exe $(KITSRC)
 
-editor: kitdir "$(KITROOT)\be.exe"
+editor: kitdir "$(KITROOT)\bemacs.exe"
 
-"$(KITROOT)\be.exe":
+"$(KITROOT)\bemacs.exe":
 	@echo Info: Build Editor $(BUILDER_CFG_BUILD_TYPE)
 	cd $(BUILDER_TOP_DIR)\editor && .\build-win32
-	cd $(BUILDER_TOP_DIR)\editor\PythonBEmacs && .\build-win32
+	cd $(BUILDER_TOP_DIR)\editor\PythonBEmacs && .\build-win32 "$(KITROOT)" all
 	echo Info: Copying images...
-	copy  "$(BUILDER_TOP_DIR)\Editor\obj-utils\dbadd.exe" "$(KITROOT)" >NUL
-	copy  "$(BUILDER_TOP_DIR)\Editor\obj-utils\dbcreate.exe" "$(KITROOT)" >NUL
-	copy  "$(BUILDER_TOP_DIR)\Editor\obj-utils\dbdel.exe" "$(KITROOT)" >NUL
-	copy  "$(BUILDER_TOP_DIR)\Editor\obj-utils\dblist.exe" "$(KITROOT)" >NUL
-	copy  "$(BUILDER_TOP_DIR)\Editor\obj-utils\dbprint.exe" "$(KITROOT)" >NUL
-	copy  "$(BUILDER_TOP_DIR)\Editor\obj-utils\mll2db.exe" "$(KITROOT)" >NUL
+	copy "$(BUILDER_TOP_DIR)\Editor\obj-utils\dbadd.exe" "$(KITROOT)" >NUL
+	copy "$(BUILDER_TOP_DIR)\Editor\obj-utils\dbcreate.exe" "$(KITROOT)" >NUL
+	copy "$(BUILDER_TOP_DIR)\Editor\obj-utils\dbdel.exe" "$(KITROOT)" >NUL
+	copy "$(BUILDER_TOP_DIR)\Editor\obj-utils\dblist.exe" "$(KITROOT)" >NUL
+	copy "$(BUILDER_TOP_DIR)\Editor\obj-utils\dbprint.exe" "$(KITROOT)" >NUL
+	copy "$(BUILDER_TOP_DIR)\Editor\obj-utils\mll2db.exe" "$(KITROOT)" >NUL
 
 mlisp:
 	echo Info: Copying Mlisp files...

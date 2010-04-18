@@ -18,7 +18,7 @@ import types
 import stat
 import time
 
-_debug_client = False
+_debug_client = True
 
 def debugClient( msg ):
     if _debug_client:

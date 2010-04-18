@@ -3,51 +3,51 @@
 ;
 
 [Code]
-function InitializeSetup(): Boolean;
+function InitializeSetup() : Boolean;
 var
-	uninstall_string : string;
-	uninstall_image	: string;
-	uninstall_params : string;
-	Error: Integer;
-	space_pos : Integer;
-	rc : Integer;
-	rcb : Boolean;
+    uninstall_string    : string;
+    uninstall_image     : string;
+    uninstall_params    : string;
+    Error               : Integer;
+    space_pos           : Integer;
+    rc                  : Integer;
+    rcb                 : Boolean;
 begin
-	Error := 0;
-	rcb := RegQueryStringValue( HKLM,
-		'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Barry''s Emacs',
-		'UninstallString', uninstall_string );
-	if rcb then
-	begin
-		rc := MsgBox( 'An old version of Barry''s Emacs is installed.' #13 #13
-				'It must be uninstalled before installing the this version' #13
-				'Do you wish to uninstall it now?', mbConfirmation, MB_YESNO );
-		if rc = idYes then
-		begin
-			space_pos := Pos( ' ', uninstall_string );
-			uninstall_image := Copy( uninstall_string, 1, space_pos-1 );
-			uninstall_params := Copy( uninstall_string, space_pos, 999 );
-			rcb := InstExec(uninstall_image, uninstall_params, ExpandConstant('{src}'), True, True, SW_SHOWNORMAL, Error);
-			if not rcb then
-				MsgBox( 'Failed to run the uninstall procedure.' #13 #13
-					'Please uninstall the old Barry''s Emacs' #13
-					'and try this installation again.', mbError, MB_OK );
-			if Error <> 0 then
-				MsgBox( 'Failed to run the uninstall procedure.' #13 #13
-					'Please uninstall the old Barry''s Emacs' #13
-					'and try this installation again.', mbError, MB_OK );
-		end;
-	end;
-	BringToFrontAndRestore;
-	rcb := RegQueryStringValue( HKLM,
-		'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Barry''s Emacs',
-		'UninstallString', uninstall_string );
-	Result := not rcb;
-	if not Result then
-		rc := MsgBox(	'Quitting installation.' #13 #13
-				'An old version of Barry''s Emacs is still installed.' #13
-				'Run this installation again after the old kit has' #13
-				'been uninstalled', mbInformation, MB_OK );
+    Error := 0;
+    rcb := RegQueryStringValue( HKLM,
+        'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Barry''s Emacs',
+        'UninstallString', uninstall_string );
+    if rcb then
+    begin
+        rc := MsgBox( 'An old version of Barry''s Emacs is installed.' #13 #13
+                'It must be uninstalled before installing the this version' #13
+                'Do you wish to uninstall it now?', mbConfirmation, MB_YESNO );
+        if rc = idYes then
+        begin
+            space_pos := Pos( ' ', uninstall_string );
+            uninstall_image := Copy( uninstall_string, 1, space_pos-1 );
+            uninstall_params := Copy( uninstall_string, space_pos, 999 );
+            rcb := Exec( uninstall_image, uninstall_params, ExpandConstant('{src}'), SW_SHOWNORMAL, ewWaitUntilTerminated, Error );
+            if not rcb then
+                MsgBox( 'Failed to run the uninstall procedure.' #13 #13
+                    'Please uninstall the old Barry''s Emacs' #13
+                    'and try this installation again.', mbError, MB_OK );
+            if Error <> 0 then
+                MsgBox( 'Failed to run the uninstall procedure.' #13 #13
+                    'Please uninstall the old Barry''s Emacs' #13
+                    'and try this installation again.', mbError, MB_OK );
+        end;
+    end;
+    BringToFrontAndRestore;
+    rcb := RegQueryStringValue( HKLM,
+        'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Barry''s Emacs',
+        'UninstallString', uninstall_string );
+    Result := not rcb;
+    if not Result then
+        rc := MsgBox(    'Quitting installation.' #13 #13
+                'An old version of Barry''s Emacs is still installed.' #13
+                'Run this installation again after the old kit has' #13
+                'been uninstalled', mbInformation, MB_OK );
 end;
 
 [Setup]
@@ -61,8 +61,6 @@ ChangesAssociations=yes
 DisableStartupPrompt=yes
 InfoBeforeFile=info_before.txt
 Compression=bzip/9
-; uncomment the following line if you want your installation to run on NT 3.51 too.
-; MinVersion=4,3.51
 
 [Tasks]
 Name: "option_register_emacs_open_ml"; Description: "Barry's Emacs will open .ML and .MLP files"
@@ -74,61 +72,30 @@ Name: "option_start_menu_icon"; Description: "Place Barry's Emacs on the Start m
 Name: "option_edit_with_bemacs"; Description: "Place Edit with Barry's Emacs on the Context menu"
 
 [Run]
-Filename: "{app}\BEmacsServer.EXE"; Parameters: "/regserver"
-Filename: "{app}\BEmacs.EXE"; Parameters: """{app}\readme.txt"""; Flags: nowait postinstall skipifsilent; Description: "View README.TXT"
-
-[UninstallRun]
-Filename: "{app}\BEmacsServer.EXE"; Parameters: "/unregserver"
-
+Filename: "{app}\bemacs.EXE"; Parameters: """{app}\readme.txt"""; Flags: nowait postinstall skipifsilent; Description: "View README.TXT"
 
 [Files]
 
 #include "msvc_system_files.iss"
 
-Source: "Readme.txt"; DestDir: "{app}";
-Source: "win32\BEmacs.exe"; DestDir: "{app}"
-Source: "win32\BEmacsWait.exe"; DestDir: "{app}"
-Source: "win32\Vss-View.exe"; DestDir: "{app}"
-Source: "win32\BEmacsServer.exe"; DestDir: "{app}"
-Source: "win32\BEmacsClassMoniker.dll"; DestDir: "{app}"; Flags: regserver
+Source: "..\Readme.txt"; DestDir: "{app}";
 
-Source: "win32\dbadd.exe"; DestDir: "{app}"
-Source: "win32\dbcreate.exe"; DestDir: "{app}"
-Source: "win32\dbdel.exe"; DestDir: "{app}"
-Source: "win32\dblist.exe"; DestDir: "{app}"
-Source: "win32\dbprint.exe"; DestDir: "{app}"
-Source: "win32\mll-2-db.exe"; DestDir: "{app}"
+Source: "kitfiles\dbadd.exe"; DestDir: "{app}"
+Source: "kitfiles\dbcreate.exe"; DestDir: "{app}"
+Source: "kitfiles\dbdel.exe"; DestDir: "{app}"
+Source: "kitfiles\dblist.exe"; DestDir: "{app}"
+Source: "kitfiles\dbprint.exe"; DestDir: "{app}"
+Source: "kitfiles\mll2db.exe"; DestDir: "{app}"
 
-Source: "..\Editor\BEmacsComClient\make_bemacs_cmd.py"; DestDir: "{app}\Contrib"
+Source: "kitfiles\emacs_library\*"; DestDir: "{app}\Library"
 
-Source: "..\Editor\Include\Windows\ExternalInclude\BarrysEmacs.h"; DestDir: "{app}\Library"
-Source: "..\Editor\Include\Windows\ExternalInclude\BarrysEmacs.tlb"; DestDir: "{app}\Library"
+Source: "..\..\HTML\*.css";  DestDir: "{app}\Documentation";
+Source: "..\..\HTML\*.html"; DestDir: "{app}\Documentation";
+Source: "..\..\HTML\*.gif";  DestDir: "{app}\Documentation";
+Source: "..\..\HTML\*.js";   DestDir: "{app}\Documentation";
 
-Source: "..\MLisp\Library\Python\bemacs_stdio.py"; DestDir: "{app}\Library"
-
-Source: "win32\EmacsDesc.dat"; DestDir: "{app}\Library"
-Source: "win32\EmacsDesc.dir"; DestDir: "{app}\Library"
-Source: "win32\EmacsDesc.pag"; DestDir: "{app}\Library"
-
-Source: "..\mlisp\emacsinit.ml"; DestDir: "{app}\Library"
-Source: "..\mlisp\emacs_profile.ml"; DestDir: "{app}\Library"
-
-Source: "win32\EmacsLang.dat"; DestDir: "{app}\Library"
-Source: "win32\EmacsLang.dir"; DestDir: "{app}\Library"
-Source: "win32\EmacsLang.pag"; DestDir: "{app}\Library"
-
-Source: "win32\emacslib.dat"; DestDir: "{app}\Library"
-Source: "win32\emacslib.dir"; DestDir: "{app}\Library"
-Source: "win32\emacslib.pag"; DestDir: "{app}\Library"
-
-Source: "win32\emacs_qinfo_c.dat"; DestDir: "{app}\Library"
-Source: "win32\emacs_qinfo_c.dir"; DestDir: "{app}\Library"
-Source: "win32\emacs_qinfo_c.pag"; DestDir: "{app}\Library"
-
-Source: "..\HTML\*.css"; DestDir: "{app}\Documentation";
-Source: "..\HTML\*.htm"; DestDir: "{app}\Documentation";
-Source: "..\HTML\*.gif"; DestDir: "{app}\Documentation";
-Source: "..\HTML\*.js"; DestDir: "{app}\Documentation";
+Source: "kitfiles\bemacs.exe"; DestDir: "{app}"
+Source: "kitfiles\bemacs_server.exe"; DestDir: "{app}"
 
 [Icons]
 Name: "{group}\Barry's Emacs"; Filename: "{app}\bemacs.exe"
@@ -138,13 +105,14 @@ Name: "{group}\Documentation"; Filename: "{app}\Documentation\emacs-documentatio
 Name: "{group}\FAQ"; Filename: "{app}\documentation\bemacs-faq.htm"
 Name: "{group}\Readme"; Filename: "{app}\bemacs.exe"; Parameters: """{app}\readme.txt"""
 Name: "{group}\Barry's Emacs Web Site"; Filename: "http://www.barrys-emacs.org";
+
 ;
-;	Add an Emacs icon to the Desktop
+;    Add an Emacs icon to the Desktop
 ;
 Name: "{commondesktop}\Barry's Emacs"; Filename: "{app}\bemacs.exe"; Tasks: "option_desktop_icon"
 
 ;
-;	Add an Emacs icon to the Start menu
+;    Add an Emacs icon to the Start menu
 ;
 Name: "{commonstartmenu}\Barry's Emacs"; Filename: "{app}\bemacs.exe"; Tasks: "option_start_menu_icon"
 
@@ -178,7 +146,7 @@ Root: HKCR; Subkey: "BarrysEmacsDocumentV\Shell\open\command"; ValueType: string
 Root: HKCR; Subkey: "BarrysEmacsDocumentV\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe,7"
 
 ;
-;	Add the Edit with Barry's Emacs to the context menu
+;    Add the Edit with Barry's Emacs to the context menu
 ;
 
 ; option_edit_with_bemacs
@@ -194,27 +162,28 @@ Root: HKCR; Subkey: "Directory\shell\Barry's Emacs Here\command"; ValueType: str
 ;
 ; have emacs open .ML files and .MLP files
 ;
-Root: HKCR; SubKey: ".ml"; ValueType: string; ValueData: "BarrysEmacsMLisp"; Tasks: "option_register_emacs_open_ml"; Flags: uninsdeletekey
+Root: HKCR; SubKey: ".ml";  ValueType: string; ValueData: "BarrysEmacsMLisp"; Tasks: "option_register_emacs_open_ml"; Flags: uninsdeletekey
 Root: HKCR; SubKey: ".mlp"; ValueType: string; ValueData: "BarrysEmacsCommand"; Tasks: "option_register_emacs_open_ml"; Flags: uninsdeletekey
 
 ;
 ; register all the C and C++ file types for emacs to open
 ; either using one type or multiple
 ;
-Root: HKCR; Subkey: ".h"; ValueType: string; ValueData: "BarrysEmacsDocument"; Tasks: "option_register_emacs_open_c_one_type"
-Root: HKCR; Subkey: ".hh"; ValueType: string; ValueData: "BarrysEmacsDocument"; Tasks: "option_register_emacs_open_c_one_type"
+Root: HKCR; Subkey: ".h";   ValueType: string; ValueData: "BarrysEmacsDocument"; Tasks: "option_register_emacs_open_c_one_type"
+Root: HKCR; Subkey: ".hh";  ValueType: string; ValueData: "BarrysEmacsDocument"; Tasks: "option_register_emacs_open_c_one_type"
 Root: HKCR; Subkey: ".hpp"; ValueType: string; ValueData: "BarrysEmacsDocument"; Tasks: "option_register_emacs_open_c_one_type"
 Root: HKCR; Subkey: ".hxx"; ValueType: string; ValueData: "BarrysEmacsDocument"; Tasks: "option_register_emacs_open_c_one_type"
-Root: HKCR; Subkey: ".c"; ValueType: string; ValueData: "BarrysEmacsDocument"; Tasks: "option_register_emacs_open_c_one_type"
-Root: HKCR; Subkey: ".cc"; ValueType: string; ValueData: "BarrysEmacsDocument"; Tasks: "option_register_emacs_open_c_one_type"
+Root: HKCR; Subkey: ".c";   ValueType: string; ValueData: "BarrysEmacsDocument"; Tasks: "option_register_emacs_open_c_one_type"
+Root: HKCR; Subkey: ".cc";  ValueType: string; ValueData: "BarrysEmacsDocument"; Tasks: "option_register_emacs_open_c_one_type"
 Root: HKCR; Subkey: ".cpp"; ValueType: string; ValueData: "BarrysEmacsDocument"; Tasks: "option_register_emacs_open_c_one_type"
 Root: HKCR; Subkey: ".cxx"; ValueType: string; ValueData: "BarrysEmacsDocument"; Tasks: "option_register_emacs_open_c_one_type"
 
-Root: HKCR; Subkey: ".h"; ValueType: string; ValueData: "BarrysEmacsDocumentII"; Tasks: "option_register_emacs_open_c_many_types"
-Root: HKCR; Subkey: ".hh"; ValueType: string; ValueData: "BarrysEmacsDocumentII"; Tasks: "option_register_emacs_open_c_many_types"
+Root: HKCR; Subkey: ".h";   ValueType: string; ValueData: "BarrysEmacsDocumentII"; Tasks: "option_register_emacs_open_c_many_types"
+Root: HKCR; Subkey: ".hh";  ValueType: string; ValueData: "BarrysEmacsDocumentII"; Tasks: "option_register_emacs_open_c_many_types"
 Root: HKCR; Subkey: ".hpp"; ValueType: string; ValueData: "BarrysEmacsDocumentII"; Tasks: "option_register_emacs_open_c_many_types"
 Root: HKCR; Subkey: ".hxx"; ValueType: string; ValueData: "BarrysEmacsDocumentII"; Tasks: "option_register_emacs_open_c_many_types"
-Root: HKCR; Subkey: ".c"; ValueType: string; ValueData: "BarrysEmacsDocumentIII"; Tasks: "option_register_emacs_open_c_many_types"
-Root: HKCR; Subkey: ".cc"; ValueType: string; ValueData: "BarrysEmacsDocumentIII"; Tasks: "option_register_emacs_open_c_many_types"
+
+Root: HKCR; Subkey: ".c";   ValueType: string; ValueData: "BarrysEmacsDocumentIII"; Tasks: "option_register_emacs_open_c_many_types"
+Root: HKCR; Subkey: ".cc";  ValueType: string; ValueData: "BarrysEmacsDocumentIII"; Tasks: "option_register_emacs_open_c_many_types"
 Root: HKCR; Subkey: ".cpp"; ValueType: string; ValueData: "BarrysEmacsDocumentIII"; Tasks: "option_register_emacs_open_c_many_types"
 Root: HKCR; Subkey: ".cxx"; ValueType: string; ValueData: "BarrysEmacsDocumentIII"; Tasks: "option_register_emacs_open_c_many_types"
