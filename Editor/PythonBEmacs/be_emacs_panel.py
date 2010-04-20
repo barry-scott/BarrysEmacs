@@ -447,14 +447,11 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
         self.dc = wx.MemoryDC()
         self.dc.SelectObject( self.editor_bitmap )
 
-        self.dc.BeginDrawing()
-
         self.dc.SetBackgroundMode( wx.SOLID )
         self.dc.SetFont( self.font )
 
         self.__initFont( self.dc )
 
-        self.dc.EndDrawing()
         self.dc = None
 
         self.__geometryChanged()
@@ -486,12 +483,10 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
         dc = wx.MemoryDC()
         dc.SelectObject( self.editor_bitmap )
 
-        dc.BeginDrawing()
         dc.SetBackgroundMode( wx.SOLID )
         dc.SetPen( wx.Pen( bg_colours[ SYNTAX_DULL ] ) )
         dc.SetBrush( wx.Brush( bg_colours[ SYNTAX_DULL ] ) )
         dc.DrawRectangle( 0, 0, self.pixel_width, self.pixel_length )
-        dc.EndDrawing()
         dc = None
 
     def __pixelPoint( self, x, y ):
@@ -539,15 +534,12 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
 
             dc = wx.PaintDC( self )
 
-            dc.BeginDrawing()
-
             dc.SetBackgroundMode( wx.SOLID )
             dc.SetBackground( wx.Brush( bg_colours[ SYNTAX_DULL ] ) )
             dc.Clear()
 
             self.__initFont( dc )
 
-            dc.EndDrawing()
             dc = None
 
             self.__calculateWindowSize()
@@ -559,27 +551,31 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
             self._debugPanel( 'EmacsPanel.OnPaint() editor_bitmap' )
 
             pdc = wx.PaintDC( self )
-            dc = wx.GCDC( pdc )
 
-            dc.BeginDrawing()
-            dc.SetBackgroundMode( wx.SOLID )
+            pdc.SetBackgroundMode( wx.SOLID )
 
             self._debugSpeed( 'DrawBitmap() start' )
-            dc.DrawBitmap( self.editor_bitmap, 0, 0, False )
+            pdc.DrawBitmap( self.editor_bitmap, 0, 0, False )
             self._debugSpeed( 'DrawBitmap() end %d x %d' % (self.pixel_width, self.pixel_length) )
 
             c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
 
+            # Create a dc to alpha blend just the cursor as wx.GCDC is very slow on large bitmaps
+            cursor_bitmap = self.editor_bitmap.GetSubBitmap( (c_x, c_y, self.char_width, self.char_length) )
+            cur_dc_mem = wx.MemoryDC()
+            cur_dc_mem.SelectObject( cursor_bitmap )
+            cur_dc = wx.GCDC( cur_dc_mem )
+
             # alpha blend the cursor
-            dc.SetBackgroundMode( wx.TRANSPARENT )
+            cur_dc.SetBackgroundMode( wx.TRANSPARENT )
             cursor_colour = wx.Colour( 0, 0, 0, 64 )
-            dc.SetPen( wx.Pen( cursor_colour ) )
-            dc.SetBrush( wx.Brush( cursor_colour ) )
-            dc.DrawRectangle( c_x, c_y, self.char_width, self.char_length )
+            cur_dc.SetPen( wx.Pen( cursor_colour ) )
+            cur_dc.SetBrush( wx.Brush( cursor_colour ) )
+            cur_dc.DrawRectangle( 0, 0, self.char_width, self.char_length )
 
-            dc.EndDrawing()
+            pdc.DrawBitmap( cursor_bitmap, c_x, c_y, False )
 
-            dc = None
+            pdc = None
 
         else:
             self._debugPanel( 'EmacsPanel.OnPaint() Nothing to do' )
@@ -909,14 +905,11 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
         self.dc = wx.MemoryDC()
         self.dc.SelectObject( self.editor_bitmap )
 
-        self.dc.BeginDrawing()
-
         self.dc.SetBackgroundMode( wx.SOLID )
         self.dc.SetFont( self.font )
 
         self.__executeTermOperations()
 
-        self.dc.EndDrawing()
         self.dc = None
 
         c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
