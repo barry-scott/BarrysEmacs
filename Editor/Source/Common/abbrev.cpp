@@ -48,8 +48,7 @@ AbbrevEntry::AbbrevEntry()
 
 AbbrevTable::AbbrevTable( EmacsString name )
 : abbrev_name( name )           // the name of this abbrev table
-, abbrev_number_defined(0)      // the number of abbrevs defined in this
-                                    // abbrev table
+, abbrev_number_defined(0)      // the number of abbrevs defined in this abbrev table
 {
     for(int i=0; i<ABBREVSIZE; i++ )
         abbrev_table[i] = NULL;

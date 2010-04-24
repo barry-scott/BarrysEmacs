@@ -1,6 +1,6 @@
 (progn
 ;
-;    Copyright (c) 1983-2001 Barry A. Scott
+;    Copyright (c) 1983-2010 Barry A. Scott
 ; 
 ; 	lisp mode package
 ; 
@@ -25,8 +25,8 @@
 		    (to-col descol)
 		)
 	    )
-	    (if (dot-is-visible) (sit-for 5))
 	)
+        (paren-flash-only)
     )
 )
 (defun    

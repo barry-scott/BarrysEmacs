@@ -89,7 +89,6 @@
     (local-bind-to-key "indent-relative" "\t")
     (local-bind-to-key "dedent-relative" "\e\t")
     (local-bind-to-key "newline-and-indent-relative" "\n")
-    (if (! (is-bound paren-flash-wait)) (execute-mlisp-file "flasher.ml"))
     (use-syntax-table "Fundamental-mode")
     (modify-syntax-table "paren" "(" ")")
     (modify-syntax-table "paren" "{" "}")

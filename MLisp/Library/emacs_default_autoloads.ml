@@ -64,6 +64,8 @@
 (autoload "next-file-buffer" "buffer-commands")
 (autoload "normal-mode" "normalmod")
 (autoload "ntcmd-mode" "ntcmdmode")
+(autoload "paren-flash" "flasher")
+(autoload "paren-flash-only" "flasher")
 (autoload "previous-file-buffer" "buffer-commands")
 (autoload "Python-console-mode" "python-mode")
 (autoload "Python-console" "python-console")
