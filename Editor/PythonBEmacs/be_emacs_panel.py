@@ -1085,16 +1085,6 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
             draw_modes.append( None )
             draw_cols.append( 10000000 )
 
-            qqq_row = 1
-            if row == qqq_row:
-                print 'X:      ',''.join( [('%2d'%i)[0] for i in range(60)] )
-                print 'X:      ',''.join( [('%2d'%i)[1] for i in range(60)] )
-
-                print 'X:      "%s"'%new_line_contents
-                print 'X:      "%s"'%''.join( draw_chars )
-                print 'X:',draw_cols
-                print 'X:',draw_modes
-
             cur_mode = None
             start = 0
             draw_last = len(draw_modes) - 1
@@ -1102,25 +1092,14 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
                 end = start + 1
 
                 while end <= draw_last:
-                    if row == 40:
-                        print 'q1 start %2d end %2d len %2d' % (start, end, draw_last),
-                        print 'mode', draw_modes[ start ], draw_modes[ end ],
-                        print 'cols', draw_cols[ end-1 ], draw_cols[ end ]
-
                     if( draw_modes[ start ] != draw_modes[ end ]
                     or draw_cols[ end-1 ]+1 != draw_cols[ end ] ):
-                        if row == 40:
-                            print 'q2 start %d end %d len %d' % (start, end, draw_last)
-    
                         if cur_mode != draw_modes[ start ]:
                             cur_mode = draw_modes[ start ]
                             self.dc.SetTextForeground( fg_colours[ cur_mode ] ) 
                             self.dc.SetTextBackground( bg_colours[ cur_mode ] )
 
                         x, y = self.__pixelPoint( draw_cols[ start ] + 1, row )
-
-                        if row == qqq_row:
-                            print 'Y:%2d %2d %s"%s"' % (draw_cols[ start ], row, ' '*draw_cols[ start ], ''.join( draw_chars[ start:end+1 ] ))
 
                         self.dc.DrawText( ''.join( draw_chars[ start:end ] ), x, y )
                         start = end
