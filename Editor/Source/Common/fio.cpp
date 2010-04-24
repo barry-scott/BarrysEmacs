@@ -49,7 +49,7 @@ EmacsFile::~EmacsFile()
     if( m_file != NULL && m_file != stdin )
         fclose( m_file );
 
-    delete m_convert_buffer;
+    delete [] m_convert_buffer;
 }
 
 //
