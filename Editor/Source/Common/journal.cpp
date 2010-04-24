@@ -450,14 +450,14 @@ void EmacsBufferJournal::insertChars
         _validateJournalBuffer( jnl );
 #endif
     union journal_record *in_rec = &m_jnl_buf[m_jnl_record];
-    int free = JNL_BUF_NUM_RECORDS - m_jnl_used;
+    int free_records = JNL_BUF_NUM_RECORDS - m_jnl_used;
     int written = 0;
 
     if( in_rec->jnl_insert.jnl_type == JNL_INSERT
     && in_rec->jnl_insert.jnl_dot + in_rec->jnl_insert.jnl_insert_length == dot
-    && free > 0 )
+    && free_records > 0 )
     {
-        int writing = min( len, free*(int)JNL_BYTE_SIZE );
+        int writing = min( len, jnlRecordsToChars( free_records ) );
         jnlCharsCopy
             (
             &in_rec[1].jnl_data.jnl_chars[in_rec->jnl_insert.jnl_insert_length],
@@ -477,15 +477,15 @@ void EmacsBufferJournal::insertChars
         //    two slots. One for the insert record and
         //    one for the bytes of data.
         //
-        free = JNL_BUF_NUM_RECORDS - m_jnl_used - 1;
-        if( free < 1 )
+        free_records = JNL_BUF_NUM_RECORDS - m_jnl_used - 1;
+        if( free_records < 1 )
         {
             jnlWriteBuffer();
-            free = JNL_BUF_NUM_RECORDS - m_jnl_used - 1;
+            free_records = JNL_BUF_NUM_RECORDS - m_jnl_used - 1;
         }
         in_rec = &m_jnl_buf[ m_jnl_used ];
 
-        int writing = min( len - written, jnlRecordsToChars( free ) );
+        int writing = min( len - written, jnlRecordsToChars( free_records ) );
         in_rec->jnl_insert.jnl_type = JNL_INSERT;
         in_rec->jnl_insert.jnl_dot = dot + written;
         in_rec->jnl_insert.jnl_insert_length = writing;
