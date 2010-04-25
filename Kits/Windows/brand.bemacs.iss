@@ -119,33 +119,33 @@ Name: "{commondesktop}\Barry's Emacs 8"; Filename: "{app}\bemacs.exe"; Tasks: "o
 Name: "{commonstartmenu}\Barry's Emacs 8"; Filename: "{app}\bemacs.exe"; Tasks: "option_start_menu_icon"
 
 [Registry]
-Root: HKCR; Subkey: "BarrysEmacsCommand"; ValueType: string; ValueData: "BEmacs Command"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "BarrysEmacsCommand\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe /package=""%%1"""
-Root: HKCR; Subkey: "BarrysEmacsCommand\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe,2"
+Root: HKCR; Subkey: "BarrysEmacs8Command"; ValueType: string; ValueData: "BEmacs Command"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "BarrysEmacs8Command\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe /package=""%%1"""
+Root: HKCR; Subkey: "BarrysEmacs8Command\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"
 
-Root: HKCR; Subkey: "BarrysEmacsMLisp"; ValueType: string; ValueData: "BEmacs MLisp"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "BarrysEmacsMLisp\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
-Root: HKCR; Subkey: "BarrysEmacsMLisp\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe,2"
+Root: HKCR; Subkey: "BarrysEmacs8MLisp"; ValueType: string; ValueData: "BEmacs MLisp"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "BarrysEmacs8MLisp\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
+Root: HKCR; Subkey: "BarrysEmacs8MLisp\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"
 
-Root: HKCR; Subkey: "BarrysEmacsDocument"; ValueType: string; ValueData: "BEmacs"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "BarrysEmacsDocument\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
-Root: HKCR; Subkey: "BarrysEmacsDocument\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe,3"
+Root: HKCR; Subkey: "BarrysEmacs8Document"; ValueType: string; ValueData: "BEmacs"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "BarrysEmacs8Document\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
+Root: HKCR; Subkey: "BarrysEmacs8Document\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"
 
-Root: HKCR; Subkey: "BarrysEmacsDocumentII"; ValueType: string; ValueData: "BEmacs II"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "BarrysEmacsDocumentII\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
-Root: HKCR; Subkey: "BarrysEmacsDocumentII\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe,4"
+Root: HKCR; Subkey: "BarrysEmacs8DocumentII"; ValueType: string; ValueData: "BEmacs II"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "BarrysEmacs8DocumentII\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
+Root: HKCR; Subkey: "BarrysEmacs8DocumentII\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"
 
-Root: HKCR; Subkey: "BarrysEmacsDocumentIII"; ValueType: string; ValueData: "BEmacs III"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "BarrysEmacsDocumentIII\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
-Root: HKCR; Subkey: "BarrysEmacsDocumentIII\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe,5"
+Root: HKCR; Subkey: "BarrysEmacs8DocumentIII"; ValueType: string; ValueData: "BEmacs III"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "BarrysEmacs8DocumentIII\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
+Root: HKCR; Subkey: "BarrysEmacs8DocumentIII\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"
 
-Root: HKCR; Subkey: "BarrysEmacsDocumentIV"; ValueType: string; ValueData: "BEmacs IV"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "BarrysEmacsDocumentIV\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
-Root: HKCR; Subkey: "BarrysEmacsDocumentIV\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe,6"
+Root: HKCR; Subkey: "BarrysEmacs8DocumentIV"; ValueType: string; ValueData: "BEmacs IV"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "BarrysEmacs8DocumentIV\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
+Root: HKCR; Subkey: "BarrysEmacs8DocumentIV\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"
 
-Root: HKCR; Subkey: "BarrysEmacsDocumentV"; ValueType: string; ValueData: "BEmacs V"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "BarrysEmacsDocumentV\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
-Root: HKCR; Subkey: "BarrysEmacsDocumentV\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe,7"
+Root: HKCR; Subkey: "BarrysEmacs8DocumentV"; ValueType: string; ValueData: "BEmacs V"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "BarrysEmacs8DocumentV\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
+Root: HKCR; Subkey: "BarrysEmacs8DocumentV\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"
 
 ;
 ;    Add the Edit with Barry's Emacs to the context menu
@@ -164,28 +164,28 @@ Root: HKCR; Subkey: "Directory\shell\Barry's Emacs Here 8\command"; ValueType: s
 ;
 ; have emacs open .ML files and .MLP files
 ;
-Root: HKCR; SubKey: ".ml";  ValueType: string; ValueData: "BarrysEmacsMLisp"; Tasks: "option_register_emacs_open_ml"; Flags: uninsdeletekey
-Root: HKCR; SubKey: ".mlp"; ValueType: string; ValueData: "BarrysEmacsCommand"; Tasks: "option_register_emacs_open_ml"; Flags: uninsdeletekey
+Root: HKCR; SubKey: ".ml";  ValueType: string; ValueData: "BarrysEmacs8MLisp"; Tasks: "option_register_emacs_open_ml"; Flags: uninsdeletekey
+Root: HKCR; SubKey: ".mlp"; ValueType: string; ValueData: "BarrysEmacs8Command"; Tasks: "option_register_emacs_open_ml"; Flags: uninsdeletekey
 
 ;
 ; register all the C and C++ file types for emacs to open
 ; either using one type or multiple
 ;
-Root: HKCR; Subkey: ".h";   ValueType: string; ValueData: "BarrysEmacsDocument"; Tasks: "option_register_emacs_open_c_one_type"
-Root: HKCR; Subkey: ".hh";  ValueType: string; ValueData: "BarrysEmacsDocument"; Tasks: "option_register_emacs_open_c_one_type"
-Root: HKCR; Subkey: ".hpp"; ValueType: string; ValueData: "BarrysEmacsDocument"; Tasks: "option_register_emacs_open_c_one_type"
-Root: HKCR; Subkey: ".hxx"; ValueType: string; ValueData: "BarrysEmacsDocument"; Tasks: "option_register_emacs_open_c_one_type"
-Root: HKCR; Subkey: ".c";   ValueType: string; ValueData: "BarrysEmacsDocument"; Tasks: "option_register_emacs_open_c_one_type"
-Root: HKCR; Subkey: ".cc";  ValueType: string; ValueData: "BarrysEmacsDocument"; Tasks: "option_register_emacs_open_c_one_type"
-Root: HKCR; Subkey: ".cpp"; ValueType: string; ValueData: "BarrysEmacsDocument"; Tasks: "option_register_emacs_open_c_one_type"
-Root: HKCR; Subkey: ".cxx"; ValueType: string; ValueData: "BarrysEmacsDocument"; Tasks: "option_register_emacs_open_c_one_type"
+Root: HKCR; Subkey: ".h";   ValueType: string; ValueData: "BarrysEmacs8Document"; Tasks: "option_register_emacs_open_c_one_type"
+Root: HKCR; Subkey: ".hh";  ValueType: string; ValueData: "BarrysEmacs8Document"; Tasks: "option_register_emacs_open_c_one_type"
+Root: HKCR; Subkey: ".hpp"; ValueType: string; ValueData: "BarrysEmacs8Document"; Tasks: "option_register_emacs_open_c_one_type"
+Root: HKCR; Subkey: ".hxx"; ValueType: string; ValueData: "BarrysEmacs8Document"; Tasks: "option_register_emacs_open_c_one_type"
+Root: HKCR; Subkey: ".c";   ValueType: string; ValueData: "BarrysEmacs8Document"; Tasks: "option_register_emacs_open_c_one_type"
+Root: HKCR; Subkey: ".cc";  ValueType: string; ValueData: "BarrysEmacs8Document"; Tasks: "option_register_emacs_open_c_one_type"
+Root: HKCR; Subkey: ".cpp"; ValueType: string; ValueData: "BarrysEmacs8Document"; Tasks: "option_register_emacs_open_c_one_type"
+Root: HKCR; Subkey: ".cxx"; ValueType: string; ValueData: "BarrysEmacs8Document"; Tasks: "option_register_emacs_open_c_one_type"
 
-Root: HKCR; Subkey: ".h";   ValueType: string; ValueData: "BarrysEmacsDocumentII"; Tasks: "option_register_emacs_open_c_many_types"
-Root: HKCR; Subkey: ".hh";  ValueType: string; ValueData: "BarrysEmacsDocumentII"; Tasks: "option_register_emacs_open_c_many_types"
-Root: HKCR; Subkey: ".hpp"; ValueType: string; ValueData: "BarrysEmacsDocumentII"; Tasks: "option_register_emacs_open_c_many_types"
-Root: HKCR; Subkey: ".hxx"; ValueType: string; ValueData: "BarrysEmacsDocumentII"; Tasks: "option_register_emacs_open_c_many_types"
+Root: HKCR; Subkey: ".h";   ValueType: string; ValueData: "BarrysEmacs8DocumentII"; Tasks: "option_register_emacs_open_c_many_types"
+Root: HKCR; Subkey: ".hh";  ValueType: string; ValueData: "BarrysEmacs8DocumentII"; Tasks: "option_register_emacs_open_c_many_types"
+Root: HKCR; Subkey: ".hpp"; ValueType: string; ValueData: "BarrysEmacs8DocumentII"; Tasks: "option_register_emacs_open_c_many_types"
+Root: HKCR; Subkey: ".hxx"; ValueType: string; ValueData: "BarrysEmacs8DocumentII"; Tasks: "option_register_emacs_open_c_many_types"
 
-Root: HKCR; Subkey: ".c";   ValueType: string; ValueData: "BarrysEmacsDocumentIII"; Tasks: "option_register_emacs_open_c_many_types"
-Root: HKCR; Subkey: ".cc";  ValueType: string; ValueData: "BarrysEmacsDocumentIII"; Tasks: "option_register_emacs_open_c_many_types"
-Root: HKCR; Subkey: ".cpp"; ValueType: string; ValueData: "BarrysEmacsDocumentIII"; Tasks: "option_register_emacs_open_c_many_types"
-Root: HKCR; Subkey: ".cxx"; ValueType: string; ValueData: "BarrysEmacsDocumentIII"; Tasks: "option_register_emacs_open_c_many_types"
+Root: HKCR; Subkey: ".c";   ValueType: string; ValueData: "BarrysEmacs8DocumentIII"; Tasks: "option_register_emacs_open_c_many_types"
+Root: HKCR; Subkey: ".cc";  ValueType: string; ValueData: "BarrysEmacs8DocumentIII"; Tasks: "option_register_emacs_open_c_many_types"
+Root: HKCR; Subkey: ".cpp"; ValueType: string; ValueData: "BarrysEmacs8DocumentIII"; Tasks: "option_register_emacs_open_c_many_types"
+Root: HKCR; Subkey: ".cxx"; ValueType: string; ValueData: "BarrysEmacs8DocumentIII"; Tasks: "option_register_emacs_open_c_many_types"
