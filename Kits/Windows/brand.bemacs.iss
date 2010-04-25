@@ -1,4 +1,4 @@
-;
+f;
 ; -- bemacs.iss --
 ;
 
@@ -102,7 +102,7 @@ Source: "kitfiles\support\*"; DestDir: "{app}\support"
 
 [Icons]
 Name: "{group}\Barry's Emacs"; Filename: "{app}\bemacs.exe"
-Name: "{group}\Barry's Emacs Server"; Filename: "{app}\BEmacsServer.exe"
+Name: "{group}\Barry's Emacs Server"; Filename: "{app}\BEmacs_Server.exe"
 Name: "{group}\Documentation"; Filename: "{app}\Documentation\emacs-documentation.html"
 Name: "{group}\FAQ"; Filename: "{app}\documentation\bemacs-faq.html"
 Name: "{group}\Readme"; Filename: "{app}\bemacs.exe"; Parameters: """{app}\readme.txt"""
@@ -156,10 +156,10 @@ Root: HKCR; Subkey: "*\shell\Edit with Barry's Emacs 8"; ValueType: string; Valu
 Root: HKCR; Subkey: "*\shell\Edit with Barry's Emacs 8\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%%1"""
 
 Root: HKCR; Subkey: "Drive\shell\Barry's Emacs Here 8"; ValueType: string; ValueData: "Barry's Emacs 8 &Here"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "Drive\shell\Barry's Emacs Here 8\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" /package=shell-chdir-here ""%%1\.."""
+Root: HKCR; Subkey: "Drive\shell\Barry's Emacs Here 8\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" -cd ""%%1\.."""
 
-Root: HKCR; Subkey: "Directory\shell\Barry's Emacs Here 8"; ValueType: string; ValueData: "Barry's Emacs &Here"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "Directory\shell\Barry's Emacs Here 8\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" /package=shell-chdir-here ""%%1"""
+Root: HKCR; Subkey: "Directory\shell\Barry's Emacs Here 8"; ValueType: string; ValueData: "Barry's Emacs 8 &Here"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "Directory\shell\Barry's Emacs Here 8\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" -cd ""%%1"""
 
 ;
 ; have emacs open .ML files and .MLP files
