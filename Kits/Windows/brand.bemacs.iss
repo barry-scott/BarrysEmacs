@@ -120,31 +120,31 @@ Name: "{commonstartmenu}\Barry's Emacs 8"; Filename: "{app}\bemacs.exe"; Tasks: 
 
 [Registry]
 Root: HKCR; Subkey: "BarrysEmacs8Command"; ValueType: string; ValueData: "BEmacs Command"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "BarrysEmacs8Command\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe /package=""%%1"""
+Root: HKCR; Subkey: "BarrysEmacs8Command\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" /package=""%%1"""
 Root: HKCR; Subkey: "BarrysEmacs8Command\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"
 
 Root: HKCR; Subkey: "BarrysEmacs8MLisp"; ValueType: string; ValueData: "BEmacs MLisp"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "BarrysEmacs8MLisp\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
+Root: HKCR; Subkey: "BarrysEmacs8MLisp\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%%1"""
 Root: HKCR; Subkey: "BarrysEmacs8MLisp\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"
 
 Root: HKCR; Subkey: "BarrysEmacs8Document"; ValueType: string; ValueData: "BEmacs"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "BarrysEmacs8Document\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
+Root: HKCR; Subkey: "BarrysEmacs8Document\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%%1"""
 Root: HKCR; Subkey: "BarrysEmacs8Document\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"
 
 Root: HKCR; Subkey: "BarrysEmacs8DocumentII"; ValueType: string; ValueData: "BEmacs II"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "BarrysEmacs8DocumentII\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
+Root: HKCR; Subkey: "BarrysEmacs8DocumentII\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%%1"""
 Root: HKCR; Subkey: "BarrysEmacs8DocumentII\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"
 
 Root: HKCR; Subkey: "BarrysEmacs8DocumentIII"; ValueType: string; ValueData: "BEmacs III"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "BarrysEmacs8DocumentIII\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
+Root: HKCR; Subkey: "BarrysEmacs8DocumentIII\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%%1"""
 Root: HKCR; Subkey: "BarrysEmacs8DocumentIII\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"
 
 Root: HKCR; Subkey: "BarrysEmacs8DocumentIV"; ValueType: string; ValueData: "BEmacs IV"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "BarrysEmacs8DocumentIV\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
+Root: HKCR; Subkey: "BarrysEmacs8DocumentIV\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%%1"""
 Root: HKCR; Subkey: "BarrysEmacs8DocumentIV\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"
 
 Root: HKCR; Subkey: "BarrysEmacs8DocumentV"; ValueType: string; ValueData: "BEmacs V"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "BarrysEmacs8DocumentV\Shell\open\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
+Root: HKCR; Subkey: "BarrysEmacs8DocumentV\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%%1"""
 Root: HKCR; Subkey: "BarrysEmacs8DocumentV\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"
 
 ;
@@ -153,13 +153,13 @@ Root: HKCR; Subkey: "BarrysEmacs8DocumentV\DefaultIcon"; ValueType: string; Valu
 
 ; option_edit_with_bemacs
 Root: HKCR; Subkey: "*\shell\Edit with Barry's Emacs 8"; ValueType: string; ValueData: "Edit with &Barry's Emacs 8"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "*\shell\Edit with Barry's Emacs 8\command"; ValueType: string; ValueData: "{app}\bemacs.exe ""%%1"""
+Root: HKCR; Subkey: "*\shell\Edit with Barry's Emacs 8\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%%1"""
 
 Root: HKCR; Subkey: "Drive\shell\Barry's Emacs Here 8"; ValueType: string; ValueData: "Barry's Emacs 8 &Here"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "Drive\shell\Barry's Emacs Here 8\command"; ValueType: string; ValueData: "{app}\bemacs.exe /package=shell-chdir-here ""%%1\.."""
+Root: HKCR; Subkey: "Drive\shell\Barry's Emacs Here 8\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" /package=shell-chdir-here ""%%1\.."""
 
 Root: HKCR; Subkey: "Directory\shell\Barry's Emacs Here 8"; ValueType: string; ValueData: "Barry's Emacs &Here"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "Directory\shell\Barry's Emacs Here 8\command"; ValueType: string; ValueData: "{app}\bemacs.exe /package=shell-chdir-here ""%%1"""
+Root: HKCR; Subkey: "Directory\shell\Barry's Emacs Here 8\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" /package=shell-chdir-here ""%%1"""
 
 ;
 ; have emacs open .ML files and .MLP files
