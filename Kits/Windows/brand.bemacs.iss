@@ -156,10 +156,10 @@ Root: HKCR; Subkey: "*\shell\Edit with Barry's Emacs 8"; ValueType: string; Valu
 Root: HKCR; Subkey: "*\shell\Edit with Barry's Emacs 8\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%%1"""
 
 Root: HKCR; Subkey: "Drive\shell\Barry's Emacs Here 8"; ValueType: string; ValueData: "Barry's Emacs 8 &Here"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "Drive\shell\Barry's Emacs Here 8\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" -cd ""%%1\.."""
+Root: HKCR; Subkey: "Drive\shell\Barry's Emacs Here 8\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" /package=cd-here ""%%1\.."""
 
 Root: HKCR; Subkey: "Directory\shell\Barry's Emacs Here 8"; ValueType: string; ValueData: "Barry's Emacs 8 &Here"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "Directory\shell\Barry's Emacs Here 8\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" -cd ""%%1"""
+Root: HKCR; Subkey: "Directory\shell\Barry's Emacs Here 8\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" /package=cd-here ""%%1"""
 
 ;
 ; have emacs open .ML files and .MLP files
