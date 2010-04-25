@@ -87,7 +87,7 @@ Source: "kitfiles\dblist.exe"; DestDir: "{app}"
 Source: "kitfiles\dbprint.exe"; DestDir: "{app}"
 Source: "kitfiles\mll2db.exe"; DestDir: "{app}"
 
-Source: "kitfiles\emacs_library\*"; DestDir: "{app}\Library"
+Source: "kitfiles\emacs_library\*"; DestDir: "{app}\emacs_library"
 
 Source: "..\..\HTML\*.css";  DestDir: "{app}\Documentation";
 Source: "..\..\HTML\*.html"; DestDir: "{app}\Documentation";

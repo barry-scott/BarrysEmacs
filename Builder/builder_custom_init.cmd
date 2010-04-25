@@ -11,7 +11,7 @@ if %MSVC_VERSION% == 90 (
     @echo %__e%
 )
 
-set MEINC_INSTALLER_DIR=%BUILDER_TOP_DIR%\Imports\MEINC_Installer-7.1.0-py26-win32
+set MEINC_INSTALLER_DIR=%BUILDER_TOP_DIR%\Imports\MEINC_Installer-7.1.1-py26-win32
 set PYTHON=c:\python26\python
 set PYTHON_VERSION=2.6
 PATH c:\svn;%PATH%

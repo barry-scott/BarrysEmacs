@@ -5,7 +5,7 @@ all: be.ico build_app
 
 
 APPNAME=bemacs
-APPTYPE=run		# run or run_w
+APPTYPE=run_w		# run or run_w
 PYTHONPATH=$(BEMACS_PYTHONPATH)
 
 SOURCES= \
