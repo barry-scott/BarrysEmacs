@@ -20,14 +20,22 @@ import time
 import math
 
 _debug_client = False
+_debug_log = None
 
 def debugClient( msg ):
     if _debug_client:
+        global _debug_log
+        if _debug_log is None:
+            if 'BEMACS_CLIENT_LOG' in os.environ:
+                _debug_log = open( os.environ[ 'BEMACS_CLIENT_LOG' ], 'w' )
+            else:
+                _debug_log = sys.stdout
+
         now = time.time()
         frac = math.modf( now )[0]        
         local_now = time.localtime( now )
         prefix = '%s.%03d' % (time.strftime( '%Y-%m-%d %H:%M:%S', local_now ), int( frac*1000 ))
-        print '%s CLIENT %s' % (prefix, msg)
+        _debug_log.write( '%s CLIENT %s\n' % (prefix, msg) )
 
 class ClientError(Exception):
     def __init__( self, text ):
@@ -49,7 +57,9 @@ class ClientBase:
     def __init__( self ):
         self.all_command_elements = []
 
-        self.opt_debug = 'BEMACS_CLIENT_DEBUG' in os.environ
+        global _debug_client
+        _debug_client = 'BEMACS_CLIENT_DEBUG' in os.environ
+
         self.opt_name = None
         self.opt_wait = False
         self.opt_start_app = True
@@ -93,13 +103,18 @@ class ClientBase:
             except StopIteration:
                 break
 
+            debugClient( 'ARG: %r' % (arg,) )
+
             try:
                 if self.isQualifier( arg ):
+                    debugClient( 'isQualifier( %r ) TRUE' % (arg,) )
+
                     if self.isNoMoreQualifiers( arg ):
                         self.process_qualifers = False
 
                     else:
                         name = self.getArgQualifierName( arg )
+                        debugClient( 'getArgQualifierName( %r ) => %r' % (arg, name) )
 
                         if name == 'name':
                             self.opt_name = self.getArgValue( arg, argv )
@@ -316,7 +331,7 @@ class ClientWindows(ClientBase):
         self.editor_pid = 0
 
     def isQualifier( self, arg ):
-        return arg.startswith( '/' )
+        return arg.startswith( '/' ) or arg.startswith( '-' )
 
     def isNoMoreQualifiers( self, name ):
         return False
@@ -325,11 +340,18 @@ class ClientWindows(ClientBase):
         if ':' in arg:
             arg, value = arg.split( ':', 1 )
 
-        return arg
+        elif '=' in arg:
+            arg, value = arg.split( '=', 1 )
+
+        return arg[1:]
 
     def getArgValue( self, arg, argv ):
         if ':' in arg:
             arg, value = arg.split( ':', 1 )
+            return value
+
+        elif '=' in arg:
+            arg, value = arg.split( '=', 1 )
             return value
 
         else:
@@ -410,26 +432,33 @@ class ClientWindows(ClientBase):
     def startBemacsServer( self ):
         import ctypes
         debugClient( 'startBemacsServer()' )
-        argv0 = sys.argv[0]
 
-        if argv0.lower().startswith( 'c:\\' ):
-            app_dir = os.path.dirname( argv0 )
 
-        elif '\\' in argv0:
-            app_dir = os.path.dirname( os.path.abspath( argv0 ) )
+        if 'BEMACS_CLIENT_SERVER' in os.environ:
+            server_path = os.environ['BEMACS_CLIENT_SERVER']
 
         else:
-            app_dir = ''
-            for folder in [s.strip() for s in os.environ.get( 'PATH', '' ).split( ';' )]:
-                app_path = os.path.abspath( os.path.join( folder, argv0 ) )
-                if os.path.exists( app_path ):
-                    app_dir = os.path.dirname( app_path )
-                    break
+            argv0 = sys.argv[0]
 
-        if app_dir == '':
-            app_dir = os.getcwd()
+            if argv0.lower().startswith( 'c:\\' ):
+                app_dir = os.path.dirname( argv0 )
 
-        server_path = os.path.join( app_dir, 'bemacs_server.exe' )
+            elif '\\' in argv0:
+                app_dir = os.path.dirname( os.path.abspath( argv0 ) )
+
+            else:
+                app_dir = ''
+                for folder in [s.strip() for s in os.environ.get( 'PATH', '' ).split( ';' )]:
+                    app_path = os.path.abspath( os.path.join( folder, argv0 ) )
+                    if os.path.exists( app_path ):
+                        app_dir = os.path.dirname( app_path )
+                        break
+
+            if app_dir == '':
+                app_dir = os.getcwd()
+
+            server_path = os.path.join( app_dir, 'bemacs_server.exe' )
+
 
         if not os.path.exists( server_path ):
             raise ClientError( 'Expected to find BEmacs Server in %s' % (server_path,) )
