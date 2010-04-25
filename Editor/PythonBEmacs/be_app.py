@@ -721,6 +721,9 @@ class FakeEditor(be_debug.EmacsDebugMixin):
         self.app = app
         self.count = 0
 
+        self.vert_scroll = []
+        self.horz_scroll = []
+
     def guiCloseWindow( self, *args, **kwds ):
         self.app.onGuiThread( self.app.quit, () )
 
@@ -740,7 +743,7 @@ class FakeEditor(be_debug.EmacsDebugMixin):
         p.termUpdateBegin()
         p.termUpdateLine( None, new, 1 )
         p.termTopos( 1, 7 )
-        p.termUpdateEnd()
+        p.termUpdateEnd( {'readonly': False, 'overstrike': False, 'eol': 'Q', 'line': 99, 'column': 9}, self.vert_scroll, self.horz_scroll )
 
         if char == 'c':
             self.app.onGuiThread( self.uiHookEditCopy, ('edit-copy', 'a'*30000) )

@@ -944,6 +944,8 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
                 bar.SetPosition( (x, y) )
                 bar.Show( True )
                 self._debugTermCalls1( 'termUpdateEnd: h scroll show %d' % (index,) )
+        else:
+            index = 0
 
         index += 1
         while index < len( self.all_vert_scroll_bars ):
