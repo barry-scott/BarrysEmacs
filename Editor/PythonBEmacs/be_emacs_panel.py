@@ -568,7 +568,7 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
 
             # alpha blend the cursor
             cur_dc.SetBackgroundMode( wx.TRANSPARENT )
-            cursor_colour = wx.Colour( 255, 0, 0, 64 )
+            cursor_colour = wx.Colour( 0, 0, 0, 64 )
             cur_dc.SetPen( wx.Pen( cursor_colour ) )
             cur_dc.SetBrush( wx.Brush( cursor_colour ) )
             cur_dc.DrawRectangle( 0, 0, self.char_width, self.char_length )
