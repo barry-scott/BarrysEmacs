@@ -63,15 +63,15 @@ int file_is_regular( const EmacsString &filename )
 }
 
 FileParse::FileParse()
-: disk()            // disk:
-, path()            // /path/
-, filename()            // name
-, filetype()            // .type
-, result_spec()            // full file spec with all fields filled in
-, wild(0)            // true if any field is wild
-, filename_maxlen(0)        // how long filename can be
-, filetype_maxlen(0)        // how long filetype can be
-, file_case_sensitive(0)    // true if case is important
+: disk()                    // disk:
+, path()                    // /path/
+, filename()                // name
+, filetype()                // .type
+, result_spec()             // full file spec with all fields filled in
+, wild( 0 )                 // true if any field is wild
+, filename_maxlen( 0 )      // how long filename can be
+, filetype_maxlen( 0 )      // how long filetype can be
+, file_case_sensitive( 0 )  // true if case is important
 { }
 
 void FileParse::init()
@@ -104,19 +104,17 @@ int FileParse::analyse_filespec( const EmacsString &filespec )
             disk = sp( 0, disk_end );
             disk_end++;
 
-            // change all $ to _
-            // the $ is supported for VMS compatibility
-            for( int i=0; i<disk.length(); i++ )
-                if( disk[i] == '$' )
-                    disk[i] = '_';
-
             //
             // if there is a replacement string use it otherwise
             // leave the device name as it is
             //
             EmacsString new_value = get_config_env( disk );
             if( new_value.isNull() )
-                disk.append( ":" );
+            {
+                disk = EmacsString::null;
+                disk_end = 0;
+                break;
+            }
             else
             {
                 // we are replacing the disk so zap any
@@ -137,7 +135,9 @@ int FileParse::analyse_filespec( const EmacsString &filespec )
             }
         }
         else
+        {
             disk_end = 0;
+        }
         break;
     }
 
@@ -181,48 +181,20 @@ int FileParse::analyse_filespec( const EmacsString &filespec )
 #endif
 static int fullpath( const EmacsString &in_path, EmacsString &out_path)
 {
-    EmacsString expanded_in_path;
+    EmacsString expanded_in_path( in_path )
 
     Trace( FormatString("fullpath( %s )") << in_path );
 
-    for( int s=0, s_len = in_path.length(); s<s_len; )
-    {
-        expanded_in_path.append( in_path[s++] );
-        if( (s+1)<s_len && in_path[s] == '$')
-        {
-            int start = s++;
-            int braces = in_path[s] == '{';
-            if( braces )
-                start++, s++;
+    char c_def_path[1+MAXPATHLEN+1];
 
-            while( s < s_len )
-            {
-                if( braces ? in_path[s] == '}' : !unicode_is_alphabetic_numeric( in_path[s] ) )
-                    break;
-                else
-                    s++;
-            }
+    c_def_path[0] = '\0';
+    getcwd( c_def_path, sizeof(c_def_path) );
 
-            EmacsString var_name( in_path( start, s<s_len ? s-1 : s ) );
-            const char *var_value = getenv( var_name );
-            if (var_value != NULL)
-            {
-                expanded_in_path.append( var_value );
-                if( braces )
-                    s++;
-            }
-        }
-    }
-
-    Trace( FormatString( "fullpath: expanded_in_path => %s" ) << expanded_in_path );
-    char def_path[1+MAXPATHLEN+1];
-
-    def_path[0] = '\0';
-    getcwd( def_path, sizeof(def_path) );
+    EmacsString def_path( c_def_path );
 
     int in_pos = 0;
     if( expanded_in_path.length() >= 2
-    && expanded_in_path[0] == '~' )                // prefix ~
+    && expanded_in_path[0] == '~' )                 // prefix ~
     {
         if( expanded_in_path[1] == PATH_CH )        // ~/filename
         {
@@ -230,25 +202,33 @@ static int fullpath( const EmacsString &in_path, EmacsString &out_path)
             if( value != NULL )
             {
                 in_pos = 2;
-                out_path.append( value );
+                out_path.append( EmacsString( value ) );
             }
             else
+            {
                 out_path.append( def_path );
+            }
         }
         else
         {                        // ~user/filename
             int path_char_pos = expanded_in_path.first( PATH_CH );
             if( path_char_pos < 0 )
+            {
                 out_path.append( def_path );
+            }
             else
             {
                 struct passwd *pw;
                 EmacsString user( expanded_in_path( 1, path_char_pos ) );
                 pw = getpwnam( user );
                 if( pw == NULL )
+                {
                     out_path.append( def_path );
+                }
                 else
-                    out_path.append( pw->pw_dir );
+                {
+                    out_path.append( EmacsString( pw->pw_dir ) );
+                }
                 in_pos = path_char_pos;
             }
         }
@@ -256,11 +236,15 @@ static int fullpath( const EmacsString &in_path, EmacsString &out_path)
     else
     if( expanded_in_path.length() >= 1
     && expanded_in_path[0] != '/' )
+    {
         out_path.append( def_path );
+    }
 
     if( out_path.length() >= 1
     && out_path[-1] != PATH_CH )
+    {
         out_path.append( PATH_CH );
+    }
 
     out_path.append( expanded_in_path( in_pos, expanded_in_path.length() ) );
 
@@ -277,12 +261,14 @@ static int fullpath( const EmacsString &in_path, EmacsString &out_path)
 
             if( (pos+1) >= out_path.length() )
                 break;
+
             switch( out_path[pos+1] )
             {
             case PATH_CH:        // found // in the name
                 Trace( FormatString("fullpath: remove( %d, 1 )") << pos );
                 out_path.remove( pos, 1 );
                 break;
+
             case '.':
                 if( (pos+2) < out_path.length() )
                     switch( out_path[pos+2] )
@@ -291,6 +277,7 @@ static int fullpath( const EmacsString &in_path, EmacsString &out_path)
                         Trace( FormatString("fullpath: remove( %d, 2 )") << pos );
                         out_path.remove( pos, 2 );
                         break;
+
                     case '.':
                         if( (pos+3) == out_path.length()
                         || ((pos+3) < out_path.length()
@@ -313,21 +300,29 @@ static int fullpath( const EmacsString &in_path, EmacsString &out_path)
                                 << out_path );
                         }
                         else
+                        {
                             pos++;
+                        }
                         break;
+
                     default:
                         pos++;
                     }
+
                 else
                     pos++;
                 break;
+
             default:
                 pos++;
                 break;
             }
         }
+
         else
+        {
             pos++;
+        }
     }
 
     Trace( FormatString( "fullpath: out_path after => %s" ) << out_path );
@@ -340,6 +335,7 @@ bool FileParse::sys_parse( const EmacsString &name, const EmacsString &def )
 
     if( !analyse_filespec( name ) )
         return false;
+
     if( !d_fab.analyse_filespec( def ) )
         return false;
 
