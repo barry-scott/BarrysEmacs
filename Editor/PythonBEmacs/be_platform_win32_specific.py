@@ -18,6 +18,7 @@ SHGFP_TYPE_CURRENT = 0
 SHGFP_TYPE_DEFAULT = 1
 
 CSIDL_APPDATA = 0x001A
+CSIDL_PROFILE = 0x0028
 
 MAX_PATH = 260
 
@@ -25,7 +26,7 @@ app_dir = None
 
 def getUserDir():
     app_folder = ctypes.create_unicode_buffer( MAX_PATH + 1 )
-    ctypes.windll.shell32.SHGetFolderPathW( 0, CSIDL_APPDATA, None, SHGFP_TYPE_CURRENT, ctypes.byref( app_folder ) )
+    ctypes.windll.shell32.SHGetFolderPathW( 0, CSIDL_PROFILE, None, SHGFP_TYPE_CURRENT, ctypes.byref( app_folder ) )
     user_dir = os.environ.get( 'BEMACS_USER', os.path.join( app_folder.value, 'bemacs' ) )
     return user_dir
 
