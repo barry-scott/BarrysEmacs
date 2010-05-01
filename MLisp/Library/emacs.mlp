@@ -146,7 +146,11 @@
     )
 
     ;;;(get-tty-string (concat "~emacs-com-visit-file " ~filename))
-    (if (>= (string-index-of-string ~filename ":" ~index-start) 0)
+    (if
+        (&
+            (= 0 (file-exists ~filename))
+            (>= (string-index-of-string ~filename ":" ~index-start) 0)
+        )
         (progn
             ~index-first
             ~index-next
