@@ -117,6 +117,10 @@ EmacsString get_config_env( const EmacsString &name )
     if( name == "emacs_library" )
         return env_emacs_library;
 
+    static EmacsString env_emacs_journal( ".\\" );
+    if( name == "emacs_journal" )
+        return env_emacs_journal;
+
     static EmacsString env_sys_login( "HOME:/" );
     if( name == "sys_login" )
         return env_sys_login;
