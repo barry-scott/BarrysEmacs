@@ -1,5 +1,5 @@
 //
-//    beemacs_python.cpp
+//    bemacs_python.cpp
 //
 //    Copyright (c) 1999-2010 Barry A. Scott
 //
