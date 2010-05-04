@@ -573,13 +573,11 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
             cur_dc.SetBrush( wx.Brush( cursor_colour ) )
             cur_dc.DrawRectangle( 0, 0, self.char_width, self.char_length )
 
-            pdc.DrawBitmap( cursor_bitmap, c_x, c_y, False )
+            # must delete these DC before DrawBitmap is called
+            del cur_dc
+            del cur_dc_mem
 
-            if '__WXMSW__' in wx.Platform:
-                cursor_colour = wx.Colour( 255, 128, 128, 255 )
-                pdc.SetPen( wx.Pen( cursor_colour ) )
-                pdc.SetBrush( wx.Brush( cursor_colour, wx.TRANSPARENT ) )
-                pdc.DrawRectangle( c_x, c_y, self.char_width, self.char_length )
+            pdc.DrawBitmap( cursor_bitmap, c_x, c_y, False )
 
             pdc = None
 
