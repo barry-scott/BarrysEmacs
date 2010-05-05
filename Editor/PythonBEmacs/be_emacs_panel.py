@@ -414,7 +414,9 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
         self.window_size = 0
 
         self.all_vert_scroll_bars = []
+        self.all_vert_scroll_bar_info = []
         self.all_horz_scroll_bars = []
+        self.all_horz_scroll_bar_info = []
 
         self.map_vert_scroll_bar_to_window_id = {}
         self.map_horz_scroll_bar_to_window_id = {}
@@ -578,6 +580,31 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
             del cur_dc_mem
 
             pdc.DrawBitmap( cursor_bitmap, c_x, c_y, False )
+
+            # Draw scroll bar backgrounds
+            # set the colour behind the scroll bars
+            G = 240
+            scroll_bar_bg = wx.Colour( G, G, G, 0 )
+            pdc.SetPen( wx.Pen( scroll_bar_bg ) )
+            pdc.SetBrush( wx.Brush( scroll_bar_bg ) )
+
+            #--- vert_scroll -----------------------------------------------------------
+            for bar_info in self.all_vert_scroll_bar_info:
+                if bar_info is None:
+                    continue
+
+                win_id, x, y, width, height, pos, total = bar_info
+                x, y = self.__pixelPoint( x+1, y+1 )
+                pdc.DrawRectangle( x, y, self.char_width * width, self.char_length * height )
+
+            #--- horz_scroll -----------------------------------------------------------
+            for bar_info in self.all_horz_scroll_bar_info:
+                if bar_info is None:
+                    continue
+
+                win_id, x, y, width, height, pos = bar_info
+                x, y = self.__pixelPoint( x+1, y+1 )
+                pdc.DrawRectangle( x, y, self.char_width * width, self.char_length * height )
 
             pdc = None
 
@@ -919,13 +946,8 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
 
         self.app.setStatus( all_status_bar_values )
 
-        # set the colour behind the scroll bars
-        G = 240
-        scroll_bar_bg = wx.Colour( G, G, G, 0 )
-        self.dc.SetPen( wx.Pen( scroll_bar_bg ) )
-        self.dc.SetBrush( wx.Brush( scroll_bar_bg ) )
-
         #--- vert_scroll -----------------------------------------------------------
+        self.all_vert_scroll_bar_info = all_vert_scroll_bars
         for index, bar_info in enumerate( all_vert_scroll_bars ):
             if len( self.all_vert_scroll_bars ) <= index:
                 self.all_vert_scroll_bars.append( wx.ScrollBar( self, wx.NewId(), style=wx.SB_VERTICAL ) )
@@ -933,7 +955,7 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
             bar = self.all_vert_scroll_bars[ index ]
             if bar_info is None:
                 bar.Show( False )
-                self._debugTermCalls1( 'termUpdateEnd: h scroll hode %d' % (index,) )
+                self._debugTermCalls1( 'termUpdateEnd: h scroll hide %d' % (index,) )
 
             else:
                 win_id, x, y, width, height, pos, total = bar_info
@@ -941,23 +963,22 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
 
                 x, y = self.__pixelPoint( x+1, y+1 )
 
-                self.dc.DrawRectangle( x, y, self.char_width * width, self.char_length * height )
+                #self.dc.DrawRectangle( x, y, self.char_width * width, self.char_length * height )
 
                 bar.SetScrollbar( pos-1, 1, total, 10 )
                 bar.SetSize( (self.char_width * width, self.char_length * height - 2) )
                 bar.SetPosition( (x, y+1) )
                 bar.Show( True )
                 self._debugTermCalls1( 'termUpdateEnd: h scroll show %d' % (index,) )
-        else:
-            index = 0
 
         index += 1
         while index < len( self.all_vert_scroll_bars ):
             self.all_vert_scroll_bars[ index ].Show( False )
-            self._debugTermCalls1( 'termUpdateEnd: h scroll hode %d' % (index,) )
+            self._debugTermCalls1( 'termUpdateEnd: h scroll hide %d extra' % (index,) )
             index += 1
 
         #--- horz_scroll -----------------------------------------------------------
+        self.all_horz_scroll_bar_info = all_horz_scroll_bars
         for index, bar_info in enumerate( all_horz_scroll_bars ):
             if len( self.all_horz_scroll_bars ) <= index:
                 self.all_horz_scroll_bars.append( wx.ScrollBar( self, wx.NewId(), style=wx.SB_HORIZONTAL ) )
@@ -973,7 +994,7 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
 
                 x, y = self.__pixelPoint( x+1, y+1 )
 
-                self.dc.DrawRectangle( x, y, self.char_width * width, self.char_length * height )
+                #self.dc.DrawRectangle( x, y, self.char_width * width, self.char_length * height )
 
                 bar.SetScrollbar( pos-1, 1, 256, 10 )
                 bar.SetSize( (self.char_width * width - 2, self.char_length * height) )
@@ -986,7 +1007,7 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
         index += 1
         while index < len( self.all_horz_scroll_bars ):
             self.all_horz_scroll_bars[ index ].Show( False )
-            self._debugTermCalls1( 'termUpdateEnd: v scroll hode %d' % (index,) )
+            self._debugTermCalls1( 'termUpdateEnd: v scroll hode %d extra' % (index,) )
             index += 1
 
 
