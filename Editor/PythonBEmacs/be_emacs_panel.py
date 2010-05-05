@@ -915,11 +915,15 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
 
         self.__executeTermOperations()
 
-        self.dc = None
-
         c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
 
         self.app.setStatus( all_status_bar_values )
+
+        # set the colour behind the scroll bars
+        G = 240
+        scroll_bar_bg = wx.Colour( G, G, G, 0 )
+        self.dc.SetPen( wx.Pen( scroll_bar_bg ) )
+        self.dc.SetBrush( wx.Brush( scroll_bar_bg ) )
 
         #--- vert_scroll -----------------------------------------------------------
         for index, bar_info in enumerate( all_vert_scroll_bars ):
@@ -937,9 +941,11 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
 
                 x, y = self.__pixelPoint( x+1, y+1 )
 
+                self.dc.DrawRectangle( x, y, self.char_width * width, self.char_length * height )
+
                 bar.SetScrollbar( pos-1, 1, total, 10 )
-                bar.SetSize( (self.char_width * width, self.char_length * height) )
-                bar.SetPosition( (x, y) )
+                bar.SetSize( (self.char_width * width, self.char_length * height - 2) )
+                bar.SetPosition( (x, y+1) )
                 bar.Show( True )
                 self._debugTermCalls1( 'termUpdateEnd: h scroll show %d' % (index,) )
         else:
@@ -967,17 +973,23 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
 
                 x, y = self.__pixelPoint( x+1, y+1 )
 
+                self.dc.DrawRectangle( x, y, self.char_width * width, self.char_length * height )
+
                 bar.SetScrollbar( pos-1, 1, 256, 10 )
-                bar.SetSize( (self.char_width * width, self.char_length * height) )
-                bar.SetPosition( (x, y) )
+                bar.SetSize( (self.char_width * width - 2, self.char_length * height) )
+                bar.SetPosition( (x+1, y) )
                 bar.Show( True )
                 self._debugTermCalls1( 'termUpdateEnd: v scroll show %d' % (index,) )
+
+        self.dc = None
 
         index += 1
         while index < len( self.all_horz_scroll_bars ):
             self.all_horz_scroll_bars[ index ].Show( False )
             self._debugTermCalls1( 'termUpdateEnd: v scroll hode %d' % (index,) )
             index += 1
+
+
 
         self.RefreshRect( (0, 0, self.pixel_width, self.pixel_length), False )
 
