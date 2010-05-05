@@ -514,6 +514,7 @@ class BemacsApp(wx.App, be_debug.EmacsDebugMixin):
 
                 self._debugApp( '__posixCommandLineHandler response %r' % (reply,) )
                 os.write( emacs_client_write_fd, reply )
+                os.close( emacs_client_write_fd )
 
     def guiClientCommandHandler( self, client_command ):
         all_client_args = [part.decode('utf-8') for part in client_command.split( '\x00' )]
