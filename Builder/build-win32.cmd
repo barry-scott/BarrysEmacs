@@ -1,1 +1,1 @@
-nmake -f Win32.mak PYTHON=python clean build
+nmake -f Win32.mak PYTHON=%python% clean build
