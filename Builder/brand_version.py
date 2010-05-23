@@ -17,7 +17,7 @@ def main( argv ):
         vi.setSvnVersion( argv[2] )
         vi.parseVersionInfo( argv[1] )
 
-        if vi.is_svn_wc:
+        if False and vi.is_svn_wc:
             finder = SvnWcFinder( vi )
         else:
             finder = FileFinder( vi )

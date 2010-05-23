@@ -1,7 +1,7 @@
 #
 #	win32.mak bemacs
 #
-all: be.ico build_app
+all: bemacs.ico build_app
 
 
 APPNAME=bemacs

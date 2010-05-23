@@ -1,7 +1,7 @@
 #
-#	win32.mak bemacs
+#	win32-server.mak bemacs
 #
-all: be.ico build_app
+all: bemacs.ico build_app
 
 
 APPNAME=bemacs_server
@@ -28,11 +28,11 @@ IMAGES = \
 bemacs_server_main.py: be_main.py
 	copy be_main.py bemacs_server_main.py
 
-bemacs_server.rc: be.rc bemacs_server.ico
+bemacs_server.rc: be.rc bemacs.ico
 	copy be.rc bemacs_server.rc
 
-bemacs_server.ico: ..\Source\Windows\Resources\win_emacs.ico
-	copy ..\Source\Windows\Resources\win_emacs.ico bemacs_server.ico >NUL
+bemacs.ico: ..\Source\Windows\Resources\win_emacs.ico
+	copy ..\Source\Windows\Resources\win_emacs.ico bemacs.ico >NUL
 
 be_images.py: make_be_images.py $(IMAGES)
 	$(PYTHON) -u make_be_images.py be_images.py $(IMAGES) 

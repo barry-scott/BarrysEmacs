@@ -1,5 +1,5 @@
 ;
-;	msvc90_system_files.iss
+;	msvc90_x86_system_files.iss
 ;
 
 ; begin VC system files

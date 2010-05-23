@@ -1,6 +1,7 @@
 * text=auto !eol
 Builder/Win32.mak -text
-Builder/build-win32.cmd -text
+Builder/Win64.mak -text
+Builder/build-windows.cmd -text
 Builder/builder_custom_init.cmd eol=crlf
 Builder/local-install-linux.sh -text
 Editor/PythonBEmacs.sln -text
