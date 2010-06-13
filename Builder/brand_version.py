@@ -40,7 +40,8 @@ class FileFinder:
 
         for filename in all_files:
             #print base
-            if filename.startswith( template_file_prefix ):
+            if( filename.startswith( template_file_prefix )
+            and not filename.endswith( '~' ) ):
                 self.__vi.brandOneFile( os.path.join( path, filename ) )
 
         for filename in all_files:

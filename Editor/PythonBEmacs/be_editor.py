@@ -17,6 +17,7 @@ import sys
 import os
 import time
 import threading
+import subprocess
 
 import be_platform_specific
 import be_debug
@@ -50,6 +51,7 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
             "edit-paste":       self.uiHookEditPaste,
             "yes-no-dialog":    self.uiHookYesNoDialog,
             "set-window-title": self.uiHookSetWindowTitle,
+            "filter-string":    self.uiHookFilterString,
             "test1":            self.uiHookTest1,
             "test2":            self.uiHookTest2,
             }
@@ -196,6 +198,21 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
     def uiHookYesNoDialog( self, cmd, default, title, message ):
         result = self.app.guiYesNoDialog( default, title, message )
         self.setGuiResultSuccess( result )
+
+    def uiHookFilterString( self, cmd, cmd_line, input_string ):
+        try:
+            p = subprocess.Popen(
+                    cmd_line,
+                    shell=True,
+                    stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT )
+
+            out, err = p.communicate( input_string.encode( 'utf-8' ) )
+            self.setGuiResultSuccess( out.decode( 'utf-8' ) )
+
+        except EnvironmentError, e:
+            self.setGuiResultError( unicode(e) )
 
     def hookUserInterface( self, *args ):
         self._debugEditor( 'hookUserInterface( %r )' % (args,) )

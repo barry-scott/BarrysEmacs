@@ -122,6 +122,8 @@ class BemacsFrame(wx.Frame):
         self.addEmacsMenu( self.menu_tool, 'tg', T_('Grep in files...') )
         self.addEmacsMenu( self.menu_tool, 'tb', T_('Grep in buffers...') )
         self.addEmacsMenu( self.menu_tool, 'tc', T_('Grep current buffer...') )
+        self.addEmacsMenu( self.menu_tool, 'rf', T_('Filter region...') )
+        self.addEmacsMenu( self.menu_tool, 'rs', T_('Sort region') )
 
         self.addEmacsMenu( self.menu_buffer, 'bs', T_('Switch to buffer...') )
         self.addEmacsMenu( self.menu_buffer, 'bl', T_('List buffers') )
