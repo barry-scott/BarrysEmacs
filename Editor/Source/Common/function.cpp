@@ -754,7 +754,6 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "file-name-expand-and-default", file_name_expand_and_default );
     EMACS_NEW BoundName( "file-is-a-directory", file_is_a_directory_cmd );
     EMACS_NEW BoundName( "file-format-string", file_format_string_cmd );
-//    EMACS_NEW BoundName( "filter-region", filter_region );
     EMACS_NEW BoundName( "following-char", following_char_command );
 # if defined (SUBPROCESSES)
     EMACS_NEW BoundName( "force-exit-process", force_exit_process );
