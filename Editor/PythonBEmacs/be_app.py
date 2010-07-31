@@ -315,6 +315,7 @@ class BemacsApp(wx.App, be_debug.EmacsDebugMixin):
         if self.__wx_raw_debug:
             return
 
+        self.command_line_thread.daemon = True
         self.command_line_thread.start()
 
     def __runCommandLineHandler( self ):
@@ -546,6 +547,7 @@ class BemacsApp(wx.App, be_debug.EmacsDebugMixin):
         if self.__wx_raw_debug:
             return
 
+        self.editor_thread.daemon = True
         self.editor_thread.start()
 
     def __runEditor( self ):
