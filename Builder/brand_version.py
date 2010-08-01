@@ -41,12 +41,15 @@ class FileFinder:
         for filename in all_files:
             #print base
             if( filename.startswith( template_file_prefix )
-            and not filename.endswith( '~' ) ):
+            and not filename.endswith( '~' )        # linux and mac edit file
+            and not filename.split( '.' )[-1].startswith( '_' ) ):  # windows edit file
                 self.__vi.brandOneFile( os.path.join( path, filename ) )
 
         for filename in all_files:
             full_path = os.path.join( path, filename )
-            if os.path.isdir( full_path ):
+            if( os.path.isdir( full_path )
+            and not full_path.endswith( '.svn' )
+            and not full_path.endswith( '_svn' ) ):
                 self.findAndBrandFiles( full_path )
 
 class SvnWcFinder:
