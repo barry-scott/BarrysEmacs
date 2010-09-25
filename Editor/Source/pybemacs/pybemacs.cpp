@@ -1014,7 +1014,7 @@ public:
     TerminalControl_Python( BemacsEditor &editor )
     : EmacsView()
     , m_editor( editor )
-    , m_check_input_count( CHECK_FOR_INPUT_INTERVAL )
+    , m_check_input_time( EmacsDateTime::now().asDouble() + CHECK_FOR_INPUT_INTERVAL )
     {
         t_il_mf = 1;
         t_il_ov = 1;
@@ -1034,10 +1034,11 @@ public:
     //
     virtual void k_check_for_input()   // check for any input
     {
-        m_check_input_count--;
-        if( m_check_input_count <= 0 )
+        double now = EmacsDateTime::now().asDouble();
+
+        if( now > m_check_input_time )
         {
-            m_check_input_count = CHECK_FOR_INPUT_INTERVAL;
+            m_check_input_time = now + CHECK_FOR_INPUT_INTERVAL;
             m_editor.termCheckForInput();
             // check for timeouts
             time_call_timeout_handler();
@@ -1127,10 +1128,12 @@ public:
     }
 
     BemacsEditor &m_editor;
-    int m_check_input_count;
-    enum { CHECK_FOR_INPUT_INTERVAL = 100000 };    // check for input every CHECK_FOR_INPUT_INTERVAL calls (about every 100ms)
+    double m_check_input_time;
+    static const double CHECK_FOR_INPUT_INTERVAL;
+    // check for input every CHECK_FOR_INPUT_INTERVAL calls (about every 100ms)
 };
 
+const double TerminalControl_Python::CHECK_FOR_INPUT_INTERVAL( 0.1 );
 
 void init_python_terminal( BemacsEditor &editor )
 {
