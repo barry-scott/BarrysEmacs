@@ -1177,7 +1177,7 @@ bool emacs_internal_init_done_event(void)
 
 void UI_update_window_title( void )
 {
-    EmacsString title( "Barry's Emacs - " );
+    EmacsString title;
 
 #if defined( WIN32 )
     EmacsString home( getenv("USERPROFILE") );

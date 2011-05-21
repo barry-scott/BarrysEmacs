@@ -62,6 +62,10 @@ class BemacsApp(wx.App, be_debug.EmacsDebugMixin):
             if arg.startswith( '-psn_' ):
                 del args[ 1 ]
 
+            elif arg.startswith( '--name=' ):
+                self.opt_name = arg[len('--name='):]
+                del args[ 1 ]
+
             elif arg == '--noredirect':
                 self.__debug_noredirect = True
                 del args[ 1 ]
@@ -623,7 +627,12 @@ class BemacsApp(wx.App, be_debug.EmacsDebugMixin):
     def MacPrintFile( self, file_path ):
         pass
 
-    def setWindowTitle( self, title ):
+    def setWindowTitle( self, title_suffix ):
+        if self.opt_name is None:
+            title = "Barry's Emacs - %s" % (title_suffix,)
+        else:
+            title = "%s - %s" % (self.opt_name, title_suffix)
+
         self.frame.SetTitle( title )
 
 #--------------------------------------------------------------------------------

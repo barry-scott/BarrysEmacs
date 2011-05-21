@@ -206,6 +206,9 @@ class ClientPosix(ClientBase):
             server_fifo += '_' + self.opt_name
             client_fifo += '_' + self.opt_name
 
+        debugClient( 'server_fifo %r' % (server_fifo,) )
+        debugClient( 'client_fifo %r' % (client_fifo,) )
+
         fifo_dir = os.path.dirname( server_fifo )
 
         if not os.path.exists( fifo_dir ):
@@ -217,6 +220,7 @@ class ClientPosix(ClientBase):
         try:
             fd_command = os.open( server_fifo, os.O_WRONLY|os.O_NONBLOCK )
         except OSError:
+            debugClient( 'failed to open server_fifo' )
             return False
 
         fd_response = os.open( client_fifo, os.O_RDONLY|os.O_NONBLOCK )
@@ -316,9 +320,14 @@ class ClientUnix(ClientPosix):
             app_dir = os.getcwd()
 
         server_path = os.path.join( app_dir, 'bemacs_server' )
+        debugClient( 'server_path %r' % (server_path,) )
+
+        args = [server_path]
+        if self.opt_name is not None:
+            args.append( '--name=%s' % (self.opt_name,) )
 
         if os.fork() == 0:
-            os.execl( server_path, server_path )
+            os.execv( server_path, args )
 
     def bringTofront( self ):
         pass
