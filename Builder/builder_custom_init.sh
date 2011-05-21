@@ -1,7 +1,7 @@
 #!/bin/echo Usage: . $0
 
 export BUILDER_CFG_PLATFORM=$(uname -s)
-export PYTHON_VERSION=${1:-2.6}
+export PYTHON_VERSION=${1:-2.7}
 case ${BUILDER_CFG_PLATFORM} in
 
 Darwin)
