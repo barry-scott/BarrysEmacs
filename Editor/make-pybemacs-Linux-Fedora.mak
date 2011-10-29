@@ -1,7 +1,7 @@
 #
 #	make-pybemacs-Linux-Fedora.mak
 #
-PYCXX_VER=6.2.0
+PYCXX_VER=6.2.4
 CCC=g++
 CC=gcc
 

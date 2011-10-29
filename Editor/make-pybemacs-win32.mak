@@ -1,7 +1,7 @@
 #
 #	make-darwin-pybemacs.mak
 #
-PYCXX_VER=6.2.0
+PYCXX_VER=6.2.4
 CCC=cl
 CC=cl
 

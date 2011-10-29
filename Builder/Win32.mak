@@ -18,7 +18,7 @@ KITROOT=$(KITSRC)\kitfiles
 build: brand kitdir editor mlisp describe quick_info language inno_kit
 
 brand:
-	python brand_version.py version_info.txt ..
+	$(PYTHON) brand_version.py version_info.txt ..
 
 kitdir:
 	if not exist $(KITROOT) mkdir $(KITROOT)
@@ -30,11 +30,11 @@ inno_kit: $(KITROOT)\Output\setup.exe
 #	Rule to run INNO's IDE to allow debugging of the installation
 #
 inno_debug:
-	"c:\Program Files\Inno Setup 5\Compil32.exe" $(KITSRC)\bemacs.iss
+	"c:\Program Files (x86)\Inno Setup 5\Compil32.exe" $(KITSRC)\bemacs.iss
 
 $(KITROOT)\Output\setup.exe: $(KITSRC)\bemacs.iss
 	copy $(KITSRC)\msvc$(MSVC_VERSION)_x86_system_files.iss $(KITSRC)\msvc_system_files.iss
-	"c:\Program Files\Inno Setup 5\ISCC.exe" $(KITSRC)\bemacs.iss
+	"c:\Program Files (x86)\Inno Setup 5\ISCC.exe" $(KITSRC)\bemacs.iss
 	$(KITSRC)\copy-setup.cmd $(KITSRC)\Output\setup.exe $(KITSRC)
 
 editor: kitdir "$(KITROOT)\bemacs.exe"
@@ -74,4 +74,5 @@ quick_info:
 
 clean:
 	cd $(BUILDER_TOP_DIR)\editor && .\build-win32 clean
+	cd $(BUILDER_TOP_DIR)\editor\PythonBEmacs && .\build-win32 "$(KITROOT)" clean
 	if exist $(KITROOT) rmdir /s /q  $(KITROOT)

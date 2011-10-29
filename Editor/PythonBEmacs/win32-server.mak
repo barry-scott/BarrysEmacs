@@ -28,11 +28,14 @@ IMAGES = \
 bemacs_server_main.py: be_main.py
 	copy be_main.py bemacs_server_main.py
 
-bemacs_server.rc: be.rc bemacs.ico
+bemacs_server.rc: be.rc bemacs.ico bemacs_server.ico
 	copy be.rc bemacs_server.rc
 
 bemacs.ico: ..\Source\Windows\Resources\win_emacs.ico
 	copy ..\Source\Windows\Resources\win_emacs.ico bemacs.ico >NUL
+
+bemacs_server.ico: ..\Source\Windows\Resources\win_emacs.ico
+	copy ..\Source\Windows\Resources\win_emacs.ico bemacs_server.ico >NUL
 
 be_images.py: make_be_images.py $(IMAGES)
 	$(PYTHON) -u make_be_images.py be_images.py $(IMAGES) 
@@ -45,6 +48,6 @@ clean::
 	if exist be_images.py del be_images.py
 	if exist bemacs_server_main.py del bemacs_server_main.py
 	if exist bemacs_server.rc del bemacs_server.rc
-	if exist bemacs_server.ico del bemacs_server.ico
+	if exist bemacs.ico del bemacs.ico
 
 !include <meinc_installer.mak>

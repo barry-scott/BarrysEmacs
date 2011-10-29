@@ -3,6 +3,7 @@ Builder/Win32.mak -text
 Builder/Win64.mak -text
 Builder/build-windows.cmd -text
 Builder/builder_custom_init.cmd eol=crlf
+Builder/import-meinc.cmd -text
 Builder/local-install-linux.sh -text
 Editor/PythonBEmacs.sln -text
 Editor/PythonBEmacs/bemacs.icns -text

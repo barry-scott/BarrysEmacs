@@ -18,7 +18,7 @@ KITROOT=$(KITSRC)\kitfiles
 build: brand kitdir editor mlisp describe quick_info language inno_kit
 
 brand:
-	python brand_version.py version_info.txt ..
+	$(PYTHON) brand_version.py version_info.txt ..
 
 kitdir:
 	if not exist $(KITROOT) mkdir $(KITROOT)

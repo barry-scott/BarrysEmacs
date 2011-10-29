@@ -1,5 +1,5 @@
 #
-#   Copyright (c) 2010 Barry A. Scott
+#   Copyright (c) 2010-2011 Barry A. Scott
 #
 import os
 import sys
@@ -211,7 +211,7 @@ class Compiler:
 
         self.__variables = {}
 
-        self._addVar( 'PYCXX_VER',       '6.2.0' )
+        self._addVar( 'PYCXX_VER',       '6.2.4' )
         self._addVar( 'DEBUG',           'NDEBUG')
 
         self._addFromEnv( 'BUILDER_TOP_DIR' )
@@ -265,7 +265,7 @@ class Win32CompilerMSVC90(Compiler):
         self._addVar( 'PYCXXSRC',       r'%(BUILDER_TOP_DIR)s\Imports\pycxx-%(PYCXX_VER)s\Src' )
         self._addVar( 'UCDDIR',         r'%(BUILDER_TOP_DIR)s\Imports\ucd' )
 
-        self._addVar( 'PYTHONDIR',      r'c:\python26' )
+        self._addVar( 'PYTHONDIR',      sys.exec_prefix )
         self._addVar( 'PYTHON_INCLUDE', r'%(PYTHONDIR)s\include' )
         self._addVar( 'PYTHON_LIB',     r'%(PYTHONDIR)s\libs' )
         self._addVar( 'PYTHON',         r'%(PYTHONDIR)s\python.exe' )
@@ -317,8 +317,8 @@ class Win32CompilerMSVC90(Compiler):
         rules.append( '' )
         rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
         rules.append( '\t@echo Link %s' % (pyd_filename,) )
-        rules.append( '\t@$(LDSHARED)  %%(CCCFLAGS)s /Fe%s /Fd%s %s %%(PYTHON_LIB)s\python26.lib Advapi32.lib' %
-                            (pyd_filename, pdf_filename, ' '.join( all_objects )) )
+        rules.append( '\t@$(LDSHARED)  %%(CCCFLAGS)s /Fe%s /Fd%s %s %%(PYTHON_LIB)s\python%d%d.lib Advapi32.lib' %
+                            (pyd_filename, pdf_filename, ' '.join( all_objects ), sys.version_info.major, sys.version_info.minor) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
@@ -345,8 +345,6 @@ class Win32CompilerMSVC90(Compiler):
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
     def setupUtilities( self ):
-        self._addVar( 'PYTHON',         sys.executable )
-
         self._addVar( 'EDIT_OBJ',       r'obj-utils' )
         self._addVar( 'EDIT_EXE',       r'exe-utils' )
         self._addVar( 'CCCFLAGS',
@@ -359,8 +357,6 @@ class Win32CompilerMSVC90(Compiler):
                                         r'-D%(DEBUG)s' )
 
     def setupPythonEmacs( self ):
-        self._addVar( 'PYTHON',         sys.executable )
-
         self._addVar( 'EDIT_OBJ',       r'obj-pybemacs' )
         self._addVar( 'EDIT_EXE',       r'exe-pybemacs' )
         self._addVar( 'CCCFLAGS',

@@ -8,4 +8,4 @@ set BEMACS_STDOUT_LOG=bemacs-stdout.log
 set BEMACS_DEBUG_LOG=bemacs-debug.log
 set BEMACS_GUI_LOG=bemacs-gui.log
 
-python -u be_main.py %*
+%PYTHON% -u be_main.py %*

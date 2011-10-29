@@ -1,9 +1,5 @@
-setlocal
-set INCLUDE=%MEINC_INSTALLER_DIR%
-set OUTPUTDIR=%1
-shift
-nmake -nologo -f win32-server.mak PYTHON=%PYTHON% BEMACS_PYTHONPATH=..\obj-pybemacs OUTPUTDIR=%OUTPUTDIR% %*
-nmake -nologo -f win32-client.mak PYTHON=%PYTHON% BEMACS_PYTHONPATH=..\obj-pybemacs OUTPUTDIR=%OUTPUTDIR% %*
+call build-client-win32.cmd %*
+call build-server-win32.cmd %*
+
 del %OUTPUTDIR%\pywintypes26.dll
 del %OUTPUTDIR%\win32api.pyd
-endlocal
