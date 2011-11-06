@@ -2,8 +2,8 @@
 @if "%1" == "" set __e=on
 @echo %__e%
 rem builder_custom_init
-rem set BUILDER_CFG_PLATFORM=Win32
-set BUILDER_CFG_PLATFORM=Win64
+set BUILDER_CFG_PLATFORM=Win32
+rem set BUILDER_CFG_PLATFORM=Win64
 set BUILDER_CFG_BUILD_TYPE=Release
 set MSVC_VERSION=90
 set PYTHON_VERSION=2.7
