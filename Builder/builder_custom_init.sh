@@ -23,7 +23,7 @@ Linux)
 
     elif [ -e /etc/os-release ]
     then
-        if [ "$( grep "DISTRIB_ID=Ubuntu" /etc/os_release )" == "ID=debian" ]
+        if [ "$( grep "DISTRIB_ID=Ubuntu" /etc/os-release )" == "ID=debian" ]
         then
             export BUILDER_CFG_PLATFORM=Linux-Debian
         fi
