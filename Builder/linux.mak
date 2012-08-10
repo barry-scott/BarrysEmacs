@@ -20,6 +20,14 @@ BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree/usr/local/bemacs8/lib/bem
 BEMACS_BIN_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree/usr/local/bemacs8/bin
 BUILD_KIT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG
 
+else
+ifeq (${BUILDER_CFG_PLATFORM},Linux-Debian)
+BEMACS_ROOT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree
+BEMACS_DOC_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree/usr/local/bemacs8/share/doc/bemacs
+BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree/usr/local/bemacs8/lib/bemacs
+BEMACS_BIN_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree/usr/local/bemacs8/bin
+BUILD_KIT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG
+
 endif
 endif
 
