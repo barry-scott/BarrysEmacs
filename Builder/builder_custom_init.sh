@@ -14,10 +14,19 @@ Linux)
     then
         export BUILDER_CFG_PLATFORM=Linux-Fedora
 
-    elif [ -e /etc/lsb-release -a "$( grep "DISTRIB_ID=Ubuntu" /etc/lsb-release )" == "DISTRIB_ID=Ubuntu" ]
+    elif [ -e /etc/lsb-release ]
     then
-        export BUILDER_CFG_PLATFORM=Linux-Ubuntu
+        if [ "$( grep "DISTRIB_ID=Ubuntu" /etc/lsb-release )" == "DISTRIB_ID=Ubuntu" ]
+        then
+            export BUILDER_CFG_PLATFORM=Linux-Ubuntu
+        fi
 
+    elif [ -e /etc/os-release ]
+    then
+        if [ "$( grep "DISTRIB_ID=Ubuntu" /etc/os_release )" == "ID=debian" ]
+        then
+            export BUILDER_CFG_PLATFORM=Linux-Debian
+        fi
     fi
     export PYTHON=python${PYTHON_VERSION}
     ;;
