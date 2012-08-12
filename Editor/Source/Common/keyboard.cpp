@@ -1447,17 +1447,10 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
 {
 #define    _qq_char( value ) output.append( (EmacsChar_t)(value) )
 
-    EmacsChar_t ch;
-    int len;
-    int csi_state = CSI_ST_NORMAL;
     EmacsChar_t hold[100];
-    EmacsChar_t *hold_get_ptr;
-    EmacsChar_t *hold_put_ptr;
-    int i;
 
-    csi_state = CSI_ST_NORMAL;
-    hold_put_ptr = &hold[0];
-    len = 0;
+    int csi_state = CSI_ST_NORMAL;
+    EmacsChar_t *hold_put_ptr = &hold[0];
 
     //
     //    If nothing special is requested just return
@@ -1469,9 +1462,9 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
         return 1;
     }
 
-    for( i=0; i<=input.length() - 1; i += 1 )
+    for( int i=0; i<=input.length() - 1; i += 1 )
     {
-        ch = input[ i ];
+        EmacsChar_t ch = input[ i ];
         for(;;)
         {
             switch( csi_state)
@@ -1531,10 +1524,8 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
                 {
                     if( ch == '~' && cs_cvt_f_keys )
                     {
-                        int key_num;
-
-                        hold_get_ptr = &hold[0];
-                        key_num = 0;
+                        EmacsChar_t *hold_get_ptr = &hold[0];
+                        int key_num = 0;
                         while( hold_get_ptr != hold_put_ptr )
                         {
                             ch = *hold_get_ptr++;
@@ -1567,10 +1558,8 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
                     && &hold[0] != hold_put_ptr
                     && hold_put_ptr[-1] == '&' )
                     {
-                        int event_num;
-
-                        hold_get_ptr = &hold[0];
-                        event_num = 0;
+                        EmacsChar_t *hold_get_ptr = &hold[0];
+                        int event_num = 0;
                         while( hold_get_ptr != hold_put_ptr )
                         {
                             ch = *hold_get_ptr++;
@@ -1591,10 +1580,8 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
                     && &hold[0] != hold_put_ptr
                     && hold_put_ptr[-1] == '#' )
                     {
-                        int event_num;
-
-                        hold_get_ptr = &hold[0];
-                        event_num = 0;
+                        EmacsChar_t *hold_get_ptr = &hold[0];
+                        int event_num = 0;
                         while( hold_get_ptr != hold_put_ptr )
                         {
                             ch = *hold_get_ptr++;
@@ -1613,15 +1600,13 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
                         _qq_char( 0x9b );
                     }
 
-                    EmacsChar_t par_char;
-                    EmacsChar_t *hold_get_ptr;
                     //
                     //    Find out how many parameters are present
                     //
-                    hold_get_ptr = &hold[0];
+                    EmacsChar_t *hold_get_ptr = &hold[0];
                     while( hold_get_ptr != hold_put_ptr )
                     {
-                        par_char = *hold_get_ptr++;
+                        EmacsChar_t par_char = *hold_get_ptr++;
                         if( ! (cs_attr[par_char]&M_CS_PAR_SEP)
                         &&  ! (cs_attr[par_char]&M_CS_PAR_CHAR) )
                             _qq_char( par_char );
@@ -1634,7 +1619,7 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
 
                 // syntax error in escape sequence
                 _qq_char( 0x9b );
-                hold_get_ptr = &hold[0];
+                EmacsChar_t *hold_get_ptr = &hold[0];
                 while( hold_get_ptr != hold_put_ptr )
                     _qq_char( *hold_get_ptr++ );
 
@@ -1659,7 +1644,7 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
         if( csi_state == CSI_ST_CSI )
             _qq_char( 0x9b );
 
-        hold_get_ptr = &hold[0];
+        EmacsChar_t *hold_get_ptr = &hold[0];
         while( hold_get_ptr != hold_put_ptr )
             _qq_char( *hold_get_ptr++ );
     }

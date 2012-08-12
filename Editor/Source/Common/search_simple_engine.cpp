@@ -1,7 +1,7 @@
 //
 //            Copyright (c) 1985
 //        Barry A. Scott and Nick Emery
-//            Copyright (c) 1986-2010
+//            Copyright (c) 1986-2012
 //        Barry A. Scott
 //
 #include <emacs.h>
@@ -519,9 +519,9 @@ int SearchSimpleAlgorithm::backref( int i, int lp )
 
 
 
-int SearchSimpleAlgorithm::cclass( EmacsChar_t *char_set, int c, int af )
+int SearchSimpleAlgorithm::cclass( EmacsChar_t *char_set, EmacsChar_t c, int af )
 {
-    int n = *char_set++;
+    EmacsChar_t n = *char_set++;
 
     if( sea_case_fold )
     {

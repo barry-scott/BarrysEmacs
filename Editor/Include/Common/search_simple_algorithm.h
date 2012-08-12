@@ -1,7 +1,7 @@
 // Copyright (c) 1985
 //        Barry A. Scott and Nick Emery
 //
-// Copyright (c) 1986-2010
+// Copyright (c) 1986-2012
 //        Barry A. Scott
 //
 // Declarations having to do with Emacs searching
@@ -69,7 +69,7 @@ private:
     int search_advance( int lp, EmacsChar_t *ep, int syn_include, int syn_exclude );
 
     int backref( int i, int lp );
-    int cclass( EmacsChar_t *char_set, int c, int af );
+    int cclass( EmacsChar_t *char_set, EmacsChar_t c, int af );
 
     enum { ESIZE = 8192 };                          // the maximum size of an RE
 
