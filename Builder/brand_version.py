@@ -35,7 +35,7 @@ class FileFinder:
         self.__vi = vi
 
     def findAndBrandFiles( self, path ):
-        print 'findAndBrandFiles',path
+        #print 'findAndBrandFiles',path
         all_files = os.listdir( path )
 
         for filename in all_files:
