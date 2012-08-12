@@ -16,14 +16,14 @@ Linux)
 
     elif [ -e /etc/lsb-release ]
     then
-        if [ "$( grep "DISTRIB_ID=Ubuntu" /etc/lsb-release )" == "DISTRIB_ID=Ubuntu" ]
+        if [ "$( grep "DISTRIB_ID=Ubuntu" /etc/lsb-release )" = "DISTRIB_ID=Ubuntu" ]
         then
             export BUILDER_CFG_PLATFORM=Linux-Ubuntu
         fi
 
     elif [ -e /etc/os-release ]
     then
-        if [ "$( grep "DISTRIB_ID=Ubuntu" /etc/os-release )" == "ID=debian" ]
+        if [ "$( grep "ID=debian" /etc/os-release )" = "ID=debian" ]
         then
             export BUILDER_CFG_PLATFORM=Linux-Debian
         fi
