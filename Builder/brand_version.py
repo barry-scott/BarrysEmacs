@@ -116,6 +116,8 @@ class VersionInfo:
         cmd = 'svnversion -c "%s" >svn_version.dat' % (wc_path,)
         os.system( cmd )
         output = open( 'svn_version.dat', 'r' ).read()
+        if len(output) == 0:
+            output = '0:0M'
 
         self.is_svn_wc = output[0] in '0123456789'
 
