@@ -63,7 +63,7 @@ $(BEMACS_BIN_DIR)::
 editor:
 	@ echo Info: Building BEmacs images...
 	cd ../Editor && ./build-linux.sh all
-	cp ../Editor/obj-pybemacs/_bemacs.so ${BEMACS_LIB_DIR}
+	cp ../Editor/obj-pybemacs/_bemacs.so $(BEMACS_LIB_DIR)
 	@ echo Info: Copy db utils...
 	cp ../Editor/obj-utils/dbadd	$(BEMACS_BIN_DIR)
 	cp ../Editor/obj-utils/dbcreate $(BEMACS_BIN_DIR)
@@ -75,7 +75,7 @@ editor:
 
 bemacs:
 	@ echo Info: Copy PythonBEmacs...
-	cd ../Editor/PythonBEmacs && ./build-linux.sh ${BEMACS_ROOT_DIR} ${BEMACS_BIN_DIR} ${BEMACS_LIB_DIR} ${BEMACS_DOC_DIR}
+	cd ../Editor/PythonBEmacs && ./build-linux.sh $(BEMACS_ROOT_DIR) $(BEMACS_BIN_DIR) $(BEMACS_LIB_DIR) $(BEMACS_DOC_DIR)
 
 mlisp:
 	@ echo Info: Copying Mlisp files...
@@ -122,7 +122,7 @@ Fedora_rpm_Any:
 
 Debian_pkg:
 	@ echo Info: ${BUILDER_CFG_PLATFORM} DPKG creation...
-	cd ${BUILD_KIT_DIR}; chmod +x ./create-dpkg.sh; ./create-dpkg.sh
+	cd $(BUILD_KIT_DIR); chmod +x ./create-dpkg.sh; ./create-dpkg.sh
 
 clean:
 	cd ../Editor && ./build-linux.sh clean
