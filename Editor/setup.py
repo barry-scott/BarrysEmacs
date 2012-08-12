@@ -381,8 +381,8 @@ class CompilerGCC(Compiler):
 
 
         if self.setup.platform == 'macosx':
-            self._addVar( 'CCC',            'g++ -arch i386' )
-            self._addVar( 'CC',             'gcc -arch i386' )
+            self._addVar( 'CCC',            'g++ -arch i386 -arch x86_64' )
+            self._addVar( 'CC',             'gcc -arch i386 -arch x86_64' )
 
         else:
             self._addVar( 'CCC',            'g++' )
@@ -433,7 +433,7 @@ class CompilerGCC(Compiler):
 
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
         rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, obj_filename) )
-        rules.append( '\t@%%(CCC)s -c %%(CCCFLAGS)s -o%s  %s' % (obj_filename, target.src_filename) )
+        rules.append( '\t%%(CCC)s -c %%(CCCFLAGS)s -o %s  %s' % (obj_filename, target.src_filename) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
@@ -444,7 +444,7 @@ class CompilerGCC(Compiler):
 
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
         rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, target) )
-        rules.append( '\t@%%(CC)s -c %%(CCCFLAGS)s -o%s  %s' % (obj_filename, target.src_filename) )
+        rules.append( '\t@%%(CC)s -c %%(CCCFLAGS)s -o %s  %s' % (obj_filename, target.src_filename) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 

@@ -35,10 +35,10 @@ elif 'BEMACS_STDOUT_LOG' in os.environ:
     sys.stdout = open( os.environ[ 'BEMACS_STDOUT_LOG' ], 'w', 0 )
     sys.stderr = sys.stdout
 
-# make sure that we get 2.8 and not an earlier version
+# make sure that we get 2.9 and not an earlier version
 try:
     import wxversion
-    wxversion.select( ['2.8'] )
+    wxversion.select( ['2.9'] )
 
 except:
     pass

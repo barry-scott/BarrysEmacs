@@ -3,7 +3,7 @@
 #
 maturity:   V
 major:      8
-minor:      0
+minor:      1
 patch:      0
 
 version:            %(wc_state)s%(maturity)s%(major)s.%(minor)s.%(patch)s-%(revision)s

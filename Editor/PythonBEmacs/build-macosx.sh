@@ -12,9 +12,9 @@ fi
 rm -rf build ${DIST_DIR}
 
 mkdir -p ${DIST_DIR}
-python2.6 make_be_images.py
+${PYTHON} make_be_images.py
 export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/obj-pybemacs
-python2.6 setup-macosx.py py2app --dist-dir ${DIST_DIR} --no-strip 2>&1 | tee a.log
+${PYTHON} setup-macosx.py py2app --dist-dir ${DIST_DIR} --no-strip 2>&1 | tee a.log
 
 mkdir -p "${DIST_DIR}/Barry's Emacs-Devel.app/Contents/Resources/emacs_library"
 mkdir -p "${DIST_DIR}/Barry's Emacs-Devel.app/Contents/Resources/documentation"

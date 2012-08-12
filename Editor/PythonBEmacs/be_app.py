@@ -614,7 +614,8 @@ class BemacsApp(wx.App, be_debug.EmacsDebugMixin):
     def MacOpenFile( self, filename ):
         # Called for files droped on dock icon, or opened via finders context menu
         self.log.debug( 'MacOpenFile( %s )' % (filename,) )
-        self.editor.guiOpenFile( filename )
+        if self.editor is not None:
+            self.editor.guiOpenFile( filename )
         self.BringWindowToFront()
 
     def MacReopenApp( self ):

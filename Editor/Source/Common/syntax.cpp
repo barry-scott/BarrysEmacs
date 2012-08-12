@@ -473,7 +473,7 @@ void SyntaxTable::modify_table_set_paired_type( int type, int ch )
 void SyntaxTable::modify_table_range_type( int type, const EmacsString &str1, void (SyntaxTable::*set_func)( int type, int ch ) )
     throw( SyntaxTable::SyntaxErrorException, SyntaxTable::SyntaxMemoryException )
 {
-    int ch = 0;
+    EmacsChar_t ch = 0;
 
     int i=0;
     while( i < str1.length() )

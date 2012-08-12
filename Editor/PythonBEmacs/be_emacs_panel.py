@@ -336,6 +336,32 @@ cmd_to_ctrl_map = {
     ord(']'):   29,
     ord('^'):   30,
     ord('_'):   31,
+    ord('A'):   1,
+    ord('B'):   2,
+    ord('C'):   3,
+    ord('D'):   4,
+    ord('E'):   5,
+    ord('F'):   6,
+    ord('G'):   7,
+    ord('H'):   8,
+    ord('I'):   9,
+    ord('J'):   10,
+    ord('K'):   11,
+    ord('L'):   12,
+    ord('M'):   13,
+    ord('N'):   14,
+    ord('O'):   15,
+    ord('P'):   16,
+    ord('Q'):   17,
+    ord('R'):   18,
+    ord('S'):   19,
+    ord('T'):   20,
+    ord('U'):   21,
+    ord('V'):   22,
+    ord('W'):   23,
+    ord('X'):   24,
+    ord('Y'):   25,
+    ord('Z'):   26,
     }
 
 special_keys = {
@@ -631,14 +657,19 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
         key = event.GetKeyCode()
         shift = event.ShiftDown()
         ctrl = event.ControlDown()
+        raw_ctrl = event.RawControlDown()
+        alt = event.AltDown()
+        cmd = event.CmdDown()
+        meta = event.MetaDown()
 
         # map cmd into ctrl
+        print 'wx.Platform', wx.Platform
         if wx.Platform == '__WXMAC__':
-            cmd = event.ControlDown()
-            if cmd:
+            if cmd or raw_ctrl:
                 ctrl = True
 
-        self._debugTermKey( 'OnKeyDown key %r name %r ctrl %s shift %s' % (key, wx_key_names.get( key, 'unknown' ), T( ctrl ), T( shift )) )
+        self._debugTermKey( 'OnKeyDown key %r name %r raw_ctrl %s ctrl %s shift %s alt %s cmd %s meta %s' %
+                            (key, wx_key_names.get( key, 'unknown' ), T( raw_ctrl ), T( ctrl ), T( shift ), T( alt ), T( cmd ), T( meta )) )
 
         if key in special_keys:
             trans, shift_trans, ctrl_trans, ctrl_shift_trans = special_keys[ key ]
@@ -670,8 +701,13 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
         key = event.GetKeyCode()
         shift = event.ShiftDown()
         ctrl = event.ControlDown()
+        raw_ctrl = event.RawControlDown()
+        alt = event.AltDown()
+        cmd = event.CmdDown()
+        meta = event.MetaDown()
 
-        self._debugTermKey( 'OnKeyUp key %r name %r ctrl %s shift %s' % (key, wx_key_names.get( key, 'unknown' ), T( ctrl ), T( shift )) )
+        self._debugTermKey( 'OnKeyUp key %r name %r raw_ctrl %s ctrl %s shift %s alt %s cmd %s meta %s' %
+                            (key, wx_key_names.get( key, 'unknown' ), T( raw_ctrl ), T( ctrl ), T( shift ), T( alt ), T( cmd ), T( meta )) )
 
         event.Skip()
 
@@ -683,30 +719,19 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
             return
 
         char = event.GetUnicodeKey()
-        line_parts = ['OnChar "%r" %r' % (unichr( char ), char)]
-
         key = event.GetKeyCode()
-        line_parts.append( ' key %r' % (key,) )
-
-        alt = event.AltDown()
-        line_parts.append( ' alt: %s' % T(alt) )
-
-        cmd = event.CmdDown()
-        line_parts.append( ' cmd: %s' % T(cmd) )
-
-        ctrl = event.ControlDown()
-        line_parts.append( ' control: %s' % T(ctrl) )
-
-        meta = event.MetaDown()
-        line_parts.append( ' meta: %s' % T(meta) )
-
         shift = event.ShiftDown()
-        line_parts.append( ' shift: %s' % T(shift) )
+        ctrl = event.ControlDown()
+        raw_ctrl = event.RawControlDown()
+        alt = event.AltDown()
+        cmd = event.CmdDown()
+        meta = event.MetaDown()
 
-        self._debugTermKey( (''.join( line_parts )).encode( 'utf-8' ) )
+        self._debugTermKey( ('OnChar "%r" %r key %r name %r raw_ctrl %s ctrl %s shift %s alt %s cmd %s meta %s' %
+                            (unichr( char ), char, key, wx_key_names.get( key, 'unknown' ), T( raw_ctrl ), T( ctrl ), T( shift ), T( alt ), T( cmd ), T( meta ))).encode( 'utf-8' ) )
 
         if( wx.Platform == '__WXMAC__'
-        and cmd
+        and (cmd or ctrl or raw_ctrl)
         and char in cmd_to_ctrl_map ):
             print 'mapped %d to %d' % (char, cmd_to_ctrl_map[ char ])
             char = cmd_to_ctrl_map[ char ]
