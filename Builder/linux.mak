@@ -28,6 +28,10 @@ BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree/usr/local/bemacs8/lib/bem
 BEMACS_BIN_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree/usr/local/bemacs8/bin
 BUILD_KIT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG
 
+else
+$(error unsupported BUILDER_CFG_PLATFORM of $(BUILDER_CFG_PLATFORM) )
+
+endif
 endif
 endif
 endif
