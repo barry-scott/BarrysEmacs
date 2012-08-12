@@ -13,7 +13,7 @@ rm -rf build ${DIST_DIR}
 
 mkdir -p ${DIST_DIR}
 ${PYTHON} make_be_images.py
-export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/obj-pybemacs
+export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/obj-pybemacs:$HOME/wc/hg/macholib
 ${PYTHON} setup-macosx.py py2app --dist-dir ${DIST_DIR} --no-strip 2>&1 | tee a.log
 
 mkdir -p "${DIST_DIR}/Barry's Emacs-Devel.app/Contents/Resources/emacs_library"
