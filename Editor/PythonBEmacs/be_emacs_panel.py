@@ -657,13 +657,15 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
         key = event.GetKeyCode()
         shift = event.ShiftDown()
         ctrl = event.ControlDown()
-        raw_ctrl = event.RawControlDown()
+        if hasattr( event, 'RawControlDown' ):
+             raw_ctrl = event.RawControlDown()
+        else:
+             raw_ctrl = True
         alt = event.AltDown()
         cmd = event.CmdDown()
         meta = event.MetaDown()
 
         # map cmd into ctrl
-        print 'wx.Platform', wx.Platform
         if wx.Platform == '__WXMAC__':
             if cmd or raw_ctrl:
                 ctrl = True
@@ -701,7 +703,10 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
         key = event.GetKeyCode()
         shift = event.ShiftDown()
         ctrl = event.ControlDown()
-        raw_ctrl = event.RawControlDown()
+        if hasattr( event, 'RawControlDown' ):
+             raw_ctrl = event.RawControlDown()
+        else:
+             raw_ctrl = True
         alt = event.AltDown()
         cmd = event.CmdDown()
         meta = event.MetaDown()
@@ -722,7 +727,10 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
         key = event.GetKeyCode()
         shift = event.ShiftDown()
         ctrl = event.ControlDown()
-        raw_ctrl = event.RawControlDown()
+        if hasattr( event, 'RawControlDown' ):
+             raw_ctrl = event.RawControlDown()
+        else:
+             raw_ctrl = True
         alt = event.AltDown()
         cmd = event.CmdDown()
         meta = event.MetaDown()
