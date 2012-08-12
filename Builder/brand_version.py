@@ -113,17 +113,11 @@ class VersionInfo:
         f.close()
 
     def setSvnVersion( self, wc_path ):
-        svn_meta_dir = os.path.join( wc_path, '.svn' )
-        if os.path.exists( svn_meta_dir ):
-            cmd = 'svnversion -c "%s" >svn_version.dat' % (wc_path,)
-            os.system( cmd )
-
-            self.is_svn_wc = True
-
-        else:
-            self.is_svn_wc = False
-
+        cmd = 'svnversion -c "%s" >svn_version.dat' % (wc_path,)
+        os.system( cmd )
         output = open( 'svn_version.dat', 'r' ).read()
+
+        self.is_svn_wc = output[0] in '0123456789'
 
         version_string = output.strip().split(':')[-1]
         modifiers = ''
