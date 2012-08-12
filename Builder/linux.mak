@@ -30,6 +30,7 @@ BUILD_KIT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG
 
 endif
 endif
+endif
 
 usage:
 	@ echo "Usage: make -f unix.mak build"
@@ -44,6 +45,8 @@ brand:
 build_Linux-Fedora: build_Linux # Fedora_rpm
 
 build_Linux-Ubuntu: build_Linux # Debian_pkg
+
+build_Linux-Debian: build_Linux # Debian_pkg
 
 build_Linux: brand $(BEMACS_DOC_DIR) $(BEMACS_LIB_DIR) $(BEMACS_BIN_DIR) editor bemacs mlisp describe language quick_info docs
 	@ echo Info: Linux kitting
