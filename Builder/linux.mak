@@ -34,7 +34,6 @@ $(error unsupported BUILDER_CFG_PLATFORM of $(BUILDER_CFG_PLATFORM) )
 endif
 endif
 endif
-endif
 
 usage:
 	@ echo "Usage: make -f unix.mak build"
