@@ -305,10 +305,10 @@ class BemacsApp(wx.App, be_debug.EmacsDebugMixin):
 
     def guiReportException( self, body, title ):
         dlg = wx.MessageDialog(
-                   self.frame,
+                    self.frame,
                     body,
                     title,
-                    wx.ICON_EXCLAMATION
+                    wx.OK|wx.ICON_EXCLAMATION
                     )
         rc = dlg.ShowModal()
         dlg.Destroy()
