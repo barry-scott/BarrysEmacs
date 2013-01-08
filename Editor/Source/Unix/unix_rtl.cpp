@@ -174,10 +174,16 @@ void _dbg_msg( const EmacsString &msg )
     }
     else
     {
-        fprintf( stderr,"%s", msg.sdata() );
+        static FILE *dbg = NULL;
+        if( dbg == NULL )
+        {
+            dbg = fopen( "/tmp/bemacs_debug.log", "a" );
+        }
+
+        fprintf( dbg,"%s", msg.sdata() );
         if( msg[-1] != '\n' )
-            fprintf( stderr, "\n" );
-        fflush( stderr );
+            fprintf( dbg, "\n" );
+        fflush( dbg );
     }
 }
 

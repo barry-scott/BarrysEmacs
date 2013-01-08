@@ -269,15 +269,21 @@ class BemacsFrame(wx.Frame):
 
     # Handler for the About menu command
     def OnCmdAbout(self, event):
-        ver_str = ('%d.%d.%d-%d\n' %
-                    (be_version.major, be_version.minor,
-                     be_version.patch, be_version.build))
-        str_message =    ((T_("Barry's Emacs version: %s") % ver_str) +
-                '\nwxPython %d.%d.%d.%d %s' % wx.VERSION +
-                '\nPython %d.%d.%d %s %d\n' % sys.version_info +
-                T_('\nCopyright Barry Scott (c) 1980-2010. All rights reserved')
-                )
-        wx.LogMessage( str_message )
+        all_about_info = []
+        all_about_info.append( T_("Barry's Emacs %d.%d.%d-%d") %
+                                (be_version.major, be_version.minor
+                                ,be_version.patch, be_version.build) )
+        all_about_info.append( 'wxPython %d.%d.%d.%d %s' %
+                                wx.VERSION )
+        all_about_info.append( 'Python %d.%d.%d %s %d' %
+                                (sys.version_info.major
+                                ,sys.version_info.minor
+                                ,sys.version_info.micro
+                                ,sys.version_info.releaselevel
+                                ,sys.version_info.serial) )
+        all_about_info.append( T_('Copyright Barry Scott (c) 1980-%s. All rights reserved') % (be_version.year,) )
+
+        wx.LogMessage( '\n'.join( all_about_info ) )
 
     def OnCmdPreferences( self, event ):
         pref_dialog = be_preferences_dialog.PreferencesDialog( self, self.app )
@@ -300,8 +306,6 @@ class BemacsFrame(wx.Frame):
 
         elif '__WXMSW__' in wx.Platform:
             os.system( 'start "%s"' % (user_guide,) )
-
-
 
     def OnSize( self, event ):
         if not self.IsMaximized():

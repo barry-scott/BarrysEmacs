@@ -1,7 +1,7 @@
 '''
 
  ====================================================================
- Copyright (c) 2009 Barry A Scott.  All rights reserved.
+ Copyright (c) 2009-2013 Barry A Scott.  All rights reserved.
 
  This software is licensed as described in the file LICENSE.txt,
  which you should have received as part of this distribution.
@@ -15,3 +15,4 @@ major = %(major)s
 minor = %(minor)s
 patch = %(patch)s
 build = %(build)s
+year = "%(year)s"
