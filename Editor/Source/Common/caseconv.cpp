@@ -176,10 +176,9 @@ static int case_string( case_op &op )
     const EmacsString &value = ml_value.asString();
     EmacsString result;
 
-    // dirty trick to modify the data inside the string
     const EmacsChar_t *p = value.unicode_data();
 
-    for( int i=result.length(); i>0; i--, p++ )
+    for( int i=value.length(); i>0; i--, p++ )
     {
         EmacsChar_t c = *p;
         if( !bf_cur->char_is( c, SYNTAX_WORD ) )
