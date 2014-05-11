@@ -189,8 +189,6 @@ public:
     virtual EmacsMacroString getMacro(void) const;    // return NULL or a Macros string if there is one
     virtual ProgramNode *getProcedure(void) const;
     virtual const char *commandTypeName() const = 0;
-private:
-    int ref_count;
 };
 
 class BoundNameMacro : public BoundNameInside

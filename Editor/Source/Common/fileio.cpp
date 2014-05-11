@@ -101,8 +101,6 @@ BoundName *buffer_saved_as_proc;
 static EmacsString wrote_file;
 static int write_errors;
 
-const int MAX_ERROR_MESSAGE( 256 );       // Max size of error string
-
 void SystemExpressionRepresentationBackupFileMode::assign_value( ExpressionRepresentation *new_value )
 {
     const EmacsString &value = new_value->asString();

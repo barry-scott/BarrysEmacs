@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1982-2010
+//    Copyright (c) 1982-2014
 //        Barry A. Scott
 //
 
@@ -199,7 +199,6 @@ public:
 private:
     virtual int readCharacter();
 
-    int pos;
     EmacsString string;
 
     int file_size;

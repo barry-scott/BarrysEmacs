@@ -80,11 +80,6 @@ static struct search_exp_info search_exp_info[] =
 //   The search match is performed in the current buffer.
 //   fflag is true iff we are doing a forward search.
 //
-const int SEARCH_FORWARD( 1 );
-const int SEARCH_BACKWARD( 0 );
-const int SEARCH_CASEFOLD( 2 );
-const int SEARCH_USETRT( 4 );
-
 int SearchSimpleAlgorithm::search_execute( int fflag, int addr )
 {
     int p1 = addr;

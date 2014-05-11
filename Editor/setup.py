@@ -1,10 +1,12 @@
 #
-#   Copyright (c) 2010-2011 Barry A. Scott
+#   Copyright (c) 2010-2014 Barry A. Scott
 #
 import os
 import sys
 
 _debug = False
+
+pycxx_version = '6.2.7'
 
 def debug( msg ):
     if _debug:
@@ -211,7 +213,7 @@ class Compiler:
 
         self.__variables = {}
 
-        self._addVar( 'PYCXX_VER',       '6.2.4' )
+        self._addVar( 'PYCXX_VER',       pycxx_version )
         self._addVar( 'DEBUG',           'NDEBUG')
 
         self._addFromEnv( 'BUILDER_TOP_DIR' )

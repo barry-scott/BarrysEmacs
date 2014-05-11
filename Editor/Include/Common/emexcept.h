@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1995 Barry A. Scott
+//    Copyright (c) 1995-2014 Barry A. Scott
 //
 //    emacs exceptions header
 //
@@ -14,7 +14,7 @@ public:
         debug_exception();
     }
     virtual ~EmacsException() { }
-private:
+protected:
     int _code;
 };
 

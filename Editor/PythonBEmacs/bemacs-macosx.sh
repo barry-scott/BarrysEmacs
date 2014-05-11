@@ -18,5 +18,6 @@ then
     gdb python${PYTHON_VERSION}
 
 else
+    which python${PYTHON_VERSION}
     python${PYTHON_VERSION} -u be_main.py "$@"
 fi

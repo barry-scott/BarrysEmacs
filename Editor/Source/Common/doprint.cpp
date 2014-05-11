@@ -338,10 +338,10 @@ void FormatString::process_format()
         else
             precision = 9999;
 
-        format_char = (char)ch;
+        format_char = ch;
         switch( ch )
         {
-        case -1:    // end of format string
+        case 0:    // end of format string
             return;
         case '%':
             put(  '%' );

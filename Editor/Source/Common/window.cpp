@@ -29,7 +29,6 @@ SystemExpressionRepresentationString global_mode_string;
 SystemExpressionRepresentationIntBoolean pop_up_windows( 1 );
 SystemExpressionRepresentationIntPositive split_height_threshold( 20 );
 
-const int CHAR_END_OF_FILE( 0x25c6 );   // unicode Black Diamond
 const int CHAR_HT( 0x2409 );            // unicode Tab HT
 const int CHAR_HT_FILL( 0x00b7 );       // unicode Middle Dot
 const int CHAR_NL( 0x2424 );            // unicode Newline NL
@@ -1312,16 +1311,30 @@ void EmacsWindow::dump_mode( int line, int col )
                 str = bf_cur->b_modified != 0 ? "*" : "";
                 break;
             case '[':
-                if( recurse_depth > 4 )
+                switch( recurse_depth  )
+                {
+                case 0: str = ""; break;
+                case 1: str = "["; break;
+                case 2: str = "[["; break;
+                case 3: str = "[[["; break;
+                case 4: str = "[[[["; break;
+                default:
                     str = FormatString("[%d[") << recurse_depth;
-                else
-                    str = "[[[[" + (4 - recurse_depth);
+                    break;
+                }
                 break;
             case ']':
-                if( recurse_depth > 4 )
+                switch( recurse_depth  )
+                {
+                case 0: str = ""; break;
+                case 1: str = "]"; break;
+                case 2: str = "]]"; break;
+                case 3: str = "]]]"; break;
+                case 4: str = "]]]]"; break;
+                default:
                     str = FormatString("]%d]") << recurse_depth;
-                else
-                    str = "]]]]" + (4 - recurse_depth);
+                    break;
+                }
                 break;
             case 'p':
                 str = dump_mode_percent( d, tl );

@@ -240,7 +240,7 @@ Py::Object BemacsFunctions::getattr( const char *c_name )
     return Py::Object( func, true );
 }
 
-int BemacsFunctions::setattr( const char *c_name, Py::Object /*value*/ )
+int BemacsFunctions::setattr( const char *c_name, const Py::Object &/*value*/ )
 {
     throw Py::NameError( c_name );
 }
@@ -288,7 +288,7 @@ Py::Object BemacsBufferData::getattr( const char *c_name )
     return getattr_methods( c_name );
 }
 
-int BemacsBufferData::setattr( const char *c_name, Py::Object /*value*/ )
+int BemacsBufferData::setattr( const char *c_name, const Py::Object &/*value*/ )
 {
     throw Py::NameError( c_name );
 }
@@ -314,7 +314,7 @@ Py::Object BemacsBufferData::sequence_concat( const Py::Object & )
     throw Py::ValueError("cannot concat");
 }
 
-Py::Object BemacsBufferData::sequence_repeat( int )
+Py::Object BemacsBufferData::sequence_repeat( Py_ssize_t )
 {
     if( !buffer.bufferValid() )
         throw Py::ValueError("buffer has been deleted");
@@ -322,7 +322,7 @@ Py::Object BemacsBufferData::sequence_repeat( int )
     throw Py::ValueError("cannot repeat");
 }
 
-Py::Object BemacsBufferData::sequence_item( int position )
+Py::Object BemacsBufferData::sequence_item( Py_ssize_t position )
 {
     if( !buffer.bufferValid() )
         throw Py::ValueError("buffer has been deleted");
@@ -337,7 +337,7 @@ Py::Object BemacsBufferData::sequence_item( int position )
     return Py::String( ch );
 }
 
-Py::Object BemacsBufferData::sequence_slice( int start, int end )
+Py::Object BemacsBufferData::sequence_slice( Py_ssize_t start, Py_ssize_t end )
 {
     if( !buffer.bufferValid() )
         throw Py::ValueError("buffer has been deleted");
@@ -360,7 +360,7 @@ Py::Object BemacsBufferData::sequence_slice( int start, int end )
     return Py::String( (char *)buffer->ref_char_at( start ), end - start );
 }
 
-int BemacsBufferData::sequence_ass_item( int, const Py::Object & )
+int BemacsBufferData::sequence_ass_item( Py_ssize_t, const Py::Object & )
 {
     if( !buffer.bufferValid() )
         throw Py::ValueError("buffer has been deleted");
@@ -368,7 +368,7 @@ int BemacsBufferData::sequence_ass_item( int, const Py::Object & )
     throw Py::ValueError("cannot ass_item");
 }
 
-int BemacsBufferData::sequence_ass_slice( int, int, const Py::Object & )
+int BemacsBufferData::sequence_ass_slice( Py_ssize_t, Py_ssize_t, const Py::Object & )
 {
     if( !buffer.bufferValid() )
         throw Py::ValueError("buffer has been deleted");
@@ -416,7 +416,7 @@ Py::Object BemacsBufferSyntax::getattr( const char *c_name )
     return getattr_methods( c_name );
 }
 
-int BemacsBufferSyntax::setattr( const char *c_name, Py::Object /*value*/ )
+int BemacsBufferSyntax::setattr( const char *c_name, const Py::Object &/*value*/ )
 {
     throw Py::NameError( c_name );
 }
@@ -442,7 +442,7 @@ Py::Object BemacsBufferSyntax::sequence_concat( const Py::Object & )
     throw Py::ValueError("cannot concat");
 }
 
-Py::Object BemacsBufferSyntax::sequence_repeat( int )
+Py::Object BemacsBufferSyntax::sequence_repeat( Py_ssize_t )
 {
     if( !buffer.bufferValid() )
         throw Py::ValueError("buffer has been deleted");
@@ -450,7 +450,7 @@ Py::Object BemacsBufferSyntax::sequence_repeat( int )
     throw Py::ValueError("cannot repeat");
 }
 
-Py::Object BemacsBufferSyntax::sequence_item( int position )
+Py::Object BemacsBufferSyntax::sequence_item( Py_ssize_t position )
 {
     if( !buffer.bufferValid() )
         throw Py::ValueError("buffer has been deleted");
@@ -466,7 +466,7 @@ Py::Object BemacsBufferSyntax::sequence_item( int position )
     return Py::Int( syntax );
 }
 
-Py::Object BemacsBufferSyntax::sequence_slice( int start, int end )
+Py::Object BemacsBufferSyntax::sequence_slice( Py_ssize_t start, Py_ssize_t end )
 {
     if( !buffer.bufferValid() )
         throw Py::ValueError("buffer has been deleted");
@@ -498,7 +498,7 @@ Py::Object BemacsBufferSyntax::sequence_slice( int start, int end )
     return slice;
 }
 
-int BemacsBufferSyntax::sequence_ass_item( int, const Py::Object & )
+int BemacsBufferSyntax::sequence_ass_item( Py_ssize_t, const Py::Object & )
 {
     if( !buffer.bufferValid() )
         throw Py::ValueError("buffer has been deleted");
@@ -506,7 +506,7 @@ int BemacsBufferSyntax::sequence_ass_item( int, const Py::Object & )
     throw Py::ValueError("cannot ass_item");
 }
 
-int BemacsBufferSyntax::sequence_ass_slice( int, int, const Py::Object & )
+int BemacsBufferSyntax::sequence_ass_slice( Py_ssize_t, Py_ssize_t, const Py::Object & )
 {
     if( !buffer.bufferValid() )
         throw Py::ValueError("buffer has been deleted");
@@ -636,7 +636,7 @@ Py::Object BemacsBuffer::getattr( const char *c_name )
     return result;
 }
 
-int BemacsBuffer::setattr( const char *c_name, Py::Object /*value*/ )
+int BemacsBuffer::setattr( const char *c_name, const Py::Object &/*value*/ )
 {
     throw Py::NameError( c_name );
 }
@@ -803,7 +803,7 @@ Py::Object BemacsMarker::getattr( const char *c_name )
     return result;
 }
 
-int BemacsMarker::setattr( const char *c_name, Py::Object /*value*/ )
+int BemacsMarker::setattr( const char *c_name, const Py::Object & /*value*/ )
 {
     throw Py::NameError( c_name );
 }

@@ -64,7 +64,15 @@ int main(int argc,char **argv)
             printf ("</FoO ThE bAr/>\n");
         }
         else
-            printf (listlens ? "%-12.*s %d,%d\n" : "%.*s\n",
-                key.dsize, key.dptr, key.val1, key.val2);
+        {
+            if( listlens )
+            {
+                printf ("%-12.*s %d,%d\n", key.dsize, key.dptr, key.val1, key.val2);
+            }
+            else
+            {
+                printf ("%.*s\n", key.dsize, key.dptr);
+            }
+        }
     return 0;
 }

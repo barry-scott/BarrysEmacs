@@ -184,7 +184,7 @@ public:
         Py::String py_cwd( args[0] );
         Py::List py_argv( args[1] );
 
-        if( py_argv.length() < 0 )
+        if( py_argv.length() == 0 )
             throw Py::ValueError( "arg 2 list cannot be empty" );
 
         EmacsString current_directory( py_cwd.as_std_string( "utf-8" ) );

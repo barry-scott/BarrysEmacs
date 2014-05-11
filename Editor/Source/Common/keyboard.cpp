@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1982-2010
+//    Copyright (c) 1982-2014
 //        Barry A. Scott
 //
 
@@ -228,7 +228,7 @@ int process_keys( void )
             }
         }
 
-        if( (next_global_keymap == 0) )
+        if( next_global_keymap == 0 )
         {
             if( remembering )
                 end_of_mac = key_mem.length();
@@ -1122,7 +1122,8 @@ void TerminalControl::k_input_char( int character, bool shift )
         return;
 
     static csi_states csi_state( CSI_ST_NORMAL );
-    static EmacsChar_t hold[100];
+    const int len_hold = 100;
+    static EmacsChar_t hold[ len_hold ];
     static EmacsChar_t *hold_put_ptr;
 
     EmacsChar_t ch( character );
@@ -1188,7 +1189,7 @@ void TerminalControl::k_input_char( int character, bool shift )
             || cs_attr[ch]&M_CS_PAR_CHAR
             || cs_attr[ch]&M_CS_INT_CHAR )
             {
-                if( hold_put_ptr >= &hold[sizeof(hold)-1] )
+                if( hold_put_ptr >= &hold[len_hold-1] )
                 {
                     //
                     // ignore chars on overflow
@@ -1447,7 +1448,8 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
 {
 #define    _qq_char( value ) output.append( (EmacsChar_t)(value) )
 
-    EmacsChar_t hold[100];
+    const int len_hold = 100;
+    EmacsChar_t hold[ len_hold ];
 
     int csi_state = CSI_ST_NORMAL;
     EmacsChar_t *hold_put_ptr = &hold[0];
@@ -1513,7 +1515,7 @@ int convert_key_string( const EmacsString &input, EmacsString &output )
                 || cs_attr[ch]&M_CS_PAR_CHAR
                 || cs_attr[ch]&M_CS_INT_CHAR )
                 {
-                    if( hold_put_ptr >= &hold[sizeof(hold)-1] )
+                    if( hold_put_ptr >= &hold[len_hold-1] )
                     {
                         return 0;
                     }
