@@ -158,6 +158,7 @@
 	(setq ~start-pos (+ ~end-pos 1))
 
         (setq ~start-filename (file-format-string "%fa" ~files))
+        (setq ~start-directory (file-format-string "%pd" ~files))
 
 	(while
 	    (progn
@@ -165,9 +166,6 @@
 		    (setq ~file (expand-file-name-recursive ~files))
 		    (setq ~file (expand-file-name ~files))
 		)
-                (if (= ~start-directory "")
-                    (setq ~start-directory (file-format-string "%pd" ~file))
-                )
 		(setq ~files "")
 		(!= ~file "")
 	    )
@@ -423,62 +421,62 @@
     (setq ~include 1)
     
     (if ~option-use-exclude-list
-	(progn
-	    ~start-pos ~end-pos ~pattern ~filename ~list ~directories ~dirname
-	    ~path-sep
-
-	    (setq ~path-sep (file-format-string "%pc" ""))
-
-	    (setq ~start-pos 0)
-	    (setq ~list (concat grep-exclude-directory-list " "))
-	    (setq ~directories (file-format-string "%pd" ~file))
-	    
-	    (while
-		(&
-		    ~include
-		    (progn
-			(setq ~end-pos (string-index-of-string ~list " " ~start-pos))
-			(> ~end-pos 0)
-		    )
-		)
-		(setq ~dirname (concat ~path-sep (string-extract ~list ~start-pos ~end-pos) ~path-sep))
-		(setq ~start-pos (+ ~end-pos 1))
-		
-	        (setq ~include
+        (progn
+            ~start-pos ~end-pos ~pattern ~filename ~list ~directories ~dirname
+            ~path-sep
+            
+            (setq ~path-sep (file-format-string "%pc" ""))
+            
+            (setq ~start-pos 0)
+            (setq ~list (concat grep-exclude-directory-list " "))
+            (setq ~directories (file-format-string "%pd" ~file))
+            
+            (while
+                (&
+                    ~include
+                    (progn
+                        (setq ~end-pos (string-index-of-string ~list " " ~start-pos))
+                        (> ~end-pos 0)
+                    )
+                )
+                (setq ~dirname (concat ~path-sep (string-extract ~list ~start-pos ~end-pos) ~path-sep))
+                (setq ~start-pos (+ ~end-pos 1))
+                
+                (setq ~include
                     (|
-                        ; include the start dir always
-                        (= ~start-directory ~directories)
-                        ; only exclude if the last dir is in the exclude list
-                        (!=
+                        ; include if exclude dir is not found
+                        (< (string-index-of-last ~directories ~dirname) 0)
+                        ; and exclude dir present anywhere after the starting dir
+                        (<
                             (string-index-of-last ~directories ~dirname)
-                            (- (length ~directories) (length ~dirname))
+                            (- (length ~start-directory) 1)
                         )
                     )
                 )
-	    )
-
-	    (setq ~start-pos 0)
-	    (setq ~list (concat grep-exclude-file-list " "))
-	    (setq ~filename (file-format-string "%fa" ~file))
-	    (while
-		(&
-		    ~include
-		    (progn
-			(setq ~end-pos (string-index-of-string ~list " " ~start-pos))
-			(> ~end-pos 0)
-		    )
-		)
-		(setq ~pattern (string-extract ~list ~start-pos ~end-pos))
-		(setq ~start-pos (+ ~end-pos 1))
-		
-		(setq ~include
+            )
+            
+            (setq ~start-pos 0)
+            (setq ~list (concat grep-exclude-file-list " "))
+            (setq ~filename (file-format-string "%fa" ~file))
+            (while
+                (&
+                    ~include
+                    (progn
+                        (setq ~end-pos (string-index-of-string ~list " " ~start-pos))
+                        (> ~end-pos 0)
+                    )
+                )
+                (setq ~pattern (string-extract ~list ~start-pos ~end-pos))
+                (setq ~start-pos (+ ~end-pos 1))
+                
+                (setq ~include
                     (|
                         (= ~filename ~start-filename)
                         (! (match-wild ~filename ~pattern))
                     )
                 )
-	    )
-	)
+            )
+        )
     )
     ~include
 )
