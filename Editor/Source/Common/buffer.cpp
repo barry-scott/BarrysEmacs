@@ -704,7 +704,7 @@ int EmacsBuffer::gap_room(int k)
 
     if( b_base == NULL )
     {
-        b_size = b_gap = b_gap = b_size1 = b_size2 = 0;
+        b_size = b_gap = b_size1 = b_size2 = 0;
         error( FormatString("Out of memory! Lost buffer %s") << b_buf_name );
         if( b_syntax.syntax_base != NULL )
         {

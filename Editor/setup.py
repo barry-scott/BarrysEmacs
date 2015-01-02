@@ -468,7 +468,7 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_OBJ',       'obj-utils' )
         self._addVar( 'EDIT_EXE',       'exe-utils' )
         self._addVar( 'CCCFLAGS',
-                                        '-g  '
+                                        '-g -O2 '
                                         '-Wall -fPIC -fexceptions -frtti '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"MacOSX\\"" '

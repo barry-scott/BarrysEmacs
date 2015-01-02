@@ -43,7 +43,7 @@ VariableNameTable VariableName::name_table( 4096, 1024 );
 
 void restore_var(void)
 {
-    VariableName *varname = NULL;
+    VariableName *varname = NULL;   // unused varname is very useful when debugging - so not remove
     Binding *Def = NULL;
     Binding *b = NULL;
     SystemExpression *se = NULL;

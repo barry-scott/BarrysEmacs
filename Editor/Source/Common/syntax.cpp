@@ -435,7 +435,7 @@ void SyntaxTable::modify_table_dull_type( const EmacsString &str1 )
         if( lim < c )
             throw SyntaxErrorException();
 
-        for( int ch=c; ch<=lim; ch++ )
+        for( EmacsChar_t ch=c; ch<=lim; ch++ )
         {
             // this test prevents a recursive loop
             if( getSyntaxKind( ch ) != SYNTAX_DULL )

@@ -96,8 +96,6 @@ int parse_erb( int pos, int limit )
 {
     EmacsBuffer *erb = bf_cur;
     int rv = 0;
-    int lo;
-    int hi;
 
     // remove the last set of error markers
     delete_errlog_list ();
@@ -115,14 +113,11 @@ int parse_erb( int pos, int limit )
     Save<int> old_dot( &dot );
 
     dot = pos;
-    // Narrow the buffer on the reion to be parsed
-    lo = bf_cur->b_mode.md_headclip;
-    hi = bf_cur->b_mode.md_tailclip;
-    bf_cur->b_mode.md_headclip =
-        bf_cur->b_mode.md_headclip = pos;
-    bf_cur->b_mode.md_tailclip =
-        bf_cur->b_mode.md_tailclip=
-        bf_cur->unrestrictedSize() + 1 - limit;
+    // Narrow the buffer on the region to be parsed
+    int lo = bf_cur->b_mode.md_headclip;
+    int hi = bf_cur->b_mode.md_tailclip;
+    bf_cur->b_mode.md_headclip = pos;
+    bf_cur->b_mode.md_tailclip = bf_cur->unrestrictedSize() + 1 - limit;
 
     //
     // Invoke the scanning routine supplied by the user.
