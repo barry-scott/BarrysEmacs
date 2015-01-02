@@ -29,7 +29,7 @@
 		(beginning-of-line)
 		(looking-at (concat "^" (quote ~line) "$"))
 	    )
-	    (sit-for 0)
+	    ;(sit-for 0)
 	    (next-line)
 	    (previous-window)
 	    (forward-character)	
