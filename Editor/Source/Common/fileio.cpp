@@ -382,12 +382,13 @@ EmacsString FileFindRecursive::next()
             // spin around and get another file
         }
         else
+        {
             // is it a dir?
             if( file[-1] == PATH_CH )
-                // yes find on the inner
             {
+                // yes find on the inner
                 EmacsString fullname;
-                expand_and_default (file, original_name, fullname);
+                expand_and_default( file, original_name, fullname );
                 FileFindRecursiveInternal *new_finder =
                         new FileFindRecursiveInternal( fullname );
                 new_finder->inner = finder;
@@ -396,8 +397,11 @@ EmacsString FileFindRecursive::next()
                 // spin around and get another file
             }
             else
+            {
                 // no so return the file
                 return file;
+            }
+        }
     }
 }
 
@@ -728,6 +732,11 @@ int expand_file_name_recursive( void )
         EmacsString fullname;
 
         expand_and_default (fn, EmacsString::null, fullname);
+        if( fullname[-1] == PATH_CH )
+        {
+            error( "No filename only a directory given" );
+            return 0;
+        }
 
         delete search_file_handle;
         search_file_handle = new FileFindRecursive( fullname );
