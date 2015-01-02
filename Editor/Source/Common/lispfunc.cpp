@@ -375,6 +375,7 @@ int string_index_of_first(void)
     if( !string_arg( 1 ) )
         return 0;
     EmacsString string( ml_value.asString() );
+
     if( !string_arg( 2 ) )
         return 0;
     EmacsString find( ml_value.asString() );
@@ -398,6 +399,7 @@ int string_index_of_last(void)
     if( !string_arg( 1 ) )
         return 0;
     EmacsString string( ml_value.asString() );
+
     if( !string_arg( 2 ) )
         return 0;
     EmacsString find( ml_value.asString() );
@@ -405,11 +407,9 @@ int string_index_of_last(void)
     if( ml_err )
         return 0;
 
-    int find_size = find.length();
-
-    int index = -find_size;
+    int index = -1;
     int next;
-    while( (next = string.index( find, index+find_size )) >= 0 )
+    while( (next = string.index( find, index+1 )) >= 0 )
         index = next;
 
     ml_value = index;
@@ -426,9 +426,11 @@ int string_index_of_string(void)
     if( !string_arg( 1 ) )
         return 0;
     EmacsString string( ml_value.asString() );
+
     if( !string_arg( 2 ) )
         return 0;
     EmacsString find( ml_value.asString() );
+
     int index = numeric_arg( 3 );
 
     if( ml_err )
