@@ -6,7 +6,7 @@ import sys
 
 _debug = False
 
-pycxx_version = '6.2.7'
+pycxx_version = '6.2.6'
 
 def debug( msg ):
     if _debug:
