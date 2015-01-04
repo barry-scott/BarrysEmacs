@@ -40,7 +40,7 @@ EOF
 chmod +x "tmp/${PKGNAME}/bemacs"
 
 echo "Info: Create DMG"
-hdiutil create -srcfolder tmp/${PKGNAME} tmp/tmp.dmg
+hdiutil create -size 100m -srcfolder tmp/${PKGNAME} tmp/tmp.dmg
 hdiutil convert tmp/tmp.dmg -format UDZO -imagekey zlib-level=9 -o tmp/${PKGNAME}.dmg
 
 echo "Info: brand.make-macosx-kit.sh Kits/MacOSX - end"
