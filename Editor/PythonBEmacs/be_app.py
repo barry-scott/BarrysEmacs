@@ -414,20 +414,20 @@ class BemacsApp(wx.App, be_debug.EmacsDebugMixin):
                 self._debugApp( '__windowsCommandLineHandler read command %r' % (client_command,) )
 
                 reply = ctypes.create_string_buffer( 32 )
+                if len( client_command ) > 0:
+                    if client_command[0] == 'P':
+                        reply.value = 'p%d' % (os.getpid(),)
 
-                if client_command[0] == 'P':
-                    reply.value = 'p%d' % (os.getpid(),)
+                    elif client_command[0] == 'C':
+                        self.onGuiThread( self.guiClientCommandHandler, (client_command[1:],) )
+                        reply.value = ' '
 
-                elif client_command[0] == 'C':
-                    self.onGuiThread( self.guiClientCommandHandler, (client_command[1:],) )
-                    reply.value = ' '
+                    else:
+                        reply.value = 'R'+'Unknown client command'
 
-                else:
-                    reply.value = 'R'+'Unknown client command'
+                    reply_size = ctypes.c_uint( len( reply.value ) )
 
-                reply_size = ctypes.c_uint( len( reply.value ) )
-
-                hr = ctypes.windll.kernel32.WriteFile( h_pipe, reply, reply_size, ctypes.byref( reply_size ), None )
+                    hr = ctypes.windll.kernel32.WriteFile( h_pipe, reply, reply_size, ctypes.byref( reply_size ), None )
 
                 # And disconnect from the client.
                 ctypes.windll.kernel32.DisconnectNamedPipe( h_pipe )
