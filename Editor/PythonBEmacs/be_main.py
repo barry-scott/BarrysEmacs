@@ -14,6 +14,7 @@ import warnings
 import sys
 import os
 import locale
+import wx
 
 #
 #   set a working STDOUT before loading most modules
@@ -56,10 +57,12 @@ def main( args ):
             del os.environ[ envvar ]
 
     # init the locale
-    initLocale()
+    #initLocale()
 
     # Create the win application and start its message loop
     app = be_app.BemacsApp( args )
+
+    locale = wx.Locale( wx.LANGUAGE_DEFAULT, wx.LOCALE_LOAD_DEFAULT )
 
     if not prerequesitChecks():
         return 1
