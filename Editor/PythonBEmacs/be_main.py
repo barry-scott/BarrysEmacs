@@ -38,8 +38,13 @@ elif 'BEMACS_STDOUT_LOG' in os.environ:
 
 # make sure that we get 3.0 or 2.8 and not an earlier version
 try:
+    if sys.platform.startswith( 'win' ):
+        wx_ver_list = ['2.8']
+    else:
+        wx_ver_list = ['3.0', '2.8']
+
     import wxversion
-    wxversion.select( ['3.0', '2.8'] )
+    wxversion.select( wx_ver_list )
 
 except:
     pass
