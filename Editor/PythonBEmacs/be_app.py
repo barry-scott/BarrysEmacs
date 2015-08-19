@@ -743,19 +743,22 @@ class FakeEditor(be_debug.EmacsDebugMixin):
     def guiGeometryChange( self, *args, **kwds ):
         pass
 
+    def guiHasFocus( sefl, *args, **kwds ):
+        pass
+
     def guiEventChar( self, char, shift ):
         p = self.app.frame.emacs_panel
 
         self.count += 1
 
-        text = '  %d guiEventChar( %r, %r ) called' % (self.count, char, shift)
+        text = '  %6d guiEventChar( %r, %r ) called' % (self.count, char, shift)
         attr = [0] * len(text)
 
         new = (text, attr)
 
         p.termUpdateBegin()
         p.termUpdateLine( None, new, 1 )
-        p.termTopos( 1, 7 )
+        p.termTopos( 1, 10 )
         p.termUpdateEnd( {'readonly': False, 'overstrike': False, 'eol': 'Q', 'line': 99, 'column': 9}, self.vert_scroll, self.horz_scroll )
 
         if char == 'c':
@@ -769,15 +772,15 @@ class FakeEditor(be_debug.EmacsDebugMixin):
 
         self.count += 1
 
-        text = '  %d guiEventMouse called' % (self.count,)
+        text = '  %6d guiEventMouse called' % (self.count,)
         attr = [0] * len(text)
 
         new = (text, attr)
 
         p.termUpdateBegin()
-        p.termUpdateLine( None, new, 1 )
-        p.termTopos( 1, 10 )
-        p.termUpdateEnd()
+        p.termUpdateLine( None, new, 2 )
+        p.termTopos( 2, 10 )
+        p.termUpdateEnd( {'readonly': False, 'overstrike': False, 'eol': 'Q', 'line': 99, 'column': 9}, self.vert_scroll, self.horz_scroll )
 
     def uiHookEditCopy( self, cmd, text ):
         self.__clipboard_data = wx.TextDataObject()

@@ -14,7 +14,6 @@ import warnings
 import sys
 import os
 import locale
-import wx
 
 #
 #   set a working STDOUT before loading most modules
@@ -36,18 +35,18 @@ elif 'BEMACS_STDOUT_LOG' in os.environ:
     sys.stdout = open( os.environ[ 'BEMACS_STDOUT_LOG' ], 'w', 0 )
     sys.stderr = sys.stdout
 
-# make sure that we get 3.0 or 2.8 and not an earlier version
+# wxversion is not present or does not work in the frozen image
+# so we catch the expection
 try:
-    if sys.platform.startswith( 'win' ):
-        wx_ver_list = ['2.8']
-    else:
-        wx_ver_list = ['3.0', '2.8']
+    # make sure that we get 3.0 or 2.8 and not an earlier version
+    wx_ver_list = ['3.0', '2.8']
 
     import wxversion
     wxversion.select( wx_ver_list )
-
 except:
     pass
+
+import wx
 
 import be_app
 

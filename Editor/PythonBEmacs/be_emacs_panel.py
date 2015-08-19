@@ -981,6 +981,9 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
 
         #--- vert_scroll -----------------------------------------------------------
         self.all_vert_scroll_bar_info = all_vert_scroll_bars
+
+        index = 0 # why is index not set in --wx-raw-debug ?
+
         for index, bar_info in enumerate( all_vert_scroll_bars ):
             if len( self.all_vert_scroll_bars ) <= index:
                 self.all_vert_scroll_bars.append( wx.ScrollBar( self, wx.NewId(), style=wx.SB_VERTICAL ) )

@@ -68,11 +68,15 @@ def main( argv ):
     casefold = {}
 
     for line in ucd:
-        line, comment = line.split( '#', 1 )
-        if line.strip() == '':
+        line = line.strip()
+        if len(line) == 0:
             continue
 
-        code, status, mapping = [v.strip() for v in line.strip().split(';')][0:3]
+        line, comment = line.split( '#', 1 )
+        line = line.strip()
+        if len(line) == 0:
+            continue
+        code, status, mapping = [v.strip() for v in line.split(';')][0:3]
         # choose common C and simple S not full F or turkic T
         if status in ('C','S'):
             casefold[ code ] = mapping
