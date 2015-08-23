@@ -60,9 +60,6 @@ def main( args ):
         if os.environ.has_key( envvar ):
             del os.environ[ envvar ]
 
-    # init the locale
-    #initLocale()
-
     # Create the win application and start its message loop
     app = be_app.BemacsApp( args )
 
@@ -75,32 +72,6 @@ def main( args ):
     app.MainLoop()
 
     return 0
-
-def initLocale():
-    # init the locale
-    if sys.platform == 'win32':
-        locale.setlocale( locale.LC_ALL, '' )
-
-    else:
-        language_code, encoding = locale.getdefaultlocale()
-        if language_code is None:
-            language_code = 'en_US'
-
-        if encoding is None:
-            encoding = 'UTF-8'
-
-        if encoding.lower() == 'utf':
-            encoding = 'UTF-8'
-
-        try:
-            # setlocale fails when params it does not understand are passed
-            locale.setlocale( locale.LC_ALL, '%s.%s' % (language_code, encoding) )
-        except locale.Error:
-            try:
-                # force a locale that will work
-                locale.setlocale( locale.LC_ALL, 'en_US.UTF-8' )
-            except locale.Error:
-                locale.setlocale( locale.LC_ALL, 'C' )
 
 # 
 # needed to make MEINC Installer notice these packages
