@@ -731,11 +731,30 @@ class FakeEditor(be_debug.EmacsDebugMixin):
     def __init__( self, app ):
         be_debug.EmacsDebugMixin.__init__( self )
 
+        be_debug._debug_editor = True
+
         self.app = app
         self.count = 0
 
         self.vert_scroll = []
         self.horz_scroll = []
+
+        self.log = self
+
+    def debug( self, msg ):
+        self.__writeToScreen( 3, 'debug: %s' % (msg,) )
+
+    def __writeToScreen( self, line, text ):
+        p = self.app.frame.emacs_panel
+
+        attr = [0] * len(text)
+
+        new = (text, attr)
+
+        p.termUpdateBegin()
+        p.termUpdateLine( None, new, line )
+        p.termTopos( line, 10 )
+        p.termUpdateEnd( {'readonly': False, 'overstrike': False, 'eol': 'Q', 'line': 99, 'column': 9}, self.vert_scroll, self.horz_scroll )
 
     def guiCloseWindow( self, *args, **kwds ):
         self.app.onGuiThread( self.app.quit, () )
@@ -747,40 +766,20 @@ class FakeEditor(be_debug.EmacsDebugMixin):
         pass
 
     def guiEventChar( self, char, shift ):
-        p = self.app.frame.emacs_panel
-
         self.count += 1
 
-        text = '  %6d guiEventChar( %r, %r ) called' % (self.count, char, shift)
-        attr = [0] * len(text)
-
-        new = (text, attr)
-
-        p.termUpdateBegin()
-        p.termUpdateLine( None, new, 1 )
-        p.termTopos( 1, 10 )
-        p.termUpdateEnd( {'readonly': False, 'overstrike': False, 'eol': 'Q', 'line': 99, 'column': 9}, self.vert_scroll, self.horz_scroll )
+        self.__writeToScreen( 1, '  %6d guiEventChar( %r, %r ) called' % (self.count, char, shift) )
 
         if char == 'c':
-            self.app.onGuiThread( self.uiHookEditCopy, ('edit-copy', 'a'*30000) )
+            self.app.onGuiThread( self.uiHookEditCopy, ('edit-copy', 'quick brown fox') )
 
         elif char == 'v':
             self.app.onGuiThread( self.uiHookEditPaste, ('edit-paste',) )
 
     def guiEventMouse( self, *args, **kwds ):
-        p = self.app.frame.emacs_panel
-
         self.count += 1
 
-        text = '  %6d guiEventMouse called' % (self.count,)
-        attr = [0] * len(text)
-
-        new = (text, attr)
-
-        p.termUpdateBegin()
-        p.termUpdateLine( None, new, 2 )
-        p.termTopos( 2, 10 )
-        p.termUpdateEnd( {'readonly': False, 'overstrike': False, 'eol': 'Q', 'line': 99, 'column': 9}, self.vert_scroll, self.horz_scroll )
+        self.__writeToScreen( 2, '  %6d guiEventMouse called' % (self.count,) )
 
     def uiHookEditCopy( self, cmd, text ):
         self.__clipboard_data = wx.TextDataObject()
