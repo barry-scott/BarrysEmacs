@@ -39,8 +39,8 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
 
         win_prefs = self.app.prefs.getWindow()
 
-        super().__init__( app )
-        self.setTitle( title )
+        super().__init__()
+        self.setWindowTitle( title )
 
         self.centre_widget = QtWidgets.QTextEdit( 'The centre widget' )
         self.setCentralWidget( self.centre_widget )

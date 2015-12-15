@@ -54,7 +54,7 @@ def main( args ):
     if not prerequesitChecks():
         return 1
 
-    app.frame.show()
+    app.main_window.show()
     return app.exec_()
 
 # 

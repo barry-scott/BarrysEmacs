@@ -63,7 +63,7 @@ class Preferences:
         # support getProjects(), getFoobars() etc.
         if name[0:3] == 'get':
             section_name = name[3:]
-            if self.pref_handlers.has_key( section_name ):
+            if section_name in self.pref_handlers:
                 return self.pref_handlers[ section_name ]
 
         raise AttributeError( '%s has no attribute %s' % (self.__class__.__name__, name ) )
@@ -170,7 +170,7 @@ class PreferenceData:
 
     def __getAttr( self, element_path, attrib_name ):
         element = self.getElement( element_path )
-        if element.hasAttributes() and element.attributes.has_key( attrib_name ):
+        if element.hasAttributes() and attrib_name in element.attributes:
             return element.attributes[ attrib_name ].value
         return default
 
