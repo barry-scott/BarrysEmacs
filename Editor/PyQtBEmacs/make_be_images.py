@@ -1,6 +1,6 @@
 '''
  ====================================================================
- Copyright (c) 2003-2010 Barry A Scott.  All rights reserved.
+ Copyright (c) 2003-2015 Barry A Scott.  All rights reserved.
 
  This software is licensed as described in the file LICENSE.txt,
  which you should have received as part of this distribution.
@@ -68,37 +68,31 @@ def main( argv ):
     f = open( argv[1], 'w' )
     f.write( header )
     for filename in argv[2:]:
-        f.write( 'images_by_filename["%s"] = (\n' % filename )
+        f.write( 'images_by_filename["%s"] = (\n' % (filename,) )
         i = open( filename, 'rb' )
         data = i.read()
         i.close()
 
         for offset in range( 0, len(data), data_slice ):
-            f.write( '    %r\n' % data[offset:offset+data_slice] )
+            f.write( '    %r\n' % (data[offset:offset+data_slice],) )
         f.write( '    )\n' )
     f.write( footer )
     f.close()
 
 header = '''
-import wx
-import cStringIO
+from PyQt5 import QtGui
+import io
 
-def getBitmap( name, size=None ):
-    return wx.BitmapFromImage( getImage( name, size ) )
+def getPixmap( name, size=None ):
+    return pixmap.BitmapFromImage( getImage( name, size ) )
 
-def getImage( name, size=None ):
-    stream = cStringIO.StringIO( images_by_filename[ name ] )
-    image = wx.ImageFromStream( stream )
-    if size is not None:
-        w, h = size
-        if image.GetWidth() != w or image.GetHeight() != h:
-            image.Rescale( w, h )
-    return image
+def getPixmap( name, size=None ):
+    pixmap = QtGui.QPixmap()
+    pixmap.loadFromData( images_by_filename[ name ] )
+    return pixmap
 
 def getIcon( name, size=None ):
-    icon = wx.EmptyIcon()
-    icon.CopyFromBitmap( getBitmap( name, size ) )
-    return icon
+    return QtGui.QIcon( getPixmap( name, size ) )
 
 images_by_filename = {}
 '''
