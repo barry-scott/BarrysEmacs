@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 '''
  ====================================================================
  Copyright (c) 2008-2015 Barry A Scott.  All rights reserved.
@@ -44,7 +45,7 @@ def main( args ):
     # don't pollute any subprocesses with env vars
     # from packaging processing
     for envvar in ['PYTHONPATH', 'PYTHONHOME', 'PYTHONEXECUTABLE']:
-        if os.environ.has_key( envvar ):
+        if envvar in os.environ:
             del os.environ[ envvar ]
 
     # Create the win application and start its message loop
@@ -53,10 +54,8 @@ def main( args ):
     if not prerequesitChecks():
         return 1
 
-    app.frame.Show( 1 )
-    app.MainLoop()
-
-    return 0
+    app.frame.show()
+    return app.exec_()
 
 # 
 # needed to make MEINC Installer notice these packages
@@ -156,7 +155,6 @@ import encodings.rot_13
 import encodings.shift_jis
 import encodings.shift_jis_2004
 import encodings.shift_jisx0213
-import encodings.string_escape
 import encodings.tis_620
 import encodings.undefined
 import encodings.unicode_escape
