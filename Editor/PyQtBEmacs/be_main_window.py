@@ -1,6 +1,6 @@
 '''
  ====================================================================
- Copyright (c) 2003-2010 Barry A Scott.  All rights reserved.
+ Copyright (c) 2003-2015 Barry A Scott.  All rights reserved.
 
  This software is licensed as described in the file LICENSE.txt,
  which you should have received as part of this distribution.
@@ -40,8 +40,6 @@ class BemacsAction:
     def connect( self, action ):
         action.triggered.connect( self.sendCode )
 
-
-
 class BemacsMainWindow(QtWidgets.QMainWindow):
     def __init__( self, app ):
         self.app = app
@@ -60,6 +58,10 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.centre_widget = QtWidgets.QTextEdit( 'The centre widget' )
         self.setCentralWidget( self.centre_widget )
 
+        self.__setupMenuBar()
+        self.__setupToolBar()
+
+    def __setupMenuBar( self ):
         mb = self.menuBar()
 
         menu_file = mb.addMenu( T_('&File') )
@@ -134,14 +136,55 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         act = menu_help.addAction( T_("&About...") )
         act.triggered.connect( self.OnActAbout )
 
-    def addEmacsMenu( self, menu, code, title, icon=None ):
+    def addEmacsMenu( self, container, code, title, icon=None ):
         if code not in self.__all_actions:
             self.__all_actions[ code ] = BemacsAction( code )
 
         if icon is None:
-            action = menu.addAction( title )
+            action = container.addAction( title )
         else:
-            action = menu.addAction( icon, title )
+            action = container.addAction( icon, title )
+
+        self.__all_actions[ code ].connect( action )
+
+    def __setupToolBar( self ):
+        # Add tool bar
+        t = self.addToolBar( 'main' )
+
+        self.addEmacsToolbar( t, 'ex', T_('Cut'), 'toolbar_images/editcut.png' )
+        self.addEmacsToolbar( t, 'ec', T_('Copy'), 'toolbar_images/editcopy.png' )
+        self.addEmacsToolbar( t, 'ev', T_('Paste'), 'toolbar_images/editpaste.png' )
+
+        self.addEmacsToolbar( t, 'wo', T_('wo'), 'toolbar_images/window_del_other.png' )
+        self.addEmacsToolbar( t, 'wt', T_('wt'), 'toolbar_images/window_del_this.png' )
+        self.addEmacsToolbar( t, 'wh', T_('wh'), 'toolbar_images/window_split_horiz.png' )
+        self.addEmacsToolbar( t, 'wv', T_('wv'), 'toolbar_images/window_split_vert.png' )
+
+        t.addSeparator()
+        self.addEmacsToolbar( t, 'cu', T_('UPPER'), 'toolbar_images/case_upper.png' )
+        self.addEmacsToolbar( t, 'cl', T_('lower'), 'toolbar_images/case_lower.png' )
+        self.addEmacsToolbar( t, 'cc', T_('Capitalise'), 'toolbar_images/case_capitalise.png' )
+        self.addEmacsToolbar( t, 'ci', T_('inVERT'), 'toolbar_images/case_invert.png' )
+
+        t.addSeparator()
+        self.addEmacsToolbar( t, 'mr', T_('Record'), 'toolbar_images/macro_record.png' )
+        self.addEmacsToolbar( t, 'ms', T_('Stop'), 'toolbar_images/macro_stop.png' )
+        self.addEmacsToolbar( t, 'mp', T_('Play'), 'toolbar_images/macro_play.png' )
+
+        t.addSeparator()
+        self.addEmacsToolbar( t, 'vw', T_('White Space'), 'toolbar_images/view_white_space.png' )
+        self.addEmacsToolbar( t, 'vl', T_('Wrap Long'), 'toolbar_images/view_wrap_long.png' )
+
+        t.addSeparator()
+        self.addEmacsToolbar( t, 'tg', T_('Grep Files'), 'toolbar_images/tools_grep.png' )
+
+    def addEmacsToolbar( self, container, code, title, icon_filename ):
+        icon = be_images.getIcon( icon_filename )
+
+        if code not in self.__all_actions:
+            self.__all_actions[ code ] = BemacsAction( code )
+
+        action = container.addAction( icon, title )
 
         self.__all_actions[ code ].connect( action )
 
@@ -175,4 +218,4 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
                                 ,sys.version_info.serial) )
         all_about_info.append( T_('Copyright Barry Scott (c) 1980-%s. All rights reserved') % (be_version.year,) )
 
-        QtWidgets.QMessageBox.information( self, T_('About'), '\n'.join( all_about_info ) )
+        QtWidgets.QMessageBox.information( self, T_("About Barry's Emacs"), '\n'.join( all_about_info ) )
