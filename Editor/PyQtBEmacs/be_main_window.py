@@ -60,6 +60,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
 
         self.__setupMenuBar()
         self.__setupToolBar()
+        self.__setupStatusBar()
 
     def __setupMenuBar( self ):
         mb = self.menuBar()
@@ -187,6 +188,29 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         action = container.addAction( icon, title )
 
         self.__all_actions[ code ].connect( action )
+
+    def __setupStatusBar( self ):
+        s = self.statusBar()
+
+        self.status_message = QtWidgets.QLabel()
+        self.status_insert_mode = QtWidgets.QLabel()
+        self.status_eol = QtWidgets.QLabel()
+        self.status_line_num = QtWidgets.QLabel()
+        self.status_col_num = QtWidgets.QLabel()
+
+        self.status_line_num.setAlignment( QtCore.Qt.AlignRight )
+        self.status_col_num.setAlignment( QtCore.Qt.AlignRight )
+
+        self.status_insert_mode.setText( 'INS ' )
+        self.status_eol.setText( 'LF  ' )
+        self.status_line_num.setText( '123' )
+        self.status_col_num.setText( '24' )
+
+        s.addWidget( self.status_message )
+        s.addPermanentWidget( self.status_insert_mode )
+        s.addPermanentWidget( self.status_eol )
+        s.addPermanentWidget( self.status_line_num )
+        s.addPermanentWidget( self.status_col_num )
 
     def OnActPreferences( self ):
         return
