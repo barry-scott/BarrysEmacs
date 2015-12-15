@@ -51,14 +51,14 @@ def main( argv ):
         if len(title) > 0:
             to_title[ code ] = title
 
-    print 'alphabetic',len(alphabetic)
-    print 'numeric',len(numeric)
-    print 'to_upper',len(to_upper)
-    print 'to_lower',len(to_lower)
-    print 'to_title',len(to_title)
-    print 'is_upper',len(is_upper)
-    print 'is_lower',len(is_lower)
-    print 'is_title',len(is_title)
+    print( 'alphabetic',len(alphabetic) )
+    print( 'numeric',len(numeric) )
+    print( 'to_upper',len(to_upper) )
+    print( 'to_lower',len(to_lower) )
+    print( 'to_title',len(to_title) )
+    print( 'is_upper',len(is_upper) )
+    print( 'is_lower',len(is_lower) )
+    print( 'is_title',len(is_title) )
 
     ucd.close()
 
@@ -83,7 +83,7 @@ def main( argv ):
 
     ucd.close()
 
-    print 'casefold', len(casefold)
+    print( 'casefold', len(casefold) )
 
     cxx = open( argv[3], 'w' )
 

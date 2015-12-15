@@ -201,7 +201,7 @@ class Setup:
 
             return 0
 
-        except ValueError, e:
+        except ValueError as e:
             sys.stderr.write( 'Error: %s\n' % (e,) )
             return 1
 
@@ -244,17 +244,17 @@ class Compiler:
         except TypeError:
             raise ValueError( 'Cannot translate name %r value %r' % (name, value) )
 
-        except KeyError, e:
+        except KeyError as e:
             raise ValueError( 'Cannot translate name %r value %r - %s' % (name, value, e) )
 
     def expand( self, s ):
         try:
             return s % self.__variables
 
-        except (TypeError, KeyError), e:
-            print 'Error: %s' % (e,)
-            print 'String: %s' % (s,)
-            print 'Vairables: %r' % (self.__variables,)
+        except (TypeError, KeyError) as e:
+            print( 'Error: %s' % (e,) )
+            print( 'String: %s' % (s,) )
+            print( 'Vairables: %r' % (self.__variables,) )
 
             raise ValueError( 'Cannot translate string (%s)' % (e,) )
 
@@ -537,7 +537,11 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_EXE',       'exe-pybemacs' )
 
         self._addFromEnv( 'PYTHON_VERSION' )
-        self._addVar( 'PYTHON_INCLUDE', '/usr/include/python%(PYTHON_VERSION)s' )
+        if self.expand( '%(PYTHON_VERSION)s' ).startswith( '3.' ):
+            self._addVar( 'PYTHON_INCLUDE', '/usr/include/python%(PYTHON_VERSION)sm' )
+        else:
+            self._addVar( 'PYTHON_INCLUDE', '/usr/include/python%(PYTHON_VERSION)s' )
+
         self._addVar( 'CCCFLAGS',
                                         '-g '
                                         '-Wall -fPIC -fexceptions -frtti '
@@ -718,7 +722,7 @@ def main( argv ):
         s.generateMakefile()
         return 0
 
-    except ValueError, e:
+    except ValueError as e:
         sys.stderr.write( 'Error: %s\n' % (e,) )
         return 1
 

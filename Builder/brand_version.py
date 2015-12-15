@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import sys
 import os
 import time
@@ -9,7 +10,7 @@ class Error(Exception):
 
 def main( argv ):
     if len(argv) < 3:
-        print 'Usage: %s <version-info-file> <wc-path>' % argv[0]
+        print( 'Usage: %s <version-info-file> <wc-path>' % argv[0] )
         return 1
 
     vi = VersionInfo()
@@ -24,8 +25,8 @@ def main( argv ):
 
         finder.findAndBrandFiles( argv[2] )
 
-    except Error, e:
-        print 'Error: %s' % str(e)
+    except Error as e:
+        print( 'Error: %s' % str(e) )
         return 1
 
     return 0
@@ -35,11 +36,11 @@ class FileFinder:
         self.__vi = vi
 
     def findAndBrandFiles( self, path ):
-        #print 'findAndBrandFiles',path
+        #print( 'findAndBrandFiles',path )
         all_files = os.listdir( path )
 
         for filename in all_files:
-            #print base
+            #print( base )
             if( filename.startswith( template_file_prefix )
             and not filename.endswith( '~' )        # linux and mac edit file
             and not filename.split( '.' )[-1].startswith( '_' ) ):  # windows edit file
@@ -60,25 +61,25 @@ class SvnWcFinder:
 
     def findAndBrandFiles( self, path ):
         import pysvn
-        #print 'findAndBrandFiles:',path
+        #print( 'findAndBrandFiles:',path )
         all_status = self.__client.status( path, recurse=False )
         for status in all_status:
-            #print 'status:',status.text_status,'path:',status.path
+            #print( 'status:',status.text_status,'path:',status.path )
             if status.text_status not in [pysvn.wc_status_kind.normal, pysvn.wc_status_kind.added, pysvn.wc_status_kind.modified]:
                 continue
 
             if status.entry.kind == pysvn.node_kind.file:
                 base = os.path.basename( status.path )
-                #print base
+                #print( base )
                 if base.startswith( template_file_prefix ):
                     self.__vi.brandOneFile( status.path )
 
         for status in all_status:
-            #print 'status:',status.text_status,'path:',status.path
+            #print( 'status:',status.text_status,'path:',status.path )
             if status.text_status not in [pysvn.wc_status_kind.normal, pysvn.wc_status_kind.added, pysvn.wc_status_kind.modified]:
                 continue
 
-            #print status.entry.kind
+            #print( status.entry.kind )
             if status.entry.kind == pysvn.node_kind.dir:
                 base = os.path.basename( status.path )
                 if base not in ['.'] and status.path != path:
@@ -96,7 +97,7 @@ class VersionInfo:
         self.is_svn_wc = True
 
     def parseVersionInfo( self, filename ):
-        f = file( filename )
+        f = open( filename )
         for line in f:
             line = line.strip()
 
@@ -108,8 +109,10 @@ class VersionInfo:
             key, value = line.split( ':', 1 )
             try:
                 self.__info[ key.strip() ] = value.strip() % self.__info
-            except (ValueError,TypeError,KeyError), e:
+
+            except (ValueError,TypeError,KeyError) as e:
                 raise Error( 'Cannot format key %s with value "%s" because %s' % (key.strip(), value.strip(), str(e)) )
+
         f.close()
 
     def setSvnVersion( self, wc_path ):
@@ -138,10 +141,11 @@ class VersionInfo:
         all_keys = self.__info.keys()
         all_keys.sort()
         for key in all_keys:
-            print 'Info: %10s: %s' % (key, self.__info[ key ])
+            print( 'Info: %10s: %s' % (key, self.__info[ key ]) )
 
     def brandOneFile( self, filename ):
-        f = file( filename )
+        print( 'qqq: filename %r' % (filename,) )
+        f = open( filename )
         template_contents = f.readlines()
         f.close()
 
@@ -149,15 +153,16 @@ class VersionInfo:
             branded_contents = []
             for line_no, line in enumerate( template_contents ):
                 branded_contents.append( line % self.__info )
-        except (ValueError,TypeError,KeyError), e:
+
+        except (ValueError,TypeError,KeyError) as e:
             raise Error( 'Cannot format %s:%d because %s' % (filename, line_no+1, str(e)) )
 
         parent_dir = os.path.dirname( filename )
         base = os.path.basename( filename )
         new_filename = os.path.join( parent_dir, base[len(template_file_prefix):] )
-        print 'Info: Creating',new_filename
+        print( 'Info: Creating', new_filename )
 
-        f = file( new_filename, 'w' )
+        f = open( new_filename, 'w' )
         f.writelines( branded_contents )
         f.close()
 

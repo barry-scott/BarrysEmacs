@@ -26,8 +26,8 @@ from PyQt5 import QtWidgets
 from PyQt5 import QtGui
 from PyQt5 import QtCore
 
+import be_main_window
 import be_platform_specific
-import be_frame
 import be_preferences
 import be_exceptions
 import be_debug
@@ -150,11 +150,11 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         self.lock_ui = 0
         self.need_activate_app_action = False
 
-        self.frame = None
+        self.main_window = None
 
         QtWidgets.QApplication.__init__( self, [sys.argv[0]] )
 
-        self.frame = be_frame.BemacsFrame( self )
+        self.main_window = be_main_window.BemacsMainWindow( self )
 
         try_wrapper = be_exceptions.TryWrapperFactory( self.log )
 
@@ -220,11 +220,11 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         QtWidgets.QMessageBox.critical( self, title, message ).exec_()
 
     def setStatus( self, all_values ):
-        if self.frame is not None:
-            self.frame.setStatus( all_values )
+        if self.main_window is not None:
+            self.main_window.setStatus( all_values )
 
     def refreshFrame( self ):
-        self.frame.refreshFrame()
+        self.main_window.refreshFrame()
 
     def savePreferences( self ):
         self.prefs.writePreferences()
@@ -234,9 +234,9 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
             # return False to veto a close
             return False
 
-        self.frame.savePreferences()
+        self.main_window.savePreferences()
         self.prefs.writePreferences()
-        self.frame = None
+        self.main_window = None
 
         return True
 
@@ -302,7 +302,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         del stack
 
     def guiReportException( self, body, title ):
-        QtWidgets.QMessageBox.critical( self.frame, title, body ).exec_()
+        QtWidgets.QMessageBox.critical( self.main_window, title, body ).exec_()
 
     #--------------------------------------------------------------------------------
     def __initCommandLineThread( self ):
@@ -519,7 +519,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         command_directory = all_client_args[0]
         command_args = all_client_args[1:]
 
-        self.frame.Raise()
+        self.main_window.Raise()
 
         self._debugApp( 'guiClientCommandHandler: command_directory %r' % (command_directory,) )
         self._debugApp( 'guiClientCommandHandler: command_args %r' % (command_args,) )
@@ -554,7 +554,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
             self._debugApp( 'BemacsApp.__runEditor()' )
 
             self.editor = be_editor.BEmacs( self )
-            self.editor.initEmacsProfile( self.frame.emacs_panel )
+            self.editor.initEmacsProfile( self.main_window.emacs_panel )
 
             # now that emacs has init'ed and processed any command line
             # the command line handler can be started
@@ -583,13 +583,13 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
 
     def guiYesNoDialog( self, default, title, message ):
         #qqq# What is default for?
-        rc = QtWidgets.QMessageBox.question( self.frame, title, message ).exec_()
+        rc = QtWidgets.QMessageBox.question( self.main_window, title, message ).exec_()
 
         return rc == QtWidgets.QMessageBox.Yes
 
     def quit( self ):
         self.log.debug( 'quit()' )
-        self.frame.Destroy()
+        self.main_window.Destroy()
 
     def BringWindowToFront( self ):
         try: # it's possible for this event to come when the frame is closed
@@ -621,7 +621,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         else:
             title = "%s - %s" % (self.opt_name, title_suffix)
 
-        self.frame.SetTitle( title )
+        self.main_window.SetTitle( title )
 
 #--------------------------------------------------------------------------------
 #

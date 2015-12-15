@@ -77,8 +77,8 @@ editor:
 
 
 bemacs:
-	@ echo Info: Copy PythonBEmacs...
-	cd ../Editor/PythonBEmacs && ./build-linux.sh $(BEMACS_ROOT_DIR) $(BEMACS_BIN_DIR) $(BEMACS_LIB_DIR) $(BEMACS_DOC_DIR)
+	@ echo Info: Copy PyQtBEmacs...
+	cd ../Editor/PyQtBEmacs && ./build-linux.sh $(BEMACS_ROOT_DIR) $(BEMACS_BIN_DIR) $(BEMACS_LIB_DIR) $(BEMACS_DOC_DIR)
 
 mlisp:
 	@ echo Info: Copying Mlisp files...

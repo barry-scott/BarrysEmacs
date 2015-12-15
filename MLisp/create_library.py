@@ -14,7 +14,7 @@ def main():
     lib_name = sys.argv[2]
     tool_path = sys.argv[3]
 
-    print 'Create MLisp Library %(lib_name)s with file set %(file_sets)s using tools from %(tool_path)s' % locals()
+    print( 'Create MLisp Library %(lib_name)s with file set %(file_sets)s using tools from %(tool_path)s' % locals() )
 
     dbtools = BemacsDatabaseTools( tool_path )
 
@@ -26,7 +26,7 @@ def main():
             dbtools.add( lib_name, filename )
             modules_added = modules_added + 1
 
-    print 'Added %d modules to %s' % (modules_added, lib_name)
+    print( 'Added %d modules to %s' % (modules_added, lib_name) )
 
 class BemacsDatabaseTools:
     def __init__(self, tool_path):
@@ -36,10 +36,10 @@ class BemacsDatabaseTools:
         self.tool_path = tool_path
         self.__dbcreate = os.path.join( tool_path, 'dbcreate' + exe_suffix )
         if not os.path.exists( self.__dbcreate ):
-            raise ValueError, 'Missing tool %s' % self.__dbcreate
+            raise ValueError( 'Missing tool %s' % self.__dbcreate )
         self.__dbadd = os.path.join( tool_path, 'dbadd' + exe_suffix )
         if not os.path.exists( self.__dbadd ):
-            raise ValueError, 'Missing tool %s' % self.__dbadd
+            raise ValueError( 'Missing tool %s' % self.__dbadd )
 
     def _run_command( self, cmd, filename=None ):
         if filename is None:
@@ -58,7 +58,7 @@ class BemacsDatabaseTools:
         output = proc.stdout.read()
         rc = proc.wait()
         if output != '':
-            sys.stdout.write( output )
+            sys.stdout.write( output.decode( 'utf-8' ) )
 
 
     def create( self, lib_name ):

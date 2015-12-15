@@ -49,7 +49,7 @@ def init():
     sys.stderr = sys.__stderr__
 
     # this should appear in the buffer
-    print 'bemacs_stdio.py done'
+    print( 'bemacs_stdio.py done' )
 
 
 init()

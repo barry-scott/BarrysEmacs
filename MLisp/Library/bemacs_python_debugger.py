@@ -48,12 +48,12 @@ def run(statement, globals=None, locals=None):
 # When invoked as main program, invoke the debugger on a script
 if __name__=='__main__':
     if not sys.argv[1:]:
-        print "usage: pdb.py scriptfile [arg] ..."
+        print( "usage: pdb.py scriptfile [arg] ..." )
         sys.exit(2)
 
     mainpyfile = filename = sys.argv[1]     # Get script filename
     if not os.path.exists(filename):
-        print 'Error:', `filename`, 'does not exist'
+        print( 'Error:', `filename`, 'does not exist' )
         sys.exit(1)
     mainmodule = os.path.basename(filename)
     del sys.argv[0]         # Hide "pdb.py" from argument list
