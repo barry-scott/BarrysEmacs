@@ -50,7 +50,7 @@ BEGIN
             VALUE "FileDescription", "Barry's Emacs\0"
             VALUE "FileVersion", "%(major)s, %(minor)s, %(patch)s, %(build)s\0"
             VALUE "InternalName", "WorkBench\0"
-            VALUE "LegalCopyright", "Copyright © 1980-2010 Barry A. Scott\0"
+            VALUE "LegalCopyright", "Copyright Â© 1980-2010 Barry A. Scott\0"
             VALUE "LegalTrademarks", "\0"
             VALUE "OriginalFilename", "be.exe\0"
             VALUE "PrivateBuild", "\0"
