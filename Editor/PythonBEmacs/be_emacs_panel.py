@@ -741,7 +741,7 @@ class EmacsPanel(wx.Panel, be_debug.EmacsDebugMixin):
         if( wx.Platform == '__WXMAC__'
         and (cmd or ctrl or raw_ctrl)
         and char in cmd_to_ctrl_map ):
-            print 'mapped %d to %d' % (char, cmd_to_ctrl_map[ char ])
+            print( 'mapped %d to %d' % (char, cmd_to_ctrl_map[ char ]) )
             char = cmd_to_ctrl_map[ char ]
 
         if( wx.Platform == '__WXGTK__'

@@ -65,11 +65,11 @@ argv = [
         ]
 
 def main( argv ):
-    f = file( argv[1], 'w' )
+    f = open( argv[1], 'w' )
     f.write( header )
     for filename in argv[2:]:
         f.write( 'images_by_filename["%s"] = (\n' % filename )
-        i = file( filename, 'rb' )
+        i = open( filename, 'rb' )
         data = i.read()
         i.close()
 

@@ -681,7 +681,7 @@ class RotatingFileHandler(logging.FileHandler):
                 sfn = "%s.%d%s" % (prefix, i, suffix)
                 dfn = "%s.%d%s" % (prefix, i+1, suffix)
                 if os.path.exists(sfn):
-                    #print "%s -> %s" % (sfn, dfn)
+                    #print( "%s -> %s" % (sfn, dfn) )
                     if os.path.exists(dfn):
                         os.remove(dfn)
                     os.rename(sfn, dfn)
@@ -689,7 +689,7 @@ class RotatingFileHandler(logging.FileHandler):
             if os.path.exists(dfn):
                 os.remove(dfn)
             os.rename(self.baseFilename, dfn)
-            #print "%s -> %s" % (self.baseFilename, dfn)
+            #print( "%s -> %s" % (self.baseFilename, dfn) )
         self.stream = open(self.baseFilename, "w")
 
     def emit(self, record):

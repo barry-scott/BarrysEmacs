@@ -86,7 +86,7 @@ class Preferences:
             new_name = self.pref_filename + '.tmp'
             old_name = self.pref_filename + '.old'
 
-            f = file( new_name, 'w' )
+            f = open( new_name, 'w' )
             self.pref_data.write( f )
             f.close()
             if os.path.exists( self.pref_filename ):
@@ -110,7 +110,7 @@ class PreferenceData:
 
     def __readXml( self, xml_pref_filename ):
         try:
-            f = file( xml_pref_filename, 'r' )
+            f = open( xml_pref_filename, 'r' )
             text = f.read()
             f.close()
 

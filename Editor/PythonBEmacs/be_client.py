@@ -77,7 +77,7 @@ class ClientBase:
             self.bringTofront()
 
         except ClientError, e:
-            print 'Error: %s' % (str(e),)
+            print( 'Error: %s' % (str(e),) )
 
     def startBemacsServer( self ):
         raise NotImplementedError()
@@ -259,7 +259,7 @@ class ClientPosix(ClientBase):
                 time.sleep( 0.1 )
 
             if len(response) > 1:
-                print response[1:]
+                print( response[1:] )
 
             return True
 
@@ -270,7 +270,7 @@ class ClientPosix(ClientBase):
         if os.path.exists( fifo_name ):
             stats = os.stat( fifo_name )
             if not stat.S_ISFIFO( stats.st_mode ):
-                print 'Error: %s is not a fifo' % (fifo_name,)
+                print( 'Error: %s is not a fifo' % (fifo_name,) )
 
             elif stats.st_size == 0:
                 return
@@ -407,7 +407,7 @@ class ClientWindows(ClientBase):
                 return None
 
             errmsg  = self.__getErrorMessage( err )
-            print 'Error:', rc, err, repr(errmsg)
+            print( 'Error:', rc, err, repr(errmsg) )
             return None
 
         else:

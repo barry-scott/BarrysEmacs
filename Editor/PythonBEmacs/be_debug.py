@@ -41,7 +41,7 @@ def setDebug( str_options ):
         if name in globals():
             globals()[ name ] = True
         else:
-            print 'Unknown debug option %s - see be_debug.py for available options' % (option,)
+            print( 'Unknown debug option %s - see be_debug.py for available options' % (option,) )
 
 class EmacsDebugMixin:
     def __init__( self ):
