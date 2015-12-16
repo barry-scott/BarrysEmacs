@@ -25,7 +25,7 @@ import be_exceptions
 import be_version
 import be_images
 #import be_emacs_panel
-#import be_preferences_dialog
+import be_preferences_dialog
 import be_platform_specific
 
 import be_config
@@ -61,6 +61,15 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.__setupMenuBar()
         self.__setupToolBar()
         self.__setupStatusBar()
+
+        self.move( win_prefs.frame_position )
+        self.resize( win_prefs.frame_size )
+
+    def closeEvent( self, event ):
+        self.log.info( 'closeEvent()' )
+        self.app.writePreferences()
+        self.app.onCloseEditor()
+        event.accept()
 
     def __setupMenuBar( self ):
         mb = self.menuBar()
@@ -217,14 +226,19 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         s.addPermanentWidget( self.status_line_num )
         s.addPermanentWidget( self.status_col_num )
 
-    def OnActPreferences( self ):
-        return
+    def moveEvent( self, event ):
+        self.app.prefs.getWindow().frame_position = event.pos()
 
+    def resizeEvent( self, event ):
+        self.app.prefs.getWindow().frame_size = event.size()
+
+    def OnActPreferences( self ):
         pref_dialog = be_preferences_dialog.PreferencesDialog( self, self.app )
-        rc = pref_dialog.ShowModal()
-        if rc == wx.ID_OK:
+        rc = pref_dialog.exec_()
+        print( 'OnActPreferences rc=%r' % (rc,) )
+        if rc == QtWidgets.QDialog.Accepted:
             self.app.savePreferences()
-            self.emacs_panel.newPreferences()
+            #qqq#self.emacs_panel.newPreferences()
 
     def OnActDocumentation( self ):
         user_guide = be_platform_specific.getDocUserGuide()

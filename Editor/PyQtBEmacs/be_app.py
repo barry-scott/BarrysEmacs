@@ -55,7 +55,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
 
         self.__debug_noredirect = False
         self.__debug = True
-        self.__gui_raw_debug = False
+        self.__mock_editor = False
         self.__log_stdout = False
 
         while len(args) > 1:
@@ -81,8 +81,8 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
                 del args[ 1 ]
                 del args[ 1 ]
 
-            elif arg == '--gui-raw-debug':
-                self.__gui_raw_debug = True
+            elif arg == '--mock-editor':
+                self.__mock_editor = True
                 del args[ 1 ]
 
             elif arg == '--start-dir' and len(args) > 2:
@@ -102,7 +102,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         self.editor = None
 
         self.main_thread = threading.currentThread()
-        if self.__gui_raw_debug:
+        if self.__mock_editor:
             self.editor_thread = None
             self.command_line_thread = None
             self.editor = FakeEditor( self )
@@ -226,19 +226,8 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
     def refreshFrame( self ):
         self.main_window.refreshFrame()
 
-    def savePreferences( self ):
+    def writePreferences( self ):
         self.prefs.writePreferences()
-
-    def exitAppNow( self ):
-        if self.lock_ui > 0:
-            # return False to veto a close
-            return False
-
-        self.main_window.savePreferences()
-        self.prefs.writePreferences()
-        self.main_window = None
-
-        return True
 
     # notify app that the emacs panel is ready for use
     def onEmacsPanelReady( self ):
@@ -272,9 +261,10 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         self.__call_gui_result_event.set()
 
     def onGuiThread( self, function, args ):
-        self.AppCallBackSignal( (function,), args ).emit()
+        self.AppCallBackSignal.emit( (function,), args )
 
     def OnAppCallBack( self, function, args ):
+        print( 'OnAppCallBack( %r, %r )' % (function, args) )
         function = function[0]
         self._debugCallback( 'OnAppCallBack func %s start' % (function.__name__,) )
         try:
@@ -307,7 +297,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
     #--------------------------------------------------------------------------------
     def __initCommandLineThread( self ):
         self._debugApp( 'BemacsApp.__initCommandLineThread()' )
-        if self.__gui_raw_debug:
+        if self.__mock_editor:
             return
 
         self.command_line_thread.daemon = True
@@ -541,7 +531,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
     #--------------------------------------------------------------------------------
     def __initEditorThread( self ):
         self._debugApp( 'BemacsApp.__initEditorThread()' )
-        if self.__gui_raw_debug:
+        if self.__mock_editor:
             return
 
         self.editor_thread.daemon = True
@@ -768,11 +758,11 @@ class FakeEditor(be_debug.EmacsDebugMixin):
 
         self.__writeToScreen( 2, '  %6d guiEventMouse called' % (self.count,) )
 
-    # Only used in __gui_raw_debug mode
+    # Only used in __mock_editor mode
     def uiHookEditCopy( self, cmd, text ):
         self.clipboard().setText( text )
 
-    # Only used in __gui_raw_debug mode
+    # Only used in __mock_editor mode
     def uiHookEditPaste( self, cmd, use_primary=False ):
         self._debugEditor( 'uiHookEditPaste use_primary=%r' % (use_primary,) )
 

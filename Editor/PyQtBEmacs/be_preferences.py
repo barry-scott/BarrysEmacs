@@ -15,7 +15,9 @@ import pprint
 
 import sys
 import os
-import types
+import time
+
+from PyQt5 import QtCore
 
 import xml.parsers.expat
 import xml.dom.minidom
@@ -128,7 +130,7 @@ class PreferenceData:
                 if self.__hasChildElements( child ):
                     child_data_dict = {}
                     if child.nodeName in data_dict:
-                        if type(data_dict[ child.nodeName ]) != types.ListType:
+                        if type(data_dict[ child.nodeName ]) != list:
                             data_dict[ child.nodeName ] = [data_dict[ child.nodeName], child_data_dict]
                         else:
                             data_dict[ child.nodeName ].append( child_data_dict )
@@ -179,7 +181,7 @@ class PreferenceData:
         return section_name in self.all_sections
 
     def len_section( self, section_name, option_name ):
-        if type(self.all_sections[ section_name ][ option_name ]) == types.ListType:
+        if type(self.all_sections[ section_name ][ option_name ]) == list:
             length = len( self.all_sections[ section_name ][ option_name ] )
         else:
             length = 1
@@ -217,28 +219,42 @@ class PreferenceData:
     def write( self, f ):
         f.write( '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' )
         f.write( '<bemacs-preferences>\n' )
+        f.write( '<!-- written: %s -->\n' % time.strftime( '%Y-%m-%d %H:%M:%S' ) )
         self.__writeDictionary( f, self.all_sections, 4 )
         f.write( '</bemacs-preferences>\n' )
 
     def __writeDictionary( self, f, d, indent ):
-        all_key_names = d.keys()
-        all_key_names.sort()
-
-        for key_name in all_key_names:
+        for key_name in sorted( d.keys() ):
             value = d[ key_name ]
-            if type(value) == types.DictType:
+            if type(value) == dict:
                 if len(value) > 0:
                     f.write( '%*s<%s>\n' % (indent, '', key_name) )
                     self.__writeDictionary( f, value, indent + 4 )
                     f.write( '%*s</%s>\n' % (indent, '', key_name) )
-            elif type(value) == types.ListType:
+
+            elif type(value) == list:
                 for item in value:
                     f.write( '%*s<%s>\n' % (indent, '', key_name) )
                     self.__writeDictionary( f, item, indent + 4 )
                     f.write( '%*s</%s>\n' % (indent, '', key_name) )
+
+            elif type(value) == int:
+                f.write( '%*s<%s>%d</%s>\n' % (indent, '', key_name, value, key_name) )
+
+            elif type(value) == float:
+                f.write( '%*s<%s>%f</%s>\n' % (indent, '', key_name, value, key_name) )
+
+            elif type(value) == bool:
+                f.write( '%*s<%s>%r</%s>\n' % (indent, '', key_name, value, key_name) )
+
+            elif type(value) == bytes:
+                f.write( '%*s<%s>%s</%s>\n' % (indent, '', key_name, value.decode('utf-8'), key_name) )
+
+            elif type(value) == str:
+                f.write( '%*s<%s>%s</%s>\n' % (indent, '', key_name, value, key_name) )
+
             else:
-                quoted_value = xml.sax.saxutils.escape( unicode( value ) ).encode('utf-8')
-                f.write( '%*s<%s>%s</%s>\n' % (indent, '', key_name, quoted_value, key_name) )
+                raise RuntimeError( 'no encoder for %s %r' % (key_name, value) )
 
 class PreferenceSection:
     def __init__( self, section_name ):
@@ -286,7 +302,7 @@ class SetOption:
         self.section_name = section_name
 
     def set( self, name, value, sep='' ):
-        if type(value) == types.ListType:
+        if type(value) == list:
             value = sep.join( value )
 
         self.pref_data.set( self.section_name, name, value )
@@ -294,7 +310,7 @@ class SetOption:
 class GetIndexedOption:
     def __init__( self, pref_data, section_name, index, index_name ):
         self.pref_list = pref_data.get( section_name, index_name )
-        if type(self.pref_list) != types.ListType:
+        if type(self.pref_list) != list:
             self.pref_list = [self.pref_list]
 
         self.index = index
@@ -322,24 +338,20 @@ class WindowPreferences(PreferenceSection):
         PreferenceSection.__init__( self, 'Window' )
         self.app = app
 
-        self.frame_size = (700, 500)
-        self.frame_position = (-1, -1)
+        self.frame_size = QtCore.QSize( 700, 500 )
+        self.frame_position = QtCore.QPoint( 0, 0 )
         self.maximized = False
         self.zoom = 0
 
     def readPreferences( self, pref_data ):
         get_option = GetOption( pref_data, self.section_name )
-        x = get_option.getint( 'pos_x' )
-        if x < 0:
-            x = 0
-        y = get_option.getint( 'pos_y' )
-        if y < 0:
-            y = 0
-        self.frame_position = ( x, y )
+        x = max( 0, get_option.getint( 'pos_x' ) )
+        y = max( 0, get_option.getint( 'pos_y' ) )
+        self.frame_position = QtCore.QPoint( x, y )
 
-        w = get_option.getint( 'width' )
-        h = get_option.getint( 'height' )
-        self.frame_size = ( w, h )
+        w = max( 400, get_option.getint( 'width' ) )
+        h = max( 200, get_option.getint( 'height' ) )
+        self.frame_size = QtCore.QSize( w, h )
 
         self.maximized = get_option.getbool( 'maximized' )
         if get_option.has( 'zoom' ):
@@ -348,10 +360,10 @@ class WindowPreferences(PreferenceSection):
     def writePreferences( self, pref_data ):
         set_option = SetOption( pref_data, self.section_name )
 
-        set_option.set( 'pos_x', self.frame_position.x )
-        set_option.set( 'pos_y', self.frame_position.y )
-        set_option.set( 'width', self.frame_size.GetWidth() )
-        set_option.set( 'height', self.frame_size.GetHeight() )
+        set_option.set( 'pos_x', self.frame_position.x() )
+        set_option.set( 'pos_y', self.frame_position.y() )
+        set_option.set( 'width', self.frame_size.width() )
+        set_option.set( 'height', self.frame_size.height() )
         set_option.set( 'maximized', self.maximized )
         set_option.set( 'zoom', self.zoom )
 
