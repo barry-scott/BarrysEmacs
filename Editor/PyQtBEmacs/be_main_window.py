@@ -198,6 +198,11 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.status_line_num = QtWidgets.QLabel()
         self.status_col_num = QtWidgets.QLabel()
 
+        self.status_insert_mode.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
+        self.status_eol.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
+        self.status_line_num.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
+        self.status_col_num.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
+
         self.status_line_num.setAlignment( QtCore.Qt.AlignRight )
         self.status_col_num.setAlignment( QtCore.Qt.AlignRight )
 
