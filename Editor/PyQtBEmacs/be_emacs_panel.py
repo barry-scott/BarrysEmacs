@@ -411,6 +411,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         QtWidgets.QWidget.__init__( self, parent )
         be_debug.EmacsDebugMixin.__init__( self )
 
+        self.__debug_save_image_index = 0
+
         self.app = app
         self.log = app.log
 
@@ -451,6 +453,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         # the size of a char on the screen
         self.char_width = None
         self.char_length = None
+        self.char_ascent = None
+
         # the size of the window
         self.pixel_width = None
         self.pixel_length = None
@@ -501,7 +505,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         qp.setPen( QtGui.QPen( bg_colours[ SYNTAX_DULL ] ) )
         qp.setBrush( QtGui.QBrush( bg_colours[ SYNTAX_DULL ] ) )
         qp.drawRect( 0, 0, self.pixel_width, self.pixel_length )
-        qp = None
+        del qp
 
     def __pixelPoint( self, x, y ):
         return  (self.client_padding + self.char_width  * (x-1)
@@ -539,6 +543,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.char_length = metrics.height()
         self._debugPanel( 'paintEvent first_paint M %d.%d' % (self.char_width, self.char_length) )
 
+        self.char_ascent = metrics.ascent()
+
     def paintEvent( self, event ):
         self._debugSpeed( 'paintEvent() begin' )
 
@@ -550,15 +556,15 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
             qp = QtGui.QPainter( self )
             qp.fillRect( QtCore.QRect( 0, 0, self.pixel_width, self.pixel_length ), bg_colours[ SYNTAX_DULL ] )
-            qp = None
+            del qp
 
             self.__calculateWindowSize()
 
             # queue up this action until after the rest of GUI init has happend
-            self.app.onGuiThread( self.app.onEmacsPanelReady, () )
+            self.app.marshallToGuiThread( self.app.onEmacsPanelReady, () )
 
         elif self.editor_pixmap is not None:
-            self._debugPanel( 'EmacsPanel.paintEvent() editor_pixmap' )
+            self._debugPanel( 'EmacsPanel.paintEvent() editor_pixmap %r' % (self.editor_pixmap,) )
 
             qp = QtGui.QPainter( self )
 
@@ -601,9 +607,10 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
                 x, y = self.__pixelPoint( x+1, y+1 )
                 qp.drawRect( x, y, self.char_width * width, self.char_length * height )
 
-            qp = None
+            del qp
 
             self._debugSpeed( 'at end' )
+
         else:
             self._debugPanel( 'EmacsPanel.paintEvent() Nothing to do' )
 
@@ -619,7 +626,18 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
     def keyPressEvent( self, event ):
         key = event.key()
-        modifiers = event.modifiers()
+        modifiers = int( event.modifiers() )
+        self._debugTermKey( 'keyPressEvent --- key %x modifiers 0x%x mask 0x%x residual 0x%x result %r' %
+                                (key, modifiers,
+                                QtCore.Qt.ShiftModifier,
+                                modifiers & QtCore.Qt.ShiftModifier,
+                                (modifiers & QtCore.Qt.ShiftModifier) != 0) )
+        self._debugTermKey( 'keyPressEvent --- key %r modifiers %r mask %r residual %r result %r' %
+                                (type(key), type(modifiers),
+                                type(QtCore.Qt.ShiftModifier),
+                                type(modifiers & QtCore.Qt.ShiftModifier),
+                                type((modifiers & QtCore.Qt.ShiftModifier) != 0)) )
+
         # see http://doc.qt.io/qt-5/qt.html#KeyboardModifier-enum for details of mappings
         if sys.platform == 'darwin':
             shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
@@ -667,7 +685,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
     def keyReleaseEvent( self, event ):
         key = event.key()
-        modifiers = event.modifiers()
+        modifiers = int( event.modifiers() )
         # see http://doc.qt.io/qt-5/qt.html#KeyboardModifier-enum for details of mappings
         if sys.platform == 'darwin':
             shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
@@ -695,7 +713,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         key = event.key()
         char = event.text()
-        modifiers = event.modifiers()
+        modifiers = int( event.modifiers() )
         # see http://doc.qt.io/qt-5/qt.html#KeyboardModifier-enum for details of mappings
         if sys.platform == 'darwin':
             shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
@@ -732,10 +750,10 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.app.editor.guiEventChar( char, False )
 
     def mousePressEvent( self, event ):
-        print( 'mousePressEvent %r %r' % (event.buttons(), event.pos()) )
+        self._debugTermMouse( 'mousePressEvent %r %r )' % (event.buttons(), event.pos()) )
 
     def mouseReleaseEvent( self, event ):
-        print( 'mousePressEvent %r %r' % (event.buttons(), event.pos()) )
+        self._debugTermMouse( 'mousePressEvent %r %r' % (event.buttons(), event.pos()) )
 
     def OnMouse( self, event ):
         self._debugTermMouse( 'OnMouse() event_type %r %r' %
@@ -946,6 +964,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.qp = QtGui.QPainter( self.editor_pixmap )
         self.qp.setBackgroundMode( QtCore.Qt.OpaqueMode )
         self.qp.setFont( self.font )
+        self.qp.setPen( QtGui.QColor( 255, 0, 0 ) )
 
         self.__executeTermOperations()
 
@@ -1010,7 +1029,10 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
                 bar.Show( True )
                 self._debugTermCalls1( 'termUpdateEnd: v scroll show %d' % (index,) )
 
-        self.qp = None
+        del self.qp
+
+        # self.__debug_save_image_index += 1
+        # self.editor_pixmap.save( '/home/barry/tmpdir/image-%03d.png' % (self.__debug_save_image_index,), 'PNG' )
 
         index += 1
         while index < len( self.all_horz_scroll_bars ):
@@ -1046,6 +1068,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         if new is None:
             new_line_contents = ''
             new_line_attrs = []
+
         else:
             new_line_contents = new[0]
             new_line_attrs = new[1]
@@ -1053,6 +1076,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         if old is None:
             old_line_contents = ''
             old_line_attrs = []
+
         else:
             old_line_contents = old[0]
             old_line_attrs = old[1]
@@ -1063,7 +1087,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         new_line_length = len( new_line_contents )
         old_line_length = len( old_line_contents )
 
-        if True or wx.Platform == '__WXMAC__':
+        if True or sys.platform == 'darwin':
             for col in range( len( new_line_contents ) ):
                 new_attr = new_line_attrs[ col ]
                 new_ch = new_line_contents[ col ]
@@ -1087,14 +1111,14 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
                     if cur_mode != mode:
                         cur_mode = mode
-                        self.qp.setPen( QtGui.QPen( bg_colours[ cur_mode ] ) )
+                        self.qp.setPen( QtGui.QPen( fg_colours[ cur_mode ] ) )
                         self.qp.setBrush( QtGui.QBrush( bg_colours[ cur_mode ] ) )
 
                 x, y = self.__pixelPoint( col+1, row )
 
                 # draw text may not fill the rectange of the char leaving lines on the screen
                 self.qp.drawRect( x, y, self.char_width, self.char_length )
-                self.qp.drawText( x, y, new_ch )
+                self.qp.drawText( x, y+self.char_ascent, new_ch )
 
         else:
             draw_chars = []
@@ -1145,7 +1169,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
                         x, y = self.__pixelPoint( draw_cols[ start ] + 1, row )
 
-                        self.qp.drawText( x, y, ''.join( draw_chars[ start:end ] ) )
+                        self.qp.drawText( x, y+self.char_ascent, ''.join( draw_chars[ start:end ] ) )
                         start = end
 
                         end += 1

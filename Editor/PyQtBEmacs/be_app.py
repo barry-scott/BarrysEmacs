@@ -21,6 +21,7 @@ import tempfile
 import threading
 import inspect
 import gettext
+import queue
 
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
@@ -34,7 +35,7 @@ import be_debug
 
 
 class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
-    AppCallBackSignal = QtCore.pyqtSignal( tuple, tuple, name='AppCallBack' )
+    MarshallToGuiThreadSignal = QtCore.pyqtSignal( name='MarshallToGuiThread' )
 
     def __init__( self, args ):
         be_debug.EmacsDebugMixin.__init__( self )
@@ -57,6 +58,8 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         self.__debug = True
         self.__mock_editor = False
         self.__log_stdout = False
+
+        self.__callback_queue = queue.Queue()
 
         while len(args) > 1:
             arg = args[ 1 ]
@@ -158,8 +161,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
 
         try_wrapper = be_exceptions.TryWrapperFactory( self.log )
 
-        #qqq#wx.EVT_ACTIVATE_APP( self, try_wrapper( self.OnActivateApp ) )
-        #qqq#EVT_APP_CALLBACK( self, try_wrapper( self.OnAppCallBack ) )
+        self.MarshallToGuiThreadSignal.connect( self.handleMarshallToGuiThread )
 
     def eventWrapper( self, function ):
         return EventScheduling( self, function )
@@ -197,7 +199,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
     def log_client_error( self, e, title='Error' ):
         # must run on the main thread
         if not self.isMainThread():
-            self.onGuiThread( self.log_client_error, (e, title) )
+            self.marshallToGuiThread( self.log_client_error, (e, title) )
             return
 
         self.__last_client_error = []
@@ -211,7 +213,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
     def log_error( self, e, title='Error' ):
         # must run on the main thread
         if not self.isMainThread():
-            self.onGuiThread( self.log_error, (e, title) )
+            self.marshallToGuiThread( self.log_error, (e, title) )
             return
 
         message = str( e )
@@ -232,7 +234,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
     # notify app that the emacs panel is ready for use
     def onEmacsPanelReady( self ):
         self._debugApp( 'BemacsApp.onEmacsPanelReady()' )
-        self.onGuiThread( self.__initEditorThread, () )
+        self.marshallToGuiThread( self.__initEditorThread, () )
 
     def OnActivateApp( self, event ):
         if self.editor is None:
@@ -252,7 +254,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
 
     def callGuiFunction( self, function, args ):
         self.__call_gui_result_event.clear()
-        self.onGuiThread( self.executeCallGuiFunction, (function, args) )
+        self.marshallToGuiThread( self.executeCallGuiFunction, (function, args) )
         self.__call_gui_result_event.wait()
         return self.__call_gui_result
 
@@ -260,20 +262,23 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         self.__call_gui_result = function( *args )
         self.__call_gui_result_event.set()
 
-    def onGuiThread( self, function, args ):
-        self.AppCallBackSignal.emit( (function,), args )
+    def marshallToGuiThread( self, function, args ):
+        m = MarshalledCall( function, args )
+        self._debugCallback( 'marshallToGuiThread %r sent' % (m,) )
+        self.__callback_queue.put( m )
+        self.MarshallToGuiThreadSignal.emit()
 
-    def OnAppCallBack( self, function, args ):
-        print( 'OnAppCallBack( %r, %r )' % (function, args) )
-        function = function[0]
-        self._debugCallback( 'OnAppCallBack func %s start' % (function.__name__,) )
+    def handleMarshallToGuiThread( self ):
+        m = self.__callback_queue.get( block=False )
+        self._debugCallback( 'handleMarshallToGuiThread %r start' % (m,) )
+
         try:
-            function( *event.args )
+            m.dispatch()
 
         except:
-            self.log.exception( 'OnAppCallBack\n' )
+            self.log.exception( 'handleMarshallToGuiThread\n' )
 
-        self._debugCallback( 'OnAppCallBack func %s done' % (function.__name__,) )
+        self._debugCallback( 'handleMarshallToGuiThread %r done' % (m,) )
 
     def debugShowCallers( self, depth ):
         if not self.__debug:
@@ -315,7 +320,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         except Exception as e:
             self.log.exception( 'command line exception' )
 
-            self.onGuiThread( self.guiReportException, (str(e), 'Command line Exception') )
+            self.marshallToGuiThread( self.guiReportException, (str(e), 'Command line Exception') )
 
     def __windowsCommandLineHandler( self ):
         self._debugApp( '__windowsCommandLineHandler()' )
@@ -401,7 +406,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
                         reply.value = 'p%d' % (os.getpid(),)
 
                     elif client_command[0] == 'C':
-                        self.onGuiThread( self.guiClientCommandHandler, (client_command[1:],) )
+                        self.marshallToGuiThread( self.guiClientCommandHandler, (client_command[1:],) )
                         reply.value = ' '
 
                     else:
@@ -493,7 +498,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
                 self._debugApp( '__posixCommandLineHandler command %r' % (client_command,) )
                 if len( client_command ) > 0:
                     if client_command[0] == 'C':
-                        self.onGuiThread( self.guiClientCommandHandler, (client_command[1:],) )
+                        self.marshallToGuiThread( self.guiClientCommandHandler, (client_command[1:],) )
                         reply = ' '                        
 
                 emacs_client_write_fd = os.open( client_fifo, os.O_WRONLY|os.O_NONBLOCK );
@@ -548,7 +553,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
 
             # now that emacs has init'ed and processed any command line
             # the command line handler can be started
-            self.onGuiThread( self.__initCommandLineThread, () )
+            self.marshallToGuiThread( self.__initCommandLineThread, () )
 
             # stay in processKeys until editor quits
             while True:
@@ -569,7 +574,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
             self.callGuiFunction( self.guiReportException, (str(e), 'Editor Exception') )
 
 
-        self.onGuiThread( self.quit, () )
+        self.marshallToGuiThread( self.quit, () )
 
     def guiYesNoDialog( self, default, title, message ):
         #qqq# What is default for?
@@ -579,7 +584,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
 
     def quit( self ):
         self.log.debug( 'quit()' )
-        self.main_window.Destroy()
+        self.main_window.close()
 
     def BringWindowToFront( self ):
         try: # it's possible for this event to come when the frame is closed
@@ -731,10 +736,10 @@ class FakeEditor(be_debug.EmacsDebugMixin):
         p.termUpdateBegin()
         p.termUpdateLine( None, new, line )
         p.termTopos( line, 10 )
-        p.termUpdateEnd( {'readonly': False, 'overstrike': False, 'eol': 'Q', 'line': 99, 'column': 9}, self.vert_scroll, self.horz_scroll )
+        p.termUpdateEnd( {'readonly': True, 'overstrike': False, 'eol': 'LF', 'line': 4199, 'column': 9}, self.vert_scroll, self.horz_scroll )
 
     def guiCloseWindow( self, *args, **kwds ):
-        self.app.onGuiThread( self.app.quit, () )
+        self.app.marshallToGuiThread( self.app.quit, () )
 
     def guiGeometryChange( self, *args, **kwds ):
         pass
@@ -743,15 +748,16 @@ class FakeEditor(be_debug.EmacsDebugMixin):
         pass
 
     def guiEventChar( self, char, shift ):
+        print( 'guiEventChar( %r, %r' % (char, shift) )
         self.count += 1
 
         self.__writeToScreen( 1, '  %6d guiEventChar( %r, %r ) called' % (self.count, char, shift) )
 
         if char == 'c':
-            self.app.onGuiThread( self.uiHookEditCopy, ('edit-copy', 'quick brown fox') )
+            self.app.marshallToGuiThread( self.uiHookEditCopy, ('edit-copy', 'quick brown fox') )
 
         elif char == 'v':
-            self.app.onGuiThread( self.uiHookEditPaste, ('edit-paste',) )
+            self.app.marshallToGuiThread( self.uiHookEditPaste, ('edit-paste',) )
 
     def guiEventMouse( self, *args, **kwds ):
         self.count += 1
@@ -775,3 +781,14 @@ class FakeEditor(be_debug.EmacsDebugMixin):
         text = text.replace( '\r\n', '\n' ).replace( '\r', '\n' )
 
         self._debugEditor( 'uiHookEditPaste text=%r' % (text,) )
+
+class MarshalledCall:
+    def __init__( self, function, args ):
+        self.function = function
+        self.args = args
+
+    def dispatch( self ):
+        self.function( *self.args )
+
+    def __repr__( self ):
+        return 'MarshalledCall: fn=%s nargs=%d' % (self.function.__name__,len(self.args))
