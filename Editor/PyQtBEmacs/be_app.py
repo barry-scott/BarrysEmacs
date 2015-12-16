@@ -722,7 +722,7 @@ class FakeEditor(be_debug.EmacsDebugMixin):
         self.__writeToScreen( 3, 'debug: %s' % (msg,) )
 
     def __writeToScreen( self, line, text ):
-        p = self.app.frame.emacs_panel
+        p = self.app.main_window.emacs_panel
 
         attr = [0] * len(text)
 

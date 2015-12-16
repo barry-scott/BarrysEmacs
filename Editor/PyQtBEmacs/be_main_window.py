@@ -24,7 +24,7 @@ from PyQt5 import QtCore
 import be_exceptions
 import be_version
 import be_images
-#import be_emacs_panel
+import be_emacs_panel
 import be_preferences_dialog
 import be_platform_specific
 
@@ -55,8 +55,8 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle( title )
         self.setWindowIcon( be_images.getIcon( 'bemacs.png' ) )
 
-        self.centre_widget = QtWidgets.QTextEdit( 'The centre widget' )
-        self.setCentralWidget( self.centre_widget )
+        self.emacs_panel = be_emacs_panel.EmacsPanel( self.app, self )
+        self.setCentralWidget( self.emacs_panel )
 
         self.__setupMenuBar()
         self.__setupToolBar()
@@ -202,11 +202,21 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         s = self.statusBar()
 
         self.status_message = QtWidgets.QLabel()
+        self.status_read_only = QtWidgets.QLabel()
         self.status_insert_mode = QtWidgets.QLabel()
         self.status_eol = QtWidgets.QLabel()
         self.status_line_num = QtWidgets.QLabel()
         self.status_col_num = QtWidgets.QLabel()
 
+        metrics = self.status_message.fontMetrics()
+
+        self.status_read_only.setMinimumWidth( metrics.width( 'READ' ) )
+        self.status_insert_mode.setMinimumWidth( max( metrics.width( 'INS' ), metrics.width( 'OVER' ) ) )
+        self.status_eol.setMinimumWidth( max( metrics.width( 'LF' ), metrics.width( 'CRLF' ), metrics.width( 'CR' ) ) )
+        self.status_line_num.setMinimumWidth( metrics.width( '9999999' ) )
+        self.status_col_num.setMinimumWidth( metrics.width( '9999' ) )
+
+        self.status_read_only.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
         self.status_insert_mode.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
         self.status_eol.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
         self.status_line_num.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
@@ -215,12 +225,14 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.status_line_num.setAlignment( QtCore.Qt.AlignRight )
         self.status_col_num.setAlignment( QtCore.Qt.AlignRight )
 
+        self.status_read_only.setText( '' )
         self.status_insert_mode.setText( 'INS ' )
         self.status_eol.setText( 'LF  ' )
         self.status_line_num.setText( '123' )
         self.status_col_num.setText( '24' )
 
         s.addWidget( self.status_message )
+        s.addPermanentWidget( self.status_read_only )
         s.addPermanentWidget( self.status_insert_mode )
         s.addPermanentWidget( self.status_eol )
         s.addPermanentWidget( self.status_line_num )
@@ -238,7 +250,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         print( 'OnActPreferences rc=%r' % (rc,) )
         if rc == QtWidgets.QDialog.Accepted:
             self.app.savePreferences()
-            #qqq#self.emacs_panel.newPreferences()
+            self.emacs_panel.newPreferences()
 
     def OnActDocumentation( self ):
         user_guide = be_platform_specific.getDocUserGuide()
@@ -262,3 +274,11 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         all_about_info.append( T_('Copyright Barry Scott (c) 1980-%s. All rights reserved') % (be_version.year,) )
 
         QtWidgets.QMessageBox.information( self, T_("About Barry's Emacs"), '\n'.join( all_about_info ) )
+
+    def setStatus( self, all_status ):
+        self.status_read_only   .setText( {True: 'READ', False: '    '}[all_status['readonly']] )
+        self.status_insert_mode .setText( {True: 'OVER', False: 'INS '}[all_status['overstrike']] )
+        self.status_eol         .setText( all_status['eol'] )
+        self.status_line_num    .setText( '%d' % (all_status['line'],) )
+        self.status_col_num     .setText( '%d' % (all_status['column'],) )
+
