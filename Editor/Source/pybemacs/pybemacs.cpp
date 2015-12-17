@@ -961,7 +961,7 @@ public:
 private:
 };
 
-#if defined( PY3 )
+#if PY_MAJOR_VERSION == 3
 extern "C" PyObject *PyInit__bemacs()
 {
 #if defined(PY_WIN32_DELAYLOAD_PYTHON_DLL)
@@ -978,7 +978,8 @@ extern "C" PyObject *PyInit__bemacs_d()
     return PyInit__bemacs();
 }
 
-#else
+#elif PY_MAJOR_VERSION == 2
+
 static BemacsModule *bemacs_module = NULL;
 
 extern "C" EXPORT_SYMBOL void init_bemacs()
@@ -995,6 +996,8 @@ extern "C" EXPORT_SYMBOL void init_bemacs_d()
 {
     init_bemacs();
 }
+#else
+#error "Unsupported Python version"
 #endif
 
 // QQQ
