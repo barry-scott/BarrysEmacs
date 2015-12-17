@@ -210,9 +210,9 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
 
         metrics = self.status_message.fontMetrics()
 
-        self.status_read_only.setMinimumWidth( metrics.width( 'READ' ) )
-        self.status_insert_mode.setMinimumWidth( max( metrics.width( 'INS' ), metrics.width( 'OVER' ) ) )
-        self.status_eol.setMinimumWidth( max( metrics.width( 'LF' ), metrics.width( 'CRLF' ), metrics.width( 'CR' ) ) )
+        self.status_read_only.setMinimumWidth( max( [metrics.width( s ) for s in ('RO',)] ) )
+        self.status_insert_mode.setMinimumWidth( max( [metrics.width( s ) for s in ('Ins', 'Over')] ) )
+        self.status_eol.setMinimumWidth( max( [metrics.width( s ) for s in ('LF', 'CR', 'CRLF')] ) )
         self.status_line_num.setMinimumWidth( metrics.width( '9999999' ) )
         self.status_col_num.setMinimumWidth( metrics.width( '9999' ) )
 
@@ -247,9 +247,8 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
     def onActPreferences( self ):
         pref_dialog = be_preferences_dialog.PreferencesDialog( self, self.app )
         rc = pref_dialog.exec_()
-        print( 'OnActPreferences rc=%r' % (rc,) )
         if rc == QtWidgets.QDialog.Accepted:
-            self.app.savePreferences()
+            self.app.writePreferences()
             self.emacs_panel.newPreferences()
 
     def onActDocumentation( self ):
@@ -276,9 +275,9 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMessageBox.information( self, T_("About Barry's Emacs"), '\n'.join( all_about_info ) )
 
     def setStatus( self, all_status ):
-        self.status_read_only   .setText( {True: 'READ', False: '    '}[all_status['readonly']] )
-        self.status_insert_mode .setText( {True: 'OVER', False: 'INS '}[all_status['overstrike']] )
-        self.status_eol         .setText( all_status['eol'] )
+        self.status_read_only   .setText( {True: 'RO', False: ''}[all_status['readonly']] )
+        self.status_insert_mode .setText( {True: 'Over', False: 'Ins '}[all_status['overstrike']] )
+        self.status_eol         .setText( all_status['eol'].upper() )
         self.status_line_num    .setText( '%d' % (all_status['line'],) )
         self.status_col_num     .setText( '%d' % (all_status['column'],) )
 

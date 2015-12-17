@@ -105,7 +105,7 @@ bg_colours = {
     SYNTAX_TYPE_COMMENT3:   QtGui.QColor(255,255,255),
     SYNTAX_TYPE_KEYWORD1:   QtGui.QColor(255,255,255),
     SYNTAX_TYPE_KEYWORD2:   QtGui.QColor(255,255,255),
-    SYNTAX_TYPE_KEYWORD3:   QtGui.QColor(255,255,255),
+    SYNTAX_TYPE_KEYWORD3:   QtGui.QColor(000,255,255),
     LINE_ATTR_MODELINE:     QtGui.QColor(  0,  0,255),
     LINE_ATTR_USER+1:       QtGui.QColor(255,255,255),
     LINE_ATTR_USER+2:       QtGui.QColor(255,255,255),
@@ -498,13 +498,11 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self._debugPanel( '__calculateWindowSize create editor_pixmap %d x %d' % (self.pixel_width, self.pixel_length) )
         self.editor_pixmap = QtGui.QPixmap( self.pixel_width, self.pixel_length )
 
+        bg_brush = QtGui.QBrush( bg_colours[ SYNTAX_DULL ] )
         qp = QtGui.QPainter( self.editor_pixmap )
-        qp.setFont( self.font )
         qp.setBackgroundMode( QtCore.Qt.OpaqueMode )
-        qp.setBackground( QtGui.QBrush( bg_colours[ SYNTAX_DULL ] ) )
-        qp.setPen( QtGui.QPen( bg_colours[ SYNTAX_DULL ] ) )
-        qp.setBrush( QtGui.QBrush( bg_colours[ SYNTAX_DULL ] ) )
-        qp.drawRect( 0, 0, self.pixel_width, self.pixel_length )
+        qp.setBackground( bg_brush )
+        qp.fillRect( 0, 0, self.pixel_width, self.pixel_length, bg_brush )
         del qp
 
     def __pixelPoint( self, x, y ):
@@ -578,16 +576,12 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
             # alpha blend the cursor
             cursor_colour = QtGui.QColor( 255, 0, 0, 64 )
-            qp.setPen( QtGui.QPen( cursor_colour ) )
-            qp.setBrush( QtGui.QBrush( cursor_colour ) )
-            qp.drawRect( c_x, c_y, self.char_width, self.char_length )
+            qp.fillRect( c_x, c_y, self.char_width, self.char_length, cursor_colour )
 
             # Draw scroll bar backgrounds
             # set the colour behind the scroll bars
             G = 240
             scroll_bar_bg = QtGui.QColor( G, G, G, 0 )
-            qp.setPen( QtGui.QPen( scroll_bar_bg ) )
-            qp.setBrush( QtGui.QBrush( scroll_bar_bg ) )
 
             #--- vert_scroll -----------------------------------------------------------
             for bar_info in self.all_vert_scroll_bar_info:
@@ -596,7 +590,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
                 win_id, x, y, width, height, pos, total = bar_info
                 x, y = self.__pixelPoint( x+1, y+1 )
-                qp.drawRect( x, y, self.char_width * width, self.char_length * height )
+                qp.fillRect( x, y, self.char_width * width, self.char_length * height, scroll_bar_bg )
 
             #--- horz_scroll -----------------------------------------------------------
             for bar_info in self.all_horz_scroll_bar_info:
@@ -605,7 +599,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
                 win_id, x, y, width, height, pos = bar_info
                 x, y = self.__pixelPoint( x+1, y+1 )
-                qp.drawRect( x, y, self.char_width * width, self.char_length * height )
+                qp.fillRect( x, y, self.char_width * width, self.char_length * height, scroll_bar_bg )
 
             del qp
 
@@ -964,9 +958,10 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self._debugTermCalls1( 'termUpdateEnd() all_vert_scroll_bars %r' % (all_vert_scroll_bars,) )
 
         self.qp = QtGui.QPainter( self.editor_pixmap )
+        self.qp.setBackground( bg_colours[ SYNTAX_DULL ] )
         self.qp.setBackgroundMode( QtCore.Qt.OpaqueMode )
         self.qp.setFont( self.font )
-        self.qp.setPen( QtGui.QColor( 255, 0, 0 ) )
+        self.qp.setPen( fg_colours[ SYNTAX_DULL ] )
 
         self.__executeTermOperations()
 
@@ -1033,9 +1028,6 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
                     self._debugTermCalls1( 'termUpdateEnd: v scroll show %d' % (index,) )
 
 
-            # self.__debug_save_image_index += 1
-            # self.editor_pixmap.save( '/home/barry/tmpdir/image-%03d.png' % (self.__debug_save_image_index,), 'PNG' )
-
             index += 1
             while index < len( self.all_horz_scroll_bars ):
                 self.all_horz_scroll_bars[ index ].Show( False )
@@ -1043,6 +1035,10 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
                 index += 1
 
         del self.qp
+
+        self.__debug_save_image_index += 1
+        self.editor_pixmap.save( '/home/barry/tmpdir/image-%03d.png' % (self.__debug_save_image_index,), 'PNG' )
+
 
         self.update( 0, 0, self.pixel_width, self.pixel_length )
 
@@ -1091,111 +1087,76 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         new_line_length = len( new_line_contents )
         old_line_length = len( old_line_contents )
 
-        if True or sys.platform == 'darwin':
-            for col in range( len( new_line_contents ) ):
-                new_attr = new_line_attrs[ col ]
-                new_ch = new_line_contents[ col ]
-                if( col < len(old_line_contents)
-                and old_line_contents[ col ] == new_ch
-                and old_line_attrs[ col ] == new_attr ):
-                    continue
+        # optimise drawing by finding runs of chars with the same fg and bg.
+        draw_chars = []
+        draw_cols = []
+        draw_modes = []
 
-                if cur_attr != new_attr:
-                    if (new_attr & LINE_M_ATTR_HIGHLIGHT) != 0:
-                        mode = LINE_M_ATTR_HIGHLIGHT
+        for col in range( len( new_line_contents ) ):
+            new_attr = new_line_attrs[ col ]
+            new_ch = new_line_contents[ col ]
+            if( col < len(old_line_contents) 
+            and old_line_contents[ col ] == new_ch
+            and old_line_attrs[ col ] == new_attr ):
+                continue
 
-                    elif (new_attr & LINE_ATTR_MODELINE) != 0:
-                        mode = LINE_ATTR_MODELINE
+            if cur_attr != new_attr:
+                if (new_attr & LINE_M_ATTR_HIGHLIGHT) != 0:
+                    mode = LINE_M_ATTR_HIGHLIGHT
 
-                    elif (new_attr & LINE_ATTR_USER) != 0:
-                        mode = new_attr&LINE_M_ATTR_USER
+                elif (new_attr & LINE_ATTR_MODELINE) != 0:
+                    mode = LINE_ATTR_MODELINE
 
-                    else:
-                        mode = new_attr
+                elif (new_attr & LINE_ATTR_USER) != 0:
+                    mode = new_attr&LINE_M_ATTR_USER
 
-                    if cur_mode != mode:
-                        cur_mode = mode
+                else:
+                    mode = new_attr
+
+            draw_chars.append( new_ch )
+            draw_cols.append( col )
+            draw_modes.append( mode )
+
+        draw_modes.append( None )
+        draw_cols.append( 10000000 )
+
+        cur_mode = None
+        start = 0
+        draw_last = len(draw_chars)
+        while start < draw_last:
+            end = start + 1
+
+            while end <= draw_last:
+                if( draw_modes[ start ] != draw_modes[ end ]
+                or draw_cols[ end-1 ]+1 != draw_cols[ end ] ):
+                    if cur_mode != draw_modes[ start ]:
+                        cur_mode = draw_modes[ start ]
                         self.qp.setPen( QtGui.QPen( fg_colours[ cur_mode ] ) )
-                        self.qp.setBrush( QtGui.QBrush( bg_colours[ cur_mode ] ) )
+                        self.qp.setBackground( bg_colours[ cur_mode ] )
 
-                x, y = self.__pixelPoint( col+1, row )
+                    x, y = self.__pixelPoint( draw_cols[ start ] + 1, row )
 
-                # draw text may not fill the rectange of the char leaving lines on the screen
-                self.qp.drawRect( x, y, self.char_width, self.char_length )
-                self.qp.drawText( x, y+self.char_ascent, new_ch )
+                    self.qp.drawText( x, y+self.char_ascent, ''.join( draw_chars[ start:end ] ) )
 
-        else:
-            draw_chars = []
-            draw_cols = []
-            draw_modes = []
+                    start = end
+                    end += 1
 
-            for col in range( len( new_line_contents ) ):
-                new_attr = new_line_attrs[ col ]
-                new_ch = new_line_contents[ col ]
-                if( col < len(old_line_contents) 
-                and old_line_contents[ col ] == new_ch
-                and old_line_attrs[ col ] == new_attr ):
-                    continue
+                    if end == draw_last:
+                        break
 
-                if cur_attr != new_attr:
-                    if (new_attr & LINE_M_ATTR_HIGHLIGHT) != 0:
-                        mode = LINE_M_ATTR_HIGHLIGHT
+                else:
+                    end += 1
 
-                    elif (new_attr & LINE_ATTR_MODELINE) != 0:
-                        mode = LINE_ATTR_MODELINE
-
-                    elif (new_attr & LINE_ATTR_USER) != 0:
-                        mode = new_attr&LINE_M_ATTR_USER
-
-                    else:
-                        mode = new_attr
-
-                draw_chars.append( new_ch )
-                draw_cols.append( col )
-                draw_modes.append( mode )
-
-            draw_modes.append( None )
-            draw_cols.append( 10000000 )
-
-            cur_mode = None
-            start = 0
-            draw_last = len(draw_modes) - 1
-            while start < draw_last:
-                end = start + 1
-
-                while end <= draw_last:
-                    if( draw_modes[ start ] != draw_modes[ end ]
-                    or draw_cols[ end-1 ]+1 != draw_cols[ end ] ):
-                        if cur_mode != draw_modes[ start ]:
-                            cur_mode = draw_modes[ start ]
-                            self.qp.setPen( fg_colours[ cur_mode ] ) 
-                            self.qp.setBackground( bg_colours[ cur_mode ] )
-
-                        x, y = self.__pixelPoint( draw_cols[ start ] + 1, row )
-
-                        self.qp.drawText( x, y+self.char_ascent, ''.join( draw_chars[ start:end ] ) )
-                        start = end
-
-                        end += 1
-
-                        if end == draw_last:
-                            break
-
-                    else:
-                        end += 1
-
-                if start == draw_last:
-                    break
+            if start == draw_last:
+                break
 
         remaining_width = self.term_width - new_line_length
         if remaining_width > 0:
-            self.qp.setPen( QtGui.QPen( bg_colours[ SYNTAX_DULL ] ) )
-            self.qp.setBrush( QtGui.QBrush( bg_colours[ SYNTAX_DULL ] ) )
+            bg_brush = QtGui.QBrush( bg_colours[ SYNTAX_DULL ] )
             x, y = self.__pixelPoint( new_line_length+1, row )
-            self.qp.drawRect( x, y, remaining_width*self.char_width, self.char_length )
+            self.qp.fillRect( x, y, remaining_width*self.char_width, self.char_length, bg_brush )
 
         self._debugTermCalls2( '__termUpdateLine %d done' % (row,) )
-
 
     def termMoveLine( self, from_line, to_line ):
         self._debugTermCalls1( 'termMoveLine( %r, %r )' % (from_line,to_line) )
@@ -1217,11 +1178,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
                 ,width, height
                 ,src_x, src_y) )
 
-        f= QtGui.PixmapFragment.create(
-                QtGui.QPointF( dst_x, dst_y ),
-                QtGui.QRectF( src_x, src_y, width, height )
-                )
-        self.qp.drawPixmapFragments( [f], self.editor_pixmap, QtGui.QPainter.OpaqueHint )
+        self.qp.drawPixmap( dst_x, dst_y, width, height, self.editor_pixmap, src_x, src_y, width, height )
 
     def termDisplayActivity( self, ch ):
         self._debugTermCalls1( 'termDisplayActivity( %r )' % (ch,) )
