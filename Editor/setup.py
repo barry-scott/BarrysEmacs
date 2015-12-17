@@ -525,7 +525,6 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
-                                        '-DDARWIN '
                                         '-D%(DEBUG)s' )
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
@@ -550,7 +549,6 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '-DPYCXX_PYTHON_2TO3 -I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"python\\"" '
-                                        '-DDARWIN '
                                         '-D%(DEBUG)s' )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
