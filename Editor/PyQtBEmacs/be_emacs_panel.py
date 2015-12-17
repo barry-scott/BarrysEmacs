@@ -431,7 +431,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.__all_term_ops = []
         self.editor_pixmap = None
 
-        self.eat_next_char = False
+        #qqq#self.eat_next_char = False
         self.cursor_x = 1
         self.cursor_y = 1
         self.window_size = 0
@@ -577,10 +577,10 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
 
             # alpha blend the cursor
-            cursor_colour = QtGui.QColor( 0, 0, 0, 64 )
+            cursor_colour = QtGui.QColor( 255, 0, 0, 64 )
             qp.setPen( QtGui.QPen( cursor_colour ) )
             qp.setBrush( QtGui.QBrush( cursor_colour ) )
-            qp.drawRect( 0, 0, self.char_width, self.char_length )
+            qp.drawRect( c_x, c_y, self.char_width, self.char_length )
 
             # Draw scroll bar backgrounds
             # set the colour behind the scroll bars
@@ -678,7 +678,9 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             for ch in translation:
                 self.app.editor.guiEventChar( ch, shift )
 
-            self.eat_next_char = True
+
+            #qqq# Not needed now?
+            #qqq# self.eat_next_char = True
 
         elif len(event.text()) > 0:
             self.handleNonSpecialKey( event )
@@ -705,11 +707,11 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
                             (event.text(), key, key, qt_key_names.get( key, 'unknown' ), T( ctrl ), T( shift ), T( alt ), T( cmd ), T( meta )) )
 
     def handleNonSpecialKey( self, event ):
-        if self.eat_next_char:
-            self._debugTermKey( 'handleNonSpecialKey eat_next_char' )
+        #qqq#if self.eat_next_char:
+        #qqq#    self._debugTermKey( 'handleNonSpecialKey eat_next_char' )
 
-            self.eat_next_char = False
-            return
+        #qqq#    self.eat_next_char = False
+        #qqq#    return
 
         key = event.key()
         char = event.text()
