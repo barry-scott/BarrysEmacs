@@ -78,7 +78,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.addEmacsMenu( menu_file, 'fo', T_('&Open') )
 
         act_prefs = menu_file.addAction( T_('&Preferences') )
-        act_prefs.triggered.connect( self.OnActPreferences )
+        act_prefs.triggered.connect( self.onActPreferences )
 
         act_exit = menu_file.addAction( T_('E&xit') )
         act_exit.triggered.connect( self.close )
@@ -142,9 +142,9 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
 
         menu_help = mb.addMenu( T_('&Help' ) )
         act = menu_help.addAction( T_('Documentation...') )
-        act.triggered.connect( self.OnActDocumentation )
+        act.triggered.connect( self.onActDocumentation )
         act = menu_help.addAction( T_("&About...") )
-        act.triggered.connect( self.OnActAbout )
+        act.triggered.connect( self.onActAbout )
 
     def addEmacsMenu( self, container, code, title, icon=None ):
         if code not in self.__all_actions:
@@ -244,7 +244,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
     def resizeEvent( self, event ):
         self.app.prefs.getWindow().frame_size = event.size()
 
-    def OnActPreferences( self ):
+    def onActPreferences( self ):
         pref_dialog = be_preferences_dialog.PreferencesDialog( self, self.app )
         rc = pref_dialog.exec_()
         print( 'OnActPreferences rc=%r' % (rc,) )
@@ -252,7 +252,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
             self.app.savePreferences()
             self.emacs_panel.newPreferences()
 
-    def OnActDocumentation( self ):
+    def onActDocumentation( self ):
         user_guide = be_platform_specific.getDocUserGuide()
         if not os.path.exists( user_guide ):
             self.log.error( 'Expected user guide %r to exist' % (user_guide,) )
@@ -260,7 +260,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
 
         #qqq# URL open( 'file://%s' % (user_guide,) )
 
-    def OnActAbout( self ):
+    def onActAbout( self ):
         all_about_info = []
         all_about_info.append( T_("Barry's Emacs %d.%d.%d-%d") %
                                 (be_version.major, be_version.minor
