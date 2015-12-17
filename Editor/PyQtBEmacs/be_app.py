@@ -576,10 +576,14 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
 
         self.marshallToGuiThread( self.quit, () )
 
-    def guiYesNoDialog( self, default, title, message ):
+    def guiYesNoDialog( self, default_to_yes, title, message ):
         #qqq# What is default for?
-        rc = QtWidgets.QMessageBox.question( self.main_window, title, message ).exec_()
+        if default_to_yes:
+            default_button = QtWidgets.QMessageBox.Yes
+        else:
+            default_button = QtWidgets.QMessageBox.No
 
+        rc = QtWidgets.QMessageBox.question( self.main_window, title, message, defaultButton=default_button )
         return rc == QtWidgets.QMessageBox.Yes
 
     def quit( self ):
@@ -616,7 +620,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         else:
             title = "%s - %s" % (self.opt_name, title_suffix)
 
-        self.main_window.SetTitle( title )
+        self.main_window.setWindowTitle( title )
 
 #--------------------------------------------------------------------------------
 #

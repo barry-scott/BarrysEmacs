@@ -141,7 +141,7 @@ keys_mapping = {
     'key-prefix':                   prefix_key,
     'mouse-prefix':                 prefix_mouse,
     'menu-prefix':                  prefix_menu,
-    'men':                          prefix_menu,
+    'menu':                         prefix_menu,
 
     'ss3':                          '\033O',
     'csi':                          '\033[',
@@ -972,73 +972,75 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         self.app.setStatus( all_status_bar_values )
 
-        #--- vert_scroll -----------------------------------------------------------
-        self.all_vert_scroll_bar_info = all_vert_scroll_bars
+        if False:
+            #--- vert_scroll -----------------------------------------------------------
+            self.all_vert_scroll_bar_info = all_vert_scroll_bars
 
-        index = 0 # why is index not set in --mock-editor?
+            index = 0 # why is index not set in --mock-editor?
 
-        for index, bar_info in enumerate( all_vert_scroll_bars ):
-            if len( self.all_vert_scroll_bars ) <= index:
-                self.all_vert_scroll_bars.append( wx.ScrollBar( self, wx.NewId(), style=wx.SB_VERTICAL ) )
+            for index, bar_info in enumerate( all_vert_scroll_bars ):
+                if len( self.all_vert_scroll_bars ) <= index:
+                    self.all_vert_scroll_bars.append( wx.ScrollBar( self, wx.NewId(), style=wx.SB_VERTICAL ) )
 
-            bar = self.all_vert_scroll_bars[ index ]
-            if bar_info is None:
-                bar.Show( False )
-                self._debugTermCalls1( 'termUpdateEnd: h scroll hide %d' % (index,) )
+                bar = self.all_vert_scroll_bars[ index ]
+                if bar_info is None:
+                    bar.Show( False )
+                    self._debugTermCalls1( 'termUpdateEnd: h scroll hide %d' % (index,) )
 
-            else:
-                win_id, x, y, width, height, pos, total = bar_info
-                self.map_vert_scroll_bar_to_window_id[ bar.GetId() ] = win_id
+                else:
+                    win_id, x, y, width, height, pos, total = bar_info
+                    self.map_vert_scroll_bar_to_window_id[ bar.GetId() ] = win_id
 
-                x, y = self.__pixelPoint( x+1, y+1 )
+                    x, y = self.__pixelPoint( x+1, y+1 )
 
-                bar.SetScrollbar( pos-1, 1, total, 10 )
-                bar.SetSize( (self.char_width * width, self.char_length * height - 2) )
-                bar.SetPosition( (x, y+1) )
-                bar.Show( True )
-                self._debugTermCalls1( 'termUpdateEnd: h scroll show %d' % (index,) )
+                    bar.SetScrollbar( pos-1, 1, total, 10 )
+                    bar.SetSize( (self.char_width * width, self.char_length * height - 2) )
+                    bar.SetPosition( (x, y+1) )
+                    bar.Show( True )
+                    self._debugTermCalls1( 'termUpdateEnd: h scroll show %d' % (index,) )
 
-        index += 1
-        while index < len( self.all_vert_scroll_bars ):
-            self.all_vert_scroll_bars[ index ].Show( False )
-            self._debugTermCalls1( 'termUpdateEnd: h scroll hide %d extra' % (index,) )
             index += 1
+            while index < len( self.all_vert_scroll_bars ):
+                self.all_vert_scroll_bars[ index ].Show( False )
+                self._debugTermCalls1( 'termUpdateEnd: h scroll hide %d extra' % (index,) )
+                index += 1
 
-        #--- horz_scroll -----------------------------------------------------------
-        self.all_horz_scroll_bar_info = all_horz_scroll_bars
-        for index, bar_info in enumerate( all_horz_scroll_bars ):
-            if len( self.all_horz_scroll_bars ) <= index:
-                self.all_horz_scroll_bars.append( wx.ScrollBar( self, wx.NewId(), style=wx.SB_HORIZONTAL ) )
+            #--- horz_scroll -----------------------------------------------------------
+            self.all_horz_scroll_bar_info = all_horz_scroll_bars
+            for index, bar_info in enumerate( all_horz_scroll_bars ):
+                if len( self.all_horz_scroll_bars ) <= index:
+                    self.all_horz_scroll_bars.append( wx.ScrollBar( self, wx.NewId(), style=wx.SB_HORIZONTAL ) )
 
-            bar = self.all_horz_scroll_bars[ index ]
-            if bar_info is None:
-                bar.Show( False )
-                self._debugTermCalls1( 'termUpdateEnd: v scroll hode %d' % (index,) )
+                bar = self.all_horz_scroll_bars[ index ]
+                if bar_info is None:
+                    bar.Show( False )
+                    self._debugTermCalls1( 'termUpdateEnd: v scroll hode %d' % (index,) )
 
-            else:
-                win_id, x, y, width, height, pos = bar_info
-                self.map_horz_scroll_bar_to_window_id[ bar.GetId() ] = win_id
+                else:
+                    win_id, x, y, width, height, pos = bar_info
+                    self.map_horz_scroll_bar_to_window_id[ bar.GetId() ] = win_id
 
-                x, y = self.__pixelPoint( x+1, y+1 )
+                    x, y = self.__pixelPoint( x+1, y+1 )
 
-                #self.qp.drawRect( x, y, self.char_width * width, self.char_length * height )
+                    #self.qp.drawRect( x, y, self.char_width * width, self.char_length * height )
 
-                bar.SetScrollbar( pos-1, 1, 256, 10 )
-                bar.SetSize( (self.char_width * width - 2, self.char_length * height) )
-                bar.SetPosition( (x+1, y) )
-                bar.Show( True )
-                self._debugTermCalls1( 'termUpdateEnd: v scroll show %d' % (index,) )
+                    bar.SetScrollbar( pos-1, 1, 256, 10 )
+                    bar.SetSize( (self.char_width * width - 2, self.char_length * height) )
+                    bar.SetPosition( (x+1, y) )
+                    bar.Show( True )
+                    self._debugTermCalls1( 'termUpdateEnd: v scroll show %d' % (index,) )
+
+
+            # self.__debug_save_image_index += 1
+            # self.editor_pixmap.save( '/home/barry/tmpdir/image-%03d.png' % (self.__debug_save_image_index,), 'PNG' )
+
+            index += 1
+            while index < len( self.all_horz_scroll_bars ):
+                self.all_horz_scroll_bars[ index ].Show( False )
+                self._debugTermCalls1( 'termUpdateEnd: v scroll hode %d extra' % (index,) )
+                index += 1
 
         del self.qp
-
-        # self.__debug_save_image_index += 1
-        # self.editor_pixmap.save( '/home/barry/tmpdir/image-%03d.png' % (self.__debug_save_image_index,), 'PNG' )
-
-        index += 1
-        while index < len( self.all_horz_scroll_bars ):
-            self.all_horz_scroll_bars[ index ].Show( False )
-            self._debugTermCalls1( 'termUpdateEnd: v scroll hode %d extra' % (index,) )
-            index += 1
 
         self.update( 0, 0, self.pixel_width, self.pixel_length )
 
