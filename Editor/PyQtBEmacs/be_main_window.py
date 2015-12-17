@@ -31,11 +31,13 @@ import be_platform_specific
 import be_config
 
 class BemacsAction:
-    def __init__( self, code ):
+    def __init__( self, app, code ):
+        self.app = app
         self.code = code
 
     def sendCode( self ):
-        print( 'BemacsAction code=%r' % (self.code,) )
+        for ch in be_emacs_panel.prefix_menu + self.code:
+            self.app.editor.guiEventChar( ch, False )
 
     def connect( self, action ):
         action.triggered.connect( self.sendCode )
@@ -148,7 +150,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
 
     def addEmacsMenu( self, container, code, title, icon=None ):
         if code not in self.__all_actions:
-            self.__all_actions[ code ] = BemacsAction( code )
+            self.__all_actions[ code ] = BemacsAction( self.app, code )
 
         if icon is None:
             action = container.addAction( title )
@@ -192,7 +194,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         icon = be_images.getIcon( icon_filename )
 
         if code not in self.__all_actions:
-            self.__all_actions[ code ] = BemacsAction( code )
+            self.__all_actions[ code ] = BemacsAction( self.app, code )
 
         action = container.addAction( icon, title )
 
