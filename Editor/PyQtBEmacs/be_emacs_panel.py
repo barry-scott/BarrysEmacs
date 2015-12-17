@@ -621,16 +621,6 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
     def keyPressEvent( self, event ):
         key = event.key()
         modifiers = int( event.modifiers() )
-        self._debugTermKey( 'keyPressEvent --- key %x modifiers 0x%x mask 0x%x residual 0x%x result %r' %
-                                (key, modifiers,
-                                QtCore.Qt.ShiftModifier,
-                                modifiers & QtCore.Qt.ShiftModifier,
-                                (modifiers & QtCore.Qt.ShiftModifier) != 0) )
-        self._debugTermKey( 'keyPressEvent --- key %r modifiers %r mask %r residual %r result %r' %
-                                (type(key), type(modifiers),
-                                type(QtCore.Qt.ShiftModifier),
-                                type(modifiers & QtCore.Qt.ShiftModifier),
-                                type((modifiers & QtCore.Qt.ShiftModifier) != 0)) )
 
         # see http://doc.qt.io/qt-5/qt.html#KeyboardModifier-enum for details of mappings
         if sys.platform == 'darwin':
@@ -746,10 +736,113 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.app.editor.guiEventChar( char, False )
 
     def mousePressEvent( self, event ):
-        self._debugTermMouse( 'mousePressEvent %r %r )' % (event.buttons(), event.pos()) )
+        self._debugTermMouse( 'mousePressEvent   %r %r %r )' % (event.button(), int(event.buttons()), event.pos()) )
+
+        if self.char_width is None:
+            return
+
+        # Calculate character cell position
+        column = (event.x() - self.client_padding + (self.char_width/2)) // self.char_width + 1;
+        line =   (event.y() - self.client_padding ) // self.char_length + 1;
+
+        if event.button() == QtCore.Qt.LeftButton:
+            translation = keys_mapping["mouse-1-down"]
+            self.__mouse_button_state.add( 1 )
+
+        elif event.button() == QtCore.Qt.MidButton:
+            translation = keys_mapping["mouse-2-down"]
+            self.__mouse_button_state.add( 2 )
+
+        elif event.button() == QtCore.Qt.RightButton:
+            translation = keys_mapping["mouse-3-down"]
+            self.__mouse_button_state.add( 3 )
+
+        if translation is not None:
+            modifiers = int(self.app.keyboardModifiers())
+            shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
+            self.app.editor.guiEventMouse( translation, shift, [line, column, shift] );
 
     def mouseReleaseEvent( self, event ):
-        self._debugTermMouse( 'mousePressEvent %r %r' % (event.buttons(), event.pos()) )
+        self._debugTermMouse( 'mouseReleaseEvent %r %r %r )' % (event.button(), int(event.buttons()), event.pos()) )
+
+        if self.char_width is None:
+            return
+
+        column = (event.x() - self.client_padding + (self.char_width/2)) // self.char_width + 1;
+        line =   (event.y() - self.client_padding ) // self.char_length + 1;
+
+        if event.button() == QtCore.Qt.LeftButton:
+            translation = keys_mapping["mouse-1-up"]
+            self.__mouse_button_state.remove( 1 )
+
+        elif event.button() == QtCore.Qt.MidButton:
+            translation = keys_mapping["mouse-2-up"]
+            self.__mouse_button_state.remove( 2 )
+
+        elif event.button() == QtCore.Qt.RightButton:
+            translation = keys_mapping["mouse-3-up"]
+            self.__mouse_button_state.remove( 3 )
+
+        if translation is not None:
+            modifiers = int(self.app.keyboardModifiers())
+            shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
+            self.app.editor.guiEventMouse( translation, shift, [line, column, shift] );
+
+    def mouseMoveEvent( self, event ):
+        self._debugTermMouse( 'mouseMoveEvent %r %r %r )' % (event.button(), int(event.buttons()), event.pos()) )
+
+        if self.char_width is None:
+            return
+
+        column = (event.x() - self.client_padding + (self.char_width/2)) // self.char_width + 1;
+        line =   (event.y() - self.client_padding ) // self.char_length + 1;
+
+        translation = keys_mapping["mouse-motion"]
+
+        modifiers = int(self.app.keyboardModifiers())
+        shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
+        self.app.editor.guiEventMouse( translation, shift, [line, column] );
+
+    def wheelEvent( self, event ):
+        self._debugTermMouse( 'wheelEvent angle %r )' % (event.angleDelta().y(),) )
+
+        if event.angleDelta().y() > 0:
+            rotation = 1
+        else:
+            rotation = -1
+
+        column = (event.x() - self.client_padding + (self.char_width/2)) // self.char_width + 1;
+        line =   (event.y() - self.client_padding ) // self.char_length + 1;
+
+        modifiers = int(self.app.keyboardModifiers())
+        shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
+        control = (modifiers & QtCore.Qt.ControlModifier) != 0
+
+        if shift and control:
+            if rotation < 0:
+                translation = keys_mapping["ctrl-shift-mouse-wheel-neg"]
+            else:
+                translation = keys_mapping["ctrl-shift-mouse-wheel-pos"]
+
+        elif shift:
+            if rotation < 0:
+                translation = keys_mapping["shift-mouse-wheel-neg"]
+            else:
+                translation = keys_mapping["shift-mouse-wheel-pos"]
+
+        elif control:
+            if rotation < 0:
+                translation = keys_mapping["ctrl-mouse-wheel-neg"]
+            else:
+                translation = keys_mapping["ctrl-mouse-wheel-pos"]
+
+        else:
+            if rotation < 0:
+                translation = keys_mapping["mouse-wheel-neg"]
+            else:
+                translation = keys_mapping["mouse-wheel-pos"]
+
+        self.app.editor.guiEventMouse( translation, shift, [abs(rotation), line, column] );
 
     def OnMouse( self, event ):
         self._debugTermMouse( 'OnMouse() event_type %r %r' %
