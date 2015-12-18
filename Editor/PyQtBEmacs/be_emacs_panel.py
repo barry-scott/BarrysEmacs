@@ -544,8 +544,6 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             self._debugPanel( 'EmacsPanel.paintEvent() first paint' )
             self.first_paint = False
 
-            print( repr( (0, 0, self.pixel_width, self.pixel_length) ) )
-
             qp = QtGui.QPainter( self )
             qp.fillRect( QtCore.QRect( 0, 0, self.pixel_width, self.pixel_length ), bg_colours[ SYNTAX_DULL ] )
             del qp
@@ -715,7 +713,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         if( sys.platform == 'darwin'
         and (cmd or ctrl)
         and char in cmd_to_ctrl_map ):
-            print( 'mapped %d to %d' % (char, cmd_to_ctrl_map[ char ]) )
+            self._debugTermKey( 'mapped %d to %d' % (char, cmd_to_ctrl_map[ char ]) )
             char = cmd_to_ctrl_map[ char ]
 
         elif( sys.platform.startswith( 'linux' )
@@ -923,6 +921,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
                 else:
                     win_id, x, y, width, height, pos, total = bar_info
                     bar.setWindowId( win_id )
+                    bar.setMaximum( total )
+                    bar.setValue( pos )
 
                     x, y = self.__pixelPoint( x+1, y+1 )
 
@@ -931,7 +931,6 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
                     bar.resize( self.char_width * width, self.char_length * height - 2 )
                     bar.move( x, y+1 )
 
-                    bar.setMaximum( total )
                     bar.show()
                     self._debugTermCalls1( 'termUpdateEnd: v scroll show %d' % (index,) )
 
@@ -950,11 +949,13 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
                 bar = self.all_horz_scroll_bars[ index ]
                 if bar_info is None:
                     bar.hide()
-                    self._debugTermCalls1( 'termUpdateEnd: h scroll hode %d' % (index,) )
+                    self._debugTermCalls1( 'termUpdateEnd: h scroll hide %d' % (index,) )
 
                 else:
                     win_id, x, y, width, height, pos = bar_info
+                    self._debugTermScroll( 'termUpdateEnd set scroll id %r value %r' % (win_id, pos) )
                     bar.setWindowId( win_id )
+                    bar.setValue( pos )
 
                     x, y = self.__pixelPoint( x+1, y+1 )
 
@@ -1173,16 +1174,21 @@ class BemacsHorizontalScrollBar(QtWidgets.QScrollBar):
 
     def handleActionTriggered( self, action ):
         if action == self.SliderSingleStepAdd:
+            self._debugTermScroll( 'guiScrollChangeHorz id %r %r' % (self.window_id, 1) )
             self.editor.guiScrollChangeHorz( self.window_id, +1 )
 
         elif action == self.SliderSingleStepSub:
+            self._debugTermScroll( 'guiScrollChangeHorz id %r %r' % (self.window_id, -1) )
             self.editor.guiScrollChangeHorz( self.window_id, -1 )
 
         if action == self.SliderPageStepAdd:
+            self._debugTermScroll( 'guiScrollChangeHorz id %r %r' % (self.window_id, 4) )
             self.editor.guiScrollChangeHorz( self.window_id, +4 )
 
         elif action == self.SliderPageStepSub:
+            self._debugTermScroll( 'guiScrollChangeHorz id %r %r' % (self.window_id, -4) )
             self.editor.guiScrollChangeHorz( self.window_id, -4 )
 
         else:
+            self._debugTermScroll( 'guiScrollSetHorz id %r %r' % (self.window_id, self.value()) )
             self.editor.guiScrollSetHorz( self.window_id, self.value() )
