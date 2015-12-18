@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2009-2010 Barry A. Scott
+//  Copyright (c) 2009-2015 Barry A. Scott
 //
 //
 //  pybemacs.cpp
@@ -961,8 +961,14 @@ public:
 private:
 };
 
+#if defined( _WIN32 )
+#define EXPORT_SYMBOL __declspec( dllexport )
+#else
+#define EXPORT_SYMBOL
+#endif
+
 #if PY_MAJOR_VERSION == 3
-extern "C" PyObject *PyInit__bemacs()
+extern "C" EXPORT_SYMBOL PyObject *PyInit__bemacs()
 {
 #if defined(PY_WIN32_DELAYLOAD_PYTHON_DLL)
     Py::InitialisePythonIndirectPy::Interface();

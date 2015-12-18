@@ -19,7 +19,6 @@ import locale
 #
 #   set a working STDOUT before loading most modules
 #
-
 # help debug when stdout goes nowhere useful
 # Mac OS X and Windows are the main problems
 if sys.platform == 'darwin':
@@ -31,10 +30,6 @@ elif sys.platform.startswith( 'win' ):
     if '--noredirect' not in sys.argv:
         sys.stdout = open( os.environ.get( 'BEMACS_STDOUT_LOG', 'nul' ), 'w' )
         sys.stderr = sys.stdout
-
-elif 'BEMACS_STDOUT_LOG' in os.environ:
-    sys.stdout = open( os.environ[ 'BEMACS_STDOUT_LOG' ], 'w', 0 )
-    sys.stderr = sys.stdout
 
 import be_app
 

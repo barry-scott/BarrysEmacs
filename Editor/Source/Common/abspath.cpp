@@ -104,7 +104,7 @@ int chdir_and_set_global_record( const EmacsString &dirname )
     if( ret < 0 )
         return ret;
 
-#ifdef win32
+#ifdef WIN32
     int len = path2.length();
     // leave a single PATH_CH
     if( len > (ROOT_CHAR_POS+1) )

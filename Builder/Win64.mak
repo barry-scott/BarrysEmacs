@@ -6,7 +6,7 @@
 #################################################################################
 #
 #
-#	Win32 build
+#	Win64 build
 #
 #
 #################################################################################
@@ -15,7 +15,7 @@ KITSRC=$(BUILDER_TOP_DIR)\Kits\Windows
 KITROOT=$(KITSRC)\kitfiles
 
 #
-build: brand kitdir editor mlisp describe quick_info language inno_kit
+build: brand kitdir editor mlisp describe quick_info language # inno_kit
 
 brand:
 	$(PYTHON) brand_version.py version_info.txt ..
@@ -33,7 +33,8 @@ inno_debug:
 	"c:\Program Files (x86)\Inno Setup 5\Compil32.exe" $(KITSRC)\bemacs.iss
 
 $(KITROOT)\Output\setup.exe: $(KITSRC)\bemacs.iss
-	copy $(KITSRC)\msvc$(MSVC_VERSION)_x64_system_files.iss $(KITSRC)\msvc_system_files.iss
+	rem copy $(KITSRC)\msvc$(MSVC_VERSION)_x64_system_files.iss $(KITSRC)\msvc_system_files.iss
+	echo ; >$(KITSRC)\msvc_system_files.iss
 	"c:\Program Files (x86)\Inno Setup 5\ISCC.exe" $(KITSRC)\bemacs.iss
 	$(KITSRC)\copy-setup.cmd $(KITSRC)\Output\setup.exe $(KITSRC)
 
@@ -41,8 +42,8 @@ editor: kitdir "$(KITROOT)\bemacs.exe"
 
 "$(KITROOT)\bemacs.exe":
 	@echo Info: Build Editor $(BUILDER_CFG_BUILD_TYPE)
-	cd $(BUILDER_TOP_DIR)\editor && .\build-win32
-	cd $(BUILDER_TOP_DIR)\editor\PythonBEmacs && .\build-win32 "$(KITROOT)" all
+	cd $(BUILDER_TOP_DIR)\editor && .\build-win64
+	cd $(BUILDER_TOP_DIR)\editor\PyQtBEmacs && .\build-win64 "$(KITROOT)" all
 	echo Info: Copying images...
 	copy "$(BUILDER_TOP_DIR)\Editor\obj-utils\dbadd.exe" "$(KITROOT)" >NUL
 	copy "$(BUILDER_TOP_DIR)\Editor\obj-utils\dbcreate.exe" "$(KITROOT)" >NUL
@@ -73,5 +74,5 @@ quick_info:
 	"$(KITROOT)\mll2db" "$(BUILDER_TOP_DIR)\describe\qi_cc.mll" "$(KITROOT)\emacs_library\emacs_qinfo_c"
 
 clean:
-	cd $(BUILDER_TOP_DIR)\editor && .\build-win32 clean
+	cd $(BUILDER_TOP_DIR)\editor && .\build-win64 clean
 	if exist $(KITROOT) rmdir /s /q  $(KITROOT)
