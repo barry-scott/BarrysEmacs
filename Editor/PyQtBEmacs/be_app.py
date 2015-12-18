@@ -40,6 +40,8 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
     def __init__( self, args ):
         be_debug.EmacsDebugMixin.__init__( self )
 
+        self.may_quit = False
+
         self.args = args
         self.opt_name = None
 
@@ -558,7 +560,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
             # stay in processKeys until editor quits
             while True:
                 rc = self.editor.processKeys()
-                self.log.debug( 'processKeys rc %r' % (rc,) )
+                self._debugApp( 'processKeys rc %r' % (rc,) )
 
                 mod = self.editor.modifiedFilesExist()
                 if not mod:
@@ -573,7 +575,6 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
 
             self.callGuiFunction( self.guiReportException, (str(e), 'Editor Exception') )
 
-
         self.marshallToGuiThread( self.quit, () )
 
     def guiYesNoDialog( self, default_to_yes, title, message ):
@@ -587,7 +588,8 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         return rc == QtWidgets.QMessageBox.Yes
 
     def quit( self ):
-        self.log.debug( 'quit()' )
+        self._debugApp( 'quit()' )
+        self.may_quit = True
         self.main_window.close()
 
     def BringWindowToFront( self ):

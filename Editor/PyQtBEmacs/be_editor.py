@@ -57,6 +57,9 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
             "test2":            self.uiHookTest2,
             }
 
+    def mayQuit( self ):
+        return self.__quit_editor
+
     def initEmacsProfile( self, window ):
         self._debugEditor( 'BEmacs.initEmacsProfile()' )
         assert window is not None

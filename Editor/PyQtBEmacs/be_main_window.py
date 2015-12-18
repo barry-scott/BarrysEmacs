@@ -68,10 +68,15 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.resize( win_prefs.frame_size )
 
     def closeEvent( self, event ):
-        self.log.info( 'closeEvent()' )
-        self.app.writePreferences()
-        self.app.onCloseEditor()
-        event.accept()
+        if self.app.may_quit:
+            self.log.info( 'closeEvent()' )
+            self.app.writePreferences()
+            event.accept()
+
+        else:
+            # set the editor decide
+            self.app.onCloseEditor()
+            event.ignore()
 
     def __setupMenuBar( self ):
         mb = self.menuBar()
@@ -83,7 +88,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         act_prefs.triggered.connect( self.onActPreferences )
 
         act_exit = menu_file.addAction( T_('E&xit') )
-        act_exit.triggered.connect( self.close )
+        act_exit.triggered.connect( self.app.onCloseEditor )
 
         menu_edit = mb.addMenu( T_('&Edit') )
 
