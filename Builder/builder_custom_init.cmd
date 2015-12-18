@@ -1,31 +1,31 @@
 @set __e=%1
-@if "%1" == "" set __e=on
+@if "%1" == "" set __e=off
 @echo %__e%
 rem builder_custom_init
+set VC_VER=14.0
 set BUILDER_CFG_PLATFORM=Win32
-rem set BUILDER_CFG_PLATFORM=Win64
+set BUILDER_CFG_PLATFORM=Win64
 set BUILDER_CFG_BUILD_TYPE=Release
-set MSVC_VERSION=90
-set PYTHON_VERSION=2.7
-set PYTHON_FILE_VERSION=27
-
-if %MSVC_VERSION% == 90 (
-    rem setup PATH to tools - VCexpress is only available as a 32 bit app
-    call "%VS90COMNTOOLS%vsvars32.bat"
-@echo %__e%
-)
+set PYTHON_VERSION=3.4
+set PYTHON_FILE_VERSION=34
 
 if %BUILDER_CFG_PLATFORM% == Win32 (
+    rem when called in place this can fork bomb (lots of CMD.exe in task manager)
+    copy "C:\Program Files (x86)\Microsoft Visual Studio %VC_VER%\VC\vcvarsall.bat" .
+    echo call vcvarsall.bat
     set MEINC_INSTALLER_DIR=%BUILDER_TOP_DIR%\Imports\MEINC_Installer-7.1.1-py%PYTHON_FILE_VERSION%-win32
 )
 
 if %BUILDER_CFG_PLATFORM% == Win64 (
     rem if Win64 then setup path to include the 64bit CL.exe
-    call vcvars64.bat
+    rem when called in place this can fork bomb (lots of CMD.exe in task manager)
+    copy "C:\Program Files (x86)\Microsoft Visual Studio %VC_VER%\VC\bin\amd64\vcvars64.bat" .
+    echo call vcvars64.bat
     @echo %__e%
 
     set MEINC_INSTALLER_DIR=%BUILDER_TOP_DIR%\Imports\MEINC_Installer-7.1.1-py%PYTHON_FILE_VERSION%-win64
 )
 
 set PYTHON=c:\python%PYTHON_FILE_VERSION%.%BUILDER_CFG_PLATFORM%\python
-PATH c:\svn;c:\python%PYTHON_FILE_VERSION%.%BUILDER_CFG_PLATFORM%;%PATH%
+PATH c:\tools\bin;c:\python%PYTHON_FILE_VERSION%.%BUILDER_CFG_PLATFORM%;%PATH%
+%PYTHON% -c "import sys;print( 'Python:', sys.version )"
