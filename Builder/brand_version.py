@@ -144,7 +144,6 @@ class VersionInfo:
             print( 'Info: %10s: %s' % (key, self.__info[ key ]) )
 
     def brandOneFile( self, filename ):
-        print( 'qqq: filename %r' % (filename,) )
         f = open( filename )
         template_contents = f.readlines()
         f.close()
