@@ -422,9 +422,6 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         self.tw = be_exceptions.TryWrapperFactory( self.log )
 
-        #self.Bind( wx.EVT_MOUSE_EVENTS, self.tw( self.OnMouse ) )
-
-        #self.Bind( wx.EVT_SCROLL, self.tw( self.OnScroll ) )
 
         self.qp = None
         self.first_paint = True
@@ -440,9 +437,6 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.all_vert_scroll_bar_info = []
         self.all_horz_scroll_bars = []
         self.all_horz_scroll_bar_info = []
-
-        self.map_vert_scroll_bar_to_window_id = {}
-        self.map_horz_scroll_bar_to_window_id = {}
 
         self.__mouse_button_state = set()
 
@@ -844,61 +838,6 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         self.app.editor.guiEventMouse( translation, shift, [abs(rotation), line, column] );
 
-    def OnScroll( self, event ):
-        bar_id = event.GetId()
-        if bar_id in self.map_horz_scroll_bar_to_window_id:
-            self.OnScrollHorz( event )
-
-        elif bar_id in self.map_vert_scroll_bar_to_window_id:
-            self.OnScrollVert( event )
-
-        else:
-            assert False, 'OnScroll called with bar that is not mapped'
-
-    def OnScrollHorz( self, event ):
-        win_id = self.map_horz_scroll_bar_to_window_id[ event.GetId() ]
-        etype = event.GetEventType()
-        self._debugTermScroll( 'OnScrollHorz win_id %d event_type %r %r' %
-                                (win_id, etype, wx_evt_names.get( etype, 'unknown')) )
-
-        if etype == wx.wxEVT_SCROLL_LINEDOWN:
-            self.app.editor.guiScrollChangeHorz( win_id, +1 )
-
-        elif etype == wx.wxEVT_SCROLL_LINEUP:
-            self.app.editor.guiScrollChangeHorz( win_id, -1 )
-
-        if etype == wx.wxEVT_SCROLL_PAGEDOWN:
-            self.app.editor.guiScrollChangeHorz( win_id, +4 )
-
-        elif etype == wx.wxEVT_SCROLL_PAGEUP:
-            self.app.editor.guiScrollChangeHorz( win_id, -4 )
-
-        elif( etype == wx.wxEVT_SCROLL_THUMBRELEASE
-        or etype == wx.wxEVT_SCROLL_THUMBTRACK ):
-            self.app.editor.guiScrollSetHorz( win_id, event.GetPosition() )
-
-    def OnScrollVert( self, event ):
-        win_id = self.map_vert_scroll_bar_to_window_id[ event.GetId() ]
-        etype = event.GetEventType()
-        self._debugTermScroll( 'OnScrollVert win_id %d event_type %r %r' %
-                                (win_id, etype, wx_evt_names.get( etype, 'unknown')) )
-
-        if etype == wx.wxEVT_SCROLL_LINEDOWN:
-            self.app.editor.guiScrollChangeVert( win_id, +1 )
-
-        elif etype == wx.wxEVT_SCROLL_LINEUP:
-            self.app.editor.guiScrollChangeVert( win_id, -1 )
-
-        if etype == wx.wxEVT_SCROLL_PAGEDOWN:
-            self.app.editor.guiScrollChangeVert( win_id, +2 )
-
-        elif etype == wx.wxEVT_SCROLL_PAGEUP:
-            self.app.editor.guiScrollChangeVert( win_id, -2 )
-
-        elif( etype == wx.wxEVT_SCROLL_THUMBRELEASE
-        or etype == wx.wxEVT_SCROLL_THUMBTRACK ):
-            self.app.editor.guiScrollSetVert( win_id, event.GetPosition() )
-
     #--------------------------------------------------------------------------------
     #
     #   terminal drawing API forwarded from bemacs editor
@@ -966,36 +905,39 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         self.app.setStatus( all_status_bar_values )
 
-        if False:
+        if True:
             #--- vert_scroll -----------------------------------------------------------
             self.all_vert_scroll_bar_info = all_vert_scroll_bars
 
-            index = 0 # why is index not set in --mock-editor?
+            index = 0
 
             for index, bar_info in enumerate( all_vert_scroll_bars ):
                 if len( self.all_vert_scroll_bars ) <= index:
-                    self.all_vert_scroll_bars.append( wx.ScrollBar( self, wx.NewId(), style=wx.SB_VERTICAL ) )
+                    self.all_vert_scroll_bars.append( BemacsVerticalScrollBar( self ) )
 
                 bar = self.all_vert_scroll_bars[ index ]
                 if bar_info is None:
-                    bar.Show( False )
-                    self._debugTermCalls1( 'termUpdateEnd: h scroll hide %d' % (index,) )
+                    bar.hide()
+                    self._debugTermCalls1( 'termUpdateEnd: v scroll hide %d' % (index,) )
 
                 else:
                     win_id, x, y, width, height, pos, total = bar_info
-                    self.map_vert_scroll_bar_to_window_id[ bar.GetId() ] = win_id
+                    bar.setWindowId( win_id )
 
                     x, y = self.__pixelPoint( x+1, y+1 )
 
-                    bar.SetScrollbar( pos-1, 1, total, 10 )
-                    bar.SetSize( (self.char_width * width, self.char_length * height - 2) )
-                    bar.SetPosition( (x, y+1) )
-                    bar.Show( True )
-                    self._debugTermCalls1( 'termUpdateEnd: h scroll show %d' % (index,) )
+                    self.qp.fillRect( x, y, self.char_width * width, self.char_length * height, QtGui.QColor( 192, 192, 192 ) )
+
+                    bar.resize( self.char_width * width, self.char_length * height - 2 )
+                    bar.move( x, y+1 )
+
+                    bar.setMaximum( total )
+                    bar.show()
+                    self._debugTermCalls1( 'termUpdateEnd: v scroll show %d' % (index,) )
 
             index += 1
             while index < len( self.all_vert_scroll_bars ):
-                self.all_vert_scroll_bars[ index ].Show( False )
+                self.all_vert_scroll_bars[ index ].hide()
                 self._debugTermCalls1( 'termUpdateEnd: h scroll hide %d extra' % (index,) )
                 index += 1
 
@@ -1003,38 +945,37 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             self.all_horz_scroll_bar_info = all_horz_scroll_bars
             for index, bar_info in enumerate( all_horz_scroll_bars ):
                 if len( self.all_horz_scroll_bars ) <= index:
-                    self.all_horz_scroll_bars.append( wx.ScrollBar( self, wx.NewId(), style=wx.SB_HORIZONTAL ) )
+                    self.all_horz_scroll_bars.append( BemacsHorizontalScrollBar( self ) )
 
                 bar = self.all_horz_scroll_bars[ index ]
                 if bar_info is None:
-                    bar.Show( False )
-                    self._debugTermCalls1( 'termUpdateEnd: v scroll hode %d' % (index,) )
+                    bar.hide()
+                    self._debugTermCalls1( 'termUpdateEnd: h scroll hode %d' % (index,) )
 
                 else:
                     win_id, x, y, width, height, pos = bar_info
-                    self.map_horz_scroll_bar_to_window_id[ bar.GetId() ] = win_id
+                    bar.setWindowId( win_id )
 
                     x, y = self.__pixelPoint( x+1, y+1 )
 
-                    #self.qp.drawRect( x, y, self.char_width * width, self.char_length * height )
+                    self.qp.fillRect( x, y, self.char_width * width, self.char_length * height, QtGui.QColor( 192, 192, 192 ) )
 
-                    bar.SetScrollbar( pos-1, 1, 256, 10 )
-                    bar.SetSize( (self.char_width * width - 2, self.char_length * height) )
-                    bar.SetPosition( (x+1, y) )
-                    bar.Show( True )
-                    self._debugTermCalls1( 'termUpdateEnd: v scroll show %d' % (index,) )
+                    bar.resize( self.char_width * width - 2, self.char_length * height )
+                    bar.move( x+1, y )
 
+                    bar.show()
+                    self._debugTermCalls1( 'termUpdateEnd: h scroll show %d' % (index,) )
 
             index += 1
             while index < len( self.all_horz_scroll_bars ):
-                self.all_horz_scroll_bars[ index ].Show( False )
+                self.all_horz_scroll_bars[ index ].hide()
                 self._debugTermCalls1( 'termUpdateEnd: v scroll hode %d extra' % (index,) )
                 index += 1
 
         del self.qp
 
         self.__debug_save_image_index += 1
-        self.editor_pixmap.save( '/home/barry/tmpdir/image-%03d.png' % (self.__debug_save_image_index,), 'PNG' )
+        #qqq#self.editor_pixmap.save( '/home/barry/tmpdir/image-%03d.png' % (self.__debug_save_image_index,), 'PNG' )
 
 
         self.update( 0, 0, self.pixel_width, self.pixel_length )
@@ -1179,3 +1120,69 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
     def termDisplayActivity( self, ch ):
         self._debugTermCalls1( 'termDisplayActivity( %r )' % (ch,) )
+
+class BemacsVerticalScrollBar(QtWidgets.QScrollBar):
+    def __init__( self, panel ):
+        super().__init__( QtCore.Qt.Vertical, panel )
+        self.editor = panel.app.editor
+        self.window_id = None
+
+        self.setMinimum( 1 )
+        self.setMaximum( 1 )
+        self.setSingleStep( 40 )
+        self.setPageStep( 1000 )
+        self.setValue( 1 )
+
+        self.actionTriggered.connect( self.handleActionTriggered )
+
+    def setWindowId( self, window_id ):
+        self.window_id = window_id
+
+    def handleActionTriggered( self, action ):
+        if action == self.SliderSingleStepAdd:
+            self.editor.guiScrollChangeVert( self.window_id, +1 )
+
+        elif action == self.SliderSingleStepSub:
+            self.editor.guiScrollChangeVert( self.window_id, -1 )
+
+        if action == self.SliderPageStepAdd:
+            self.editor.guiScrollChangeVert( self.window_id, +2 )
+
+        elif action == self.SliderPageStepSub:
+            self.editor.guiScrollChangeVert( self.window_id, -2 )
+
+        else:
+            self.editor.guiScrollSetVert( self.window_id, self.value() )
+
+class BemacsHorizontalScrollBar(QtWidgets.QScrollBar):
+    def __init__( self, panel ):
+        super().__init__( QtCore.Qt.Horizontal, panel )
+        self.editor = panel.app.editor
+        self.window_id = None
+
+        self.setMinimum( 1 )
+        self.setMaximum( 256 )
+        self.setSingleStep( 1 )
+        self.setPageStep( 4 )
+        self.setValue( 1 )
+
+        self.actionTriggered.connect( self.handleActionTriggered )
+
+    def setWindowId( self, window_id ):
+        self.window_id = window_id
+
+    def handleActionTriggered( self, action ):
+        if action == self.SliderSingleStepAdd:
+            self.editor.guiScrollChangeHorz( self.window_id, +1 )
+
+        elif action == self.SliderSingleStepSub:
+            self.editor.guiScrollChangeHorz( self.window_id, -1 )
+
+        if action == self.SliderPageStepAdd:
+            self.editor.guiScrollChangeHorz( self.window_id, +4 )
+
+        elif action == self.SliderPageStepSub:
+            self.editor.guiScrollChangeHorz( self.window_id, -4 )
+
+        else:
+            self.editor.guiScrollSetHorz( self.window_id, self.value() )
