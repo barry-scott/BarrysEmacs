@@ -26,6 +26,7 @@ import _bemacs
 
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
+from PyQt5 import QtGui
 
 class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
     def __init__( self, app ):
@@ -161,7 +162,10 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
         self.setGuiResultSuccess( None )
 
     def uiHookEditCopy( self, cmd, text ):
-        self.clipboard().setText( text )
+        self._debugEditor( 'uiHookEditCopy text=%r' % (text[0:32],) )
+        self.app.clipboard().setText( text )
+        self._debugEditor( 'uiHookEditCopy done' )
+        self.setGuiResultSuccess( True )
 
     def uiHookEditPaste( self, cmd, use_primary=False ):
         self._debugEditor( 'uiHookEditPaste use_primary=%r' % (use_primary,) )
@@ -169,10 +173,10 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
         self._debugEditor( 'uiHookEditPaste use_primary=%r' % (use_primary,) )
 
         if use_primary:
-            text = self.clipboard().text( mode=QtGui.QClipBoard.ClipBoard )
+            text = self.app.clipboard().text( mode=QtGui.QClipboard.Selection )
 
         else:
-            text = self.clipboard().text( mode=QtGui.QClipBoard.ClipBoard )
+            text = self.app.clipboard().text( mode=QtGui.QClipboard.Clipboard )
 
         text = text.replace( '\r\n', '\n' ).replace( '\r', '\n' )
         self._debugEditor( 'uiHookEditPaste text=%r' % (text,) )

@@ -779,10 +779,10 @@ class FakeEditor(be_debug.EmacsDebugMixin):
         self._debugEditor( 'uiHookEditPaste use_primary=%r' % (use_primary,) )
 
         if use_primary:
-            text = self.clipboard().text( mode=QtGui.QClipBoard.ClipBoard )
+            text = self.clipboard().text( mode=QtGui.QClipBoard.Selection )
 
         else:
-            text = self.clipboard().text( mode=QtGui.QClipBoard.ClipBoard )
+            text = self.clipboard().text( mode=QtGui.QClipBoard.Clipboard )
 
         text = text.replace( '\r\n', '\n' ).replace( '\r', '\n' )
 
