@@ -170,8 +170,6 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
     def uiHookEditPaste( self, cmd, use_primary=False ):
         self._debugEditor( 'uiHookEditPaste use_primary=%r' % (use_primary,) )
 
-        self._debugEditor( 'uiHookEditPaste use_primary=%r' % (use_primary,) )
-
         if use_primary:
             text = self.app.clipboard().text( mode=QtGui.QClipboard.Selection )
 
