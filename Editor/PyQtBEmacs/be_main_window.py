@@ -291,24 +291,8 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMessageBox.information( self, T_("About Barry's Emacs"), '\n'.join( all_about_info ) )
 
     def setStatus( self, all_status ):
-        print( 'QQQ1: text %r width %r min width %r margin %r indent %r frame width %r' %
-                (self.status_col_num.text()
-                ,self.status_col_num.width()
-                ,self.status_col_num.minimumWidth()
-                ,self.status_col_num.margin()
-                ,self.status_col_num.indent()
-                ,self.status_col_num.frameWidth()) )
-
         self.status_read_only   .setText( {True: 'RO', False: ''}[all_status['readonly']] )
         self.status_insert_mode .setText( {True: 'Over', False: 'Ins '}[all_status['overstrike']] )
         self.status_eol         .setText( all_status['eol'].upper() )
         self.status_line_num    .setText( '%d' % (all_status['line'],) )
         self.status_col_num     .setText( '%d' % (all_status['column'],) )
-
-        print( 'QQQ2: text %r width %r min width %r margin %r indent %r frame width %r' %
-                (self.status_col_num.text()
-                ,self.status_col_num.width()
-                ,self.status_col_num.minimumWidth()
-                ,self.status_col_num.margin()
-                ,self.status_col_num.indent()
-                ,self.status_col_num.frameWidth()) )
