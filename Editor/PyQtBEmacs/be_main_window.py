@@ -215,28 +215,13 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.status_line_num = QtWidgets.QLabel()
         self.status_col_num = QtWidgets.QLabel()
 
-        self.status_message.setFont( font )
-        self.status_read_only.setFont( font )
-        self.status_insert_mode.setFont( font )
-        self.status_eol.setFont( font )
-        self.status_line_num.setFont( font )
-        self.status_col_num.setFont( font )
-
         self.status_read_only.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
         self.status_insert_mode.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
         self.status_eol.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
         self.status_line_num.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
         self.status_col_num.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
 
-        metrics = self.status_col_num.fontMetrics()
-        # QLabel min width is not used for the text. Its the text + somthing-magic
-        # try width of a char + 25%
-        fudge = metrics.width( 'M' ) * 125 // 100
-        self.status_read_only.setMinimumWidth( fudge + max( [metrics.width( s ) for s in ('RO',)] ) )
-        self.status_insert_mode.setMinimumWidth( fudge + max( [metrics.width( s ) for s in ('Ins', 'Over')] ) )
-        self.status_eol.setMinimumWidth( fudge + max( [metrics.width( s ) for s in ('LF', 'CR', 'CRLF')] ) )
-        self.status_line_num.setMinimumWidth( fudge + metrics.width( '9999999' ) )
-        self.status_col_num.setMinimumWidth( fudge + metrics.width( '9999' ) )
+        self.__setupStatusBarFont( font )
 
         self.status_line_num.setAlignment( QtCore.Qt.AlignRight )
         self.status_col_num.setAlignment( QtCore.Qt.AlignRight )
@@ -254,6 +239,27 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         s.addPermanentWidget( self.status_line_num )
         s.addPermanentWidget( self.status_col_num )
 
+    def __setupStatusBarFont( self, font ):
+        self.status_message.setFont( font )
+        self.status_read_only.setFont( font )
+        self.status_insert_mode.setFont( font )
+        self.status_eol.setFont( font )
+        self.status_line_num.setFont( font )
+        self.status_col_num.setFont( font )
+
+        metrics = self.status_col_num.fontMetrics()
+        # QLabel min width is not used for the text. Its the text + somthing-magic
+        # try width of a char + 25%
+        fudge = metrics.width( 'M' ) * 125 // 100
+        self.status_read_only.setMinimumWidth( fudge + max( [metrics.width( s ) for s in ('RO',)] ) )
+        self.status_insert_mode.setMinimumWidth( fudge + max( [metrics.width( s ) for s in ('Ins', 'Over')] ) )
+        self.status_eol.setMinimumWidth( fudge + max( [metrics.width( s ) for s in ('LF', 'CR', 'CRLF')] ) )
+        self.status_line_num.setMinimumWidth( fudge + metrics.width( '9999999' ) )
+        self.status_col_num.setMinimumWidth( fudge + metrics.width( '9999' ) )
+
+    def newPreferences( self ):
+        self.__setupStatusBarFont( self.emacs_panel.font )
+
     def moveEvent( self, event ):
         self.app.prefs.getWindow().frame_position = event.pos()
 
@@ -266,6 +272,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         if rc == QtWidgets.QDialog.Accepted:
             self.app.writePreferences()
             self.emacs_panel.newPreferences()
+            self.newPreferences()
 
     def onActDocumentation( self ):
         user_guide = be_platform_specific.getDocUserGuide()
