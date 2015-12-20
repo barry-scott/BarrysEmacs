@@ -299,7 +299,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         del stack
 
     def guiReportException( self, body, title ):
-        QtWidgets.QMessageBox.critical( self.main_window, title, body ).exec_()
+        QtWidgets.QMessageBox.critical( self.main_window, title, body )
 
     #--------------------------------------------------------------------------------
     def __initCommandLineThread( self ):
@@ -404,15 +404,15 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
 
                 reply = ctypes.create_string_buffer( 32 )
                 if len( client_command ) > 0:
-                    if client_command[0] == 'P':
+                    if client_command[0] == ord('P'):
                         reply.value = 'p%d' % (os.getpid(),)
 
-                    elif client_command[0] == 'C':
+                    elif client_command[0] == ord('C'):
                         self.marshallToGuiThread( self.guiClientCommandHandler, (client_command[1:],) )
-                        reply.value = ' '
+                        reply.value = b' '
 
                     else:
-                        reply.value = 'R'+'Unknown client command'
+                        reply.value = b'R'+b'Unknown client command'
 
                     reply_size = ctypes.c_uint( len( reply.value ) )
 
@@ -492,16 +492,16 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         self._debugApp( '__posixCommandLineHandler before read loop' )
         while True:
             r, w, x = select.select( [emacs_server_read_fd], [], [], 1.0 )
-            reply = ' '
+            reply = b' '
             if emacs_server_read_fd in r:
-                reply = 'R' 'Unknown client command'
+                reply = b'R' b'Unknown client command'
 
                 client_command = os.read( emacs_server_read_fd, 16384 )
                 self._debugApp( '__posixCommandLineHandler command %r' % (client_command,) )
                 if len( client_command ) > 0:
-                    if client_command[0] == 'C':
+                    if client_command[0] == ord('C'):
                         self.marshallToGuiThread( self.guiClientCommandHandler, (client_command[1:],) )
-                        reply = ' '                        
+                        reply = b' '
 
                 emacs_client_write_fd = os.open( client_fifo, os.O_WRONLY|os.O_NONBLOCK );
                 if emacs_client_write_fd < 0:
@@ -512,11 +512,11 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
                 os.close( emacs_client_write_fd )
 
     def guiClientCommandHandler( self, client_command ):
-        all_client_args = [part.decode('utf-8') for part in client_command.split( '\x00' )]
+        all_client_args = [part.decode('utf-8') for part in client_command.split( b'\x00' )]
         command_directory = all_client_args[0]
         command_args = all_client_args[1:]
 
-        self.main_window.Raise()
+        self.main_window.raise_()
 
         self._debugApp( 'guiClientCommandHandler: command_directory %r' % (command_directory,) )
         self._debugApp( 'guiClientCommandHandler: command_args %r' % (command_args,) )
