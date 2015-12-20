@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "Info: build-macosx.sh Editor/PythonBEmacs - start"
+echo "Info: build-macosx.sh Editor/PyQtBEmacs - start"
 PKG_DIST_DIR=${BUILDER_TOP_DIR}/Kits/MacOSX/pkg
 
 if [ "$1" = "--package" ]
@@ -28,4 +28,4 @@ then
         "${PKG_DIST_DIR}/Barry's Emacs-Devel.app/Contents/Resources/documentation"/* \
         "${DIST_DIR}/Barry's Emacs-Devel.app/Contents/Resources/documentation"
 fi
-echo "Info: build-macosx.sh Editor/PythonBEmacs - end"
+echo "Info: build-macosx.sh Editor/PyQtBEmacs - end"

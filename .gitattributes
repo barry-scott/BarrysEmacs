@@ -5,6 +5,7 @@ Builder/build-windows.cmd -text
 Builder/builder_custom_init.cmd eol=crlf
 Builder/import-meinc.cmd -text
 Builder/local-install-linux.sh -text
+Editor/PyQtBEmacs/bemacs.icns -text
 Editor/PyQtBEmacs/bemacs.png -text svneol=unset#image/png
 Editor/PyQtBEmacs/toolbar_images/build_compile.png -text svneol=unset#image/png
 Editor/PyQtBEmacs/toolbar_images/build_next_error.png -text svneol=unset#image/png

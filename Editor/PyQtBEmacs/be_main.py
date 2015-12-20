@@ -52,6 +52,11 @@ def main( args ):
     app.main_window.show()
     return app.exec_()
 
+#
+#   py2exe needs to notice these
+#
+import sip
+
 # 
 # needed to make MEINC Installer notice these packages
 # Include all the codecs
