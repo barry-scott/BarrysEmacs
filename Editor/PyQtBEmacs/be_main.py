@@ -23,7 +23,7 @@ import locale
 # Mac OS X and Windows are the main problems
 if sys.platform == 'darwin':
     if '--noredirect' not in sys.argv:
-        sys.stdout = open( os.environ.get( 'BEMACS_STDOUT_LOG', '/dev/null' ), 'w', 0 )
+        sys.stdout = open( os.environ.get( 'BEMACS_STDOUT_LOG', '/dev/null' ), 'w', 1 )
         sys.stderr = sys.stdout
 
 elif sys.platform.startswith( 'win' ):

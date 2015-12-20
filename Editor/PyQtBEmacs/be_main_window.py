@@ -62,7 +62,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
 
         self.__setupMenuBar()
         self.__setupToolBar()
-        self.__setupStatusBar()
+        self.__setupStatusBar( self.emacs_panel.font )
 
         self.move( win_prefs.frame_position )
         self.resize( win_prefs.frame_size )
@@ -205,7 +205,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
 
         self.__all_actions[ code ].connect( action )
 
-    def __setupStatusBar( self ):
+    def __setupStatusBar( self, font ):
         s = self.statusBar()
 
         self.status_message = QtWidgets.QLabel()
@@ -215,13 +215,12 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.status_line_num = QtWidgets.QLabel()
         self.status_col_num = QtWidgets.QLabel()
 
-        metrics = self.status_message.fontMetrics()
-
-        self.status_read_only.setMinimumWidth( max( [metrics.width( s ) for s in ('RO',)] ) )
-        self.status_insert_mode.setMinimumWidth( max( [metrics.width( s ) for s in ('Ins', 'Over')] ) )
-        self.status_eol.setMinimumWidth( max( [metrics.width( s ) for s in ('LF', 'CR', 'CRLF')] ) )
-        self.status_line_num.setMinimumWidth( metrics.width( '9999999' ) )
-        self.status_col_num.setMinimumWidth( metrics.width( '9999' ) )
+        self.status_message.setFont( font )
+        self.status_read_only.setFont( font )
+        self.status_insert_mode.setFont( font )
+        self.status_eol.setFont( font )
+        self.status_line_num.setFont( font )
+        self.status_col_num.setFont( font )
 
         self.status_read_only.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
         self.status_insert_mode.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
@@ -229,14 +228,24 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.status_line_num.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
         self.status_col_num.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
 
+        metrics = self.status_col_num.fontMetrics()
+        # QLabel min width is not used for the text. Its the text + somthing-magic
+        # try width of a char + 25%
+        fudge = metrics.width( 'M' ) * 125 // 100
+        self.status_read_only.setMinimumWidth( fudge + max( [metrics.width( s ) for s in ('RO',)] ) )
+        self.status_insert_mode.setMinimumWidth( fudge + max( [metrics.width( s ) for s in ('Ins', 'Over')] ) )
+        self.status_eol.setMinimumWidth( fudge + max( [metrics.width( s ) for s in ('LF', 'CR', 'CRLF')] ) )
+        self.status_line_num.setMinimumWidth( fudge + metrics.width( '9999999' ) )
+        self.status_col_num.setMinimumWidth( fudge + metrics.width( '9999' ) )
+
         self.status_line_num.setAlignment( QtCore.Qt.AlignRight )
         self.status_col_num.setAlignment( QtCore.Qt.AlignRight )
 
         self.status_read_only.setText( '' )
-        self.status_insert_mode.setText( 'INS ' )
-        self.status_eol.setText( 'LF  ' )
-        self.status_line_num.setText( '123' )
-        self.status_col_num.setText( '24' )
+        self.status_insert_mode.setText( '' )
+        self.status_eol.setText( '' )
+        self.status_line_num.setText( '' )
+        self.status_col_num.setText( '' )
 
         s.addWidget( self.status_message )
         s.addPermanentWidget( self.status_read_only )
@@ -282,9 +291,24 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMessageBox.information( self, T_("About Barry's Emacs"), '\n'.join( all_about_info ) )
 
     def setStatus( self, all_status ):
+        print( 'QQQ1: text %r width %r min width %r margin %r indent %r frame width %r' %
+                (self.status_col_num.text()
+                ,self.status_col_num.width()
+                ,self.status_col_num.minimumWidth()
+                ,self.status_col_num.margin()
+                ,self.status_col_num.indent()
+                ,self.status_col_num.frameWidth()) )
+
         self.status_read_only   .setText( {True: 'RO', False: ''}[all_status['readonly']] )
         self.status_insert_mode .setText( {True: 'Over', False: 'Ins '}[all_status['overstrike']] )
         self.status_eol         .setText( all_status['eol'].upper() )
         self.status_line_num    .setText( '%d' % (all_status['line'],) )
         self.status_col_num     .setText( '%d' % (all_status['column'],) )
 
+        print( 'QQQ2: text %r width %r min width %r margin %r indent %r frame width %r' %
+                (self.status_col_num.text()
+                ,self.status_col_num.width()
+                ,self.status_col_num.minimumWidth()
+                ,self.status_col_num.margin()
+                ,self.status_col_num.indent()
+                ,self.status_col_num.frameWidth()) )

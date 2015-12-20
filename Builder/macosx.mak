@@ -13,7 +13,7 @@ usage:
 	@ echo "Usage: make -f macosx.mak clean"
 	exit 1
 
-build: brand editor mlisp describe language quick_info docs MacOSX_pkg
+build: brand editor mlisp describe language quick_info docs # MacOSX_pkg
 
 brand:
 	$(PYTHON) brand_version.py version_info.txt ..
@@ -22,7 +22,7 @@ editor:
 	@ echo Info: Building BEmacs images...
 	cd ../Editor && ./build-macosx.sh all
 	@ echo Info: Building BEmacs application...
-	cd ../Editor/PythonBEmacs && ./build-macosx.sh --package
+	cd ../Editor/PyQtBEmacs && ./build-macosx.sh --package
 	@ echo Info: Copy db utils...
 	cp ../Editor/obj-utils/dbadd	"$(BEMACS_LIB_DIR)"
 	cp ../Editor/obj-utils/dbcreate	"$(BEMACS_LIB_DIR)"
@@ -36,7 +36,6 @@ mlisp:
 	cp -f ../MLisp/emacsinit.ml	"$(BEMACS_LIB_DIR)"; chmod ugo=r "$(BEMACS_LIB_DIR)/emacsinit.ml"
 	cp -f ../MLisp/emacs_profile.ml	"$(BEMACS_LIB_DIR)"; chmod ugo=r "$(BEMACS_LIB_DIR)/emacs_profile.ml"
 	cd ../MLisp; $(PYTHON) create_library.py common,unix "$(BEMACS_LIB_DIR)/emacslib" ../Editor/obj-utils
-
 
 describe:
 	@ echo Info: Making describe...

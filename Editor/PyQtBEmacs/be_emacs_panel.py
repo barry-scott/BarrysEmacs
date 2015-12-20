@@ -428,7 +428,6 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.__all_term_ops = []
         self.editor_pixmap = None
 
-        #qqq#self.eat_next_char = False
         self.cursor_x = 1
         self.cursor_y = 1
         self.window_size = 0
@@ -473,7 +472,11 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         font_pref = self.app.prefs.getFont()
 
         self.font = QtGui.QFont( font_pref.face, font_pref.point_size )
-        self.log.info( 'Font family: %r %dpt' % (self.font.family(), self.font.pointSize()) )
+        self.font.setFixedPitch( True )
+        self.font.setKerning( False )
+        self.font.setStyleStrategy( self.font.NoAntialias )
+        fi = QtGui.QFontInfo( self.font )
+        self.log.info( 'Font family: %r %dpt' % (fi.family(), fi.pointSize()) )
 
     def __calculateWindowSize( self ):
         assert self.char_width is not None
@@ -529,11 +532,11 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         self.char_width = metrics.width( 'i' )
         self.char_length = metrics.height()
-        self._debugPanel( 'paintEvent first_paint i %d.%d' % (self.char_width, self.char_length) )
+        self._debugPanel( 'paintEvent first_paint i %d x %d' % (self.char_width, self.char_length) )
 
         self.char_width = metrics.width( 'M' )
         self.char_length = metrics.height()
-        self._debugPanel( 'paintEvent first_paint M %d.%d' % (self.char_width, self.char_length) )
+        self._debugPanel( 'paintEvent first_paint M %d x %d' % (self.char_width, self.char_length) )
 
         self.char_ascent = metrics.ascent()
 
@@ -633,6 +636,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
                             (event.text(), key, key, qt_key_names.get( key, 'unknown' ), T( ctrl ), T( shift ), T( alt ), T( cmd ), T( meta )) )
 
         if key in special_keys:
+            self._debugTermKey( 'keyPressEvent special_keys %r' % (special_keys[ key ],) )
             trans, shift_trans, ctrl_trans, ctrl_shift_trans = special_keys[ key ]
 
             if ctrl and shift and ctrl_shift_trans is not None:
@@ -654,11 +658,10 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             for ch in translation:
                 self.app.editor.guiEventChar( ch, shift )
 
-
-            #qqq# Not needed now?
-            #qqq# self.eat_next_char = True
-
         elif len(event.text()) > 0:
+            self.handleNonSpecialKey( event )
+
+        elif sys.platform == 'darwin' and key in cmd_to_ctrl_map:
             self.handleNonSpecialKey( event )
 
     def keyReleaseEvent( self, event ):
@@ -683,12 +686,6 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
                             (event.text(), key, key, qt_key_names.get( key, 'unknown' ), T( ctrl ), T( shift ), T( alt ), T( cmd ), T( meta )) )
 
     def handleNonSpecialKey( self, event ):
-        #qqq#if self.eat_next_char:
-        #qqq#    self._debugTermKey( 'handleNonSpecialKey eat_next_char' )
-
-        #qqq#    self.eat_next_char = False
-        #qqq#    return
-
         key = event.key()
         char = event.text()
         modifiers = int( event.modifiers() )
@@ -712,14 +709,9 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         if( sys.platform == 'darwin'
         and (cmd or ctrl)
-        and char in cmd_to_ctrl_map ):
-            self._debugTermKey( 'mapped %d to %d' % (char, cmd_to_ctrl_map[ char ]) )
-            char = cmd_to_ctrl_map[ char ]
-
-        elif( sys.platform.startswith( 'linux' )
-        and ctrl
-        and char in cmd_to_ctrl_map):
-            char = cmd_to_ctrl_map[ char ]
+        and key in cmd_to_ctrl_map ):
+            self._debugTermKey( 'mapped %d to %d' % (key, cmd_to_ctrl_map[ key ]) )
+            char = cmd_to_ctrl_map[ key ]
 
         if ctrl and char == ord( ' ' ):
             char = 0
@@ -892,6 +884,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self._debugTermCalls1( 'termUpdateEnd() all_vert_scroll_bars %r' % (all_vert_scroll_bars,) )
 
         self.qp = QtGui.QPainter( self.editor_pixmap )
+        self.qp.setRenderHint( self.qp.TextAntialiasing, False )
+
         self.qp.setBackground( bg_colours[ SYNTAX_DULL ] )
         self.qp.setBackgroundMode( QtCore.Qt.OpaqueMode )
         self.qp.setFont( self.font )
@@ -997,7 +991,10 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
     def termUpdateLine( self, old, new, row ):
         self._debugTermCalls2( 'termUpdateLine row=%d' % (row,) )
         if old != new:
-            self.__all_term_ops.append( (self.__termUpdateLine, (old, new, row)) )
+            if sys.platform == 'darwin':
+                self.__all_term_ops.append( (self.__termUpdateLineOSX, (old, new, row)) )
+            else:
+                self.__all_term_ops.append( (self.__termUpdateLine, (old, new, row)) )
 
     def __termUpdateLine( self, old, new, row ):
         if old is not None:
@@ -1096,6 +1093,74 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             self.qp.fillRect( x, y, remaining_width*self.char_width, self.char_length, bg_brush )
 
         self._debugTermCalls2( '__termUpdateLine %d done' % (row,) )
+
+    def __termUpdateLineOSX( self, old, new, row ):
+        if old is not None:
+            self._debugTermCalls2( '__termUpdateLineOSX row=%d old %r' % (row, old[0].rstrip(),) )
+        self._debugTermCalls2( '__termUpdateLineOSX row=%d new %r' % (row, new[0].rstrip(),) )
+
+        if new is None:
+            new_line_contents = ''
+            new_line_attrs = []
+
+        else:
+            new_line_contents = new[0]
+            new_line_attrs = new[1]
+
+        if old is None:
+            old_line_contents = ''
+            old_line_attrs = []
+
+        else:
+            old_line_contents = old[0]
+            old_line_attrs = old[1]
+
+        cur_attr = None
+        cur_mode = None
+
+        new_line_length = len( new_line_contents )
+        old_line_length = len( old_line_contents )
+
+
+        for col in range( len( new_line_contents ) ):
+            new_attr = new_line_attrs[ col ]
+            new_ch = new_line_contents[ col ]
+            if( col < len(old_line_contents)
+            and old_line_contents[ col ] == new_ch
+            and old_line_attrs[ col ] == new_attr ):
+                continue
+
+            if cur_attr != new_attr:
+                if (new_attr & LINE_M_ATTR_HIGHLIGHT) != 0:
+                    mode = LINE_M_ATTR_HIGHLIGHT
+
+                elif (new_attr & LINE_ATTR_MODELINE) != 0:
+                    mode = LINE_ATTR_MODELINE
+
+                elif (new_attr & LINE_ATTR_USER) != 0:
+                    mode = new_attr&LINE_M_ATTR_USER
+
+                else:
+                    mode = new_attr
+
+                if cur_mode != mode:
+                    cur_mode = mode
+                    self.qp.setPen( QtGui.QPen( fg_colours[ cur_mode ] ) ) 
+                    self.qp.setBackground( bg_colours[ cur_mode ] )
+
+            x, y = self.__pixelPoint( col+1, row )
+
+            # draw text may not fill the rectange of the char leaving lines on the screen
+            #self.dc.DrawRectangle( x, y, self.char_width, self.char_length )
+            self.qp.drawText( x, y+self.char_ascent, new_ch )
+
+        remaining_width = self.term_width - new_line_length
+        if remaining_width > 0:
+            bg_brush = QtGui.QBrush( bg_colours[ SYNTAX_DULL ] )
+            x, y = self.__pixelPoint( new_line_length+1, row )
+            self.qp.fillRect( x, y, remaining_width*self.char_width, self.char_length, bg_brush )
+
+        self._debugTermCalls2( '__termUpdateLineOSX %d done' % (row,) )
 
     def termMoveLine( self, from_line, to_line ):
         self._debugTermCalls1( 'termMoveLine( %r, %r )' % (from_line,to_line) )

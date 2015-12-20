@@ -605,7 +605,10 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'PYTHON_FRAMEWORK', '/Library/Frameworks/Python.framework/Versions/%(PYTHON_VERSION)s/Python' )
 
         self._addVar( 'PYTHON',         '%(PYTHONDIR)s/Resources/Python.app/Contents/MacOS/Python' )
-        self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)s' )
+        if self.expand( '%(PYTHON_VERSION)s' ).startswith( '3.' ):
+            self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)sm' )
+        else:
+            self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)s' )
 
         self._addVar( 'CCCFLAGS',
                                         '-g '
@@ -618,7 +621,7 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-DDARWIN '
                                         '-D%(DEBUG)s' )
 
-        self._addVar( 'LDSHARED',       '%(CCC)s -bundle -g -u _PyMac_Error '
+        self._addVar( 'LDSHARED',       '%(CCC)s -bundle -g '
                                         '-framework System '
                                         '%(PYTHON_FRAMEWORK)s '
                                         '-framework CoreFoundation '
