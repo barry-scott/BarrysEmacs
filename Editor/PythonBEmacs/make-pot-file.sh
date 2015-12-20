@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ls *.py | grep -v -e ^wb_diff_images.py -e ^wb_images.py >wb_files.tmp
 

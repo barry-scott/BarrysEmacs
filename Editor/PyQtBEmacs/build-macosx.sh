@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 echo "Info: build-macosx.sh Editor/PythonBEmacs - start"
 PKG_DIST_DIR=${BUILDER_TOP_DIR}/Kits/MacOSX/pkg
 

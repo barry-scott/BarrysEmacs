@@ -13,7 +13,7 @@ usage:
 	@ echo "Usage: make -f macosx.mak clean"
 	exit 1
 
-build: brand editor mlisp describe language quick_info docs # MacOSX_pkg
+build: brand editor mlisp describe language quick_info docs MacOSX_pkg
 
 brand:
 	$(PYTHON) brand_version.py version_info.txt ..
@@ -62,7 +62,7 @@ docs:
 
 MacOSX_pkg:
 	@ echo Info: MacOSX package creation...
-	cd ../Kits/MacOSX; sh ./make-macosx-kit.sh
+	cd ../Kits/MacOSX; bash ./make-macosx-kit.sh
 
 clean:
 	cd ../Editor && export BUILD_KIT_DIR="$(BEMACS_LIB_DIR)"; ./build-macosx.sh clean

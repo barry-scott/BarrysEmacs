@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 echo "Info: brand.make-macosx-kit.sh Kits/MacOSX - start"
 PKGNAME=BarrysEmacs-%(version)s

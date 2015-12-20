@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ROOT_DIR=${1:? Root dir}
 ROOT_BIN_DIR=${2:? Bin dir}
 ROOT_LIB_DIR=${3:? Lib dir}

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 mkdir -p tree/DEBIAN
 
 cat <<EOF >tree/DEBIAN/control
@@ -13,7 +13,7 @@ Depends: libmotif3
 EOF
 
 cat <<EOF >tree/DEBIAN/postinst
-#!/bin/sh
+#!/bin/bash
 cd /usr/local/bin
 ln -s ../bemacs/bemacs bemacs
 cd /usr/local/bemacs
@@ -22,7 +22,7 @@ EOF
 chmod +x tree/DEBIAN/postinst
 
 cat <<EOF >tree/DEBIAN/prerm
-#!/bin/sh
+#!/bin/bash
 cd /usr/local/bin
 rm -f bemacs
 cd /usr/local/bemacs

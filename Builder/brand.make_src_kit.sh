@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 KITNAME=bemacs-src-%(version)s
 KITDIR=/tmp/${KITNAME}
 

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/PyQtBEmacs:${BUILDER_TOP_DIR}/Editor/obj-pybemacs
 case "${BUILDER_CFG_PLATFORM}" in
 Linux-Fedora)

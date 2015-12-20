@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 LOCALEDIR=${1:-missing arg 1 output locale dir}
 
