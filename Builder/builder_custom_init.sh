@@ -10,6 +10,14 @@ Darwin)
     ;;
 
 Linux)
+    for version in ${PYTHON_VERSION} 3.4
+    do
+        if [ -e /usr/bin/python${version} ]
+        then
+            export PYTHON_VERSION=${version}
+            break
+        fi
+    done
     if [ -e /etc/fedora-release ]
     then
         export BUILDER_CFG_PLATFORM=Linux-Fedora
