@@ -3,8 +3,8 @@
 #
 maturity:   V
 major:      8
-minor:      1
-patch:      4
+minor:      2
+patch:      0
 
 version:            %(wc_state)s%(maturity)s%(major)s.%(minor)s.%(patch)s-%(revision)s
 mac_short_version:  %(maturity)s%(major)s.%(minor)s
