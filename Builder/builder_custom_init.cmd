@@ -11,16 +11,16 @@ set PYTHON_FILE_VERSION=34
 
 if %BUILDER_CFG_PLATFORM% == Win32 (
     rem when called in place this can fork bomb (lots of CMD.exe in task manager)
-    copy "C:\Program Files (x86)\Microsoft Visual Studio %VC_VER%\VC\vcvarsall.bat" .
-    echo call vcvarsall.bat
+    call "C:\Program Files (x86)\Microsoft Visual Studio %VC_VER%\VC\vcvarsall.bat"
+    @echo %__e%
+
     set MEINC_INSTALLER_DIR=%BUILDER_TOP_DIR%\Imports\MEINC_Installer-7.1.1-py%PYTHON_FILE_VERSION%-win32
 )
 
 if %BUILDER_CFG_PLATFORM% == Win64 (
     rem if Win64 then setup path to include the 64bit CL.exe
     rem when called in place this can fork bomb (lots of CMD.exe in task manager)
-    copy "C:\Program Files (x86)\Microsoft Visual Studio %VC_VER%\VC\bin\amd64\vcvars64.bat" .
-    echo call vcvars64.bat
+    call "C:\Program Files (x86)\Microsoft Visual Studio %VC_VER%\VC\bin\amd64\vcvars64.bat"
     @echo %__e%
 
     set MEINC_INSTALLER_DIR=%BUILDER_TOP_DIR%\Imports\MEINC_Installer-7.1.1-py%PYTHON_FILE_VERSION%-win64
