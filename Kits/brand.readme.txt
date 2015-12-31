@@ -1,44 +1,41 @@
-	       Emacs Version %(version)s
-	       ____________________________________________
+           Emacs Version %(version)s
+           ____________________________________________
 
 Introduction
 
-	Barry's Emacs is copyright (c) 1991-%(year)s by Barry A. Scott.
+    Barry's Emacs is copyright (c) 1991-%(year)s by Barry A. Scott.
 
-	You can contact me at the following Email address.
+    You can contact me at the following Email address.
 
-		Internet: barry@barrys-emacs.org
+        Internet: barry@barrys-emacs.org
 
-	Barry's Emacs is discussed on
+    Barry's Emacs is discussed on
 
-		http://groups.yahoo.com/group/barrysemacs.
+        http://groups.yahoo.com/group/barrysemacs.
 
-	Barry's Emacs website is
+    Barry's Emacs website is
 
-		http://www.barrys-emacs.org/
+        http://www.barrys-emacs.org/
 
-	This is a release version of %(maturity)s%(major)s.%(minor)s of Barry's Emacs.
+    This is a release version of %(maturity)s%(major)s.%(minor)s of Barry's Emacs.
 
-	This kit works on:
-		Windows XP
-		Windows 2000
-		Windows NT 4.0
-		Windows Me
-		Windows 98
-		Linux (tested on: Fedora 8)
+    There are kits available for:
+        Windows 7 and later
+                Mac OS X 10.11
+        Linux (tested on: Fedora 23)
 
 New in %(version)s
-	New in this release
+    New in this release
 
-        * Improve XML mode and HTML modes
+    * UI has been implemented use PyQT
 
-        * Improve Python mode
+Mac OS X notes:
 
-        * Disable python integration. Too compile bemacs MFC is required
-          which I only have for VC 6.0.  Python 2.5 needs newer compiler
-          that does not provide MFC unless I get the expensive version.
+    Use the included bemacs_client as a command line interface to Barry's Emacs.
 
-        * Fix crash with abbrev expansions.
+    copy bemacs_client to some what on your PATH. Then you can edit a file by
+    typing:
 
+        $ bemacs_client <filename>
 
 [end readme.txt]

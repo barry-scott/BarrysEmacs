@@ -49,6 +49,7 @@ class FileFinder:
         for filename in all_files:
             full_path = os.path.join( path, filename )
             if( os.path.isdir( full_path )
+            and not os.path.islink( full_path )
             and not full_path.endswith( '.svn' )
             and not full_path.endswith( '_svn' ) ):
                 self.findAndBrandFiles( full_path )
