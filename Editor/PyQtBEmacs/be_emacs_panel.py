@@ -12,6 +12,7 @@
 '''
 import sys
 import logging
+import time
 
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
@@ -438,6 +439,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.all_horz_scroll_bar_info = []
 
         self.__mouse_button_state = set()
+        self.__last_wheel_event_time = time.time()
 
         self.font = None
 
@@ -788,12 +790,25 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.app.editor.guiEventMouse( translation, shift, [line, column] );
 
     def wheelEvent( self, event ):
-        self._debugTermMouse( 'wheelEvent angle %r )' % (event.angleDelta().y(),) )
+        self._debugTermMouse( 'wheelEvent source %d, angle %r, pixel %r' %
+                (event.source(), event.angleDelta().y(), event.pixelDelta().y()) )
 
-        if event.angleDelta().y() > 0:
+        if event.angleDelta().y() == 0:
+            return
+
+        elif event.angleDelta().y() > 0:
             rotation = 1
         else:
             rotation = -1
+
+        # there can be a storm of events from a track pad
+        # that makes the scrolling jerky. Filter out excess
+        # events. 40ms seems to work well on OS X
+        this_event_time = time.time()
+        if (this_event_time - self.__last_wheel_event_time) < 0.040:
+            return
+
+        self.__last_wheel_event_time = this_event_time
 
         column = (event.x() - self.client_padding + (self.char_width/2)) // self.char_width + 1;
         line =   (event.y() - self.client_padding ) // self.char_length + 1;
@@ -910,10 +925,11 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
                 bar = self.all_vert_scroll_bars[ index ]
                 if bar_info is None:
                     bar.hide()
-                    self._debugTermCalls1( 'termUpdateEnd: v scroll hide %d' % (index,) )
+                    self._debugTermCalls1( 'termUpdateEnd: V scroll hide %d' % (index,) )
 
                 else:
                     win_id, x, y, width, height, pos, total = bar_info
+                    self._debugTermScroll( 'termUpdateEnd set V scroll id %r value %r' % (win_id, pos) )
                     bar.setWindowId( win_id )
                     bar.setMaximum( total )
                     bar.setValue( pos )
@@ -922,16 +938,16 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
                     self.qp.fillRect( x, y, self.char_width * width, self.char_length * height, QtGui.QColor( 192, 192, 192 ) )
 
-                    bar.resize( self.char_width * width, self.char_length * height - 2 )
-                    bar.move( x, y+1 )
+                    bar.resize( self.char_width * width, self.char_length * height )
+                    bar.move( x, y )
 
                     bar.show()
-                    self._debugTermCalls1( 'termUpdateEnd: v scroll show %d' % (index,) )
+                    self._debugTermCalls1( 'termUpdateEnd: V scroll show %d' % (index,) )
 
             index += 1
             while index < len( self.all_vert_scroll_bars ):
                 self.all_vert_scroll_bars[ index ].hide()
-                self._debugTermCalls1( 'termUpdateEnd: h scroll hide %d extra' % (index,) )
+                self._debugTermCalls1( 'termUpdateEnd: V scroll hide %d extra' % (index,) )
                 index += 1
 
             #--- horz_scroll -----------------------------------------------------------
@@ -943,11 +959,11 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
                 bar = self.all_horz_scroll_bars[ index ]
                 if bar_info is None:
                     bar.hide()
-                    self._debugTermCalls1( 'termUpdateEnd: h scroll hide %d' % (index,) )
+                    self._debugTermCalls1( 'termUpdateEnd: H scroll hide %d' % (index,) )
 
                 else:
                     win_id, x, y, width, height, pos = bar_info
-                    self._debugTermScroll( 'termUpdateEnd set scroll id %r value %r' % (win_id, pos) )
+                    self._debugTermScroll( 'termUpdateEnd set H scroll id %r value %r' % (win_id, pos) )
                     bar.setWindowId( win_id )
                     bar.setValue( pos )
 
@@ -955,16 +971,16 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
                     self.qp.fillRect( x, y, self.char_width * width, self.char_length * height, QtGui.QColor( 192, 192, 192 ) )
 
-                    bar.resize( self.char_width * width - 2, self.char_length * height )
-                    bar.move( x+1, y )
+                    bar.resize( self.char_width * width, self.char_length * height )
+                    bar.move( x, y )
 
                     bar.show()
-                    self._debugTermCalls1( 'termUpdateEnd: h scroll show %d' % (index,) )
+                    self._debugTermCalls1( 'termUpdateEnd: H scroll show %d' % (index,) )
 
             index += 1
             while index < len( self.all_horz_scroll_bars ):
                 self.all_horz_scroll_bars[ index ].hide()
-                self._debugTermCalls1( 'termUpdateEnd: v scroll hode %d extra' % (index,) )
+                self._debugTermCalls1( 'termUpdateEnd: Hß scroll hode %d extra' % (index,) )
                 index += 1
 
         del self.qp
@@ -1187,42 +1203,57 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
     def termDisplayActivity( self, ch ):
         self._debugTermCalls1( 'termDisplayActivity( %r )' % (ch,) )
 
-class BemacsVerticalScrollBar(QtWidgets.QScrollBar):
+class BemacsVerticalScrollBar(QtWidgets.QScrollBar, be_debug.EmacsDebugMixin):
     def __init__( self, panel ):
         super().__init__( QtCore.Qt.Vertical, panel )
+        self.log = panel.log
+        be_debug.EmacsDebugMixin.__init__( self )
+
         self.editor = panel.app.editor
         self.window_id = None
 
         self.setMinimum( 1 )
-        self.setMaximum( 1 )
-        self.setSingleStep( 40 )
-        self.setPageStep( 1000 )
+        self.setMaximum( 2 )
+        self.setSingleStep( 1 )
+        self.setPageStep( 1 )
         self.setValue( 1 )
+        print( 'qqq: __init__ vert 1' )
 
         self.actionTriggered.connect( self.handleActionTriggered )
+
+        print( 'qqq: __init__ vert 2' )
 
     def setWindowId( self, window_id ):
         self.window_id = window_id
 
     def handleActionTriggered( self, action ):
+        print( 'qqq: vert handleActionTriggered ' )
         if action == self.SliderSingleStepAdd:
+            self._debugTermScroll( 'guiScrollChangeVert id %r %r' % (self.window_id, 1) )
             self.editor.guiScrollChangeVert( self.window_id, +1 )
 
         elif action == self.SliderSingleStepSub:
+            self._debugTermScroll( 'guiScrollChangeVert id %r %r' % (self.window_id, -1) )
             self.editor.guiScrollChangeVert( self.window_id, -1 )
 
         if action == self.SliderPageStepAdd:
+            self._debugTermScroll( 'guiScrollChangeVert id %r %r' % (self.window_id, 2) )
             self.editor.guiScrollChangeVert( self.window_id, +2 )
 
         elif action == self.SliderPageStepSub:
+            self._debugTermScroll( 'guiScrollChangeVert id %r %r' % (self.window_id, -2) )
             self.editor.guiScrollChangeVert( self.window_id, -2 )
 
         else:
+            self._debugTermScroll( 'guiScrollSetVert id %r %r' % (self.window_id, self.value()) )
             self.editor.guiScrollSetVert( self.window_id, self.value() )
 
-class BemacsHorizontalScrollBar(QtWidgets.QScrollBar):
+class BemacsHorizontalScrollBar(QtWidgets.QScrollBar, be_debug.EmacsDebugMixin):
     def __init__( self, panel ):
         super().__init__( QtCore.Qt.Horizontal, panel )
+        self.log = panel.log
+        be_debug.EmacsDebugMixin.__init__( self )
+
         self.editor = panel.app.editor
         self.window_id = None
 
