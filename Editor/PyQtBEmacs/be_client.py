@@ -18,6 +18,7 @@ import types
 import stat
 import time
 import math
+import ctypes
 
 _debug_client = False
 _debug_log = None
@@ -76,7 +77,7 @@ class ClientBase:
 
             self.bringTofront()
 
-        except ClientError, e:
+        except ClientError as e:
             print( 'Error: %s' % (str(e),) )
 
     def startBemacsServer( self ):
@@ -94,11 +95,11 @@ class ClientBase:
 
         argv = iter( _argv )
 
-        self.argv0 = argv.next()
+        self.argv0 = argv.__next__()
 
         while True:
             try:
-                arg = argv.next()
+                arg = argv.__next__()
 
             except StopIteration:
                 break
@@ -184,7 +185,7 @@ class ClientPosix(ClientBase):
             return value
 
         else:
-            return argv.next()
+            return argv.__next__()
 
     def processCommand( self ):
         debugClient( 'processCommand' )
@@ -364,11 +365,9 @@ class ClientWindows(ClientBase):
             return value
 
         else:
-            return argv.next()
+            return argv.__next__()
 
     def processCommand( self ):
-        import ctypes
-
         reply = self.__sendCommand( 'P' )
         if reply is None:
             return False
@@ -383,8 +382,6 @@ class ClientWindows(ClientBase):
         return reply is not None
 
     def __sendCommand( self, cmd ):
-        import ctypes
-
         debugClient( '__sendCommand %r' % (cmd,) )
 
         pipe_name = "\\\\.\\pipe\\Barry's Emacs"
@@ -414,8 +411,6 @@ class ClientWindows(ClientBase):
             return buf_result.raw[:buf_size.value]
 
     def __getErrorMessage( self, err ):
-        import ctypes
-
         FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000
         FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200
 
@@ -436,10 +431,7 @@ class ClientWindows(ClientBase):
 
         return errmsg.value
 
-
-
     def startBemacsServer( self ):
-        import ctypes
         debugClient( 'startBemacsServer()' )
 
 
@@ -526,5 +518,9 @@ class ClientWindows(ClientBase):
     def bringTofront( self ):
         pass
 
-if __name__ == '__main__':
+
+def run():
     sys.exit( main( sys.argv ) )
+
+if __name__ == '__main__':
+    run()
