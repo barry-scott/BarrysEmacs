@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #
 # ====================================================================
-# Copyright (c) 2010 Barry A Scott.  All rights reserved.
+# Copyright (c) 2010-2016 Barry A Scott.  All rights reserved.
 #
 # This software is licensed as described in the file LICENSE.txt,
 # which you should have received as part of this distribution.
@@ -20,7 +20,7 @@ import time
 import math
 import ctypes
 
-_debug_client = False
+_debug_client = True
 _debug_log = None
 
 def debugClient( msg ):
@@ -30,7 +30,7 @@ def debugClient( msg ):
             if 'BEMACS_CLIENT_LOG' in os.environ:
                 _debug_log = open( os.environ[ 'BEMACS_CLIENT_LOG' ], 'w' )
             else:
-                _debug_log = sys.stdout
+                _debug_log = sys.stderr
 
         now = time.time()
         frac = math.modf( now )[0]        
@@ -404,7 +404,7 @@ class ClientWindows(ClientBase):
                 return None
 
             errmsg  = self.__getErrorMessage( err )
-            print( 'Error:', rc, err, repr(errmsg) )
+            print( 'Error: CallNamedPipeA rc=%d err=%d errmsg=%r' % (rc, err, errmsg) )
             return None
 
         else:
@@ -434,23 +434,21 @@ class ClientWindows(ClientBase):
     def startBemacsServer( self ):
         debugClient( 'startBemacsServer()' )
 
-
         if 'BEMACS_CLIENT_SERVER' in os.environ:
             server_path = os.environ['BEMACS_CLIENT_SERVER']
 
         else:
             argv0 = sys.argv[0]
 
-            if argv0.lower().startswith( 'c:\\' ):
-                app_dir = os.path.dirname( argv0 )
-
-            elif '\\' in argv0:
+            if '\\' in argv0:
                 app_dir = os.path.dirname( os.path.abspath( argv0 ) )
 
             else:
                 app_dir = ''
-                for folder in [s.strip() for s in os.environ.get( 'PATH', '' ).split( ';' )]:
+                for folder in [s.strip() for s in ['.']+os.environ.get( 'PATH', '' ).split( ';' )]:
+                    print ( 'qqq: folder %s' % (folder,) )
                     app_path = os.path.abspath( os.path.join( folder, argv0 ) )
+                    print ( 'qqq: app_path %s' % (app_path,) )
                     if os.path.exists( app_path ):
                         app_dir = os.path.dirname( app_path )
                         break
@@ -460,14 +458,13 @@ class ClientWindows(ClientBase):
 
             server_path = os.path.join( app_dir, 'bemacs_server.exe' )
 
-
         if not os.path.exists( server_path ):
             raise ClientError( 'Expected to find BEmacs Server in %s' % (server_path,) )
 
         debugClient( 'server_path %s' % (server_path,) )
 
         cmd_line = ctypes.create_string_buffer( 128 )
-        cmd_line.value = ''
+        cmd_line.value = b''
 
         class STARTUPINFO(ctypes.Structure):
             _fields_ =  [('cb',                 ctypes.c_uint)
@@ -503,16 +500,16 @@ class ClientWindows(ClientBase):
         p_info = PROCESS_INFORMATION( None, None, 0, 0 )
 
         rc = ctypes.windll.kernel32.CreateProcessW(
-                        unicode( server_path ),     # LPCTSTR lpApplicationName,
-                        ctypes.byref( cmd_line ),  # LPTSTR lpCommandLine,
+                        server_path,                # LPCTSTR lpApplicationName,
+                        ctypes.byref( cmd_line ),   # LPTSTR lpCommandLine,
                         None,                       # LPSECURITY_ATTRIBUTES lpProcessAttributes,
                         None,                       # LPSECURITY_ATTRIBUTES lpThreadAttributes,
                         False,                      # BOOL bInheritHandles,
                         0,                          # DWORD dwCreationFlags,
                         None,                       # LPVOID lpEnvironment,
                         None,                       # LPCTSTR lpCurrentDirectory,
-                        ctypes.byref( s_info ),    # LPSTARTUPINFO lpStartupInfo,
-                        ctypes.byref( p_info )     # LPPROCESS_INFORMATION lpProcessInformation
+                        ctypes.byref( s_info ),     # LPSTARTUPINFO lpStartupInfo,
+                        ctypes.byref( p_info )      # LPPROCESS_INFORMATION lpProcessInformation
                         )
 
     def bringTofront( self ):
