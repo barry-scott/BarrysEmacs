@@ -94,23 +94,6 @@ Editor/PythonBEmacs/toolbar_images/window_split_vert.png -text svneol=unset#imag
 Editor/PythonBEmacs/toolbar_images/window_tile_horiz.png -text svneol=unset#image/png
 Editor/PythonBEmacs/toolbar_images/window_tile_vert.png -text svneol=unset#image/png
 Editor/PythonBEmacs/win32-client.mak -text
-Editor/Source/Windows/Resources/BMP16175.BMP -text
-Editor/Source/Windows/Resources/BMP24826.BMP -text
-Editor/Source/Windows/Resources/BMP28043.BMP -text
-Editor/Source/Windows/Resources/IDR_MAIN.ICO -text
-Editor/Source/Windows/Resources/TOOLBAR.BMP -text
-Editor/Source/Windows/Resources/TOOLBAR1.BMP -text
-Editor/Source/Windows/Resources/toolbar_build.bmp -text
-Editor/Source/Windows/Resources/toolbar_case.bmp -text
-Editor/Source/Windows/Resources/toolbar_edit.bmp -text
-Editor/Source/Windows/Resources/toolbar_file.bmp -text
-Editor/Source/Windows/Resources/toolbar_macro.bmp -text
-Editor/Source/Windows/Resources/toolbar_region.bmp -text
-Editor/Source/Windows/Resources/toolbar_search.bmp -text
-Editor/Source/Windows/Resources/toolbar_tools.bmp -text
-Editor/Source/Windows/Resources/toolbar_view.bmp -text
-Editor/Source/Windows/Resources/toolbar_window.bmp -text
-Editor/Source/Windows/Resources/win_doc.ico -text
 Editor/Source/Windows/Resources/win_emacs.ico -text
 Editor/make-Linux-Fedora.mak -text
 Editor/make-Linux-Ubuntu.mak -text
