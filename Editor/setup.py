@@ -234,7 +234,11 @@ class Compiler:
     def _addFromEnv( self, name ):
         debug( 'Compiler._addFromEnv( %r )' % (name,) )
 
-        self._addVar( name, os.environ[ name ] )
+        value = os.environ[ name ]
+        if value[0] == '"' and value[-1] == '"':
+            value = value[1:-1]
+
+        self._addVar( name, value )
 
     def _addVar( self, name, value ):
         debug( 'Compiler._addVar( %r, %r )' % (name,value) )
