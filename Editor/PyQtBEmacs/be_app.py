@@ -331,8 +331,12 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
 
         PIPE_UNLIMITED_INSTANCES = 255
         PIPE_ACCESS_DUPLEX = 3
-        PIPE_TYPE_MESSAGE = 4
         FILE_FLAG_OVERLAPPED = 0x40000000
+
+        PIPE_TYPE_MESSAGE = 4
+        PIPE_READMODE_MESSAGE = 2
+        PIPE_REJECT_REMOTE_CLIENTS = 8
+
         INFINITE = -1
         ERROR_PIPE_CONNECTED = 535
         WAIT_OBJECT_0 = 0
@@ -354,19 +358,24 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         self.__overlapped.hevent = ctypes.windll.kernel32.CreateEventW( None, 0, 0, None )
 
         # We create our named pipe.
-        pipe_name = "\\\\.\\pipe\\Barry's Emacs"
+        pipe_name = "\\\\.\\pipe\\Barry's Emacs 8.2"
 
-        h_pipe = ctypes.windll.kernel32.CreateNamedPipeA(
-                        pipe_name,                  #  __in      LPCTSTR lpName,
+        h_pipe = ctypes.windll.kernel32.CreateNamedPipeW(
+                        pipe_name,                      #  __in      LPCTSTR lpName,
                         PIPE_ACCESS_DUPLEX
-                        | FILE_FLAG_OVERLAPPED,     #  __in      DWORD dwOpenMode,
-                        PIPE_TYPE_MESSAGE,          #  __in      DWORD dwPipeMode,
-                        PIPE_UNLIMITED_INSTANCES,   #  __in      DWORD nMaxInstances,
-                        0,                          #  __in      DWORD nOutBufferSize,
-                        0,                          #  __in      DWORD nInBufferSize,
-                        100,                        #  __in      DWORD nDefaultTimeOut, (100ms)
-                        None                        #  __in_opt  LPSECURITY_ATTRIBUTES lpSecurityAttributes
+                        | FILE_FLAG_OVERLAPPED,         #  __in      DWORD dwOpenMode,
+                        PIPE_TYPE_MESSAGE
+                        | PIPE_READMODE_MESSAGE
+                        | PIPE_REJECT_REMOTE_CLIENTS,   #  __in      DWORD dwPipeMode,
+                        PIPE_UNLIMITED_INSTANCES,       #  __in      DWORD nMaxInstances,
+                        0,                              #  __in      DWORD nOutBufferSize,
+                        0,                              #  __in      DWORD nInBufferSize,
+                        100,                            #  __in      DWORD nDefaultTimeOut, (100ms)
+                        None                            #  __in_opt  LPSECURITY_ATTRIBUTES lpSecurityAttributes
                         )
+        if h_pipe is None:
+            self.log_client_log( 'Failed to CreateNamedPipeW( %s ): %s' %
+                                    (pipe_name, self.__getLastErrorMessage()) )
 
         # Loop accepting and processing connections
         while True:
@@ -380,7 +389,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
             self._debugApp( '__windowsCommandLineHandler connected to named pipe' )
 
             # Wait for either a connection, or a service stop request.
-            wait_handles_t = ctypes.c_uint * 2
+            wait_handles_t = ctypes.c_uint64 * 2
             wait_handles = wait_handles_t( self.__h_wait_stop, self.__overlapped.hevent )
 
             self._debugApp( '__windowsCommandLineHandler WaitForMultipleObjects...' )

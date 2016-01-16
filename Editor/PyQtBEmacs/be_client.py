@@ -384,12 +384,12 @@ class ClientWindows(ClientBase):
     def __sendCommand( self, cmd ):
         debugClient( '__sendCommand %r' % (cmd,) )
 
-        pipe_name = "\\\\.\\pipe\\Barry's Emacs"
+        pipe_name = "\\\\.\\pipe\\Barry's Emacs 8.2"
 
         buf_size = ctypes.c_int( 128 )
         buf_result = ctypes.create_string_buffer( buf_size.value )
 
-        rc = ctypes.windll.kernel32.CallNamedPipeA(
+        rc = ctypes.windll.kernel32.CallNamedPipeW(
                 pipe_name,
                 cmd,
                 len(cmd),
