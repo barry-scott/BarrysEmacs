@@ -51,7 +51,6 @@ Editor/PyQtBEmacs/toolbar_images/window_split_horiz.png -text svneol=unset#image
 Editor/PyQtBEmacs/toolbar_images/window_split_vert.png -text svneol=unset#image/png
 Editor/PyQtBEmacs/toolbar_images/window_tile_horiz.png -text svneol=unset#image/png
 Editor/PyQtBEmacs/toolbar_images/window_tile_vert.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/win64-client.mak -text
 Editor/PythonBEmacs.sln -text
 Editor/PythonBEmacs/bemacs.icns -text
 Editor/PythonBEmacs/bemacs.png -text svneol=unset#image/png
