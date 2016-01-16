@@ -1217,11 +1217,8 @@ class BemacsVerticalScrollBar(QtWidgets.QScrollBar, be_debug.EmacsDebugMixin):
         self.setSingleStep( 1 )
         self.setPageStep( 1 )
         self.setValue( 1 )
-        print( 'qqq: __init__ vert 1' )
 
         self.actionTriggered.connect( self.handleActionTriggered )
-
-        print( 'qqq: __init__ vert 2' )
 
     def setWindowId( self, window_id ):
         self.window_id = window_id

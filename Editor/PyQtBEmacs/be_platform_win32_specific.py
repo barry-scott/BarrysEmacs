@@ -58,5 +58,3 @@ def setupPlatformSpecific_( argv0 ):
             if os.path.exists( app_path ):
                 app_dir = os.path.dirname( app_path )
                 break
-
-    print( 'QQQ setupPlatformSpecific_ app_dir = %r' % (app_dir,) )
