@@ -2,27 +2,33 @@
 ; -- bemacs.iss --
 ;
 
+;
+; Notes:
+;   Uninstall key has hte _is1 added by inno
+;   Uninstall key is the same in 32 and 64 bit worlds
+;
+
 [Code]
-function InitializeSetup() : Boolean;
+procedure UninstallOldVersions();
 var
     uninstall_string    : string;
     uninstall_image     : string;
     uninstall_params    : string;
     Error               : Integer;
     space_pos           : Integer;
-    rc                  : Integer;
+    rci                 : Integer;
     rcb                 : Boolean;
 begin
     Error := 0;
     rcb := RegQueryStringValue( HKLM,
-        'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Barry''s Emacs',
+        'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#AppId}_is1',
         'UninstallString', uninstall_string );
     if rcb then
     begin
-        rc := MsgBox( 'An old version of Barry''s Emacs is installed.' #13 #13
-                'It must be uninstalled before installing the this version' #13
-                'Do you wish to uninstall it now?', mbConfirmation, MB_YESNO );
-        if rc = idYes then
+        rci := MsgBox( 'An old version of Barry''s Emacs is installed.' #13 #13
+                      'It must be uninstalled before installing the this version' #13
+                      'Do you wish to uninstall it now?', mbConfirmation, MB_YESNO );
+        if rci = idYes then
         begin
             space_pos := Pos( ' ', uninstall_string );
             uninstall_image := Copy( uninstall_string, 1, space_pos-1 );
@@ -34,19 +40,28 @@ begin
                     'and try this installation again.', mbError, MB_OK );
             if Error <> 0 then
                 MsgBox( 'Failed to run the uninstall procedure.' #13 #13
-                    'Please uninstall the old Barry''s Emacs' #13
-                    'and try this installation again.', mbError, MB_OK );
+                        'Please uninstall the old Barry''s Emacs' #13
+                        'and try this installation again.', mbError, MB_OK );
         end;
     end;
+end;
+
+function InitializeSetup() : Boolean;
+var
+    uninstall_string    : string;
+    rc                  : Boolean;
+begin
+    UninstallOldVersions();
+
     BringToFrontAndRestore;
-    rcb := RegQueryStringValue( HKLM,
-        'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Barry''s Emacs',
+    rc := RegQueryStringValue( HKLM32,
+        'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#AppId}_is1',
         'UninstallString', uninstall_string );
-    Result := not rcb;
+    Result := not rc;
     if not Result then
-        rc := MsgBox(    'Quitting installation.' #13 #13
+        MsgBox( 'Quitting installation.' #13 #13
                 'An old version of Barry''s Emacs is still installed.' #13
-                'Run this installation again after the old kit has' #13
+                'Run this installation again after the old version has' #13
                 'been uninstalled', mbInformation, MB_OK );
 end;
 
