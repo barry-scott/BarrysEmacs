@@ -4,41 +4,41 @@
 
 ;
 ; Notes:
-;   Uninstall key has hte _is1 added by inno
-;   Uninstall key is the same in 32 and 64 bit worlds
+;   Uninstall key has the _is1 added by inno
+;   32 bit apps are have uninstall keys in HKLM32
+;   64 bit apps are have uninstall keys in HKLM64
 ;
 
+#define AppName "Barry's Emacs 8"
+; need to double up the apostrophe for use inside of pascal strings
+#define AppId   "Barry''s Emacs 8"
+
 [Code]
-procedure UninstallOldVersions();
+procedure UninstallOldVersions( root_key : Integer );
 var
-    uninstall_string    : string;
     uninstall_image     : string;
-    uninstall_params    : string;
-    Error               : Integer;
-    space_pos           : Integer;
+    error               : Integer;
     rci                 : Integer;
     rcb                 : Boolean;
 begin
-    Error := 0;
-    rcb := RegQueryStringValue( HKLM,
+    error := 0;
+    rcb := RegQueryStringValue( root_key,
         'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#AppId}_is1',
-        'UninstallString', uninstall_string );
+        'UninstallString', uninstall_image );
     if rcb then
     begin
-        rci := MsgBox( 'An old version of Barry''s Emacs is installed.' #13 #13
+        rci := MsgBox( 'An old version of {#AppId} is installed.' #13 #13
                       'It must be uninstalled before installing the this version' #13
                       'Do you wish to uninstall it now?', mbConfirmation, MB_YESNO );
         if rci = idYes then
         begin
-            space_pos := Pos( ' ', uninstall_string );
-            uninstall_image := Copy( uninstall_string, 1, space_pos-1 );
-            uninstall_params := Copy( uninstall_string, space_pos, 999 );
-            rcb := Exec( uninstall_image, uninstall_params, ExpandConstant('{src}'), SW_SHOWNORMAL, ewWaitUntilTerminated, Error );
+            rcb := Exec( RemoveQuotes( uninstall_image ), '',
+                            ExpandConstant('{src}'), SW_SHOWNORMAL, ewWaitUntilTerminated, Error );
             if not rcb then
                 MsgBox( 'Failed to run the uninstall procedure.' #13 #13
                     'Please uninstall the old Barry''s Emacs' #13
                     'and try this installation again.', mbError, MB_OK );
-            if Error <> 0 then
+            if error <> 0 then
                 MsgBox( 'Failed to run the uninstall procedure.' #13 #13
                         'Please uninstall the old Barry''s Emacs' #13
                         'and try this installation again.', mbError, MB_OK );
@@ -49,39 +49,39 @@ end;
 function InitializeSetup() : Boolean;
 var
     uninstall_string    : string;
-    rc                  : Boolean;
+    rc32                : Boolean;
+    rc64                : Boolean;
 begin
-    UninstallOldVersions();
+    UninstallOldVersions( HKLM32 );
+    UninstallOldVersions( HKLM64 );
 
     BringToFrontAndRestore;
-    rc := RegQueryStringValue( HKLM32,
+    rc32 := RegQueryStringValue( HKLM32,
         'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#AppId}_is1',
         'UninstallString', uninstall_string );
-    Result := not rc;
+    rc64 := RegQueryStringValue( HKLM64,
+        'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#AppId}_is1',
+        'UninstallString', uninstall_string );
+    Result := not (rc32 or rc64);
     if not Result then
         MsgBox( 'Quitting installation.' #13 #13
-                'An old version of Barry''s Emacs is still installed.' #13
+                'An old version of {#AppId} is still installed.' #13
                 'Run this installation again after the old version has' #13
                 'been uninstalled', mbInformation, MB_OK );
 end;
 
 [Setup]
-AppName=Barry's Emacs 8
+AppName={#AppName}
 AppVerName=Barry's Emacs %(maturity)s%(major)s.%(minor)s
 AppCopyright=Copyright (C) 1991-%(year)s Barry A. Scott
-DefaultDirName={pf}\Barry Scott\Barry's Emacs 8
-DefaultGroupName=Barry's Emacs 8
+DefaultDirName={pf}\Barry Scott\{#AppName}
+DefaultGroupName={#AppName}
 UninstallDisplayIcon={app}\bemacs.exe
 ChangesAssociations=yes
 DisableStartupPrompt=yes
 InfoBeforeFile=info_before.txt
 Compression=bzip/9
-; "ArchitecturesAllowed=x64" specifies that Setup cannot run on
-; anything but x64.
 ArchitecturesAllowed=x64
-; "ArchitecturesInstallIn64BitMode=x64" requests that the install be
-; done in "64-bit mode" on x64, meaning it should use the native
-; 64-bit Program Files directory and the 64-bit view of the registry.
 ArchitecturesInstallIn64BitMode=x64
 
 [Tasks]
@@ -118,12 +118,12 @@ Name: "{group}\Barry's Emacs Web Site"; Filename: "http://www.barrys-emacs.org";
 ;
 ;    Add an Emacs icon to the Desktop
 ;
-Name: "{commondesktop}\Barry's Emacs 8"; Filename: "{app}\bemacs.exe"; Tasks: "option_desktop_icon"
+Name: "{commondesktop}\{#AppName}"; Filename: "{app}\bemacs.exe"; Tasks: "option_desktop_icon"
 
 ;
 ;    Add an Emacs icon to the Start menu
 ;
-Name: "{commonstartmenu}\Barry's Emacs 8"; Filename: "{app}\bemacs.exe"; Tasks: "option_start_menu_icon"
+Name: "{commonstartmenu}\{#AppName}"; Filename: "{app}\bemacs.exe"; Tasks: "option_start_menu_icon"
 
 [Registry]
 Root: HKCR; Subkey: "BarrysEmacs8Command"; ValueType: string; ValueData: "BEmacs Command"; Flags: uninsdeletekey
@@ -159,14 +159,14 @@ Root: HKCR; Subkey: "BarrysEmacs8DocumentV\DefaultIcon"; ValueType: string; Valu
 ;
 
 ; option_edit_with_bemacs
-Root: HKCR; Subkey: "*\shell\Edit with Barry's Emacs 8"; ValueType: string; ValueData: "Edit with &Barry's Emacs 8"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "*\shell\Edit with Barry's Emacs 8\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%%1"""
+Root: HKCR; Subkey: "*\shell\Edit with {#AppName}"; ValueType: string; ValueData: "Edit with &Barry's Emacs 8"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "*\shell\Edit with {#AppName}\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%%1"""
 
-Root: HKCR; Subkey: "Drive\shell\Barry's Emacs Here 8"; ValueType: string; ValueData: "Barry's Emacs 8 &Here"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "Drive\shell\Barry's Emacs Here 8\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" /package=cd-here ""%%1\.."""
+Root: HKCR; Subkey: "Drive\shell\{#AppName} Here"; ValueType: string; ValueData: "Barry's Emacs 8 &Here"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "Drive\shell\{#AppName} Here\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" /package=cd-here ""%%1\.."""
 
-Root: HKCR; Subkey: "Directory\shell\Barry's Emacs Here 8"; ValueType: string; ValueData: "Barry's Emacs 8 &Here"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "Directory\shell\Barry's Emacs Here 8\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" /package=cd-here ""%%1"""
+Root: HKCR; Subkey: "Directory\shell\{#AppName} Here"; ValueType: string; ValueData: "Barry's Emacs 8 &Here"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "Directory\shell\{#AppName} Here\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" /package=cd-here ""%%1"""
 
 ;
 ; have emacs open .ML files and .MLP files
