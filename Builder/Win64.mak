@@ -15,7 +15,7 @@ KITSRC=$(BUILDER_TOP_DIR)\Kits\Windows
 KITROOT=$(KITSRC)\kitfiles
 
 #
-build: brand kitdir editor mlisp describe quick_info language # inno_kit
+build: brand kitdir editor mlisp describe quick_info language inno_kit
 
 brand:
 	$(PYTHON) brand_version.py version_info.txt ..
