@@ -20,4 +20,4 @@ for dirpath, all_dirnames, all_filenames in os.walk( str( kitfiles_folder ) ):
 for filepath in sorted( all_files ):
     src_path = kitfiles_folder / filepath
     dst_path = pathlib.Path( '{app}' ) / filepath
-    print( 'Source: "%s"; DestDir: "%s"' % (src_path, dst_path) )
+    print( 'Source: "%s"; DestDir: "%s"' % (src_path, dst_path.parent) )
