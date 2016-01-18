@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 #
 # ====================================================================
 # Copyright (c) 2010-2016 Barry A Scott.  All rights reserved.
@@ -142,16 +142,19 @@ class ClientBase:
     def processCommand( self ):
         raise NotImplementedError()
 
-    def _getCommandString( self ):
+    def _encodeCommandString( self ):
         all_byte_elements = []
+
+        print( 'qqq: _encodeCommandString %r' % (self.all_command_elements,) )
+
         for element in self.all_command_elements:
-            if type(element) == types.UnicodeType:
+            if type(element) == str:
                 all_byte_elements.append( element.encode( 'utf-8' ) )
 
             else:
                 all_byte_elements.append( element )
 
-        return '\x00'.join( all_byte_elements )
+        return b'\x00'.join( all_byte_elements )
 
 
     def getArgQualifierName( self, arg ):
@@ -226,7 +229,7 @@ class ClientPosix(ClientBase):
 
         fd_response = os.open( client_fifo, os.O_RDONLY|os.O_NONBLOCK )
 
-        cmd = 'C'+self._getCommandString()
+        cmd = b'C'+self._encodeCommandString()
 
         debugClient( 'processCommand command %r' % (cmd,) )
 
@@ -376,9 +379,9 @@ class ClientWindows(ClientBase):
 
         rc = ctypes.windll.user32.AllowSetForegroundWindow( pid )
 
-        cmd = self._getCommandString()
+        cmd = self._encodeCommandString()
 
-        reply = self.__sendCommand( 'C' + cmd )
+        reply = self.__sendCommand( b'C' + cmd )
         return reply is not None
 
     def __sendCommand( self, cmd ):

@@ -8,6 +8,8 @@ Builder/local-install-linux.sh -text
 Editor/PyQtBEmacs/WindowsNamedPipes/Makefile -text
 Editor/PyQtBEmacs/WindowsNamedPipes/named-pipe-client.cpp -text
 Editor/PyQtBEmacs/WindowsNamedPipes/named-pipe-server.cpp -text
+Editor/PyQtBEmacs/be_command_line_handler_posix.py -text
+Editor/PyQtBEmacs/be_command_line_handler_windows.py -text
 Editor/PyQtBEmacs/bemacs.icns -text
 Editor/PyQtBEmacs/bemacs.png -text svneol=unset#image/png
 Editor/PyQtBEmacs/toolbar_images/build_compile.png -text svneol=unset#image/png

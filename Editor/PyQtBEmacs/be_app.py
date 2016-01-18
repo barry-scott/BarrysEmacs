@@ -313,215 +313,25 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
     def __runCommandLineHandler( self ):
         try:
             if sys.platform.startswith( 'win' ):
-                self.__windowsCommandLineHandler()
+                import be_command_line_handler_windows
+                handler = be_command_line_handler_windows.CommandLineHandlerWindows( self )
 
             else:
                 # unix and OS X
-                self.__posixCommandLineHandler()
+                import be_command_line_handler_posix
+                handler = be_command_line_handler_posix.CommandLineHandlerPosix( self )
+
+            handler.processCommandLines()
 
         except Exception as e:
             self.log.exception( 'command line exception' )
 
             self.marshallToGuiThread( self.guiReportException, (str(e), 'Command line Exception') )
 
-    def __windowsCommandLineHandler( self ):
-        self._debugApp( '__windowsCommandLineHandler()' )
+    def handleClientCommand( self, all_client_args ):
+        self.marshallToGuiThread( self.guiClientCommandHandler, (all_client_args,) )
 
-        import ctypes
-
-        PIPE_UNLIMITED_INSTANCES = 255
-        PIPE_ACCESS_DUPLEX = 3
-        FILE_FLAG_OVERLAPPED = 0x40000000
-
-        PIPE_TYPE_MESSAGE = 4
-        PIPE_READMODE_MESSAGE = 2
-        PIPE_REJECT_REMOTE_CLIENTS = 8
-
-        INFINITE = -1
-        ERROR_PIPE_CONNECTED = 535
-        WAIT_OBJECT_0 = 0
-
-        class OVERLAPPED(ctypes.Structure):
-            _fields_ =  [('status', ctypes.c_uint)
-                        ,('transfered', ctypes.c_uint)
-                        ,('offset', ctypes.c_ulonglong)
-                        ,('hevent', ctypes.c_uint)]
-
-        self.__h_wait_stop = ctypes.windll.kernel32.CreateEventW( None, 0, 0, None )
-
-        # We need to use overlapped IO for this, so we dont block when
-        # waiting for a client to connect.  This is the only effective way
-        # to handle either a client connection, or a service stop request.
-        self.__overlapped = OVERLAPPED( 0, 0, 0, 0 )
-
-        # And create an event to be used in the OVERLAPPED object.
-        self.__overlapped.hevent = ctypes.windll.kernel32.CreateEventW( None, 0, 0, None )
-
-        # We create our named pipe.
-        pipe_name = "\\\\.\\pipe\\Barry's Emacs 8.2"
-
-        h_pipe = ctypes.windll.kernel32.CreateNamedPipeW(
-                        pipe_name,                      #  __in      LPCTSTR lpName,
-                        PIPE_ACCESS_DUPLEX
-                        | FILE_FLAG_OVERLAPPED,         #  __in      DWORD dwOpenMode,
-                        PIPE_TYPE_MESSAGE
-                        | PIPE_READMODE_MESSAGE
-                        | PIPE_REJECT_REMOTE_CLIENTS,   #  __in      DWORD dwPipeMode,
-                        PIPE_UNLIMITED_INSTANCES,       #  __in      DWORD nMaxInstances,
-                        0,                              #  __in      DWORD nOutBufferSize,
-                        0,                              #  __in      DWORD nInBufferSize,
-                        100,                            #  __in      DWORD nDefaultTimeOut, (100ms)
-                        None                            #  __in_opt  LPSECURITY_ATTRIBUTES lpSecurityAttributes
-                        )
-        if h_pipe is None:
-            self.log_client_log( 'Failed to CreateNamedPipeW( %s ): %s' %
-                                    (pipe_name, self.__getLastErrorMessage()) )
-
-        # Loop accepting and processing connections
-        while True:
-            self._debugApp( '__windowsCommandLineHandler loop top' )
-
-            hr = ctypes.windll.kernel32.ConnectNamedPipe( h_pipe, ctypes.byref( self.__overlapped ) )
-            if hr == ERROR_PIPE_CONNECTED:
-                # Client is fast, and already connected - signal event
-                ctypes.windll.kernel32.SetEvent( self.__overlapped.hevent )
-
-            self._debugApp( '__windowsCommandLineHandler connected to named pipe' )
-
-            # Wait for either a connection, or a service stop request.
-            wait_handles_t = ctypes.c_uint64 * 2
-            wait_handles = wait_handles_t( self.__h_wait_stop, self.__overlapped.hevent )
-
-            self._debugApp( '__windowsCommandLineHandler WaitForMultipleObjects...' )
-            rc = ctypes.windll.kernel32.WaitForMultipleObjects( 2, ctypes.byref( wait_handles ), 0, INFINITE )
-
-            if rc == WAIT_OBJECT_0:
-                self._debugApp( '__windowsCommandLineHandler Stop event' )
-                # Stop event
-                break
-
-            else:
-                self._debugApp( '__windowsCommandLineHandler data ready for read' )
-
-                # Pipe event - read the data, and write it back.
-                buf_size = ctypes.c_uint( 32768 )
-                buf_client = ctypes.create_string_buffer( buf_size.value )
-                hr = ctypes.windll.kernel32.ReadFile( h_pipe, buf_client, buf_size, ctypes.byref( buf_size ), None )
-                client_command = buf_client.raw[:buf_size.value]
-
-                self._debugApp( '__windowsCommandLineHandler read command %r' % (client_command,) )
-
-                reply = ctypes.create_string_buffer( 32 )
-                if len( client_command ) > 0:
-                    if client_command[0] == ord('P'):
-                        reply.value = 'p%d' % (os.getpid(),)
-
-                    elif client_command[0] == ord('C'):
-                        self.marshallToGuiThread( self.guiClientCommandHandler, (client_command[1:],) )
-                        reply.value = b' '
-
-                    else:
-                        reply.value = b'R'+b'Unknown client command'
-
-                    reply_size = ctypes.c_uint( len( reply.value ) )
-
-                    hr = ctypes.windll.kernel32.WriteFile( h_pipe, reply, reply_size, ctypes.byref( reply_size ), None )
-
-                # And disconnect from the client.
-                ctypes.windll.kernel32.DisconnectNamedPipe( h_pipe )
-                self._debugApp( '__windowsCommandLineHandler Disconnected named pipe' )
-
-    def __getLastErrorMessage( self ):
-        import ctypes
-
-        err = ctypes.windll.kernel32.GetLastError()
-
-        FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000
-        FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200
-
-        errmsg_size = ctypes.c_int( 256 )
-        errmsg = ctypes.create_string_buffer( errmsg_size.value + 1 )
-
-        rc = ctypes.windll.kernel32.FormatMessageA(
-            FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS, # __in      DWORD dwFlags,
-            None,           # __in_opt  LPCVOID lpSource,
-            err,            # __in      DWORD dwMessageId,
-            0,              # __in      DWORD dwLanguageId,
-            errmsg,         # __out     LPTSTR lpBuffer,
-            errmsg_size,    # __in      DWORD nSize,
-            None            # __in_opt  va_list *Arguments
-            )
-        if rc == 0:
-            return 'error 0x%8.8x' % (err,)
-
-        return errmsg.value
-
-    def __posixCommandLineHandler( self ):
-        self._debugApp( '__posixCommandLineHandler' )
-        import pwd
-        import select
-
-        fifo_name = os.environ.get( 'BEMACS_FIFO', '.bemacs8/.emacs_command' )
-
-        if fifo_name.startswith( '/' ):
-            server_fifo = fifo_name
-
-        else:
-            e = pwd.getpwuid( os.geteuid() )
-
-            server_fifo = '/tmp/%s/%s' % (e.pw_name, fifo_name)
-
-        client_fifo = '%s_response' % (server_fifo,)
-
-        if self.opt_name is not None:
-            server_fifo += '_' + self.opt_name
-            client_fifo += '_' + self.opt_name
-
-        fifo_dir = os.path.dirname( server_fifo )
-
-        if not os.path.exists( fifo_dir ):
-            os.makedirs( fifo_dir )
-
-        self.__makeFifo( server_fifo )
-        self.__makeFifo( client_fifo )
-
-        try:
-            emacs_server_read_fd = os.open( server_fifo, os.O_RDONLY|os.O_NONBLOCK );
-
-        except OSError:
-            self.log.error( 'Failed to open %s for read' % (server_fifo,) )
-            return
-
-        try:
-            emacs_server_write_fd = os.open( server_fifo, os.O_WRONLY|os.O_NONBLOCK );
-        except OSError:
-            self.log.error( 'Failed to open %s for write' % (server_fifo,) )
-            return
-
-        self._debugApp( '__posixCommandLineHandler before read loop' )
-        while True:
-            r, w, x = select.select( [emacs_server_read_fd], [], [], 1.0 )
-            reply = b' '
-            if emacs_server_read_fd in r:
-                reply = b'R' b'Unknown client command'
-
-                client_command = os.read( emacs_server_read_fd, 16384 )
-                self._debugApp( '__posixCommandLineHandler command %r' % (client_command,) )
-                if len( client_command ) > 0:
-                    if client_command[0] == ord('C'):
-                        self.marshallToGuiThread( self.guiClientCommandHandler, (client_command[1:],) )
-                        reply = b' '
-
-                emacs_client_write_fd = os.open( client_fifo, os.O_WRONLY|os.O_NONBLOCK );
-                if emacs_client_write_fd < 0:
-                    return
-
-                self._debugApp( '__posixCommandLineHandler response %r' % (reply,) )
-                os.write( emacs_client_write_fd, reply )
-                os.close( emacs_client_write_fd )
-
-    def guiClientCommandHandler( self, client_command ):
-        all_client_args = [part.decode('utf-8') for part in client_command.split( b'\x00' )]
+    def guiClientCommandHandler( self, all_client_args ):
         command_directory = all_client_args[0]
         command_args = all_client_args[1:]
 
@@ -530,19 +340,6 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         self._debugApp( 'guiClientCommandHandler: command_directory %r' % (command_directory,) )
         self._debugApp( 'guiClientCommandHandler: command_args %r' % (command_args,) )
         self.editor.guiClientCommand( command_directory, command_args )
-
-    def __makeFifo( self, fifo_name ):
-        if os.path.exists( fifo_name ):
-            stats = os.stat( fifo_name )
-            if not stat.S_ISFIFO( stats.st_mode ):
-                self.log.error( '%s is not a fifo' % (fifo_name,) )
-
-            elif stats.st_size == 0:
-                return
-
-            os.remove( fifo_name )
-
-        os.mkfifo( fifo_name, stat.S_IRUSR|stat.S_IWUSR )
 
     #--------------------------------------------------------------------------------
     def __initEditorThread( self ):

@@ -55,6 +55,13 @@ int wmain( int argc, wchar_t **argv, wchar_t **envp )
     overlapped.Internal = 0;
     overlapped.InternalHigh = 0;
     overlapped.Pointer = 0;
+
+    std::wcout << "sizeof( overlapperd ) " << sizeof( overlapped ) << std::endl;
+    std::wcout << "sizeof( overlapperd.Internal ) " << sizeof( overlapped.Internal ) << std::endl;
+    std::wcout << "sizeof( overlapperd.InternalHigh ) " << sizeof( overlapped.InternalHigh ) << std::endl;
+    std::wcout << "sizeof( overlapperd.Pointer ) " << sizeof( overlapped.Pointer ) << std::endl;
+    std::wcout << "sizeof( overlapperd.hEvent ) " << sizeof( overlapped.hEvent ) << std::endl;
+
     // And create an event to be used in the OVERLAPPED object.
     overlapped.hEvent = CreateEventW( nullptr, 0, 0, nullptr );
 
