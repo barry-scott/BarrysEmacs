@@ -61,6 +61,13 @@ ChangesAssociations=yes
 DisableStartupPrompt=yes
 InfoBeforeFile=info_before.txt
 Compression=bzip/9
+; "ArchitecturesAllowed=x64" specifies that Setup cannot run on
+; anything but x64.
+ArchitecturesAllowed=x64
+; "ArchitecturesInstallIn64BitMode=x64" requests that the install be
+; done in "64-bit mode" on x64, meaning it should use the native
+; 64-bit Program Files directory and the 64-bit view of the registry.
+ArchitecturesInstallIn64BitMode=x64
 
 [Tasks]
 Name: "option_register_emacs_open_ml"; Description: "Barry's Emacs will open .ML and .MLP files"
@@ -76,29 +83,14 @@ Filename: "{app}\bemacs.EXE"; Parameters: """{app}\readme.txt"""; Flags: nowait 
 
 [Files]
 
-#include "msvc_system_files.iss"
-
 Source: "..\Readme.txt"; DestDir: "{app}";
-
-Source: "kitfiles\dbadd.exe"; DestDir: "{app}"
-Source: "kitfiles\dbcreate.exe"; DestDir: "{app}"
-Source: "kitfiles\dbdel.exe"; DestDir: "{app}"
-Source: "kitfiles\dblist.exe"; DestDir: "{app}"
-Source: "kitfiles\dbprint.exe"; DestDir: "{app}"
-Source: "kitfiles\mll2db.exe"; DestDir: "{app}"
-
-Source: "kitfiles\emacs_library\*"; DestDir: "{app}\emacs_library"
 
 Source: "..\..\HTML\*.css";  DestDir: "{app}\Documentation";
 Source: "..\..\HTML\*.html"; DestDir: "{app}\Documentation";
 Source: "..\..\HTML\*.gif";  DestDir: "{app}\Documentation";
 Source: "..\..\HTML\*.js";   DestDir: "{app}\Documentation";
 
-Source: "kitfiles\bemacs.exe"; DestDir: "{app}"
-Source: "kitfiles\bemacs.exe.manifest"; DestDir: "{app}"
-Source: "kitfiles\bemacs_server.exe"; DestDir: "{app}"
-Source: "kitfiles\bemacs_server.exe.manifest"; DestDir: "{app}"
-Source: "kitfiles\support\*"; DestDir: "{app}\support"
+#include "bemacs-kitfiles.iss"
 
 [Icons]
 Name: "{group}\Barry's Emacs"; Filename: "{app}\bemacs.exe"

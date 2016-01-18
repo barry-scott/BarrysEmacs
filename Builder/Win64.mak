@@ -32,10 +32,7 @@ inno_debug:
 	"c:\Program Files (x86)\Inno Setup 5\Compil32.exe" $(KITSRC)\bemacs.iss
 
 $(KITROOT)\Output\setup.exe: $(KITSRC)\bemacs.iss
-	rem copy $(KITSRC)\msvc$(MSVC_VERSION)_x64_system_files.iss $(KITSRC)\msvc_system_files.iss
-	echo ; >$(KITSRC)\msvc_system_files.iss
-	"c:\Program Files (x86)\Inno Setup 5\ISCC.exe" $(KITSRC)\bemacs.iss
-	$(KITSRC)\copy-setup.cmd $(KITSRC)\Output\setup.exe $(KITSRC)
+	cd $(KITSRC) && .\build-win64
 
 editor: kitdir $(KITROOT)\bemacs_server.exe
 

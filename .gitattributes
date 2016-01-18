@@ -114,6 +114,8 @@ HTML/ug_screen.gif -text
 HTML/ug_start_menu.gif -text
 HTML/ug_windows.gif -text
 Kits/Linux/DPKG/brand.create-dpkg.sh -text
+Kits/Windows/brand.build-win64.cmd -text
+Kits/Windows/make_kit_files_list.py -text
 MLisp/Library/edit-variable.ml -text
 MLisp/Library/makefile-mode.ml -text
 MLisp/Library/pybemacs-ui.ml -text
