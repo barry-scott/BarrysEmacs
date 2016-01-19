@@ -14,10 +14,13 @@
 '''
 import pwd
 import select
+import os
+import stat
 
 class CommandLineHandlerPosix:
     def __init__( self, app ):
         self.app = app
+        self.opt_name = None
         
     def processCommandLines( self ):
         self.app._debugApp( 'CommandLineHandlerPosix' )
