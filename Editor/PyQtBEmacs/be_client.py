@@ -23,6 +23,15 @@ import ctypes
 _debug_client = True
 _debug_log = None
 
+PY3 = sys.version_info.major > 2
+if PY3:
+    def Next( it ):
+        return it.__next__()
+
+else:
+    def Next( it ):
+        return it.next()
+
 def debugClient( msg ):
     if _debug_client:
         global _debug_log
@@ -95,11 +104,11 @@ class ClientBase:
 
         argv = iter( _argv )
 
-        self.argv0 = argv.__next__()
+        self.argv0 = Next( argv )
 
         while True:
             try:
-                arg = argv.__next__()
+                arg = Next( argv )
 
             except StopIteration:
                 break
@@ -186,7 +195,7 @@ class ClientPosix(ClientBase):
             return value
 
         else:
-            return argv.__next__()
+            return Next( argv )
 
     def processCommand( self ):
         debugClient( 'processCommand' )
@@ -366,7 +375,7 @@ class ClientWindows(ClientBase):
             return value
 
         else:
-            return argv.__next__()
+            return Next( argv )
 
     def processCommand( self ):
         reply = self.__sendCommand( 'P' )
