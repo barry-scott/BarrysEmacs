@@ -18,7 +18,7 @@ with open( path, 'r' ) as f:
     __text = f.read().decode( 'utf-8' )
 
 __text = __text.replace( '<string>org.barrys-emacs.bemacs-devel</string>',
-                     '<string>org.barrys-emacs.bemacs</string>' )
+                         '<string>org.barrys-emacs.bemacs</string>' )
 __text = __text.replace( 'Emacs-Devel', 'Emacs' )
 
 path = os.path.join( app_path, 'Contents', 'Info.plist' )
@@ -26,12 +26,13 @@ with open( path, 'w' ) as f:
     print( 'Info: Writing %%s' %% (path,) )
     f.write( __text.encode( 'utf-8' ) )
 
-path = os.path.join( os.environ['BUILDER_TOP_DIR'], 'Editor', 'PythonBemacs', 'be_client.py')
+path = os.path.join( os.environ['BUILDER_TOP_DIR'], 'Editor', 'PyQtBEmacs', 'be_client.py')
 with open( path, 'r' ) as f:
     print( 'Info: Reading %%s' %% (path,) )
     __text = f.read().decode( 'utf-8' )
 
 __text = __text.replace( 'org.barrys-emacs.bemacs-devel', 'org.barrys-emacs.bemacs' )
+__text = __text.replace( #!/usr/bin/env python3\n', '#!/usr/bin/python\n' )
 
 cli_client_name = 'bemacs_client'
 cli_client_path = os.path.join( 'tmp', PKGNAME, cli_client_name )
@@ -40,8 +41,8 @@ with open( cli_client_path, 'w' )  as f:
     print( 'Info: Writing %%s' %% (cli_client_path,) )
     f.write( __text.encode( 'utf-8' ) )
 
-print( 'Info: chmod 444 %%s' %% (cli_client_path,) )
-os.chmod( cli_client_path, 0o444 )
+print( 'Info: chmod 555 %%s' %% (cli_client_path,) )
+os.chmod( cli_client_path, 0o555 )
 
 # .. Useful stuff ..............................................................
 
