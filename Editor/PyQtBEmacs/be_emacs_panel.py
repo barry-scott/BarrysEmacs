@@ -371,7 +371,8 @@ cmd_to_ctrl_map = {
 special_keys = {
 #   Key code                    trans          shift_trans      ctrl_trans         ctrl_shift_trans
     QtCore.Qt.Key_Backspace:    ('backspace',  None,            'ctrl-backspace',  None),
-    QtCore.Qt.Key_Tab:          ('tab',        'shift-tab',     'tab',             'shift-tab'),
+    QtCore.Qt.Key_Tab:          ('tab',        None,            None,              None),
+    QtCore.Qt.Key_Backtab:      ('shift-tab',  None,            None,              None),
 
     # function keys
     QtCore.Qt.Key_F1:           ('f1',         'shift-f1',      'ctrl-f1',         'ctrl-shift-f1'),
@@ -422,7 +423,6 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.setFocusPolicy( QtCore.Qt.StrongFocus )
 
         self.tw = be_exceptions.TryWrapperFactory( self.log )
-
 
         self.qp = None
         self.first_paint = True
@@ -645,7 +645,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
                 translation = ctrl_shift_trans
                 shift = False
 
-            elif ctrl:
+            elif ctrl and ctrl_trans is not None:
                 translation = ctrl_trans
 
             elif shift and shift_trans is not None:
