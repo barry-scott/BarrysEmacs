@@ -16,6 +16,9 @@ import sys
 import os
 import logging
 
+# On OS X the packager missing this import
+import sip
+
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
 from PyQt5 import QtCore
