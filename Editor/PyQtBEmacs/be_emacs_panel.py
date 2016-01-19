@@ -1224,7 +1224,6 @@ class BemacsVerticalScrollBar(QtWidgets.QScrollBar, be_debug.EmacsDebugMixin):
         self.window_id = window_id
 
     def handleActionTriggered( self, action ):
-        print( 'qqq: vert handleActionTriggered ' )
         if action == self.SliderSingleStepAdd:
             self._debugTermScroll( 'guiScrollChangeVert id %r %r' % (self.window_id, 1) )
             self.editor.guiScrollChangeVert( self.window_id, +1 )

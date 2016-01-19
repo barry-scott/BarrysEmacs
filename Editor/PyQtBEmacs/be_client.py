@@ -145,8 +145,6 @@ class ClientBase:
     def _encodeCommandString( self ):
         all_byte_elements = []
 
-        print( 'qqq: _encodeCommandString %r' % (self.all_command_elements,) )
-
         for element in self.all_command_elements:
             if type(element) == str:
                 all_byte_elements.append( element.encode( 'utf-8' ) )
@@ -449,9 +447,7 @@ class ClientWindows(ClientBase):
             else:
                 app_dir = ''
                 for folder in [s.strip() for s in ['.']+os.environ.get( 'PATH', '' ).split( ';' )]:
-                    print ( 'qqq: folder %s' % (folder,) )
                     app_path = os.path.abspath( os.path.join( folder, argv0 ) )
-                    print ( 'qqq: app_path %s' % (app_path,) )
                     if os.path.exists( app_path ):
                         app_dir = os.path.dirname( app_path )
                         break
