@@ -32,7 +32,7 @@ with open( path, 'r' ) as f:
     __text = f.read().decode( 'utf-8' )
 
 __text = __text.replace( 'org.barrys-emacs.bemacs-devel', 'org.barrys-emacs.bemacs' )
-__text = __text.replace( #!/usr/bin/env python3\n', '#!/usr/bin/python\n' )
+__text = __text.replace( '#!/usr/bin/env python3\n', '#!/usr/bin/python\n' )
 
 cli_client_name = 'bemacs_client'
 cli_client_path = os.path.join( 'tmp', PKGNAME, cli_client_name )
