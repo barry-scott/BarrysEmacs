@@ -168,6 +168,9 @@ Root: HKCR; Subkey: "Drive\shell\{#AppName} Here\command"; ValueType: string; Va
 Root: HKCR; Subkey: "Directory\shell\{#AppName} Here"; ValueType: string; ValueData: "Barry's Emacs 8 &Here"; Flags: uninsdeletekey
 Root: HKCR; Subkey: "Directory\shell\{#AppName} Here\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" /package=cd-here ""%%1"""
 
+Root: HKCR; Subkey: "Directory\Background\shell\{#AppName} Here"; ValueType: string; ValueData: "Barry's Emacs 8 &Here"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "Directory\Background\shell\{#AppName} Here\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" /package=cd-here ""%%v"""
+
 ;
 ; have emacs open .ML files and .MLP files
 ;
