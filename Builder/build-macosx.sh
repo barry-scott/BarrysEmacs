@@ -8,4 +8,5 @@ ${CORE}/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister 
  -kill \
  -r -domain local -domain system -domain user 
 
+find .. -name '*.dmg'
 echo "Info: build-macosx.sh Builder - end"
