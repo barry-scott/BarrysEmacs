@@ -336,6 +336,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         command_args = all_client_args[1:]
 
         self.main_window.raise_()
+        self.main_window.activateWindow()
 
         self._debugApp( 'guiClientCommandHandler: command_directory %r' % (command_directory,) )
         self._debugApp( 'guiClientCommandHandler: command_args %r' % (command_args,) )
