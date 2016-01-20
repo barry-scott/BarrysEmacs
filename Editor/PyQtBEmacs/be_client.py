@@ -20,7 +20,7 @@ import time
 import math
 import ctypes
 
-_debug_client = True
+_debug_client = False
 _debug_log = None
 
 PY3 = sys.version_info.major > 2
@@ -378,7 +378,7 @@ class ClientWindows(ClientBase):
             return Next( argv )
 
     def processCommand( self ):
-        reply = self.__sendCommand( 'P' )
+        reply = self.__sendCommand( b'P' )
         if reply is None:
             return False
 
@@ -392,7 +392,7 @@ class ClientWindows(ClientBase):
         return reply is not None
 
     def __sendCommand( self, cmd ):
-        debugClient( '__sendCommand %r' % (cmd,) )
+        debugClient( '__sendCommand cmd   %r' % (cmd,) )
 
         pipe_name = "\\\\.\\pipe\\Barry's Emacs 8.2"
 
@@ -418,7 +418,9 @@ class ClientWindows(ClientBase):
             return None
 
         else:
-            return buf_result.raw[:buf_size.value]
+            reply = buf_result.raw[:buf_size.value]
+            debugClient( '__sendCommand reply %r' % (reply,) )
+            return reply
 
     def __getErrorMessage( self, err ):
         FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000
