@@ -325,10 +325,10 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         all_paths = [url.toLocalFile() for url in event.mimeData().urls()]
 
         if len(all_paths) == 1 and os.path.isdir( all_paths[0] ):
-            self.app.editor.guiClientCommand( os.getcwd(), ['cd-here']+ all_paths )
+            self.app.guiClientCommandHandler( [os.getcwd(), 'cd-here'] + all_paths )
 
         else:
             all_paths = [path for path in all_paths if not os.path.isdir( path )]
-            self.app.editor.guiClientCommand( os.getcwd(), ['emacs'] + all_paths )
+            self.app.guiClientCommandHandler( [os.getcwd(), 'emacs'] + all_paths )
 
         event.acceptProposedAction()
