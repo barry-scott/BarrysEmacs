@@ -70,6 +70,8 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.move( win_prefs.frame_position )
         self.resize( win_prefs.frame_size )
 
+        self.setAcceptDrops( True )
+
     def closeEvent( self, event ):
         if self.app.may_quit:
             self.log.info( 'closeEvent()' )
@@ -308,3 +310,25 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.status_eol         .setText( all_status['eol'].upper() )
         self.status_line_num    .setText( '%d' % (all_status['line'],) )
         self.status_col_num     .setText( '%d' % (all_status['column'],) )
+
+    def dragEnterEvent( self, event ):
+        if not event.mimeData().hasUrls():
+            return
+
+        for url in event.mimeData().urls():
+            if url.scheme() != 'file':
+                return
+
+        event.acceptProposedAction()
+
+    def dropEvent( self, event ):
+        all_paths = [url.toLocalFile() for url in event.mimeData().urls()]
+
+        if len(all_paths) == 1 and os.path.isdir( all_paths[0] ):
+            self.app.editor.guiClientCommand( os.getcwd(), ['cd-here']+ all_paths )
+
+        else:
+            all_paths = [path for path in all_paths if not os.path.isdir( path )]
+            self.app.editor.guiClientCommand( os.getcwd(), ['emacs'] + all_paths )
+
+        event.acceptProposedAction()
