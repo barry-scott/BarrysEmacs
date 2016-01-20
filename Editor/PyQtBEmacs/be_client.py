@@ -254,17 +254,17 @@ class ClientPosix(ClientBase):
                     response = os.read( fd_response, 16384 )
 
                 except OSError:
-                    response = ''
+                    response = b''
 
                 debugClient( 'processCommand response %r' % (response,) )
 
-                if response == ' ':
+                if response == b' ':
                     seen_ack = True
                     if not self.opt_wait:
                         break
 
                 elif seen_ack:
-                    if response[0] == 'R':
+                    if response[0] == b'R':
                         break
 
                 time.sleep( 0.1 )
