@@ -329,12 +329,12 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         try:
             if sys.platform.startswith( 'win' ):
                 import be_command_line_handler_windows
-                handler = be_command_line_handler_windows.CommandLineHandlerWindows( self )
+                handler = be_command_line_handler_windows.CommandLineHandlerWindows( self, self.opt_name )
 
             else:
                 # unix and OS X
                 import be_command_line_handler_posix
-                handler = be_command_line_handler_posix.CommandLineHandlerPosix( self )
+                handler = be_command_line_handler_posix.CommandLineHandlerPosix( self, self.opt_name )
 
             handler.processCommandLines()
 

@@ -16,9 +16,10 @@ import os
 import ctypes
 
 class CommandLineHandlerWindows:
-    def __init__( self, app ):
+    def __init__( self, app, opt_name ):
         self.app = app
-        
+        self.opt_name = opt_name
+
     def processCommandLines( self ):
         self.app._debugApp( 'CommandLineHandlerWindows()' )
 
@@ -53,6 +54,8 @@ class CommandLineHandlerWindows:
 
         # We create our named pipe.
         pipe_name = "\\\\.\\pipe\\Barry's Emacs 8.2"
+        if self.opt_name is not None:
+            pipe_name = '%s_%s' % (pipe_name, self.opt_name)
 
         h_pipe = ctypes.windll.kernel32.CreateNamedPipeW(
                         pipe_name,                      #  __in      LPCTSTR lpName,

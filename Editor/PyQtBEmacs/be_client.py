@@ -19,6 +19,7 @@ import stat
 import time
 import math
 import ctypes
+import tempfile
 
 _debug_client = False
 _debug_log = None
@@ -209,7 +210,7 @@ class ClientPosix(ClientBase):
         else:
             e = pwd.getpwuid( os.geteuid() )
 
-            server_fifo = '/tmp/%s/%s' % (e.pw_name, fifo_name)
+            server_fifo = os.path.join( tempfile.gettempdir(), e.pw_name, fifo_name )
 
         client_fifo = '%s_response' % (server_fifo,)
 

@@ -16,11 +16,12 @@ import pwd
 import select
 import os
 import stat
+import tempfile
 
 class CommandLineHandlerPosix:
-    def __init__( self, app ):
+    def __init__( self, app, opt_name ):
         self.app = app
-        self.opt_name = None
+        self.opt_name = opt_name
         
     def processCommandLines( self ):
         self.app._debugApp( 'CommandLineHandlerPosix' )
@@ -33,7 +34,7 @@ class CommandLineHandlerPosix:
         else:
             e = pwd.getpwuid( os.geteuid() )
 
-            server_fifo = '/tmp/%s/%s' % (e.pw_name, fifo_name)
+            server_fifo = os.path.join( tempfile.gettempdir(), e.pw_name, fifo_name )
 
         client_fifo = '%s_response' % (server_fifo,)
 
@@ -97,7 +98,6 @@ class CommandLineHandlerPosix:
             os.remove( fifo_name )
 
         os.mkfifo( fifo_name, stat.S_IRUSR|stat.S_IWUSR )
-
 
 if __name__ == '__main__':
     class FakeApp:
