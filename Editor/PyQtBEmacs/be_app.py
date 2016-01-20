@@ -414,30 +414,6 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         self.may_quit = True
         self.main_window.close()
 
-    def BringWindowToFront( self ):
-        try: # it's possible for this event to come when the frame is closed
-            pass
-            #self.GetTopWindow().Raise()
-        except:
-            pass
-
-    def MacOpenFile( self, filename ):
-        # Called for files droped on dock icon, or opened via finders context menu
-        self.log.debug( 'MacOpenFile( %s )' % (filename,) )
-        if self.editor is not None:
-            self.editor.guiOpenFile( filename )
-        self.BringWindowToFront()
-
-    def MacReopenApp( self ):
-        # Called when the doc icon is clicked, and ???
-        self.BringWindowToFront()
-
-    def MacNewFile( self ):
-        pass
-
-    def MacPrintFile( self, file_path ):
-        pass
-
     def setWindowTitle( self, title_suffix ):
         if self.opt_name is None:
             title = "Barry's Emacs - %s" % (title_suffix,)
