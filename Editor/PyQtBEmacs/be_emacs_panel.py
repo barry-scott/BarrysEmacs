@@ -372,7 +372,7 @@ special_keys = {
 #   Key code                    trans          shift_trans      ctrl_trans         ctrl_shift_trans
     QtCore.Qt.Key_Backspace:    ('backspace',  None,            'ctrl-backspace',  None),
     QtCore.Qt.Key_Tab:          ('tab',        None,            None,              None),
-    QtCore.Qt.Key_Backtab:      ('shift-tab',  None,            None,              None),
+    QtCore.Qt.Key_Backtab:      ('shift-tab',  'shift-tab',     'shift-tab',       'shift-tab'),
 
     # function keys
     QtCore.Qt.Key_F1:           ('f1',         'shift-f1',      'ctrl-f1',         'ctrl-shift-f1'),
@@ -474,9 +474,11 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         font_pref = self.app.prefs.getFont()
 
         self.font = QtGui.QFont( font_pref.face, font_pref.point_size )
-        self.font.setFixedPitch( True )
-        self.font.setKerning( False )
-        self.font.setStyleStrategy( self.font.NoAntialias )
+        #self.font.setFixedPitch( True )
+        #self.font.setKerning( False )
+        #self.font.setStyleStrategy( self.font.NoAntialias )
+        self.font.setStyleStrategy( self.font.NoSubpixelAntialias )
+
         fi = QtGui.QFontInfo( self.font )
         self.log.info( 'Font family: %r %dpt' % (fi.family(), fi.pointSize()) )
 
@@ -899,7 +901,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self._debugTermCalls1( 'termUpdateEnd() all_vert_scroll_bars %r' % (all_vert_scroll_bars,) )
 
         self.qp = QtGui.QPainter( self.editor_pixmap )
-        self.qp.setRenderHint( self.qp.TextAntialiasing, False )
+        #self.qp.setRenderHint( self.qp.TextAntialiasing, False )
 
         self.qp.setBackground( bg_colours[ SYNTAX_DULL ] )
         self.qp.setBackgroundMode( QtCore.Qt.OpaqueMode )
