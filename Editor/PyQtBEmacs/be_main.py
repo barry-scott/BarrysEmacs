@@ -52,8 +52,5 @@ def main( argv ):
     app.main_window.show()
     return app.exec_()
 
-def run():
-    sys.exit( main( sys.argv ) )
-
 if __name__ == '__main__':
-    run()
+    sys.exit( main( sys.argv ) )
