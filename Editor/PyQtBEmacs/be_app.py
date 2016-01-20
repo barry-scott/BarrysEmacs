@@ -33,6 +33,11 @@ import be_preferences
 import be_exceptions
 import be_debug
 
+qt_event_type_names = {}
+for name in dir(QtCore.QEvent):
+    value = getattr( QtCore.QEvent, name )
+    if isinstance( value, int ):
+        qt_event_type_names[ int(value) ] = name
 
 class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
     MarshallToGuiThreadSignal = QtCore.pyqtSignal( name='MarshallToGuiThread' )
@@ -164,6 +169,16 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         try_wrapper = be_exceptions.TryWrapperFactory( self.log )
 
         self.MarshallToGuiThreadSignal.connect( self.handleMarshallToGuiThread )
+
+    def event( self, event ):
+        self._debugApp( 'BemacsApp.event() type() %r  %s' %
+            (event.type(), qt_event_type_names.get( event.type(), '-unknown-' )) )
+
+        if event.type() == QtCore.QEvent.FileOpen:
+            self.guiClientCommandHandler( [os.getcwd(), 'emacs'] + [event.file()] )
+            return True
+
+        return QtWidgets.QApplication.event( self, event )
 
     def eventWrapper( self, function ):
         return EventScheduling( self, function )
