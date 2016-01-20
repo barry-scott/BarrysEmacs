@@ -477,7 +477,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         #self.font.setFixedPitch( True )
         #self.font.setKerning( False )
         #self.font.setStyleStrategy( self.font.NoAntialias )
-        self.font.setStyleStrategy( self.font.NoSubpixelAntialias )
+        if sys.platform == 'darwin':
+            self.font.setStyleStrategy( self.font.NoSubpixelAntialias )
 
         fi = QtGui.QFontInfo( self.font )
         self.log.info( 'Font family: %r %dpt' % (fi.family(), fi.pointSize()) )
