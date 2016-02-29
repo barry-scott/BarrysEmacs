@@ -618,6 +618,10 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         self.__geometryChanged()
 
+    def focusInEvent( self, event ):
+        super().focusInEvent( event )
+        self.app.guiHasFocus()
+
     def keyPressEvent( self, event ):
         key = event.key()
         modifiers = int( event.modifiers() )

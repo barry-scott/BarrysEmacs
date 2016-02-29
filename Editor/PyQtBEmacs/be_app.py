@@ -157,9 +157,6 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
                 self,
                 be_platform_specific.getPreferencesFilename() )
 
-        self.lock_ui = 0
-        self.need_activate_app_action = False
-
         self.main_window = None
 
         QtWidgets.QApplication.__init__( self, [sys.argv[0]] )
@@ -253,17 +250,9 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         self._debugApp( 'BemacsApp.onEmacsPanelReady()' )
         self.marshallToGuiThread( self.__initEditorThread, () )
 
-    def OnActivateApp( self, event ):
-        if self.editor is None:
-            # too early or too late
-            return
-
-        if self.lock_ui == 0:
-            if event.GetActive():
-                self.editor.guiHasFocus()
-        else:
-            if event.GetActive():
-                self.need_activate_app_action = True
+    def guiHasFocus( self ):
+        if self.editor is not None:
+            self.editor.guiHasFocus()
 
     def onCloseEditor( self ):
         self.log.debug( 'onCloseEditor()' )
@@ -548,7 +537,7 @@ class FakeEditor(be_debug.EmacsDebugMixin):
     def guiGeometryChange( self, *args, **kwds ):
         pass
 
-    def guiHasFocus( sefl, *args, **kwds ):
+    def guiHasFocus( self, *args, **kwds ):
         pass
 
     def guiEventChar( self, char, shift ):
