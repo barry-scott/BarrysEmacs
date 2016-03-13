@@ -14,6 +14,7 @@
 '''
 import sys
 import os
+import time
 import logging
 
 # On OS X the packager missing this import
@@ -67,10 +68,19 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.__setupToolBar()
         self.__setupStatusBar( self.emacs_panel.font )
 
-        self.move( win_prefs.frame_position )
-        self.resize( win_prefs.frame_size )
+        self.resize( *win_prefs.getFrameSize() )
+        if win_prefs.getFramePosition() is not None:
+            x, y = win_prefs.getFramePosition()
+            x_err, y_err = win_prefs.getFramePositionError()
+            self.emacs_panel._debugPanel( 'BemacsMainWindow  intended move( %d, %d )' % (x, y) )
+            self.emacs_panel._debugPanel( 'BemacsMainWindow corrected move( %d, %d )' % (x-x_err, y-y_err) )
+
+            self.move( x-x_err, y-y_err )
 
         self.setAcceptDrops( True )
+
+        self.move_event_count = 0
+        self.main_window_start_time = time.time()
 
     def closeEvent( self, event ):
         if self.app.may_quit:
@@ -266,10 +276,36 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.__setupStatusBarFont( self.emacs_panel.font )
 
     def moveEvent( self, event ):
-        self.app.prefs.getWindow().frame_position = event.pos()
+        #
+        # KDE places the Window down and to the left
+        # preventing restore of window position
+        #
+        # Try to determine the X and Y error and save in preferences
+        #
+        # first move is to the prefs location
+        # second move is the adjustment for the decoration of the window
+        #
+        self.move_event_count += 1
+        win_prefs = self.app.prefs.getWindow()
+        self.emacs_panel._debugPanel( 'moveEvent()  x %r, y %r' % (event.pos().x(), event.pos().y()) )
+
+        if win_prefs.getFramePosition() is not None and self.move_event_count == 2:
+            self.emacs_panel._debugPanel( 'moveEvent()  frame x %r, frame y %r' % (win_prefs.getFramePosition()[0], win_prefs.getFramePosition()[1]) )
+            time_since_start = time.time() - self.main_window_start_time
+            if time_since_start < 0.5:
+                if (event.pos().x(), event.pos().y()) != win_prefs.getFramePosition():
+                    x_err = event.pos().x() - win_prefs.getFramePosition()[0]
+                    y_err = event.pos().y() - win_prefs.getFramePosition()[1]
+
+                    self.emacs_panel._debugPanel( 'moveEvent()  x_err %r, y_err %r' % (x_err, y_err) )
+                    win_prefs.setFramePositionError( x_err, y_err )
+                    return
+
+        if self.move_event_count >= 2:
+            win_prefs.setFramePosition( event.pos().x(), event.pos().y() )
 
     def resizeEvent( self, event ):
-        self.app.prefs.getWindow().frame_size = event.size()
+        self.app.prefs.getWindow().setFrameSize( event.size().width(), event.size().height() )
 
     def onActPreferences( self ):
         pref_dialog = be_preferences_dialog.PreferencesDialog( self, self.app )
