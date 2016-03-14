@@ -276,6 +276,52 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.__setupStatusBarFont( self.emacs_panel.font )
 
     def moveEvent( self, event ):
+        if sys.platform == 'win32':
+            self.moveEventWin32( event )
+
+        elif sys.platform == 'darwin':
+            self.moveEventMacOSX( event )
+
+        else:
+            self.moveEventUnix( event )
+
+    def moveEventWin32( self, event ):
+        self.move_event_count += 1
+        self.emacs_panel._debugPanel( 'moveEventWin32()  x %r, y %r' % (event.pos().x(), event.pos().y()) )
+
+        win_prefs = self.app.prefs.getWindow()
+        if win_prefs.getFramePosition() is not None and self.move_event_count == 1:
+            self.emacs_panel._debugPanel( 'moveEventWin32()  frame x %r, frame y %r' % (win_prefs.getFramePosition()[0], win_prefs.getFramePosition()[1]) )
+
+            if (event.pos().x(), event.pos().y()) != win_prefs.getFramePosition():
+                x_err = event.pos().x() - win_prefs.getFramePosition()[0]
+                y_err = event.pos().y() - win_prefs.getFramePosition()[1]
+
+                self.emacs_panel._debugPanel( 'moveEventWin32()  x_err %r, y_err %r' % (x_err, y_err) )
+                win_prefs.setFramePositionError( x_err, y_err )
+                return
+
+        win_prefs.setFramePosition( event.pos().x(), event.pos().y() )
+
+    def moveEventMacOSX( self, event ):
+        self.move_event_count += 1
+        self.emacs_panel._debugPanel( 'moveEventMacOSX()  x %r, y %r' % (event.pos().x(), event.pos().y()) )
+
+        win_prefs = self.app.prefs.getWindow()
+        if win_prefs.getFramePosition() is not None and self.move_event_count == 1:
+            self.emacs_panel._debugPanel( 'moveEventMacOSX()  frame x %r, frame y %r' % (win_prefs.getFramePosition()[0], win_prefs.getFramePosition()[1]) )
+
+            if (event.pos().x(), event.pos().y()) != win_prefs.getFramePosition():
+                x_err = event.pos().x() - win_prefs.getFramePosition()[0]
+                y_err = event.pos().y() - win_prefs.getFramePosition()[1]
+
+                self.emacs_panel._debugPanel( 'moveEventMacOSX()  x_err %r, y_err %r' % (x_err, y_err) )
+                win_prefs.setFramePositionError( x_err, y_err )
+                return
+
+        win_prefs.setFramePosition( event.pos().x(), event.pos().y() )
+
+    def moveEventUnix( self, event ):
         #
         # KDE places the Window down and to the left
         # preventing restore of window position
@@ -287,7 +333,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         #
         self.move_event_count += 1
         win_prefs = self.app.prefs.getWindow()
-        self.emacs_panel._debugPanel( 'moveEvent()  x %r, y %r' % (event.pos().x(), event.pos().y()) )
+        self.emacs_panel._debugPanel( 'moveEventUnix()  x %r, y %r' % (event.pos().x(), event.pos().y()) )
 
         time_since_start = time.time() - self.main_window_start_time
 
@@ -298,7 +344,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
                     x_err = event.pos().x() - win_prefs.getFramePosition()[0]
                     y_err = event.pos().y() - win_prefs.getFramePosition()[1]
 
-                    self.emacs_panel._debugPanel( 'moveEvent()  x_err %r, y_err %r' % (x_err, y_err) )
+                    self.emacs_panel._debugPanel( 'moveEventUnix()  x_err %r, y_err %r' % (x_err, y_err) )
                     win_prefs.setFramePositionError( x_err, y_err )
                     return
 
