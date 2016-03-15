@@ -87,14 +87,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
             self.log.info( 'closeEvent()' )
 
             win_prefs = self.app.prefs.getWindow()
-            geometry = self.saveGeometry()
-            import struct
-            shorts = struct.unpack( '<' + ('H'*(len(geometry)//2)), geometry )
-
-            print( 'qqq geometry %r' % (geometry.toHex().data(),) )
-            print( 'qqq shorts %r' % (shorts,) )
-
-            win_prefs.setFrameGeometry( geometry.toHex().data() )
+            win_prefs.setFrameGeometry( self.saveGeometry().toHex().data() )
             self.app.writePreferences()
             event.accept()
 
