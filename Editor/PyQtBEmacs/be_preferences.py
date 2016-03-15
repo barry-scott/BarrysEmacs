@@ -31,7 +31,6 @@ class ParseError(Exception):
     def __repr__( self ):
         return repr(self.value)
 
-
 class Preferences:
     def __init__( self, app, pref_filename ):
         self.app = app
@@ -336,9 +335,7 @@ class WindowPreferences(PreferenceSection):
         PreferenceSection.__init__( self, 'Window' )
         self.app = app
 
-        self.__frame_size = ( 700, 500 )
-        self.__frame_position = None
-        self.__frame_position_error = (0, 0)
+        self.__geometry = None
 
         self.maximized = False
         self.zoom = 0
@@ -346,60 +343,23 @@ class WindowPreferences(PreferenceSection):
     def readPreferences( self, pref_data ):
         get_option = GetOption( pref_data, self.section_name )
 
-        if get_option.has( 'pos_x' ) and get_option.has( 'pos_y' ):
-            x = max( 0, get_option.getint( 'pos_x' ) )
-            y = max( 0, get_option.getint( 'pos_y' ) )
-            self.__frame_position = (x, y)
-
-        if get_option.has( 'pos_x_error' ) and get_option.has( 'pos_y_error' ):
-            x_err = get_option.getint( 'pos_x_error' )
-            y_err = get_option.getint( 'pos_y_error' )
-            self.__frame_position_error = (x_err, y_err)
-
-        w = max( 400, get_option.getint( 'width' ) )
-        h = max( 200, get_option.getint( 'height' ) )
-        self.__frame_size = (w, h)
-
-        if get_option.has( 'maximized' ):
-            self.maximized = get_option.getbool( 'maximized' )
-
-        if get_option.has( 'zoom' ):
-            self.zoom = get_option.getint( 'zoom' )
+        if get_option.has( 'geometry' ):
+            self.__geometry = get_option.getstr( 'geometry' )
 
     def writePreferences( self, pref_data ):
         set_option = SetOption( pref_data, self.section_name )
 
-        if self.__frame_position is not None:
-            set_option.set( 'pos_x', self.__frame_position[0] )
-            set_option.set( 'pos_y', self.__frame_position[1] )
+        if self.__geometry is not None:
+            set_option.set( 'geometry', self.__geometry )
 
-        if self.__frame_position_error is not None:
-            set_option.set( 'pos_x_error', self.__frame_position_error[0] )
-            set_option.set( 'pos_y_error', self.__frame_position_error[1] )
+    def getFrameGeometry( self ):
+        if self.__geometry is not None:
+            return self.__geometry
 
-        set_option.set( 'width', self.__frame_size[0] )
-        set_option.set( 'height', self.__frame_size[1] )
+        return None
 
-        set_option.set( 'maximized', self.maximized )
-        set_option.set( 'zoom', self.zoom )
-
-    def setFrameSize( self, width, height ):
-        self.__frame_size = (width, height)
-
-    def getFrameSize( self ):
-        return self.__frame_size
-
-    def setFramePosition( self, x, y ):
-        self.__frame_position = (x,y)
-
-    def getFramePosition( self ):
-        return self.__frame_position
-
-    def setFramePositionError( self, x_err, y_err ):
-        self.__frame_position_error = (x_err, y_err)
-
-    def getFramePositionError( self ):
-        return self.__frame_position_error
+    def setFrameGeometry( self, geometry ):
+        self.__geometry = geometry
 
 class FontPreferences(PreferenceSection):
     def __init__( self, app ):

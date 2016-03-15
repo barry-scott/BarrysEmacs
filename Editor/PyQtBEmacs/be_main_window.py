@@ -68,14 +68,14 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.__setupToolBar()
         self.__setupStatusBar( self.emacs_panel.font )
 
-        self.resize( *win_prefs.getFrameSize() )
-        if win_prefs.getFramePosition() is not None:
-            x, y = win_prefs.getFramePosition()
-            x_err, y_err = win_prefs.getFramePositionError()
-            self.emacs_panel._debugPanel( 'BemacsMainWindow  intended move( %d, %d )' % (x, y) )
-            self.emacs_panel._debugPanel( 'BemacsMainWindow corrected move( %d, %d )' % (x-x_err, y-y_err) )
+        print( '-'*60 )
+        geometry = win_prefs.getFrameGeometry()
+        if geometry is not None:
+            geometry = QtCore.QByteArray( geometry.encode('utf-8') )
+            self.restoreGeometry( QtCore.QByteArray.fromHex( geometry ) )
 
-            self.move( x-x_err, y-y_err )
+        else:
+            self.resize( 700, 500 )
 
         self.setAcceptDrops( True )
 
@@ -85,6 +85,16 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
     def closeEvent( self, event ):
         if self.app.may_quit:
             self.log.info( 'closeEvent()' )
+
+            win_prefs = self.app.prefs.getWindow()
+            geometry = self.saveGeometry()
+            import struct
+            shorts = struct.unpack( '<' + ('H'*(len(geometry)//2)), geometry )
+
+            print( 'qqq geometry %r' % (geometry.toHex().data(),) )
+            print( 'qqq shorts %r' % (shorts,) )
+
+            win_prefs.setFrameGeometry( geometry.toHex().data() )
             self.app.writePreferences()
             event.accept()
 
@@ -274,85 +284,6 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
 
     def newPreferences( self ):
         self.__setupStatusBarFont( self.emacs_panel.font )
-
-    def moveEvent( self, event ):
-        if sys.platform == 'win32':
-            self.moveEventWin32( event )
-
-        elif sys.platform == 'darwin':
-            self.moveEventMacOSX( event )
-
-        else:
-            self.moveEventUnix( event )
-
-    def moveEventWin32( self, event ):
-        self.move_event_count += 1
-        self.emacs_panel._debugPanel( 'moveEventWin32()  x %r, y %r' % (event.pos().x(), event.pos().y()) )
-
-        win_prefs = self.app.prefs.getWindow()
-        if win_prefs.getFramePosition() is not None and self.move_event_count == 1:
-            self.emacs_panel._debugPanel( 'moveEventWin32()  frame x %r, frame y %r' % (win_prefs.getFramePosition()[0], win_prefs.getFramePosition()[1]) )
-
-            if (event.pos().x(), event.pos().y()) != win_prefs.getFramePosition():
-                x_err = event.pos().x() - win_prefs.getFramePosition()[0]
-                y_err = event.pos().y() - win_prefs.getFramePosition()[1]
-
-                self.emacs_panel._debugPanel( 'moveEventWin32()  x_err %r, y_err %r' % (x_err, y_err) )
-                win_prefs.setFramePositionError( x_err, y_err )
-                return
-
-        win_prefs.setFramePosition( event.pos().x(), event.pos().y() )
-
-    def moveEventMacOSX( self, event ):
-        self.move_event_count += 1
-        self.emacs_panel._debugPanel( 'moveEventMacOSX()  x %r, y %r' % (event.pos().x(), event.pos().y()) )
-
-        win_prefs = self.app.prefs.getWindow()
-        if win_prefs.getFramePosition() is not None and self.move_event_count == 1:
-            self.emacs_panel._debugPanel( 'moveEventMacOSX()  frame x %r, frame y %r' % (win_prefs.getFramePosition()[0], win_prefs.getFramePosition()[1]) )
-
-            if (event.pos().x(), event.pos().y()) != win_prefs.getFramePosition():
-                x_err = event.pos().x() - win_prefs.getFramePosition()[0]
-                y_err = event.pos().y() - win_prefs.getFramePosition()[1]
-
-                self.emacs_panel._debugPanel( 'moveEventMacOSX()  x_err %r, y_err %r' % (x_err, y_err) )
-                win_prefs.setFramePositionError( x_err, y_err )
-                return
-
-        win_prefs.setFramePosition( event.pos().x(), event.pos().y() )
-
-    def moveEventUnix( self, event ):
-        #
-        # KDE places the Window down and to the left
-        # preventing restore of window position
-        #
-        # Try to determine the X and Y error and save in preferences
-        #
-        # first move is to the prefs location
-        # second move is the adjustment for the decoration of the window
-        #
-        self.move_event_count += 1
-        win_prefs = self.app.prefs.getWindow()
-        self.emacs_panel._debugPanel( 'moveEventUnix()  x %r, y %r' % (event.pos().x(), event.pos().y()) )
-
-        time_since_start = time.time() - self.main_window_start_time
-
-        if win_prefs.getFramePosition() is not None and self.move_event_count == 2:
-            self.emacs_panel._debugPanel( 'moveEvent()  frame x %r, frame y %r' % (win_prefs.getFramePosition()[0], win_prefs.getFramePosition()[1]) )
-            if time_since_start < 0.5:
-                if (event.pos().x(), event.pos().y()) != win_prefs.getFramePosition():
-                    x_err = event.pos().x() - win_prefs.getFramePosition()[0]
-                    y_err = event.pos().y() - win_prefs.getFramePosition()[1]
-
-                    self.emacs_panel._debugPanel( 'moveEventUnix()  x_err %r, y_err %r' % (x_err, y_err) )
-                    win_prefs.setFramePositionError( x_err, y_err )
-                    return
-
-        if self.move_event_count >= 2 or time_since_start >= 0.5:
-            win_prefs.setFramePosition( event.pos().x(), event.pos().y() )
-
-    def resizeEvent( self, event ):
-        self.app.prefs.getWindow().setFrameSize( event.size().width(), event.size().height() )
 
     def onActPreferences( self ):
         pref_dialog = be_preferences_dialog.PreferencesDialog( self, self.app )
