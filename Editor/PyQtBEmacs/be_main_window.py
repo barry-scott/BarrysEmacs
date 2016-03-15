@@ -78,9 +78,6 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
 
         self.setAcceptDrops( True )
 
-        self.move_event_count = 0
-        self.main_window_start_time = time.time()
-
     def closeEvent( self, event ):
         if self.app.may_quit:
             self.log.info( 'closeEvent()' )

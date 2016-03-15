@@ -337,9 +337,6 @@ class WindowPreferences(PreferenceSection):
 
         self.__geometry = None
 
-        self.maximized = False
-        self.zoom = 0
-
     def readPreferences( self, pref_data ):
         get_option = GetOption( pref_data, self.section_name )
 
@@ -353,10 +350,7 @@ class WindowPreferences(PreferenceSection):
             set_option.set( 'geometry', self.__geometry )
 
     def getFrameGeometry( self ):
-        if self.__geometry is not None:
-            return self.__geometry
-
-        return None
+        return self.__geometry
 
     def setFrameGeometry( self, geometry ):
         self.__geometry = geometry
