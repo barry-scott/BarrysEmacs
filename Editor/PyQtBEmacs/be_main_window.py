@@ -68,14 +68,13 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.__setupToolBar()
         self.__setupStatusBar( self.emacs_panel.font )
 
-        print( '-'*60 )
         geometry = win_prefs.getFrameGeometry()
         if geometry is not None:
             geometry = QtCore.QByteArray( geometry.encode('utf-8') )
             self.restoreGeometry( QtCore.QByteArray.fromHex( geometry ) )
 
         else:
-            self.resize( 700, 500 )
+            self.resize( 800, 600 )
 
         self.setAcceptDrops( True )
 
