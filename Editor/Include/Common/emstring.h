@@ -198,7 +198,7 @@ public:
     EmacsString &insert( int pos, unsigned char ch )
         { return insert( pos, EmacsString( copy, &ch, 1 ) ); }
     EmacsString &insert( int pos, EmacsChar_t ch )
-        { return insert( pos, ch ); }
+        { return insert( pos, static_cast<int>( ch ) ); }
     EmacsString &insert( int pos, int ch )
         {
             EmacsChar_t str[1];
