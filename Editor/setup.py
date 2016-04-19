@@ -1,12 +1,12 @@
 #
-#   Copyright (c) 2010-2014 Barry A. Scott
+#   Copyright (c) 2010-2016 Barry A. Scott
 #
 import os
 import sys
 
 _debug = False
 
-pycxx_version = '6.2.6'
+pycxx_version = '6.2.7'
 
 def debug( msg ):
     if _debug:
