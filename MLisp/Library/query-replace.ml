@@ -158,18 +158,17 @@
 			
 		    )
 		    
-		    (|
-			(<= ~char 31)
-			(& (>= ~char 128) (<= ~char 191))
-		    )
+                    (& (>= ~char 32) (<= ~char 127))
+		    ; show help from printing ascii
+		    (~query-replace-help)
+
+                    ;  default is to push back and quit
 		    (progn
 			(push-back-character ~char)
 			(setq ~query 0)
 			(setq ~cannot-continue-searching 0)
 		    )
 		    
-		    ; default is to show help text
-		    (~query-replace-help)
 		)
 	    )
 	    (if ~query
