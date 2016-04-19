@@ -9,10 +9,13 @@
 (declare-global query-replace-use-region-for-search)
 (setq query-replace-use-region-for-search 1)
 
-(defun ~query-replace-search-default()
+(defun ~query-replace-search-default(~quote-result)
     (if
 	(& query-replace-use-region-for-search (! (error-occurred (mark))))
-	(region-to-string)
+        (if ~quote-result
+            (quote (region-to-string))
+            (region-to-string)
+        )
 	""
     )
 )
@@ -22,21 +25,21 @@
 )
 
 (defun
-    ere-query-replace-string(~old-string (get-tty-string "ERE Old pattern: " (~query-replace-search-default))
+    ere-query-replace-string(~old-string (get-tty-string "ERE Old pattern: " (~query-replace-search-default 1))
 			  ~new-string (get-tty-string "ERE New string: " (~query-replace-replace-default)))
     
     (~query-replace-string-helper ~old-string ~new-string "ere-query-replace-string" "ere-search-forward" "re-replace-search-text" "ere-replace-string")
 )
 
 (defun
-    re-query-replace-string(~old-string (get-tty-string "RE old pattern: " (~query-replace-search-default))
+    re-query-replace-string(~old-string (get-tty-string "RE old pattern: " (~query-replace-search-default 1))
 			  ~new-string (get-tty-string  "RE New string: " (~query-replace-replace-default)))
     
     (~query-replace-string-helper ~old-string ~new-string "re-query-replace-string" "re-search-forward" "re-replace-search-text" "re-replace-string")
 )
 
 (defun
-    query-replace-string(~old-string (get-tty-string "Old string: " (~query-replace-search-default))
+    query-replace-string(~old-string (get-tty-string "Old string: " (~query-replace-search-default 0))
 			      ~new-string (get-tty-string "New string: " (~query-replace-replace-default)))
 
     (~query-replace-string-helper ~old-string ~new-string "query-replace-string" "search-forward" "replace-search-text" "replace-string")
@@ -139,6 +142,7 @@
 		    (progn
 			(execute-mlisp-line (concat "(" ~replace-cmd " ~new-string)" ))
 			(setq ~can-replace 0)
+                        (setq ~query 0)
 			(setq ~cannot-continue-searching 0)
 			(setq ~replaced (+ ~replaced 1))
 			(setq ~replaced
