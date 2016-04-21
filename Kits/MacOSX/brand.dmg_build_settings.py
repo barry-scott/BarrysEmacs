@@ -62,7 +62,7 @@ def __iconFromApp( app_path ):
 format = 'UDZO'
 
 # Volume size (must be large enough for your files)
-size = '100M'
+size = '300M'
 
 # Files to include
 files = [app_path

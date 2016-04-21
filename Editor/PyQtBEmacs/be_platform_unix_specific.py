@@ -17,6 +17,10 @@ app_dir = None
 library_dir = None
 doc_dir = None
 
+def getAppDir():
+    assert app_dir is not None, 'call setupPlatformSpecific_() first'
+    return app_dir
+
 def getUserDir():
     return os.environ.get( 'BEMACS_EMACS_USER', os.path.join( os.environ['HOME'], 'bemacs' ) )
 

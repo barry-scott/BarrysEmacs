@@ -15,6 +15,10 @@ import os
 
 app_dir = None
 
+def getAppDir():
+    assert app_dir is not None, 'call setupPlatformSpecific_() first'
+    return app_dir
+
 def getUserDir():
     folder = os.environ.get( 'BEMACS_EMACS_USER', os.path.join( os.environ['HOME'], 'bemacs' ) )
     assert folder is not None
@@ -39,10 +43,10 @@ def getNullDevice():
 def setupPlatformSpecific_( argv0 ):
     global app_dir
 
-    if argv0.startswith( '\\' ):
+    if argv0.startswith( '/' ):
         app_dir = os.path.dirname( argv0 )
 
-    elif '\\' in argv0:
+    elif '/' in argv0:
             app_dir = os.path.dirname( os.path.abspath( argv0 ) )
 
     else:

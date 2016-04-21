@@ -150,6 +150,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         self.log.info( 'info %r' % (self.translation.info(),) )
         self.log.info( T_("Barry's Emacs") )
 
+        self.log.info( 'Application dir %s' % (be_platform_specific.getAppDir(),) )
         self.log.info( 'emacs_user %s' % (be_platform_specific.getUserDir(),) )
         self.log.info( 'emacs_library %s' % (be_platform_specific.getLibraryDir(),) )
 
@@ -158,7 +159,18 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
                 be_platform_specific.getPreferencesFilename() )
 
         self.main_window = None
+        self.log.info( 'Qt argv[0] %r' % (sys.argv[0],) )
+        self.log.info( 'Qt libraryPaths %r' % (QtWidgets.QApplication.libraryPaths(),) )
 
+        qt_plugin_dir = os.path.join(
+                            be_platform_specific.getAppDir(),
+                            'plugins' )
+
+        if os.path.exists( qt_plugin_dir ):
+            self.log.info( 'Settings Qt libraryPaths to %s' % (qt_plugin_dir,) )
+            QtWidgets.QApplication.setLibraryPaths( [qt_plugin_dir] )
+
+	# init QApplication now that we have the plugin dir setup
         QtWidgets.QApplication.__init__( self, [sys.argv[0]] )
 
         self.main_window = be_main_window.BemacsMainWindow( self )

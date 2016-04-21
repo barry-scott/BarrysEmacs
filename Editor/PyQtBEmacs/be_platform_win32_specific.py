@@ -24,6 +24,10 @@ MAX_PATH = 260
 
 app_dir = None
 
+def getAppDir():
+    assert app_dir is not None, 'call setupPlatformSpecific_() first'
+    return app_dir
+
 def getUserDir():
     app_folder = ctypes.create_unicode_buffer( MAX_PATH + 1 )
     ctypes.windll.shell32.SHGetFolderPathW( 0, CSIDL_PROFILE, None, SHGFP_TYPE_CURRENT, ctypes.byref( app_folder ) )

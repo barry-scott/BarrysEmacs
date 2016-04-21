@@ -16,16 +16,77 @@ ${PYTHON} make_be_images.py
 export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/obj-pybemacs:$HOME/wc/hg/macholib
 ${PYTHON} setup-macosx.py py2app --dist-dir ${DIST_DIR} --no-strip 2>&1 | tee a.log
 
-mkdir -p "${DIST_DIR}/Barry's Emacs-Devel.app/Contents/Resources/emacs_library"
-mkdir -p "${DIST_DIR}/Barry's Emacs-Devel.app/Contents/Resources/documentation"
+set -x
+pushd "${DIST_DIR}/Barry's Emacs-Devel.app/Contents" >/dev/null
+
+for PYQT_SO in Resources/lib/python3.5/lib-dynload/PyQt5/*.so
+do
+    otool -l ${PYQT_SO} | grep -e LC_RPATH -A 2
+    install_name_tool -rpath "/Users/barry/Qt-5.6/5.6/clang_64/lib" "@executable_path/../Frameworks" ${PYQT_SO}
+    install_name_tool -delete_rpath "/Users/barry/Qt-5.6/5.6/clang_64/lib" ${PYQT_SO}
+    install_name_tool -add_rpath "@loader_path/../../../../Frameworks" ${PYQT_SO}
+    otool -l ${PYQT_SO} | grep -e LC_RPATH -A 2
+done
+
+for LIBNAME in \
+    QtCore \
+    QtDBus \
+    QtGui \
+    QtPrintSupport \
+    QtSvg \
+    QtWidgets \
+    ;
+do
+    echo "Info: Copy framework ${LIBNAME}"
+    cp -R \
+        "${BUILDER_QTDIR}/clang_64/lib/${LIBNAME}.framework" \
+        "Frameworks"
+
+    otool -l Frameworks/${LIBNAME}.framework/${LIBNAME} | grep -e LC_RPATH -A 2
+done
+
+echo "Info: remove Headers links"
+find "Frameworks" -type l -name 'Headers' -exec rm -f {} ';'
+echo "Info: remove Headers dirs"
+find -d "Frameworks" -type d -name 'Headers' -exec rm -rf {} ';'
+
+for PLUGIN in \
+    imageformats/libqdds.dylib \
+    imageformats/libqgif.dylib \
+    imageformats/libqicns.dylib \
+    imageformats/libqico.dylib \
+    imageformats/libqjpeg.dylib \
+    imageformats/libqsvg.dylib \
+    imageformats/libqtga.dylib \
+    imageformats/libqtiff.dylib \
+    imageformats/libqwbmp.dylib \
+    imageformats/libqwebp.dylib \
+    platforms/libqcocoa.dylib \
+    ;
+do
+    echo "Info: Copy plugin ${PLUGIN}"
+    TARGET_DIR=$( dirname "Resources/plugins/${PLUGIN}" )
+    mkdir -p "${TARGET_DIR}"
+    cp \
+        "${BUILDER_QTDIR}/clang_64/plugins/${PLUGIN}" \
+        "${TARGET_DIR}"
+
+    otool -l Resources/plugins/${PLUGIN} | grep -e LC_RPATH -A 2
+    install_name_tool -rpath "@loader_path/../../lib" "@executable_path/../Frameworks" Resources/plugins/${PLUGIN}
+    otool -l Resources/plugins/${PLUGIN} | grep -e LC_RPATH -A 2
+done
+
+mkdir -p "Resources/emacs_library"
+mkdir -p "Resources/documentation"
 
 if [ "$1" != "--package" ]
 then
     cp \
         "${PKG_DIST_DIR}/Barry's Emacs-Devel.app/Contents/Resources/emacs_library"/* \
-        "${DIST_DIR}/Barry's Emacs-Devel.app/Contents/Resources/emacs_library"
+        "Resources/emacs_library"
     cp \
         "${PKG_DIST_DIR}/Barry's Emacs-Devel.app/Contents/Resources/documentation"/* \
-        "${DIST_DIR}/Barry's Emacs-Devel.app/Contents/Resources/documentation"
+        "Resources/documentation"
 fi
+popd >/dev/null
 echo "Info: build-macosx.sh Editor/PyQtBEmacs - end"
