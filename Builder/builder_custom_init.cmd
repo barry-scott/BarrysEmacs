@@ -9,6 +9,8 @@ set BUILDER_CFG_BUILD_TYPE=Release
 set PYTHON_VERSION=3.5
 set PYTHON_FILE_VERSION=35
 
+set BUILDER_QTDIR=c:\Qt\Qt5.6.0\5.6
+
 if %BUILDER_CFG_PLATFORM% == Win32 (
     rem when called in place this can fork bomb (lots of CMD.exe in task manager)
     call "C:\Program Files (x86)\Microsoft Visual Studio %VC_VER%\VC\vcvarsall.bat"
