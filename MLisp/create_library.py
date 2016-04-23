@@ -153,6 +153,8 @@ library_files =    [
     ('common',    'Library/info_p.ml'),
     ('common',    'Library/info_save.ml'),
     ('common',    'Library/info_u.ml'),
+    ('common',    'Library/inno-mode.ml'),
+    ('common',    'Library/inno-mode.key'),
     ('common',    'Library/install-shield-mode.ml'),
     ('common',    'Library/install-shield-mode.key'),
     ('common',    'Library/javamode.key'),
