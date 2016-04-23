@@ -120,9 +120,18 @@ int emacsMain
     EmacsString p( get_config_env( "EMACS_DEBUG" ) );
     if( !p.isNull() )
     {
+        EmacsString debug_file( get_config_env( "EMACS_DEBUG_FILE" ) );
+        if( !debug_file.isNull() )
+        {
+            freopen( debug_file, "a", stderr );
+        }
+
         dbg_flags = parse_dbg_flags( p );
+
         if( dbg_flags != 0 )
+        {
             _dbg_msg( FormatString("dbg_flags=%X") << dbg_flags );
+        }
     }
 
     //
