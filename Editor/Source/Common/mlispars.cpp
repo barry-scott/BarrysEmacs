@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1982-2014
+//    Copyright (c) 1982-2016
 //        Barry A. Scott
 //
 
@@ -214,6 +214,14 @@ MLispFileInputStream::MLispFileInputStream( const EmacsString &fn )
 , file_pointer( NULL )
 {
     fio_open_using_path( EMACS_PATH, fn, FIO_READ, ".ml" );
+#if DBG_EXECFILE
+    if( dbg_flags&DBG_EXECFILE )
+    {
+        _dbg_msg( FormatString("execute-mlisp-file == %s (file) %s") << fn << fio_getname() );
+        _dbg_msg( FormatString("execute-mlisp-file == (file) isOk() %d") << isOk() );
+    }
+#endif
+
 }
 
 bool MLispFileInputStream::isOk()
@@ -264,12 +272,12 @@ MLispLibraryInputStream::MLispLibraryInputStream( const EmacsString &fn )
 , is_ok( false )
 {
 #if defined( DB )
-    DatabaseSearchList *dbs;
+    DatabaseSearchList *dbs = DatabaseSearchList::find( "MLisp-library" );
 
     //
     //    If the search list exists...
     //
-    if( (dbs = DatabaseSearchList::find( "MLisp-library" )) != NULL )
+    if( dbs != NULL )
     {
 #ifdef vms
         EmacsString cp( fn );
@@ -294,7 +302,25 @@ MLispLibraryInputStream::MLispLibraryInputStream( const EmacsString &fn )
                 break;
             }
         }
+#if DBG_EXECFILE
+        if( dbg_flags&DBG_EXECFILE )
+        {
+            _dbg_msg( FormatString("execute-mlisp-file == %s (db) %s") << fn << cp );
+            _dbg_msg( FormatString("execute-mlisp-file == (db) isOk() %d") << isOk() );
+        }
+#endif
+
     }
+#if DBG_EXECFILE
+    else
+    {
+        if( dbg_flags&DBG_EXECFILE )
+        {
+            _dbg_msg( FormatString("execute-mlisp-file == cannot open Mlisp-library for %s") << fn );
+            _dbg_msg( FormatString("execute-mlisp-file == (db) isOk() %d") << isOk() );
+        }
+    }
+#endif
 #endif
 }
 
@@ -887,7 +913,7 @@ int execute_mlisp_file( const EmacsString &fn, int missingOK )
 
 #if DBG_EXECFILE
         if( dbg_flags&DBG_EXECFILE )
-                _dbg_msg( FormatString("execute-mlisp-file >> %s\r\n") << fn );
+                _dbg_msg( FormatString("execute-mlisp-file >> %s") << fn );
 #endif
 
     Save<EmacsString> saved_cur_mlisp_file( &cur_mlisp_file );
@@ -915,7 +941,7 @@ int execute_mlisp_file( const EmacsString &fn, int missingOK )
 
 #if DBG_EXECFILE
         if( dbg_flags&DBG_EXECFILE )
-                _dbg_msg( FormatString("execute-mlisp-file << %s\r\n") << fn );
+                _dbg_msg( FormatString("execute-mlisp-file << %s") << fn );
 #endif
 
     return rv;
