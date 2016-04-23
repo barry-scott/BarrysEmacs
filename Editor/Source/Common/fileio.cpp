@@ -307,7 +307,7 @@ int unlink_file( void )
     EmacsString fullname;
     expand_and_default (fn, EmacsString::null, fullname);
 
-    ml_value = Expression( EmacsFile::fio_delete (fullname) ? 0 : -1 );
+    ml_value = Expression( EmacsFile::fio_delete( fullname ) ? 0 : -1 );
     return 0;
 }
 
@@ -1782,7 +1782,7 @@ void kill_checkpoint_files( void )
         {
             if( b->b_checkpointfn.length() > 0 )
             {
-                EmacsFile::fio_delete (b->b_checkpointfn);
+                EmacsFile::fio_delete( b->b_checkpointfn );
                 b->b_checkpointfn = EmacsString::null;
             }
              b = b->b_next;
