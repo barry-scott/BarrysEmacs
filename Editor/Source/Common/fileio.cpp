@@ -35,7 +35,6 @@ int write_named_file( EmacsString &fn );
 int append_to_file( void );
 int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const EmacsString &dn );
 static EmacsString concoct_name( const EmacsString &fn, const EmacsString &extension );
-FILE *fopenp( const EmacsString &path, const EmacsString &fn, EmacsString &fnb, int mode, const EmacsString &ex );
 bool mod_exist( void );
 int check_yes_no( const EmacsString &s, ... );
 bool mod_write( void );
@@ -1667,7 +1666,7 @@ int EmacsBuffer::write_file( const EmacsString &fn, EmacsBuffer::WriteFileOperat
 }                // write_file
 
 
-// fopenp opens the file fn with the given IO mode using the given
+// fio_open_using_path opens the file fn with the given IO mode using the given
 // search path. The actual file name is returned in fnb. It is used to
 // to read in MLisp files via the executed-mlisp-file function.
 bool EmacsFile::fio_open_using_path
@@ -1716,7 +1715,7 @@ bool EmacsFile::fio_open_using_path
     }
 
     return false;
-}   // Of fopenp
+}   // Of fio_open_using_path
 
 
 // Returns true if modified buffers exist
