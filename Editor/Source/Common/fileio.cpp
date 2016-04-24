@@ -994,7 +994,7 @@ int write_this( const EmacsString &fname )
         }
     }
 
-    if( bf_cur->write_file (fn, EmacsBuffer::ORDINARY_WRITE) != 0 )
+    if( bf_cur->write_file( fn, EmacsBuffer::ORDINARY_WRITE ) != 0 )
     {
         bf_cur->b_fname = wrote_file;
         delete bf_cur->b_journal;
