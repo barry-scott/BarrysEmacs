@@ -24,33 +24,37 @@ editor:
 	@ echo Info: Building BEmacs application...
 	cd ../Editor/PyQtBEmacs && ./build-macosx.sh --package
 	@ echo Info: Copy db utils...
-	cp ../Editor/obj-utils/dbadd	"$(BEMACS_LIB_DIR)"
-	cp ../Editor/obj-utils/dbcreate	"$(BEMACS_LIB_DIR)"
-	cp ../Editor/obj-utils/dbdel	"$(BEMACS_LIB_DIR)"
-	cp ../Editor/obj-utils/dbprint	"$(BEMACS_LIB_DIR)"
-	cp ../Editor/obj-utils/dblist	"$(BEMACS_LIB_DIR)"
-	cp ../Editor/obj-utils/mll2db	"$(BEMACS_LIB_DIR)"
+	cp ../Editor/obj-utils/dbadd	"$(BEMACS_LIB_DIR)"; chmod ugo=rx "$(BEMACS_LIB_DIR)/dbadd"
+	cp ../Editor/obj-utils/dbcreate	"$(BEMACS_LIB_DIR)"; chmod ugo=rx "$(BEMACS_LIB_DIR)/dbcreate"
+	cp ../Editor/obj-utils/dbdel	"$(BEMACS_LIB_DIR)"; chmod ugo=rx "$(BEMACS_LIB_DIR)/dbdel"
+	cp ../Editor/obj-utils/dbprint	"$(BEMACS_LIB_DIR)"; chmod ugo=rx "$(BEMACS_LIB_DIR)/dbprint"
+	cp ../Editor/obj-utils/dblist	"$(BEMACS_LIB_DIR)"; chmod ugo=rx "$(BEMACS_LIB_DIR)/dblist"
+	cp ../Editor/obj-utils/mll2db	"$(BEMACS_LIB_DIR)"; chmod ugo=rx "$(BEMACS_LIB_DIR)/mll2db"
 
 mlisp:
 	@ echo Info: Copying Mlisp files...
 	cp -f ../MLisp/emacsinit.ml	"$(BEMACS_LIB_DIR)"; chmod ugo=r "$(BEMACS_LIB_DIR)/emacsinit.ml"
 	cp -f ../MLisp/emacs_profile.ml	"$(BEMACS_LIB_DIR)"; chmod ugo=r "$(BEMACS_LIB_DIR)/emacs_profile.ml"
 	cd ../MLisp; $(PYTHON) create_library.py common,unix "$(BEMACS_LIB_DIR)/emacslib" ../Editor/obj-utils
+	chmod ugo=r "$(BEMACS_LIB_DIR)/emacslib"
 
 describe:
 	@ echo Info: Making describe...
 	@ "../Editor/obj-utils/dbcreate" "$(BEMACS_LIB_DIR)/emacsdesc" -c
 	@ "../Editor/obj-utils/mll2db" ../Describe/em_desc.mll "$(BEMACS_LIB_DIR)/emacsdesc"
+	chmod ugo=r "$(BEMACS_LIB_DIR)/emacsdesc"
 
 language:
 	@ echo Info: Making language...
 	@ "../Editor/obj-utils/dbcreate" "$(BEMACS_LIB_DIR)/emacslang" -c
 	@ "../Editor/obj-utils/mll2db" ../Language/language.mll "$(BEMACS_LIB_DIR)/emacslang"
+	chmod ugo=r "$(BEMACS_LIB_DIR)/emacslang"
 
 quick_info:
 	@ echo Info: Making quick info...
 	@ "../Editor/obj-utils/dbcreate" "$(BEMACS_LIB_DIR)/emacs_qinfo_c" -c
 	@ "../Editor/obj-utils/mll2db" ../Describe/qi_cc.mll "$(BEMACS_LIB_DIR)/emacs_qinfo_c"
+	chmod ugo=r "$(BEMACS_LIB_DIR)/emacs_qinfo_c"
 
 docs:
 	@ echo Info: Copying documentation...
