@@ -37,8 +37,10 @@ void error( const EmacsString &text )
     next_global_keymap = 0;
 
 #if DBG_ML_ERROR
-        if( dbg_flags&DBG_ML_ERROR )
-                _dbg_msg( FormatString("ML Error: %s\n") << text );
+    if( dbg_flags&DBG_ML_ERROR )
+    {
+        _dbg_msg( FormatString("ML Error: %s\n") << text );
+    }
 #endif
 
     //
@@ -46,7 +48,9 @@ void error( const EmacsString &text )
     // most sense, so we suppress subsequent ones.
     //
     if( ml_err && minibuf_body.haveBody() )
+    {
         return;
+    }
 
     error_message_text = text;
 
@@ -62,10 +66,14 @@ void error( const EmacsString &text )
 #endif
         }
         else
+        {
             message_file.fio_put( text.data(),text.length() );
+        }
     }
     if( error_handled == 0 )
+    {
         ml_err = 1;
+    }
 
     if( !error_messages_buffer.asString().isNull() )
     {
