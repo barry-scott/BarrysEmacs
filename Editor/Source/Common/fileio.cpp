@@ -104,16 +104,28 @@ void SystemExpressionRepresentationBackupFileMode::assign_value( ExpressionRepre
 {
     const EmacsString &value = new_value->asString();
     if( value.isNull() )
+    {
         return;
+    }
 
     if( value == "none" )
+    {
         exp_int = BACKUP_FILE_MODE_NONE;
+    }
+
     else if( value == "copy" )
+    {
         exp_int = BACKUP_FILE_MODE_COPY;
+    }
+
     else if( value == "rename" )
+    {
         exp_int = BACKUP_FILE_MODE_RENAME;
+    }
     else
+    {
         throw EmacsExceptionTextError( "Unknown backup file mode" );
+    }
 }
 
 void SystemExpressionRepresentationBackupFileMode::fetch_value()
@@ -165,14 +177,20 @@ static void do_auto( const EmacsString &filename )
     //
     int fn_in = filename.last( PATH_CH );
     if( fn_in < 0 )
+    {
         fn = filename;
+    }
     else
+    {
         fn = filename( fn_in+1, INT_MAX );
+    }
 
 #ifdef VERS_CH
     fn_in = fn.first( VERS_CH );
     if( fn_in > 0 )
+    {
         fn.remove( fn_in );
+    }
 #endif
 
     fn.toLower();
@@ -206,12 +224,18 @@ int apply_auto_execute( void )
 {
     EmacsString file;
     if( cur_exec == NULL )
+    {
         file = get_string_interactive(": apply-auto-execute ");
+    }
     else
+    {
         file = get_string_mlisp();
+    }
 
     if( !file.isNull() )
+    {
         do_auto( file );
+    }
 
     return 0;
 }   // of ApplyAutoExecute
@@ -222,22 +246,34 @@ int auto_execute( void )
 {
     BoundName *what;
     if( cur_exec == NULL )
+    {
         what = BoundName::get_word_interactive( ": auto-execute " );
+    }
     else
+    {
         what = BoundName::get_word_mlisp();
+    }
 
     if( what == NULL )
+    {
         return 0;
+    }
 
     EmacsString pattern;
     if( cur_exec == NULL )
+    {
         pattern = get_string_interactive( FormatString(": auto-execute %s when name matches ") <<
             what->b_proc_name );
+    }
     else
+    {
         pattern = get_string_mlisp();
+    }
 
     if( pattern.isNull() )
+    {
         return 0;
+    }
 
     FileAutoMode *p = EMACS_NEW FileAutoMode;
     if( p == NULL )
@@ -264,10 +300,12 @@ int list_auto_executes( void )
     EmacsBuffer::scratch_bfn( "Auto Execute list", interactive() );
 
     bf_cur->ins_cstr( "  Pattern               Function\n"
-          "  -------               --------\n" );
+                      "  -------               --------\n" );
 
     for( FileAutoMode *p = auto_list; p != NULL; p = p->a_next )
+    {
         bf_cur->ins_cstr( FormatString("  %-20s  %s\n") << p->a_pattern << p->a_what->b_proc_name );
+    }
 
     bf_cur->b_modified = 0;
     set_dot( 1 );
@@ -280,7 +318,9 @@ int list_auto_executes( void )
 int match_wild_command(void)
 {
     if( check_args( 2, 2 ) )
+    {
         return 0;
+    }
 
     EmacsString candidate = get_string_mlisp();
     EmacsString pattern = get_string_mlisp();
@@ -298,11 +338,17 @@ int unlink_file( void )
     EmacsFileTable file_table;
     EmacsString fn;
     if( cur_exec == NULL )
+    {
         file_table.get_word_interactive( ": unlink-file ", fn );
+    }
     else
+    {
         file_table.get_word_mlisp( fn );
+    }
     if( fn.isNull() )
+    {
         return 0;
+    }
 
     EmacsString fullname;
     expand_and_default (fn, EmacsString::null, fullname);
@@ -320,15 +366,21 @@ int file_exists( void )
     EmacsString fullname;
 
     if( fn.isNull() )
+    {
         ml_value = Expression( is_not_accessible );
+    }
     else
     {
         expand_and_default (fn, EmacsString::null, fullname);
 
         if( fullname.isNull() )
+        {
             ml_value = Expression( is_not_accessible );
+        }
         else
+        {
             ml_value = Expression( EmacsFile::fio_access( fullname ) );
+        }
     }
 
     return 0;
@@ -338,8 +390,8 @@ class FileFindRecursiveInternal : public FileFind
 {
 public:
     FileFindRecursiveInternal( const EmacsString &_name )
-        : FileFind( _name, true )
-        , inner( NULL )
+    : FileFind( _name, true )
+    , inner( NULL )
     { }
     virtual ~FileFindRecursiveInternal()
     { }
@@ -351,8 +403,8 @@ class FileFindRecursive
 {
 public:
     FileFindRecursive( const EmacsString &name )
-        : original_name( name )
-        , finder( new FileFindRecursiveInternal( name ) )
+    : original_name( name )
+    , finder( new FileFindRecursiveInternal( name ) )
     { }
 
     virtual ~FileFindRecursive()
@@ -374,7 +426,10 @@ EmacsString FileFindRecursive::next()
         {
             FileFindRecursiveInternal *inner = finder->inner;
             if( inner == NULL )
+            {
                 return file;
+            }
+
             delete finder;
             finder = inner;
 
@@ -388,8 +443,7 @@ EmacsString FileFindRecursive::next()
                 // yes find on the inner
                 EmacsString fullname;
                 expand_and_default( file, original_name, fullname );
-                FileFindRecursiveInternal *new_finder =
-                        new FileFindRecursiveInternal( fullname );
+                FileFindRecursiveInternal *new_finder = new FileFindRecursiveInternal( fullname );
                 new_finder->inner = finder;
                 finder = new_finder;
 
@@ -462,33 +516,42 @@ static void file_format_string_path_split
     fullpath.append( fab.path );
 
     if( split_point == 0 )
+    {
         return;
+    }
 
     // count the path parts
     int pos = 0;
     int num_path_parts = -1;
 
     while( (pos = head.index( PATH_CH, pos+1 )) >= 0 )
+    {
         num_path_parts++;
+    }
 
     if( split_point < 0 )
     {
         split_point = num_path_parts + split_point;
 
         if( split_point <= 0 )
+        {
             split_point = 1;
+        }
     }
     else
     {
         if( split_point > num_path_parts )
+        {
             split_point = num_path_parts;
+        }
     }
 
     // find index of split_point path fragment
     pos = -1;
     while( (pos = head.index( PATH_CH, pos+1 )) >= 0 && split_point > 0)
+    {
         split_point--;
-
+    }
 
     // return the parts
     head = fullpath( 0, pos+1 );
@@ -498,7 +561,6 @@ static void file_format_string_path_split
 EmacsString file_format_string( const EmacsString &format, const EmacsString &filename )
 {
     FileParse fab;
-
     fab.sys_parse( filename, EmacsString::null );
 
     return file_format_string( format, fab );
@@ -519,7 +581,9 @@ EmacsString file_format_string( const EmacsString &format, const FileParse &fab 
     while( format_iterator.next( ch ) )
     {
         if( ch != '%' )
+        {
             result.append( ch );
+        }
         else
         {
             char format_ch_1 = 0;
@@ -535,21 +599,31 @@ EmacsString file_format_string( const EmacsString &format, const FileParse &fab 
                 }
 
                 if( format_ch_1 >= '0' && format_ch_1 <= '9' )
+                {
                     format_arg = format_arg*10 + format_ch_1-'0';
+                }
+
                 else if( !negative_arg && format_ch_1 == '-' )
+                {
                     negative_arg = true;
+                }
                 else
+                {
                     break;
+                }
             }
 
             if( negative_arg )
+            {
                 format_arg = -format_arg;
+            }
 
             switch( format_ch_1 )
             {
             case '%':
                 result.append( '%' );
                 break;
+
             case 'p':    // path operations
             {
                 char format_ch_2 = 0;
@@ -589,6 +663,7 @@ EmacsString file_format_string( const EmacsString &format, const FileParse &fab 
                 }
             }
                 break;
+
             case 'f':    // file operations
             {
                 char format_ch_2 = 0;
@@ -619,13 +694,13 @@ EmacsString file_format_string( const EmacsString &format, const FileParse &fab 
                 }
             }
                 break;
+
             default:
                 error(FormatString("file-format-string unknown format type \"%%%c\"") << format_ch_1 );
                 return EmacsString::null;
             }
         }
     }
-
 
     return result;
 }
@@ -634,7 +709,6 @@ EmacsString file_format_string( const EmacsString &format, const FileParse &fab 
 int file_format_string_cmd(void)
 {
     EmacsString format;
-
     EmacsString filename;
 
     if( cur_exec == NULL )
@@ -667,17 +741,20 @@ int file_is_a_directory_cmd(void)
     getescword( file_table., ": file-is-a-directory ", fn );
 
     EmacsString fullname;
-    expand_and_default (fn, EmacsString::null, fullname);
+    expand_and_default( fn, EmacsString::null, fullname );
 
     if( !fullname.isNull()
     && file_is_directory( fullname ) )
+    {
         ml_value = int(true);
+    }
     else
+    {
         ml_value = int(false);
+    }
 
     return 0;
 }
-
 
 int expand_file_name( void )
 {
@@ -768,9 +845,13 @@ int expand_file_name_recursive( void )
 int write_file_exit( void )
 {
     if( mod_write () != 0 )
+    {
         return -1;
+    }
     else
-        return 0;    // End of WriteFileExit
+    {
+        return 0;
+    }
 }
 
 static void backup_buffer( EmacsString &fn )
@@ -779,7 +860,6 @@ static void backup_buffer( EmacsString &fn )
     //    A backup file name has an "_" added to the front of the type
     //
     FileParse fab;
-
     fab.sys_parse( fn, EmacsString::null );
 
     //BoundName *proc = BoundName::find( "create-backup-filename" );
@@ -788,19 +868,15 @@ static void backup_buffer( EmacsString &fn )
     EmacsString string( fab.result_spec );
     if( callProc( buffer_backup_filename_proc, string ) )
     {
-#ifndef __GNUC__
         try
         {
-#endif
             fab.sys_parse( ml_value.asString(), fn );
             use_builtin_rule = false;
-#ifndef __GNUC__
         }
         catch( EmacsExceptionExpressionNotString )
         {
             use_builtin_rule = true;
         }
-#endif
     }
 
     if( use_builtin_rule )
@@ -844,7 +920,6 @@ static void backup_buffer( EmacsString &fn )
         //
         EmacsFile in( FIO_EOL__Binary );
         EmacsFile out( FIO_EOL__Binary );
-        int len;
         unsigned char buf[16384];
 
         // Open the input file
@@ -856,12 +931,13 @@ static void backup_buffer( EmacsString &fn )
         }
 
         // Create the output file
-        if( !out.fio_create(fab.result_spec,0,FIO_STD,EmacsString::null, FIO_EOL__Binary) )
+        if( !out.fio_create( fab.result_spec, 0, FIO_STD, EmacsString::null, FIO_EOL__Binary ) )
         {
             error( FormatString("Failed to create file for backup %s") <<fab.result_spec );
             return;
         }
         // copy all the input file to the output file
+        int len;
         while( (len = in.fio_get( buf, sizeof(buf) )) > 0 )
             if( out.fio_put( buf, len ) < 0 )
             {
@@ -884,9 +960,13 @@ int write_this( const EmacsString &fname )
     EmacsString fn;
 
     if( fname.isNull() )
+    {
         fn = bf_cur->b_fname;
+    }
     else
+    {
         fn = fname;
+    }
     if( fn.isNull() )
     {
         error( FormatString("No file name associated with buffer %s") << bf_cur->b_buf_name);
@@ -894,12 +974,14 @@ int write_this( const EmacsString &fname )
     }
 
 #ifdef VERS_CH
-{
+    {
     // lose any version numbers
     int pos = fn.first( VERS_CH );
     if( pos >=0 )
+    {
         fn.remove( pos+1, INT_MAX );
-}
+    }
+    }
 #endif
 
     if( backup_file_mode != BACKUP_FILE_MODE_NONE
@@ -907,9 +989,10 @@ int write_this( const EmacsString &fname )
     {
         backup_buffer( fn );
         if( ml_err )
+        {
             return -1;
+        }
     }
-
 
     if( bf_cur->write_file (fn, EmacsBuffer::ORDINARY_WRITE) != 0 )
     {
@@ -923,10 +1006,14 @@ int write_this( const EmacsString &fname )
     {
         if( !ml_err
         && bf_cur->b_checkpointfn.length() > 0 )
+        {
             EmacsFile::fio_delete( bf_cur->b_checkpointfn );
+        }
 
         if( bf_cur->b_checkpointed > 0 )
+        {
             bf_cur->b_checkpointed = 0;
+        }
     }
 
     return rv;
@@ -950,15 +1037,21 @@ int insert_file( void )
     EmacsFileTable file_table;
     EmacsString fn;
     if( cur_exec == NULL )
+    {
         file_table.get_word_interactive( ": insert-file ", fn );
+    }
     else
+    {
         file_table.get_word_mlisp( fn );
+    }
 
     EmacsString fullname;
     expand_and_default( fn, EmacsString::null, fullname );
 
     if( file_read_veto( fullname ) )
+    {
         return 0;
+    }
 
     if( bf_cur->read_file( fn, 0, 0 ) != 0
     || interrupt_key_struck != 0 )
@@ -972,7 +1065,9 @@ int insert_file( void )
     }
 
     if( bf_cur->b_mode.md_syntax_colouring )
+    {
         syntax_insert_update( dot, (bf_cur->unrestrictedSize()) - old_size );
+    }
 
     return 0;
 }                // Of InsertFile
@@ -982,9 +1077,8 @@ int insert_file( void )
 int write_modified_files( void )
 {
     mod_write();
-
     return 0;
-}                // Of WriteModifiedFiles
+}
 
 
 int read_file_command( void )
@@ -994,19 +1088,23 @@ int read_file_command( void )
     getescword( file_table., ": read-file ", fn );
 
     if( fn.isNull() )
+    {
         return 0;
-
+    }
 
     EmacsString fullname;
     expand_and_default( fn, EmacsString::null, fullname );
 
     if( file_read_veto( fullname ) )
+    {
         return 0;
+    }
 
     bf_cur->read_file( fullname, 1, 0 );
     if( !callProc( buffer_file_loaded_proc, bf_cur->b_buf_name ) )
+    {
         do_auto( fn );
-
+    }
 
     return 0;
 }                // Of ReadFile_command
@@ -1048,16 +1146,20 @@ int write_named_file_command( void )
 
         // use the file buffer last filename
         if( bf_cur->b_kind == FILEBUFFER )
+        {
             default_filename = bf_cur->b_fname;
-
+        }
         // if all else fails use the buffer name
         if( default_filename.isNull() )
+        {
             default_filename = bf_cur->b_buf_name;
-
+        }
         file_table.get_esc_word_interactive( ": write-named-file ", default_filename, fn );
     }
     else
+    {
         file_table.get_esc_word_mlisp( fn );
+    }
 
     return write_named_file( fn );
 }
@@ -1093,9 +1195,13 @@ int append_to_file( void )
     getescword( file_table., ": append-to-file ", fn );
 
     if( fn.isNull() )
+    {
         error( null_file_spec );
+    }
     else
+    {
         bf_cur->write_file( fn, EmacsBuffer::APPEND_WRITE );
+    }
 
     return 0;
 }
@@ -1111,7 +1217,9 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
 
     // If no filename is supplied, just return
     if( fn.isNull() )
+    {
         return 0;
+    }
 
     expand_and_default( fn, dn, fullname );
 
@@ -1123,14 +1231,18 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
 
     EmacsBuffer *b = buffers;
     while( b != NULL && file_name_compare->compare( b->b_fname, fullname ) != 0 )
+    {
         b = b->b_next;
+    }
 
     if( b != NULL )
     {
         b->set_bf();
 
         if( windowfiddle )
-            theActiveView->window_on (bf_cur);
+        {
+            theActiveView->window_on( bf_cur );
+        }
 
         return 1;
     }
@@ -1139,7 +1251,9 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
     //    Check the limits
     //
     if( file_read_veto( fullname ) )
+    {
         return 1;
+    }
 
     EmacsString bufname;
 
@@ -1158,19 +1272,27 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
             use_builtin_rule = false;
         }
         else
+        {
             use_builtin_rule = true;
-    }
+        }
+   }
 
     if( use_builtin_rule )
     {
         int last_part = fullname.last( PATH_CH );
         if( last_part > 0 )
+        {
             bufname = fullname( last_part+1, INT_MAX );
+        }
         else
+        {
             bufname = fullname;
+        }
 
         if( bufname == "." || bufname.isNull() )
+        {
             bufname = u_str ("no-name");
+        }
         else
         {
 #ifdef VERS_CH
@@ -1193,13 +1315,19 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
         {
             EmacsString p;
             if( cur_exec == NULL )
+            {
                 p = get_string_interactive(
                     FormatString("Buffer name %s is in use, type a new name or <Enter> to reuse: ")
                                     << bufname );
+            }
             else
+            {
                 p = get_string_mlisp();
+            }
             if( !p.isNull() )
+            {
                 bufname = p;
+            }
         }
         else
         {
@@ -1226,7 +1354,9 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
     }
 
     if( bufname.isNull() )
+    {
         return 0;
+    }
 
     // Create the buffer, and free up the old filename
     EmacsBuffer::set_bfn( bufname );
@@ -1272,10 +1402,14 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
     // sure that any auto-executes get executed
     //
     if( windowfiddle )
+    {
         theActiveView->window_on (bf_cur);
+    }
 
     if( !callProc( buffer_file_loaded_proc, bf_cur->b_buf_name ) )
+    {
         do_auto( fullname );
+    }
 
     return 1;
 }                // Of visit_file
@@ -1338,7 +1472,9 @@ int EmacsBuffer::read_file( const EmacsString &fn, int erase, int createnew )
             b_kind = FILEBUFFER;
         }
         else
+        {
             error( FormatString(perror_str) << fetch_os_error(errno) << fn );
+        }
 
         errno = saved_errno;
         return 0;
@@ -1393,6 +1529,7 @@ int EmacsBuffer::read_file( const EmacsString &fn, int erase, int createnew )
     int i = 0;
 
     if( fsize > 0 )
+    {
         while( ! ml_err
         && (i = fd.fio_get( b_base + dot - 1 + n, fsize - n)) > 0 )
         {
@@ -1403,9 +1540,12 @@ int EmacsBuffer::read_file( const EmacsString &fn, int erase, int createnew )
                 gap_room( fsize );
             }
         }
+    }
 
     if( erase )
+    {
         b_eol_attribute = fd.fio_get_eol_attribute();
+    }
 
     // Close  the file, and adjust the pointers
     fd.fio_close();
@@ -1413,28 +1553,38 @@ int EmacsBuffer::read_file( const EmacsString &fn, int erase, int createnew )
     {
         // first record an insert before changing the buffer size
         if( !erase )
+        {
             record_insert( dot, n, b_base + b_size1 );
+        }
         b_size1 += + n;
         b_gap -= n;
 
         // notify the syntax code of an insert after the buffer size is changed
         if( !erase )
+        {
             syntax_insert_update( dot, n );
+        }
     }
 
     // Generate appropriate messages
     if( n == 0
     && ! ml_err )
+    {
         message( "Empty file." );
+    }
 
     if( i == EOF )
+    {
         error( FormatString(perror_str) << fetch_os_error(errno) << fnam );
+    }
 
     if( erase )
     {
         b_checkpointfn = EmacsString::null;
         if( b_checkpointed > 0 )
+        {
             b_checkpointed = 0;
+        }
 
         if( interrupt_key_struck )
         {
@@ -1464,7 +1614,9 @@ static EmacsString concoct_name( const EmacsString &fn, const EmacsString &exten
     // Create the file to check that it is valid, and get its real name
     if( !fd.fio_create( result, 0, FIO_STD, EmacsString::null, (FIO_EOL_Attribute)(int)default_end_of_line_style )
     && !fd.fio_create( defname, 0, FIO_STD, EmacsString::null, (FIO_EOL_Attribute)(int)default_end_of_line_style ) )
+    {
         return defname;
+    }
 
     result = fd.fio_getname();
     fd.fio_close();
@@ -1488,11 +1640,15 @@ int EmacsBuffer::write_file( const EmacsString &fn, EmacsBuffer::WriteFileOperat
         return 0;
 
     if( b_eol_attribute == FIO_EOL__None )
+    {
         b_eol_attribute = default_end_of_line_style;
+    }
 
     FIO_EOL_Attribute write_eol_attribute( b_eol_attribute );
     if( end_of_line_style_override != FIO_EOL__None )
+    {
         write_eol_attribute = end_of_line_style_override;
+    }
 
     EmacsFile fd;
     // Open the file, and position to the correct place
@@ -1504,7 +1660,9 @@ int EmacsBuffer::write_file( const EmacsString &fn, EmacsBuffer::WriteFileOperat
         // create a new file
         //
         if( !fd.fio_open( fn, 1, EmacsString::null, write_eol_attribute ) )
+        {
             fd.fio_create( fn, nc, FIO_STD, EmacsString::null, write_eol_attribute );
+        }
         break;
 
     case CHECKPOINT_WRITE:
@@ -1625,20 +1783,21 @@ int EmacsBuffer::write_file( const EmacsString &fn, EmacsBuffer::WriteFileOperat
     }
 }
 #else
-    if( b_size1 > 0 )
-        if( fd.fio_put( b_base, b_size1 ) < 0 )
-        {
-            error( FormatString(perror_str) << fetch_os_error(errno) << fn);
-            fd.fio_close();
-            return 0;
-        }
-    if( b_size2 > 0 )
-        if( fd.fio_put( b_base + b_size1 + b_gap, b_size2 ) < 0 )
-        {
-            error( FormatString(perror_str) << fetch_os_error(errno) << fn);
-            fd.fio_close();
-            return 0;
-        }
+    if( b_size1 > 0
+    && fd.fio_put( b_base, b_size1 ) < 0 )
+    {
+        error( FormatString(perror_str) << fetch_os_error(errno) << fn);
+        fd.fio_close();
+        return 0;
+    }
+
+    if( b_size2 > 0
+    && fd.fio_put( b_base + b_size1 + b_gap, b_size2 ) < 0 )
+    {
+        error( FormatString(perror_str) << fetch_os_error(errno) << fn);
+        fd.fio_close();
+        return 0;
+    }
 #endif
 
     fd.fio_close();
@@ -1657,9 +1816,13 @@ int EmacsBuffer::write_file( const EmacsString &fn, EmacsBuffer::WriteFileOperat
         }
 
         if( b_checkpointed > 0 )
+        {
             b_checkpointed = 0;
+        }
         if( appendit != CHECKPOINT_WRITE )
+        {
             message( FormatString("Wrote %s") << wrote_file );
+        }
     }
 
     return 1;
@@ -1684,9 +1847,10 @@ bool EmacsFile::fio_open_using_path
     // If present then just open the file stright.
     //
     if( fn.first( PATH_CH ) >= 0
-    || fn.first( ':' ) >= 0
-    )
+    || fn.first( ':' ) >= 0 )
+    {
         return fio_open( fn, append, ex, _attr );
+    }
 
     //
     // Otherwise, add the path onto the front of the filespec
@@ -1698,17 +1862,23 @@ bool EmacsFile::fio_open_using_path
     {
         end = path.index( PATH_SEP, start );
         if( end < 0 )
+        {
             end = path.length();
+        }
 
         EmacsString fnb( path( start, end ) );
         if(fnb[-1] != PATH_CH
         && fnb[-1] != ':' )
+        {
             fnb.append( PATH_STR );
+        }
         fnb.append( fn );
 
         fio_open( fnb, append, ex );
         if( fio_is_open() )
+        {
             return true;
+        }
 
         start = end;
         start++;
@@ -1722,16 +1892,24 @@ bool EmacsFile::fio_open_using_path
 bool mod_exist( void )
 {
     if( bf_cur == NULL )
+    {
         return 0;
+    }
 
     bf_cur->set_bf();
     EmacsBuffer *b = buffers;
     while( b != 0)
+    {
         if( b->b_modified != 0
         &&  b->b_kind == FILEBUFFER )
+        {
             return true;
+        }
         else
+        {
             b = b->b_next;
+        }
+    }
 
     return false;
 }   // Of mod_exist
@@ -1755,13 +1933,17 @@ bool mod_write( void )
         && b->b_modified != 0 )
         {
             b->set_bf();
-            if( write_this (EmacsString::null) == 0 )
+            if( write_this( EmacsString::null ) == 0 )
+            {
                 if( interactive()
                 || get_yes_or_no
-                   ( 0,
-                   FormatString("Cannot write buffer %s, can I ignore it? ") << b->b_buf_name
-                   ) == 0 )
+                        ( 0,
+                        FormatString("Cannot write buffer %s, can I ignore it? ") << b->b_buf_name
+                        ) == 0 )
+                {
                     write_errors++;
+                }
+            }
         }
         b = b->b_next;
     }
@@ -1778,19 +1960,18 @@ void kill_checkpoint_files( void )
     if( unlink_checkpoint_files != 0 )
     {
         EmacsBuffer *b = buffers;
-        while( b != 0)
+        while( b != NULL )
         {
             if( b->b_checkpointfn.length() > 0 )
             {
                 EmacsFile::fio_delete( b->b_checkpointfn );
                 b->b_checkpointfn = EmacsString::null;
             }
-             b = b->b_next;
-             }
+
+            b = b->b_next;
+        }
     }
 }
-
-
 
 // Function that initiate checkpointing
 int checkpoint_everything(void)
@@ -1805,9 +1986,13 @@ int checkpoint_everything(void)
         if( interactive() )
         {
             if( activity_indicator != 0 && term_ansi != 0 )
+            {
                 set_activity_character ('c');
+            }
             else
+            {
                 message ("Checkpointing...");
+            }
 
             theActiveView->do_dsp();
         }
@@ -1819,15 +2004,25 @@ int checkpoint_everything(void)
             if( write_errors == 0 || interrupt_key_struck != 0 )
             {
                 if( interrupt_key_struck != 0 )
+                {
                     message( "Checkpointing... interrupted." );
+                }
                 else
+                {
                     if( activity_indicator != 0 && term_ansi != 0 )
+                    {
                         set_activity_character( saved_activity_char );
+                    }
                     else
+                    {
                         message( "Checkpointing... done." );
+                    }
+                }
             }
             else
+            {
                 error( "Checkpointing... failed.");
+            }
 
             theActiveView->do_dsp();
         }
@@ -1840,16 +2035,14 @@ int checkpoint_everything(void)
 // Function interface to the checkpoint-buffers default checkpoint action
 int checkpoint_buffers(void)
 {
-    EmacsBuffer *b;
     EmacsBufferRef old( bf_cur );
-    int modcnt;
 
     write_errors = 0;
 
-    b = buffers;
+    EmacsBuffer *b = buffers;
     while( b != 0 && interrupt_key_struck == 0)
     {
-        modcnt = b->b_modified;
+        int modcnt = b->b_modified;
 
         if( b->b_checkpointed >= 0
         && b->b_checkpointed < modcnt )
@@ -1911,9 +2104,13 @@ EmacsString fetch_os_error ( int error_code )
 {
     char *error_str = strerror( error_code );
     if( error_str != NULL )
+    {
         return error_str;
+    }
     else
+    {
         return FormatString("Unknown error %d detected") << error_code;
+    }
 }
 #endif
 
@@ -1928,134 +2125,156 @@ int synchronise_files(void)
 
     EmacsBuffer *b = buffers;
     while( !ml_err && b != NULL )
-        {
+    {
         b->set_bf();
         if( b->b_kind == FILEBUFFER
         && b->b_fname.length() > 0 )
-    {
-        time_t new_time;
-        int new_access;
-        EmacsString fname( b->b_fname );
+            {
+            EmacsString fname( b->b_fname );
 
 #if defined( vms )
-        // for VMS use the  latest version of the file
-        int index = fname.last( ';' );
-        // strip the version
-        if( index >= 0 )
-            fname.remove( index );
+            // for VMS use the  latest version of the file
+            int index = fname.last( ';' );
+            // strip the version
+            if( index >= 0 )
+            {
+                fname.remove( index );
+            }
 #endif
 
-        new_time = EmacsFile::fio_file_modify_date( fname );
-        new_access = EmacsFile::fio_access( fname );
+            time_t new_time = EmacsFile::fio_file_modify_date( fname );
+            int new_access = EmacsFile::fio_access( fname );
 
-        // if has been deleted and used to exist
-        if( new_access == 0 && new_access != b->b_synch_file_access )
-        {
-            int delete_it = 1;
-
-            if( b->b_modified != 0 )
-                delete_it = get_yes_or_no
-                    ( 0,
-                    FormatString("The file %s has been delete do you want to delete modified buffer %s?") <<
-                        fname << b->b_buf_name
-                    );
-            else
-            if( ask_about_synchronise_for_none_modified_buffers )
-                delete_it = get_yes_or_no
-                    ( 1,
-                    FormatString("The file %s has been delete do you want to delete buffer %s?") <<
-                        fname << b->b_buf_name
-                    );
-            if( delete_it )
+            // if has been deleted and used to exist
+            if( new_access == 0 && new_access != b->b_synch_file_access )
             {
-                synched_buffers_deleted++;
+                int delete_it = 1;
 
-                message(FormatString("Deleting buffer synchronising %s...") << b->b_buf_name );
-                if( theActiveView != NULL && theActiveView->currentWindow() != NULL )
-                    theActiveView->do_dsp();    // Make the screen correct
+                if( b->b_modified != 0 )
+                {
+                    delete_it = get_yes_or_no
+                        ( 0,
+                        FormatString("The file %s has been delete do you want to delete modified buffer %s?") <<
+                            fname << b->b_buf_name
+                        );
+                }
+                else
+                {
+                    if( ask_about_synchronise_for_none_modified_buffers )
+                    {
+                        delete_it = get_yes_or_no
+                            ( 1,
+                            FormatString("The file %s has been delete do you want to delete buffer %s?") <<
+                                fname << b->b_buf_name
+                            );
+                    }
+                }
 
-                // need to save the name as it will be free'ed in kill_bfn
-                EmacsString name( b->b_buf_name );
+                if( delete_it )
+                {
+                    synched_buffers_deleted++;
 
-                EmacsBuffer *to_kill = b;
-                // find the next before we kill this buffer
-                b = b->b_next;
+                    message(FormatString("Deleting buffer synchronising %s...") << b->b_buf_name );
+                    if( theActiveView != NULL && theActiveView->currentWindow() != NULL )
+                    {
+                        theActiveView->do_dsp();    // Make the screen correct
+                    }
 
-                // kill off the buffer
-                delete to_kill;
+                    // need to save the name as it will be free'ed in kill_bfn
+                    EmacsString name( b->b_buf_name );
 
-                // on to the next buffer
-                continue;
+                    EmacsBuffer *to_kill = b;
+                    // find the next before we kill this buffer
+                    b = b->b_next;
+
+                    // kill off the buffer
+                    delete to_kill;
+
+                    // on to the next buffer
+                    continue;
+                }
+                else
+                {
+                    // update the synch attribute variable
+                    b->b_synch_file_access = new_access;
+                }
             }
-            else
+
+            // see if the file attributes have changed since the last synch
+            if( b->b_synch_file_time != new_time )
             {
-                // update the synch attribute variable
+                int read_it = 1;
+
+                if( b->b_modified != 0 )
+                {
+                    read_it = get_yes_or_no
+                        ( 0,
+                        FormatString("For modified buffer %s the file %s has changed do you want to reload it?") <<
+                            b->b_buf_name << fname
+                        );
+                }
+                else
+                {
+                    if( ask_about_synchronise_for_none_modified_buffers )
+                    {
+                        read_it = get_yes_or_no
+                            ( 1,
+                            FormatString("The file %s has changed do you want to reload it?") <<
+                                fname
+                            );
+                    }
+                }
+
+                if( read_it )
+                {
+                    synched_buffers_reloaded++;
+
+                    int old_dot = dot;
+
+                    // allow the buffer to be over written
+                    b->b_mode.md_readonly = 0;
+
+                    message(FormatString("Reading buffer to synchronise %s...") << b->b_buf_name );
+                    if( theActiveView != NULL && theActiveView->currentWindow() != NULL )
+                    {
+                        theActiveView->do_dsp();    // Make the screen correct
+                    }
+
+                    // the do_dsp may change buffers under us
+                    b->set_bf();
+                    b->read_file( fname, 1, 0 );
+
+                    set_dot( old_dot );
+                }
+                else
+                {
+                    // update the synch attribute variables
+                    b->b_synch_file_time = new_time;
+                    b->b_synch_file_access = new_access;
+                }
+            }
+            else if( b->b_synch_file_access != new_access )
+            {
                 b->b_synch_file_access = new_access;
+                b->b_file_access = new_access;
+                b->b_mode.md_readonly = new_access < 0;
             }
         }
 
-        // see if the file attributes have changed since the last synch
-        if( b->b_synch_file_time != new_time )
-        {
-            int read_it = 1;
-
-            if( b->b_modified != 0 )
-                read_it = get_yes_or_no
-                    ( 0,
-                    FormatString("For modified buffer %s the file %s has changed do you want to reload it?") <<
-                        b->b_buf_name << fname
-                    );
-            else
-            if( ask_about_synchronise_for_none_modified_buffers )
-                read_it = get_yes_or_no
-                    ( 1,
-                    FormatString("The file %s has changed do you want to reload it?") <<
-                        fname
-                    );
-            if( read_it )
-            {
-                synched_buffers_reloaded++;
-
-                int old_dot = dot;
-
-                // allow the buffer to be over written
-                b->b_mode.md_readonly = 0;
-
-                message(FormatString("Reading buffer to synchronise %s...") << b->b_buf_name );
-                if( theActiveView != NULL && theActiveView->currentWindow() != NULL )
-                    theActiveView->do_dsp();    // Make the screen correct
-
-                // the do_dsp may change buffers under us
-                b->set_bf();
-                b->read_file( fname, 1, 0 );
-
-                set_dot( old_dot );
-            }
-            else
-            {
-                // update the synch attribute variables
-                b->b_synch_file_time = new_time;
-                b->b_synch_file_access = new_access;
-            }
-        }
-        else if( b->b_synch_file_access != new_access )
-        {
-            b->b_synch_file_access = new_access;
-            b->b_file_access = new_access;
-            b->b_mode.md_readonly = new_access < 0;
-        }
+    b = b->b_next;
     }
-
-        b = b->b_next;
-        }
 
     // carefully return to the old buffer
     if( old.bufferValid() )
+    {
         // o.k. its still around use it
         old.set_bf();
+    }
     else
+    {
         // default to main to prevent the posibilty of ending up in the Minibuffer
         EmacsBuffer::set_bfn( "main" );
+    }
 
     if( synched_buffers_reloaded > 0 || synched_buffers_deleted > 0 )
     {
@@ -2074,7 +2293,9 @@ int synchronise_files(void)
         }
 
         if( synched_buffers_reloaded > 0 && synched_buffers_deleted > 0 )
+        {
             message_text.append( " and " );
+        }
 
         switch( synched_buffers_reloaded )
         {
@@ -2092,7 +2313,9 @@ int synchronise_files(void)
     }
 
     if( theActiveView != NULL && theActiveView->currentWindow() != NULL )
+    {
         theActiveView->do_dsp();
+    }
 
     return 0;
 }
@@ -2101,13 +2324,17 @@ bool file_read_veto( const EmacsString &filename )
 {
     // only bother if there is a size limit
     if( maximum_file_read_size.asInt() == 0 )
+    {
         return false;
+    }
 
     EmacsFile fd;
 
     // Open the file if possible
     if( !fd.fio_open( filename, 0, EmacsString::null ) )
+    {
         return false;
+    }
 
     //
     //    Check the size is within the read limit
