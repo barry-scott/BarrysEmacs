@@ -19,6 +19,13 @@ ${PYTHON} setup-macosx.py py2app --dist-dir ${DIST_DIR} --no-strip 2>&1 | tee a.
 set -x
 pushd "${DIST_DIR}/Barry's Emacs-Devel.app/Contents" >/dev/null
 
+if false
+then
+cp -R \
+    /Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/PyQt5/Qt \
+    Resources/lib/python3.5/lib-dynload/PyQt5
+
+else
 for PYQT_SO in Resources/lib/python3.5/lib-dynload/PyQt5/*.so
 do
     otool -l ${PYQT_SO} | grep -e LC_RPATH -A 2
@@ -75,6 +82,7 @@ do
     install_name_tool -rpath "@loader_path/../../lib" "@executable_path/../Frameworks" Resources/plugins/${PLUGIN}
     otool -l Resources/plugins/${PLUGIN} | grep -e LC_RPATH -A 2
 done
+fi
 
 mkdir -p "Resources/emacs_library"
 mkdir -p "Resources/documentation"
