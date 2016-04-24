@@ -36,7 +36,7 @@ mlisp:
 	cp -f ../MLisp/emacsinit.ml	"$(BEMACS_LIB_DIR)"; chmod ugo=r "$(BEMACS_LIB_DIR)/emacsinit.ml"
 	cp -f ../MLisp/emacs_profile.ml	"$(BEMACS_LIB_DIR)"; chmod ugo=r "$(BEMACS_LIB_DIR)/emacs_profile.ml"
 	cd ../MLisp; $(PYTHON) create_library.py common,unix "$(BEMACS_LIB_DIR)/emacslib" ../Editor/obj-utils
-	chmod ugo=r "$(BEMACS_LIB_DIR)/emacslib"
+	chmod ugo=r "$(BEMACS_LIB_DIR)"/emacslib.*
 
 describe:
 	@ echo Info: Making describe...
