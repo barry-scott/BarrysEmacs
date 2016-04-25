@@ -224,6 +224,10 @@ this kit.
         self.all_run_items.append( r'Filename: {tmp}\%s; Parameters: "/q"; StatusMsg: Installing VC++ %s %s Redistributables...' %
                                     (redist_file, redist_year, self.arch) )
 
+        # finally show the readme.txt
+        self.all_run_items.append( r'Filename: "{app}\bemacs.exe"; Parameters: """{app}\readme.txt"""; '
+                                        r'Flags: nowait postinstall skipifsilent; Description: "View README.TXT"' )
+
     def addAllKitFiles( self ):
         os.chdir( 'tmp' )
         kitfiles_folder = pathlib.Path( 'kitfiles' )
