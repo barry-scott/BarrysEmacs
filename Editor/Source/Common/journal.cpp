@@ -236,115 +236,108 @@ EmacsBufferJournal *EmacsBufferJournal::_journalStart( void )
     //
     //    Allocate all the blocks required in one go
     //
-   EmacsBufferJournal *jnl = EMACS_NEW EmacsBufferJournal();
-
-    for(;;)
+    EmacsBufferJournal *jnl = EMACS_NEW EmacsBufferJournal();
+    if( jnl == NULL )
     {
-        if( jnl == NULL )
+        error( FormatString("Unable to start journalling for buffer %s no mem") <<
+            bf_cur->b_buf_name );
+        return NULL;
+    }
+
+    jnl->m_jnl_active = 1;
+    jnl->m_jnl_open = 1;
+
+    union journal_record *open_record = &jnl->m_jnl_buf[0];
+
+    EmacsString p;
+
+    //
+    //    Create a unique journal file
+    //
+    for( int i=0;; i++ )
+    {
+
+        //
+        //    If this is a file buffer use the filename to
+        //    to make the journal file name. Otherwise use the
+        //    buffer name to make a name from.
+        //
+        if( bf_cur->b_kind == FILEBUFFER )
         {
+            p = bf_cur->b_fname;
+            open_record->jnl_open.jnl_type = JNL_FILENAME;
+            if( p.length() > JNL_MAX_NAME_LENGTH )
+            {
+                error( FormatString("Unable to create journal becuase file name is longer then %d") << JNL_MAX_NAME_LENGTH );
+                delete jnl;
+                return NULL;
+            }
+
+        }
+        else
+        {
+            p = _concoctFilename( bf_cur->b_buf_name );
+            open_record->jnl_open.jnl_type = JNL_BUFFERNAME;
+            if( p.length() > JNL_MAX_NAME_LENGTH )
+            {
+                error( FormatString("Unable to create journal becuase bufer name is longer then %d") << JNL_MAX_NAME_LENGTH );
+                delete jnl;
+                return NULL;
+            }
+        }
+
+        EmacsString jfilename;
+        expand_and_default( "emacs_journal:", p, jfilename );
+        if( i == 0 )
+        {
+            jnl->m_jnl_jname = FormatString( "%s.bj~") << jfilename;
+        }
+        else
+        {
+            jnl->m_jnl_jname = FormatString( "%s.%d.bj~") << jfilename << i;
+        }
+
+        // see if this file exist
+        FILE *file = fopen( jnl->m_jnl_jname, "r" );
+
+        // no then we have the file name we need
+        if( file == NULL )
             break;
-        }
 
-        jnl->m_jnl_active = 1;
-        jnl->m_jnl_open = 1;
+        // close and loop around
+        fclose( file );
 
-        union journal_record *open_record = &jnl->m_jnl_buf[0];
-
-        EmacsString p;
-
-        //
-        //    Create a unique journal file
-        //
+        if( i >= 200 )
         {
-        for( int i=0;; i++ )
-        {
-
-            //
-            //    If this is a file buffer use the filename to
-            //    to make the journal file name. Otherwise use the
-            //    buffer name to make a name from.
-            //
-            if( bf_cur->b_kind == FILEBUFFER )
-            {
-                p = bf_cur->b_fname;
-                open_record->jnl_open.jnl_type = JNL_FILENAME;
-                if( p.length() > JNL_MAX_NAME_LENGTH )
-                {
-                    error( FormatString("Unable to create journal becuase file name is longer then %d") << JNL_MAX_NAME_LENGTH );
-                    return NULL;
-                }
-
-            }
-            else
-            {
-                p = _concoctFilename( bf_cur->b_buf_name );
-                open_record->jnl_open.jnl_type = JNL_BUFFERNAME;
-                if( p.length() > JNL_MAX_NAME_LENGTH )
-                {
-                    error( FormatString("Unable to create journal becuase bufer name is longer then %d") << JNL_MAX_NAME_LENGTH );
-                    return NULL;
-                }
-            }
-
-            EmacsString jfilename;
-            expand_and_default( "emacs_journal:", p, jfilename );
-            if( i == 0 )
-            {
-                jnl->m_jnl_jname = FormatString( "%s.bj~") << jfilename;
-            }
-            else
-            {
-                jnl->m_jnl_jname = FormatString( "%s.%d.bj~") << jfilename << i;
-            }
-
-            // see if this file exist
-            FILE *file = fopen( jnl->m_jnl_jname, "r" );
-
-            // no then we have the file name we need
-            if( file == NULL )
-                break;
-
-            // close and loop around
-            fclose( file );
-
-            if( i >= 200 )
-            {
-                error( FormatString("Unable to create a unique journal filename tried %s last") <<
-                                        jnl->m_jnl_jname );
-                break;
-            }
+            error( FormatString("Unable to create a unique journal filename tried %s last") <<
+                                    jnl->m_jnl_jname );
+            delete jnl;
+            return NULL;
         }
-        }
+    }
 
-        // w - write, b - binary, c - commit
-        jnl->m_jnl_file = fopen( jnl->m_jnl_jname, "w" BINARY_MODE COMMIT_MODE );
-        if( jnl->m_jnl_file == NULL )
-        {
-            break;
-        }
-
-        //
-        //    setup the open record into the journal
-        //
-        open_record[0].jnl_open.jnl_version = JNL_VERSION;
-        open_record[0].jnl_open.jnl_name_length = p.length();
-        jnlCharsCopy( open_record[1].jnl_data.jnl_chars, p.unicode_data(), p.length() );
-
-        jnl->m_jnl_used = 1 + jnlCharsToRecords( open_record[0].jnl_open.jnl_name_length );
-        jnl->m_jnl_record = 0;
-        bf_cur->b_journal = jnl;
-
-        return jnl;
+    // w - write, b - binary, c - commit
+    jnl->m_jnl_file = fopen( jnl->m_jnl_jname, "w" BINARY_MODE COMMIT_MODE );
+    if( jnl->m_jnl_file == NULL )
+    {
+        error( FormatString("Unable to create journal filename %s") <<
+                                    jnl->m_jnl_jname );
+        delete jnl;
+        return NULL;
     }
 
     //
-    //    error recovery
+    //    setup the open record into the journal
     //
-    delete jnl;
+    open_record[0].jnl_open.jnl_version = JNL_VERSION;
+    open_record[0].jnl_open.jnl_name_length = p.length();
+    jnlCharsCopy( open_record[1].jnl_data.jnl_chars, p.unicode_data(), p.length() );
 
-    error( FormatString("Unable to start journalling for buffer %s code %x") <<
-            bf_cur->b_buf_name << errno );
-    return NULL;
+    jnl->m_jnl_used = 1 + jnlCharsToRecords( open_record[0].jnl_open.jnl_name_length );
+    jnl->m_jnl_record = 0;
+    bf_cur->b_journal = jnl;
+
+    return jnl;
 }
 
 // QQQ: what is this function solving? filename for journal or buffer
