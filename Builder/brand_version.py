@@ -18,10 +18,7 @@ def main( argv ):
         vi.setSvnVersion( argv[2] )
         vi.parseVersionInfo( argv[1] )
 
-        if False and vi.is_svn_wc:
-            finder = SvnWcFinder( vi )
-        else:
-            finder = FileFinder( vi )
+        finder = FileFinder( vi )
 
         finder.findAndBrandFiles( argv[2] )
 
@@ -54,39 +51,6 @@ class FileFinder:
             and not full_path.endswith( '_svn' ) ):
                 self.findAndBrandFiles( full_path )
 
-class SvnWcFinder:
-    def __init__( self, vi ):
-        import pysvn
-        self.__client = pysvn.Client()
-        self.__vi = vi
-
-    def findAndBrandFiles( self, path ):
-        import pysvn
-        #print( 'findAndBrandFiles:',path )
-        all_status = self.__client.status( path, recurse=False )
-        for status in all_status:
-            #print( 'status:',status.text_status,'path:',status.path )
-            if status.text_status not in [pysvn.wc_status_kind.normal, pysvn.wc_status_kind.added, pysvn.wc_status_kind.modified]:
-                continue
-
-            if status.entry.kind == pysvn.node_kind.file:
-                base = os.path.basename( status.path )
-                #print( base )
-                if base.startswith( template_file_prefix ):
-                    self.__vi.brandOneFile( status.path )
-
-        for status in all_status:
-            #print( 'status:',status.text_status,'path:',status.path )
-            if status.text_status not in [pysvn.wc_status_kind.normal, pysvn.wc_status_kind.added, pysvn.wc_status_kind.modified]:
-                continue
-
-            #print( status.entry.kind )
-            if status.entry.kind == pysvn.node_kind.dir:
-                base = os.path.basename( status.path )
-                if base not in ['.'] and status.path != path:
-                    self.findAndBrandFiles( status.path )
-    
-
 class VersionInfo:
     def __init__( self ):
         self.__info = {}
@@ -98,7 +62,7 @@ class VersionInfo:
         self.is_svn_wc = True
 
     def parseVersionInfo( self, filename ):
-        f = open( filename )
+        f = open( filename, 'r', encoding='utf-8' )
         for line in f:
             line = line.strip()
 
@@ -117,9 +81,15 @@ class VersionInfo:
         f.close()
 
     def setSvnVersion( self, wc_path ):
-        cmd = 'svnversion -c "%s" >svn_version.dat' % (wc_path,)
-        os.system( cmd )
-        output = open( 'svn_version.dat', 'r' ).read()
+        override = 'svn_version_override.dat'
+        if os.path.exists( override ):
+            output = open( override, 'r', encoding='utf-8' ).read()
+
+        else:
+            cmd = 'svnversion -c "%s" >svn_version.dat' % (wc_path,)
+            os.system( cmd )
+            output = open( 'svn_version.dat', 'r', encoding='utf-8' ).read()
+
         if len(output) == 0:
             output = '0:0M'
 
@@ -135,6 +105,7 @@ class VersionInfo:
             self.__info[ 'build' ] = version_string
         else:
             self.__info[ 'build' ] = 0
+
         self.__info[ 'revision' ] = version_string
         self.__info[ 'wc_state' ] = modifiers
 
@@ -145,7 +116,7 @@ class VersionInfo:
             print( 'Info: %10s: %s' % (key, self.__info[ key ]) )
 
     def brandOneFile( self, filename ):
-        f = open( filename )
+        f = open( filename, 'r', encoding='utf-8' )
         template_contents = f.readlines()
         f.close()
 
@@ -154,7 +125,7 @@ class VersionInfo:
             for line_no, line in enumerate( template_contents ):
                 branded_contents.append( line % self.__info )
 
-        except (ValueError,TypeError,KeyError) as e:
+        except (ValueError, TypeError, KeyError) as e:
             raise Error( 'Cannot format %s:%d because %s' % (filename, line_no+1, str(e)) )
 
         parent_dir = os.path.dirname( filename )
@@ -162,7 +133,7 @@ class VersionInfo:
         new_filename = os.path.join( parent_dir, base[len(template_file_prefix):] )
         print( 'Info: Creating', new_filename )
 
-        f = open( new_filename, 'w' )
+        f = open( new_filename, 'w', encoding='utf-8' )
         f.writelines( branded_contents )
         f.close()
 

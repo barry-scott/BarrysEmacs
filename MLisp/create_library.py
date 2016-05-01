@@ -36,10 +36,15 @@ class BemacsDatabaseTools:
         self.tool_path = tool_path
         self.__dbcreate = os.path.join( tool_path, 'dbcreate' + exe_suffix )
         if not os.path.exists( self.__dbcreate ):
-            raise ValueError( 'Missing tool %s' % self.__dbcreate )
+            self.__dbcreate = os.path.join( tool_path, 'bemacs-dbcreate' + exe_suffix )
+            if not os.path.exists( self.__dbcreate ):
+                raise ValueError( 'Missing tool %s' % self.__dbcreate )
+
         self.__dbadd = os.path.join( tool_path, 'dbadd' + exe_suffix )
         if not os.path.exists( self.__dbadd ):
-            raise ValueError( 'Missing tool %s' % self.__dbadd )
+            self.__dbadd = os.path.join( tool_path, 'bemacs-dbadd' + exe_suffix )
+            if not os.path.exists( self.__dbadd ):
+                raise ValueError( 'Missing tool %s' % self.__dbadd )
 
     def _run_command( self, cmd, filename=None ):
         if filename is None:

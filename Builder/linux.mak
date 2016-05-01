@@ -3,8 +3,17 @@
 #
 #	build emacs for Linux
 #
-PYTHON=python${PYTHON_VERSION}
+ifndef PYTHON
+$(error PYTHON is not defined)
+endif
 
+ifdef DESTDIR
+BEMACS_ROOT_DIR=$(DESTDIR)
+BEMACS_DOC_DIR=$(DESTDIR)/usr/share/bemacs/doc
+BEMACS_LIB_DIR=$(DESTDIR)/usr/share/bemacs/lib
+BEMACS_BIN_DIR=$(DESTDIR)/usr/bin
+
+else
 ifeq (${BUILDER_CFG_PLATFORM},Linux-Fedora)
 BEMACS_ROOT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM/ROOT
 BEMACS_DOC_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM/ROOT/usr/local/bemacs8/share/doc/bemacs
@@ -31,6 +40,7 @@ BUILD_KIT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG
 else
 $(error unsupported BUILDER_CFG_PLATFORM of $(BUILDER_CFG_PLATFORM) )
 
+endif
 endif
 endif
 endif
@@ -68,13 +78,12 @@ editor:
 	cd ../Editor && ./build-linux.sh all
 	cp ../Editor/obj-pybemacs/_bemacs.so $(BEMACS_LIB_DIR)
 	@ echo Info: Copy db utils...
-	cp ../Editor/obj-utils/dbadd	$(BEMACS_BIN_DIR)
-	cp ../Editor/obj-utils/dbcreate $(BEMACS_BIN_DIR)
-	cp ../Editor/obj-utils/dbdel	$(BEMACS_BIN_DIR)
-	cp ../Editor/obj-utils/dbprint	$(BEMACS_BIN_DIR)
-	cp ../Editor/obj-utils/dblist	$(BEMACS_BIN_DIR)
-	cp ../Editor/obj-utils/mll2db	$(BEMACS_BIN_DIR)
-
+	cp ../Editor/obj-utils/dbadd	$(BEMACS_BIN_DIR)/bemacs-dbadd
+	cp ../Editor/obj-utils/dbcreate $(BEMACS_BIN_DIR)/bemacs-dbcreate
+	cp ../Editor/obj-utils/dbdel	$(BEMACS_BIN_DIR)/bemacs-dbdel
+	cp ../Editor/obj-utils/dbprint	$(BEMACS_BIN_DIR)/bemacs-dbprint
+	cp ../Editor/obj-utils/dblist	$(BEMACS_BIN_DIR)/bemacs-dblist
+	cp ../Editor/obj-utils/mll2db	$(BEMACS_BIN_DIR)/bemacs-mll2db
 
 bemacs:
 	@ echo Info: Copy PyQtBEmacs...
@@ -84,22 +93,22 @@ mlisp:
 	@ echo Info: Copying Mlisp files...
 	cp -f ../MLisp/emacsinit.ml	$(BEMACS_LIB_DIR); chmod ugo=r $(BEMACS_LIB_DIR)/emacsinit.ml
 	cp -f ../MLisp/emacs_profile.ml	$(BEMACS_LIB_DIR); chmod ugo=r $(BEMACS_LIB_DIR)/emacs_profile.ml
-	cd ../MLisp; $(PYTHON) create_library.py common $(BEMACS_LIB_DIR)/emacslib $(BEMACS_BIN_DIR)
+	cd ../MLisp; $(PYTHON) create_library.py common $(BEMACS_LIB_DIR)/emacslib $(BEMACS_BIN_DIR); chmod ugo=r $(BEMACS_LIB_DIR)/emacslib.*
 
 describe:
 	@ echo Info: Making describe...
-	@ $(BEMACS_BIN_DIR)/dbcreate $(BEMACS_LIB_DIR)/emacsdesc -c
-	@ $(BEMACS_BIN_DIR)/mll2db ../Describe/em_desc.mll $(BEMACS_LIB_DIR)/emacsdesc
+	@ $(BEMACS_BIN_DIR)/bemacs-dbcreate $(BEMACS_LIB_DIR)/emacsdesc -c
+	@ $(BEMACS_BIN_DIR)/bemacs-mll2db ../Describe/em_desc.mll $(BEMACS_LIB_DIR)/emacsdesc; chmod ugo=r $(BEMACS_LIB_DIR)/emacsdesc.*
 
 language:
 	@ echo Info: Making language...
-	@ $(BEMACS_BIN_DIR)/dbcreate $(BEMACS_LIB_DIR)/emacslang -c
-	@ $(BEMACS_BIN_DIR)/mll2db ../Language/language.mll $(BEMACS_LIB_DIR)/emacslang
+	@ $(BEMACS_BIN_DIR)/bemacs-dbcreate $(BEMACS_LIB_DIR)/emacslang -c
+	@ $(BEMACS_BIN_DIR)/bemacs-mll2db ../Language/language.mll $(BEMACS_LIB_DIR)/emacslang; chmod ugo=r $(BEMACS_LIB_DIR)/emacslang.*
 
 quick_info:
 	@ echo Info: Making quick info...
-	@ $(BEMACS_BIN_DIR)/dbcreate $(BEMACS_LIB_DIR)/emacs_qinfo_c -c
-	@ $(BEMACS_BIN_DIR)/mll2db ../Describe/qi_cc.mll $(BEMACS_LIB_DIR)/emacs_qinfo_c
+	@ $(BEMACS_BIN_DIR)/bemacs-dbcreate $(BEMACS_LIB_DIR)/emacs_qinfo_c -c
+	@ $(BEMACS_BIN_DIR)/bemacs-mll2db ../Describe/qi_cc.mll $(BEMACS_LIB_DIR)/emacs_qinfo_c; chmod ugo=r $(BEMACS_LIB_DIR)/emacs_qinfo_c.*
 
 docs:
 	@ echo Info: Copying documentation...

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 #
 #   make_unicode_data.py
 #
@@ -8,9 +9,8 @@ import os
 import time
 
 def main( argv ):
-
     # uncode data
-    ucd = open( argv[1], 'r' )
+    ucd = open( argv[1], 'r', encoding='utf-8' )
 
     alphabetic = set()
     numeric = set()
@@ -63,7 +63,7 @@ def main( argv ):
     ucd.close()
 
     # case folding
-    ucd = open( argv[2], 'r' )
+    ucd = open( argv[2], 'r', encoding='utf-8' )
 
     casefold = {}
 
@@ -85,7 +85,7 @@ def main( argv ):
 
     print( 'casefold', len(casefold) )
 
-    cxx = open( argv[3], 'w' )
+    cxx = open( argv[3], 'w', encoding='utf-8' )
 
     cxx.write( 
 '''//

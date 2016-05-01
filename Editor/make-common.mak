@@ -104,11 +104,13 @@ bintools: $(edit_exe)bemacs $(edit_exe)mll-2-db $(edit_exe)dbadd \
 #                                                                                #
 ##################################################################################
 
-install_pybemacs_images: $(edit_obj)_bemacs.so be_main bintools
-	for file in _bemacs.so mll-2-db dbadd dbcreate dblist dbdel dbprint; \
+install_pybemacs_images: $(edit_exe)_bemacs.so be_main bintools
+	cp -f $(edit_exe)_bemacs.so $(BUILD_KIT_DIR);
+	chmod ugo=rx $(BUILD_KIT_DIR)/_bemacs.so;
+	for file in mll-2-db dbadd dbcreate dblist dbdel dbprint; \
 	do \
 		cp -f $(edit_exe)$$file $(BUILD_KIT_DIR); \
-		chmod ugo=rx $(BUILD_KIT_DIR)/$$file; \
+		chmod ugo=rx $(BUILD_KIT_DIR)/bemacs-$$file; \
 	done
 
 install_bitmaps:
