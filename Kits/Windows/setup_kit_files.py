@@ -106,31 +106,31 @@ this kit.
 
         self.all_registry_items.extend( [
                 r'''Root: HKCR; Subkey: "BarrysEmacs8Command"; ValueType: string; ValueData: "BEmacs Command"; Flags: uninsdeletekey''',
-                r'''Root: HKCR; Subkey: "BarrysEmacs8Command\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" /package=""%%1"""''',
+                r'''Root: HKCR; Subkey: "BarrysEmacs8Command\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" /package=""%1"""''',
                 r'''Root: HKCR; Subkey: "BarrysEmacs8Command\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"''',
 
                 r'''Root: HKCR; Subkey: "BarrysEmacs8MLisp"; ValueType: string; ValueData: "BEmacs MLisp"; Flags: uninsdeletekey''',
-                r'''Root: HKCR; Subkey: "BarrysEmacs8MLisp\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%%1"""''',
+                r'''Root: HKCR; Subkey: "BarrysEmacs8MLisp\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%1"""''',
                 r'''Root: HKCR; Subkey: "BarrysEmacs8MLisp\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"''',
 
                 r'''Root: HKCR; Subkey: "BarrysEmacs8Document"; ValueType: string; ValueData: "BEmacs"; Flags: uninsdeletekey''',
-                r'''Root: HKCR; Subkey: "BarrysEmacs8Document\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%%1"""''',
+                r'''Root: HKCR; Subkey: "BarrysEmacs8Document\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%1"""''',
                 r'''Root: HKCR; Subkey: "BarrysEmacs8Document\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"''',
 
                 r'''Root: HKCR; Subkey: "BarrysEmacs8DocumentII"; ValueType: string; ValueData: "BEmacs II"; Flags: uninsdeletekey''',
-                r'''Root: HKCR; Subkey: "BarrysEmacs8DocumentII\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%%1"""''',
+                r'''Root: HKCR; Subkey: "BarrysEmacs8DocumentII\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%1"""''',
                 r'''Root: HKCR; Subkey: "BarrysEmacs8DocumentII\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"''',
 
                 r'''Root: HKCR; Subkey: "BarrysEmacs8DocumentIII"; ValueType: string; ValueData: "BEmacs III"; Flags: uninsdeletekey''',
-                r'''Root: HKCR; Subkey: "BarrysEmacs8DocumentIII\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%%1"""''',
+                r'''Root: HKCR; Subkey: "BarrysEmacs8DocumentIII\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%1"""''',
                 r'''Root: HKCR; Subkey: "BarrysEmacs8DocumentIII\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"''',
 
                 r'''Root: HKCR; Subkey: "BarrysEmacs8DocumentIV"; ValueType: string; ValueData: "BEmacs IV"; Flags: uninsdeletekey''',
-                r'''Root: HKCR; Subkey: "BarrysEmacs8DocumentIV\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%%1"""''',
+                r'''Root: HKCR; Subkey: "BarrysEmacs8DocumentIV\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%1"""''',
                 r'''Root: HKCR; Subkey: "BarrysEmacs8DocumentIV\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"''',
 
                 r'''Root: HKCR; Subkey: "BarrysEmacs8DocumentV"; ValueType: string; ValueData: "BEmacs V"; Flags: uninsdeletekey''',
-                r'''Root: HKCR; Subkey: "BarrysEmacs8DocumentV\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%%1"""''',
+                r'''Root: HKCR; Subkey: "BarrysEmacs8DocumentV\Shell\open\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%1"""''',
                 r'''Root: HKCR; Subkey: "BarrysEmacs8DocumentV\DefaultIcon"; ValueType: string; ValueData: "{app}\bemacs.exe"''',
 
                 #
@@ -139,7 +139,7 @@ this kit.
 
                 # option_edit_with_bemacs
                 r'''Root: HKCR; Subkey: "*\shell\Edit with %(app_name)s"; ValueType: string; ValueData: "Edit with &%(app_name)s"; Flags: uninsdeletekey''' % self.__dict__,
-                r'''Root: HKCR; Subkey: "*\shell\Edit with %(app_name)s\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%%%%1"""''' % self.__dict__,
+                r'''Root: HKCR; Subkey: "*\shell\Edit with %(app_name)s\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" ""%%1"""''' % self.__dict__,
 
                 r'''Root: HKCR; Subkey: "Drive\shell\%(app_name)s Here"; ValueType: string; ValueData: "%(app_name)s &Here"; Flags: uninsdeletekey''' % self.__dict__,
                 r'''Root: HKCR; Subkey: "Drive\shell\%(app_name)s Here\command"; ValueType: string; ValueData: """{app}\bemacs.exe"" /package=cd-here ""%%1\.."""''' % self.__dict__,
