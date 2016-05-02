@@ -288,7 +288,13 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
             self.log.error( 'Expected user guide %r to exist' % (user_guide,) )
             return
 
-        #qqq# URL open( 'file://%s' % (user_guide,) )
+        # replace \ on windows with / for a good URL.
+        url = 'file:///%s' % (user_guide.replace( '\\', '/' ),)
+        url = QtCore.QUrl( url )
+
+        rc = QtGui.QDesktopServices.openUrl( url )
+        if not rc:
+            self.log.error( 'Failed to open documentation for URL %r' % (url,) )
 
     def onActAbout( self ):
         from PyQt5 import Qt

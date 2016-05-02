@@ -35,11 +35,14 @@ def getUserDir():
     return user_dir
 
 def getLibraryDir():
-    lib_dir = os.environ.get( 'BEMACS_EMACS_LIBRARY', os.path.join( app_dir, 'emacs_library' ) )
-    return lib_dir
+    return os.environ.get(
+                'BEMACS_EMACS_LIBRARY',
+                os.path.join( app_dir, 'emacs_library' ) )
 
 def getDocUserGuide():
-    return os.path.join( app_dir, 'documentation/emacs-documentation.html' )
+    return os.environ.get(
+                'BEMACS_EMACS_DOCUMENTATION',
+                os.path.join( app_dir, 'documentation', 'emacs-documentation.html' ) )
 
 def getLocalePath( app ):
     return os.path.join( app_dir, 'locale' )

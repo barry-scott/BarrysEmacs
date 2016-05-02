@@ -1,6 +1,7 @@
 setlocal
 set PYTHONPATH=%BUILDER_TOP_DIR%\Editor\PyQtBEmacs;%BUILDER_TOP_DIR%\Editor\obj-pybemacs
-set BEMACS_EMACS_LIBRARY=%BUILDER_TOP_DIR%\Kits\Windows\kitfiles\emacs_library
+set BEMACS_EMACS_LIBRARY=%BUILDER_TOP_DIR%\Kits\Windows\tmp\kitfiles\emacs_library
+set BEMACS_EMACS_DOCUMENTATION=%BUILDER_TOP_DIR%\HTML\emacs-documentation.html
 
 echo PYTHONPATH=%PYTHONPATH%
 echo BEMACS_EMACS_LIBRARY=%BEMACS_EMACS_LIBRARY%
