@@ -54,6 +54,7 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
             "yes-no-dialog":    self.uiHookYesNoDialog,
             "set-window-title": self.uiHookSetWindowTitle,
             "filter-string":    self.uiHookFilterString,
+            "open-file-dialog": self.uiHookOpenFileDialog,
             "test1":            self.uiHookTest1,
             "test2":            self.uiHookTest2,
             }
@@ -185,6 +186,19 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
         result = self.app.guiYesNoDialog( default, title, message )
         self.setGuiResultSuccess( result )
 
+    def uiHookOpenFileDialog( self, cmd, title, existing_file, file_filter, detailed ):
+        self._debugUiHook( 'uiHookOpenFileDialog' )
+        try:
+            result = self.app.guiOpenFileDialog( title, existing_file, file_filter, detailed )
+            if result is None:
+                self.setGuiResultError( 'open-file-dialog cancelled' )
+            else:
+                self.setGuiResultSuccess( result )
+
+        except Exception as e:
+            self.log.error( 'uiHookOpenFileDialog - %s' % (e,) )
+            self.setGuiResultError( 'open-file-dialog error: %s' % (e,) )
+
     def uiHookFilterString( self, cmd, cmd_line, input_string ):
         try:
             p = subprocess.Popen(
@@ -195,34 +209,41 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
                     stderr=subprocess.STDOUT )
 
             out, err = p.communicate( input_string.encode( 'utf-8' ) )
-            self.setGuiResultSuccess( out.decode( 'utf-8' ) )
+
+            if '\r\n' in out:
+                out = out.decode( 'utf-8' ).replace( '\r\n', '\n' )
+            else:
+                out = out.decode( 'utf-8' )
+
+            self.setGuiResultSuccess( out )
 
         except EnvironmentError as e:
             self.setGuiResultError( str(e) )
 
     def hookUserInterface( self, *args ):
-        self._debugEditor( 'hookUserInterface( %r )' % (args,) )
+        self._debugUiHook( 'hookUserInterface( %r )' % (args,) )
         cmd = args[0]
         if cmd in self.hook_ui_handlers:
             self.initGuiResult()
 
-            self._debugEditor( 'hookUserInterface calling handler' )
+            self._debugUiHook( 'hookUserInterface calling handler' )
             self.app.marshallToGuiThread( self.hook_ui_handlers[ cmd ], args )
 
-            self._debugEditor( 'hookUserInterface waiting for result' )
+            self._debugUiHook( 'hookUserInterface waiting for result' )
             error, value = self.getGuiResult()
 
-            self._debugEditor( 'hookUserInterface error %r value %r' % (error, value) )
+            self._debugUiHook( 'hookUserInterface error %r value %r' % (error, value) )
 
             if error is not None:
-                self._debugEditor( 'hookUserInterface handler error return' )
+                self._debugUiHook( 'hookUserInterface handler error return' )
                 raise error
 
             else:
-                self._debugEditor( 'hookUserInterface handler normal return' )
+                self._debugUiHook( 'hookUserInterface handler normal return' )
                 return value
 
         else:
+            self._debugUiHook( 'Unknown command' )
             raise ValueError( 'Unknown command %r' % (cmd,) )
 
     def initGuiResult( self ):

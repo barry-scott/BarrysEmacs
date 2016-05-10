@@ -34,6 +34,7 @@ _debug_term_mouse = False
 _debug_term_scroll = False
 _debug_panel = False
 _debug_speed = False
+_debug_ui_hook = False
 
 def setDebug( str_options ):
     for option in [s.strip().lower() for s in str_options.split(',')]:
@@ -41,7 +42,7 @@ def setDebug( str_options ):
         if name in globals():
             globals()[ name ] = True
         else:
-            print( 'Unknown debug option %s - see be_debug.py for available options' % (option,) )
+            print( 'Unknown debug option %s - see be_debug.py for available options' % (name,) )
 
 class EmacsDebugMixin:
     def __init__( self ):
@@ -99,6 +100,10 @@ class EmacsDebugMixin:
     def _debugEditor( self, msg ):
         if _debug_editor:
             self.log.debug( 'EDITOR %s' % (msg,) )
+
+    def _debugUiHook( self, msg ):
+        if _debug_ui_hook:
+            self.log.debug( 'UI-HOOK %s' % (msg,) )
 
     def _debugQueue( self, msg ):
         if _debug_queue:

@@ -1,11 +1,37 @@
 ; 
 ; pc-keyboard.ml
 ; 
-; Barry A. Scott (c) 1997-2010
+; Barry A. Scott (c) 1997-2016
 ; 
 ; bind keys on a PC style keyboard to functions that
 ; match the behaviour defined by Windows interface.
 ; 
+
+(declare-global
+    PC-open-file-filters)
+(setq PC-open-file-filters
+    (concat
+        "All (*)" "\n"
+        "C/C++ (*.h, *.c, *.hpp, *.hxx, *.cpp, *.cxx)" "\n"
+        "MLisp (*.ml *.key *.mlp)" "\n"
+        "HTML (*.html *.css *.js)" "\n"
+        "Python (*.py)"
+    )
+)
+
+(defun
+    (PC-open-file
+        (visit-file
+            (UI-python-hook
+                "open-file-dialog"
+                "Open file"
+                1               ; existing file
+                PC-open-file-filters
+                1               ; detailed
+            )
+        )
+    )
+)
 
 (defun
     (PC-home-key
@@ -132,13 +158,13 @@
 ; 
 
 ; File
-(bind-to-key "visit-file"       "\[menu]fo")
+(bind-to-key "PC-open-file"                                 "\[menu]fo")
 
 ; Edit
 (bind-to-key "new-undo"					    "\[menu]eu")
-(bind-to-key "PC-edit-cut"      "\[menu]ex")
-(bind-to-key "PC-edit-copy"     "\[menu]ec")
-(bind-to-key "UI-edit-paste"    "\[menu]ev")
+(bind-to-key "PC-edit-cut"                                  "\[menu]ex")
+(bind-to-key "PC-edit-copy"                                 "\[menu]ec")
+(bind-to-key "UI-edit-paste"                                "\[menu]ev")
 (bind-to-key "(setq case-fold-search (! case-fold-search))" "\[menu]eS")
 (bind-to-key "(setq replace-case (! replace-case))"	    "\[menu]eR")
 (bind-to-key "goto-line"    				    "\[menu]eg")

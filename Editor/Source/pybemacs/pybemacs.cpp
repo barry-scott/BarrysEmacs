@@ -307,7 +307,11 @@ public:
         {
             ml_value = Expression();
 
-            reportException( fn_name, e );
+            std::string type( Py::type( e ).str().as_std_string() );
+            std::string value( Py::value( e ).str().as_std_string() );
+            e.clear();
+
+            error( FormatString("error calling \"%s\" - %s( %s )") << fn_name << type << value );
         }
     }
 

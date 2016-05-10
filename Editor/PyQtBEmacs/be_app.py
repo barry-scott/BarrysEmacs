@@ -1,6 +1,6 @@
 '''
  ====================================================================
- Copyright (c) 2003-2015 Barry A Scott.  All rights reserved.
+ Copyright (c) 2003-2016 Barry A Scott.  All rights reserved.
 
  This software is licensed as described in the file LICENSE.txt,
  which you should have received as part of this distribution.
@@ -409,6 +409,37 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
 
         rc = QtWidgets.QMessageBox.question( self.main_window, title, message, defaultButton=default_button )
         return rc == QtWidgets.QMessageBox.Yes
+
+    def guiOpenFileDialog( self, title, existing_file, file_filter, detailed ):
+        self._debugUiHook( 'qqq guiOpenFileDialog( title=%r, existing_file=%r, file_filter=%r, detailed=%r )' % (title, existing_file, file_filter, detailed) )
+        open_file = QtWidgets.QFileDialog( self.main_window, QtCore.Qt.Dialog )
+        open_file.setWindowTitle( title )
+
+        if existing_file:
+            open_file.setFileMode( open_file.ExistingFile )
+            open_file.setAcceptMode( open_file.AcceptOpen )
+
+        else:
+            open_file.setFileMode( open_file.AnyFile )
+            open_file.setAcceptMode( open_file.AcceptSave )
+
+        if detailed:
+            open_file.setViewMode( open_file.Detail )
+
+        else:
+            open_file.setViewMode( open_file.List )
+
+        if file_filter == '':
+            open_file.setNameFilters( ['All (*)'] )
+
+        else:
+            open_file.setNameFilters( file_filter.split( '\n' ) )
+
+        if open_file.exec_():
+            self._debugUiHook( 'open_file.exec_()' )
+            return open_file.selectedFiles()[0]
+
+        return None
 
     def quit( self ):
         self._debugApp( 'quit()' )
