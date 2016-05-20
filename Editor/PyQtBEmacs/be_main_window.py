@@ -34,6 +34,8 @@ import be_platform_specific
 
 import be_config
 
+ellipsis = '…'
+
 class BemacsAction:
     def __init__( self, app, code ):
         self.app = app
@@ -96,7 +98,16 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         mb = self.menuBar()
 
         menu_file = mb.addMenu( T_('&File') )
-        self.addEmacsMenu( menu_file, 'fo', T_('&Open') )
+        self.addEmacsMenu( menu_file, 'fo', T_('&Open…') )
+        menu_file.addSeparator()
+        self.addEmacsMenu( menu_file, 'fs', T_('&Save') )
+        self.addEmacsMenu( menu_file, 'fa', T_('Save &As…') )
+        self.addEmacsMenu( menu_file, 'fl', T_('Save A&ll Modified Files') )
+
+        if sys.platform == 'darwin':
+            # on OS X Preferences and exit are not in the file menu
+            # so no need for a separator
+            menu_file.addSeparator()
 
         act_prefs = menu_file.addAction( T_('&Preferences') )
         act_prefs.triggered.connect( self.onActPreferences )
@@ -114,10 +125,10 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.addEmacsMenu( menu_edit, 'ea', T_('Select All') )
 
         menu_edit.addSeparator()
-        self.addEmacsMenu( menu_edit, 'eg', T_('Goto Line...') )
+        self.addEmacsMenu( menu_edit, 'eg', T_('Goto Line…') )
 
         menu_edit.addSeparator()
-        menu_edit_advanced = menu_edit.addMenu( T_('Advanced...') )
+        menu_edit_advanced = menu_edit.addMenu( T_('Advanced…') )
 
         self.addEmacsMenu( menu_edit_advanced, 'cu', T_('Case Upper') )
         self.addEmacsMenu( menu_edit_advanced, 'cl', T_('Case Lower') )
@@ -145,14 +156,14 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.addEmacsMenu( menu_build, 'bp', T_('Previous Error') )
 
         menu_tool = mb.addMenu( T_('&Tool') )
-        self.addEmacsMenu( menu_tool, 'tg', T_('Grep in files...') )
-        self.addEmacsMenu( menu_tool, 'tb', T_('Grep in buffers...') )
-        self.addEmacsMenu( menu_tool, 'tc', T_('Grep current buffer...') )
-        self.addEmacsMenu( menu_tool, 'rf', T_('Filter region...') )
+        self.addEmacsMenu( menu_tool, 'tg', T_('Grep in files…') )
+        self.addEmacsMenu( menu_tool, 'tb', T_('Grep in buffers…') )
+        self.addEmacsMenu( menu_tool, 'tc', T_('Grep current buffer…') )
+        self.addEmacsMenu( menu_tool, 'rf', T_('Filter region…') )
         self.addEmacsMenu( menu_tool, 'rs', T_('Sort region') )
 
         menu_buffer = mb.addMenu( T_('&Buffer') )
-        self.addEmacsMenu( menu_buffer, 'bs', T_('Switch to buffer...') )
+        self.addEmacsMenu( menu_buffer, 'bs', T_('Switch to buffer…') )
         self.addEmacsMenu( menu_buffer, 'bl', T_('List buffers') )
 
         menu_window = mb.addMenu( T_('&Window') )
@@ -162,9 +173,9 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.addEmacsMenu( menu_window, 'wt', T_('Delete This') )
 
         menu_help = mb.addMenu( T_('&Help' ) )
-        act = menu_help.addAction( T_('Documentation...') )
+        act = menu_help.addAction( T_('Documentation…') )
         act.triggered.connect( self.onActDocumentation )
-        act = menu_help.addAction( T_("&About...") )
+        act = menu_help.addAction( T_("&About…") )
         act.triggered.connect( self.onActAbout )
 
     def addEmacsMenu( self, container, code, title, icon=None ):

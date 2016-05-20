@@ -34,6 +34,20 @@
 )
 
 (defun
+    (PC-save-file-as
+        (write-named-file
+            (UI-python-hook
+                "open-file-dialog"
+                "Save file as"
+                0
+                PC-open-file-filters
+                1
+            )
+        )
+    )
+)
+
+(defun
     (PC-home-key
 	(goto-character
 	    (save-excursion
@@ -159,6 +173,9 @@
 
 ; File
 (bind-to-key "PC-open-file"                                 "\[menu]fo")
+(bind-to-key "write-current-file"                           "\[menu]fs")
+(bind-to-key "PC-save-file-as"                              "\[menu]fa")
+(bind-to-key "write-modified-files"                         "\[menu]fl")
 
 ; Edit
 (bind-to-key "new-undo"					    "\[menu]eu")
