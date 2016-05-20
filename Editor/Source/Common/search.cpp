@@ -283,14 +283,18 @@ int quote_command( void )
         EmacsChar_t ch = s[i];
         if( ch == '['
         || ch == ']'
+        || ch == '('
+        || ch == ')'
+        || ch == '{'
+        || ch == '}'
         || ch == '*'
         || ch == '+'
-        || ch == '{'
         || ch == '.'
-        || ch == 92
+        || ch == '|'
+        || ch == '\\'
         || (ch == '^' && i == 0)
         || (ch == '$' && s[0] == 0) )
-            result.append( (EmacsChar_t)92 );
+            result.append( (EmacsChar_t)'\\' );
         result.append( ch );
     }
 
