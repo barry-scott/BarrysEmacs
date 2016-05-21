@@ -38,7 +38,7 @@ _debug_ui_hook = False
 
 def setDebug( str_options ):
     for option in [s.strip().lower() for s in str_options.split(',')]:
-        name = '_debug_%s' % (option,)
+        name = '_debug_%s' % (option.replace( '-', '_' ),)
         if name in globals():
             globals()[ name ] = True
         else:

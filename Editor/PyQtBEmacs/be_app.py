@@ -415,6 +415,8 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         open_file = QtWidgets.QFileDialog( self.main_window, QtCore.Qt.Dialog )
         open_file.setWindowTitle( title )
 
+        open_file.setDefaultSuffix( '' )
+
         if existing_file:
             open_file.setFileMode( open_file.ExistingFile )
             open_file.setAcceptMode( open_file.AcceptOpen )

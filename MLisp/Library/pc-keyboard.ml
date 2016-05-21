@@ -11,8 +11,8 @@
     PC-open-file-filters)
 (setq PC-open-file-filters
     (concat
-        "All (*)" "\n"
-        "C/C++ (*.h, *.c, *.hpp, *.hxx, *.cpp, *.cxx)" "\n"
+        (if (= "Windows" operating-system-name) "All (*.*)" "All (*)") "\n"
+        "C/C++ (*.h *.c *.hpp *.hxx *.cpp *.cxx)" "\n"
         "MLisp (*.ml *.key *.mlp)" "\n"
         "HTML (*.html *.css *.js)" "\n"
         "Python (*.py)"
