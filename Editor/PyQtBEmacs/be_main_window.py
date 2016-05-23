@@ -20,6 +20,7 @@ import logging
 # On OS X the packager missing this import
 import sip
 
+from PyQt5 import Qt
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
 from PyQt5 import QtCore
@@ -308,7 +309,6 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
             self.log.error( 'Failed to open documentation for URL %r' % (url,) )
 
     def onActAbout( self ):
-        from PyQt5 import Qt
         all_about_info = []
         all_about_info.append( T_("Barry's Emacs %d.%d.%d-%d") %
                                 (be_version.major, be_version.minor
