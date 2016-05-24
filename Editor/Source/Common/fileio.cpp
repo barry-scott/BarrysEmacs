@@ -1,5 +1,5 @@
 //
-//     Copyright (c) 1982-2010
+//     Copyright (c) 1982-2016
 //        Barry A. Scott
 //
 // File IO for Emacs
@@ -33,6 +33,7 @@ int visit_file_command( void );
 int write_named_file_command( void );
 int write_named_file( EmacsString &fn );
 int append_to_file( void );
+EmacsString makeBufferName( EmacsString &fullname, EmacsBuffer *existing_buffer );
 int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const EmacsString &dn );
 static EmacsString concoct_name( const EmacsString &fn, const EmacsString &extension );
 bool mod_exist( void );
@@ -1174,18 +1175,20 @@ int write_named_file( EmacsString &fn )
     }
 
     // Write the file, update the
-    if( write_this (fn) )
+    if( write_this( fn ) )
     {
         bf_cur->b_kind = FILEBUFFER;
 
-        callProc( buffer_saved_as_proc, bf_cur->b_buf_name );
+        if( !callProc( buffer_saved_as_proc, bf_cur->b_buf_name ) )
+        {
+            bf_cur->b_buf_name = makeBufferName( bf_cur->b_fname, bf_cur );
+        }
     }
 
     cant_1win_opt = 1;
 
     return 0;
 }   // Of WriteNamedFile
-
 
 // Appends to a file
 int append_to_file( void )
@@ -1206,55 +1209,8 @@ int append_to_file( void )
     return 0;
 }
 
-
-// Visit a file - all the internal logic for this wonderous function
-
-int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const EmacsString &dn )
+EmacsString makeBufferName( EmacsString &fullname, EmacsBuffer *existing_buffer )
 {
-    int r_stat;
-    EmacsString fullname;
-    EmacsBufferRef oldb( bf_cur );
-
-    // If no filename is supplied, just return
-    if( fn.isNull() )
-    {
-        return 0;
-    }
-
-    expand_and_default( fn, dn, fullname );
-
-    if( file_is_directory( fullname ) )
-    {
-        error( FormatString("visit-file cannot open directory %s") << fullname );
-        return 0;
-    }
-
-    EmacsBuffer *b = buffers;
-    while( b != NULL && file_name_compare->compare( b->b_fname, fullname ) != 0 )
-    {
-        b = b->b_next;
-    }
-
-    if( b != NULL )
-    {
-        b->set_bf();
-
-        if( windowfiddle )
-        {
-            theActiveView->window_on( bf_cur );
-        }
-
-        return 1;
-    }
-
-    //
-    //    Check the limits
-    //
-    if( file_read_veto( fullname ) )
-    {
-        return 1;
-    }
-
     EmacsString bufname;
 
     bool use_builtin_rule = true;
@@ -1306,9 +1262,11 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
 
     //
     // Now, check to see if the buffer is in use, and perform
-    // appropriate actions
+    // appropriate actions. Allow buffer's name to set to its current
+    // value.
     //
-    if( EmacsBuffer::find( bufname ) != NULL )
+    EmacsBuffer *named_buffer = EmacsBuffer::find( bufname );
+    if( named_buffer != NULL && named_buffer != existing_buffer )
     {
         if( interactive()
         && ask_about_buffer_names != 0 )
@@ -1352,6 +1310,59 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
             bufname = synthname;
         }
     }
+
+    return bufname;
+}
+
+// Visit a file - all the internal logic for this wonderous function
+
+int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const EmacsString &dn )
+{
+    int r_stat;
+    EmacsString fullname;
+    EmacsBufferRef oldb( bf_cur );
+
+    // If no filename is supplied, just return
+    if( fn.isNull() )
+    {
+        return 0;
+    }
+
+    expand_and_default( fn, dn, fullname );
+
+    if( file_is_directory( fullname ) )
+    {
+        error( FormatString("visit-file cannot open directory %s") << fullname );
+        return 0;
+    }
+
+    EmacsBuffer *b = buffers;
+    while( b != NULL && file_name_compare->compare( b->b_fname, fullname ) != 0 )
+    {
+        b = b->b_next;
+    }
+
+    if( b != NULL )
+    {
+        b->set_bf();
+
+        if( windowfiddle )
+        {
+            theActiveView->window_on( bf_cur );
+        }
+
+        return 1;
+    }
+
+    //
+    //    Check the limits
+    //
+    if( file_read_veto( fullname ) )
+    {
+        return 1;
+    }
+
+    EmacsString bufname = makeBufferName( fullname, NULL );
 
     if( bufname.isNull() )
     {
