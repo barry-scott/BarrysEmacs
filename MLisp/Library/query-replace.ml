@@ -12,8 +12,13 @@
 (defun ~query-replace-search-default(~quote-result)
     (if
 	(& query-replace-use-region-for-search (! (error-occurred (mark))))
-        (if ~quote-result
-            (quote (region-to-string))
+        (if
+            (= ~quote-result 2)
+            (ere-quote (region-to-string))
+
+            (= ~quote-result 1)
+            (re-quote (region-to-string))
+
             (region-to-string)
         )
 	""
@@ -25,7 +30,7 @@
 )
 
 (defun
-    ere-query-replace-string(~old-string (get-tty-string "ERE Old pattern: " (~query-replace-search-default 1))
+    ere-query-replace-string(~old-string (get-tty-string "ERE Old pattern: " (~query-replace-search-default 2))
 			  ~new-string (get-tty-string "ERE New string: " (~query-replace-replace-default)))
     
     (~query-replace-string-helper ~old-string ~new-string "ere-query-replace-string" "ere-search-forward" "re-replace-search-text" "ere-replace-string")

@@ -369,7 +369,8 @@ extern int quietly_read_abbrev_file(void);
 # if defined (__unix__) && defined (SUBPROCESSES)
 extern int quit_process(void);
 # endif
-extern int quote_command(void);
+extern int re_quote_command(void);
+extern int ere_quote_command(void);
 extern int quote_character(void);
 extern int re_replace_search_text_command(void);
 extern int re_replace_string(void);
@@ -864,12 +865,14 @@ static void init_fncs_a( void )
 # if defined (__unix__) && defined (SUBPROCESSES)
     EMACS_NEW BoundName( "quit-process", quit_process );
 # endif
-    EMACS_NEW BoundName( "quote", quote_command );
+    EMACS_NEW BoundName( "quote", re_quote_command );
     EMACS_NEW BoundName( "quote-character", quote_character );
+    EMACS_NEW BoundName( "re-quote", re_quote_command );
     EMACS_NEW BoundName( "re-replace-search-text", re_replace_search_text_command );
     EMACS_NEW BoundName( "re-replace-string", re_replace_string );
     EMACS_NEW BoundName( "re-search-forward", re_search_forward );
     EMACS_NEW BoundName( "re-search-reverse", re_search_reverse );
+    EMACS_NEW BoundName( "ere-quote", ere_quote_command );
     EMACS_NEW BoundName( "ere-replace-string", ere_replace_string );
     EMACS_NEW BoundName( "ere-search-forward", ere_search_forward );
     EMACS_NEW BoundName( "ere-search-reverse", ere_search_reverse );

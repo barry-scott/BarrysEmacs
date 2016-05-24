@@ -31,8 +31,7 @@ int looking_at_helper( EmacsSearch::sea_type RE, const char *prompt )
     //    (looking-at str) is true iff we are
     //    currently looking at the given RE
     //
-    EmacsString s;
-    s = getstr( prompt );
+    EmacsString s = getstr( prompt );
 
     sea_glob.looking_at( s, RE );
 
@@ -52,17 +51,25 @@ int ere_looking_at( void )
 
 int search_reverse( void )
 {
-    EmacsString str;
-    int np;
     if( arg <= 0 )
+    {
         arg = 1;
-    str = getstr("Reverse search for: ");
-    np = sea_glob.search( str, -arg, dot, EmacsSearch::sea_type__string );
+    }
+
+    EmacsString str = getstr( "Reverse search for: " );
+    int np = sea_glob.search( str, -arg, dot, EmacsSearch::sea_type__string );
     if( np == 0 && ! ml_err )
-        error(FormatString("Cannot find \"%s\"") << last_search_string.asString() );
+    {
+        error( FormatString("Cannot find \"%s\"") << last_search_string.asString() );
+    }
     else
+    {
         if( np > 0 )
+        {
             set_dot( np );
+        }
+    }
+
     return 0;
 }
 
@@ -272,12 +279,36 @@ int region_around_match( int n )
 //
 // Quote a string to inactivate reg-expr chars
 //
-int quote_command( void )
+int re_quote_command( void )
 {
-    EmacsString s;
-    EmacsString result;
+    EmacsString s = getstr( ": re-quote " );
 
-    s = getstr( ": quote " );
+    EmacsString result;
+    for( int i=0; i<s.length(); i++ )
+    {
+        EmacsChar_t ch = s[i];
+        if( ch == '['
+        || ch == ']'
+        || ch == '*'
+        || ch == '+'
+        || ch == '.'
+        || ch == '\\'
+        || (ch == '^' && i == 0)
+        || (ch == '$' && s[0] == 0) )
+            result.append( (EmacsChar_t)'\\' );
+        result.append( ch );
+    }
+
+    ml_value = result;
+
+    return 0;
+}
+
+int ere_quote_command( void )
+{
+    EmacsString s = getstr( ": ere-quote " );
+
+    EmacsString result;
     for( int i=0; i<s.length(); i++ )
     {
         EmacsChar_t ch = s[i];
