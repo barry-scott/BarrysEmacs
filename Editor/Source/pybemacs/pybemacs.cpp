@@ -45,6 +45,9 @@ extern void init_syntax( void );
 extern int vertical_bar_width;
 
 class BemacsEditor;
+class BemacsModule;
+
+static BemacsModule *bemacs_module = NULL;
 
 void init_python_terminal( BemacsEditor &editor );
 
@@ -277,44 +280,8 @@ public:
     //------------------------------------------------------------
 
     //------------------------------------------------------------
-    void hookUserInterface()
-    {
-        PythonDisallowThreads permission( editor_access_control );
-
-        static std::string fn_name( "hookUserInterface" );
-        try
-        {
-            Py::Tuple all_args( cur_exec->p_nargs );
-
-            for( int i=1; i<=cur_exec->p_nargs; i++ )
-            {
-                {
-                    PythonAllowThreads permission( editor_access_control );
-
-                    if( !eval_arg( i ) )
-                        return;
-                }
-
-                Py::Object arg( convertEmacsExpressionToPyObject( ml_value ) );
-                all_args[ i-1 ] = arg;
-            }
-
-            Py::Object result( self().callMemberFunction( fn_name, all_args ) );
-
-            ml_value = convertPyObjectToEmacsExpression( result );
-        }
-        catch( Py::Exception &e )
-        {
-            ml_value = Expression();
-
-            std::string type( Py::type( e ).str().as_std_string() );
-            std::string value( Py::value( e ).str().as_std_string() );
-            e.clear();
-
-            error( FormatString("error calling \"%s\" - %s( %s )") << fn_name << type << value );
-        }
-    }
-
+    void hookUserInterface();
+    
     int yesNoDialog( int yes, const EmacsString &prompt )
     {
         PythonDisallowThreads permission( editor_access_control );
@@ -890,9 +857,18 @@ public:
 class BemacsModule: public Py::ExtensionModule<BemacsModule>
 {
 public:
+    Py::ExtensionExceptionType bemacs_error;
+    Py::ExtensionExceptionType bemacs_user_interface_error;
+
     BemacsModule()
     : Py::ExtensionModule<BemacsModule>( "_bemacs" ) // this must be name of the file on disk e.g. bemacs.so or bemacs.pyd
+    , bemacs_error()
+    , bemacs_user_interface_error()
     {
+        // exceptions
+        bemacs_error.init( *this, "EmacsError" );
+        bemacs_user_interface_error.init( *this, "UserInterfaceError", bemacs_error );
+
         //
         // init types used by this module
         //
@@ -928,6 +904,10 @@ public:
         d["variable"] = Py::Object( new BemacsVariables );
         d["function"] = Py::Object( new BemacsFunctions );
         d["buffers"] = Py::Object( new BemacsBuffersDict );
+
+        d["EmacsError"] = bemacs_error;
+        d["UserInterfaceError"] = bemacs_user_interface_error;
+
     }
 
     virtual ~BemacsModule()
@@ -982,6 +962,55 @@ public:
 private:
 };
 
+// have to place after BemacsModule is defined as this function uses the module
+void BemacsEditor::hookUserInterface()
+{
+    PythonDisallowThreads permission( editor_access_control );
+
+    static std::string fn_name( "hookUserInterface" );
+    try
+    {
+        Py::Tuple all_args( cur_exec->p_nargs );
+
+        for( int i=1; i<=cur_exec->p_nargs; i++ )
+        {
+            {
+                PythonAllowThreads permission( editor_access_control );
+
+                if( !eval_arg( i ) )
+                    return;
+            }
+
+            Py::Object arg( convertEmacsExpressionToPyObject( ml_value ) );
+            all_args[ i-1 ] = arg;
+        }
+
+        Py::Object result( self().callMemberFunction( fn_name, all_args ) );
+
+        ml_value = convertPyObjectToEmacsExpression( result );
+    }
+    catch( Py::Exception &e )
+    {
+        if( e.matches( bemacs_module->bemacs_user_interface_error ) )
+        {
+            std::string value( Py::value( e ).str().as_std_string() );
+            e.clear();
+
+            error( value );
+        }
+        else
+        {
+            ml_value = Expression();
+
+            std::string type( Py::type( e ).str().as_std_string() );
+            std::string value( Py::value( e ).str().as_std_string() );
+            e.clear();
+
+            error( FormatString("error calling \"%s\" - %s( %s )") << fn_name << type << value );
+        }
+    }
+}
+
 #if defined( _WIN32 )
 #define EXPORT_SYMBOL __declspec( dllexport )
 #else
@@ -995,8 +1024,8 @@ extern "C" EXPORT_SYMBOL PyObject *PyInit__bemacs()
     Py::InitialisePythonIndirectPy::Interface();
 #endif
 
-    static BemacsModule *bemacs = new BemacsModule;
-    return bemacs->module().ptr();
+    bemacs_module = new BemacsModule;
+    return bemacs_module->module().ptr();
 }
 
 // symbol required for the debug version
@@ -1006,8 +1035,6 @@ extern "C" PyObject *PyInit__bemacs_d()
 }
 
 #elif PY_MAJOR_VERSION == 2
-
-static BemacsModule *bemacs_module = NULL;
 
 extern "C" EXPORT_SYMBOL void init_bemacs()
 {

@@ -6,7 +6,8 @@ import sys
 
 _debug = False
 
-pycxx_version = '6.2.8'
+pycxx_version = (6,2,9)
+pycxx_version_str = '%d.%d.%d' % pycxx_version
 
 def debug( msg ):
     if _debug:
@@ -217,7 +218,7 @@ class Compiler:
 
         self.__variables = {}
 
-        self._addVar( 'PYCXX_VER',       pycxx_version )
+        self._addVar( 'PYCXX_VER',       pycxx_version_str )
         self._addVar( 'DEBUG',           'NDEBUG')
 
         self._addFromEnv( 'BUILDER_TOP_DIR' )

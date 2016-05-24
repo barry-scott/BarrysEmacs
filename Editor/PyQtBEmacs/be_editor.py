@@ -190,6 +190,7 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
         self._debugUiHook( 'uiHookOpenFileDialog' )
         try:
             result = self.app.guiOpenFileDialog( title, existing_file, file_filter, detailed )
+            self._debugUiHook( 'uiHookOpenFileDialog result %r' % (result,) )
             if result is None:
                 self.setGuiResultError( 'open-file-dialog cancelled' )
             else:
@@ -236,7 +237,7 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
 
             if error is not None:
                 self._debugUiHook( 'hookUserInterface handler error return' )
-                raise error
+                raise _bemacs.UserInterfaceError( error )
 
             else:
                 self._debugUiHook( 'hookUserInterface handler normal return' )
@@ -244,7 +245,7 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
 
         else:
             self._debugUiHook( 'Unknown command' )
-            raise ValueError( 'Unknown command %r' % (cmd,) )
+            raise _bemacs.UserInterfaceError( 'Unknown command %r' % (cmd,) )
 
     def initGuiResult( self ):
         self.__gui_result_event.clear()
@@ -253,6 +254,7 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
         self.__gui_result_event.wait()
         result = self.__gui_result
         self.__gui_result = None
+        self._debugUiHook( 'getGuiResult result %r' % (result,) )
         return result
 
     def setGuiResultSuccess( self, result ):

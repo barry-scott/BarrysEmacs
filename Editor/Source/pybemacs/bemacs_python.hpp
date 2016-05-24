@@ -1,7 +1,7 @@
 //
 //    bemacs_python.cpp
 //
-//    Copyright (c) 1999-2010 Barry A. Scott
+//    Copyright (c) 1999-2016 Barry A. Scott
 //
 #include "CXX/Objects.hxx"
 #include "CXX/Extensions.hxx"
