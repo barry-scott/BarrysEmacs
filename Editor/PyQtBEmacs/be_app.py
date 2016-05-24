@@ -629,4 +629,4 @@ class MarshalledCall:
         self.function( *self.args )
 
     def __repr__( self ):
-        return 'MarshalledCall: fn=%s nargs=%d' % (self.function.__name__,len(self.args))
+        return 'MarshalledCall: fn=%s nargs=%d' % (self.function.__name__, len(self.args))

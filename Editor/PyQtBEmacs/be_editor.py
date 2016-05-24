@@ -211,7 +211,7 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
 
             out, err = p.communicate( input_string.encode( 'utf-8' ) )
 
-            if '\r\n' in out:
+            if b'\r\n' in out:
                 out = out.decode( 'utf-8' ).replace( '\r\n', '\n' )
             else:
                 out = out.decode( 'utf-8' )
@@ -223,29 +223,39 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
 
     def hookUserInterface( self, *args ):
         self._debugUiHook( 'hookUserInterface( %r )' % (args,) )
-        cmd = args[0]
-        if cmd in self.hook_ui_handlers:
-            self.initGuiResult()
+        self.initGuiResult()
 
-            self._debugUiHook( 'hookUserInterface calling handler' )
-            self.app.marshallToGuiThread( self.hook_ui_handlers[ cmd ], args )
+        self._debugUiHook( 'hookUserInterface calling handler' )
+        self.app.marshallToGuiThread( self.userInterfaceDispatch, args )
 
-            self._debugUiHook( 'hookUserInterface waiting for result' )
-            error, value = self.getGuiResult()
+        self._debugUiHook( 'hookUserInterface waiting for result' )
+        error, value = self.getGuiResult()
 
-            self._debugUiHook( 'hookUserInterface error %r value %r' % (error, value) )
+        self._debugUiHook( 'hookUserInterface error %r value %r' % (error, value) )
 
-            if error is not None:
-                self._debugUiHook( 'hookUserInterface handler error return' )
-                raise _bemacs.UserInterfaceError( error )
-
-            else:
-                self._debugUiHook( 'hookUserInterface handler normal return' )
-                return value
+        if error is not None:
+            self._debugUiHook( 'hookUserInterface handler error return' )
+            raise _bemacs.UserInterfaceError( error )
 
         else:
-            self._debugUiHook( 'Unknown command' )
-            raise _bemacs.UserInterfaceError( 'Unknown command %r' % (cmd,) )
+            self._debugUiHook( 'hookUserInterface handler normal return' )
+            return value
+
+    def userInterfaceDispatch( self, *args ):
+        self._debugUiHook( 'userInterfaceDispatch( %r )' % (args,) )
+        try:
+            cmd = args[0]
+            if cmd in self.hook_ui_handlers:
+                self.hook_ui_handlers[ cmd ]( *args )
+
+            else:
+                self._debugUiHook( 'Unknown command' )
+                raise _bemacs.UserInterfaceError( 'Unknown command %r' % (cmd,) )
+
+        except Exception as e:
+            msg = 'userInterfaceDispatch unhandled exception %s' % (e,)
+            self.log.error( msg )
+            self.setGuiResultError( msg )
 
     def initGuiResult( self ):
         self.__gui_result_event.clear()
