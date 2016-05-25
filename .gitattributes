@@ -72,7 +72,7 @@ HTML/ug_windows.gif -text
 Kits/Linux/DPKG/brand.create-dpkg.sh -text
 Kits/Linux/bemacs.1 -text
 Kits/Linux/bemacs.desktop -text
-Kits/Linux/bemacs.spec -text
+Kits/Linux/bemacs.spec.template -text
 Kits/Windows/bemacs_win64_code.iss -text
 Kits/Windows/brand.bemacs_version.py -text
 Kits/Windows/build-win64.cmd -text

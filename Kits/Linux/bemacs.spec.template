@@ -1,5 +1,5 @@
 Name:           bemacs
-Version:        8.2.3
+Version:        BEMACS-VERSION
 Release:        1%{?dist}
 Summary:        Barry's Emacs
 

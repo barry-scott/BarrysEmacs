@@ -4,7 +4,7 @@
 #
 set -e
 
-sCMD="$1"
+CMD="$1"
 
 echo "Info: Creating source tarball"
 
@@ -28,6 +28,9 @@ popd
 
 tar czf ${KIT_BASENAME}.tar.gz ${KIT_BASENAME}
 popd
+
+echo "Info: creating bemacs.spec"
+python3 bemacs_spec_set_version.py ${V}
 
 echo "Info: Creating SRPM for ${KIT_BASENAME}"
 
