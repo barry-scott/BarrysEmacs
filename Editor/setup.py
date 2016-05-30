@@ -6,7 +6,7 @@ import sys
 
 _debug = False
 
-pycxx_version = (6,2,9)
+pycxx_version = (6,3,0)
 pycxx_version_str = '%d.%d.%d' % pycxx_version
 
 def debug( msg ):
@@ -88,6 +88,7 @@ class Setup:
         self.pycxx_obj_file = [
             Source( self.c_pybemacs, '%(PYCXXSRC)s/cxxsupport.cxx' ),
             Source( self.c_pybemacs, '%(PYCXXSRC)s/cxx_extensions.cxx' ),
+            Source( self.c_pybemacs, '%(PYCXXSRC)s/cxx_exceptions.cxx' ),
             Source( self.c_pybemacs, '%(PYCXXSRC)s/cxxextensions.c' ),
             Source( self.c_pybemacs, '%(PYCXXSRC)s/IndirectPythonInterface.cxx' ),
             ]
