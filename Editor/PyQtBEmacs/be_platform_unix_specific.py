@@ -12,6 +12,7 @@
 
 '''
 import os
+import pathlib
 
 app_dir = None
 library_dir = None
@@ -22,16 +23,16 @@ def getAppDir():
     return app_dir
 
 def getUserDir():
-    return os.environ.get( 'BEMACS_EMACS_USER', os.path.join( os.environ['HOME'], 'bemacs' ) )
+    return pathlib.Path( os.environ.get( 'BEMACS_EMACS_USER', os.path.join( os.environ['HOME'], 'bemacs' ) ) )
 
 def getLibraryDir():
-    return os.environ.get( 'BEMACS_EMACS_LIBRARY', library_dir )
+    return pathlib.Path( os.environ.get( 'BEMACS_EMACS_LIBRARY', library_dir ) )
 
 def getLocalePath( app ):
-    return os.path.join( app_dir, 'locale' )
+    return app_dir / 'locale'
 
 def getDocUserGuide():
-    return os.path.join( doc_dir, 'emacs-documentation.html' )
+    return doc_dir / 'emacs-documentation.html'
 
 def getNullDevice():
     return '/dev/null'
@@ -40,20 +41,20 @@ def setupPlatformSpecific_( argv0 ):
     global app_dir
 
     if argv0.startswith( '/' ):
-        app_dir = os.path.dirname( argv0 )
+        app_dir = pathlib.Path( argv0 ).parents
 
     elif '/' in argv0:
-            app_dir = os.path.dirname( os.path.abspath( argv0 ) )
+        app_dir = pathlib.Path( argv0 ).resolve().parents
 
     else:
-        for folder in [s.strip() for s in os.environ.get( 'PATH', '' ).split( ':' )]:
-            app_path = os.path.abspath( os.path.join( folder, argv0 ) )
-            if os.path.exists( app_path ):
-                app_dir = os.path.dirname( app_path )
+        for folder in [pathlib.Path( s.strip() ) for s in os.environ.get( 'PATH', '' ).split( ':' )]:
+            app_path = folder / argv0
+            if app_path.exists():
+                app_dir = app_path.parents
                 break
 
     if app_dir == None:
-        app_dir = os.getcwd()
+        app_dir = pathlib.Path( os.getcwd() )
 
 # build will add definition of library_dir
 # build will add definition of doc_dir

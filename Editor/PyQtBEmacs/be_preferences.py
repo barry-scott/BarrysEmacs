@@ -1,6 +1,6 @@
 '''
  ====================================================================
- Copyright (c) 2003-2010 Barry A Scott.  All rights reserved.
+ Copyright (c) 2003-2016 Barry A Scott.  All rights reserved.
 
  This software is licensed as described in the file LICENSE.txt,
  which you should have received as part of this distribution.
@@ -11,375 +11,153 @@
     be_preferences.py
 
 '''
-import pprint
-
+import pathlib
 import sys
-import os
-import time
 
-import xml.parsers.expat
-import xml.dom.minidom
-import xml.sax.saxutils
+from  xml_preferences import XmlPreferences, Scheme, SchemeNode, PreferencesNode
 
-class ParseError(Exception):
-    def __init__( self, value ):
-        self.value = value
+import be_emacs_panel
 
-    def __str__( self ):
-        return str(self.value)
 
-    def __repr__( self ):
-        return repr(self.value)
+class Preferences(PreferencesNode):
+    def __init__( self ):
+        self.window = None
 
-class Preferences:
-    def __init__( self, app, pref_filename ):
-        self.app = app
-        self.pref_filename = pref_filename
+    def finaliseNode( self ):
+        if self.window is None:
+            self.window = Window()
+            self.window.finaliseNode()
 
-        self.pref_data = None
-
-        # all the preference section handles get created here
-        self.pref_handlers = {}
-        self.pref_handlers['Window'] = WindowPreferences( self.app )
-        self.pref_handlers['Font'] = FontPreferences( self.app )
-
-        # read preferences into the handlers
-        self.readPreferences()
-
-    def readPreferences( self ):
-        try:
-            self.pref_data = PreferenceData( self.app.log, self.pref_filename )
-
-        except ParseError as e:
-            self.app.log.error( str(e) )
-            return
-
-        for handler in self.pref_handlers.values():
-            if self.pref_data.has_section( handler.section_name ):
-                handler.readPreferences( self.pref_data )
-
-    def __getattr__( self, name ):
-        # support getProjects(), getFoobars() etc.
-        if name[0:3] == 'get':
-            section_name = name[3:]
-            if section_name in self.pref_handlers:
-                return self.pref_handlers[ section_name ]
-
-        raise AttributeError( '%s has no attribute %s' % (self.__class__.__name__, name ) )
-
-    def writePreferences( self ):
-        try:
-            for handler in self.pref_handlers.values():
-                self.pref_data.remove_section( handler.section_name )
-                self.pref_data.add_section( handler.section_name )
-                handler.writePreferences( self.pref_data )
-
-            # write the prefs so that a failure to write does not
-            # destroy the original
-            # also keep one backup copy
-            new_name = self.pref_filename + '.tmp'
-            old_name = self.pref_filename + '.old'
-
-            f = open( new_name, 'w' )
-            self.pref_data.write( f )
-            f.close()
-            if os.path.exists( self.pref_filename ):
-                if os.path.exists( old_name ): # os.rename does not delete automatically on Windows.
-                    os.remove( old_name )
-                os.rename( self.pref_filename, old_name )
-            os.rename( new_name, self.pref_filename )
-
-            self.app.log.info( 'Wrote preferences to %s' % self.pref_filename )
-
-        except EnvironmentError as e:
-            self.app.log.error( 'write preferences: %s' % e )
-
-class PreferenceData:
-    def __init__( self, log, xml_pref_filename ):
-        self.all_sections = {}
-
-        if os.path.exists( xml_pref_filename ):
-            log.info( 'Reading preferences from %s' % xml_pref_filename )
-            self.__readXml( xml_pref_filename )
-
-    def __readXml( self, xml_pref_filename ):
-        try:
-            f = open( xml_pref_filename, 'r' )
-            text = f.read()
-            f.close()
-
-            dom = xml.dom.minidom.parseString( text )
-
-        except IOError as e:
-            raise ParseError( str(e) )
-
-        except xml.parsers.expat.ExpatError as e:
-            raise ParseError( str(e) )
-
-        prefs = dom.getElementsByTagName( 'bemacs-preferences' )[0]
-
-        self.__parseXmlChildren( prefs, self.all_sections )
-
-    def __parseXmlChildren( self, parent, data_dict ):
-        for child in parent.childNodes:
-            if child.nodeType == xml.dom.minidom.Node.ELEMENT_NODE:
-
-                if self.__hasChildElements( child ):
-                    child_data_dict = {}
-                    if child.nodeName in data_dict:
-                        if type(data_dict[ child.nodeName ]) != list:
-                            data_dict[ child.nodeName ] = [data_dict[ child.nodeName], child_data_dict]
-                        else:
-                            data_dict[ child.nodeName ].append( child_data_dict )
-                    else:
-                        data_dict[ child.nodeName ] = child_data_dict
-
-                    self.__parseXmlChildren( child, child_data_dict )
-                else:
-                    data_dict[ child.nodeName ] = self.__getText( child )
-
-    def __hasChildElements( self, parent ):
-        for child in parent.childNodes:
-            if child.nodeType == xml.dom.minidom.Node.ELEMENT_NODE:
-                return True
-        return False
-
-    def __getText( self, parent ):
-        all_text = []
-
-        for child in parent.childNodes:
-            if child.nodeType == xml.dom.minidom.Node.TEXT_NODE:
-                all_text.append( child.nodeValue )
-
-        return ''.join( all_text )
-
-    def __getElem( self, element_path ):
-        node = self._dom
-        for element_name in element_path:
-            children = node.childNodes
-            node = None
-            for child in children:
-                if child.nodeType == xml.dom.minidom.Node.ELEMENT_NODE and child.nodeName == element_name:
-                    node = child
-                    break
-            if node is None:
-                break
-
-        return node
-
-    def __getAttr( self, element_path, attrib_name ):
-        element = self.getElement( element_path )
-        if element.hasAttributes() and attrib_name in element.attributes:
-            return element.attributes[ attrib_name ].value
-        return default
-
-
-    def has_section( self, section_name ):
-        return section_name in self.all_sections
-
-    def len_section( self, section_name, option_name ):
-        if type(self.all_sections[ section_name ][ option_name ]) == list:
-            length = len( self.all_sections[ section_name ][ option_name ] )
-        else:
-            length = 1
-        return length
-
-    def has_option( self, section_name, option_name ):
-        return option_name in self.all_sections[ section_name ]
-
-    def get( self, section_name, option_name ):
-        return self.all_sections[ section_name ][ option_name ]
-
-    def getint( self, section_name, option_name ):
-        return int( self.get( section_name, option_name ).strip() )
-
-    def getfloat( self, section_name, option_name ):
-        return float( self.get( section_name, option_name ).strip() )
-
-    def getboolean( self, section_name, option_name ):
-        return self.get( section_name, option_name ).strip().lower() == 'true'
-
-    def remove_section( self, section_name ):
-        if section_name in self.all_sections:
-            del self.all_sections[ section_name ]
-
-    def add_section( self, section_name ):
-        self.all_sections[ section_name ] = {}
-
-    def append_dict( self, section_name, list_name, data ):
-        item_list = self.all_sections[ section_name ].setdefault( list_name, [] )
-        item_list.append( data )
-
-    def set( self, section_name, option_name, value ):
-        self.all_sections[ section_name ][ option_name ] = value
-
-    def write( self, f ):
-        f.write( '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' )
-        f.write( '<bemacs-preferences>\n' )
-        f.write( '<!-- written: %s -->\n' % time.strftime( '%Y-%m-%d %H:%M:%S' ) )
-        self.__writeDictionary( f, self.all_sections, 4 )
-        f.write( '</bemacs-preferences>\n' )
-
-    def __writeDictionary( self, f, d, indent ):
-        for key_name in sorted( d.keys() ):
-            value = d[ key_name ]
-            if type(value) == dict:
-                if len(value) > 0:
-                    f.write( '%*s<%s>\n' % (indent, '', key_name) )
-                    self.__writeDictionary( f, value, indent + 4 )
-                    f.write( '%*s</%s>\n' % (indent, '', key_name) )
-
-            elif type(value) == list:
-                for item in value:
-                    f.write( '%*s<%s>\n' % (indent, '', key_name) )
-                    self.__writeDictionary( f, item, indent + 4 )
-                    f.write( '%*s</%s>\n' % (indent, '', key_name) )
-
-            elif type(value) == int:
-                f.write( '%*s<%s>%d</%s>\n' % (indent, '', key_name, value, key_name) )
-
-            elif type(value) == float:
-                f.write( '%*s<%s>%f</%s>\n' % (indent, '', key_name, value, key_name) )
-
-            elif type(value) == bool:
-                f.write( '%*s<%s>%r</%s>\n' % (indent, '', key_name, value, key_name) )
-
-            elif type(value) == bytes:
-                f.write( '%*s<%s>%s</%s>\n' % (indent, '', key_name, value.decode('utf-8'), key_name) )
-
-            elif type(value) == str:
-                f.write( '%*s<%s>%s</%s>\n' % (indent, '', key_name, value, key_name) )
-
-            else:
-                raise RuntimeError( 'no encoder for %s %r' % (key_name, value) )
-
-class PreferenceSection:
-    def __init__( self, section_name ):
-        self.section_name = section_name
-
-    def readPreferences( self, pref_data ):
-        pass
-
-    def writePreferences( self, pref_data ):
-        pass
-
-    # support being returned by the __getattr__ above
-    def __call__( self ):
-        return self
-
-class GetOption:
-    def __init__( self, pref_data, section_name ):
-        self.pref_data = pref_data
-        self.section_name = section_name
-
-    def has( self, name ):
-        return self.pref_data.has_option( self.section_name, name )
-
-    def getstr( self, name ):
-        return self.pref_data.get( self.section_name, name ).strip()
-
-    def getint( self, name ):
-        return self.pref_data.getint( self.section_name, name )
-
-    def getfloat( self, name ):
-        return self.pref_data.getfloat( self.section_name, name )
-
-    def getbool( self, name ):
-        return self.pref_data.getboolean( self.section_name, name )
-
-    def getstrlist( self, name, sep ):
-        s = self.getstr( name )
-        if len(s) == 0:
-            return []
-        return [p.strip() for p in s.split( sep )]
-
-class SetOption:
-    def __init__( self, pref_data, section_name ):
-        self.pref_data = pref_data
-        self.section_name = section_name
-
-    def set( self, name, value, sep='' ):
-        if type(value) == list:
-            value = sep.join( value )
-
-        self.pref_data.set( self.section_name, name, value )
-
-class GetIndexedOption:
-    def __init__( self, pref_data, section_name, index, index_name ):
-        self.pref_list = pref_data.get( section_name, index_name )
-        if type(self.pref_list) != list:
-            self.pref_list = [self.pref_list]
-
-        self.index = index
-
-    def has( self, name ):
-        return name in self.pref_list[ self.index ]
-
-    def get( self, name ):
-        return self.pref_list[ self.index ][ name ]
-
-    def getstr( self, name ):
-        return self.get( name ).strip()
-
-    def getint( self, name ):
-        return int( self.getstr( name ) )
-
-    def getfloat( self, name ):
-        return float( self.getstr( name ) )
-
-    def getbool( self, name ):
-        return self.getstr( name ) == 'true'
-
-class WindowPreferences(PreferenceSection):
-    def __init__( self, app ):
-        PreferenceSection.__init__( self, 'Window' )
-        self.app = app
-
-        self.__geometry = None
-
-    def readPreferences( self, pref_data ):
-        get_option = GetOption( pref_data, self.section_name )
-
-        if get_option.has( 'geometry' ):
-            self.__geometry = get_option.getstr( 'geometry' )
-
-    def writePreferences( self, pref_data ):
-        set_option = SetOption( pref_data, self.section_name )
-
-        if self.__geometry is not None:
-            set_option.set( 'geometry', self.__geometry )
+class Window(PreferencesNode):
+    def __init__( self ):
+        self.geometry = None
+        self.font = None
+        self.all_colours = {}
 
     def getFrameGeometry( self ):
-        return self.__geometry
+        return self.geometry
 
     def setFrameGeometry( self, geometry ):
-        self.__geometry = geometry
+        self.geometry = geometry.decode('utf-8')
 
-class FontPreferences(PreferenceSection):
-    def __init__( self, app ):
-        PreferenceSection.__init__( self, 'Font' )
-        self.app = app
+    def getColour( self, name ):
+        return self.all_colours[ name ]
 
-        self.point_size = 14
-        # point size and face need to choosen for platform
+    def finaliseNode( self ):
+        if self.font is None:
+            self.font = Font()
+            self.font.finaliseNode()
+
+        for name, mask, fg, bg in be_emacs_panel.all_colour_defaults:
+            if name not in self.all_colours:
+                self.all_colours[ name ] = Colour( name, fg, bg )
+
+    def setChildNodeMap( self, name, key, node ):
+        if name == 'colour':
+            self.all_colours[ key ] = node
+
+        else:
+            raise RuntimeError( 'unknown name %r' % (name,) )
+
+    def getChildNodeMap( self, name ):
+        if name == 'colour':
+            return sorted( self.all_colours.values() )
+
+        else:
+            raise RuntimeError( 'unknown name %r' % (name,) )
+
+class Font(PreferencesNode):
+    def __init__( self ):
+        # point size and face need to chosen by platform
         if sys.platform.startswith( 'win' ):
             self.face = 'Courier New'
+            self.point_size = 14
 
         elif sys.platform == 'darwin':
             self.face = 'Monaco'
+            self.point_size = 14
 
         else:
             # Assuming linux/xxxBSD
             self.face = 'Liberation Mono'
             self.point_size = 11
 
-    def readPreferences( self, pref_data ):
-        get_option = GetOption( pref_data, self.section_name )
-        self.face = get_option.getstr( 'face' )
-        self.point_size = get_option.getint( 'point_size' )
+    def setAttr( self, name, value ):
+        if name == 'point_size':
+            self.point_size = int(value)
 
-    def writePreferences( self, pref_data ):
-        set_option = SetOption( pref_data, self.section_name )
+        else:
+            super().setAttr( name, value )
 
-        set_option.set( 'face', self.face )
-        set_option.set( 'point_size', self.point_size )
+class Colour(PreferencesNode):
+    def __init__( self, name, fg=None, bg=None ):
+        self.name = name
+        self.fg = fg
+        self.bg = bg
+
+    def __lt__( self, other ):
+        return self.name < other.name
+
+    def setAttr( self, name, value ):
+        if name == 'fg':
+            self.fg = tuple( [int(v) for v in value.split(',')] )
+
+        elif name == 'bg':
+            self.bg = tuple( [int(v) for v in value.split(',')] )
+
+        else:
+            super().setAttr( name, value )
+
+    def getAttr( self, name ):
+        if name == 'fg':
+            return '%d,%d,%d' % self.fg
+
+        elif name == 'bg':
+            return '%d,%d,%d' % self.bg
+
+        else:
+            return super().getAttr( name )
+
+bemacs_preferences_scheme = (Scheme(
+        (SchemeNode( Preferences, 'preferences',  )
+        <<  (SchemeNode( Window, 'window', ('geometry',) )
+            << SchemeNode( Font, 'font', ('point_size', 'face') )
+            << SchemeNode( Colour, 'colour', ('fg', 'bg'), key_attribute='name' )
+            )
+        )
+    ) )
+
+class BemacsPreferenceManager:
+    def __init__( self, app, filename ):
+        self.xml_prefs = XmlPreferences( bemacs_preferences_scheme )
+
+        self.app = app
+
+        self.prefs_filename = filename
+
+        assert isinstance( filename, pathlib.Path )
+
+        try:
+            self.prefs = self.xml_prefs.load( self.prefs_filename )
+
+        except IOError:
+            self.prefs = Preferences()
+            self.prefs.finaliseNode()
+
+    def getPrefs( self ):
+        return self.prefs
+
+    def writePreferences( self ):
+        tmp_filename = self.prefs_filename.with_suffix( '.tmp' )
+
+        self.xml_prefs.saveAs( self.prefs, tmp_filename )
+
+        old_filename = self.prefs_filename.with_suffix( '.old.xml' )
+
+        if self.prefs_filename.exists():
+            if old_filename.exists():
+                old_filename.unlink()
+
+            self.prefs_filename.rename( old_filename )
+
+        tmp_filename.rename( self.prefs_filename )

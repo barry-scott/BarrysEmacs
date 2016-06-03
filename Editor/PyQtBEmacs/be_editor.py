@@ -31,8 +31,8 @@ from PyQt5 import QtGui
 class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
     def __init__( self, app ):
         _bemacs.BemacsEditor.__init__( self,
-                be_platform_specific.getUserDir(),
-                be_platform_specific.getLibraryDir() )
+                str(be_platform_specific.getUserDir()),
+                str(be_platform_specific.getLibraryDir()) )
 
         be_debug.EmacsDebugMixin.__init__( self )
 

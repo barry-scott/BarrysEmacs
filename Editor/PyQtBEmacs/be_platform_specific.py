@@ -10,7 +10,6 @@
     be_platform_specific.py
 
 '''
-
 import sys
 
 if sys.platform == 'win32':
@@ -23,14 +22,14 @@ else:
     from be_platform_unix_specific import *
 
 def getPreferencesFilename():
-    return os.path.join( getUserDir(), 'bemacs.xml' )
+    return getUserDir() / 'bemacs.xml'
 
 def getLogFilename():
-    return os.environ.get( 'BEMACS_GUI_LOG', os.path.join( getUserDir(), 'bemacs.log' ) )
+    return pathlib.Path( os.environ.get( 'BEMACS_GUI_LOG', getUserDir() / 'bemacs.log' ) )
 
 def setupPlatform( argv0 ):
     setupPlatformSpecific_( argv0 )
 
     user_dir = getUserDir()
-    if not os.path.exists( user_dir ):
-        os.makedirs( user_dir )
+    if not user_dir.exists():
+        user_dir.mkdir( parents=True )

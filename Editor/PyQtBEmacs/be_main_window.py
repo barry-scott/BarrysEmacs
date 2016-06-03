@@ -58,7 +58,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
 
         title = T_("Barry's Emacs")
 
-        win_prefs = self.app.prefs.getWindow()
+        win_prefs = self.app.getPrefs().window
 
         super().__init__()
         self.setWindowTitle( title )
@@ -85,7 +85,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         if self.app.may_quit:
             self.log.info( 'closeEvent()' )
 
-            win_prefs = self.app.prefs.getWindow()
+            win_prefs = win_prefs = self.app.getPrefs().window
             win_prefs.setFrameGeometry( self.saveGeometry().toHex().data() )
             self.app.writePreferences()
             event.accept()

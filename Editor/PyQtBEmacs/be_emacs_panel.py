@@ -70,53 +70,29 @@ LINE_ATTR_USER          = SYNTAX_FIRST_FREE<<1  # 200
 LINE_M_ATTR_HIGHLIGHT   = SYNTAX_LAST_BIT       # 400
 LINE_M_ATTR_USER        = LINE_ATTR_USER|(15)   # the 8 user colours
 
-fg_colours = {
-    SYNTAX_DULL:            QtGui.QColor(  0,  0,  0),
-    LINE_M_ATTR_HIGHLIGHT:  QtGui.QColor(  0,  0,  0),
-    SYNTAX_WORD:            QtGui.QColor(  0,  0,  0),
-    SYNTAX_TYPE_STRING1:    QtGui.QColor(  0,128,  0),
-    SYNTAX_TYPE_STRING2:    QtGui.QColor(  0,128,  0),
-    SYNTAX_TYPE_STRING3:    QtGui.QColor(  0,128,  0),
-    SYNTAX_TYPE_COMMENT1:   QtGui.QColor(  0,128,  0),
-    SYNTAX_TYPE_COMMENT2:   QtGui.QColor(  0,128,  0),
-    SYNTAX_TYPE_COMMENT3:   QtGui.QColor(  0,128,  0),
-    SYNTAX_TYPE_KEYWORD1:   QtGui.QColor(  0,  0,255),
-    SYNTAX_TYPE_KEYWORD2:   QtGui.QColor(255,  0,  0),
-    SYNTAX_TYPE_KEYWORD3:   QtGui.QColor(255,  0,  0),
-    LINE_ATTR_MODELINE:     QtGui.QColor(255,255,128),
-    LINE_ATTR_USER+1:       QtGui.QColor(255,  0,  0),
-    LINE_ATTR_USER+2:       QtGui.QColor(  0,255,  0),
-    LINE_ATTR_USER+3:       QtGui.QColor(  0,  0,255),
-    LINE_ATTR_USER+4:       QtGui.QColor(255,255,  0),
-    LINE_ATTR_USER+5:       QtGui.QColor(255,  0,255),
-    LINE_ATTR_USER+6:       QtGui.QColor(  0,255,255),
-    LINE_ATTR_USER+7:       QtGui.QColor(255,255,255),
-    LINE_ATTR_USER+8:       QtGui.QColor(255,255,255),
-    }
-
-bg_colours = {
-    SYNTAX_DULL:            QtGui.QColor(255,255,255),
-    LINE_M_ATTR_HIGHLIGHT:  QtGui.QColor(255,204,102),
-    SYNTAX_WORD:            QtGui.QColor(255,255,255),
-    SYNTAX_TYPE_STRING1:    QtGui.QColor(255,255,255),
-    SYNTAX_TYPE_STRING2:    QtGui.QColor(255,255,255),
-    SYNTAX_TYPE_STRING3:    QtGui.QColor(255,255,255),
-    SYNTAX_TYPE_COMMENT1:   QtGui.QColor(255,255,255),
-    SYNTAX_TYPE_COMMENT2:   QtGui.QColor(255,255,255),
-    SYNTAX_TYPE_COMMENT3:   QtGui.QColor(255,255,255),
-    SYNTAX_TYPE_KEYWORD1:   QtGui.QColor(255,255,255),
-    SYNTAX_TYPE_KEYWORD2:   QtGui.QColor(255,255,255),
-    SYNTAX_TYPE_KEYWORD3:   QtGui.QColor(000,255,255),
-    LINE_ATTR_MODELINE:     QtGui.QColor(  0,  0,255),
-    LINE_ATTR_USER+1:       QtGui.QColor(255,255,255),
-    LINE_ATTR_USER+2:       QtGui.QColor(255,255,255),
-    LINE_ATTR_USER+3:       QtGui.QColor(255,255,255),
-    LINE_ATTR_USER+4:       QtGui.QColor(255,255,255),
-    LINE_ATTR_USER+5:       QtGui.QColor(255,255,255),
-    LINE_ATTR_USER+6:       QtGui.QColor(255,255,255),
-    LINE_ATTR_USER+7:       QtGui.QColor(192,192,192),
-    LINE_ATTR_USER+8:       QtGui.QColor(255,255,255),
-    }
+all_colour_defaults = (
+    ('SYNTAX_DULL',             SYNTAX_DULL,            (  0,  0,  0),  (255,255,255)),
+    ('LINE_M_ATTR_HIGHLIGHT',   LINE_M_ATTR_HIGHLIGHT,  (  0,  0,  0),  (255,204,102)),
+    ('SYNTAX_WORD',             SYNTAX_WORD,            (  0,  0,  0),  (255,255,255)),
+    ('SYNTAX_TYPE_STRING1',     SYNTAX_TYPE_STRING1,    (  0,128,  0),  (255,255,255)),
+    ('SYNTAX_TYPE_STRING2',     SYNTAX_TYPE_STRING2,    (  0,128,  0),  (255,255,255)),
+    ('SYNTAX_TYPE_STRING3',     SYNTAX_TYPE_STRING3,    (  0,128,  0),  (255,255,255)),
+    ('SYNTAX_TYPE_COMMENT1',    SYNTAX_TYPE_COMMENT1,   (  0,128,  0),  (255,255,255)),
+    ('SYNTAX_TYPE_COMMENT2',    SYNTAX_TYPE_COMMENT2,   (  0,128,  0),  (255,255,255)),
+    ('SYNTAX_TYPE_COMMENT3',    SYNTAX_TYPE_COMMENT3,   (  0,128,  0),  (255,255,255)),
+    ('SYNTAX_TYPE_KEYWORD1',    SYNTAX_TYPE_KEYWORD1,   (  0,  0,255),  (255,255,255)),
+    ('SYNTAX_TYPE_KEYWORD2',    SYNTAX_TYPE_KEYWORD2,   (255,  0,  0),  (255,255,255)),
+    ('SYNTAX_TYPE_KEYWORD3',    SYNTAX_TYPE_KEYWORD3,   (255,  0,  0),  (000,255,255)),
+    ('LINE_ATTR_MODELINE',      LINE_ATTR_MODELINE,     (255,255,128),  (  0,  0,255)),
+    ('LINE_ATTR_USER_1',        LINE_ATTR_USER+1,       (255,  0,  0),  (255,255,255)),
+    ('LINE_ATTR_USER_2',        LINE_ATTR_USER+2,       (  0,255,  0),  (255,255,255)),
+    ('LINE_ATTR_USER_3',        LINE_ATTR_USER+3,       (  0,  0,255),  (255,255,255)),
+    ('LINE_ATTR_USER_4',        LINE_ATTR_USER+4,       (255,255,  0),  (255,255,255)),
+    ('LINE_ATTR_USER_5',        LINE_ATTR_USER+5,       (255,  0,255),  (255,255,255)),
+    ('LINE_ATTR_USER_6',        LINE_ATTR_USER+6,       (  0,255,255),  (255,255,255)),
+    ('LINE_ATTR_USER_7',        LINE_ATTR_USER+7,       (255,255,255),  (192,192,192)),
+    ('LINE_ATTR_USER_8',        LINE_ATTR_USER+8,       (255,255,255),  (255,255,255)),
+    )
 
 default_binding =   '\uef00'
 prefix_key =        '\uef01'
@@ -418,6 +394,11 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.app = app
         self.log = app.log
 
+        self.fg_colours = {}
+        self.bg_colours = {}
+
+        self.__setupColours( app.getPrefs().window )
+
         self._debugPanel( '__init__()' )
 
         self.setFocusPolicy( QtCore.Qt.StrongFocus )
@@ -471,7 +452,10 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.update( 0, 0, self.pixel_width, self.pixel_length )
 
     def __initFromPreferences( self ):
-        font_pref = self.app.prefs.getFont()
+        prefs = self.app.getPrefs()
+        self.__setupColours( prefs.window )
+
+        font_pref = prefs.window.font
 
         self.font = QtGui.QFont( font_pref.face, font_pref.point_size )
         #self.font.setFixedPitch( True )
@@ -482,6 +466,13 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         fi = QtGui.QFontInfo( self.font )
         self.log.info( 'Font family: %r %dpt' % (fi.family(), fi.pointSize()) )
+
+    def __setupColours( self, win_prefs ):
+        for name, mask, fg, bg in all_colour_defaults:
+            colour_pref = win_prefs.getColour( name )
+
+            self.fg_colours[ mask ] = QtGui.QColor( *colour_pref.fg )
+            self.bg_colours[ mask ] = QtGui.QColor( *colour_pref.bg )
 
     def __calculateWindowSize( self ):
         assert self.char_width is not None
@@ -500,7 +491,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self._debugPanel( '__calculateWindowSize create editor_pixmap %d x %d' % (self.pixel_width, self.pixel_length) )
         self.editor_pixmap = QtGui.QPixmap( self.pixel_width, self.pixel_length )
 
-        bg_brush = QtGui.QBrush( bg_colours[ SYNTAX_DULL ] )
+        bg_brush = QtGui.QBrush( self.bg_colours[ SYNTAX_DULL ] )
         qp = QtGui.QPainter( self.editor_pixmap )
         qp.setBackgroundMode( QtCore.Qt.OpaqueMode )
         qp.setBackground( bg_brush )
@@ -553,7 +544,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             self.first_paint = False
 
             qp = QtGui.QPainter( self )
-            qp.fillRect( QtCore.QRect( 0, 0, self.pixel_width, self.pixel_length ), bg_colours[ SYNTAX_DULL ] )
+            qp.fillRect( QtCore.QRect( 0, 0, self.pixel_width, self.pixel_length ), self.bg_colours[ SYNTAX_DULL ] )
             del qp
 
             self.__calculateWindowSize()
@@ -908,10 +899,10 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.qp = QtGui.QPainter( self.editor_pixmap )
         #self.qp.setRenderHint( self.qp.TextAntialiasing, False )
 
-        self.qp.setBackground( bg_colours[ SYNTAX_DULL ] )
+        self.qp.setBackground( self.bg_colours[ SYNTAX_DULL ] )
         self.qp.setBackgroundMode( QtCore.Qt.OpaqueMode )
         self.qp.setFont( self.font )
-        self.qp.setPen( fg_colours[ SYNTAX_DULL ] )
+        self.qp.setPen( self.fg_colours[ SYNTAX_DULL ] )
 
         self.__executeTermOperations()
 
@@ -1090,8 +1081,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
                 or draw_cols[ end-1 ]+1 != draw_cols[ end ] ):
                     if cur_mode != draw_modes[ start ]:
                         cur_mode = draw_modes[ start ]
-                        self.qp.setPen( QtGui.QPen( fg_colours[ cur_mode ] ) )
-                        self.qp.setBackground( bg_colours[ cur_mode ] )
+                        self.qp.setPen( QtGui.QPen( self.fg_colours[ cur_mode ] ) )
+                        self.qp.setBackground( self.bg_colours[ cur_mode ] )
 
                     x, y = self.__pixelPoint( draw_cols[ start ] + 1, row )
 
@@ -1111,7 +1102,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         remaining_width = self.term_width - new_line_length
         if remaining_width > 0:
-            bg_brush = QtGui.QBrush( bg_colours[ SYNTAX_DULL ] )
+            bg_brush = QtGui.QBrush( self.bg_colours[ SYNTAX_DULL ] )
             x, y = self.__pixelPoint( new_line_length+1, row )
             self.qp.fillRect( x, y, remaining_width*self.char_width, self.char_length, bg_brush )
 
@@ -1168,8 +1159,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
                 if cur_mode != mode:
                     cur_mode = mode
-                    self.qp.setPen( QtGui.QPen( fg_colours[ cur_mode ] ) ) 
-                    self.qp.setBackground( bg_colours[ cur_mode ] )
+                    self.qp.setPen( QtGui.QPen( self.fg_colours[ cur_mode ] ) ) 
+                    self.qp.setBackground( self.bg_colours[ cur_mode ] )
 
             x, y = self.__pixelPoint( col+1, row )
 
@@ -1179,7 +1170,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         remaining_width = self.term_width - new_line_length
         if remaining_width > 0:
-            bg_brush = QtGui.QBrush( bg_colours[ SYNTAX_DULL ] )
+            bg_brush = QtGui.QBrush( self.bg_colours[ SYNTAX_DULL ] )
             x, y = self.__pixelPoint( new_line_length+1, row )
             self.qp.fillRect( x, y, remaining_width*self.char_width, self.char_length, bg_brush )
 

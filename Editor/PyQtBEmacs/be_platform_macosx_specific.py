@@ -12,17 +12,18 @@
 
 '''
 import os
+import pathlib
 
 app_dir = None
 
 def getAppDir():
     assert app_dir is not None, 'call setupPlatformSpecific_() first'
-    return app_dir
+    return pathlib.Path( app_dir )
 
 def getUserDir():
     folder = os.environ.get( 'BEMACS_EMACS_USER', os.path.join( os.environ['HOME'], 'bemacs' ) )
     assert folder is not None
-    return folder
+    return pathlib.Path( folder )
 
 def getLibraryDir():
     assert app_dir is not None
@@ -44,16 +45,16 @@ def setupPlatformSpecific_( argv0 ):
     global app_dir
 
     if argv0.startswith( '/' ):
-        app_dir = os.path.dirname( argv0 )
+        app_dir = pathlib.Path( argv0 ).parents
 
     elif '/' in argv0:
-            app_dir = os.path.dirname( os.path.abspath( argv0 ) )
+        app_dir = pathlib.Path( argv0 ).resolve().parents
 
     else:
-        for folder in [p.strip() for p in ['.'] + os.environ.get( 'PATH', '' ).split( ':' )]:
-            app_path = os.path.abspath( os.path.join( folder, argv0 ) )
-            if os.path.exists( app_path ):
-                app_dir = os.path.abspath( os.path.dirname( app_path ) )
+        for folder in [pathlib.Path( p.strip() ) for p in ['.'] + os.environ.get( 'PATH', '' ).split( ':' )]:
+            app_path = (folder / argv0).resolve()
+            if app_path.exists():
+                app_dir = app_dir.parents
                 break
 
     assert app_dir is not None

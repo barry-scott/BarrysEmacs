@@ -13,6 +13,7 @@
 '''
 import os
 import ctypes
+import pathlib
 
 SHGFP_TYPE_CURRENT = 0
 SHGFP_TYPE_DEFAULT = 1
@@ -32,7 +33,7 @@ def getUserDir():
     app_folder = ctypes.create_unicode_buffer( MAX_PATH + 1 )
     ctypes.windll.shell32.SHGetFolderPathW( 0, CSIDL_PROFILE, None, SHGFP_TYPE_CURRENT, ctypes.byref( app_folder ) )
     user_dir = os.environ.get( 'BEMACS_USER', os.path.join( app_folder.value, 'bemacs' ) )
-    return user_dir
+    return pathlib.Path( user_dir )
 
 def getLibraryDir():
     return os.environ.get(
@@ -54,14 +55,14 @@ def setupPlatformSpecific_( argv0 ):
     global app_dir
 
     if argv0[1:3] ==':\\':
-        app_dir = os.path.dirname( argv0 )
+        app_dir = pathlib.Path( argv0 ).parents
 
     elif '\\' in argv0:
-            app_dir = os.path.dirname( os.path.abspath( argv0 ) )
+        app_dir = pathlib.Path( argv0 ).resolve().parents
 
     else:
         for folder in [os.getcwd()] + [p.strip() for p in os.environ.get( 'PATH', '' ).split( ';' )]:
-            app_path = os.path.join( folder, argv0 )
-            if os.path.exists( app_path ):
-                app_dir = os.path.dirname( app_path )
+            app_path = pathlib.Path( folder ) / argv0
+            if app_path.exists():
+                app_dir = app_path.parents
                 break

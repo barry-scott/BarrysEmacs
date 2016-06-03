@@ -70,7 +70,7 @@ class FontTab(QtWidgets.QWidget):
         self.initControls()
 
     def initControls( self ):
-        p = self.app.prefs.getFont()
+        p = self.app.getPrefs().window.font
 
         self.face = p.face
         self.point_size = p.point_size
@@ -93,7 +93,8 @@ class FontTab(QtWidgets.QWidget):
         self.setLayout( self.grid_sizer )
 
     def savePreferences( self ):
-        p = self.app.prefs.getFont()
+        p = self.app.getPrefs().window.font
+
         p.face = self.face
         p.point_size = self.point_size
 

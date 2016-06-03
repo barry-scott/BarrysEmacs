@@ -127,7 +127,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         locale_path = be_platform_specific.getLocalePath( self )
         self.translation = gettext.translation(
                 'bemacs',
-                locale_path,
+                str(locale_path),
                 # language defaults
                 fallback=True )
 
@@ -146,7 +146,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
 
         self.log.info( 'startup_dir %s' % (self.startup_dir,) )
         self.log.info( 'locale_path %s' % (locale_path,) )
-        self.log.info( 'find %r' % (gettext.find( 'bemacs', locale_path ),) )
+        self.log.info( 'find %r' % (gettext.find( 'bemacs', str(locale_path) ),) )
         self.log.info( 'info %r' % (self.translation.info(),) )
         self.log.info( T_("Barry's Emacs") )
 
@@ -154,7 +154,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         self.log.info( 'emacs_user %s' % (be_platform_specific.getUserDir(),) )
         self.log.info( 'emacs_library %s' % (be_platform_specific.getLibraryDir(),) )
 
-        self.prefs = be_preferences.Preferences(
+        self.prefs_mgr = be_preferences.BemacsPreferenceManager(
                 self,
                 be_platform_specific.getPreferencesFilename() )
 
@@ -162,13 +162,11 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         self.log.info( 'Qt argv[0] %r' % (sys.argv[0],) )
         self.log.info( 'Qt libraryPaths %r' % (QtWidgets.QApplication.libraryPaths(),) )
 
-        qt_plugin_dir = os.path.join(
-                            be_platform_specific.getAppDir(),
-                            'plugins' )
+        qt_plugin_dir = be_platform_specific.getAppDir() / 'plugins'
 
-        if os.path.exists( qt_plugin_dir ):
+        if qt_plugin_dir.exists():
             self.log.info( 'Settings Qt libraryPaths to %s' % (qt_plugin_dir,) )
-            QtWidgets.QApplication.setLibraryPaths( [qt_plugin_dir] )
+            QtWidgets.QApplication.setLibraryPaths( [str(qt_plugin_dir)] )
 
 	# init QApplication now that we have the plugin dir setup
         QtWidgets.QApplication.__init__( self, [sys.argv[0]] )
@@ -178,6 +176,9 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         try_wrapper = be_exceptions.TryWrapperFactory( self.log )
 
         self.MarshallToGuiThreadSignal.connect( self.handleMarshallToGuiThread )
+
+    def getPrefs( self ):
+        return self.prefs_mgr.getPrefs()
 
     def event( self, event ):
         self._debugApp( 'BemacsApp.event() type() %r  %s' %
@@ -255,7 +256,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         self.main_window.refreshFrame()
 
     def writePreferences( self ):
-        self.prefs.writePreferences()
+        self.prefs_mgr.writePreferences()
 
     # notify app that the emacs panel is ready for use
     def onEmacsPanelReady( self ):
@@ -483,7 +484,7 @@ class RotatingFileHandler(logging.FileHandler):
 
         If maxBytes is zero, rollover never occurs.
         """
-        logging.FileHandler.__init__(self, filename, mode)
+        logging.FileHandler.__init__(self, str(filename), mode)
         self.maxBytes = maxBytes
         self.backupCount = backupCount
         if maxBytes > 0:
