@@ -301,7 +301,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
             return
 
         # replace \ on windows with / for a good URL.
-        url = 'file:///%s' % (str(ser_guide).replace( '\\', '/' ),)
+        url = user_guide.as_uri()
         url = QtCore.QUrl( url )
 
         rc = QtGui.QDesktopServices.openUrl( url )
