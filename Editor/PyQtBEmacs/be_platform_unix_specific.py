@@ -41,19 +41,19 @@ def setupPlatformSpecific_( argv0 ):
     global app_dir
 
     if argv0.startswith( '/' ):
-        app_dir = pathlib.Path( argv0 ).parents
+        app_dir = pathlib.Path( argv0 ).parent
 
     elif '/' in argv0:
-        app_dir = pathlib.Path( argv0 ).resolve().parents
+        app_dir = pathlib.Path( argv0 ).resolve().parent
 
     else:
         for folder in [pathlib.Path( s.strip() ) for s in os.environ.get( 'PATH', '' ).split( ':' )]:
             app_path = folder / argv0
             if app_path.exists():
-                app_dir = app_path.parents
+                app_dir = app_path.parent
                 break
 
-    if app_dir == None:
+    if app_dir is None:
         app_dir = pathlib.Path( os.getcwd() )
 
 # build will add definition of library_dir

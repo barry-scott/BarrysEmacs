@@ -45,16 +45,16 @@ def setupPlatformSpecific_( argv0 ):
     global app_dir
 
     if argv0.startswith( '/' ):
-        app_dir = pathlib.Path( argv0 ).parents
+        app_dir = pathlib.Path( argv0 ).parent
 
     elif '/' in argv0:
-        app_dir = pathlib.Path( argv0 ).resolve().parents
+        app_dir = pathlib.Path( argv0 ).resolve().parent
 
     else:
         for folder in [pathlib.Path( p.strip() ) for p in ['.'] + os.environ.get( 'PATH', '' ).split( ':' )]:
             app_path = (folder / argv0).resolve()
             if app_path.exists():
-                app_dir = app_dir.parents
+                app_dir = app_dir.parent
                 break
 
     assert app_dir is not None

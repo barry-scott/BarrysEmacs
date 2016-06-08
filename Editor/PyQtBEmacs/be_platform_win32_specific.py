@@ -55,14 +55,14 @@ def setupPlatformSpecific_( argv0 ):
     global app_dir
 
     if argv0[1:3] ==':\\':
-        app_dir = pathlib.Path( argv0 ).parents
+        app_dir = pathlib.Path( argv0 ).parent
 
     elif '\\' in argv0:
-        app_dir = pathlib.Path( argv0 ).resolve().parents
+        app_dir = pathlib.Path( argv0 ).resolve().parent
 
     else:
         for folder in [os.getcwd()] + [p.strip() for p in os.environ.get( 'PATH', '' ).split( ';' )]:
             app_path = pathlib.Path( folder ) / argv0
             if app_path.exists():
-                app_dir = app_path.parents
+                app_dir = app_path.parent
                 break
