@@ -1,6 +1,6 @@
 //    Copyright (c) 1982-1994
 //        Barry A. Scott and Nick Emery
-//    Copyright (c) 1995-2010
+//    Copyright (c) 1995-2016
 //        Barry A. Scott
 //
 // A random assortment of commands: help facilities, macros, key bindings
@@ -384,22 +384,24 @@ int describe_bindings( void )
 
     EmacsBuffer::scratch_bfn( EmacsString("Help"), 1 );
 
-    bf_cur->ins_str("Global Bindings (" );
+    if( local_map != NULL && local_map != current_global_map )
+    {
+        bf_cur->ins_str( "Local bindings (" );
+        bf_cur->ins_cstr( local_map->k_name );
+        bf_cur->ins_str( "):\n"
+            "Key                             Binding\n"
+            "---                             -------\n" );
+
+        scan_map( local_map, describe1, false );
+    }
+
+    bf_cur->ins_str("\nGlobal Bindings (" );
     bf_cur->ins_cstr( current_global_map->k_name );
     bf_cur->ins_str( "):\n"
         "Key                             Binding\n"
         "---                             -------\n" );
 
     scan_map( current_global_map, describe1, false );
-
-    if( local_map != NULL && local_map != current_global_map )
-    {
-        bf_cur->ins_str( "\nLocal bindings (" );
-        bf_cur->ins_cstr( local_map->k_name );
-        bf_cur->ins_str( "):\n" );
-
-        scan_map( local_map, describe1, false );
-    }
 
     beginning_of_file();
     bf_cur->b_modified = 0;
