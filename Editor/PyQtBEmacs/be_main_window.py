@@ -296,12 +296,12 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
 
     def onActDocumentation( self ):
         user_guide = be_platform_specific.getDocUserGuide()
-        if not os.path.exists( user_guide ):
+        if not user_guide.exists():
             self.log.error( 'Expected user guide %r to exist' % (user_guide,) )
             return
 
         # replace \ on windows with / for a good URL.
-        url = 'file:///%s' % (user_guide.replace( '\\', '/' ),)
+        url = 'file:///%s' % (str(ser_guide).replace( '\\', '/' ),)
         url = QtCore.QUrl( url )
 
         rc = QtGui.QDesktopServices.openUrl( url )

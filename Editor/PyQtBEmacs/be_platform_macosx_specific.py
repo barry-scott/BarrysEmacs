@@ -18,7 +18,7 @@ app_dir = None
 
 def getAppDir():
     assert app_dir is not None, 'call setupPlatformSpecific_() first'
-    return pathlib.Path( app_dir )
+    return app_dir
 
 def getUserDir():
     folder = os.environ.get( 'BEMACS_EMACS_USER', os.path.join( os.environ['HOME'], 'bemacs' ) )
@@ -27,16 +27,15 @@ def getUserDir():
 
 def getLibraryDir():
     assert app_dir is not None
-    folder = os.environ.get( 'BEMACS_EMACS_LIBRARY', os.path.join( app_dir, 'emacs_library' ) )
-    assert folder is not None
-    assert os.path.exists( folder )
+    folder = pathlib.Path( os.environ.get( 'BEMACS_EMACS_LIBRARY', app_dir / 'emacs_library' ) )
+    assert folder.exists()
     return folder
 
 def getLocalePath( app ):
-    return os.path.join( app_dir, 'locale' )
+    return app_dir / 'locale'
 
 def getDocUserGuide():
-    return os.path.join( app_dir, 'documentation/emacs-documentation.html' )
+    return app_dir / 'documentation/emacs-documentation.html'
 
 def getNullDevice():
     return '/dev/null'
@@ -54,7 +53,7 @@ def setupPlatformSpecific_( argv0 ):
         for folder in [pathlib.Path( p.strip() ) for p in ['.'] + os.environ.get( 'PATH', '' ).split( ':' )]:
             app_path = (folder / argv0).resolve()
             if app_path.exists():
-                app_dir = app_dir.parent
+                app_dir = app_path.parent
                 break
 
     assert app_dir is not None
