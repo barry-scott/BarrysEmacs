@@ -268,7 +268,7 @@ EmacsBufferJournal *EmacsBufferJournal::_journalStart( void )
             open_record->jnl_open.jnl_type = JNL_FILENAME;
             if( p.length() > JNL_MAX_NAME_LENGTH )
             {
-                error( FormatString("Unable to create journal becuase file name is longer then %d") << JNL_MAX_NAME_LENGTH );
+                error( FormatString("Unable to create journal because file name is longer then %d") << JNL_MAX_NAME_LENGTH );
                 delete jnl;
                 return NULL;
             }
@@ -280,7 +280,7 @@ EmacsBufferJournal *EmacsBufferJournal::_journalStart( void )
             open_record->jnl_open.jnl_type = JNL_BUFFERNAME;
             if( p.length() > JNL_MAX_NAME_LENGTH )
             {
-                error( FormatString("Unable to create journal becuase bufer name is longer then %d") << JNL_MAX_NAME_LENGTH );
+                error( FormatString("Unable to create journal because buffer name is longer then %d") << JNL_MAX_NAME_LENGTH );
                 delete jnl;
                 return NULL;
             }
