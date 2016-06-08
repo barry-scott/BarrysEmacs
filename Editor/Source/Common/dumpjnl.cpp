@@ -11,9 +11,11 @@
 #define JNL_BUFFERNAME 2              // name of buffer being journalled
 #define JNL_INSERT 3                  // insert text
 #define JNL_DELETE 4                  // delete text
-#define JNL_VERSION 2
+#define JNL_VERSION 3
 
-#define INT long int
+#define INT int
+
+typedef int EmacsChar_t;
 
 struct jnl_open
 {
@@ -38,11 +40,15 @@ struct jnl_delete
 
 struct jnl_data
 {
-    unsigned char jnl_chars[ sizeof(INT) * 4 ];
+    EmacsChar_t jnl_chars[ 16/sizeof(EmacsChar_t) ];
 };
 
 #define JNL_BYTE_SIZE sizeof( struct jnl_data )
-#define JNL_BYTE_TO_REC( n ) (((n)+JNL_BYTE_SIZE-1)/JNL_BYTE_SIZE)
+int JNL_BYTE_TO_REC( int n )
+{
+    int numrec =  ((n)+JNL_BYTE_SIZE-1)/JNL_BYTE_SIZE;
+    return numrec;
+}
 
 union journal_record
 {
@@ -54,18 +60,22 @@ union journal_record
 
 #define JNL_BUF_SIZE 64        // this yields a 1k buffer
 
+char *fromUnicode( EmacsChar_t *unicode, int length )
+{
+    static char charbuf[1024];
+
+    for( int i=0; i<length; ++i )
+    {
+        charbuf[i] = unicode[i];
+    }
+    charbuf[length] = 0;
+
+    return charbuf;
+}
+
 int main( int argc, char **argv )
 {
-    int status;
-    FILE *file;
-    union journal_record buf[JNL_BUF_SIZE];
-    int offset;
-    long file_offset;
-    union journal_record *rec;
-    unsigned char *journal_file;
-    unsigned char journal_filename[MAXPATHLEN+1];
-
-    file = fopen(argv[1], "rb");
+    FILE *file = fopen(argv[1], "rb");
     if( file == NULL )
         return 1;
     //
@@ -73,19 +83,22 @@ int main( int argc, char **argv )
     //    It will be the file or buffer that is
     //    to be recovered.
     //
-    offset = 0;
-    file_offset = 0l;
-    status = fread( buf, JNL_BYTE_SIZE, JNL_BUF_SIZE, file );
+    int offset = 0;
+    long file_offset = 0l;
+
+    union journal_record buf[JNL_BUF_SIZE];
+
+    int status = fread( (unsigned char *)buf, JNL_BYTE_SIZE, JNL_BUF_SIZE, file );
 
     printf("Block offset: 0x%lx (0x%x)\n", file_offset, status );
 
-    if( status == 0 || feof( file ) || ferror( file ) )
+    if( status == 0 || ferror( file ) )
     {
         printf( "Unable to read the first record from the journal");
-        goto journal_recover;
+        return 0;
     }
 
-    rec = &buf[offset];
+    union journal_record *rec = &buf[offset];
 
     //
     //    Read all the blocks in the journal file
@@ -97,52 +110,54 @@ int main( int argc, char **argv )
         //
         while( offset < JNL_BUF_SIZE )
         {
+            printf( "offset: %d\n", offset );
             rec = &buf[offset];
+
             switch( rec->jnl_open.jnl_type )
-        {
+            {
             case JNL_FILENAME:
-        printf(" JNL_FILENAME(0x%x): Version: %ld File: %s\n", offset,
+                printf(" JNL_FILENAME(0x%x): Version: %d File: %s\n", offset,
                     rec->jnl_open.jnl_version,
-                    rec[1].jnl_data.jnl_chars );
-                offset = 1 + JNL_BYTE_TO_REC( rec->jnl_open.jnl_name_length );
+                    fromUnicode( rec[1].jnl_data.jnl_chars, rec->jnl_open.jnl_name_length ) );
+                offset = 1 + JNL_BYTE_TO_REC( rec->jnl_open.jnl_name_length*sizeof( EmacsChar_t ) );
                 break;
 
             case JNL_BUFFERNAME:
-        printf(" JNL_BUFFERNAME(0x%x): Version: %ld Buf: %s\n", offset,
+                printf(" JNL_BUFFERNAME(0x%x): Version: %d Buf: %s\n", offset,
                     rec->jnl_open.jnl_version,
-                    rec[1].jnl_data.jnl_chars );
-                offset = 1 + JNL_BYTE_TO_REC( rec->jnl_open.jnl_name_length );
+                    fromUnicode( rec[1].jnl_data.jnl_chars, rec->jnl_open.jnl_name_length ) );
+                offset = 1 + JNL_BYTE_TO_REC( rec->jnl_open.jnl_name_length*sizeof( EmacsChar_t ) );
                 break;
 
             case JNL_INSERT:
-        printf(" JNL_INSERT(0x%x): Dot:%ld Size:%ld\n", offset,
+                printf(" JNL_INSERT(0x%x): Dot:%d Size:%d\n", offset,
                     rec->jnl_insert.jnl_dot,
                     rec->jnl_insert.jnl_insert_length
                     );
-    {
-        int len = (int)rec->jnl_insert.jnl_insert_length;
-        unsigned char *p = rec[1].jnl_data.jnl_chars;
-        int i;
+                {
+                    int len = (int)rec->jnl_insert.jnl_insert_length;
+                    int *p = rec[1].jnl_data.jnl_chars;
+                    int i;
 
-        for( i=0; i<len; i++ )
-            if( p[i] < ' ' )
-                printf("%1.1x", p[i]>>4);
-            else
-                printf("_");
-        printf("\n");
-        for( i=0; i<len; i++ )
-            if( p[i] < ' ' )
-                printf("%1.1x", p[i]&0xf);
-            else
-                printf("%c", p[i]);
-        printf("\n");
-    }
+                    for( i=0; i<len; i++ )
+                        if( p[i] < ' ' )
+                            printf("%1.1x", p[i]>>4);
+                        else
+                            printf("%c", p[i]);
+                    printf("\n");
+                    for( i=0; i<len; i++ )
+                        if( p[i] < ' ' )
+                            printf("%1.1x", p[i]&0xf);
+                        else
+                            printf("-");
+                    printf("\n");
+                }
 
-                offset += 1 + JNL_BYTE_TO_REC( rec->jnl_insert.jnl_insert_length );
+                offset += 1 + JNL_BYTE_TO_REC( rec->jnl_insert.jnl_insert_length*sizeof(EmacsChar_t) );
                 break;
 
             case JNL_DELETE:
-        printf(" JNL_DELETE(0x%x): Dot:%ld Size:%ld\n", offset,
+                printf(" JNL_DELETE(0x%x): Dot:%d Size:%d\n", offset,
                     rec->jnl_delete.jnl_del_dot,
                     rec->jnl_delete.jnl_length
                     );
@@ -150,15 +165,16 @@ int main( int argc, char **argv )
                 break;
 
             case JNL_END:
-        printf(" JNL_END(0x%x):\n", offset);
+                printf(" JNL_END(0x%x):\n", offset);
                 goto exit_loop;
+
             default:
-        printf( ("Unexpected type(0x%x): Type: %lx\n"),
+                printf( ("Unexpected type(0x%x): Type: %x\n"),
                     offset,
                     rec->jnl_open.jnl_type );
                 offset += 1;
                 break;
-        }
+            }
         }
 exit_loop:
         offset = 0;
@@ -170,7 +186,6 @@ exit_loop:
 
     printf("Recovery completed");
 
-journal_recover:
     //
     //    Tidy up and exit
     //

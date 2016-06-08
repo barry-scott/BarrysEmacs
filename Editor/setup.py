@@ -191,6 +191,7 @@ class Setup:
             Program( self.c_utils, 'dbdel',      [Source( self.c_utils, 'Utilities/dbdel/dbdel.cpp' )]       +self.db_files ),
             Program( self.c_utils, 'dblist',     [Source( self.c_utils, 'Utilities/dblist/dblist.cpp' )]     +self.db_files ),
             Program( self.c_utils, 'mll2db',     [Source( self.c_utils, 'Utilities/mll2db/mll2db.cpp' )]     +self.db_files ),
+            Program( self.c_utils, 'dumpjnl',    [Source( self.c_utils, 'Source/Common/dumpjnl.cpp' )] ),
             ]
 
     def generateMakefile( self ):
