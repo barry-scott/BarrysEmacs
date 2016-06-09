@@ -9,6 +9,8 @@ else
     DIST_DIR=dist
 fi
 
+QT_KIT_PATH=~/Qt-5.6.1/5.6
+
 rm -rf build ${DIST_DIR}
 
 mkdir -p ${DIST_DIR}
@@ -29,8 +31,8 @@ else
 for PYQT_SO in Resources/lib/python3.5/lib-dynload/PyQt5/*.so
 do
     otool -l ${PYQT_SO} | grep -e LC_RPATH -A 2
-    install_name_tool -rpath "/Users/barry/Qt-5.6/5.6/clang_64/lib" "@executable_path/../Frameworks" ${PYQT_SO}
-    install_name_tool -delete_rpath "/Users/barry/Qt-5.6/5.6/clang_64/lib" ${PYQT_SO}
+    install_name_tool -rpath "${QT_KIT_PATH}/clang_64/lib" "@executable_path/../Frameworks" ${PYQT_SO}
+    install_name_tool -delete_rpath "${QT_KIT_PATH}/clang_64/lib" ${PYQT_SO}
     install_name_tool -add_rpath "@loader_path/../../../../Frameworks" ${PYQT_SO}
     otool -l ${PYQT_SO} | grep -e LC_RPATH -A 2
 done
