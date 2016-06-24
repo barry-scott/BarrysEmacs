@@ -1,4 +1,4 @@
-//    Copyright (c) 1982-2010
+//    Copyright (c) 1982-2016
 //        Barry A. Scott
 
 // #define DEBUG_SET_BF
@@ -136,13 +136,13 @@ public:
     { }
 
     void add( const EmacsString &key, EmacsBuffer *value )
-    { EmacsStringTable::add( key, value ); }
+        { EmacsStringTable::add( key, value ); }
     EmacsBuffer *remove( const EmacsString &key )
-    { return (EmacsBuffer *)EmacsStringTable::remove( key ); }
+        { return (EmacsBuffer *)EmacsStringTable::remove( key ); }
     EmacsBuffer *find( const EmacsString &key )
-    { return (EmacsBuffer *)EmacsStringTable::find( key ); }
+        { return (EmacsBuffer *)EmacsStringTable::find( key ); }
     EmacsBuffer *value( int index )
-    { return (EmacsBuffer *)EmacsStringTable::value( index ); }
+        { return (EmacsBuffer *)EmacsStringTable::value( index ); }
 };
 
 class EmacsBuffer : public EmacsObject
@@ -156,6 +156,9 @@ public:
     EMACS_OBJECT_FUNCTIONS( EmacsBuffer )
     EmacsBuffer( const EmacsString &name );
     virtual ~EmacsBuffer();
+
+    // change the name of this buffer
+    void rename( const EmacsString &name );
 
     // set this as the current buffer
 #ifdef DEBUG_SET_BF
@@ -195,11 +198,11 @@ public:
 
     // return one of the keys in the table otherwise NULL
     static EmacsString &get_esc_word_mlisp( EmacsString &result )
-    { return name_table.get_esc_word_mlisp( result ); }
+        { return name_table.get_esc_word_mlisp( result ); }
     static EmacsString &get_esc_word_interactive( const EmacsString &prompt, EmacsString &result )
-    { return name_table.get_esc_word_interactive( prompt, EmacsString::null, result ); }
+        { return name_table.get_esc_word_interactive( prompt, EmacsString::null, result ); }
     static EmacsString &get_esc_word_interactive( const EmacsString &prompt, const EmacsString &default_value, EmacsString &result )
-    { return name_table.get_esc_word_interactive( prompt, default_value, result ); }
+        { return name_table.get_esc_word_interactive( prompt, default_value, result ); }
 
     // set the current buffer by name
     static void set_bfn( const EmacsString &name );

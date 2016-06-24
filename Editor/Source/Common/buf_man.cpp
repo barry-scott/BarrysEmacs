@@ -385,6 +385,8 @@ void SystemExpressionRepresentationBufferName::assign_value( ExpressionRepresent
         return;
     }
 
+
+    current_buffer_for_mlisp()->rename( value );
     // remove from the name table
     b = EmacsBuffer::name_table.remove( current_buffer_for_mlisp()->b_buf_name );
     // change the name

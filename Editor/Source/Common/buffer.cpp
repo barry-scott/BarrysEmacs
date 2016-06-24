@@ -1083,6 +1083,17 @@ void EmacsBuffer::scratch_bfn( const EmacsString &name, int disp)
     bf_cur->erase_bf();
 }
 
+// change the name of this buffer
+void EmacsBuffer::rename( const EmacsString &name )
+{
+    // remove from the name table
+    name_table.remove( b_buf_name );
+    // change the name
+    b_buf_name = name;
+    // put the buffer back
+    name_table.add( b_buf_name, this );
+}
+
 EmacsBuffer::~EmacsBuffer(void)
 {
     // do not let any of the following code find this buffer

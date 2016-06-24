@@ -1181,7 +1181,7 @@ int write_named_file( EmacsString &fn )
 
         if( !callProc( buffer_saved_as_proc, bf_cur->b_buf_name ) )
         {
-            bf_cur->b_buf_name = makeBufferName( bf_cur->b_fname, bf_cur );
+            bf_cur->rename( makeBufferName( bf_cur->b_fname, bf_cur ) );
         }
     }
 
