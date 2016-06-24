@@ -1,6 +1,6 @@
 #!/bin/bash
 KITNAME=bemacs-src-%(version)s
-KITDIR=/tmp/${KITNAME}
+KITDIR=${TMPDIR:-/tmp}/${KITNAME}
 
 rm -rf ${KITDIR}
 
@@ -10,7 +10,7 @@ svnversion -c ${BUILDER_TOP_DIR} > ${KITDIR}/Builder/svn_version.dat
 
 cd ${KITDIR}
 cd Imports
-tar xzf /tmp/pycxx-6.2.6.tar.gz 
+tar xzf ${TMPDIR:-/tmp}/pycxx-${PYCXX_VER#*:}.tar.gz 
 
 cd ${KITDIR}
 cd ..

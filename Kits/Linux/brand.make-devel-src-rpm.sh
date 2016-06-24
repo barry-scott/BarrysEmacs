@@ -11,7 +11,7 @@ echo "Info: Creating source tarball"
 KITNAME=bemacs
 
 V=%(major)s.%(minor)s.%(patch)s
-rm -rf /tmp/${NAME}-${V}
+rm -rf ${TMPDIR:-/tmp}/${NAME}-${V}
 
 KIT_BASENAME=${KITNAME}-${V}
 

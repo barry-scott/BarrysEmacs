@@ -13,5 +13,5 @@ Linux-Ubuntu)
     exit 1
 esac
 
-tar czf /tmp/bemacs-tmp.tar.gz usr
-sudo tar xzf /tmp/bemacs-tmp.tar.gz -C /
+tar czf ${TMPDIR:-/tmp}/bemacs-tmp.tar.gz usr
+sudo tar xzf ${TMPDIR:-/tmp}/bemacs-tmp.tar.gz -C /

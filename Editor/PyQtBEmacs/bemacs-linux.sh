@@ -37,12 +37,12 @@ then
         shift 1
         valgrind \
             --db-attach=yes \
-            /tmp/python -u be_main.py "$@"
+            ${TMPDIR:-/tmp}/python -u be_main.py "$@"
 
     else
         valgrind \
             --log-file=bemacs-memcheck.log \
-            /tmp/python -u be_main.py "$@"
+            ${TMPDIR:-/tmp}p/python -u be_main.py "$@"
     fi
 
 else
