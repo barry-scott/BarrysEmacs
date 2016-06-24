@@ -1,10 +1,11 @@
 //
-//    bemacs_python.cpp
+//    bemacs_python.hpp
 //
 //    Copyright (c) 1999-2016 Barry A. Scott
 //
 #include "CXX/Objects.hxx"
 #include "CXX/Extensions.hxx"
+#include "CXX/Exception.hxx"
 
 extern Expression convertPyObjectToEmacsExpression( const Py::Object &obj );
 extern Py::Object convertEmacsExpressionToPyObject( const Expression &expr );

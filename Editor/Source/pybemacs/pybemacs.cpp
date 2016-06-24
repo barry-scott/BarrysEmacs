@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2009-2015 Barry A. Scott
+//  Copyright (c) 2009-2016 Barry A. Scott
 //
 //
 //  pybemacs.cpp
@@ -854,21 +854,15 @@ public:
     bool m_display_status_bar;
 };
 
+PYCXX_USER_EXCEPTION_STR_ARG( EmacsError )
+PYCXX_USER_EXCEPTION_STR_ARG( UserInterfaceError )
+
 class BemacsModule: public Py::ExtensionModule<BemacsModule>
 {
 public:
-    Py::ExtensionExceptionType bemacs_error;
-    Py::ExtensionExceptionType bemacs_user_interface_error;
-
     BemacsModule()
     : Py::ExtensionModule<BemacsModule>( "_bemacs" ) // this must be name of the file on disk e.g. bemacs.so or bemacs.pyd
-    , bemacs_error()
-    , bemacs_user_interface_error()
     {
-        // exceptions
-        bemacs_error.init( *this, "EmacsError" );
-        bemacs_user_interface_error.init( *this, "UserInterfaceError", bemacs_error );
-
         //
         // init types used by this module
         //
@@ -905,9 +899,8 @@ public:
         d["function"] = Py::Object( new BemacsFunctions );
         d["buffers"] = Py::Object( new BemacsBuffersDict );
 
-        d["EmacsError"] = bemacs_error;
-        d["UserInterfaceError"] = bemacs_user_interface_error;
-
+        // exceptions
+        UserInterfaceError::init( *this );
     }
 
     virtual ~BemacsModule()
@@ -989,25 +982,22 @@ void BemacsEditor::hookUserInterface()
 
         ml_value = convertPyObjectToEmacsExpression( result );
     }
+    catch( UserInterfaceError &e )
+    {
+        std::string value( Py::value( e ).str().as_std_string() );
+        e.clear();
+
+        error( value );
+    }
     catch( Py::Exception &e )
     {
-        if( e.matches( bemacs_module->bemacs_user_interface_error ) )
-        {
-            std::string value( Py::value( e ).str().as_std_string() );
-            e.clear();
+        ml_value = Expression();
 
-            error( value );
-        }
-        else
-        {
-            ml_value = Expression();
+        std::string type( Py::type( e ).str().as_std_string() );
+        std::string value( Py::value( e ).str().as_std_string() );
+        e.clear();
 
-            std::string type( Py::type( e ).str().as_std_string() );
-            std::string value( Py::value( e ).str().as_std_string() );
-            e.clear();
-
-            error( FormatString("error calling \"%s\" - %s( %s )") << fn_name << type << value );
-        }
+        error( FormatString("error calling \"%s\" - %s( %s )") << fn_name << type << value );
     }
 }
 

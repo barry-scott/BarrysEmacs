@@ -186,10 +186,10 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
         result = self.app.guiYesNoDialog( default, title, message )
         self.setGuiResultSuccess( result )
 
-    def uiHookOpenFileDialog( self, cmd, title, existing_file, file_filter, detailed ):
+    def uiHookOpenFileDialog( self, cmd, title, existing_file, file_filter, detailed, folder, filename ):
         self._debugUiHook( 'uiHookOpenFileDialog' )
         try:
-            result = self.app.guiOpenFileDialog( title, existing_file, file_filter, detailed )
+            result = self.app.guiOpenFileDialog( title, existing_file, file_filter, detailed, folder, filename )
             self._debugUiHook( 'uiHookOpenFileDialog result %r' % (result,) )
             if result is None:
                 self.setGuiResultError( 'open-file-dialog cancelled' )

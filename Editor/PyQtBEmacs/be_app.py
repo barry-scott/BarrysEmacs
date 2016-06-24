@@ -411,8 +411,8 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         rc = QtWidgets.QMessageBox.question( self.main_window, title, message, defaultButton=default_button )
         return rc == QtWidgets.QMessageBox.Yes
 
-    def guiOpenFileDialog( self, title, existing_file, file_filter, detailed ):
-        self._debugUiHook( 'qqq guiOpenFileDialog( title=%r, existing_file=%r, file_filter=%r, detailed=%r )' % (title, existing_file, file_filter, detailed) )
+    def guiOpenFileDialog( self, title, existing_file, file_filter, detailed, folder, filename ):
+        self._debugUiHook( 'guiOpenFileDialog( title=%r, existing_file=%r, file_filter=%r, detailed=%r, folder=%r, filename=%r )' % (title, existing_file, file_filter, detailed, folder, filename) )
         open_file = QtWidgets.QFileDialog( self.main_window, QtCore.Qt.Dialog )
         open_file.setWindowTitle( title )
 
@@ -437,6 +437,12 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
 
         else:
             open_file.setNameFilters( file_filter.split( '\n' ) )
+
+        if folder != '':
+            open_file.setDirectory( folder )
+
+        if filename != '':
+            open_file.selectFile( filename )
 
         if open_file.exec_():
             self._debugUiHook( 'open_file.exec_()' )

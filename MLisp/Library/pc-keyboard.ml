@@ -28,6 +28,8 @@
                 1               ; existing file
                 PC-open-file-filters
                 1               ; detailed
+                (current-directory)
+                ""
             )
         )
     )
@@ -42,6 +44,8 @@
                 0
                 PC-open-file-filters
                 1
+                (file-format-string "%pa" (current-file-name))
+                (file-format-string "%fa" (current-file-name))
             )
         )
     )
