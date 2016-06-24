@@ -2,7 +2,6 @@
 
 export BUILDER_CFG_PLATFORM=$(uname -s)
 export PYTHON_VERSION=${1:-3.5}
-export PYCXX_VER=6.2.8
 
 case ${BUILDER_CFG_PLATFORM} in
 
