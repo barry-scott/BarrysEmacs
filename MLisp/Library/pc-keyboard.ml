@@ -44,8 +44,14 @@
                 0
                 PC-open-file-filters
                 1
-                (file-format-string "%pa" (current-file-name))
-                (file-format-string "%fa" (current-file-name))
+                (if (= current-buffer-type "scratch")
+                    (current-directory)
+                    (file-format-string "%pa" (current-file-name))
+                )
+                (if (= current-buffer-type "scratch")
+                    current-buffer-name
+                    (file-format-string "%fa" (current-file-name))
+                )
             )
         )
     )
