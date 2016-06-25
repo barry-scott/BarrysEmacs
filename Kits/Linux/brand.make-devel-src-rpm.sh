@@ -26,7 +26,7 @@ pushd ${KIT_BASENAME}/Imports
 
 case "${PYCXX_VER%%:*}" in
 trunk)
-    svn export --quiet https://svn.code.sf.net/p/cxx/code/trunk pycxx-${PYCXX_VER#*:}
+    svn export --quiet https://svn.code.sf.net/p/cxx/code/trunk/CXX pycxx-${PYCXX_VER#*:}
     ;;
 
 tag)
