@@ -1,6 +1,6 @@
 Name:		bemacs
-Version:	%(major)s.%(minor)s
-Release:	%(build)s
+Version:	%(major)s.%(minor)s.%(patch)s
+Release:	1
 Summary:	Barry's Emacs %(version)s text editor for X11 and ANSI terminals
 License:	Copyright Barry A. Scott (c) 1990-%(year)s
 Group:		Applications/Editors

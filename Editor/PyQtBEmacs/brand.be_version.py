@@ -14,5 +14,5 @@
 major = %(major)s
 minor = %(minor)s
 patch = %(patch)s
-build = %(build)s
+build = ''
 year = "%(year)s"

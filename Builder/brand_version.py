@@ -15,7 +15,6 @@ def main( argv ):
 
     vi = VersionInfo()
     try:
-        vi.setSvnVersion( argv[2] )
         vi.parseVersionInfo( argv[1] )
 
         finder = FileFinder( vi )
@@ -79,35 +78,6 @@ class VersionInfo:
                 raise Error( 'Cannot format key %s with value "%s" because %s' % (key.strip(), value.strip(), str(e)) )
 
         f.close()
-
-    def setSvnVersion( self, wc_path ):
-        override = 'svn_version_override.dat'
-        if os.path.exists( override ):
-            output = open( override, 'r', encoding='utf-8' ).read()
-
-        else:
-            cmd = 'svnversion -c "%s" >svn_version.dat' % (wc_path,)
-            os.system( cmd )
-            output = open( 'svn_version.dat', 'r', encoding='utf-8' ).read()
-
-        if len(output) == 0:
-            output = '0:0M'
-
-        self.is_svn_wc = output[0] in '0123456789'
-
-        version_string = output.strip().split(':')[-1]
-        modifiers = ''
-        while version_string[-1] not in '0123456789':
-            modifiers += version_string[-1]
-            version_string = version_string[:-1]
-
-        if modifiers == '':
-            self.__info[ 'build' ] = version_string
-        else:
-            self.__info[ 'build' ] = 0
-
-        self.__info[ 'revision' ] = version_string
-        self.__info[ 'wc_state' ] = modifiers
 
     def printInfo( self ):
         all_keys = self.__info.keys()

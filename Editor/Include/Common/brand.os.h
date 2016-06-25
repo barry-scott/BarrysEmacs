@@ -25,7 +25,7 @@
 //    XTERM         - X interface
 //
 //
-#define EMACS_VERSION    "%(maturity)s%(major)s.%(minor)s-%(revision)s%(wc_state)s"
+#define EMACS_VERSION    "%(maturity)s%(major)s.%(minor)s.%(patch)s"
 
 #ifndef RC_INVOKED
 // Include files

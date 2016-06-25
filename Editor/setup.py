@@ -330,6 +330,7 @@ class Win64CompilerVC14(Compiler):
         rules.append( '' )
         rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
         rules.append( '\t@echo Link %s' % (pyd_filename,) )
+        rules.append( '\t@mkdir %(EDIT_EXE)s' )
         rules.append( '\t@$(LDSHARED)  %%(CCCFLAGS)s /Fe%s /Fd%s %s %%(PYTHON_LIB)s\python%d%d.lib' %
                             (pyd_filename, pdf_filename, ' '.join( all_objects ), sys.version_info.major, sys.version_info.minor) )
 
@@ -342,6 +343,7 @@ class Win64CompilerVC14(Compiler):
 
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
         rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, target.getTargetFilename()) )
+        rules.append( '\t@mkdir %(EDIT_OBJ)s' )
         rules.append( '\t@$(CCC) /c %%(CCCFLAGS)s /Fo%s /Fd%s %s' % (obj_filename, target.dependent.getTargetFilename( '.pdb' ), target.src_filename) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
@@ -443,6 +445,7 @@ class Win32CompilerMSVC90(Compiler):
         rules.append( '' )
         rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
         rules.append( '\t@echo Link %s' % (pyd_filename,) )
+        rules.append( '\t@mkdir %(EDIT_EXE)s' )
         rules.append( '\t@$(LDSHARED)  %%(CCCFLAGS)s /Fe%s /Fd%s %s %%(PYTHON_LIB)s\python%d%d.lib Advapi32.lib' %
                             (pyd_filename, pdf_filename, ' '.join( all_objects ), sys.version_info.major, sys.version_info.minor) )
 
@@ -455,6 +458,7 @@ class Win32CompilerMSVC90(Compiler):
 
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
         rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, target.getTargetFilename()) )
+        rules.append( '\t@mkdir %(EDIT_OBJ)s' )
         rules.append( '\t@$(CCC) /c %%(CCCFLAGS)s /Fo%s /Fd%s %s' % (obj_filename, target.dependent.getTargetFilename( '.pdb' ), target.src_filename) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
@@ -535,6 +539,7 @@ class CompilerGCC(Compiler):
 
         rules.append( '%s : %s' % (target_filename, ' '.join( all_objects )) )
         rules.append( '\t@echo Link %s' % (target_filename,) )
+        rules.append( '\t@mkdir -p %(EDIT_EXE)s' )
         rules.append( '\t@%%(LDEXE)s -o %s %%(CCCFLAGS)s %s' % (target_filename, ' '.join( all_objects )) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
@@ -548,6 +553,7 @@ class CompilerGCC(Compiler):
 
         rules.append( '%s : %s' % (target_filename, ' '.join( all_objects )) )
         rules.append( '\t@echo Link %s' % (target_filename,) )
+        rules.append( '\t@mkdir -p %(EDIT_EXE)s' )
         rules.append( '\t@%%(LDSHARED)s -o %s %%(CCCFLAGS)s %s' % (target_filename, ' '.join( all_objects )) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
@@ -559,6 +565,7 @@ class CompilerGCC(Compiler):
 
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
         rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, obj_filename) )
+        rules.append( '\t@mkdir -p %(EDIT_OBJ)s' )
         rules.append( '\t%%(CCC)s -c %%(CCCFLAGS)s -o %s  %s' % (obj_filename, target.src_filename) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
@@ -570,6 +577,7 @@ class CompilerGCC(Compiler):
 
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
         rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, target) )
+        rules.append( '\t@mkdir -p %(EDIT_OBJ)s' )
         rules.append( '\t@%%(CC)s -c %%(CCCFLAGS)s -o %s  %s' % (obj_filename, target.src_filename) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )

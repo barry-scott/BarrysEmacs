@@ -6,5 +6,5 @@ major:      8
 minor:      2
 patch:      5
 
-version:            %(wc_state)s%(maturity)s%(major)s.%(minor)s.%(patch)s-%(revision)s
+version:            %(maturity)s%(major)s.%(minor)s.%(patch)s
 mac_short_version:  %(maturity)s%(major)s.%(minor)s

@@ -1,4 +1,4 @@
-@name bemacs-%(major)s.%(minor)s-%(build)s
+@name bemacs-%(major)s.%(minor)s
 @cwd /usr/local/bemacs
 @src %%SRCDIR%%
 @exec echo "BEmacs %(version)s Copyright (c) 1990-%(year)s Barry A. Scott (barry@barrys-emacs.org)"

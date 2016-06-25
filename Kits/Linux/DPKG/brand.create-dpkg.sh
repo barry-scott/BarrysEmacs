@@ -3,7 +3,7 @@ mkdir -p tree/DEBIAN
 
 cat <<EOF >tree/DEBIAN/control
 Package: bemacs
-Version: %(wc_state)s%(maturity)s%(major)s.%(minor)s.%(revision)s
+Version: %(maturity)s%(major)s.%(minor)s.%(patch)s
 Maintainer: Barry Scott <barry@barrys-emacs.org>
 Description: Barry's Emacs Text editor
  Barry's Emacs Text editor
