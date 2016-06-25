@@ -19,11 +19,26 @@ rm -rf tmp
 mkdir -p tmp
 pushd tmp
 echo "Info: Exporting source code"
-svn export --quiet ${BUILDER_TOP_DIR} ${KIT_BASENAME}
+svn export --quiet --ignore-externals ${BUILDER_TOP_DIR} ${KIT_BASENAME}
 svnversion ${BUILDER_TOP_DIR} >${KIT_BASENAME}/Builder/svn_version_override.dat
 
 pushd ${KIT_BASENAME}/Imports
-svn export --quiet https://svn.code.sf.net/p/cxx/code/tags/${PYCXX_VER} pycxx-${PYCXX_VER}
+
+case "${PYCXX_VER%%:*}" in
+trunk)
+    svn export --quiet https://svn.code.sf.net/p/cxx/code/trunk pycxx-${PYCXX_VER#*:}
+    ;;
+
+tag)
+    svn export --quiet https://svn.code.sf.net/p/cxx/code/tags/${PYCXX_VER#*:} pycxx-${PYCXX_VER#*:}
+    ;;
+
+*)
+    echo "Error: PYCXX_VER unknown value ${PYCXX_VER}"
+    exit 1
+    ;;
+esac
+
 popd
 
 tar czf ${KIT_BASENAME}.tar.gz ${KIT_BASENAME}
