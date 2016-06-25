@@ -42,7 +42,7 @@ div.menu_dropdown
 <li>Python 3.4 or newer, 3.5 recommended.</li>
 <li>pip install xml-preferences</li>
 <li>pycxx 7.0.0 SVN sources from https://svn.code.sf.net/p/cxx/code/trunk/CXX.
-Then symlink the checkout folder into Imports/pycxx-7.0.0</li>
+Then symlink the checkout folder into Imports/pycxx-7.0.0.</li>
 <li>
 </ul>
 
@@ -56,13 +56,25 @@ Then symlink the checkout folder into Imports/pycxx-7.0.0</li>
 <p>For Windows:</p>
 
 <ul>
-<li>git - TDB</li>
-<li>Python 3.5 win64 strongly recommended.
-<li>Visual C++ V14.0 for Python 3.5 development.</li>
-<li>py -3.5 -m pip install win_app_packager</li>
-<li>py -3.5 -m pip install PyQt xxx - CONFIRM command</li>
+<li>git - https://git-for-windows.github.io/</li>
+<li>Python 3.5 win64 strongly recommended.</li>
+<li>Visual C++ 2015 Community Edition (Version 14.0) for Python 3.5 development.</li>
+<li>py -3.5 -m pip install win-app-packager</li>
+<li>py -3.5 -m pip install PyQt5</li>
 <li>inno setup - from http://www.jrsoftware.org/isinfo.php</li>
 </ul>
+
+<p>Note: To create a symlink on windows run the mklink from an admin CMD.</p>
+<pre>
+C:\Users\barry\wc\git\BarrysEmacs\Imports>mklink /d pycxx-7.0.0 c:\Users\barry\wc\svn\PyCXX
+symbolic link created for pycxx-7.0.0 <<===>> c:\Users\barry\wc\svn\PyCXX
+
+C:\Users\barry\wc\git\BarrysEmacs\Imports>dir
+ Directory of C:\Users\barry\wc\git\BarrysEmacs\Imports
+
+25/06/2016  17:37    <SYMLINKD>     pycxx-7.0.0 [c:\Users\barry\wc\svn\PyCXX]
+25/06/2016  17:13    <DIR>          ucd
+</pre>
 
 <p>For macOS:</p>
 <ul>
@@ -71,7 +83,7 @@ Then symlink the checkout folder into Imports/pycxx-7.0.0</li>
 <li>Install Qt 5.6.1</li>
 <li>Compile and Install PyQt5 from source. pypi version is too hard to package.</li>
 <li>python2.7 -m pip install dmgbuild</li>
-<li>python3.5 -m pip install py2app<li>
+<li>python3.5 -m pip install py2app</li>
 </ul>
 
 <h2>Build Barry's Emacs</h2>
@@ -85,7 +97,7 @@ Then symlink the checkout folder into Imports/pycxx-7.0.0</li>
 <li>. builder_custom_init.sh</li>
 <li>./build-linux.sh</li>
 <li>cd ../Editor/PyQtBEmacs</li>
-<li>./bemacs-linux.sh --noredirect<li>
+<li>./bemacs-linux.sh --noredirect</li>
 </ol>
 
 <p>For macOS development:</p>
@@ -97,22 +109,23 @@ Then symlink the checkout folder into Imports/pycxx-7.0.0</li>
 <li>. builder_custom_init.sh</li>
 <li>./build-macosx.sh</li>
 <li>cd ../Editor/PyQtBEmacs</li>
-<li>./bemacs-macosx.sh --noredirect<li>
+<li>./bemacs-macosx.sh --noredirect</li>
 </ol>
 
 <p>For Windows development:</p>
 
 <ol>
-<li>cd %USERPROFILE%
+<li>cd %USERPROFILE%</li>
 <li>mkdir wc/git</li>
 <li>git clone https://github.com/barry-scott/BarrysEmacs.git
 <li>cd BarrysEmacs\Builder</li>
 <li>builder_custom_init.cmd</li>
-<li>TBD setup Visual C++ 14.0 x64</li>
+<li>"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64\vcvars64.bat"</li>
 <li>build-windows.cmd</li>
 <li>cd ..\Editor\PyQtBEmacs</li>
-<li>./bemacs-win64.sh --noredirect<li>
+<li>bemacs-win64.sh --noredirect</li>
 </ol>
 
+<hr/>
 </body>
 </html>

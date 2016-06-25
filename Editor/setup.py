@@ -330,7 +330,7 @@ class Win64CompilerVC14(Compiler):
         rules.append( '' )
         rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
         rules.append( '\t@echo Link %s' % (pyd_filename,) )
-        rules.append( '\t@mkdir %(EDIT_EXE)s' )
+        rules.append( '\t@if not exist %(EDIT_EXE)s mkdir %(EDIT_EXE)s' )
         rules.append( '\t@$(LDSHARED)  %%(CCCFLAGS)s /Fe%s /Fd%s %s %%(PYTHON_LIB)s\python%d%d.lib' %
                             (pyd_filename, pdf_filename, ' '.join( all_objects ), sys.version_info.major, sys.version_info.minor) )
 
@@ -343,7 +343,7 @@ class Win64CompilerVC14(Compiler):
 
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
         rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, target.getTargetFilename()) )
-        rules.append( '\t@mkdir %(EDIT_OBJ)s' )
+        rules.append( '\t@if not exist %(EDIT_OBJ)s mkdir %(EDIT_OBJ)s' )
         rules.append( '\t@$(CCC) /c %%(CCCFLAGS)s /Fo%s /Fd%s %s' % (obj_filename, target.dependent.getTargetFilename( '.pdb' ), target.src_filename) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
