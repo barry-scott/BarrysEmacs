@@ -91,5 +91,5 @@ if [ "$CMD" = "--install" ]
 then
     echo "Info: Installing RPM"
     sudo dnf -y remove ${KITNAME}
-    sudo dnf -y install "tmp/${SRPM_BASENAME}.noarch.rpm"
+    sudo dnf -y install "tmp/${SRPM_BASENAME}.x86_64.rpm"
 fi
