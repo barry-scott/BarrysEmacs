@@ -19,8 +19,8 @@ rm -rf tmp
 mkdir -p tmp
 pushd tmp
 echo "Info: Exporting source code"
-svn export --quiet --ignore-externals ${BUILDER_TOP_DIR} ${KIT_BASENAME}
-svnversion ${BUILDER_TOP_DIR} >${KIT_BASENAME}/Builder/svn_version_override.dat
+
+(cd ${BUILDER_TOP_DIR}; git archive --format=tar --prefix=${KIT_BASENAME}/ master) | tar xf -
 
 pushd ${KIT_BASENAME}/Imports
 
