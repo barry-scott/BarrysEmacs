@@ -393,6 +393,7 @@ extern int remove_local_binding(void);
 extern int rename_macro(void);
 extern int replace_search_text_command(void);
 extern int replace_string_command(void);
+extern int reset_buffer_name_from_filename_command(void);
 # if defined (SUBPROCESSES)
 extern int resume_process(void);
 # endif
@@ -890,6 +891,7 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "rename-macro", rename_macro );
     EMACS_NEW BoundName( "replace-search-text", replace_search_text_command );
     EMACS_NEW BoundName( "replace-string", replace_string_command );
+    EMACS_NEW BoundName( "reset-buffer-name-from-filename", reset_buffer_name_from_filename_command );
 # if defined (SUBPROCESSES)
     EMACS_NEW BoundName( "resume-process", resume_process );
 # endif

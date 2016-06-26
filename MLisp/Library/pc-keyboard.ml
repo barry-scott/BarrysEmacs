@@ -54,6 +54,8 @@
                 )
             )
         )
+        ; change the buffer name to reflect the new filename
+        (reset-buffer-name-from-filename)
     )
 )
 

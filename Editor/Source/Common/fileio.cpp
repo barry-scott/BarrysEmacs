@@ -31,7 +31,7 @@ int read_file_command( void );
 int write_current_file( void );
 int visit_file_command( void );
 int write_named_file_command( void );
-int write_named_file( EmacsString &fn );
+int write_named_file( const EmacsString &fn );
 int append_to_file( void );
 EmacsString makeBufferName( EmacsString &fullname, EmacsBuffer *existing_buffer );
 int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const EmacsString &dn );
@@ -1165,7 +1165,20 @@ int write_named_file_command( void )
     return write_named_file( fn );
 }
 
-int write_named_file( EmacsString &fn )
+int reset_buffer_name_from_filename_command( void )
+{
+    if( bf_cur->b_kind == FILEBUFFER )
+    {
+        if( !callProc( buffer_saved_as_proc, bf_cur->b_buf_name ) )
+        {
+            bf_cur->rename( makeBufferName( bf_cur->b_fname, bf_cur ) );
+        }
+    }
+
+    return 0;
+}
+
+int write_named_file( const EmacsString &fn )
 {
     if( fn.isNull()
     && bf_cur->b_fname.isNull() )
@@ -1178,17 +1191,13 @@ int write_named_file( EmacsString &fn )
     if( write_this( fn ) )
     {
         bf_cur->b_kind = FILEBUFFER;
-
-        if( !callProc( buffer_saved_as_proc, bf_cur->b_buf_name ) )
-        {
-            bf_cur->rename( makeBufferName( bf_cur->b_fname, bf_cur ) );
-        }
     }
 
     cant_1win_opt = 1;
 
     return 0;
 }   // Of WriteNamedFile
+
 
 // Appends to a file
 int append_to_file( void )

@@ -149,7 +149,6 @@ extern int use_variables_of_buffer_command( void );
 extern EmacsBuffer *current_buffer_for_mlisp();
 extern int write_current_file(void);
 extern int no_value_command(void);
-extern int write_named_file(unsigned char *);
 extern int synchronise_files(void);
 extern int wait_for_activity(void);
 extern int interlock_dec( volatile int * );
