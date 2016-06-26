@@ -29,7 +29,7 @@ BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM/ROOT/usr/local/bemacs
 BUILD_KIT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM
 
 else
-ifeq (${BUILDER_CFG_PLATFORM},Linux-Ubuntu)
+ifeq (${BUILDER_CFG_PLATFORM},Linux-Debian)
 BEMACS_DOC_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree/usr/local/share/doc/bemacs
 BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree/usr/local/bemacs
 BUILD_KIT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG

@@ -4,7 +4,7 @@ Linux-Fedora)
     cd ${BUILDER_TOP_DIR}/Kits/Linux/RPM/ROOT
     ;;
 
-Linux-Ubuntu)
+Linux-Debian)
     cd ${BUILDER_TOP_DIR}/Kits/Linux/DPKG/tree
     ;;
 

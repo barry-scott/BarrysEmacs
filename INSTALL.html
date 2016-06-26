@@ -78,8 +78,11 @@ Then symlink the checkout folder into Imports/pycxx-7.0.0</li>
 
 <p>For Linux development:</p>
 
+<p>Note: For the purposes of documentation it is assumed that the Barry's Emacs files are in ~/wc/git/BarrysEmacs, however you can replace with any folder name you like.</p>
+
 <ol>
 <li>mkdir -p ~/wc/git</li>
+<li>cd ~/wc/git</li>
 <li>git clone https://github.com/barry-scott/BarrysEmacs.git
 <li>cd BarrysEmacs/Builder</li>
 <li>. builder_custom_init.sh</li>
@@ -90,8 +93,11 @@ Then symlink the checkout folder into Imports/pycxx-7.0.0</li>
 
 <p>For macOS development:</p>
 
+<p>Note: For the purposes of documentation it is assumed that the Barry's Emacs files are in ~/wc/git/BarrysEmacs, however you can replace with any folder name you like.</p>
+
 <ol>
 <li>mkdir -p ~/wc/git</li>
+<li>cd -p ~/wc/git</li>
 <li>git clone https://github.com/barry-scott/BarrysEmacs.git
 <li>cd BarrysEmacs/Builder</li>
 <li>. builder_custom_init.sh</li>
@@ -102,9 +108,12 @@ Then symlink the checkout folder into Imports/pycxx-7.0.0</li>
 
 <p>For Windows development:</p>
 
+<p>Note: For the purposes of documentation it is assumed that the Barry's Emacs files are in %USERPROFILE%\wc\git\BarrysEmacs, however you can replace with any folder name you like.</p>
+
 <ol>
 <li>cd %USERPROFILE%
-<li>mkdir wc/git</li>
+<li>mkdir wc\git</li>
+<li>cd wc\git</li>
 <li>git clone https://github.com/barry-scott/BarrysEmacs.git
 <li>cd BarrysEmacs\Builder</li>
 <li>builder_custom_init.cmd</li>

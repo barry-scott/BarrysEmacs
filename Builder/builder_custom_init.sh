@@ -1,5 +1,10 @@
 #!/bin/echo Usage: . $0
 
+if [ "$BUILDER_TOP_DIR" = "" ]
+then
+    export BUILDER_TOP_DIR=$( cd ..; pwd )
+fi
+
 export BUILDER_CFG_PLATFORM=$(uname -s)
 export PYTHON_VERSION=${1:-3.5}
 
@@ -28,19 +33,10 @@ Linux)
     then
         export BUILDER_CFG_PLATFORM=Linux-Fedora
 
-    elif [ -e /etc/lsb-release ]
-    then
-        if [ "$( grep "DISTRIB_ID=Ubuntu" /etc/lsb-release )" = "DISTRIB_ID=Ubuntu" ]
-        then
-            export BUILDER_CFG_PLATFORM=Linux-Ubuntu
-        fi
+    else
+        # assume a debian type of system
+        export BUILDER_CFG_PLATFORM=Linux-Debian
 
-    elif [ -e /etc/os-release ]
-    then
-        if [ "$( grep "ID=debian" /etc/os-release )" = "ID=debian" ]
-        then
-            export BUILDER_CFG_PLATFORM=Linux-Debian
-        fi
     fi
     export PYTHON=python${PYTHON_VERSION}
     ;;
