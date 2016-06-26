@@ -4,7 +4,7 @@ case "${BUILDER_CFG_PLATFORM}" in
 Linux-Fedora)
     export BEMACS_EMACS_LIBRARY=${BUILDER_TOP_DIR}/Kits/Linux/RPM/ROOT/usr/local/bemacs8/lib/bemacs
     ;;
-Linux-Ubuntu)
+Linux-Debian)
     export BEMACS_EMACS_LIBRARY=${BUILDER_TOP_DIR}/Kits/Linux/DPKG/tree/usr/local/bemacs8/lib/bemacs
     ;;
 *)
