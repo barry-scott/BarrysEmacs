@@ -54,7 +54,7 @@
     (Python3-mode
         (setq mode-string "Python3")
         (use-syntax-table "Python3")
-        (use-local-map "Python3-map")
+        (use-local-map "Python-map")
         (use-abbrev-table "Python3")
         (if
             (is-windows)
@@ -613,10 +613,10 @@
 )
 (save-window-excursion
     (temp-use-buffer "~python-hack")
-    (define-keymap "Python3-map")
-    (define-keymap "Python3-ESC-map")
-    (use-local-map "Python3-map")
-    (local-bind-to-key "Python3-ESC-map" "\e")
+    (define-keymap "Python-map")
+    (define-keymap "Python-ESC-map")
+    (use-local-map "Python-map")
+    (local-bind-to-key "Python-ESC-map" "\e")
     (execute-mlisp-file "python-mode.key")
     (kill-buffer "~python-hack")
 )
