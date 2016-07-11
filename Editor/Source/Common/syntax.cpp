@@ -1494,7 +1494,7 @@ static EmacsString syntax_bits_as_string( int syntax )
 }
 #endif
 
-// return true if there is a error with initBuffer
+// return false if there is a error with initBuffer
 bool EmacsBuffer::syntax_fill_in_array( int required )
 {
     syntax_buffer_data *s = &b_syntax;
