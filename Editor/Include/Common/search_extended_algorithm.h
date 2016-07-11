@@ -47,7 +47,7 @@ private:
     void compile( const EmacsString &pattern, EmacsSearch::sea_type RE );
 
     int search( int n, int dot );
-    int looking_at();
+    int looking_at( int dot );
     void search_replace_once( const EmacsString &new_string );
 private:
     int m_max_group_number;

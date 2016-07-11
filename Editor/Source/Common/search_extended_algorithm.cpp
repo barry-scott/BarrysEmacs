@@ -82,10 +82,10 @@ EmacsChar_t SearchAdvancedAlgorithm::caseFold( EmacsChar_t ch ) const
     return ch;
 }
 
-int SearchAdvancedAlgorithm::looking_at()
+int SearchAdvancedAlgorithm::looking_at( int pos )
 {
     int end_pos = 0;
-    if( m_expression != NULL && m_expression->matchExpression( dot, end_pos ) )
+    if( m_expression != NULL && m_expression->matchExpression( pos, end_pos ) )
         ml_value = int(1);
     else
         ml_value = int(0);

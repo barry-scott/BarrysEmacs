@@ -10,7 +10,7 @@
 
 
 SearchImplementation::SearchImplementation()
-    : ref_count( 1 )
+: ref_count( 1 )
 {}
 
 SearchImplementation::~SearchImplementation()
@@ -19,50 +19,50 @@ SearchImplementation::~SearchImplementation()
 }
 
 EmacsSearch::EmacsSearch()
-    : pointer( NULL )
+: m_search_implementation( NULL )
 {}
 
 EmacsSearch::EmacsSearch( EmacsSearch &other )
-    : pointer( other.pointer )
+: m_search_implementation( other.m_search_implementation )
 {
-    if( pointer != NULL )
-        pointer->ref_count++;
+    if( m_search_implementation != NULL )
+        m_search_implementation->ref_count++;
 }
 
 EmacsSearch::~EmacsSearch()
 {
-    if( pointer != NULL )
+    if( m_search_implementation != NULL )
     {
-        pointer->ref_count--;
-        if( pointer->ref_count == 0 )
+        m_search_implementation->ref_count--;
+        if( m_search_implementation->ref_count == 0 )
         {
-            delete pointer;
-            pointer = NULL;
+            delete m_search_implementation;
+            m_search_implementation = NULL;
         }
     }
 }
 
 SearchImplementation *EmacsSearch::operator->()
 {
-    return pointer;
+    return m_search_implementation;
 }
 
 EmacsSearch &EmacsSearch::operator=( EmacsSearch &other )
 {
-    if( other.pointer != NULL )
-        other.pointer->ref_count++;
+    if( other.m_search_implementation != NULL )
+        other.m_search_implementation->ref_count++;
 
-    if( pointer != NULL )
+    if( m_search_implementation != NULL )
     {
-        pointer->ref_count--;
-        if( pointer->ref_count == 0 )
+        m_search_implementation->ref_count--;
+        if( m_search_implementation->ref_count == 0 )
         {
-            delete pointer;
-            pointer = NULL;
+            delete m_search_implementation;
+            m_search_implementation = NULL;
         }
     }
 
-    pointer = other.pointer;
+    m_search_implementation = other.m_search_implementation;
     return *this;
 }
 
@@ -71,7 +71,7 @@ void EmacsSearch::compile( const EmacsString &pattern, EmacsSearch::sea_type RE 
     if( pattern.isNull() )
     {
         // use existing pattern
-        if( pointer == NULL )
+        if( m_search_implementation == NULL )
         {
             error("null search string");
             return;
@@ -79,26 +79,26 @@ void EmacsSearch::compile( const EmacsString &pattern, EmacsSearch::sea_type RE 
         return;
     }
 
-    if( pointer != NULL && !pointer->is_compatible( RE ) )
+    if( m_search_implementation != NULL && !m_search_implementation->is_compatible( RE ) )
     {
-        pointer->ref_count--;
+        m_search_implementation->ref_count--;
 
-        if( pointer->ref_count == 0 )
-            delete pointer;
+        if( m_search_implementation->ref_count == 0 )
+            delete m_search_implementation;
 
-        pointer = NULL;
+        m_search_implementation = NULL;
     }
 
-    if( pointer == NULL )
+    if( m_search_implementation == NULL )
     {
         switch( RE )
         {
         case sea_type__string:
         case sea_type__RE_simple:
-            pointer = new SearchSimpleAlgorithm;
+            m_search_implementation = new SearchSimpleAlgorithm;
             break;
         case sea_type__RE_extended:
-            pointer = new SearchAdvancedAlgorithm;
+            m_search_implementation = new SearchAdvancedAlgorithm;
             break;
         default:
             error( "Unsupported search type" );
@@ -106,7 +106,7 @@ void EmacsSearch::compile( const EmacsString &pattern, EmacsSearch::sea_type RE 
         }
     }
 
-    pointer->compile( pattern, RE );
+    m_search_implementation->compile( pattern, RE );
 }
 
 int EmacsSearch::search( const EmacsString &s, int n, int dot, EmacsSearch::sea_type RE )
@@ -115,16 +115,16 @@ int EmacsSearch::search( const EmacsString &s, int n, int dot, EmacsSearch::sea_
     if( ml_err )
         return 0;
 
-    if( pointer != NULL )
-        return pointer->search( n, dot );
+    if( m_search_implementation != NULL )
+        return m_search_implementation->search( n, dot );
     else
         return 0;
 }
 
 int EmacsSearch::search( int n, int dot )
 {
-    if( pointer != NULL )
-        return pointer->search( n, dot );
+    if( m_search_implementation != NULL )
+        return m_search_implementation->search( n, dot );
     else
         return 0;
 }
@@ -136,40 +136,40 @@ int EmacsSearch::looking_at( const EmacsString &s, EmacsSearch::sea_type RE )
     if( ml_err )
         return 0;
 
-    if( pointer != NULL )
-        return pointer->looking_at();
+    if( m_search_implementation != NULL )
+        return m_search_implementation->looking_at( dot );
     else
         return 0;
 }
 
 void EmacsSearch::search_replace_once( const EmacsString &new_string )
 {
-    if( pointer != NULL )
-        pointer->search_replace_once( new_string );
+    if( m_search_implementation != NULL )
+        m_search_implementation->search_replace_once( new_string );
     else
         error( "search-replace-once called before a search");
 }
 
 int EmacsSearch::get_number_of_groups()
 {
-    if( pointer == NULL )
+    if( m_search_implementation == NULL )
         return -1;
 
-    return pointer->get_number_of_groups();
+    return m_search_implementation->get_number_of_groups();
 }
 
 int EmacsSearch::get_start_of_group( int group_number )
 {
-    if( pointer == NULL )
+    if( m_search_implementation == NULL )
         return -1;
 
-    return pointer->get_start_of_group( group_number );
+    return m_search_implementation->get_start_of_group( group_number );
 }
 
 int EmacsSearch::get_end_of_group( int group_number )
 {
-    if( pointer == NULL )
+    if( m_search_implementation == NULL )
         return -1;
 
-    return pointer->get_end_of_group( group_number );
+    return m_search_implementation->get_end_of_group( group_number );
 }

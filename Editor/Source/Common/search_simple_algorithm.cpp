@@ -74,7 +74,7 @@ int SearchSimpleAlgorithm::search( int n, int dot )
         return pos;
 }
 
-int SearchSimpleAlgorithm::looking_at()
+int SearchSimpleAlgorithm::looking_at( int pos )
 {
     EmacsChar_t **alt = sea_alternatives;
 
@@ -82,14 +82,14 @@ int SearchSimpleAlgorithm::looking_at()
 
     if( arg < 0 )
     {
-        int resp = search_execute( 0, dot-1 );
-        ml_value = resp + sea_loc1 == dot;
+        int resp = search_execute( 0, pos-1 );
+        ml_value = resp + sea_loc1 == pos;
     }
     else
     {
         while( *alt != 0 && ! ml_err )
         {
-            ml_value = search_advance( dot, *alt, 0, 0 );
+            ml_value = search_advance( pos, *alt, 0, 0 );
             if( ml_value.asInt() != 0 )
                 break;
             alt++;

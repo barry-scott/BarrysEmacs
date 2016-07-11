@@ -38,7 +38,7 @@ public:
 
 private:
     SearchImplementation *operator->();
-    SearchImplementation *pointer;
+    SearchImplementation *m_search_implementation;
 };
 
 class SearchImplementation
@@ -49,7 +49,7 @@ public:
     virtual bool is_compatible( EmacsSearch::sea_type type ) = 0;
 
     virtual int search( int n, int dot ) = 0;
-    virtual int looking_at() = 0;
+    virtual int looking_at( int dot ) = 0;
     virtual void compile( const EmacsString &strp, EmacsSearch::sea_type RE ) = 0;
 
     virtual void search_replace_once( const EmacsString &new_string ) = 0;
