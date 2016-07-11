@@ -70,28 +70,32 @@ LINE_ATTR_USER          = SYNTAX_FIRST_FREE<<1  # 200
 LINE_M_ATTR_HIGHLIGHT   = SYNTAX_LAST_BIT       # 400
 LINE_M_ATTR_USER        = LINE_ATTR_USER|(15)   # the 8 user colours
 
+# for i18n
+def U_( s ):
+    return s
+
 all_colour_defaults = (
-    ('SYNTAX_DULL',             SYNTAX_DULL,            (  0,  0,  0),  (255,255,255)),
-    ('LINE_M_ATTR_HIGHLIGHT',   LINE_M_ATTR_HIGHLIGHT,  (  0,  0,  0),  (255,204,102)),
-    ('SYNTAX_WORD',             SYNTAX_WORD,            (  0,  0,  0),  (255,255,255)),
-    ('SYNTAX_TYPE_STRING1',     SYNTAX_TYPE_STRING1,    (  0,128,  0),  (255,255,255)),
-    ('SYNTAX_TYPE_STRING2',     SYNTAX_TYPE_STRING2,    (  0,128,  0),  (255,255,255)),
-    ('SYNTAX_TYPE_STRING3',     SYNTAX_TYPE_STRING3,    (  0,128,  0),  (255,255,255)),
-    ('SYNTAX_TYPE_COMMENT1',    SYNTAX_TYPE_COMMENT1,   (  0,128,  0),  (255,255,255)),
-    ('SYNTAX_TYPE_COMMENT2',    SYNTAX_TYPE_COMMENT2,   (  0,128,  0),  (255,255,255)),
-    ('SYNTAX_TYPE_COMMENT3',    SYNTAX_TYPE_COMMENT3,   (  0,128,  0),  (255,255,255)),
-    ('SYNTAX_TYPE_KEYWORD1',    SYNTAX_TYPE_KEYWORD1,   (  0,  0,255),  (255,255,255)),
-    ('SYNTAX_TYPE_KEYWORD2',    SYNTAX_TYPE_KEYWORD2,   (255,  0,  0),  (255,255,255)),
-    ('SYNTAX_TYPE_KEYWORD3',    SYNTAX_TYPE_KEYWORD3,   (255,  0,  0),  (000,255,255)),
-    ('LINE_ATTR_MODELINE',      LINE_ATTR_MODELINE,     (255,255,128),  (  0,  0,255)),
-    ('LINE_ATTR_USER_1',        LINE_ATTR_USER+1,       (255,  0,  0),  (255,255,255)),
-    ('LINE_ATTR_USER_2',        LINE_ATTR_USER+2,       (  0,255,  0),  (255,255,255)),
-    ('LINE_ATTR_USER_3',        LINE_ATTR_USER+3,       (  0,  0,255),  (255,255,255)),
-    ('LINE_ATTR_USER_4',        LINE_ATTR_USER+4,       (255,255,  0),  (255,255,255)),
-    ('LINE_ATTR_USER_5',        LINE_ATTR_USER+5,       (255,  0,255),  (255,255,255)),
-    ('LINE_ATTR_USER_6',        LINE_ATTR_USER+6,       (  0,255,255),  (255,255,255)),
-    ('LINE_ATTR_USER_7',        LINE_ATTR_USER+7,       (255,255,255),  (192,192,192)),
-    ('LINE_ATTR_USER_8',        LINE_ATTR_USER+8,       (255,255,255),  (255,255,255)),
+    ('LINE_ATTR_MODELINE',      U_('Mode line'),    LINE_ATTR_MODELINE,     (255,255,128),  (  0,  0,255)),
+    ('LINE_M_ATTR_HIGHLIGHT',   U_('Highlight'),    LINE_M_ATTR_HIGHLIGHT,  (  0,  0,  0),  (255,204,102)),
+    ('SYNTAX_DULL',             U_('Dull'),         SYNTAX_DULL,            (  0,  0,  0),  (255,255,255)),
+    ('SYNTAX_WORD',             U_('Word'),         SYNTAX_WORD,            (  0,  0,  0),  (255,255,255)),
+    ('SYNTAX_TYPE_STRING1',     U_('String 1'),     SYNTAX_TYPE_STRING1,    (  0,128,  0),  (255,255,255)),
+    ('SYNTAX_TYPE_STRING2',     U_('String 2'),     SYNTAX_TYPE_STRING2,    (  0,128,  0),  (255,255,255)),
+    ('SYNTAX_TYPE_STRING3',     U_('String 3'),     SYNTAX_TYPE_STRING3,    (  0,128,  0),  (255,255,255)),
+    ('SYNTAX_TYPE_COMMENT1',    U_('Comment 1'),    SYNTAX_TYPE_COMMENT1,   (  0,128,  0),  (255,255,255)),
+    ('SYNTAX_TYPE_COMMENT2',    U_('Comment 2'),    SYNTAX_TYPE_COMMENT2,   (  0,128,  0),  (255,255,255)),
+    ('SYNTAX_TYPE_COMMENT3',    U_('Comment 3'),    SYNTAX_TYPE_COMMENT3,   (  0,128,  0),  (255,255,255)),
+    ('SYNTAX_TYPE_KEYWORD1',    U_('Keyword 1'),    SYNTAX_TYPE_KEYWORD1,   (  0,  0,255),  (255,255,255)),
+    ('SYNTAX_TYPE_KEYWORD2',    U_('Keyword 2'),    SYNTAX_TYPE_KEYWORD2,   (255,  0,  0),  (255,255,255)),
+    ('SYNTAX_TYPE_KEYWORD3',    U_('Keyword 3'),    SYNTAX_TYPE_KEYWORD3,   (255,  0,  0),  (000,255,255)),
+    ('LINE_ATTR_USER_1',        U_('User 1' ),      LINE_ATTR_USER+1,       (255,  0,  0),  (255,255,255)),
+    ('LINE_ATTR_USER_2',        U_('User 2' ),      LINE_ATTR_USER+2,       (  0,255,  0),  (255,255,255)),
+    ('LINE_ATTR_USER_3',        U_('User 3' ),      LINE_ATTR_USER+3,       (  0,  0,255),  (255,255,255)),
+    ('LINE_ATTR_USER_4',        U_('User 4' ),      LINE_ATTR_USER+4,       (255,255,  0),  (255,255,255)),
+    ('LINE_ATTR_USER_5',        U_('User 5' ),      LINE_ATTR_USER+5,       (255,  0,255),  (255,255,255)),
+    ('LINE_ATTR_USER_6',        U_('User 6' ),      LINE_ATTR_USER+6,       (  0,255,255),  (255,255,255)),
+    ('LINE_ATTR_USER_7',        U_('User 7' ),      LINE_ATTR_USER+7,       (255,255,255),  (192,192,192)),
+    ('LINE_ATTR_USER_8',        U_('User 8' ),      LINE_ATTR_USER+8,       (192,192,192),  (255,255,255)),
     )
 
 default_binding =   '\uef00'
@@ -468,7 +472,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.log.info( 'Font family: %r %dpt' % (fi.family(), fi.pointSize()) )
 
     def __setupColours( self, win_prefs ):
-        for name, mask, fg, bg in all_colour_defaults:
+        for name, presentation_name, mask, fg, bg in all_colour_defaults:
             colour_pref = win_prefs.getColour( name )
 
             self.fg_colours[ mask ] = QtGui.QColor( *colour_pref.fg )

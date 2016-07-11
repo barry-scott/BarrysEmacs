@@ -48,7 +48,7 @@ class Window(PreferencesNode):
             self.font = Font()
             self.font.finaliseNode()
 
-        for name, mask, fg, bg in be_emacs_panel.all_colour_defaults:
+        for name, presentation_name, mask, fg, bg in be_emacs_panel.all_colour_defaults:
             if name not in self.all_colours:
                 self.all_colours[ name ] = Colour( name, fg, bg )
 
