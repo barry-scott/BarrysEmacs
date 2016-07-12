@@ -198,12 +198,6 @@ void EmacsView::setpos(int row, int col)
     if( current_line >= 0 )
     {
         EmacsLinePtr p = t_desired_screen[ current_line ];
-        for( int i=0; i<MSCREENWIDTH; i++ )
-        {
-            if( p->line_attr[i] == 512 )
-                fatal_error( 993 );
-        }
-
         int n = t_width - columns_left;
 
         if( p->line_length <= n )
