@@ -122,7 +122,7 @@ EmacsString get_system_name()
 
 void fatal_error( int code )
 {
-    printf( "\nFatal Error %d\n", code );
+    printf( "\nBarry's Emacs Fatal Error %d\n", code );
     exit( 1 );
 }
 
