@@ -532,7 +532,7 @@ EmacsString &EmacsStringTable::get_word_mlisp( EmacsString &result )
 
     error( FormatString("\"%s\" %s") << current_string <<
         ( nfound == 0 ?
-            "does not make any sense to me."
+            "is not one of the available choices."
         :
             "is ambiguous.") );
 
@@ -643,7 +643,7 @@ EmacsString &EmacsStringTable::get_esc_word_interactive( const EmacsString &prom
             //
             error( FormatString("\"%s\" %s") << current_string <<
                 (nfound == 0 ?
-                    "does not make any sense to me."
+                    "is not one of the available choices."
                 :
                     "is ambiguous.") );
             break;
