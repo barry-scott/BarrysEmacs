@@ -1,7 +1,7 @@
 //
-//    search_advanced_algorithm.h
+//    search_extended_algorithm.h
 //
-//    Copyright Barry A. Scott (c) 2002-2006
+//    Copyright Barry A. Scott (c) 2002-2016
 //
 #ifdef _MSC_VER
 #pragma warning (disable : 4786)
@@ -20,6 +20,8 @@ class RegularExpressionGroupEnd;
 //
 class SearchAdvancedAlgorithm : public SearchImplementation
 {
+    friend class SyntaxString;
+
 public:
     enum { MAX_GROUPS = 100 };    // the maximum number of meta-brackets in an RE -- ( )
     SearchAdvancedAlgorithm();
@@ -41,6 +43,8 @@ public:
     int get_start_of_group( const EmacsString &group_name );
     int get_end_of_group( const EmacsString &group_name );
 
+    int syntax_looking_at( int dot );
+
 private:
     bool is_compatible( EmacsSearch::sea_type type );
 
@@ -57,6 +61,7 @@ private:
 
     void compile_string( const EmacsString &pattern );
     void compile_expression( const EmacsString &pattern );
+    void compile_for_syntax( const EmacsString &pattern );
 
     RegularExpressionTerm *parse_re( EmacsStringStream &pattern );
     RegularExpressionTerm *parse_term( EmacsStringStream &pattern );
@@ -87,9 +92,13 @@ public:
 
     virtual bool matchTerm( int pos, int &end_pos ) = 0;
     virtual bool matchExpression( int pos, int &end_pos );
+    virtual bool isStringExpression() { return false; }
+    virtual EmacsChar_t stringExpressionFirstChar() { return 0; }
 
     void setNextTerm( RegularExpressionTerm *next_term );
     void appendTerm( RegularExpressionTerm *next_term );
+
+    virtual bool isStringTerm() { return false; }
 
 protected:
     SearchAdvancedAlgorithm &m_owner;
@@ -106,6 +115,8 @@ public:
     virtual ~RegularExpressionString();
 
     bool matchTerm( int pos, int &end_pos );
+
+    virtual bool isStringTerm() { return true; }
 
 private:
     EmacsString m_term_string;

@@ -1,7 +1,7 @@
 //
 //    search_advanced_algorithm.cpp
 //
-//    Copyright (c) 2002-2006
+//    Copyright (c) 2002-2016
 //        Barry A. Scott
 //
 
@@ -20,12 +20,12 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 //
 //
 SearchAdvancedAlgorithm::SearchAdvancedAlgorithm()
-    : SearchImplementation()
-    , m_max_group_number( 0 )
-    , m_numbered_groups()
-    , m_named_groups()
-    , m_expression( NULL )
-    , m_case_fold( false )
+: SearchImplementation()
+, m_max_group_number( 0 )
+, m_numbered_groups()
+, m_named_groups()
+, m_expression( NULL )
+, m_case_fold( false )
 { }
 
 SearchAdvancedAlgorithm::~SearchAdvancedAlgorithm()
@@ -41,7 +41,6 @@ int SearchAdvancedAlgorithm::search( int n, int dot )
 {
     if( m_expression == NULL )
         return 0;
-
 
     // default the case folding to the users preference
     m_case_fold = bf_cur->b_mode.md_foldcase != 0;
@@ -80,6 +79,15 @@ EmacsChar_t SearchAdvancedAlgorithm::caseFold( EmacsChar_t ch ) const
         return unicode_casefold( ch );
 
     return ch;
+}
+
+int SearchAdvancedAlgorithm::syntax_looking_at( int pos )
+{
+    int end_pos = 0;
+    if( m_expression->matchExpression( pos, end_pos ) )
+        return end_pos;
+    else
+        return 0;
 }
 
 int SearchAdvancedAlgorithm::looking_at( int pos )
@@ -661,10 +669,9 @@ bool RegularExpressionRepeatLeast::matchExpression( int start_pos, int &end_pos 
 // RegularExpressionAlternation
 //
 //--------------------------------------------------------------------------------
-RegularExpressionAlternation::RegularExpressionAlternation(
-        SearchAdvancedAlgorithm &m_owner )
-    : RegularExpressionTerm( m_owner )
-    , m_alternative_expressions()
+RegularExpressionAlternation::RegularExpressionAlternation( SearchAdvancedAlgorithm &m_owner )
+: RegularExpressionTerm( m_owner )
+, m_alternative_expressions()
 {}
 
 RegularExpressionAlternation::~RegularExpressionAlternation()

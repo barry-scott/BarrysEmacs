@@ -71,17 +71,19 @@ const SyntaxKind_t SYNTAX_TYPE_KEYWORD1     ( B(6)      );      // 40 its a keyw
 const SyntaxKind_t SYNTAX_TYPE_KEYWORD2     (      B(7) );      // 80 its a keyword type 2
 const SyntaxKind_t SYNTAX_TYPE_KEYWORD3     ( B(6)+B(7) );      // c0 its a keyword type 3
 
-const SyntaxKind_t SYNTAX_FIRST_FREE        (      B(8) );      // 100
-const SyntaxKind_t SYNTAX_PREFIX_QUOTE      (      B(8) );      // 100 like \ in C
-const SyntaxKind_t SYNTAX_BEGIN_PAREN       (      B(9) );      // 200 a begin paren: (<[
-const SyntaxKind_t SYNTAX_END_PAREN         (     B(10) );      // 400 an end paren: )>]    end
-const SyntaxKind_t SYNTAX_LAST_BIT          (     B(10) );
+const SyntaxKind_t SYNTAX_TYPE_PROBLEM      (      B(8) );      // 100
+
+const SyntaxKind_t SYNTAX_FIRST_FREE        (      B(9) );      // 200
+const SyntaxKind_t SYNTAX_PREFIX_QUOTE      (      B(9) );      // 200 like \ in C
+const SyntaxKind_t SYNTAX_BEGIN_PAREN       (     B(10) );      // 400 a begin paren: (<[
+const SyntaxKind_t SYNTAX_END_PAREN         (     B(11) );      // 800 an end paren: )>]    end
+const SyntaxKind_t SYNTAX_LAST_BIT          (     B(11) );
 
 #undef B
 
 const SyntaxKind_t SYNTAX_MULTI_CHAR_TYPES
     (
-    SYNTAX_WORD|SYNTAX_KEYWORD_MASK|SYNTAX_COMMENT_MASK|SYNTAX_STRING_MASK
+    SYNTAX_WORD|SYNTAX_KEYWORD_MASK|SYNTAX_COMMENT_MASK|SYNTAX_STRING_MASK|SYNTAX_TYPE_PROBLEM
     );
 
 const int SYNTAX_PROP_CASE_FOLD_MATCH( 1 );     // case blind matching of this entry
@@ -94,8 +96,8 @@ typedef int SyntaxTable_t;
 
 struct SyntaxCharData_t
 {
-    unsigned int data               : 12;
-    unsigned int outline_visible    :  4;
+    unsigned int data               : 14;
+    unsigned int outline_visible    :  2;
     unsigned int table_number       :  8;
     unsigned int outline_depth      :  8;
 };
@@ -129,6 +131,7 @@ public:
 
     int looking_at_main( int pos ) const;
     int looking_at_match( int pos ) const;
+    int ere_looking_at_main( int pos ) const;
 
     bool first_is_word() const;
     bool last_is_word( const SyntaxTable &table ) const;
@@ -270,6 +273,9 @@ private:
 
     void modify_table_set_simple_type( int type, int ch );
     void modify_table_set_paired_type( int type, int ch );
+
+    // syntax defined by an ere pattern
+    void modify_table_ere( int type, int properties, const EmacsString &str1, const EmacsString &str2  );
 
     // add any type of syntax string
     void add_syntax_string_to_table( int ch, const SyntaxString &str );

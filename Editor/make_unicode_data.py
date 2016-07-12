@@ -21,6 +21,8 @@ def main( argv ):
     is_lower = set()
     is_title = set()
 
+    last_code_point = None
+
     for line in ucd:
         parts = line.strip().split(';')
         code = parts[0]
@@ -28,6 +30,8 @@ def main( argv ):
         upper = parts[12]
         lower = parts[13]
         title = parts[14]
+
+        last_code_point = int( code, 16 )
 
         if category.startswith( 'Lu' ):
             alphabetic.add( code )
@@ -52,13 +56,14 @@ def main( argv ):
             to_title[ code ] = title
 
     print( 'alphabetic',len(alphabetic) )
-    print( 'numeric',len(numeric) )
-    print( 'to_upper',len(to_upper) )
-    print( 'to_lower',len(to_lower) )
-    print( 'to_title',len(to_title) )
-    print( 'is_upper',len(is_upper) )
-    print( 'is_lower',len(is_lower) )
-    print( 'is_title',len(is_title) )
+    print( 'numeric', len(numeric) )
+    print( 'to_upper', len(to_upper) )
+    print( 'to_lower', len(to_lower) )
+    print( 'to_title', len(to_title) )
+    print( 'is_upper', len(is_upper) )
+    print( 'is_lower', len(is_lower) )
+    print( 'is_title', len(is_title) )
+    print( 'last code point', last_code_point )
 
     ucd.close()
 
@@ -103,6 +108,8 @@ struct unicode_data
 };
 
 ''' % (argv[0], time.strftime( '%Y-%d-%m %H:%M:%S' )) )
+
+    cxx.write( 'const int unicode_max_code_point( 0x%x );\n' % (last_code_point,) )
 
     cxx.write( 'struct unicode_category unicode_init_alphabetic[ %d ] = {\n' % (len(alphabetic)+1,))
     for code in sorted( alphabetic ):

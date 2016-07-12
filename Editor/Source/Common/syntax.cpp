@@ -5,6 +5,7 @@
 // Emacs routines to deal with syntax tables
 //
 #include <emacs.h>
+#include <search_extended_algorithm.h>
 
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -281,6 +282,8 @@ static ModifySyntaxData modify_syntax_table_init_data[] =
                             " (string-begin) ",     " (string-end) "},
 {"word",                    SYNTAX_WORD,            0,
                             " (character-set) ",    ""},
+{"problem,ere",             SYNTAX_TYPE_PROBLEM,    SYNTAX_PROP_REGEX_MATCH,
+                            " (extended-regex) ",   ""},
 {NULL,                      0,                      0,
                             NULL,                   NULL}
 };
@@ -392,6 +395,10 @@ void SyntaxTable::modify_table( int type, int properties, const EmacsString &str
             modify_table_paired_type( type, properties, str1, str2 );
             break;
 
+        case SYNTAX_TYPE_PROBLEM:
+            modify_table_ere( type, properties, str1, str2 );
+            break;
+
         default:
             error( "modify-syntax-table - internal error");
             break;
@@ -405,6 +412,19 @@ void SyntaxTable::modify_table( int type, int properties, const EmacsString &str
     {
         error( "modify-syntax-table - out of memory!");
     }
+}
+
+// check its an ERE that we can use in the syntax code
+void SyntaxTable::modify_table_ere( int type, int properties, const EmacsString &str1, const EmacsString &str2 )
+{
+    SearchAdvancedAlgorithm ere;
+    SearchImplementation &si = ere;
+
+    si.compile( str1, EmacsSearch::sea_type__RE_syntax );
+    if( ml_err )
+        return;
+
+    modify_table_paired_type( type, properties, str1, str2 );
 }
 
 void SyntaxTable::modify_table_dull_type( const EmacsString &str1 )
@@ -466,7 +486,7 @@ void SyntaxTable::modify_table_set_simple_type( int type, int ch )
 
 void SyntaxTable::modify_table_set_paired_type( int type, int ch )
 {
-    EmacsString str1; str1.append( char( ch ) );
+    EmacsString str1; str1.append( EmacsChar_t( ch ) );
     modify_table_paired_type( type, 0, str1, str1 );
 }
 
@@ -518,7 +538,14 @@ void SyntaxTable::modify_table_paired_type( int type, int properties, const Emac
         if( syn_str2 == NULL )
             throw SyntaxMemoryException();
 
-        add_syntax_string_to_table( ch^0x20, SyntaxString( type, properties, str1, str2 ) );
+        if( unicode_has_upper_translation( ch ) )
+        {
+            add_syntax_string_to_table( unicode_to_upper( ch ), SyntaxString( type, properties, str1, str2 ) );
+        }
+        else if( unicode_has_upper_translation( ch ) )
+        {
+            add_syntax_string_to_table( unicode_to_lower( ch ), SyntaxString( type, properties, str1, str2 ) );
+        }
     }
 }
 
@@ -1003,6 +1030,12 @@ int dump_syntax_table( void )
                 syntax_kinds.append( ", " );
             syntax_kinds.append( "Prefix quote");
         }
+        if( p->getSyntaxKind( i )&SYNTAX_TYPE_PROBLEM )
+        {
+            if( !syntax_kinds.isNull() )
+                syntax_kinds.append( ", " );
+            syntax_kinds.append( "Problem");
+        }
 
         bf_cur->ins_cstr( FormatString("%13s   %s\n") << char_range << syntax_kinds );
 
@@ -1065,6 +1098,14 @@ int dump_syntax_table( void )
                 int type = cur->s_kind >> SYNTAX_KEYWORD_SHIFT;
                 syntax_details = FormatString("Keyword type %d \"%s\"")
                             << type << cur->s_main_str;
+            }
+                break;
+
+
+            case SYNTAX_TYPE_PROBLEM:
+            {
+                syntax_details = FormatString("Problem \"%s\"")
+                                    << cur->s_main_str;
             }
                 break;
 
@@ -1283,8 +1324,22 @@ bool SyntaxString::last_is_word( const SyntaxTable &table ) const
 }
 
 //
-//    return true if the string is as pos in the buffer
+//    return end
 //
+int SyntaxString::ere_looking_at_main( int pos ) const
+{
+    SearchAdvancedAlgorithm ere;
+    ere.compile( s_main_str, EmacsSearch::sea_type__RE_syntax );
+    int end_pos = ere.syntax_looking_at( pos );
+    if( end_pos == 0 )
+    {
+        return 0;
+    }
+
+    // calc length
+    return end_pos - pos;
+}
+
 int SyntaxString::looking_at_main( int pos ) const
 {
     return looking_at_internal( pos, s_main_str );
@@ -1562,6 +1617,27 @@ bool EmacsBuffer::syntax_fill_in_array( int required )
             if( pos > required
             && (syntax_at( pos )&SYNTAX_MULTI_CHAR_TYPES) == 0 )
                 return true;
+
+            if( kind&SYNTAX_TYPE_PROBLEM )
+            {
+                SyntaxStringList_t::iterator problem;
+
+                for( problem = b_mode.md_syntax->getSyntaxStrings( c ).begin(),
+                         end = b_mode.md_syntax->getSyntaxStrings( c ).end();
+                        problem != end;
+                            ++problem )
+                {
+                    int len = problem->ere_looking_at_main( pos );
+                    if( len > 0 )
+                    {
+                        for( int i=0; i<len; i++, pos++ )
+                            set_syntax_at( pos, SYNTAX_TYPE_PROBLEM );
+
+                        pos--;    // incremented at the top of the loop
+                        goto for_loop_end;
+                    }
+                }
+            }
 
             if( kind&SYNTAX_COMMENT_MASK )
             {

@@ -59,6 +59,9 @@ void SearchAdvancedAlgorithm::compile( const EmacsString &pattern, EmacsSearch::
     case EmacsSearch::sea_type__RE_extended:
         compile_expression( pattern );
         break;
+    case EmacsSearch::sea_type__RE_syntax:
+        compile_for_syntax( pattern );
+        break;
     default:
         emacs_assert( false );
     }
@@ -299,6 +302,40 @@ void SearchAdvancedAlgorithm::compile_expression( const EmacsString &pattern )
     }
 }
 
+void SearchAdvancedAlgorithm::compile_for_syntax( const EmacsString &pattern )
+{
+    delete m_expression;
+    m_expression = NULL;
+
+    try
+    {
+        EmacsStringStreamData data( pattern );
+        EmacsStringStreamStringEnd stream( data );
+
+        //
+        // we claim group 0 for the whole match
+        // and start the interior groups at 1
+        //
+        RegularExpressionTerm *term = parse_re( stream );
+        if( !stream.atEnd() )
+        {
+            delete term;
+            throw RegularExpressionSyntaxError( "syntax table ere not all string parsed" );
+        }
+
+        if( !term->isStringTerm() )
+        {
+            delete term;
+            throw RegularExpressionSyntaxError( "syntax table ere must start with a simple char" );
+        }
+
+        m_expression = term;
+    }
+    catch( RegularExpressionSyntaxError &e )
+    {
+        error( e.reason() );
+    }
+}
 
 RegularExpressionTerm *SearchAdvancedAlgorithm::parse_re( EmacsStringStream &pattern )
 {

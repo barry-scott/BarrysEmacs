@@ -1,7 +1,7 @@
 //
 //    search.h
 //
-//    Copyright Barry A. Scott (c) 2002
+//    Copyright Barry A. Scott (c) 2002-2016
 //
 
 class SearchImplementation;
@@ -13,7 +13,8 @@ public:
     {
         sea_type__string = 0,
         sea_type__RE_simple,
-        sea_type__RE_extended
+        sea_type__RE_extended,
+        sea_type__RE_syntax     // simplified extended for use in syntax tables
     };
 
     EmacsSearch();

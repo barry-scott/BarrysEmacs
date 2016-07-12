@@ -58,17 +58,19 @@ SYNTAX_TYPE_KEYWORD1    = ( B(6)      );        # 040 its a keyword type 1
 SYNTAX_TYPE_KEYWORD2    = (      B(7) );        # 080 its a keyword type 2
 SYNTAX_TYPE_KEYWORD3    = ( B(6)+B(7) );        # 0c0 its a keyword type 3
 
-SYNTAX_FIRST_FREE       = (      B(8) );        # 100
-SYNTAX_PREFIX_QUOTE     = (      B(8) );        # 100 like \ in C
-SYNTAX_BEGIN_PAREN      = (      B(9) );        # 200 a begin paren: (<[
-SYNTAX_END_PAREN        = (     B(10) );        # 400 an end paren: )>]    end
-SYNTAX_LAST_BIT         = (     B(10) );
+SYNTAX_TYPE_PROBLEM     = (      B(8) );        # 100
 
-LINE_ATTR_MODELINE      = SYNTAX_FIRST_FREE     # 100
-LINE_ATTR_USER          = SYNTAX_FIRST_FREE<<1  # 200
+SYNTAX_FIRST_FREE       = (      B(9) );        # 200
+SYNTAX_PREFIX_QUOTE     = (     B(10) );        # 200 like \ in C
+SYNTAX_BEGIN_PAREN      = (     B(11) );        # 400 a begin paren: (<[
+SYNTAX_END_PAREN        = (     B(12) );        # 800 an end paren: )>]    end
+SYNTAX_LAST_BIT         = (     B(12) );
 
-LINE_M_ATTR_HIGHLIGHT   = SYNTAX_LAST_BIT       # 400
-LINE_M_ATTR_USER        = LINE_ATTR_USER|(15)   # the 8 user colours
+LINE_ATTR_MODELINE      = SYNTAX_FIRST_FREE<<0  # 200
+LINE_M_ATTR_HIGHLIGHT   = SYNTAX_FIRST_FREE<<1  # 400
+LINE_ATTR_USER          = SYNTAX_FIRST_FREE<<2  # 800
+
+LINE_M_ATTR_USER        = LINE_ATTR_USER|(7)   # the 8 user colours
 
 # for i18n
 def U_( s ):
@@ -88,6 +90,7 @@ all_colour_defaults = (
     ('SYNTAX_TYPE_KEYWORD1',    U_('Keyword 1'),    SYNTAX_TYPE_KEYWORD1,   (  0,  0,255),  (255,255,255)),
     ('SYNTAX_TYPE_KEYWORD2',    U_('Keyword 2'),    SYNTAX_TYPE_KEYWORD2,   (255,  0,  0),  (255,255,255)),
     ('SYNTAX_TYPE_KEYWORD3',    U_('Keyword 3'),    SYNTAX_TYPE_KEYWORD3,   (255,  0,  0),  (000,255,255)),
+    ('SYNTAX_TYPE_PROBLEM',     U_('Problem'),      SYNTAX_TYPE_PROBLEM,    (255,255,255),  (255,  0,  0)),
     ('LINE_ATTR_USER_1',        U_('User 1' ),      LINE_ATTR_USER+1,       (255,  0,  0),  (255,255,255)),
     ('LINE_ATTR_USER_2',        U_('User 2' ),      LINE_ATTR_USER+2,       (  0,255,  0),  (255,255,255)),
     ('LINE_ATTR_USER_3',        U_('User 3' ),      LINE_ATTR_USER+3,       (  0,  0,255),  (255,255,255)),

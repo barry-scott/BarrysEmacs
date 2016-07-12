@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1982-2010
+//    Copyright (c) 1982-2016
 //        Barry A. Scott
 //
 
@@ -9,11 +9,11 @@ const int MSCREENLENGTH( 512 );
 //  If highlighted is true then mode line highlighting is done
 //  If highlight_start is greater then zero then apply region
 //  highlight to the characters between hightlight_start and end.
-const int LINE_ATTR_MODELINE( SYNTAX_FIRST_FREE );          // 100
-const int LINE_ATTR_USER( SYNTAX_FIRST_FREE<<1 );           // 200
+const int LINE_ATTR_MODELINE    ( SYNTAX_FIRST_FREE<<0 );   // 200
+const int LINE_M_ATTR_HIGHLIGHT ( SYNTAX_FIRST_FREE<<1 );   // 800
+const int LINE_ATTR_USER        ( SYNTAX_FIRST_FREE<<2 );   // 400
 
-const int LINE_M_ATTR_HIGHLIGHT( SYNTAX_LAST_BIT );         // 400
-const int LINE_M_ATTR_USER( LINE_ATTR_USER|(15) );          // the 8 user colours
+const int LINE_M_ATTR_USER( LINE_ATTR_USER|(7) );           // the 8 user colours
 
 typedef EmacsChar_t DisplayBody_t;
 typedef unsigned short DisplayAttr_t;
