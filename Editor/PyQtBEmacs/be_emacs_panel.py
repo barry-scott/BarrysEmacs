@@ -76,29 +76,38 @@ LINE_M_ATTR_USER        = LINE_ATTR_USER|(7)   # the 8 user colours
 def U_( s ):
     return s
 
+
+class ColourInfo:
+    def __init__( self, name, presentation_name, mask, fg, bg ):
+        self.name = name
+        self.presentation_name = presentation_name
+        self.mask = mask
+        self.fg = fg
+        self.bg = bg
+
 all_colour_defaults = (
-    ('LINE_ATTR_MODELINE',      U_('Mode line'),    LINE_ATTR_MODELINE,     (255,255,128),  (  0,  0,255)),
-    ('LINE_M_ATTR_HIGHLIGHT',   U_('Highlight'),    LINE_M_ATTR_HIGHLIGHT,  (  0,  0,  0),  (255,204,102)),
-    ('SYNTAX_DULL',             U_('Dull'),         SYNTAX_DULL,            (  0,  0,  0),  (255,255,255)),
-    ('SYNTAX_WORD',             U_('Word'),         SYNTAX_WORD,            (  0,  0,  0),  (255,255,255)),
-    ('SYNTAX_TYPE_STRING1',     U_('String 1'),     SYNTAX_TYPE_STRING1,    (  0,128,  0),  (255,255,255)),
-    ('SYNTAX_TYPE_STRING2',     U_('String 2'),     SYNTAX_TYPE_STRING2,    (  0,128,  0),  (255,255,255)),
-    ('SYNTAX_TYPE_STRING3',     U_('String 3'),     SYNTAX_TYPE_STRING3,    (  0,128,  0),  (255,255,255)),
-    ('SYNTAX_TYPE_COMMENT1',    U_('Comment 1'),    SYNTAX_TYPE_COMMENT1,   (  0,128,  0),  (255,255,255)),
-    ('SYNTAX_TYPE_COMMENT2',    U_('Comment 2'),    SYNTAX_TYPE_COMMENT2,   (  0,128,  0),  (255,255,255)),
-    ('SYNTAX_TYPE_COMMENT3',    U_('Comment 3'),    SYNTAX_TYPE_COMMENT3,   (  0,128,  0),  (255,255,255)),
-    ('SYNTAX_TYPE_KEYWORD1',    U_('Keyword 1'),    SYNTAX_TYPE_KEYWORD1,   (  0,  0,255),  (255,255,255)),
-    ('SYNTAX_TYPE_KEYWORD2',    U_('Keyword 2'),    SYNTAX_TYPE_KEYWORD2,   (255,  0,  0),  (255,255,255)),
-    ('SYNTAX_TYPE_KEYWORD3',    U_('Keyword 3'),    SYNTAX_TYPE_KEYWORD3,   (255,  0,  0),  (000,255,255)),
-    ('SYNTAX_TYPE_PROBLEM',     U_('Problem'),      SYNTAX_TYPE_PROBLEM,    (255,255,255),  (255,  0,  0)),
-    ('LINE_ATTR_USER_1',        U_('User 1' ),      LINE_ATTR_USER+1,       (255,  0,  0),  (255,255,255)),
-    ('LINE_ATTR_USER_2',        U_('User 2' ),      LINE_ATTR_USER+2,       (  0,255,  0),  (255,255,255)),
-    ('LINE_ATTR_USER_3',        U_('User 3' ),      LINE_ATTR_USER+3,       (  0,  0,255),  (255,255,255)),
-    ('LINE_ATTR_USER_4',        U_('User 4' ),      LINE_ATTR_USER+4,       (255,255,  0),  (255,255,255)),
-    ('LINE_ATTR_USER_5',        U_('User 5' ),      LINE_ATTR_USER+5,       (255,  0,255),  (255,255,255)),
-    ('LINE_ATTR_USER_6',        U_('User 6' ),      LINE_ATTR_USER+6,       (  0,255,255),  (255,255,255)),
-    ('LINE_ATTR_USER_7',        U_('User 7' ),      LINE_ATTR_USER+7,       (255,255,255),  (192,192,192)),
-    ('LINE_ATTR_USER_8',        U_('User 8' ),      LINE_ATTR_USER+8,       (192,192,192),  (255,255,255)),
+    ColourInfo('LINE_ATTR_MODELINE',      U_('Mode line'),    LINE_ATTR_MODELINE,     (255,255,128),  (  0,  0,255)),
+    ColourInfo('LINE_M_ATTR_HIGHLIGHT',   U_('Highlight'),    LINE_M_ATTR_HIGHLIGHT,  (  0,  0,  0),  (255,204,102)),
+    ColourInfo('SYNTAX_DULL',             U_('Dull'),         SYNTAX_DULL,            (  0,  0,  0),  (255,255,255)),
+    ColourInfo('SYNTAX_WORD',             U_('Word'),         SYNTAX_WORD,            (  0,  0,  0),  (255,255,255)),
+    ColourInfo('SYNTAX_TYPE_STRING1',     U_('String 1'),     SYNTAX_TYPE_STRING1,    (  0,128,  0),  (255,255,255)),
+    ColourInfo('SYNTAX_TYPE_STRING2',     U_('String 2'),     SYNTAX_TYPE_STRING2,    (  0,128,  0),  (255,255,255)),
+    ColourInfo('SYNTAX_TYPE_STRING3',     U_('String 3'),     SYNTAX_TYPE_STRING3,    (  0,128,  0),  (255,255,255)),
+    ColourInfo('SYNTAX_TYPE_COMMENT1',    U_('Comment 1'),    SYNTAX_TYPE_COMMENT1,   (  0,128,  0),  (255,255,255)),
+    ColourInfo('SYNTAX_TYPE_COMMENT2',    U_('Comment 2'),    SYNTAX_TYPE_COMMENT2,   (  0,128,  0),  (255,255,255)),
+    ColourInfo('SYNTAX_TYPE_COMMENT3',    U_('Comment 3'),    SYNTAX_TYPE_COMMENT3,   (  0,128,  0),  (255,255,255)),
+    ColourInfo('SYNTAX_TYPE_KEYWORD1',    U_('Keyword 1'),    SYNTAX_TYPE_KEYWORD1,   (  0,  0,255),  (255,255,255)),
+    ColourInfo('SYNTAX_TYPE_KEYWORD2',    U_('Keyword 2'),    SYNTAX_TYPE_KEYWORD2,   (255,  0,  0),  (255,255,255)),
+    ColourInfo('SYNTAX_TYPE_KEYWORD3',    U_('Keyword 3'),    SYNTAX_TYPE_KEYWORD3,   (255,  0,  0),  (000,255,255)),
+    ColourInfo('SYNTAX_TYPE_PROBLEM',     U_('Problem'),      SYNTAX_TYPE_PROBLEM,    (255,255,255),  (255,  0,  0)),
+    ColourInfo('LINE_ATTR_USER_1',        U_('User 1' ),      LINE_ATTR_USER+1,       (255,  0,  0),  (255,255,255)),
+    ColourInfo('LINE_ATTR_USER_2',        U_('User 2' ),      LINE_ATTR_USER+2,       (  0,255,  0),  (255,255,255)),
+    ColourInfo('LINE_ATTR_USER_3',        U_('User 3' ),      LINE_ATTR_USER+3,       (  0,  0,255),  (255,255,255)),
+    ColourInfo('LINE_ATTR_USER_4',        U_('User 4' ),      LINE_ATTR_USER+4,       (255,255,  0),  (255,255,255)),
+    ColourInfo('LINE_ATTR_USER_5',        U_('User 5' ),      LINE_ATTR_USER+5,       (255,  0,255),  (255,255,255)),
+    ColourInfo('LINE_ATTR_USER_6',        U_('User 6' ),      LINE_ATTR_USER+6,       (  0,255,255),  (255,255,255)),
+    ColourInfo('LINE_ATTR_USER_7',        U_('User 7' ),      LINE_ATTR_USER+7,       (255,255,255),  (192,192,192)),
+    ColourInfo('LINE_ATTR_USER_8',        U_('User 8' ),      LINE_ATTR_USER+8,       (192,192,192),  (255,255,255)),
     )
 
 default_binding =   '\uef00'
@@ -404,6 +413,9 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.fg_colours = {}
         self.bg_colours = {}
 
+        self.fg_pens = {}
+        self.bg_brushes = {}
+
         self.__setupColours( app.getPrefs().window )
 
         self._debugPanel( '__init__()' )
@@ -475,11 +487,14 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.log.info( 'Font family: %r %dpt' % (fi.family(), fi.pointSize()) )
 
     def __setupColours( self, win_prefs ):
-        for name, presentation_name, mask, fg, bg in all_colour_defaults:
-            colour_pref = win_prefs.getColour( name )
+        for colour_info in all_colour_defaults:
+            colour_pref = win_prefs.getColour( colour_info.name )
+            mask = colour_info.mask
 
             self.fg_colours[ mask ] = QtGui.QColor( *colour_pref.fg )
+            self.fg_pens[ mask ] =    QtGui.QPen( self.fg_colours[ mask ] )
             self.bg_colours[ mask ] = QtGui.QColor( *colour_pref.bg )
+            self.bg_brushes[ mask ] = QtGui.QBrush( self.bg_colours[ mask ] )
 
     def __calculateWindowSize( self ):
         assert self.char_width is not None
@@ -498,11 +513,10 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self._debugPanel( '__calculateWindowSize create editor_pixmap %d x %d' % (self.pixel_width, self.pixel_length) )
         self.editor_pixmap = QtGui.QPixmap( self.pixel_width, self.pixel_length )
 
-        bg_brush = QtGui.QBrush( self.bg_colours[ SYNTAX_DULL ] )
         qp = QtGui.QPainter( self.editor_pixmap )
         qp.setBackgroundMode( QtCore.Qt.OpaqueMode )
-        qp.setBackground( bg_brush )
-        qp.fillRect( 0, 0, self.pixel_width, self.pixel_length, bg_brush )
+        qp.setBackground( self.bg_brushes[ SYNTAX_DULL ] )
+        qp.fillRect( 0, 0, self.pixel_width, self.pixel_length, self.bg_brushes[ SYNTAX_DULL ] )
         del qp
 
     def __pixelPoint( self, x, y ):
@@ -551,7 +565,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             self.first_paint = False
 
             qp = QtGui.QPainter( self )
-            qp.fillRect( QtCore.QRect( 0, 0, self.pixel_width, self.pixel_length ), self.bg_colours[ SYNTAX_DULL ] )
+            qp.fillRect( QtCore.QRect( 0, 0, self.pixel_width, self.pixel_length ), self.bg_brushes[ SYNTAX_DULL ] )
             del qp
 
             self.__calculateWindowSize()
@@ -906,7 +920,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.qp = QtGui.QPainter( self.editor_pixmap )
         #self.qp.setRenderHint( self.qp.TextAntialiasing, False )
 
-        self.qp.setBackground( self.bg_colours[ SYNTAX_DULL ] )
+        self.qp.setBackground( self.bg_brushes[ SYNTAX_DULL ] )
         self.qp.setBackgroundMode( QtCore.Qt.OpaqueMode )
         self.qp.setFont( self.font )
         self.qp.setPen( self.fg_colours[ SYNTAX_DULL ] )
@@ -1012,7 +1026,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
     def termUpdateLine( self, old, new, row ):
         self._debugTermCalls2( 'termUpdateLine row=%d' % (row,) )
         if old != new:
-            if sys.platform == 'darwin':
+            if True or sys.platform == 'darwin':
                 self.__all_term_ops.append( (self.__termUpdateLineOSX, (old, new, row)) )
             else:
                 self.__all_term_ops.append( (self.__termUpdateLine, (old, new, row)) )
@@ -1088,8 +1102,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
                 or draw_cols[ end-1 ]+1 != draw_cols[ end ] ):
                     if cur_mode != draw_modes[ start ]:
                         cur_mode = draw_modes[ start ]
-                        self.qp.setPen( QtGui.QPen( self.fg_colours[ cur_mode ] ) )
-                        self.qp.setBackground( self.bg_colours[ cur_mode ] )
+                        self.qp.setPen( self.fg_pens[ cur_mode ] )
+                        self.qp.setBackground( self.bg_brushes[ cur_mode ] )
 
                     x, y = self.__pixelPoint( draw_cols[ start ] + 1, row )
 
@@ -1109,9 +1123,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         remaining_width = self.term_width - new_line_length
         if remaining_width > 0:
-            bg_brush = QtGui.QBrush( self.bg_colours[ SYNTAX_DULL ] )
             x, y = self.__pixelPoint( new_line_length+1, row )
-            self.qp.fillRect( x, y, remaining_width*self.char_width, self.char_length, bg_brush )
+            self.qp.fillRect( x, y, remaining_width*self.char_width, self.char_length, self.bg_brushes[ SYNTAX_DULL ] )
 
         self._debugTermCalls2( '__termUpdateLine %d done' % (row,) )
 
@@ -1166,8 +1179,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
                 if cur_mode != mode:
                     cur_mode = mode
-                    self.qp.setPen( QtGui.QPen( self.fg_colours[ cur_mode ] ) ) 
-                    self.qp.setBackground( self.bg_colours[ cur_mode ] )
+                    self.qp.setPen( self.fg_pens[ cur_mode ] ) 
+                    self.qp.setBackground( self.bg_brushes[ cur_mode ] )
 
             x, y = self.__pixelPoint( col+1, row )
 
@@ -1177,9 +1190,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         remaining_width = self.term_width - new_line_length
         if remaining_width > 0:
-            bg_brush = QtGui.QBrush( self.bg_colours[ SYNTAX_DULL ] )
             x, y = self.__pixelPoint( new_line_length+1, row )
-            self.qp.fillRect( x, y, remaining_width*self.char_width, self.char_length, bg_brush )
+            self.qp.fillRect( x, y, remaining_width*self.char_width, self.char_length, self.bg_brushes[ SYNTAX_DULL ] )
 
         self._debugTermCalls2( '__termUpdateLineOSX %d done' % (row,) )
 

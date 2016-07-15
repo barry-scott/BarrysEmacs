@@ -153,10 +153,8 @@ class ColoursTab(QtWidgets.QWidget):
 
         self.view.doubleClicked.connect( self.model.tableDoubleClicked )
 
-
     def savePreferences( self ):
         p = self.app.getPrefs().window
-
 
     def validate( self ):
         return True
@@ -164,6 +162,44 @@ class ColoursTab(QtWidgets.QWidget):
 class ColourTableView(QtWidgets.QTableView):
     def __init__( self ):
         super().__init__()
+
+        self.customContextMenuRequested.connect( self.tableContextMenu )
+        self.setContextMenuPolicy( QtCore.Qt.CustomContextMenu )
+
+        self.setSelectionBehavior( self.SelectItems )
+        self.setSelectionMode( self.SingleSelection )
+
+        self.current_selection = []
+
+    def selectionChanged( self, selected, deselected ):
+        # allow the table to redraw the selected row highlights
+        super().selectionChanged( selected, deselected )
+
+        model = self.model()
+        self.current_selection = [index for index in self.selectedIndexes() if index.column() in (model.col_fg, model.col_bg)]
+
+    def tableContextMenu( self, pos ):
+        if len(self.current_selection) == 0:
+            return
+
+        global_pos = self.viewport().mapToGlobal( pos )
+
+        menu = QtWidgets.QMenu( self )
+        menu.addSection( T_('Colour') )
+
+        action = menu.addAction( T_('Edit…') )
+        action.triggered.connect( self.tableEditColour )
+
+        action = menu.addAction( T_('Set to default colour') )
+        action.triggered.connect( self.tableSetToDefault )
+
+        menu.exec_( global_pos )
+
+    def tableEditColour( self ):
+        self.model().editColour( self.current_selection[0] )
+
+    def tableSetToDefault( self ):
+        self.model().setToDefault( self.current_selection[0] )
 
 class ColourTableModel(QtCore.QAbstractTableModel):
     col_name = 0
@@ -178,17 +214,21 @@ class ColourTableModel(QtCore.QAbstractTableModel):
 
         self.all_colours = all_colours
 
-        self.all_names = [colour_info[0] for colour_info in be_emacs_panel.all_colour_defaults]
+        self.all_names = [colour_info.name for colour_info in be_emacs_panel.all_colour_defaults]
+        self.all_presentation_names = [colour_info.presentation_name for colour_info in be_emacs_panel.all_colour_defaults]
 
         self.__all_brushes = {}
 
     def tableDoubleClicked( self, index ):
+        self.editColour( index )
+
+    def setToDefault( self, index ):
         row = index.row()
         colour = self.all_colours[ self.all_names[ row ] ]
 
         col = index.column()
         if col == self.col_fg:
-            fg = self.__pickColour( colour.fg, 'Foreground for %s' % (colour.name,) )
+            fg = be_emacs_panel.all_colour_defaults[ row ].fg
             if fg is not None:
                 colour.fg = fg
 
@@ -197,7 +237,30 @@ class ColourTableModel(QtCore.QAbstractTableModel):
                     self.createIndex( row, self.col_example ) )
 
         if col == self.col_bg:
-            bg = self.__pickColour( colour.bg, 'Background for %s' % (colour.name,) )
+            bg = be_emacs_panel.all_colour_defaults[ row ].bg
+            if bg is not None:
+                colour.bg = bg
+
+                self.dataChanged.emit(
+                    self.createIndex( row, self.col_fg ),
+                    self.createIndex( row, self.col_example ) )
+
+    def editColour( self, index ):
+        row = index.row()
+        colour = self.all_colours[ self.all_names[ row ] ]
+
+        col = index.column()
+        if col == self.col_fg:
+            fg = self.__pickColour( colour.fg, T_('Foreground for %s') % (self.all_presentation_names[ row ],) )
+            if fg is not None:
+                colour.fg = fg
+
+                self.dataChanged.emit(
+                    self.createIndex( row, self.col_fg ),
+                    self.createIndex( row, self.col_example ) )
+
+        if col == self.col_bg:
+            bg = self.__pickColour( colour.bg, T_('Background for %s') % (self.all_presentation_names[ row ],) )
             if bg is not None:
                 colour.bg = bg
 
@@ -249,7 +312,7 @@ class ColourTableModel(QtCore.QAbstractTableModel):
 
         if role == QtCore.Qt.DisplayRole:
             if col == self.col_name:
-                return T_( be_emacs_panel.all_colour_defaults[ row ][1] )
+                return T_( self.all_presentation_names[ row ] )
 
             elif col == self.col_fg:
                 return '#%2.2x%2.2x%2.2x' % colour.fg

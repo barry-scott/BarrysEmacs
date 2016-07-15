@@ -48,9 +48,9 @@ class Window(PreferencesNode):
             self.font = Font()
             self.font.finaliseNode()
 
-        for name, presentation_name, mask, fg, bg in be_emacs_panel.all_colour_defaults:
-            if name not in self.all_colours:
-                self.all_colours[ name ] = Colour( name, fg, bg )
+        for colour_info in be_emacs_panel.all_colour_defaults:
+            if colour_info.name not in self.all_colours:
+                self.all_colours[ colour_info.name ] = Colour( colour_info.name, colour_info.fg, colour_info.bg )
 
     def setChildNodeMap( self, name, key, node ):
         if name == 'colour':
