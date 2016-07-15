@@ -82,7 +82,7 @@ private:
     // Sequence methods
     //
     //--------------------------------------------------------------------------------
-    virtual int sequence_length();
+    virtual Py_ssize_t sequence_length();
     virtual Py::Object sequence_concat( const Py::Object & );
     virtual Py::Object sequence_repeat( Py_ssize_t );
     virtual Py::Object sequence_item( Py_ssize_t position );
@@ -122,7 +122,7 @@ private:
     // Sequence methods
     //
     //--------------------------------------------------------------------------------
-    virtual int sequence_length();
+    virtual Py_ssize_t sequence_length();
     virtual Py::Object sequence_concat( const Py::Object & );
     virtual Py::Object sequence_repeat( Py_ssize_t );
     virtual Py::Object sequence_item( Py_ssize_t position );
@@ -242,7 +242,7 @@ private:
     Py::Object keys( const Py::Tuple &args );
 
     // Mapping
-    virtual int mapping_length();
+    virtual Py_ssize_t mapping_length();
     virtual Py::Object mapping_subscript( const Py::Object &key );
     virtual int mapping_ass_subscript( const Py::Object &, const Py::Object & );
 };

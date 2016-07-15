@@ -298,7 +298,7 @@ int BemacsBufferData::setattr( const char *c_name, const Py::Object &/*value*/ )
 // Sequence methods
 //
 //--------------------------------------------------------------------------------
-int BemacsBufferData::sequence_length()
+Py_ssize_t BemacsBufferData::sequence_length()
 {
     if( !buffer.bufferValid() )
         throw Py::ValueError("buffer has been deleted");
@@ -426,7 +426,7 @@ int BemacsBufferSyntax::setattr( const char *c_name, const Py::Object &/*value*/
 // Sequence methods
 //
 //--------------------------------------------------------------------------------
-int BemacsBufferSyntax::sequence_length()
+Py_ssize_t BemacsBufferSyntax::sequence_length()
 {
     if( !buffer.bufferValid() )
         throw Py::ValueError("buffer has been deleted");
@@ -694,7 +694,7 @@ Py::Object BemacsBuffersDict::keys( const Py::Tuple &args )
 }
 
 // Mapping
-int BemacsBuffersDict::mapping_length()
+Py_ssize_t BemacsBuffersDict::mapping_length()
 {
     return EmacsBuffer::name_table.entries();
 }
