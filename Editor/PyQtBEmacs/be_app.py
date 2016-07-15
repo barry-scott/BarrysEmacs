@@ -115,7 +115,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         if self.__mock_editor:
             self.editor_thread = None
             self.command_line_thread = None
-            self.editor = FakeEditor( self )
+            self.editor = MockEditor( self )
 
         else:
             self.editor_thread = threading.Thread( name='Editor', target=self.__runEditor )
@@ -554,7 +554,7 @@ class StdoutLogHandler(logging.Handler):
         except:
             self.handleError( record )
 
-class FakeEditor(be_debug.EmacsDebugMixin):
+class MockEditor(be_debug.EmacsDebugMixin):
     def __init__( self, app ):
         be_debug.EmacsDebugMixin.__init__( self )
 
@@ -593,7 +593,7 @@ class FakeEditor(be_debug.EmacsDebugMixin):
         pass
 
     def guiEventChar( self, char, shift ):
-        print( 'guiEventChar( %r, %r' % (char, shift) )
+        print( 'guiEventChar( %r, %r )' % (char, shift) )
         self.count += 1
 
         self.__writeToScreen( 1, '  %6d guiEventChar( %r, %r ) called' % (self.count, char, shift) )
