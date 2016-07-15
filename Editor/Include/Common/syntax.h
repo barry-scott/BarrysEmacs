@@ -1,4 +1,4 @@
-//    Copyright (c) 1982-2010
+//    Copyright (c) 1982-2016
 //        Barry A. Scott
 //
 // Declarations having to do with Emacs syntax tables

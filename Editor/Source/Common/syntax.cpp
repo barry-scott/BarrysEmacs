@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1982-2010
+//    Copyright (c) 1982-2016
 //        Barry A. Scott
 //
 // Emacs routines to deal with syntax tables
@@ -1225,6 +1225,7 @@ SystemExpressionRepresentationIntReadOnly is_word( 1 );
 SystemExpressionRepresentationIntReadOnly is_str( 2 );
 SystemExpressionRepresentationIntReadOnly is_quote_character( 3 );
 SystemExpressionRepresentationIntReadOnly is_comment( 4 );
+SystemExpressionRepresentationIntReadOnly is_problem( 5 );
 
 int syntax_loc( void )
 {
@@ -1237,12 +1238,19 @@ int syntax_loc( void )
         bf_cur->syntax_fill_in_array( dot+1 );
 
         i = bf_cur->syntax_at( dot );
+
+        if( (i&SYNTAX_TYPE_PROBLEM) != 0 )
+            return is_problem;
+
         if( (i&SYNTAX_COMMENT_MASK) != 0 )
             return is_comment;
+
         if( (i&SYNTAX_STRING_MASK) != 0 )
             return is_str;
+
         if( (i&(SYNTAX_WORD|SYNTAX_KEYWORD_MASK)) != 0 )
             return is_word;
+
         return is_dull;
     }
 
@@ -1488,16 +1496,21 @@ enum syn_states
 };
 
 #if DEBUG_SYNTAX
-static char *state_to_string( syn_states st )
+static const char *state_to_string( syn_states st )
 {
     switch( st )
     {
     case st_simple:
-        return "Simple ";
+        return " Simple";
+
     case st_string:
-        return "String ";
+        return " String";
+
     case st_comment:
         return "Comment";
+
+    default:
+        return "UNKNOWN";
     }
 }
 
@@ -1505,45 +1518,55 @@ static EmacsString syntax_bits_as_string( int syntax )
 {
     EmacsString result;
     if( syntax == 0 )
-        result = "Dull";
+        result = "D ";
+
     if( syntax & SYNTAX_WORD )
-        result.append( "W" );
-    if( syntax & SYNTAX_STRING )
-        switch( syntax & SYNTAX_STRING )
+        result.append( "W " );
+
+    if( syntax & SYNTAX_TYPE_PROBLEM )
+        result.append( "P " );
+
+    if( syntax & SYNTAX_STRING_MASK )
+        switch( syntax & SYNTAX_STRING_MASK )
         {
         case SYNTAX_TYPE_STRING1:
-            result.append( "S1" ); break;
+            result.append( "S1 " ); break;
         case SYNTAX_TYPE_STRING2:
-            result.append( "S2" ); break;
+            result.append( "S2 " ); break;
         case SYNTAX_TYPE_STRING3:
-            result.append( "S3" ); break;
+            result.append( "S3 " ); break;
         }
-    if( syntax & SYNTAX_COMMENT )
-        switch( syntax & SYNTAX_COMMENT )
+
+    if( syntax & SYNTAX_COMMENT_MASK )
+        switch( syntax & SYNTAX_COMMENT_MASK )
         {
         case SYNTAX_TYPE_COMMENT1:
-            result.append( "C1" ); break;
+            result.append( "C1 " ); break;
         case SYNTAX_TYPE_COMMENT2:
-            result.append( "C2" ); break;
+            result.append( "C2 " ); break;
         case SYNTAX_TYPE_COMMENT3:
-            result.append( "C3" ); break;
+            result.append( "C3 " ); break;
         }
-    if( syntax & SYNTAX_KEYWORD )
-        switch( syntax & SYNTAX_KEYWORD )
+
+    if( syntax & SYNTAX_KEYWORD_MASK )
+        switch( syntax & SYNTAX_KEYWORD_MASK )
         {
         case SYNTAX_TYPE_KEYWORD1:
-            result.append( "K1" ); break;
+            result.append( "K1 " ); break;
         case SYNTAX_TYPE_KEYWORD2:
-            result.append( "K2" ); break;
+            result.append( "K2 " ); break;
         case SYNTAX_TYPE_KEYWORD3:
-            result.append( "K3" ); break;
+            result.append( "K3 " ); break;
         }
+
     if( syntax & SYNTAX_PREFIX_QUOTE )
-        result.append( "Q" );
+        result.append( "Q " );
+
     if( syntax & SYNTAX_BEGIN_PAREN )
-        result.append( "(" );
+        result.append( "( " );
+
     if( syntax & SYNTAX_END_PAREN )
-        result.append( ")" );
+        result.append( ") " );
 
     return result;
 }
@@ -1553,8 +1576,6 @@ static EmacsString syntax_bits_as_string( int syntax )
 bool EmacsBuffer::syntax_fill_in_array( int required )
 {
     syntax_buffer_data *s = &b_syntax;
-    enum syn_states state = st_simple;
-    int pos;
 
     if( !b_mode.md_syntax_array )
         return true;
@@ -1570,6 +1591,7 @@ bool EmacsBuffer::syntax_fill_in_array( int required )
 
     if( required > unrestrictedSize() )
         required = unrestrictedSize();
+
     if( required <= s->syntax_valid )
         return true;
 
@@ -1579,6 +1601,7 @@ bool EmacsBuffer::syntax_fill_in_array( int required )
     // figure out the rest of the syntax
     // unambiguosly
     //
+    int pos;
     for( pos=s->syntax_valid-1-SYNTAX_STRING_SIZE; pos > 1; pos-- )
     {
         if( syntax_at(pos) == SYNTAX_DULL )
@@ -1592,6 +1615,7 @@ bool EmacsBuffer::syntax_fill_in_array( int required )
     SyntaxStringList_t::iterator string;
     SyntaxStringList_t::iterator end;
 
+    enum syn_states state = st_simple;
     int limit = required;
     for( ; pos<=limit; pos++ )
     {
@@ -1604,7 +1628,7 @@ bool EmacsBuffer::syntax_fill_in_array( int required )
         // emacs_check_malloc_block( b_syntax_base );
 
 #if DEBUG_SYNTAX
-        _dbg_msg( FormatString("state: %s, pos: %d, s_kind: %s, c: %C, s: %s")
+        _dbg_msg( FormatString("fillin state: %s, pos: %d, s_kind: %s, c: %C, s_at: %s")
                 << state_to_string( state )
                 << pos
                 << syntax_bits_as_string( kind )
@@ -1776,7 +1800,6 @@ bool EmacsBuffer::syntax_fill_in_array( int required )
 void EmacsBuffer::syntax_update_buffer( int pos, int len )
 {
     syntax_buffer_data *s = &b_syntax;
-    enum syn_states state = st_simple;
     int required = pos + len;
 
     if( !b_mode.md_syntax_array
@@ -1805,6 +1828,7 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
     SyntaxStringList_t::iterator string;
     SyntaxStringList_t::iterator end;
 
+    enum syn_states state = st_simple;
     int limit = s->syntax_valid;
     for( ; pos<=limit; pos++ )
     {
@@ -1817,7 +1841,7 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
         // emacs_check_malloc_block( b_syntax_base );
 
 #if DEBUG_SYNTAX
-        _dbg_msg( FormatString("state: %s, pos: %d, s_kind: %s, c: %C, s: %s")
+        _dbg_msg( FormatString("update state: %s, pos: %d, s_kind: %s, c: %C, s: %s")
                 << state_to_string( state )
                 << pos
                 << syntax_bits_as_string( kind )
@@ -1830,6 +1854,27 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
             if( pos > required
             && (syntax_at( pos )&SYNTAX_MULTI_CHAR_TYPES) == 0 )
                 return;
+
+            if( kind&SYNTAX_TYPE_PROBLEM )
+            {
+                SyntaxStringList_t::iterator problem;
+
+                for( problem = b_mode.md_syntax->getSyntaxStrings( c ).begin(),
+                         end = b_mode.md_syntax->getSyntaxStrings( c ).end();
+                        problem != end;
+                            ++problem )
+                {
+                    int len = problem->ere_looking_at_main( pos );
+                    if( len > 0 )
+                    {
+                        for( int i=0; i<len; i++, pos++ )
+                            set_syntax_at( pos, SYNTAX_TYPE_PROBLEM );
+
+                        pos--;    // incremented at the top of the loop
+                        goto for_loop_end;
+                    }
+                }
+            }
 
             if( kind&SYNTAX_COMMENT_MASK )
             {

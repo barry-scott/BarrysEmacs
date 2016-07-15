@@ -169,6 +169,7 @@ void restore_var(void)
     DefVarRep("default-indent-use-tab", &default_indent_use_tab )
     VarWithDef0("indent-use-tab", IndentUseTab )
     VarRep("input-mode", &input_mode );
+    VarRep("is-problem", &is_problem )
     VarRep("is-comment", &is_comment )
     VarRep("is-dull", &is_dull )
     VarRep("is-quote", &is_quote_character )
