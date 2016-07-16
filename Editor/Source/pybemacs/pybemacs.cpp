@@ -1236,9 +1236,9 @@ void UI_update_window_title( void )
 
     if( cwd.commonPrefix( home ) == home.length() )
     {
-        title.append( "~/" );
+        title.append( "~" PATH_STR );
         cwd.remove( 0, home.length() );
-        if( cwd.length() > 0 && cwd[0] == '/'  )
+        if( cwd.length() > 0 && cwd[0] == PATH_CH  )
             cwd.remove( 0, 1 );
         title.append( cwd );
     }
