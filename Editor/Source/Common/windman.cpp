@@ -335,19 +335,22 @@ int EmacsWindowGroup::change_window_height(int delta)
     w = current_window;
     while( w->w_right != 0 )
         w = w->w_next;
-    if( w->w_next->change_w_height( -delta, 1 ) == 0 )
+
+    if( w->w_next == NULL || w->w_next->change_w_height( -delta, 1 ) == 0 )
     {
         w = current_window;
         while( w->w_left != 0 )
             w = w->w_prev;
-        if( w->w_prev->change_w_height( -delta, -1 ) == 0 )
+
+        if( w->w_prev == NULL || w->w_prev->change_w_height( -delta, -1 ) == 0 )
             goto win_change_error;
     }
 
-
     if( current_window->change_w_height( delta, 0 ) == 0 )
         error( "Emacs bug -- window size change." );
+
     return 0;
+
 win_change_error:
     error( "Cannot change window size" );
     return 0;

@@ -627,7 +627,7 @@ void EmacsWindowGroup::del_win( EmacsWindow *w )
 // tie a window to a buffer
 void EmacsWindow::tie_win( EmacsBuffer *b )
 {
-    if( b == NULL || this == NULL || w_buf == b )
+    if( b == NULL || w_buf == b )
         return;
 
     M_dbg_msg( FormatString("EmacsWindow::tie_win( %s ) dot=%d b_ephemeral_dot=%d, window=%s")
@@ -656,9 +656,6 @@ void EmacsWindow::tie_win( EmacsBuffer *b )
 //
 int EmacsWindow::change_w_height( int delta, int dir )
 {
-    if( this == NULL )
-        return 0;
-
     //
     //    Start from the left most window
     //
