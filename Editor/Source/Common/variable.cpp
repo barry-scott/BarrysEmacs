@@ -282,6 +282,10 @@ void restore_var(void)
     DefVarRep("default-wrap-long-lines", &default_wrap_lines)
     VarWithDef0("wrap-long-lines", WrapLines)
     VarRep("xon-mode", &protocol_mode)
+
+    // keep compiler quite about unused varname.
+    varname = NULL;
+    delete varname;
 }
 
 void init_var(void)
