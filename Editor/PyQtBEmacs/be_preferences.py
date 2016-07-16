@@ -21,6 +21,7 @@ import be_emacs_panel
 
 class Preferences(PreferencesNode):
     def __init__( self ):
+        super().__init__()
         self.window = None
 
     def finaliseNode( self ):
@@ -30,9 +31,11 @@ class Preferences(PreferencesNode):
 
 class Window(PreferencesNode):
     def __init__( self ):
+        super().__init__()
         self.geometry = None
         self.font = None
         self.all_colours = {}
+        self.cursor = None
 
     def getFrameGeometry( self ):
         return self.geometry
@@ -68,6 +71,7 @@ class Window(PreferencesNode):
 
 class Font(PreferencesNode):
     def __init__( self ):
+        super().__init__()
         # point size and face need to chosen by platform
         if sys.platform.startswith( 'win' ):
             self.face = 'Courier New'
@@ -91,6 +95,7 @@ class Font(PreferencesNode):
 
 class Colour(PreferencesNode):
     def __init__( self, name, fg=None, bg=None ):
+        super().__init__()
         self.name = name
         self.fg = fg
         self.bg = bg
@@ -118,11 +123,35 @@ class Colour(PreferencesNode):
         else:
             return super().getAttr( name )
 
+class Cursor(PreferencesNode):
+    def __init__( self, fg=None ):
+        super().__init__()
+        self.fg = fg
+
+    def setAttr( self, name, value ):
+        if name == 'fg':
+            self.fg = tuple( [int(v) for v in value.split(',')] )
+
+        else:
+            super().setAttr( name, value )
+
+    def getAttr( self, name ):
+        if name == 'fg':
+            return '%d,%d,%d,%d' % self.fg
+
+        else:
+            return super().getAttr( name )
+
+    def finaliseNode( self ):
+        if self.fg is None:
+            self.fg = be_emacs_panel.cursor_fg_default
+
 bemacs_preferences_scheme = (Scheme(
         (SchemeNode( Preferences, 'preferences',  )
         <<  (SchemeNode( Window, 'window', ('geometry',) )
             << SchemeNode( Font, 'font', ('point_size', 'face') )
             << SchemeNode( Colour, 'colour', ('fg', 'bg'), key_attribute='name' )
+            << SchemeNode( Cursor, 'cursor', ('fg',), default_attributes={'fg': '%d,%d,%d,%d' % be_emacs_panel.cursor_fg_default} )
             )
         )
     ) )

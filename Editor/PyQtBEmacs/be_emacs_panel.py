@@ -85,9 +85,12 @@ class ColourInfo:
         self.fg = fg
         self.bg = bg
 
+cursor_fg_default = (128,0,0,64)
+
 all_colour_defaults = (
     ColourInfo('LINE_ATTR_MODELINE',      U_('Mode line'),    LINE_ATTR_MODELINE,     (255,255,128),  (  0,  0,255)),
     ColourInfo('LINE_M_ATTR_HIGHLIGHT',   U_('Highlight'),    LINE_M_ATTR_HIGHLIGHT,  (  0,  0,  0),  (255,204,102)),
+    ColourInfo('SYNTAX_TYPE_PROBLEM',     U_('Problem'),      SYNTAX_TYPE_PROBLEM,    (255,255,255),  (128,  0,  0)),
     ColourInfo('SYNTAX_DULL',             U_('Dull'),         SYNTAX_DULL,            (  0,  0,  0),  (255,255,255)),
     ColourInfo('SYNTAX_WORD',             U_('Word'),         SYNTAX_WORD,            (  0,  0,  0),  (255,255,255)),
     ColourInfo('SYNTAX_TYPE_STRING1',     U_('String 1'),     SYNTAX_TYPE_STRING1,    (  0,128,  0),  (255,255,255)),
@@ -99,7 +102,6 @@ all_colour_defaults = (
     ColourInfo('SYNTAX_TYPE_KEYWORD1',    U_('Keyword 1'),    SYNTAX_TYPE_KEYWORD1,   (  0,  0,255),  (255,255,255)),
     ColourInfo('SYNTAX_TYPE_KEYWORD2',    U_('Keyword 2'),    SYNTAX_TYPE_KEYWORD2,   (255,  0,  0),  (255,255,255)),
     ColourInfo('SYNTAX_TYPE_KEYWORD3',    U_('Keyword 3'),    SYNTAX_TYPE_KEYWORD3,   (255,  0,  0),  (000,255,255)),
-    ColourInfo('SYNTAX_TYPE_PROBLEM',     U_('Problem'),      SYNTAX_TYPE_PROBLEM,    (255,255,255),  (255,  0,  0)),
     ColourInfo('LINE_ATTR_USER_1',        U_('User 1' ),      LINE_ATTR_USER+1,       (255,  0,  0),  (255,255,255)),
     ColourInfo('LINE_ATTR_USER_2',        U_('User 2' ),      LINE_ATTR_USER+2,       (  0,255,  0),  (255,255,255)),
     ColourInfo('LINE_ATTR_USER_3',        U_('User 3' ),      LINE_ATTR_USER+3,       (  0,  0,255),  (255,255,255)),
@@ -416,6 +418,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.fg_pens = {}
         self.bg_brushes = {}
 
+        self.cursor_brush = None
+
         self.__setupColours( app.getPrefs().window )
 
         self._debugPanel( '__init__()' )
@@ -496,6 +500,9 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             self.bg_colours[ mask ] = QtGui.QColor( *colour_pref.bg )
             self.bg_brushes[ mask ] = QtGui.QBrush( self.bg_colours[ mask ] )
 
+        self.cursor_colour = QtGui.QColor( *win_prefs.cursor.fg )
+        self.cursor_brush = QtGui.QBrush( self.cursor_colour )
+
     def __calculateWindowSize( self ):
         assert self.char_width is not None
 
@@ -548,11 +555,11 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         metrics = QtGui.QFontMetrics( self.font )
 
         self.char_width = metrics.width( 'i' )
-        self.char_length = metrics.height()
+        self.char_length = metrics.height() + metrics.leading()
         self._debugPanel( 'paintEvent first_paint i %d x %d' % (self.char_width, self.char_length) )
 
         self.char_width = metrics.width( 'M' )
-        self.char_length = metrics.height()
+        self.char_length = metrics.height() + metrics.leading()
         self._debugPanel( 'paintEvent first_paint M %d x %d' % (self.char_width, self.char_length) )
 
         self.char_ascent = metrics.ascent()
@@ -587,8 +594,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
 
             # alpha blend the cursor
-            cursor_colour = QtGui.QColor( 255, 0, 0, 64 )
-            qp.fillRect( c_x, c_y, self.char_width, self.char_length, cursor_colour )
+            qp.fillRect( c_x, c_y, self.char_width, self.char_length, self.cursor_brush )
 
             # Draw scroll bar backgrounds
             # set the colour behind the scroll bars
@@ -1026,7 +1032,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
     def termUpdateLine( self, old, new, row ):
         self._debugTermCalls2( 'termUpdateLine row=%d' % (row,) )
         if old != new:
-            if True or sys.platform == 'darwin':
+            if sys.platform == 'darwin':
                 self.__all_term_ops.append( (self.__termUpdateLineOSX, (old, new, row)) )
             else:
                 self.__all_term_ops.append( (self.__termUpdateLine, (old, new, row)) )

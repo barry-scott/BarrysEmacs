@@ -141,7 +141,7 @@ class ColoursTab(QtWidgets.QWidget):
     def initControls( self ):
         p = self.app.getPrefs().window
 
-        self.model = ColourTableModel( p.all_colours )
+        self.model = ColourTableModel( p.cursor, p.all_colours )
         self.view = ColourTableView()
         self.view.setModel( self.model )
         self.view.resizeColumnsToContents()
@@ -176,7 +176,9 @@ class ColourTableView(QtWidgets.QTableView):
         super().selectionChanged( selected, deselected )
 
         model = self.model()
-        self.current_selection = [index for index in self.selectedIndexes() if index.column() in (model.col_fg, model.col_bg)]
+        self.current_selection = [index for index in self.selectedIndexes()
+                                        if (index.row() > 0 and index.column() in (model.col_fg, model.col_bg))
+                                        or (index.row() == 0 and index.column() in (model.col_fg,))]
 
     def tableContextMenu( self, pos ):
         if len(self.current_selection) == 0:
@@ -185,7 +187,12 @@ class ColourTableView(QtWidgets.QTableView):
         global_pos = self.viewport().mapToGlobal( pos )
 
         menu = QtWidgets.QMenu( self )
-        menu.addSection( T_('Colour') )
+
+        if self.current_selection[0].row() == 0:
+            menu.addSection( T_('Cursor') )
+
+        else:
+            menu.addSection( T_('Colour') )
 
         action = menu.addAction( T_('Edit…') )
         action.triggered.connect( self.tableEditColour )
@@ -207,11 +214,12 @@ class ColourTableModel(QtCore.QAbstractTableModel):
     col_fg = 2
     col_bg = 3
 
-    def __init__( self, all_colours ):
+    def __init__( self, cursor, all_colours ):
         super().__init__()
 
         self.column_titles = [U_('Name'), U_('Example'), U_('Foreground'), U_('Background')]
 
+        self.cursor = cursor
         self.all_colours = all_colours
 
         self.all_names = [colour_info.name for colour_info in be_emacs_panel.all_colour_defaults]
@@ -224,58 +232,83 @@ class ColourTableModel(QtCore.QAbstractTableModel):
 
     def setToDefault( self, index ):
         row = index.row()
-        colour = self.all_colours[ self.all_names[ row ] ]
-
         col = index.column()
+
+        if row == 0:
+            if col == self.col_fg:
+                self.cursor.fg = be_emacs_panel.cursor_fg_default
+
+            return
+
+        colour = self.all_colours[ self.all_names[ row-1 ] ]
+
         if col == self.col_fg:
-            fg = be_emacs_panel.all_colour_defaults[ row ].fg
+            fg = be_emacs_panel.all_colour_defaults[ row-1 ].fg
             if fg is not None:
                 colour.fg = fg
 
                 self.dataChanged.emit(
-                    self.createIndex( row, self.col_fg ),
-                    self.createIndex( row, self.col_example ) )
+                    self.createIndex( row, self.col_example ),
+                    self.createIndex( row, self.col_fg ) )
 
         if col == self.col_bg:
-            bg = be_emacs_panel.all_colour_defaults[ row ].bg
+            bg = be_emacs_panel.all_colour_defaults[ row-1 ].bg
             if bg is not None:
                 colour.bg = bg
 
                 self.dataChanged.emit(
-                    self.createIndex( row, self.col_fg ),
-                    self.createIndex( row, self.col_example ) )
+                    self.createIndex( row, self.col_example ),
+                    self.createIndex( row, self.col_fg ) )
 
     def editColour( self, index ):
         row = index.row()
-        colour = self.all_colours[ self.all_names[ row ] ]
-
         col = index.column()
+
+        if row == 0:
+            if col == self.col_fg:
+                fg = self.__pickColour( self.cursor.fg, T_('Cursor') )
+                if fg is not None:
+                    self.cursor.fg = fg
+
+                    self.dataChanged.emit(
+                        self.createIndex( row, self.col_example ),
+                        self.createIndex( row, self.col_fg ) )
+
+            return
+
+        colour = self.all_colours[ self.all_names[ row-1 ] ]
+
         if col == self.col_fg:
-            fg = self.__pickColour( colour.fg, T_('Foreground for %s') % (self.all_presentation_names[ row ],) )
+            fg = self.__pickColour( colour.fg, T_('Foreground for %s') % (self.all_presentation_names[ row-1 ],) )
             if fg is not None:
                 colour.fg = fg
 
                 self.dataChanged.emit(
-                    self.createIndex( row, self.col_fg ),
-                    self.createIndex( row, self.col_example ) )
+                    self.createIndex( row, self.col_example ),
+                    self.createIndex( row, self.col_fg ) )
 
         if col == self.col_bg:
-            bg = self.__pickColour( colour.bg, T_('Background for %s') % (self.all_presentation_names[ row ],) )
+            bg = self.__pickColour( colour.bg, T_('Background for %s') % (self.all_presentation_names[ row-1 ],) )
             if bg is not None:
                 colour.bg = bg
 
                 self.dataChanged.emit(
-                    self.createIndex( row, self.col_fg ),
-                    self.createIndex( row, self.col_example ) )
+                    self.createIndex( row, self.col_example ),
+                    self.createIndex( row, self.col_fg ) )
 
     def __pickColour( self, rgb, title ):
         colour = QtGui.QColor( *rgb )
-        colour = QtWidgets.QColorDialog.getColor( colour, None, title )
-        if colour.isValid():
-            return (colour.red(), colour.green(), colour.blue())
+        if len(rgb) == 3:
+            colour = QtWidgets.QColorDialog.getColor( colour, None, title )
+            if colour.isValid():
+                return (colour.red(), colour.green(), colour.blue())
 
         else:
-            return None
+            colour = QtWidgets.QColorDialog.getColor( colour, None, title, QtWidgets.QColorDialog.ShowAlphaChannel )
+            if colour.isValid():
+                return (colour.red(), colour.green(), colour.blue(), colour.alpha())
+
+        return None
 
     def __brush( self, rgb ):
         if rgb not in self.__all_brushes:
@@ -284,7 +317,7 @@ class ColourTableModel(QtCore.QAbstractTableModel):
         return self.__all_brushes[ rgb ]
 
     def rowCount( self, parent ):
-        return len( self.all_colours )
+        return len( self.all_colours ) + 1
 
     def columnCount( self, parent ):
         return len( self.column_titles )
@@ -303,36 +336,64 @@ class ColourTableModel(QtCore.QAbstractTableModel):
         return None
 
     def data( self, index, role ):
-        row = index.row()
-        name = self.all_names[ row ]
-        colour = self.all_colours[ name ]
-
         col = index.column()
+        row = index.row()
+        if row == 0:
+            # its the cursor
+            if role == QtCore.Qt.DisplayRole:
+                if col == self.col_name:
+                    return T_('Cursor')
 
+                elif col == self.col_fg:
+                    return '#%2.2x%2.2x%2.2x%2.2x' % self.cursor.fg
 
-        if role == QtCore.Qt.DisplayRole:
-            if col == self.col_name:
-                return T_( self.all_presentation_names[ row ] )
+                elif col == self.col_bg:
+                    return ''
 
-            elif col == self.col_fg:
-                return '#%2.2x%2.2x%2.2x' % colour.fg
+                elif col == self.col_example:
+                    return ' X '
 
-            elif col == self.col_bg:
-                return '#%2.2x%2.2x%2.2x' % colour.bg
+                assert False
 
-            elif col == self.col_example:
-                return 'Example Text'
+            elif role == QtCore.Qt.ForegroundRole:
+                if col == self.col_example:
+                    brush = self.__brush( self.cursor.fg )
+                    return brush
 
-            assert False
+            elif role == QtCore.Qt.BackgroundRole:
+                if col == self.col_example:
+                    brush = self.__brush( (255,255,255) )
+                    return brush
 
-        elif role == QtCore.Qt.ForegroundRole:
-            if col == self.col_example:
-                brush = self.__brush( colour.fg )
-                return brush
+        else:
+            # skip first row
+            row -= 1    
+            name = self.all_names[ row ]
+            colour = self.all_colours[ name ]
+    
+            if role == QtCore.Qt.DisplayRole:
+                if col == self.col_name:
+                    return T_( self.all_presentation_names[ row ] )
 
-        elif role == QtCore.Qt.BackgroundRole:
-            if col == self.col_example:
-                brush = self.__brush( colour.bg )
-                return brush
+                elif col == self.col_fg:
+                    return '#%2.2x%2.2x%2.2x' % colour.fg
+
+                elif col == self.col_bg:
+                    return '#%2.2x%2.2x%2.2x' % colour.bg
+
+                elif col == self.col_example:
+                    return 'Example Text'
+
+                assert False
+
+            elif role == QtCore.Qt.ForegroundRole:
+                if col == self.col_example:
+                    brush = self.__brush( colour.fg )
+                    return brush
+
+            elif role == QtCore.Qt.BackgroundRole:
+                if col == self.col_example:
+                    brush = self.__brush( colour.bg )
+                    return brush
 
         return None
