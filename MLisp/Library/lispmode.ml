@@ -1,14 +1,8 @@
 (progn
 ;
-;    Copyright (c) 1983-2010 Barry A. Scott
+;    Copyright (c) 1983-2016 Barry A. Scott
 ; 
 ; 	lisp mode package
-; 
-; 	updated:
-; 	Barry A. Scott	 5-Jun-1983	correct syntax table
-; 					add messages each side of a M-c
-;	Barry A. Scott	 5-Feb-1986	improve defun-compiling and add
-;					electric-lisp-end-comment.
 ; 
 (defun
     (paren-pause dot instabs
@@ -202,6 +196,7 @@
 	(novalue)
     )
 )
+
 ;
 ;	initialisation of lisp mode
 ;    
@@ -216,6 +211,13 @@
     (execute-mlisp-file "lispmode.key")
     
     (use-syntax-table "Lisp-mode")
+
+    (if (is-bound check-for-white-space-problems)
+        (if check-for-white-space-problems
+            (add-check-for-white-space-problems-to-syntax-table)
+        )
+    )
+
     (modify-syntax-table "paren" "(" ")")
     (modify-syntax-table "string" "'")
     (modify-syntax-table "string" "\"")

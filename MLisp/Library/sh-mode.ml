@@ -19,6 +19,13 @@
     (error-occurred (execute-mlisp-file "sh-mode.key"))
     
     (use-syntax-table "sh")
+
+    (if (is-bound check-for-white-space-problems)
+        (if check-for-white-space-problems
+            (add-check-for-white-space-problems-to-syntax-table)
+        )
+    )
+
     (modify-syntax-table "paren" "(" ")")
     (modify-syntax-table "paren" "{" "}")
     (modify-syntax-table "paren" "[" "]")
@@ -28,6 +35,7 @@
     (modify-syntax-table "string-2,paired" "${" "}")
     (modify-syntax-table "prefix" "\\")
     (modify-syntax-table "word" "_")
+
     (modify-syntax-table "keyword-1" "alias")
     (modify-syntax-table "keyword-1" "autoload")
     (modify-syntax-table "keyword-1" "bg")
@@ -82,5 +90,6 @@
     (modify-syntax-table "keyword-1" "wait")
     (modify-syntax-table "keyword-1" "whence")
     (modify-syntax-table "keyword-1" "while")
+
     (kill-buffer "keymap-hack")
 )

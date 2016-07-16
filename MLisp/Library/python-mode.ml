@@ -245,6 +245,17 @@
 (save-window-excursion
     (temp-use-buffer "~python-hack")
     (use-syntax-table "Python2")
+
+    (if (is-bound check-for-white-space-problems)
+        (if check-for-white-space-problems
+            (add-check-for-white-space-problems-to-syntax-table)
+        )
+    )
+
+    (modify-syntax-table "problem,ere" "  *\t+")
+    (modify-syntax-table "problem,ere" " [ \t]*$")
+    (modify-syntax-table "problem,ere" "\t[ \t]*$")
+
     (modify-syntax-table "paren" "(" ")")
     (modify-syntax-table "paren" "{" "}")
     (modify-syntax-table "paren" "[" "]")
@@ -416,6 +427,13 @@
 (save-window-excursion
     (temp-use-buffer "~python-hack")
     (use-syntax-table "Python3")
+
+    (if (is-bound check-for-white-space-problems)
+        (if check-for-white-space-problems
+            (add-check-for-white-space-problems-to-syntax-table)
+        )
+    )
+
     (modify-syntax-table "paren" "(" ")")
     (modify-syntax-table "paren" "{" "}")
     (modify-syntax-table "paren" "[" "]")

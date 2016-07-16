@@ -187,6 +187,13 @@
 (save-excursion
     (temp-use-buffer "~Java-hack~")
     (use-syntax-table "Java")
+
+    (if (is-bound check-for-white-space-problems)
+        (if check-for-white-space-problems
+            (add-check-for-white-space-problems-to-syntax-table)
+        )
+    )
+
     (modify-syntax-table "paren" "(" ")")
     (modify-syntax-table "paren" "{" "}")
     (modify-syntax-table "paren" "[" "]")

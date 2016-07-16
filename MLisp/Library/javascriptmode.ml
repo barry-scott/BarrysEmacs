@@ -180,6 +180,13 @@
 (save-excursion
     (temp-use-buffer "~JavaScript-hack~")
     (use-syntax-table "JavaScript")
+
+    (if (is-bound check-for-white-space-problems)
+        (if check-for-white-space-problems
+            (add-check-for-white-space-problems-to-syntax-table)
+        )
+    )
+
     (modify-syntax-table "paren" "(" ")")
     (modify-syntax-table "paren" "{" "}")
     (modify-syntax-table "paren" "[" "]")
@@ -189,7 +196,8 @@
     (modify-syntax-table "word" "_$")
     (modify-syntax-table "comment" "//" "\n")
     (modify-syntax-table "comment" "/*" "*/")
-; Reserved JavaScript Keywords
+
+    ; Reserved JavaScript Keywords
     (modify-syntax-table "keyword-1" "boolean")
     (modify-syntax-table "keyword-1" "break")
     (modify-syntax-table "keyword-1" "continue")
@@ -210,7 +218,8 @@
     (modify-syntax-table "keyword-1" "void")
     (modify-syntax-table "keyword-1" "while")
     (modify-syntax-table "keyword-1" "with")
-; builtin Function and Property Names
+
+    ; builtin Function and Property Names
     (modify-syntax-table "keyword-2" "alert")
     (modify-syntax-table "keyword-2" "Anchor")
     (modify-syntax-table "keyword-2" "Area")
@@ -299,7 +308,7 @@
     (modify-syntax-table "keyword-2" "Window")
     (modify-syntax-table "keyword-2" "window")
 
-; Java Keywords Reserved by JavaScript
+    ; Java Keywords Reserved by JavaScript
     (modify-syntax-table "keyword-3" "abstract")
     (modify-syntax-table "keyword-3" "boolean")
     (modify-syntax-table "keyword-3" "byte")
@@ -336,6 +345,7 @@
     (modify-syntax-table "keyword-3" "throws")
     (modify-syntax-table "keyword-3" "transient")
     (modify-syntax-table "keyword-3" "try")
+
     (define-keymap "JavaScript-map")
     (define-keymap "JavaScript-ESC-map")
     (use-local-map "JavaScript-map")

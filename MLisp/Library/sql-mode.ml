@@ -39,6 +39,13 @@
 (save-window-excursion
     (temp-use-buffer "~SQL-hack")
     (use-syntax-table "SQL")
+
+    (if (is-bound check-for-white-space-problems)
+        (if check-for-white-space-problems
+            (add-check-for-white-space-problems-to-syntax-table)
+        )
+    )
+
     (modify-syntax-table "paren" "(" ")")
     (modify-syntax-table "paren" "{" "}")
     (modify-syntax-table "paren" "[" "]")
@@ -46,7 +53,6 @@
     (modify-syntax-table "string" "'")
     (modify-syntax-table "word" "_")
     (modify-syntax-table "comment" "--" "\n")
-
 
     (~mode-modify-syntax-table "keyword-1,case-fold"
         "a" "abort" "abs"   "absolute"
@@ -88,7 +94,8 @@
         "current_date"  "current_default_transform_group"   "current_path"  "current_role"
         "current_time"  "current_timestamp" 
     )
-;"current_transform_group_for_type"
+
+    ;"current_transform_group_for_type"
     (~mode-modify-syntax-table "keyword-1,case-fold"
         "current_user"
         "cursor"    "cursor_name"   "cycle" "data"

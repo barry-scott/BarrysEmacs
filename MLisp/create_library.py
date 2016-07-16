@@ -9,24 +9,30 @@ import sys
 import os
 import subprocess
 
-def main():
-    file_sets = sys.argv[1].split( ',' )
-    lib_name = sys.argv[2]
-    tool_path = sys.argv[3]
+def main( argv ):
+    file_sets = argv[1].split( ',' )
+    lib_name = argv[2]
+    tool_path = argv[3]
 
     print( 'Create MLisp Library %(lib_name)s with file set %(file_sets)s using tools from %(tool_path)s' % locals() )
 
-    dbtools = BemacsDatabaseTools( tool_path )
+    try:
+        dbtools = BemacsDatabaseTools( tool_path )
 
-    dbtools.create( lib_name )
+        dbtools.create( lib_name )
 
-    modules_added = 0
-    for set_name, filename in library_files:
-        if set_name in file_sets:
-            dbtools.add( lib_name, filename )
-            modules_added = modules_added + 1
+        modules_added = 0
+        for set_name, filename in library_files:
+            if set_name in file_sets:
+                dbtools.add( lib_name, filename )
+                modules_added = modules_added + 1
+
+    except ValueError as e:
+        print( 'Error: %s' % (e,) )
+        return 1
 
     print( 'Added %d modules to %s' % (modules_added, lib_name) )
+    return 0
 
 class BemacsDatabaseTools:
     def __init__(self, tool_path):
@@ -231,6 +237,7 @@ library_files =    [
     ('common',    'Library/vbscript-mode.key'),
     ('common',    'Library/whatcurs.ml'),
     ('common',    'Library/whereis.ml'),
+    ('common',    'Library/white-space-mini-mode.ml'),
     ('common',    'Library/windiff.ml'),
     ('common',    'Library/windows.ml'),
     ('common',    'Library/writereg.ml'),
@@ -313,4 +320,4 @@ library_files =    [
     ]
 
 if __name__ == "__main__":
-    main()
+    sys.exit( main( sys.argv ) )
