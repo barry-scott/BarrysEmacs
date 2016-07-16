@@ -760,7 +760,7 @@ public:
         bool shift = py_shift;
         std::vector<int> all_params;
 
-        for( size_t i=0; i<py_all_params.size(); i++ )
+        for( Py_ssize_t i=0; i<py_all_params.size(); i++ )
         {
             Py::Long py_param( py_all_params[ i ] );
             long param( py_param );
@@ -802,7 +802,7 @@ public:
         Py::Dict keys_mapping( args[0] );
         Py::List all_keys( keys_mapping.keys() );
 
-        for( size_t i=0; i < all_keys.size(); ++i )
+        for( Py_ssize_t i=0; i < all_keys.size(); ++i )
         {
             Py::String py_key( all_keys[ i ] );
             Py::String py_value( keys_mapping[ py_key ] );
