@@ -1,42 +1,42 @@
 // Copyright (c) 1985
 //        Barry A. Scott and Nick Emery
 //
-// Copyright (c) 1986-2012
+// Copyright (c) 1986-2016
 //        Barry A. Scott
 //
 // Declarations having to do with Emacs searching
 
 
 // meta characters in the "compiled" form of a regular expression
-#define CBRA                 2u    // \( -- begin bracket
-#define CCHR                 4u    // a vanilla character
-#define CDOT                 6u    // . -- match anything except a newline
-#define CCL                  8u    // [...] -- character class
-#define NCCL                10u    // [^...] -- negated character class
-#define CDOL                12u    // $ -- matches the end of a line
-#define CEOP                14u    // The end of the pattern
-#define CKET                16u    // \) -- close bracket
-#define CBACK               18u    // \N -- backreference to the Nth bracketed string
-#define CIRC                20u    // ^ matches the beginning of a line
-#define BBUF                22u    // beginning of buffer \`
-#define EBUF                24u    // end of buffer \'
-#define BDOT                26u    // matches before dot \<
-#define EDOT                28u    // matches at dot \=
-#define ADOT                30u    // matches after dot \>
-#define WORDC               32u    // matches word character \w
-#define NWORDC              34u    // matches non-word characer \W
-#define WBOUND              36u    // matches word boundary \b
-#define NWBOUND             38u    // matches non-(word boundary) \B
+#define CBRA               EmacsChar_t(   2 )  // \( -- begin bracket
+#define CCHR               EmacsChar_t(   4 )  // a vanilla character
+#define CDOT               EmacsChar_t(   6 )  // . -- match anything except a newline
+#define CCL                EmacsChar_t(   8 )  // [...] -- character class
+#define NCCL               EmacsChar_t(  10 )  // [^...] -- negated character class
+#define CDOL               EmacsChar_t(  12 )  // $ -- matches the end of a line
+#define CEOP               EmacsChar_t(  14 )  // The end of the pattern
+#define CKET               EmacsChar_t(  16 )  // \) -- close bracket
+#define CBACK              EmacsChar_t(  18 )  // \N -- backreference to the Nth bracketed string
+#define CIRC               EmacsChar_t(  20 )  // ^ matches the beginning of a line
+#define BBUF               EmacsChar_t(  22 )  // beginning of buffer \`
+#define EBUF               EmacsChar_t(  24 )  // end of buffer \'
+#define BDOT               EmacsChar_t(  26 )  // matches before dot \<
+#define EDOT               EmacsChar_t(  28 )  // matches at dot \=
+#define ADOT               EmacsChar_t(  30 )  // matches after dot \>
+#define WORDC              EmacsChar_t(  32 )  // matches word character \w
+#define NWORDC             EmacsChar_t(  34 )  // matches non-word characer \W
+#define WBOUND             EmacsChar_t(  36 )  // matches word boundary \b
+#define NWBOUND            EmacsChar_t(  38 )  // matches non-(word boundary) \B
 
 // the following are only allowed when syntax_array is used
-#define SEA_SYN_COMMENT     40u     // only match inside a comment \c
-#define SEA_SYN_NOCOMMENT   42u     // only match outside a comment \C
-#define SEA_SYN_STRING      44u     // only match inside a string \s
-#define SEA_SYN_NOSTRING    46u     // only match outside a string \S
+#define SEA_SYN_COMMENT    EmacsChar_t(  40 )   // only match inside a comment \c
+#define SEA_SYN_NOCOMMENT  EmacsChar_t(  42 )   // only match outside a comment \C
+#define SEA_SYN_STRING     EmacsChar_t(  44 )   // only match inside a string \s
+#define SEA_SYN_NOSTRING   EmacsChar_t(  46 )   // only match outside a string \S
 
-#define STAR                 1u     // * -- Kleene star, repeats the previous
-                                    // RE as many times as possible; the value
-                                    // ORs with the other operator types
+#define STAR               EmacsChar_t(   1 )   // * -- Kleene star, repeats the previous
+                                                // RE as many times as possible; the value
+                                                // ORs with the other operator types
 
 
 class SearchSimpleAlgorithm : public SearchImplementation
