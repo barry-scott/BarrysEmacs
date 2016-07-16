@@ -362,12 +362,12 @@ ExpressionType Expression::exp_type() const
 
 void Expression::release_expr()
 {
-    if( this == NULL )
-        return;
     if( data == NULL )
         return;
+
     if( data->remove_ref() )
         delete data;
+
     data = NULL;
 }
 
