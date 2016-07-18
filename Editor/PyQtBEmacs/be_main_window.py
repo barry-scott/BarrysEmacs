@@ -194,6 +194,10 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         # Add tool bar
         t = self.addToolBar( 'main' )
 
+        self.addEmacsToolbar( t, 'fo', T_('Open'), 'toolbar_images/file_open.png' )
+        self.addEmacsToolbar( t, 'fs', T_('Save'), 'toolbar_images/file_save.png' )
+        self.addEmacsToolbar( t, 'fl', T_('Save All Modified Files'), 'toolbar_images/file_save_all.png' )
+
         self.addEmacsToolbar( t, 'ex', T_('Cut'), 'toolbar_images/editcut.png' )
         self.addEmacsToolbar( t, 'ec', T_('Copy'), 'toolbar_images/editcopy.png' )
         self.addEmacsToolbar( t, 'ev', T_('Paste'), 'toolbar_images/editpaste.png' )
