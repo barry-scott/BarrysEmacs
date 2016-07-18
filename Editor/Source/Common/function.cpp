@@ -512,6 +512,7 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "!=", not_equal_command );
     EMACS_NEW BoundName( "%", mod_command );
     EMACS_NEW BoundName( "&", and_command );
+    EMACS_NEW BoundName( "|", or_command );
     EMACS_NEW BoundName( "*", times_command );
     EMACS_NEW BoundName( "+", add_command );
     EMACS_NEW BoundName( "-", subtract_command );
@@ -989,7 +990,6 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "write-named-file", write_named_file_command );
     EMACS_NEW BoundName( "yank-buffer", yank_buffer );
     EMACS_NEW BoundName( "yank-from-killbuffer", yank_from_kill_buffer );
-    EMACS_NEW BoundName( "|", or_command );
 }
 
 void init_fncs( void )
