@@ -20,12 +20,14 @@
                 )
             )
         )
+
         (paren-flash-only)
     )
 )
 (defun
     (nl-indent column
         (delete-white-space)
+
         (save-excursion
             (backward-balanced-paren-line 0)
             (setq column
@@ -215,6 +217,12 @@
     (if (is-bound check-for-white-space-problems)
         (if check-for-white-space-problems
             (add-check-for-white-space-problems-to-syntax-table)
+        )
+    )
+
+    (if (is-bound check-for-use-of-tabs-problems)
+        (if check-for-use-of-tabs-problems
+            (add-check-for-use-of-tabs-problems-syntax-table)
         )
     )
 

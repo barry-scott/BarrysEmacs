@@ -46,6 +46,12 @@
         )
     )
 
+    (if (is-bound check-for-use-of-tabs-problems)
+        (if check-for-use-of-tabs-problems
+            (add-check-for-use-of-tabs-problems-syntax-table)
+        )
+    )
+
     (modify-syntax-table "paren" "(" ")")
     (modify-syntax-table "paren" "{" "}")
     (modify-syntax-table "paren" "[" "]")

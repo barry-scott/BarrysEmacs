@@ -23,7 +23,7 @@
         (if check-for-use-of-tabs-problems
             (progn
                 ; tab
-                (modify-syntax-table "problem,ere" "\t+")
+                (modify-syntax-table "problem,ere" "\t\t*")
             )
         )
     )

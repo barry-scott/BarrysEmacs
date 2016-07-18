@@ -252,6 +252,12 @@
         )
     )
 
+    (if (is-bound check-for-use-of-tabs-problems)
+        (if check-for-use-of-tabs-problems
+            (add-check-for-use-of-tabs-problems-syntax-table)
+        )
+    )
+
     (modify-syntax-table "problem,ere" "  *\t+")
     (modify-syntax-table "problem,ere" " [ \t]*$")
     (modify-syntax-table "problem,ere" "\t[ \t]*$")
@@ -431,6 +437,12 @@
     (if (is-bound check-for-white-space-problems)
         (if check-for-white-space-problems
             (add-check-for-white-space-problems-to-syntax-table)
+        )
+    )
+
+    (if (is-bound check-for-use-of-tabs-problems)
+        (if check-for-use-of-tabs-problems
+            (add-check-for-use-of-tabs-problems-syntax-table)
         )
     )
 
