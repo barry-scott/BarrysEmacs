@@ -137,9 +137,12 @@
 (defun
     (skip-spaces                ; Skip 'following' whitespace
         (forward-character)
-        (while (| (| (= (following-char) ' ')
-                      (= (following-char) '     '))
-                   (= (following-char) 10))
+        (while
+            (|
+                (|
+                    (= (following-char) ' ')
+                    (= (following-char) '\t'))
+                (= (following-char) '\n'))
             (forward-character)
         )
     )
