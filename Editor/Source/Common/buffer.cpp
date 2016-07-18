@@ -767,32 +767,32 @@ int EmacsBuffer::gap_room(int k)
 }
 
 ModeSpecific::ModeSpecific()
-    : md_abbrev( NULL )
-    , md_syntax( global_syntax_table )
-    , md_rightmargin( (int)default_right_margin )
-    , md_leftmargin( (int)default_left_margin )
-    , md_commentcolumn( (int)default_comment_column )
-    , md_tabsize( default_tab_size )
-    , md_indent_use_tab( default_indent_use_tab )
-    , md_headclip( 1 )
-    , md_tailclip( 0 )
-    , md_keys( NULL )
-    , md_abbrevon( global_abbrev.abbrev_number_defined > 0 )
-    , md_foldcase( default_fold_case )
-    , md_replace( default_replace_mode )
-    , md_highlight( default_highlight )
-    , md_displaynonprinting( (int)default_display_nonprinting )
-    , md_display_eof( default_display_eof )
-    , md_display_c1( default_display_c1 )
-    , md_readonly( default_read_only_buffer )
-    , md_wrap_lines( default_wrap_lines )
-    , md_syntax_colouring( (int)default_syntax_colouring )
-    , md_syntax_array( default_syntax_array || default_syntax_colouring )
-    , md_modestring( "Normal" )
-    , md_modeformat( default_mode_format.asString() )
-    , md_prefixstring()
-    , md_auto_fill_proc( default_auto_fill_proc )
-    , md_process_key_proc( NULL )
+: md_abbrev( NULL )
+, md_syntax( global_syntax_table )
+, md_rightmargin( (int)default_right_margin )
+, md_leftmargin( (int)default_left_margin )
+, md_commentcolumn( (int)default_comment_column )
+, md_tabsize( default_tab_size )
+, md_indent_use_tab( default_indent_use_tab )
+, md_headclip( 1 )
+, md_tailclip( 0 )
+, md_keys( NULL )
+, md_abbrevon( global_abbrev.abbrev_number_defined > 0 )
+, md_foldcase( default_fold_case )
+, md_replace( default_replace_mode )
+, md_highlight( default_highlight )
+, md_displaynonprinting( (int)default_display_nonprinting )
+, md_display_eof( default_display_eof )
+, md_display_c1( default_display_c1 )
+, md_readonly( default_read_only_buffer )
+, md_wrap_lines( default_wrap_lines )
+, md_syntax_colouring( (int)default_syntax_colouring )
+, md_syntax_array( default_syntax_array || default_syntax_colouring )
+, md_modestring( "Normal" )
+, md_modeformat( default_mode_format.asString() )
+, md_prefixstring()
+, md_auto_fill_proc( default_auto_fill_proc )
+, md_process_key_proc( NULL )
 {
 }
 
@@ -802,40 +802,40 @@ ModeSpecific::~ModeSpecific()
 
 ModeSpecific &ModeSpecific::operator=( ModeSpecific &from )
 {
-    md_abbrev        = from.md_abbrev;
-    md_syntax        = from.md_syntax;
-    md_rightmargin        = from.md_rightmargin;
-    md_leftmargin        = from.md_leftmargin;
-    md_commentcolumn    = (int)from.md_commentcolumn;
-    md_tabsize        = from.md_tabsize;
-    md_headclip        = from.md_headclip;
-    md_tailclip        = from.md_tailclip;
-    md_keys            = from.md_keys;
-    md_abbrevon        = (int)from.md_abbrevon;
-    md_foldcase        = (int)from.md_foldcase;
-    md_replace        = (int)from.md_replace;
-    md_highlight        = (int)from.md_highlight;
-    md_displaynonprinting    = (int)from.md_displaynonprinting;
-    md_display_eof        = (int)from.md_display_eof;
-    md_display_c1        = (int)from.md_display_c1;
-    md_readonly        = (int)from.md_readonly;
-    md_wrap_lines        = (int)from.md_wrap_lines;
-    md_syntax_colouring    = (int)from.md_syntax_colouring;
-    md_syntax_array        = (int)from.md_syntax_array;
-    md_modestring        = from.md_modestring;
-    md_modeformat        = from.md_modeformat;
-    md_prefixstring        = from.md_prefixstring;
-    md_auto_fill_proc    = from.md_auto_fill_proc;
-    md_process_key_proc    = from.md_process_key_proc;
+    md_abbrev               = from.md_abbrev;
+    md_syntax               = from.md_syntax;
+    md_rightmargin          = from.md_rightmargin;
+    md_leftmargin           = from.md_leftmargin;
+    md_commentcolumn        = (int)from.md_commentcolumn;
+    md_tabsize              = from.md_tabsize;
+    md_headclip             = from.md_headclip;
+    md_tailclip             = from.md_tailclip;
+    md_keys                 = from.md_keys;
+    md_abbrevon             = (int)from.md_abbrevon;
+    md_foldcase             = (int)from.md_foldcase;
+    md_replace              = (int)from.md_replace;
+    md_highlight            = (int)from.md_highlight;
+    md_displaynonprinting   = (int)from.md_displaynonprinting;
+    md_display_eof          = (int)from.md_display_eof;
+    md_display_c1           = (int)from.md_display_c1;
+    md_readonly             = (int)from.md_readonly;
+    md_wrap_lines           = (int)from.md_wrap_lines;
+    md_syntax_colouring     = (int)from.md_syntax_colouring;
+    md_syntax_array         = (int)from.md_syntax_array;
+    md_modestring           = from.md_modestring;
+    md_modeformat           = from.md_modeformat;
+    md_prefixstring         = from.md_prefixstring;
+    md_auto_fill_proc       = from.md_auto_fill_proc;
+    md_process_key_proc     = from.md_process_key_proc;
 
     return *this;
 }
 
 syntax_buffer_data::syntax_buffer_data( EmacsBuffer &_buffer )
-    : syntax_valid( 0 )
-    , syntax_update_credit( 0 )
-    , syntax_base( NULL )
-    , buffer( _buffer )
+: syntax_valid( 0 )
+, syntax_update_credit( 0 )
+, syntax_base( NULL )
+, buffer( _buffer )
 {}
 
 syntax_buffer_data::~syntax_buffer_data()
