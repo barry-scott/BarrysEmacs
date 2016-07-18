@@ -139,10 +139,10 @@
         (forward-character)
         (while
             (|
-                (|
-                    (= (following-char) ' ')
-                    (= (following-char) '\t'))
-                (= (following-char) '\n'))
+                (= (following-char) ' ')
+                (= (following-char) '\t')
+                (= (following-char) '\n')
+            )
             (forward-character)
         )
     )
