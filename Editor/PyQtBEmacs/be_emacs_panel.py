@@ -90,7 +90,7 @@ cursor_fg_default = (128,0,0,64)
 all_colour_defaults = (
     ColourInfo('LINE_ATTR_MODELINE',      U_('Mode line'),    LINE_ATTR_MODELINE,     (255,255,128),  (  0,  0,255)),
     ColourInfo('LINE_M_ATTR_HIGHLIGHT',   U_('Highlight'),    LINE_M_ATTR_HIGHLIGHT,  (  0,  0,  0),  (255,204,102)),
-    ColourInfo('SYNTAX_TYPE_PROBLEM',     U_('Problem'),      SYNTAX_TYPE_PROBLEM,    (255,255,255),  (128,  0,  0)),
+    ColourInfo('SYNTAX_TYPE_PROBLEM',     U_('Problem'),      SYNTAX_TYPE_PROBLEM,    (255,  0,  0),  (255,255,255)),
     ColourInfo('SYNTAX_DULL',             U_('Dull'),         SYNTAX_DULL,            (  0,  0,  0),  (255,255,255)),
     ColourInfo('SYNTAX_WORD',             U_('Word'),         SYNTAX_WORD,            (  0,  0,  0),  (255,255,255)),
     ColourInfo('SYNTAX_TYPE_STRING1',     U_('String 1'),     SYNTAX_TYPE_STRING1,    (  0,128,  0),  (255,255,255)),

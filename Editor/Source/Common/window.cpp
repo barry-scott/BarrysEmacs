@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1982-2002
+//    Copyright (c) 1982-2016
 //        Barry A. Scott
 //
 #include <emacs.h>
@@ -29,20 +29,22 @@ SystemExpressionRepresentationString global_mode_string;
 SystemExpressionRepresentationIntBoolean pop_up_windows( 1 );
 SystemExpressionRepresentationIntPositive split_height_threshold( 20 );
 
-const int CHAR_HT( 0x2409 );            // unicode Tab HT
-const int CHAR_HT_FILL( 0x00b7 );       // unicode Middle Dot
-const int CHAR_NL( 0x2424 );            // unicode Newline NL
-const int CHAR_CR( 0x240d );            // unicode Newline CR
-const int CHAR_FF( 0x240c );            // unicode Form Feed FF
-const int CHAR_VT( 0x240b );            // unicode Vertical Tab VT
-const int CHAR_LINE_TRUNCATED( 0x2190 );// unicode Right Arrow
-const int CHAR_LINE_WRAPPED( 0x2199 );  // unicode South west Arrow
+const int CHAR_VISIBLE_HT( 0x2409 );            // unicode SYMBOL FOR HORIZONTAL TABULATION
+const int CHAR_VISIBLE_HT_FILL( 0x02C3 );       // unicode MODIFIER LETTER RIGHT ARROWHEAD
+const int CHAR_VISIBLE_SP( 0x00b7 );            // unicode MIDDLE DOT
+const int CHAR_VISIBLE_NL( 0x2424 );            // unicode SYMBOL FOR NEWLINE
+const int CHAR_VISIBLE_CR( 0x240d );            // unicode SYMBOL FOR CARRIAGE RETURN
+const int CHAR_VISIBLE_FF( 0x240c );            // unicode SYMBOL FOR FORM FEED
+const int CHAR_VISIBLE_VT( 0x240b );            // unicode SYMBOL FOR VERTICAL TABULATION
+const int CHAR_LINE_TRUNCATED( 0x2190 );// unicode LEFTWARDS ARROW
+const int CHAR_LINE_WRAPPED( 0x2199 );  // unicode SOUTH WEST ARROW
 
 static int mouse_x;             // The X screen coordinate of the mouse
 static int mouse_y;             // The Y screen coordinate of the mouse
 
 static int use_time;            // A counter used to set the time of last use
                                 // of a window: for selecting the LRU window
+
 
 // Move dot to the buffer and character corresponding to some absolute X
 // and Y coordinate.
@@ -1432,11 +1434,11 @@ void EmacsView::dump_str
                         switch( c )
                         {
                         case ctl('L'):
-                            dsputc( CHAR_FF, highlight ); break;
+                            dsputc( CHAR_VISIBLE_FF, highlight ); break;
                         case ctl('M'):
-                            dsputc( CHAR_CR, highlight ); break;
+                            dsputc( CHAR_VISIBLE_CR, highlight ); break;
                         case ctl('K'):
-                            dsputc( CHAR_VT, highlight ); break;
+                            dsputc( CHAR_VISIBLE_VT, highlight ); break;
                         }
                 }
                 else
@@ -2131,9 +2133,9 @@ int EmacsView::dump_line_from_buffer
         switch( c )
         {
         case ctl('J'):    // Newline
-            if( flags.display_non_printing )
+            if( flags.display_non_printing || (highlight&SYNTAX_TYPE_PROBLEM) != 0)
                 if( col >= first_column - 1 )
-                    dsputc( CHAR_NL, highlight );
+                    dsputc( CHAR_VISIBLE_NL, highlight );
 
             goto dump_line_from_buffer_loop;
 
@@ -2142,14 +2144,14 @@ int EmacsView::dump_line_from_buffer
             int old_col = col;
             col = ((col - 1) / mode.md_tabsize + 1) * mode.md_tabsize + 1;
 
-            if( flags.display_non_printing )
+            if( flags.display_non_printing || (highlight&SYNTAX_TYPE_PROBLEM) != 0)
             {
                 _if_wraped( old_col + 1 )
-                    dsputc( CHAR_HT, highlight );
+                    dsputc( CHAR_VISIBLE_HT, highlight );
 
                 for( int i=old_col + 2; i<=col; i += 1 )
                     _if_wraped( i )
-                        dsputc( CHAR_HT_FILL, highlight );
+                        dsputc( CHAR_VISIBLE_HT_FILL, highlight );
             }
             else
             {
@@ -2168,6 +2170,25 @@ int EmacsView::dump_line_from_buffer
             }
 
             last_char_type = space_char;
+            break;
+        }
+
+        case ' ':
+        {
+            if( flags.display_non_printing || (highlight&SYNTAX_TYPE_PROBLEM) != 0)
+            {
+                col++;
+
+                _if_wraped( col )
+                    dsputc( CHAR_VISIBLE_SP, highlight );
+            }
+            else
+            {
+                col++;
+
+                _if_wraped( col )
+                    dsputc( ' ', highlight );
+            }
             break;
         }
 
@@ -2194,9 +2215,9 @@ int EmacsView::dump_line_from_buffer
             last_char_type = char_type;
         }
 
-            if( (c >= ' ' && c <= '~')    // printing chars
+            if( (c >= ' ' && c <= '~')      // printing chars
             || (c >= 128+32 && c <= 254)
-            || (c >= 256 && c < 0xef00)
+            || (c >= 256 && c < 0xef00)     // QQQ: what ef00 and f100
             || (c >= 0xf100)
             )
             {
@@ -2232,10 +2253,10 @@ int EmacsView::dump_line_from_buffer
                         _if_wraped( col )
                             switch( c )
                             {
-                            case ctl('L'):    dsputc( CHAR_FF, highlight ); break;
-                            case ctl('M'):    dsputc( CHAR_CR, highlight ); break;
-                            case ctl('K'):    dsputc( CHAR_VT, highlight ); break;
-                            case ctl('I'):    dsputc( CHAR_HT, highlight ); break;
+                            case ctl('L'):    dsputc( CHAR_VISIBLE_FF, highlight ); break;
+                            case ctl('M'):    dsputc( CHAR_VISIBLE_CR, highlight ); break;
+                            case ctl('K'):    dsputc( CHAR_VISIBLE_VT, highlight ); break;
+                            case ctl('I'):    dsputc( CHAR_VISIBLE_HT, highlight ); break;
                             }
                     }
                     else
