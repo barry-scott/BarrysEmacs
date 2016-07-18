@@ -77,8 +77,6 @@
         (modify-syntax-table "keyword-1" "wait")
         (modify-syntax-table "keyword-1" "whence")
         (modify-syntax-table "keyword-1" "while")
-
-        (kill-buffer "keymap-hack")
     )
 )
 
