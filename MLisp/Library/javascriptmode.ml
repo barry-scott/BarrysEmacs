@@ -1,180 +1,180 @@
-; 
+;
 ; Javascript mode
-; 
+;
 (defun
-    (JavaScript-back-paren			; Go to last open parenthesis at current level
-	(backward-paren 0))
+    (JavaScript-back-paren                      ; Go to last open parenthesis at current level
+        (backward-paren 0))
 )
 (defun
-    (JavaScript-fore-paren			; Go to next close parenthesis at current level
-	(forward-paren 0))
+    (JavaScript-fore-paren                      ; Go to next close parenthesis at current level
+        (forward-paren 0))
 )
 (defun
-    (JavaScript-flash-back-paren 		; Flash the matching left parenthesis
-	(save-excursion
-	    (backward-paren 0)
-	    (if (dot-is-visible)
-		(sit-for 5)
-		(progn
-		    (beginning-of-line)
-		    (set-mark)
-		    (end-of-line)
-		    (message (region-to-string)))
-	    )
-	)
+    (JavaScript-flash-back-paren                ; Flash the matching left parenthesis
+        (save-excursion
+            (backward-paren 0)
+            (if (dot-is-visible)
+                (sit-for 5)
+                (progn
+                    (beginning-of-line)
+                    (set-mark)
+                    (end-of-line)
+                    (message (region-to-string)))
+            )
+        )
     )
 )
 (defun
-    (JavaScript-flash-fore-paren		; Flash the matching close parenthesis
-	(save-excursion
-	    (forward-paren 0)
-	    (if (dot-is-visible)
-		(sit-for 5)
-		(progn
-		    (beginning-of-line)
-		    (set-mark)
-		    (end-of-line)
-		    (message (region-to-string))
-		)
-	    )
-	)
+    (JavaScript-flash-fore-paren                ; Flash the matching close parenthesis
+        (save-excursion
+            (forward-paren 0)
+            (if (dot-is-visible)
+                (sit-for 5)
+                (progn
+                    (beginning-of-line)
+                    (set-mark)
+                    (end-of-line)
+                    (message (region-to-string))
+                )
+            )
+        )
     )
 )
 (defun
-    (JavaScript-paren			; Flashes matching open parenthesis when ')' is typed.
-	(insert-character (last-key-struck))
-	(save-excursion
-	    (backward-paren 0)
-	    (if (dot-is-visible)
-		(sit-for 5)
-		(progn
-		    (beginning-of-line)
-		    (set-mark)
-		    (end-of-line)
-		    (message (region-to-string))
-		)
-	    )
-	)
+    (JavaScript-paren                   ; Flashes matching open parenthesis when ')' is typed.
+        (insert-character (last-key-struck))
+        (save-excursion
+            (backward-paren 0)
+            (if (dot-is-visible)
+                (sit-for 5)
+                (progn
+                    (beginning-of-line)
+                    (set-mark)
+                    (end-of-line)
+                    (message (region-to-string))
+                )
+            )
+        )
     )
 )
 (defun
-    (JavaScript-indent old-dot old-size	; indent a {...} apropriately
+    (JavaScript-indent old-dot old-size ; indent a {...} apropriately
         (setq old-dot (dot))
-	(setq old-size (buffer-size))
-	(save-excursion
-	    (previous-line)
-	    (search-forward "^}")
-	    (set-mark)
-	    (backward-paren 0)
-	    (beginning-of-line)
-	    (exchange-dot-and-mark)
-	    (end-of-line)
-	    (forward-character)
-	    (filter-region "indent -st")
-	)
-	(goto-character (/ (* (buffer-size) old-dot) old-size))
-	(novalue)
+        (setq old-size (buffer-size))
+        (save-excursion
+            (previous-line)
+            (search-forward "^}")
+            (set-mark)
+            (backward-paren 0)
+            (beginning-of-line)
+            (exchange-dot-and-mark)
+            (end-of-line)
+            (forward-character)
+            (filter-region "indent -st")
+        )
+        (goto-character (/ (* (buffer-size) old-dot) old-size))
+        (novalue)
     )
 )
 (defun
-    (JavaScript-}			; flash the matching '{'
-	(if (eolp)
-	    (progn
-		(delete-white-space)
-		(if (! (bolp))
-		    (newline-and-indent)
-		    (progn
-			(delete-previous-character)
-			(newline-and-indent)
-		    ))
-		(JavaScript-paren)
-		(newline-and-indent)
-		(dedent-line)
-	    )
-	    (JavaScript-paren)
-	)
+    (JavaScript-}                       ; flash the matching '{'
+        (if (eolp)
+            (progn
+                (delete-white-space)
+                (if (! (bolp))
+                    (newline-and-indent)
+                    (progn
+                        (delete-previous-character)
+                        (newline-and-indent)
+                    ))
+                (JavaScript-paren)
+                (newline-and-indent)
+                (dedent-line)
+            )
+            (JavaScript-paren)
+        )
     )
 )
 (defun
-    (JavaScript-{			; Flash the matching '}'...
-				; really should do this only if the line
-				; isn't all whitespace
-	(if (eolp)
-	    (progn
-		(insert-string "{")
-		(newline-and-indent)
-	    )
-	    (insert-string "{")
-	)
+    (JavaScript-{                       ; Flash the matching '}'...
+                                ; really should do this only if the line
+                                ; isn't all whitespace
+        (if (eolp)
+            (progn
+                (insert-string "{")
+                (newline-and-indent)
+            )
+            (insert-string "{")
+        )
     )
 )
 ; need to setup tab stops too! (tab at beginning of blank line should just
 ; tab. at beginning of non-blank line, should re-indent-line.)
 (defun
     (JavaScript-tab
-	(if (| (& (eolp) (bolp)) (!= (current-column) 1))
-	    (insert-character '\t')
-	    (progn
-		(delete-white-space)
-		(to-col (JavaScript-indent-level))
-	    )
-	)
+        (if (| (& (eolp) (bolp)) (!= (current-column) 1))
+            (insert-character '\t')
+            (progn
+                (delete-white-space)
+                (to-col (JavaScript-indent-level))
+            )
+        )
     )
 )
- 
+
 (defun
     (JavaScript-indent-level
-	(save-excursion
-	    (if (error-occurred (re-search-reverse "^[ 	]*[!-~]"))
-		(progn
-		    logical-tab-size
-		)
-		(progn
-		    (re-search-forward "[!-~]")
-		    (- (current-column) 1)   
-		)
-	    )
-	)
+        (save-excursion
+            (if (error-occurred (re-search-reverse "^[  ]*[!-~]"))
+                (progn
+                    logical-tab-size
+                )
+                (progn
+                    (re-search-forward "[!-~]")
+                    (- (current-column) 1)
+                )
+            )
+        )
     )
 )
 (defun
     (JavaScript-compile
-	(setq compile-it-command (concat "javac " current-buffer-file-name))
+        (setq compile-it-command (concat "javac " current-buffer-file-name))
 
-	(compile-it)
+        (compile-it)
     )
 )
 
 (defun
     (JavaScript-high-voltage-on
-	(setq mode-string "JavaScript high voltage")
-	(local-bind-to-key "JavaScript-{" "{")
-	(local-bind-to-key "JavaScript-}" "}")
-	(local-bind-to-key "JavaScript-tab" "\t")
-	(local-bind-to-key "JavaScript-flash-fore-paren" "\e}")
-	(local-bind-to-key "JavaScript-flash-back-paren" "\e{")
-	(high-voltage-off-key-binding)
-	(message "high voltage on")
+        (setq mode-string "JavaScript high voltage")
+        (local-bind-to-key "JavaScript-{" "{")
+        (local-bind-to-key "JavaScript-}" "}")
+        (local-bind-to-key "JavaScript-tab" "\t")
+        (local-bind-to-key "JavaScript-flash-fore-paren" "\e}")
+        (local-bind-to-key "JavaScript-flash-back-paren" "\e{")
+        (high-voltage-off-key-binding)
+        (message "high voltage on")
     )
 )
 (defun
     (JavaScript-high-voltage-off
-	(setq mode-string "JavaScript")
-	(local-bind-to-key "self-insert" ";")
-	(local-bind-to-key "self-insert" "{")
-	(local-bind-to-key "self-insert" "\t")
-	(local-bind-to-key "JavaScript-paren" "}")
-	(high-voltage-on-key-binding)
-	(message "high voltage off")
+        (setq mode-string "JavaScript")
+        (local-bind-to-key "self-insert" ";")
+        (local-bind-to-key "self-insert" "{")
+        (local-bind-to-key "self-insert" "\t")
+        (local-bind-to-key "JavaScript-paren" "}")
+        (high-voltage-on-key-binding)
+        (message "high voltage off")
     )
 )
 (defun
     (JavaScript-mode
-	(setq mode-string "JavaScript")
-	(use-syntax-table "JavaScript")
-	(use-local-map "JavaScript-map")
-	(use-abbrev-table "JavaScript")
-	(novalue)
+        (setq mode-string "JavaScript")
+        (use-syntax-table "JavaScript")
+        (use-local-map "JavaScript-map")
+        (use-abbrev-table "JavaScript")
+        (novalue)
     )
 )
 (save-excursion

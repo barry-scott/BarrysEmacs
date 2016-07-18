@@ -1,6 +1,6 @@
 ;
 ; $uaidef
-; 
+;
 (progn
     (~sys_literal_setup_incr "uai$c_" 0 1
            "ad_ii"
@@ -18,7 +18,7 @@
            "captive"
     )
     (~sys_literal_setup_incr "uai$m_" 16 1
-           "disacnt"   	       	       	
+           "disacnt"
     )
     (~sys_literal_setup_incr "uai$m_" 32 1
            "diswelcom"
@@ -51,30 +51,30 @@
            "autologin"
     )
     (~sys_literal_setup_incr "uai$v_" 0 1
-	  "monday"
-	  "tuesday"
-	  "wednesday"
-	  "thursday"
-	  "friday"
-	  "saturday"
-     	  "sunday"
+          "monday"
+          "tuesday"
+          "wednesday"
+          "thursday"
+          "friday"
+          "saturday"
+          "sunday"
     )
     (~sys_literal_setup_incr "uai$v_" 0 1
-	  "disctly"
-	  "defcli"
-	  "lockpwd"
-	  "captive"
-	  "disacnt"
-	  "diswelcom"
-	  "dismail"
-	  "nomail"
-	  "genpwd"
-	  "pwd_expired"
-	  "pwd2_expired"
-	  "audit"
-	  "disreport"
-	  "disreconnect"
-	  "autologin"
+          "disctly"
+          "defcli"
+          "lockpwd"
+          "captive"
+          "disacnt"
+          "diswelcom"
+          "dismail"
+          "nomail"
+          "genpwd"
+          "pwd_expired"
+          "pwd2_expired"
+          "audit"
+          "disreport"
+          "disreconnect"
+          "autologin"
     )
 
     (~sys_literal_setup_incr "uai$_" 1 1
@@ -151,4 +151,4 @@
         "accounts"
     )
 
-)                                                 
+)

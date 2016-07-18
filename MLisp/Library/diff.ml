@@ -1,76 +1,76 @@
-; 
+;
 ;   diff.ml
-; 
+;
 (declare-global
-    diff-command)   		; holds the diff command to use
+    diff-command)               ; holds the diff command to use
 
 (declare-buffer-specific
-    diff-buffer)		; holds the buffer that was last differ
+    diff-buffer)                ; holds the buffer that was last differ
 
 (defun
     (diff
-	~prefix 
-	
-	(setq ~prefix prefix-argument-provided)
-	
-	(if (= current-buffer-type "file")
-	    (progn
-		~buffer
-		~filename
-		~backup-filename
-		~buffer-is-not-modified
-		
-		(setq ~buffer current-buffer-name)
-		(setq ~filename current-buffer-file-name)
-		(setq ~buffer-is-not-modified (= buffer-is-modified 0))
-		
+        ~prefix
+
+        (setq ~prefix prefix-argument-provided)
+
+        (if (= current-buffer-type "file")
+            (progn
+                ~buffer
+                ~filename
+                ~backup-filename
+                ~buffer-is-not-modified
+
+                (setq ~buffer current-buffer-name)
+                (setq ~filename current-buffer-file-name)
+                (setq ~buffer-is-not-modified (= buffer-is-modified 0))
+
                 (setq ~backup-filename (file-format-string backup-filename-format ~filename))
-		(save-excursion
-		    (save-restriction
-			(widen-region)
-			(beginning-of-file)
-			(set-mark)
-			(end-of-file)
-			(write-region-to-file "_diff_.tmp")
-		    )
-		)
-		
-		(pop-to-buffer "diff")
-		(setq diff-buffer ~buffer)
-		(diff-mode)
-		(erase-buffer)
-		(set-mark)
-		
-		(if (| ~buffer-is-not-modified ~prefix)
-		    (filter-region
-			(concat diff-command " \"" ~backup-filename "\" _diff_.tmp") )
-		    (filter-region
-			(concat diff-command " \"" ~filename "\"  _diff_.tmp") )
-		)
-		
-		(beginning-of-file)
-		(unset-mark)
-		(unlink-file "_diff_.tmp")
-		(novalue)
-	    )
-	    ; else nothing to do
-	    (message "Nothing to diff")
-	)
+                (save-excursion
+                    (save-restriction
+                        (widen-region)
+                        (beginning-of-file)
+                        (set-mark)
+                        (end-of-file)
+                        (write-region-to-file "_diff_.tmp")
+                    )
+                )
+
+                (pop-to-buffer "diff")
+                (setq diff-buffer ~buffer)
+                (diff-mode)
+                (erase-buffer)
+                (set-mark)
+
+                (if (| ~buffer-is-not-modified ~prefix)
+                    (filter-region
+                        (concat diff-command " \"" ~backup-filename "\" _diff_.tmp") )
+                    (filter-region
+                        (concat diff-command " \"" ~filename "\"  _diff_.tmp") )
+                )
+
+                (beginning-of-file)
+                (unset-mark)
+                (unlink-file "_diff_.tmp")
+                (novalue)
+            )
+            ; else nothing to do
+            (message "Nothing to diff")
+        )
     )
 )
 (defun
     (diff-mode
-	(setq mode-string (concat "Diff of " diff-buffer))
-	(use-local-map "diff-mode-map")
+        (setq mode-string (concat "Diff of " diff-buffer))
+        (use-local-map "diff-mode-map")
     )
 )
-; 
+;
 ; Bound to return
-; 
+;
 (defun
     (diff-goto-diff
-        ~line 
-        
+        ~line
+
         (if (= operating-system-name "Windows")
             (save-excursion
                 (beginning-of-line)
@@ -118,13 +118,13 @@
 
 (if (= diff-command 0)
     (if (= operating-system-name "unix")
-	(setq diff-command "diff -u")
-	(= operating-system-name "vms")
-	(setq diff-command "diff")
-	(= operating-system-name "Windows")
-	(setq diff-command "fc /n")
-	; default
-	(setq diff-command "diff")
+        (setq diff-command "diff -u")
+        (= operating-system-name "vms")
+        (setq diff-command "diff")
+        (= operating-system-name "Windows")
+        (setq diff-command "fc /n")
+        ; default
+        (setq diff-command "diff")
     )
 )
 (save-excursion

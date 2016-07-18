@@ -1,25 +1,25 @@
-; 
+;
 ; SQL mode
-; 
+;
 (defun
     (SQL-mode
-	(setq mode-string "SQL")
-	(use-syntax-table "SQL")
-	(use-local-map "SQL-map")
-	(use-abbrev-table "SQL")
-	(novalue)
+        (setq mode-string "SQL")
+        (use-syntax-table "SQL")
+        (use-local-map "SQL-map")
+        (use-abbrev-table "SQL")
+        (novalue)
     )
 )
 
-; 
+;
 ; used by the SQL-console module which share all but the keymap
-; 
+;
 (defun
     (SQL-console-mode
-	(setq mode-string "SQL")
-	(use-syntax-table "SQL")
-	(use-abbrev-table "SQL")
-	(novalue)
+        (setq mode-string "SQL")
+        (use-syntax-table "SQL")
+        (use-abbrev-table "SQL")
+        (novalue)
     )
 )
 
@@ -92,7 +92,7 @@
         "createdb"  "createrole"    "createuser"    "cross"
         "csv"   "cube"  "cume_dist" "current"
         "current_date"  "current_default_transform_group"   "current_path"  "current_role"
-        "current_time"  "current_timestamp" 
+        "current_time"  "current_timestamp"
     )
 
     ;"current_transform_group_for_type"

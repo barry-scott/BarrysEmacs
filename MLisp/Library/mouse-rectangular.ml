@@ -1,15 +1,15 @@
-;	mouserect.ml	Mouse interface to rectangular package
+;       mouserect.ml    Mouse interface to rectangular package
 ;
-;	27-Jan-1988	Jeff Lomicka
+;       27-Jan-1988     Jeff Lomicka
 ;
-;	Requires "mousev5.ml" and "rectangular.ml" be loaded first.
+;       Requires "mousev5.ml" and "rectangular.ml" be loaded first.
 ;
-;	Uses escape-prefix mouse buttons for rectangular operations.
-;		Left - Rectangular copy between text cursor and mouse
-;		Cetner - Rectangular cut between text cursor and mouse
-;		Right - Paste at mouse location
-;	If in replace-mode, the replace-mode variation of cut and paste
-;	is used.
+;       Uses escape-prefix mouse buttons for rectangular operations.
+;               Left - Rectangular copy between text cursor and mouse
+;               Cetner - Rectangular cut between text cursor and mouse
+;               Right - Paste at mouse location
+;       If in replace-mode, the replace-mode variation of cut and paste
+;       is used.
 
 (progn
 

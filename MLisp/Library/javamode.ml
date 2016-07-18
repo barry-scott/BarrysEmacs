@@ -1,187 +1,187 @@
-; 
+;
 ; electric Java mode
-; 
+;
 (defun
-    (Java-back-paren			; Go to last open parenthesis at current level
-	(backward-paren 0))
+    (Java-back-paren                    ; Go to last open parenthesis at current level
+        (backward-paren 0))
 )
 (defun
-    (Java-fore-paren			; Go to next close parenthesis at current level
-	(forward-paren 0))
+    (Java-fore-paren                    ; Go to next close parenthesis at current level
+        (forward-paren 0))
 )
 (defun
-    (Java-flash-back-paren 		; Flash the matching left parenthesis
-	(save-excursion
-	    (backward-paren 0)
-	    (if (dot-is-visible)
-		(sit-for 5)
-		(progn
-		    (beginning-of-line)
-		    (set-mark)
-		    (end-of-line)
-		    (message (region-to-string)))
-	    )
-	)
+    (Java-flash-back-paren              ; Flash the matching left parenthesis
+        (save-excursion
+            (backward-paren 0)
+            (if (dot-is-visible)
+                (sit-for 5)
+                (progn
+                    (beginning-of-line)
+                    (set-mark)
+                    (end-of-line)
+                    (message (region-to-string)))
+            )
+        )
     )
 )
 (defun
-    (Java-flash-fore-paren		; Flash the matching close parenthesis
-	(save-excursion
-	    (forward-paren 0)
-	    (if (dot-is-visible)
-		(sit-for 5)
-		(progn
-		    (beginning-of-line)
-		    (set-mark)
-		    (end-of-line)
-		    (message (region-to-string))
-		)
-	    )
-	)
+    (Java-flash-fore-paren              ; Flash the matching close parenthesis
+        (save-excursion
+            (forward-paren 0)
+            (if (dot-is-visible)
+                (sit-for 5)
+                (progn
+                    (beginning-of-line)
+                    (set-mark)
+                    (end-of-line)
+                    (message (region-to-string))
+                )
+            )
+        )
     )
 )
 (defun
-    (Java-paren			; Flashes matching open parenthesis when ')' is typed.
-	(insert-character (last-key-struck))
-	(save-excursion
-	    (backward-paren 0)
-	    (if (dot-is-visible)
-		(sit-for 5)
-		(progn
-		    (beginning-of-line)
-		    (set-mark)
-		    (end-of-line)
-		    (message (region-to-string))
-		)
-	    )
-	)
+    (Java-paren                 ; Flashes matching open parenthesis when ')' is typed.
+        (insert-character (last-key-struck))
+        (save-excursion
+            (backward-paren 0)
+            (if (dot-is-visible)
+                (sit-for 5)
+                (progn
+                    (beginning-of-line)
+                    (set-mark)
+                    (end-of-line)
+                    (message (region-to-string))
+                )
+            )
+        )
     )
 )
 (defun
-    (Java-indent old-dot old-size	; indent a {...} apropriately
+    (Java-indent old-dot old-size       ; indent a {...} apropriately
         (setq old-dot (dot))
-	(setq old-size (buffer-size))
-	(save-excursion
-	    (previous-line)
-	    (search-forward "^}")
-	    (set-mark)
-	    (backward-paren 0)
-	    (beginning-of-line)
-	    (exchange-dot-and-mark)
-	    (end-of-line)
-	    (forward-character)
-	    (filter-region "indent -st")
-	)
-	(goto-character (/ (* (buffer-size) old-dot) old-size))
-	(novalue)
+        (setq old-size (buffer-size))
+        (save-excursion
+            (previous-line)
+            (search-forward "^}")
+            (set-mark)
+            (backward-paren 0)
+            (beginning-of-line)
+            (exchange-dot-and-mark)
+            (end-of-line)
+            (forward-character)
+            (filter-region "indent -st")
+        )
+        (goto-character (/ (* (buffer-size) old-dot) old-size))
+        (novalue)
     )
 )
 (defun
-    (Java-}			; flash the matching '{'
-	(if (eolp)
-	    (progn
-		(delete-white-space)
-		(if (! (bolp))
-		    (newline-and-indent)
-		    (progn
-			(delete-previous-character)
-			(newline-and-indent)
-		    ))
-		(Java-paren)
-		(newline-and-indent)
-		(dedent-line)
-	    )
-	    (Java-paren)
-	)
+    (Java-}                     ; flash the matching '{'
+        (if (eolp)
+            (progn
+                (delete-white-space)
+                (if (! (bolp))
+                    (newline-and-indent)
+                    (progn
+                        (delete-previous-character)
+                        (newline-and-indent)
+                    ))
+                (Java-paren)
+                (newline-and-indent)
+                (dedent-line)
+            )
+            (Java-paren)
+        )
     )
 )
 (defun
-    (Java-{			; Flash the matching '}'...
-				; really should do this only if the line
-				; isn't all whitespace
-	(if (eolp)
-	    (progn
-		(insert-string "{")
-		(newline-and-indent)
-	    )
-	    (insert-string "{")
-	)
+    (Java-{                     ; Flash the matching '}'...
+                                ; really should do this only if the line
+                                ; isn't all whitespace
+        (if (eolp)
+            (progn
+                (insert-string "{")
+                (newline-and-indent)
+            )
+            (insert-string "{")
+        )
     )
 )
 (defun
-    (Java-semi		; Insert a comment starter
-	(insert-string ";")
-	(if (eolp) (newline-and-indent))
+    (Java-semi          ; Insert a comment starter
+        (insert-string ";")
+        (if (eolp) (newline-and-indent))
     )
 )
 ; need to setup tab stops too! (tab at beginning of blank line should just
 ; tab. at beginning of non-blank line, should re-indent-line.)
 (defun
     (Java-tab
-	(if (| (& (eolp) (bolp)) (!= (current-column) 1))
-	    (insert-character '\t')
-	    (progn
-		(delete-white-space)
-		(to-col (Java-indent-level))
-	    )
-	)
+        (if (| (& (eolp) (bolp)) (!= (current-column) 1))
+            (insert-character '\t')
+            (progn
+                (delete-white-space)
+                (to-col (Java-indent-level))
+            )
+        )
     )
 )
- 
+
 (defun
     (Java-indent-level
-	(save-excursion
-	    (if (error-occurred (re-search-reverse "^[ 	]*[!-~]"))
-		(progn
-		    logical-tab-size
-		)
-		(progn
-		    (re-search-forward "[!-~]")
-		    (- (current-column) 1)   
-		)
-	    )
-	)
+        (save-excursion
+            (if (error-occurred (re-search-reverse "^[  ]*[!-~]"))
+                (progn
+                    logical-tab-size
+                )
+                (progn
+                    (re-search-forward "[!-~]")
+                    (- (current-column) 1)
+                )
+            )
+        )
     )
 )
 (defun
     (Java-compile
-	(setq compile-it-command (concat "javac " current-buffer-file-name))
+        (setq compile-it-command (concat "javac " current-buffer-file-name))
 
-	(compile-it)
+        (compile-it)
     )
 )
 
 (defun
     (Java-high-voltage-on
-	(setq mode-string "Java high voltage")
-	(local-bind-to-key "Java-semi" ";")
-	(local-bind-to-key "Java-{" "{")
-	(local-bind-to-key "Java-}" "}")
-	(local-bind-to-key "Java-tab" "\t")
-	(local-bind-to-key "Java-flash-fore-paren" "\e}")
-	(local-bind-to-key "Java-flash-back-paren" "\e{")
-	(high-voltage-off-key-binding)
-	(message "high voltage on")
+        (setq mode-string "Java high voltage")
+        (local-bind-to-key "Java-semi" ";")
+        (local-bind-to-key "Java-{" "{")
+        (local-bind-to-key "Java-}" "}")
+        (local-bind-to-key "Java-tab" "\t")
+        (local-bind-to-key "Java-flash-fore-paren" "\e}")
+        (local-bind-to-key "Java-flash-back-paren" "\e{")
+        (high-voltage-off-key-binding)
+        (message "high voltage on")
     )
 )
 (defun
     (Java-high-voltage-off
-	(setq mode-string "Java")
-	(local-bind-to-key "self-insert" ";")
-	(local-bind-to-key "self-insert" "{")
-	(local-bind-to-key "self-insert" "\t")
-	(local-bind-to-key "Java-paren" "}")
-	(high-voltage-on-key-binding)
-	(message "high voltage off")
+        (setq mode-string "Java")
+        (local-bind-to-key "self-insert" ";")
+        (local-bind-to-key "self-insert" "{")
+        (local-bind-to-key "self-insert" "\t")
+        (local-bind-to-key "Java-paren" "}")
+        (high-voltage-on-key-binding)
+        (message "high voltage off")
     )
 )
 (defun
     (Java-mode
-	(setq mode-string "Java")
-	(use-syntax-table "Java")
-	(use-local-map "Java-map")
-	(use-abbrev-table "Java")
-	(novalue)
+        (setq mode-string "Java")
+        (use-syntax-table "Java")
+        (use-local-map "Java-map")
+        (use-abbrev-table "Java")
+        (novalue)
     )
 )
 (save-excursion

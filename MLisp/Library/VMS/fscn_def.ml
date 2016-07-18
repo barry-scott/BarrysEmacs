@@ -1,6 +1,6 @@
-; 
+;
 ; $fscndef
-; 
+;
 (~sys_literal_setup_incr "fscn$_" 1 1
     "filespec"             ;  complete filespec
     "node"                 ;  node:: field

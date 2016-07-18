@@ -1,12 +1,12 @@
 (defun
     (~info-d
-	    (find-node
-		(concat
-		    info-default-directory
-		    info-root-file
-		)
-		"TOP"
-		0
-	    )
-	)
+        (find-node
+            (concat
+                info-default-directory
+                info-root-file
+            )
+            "TOP"
+            0
+        )
+    )
 )

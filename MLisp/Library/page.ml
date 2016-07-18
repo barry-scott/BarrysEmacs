@@ -1,10 +1,10 @@
-;							-*-mlisp-*-
+;                                                       -*-mlisp-*-
 ;
 ; Page oriented commands using virtual buffer bounds
 ; See end of this file for default
 ; key bindings.  Defining a function called ~page-load-hook supresses
 ; these defaults.
-; 
+;
 ; The string value of global variable <FF> defines a page boundary.
 ; Default is a line beginning with ^L (ascii 12.).  Beginning and
 ; and of buffer always act like page boundaries.
@@ -13,7 +13,7 @@
 ; Modified 2/82 by D. Oran to use multi-autoload (see misc.ml)
 (progn
 
-(declare-global <FF>)			       ; It works to redefine this.
+(declare-global <FF>)                          ; It works to redefine this.
 (setq <FF> "^\^l")
 
 (defun
@@ -50,7 +50,7 @@
   (goto-character (- tdot zdot))
   (line-to-top-of-window)
   (goto-character (- dot zdot)))
-  
+
 ;jump to next page, narrow bounds
 (Next-page
   (error-occurred (~widen-bounds))
@@ -72,7 +72,7 @@
   (widen-bounds)
   (if (next-ff)
       (progn (set-mark)(search-reverse "")
-	     (delete-to-killbuffer)))
+             (delete-to-killbuffer)))
   (narrow-bounds-to-page))
 
 ;jump to previous page, narrow bounds
@@ -90,8 +90,8 @@
   (error-occurred (~widen-bounds))
   (beginning-of-file)
   (while (< i page#)
-	 (next-ff)
-	 (setq i (+ 1 i)))
+         (next-ff)
+         (setq i (+ 1 i)))
   (narrow-bounds-to-page)
   (beginning-of-file))
 
@@ -99,49 +99,49 @@
 ; place a listing of page number and 1st non-blank line in buffer Help.
 (~generate-page-directory
   dir i dot mark prev-ff-dot ff-dot nb-dot was-narrow dotn markn tdotn
-  (setq dotn (dot))			       ; save these guys
-  (setq markn (~mark))			       ; to preserve window state.
+  (setq dotn (dot))                            ; save these guys
+  (setq markn (~mark))                         ; to preserve window state.
   (setq tdotn (save-excursion (beginning-of-window) (dot)))
   (setq was-narrow (! (error-occurred (~widen-bounds))))
-  (setq dir "")				       ; this string holds directory
+  (setq dir "")                                ; this string holds directory
   (save-excursion
     (temp-use-buffer "Help")
     (erase-buffer)
-    (insert-string "Page	First non-blank line")(newline)
-    (insert-string "----	--------------------")(newline)(newline))
+    (insert-string "Page        First non-blank line")(newline)
+    (insert-string "----        --------------------")(newline)(newline))
   (setq dot (dot))(setq mark (~mark))
-  (setq i 1)				       ; page # count
+  (setq i 1)                                   ; page # count
   (beginning-of-file)
   (while (>= ff-dot 0)
-	 (setq prev-ff-dot ff-dot)
-	 (setq ff-dot (save-excursion (if (next-ff) (dot) -1)))
-	 (setq nb-dot (save-excursion (forward-word) (dot)))
-	 (if (| (< ff-dot 0)(> ff-dot nb-dot))
-	     (progn (goto-character nb-dot)
-		    (beginning-of-line)
-		    (if (< (dot) prev-ff-dot)
-			(goto-character prev-ff-dot))
-		    (set-mark)
-		    (end-of-line)
-		    (setq dir 
-			  (concat i 
-				  "	"
-				  (region-to-string))))
-		    (setq dir (concat dir i (char-to-string 10))))
-	 (save-excursion
-	   (temp-use-buffer "Help")
-	   (end-of-file)
-	   (insert-string dir)(newline))
-	 (setq i (+ 1 i))
-	 (if (> ff-dot 0)(goto-character ff-dot)))
+         (setq prev-ff-dot ff-dot)
+         (setq ff-dot (save-excursion (if (next-ff) (dot) -1)))
+         (setq nb-dot (save-excursion (forward-word) (dot)))
+         (if (| (< ff-dot 0)(> ff-dot nb-dot))
+             (progn (goto-character nb-dot)
+                    (beginning-of-line)
+                    (if (< (dot) prev-ff-dot)
+                        (goto-character prev-ff-dot))
+                    (set-mark)
+                    (end-of-line)
+                    (setq dir
+                          (concat i
+                                  "     "
+                                  (region-to-string))))
+                    (setq dir (concat dir i (char-to-string 10))))
+         (save-excursion
+           (temp-use-buffer "Help")
+           (end-of-file)
+           (insert-string dir)(newline))
+         (setq i (+ 1 i))
+         (if (> ff-dot 0)(goto-character ff-dot)))
   (goto-character mark)(set-mark)
   (goto-character dot)
   (if was-narrow
       (progn
-	(narrow-bounds-to-region)
-	(goto-character markn)(set-mark)
-	(goto-character tdotn)(line-to-top-of-window)
-	(goto-character dotn))))
+        (narrow-bounds-to-region)
+        (goto-character markn)(set-mark)
+        (goto-character tdotn)(line-to-top-of-window)
+        (goto-character dotn))))
 
 ; view page directory using *more*
 (view-page-directory

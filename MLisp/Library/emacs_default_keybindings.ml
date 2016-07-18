@@ -1,11 +1,11 @@
-; 
+;
 ; EMACS_DEFAULT_KEYBINDINGS.ML for EMACS V8.0
 ;
 ; This file defines all the default key settings that EMACS uses.
-; 
-; 
+;
+;
 ; Initialize default-global-keymap. First set it to self-insert
-; 
+;
 
 (use-global-map "default-global-keymap")
 (error-occurred (execute-mlisp-file "escape_sequence_strings"))
@@ -47,9 +47,9 @@
 (progn char
     (setq char '0')
     (while (<= char '9')
-	(bind-to-key "digit" char)
-	(bind-to-key "meta-digit" (concat "\e" (char-to-string char)))
-	(setq char (+ 1 char))
+        (bind-to-key "digit" char)
+        (bind-to-key "meta-digit" (concat "\e" (char-to-string char)))
+        (setq char (+ 1 char))
     )
 )
 (bind-to-key "end-of-file" "\e>")
@@ -77,10 +77,10 @@
 (progn char
     (setq char '0')
     (while (<= '9' char)
-	(bind-to-key "meta-digit" (concat "\e" (char-to-string char)))
-	(setq char (+ 1 char))
+        (bind-to-key "meta-digit" (concat "\e" (char-to-string char)))
+        (setq char (+ 1 char))
     )
-)	
+)
 (bind-to-key "meta-minus" "\e-")
 (bind-to-key "minus" "-")
 (bind-to-key "newline" "\^m")

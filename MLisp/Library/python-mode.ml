@@ -1,6 +1,6 @@
-; 
+;
 ; Python mode
-; 
+;
 (declare-global Python-checker-command)
 (declare-global Python-default-version)
 (declare-buffer-specific Python-command)
@@ -82,9 +82,9 @@
     )
 )
 
-; 
+;
 ; used by the Python-console module which share all but the keymap
-; 
+;
 (defun
     (Python-console-mode
         (setq mode-string "Python")
@@ -98,24 +98,24 @@
     (Python-syntax-check
         ~file
         ~cmd
-        
+
         (setq ~file current-buffer-file-name)
         (if buffer-is-modified
             (write-current-file)
         )
-        
+
         (temp-use-buffer "Python Compile")
         (erase-buffer)
         (set-mark)
-        
+
         (setq ~cmd
             (concat
                 Python-command " -c \"import py_compile,sys;sys.stderr = sys.stdout;py_compile.compile('" (~Python-quote-file ~file) "')\""
             )
         )
-        
+
         (filter-region ~cmd)
-        
+
         (beginning-of-file)
         (if (! (error-occurred (re-search-forward "File \"\\(.*\\)\", line \\([0-9][0-9]*\\)")))
             (progn
@@ -185,28 +185,28 @@
 (defun
     (Python-checker
         ~old-parser
-        
+
         (write-modified-files)
-        
+
         (pop-to-buffer "Python Checker")
         (erase-buffer)
         (set-mark)
-        
+
         (message "Running PyChecker...")(sit-for 0)
         (filter-region Python-checker-command)
-        
+
         (setq ~old-parser error-message-parser)
         (setq error-message-parser "Python-checker-error-message-parser")
-        
+
         (beginning-of-file)
         (set-mark)
         (end-of-file)
         (parse-error-messages-in-region)
-        
+
         (setq error-message-parser ~old-parser)
-        
+
         (next-error)
-        
+
         (novalue)
     )
 )
@@ -225,7 +225,7 @@
     ~limit
     ~pos
     ~char
-    
+
     (setq ~new-file "")
     (setq ~limit (length ~file))
     (setq ~pos 0)
@@ -239,9 +239,9 @@
     )
     ~new-file
 )
-; 
+;
 ; Python 2 syntax table
-; 
+;
 (save-window-excursion
     (temp-use-buffer "~python-hack")
     (use-syntax-table "Python2")
@@ -266,7 +266,7 @@
     (modify-syntax-table "prefix" "\\")
     (modify-syntax-table "word" "_")
     (modify-syntax-table "comment" "#" "\n")
-    
+
     (modify-syntax-table "keyword-1" "as")
     (modify-syntax-table "keyword-1" "and")
     (modify-syntax-table "keyword-1" "assert")
@@ -298,7 +298,7 @@
     (modify-syntax-table "keyword-1" "while")
     (modify-syntax-table "keyword-1" "with")
     (modify-syntax-table "keyword-1" "yield")
-    
+
     (modify-syntax-table "keyword-2" "ArithmeticError")
     (modify-syntax-table "keyword-2" "AssertionError")
     (modify-syntax-table "keyword-2" "AttributeError")
@@ -342,7 +342,7 @@
     (modify-syntax-table "keyword-2" "Warning")
     (modify-syntax-table "keyword-2" "WindowsError")
     (modify-syntax-table "keyword-2" "ZeroDivisionError")
-    
+
     (modify-syntax-table "keyword-2" "_")
     (modify-syntax-table "keyword-2" "__debug__")
     (modify-syntax-table "keyword-2" "__doc__")
@@ -444,7 +444,7 @@
     (modify-syntax-table "prefix" "\\")
     (modify-syntax-table "word" "_")
     (modify-syntax-table "comment" "#" "\n")
-    
+
     (modify-syntax-table "keyword-1" "and")
     (modify-syntax-table "keyword-1" "as")
     (modify-syntax-table "keyword-1" "assert")
@@ -479,10 +479,10 @@
     (modify-syntax-table "keyword-1" "while")
     (modify-syntax-table "keyword-1" "with")
     (modify-syntax-table "keyword-1" "yield")
-    
+
     (modify-syntax-table "keyword-2" "Exception")
     (modify-syntax-table "keyword-2" "BaseException")
-    
+
     (modify-syntax-table "keyword-2" "ArithmeticError")
     (modify-syntax-table "keyword-2" "AssertionError")
     (modify-syntax-table "keyword-2" "AttributeError")
@@ -536,7 +536,7 @@
     (modify-syntax-table "keyword-2" "Warning")
     (modify-syntax-table "keyword-2" "WindowsError")
     (modify-syntax-table "keyword-2" "ZeroDivisionError")
-    
+
     (modify-syntax-table "keyword-2" "BytesWarning")
     (modify-syntax-table "keyword-2" "DeprecationWarning")
     (modify-syntax-table "keyword-2" "DeprecationWarning")
@@ -549,7 +549,7 @@
     (modify-syntax-table "keyword-2" "UnicodeWarning")
     (modify-syntax-table "keyword-2" "UserWarning")
     (modify-syntax-table "keyword-2" "Warning")
-    
+
     (modify-syntax-table "keyword-2" "_")
     (modify-syntax-table "keyword-2" "__class__")
     (modify-syntax-table "keyword-2" "__debug__")

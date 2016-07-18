@@ -1,4 +1,4 @@
-; 
+;
 ; EMACS_DEFAULT_AUTOLOADS.ML for EMACS V7.0
 ;
 ; This file contains the default set of autoloading functions. These
@@ -99,25 +99,25 @@
 
 (if (= operating-system-name "unix")
     (progn
-	(autoload "buffer-chmod" "unix-buffer")
-	(autoload "buffer-chown" "unix-buffer")
-	(autoload "new-shell" "process")
-	(autoload "unix-man-word-in-buffer" "unix-man")
-	(autoload "unix-man" "unix-man")
+        (autoload "buffer-chmod" "unix-buffer")
+        (autoload "buffer-chown" "unix-buffer")
+        (autoload "new-shell" "process")
+        (autoload "unix-man-word-in-buffer" "unix-man")
+        (autoload "unix-man" "unix-man")
     )
 )
 
 (if (= operating-system-name "VMS")
     (progn
-	(autoload "correct-word" "emacs_spell")
-	(autoload "get-tty-correction" "emacs_spell")
-	(autoload "notes" "notes")
-	(autoload "print-file" "queues")
-	(autoload "show-queue" "queues")
-	(autoload "spell-check-word" "emacs_spell")
-	(autoload "spell-word-in-buffer" "spell")
-	(autoload "vms-help" "help")
-	(execute-mlisp-file "emacs_sys")
+        (autoload "correct-word" "emacs_spell")
+        (autoload "get-tty-correction" "emacs_spell")
+        (autoload "notes" "notes")
+        (autoload "print-file" "queues")
+        (autoload "show-queue" "queues")
+        (autoload "spell-check-word" "emacs_spell")
+        (autoload "spell-word-in-buffer" "spell")
+        (autoload "vms-help" "help")
+        (execute-mlisp-file "emacs_sys")
     )
 )
 (if (= operating-system-name "Windows")

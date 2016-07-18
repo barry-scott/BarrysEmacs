@@ -1,13 +1,13 @@
-; 
+;
 ; inno mode
-; 
+;
 (defun
     (inno-mode
-	(setq mode-string "inno")
-	(use-syntax-table "inno")
-	(use-local-map "inno-map")
-	(use-abbrev-table "inno")
-	(novalue)
+        (setq mode-string "inno")
+        (use-syntax-table "inno")
+        (use-local-map "inno-map")
+        (use-abbrev-table "inno")
+        (novalue)
     )
 )
 

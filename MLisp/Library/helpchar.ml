@@ -2,64 +2,64 @@
 (define-keymap "~helpchar-view-prefix")
 (defun
     (~helpchar-prompt
-	(delete-other-windows)
-	(split-current-window)
-	(pop-to-buffer "Minibuf")
-	(previous-window)
-	(switch-to-buffer "Help prompt")
-	(while (! (error-occurred (shrink-window))) 0)
-	(setq current-buffer-checkpointable 0)
-	(setq current-buffer-journalled 0)
-	(setq mode-line-format "")
-	(erase-buffer)
-	(insert-string (arg 1))
-	(previous-window)
+        (delete-other-windows)
+        (split-current-window)
+        (pop-to-buffer "Minibuf")
+        (previous-window)
+        (switch-to-buffer "Help prompt")
+        (while (! (error-occurred (shrink-window))) 0)
+        (setq current-buffer-checkpointable 0)
+        (setq current-buffer-journalled 0)
+        (setq mode-line-format "")
+        (erase-buffer)
+        (insert-string (arg 1))
+        (previous-window)
     )
 )
 (defun
     (~helpchar-more
-	(if (save-window-excursion
-		(end-of-file)
-		(dot-is-visible)
-	    )
-	    "- End -"
-	    "More..."
-	)
+        (if (save-window-excursion
+                (end-of-file)
+                (dot-is-visible)
+            )
+            "- End -"
+            "More..."
+        )
     )
 )
 (defun
     (~helpchar-next-page
-	(next-page)
-	(setq mode-string (~helpchar-more))
+        (next-page)
+        (setq mode-string (~helpchar-more))
     )
 )
 (defun
     (~helpchar-previous-page
-	(previous-page)
-	(setq mode-string (~helpchar-more))
+        (previous-page)
+        (setq mode-string (~helpchar-more))
     )
 )
 (defun
     (~helpchar-beginning
-	(beginning-of-file)
-	(setq mode-string (~helpchar-more))
+        (beginning-of-file)
+        (setq mode-string (~helpchar-more))
     )
 )
 (defun
     (~helpchar-end
-	(end-of-file)
-	(setq mode-string (~helpchar-more))
+        (end-of-file)
+        (setq mode-string (~helpchar-more))
     )
 )
 (defun
     (help
-	(help-key)
+        (help-key)
     )
 )
 (defun
     (help-key
-	(message "Help category (? for help):")
-	(~helpchar-prefix)
+        (message "Help category (? for help):")
+        (~helpchar-prefix)
     )
 )
 (save-excursion
@@ -76,8 +76,8 @@
     (setq mode-line-format "                                                                  %10m")
     (setq ~helpchar-variable 0)
     (while (< ~helpchar-variable 128)
-	(local-bind-to-key "illegal-operation" ~helpchar-variable)
-	(setq ~helpchar-variable (+ ~helpchar-variable 1))
+        (local-bind-to-key "illegal-operation" ~helpchar-variable)
+        (setq ~helpchar-variable (+ ~helpchar-variable 1))
     )
     (local-bind-to-key "~helpchar-next-page" " ")
     (local-bind-to-key "~helpchar-next-page" "\[page-down]")
@@ -114,16 +114,16 @@
     (local-bind-to-key "~helpchar-where-is" "w")
 
 
-; 
+;
 ;   Comment out info, vms help and news as they are not used
-; 
+;
 
 ;    (autoload "~helpchar-info" "helpchar_info")
 ;    (local-bind-to-key "~helpchar-info" "i")
 ;    (autoload "~helpchar-news" "helpchar_news")
 ;    (local-bind-to-key "~helpchar-news" "n")
 ;    (if (! (is-bound ~info-is-init))
-;	(autoload "info" "info")
+;       (autoload "info" "info")
 ;    )
 ;    (autoload "~helpchar-help-i" "helpchar_help_i")
 ;    (local-bind-to-key "~helpchar-help-i" "h")

@@ -1,8 +1,8 @@
-; 
+;
 ; motif-def.ml
-; 
+;
 ; constants used in programming the motif interface functions
-; 
+;
 (if (! (is-bound sys_literal_loaded))
     (execute-mlisp-file "sys_literals")
 )

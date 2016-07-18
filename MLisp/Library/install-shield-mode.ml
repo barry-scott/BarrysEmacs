@@ -1,4 +1,4 @@
-; 
+;
 ; install-shield-mode.ml
 ;
 (save-excursion
@@ -125,65 +125,65 @@
 (delete-buffer "~hack")
 (defun
     (install-shield-mode
-	(setq mode-string "Install Shield")
-	(use-syntax-table "Install-Shield")
-	(use-local-map "Install-Shield-map")
-	(novalue)
+        (setq mode-string "Install Shield")
+        (use-syntax-table "Install-Shield")
+        (use-local-map "Install-Shield-map")
+        (novalue)
     )
 )
 
 (defun
-    (back-paren			; Go to last open parenthesis at current level
-	(backward-paren 0))
+    (back-paren                 ; Go to last open parenthesis at current level
+        (backward-paren 0))
 )
 (defun
-    (fore-paren			; Go to next close parenthesis at current level
-	(forward-paren 0))
+    (fore-paren                 ; Go to next close parenthesis at current level
+        (forward-paren 0))
 )
 (defun
-    (flash-back-paren 		; Flash the matching left parenthesis
-	(save-excursion
-	    (backward-paren 0)
-	    (if (dot-is-visible)
-		(sit-for 5)
-		(progn
-		    (beginning-of-line)
-		    (set-mark)
-		    (end-of-line)
-		    (message (region-to-string)))
-	    )
-	)
+    (flash-back-paren           ; Flash the matching left parenthesis
+        (save-excursion
+            (backward-paren 0)
+            (if (dot-is-visible)
+                (sit-for 5)
+                (progn
+                    (beginning-of-line)
+                    (set-mark)
+                    (end-of-line)
+                    (message (region-to-string)))
+            )
+        )
     )
 )
 (defun
-    (flash-fore-paren		; Flash the matching close parenthesis
-	(save-excursion
-	    (forward-paren 0)
-	    (if (dot-is-visible)
-		(sit-for 5)
-		(progn
-		    (beginning-of-line)
-		    (set-mark)
-		    (end-of-line)
-		    (message (region-to-string)))
-	    )
-	)
+    (flash-fore-paren           ; Flash the matching close parenthesis
+        (save-excursion
+            (forward-paren 0)
+            (if (dot-is-visible)
+                (sit-for 5)
+                (progn
+                    (beginning-of-line)
+                    (set-mark)
+                    (end-of-line)
+                    (message (region-to-string)))
+            )
+        )
     )
 )
 (defun
-    (c-paren			; Flashes matching open parenthesis when ')' is typed.
-	(insert-character (last-key-struck))
-	(save-excursion
-	    (backward-paren 0)
-	    (if (dot-is-visible)
-		(sit-for 5)
-		(progn
-		    (beginning-of-line)
-		    (set-mark)
-		    (end-of-line)
-		    (message (region-to-string)))
-	    )
-	)
+    (c-paren                    ; Flashes matching open parenthesis when ')' is typed.
+        (insert-character (last-key-struck))
+        (save-excursion
+            (backward-paren 0)
+            (if (dot-is-visible)
+                (sit-for 5)
+                (progn
+                    (beginning-of-line)
+                    (set-mark)
+                    (end-of-line)
+                    (message (region-to-string)))
+            )
+        )
     )
 )
 (novalue)

@@ -1,12 +1,12 @@
-; TECO.ML	Emacs routines to execute TECO commands on a buffer
+; TECO.ML       Emacs routines to execute TECO commands on a buffer
 ; * Requires that the DCL command MUNG be defined as: *
-;$	mung :==  $sys$system:teco mung
+;$      mung :==  $sys$system:teco mung
 ;
-;	Usage is (teco <teco command>), user is prompted if not provided.
-;	The command string may contain "~" instead of <esc>.  (Good for
-;	PRO keyboards.)  There is no (yet) to enter "~".
+;       Usage is (teco <teco command>), user is prompted if not provided.
+;       The command string may contain "~" instead of <esc>.  (Good for
+;       PRO keyboards.)  There is no (yet) to enter "~".
 ;
-;	Current position is left where TECO put it.
+;       Current position is left where TECO put it.
 ;
 (defun (teco-command tecostring
   (setq tecostring (arg 1 "Enter TECO command:"))
