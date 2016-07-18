@@ -22,6 +22,10 @@
             (add-check-for-white-space-problems-to-syntax-table)
         )
     )
+
+    ; use sh-modes syntax table for the shell commands
+    (load "sh-mode")
     (~sh-mode-setup-syntax-table)
+
     (delete-buffer "keymap-hack")
 )
