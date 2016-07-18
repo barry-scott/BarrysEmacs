@@ -13,6 +13,8 @@
     )
 )
 
+; use sh-modes syntax table for the shell commands
+(load "sh-mode")
 (save-window-excursion
     (temp-use-buffer "keymap-hack")
     (use-syntax-table "Makefile")
@@ -23,8 +25,6 @@
         )
     )
 
-    ; use sh-modes syntax table for the shell commands
-    (load "sh-mode")
     (~sh-mode-setup-syntax-table)
 
     (delete-buffer "keymap-hack")
