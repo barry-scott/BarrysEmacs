@@ -1,23 +1,23 @@
 
-H1 {
-  font-family: "Arial";
+h1 {
+  font-family: "sans-serif";
   color: navy;
 }
 
-H2 {
-  font-family: "Arial";
+h2 {
+  font-family: "sans-serif";
   color: navy;
 }
 
-H3 {
-  font-family: "Arial";
+h3 {
+  font-family: "sans-serif";
   color: navy;
 }
 
-INPUT {
-  font-family: "Arial";
+input {
+  font-family: "sans-serif";
 }
 
-LI {
+li {
   padding-top: 5pt;
 }
