@@ -1,6 +1,9 @@
 #!/bin/bash
+set -e
 echo "Info: build-macosx.sh Editor/PyQtBEmacs - start"
 PKG_DIST_DIR=${BUILDER_TOP_DIR}/Kits/MacOSX/pkg
+
+SRC_DIR=${PWD}
 
 if [ "$1" = "--package" ]
 then
@@ -26,14 +29,7 @@ cp -R \
     Resources/lib/python3.5/lib-dynload/PyQt5
 
 else
-for PYQT_SO in Resources/lib/python3.5/lib-dynload/PyQt5/*.so
-do
-    otool -l ${PYQT_SO} | grep -e LC_RPATH -A 2
-    install_name_tool -rpath "${BUILDER_QTDIR}/clang_64/lib" "@executable_path/../Frameworks" ${PYQT_SO}
-    install_name_tool -delete_rpath "${BUILDER_QTDIR}/clang_64/lib" ${PYQT_SO}
-    install_name_tool -add_rpath "@loader_path/../../../../Frameworks" ${PYQT_SO}
-    otool -l ${PYQT_SO} | grep -e LC_RPATH -A 2
-done
+${PYTHON} ${SRC_DIR}/build_fix_install_rpath.py fix Resources/lib/python3.5/lib-dynload/PyQt5/*.so
 
 for LIBNAME in \
     QtCore \
@@ -49,7 +45,7 @@ do
         "${BUILDER_QTDIR}/clang_64/lib/${LIBNAME}.framework" \
         "Frameworks"
 
-    otool -l Frameworks/${LIBNAME}.framework/${LIBNAME} | grep -e LC_RPATH -A 2
+    ${PYTHON} ${SRC_DIR}/build_fix_install_rpath.py show "Frameworks/${LIBNAME}.framework/${LIBNAME}"
 done
 
 echo "Info: remove Headers links"
@@ -78,9 +74,7 @@ do
         "${BUILDER_QTDIR}/clang_64/plugins/${PLUGIN}" \
         "${TARGET_DIR}"
 
-    otool -l Resources/plugins/${PLUGIN} | grep -e LC_RPATH -A 2
-    install_name_tool -rpath "@loader_path/../../lib" "@executable_path/../Frameworks" Resources/plugins/${PLUGIN}
-    otool -l Resources/plugins/${PLUGIN} | grep -e LC_RPATH -A 2
+    ${PYTHON} ${SRC_DIR}/build_fix_install_rpath.py fix "Resources/plugins/${PLUGIN}"
 done
 fi
 
