@@ -2,9 +2,7 @@
 <html>
 <head>
 <title>Mlisp Programmer's Guide</title>
-<meta name="GENERATOR" content="HTML Transit 3.0 by InfoAccess Inc. www.infoaccess.com">
-
-<link rel="STYLESHEET" href="styles.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <a name="TopOfPage"></a> <!-- TRANSIT - TEXTBAR --> 
@@ -13,7 +11,7 @@
 
 <p>The Mock Lisp (MLisp) programming language provides access to all the Emacs extension facilities. This chapter describes how to use MLisp to extend Emacs by writing private functions or shareable libraries and subsystems.</p>
 
-<hr align="LEFT" size="2" color="#800080">
+<hr align="left" size="2" color="#800080">
 <a name="P166_10893"></a> 
 
 <h2>mlisp syntax</h2>
@@ -86,109 +84,109 @@ ANAMEWITHCAPITALLETTERS
 
 <table border="1">
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>Sequence</p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>ASCII Character</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\n</p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>Linefeed</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\b</p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>Backspace</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\t</p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>Tab</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\r</p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>Return</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\e</p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>Escape</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\'</p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>Quote</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\\</p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>\</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\<i>xxx</i></p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>Octal character <i>xxx</i></p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>^<i>X</i></p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>Control <i>X</i></p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>^?</p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>Delete</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\<i>x</i></p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>character <i>x</i></p>
 </td>
 </tr>
@@ -204,118 +202,118 @@ ANAMEWITHCAPITALLETTERS
 
 <table border="1">
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p><u>Sequence</u></p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p><u>ASCII character</u></p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\n</p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>Linefeed</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\b</p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>Backspace</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\t</p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>Tab</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\r</p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>Return</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\e</p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>Escape</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\"</p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>Double quotes</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\\</p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>\</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\<i>xxx</i></p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>Octal character <i>xxx</i></p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\^<i>X</i></p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>Control <i>X</i></p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\^?</p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>Delete</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\<i>x</i></p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>Character <i>x</i></p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="153">
+<td valign="top" width="153">
 <p>\<i>(key)</i></p>
 </td>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p>Key sequence for <i>key</i></p>
 </td>
 </tr>
@@ -329,7 +327,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p><b>Figure: LK201 Top-Row Function Key Escapes</b>FIGUREFILE: postscript:docs$src:emacspgfunkeysfig.psFIGUREFILE: bookreader:docs$src:emacspgfunkeysfig.fse</p>
 
-<hr align="LEFT" size="2" color="#800080">
+<hr align="left" size="2" color="#800080">
 <a name="P287_15621"></a> 
 
 <h2>variables</h2>
@@ -346,46 +344,46 @@ ANAMEWITHCAPITALLETTERS
 
 <table border="1">
 <tr>
-<td valign="TOP" width="141">
-<p align="RIGHT"><b>Numerics</b></p>
+<td valign="top" width="141">
+<p align="right"><b>Numerics</b></p>
 </td>
-<td valign="TOP" width="531">
+<td valign="top" width="531">
 <p>which hold integer numbers in the range 2,147,483,647 to -2,147,483,648;</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="141">
-<p align="RIGHT"><b>Strings</b></p>
+<td valign="top" width="141">
+<p align="right"><b>Strings</b></p>
 </td>
-<td valign="TOP" width="531">
+<td valign="top" width="531">
 <p>which contain arbitrary length text;</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="141">
-<p align="RIGHT"><b>Markers</b></p>
+<td valign="top" width="141">
+<p align="right"><b>Markers</b></p>
 </td>
-<td valign="TOP" width="531">
+<td valign="top" width="531">
 <p>which contain a buffer name and positional information;</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="141">
-<p align="RIGHT"><b>Array</b></p>
+<td valign="top" width="141">
+<p align="right"><b>Array</b></p>
 </td>
-<td valign="TOP" width="531">
+<td valign="top" width="531">
 <p>which contains up to a 10 dimension array of variables</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="141">
-<p align="RIGHT"><b>Window-rings</b></p>
+<td valign="top" width="141">
+<p align="right"><b>Window-rings</b></p>
 </td>
-<td valign="TOP" width="531">
+<td valign="top" width="531">
 <p>which contain a set of windows that make up a screen.</p>
 </td>
 </tr>
@@ -503,7 +501,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p>Assigns a value to an element of an array.</p>
 
-<hr align="LEFT" size="2" color="#800080">
+<hr align="left" size="2" color="#800080">
 <a name="P416_22342"></a> 
 
 <h2>defining functions</h2>
@@ -520,7 +518,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p>This defines a function with arguments. The arguments are entered into the variable name-space, and may have optional default expressions. The initialising expressions are executed just before the function in invoked. The result of the function is the value of the last expression executed in the expression list.</p>
 
-<hr align="LEFT" size="2" color="#800080">
+<hr align="left" size="2" color="#800080">
 <a name="P431_23601"></a> 
 
 <h2>block structuring functions</h2>
@@ -549,7 +547,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p>Introduces a block, and evaluates expressions until an error occurs. If no error occurs, then the value of the block is 0, otherwise, the value of the block is 1. When an error occurs, the text of the error message is available in the system variable <code>error-message</code>, but is not displayed in the Mini-buffer.</p>
 
-<hr align="LEFT" size="2" color="#800080">
+<hr align="left" size="2" color="#800080">
 <a name="P458_25499"></a> 
 
 <h2>flow control functions</h2>
@@ -582,7 +580,7 @@ ANAMEWITHCAPITALLETTERS
 )
 </pre>
 
-<hr align="LEFT" size="2" color="#800080">
+<hr align="left" size="2" color="#800080">
 <a name="P475_26723"></a> 
 
 <h2>operator functions</h2>
@@ -599,154 +597,154 @@ ANAMEWITHCAPITALLETTERS
 
 <table border="1">
 <tr>
-<td valign="TOP" width="141">
+<td valign="top" width="141">
 <p>+</p>
 </td>
-<td valign="TOP" width="224">
+<td valign="top" width="224">
 <p>Addition</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="141">
+<td valign="top" width="141">
 <p>--</p>
 </td>
-<td valign="TOP" width="224">
+<td valign="top" width="224">
 <p>Subtraction</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="141">
+<td valign="top" width="141">
 <p>/</p>
 </td>
-<td valign="TOP" width="224">
+<td valign="top" width="224">
 <p>Division</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="141">
+<td valign="top" width="141">
 <p>*</p>
 </td>
-<td valign="TOP" width="224">
+<td valign="top" width="224">
 <p>Multiplication</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="141">
+<td valign="top" width="141">
 <p>!</p>
 </td>
-<td valign="TOP" width="224">
+<td valign="top" width="224">
 <p>Complimentation</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="141">
+<td valign="top" width="141">
 <p>&amp;</p>
 </td>
-<td valign="TOP" width="224">
+<td valign="top" width="224">
 <p>And</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="141">
+<td valign="top" width="141">
 <p>|</p>
 </td>
-<td valign="TOP" width="224">
+<td valign="top" width="224">
 <p>Inclusive-or</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="141">
+<td valign="top" width="141">
 <p>^</p>
 </td>
-<td valign="TOP" width="224">
+<td valign="top" width="224">
 <p>Exclusive-or</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="141">
+<td valign="top" width="141">
 <p>&lt;&lt;</p>
 </td>
-<td valign="TOP" width="224">
+<td valign="top" width="224">
 <p>Left shift</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="141">
+<td valign="top" width="141">
 <p>&gt;&gt;</p>
 </td>
-<td valign="TOP" width="224">
+<td valign="top" width="224">
 <p>Right shift</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="141">
+<td valign="top" width="141">
 <p>=</p>
 </td>
-<td valign="TOP" width="224">
+<td valign="top" width="224">
 <p>Equality</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="141">
+<td valign="top" width="141">
 <p>!=</p>
 </td>
-<td valign="TOP" width="224">
+<td valign="top" width="224">
 <p>Non-equality</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="141">
+<td valign="top" width="141">
 <p>&lt;</p>
 </td>
-<td valign="TOP" width="224">
+<td valign="top" width="224">
 <p>Less than</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="141">
+<td valign="top" width="141">
 <p>&gt;</p>
 </td>
-<td valign="TOP" width="224">
+<td valign="top" width="224">
 <p>Greater than</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="141">
+<td valign="top" width="141">
 <p>&lt;=</p>
 </td>
-<td valign="TOP" width="224">
+<td valign="top" width="224">
 <p>Less than or equal</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="141">
+<td valign="top" width="141">
 <p>&gt;=</p>
 </td>
-<td valign="TOP" width="224">
+<td valign="top" width="224">
 <p>Greater than or equal</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="141">
+<td valign="top" width="141">
 <p>c=</p>
 </td>
-<td valign="TOP" width="224">
+<td valign="top" width="224">
 <p>Character equal</p>
 </td>
 </tr>
@@ -810,7 +808,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p><code>following-char</code> returns the numeric value of the character to the right of dot in the current buffer. If dot is located at the end of the buffer, 0 is returned.</p>
 
-<hr align="LEFT" size="2" color="#800080">
+<hr align="left" size="2" color="#800080">
 <a name="P583_29496"></a> 
 
 <h2>miscellaneous mlisp functions</h2>
@@ -945,7 +943,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p>This function is useful when displaying status information to the user. For example, if a function takes some time to execute, it may be helpful to indicate what the function is currently doing. An argument of zero to <code>sit-for</code> will update the screen, but will not pause Emacs processing.</p>
 
-<hr align="LEFT" size="2" color="#800080">
+<hr align="left" size="2" color="#800080">
 <a name="P714_37262"></a> 
 
 <h2>how to compile an mlisp program</h2>
@@ -968,7 +966,7 @@ ANAMEWITHCAPITALLETTERS
 <li>If you wish to type a short MLisp program, you can use the MINIBUF package. See the Barry's Emacs Extensions Reference Manual for a description of the MINIBUF package.</li>
 </ul>
 
-<hr align="LEFT" size="2" color="#800080">
+<hr align="left" size="2" color="#800080">
 <a name="P731_38934"></a> 
 
 <h2>libraries of commands</h2>
@@ -991,7 +989,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p>will define the <code>box-it</code> function, but will not actually load the definition from BOXIT.ML until you execute the <code>box-it</code> function.</p>
 
-<hr align="LEFT" size="2" color="#800080">
+<hr align="left" size="2" color="#800080">
 <a name="P750_40825"></a> 
 
 <h2>debugging mlisp programs</h2>

@@ -4,7 +4,7 @@
 <title>Mlisp Programmer's Guide</title>
 <meta name="GENERATOR" content="HTML Transit 3.0 by InfoAccess Inc. www.infoaccess.com">
 
-<link rel="STYLESHEET" href="styles.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <a name="TopOfPage"></a>
@@ -15,44 +15,44 @@
 
 <p>Macros differ from Mock Lisp (MLisp) functions because they are key sequences that are replayed into the Emacs keyboard processor and are subject to the current bindings. The effect of a macro will be unpredictable if the key bindings used in a macro change between the macro's definition and its use. There are no facilities to alter control flow while a macro is being executed.</p>
 
-<hr align="LEFT" size="2" color="#800080">
+<hr align="left" size="2" color="#800080">
 <a name="P108_5867"></a> 
 
 <h2>keyboard macros</h2>
 
 <table border="1">
 <tr>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p><b>(start-remembering) ^X-(</b></p>
 </td>
-<td valign="TOP" width="437">
+<td valign="top" width="437">
 <p>Starts defining a keyboard macro.</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p><b>(stop-remembering) ^X-)</b></p>
 </td>
-<td valign="TOP" width="437">
+<td valign="top" width="437">
 <p>Ends the definition of a keyboard macro.</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p><b>(execute-keyboard-macro) ^X-e</b></p>
 </td>
-<td valign="TOP" width="437">
+<td valign="top" width="437">
 <p>Executes the most recently-defined keyboard macro.</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p><b>(define-keyboard-macro)</b></p>
 </td>
-<td valign="TOP" width="437">
+<td valign="top" width="437">
 <p>Turns the most recent keyboard macro into a named macro.</p>
 </td>
 </tr>
@@ -70,7 +70,7 @@
 
 <p>Emacs can have only one current keyboard macro. When you define a new keyboard macro, the old macro definition is lost. To save a keyboard macro definition, you must give it a name. If you execute <code>define-keyboard-macro</code>, the last keyboard macro defined is turned into a named macro . When a named macro has been created, you can bind it to any key sequence in the usual way.</p>
 
-<hr align="LEFT" size="2" color="#800080">
+<hr align="left" size="2" color="#800080">
 <a name="P133_8015"></a> 
 
 <h2>named macros</h2>
@@ -79,46 +79,46 @@
 
 <table border="1">
 <tr>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p><b>(define-buffer-macro)</b></p>
 </td>
-<td valign="TOP" width="437">
+<td valign="top" width="437">
 <p>Defines a macro using the current buffer's contents as the keystroke sequence. The name of the macro is obtained from the buffer-specific variable <code>current-buffer-macro-name</code>.</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p><b>(define-keyboard-macro <i>function-name</i>)</b></p>
 </td>
-<td valign="TOP" width="437">
+<td valign="top" width="437">
 <p>Defines a named macro with the current contents of the keyboard macro.</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p><b>(define-string-macro <i>function-name keys</i>)</b></p>
 </td>
-<td valign="TOP" width="437">
+<td valign="top" width="437">
 <p>Defines a macro given its name and the key sequence as arguments.</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p><b>ESC-x edit-macro</b></p>
 </td>
-<td valign="TOP" width="437">
+<td valign="top" width="437">
 <p>Inserts the body of the specified macro into the buffer <code>Macro edit</code> to allow editing of the keystroke sequence.</p>
 </td>
 </tr>
 
 <tr>
-<td valign="TOP" width="236">
+<td valign="top" width="236">
 <p><b>(rename-macro <i>old-name new-name</i>)</b></p>
 </td>
-<td valign="TOP" width="437">
+<td valign="top" width="437">
 <p>Changes the name of a macro or function.</p>
 </td>
 </tr>
