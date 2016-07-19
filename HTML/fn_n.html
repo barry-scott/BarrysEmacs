@@ -1,203 +1,203 @@
 <!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
-<HTML>
-<HEAD>
-<TITLE>Functions N*</TITLE>
+<html>
+<head>
+<title>Functions N*</title>
 
-<LINK REL="STYLESHEET" HREF="styles.css">
-</HEAD>
-<BODY>
-<HR>
-<P><A name="nargs"></A>(<B>nargs</B>)</P>
+<link rel="STYLESHEET" href="styles.css">
+</head>
+<body>
+<hr>
+<p><a name="nargs"></a>(<b>nargs</b>)</p>
 
-<BLOCKQUOTE>
-<P>Returns the number of arguments passed to the invoking MLisp function.</P>
+<blockquote>
+<p>Returns the number of arguments passed to the invoking MLisp function.</p>
 
-<P>For example, within the execution of foo invoked by (foo x y) the value returned by nargs would be 2.  </P>
+<p>For example, within the execution of foo invoked by (foo x y) the value returned by nargs would be 2.  </p>
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A HREF="fn_a.html#arg">arg</A></LI>
-</UL>
+<ul>
+<li><a href="fn_a.html#arg">arg</a></li>
+</ul>
 
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-<P><A name="narrow-region"></A>(<B>narrow-region</B>)</P>
+<hr>
+<p><a name="narrow-region"></a>(<b>narrow-region</b>)</p>
 
-<BLOCKQUOTE>
-<P>Restricts the amount of a buffer that can be manipulated to the region between dot and mark. <CODE>widen-region</CODE> will remove the restriction.</P>
+<blockquote>
+<p>Restricts the amount of a buffer that can be manipulated to the region between dot and mark. <code>widen-region</code> will remove the restriction.</p>
 
-<P>File operations ignore this restriction so, for example, you can save a file after performing <CODE>narrow-region</CODE> and the whole file is saved, not just the visible portion.</P>
+<p>File operations ignore this restriction so, for example, you can save a file after performing <code>narrow-region</code> and the whole file is saved, not just the visible portion.</p>
 
-<P>This function is useful for replacing strings over a small parts of a buffer or for running packages that usually affect the whole of a buffer but a required to operate on a portion of it.</P>
+<p>This function is useful for replacing strings over a small parts of a buffer or for running packages that usually affect the whole of a buffer but a required to operate on a portion of it.</p>
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A HREF="fn_w.html#widen-region">widen-region</A></LI>
-<LI><A HREF="fn_s.html#save-restriction">save-restriction</A></LI>
-</UL>
+<ul>
+<li><a href="fn_w.html#widen-region">widen-region</a></li>
+<li><a href="fn_s.html#save-restriction">save-restriction</a></li>
+</ul>
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-<P><A name="narrow-window"></A>(<B>narrow-window</B>)</P>
+<hr>
+<p><a name="narrow-window"></a>(<b>narrow-window</b>)</p>
 
-<BLOCKQUOTE>
-<P>Reduces the width of a vertically-split window. A window has to be at least one column wide.</P>
+<blockquote>
+<p>Reduces the width of a vertically-split window. A window has to be at least one column wide.</p>
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A HREF="fn_w.html#widen-window">widen-window</A></LI>
-<LI><A HREF="var_w.html#window-width">window-width</A> variable</LI>
-</UL>
+<ul>
+<li><a href="fn_w.html#widen-window">widen-window</a></li>
+<li><a href="var_w.html#window-width">window-width</a> variable</li>
+</ul>
 
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-<P><A name="newline"></A>(<B>newline</B>) ^M (Return)</P>
+<hr>
+<p><a name="newline"></a>(<b>newline</b>) ^M (Return)</p>
 
-<BLOCKQUOTE>
-<P>Inserts a newline character into the buffer.</P>
+<blockquote>
+<p>Inserts a newline character into the buffer.</p>
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A HREF="#newline-and-backup">newline-and-backup</A></LI>
-<LI><A HREF="#newline-and-indent">newline-and-indent</A></LI>
-</UL>
+<ul>
+<li><a href="#newline-and-backup">newline-and-backup</a></li>
+<li><a href="#newline-and-indent">newline-and-indent</a></li>
+</ul>
 
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-<P><A name="newline-and-backup"></A>(<B>newline-and-backup</B>) ^O</P>
+<hr>
+<p><a name="newline-and-backup"></a>(<b>newline-and-backup</b>) ^O</p>
 
-<BLOCKQUOTE>
-<P>Inserts an end-of-line immediately after dot, effectively opening up the line. If dot is positioned at the beginning of a line, then ^O will create a blank line preceding the current line and will position dot on that new line.</P>
+<blockquote>
+<p>Inserts an end-of-line immediately after dot, effectively opening up the line. If dot is positioned at the beginning of a line, then ^O will create a blank line preceding the current line and will position dot on that new line.</p>
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A HREF="#newline">newline</A></LI>
-<LI><A HREF="#newline-and-indent">newline-and-indent</A></LI>
-</UL>
+<ul>
+<li><a href="#newline">newline</a></li>
+<li><a href="#newline-and-indent">newline-and-indent</a></li>
+</ul>
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-<P><A name="newline-and-indent"></A>(<B>newline-and-indent</B>) ^J</P>
+<hr>
+<p><a name="newline-and-indent"></a>(<b>newline-and-indent</b>) ^J</p>
 
-<BLOCKQUOTE>
-<P>Inserts a newline just as Return does, but also inserts enough tabs and spaces so that the newly-created line has the same indentation as the old line.</P>
+<blockquote>
+<p>Inserts a newline just as Return does, but also inserts enough tabs and spaces so that the newly-created line has the same indentation as the old line.</p>
 
-<P>This is useful when you are typing in a block of program text all at the same indentation level. </P>
+<p>This is useful when you are typing in a block of program text all at the same indentation level. </p>
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A HREF="#newline">newline</A></LI>
-<LI><A HREF="#newline-and-backup">newline-and-backup</A></LI>
-</UL>
+<ul>
+<li><a href="#newline">newline</a></li>
+<li><a href="#newline-and-backup">newline-and-backup</a></li>
+</ul>
 
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-<P><A name="next-error"></A>(<B>next-error</B>) ^X-^N</P>
+<hr>
+<p><a name="next-error"></a>(<b>next-error</b>) ^X-^N</p>
 
-<BLOCKQUOTE>
-<P>Takes the next error message (as returned from the ESC-x <CODE>compile-it</CODE> command), visits the file in which the error occurred and sets dot to the line in which that error occurred. The error message will be displayed at the top of the window associated with the Error log buffer.</P>
+<blockquote>
+<p>Takes the next error message (as returned from the ESC-x <code>compile-it</code> command), visits the file in which the error occurred and sets dot to the line in which that error occurred. The error message will be displayed at the top of the window associated with the Error log buffer.</p>
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A HREF="fn_c.html#compile-it">compile-it</A></LI>
-<LI><A HREF="fn_p.html#previous-error">previous-error</A></LI>
-</UL>
+<ul>
+<li><a href="fn_c.html#compile-it">compile-it</a></li>
+<li><a href="fn_p.html#previous-error">previous-error</a></li>
+</ul>
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-<P><A name="next-line"></A>(<B>next-line</B> <CODE>repeat-count</CODE>) ^N</P>
+<hr>
+<p><a name="next-line"></a>(<b>next-line</b> <code>repeat-count</code>) ^N</p>
 
-<BLOCKQUOTE>
-<P>Moves dot down <CODE>prefix-argument</CODE> times <CODE>repeat-count</CODE> lines. If <CODE>repeat-count</CODE> is omitted, 1 is assumed. <CODE>next-line</CODE> attempts to keep dot at the same horizontal character position as you move from line to line.</P>
+<blockquote>
+<p>Moves dot down <code>prefix-argument</code> times <code>repeat-count</code> lines. If <code>repeat-count</code> is omitted, 1 is assumed. <code>next-line</code> attempts to keep dot at the same horizontal character position as you move from line to line.</p>
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A HREF="fn_p.html#previous-line">previous-line</A></LI>
-<LI><A HREF="var_t.html#track-eol-on-^N-^P">track-eol-on-^N-^P</A> variable</LI>
-</UL>
+<ul>
+<li><a href="fn_p.html#previous-line">previous-line</a></li>
+<li><a href="var_t.html#track-eol-on-^N-^P">track-eol-on-^N-^P</a> variable</li>
+</ul>
 
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-<P><A name="next-page"></A>(<B>next-page</B>) page-down</P>
+<hr>
+<p><a name="next-page"></a>(<b>next-page</b>) page-down</p>
 
-<BLOCKQUOTE>
-<P>Repositions the current window on the current buffer so that the page prefix-argument pages forward is visible in the window (where a page is a group of lines 4/5th's the size of the window). If possible, dot is kept where it is, otherwise it is moved to the middle of the new page.</P>
+<blockquote>
+<p>Repositions the current window on the current buffer so that the page prefix-argument pages forward is visible in the window (where a page is a group of lines 4/5th's the size of the window). If possible, dot is kept where it is, otherwise it is moved to the middle of the new page.</p>
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A HREF="fn_p.html#previous-page">previous-page</A></LI>
-<LI><A HREF="fn_p.html#page-next-window">page-next-window</A></LI>
-</UL>
+<ul>
+<li><a href="fn_p.html#previous-page">previous-page</a></li>
+<li><a href="fn_p.html#page-next-window">page-next-window</a></li>
+</ul>
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-<P><A name="next-window"></A>(<B>next-window</B>) ^X-n</P>
+<hr>
+<p><a name="next-window"></a>(<b>next-window</b>) ^X-n</p>
 
-<BLOCKQUOTE>
-<P>Switches to the window (and associated buffer) that is below the current window. If there is no lower window, moves to the window at the top of the screen.</P>
+<blockquote>
+<p>Switches to the window (and associated buffer) that is below the current window. If there is no lower window, moves to the window at the top of the screen.</p>
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A HREF="fn_b.html#beginning-of-window">beginning-of-window</A></LI>
-<LI><A HREF="fn_e.html#end-of-window">end-of-window</A></LI>
-<LI><A HREF="fn_l.html#line-to-top-of-window">line-to-top-of-window</A></LI>
-<LI><A HREF="fn_p.html#previous-window">previous-window</A></LI>
-</UL>
+<ul>
+<li><a href="fn_b.html#beginning-of-window">beginning-of-window</a></li>
+<li><a href="fn_e.html#end-of-window">end-of-window</a></li>
+<li><a href="fn_l.html#line-to-top-of-window">line-to-top-of-window</a></li>
+<li><a href="fn_p.html#previous-window">previous-window</a></li>
+</ul>
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-<P><A name="normal-mode"></A>(<B>normal-mode</B>)</P>
+<hr>
+<p><a name="normal-mode"></a>(<b>normal-mode</b>)</p>
 
-<BLOCKQUOTE>
-<P>Turns on Normal Mode -- default major mode which Emacs gives to all new buffers that it creates. It provides a general text manipulating environment with no special features.</P>
+<blockquote>
+<p>Turns on Normal Mode -- default major mode which Emacs gives to all new buffers that it creates. It provides a general text manipulating environment with no special features.</p>
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A HREF="fn_f.html#fundamental-mode">fundamental-mode</A></LI>
-<LI><A HREF="fn_t.html#text-mode">text-mode</A></LI>
-<LI><A HREF="fn_c.html#c-mode">c-mode</A></LI>
-<LI><A HREF="fn_l.html#lisp-mode">lisp-mode</A></LI>
-</UL>
+<ul>
+<li><a href="fn_f.html#fundamental-mode">fundamental-mode</a></li>
+<li><a href="fn_t.html#text-mode">text-mode</a></li>
+<li><a href="fn_c.html#c-mode">c-mode</a></li>
+<li><a href="fn_l.html#lisp-mode">lisp-mode</a></li>
+</ul>
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-<P><A name="novalue"></A>(<B>novalue</B>)</P>
+<hr>
+<p><a name="novalue"></a>(<b>novalue</b>)</p>
 
-<BLOCKQUOTE>
-<P>Does nothing. <CODE>novalue</CODE> is a complete no-op -- it performs no action and returns no value.</P>
+<blockquote>
+<p>Does nothing. <code>novalue</code> is a complete no-op -- it performs no action and returns no value.</p>
 
-<P>Normally, the value of an MLisp function is the value of the last expression evaluated in the body of the function. If you do not want the function to return a value, use <CODE>novalue</CODE>as the last expression in the function.</P>
+<p>Normally, the value of an MLisp function is the value of the last expression evaluated in the body of the function. If you do not want the function to return a value, use <code>novalue</code>as the last expression in the function.</p>
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-</BODY>
-</HTML>
+<hr>
+</body>
+</html>
 

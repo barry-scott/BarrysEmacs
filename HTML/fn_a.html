@@ -1,63 +1,63 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
-<HTML>
-<HEAD>
-<TITLE>Functions A*</TITLE>
+<html>
+<head>
+<title>Functions A*</title>
 
-<LINK REL="STYLESHEET" HREF="styles.css">
-</HEAD>
-<BODY>
-<HR>
-<P><A name="append-region-to-buffer">(<B>append-region-to-buffer</B> <CODE>buffer-name</CODE>)</A></P>
+<link rel="STYLESHEET" href="styles.css">
+</head>
+<body>
+<hr>
+<p><a name="append-region-to-buffer">(<b>append-region-to-buffer</b> <code>buffer-name</code>)</a></p>
 
-<BLOCKQUOTE>
-<P>Appends the region between dot and mark to the buffer <CODE>buffer-name</CODE>. Neither the original text in the destination buffer nor the text in the region between dot and mark are disturbed.</P>
+<blockquote>
+<p>Appends the region between dot and mark to the buffer <code>buffer-name</code>. Neither the original text in the destination buffer nor the text in the region between dot and mark are disturbed.</p>
 
-<P><STRONG>Default binding:</STRONG> none</P>
+<p><strong>Default binding:</strong> none</p>
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A href="fn_p.html#prepend-region-to-buffer">prepend-region-to-buffer</A></LI>
-</UL>
-</BLOCKQUOTE>
+<ul>
+<li><a href="fn_p.html#prepend-region-to-buffer">prepend-region-to-buffer</a></li>
+</ul>
+</blockquote>
 
-<HR>
-<P><A name="append-to-file">(<B>append-to-file</B> <CODE>file-name</CODE>)</A></P>
+<hr>
+<p><a name="append-to-file">(<b>append-to-file</b> <code>file-name</code>)</a></p>
 
-<BLOCKQUOTE>
-<P>Appends the contents of the current buffer to the file named <CODE>file-name</CODE>. If the file does not exist, it is created.</P>
+<blockquote>
+<p>Appends the contents of the current buffer to the file named <code>file-name</code>. If the file does not exist, it is created.</p>
 
-<P><STRONG>Default binding:</STRONG> none</P>
-</BLOCKQUOTE>
+<p><strong>Default binding:</strong> none</p>
+</blockquote>
 
-<HR>
-<P><A name="apply-auto-execute">(<B>apply-auto-execute</B> <CODE>filename</CODE>)</A></P>
+<hr>
+<p><a name="apply-auto-execute">(<b>apply-auto-execute</b> <code>filename</code>)</a></p>
 
-<BLOCKQUOTE>
-<P>Scans the list of file name patterns set up by auto-execute and executes an associated command if the supplied file name matches one of the patterns.</P>
+<blockquote>
+<p>Scans the list of file name patterns set up by auto-execute and executes an associated command if the supplied file name matches one of the patterns.</p>
 
-<P><STRONG>Default binding:</STRONG> none</P>
+<p><strong>Default binding:</strong> none</p>
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A href="#auto-execute">auto-execute</A></LI>
-</UL>
-</BLOCKQUOTE>
+<ul>
+<li><a href="#auto-execute">auto-execute</a></li>
+</ul>
+</blockquote>
 
-<HR>
-<P><A name="apply-colour-to-region">(<B>apply-colour-to-region</B> <CODE>start end colour</CODE>)</A></P>
+<hr>
+<p><a name="apply-colour-to-region">(<b>apply-colour-to-region</b> <code>start end colour</code>)</a></p>
 
-<BLOCKQUOTE>
-<P>Use the command <CODE>apply-colour-to-region</CODE> to define the region in a buffer to which Emacs is to add colour.</P>
+<blockquote>
+<p>Use the command <code>apply-colour-to-region</code> to define the region in a buffer to which Emacs is to add colour.</p>
 
-<P>Where the region covers the characters between <CODE>start</CODE> and <CODE>end</CODE> and will take on the colour <CODE>colour</CODE>. The valid range for colour is 1 to 8, which selects colours User 1 to User 8. To clear the colouring from a range, use colour 0.</P>
+<p>Where the region covers the characters between <code>start</code> and <code>end</code> and will take on the colour <code>colour</code>. The valid range for colour is 1 to 8, which selects colours User 1 to User 8. To clear the colouring from a range, use colour 0.</p>
 
-<P><STRONG>Default binding:</STRONG> none.</P>
+<p><strong>Default binding:</strong> none.</p>
 
-<P><STRONG>Example:</STRONG></P>
+<p><strong>Example:</strong></p>
 
-<PRE>
+<pre>
 (defun
     (test-0
   (switch-to-buffer "Test rendition regions")
@@ -76,205 +76,205 @@
   (apply-colour-to-region 12 16 3)
     )
 )
-</PRE>
-</BLOCKQUOTE>
+</pre>
+</blockquote>
 
-<HR>
-<P><A name="apropos">(<B>apropos</B> <CODE>keyword</CODE>) ESC-?</A></P>
+<hr>
+<p><a name="apropos">(<b>apropos</b> <code>keyword</code>) ESC-?</a></p>
 
-<BLOCKQUOTE>
-<P>Prints a list of all the commands and variable whose names contains the word <CODE>keyword</CODE>. For example, if you forget which commands and variables deal with windows, you can type <CODE>ESC-? window ENTER</CODE>.</P>
+<blockquote>
+<p>Prints a list of all the commands and variable whose names contains the word <code>keyword</code>. For example, if you forget which commands and variables deal with windows, you can type <code>ESC-? window ENTER</code>.</p>
 
-<P><STRONG>Default binding:</STRONG> ESC-?</P>
+<p><strong>Default binding:</strong> ESC-?</p>
 
-<P><STRONG>See also:</STRONG></P>
-</BLOCKQUOTE>
+<p><strong>See also:</strong></p>
+</blockquote>
 
-<HR>
-<P><A name="apropos-command">(<B>apropos-command</B> <CODE>keyword</CODE>)</A></P>
+<hr>
+<p><a name="apropos-command">(<b>apropos-command</b> <code>keyword</code>)</a></p>
 
-<BLOCKQUOTE>
-<P>Prints a list of all the commands whose extended command name contains the word <CODE>keyword</CODE>. For example, if you forget which commands deal with windows, you can type <CODE>ESC-? window ENTER</CODE>.</P>
+<blockquote>
+<p>Prints a list of all the commands whose extended command name contains the word <code>keyword</code>. For example, if you forget which commands deal with windows, you can type <code>ESC-? window ENTER</code>.</p>
 
-<UL>
-<LI><A href="#apropos-variable">apropos-variable</A></LI>
-</UL>
-</BLOCKQUOTE>
+<ul>
+<li><a href="#apropos-variable">apropos-variable</a></li>
+</ul>
+</blockquote>
 
-<HR>
-<P><A name="apropos-variable">(<B>apropos-variable</B> <CODE>keyword</CODE>) ^X-?</A></P>
+<hr>
+<p><a name="apropos-variable">(<b>apropos-variable</b> <code>keyword</code>) ^X-?</a></p>
 
-<BLOCKQUOTE>
-<P>Prints a list of all the variables whose extended command name contains the word <CODE>keyword</CODE>. For example, if you forget which variables deal with windows, you can type <CODE>^X-? window ESC</CODE>.</P>
+<blockquote>
+<p>Prints a list of all the variables whose extended command name contains the word <code>keyword</code>. For example, if you forget which variables deal with windows, you can type <code>^X-? window ESC</code>.</p>
 
-<P><STRONG>Default binding:</STRONG> ^X-?</P>
+<p><strong>Default binding:</strong> ^X-?</p>
 
-<P><STRONG>See also:</STRONG></P>
+<p><strong>See also:</strong></p>
 
-<UL>
-<LI><A href="#apropos">apropos</A></LI>
-</UL>
-</BLOCKQUOTE>
+<ul>
+<li><a href="#apropos">apropos</a></li>
+</ul>
+</blockquote>
 
-<HR>
-<P><A name="arg">(<B>arg</B> <CODE>expression-1 prompt-string</CODE>)</A></P>
+<hr>
+<p><a name="arg">(<b>arg</b> <code>expression-1 prompt-string</code>)</a></p>
 
-<BLOCKQUOTE>
-<P>Evaluates the <CODE>expression-1</CODE>th argument of the invoking function or prompts for it if called interactively. The prompt is optional; if it is omitted, the function cannot be called interactively.</P>
+<blockquote>
+<p>Evaluates the <code>expression-1</code>th argument of the invoking function or prompts for it if called interactively. The prompt is optional; if it is omitted, the function cannot be called interactively.</p>
 
-<P>Some examples:</P>
+<p>Some examples:</p>
 
 (arg 1 "Enter a number: ") 
 
-<P>evaluates to the value of the first argument of the current function, if the current function was called from MLisp. If it was called interactively then the argument is prompted for.</P>
+<p>evaluates to the value of the first argument of the current function, if the current function was called from MLisp. If it was called interactively then the argument is prompted for.</p>
 
-<P>Given:</P>
+<p>Given:</p>
 
-<CODE>defun (foo (+ (arg 1 "Number to increment? ") 1)))</CODE> 
+<code>defun (foo (+ (arg 1 "Number to increment? ") 1)))</code> 
 
-<P>then <CODE>(foo 10)</CODE> returns 11, but typing <CODE>ESC-X foo</CODE> causes Emacs to ask <CODE>Number to increment?</CODE></P>
+<p>then <code>(foo 10)</code> returns 11, but typing <code>ESC-X foo</code> causes Emacs to ask <code>Number to increment?</code></p>
 
-<P>Language purists will no doubt cringe at this rather primitive parameter mechanism, but what-the-hell... it's amazingly powerful.</P>
+<p>Language purists will no doubt cringe at this rather primitive parameter mechanism, but what-the-hell... it's amazingly powerful.</p>
 
-<P><STRONG>Default binding:</STRONG> none</P>
-</BLOCKQUOTE>
+<p><strong>Default binding:</strong> none</p>
+</blockquote>
 
-<HR>
-<P><A name="arg-is-qualifier">(<B>arg-is-qualifier</B> <CODE>expression-1</CODE>)</A></P>
+<hr>
+<p><a name="arg-is-qualifier">(<b>arg-is-qualifier</b> <code>expression-1</code>)</a></p>
 
-<BLOCKQUOTE>
-<P>When Emacs is invoked it parses the command line into qualifiers and values according to the host operating system conventions. Use arg-is-qualifier to find out if the <CODE>expression-1</CODE>th argument if a qualifier.</P>
+<blockquote>
+<p>When Emacs is invoked it parses the command line into qualifiers and values according to the host operating system conventions. Use arg-is-qualifier to find out if the <code>expression-1</code>th argument if a qualifier.</p>
 
-<P>The MLisp Programmers Guide has furthur information about <A href="Z" onmouseover="return top.bemacs.mouseOver()" onclick="return top.bemacs.loadDocument(&#39;pg&#39;,&#39;#commandlines&#39;)">Command Lines</A>.</P>
+<p>The MLisp Programmers Guide has furthur information about <a href="Z" onmouseover="return top.bemacs.mouseOver()" onclick="return top.bemacs.loadDocument(&#39;pg&#39;,&#39;#commandlines&#39;)">Command Lines</a>.</p>
 
-<P>If Emacs was invoked on Windows as:</P>
+<p>If Emacs was invoked on Windows as:</p>
 
-<TT>bemacs fred.dat /invert</TT> 
+<tt>bemacs fred.dat /invert</tt> 
 
-<P>Then (arg-is-qualifier 1) returns false.</P>
+<p>Then (arg-is-qualifier 1) returns false.</p>
 
-<P>And (arg-is-qualifier 2) returns true.</P>
+<p>And (arg-is-qualifier 2) returns true.</p>
 
-<P><STRONG>Default binding:</STRONG> none</P>
+<p><strong>Default binding:</strong> none</p>
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A href="#argc">argc</A></LI>
+<ul>
+<li><a href="#argc">argc</a></li>
 
-<LI><A href="#argv">argv</A></LI>
-</UL>
-</BLOCKQUOTE>
+<li><a href="#argv">argv</a></li>
+</ul>
+</blockquote>
 
-<HR>
-<P><A name="argc">(<B>argc</B>)</A></P>
+<hr>
+<p><a name="argc">(<b>argc</b>)</a></p>
 
-<BLOCKQUOTE>
-<P>Returns the number of arguments that were passed to Emacs when it was invoked from DCL. If argc is called early enough, Emacs' default startup action of visiting the files named on the command line is suppressed.</P>
+<blockquote>
+<p>Returns the number of arguments that were passed to Emacs when it was invoked from DCL. If argc is called early enough, Emacs' default startup action of visiting the files named on the command line is suppressed.</p>
 
-<P>The MLisp Programmers Guide has furthur information about <A href="Z" onmouseover="return top.bemacs.mouseOver()" onclick="return top.bemacs.loadDocument(&#39;pg&#39;,&#39;#commandlines&#39;)">Command Lines</A>.</P>
+<p>The MLisp Programmers Guide has furthur information about <a href="Z" onmouseover="return top.bemacs.mouseOver()" onclick="return top.bemacs.loadDocument(&#39;pg&#39;,&#39;#commandlines&#39;)">Command Lines</a>.</p>
 
-<P><STRONG>Default binding:</STRONG> none</P>
+<p><strong>Default binding:</strong> none</p>
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A href="#argv">argv</A></LI>
+<ul>
+<li><a href="#argv">argv</a></li>
 
-<LI><A href="#arg-is-qualifier">arg-is-qualifier</A></LI>
-</UL>
-</BLOCKQUOTE>
+<li><a href="#arg-is-qualifier">arg-is-qualifier</a></li>
+</ul>
+</blockquote>
 
-<HR>
-<P><A name="argument-prefix"></A><B>argument-prefix</B></P>
+<hr>
+<p><a name="argument-prefix"></a><b>argument-prefix</b></p>
 
-<BLOCKQUOTE>
-<P>When followed by a string of digits, cause that string of digits to be interpreted as a numeric prefix argument which is generally a repetition count for the following command.</P>
+<blockquote>
+<p>When followed by a string of digits, cause that string of digits to be interpreted as a numeric prefix argument which is generally a repetition count for the following command.</p>
 
-<P>For example, <CODE>^U10^N</CODE> moves down 10 lines (the 10'th next).</P>
+<p>For example, <code>^U10^N</code> moves down 10 lines (the 10'th next).</p>
 
-<P>For each ^U typed before a command, the current prefix argument is multiplied by 4. So <CODE>^U</CODE> is 4, <CODE>^U-^U</CODE> is 16 and <CODE>^U-^U-^U</CODE> is 64.</P>
+<p>For each ^U typed before a command, the current prefix argument is multiplied by 4. So <code>^U</code> is 4, <code>^U-^U</code> is 16 and <code>^U-^U-^U</code> is 64.</p>
 
-<P><B>Never call argument-prefix from an MLisp function.</B></P>
+<p><b>Never call argument-prefix from an MLisp function.</b></p>
 
-<P><STRONG>Default binding:</STRONG> ^U</P>
-</BLOCKQUOTE>
+<p><strong>Default binding:</strong> ^U</p>
+</blockquote>
 
-<HR>
-<P><A name="argv">(<B>argv</B> <CODE>expression-1</CODE>)</A></P>
+<hr>
+<p><a name="argv">(<b>argv</b> <code>expression-1</code>)</a></p>
 
-<BLOCKQUOTE>
-<P>Returns the <CODE>expression-1</CODE>th argument that was passed to Emacs when it was invoked from DCL. If Emacs was invoked as Emacs blatto then (argv 1) would return the string blatto. If argv is called early enough, Emacs' default startup action of visiting the files named on the command line is suppressed.</P>
+<blockquote>
+<p>Returns the <code>expression-1</code>th argument that was passed to Emacs when it was invoked from DCL. If Emacs was invoked as Emacs blatto then (argv 1) would return the string blatto. If argv is called early enough, Emacs' default startup action of visiting the files named on the command line is suppressed.</p>
 
-<P>The MLisp Programmers Guide has furthur information about <A href="Z" onmouseover="return top.bemacs.mouseOver()" onclick="return top.bemacs.loadDocument(&#39;pg&#39;,&#39;#commandlines&#39;)">Command Lines</A>.</P>
+<p>The MLisp Programmers Guide has furthur information about <a href="Z" onmouseover="return top.bemacs.mouseOver()" onclick="return top.bemacs.loadDocument(&#39;pg&#39;,&#39;#commandlines&#39;)">Command Lines</a>.</p>
 
-<P><STRONG>Default binding:</STRONG> none</P>
+<p><strong>Default binding:</strong> none</p>
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A href="#argc">argc</A></LI>
+<ul>
+<li><a href="#argc">argc</a></li>
 
-<LI><A href="#arg-is-qualifier">arg-is-qualifier</A></LI>
-</UL>
-</BLOCKQUOTE>
+<li><a href="#arg-is-qualifier">arg-is-qualifier</a></li>
+</ul>
+</blockquote>
 
-<HR>
-<P><A name="array">(<B>array</B> <CODE>low-bound high-bound ...</CODE>)</A></P>
+<hr>
+<p><a name="array">(<b>array</b> <code>low-bound high-bound ...</code>)</a></p>
 
-<BLOCKQUOTE>
-<P>Creates an array of up to 10 dimensions. The arguments to the command are pairs of array bounds (first the lower bound, then the upper bound). All elements of the array are initialised to integer value 0.</P>
+<blockquote>
+<p>Creates an array of up to 10 dimensions. The arguments to the command are pairs of array bounds (first the lower bound, then the upper bound). All elements of the array are initialised to integer value 0.</p>
 
-<P><STRONG>Example:</STRONG> Create a two dimension array</P>
+<p><strong>Example:</strong> Create a two dimension array</p>
 
-<PRE>
+<pre>
 (setq 2d-array (array -5 5 3 7))
-</PRE>
+</pre>
 
-<P>This creates an array where the first index ranges from -5 to +5 and the second index ranges from +3 to +7. The array has a total of 55 elements in it.</P>
+<p>This creates an array where the first index ranges from -5 to +5 and the second index ranges from +3 to +7. The array has a total of 55 elements in it.</p>
 
-<P><STRONG>Default binding:</STRONG> none</P>
-</BLOCKQUOTE>
+<p><strong>Default binding:</strong> none</p>
+</blockquote>
 
-<HR>
-<P><A name="auto-execute">(<B>auto-execute</B> <CODE>command-name file-pattern</CODE>)</A></P>
+<hr>
+<p><a name="auto-execute">(<b>auto-execute</b> <code>command-name file-pattern</code>)</a></p>
 
-<BLOCKQUOTE>
-<P>Sets up a filename-to-command association. When a file is read in, using visit-file or read-file, whose name matches the given pattern, the specified command will be executed. The command is generally one which sets the mode for the buffer.</P>
+<blockquote>
+<p>Sets up a filename-to-command association. When a file is read in, using visit-file or read-file, whose name matches the given pattern, the specified command will be executed. The command is generally one which sets the mode for the buffer.</p>
 
-<P>Filename patterns can be either of the following:</P>
+<p>Filename patterns can be either of the following:</p>
 
-<UL>
-<LI><CODE>*string</CODE> matches any filename whose suffix is "string"</LI>
+<ul>
+<li><code>*string</code> matches any filename whose suffix is "string"</li>
 
-<LI><CODE>string*</CODE> matches any filename prefixed by "string".</LI>
-</UL>
+<li><code>string*</code> matches any filename prefixed by "string".</li>
+</ul>
 
-<P><STRONG>Example:</STRONG> To enable Lisp Mode for all files with a .ML file type:</P>
+<p><strong>Example:</strong> To enable Lisp Mode for all files with a .ML file type:</p>
 
-<PRE>
+<pre>
 (auto-execute  "lisp-mode" "*.ml")
-</PRE>
-</BLOCKQUOTE>
+</pre>
+</blockquote>
 
-<HR>
-<P><A name="autoload">(<B>autoload</B> <CODE>command-string file-name</CODE>)</A></P>
+<hr>
+<p><a name="autoload">(<b>autoload</b> <code>command-string file-name</code>)</a></p>
 
-<BLOCKQUOTE>
-<P>Specifies that the code that defines the specified command should be automatically loaded from the named file. When an attempt to execute the command is encountered, the file is loaded and then the specified function is executed. You can use autoload to load functions into Emacs only when they are necessary rather than saving them as part of an environment; this saves space in Emacs and speeds Emacs startup.</P>
+<blockquote>
+<p>Specifies that the code that defines the specified command should be automatically loaded from the named file. When an attempt to execute the command is encountered, the file is loaded and then the specified function is executed. You can use autoload to load functions into Emacs only when they are necessary rather than saving them as part of an environment; this saves space in Emacs and speeds Emacs startup.</p>
 
-<P>Use autoload when you have some mlisp code that you do not want to have code loaded until it is needed.</P>
+<p>Use autoload when you have some mlisp code that you do not want to have code loaded until it is needed.</p>
 
-<P><STRONG>Example:</STRONG></P>
+<p><strong>Example:</strong></p>
 
-<P>If you have a function named box-it in a file named boxit.ml, then the following command will define the box-it command, but won't load its definition from boxit.ml. The loading will happen when you try to execute the box-it command.</P>
+<p>If you have a function named box-it in a file named boxit.ml, then the following command will define the box-it command, but won't load its definition from boxit.ml. The loading will happen when you try to execute the box-it command.</p>
 
-<PRE>
+<pre>
 (autoload  "box-it" "boxit.ml")
-</PRE>
-</BLOCKQUOTE>
+</pre>
+</blockquote>
 
-<HR>
-</BODY>
-</HTML>
+<hr>
+</body>
+</html>
 

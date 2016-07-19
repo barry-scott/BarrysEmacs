@@ -1,463 +1,463 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<HTML>
-<HEAD>
-<TITLE>Mlisp Programmer's Guide</TITLE>
-<META name="GENERATOR" content="HTML Transit 3.0 by InfoAccess Inc. www.infoaccess.com">
+<html>
+<head>
+<title>Mlisp Programmer's Guide</title>
+<meta name="GENERATOR" content="HTML Transit 3.0 by InfoAccess Inc. www.infoaccess.com">
 
-<LINK REL="STYLESHEET" HREF="styles.css">
-</HEAD>
-<BODY>
-<A name="TopOfPage"></A>
+<link rel="STYLESHEET" href="styles.css">
+</head>
+<body>
+<a name="TopOfPage"></a>
 
-<H1><A name="P884_47561"></A> Extension Facilities</H1>
+<h1><a name="P884_47561"></a> Extension Facilities</h1>
 
-<P>This chapter describes the various useful facilities which enable complex extensions to be built using MLisp programs.</P>
+<p>This chapter describes the various useful facilities which enable complex extensions to be built using MLisp programs.</p>
 
-<HR align="LEFT" size="2" color="#800080">
-<A name="P889_47699"></A> 
+<hr align="LEFT" size="2" color="#800080">
+<a name="P889_47699"></a> 
 
-<H2>Keymaps and Key Bindings</H2>
+<h2>keymaps and key bindings</h2>
 
-<P>The facilities for binding command key sequences to functions are very general in nature. When Emacs is accepting commands from the terminal, it translates those commands into Emacs functions. Every command key sequence will result in the execution of one function---either MLisp, a macro, an autoloaded function or some wired-in code.</P>
+<p>The facilities for binding command key sequences to functions are very general in nature. When Emacs is accepting commands from the terminal, it translates those commands into Emacs functions. Every command key sequence will result in the execution of one function---either MLisp, a macro, an autoloaded function or some wired-in code.</p>
 
-<P>A keymap is the entity that tells Emacs what to do when a given key is typed by the user. It will either indicate that a function should be called, or that another keymap should be used to obtain another character in a multicharacter command sequence.</P>
+<p>A keymap is the entity that tells Emacs what to do when a given key is typed by the user. It will either indicate that a function should be called, or that another keymap should be used to obtain another character in a multicharacter command sequence.</p>
 
-<P>For every buffer, there are two routes to follow for command key decoding; the global keymap and the buffer's local keymap . Command key sequences that are defined by the global keymap may be used from any buffer in Emacs, while command key sequences defined in local keymaps may only be used from buffers that associate with the keymap.</P>
+<p>For every buffer, there are two routes to follow for command key decoding; the global keymap and the buffer's local keymap . Command key sequences that are defined by the global keymap may be used from any buffer in Emacs, while command key sequences defined in local keymaps may only be used from buffers that associate with the keymap.</p>
 
-<P>When accepting commands, Emacs makes transitions across the two trees of keymaps as though they were finite state automata. Keymaps can be regarded as look-up tables to make transitions across these automata. Each table contains 256 entries---one entry for each eight-bit ASCII character.</P>
+<p>When accepting commands, Emacs makes transitions across the two trees of keymaps as though they were finite state automata. Keymaps can be regarded as look-up tables to make transitions across these automata. Each table contains 256 entries---one entry for each eight-bit ASCII character.</p>
 
-<P>Keymaps have names which are entered into the function name-space. This means that it is quite legal to execute a keymap as a function. If you do this, the next key sequence input by Emacs will be translated starting with the executed keymap. If you execute more than one keymap, the last keymap executed is used to start the keymap translation.</P>
+<p>Keymaps have names which are entered into the function name-space. This means that it is quite legal to execute a keymap as a function. If you do this, the next key sequence input by Emacs will be translated starting with the executed keymap. If you execute more than one keymap, the last keymap executed is used to start the keymap translation.</p>
 
-<H3>Manipulating Keymaps</H3>
+<h3>manipulating keymaps</h3>
 
-<P>Several functions and variables can be used to manipulate keymaps. These include the following:</P>
+<p>Several functions and variables can be used to manipulate keymaps. These include the following:</p>
 
-<P><B>(define-keymap <I>name</I>)</B></P>
+<p><b>(define-keymap <i>name</i>)</b></p>
 
-<P>This function explicitly declares a keymap and initialises its contents. The keymap's name is entered into the function name-space. Once the keymap has been declared in this way, it can be explicitly nominated as a local or global keymap.</P>
+<p>This function explicitly declares a keymap and initialises its contents. The keymap's name is entered into the function name-space. Once the keymap has been declared in this way, it can be explicitly nominated as a local or global keymap.</p>
 
-<P><B>(use-global-map <I>name</I>)</B></P>
+<p><b>(use-global-map <i>name</i>)</b></p>
 
-<P>Uses the nominated keymap as the global keymap for all subsequent command input. <I>name</I> must be an existing keymap.</P>
+<p>Uses the nominated keymap as the global keymap for all subsequent command input. <i>name</i> must be an existing keymap.</p>
 
-<P><B>(use-local-map <I>name</I>)</B></P>
+<p><b>(use-local-map <i>name</i>)</b></p>
 
-<P>Uses the nominated keymap as the local keymap for the current buffer. Any previous local keymap association is removed (though the keymap itself will not be destroyed).</P>
+<p>Uses the nominated keymap as the local keymap for the current buffer. Any previous local keymap association is removed (though the keymap itself will not be destroyed).</p>
 
-<P><B>current-local-keymap</B></P>
+<p><b>current-local-keymap</b></p>
 
-<P>This variable contains the name of a buffer's current local keymap. The name it contains may be used with a <CODE>use-local-map</CODE> function.</P>
+<p>This variable contains the name of a buffer's current local keymap. The name it contains may be used with a <code>use-local-map</code> function.</p>
 
-<P><B>default-global-keymap</B></P>
+<p><b>default-global-keymap</b></p>
 
-<P>This variable contains the default global keymap that Emacs initialises and uses when it starts up. It contains the standard command key sequences plus any global alterations the user has made.</P>
+<p>This variable contains the default global keymap that Emacs initialises and uses when it starts up. It contains the standard command key sequences plus any global alterations the user has made.</p>
 
-<H3>Command Binding</H3>
+<h3>command binding</h3>
 
-<P>Functions may be bound to any arbitrary key sequence using the functions described as follows:</P>
+<p>Functions may be bound to any arbitrary key sequence using the functions described as follows:</p>
 
-<P><B>(bind-to-key <I>name keys</I>)</B></P>
+<p><b>(bind-to-key <i>name keys</i>)</b></p>
 
-<P>Makes a global binding to a function. The function binding will be usable from any buffer. The function <I>name</I> must have already been declared in the function name-space. <I>keys</I> can be an arbitrary sequence of characters used to access the function. The following example binds the function <CODE>set-mark</CODE> to the <CODE>Select</CODE> key:</P>
+<p>Makes a global binding to a function. The function binding will be usable from any buffer. The function <i>name</i> must have already been declared in the function name-space. <i>keys</i> can be an arbitrary sequence of characters used to access the function. The following example binds the function <code>set-mark</code> to the <code>Select</code> key:</p>
 
-<PRE>
+<pre>
 (bind-to-key "set-mark" "select)")
-</PRE>
+</pre>
 
-<P>If <I>keys</I> is a character constant, then the binding is entered into the current global keymap. If <I>keys</I> is a string, then enough keymaps are automatically generated to define the entire path to the function. Automatically generated keymaps have names of the form <CODE>auto-defined-keymap-n</CODE>, where <CODE>n</CODE> is a sequence number.</P>
+<p>If <i>keys</i> is a character constant, then the binding is entered into the current global keymap. If <i>keys</i> is a string, then enough keymaps are automatically generated to define the entire path to the function. Automatically generated keymaps have names of the form <code>auto-defined-keymap-n</code>, where <code>n</code> is a sequence number.</p>
 
-<P>If the key sequence specified is a control sequence, it must be a valid ISO control sequence. For example, the key sequence <CODE>ESC-Select</CODE> is not a valid ISO control sequence because it generates two consecutive <CODE>ESC</CODE> characters. However, Emacs allows you to bind commands to such sequences by providing the <CODE>convert-key-string</CODE> function. <CODE>convert-key-string</CODE> will convert a control sequence according to Emacs' control-string processing rules to a valid ISO control sequence. For example, to bind the <CODE>unset-mark</CODE> function to the <CODE>ESC-Select</CODE> key sequence, use the <CODE>convert-key-string</CODE> function as follows:</P>
+<p>If the key sequence specified is a control sequence, it must be a valid ISO control sequence. For example, the key sequence <code>ESC-Select</code> is not a valid ISO control sequence because it generates two consecutive <code>ESC</code> characters. However, Emacs allows you to bind commands to such sequences by providing the <code>convert-key-string</code> function. <code>convert-key-string</code> will convert a control sequence according to Emacs' control-string processing rules to a valid ISO control sequence. For example, to bind the <code>unset-mark</code> function to the <code>ESC-Select</code> key sequence, use the <code>convert-key-string</code> function as follows:</p>
 
-<PRE>
+<pre>
 (bind-to-key "unset-mark"
-<BR>
+<br>
  (concat
-<BR>
+<br>
  ""
-<BR>
+<br>
  (convert-key-string "select)")
-<BR>
+<br>
  )
-<BR>
+<br>
 )
-</PRE>
+</pre>
 
-<P><B>(local-bind-to-key <I>name keys</I>)</B></P>
+<p><b>(local-bind-to-key <i>name keys</i>)</b></p>
 
-<P>Defines a local binding to a function. The binding is entered into the current buffer's local keymap. Character and string <I>keys</I> parameters are treated as described under <CODE>bind-to-key</CODE>. If a buffer does not have a local keymap, an error is reported.</P>
+<p>Defines a local binding to a function. The binding is entered into the current buffer's local keymap. Character and string <i>keys</i> parameters are treated as described under <code>bind-to-key</code>. If a buffer does not have a local keymap, an error is reported.</p>
 
-<P><B>(global-binding-of <I>keys</I>)</B></P>
+<p><b>(global-binding-of <i>keys</i>)</b></p>
 
-<P>Returns a string containing the name of the function defined by the <I>keys</I> string using the current global keymap.</P>
+<p>Returns a string containing the name of the function defined by the <i>keys</i> string using the current global keymap.</p>
 
-<P><B>(local-binding-of <I>keys</I>)</B></P>
+<p><b>(local-binding-of <i>keys</i>)</b></p>
 
-<P>Returns a string containing the name of the function defined by the <I>keys</I> string using the current buffer's local keymap.</P>
+<p>Returns a string containing the name of the function defined by the <i>keys</i> string using the current buffer's local keymap.</p>
 
-<P><B>(remove-all-local-bindings)</B></P>
+<p><b>(remove-all-local-bindings)</b></p>
 
-<P>Removes all the local bindings in the current buffer's local keymap. The local keymap itself is not destroyed.</P>
+<p>Removes all the local bindings in the current buffer's local keymap. The local keymap itself is not destroyed.</p>
 
-<P><B>(remove-binding <I>keys</I>)</B></P>
+<p><b>(remove-binding <i>keys</i>)</b></p>
 
-<P>Removes the association of a function to a command key sequence from the global keymap.</P>
+<p>Removes the association of a function to a command key sequence from the global keymap.</p>
 
-<P><B>(remove-local-binding <I>keys</I>)</B></P>
+<p><b>(remove-local-binding <i>keys</i>)</b></p>
 
-<P>Removes the association of a function to a command key sequence from the local keymap.</P>
+<p>Removes the association of a function to a command key sequence from the local keymap.</p>
 
-<HR align="LEFT" size="2" color="#800080">
-<A name="P966_52721"></A> 
+<hr align="LEFT" size="2" color="#800080">
+<a name="P966_52721"></a> 
 
-<H2>Databases</H2>
+<h2>databases</h2>
 
-<P>Emacs provides a comprehensive database management system.</P>
+<p>Emacs provides a comprehensive database management system.</p>
 
-<P>The key components of the database system are database search-lists. These are ordered lists of database files. When data is to be fetched from a database search-list, Emacs scans all the files in the list until it either finds a key match, or the list is exhausted. When Emacs writes data to a database search-list, the data is always inserted into the database at the top of the specified search-list.</P>
+<p>The key components of the database system are database search-lists. These are ordered lists of database files. When data is to be fetched from a database search-list, Emacs scans all the files in the list until it either finds a key match, or the list is exhausted. When Emacs writes data to a database search-list, the data is always inserted into the database at the top of the specified search-list.</p>
 
-<P>You can use any text as the key for a database entry. However keys used in the MLisp-library should conform to the rules for file names and not use upper case letters.</P>
+<p>You can use any text as the key for a database entry. However keys used in the MLisp-library should conform to the rules for file names and not use upper case letters.</p>
 
-<P>Certain optimisations are made to ease the problems of multiple invocations of Emacs using the same library files. Library files in a database search-list will always be closed and re-opened between each library operation. This may slow down library searches, but it does ensure that data in the library is not cached inside Emacs, so that other Emacs users can access the library.</P>
+<p>Certain optimisations are made to ease the problems of multiple invocations of Emacs using the same library files. Library files in a database search-list will always be closed and re-opened between each library operation. This may slow down library searches, but it does ensure that data in the library is not cached inside Emacs, so that other Emacs users can access the library.</p>
 
-<P>Database files are of two types: read-only, and read-write. You control which type of access is required by specifying parameters to Emacs. If a database file is protected against writing, read-only access will be granted if possible.</P>
+<p>Database files are of two types: read-only, and read-write. You control which type of access is required by specifying parameters to Emacs. If a database file is protected against writing, read-only access will be granted if possible.</p>
 
-<P>Emacs uses the following database search-lists:</P>
+<p>Emacs uses the following database search-lists:</p>
 
-<P><B>info</B></P>
+<p><b>info</b></p>
 
-<P>This list is used by the INFO subsystem to provide pages of information. The INFO database describes which files are accessed.</P>
+<p>This list is used by the INFO subsystem to provide pages of information. The INFO database describes which files are accessed.</p>
 
-<P><B>language</B></P>
+<p><b>language</b></p>
 
-<P>This list is used by the language modes C Mode and Bliss Mode as the source of language construct templates. The templates supplied with Emacs are found in the file EMACS_LIBRARY:EMACSLANG.TLB. During initialisation of the language subsystems, your language template file SYS$LOGIN:LANGUAGE-TEMPLATES.TLB is added to the search-list so that you can override the system templates with your own templates.</P>
+<p>This list is used by the language modes C Mode and Bliss Mode as the source of language construct templates. The templates supplied with Emacs are found in the file EMACS_LIBRARY:EMACSLANG.TLB. During initialisation of the language subsystems, your language template file SYS$LOGIN:LANGUAGE-TEMPLATES.TLB is added to the search-list so that you can override the system templates with your own templates.</p>
 
-<P><B>MLisp-library</B></P>
+<p><b>MLisp-library</b></p>
 
-<P>This list provides database access to stored MLisp programs. All the distributed MLisp functions are stored in the file EMACS_LIBRARY:EMACSLIB.TLB. This file is visible in the search-list. To provide for user extensions and customisations, Emacs will also add the file SYS$LOGIN:EMACSLIB.TLB (if it exists) to the search-list during initialisation.</P>
+<p>This list provides database access to stored MLisp programs. All the distributed MLisp functions are stored in the file EMACS_LIBRARY:EMACSLIB.TLB. This file is visible in the search-list. To provide for user extensions and customisations, Emacs will also add the file SYS$LOGIN:EMACSLIB.TLB (if it exists) to the search-list during initialisation.</p>
 
-<P><B>describe</B></P>
+<p><b>describe</b></p>
 
-<P>This search-list is used by the <CODE>describe-command</CODE>, <CODE>describe-variable</CODE> and <CODE>Help</CODE> functions. The files in the list contain the Emacs help database. This search-list can grow as new packages are added into the running Emacs.</P>
+<p>This search-list is used by the <code>describe-command</code>, <code>describe-variable</code> and <code>Help</code> functions. The files in the list contain the Emacs help database. This search-list can grow as new packages are added into the running Emacs.</p>
 
-<P><B>subr-names</B></P>
+<p><b>subr-names</b></p>
 
-<P>This search-list is used by the <CODE>describe-word-in-buffer</CODE> function as the source of one-line information about words. It contains the supplied quick-information database files and the user's SYS$LOGIN:SUBRNAMES.TLB database if it exists.</P>
+<p>This search-list is used by the <code>describe-word-in-buffer</code> function as the source of one-line information about words. It contains the supplied quick-information database files and the user's SYS$LOGIN:SUBRNAMES.TLB database if it exists.</p>
 
-<H3>Database Functions</H3>
+<h3>database functions</h3>
 
-<P>The following commands are provided to manipulate database search-lists and to access the data contained in them:</P>
+<p>The following commands are provided to manipulate database search-lists and to access the data contained in them:</p>
 
-<P><B>(extend-database-search-list <I>dbname dbfile access</I>)</B></P>
+<p><b>(extend-database-search-list <i>dbname dbfile access</i>)</b></p>
 
-<P>This command adds the database file specified to the nominated database search-list. The file's writeability is checked and a flag is set to indicate the file's type. If the database search-list does not exist, it is created. If the file already exists in the search-list, it is not added again. <I>access</I> is an optional argument containing access flags. The flags are specified as a bit-mask with the following meaning:</P>
+<p>This command adds the database file specified to the nominated database search-list. The file's writeability is checked and a flag is set to indicate the file's type. If the database search-list does not exist, it is created. If the file already exists in the search-list, it is not added again. <i>access</i> is an optional argument containing access flags. The flags are specified as a bit-mask with the following meaning:</p>
 
-<UL>
-<LI><B>1 (read-only)</B> --- indicates that read-only access is required</LI>
+<ul>
+<li><b>1 (read-only)</b> --- indicates that read-only access is required</li>
 
-<LI><B>2 (noclose)</B> --- indicates that the library should remain open across library accesses.</LI>
-</UL>
+<li><b>2 (noclose)</b> --- indicates that the library should remain open across library accesses.</li>
+</ul>
 
-<P><B>(remove-database <I>dbname dbfile</I>)</B></P>
+<p><b>(remove-database <i>dbname dbfile</i>)</b></p>
 
-<P>Removes the <I>dbfile</I> database file from the <I>dbname</I> database search-list. No error message is generated if the file does not exist. The database search-list will remain even if the last file is removed.</P>
+<p>Removes the <i>dbfile</i> database file from the <i>dbname</i> database search-list. No error message is generated if the file does not exist. The database search-list will remain even if the last file is removed.</p>
 
-<P><B>(list-databases)</B></P>
+<p><b>(list-databases)</b></p>
 
-<P>Creates a buffer called <CODE>Database list</CODE> and inserts the names and file names of all the database search-lists. This buffer is then displayed in a window.</P>
+<p>Creates a buffer called <code>Database list</code> and inserts the names and file names of all the database search-lists. This buffer is then displayed in a window.</p>
 
-<P><B>(put-database-entry <I>dbname key</I>)</B></P>
+<p><b>(put-database-entry <i>dbname key</i>)</b></p>
 
-<P>Inserts the current buffer into the first library in the designated database search-list using the specified key. You cannot use <CODE>put-database-entry</CODE> on a read-only database. Completion is enabled for both the database search-list name and the key.</P>
+<p>Inserts the current buffer into the first library in the designated database search-list using the specified key. You cannot use <code>put-database-entry</code> on a read-only database. Completion is enabled for both the database search-list name and the key.</p>
 
-<P><B>(fetch-database-entry <I>dbname key</I>)</B></P>
+<p><b>(fetch-database-entry <i>dbname key</i>)</b></p>
 
-<P>Fetches the contents of the designated module and inserts the data into the current buffer at dot. Dot remains in the same place. Completion is enabled for both the database search-list name and the key. If the key does not exist, an error is generated.</P>
+<p>Fetches the contents of the designated module and inserts the data into the current buffer at dot. Dot remains in the same place. Completion is enabled for both the database search-list name and the key. If the key does not exist, an error is generated.</p>
 
-<P><B>(fetch-help-database-entry <I>dbname keys</I>)</B></P>
+<p><b>(fetch-help-database-entry <i>dbname keys</i>)</b></p>
 
-<P>Performs the special operation of fetching help from a VMS HELP library and formats it in the same way as the DCL HELP command. The location of the key must be a help library. The formatted help text is inserted into the buffer at dot. Dot remains in the same place. An error is reported if the keys are not found. The keys are defined as a space-separated list of up to 8 keys which access the required help text. <CODE>fetch-help-database-flags</CODE> controls the amount of information fetched from the entry.</P>
+<p>Performs the special operation of fetching help from a VMS HELP library and formats it in the same way as the DCL HELP command. The location of the key must be a help library. The formatted help text is inserted into the buffer at dot. Dot remains in the same place. An error is reported if the keys are not found. The keys are defined as a space-separated list of up to 8 keys which access the required help text. <code>fetch-help-database-flags</code> controls the amount of information fetched from the entry.</p>
 
-<P><B>fetch-help-database-flags</B></P>
+<p><b>fetch-help-database-flags</b></p>
 
-<P>Controls the amount of help text that is inserted into the current buffer when the <CODE>fetch-help-database-entry</CODE> function is executed. It contains a bit-mask which can take the following values:</P>
+<p>Controls the amount of help text that is inserted into the current buffer when the <code>fetch-help-database-entry</code> function is executed. It contains a bit-mask which can take the following values:</p>
 
-<UL>
-<LI><B>1 (text)</B> --- includes the help text for this entry</LI>
+<ul>
+<li><b>1 (text)</b> --- includes the help text for this entry</li>
 
-<LI><B>2 (keys)</B> --- includes the key name lines for this entry</LI>
+<li><b>2 (keys)</b> --- includes the key name lines for this entry</li>
 
-<LI><B>4 (additional)</B> --- includes additional information lines for this entry.</LI>
-</UL>
+<li><b>4 (additional)</b> --- includes additional information lines for this entry.</li>
+</ul>
 
-<P>The default value of the bit-mask is 7, meaning that all the information is returned.</P>
+<p>The default value of the bit-mask is 7, meaning that all the information is returned.</p>
 
-<HR align="LEFT" size="2" color="#800080">
-<A name="P1049_58596"></A> 
+<hr align="LEFT" size="2" color="#800080">
+<a name="P1049_58596"></a> 
 
-<H2>Controlling Processes from Emacs</H2>
+<h2>controlling processes from emacs</h2>
 
-<P>Emacs has a set of functions for controlling subprocesses. These processes are created by Emacs and can execute any shell to accept commands. You designate a name for each subprocess and use this name when you want to refer to it.</P>
+<p>Emacs has a set of functions for controlling subprocesses. These processes are created by Emacs and can execute any shell to accept commands. You designate a name for each subprocess and use this name when you want to refer to it.</p>
 
-<P>The number of concurrently running subprocesses is limited only by the resources available to you.</P>
+<p>The number of concurrently running subprocesses is limited only by the resources available to you.</p>
 
-<H3>Functions for Controlling Processes</H3>
+<h3>functions for controlling processes</h3>
 
-<P><B>(start-process <I>process-name</I>)</B></P>
+<p><b>(start-process <i>process-name</i>)</b></p>
 
-<P>Creates the named subprocess. <I>process-name</I> must not already exist. The current process is changed to the newly-created process.</P>
+<p>Creates the named subprocess. <i>process-name</i> must not already exist. The current process is changed to the newly-created process.</p>
 
-<P><B>(kill-process <I>process-name</I>)</B></P>
+<p><b>(kill-process <i>process-name</i>)</b></p>
 
-<P>Deletes the named subprocess. If the name is null, the current process is deleted. When the process has actually terminated, the process termination procedure will be called. After the termination procedure has finished executing, the process name will be removed from the process name-space.</P>
+<p>Deletes the named subprocess. If the name is null, the current process is deleted. When the process has actually terminated, the process termination procedure will be called. After the termination procedure has finished executing, the process name will be removed from the process name-space.</p>
 
-<P><B>(list-processes)</B></P>
+<p><b>(list-processes)</b></p>
 
-<P>Displays a buffer containing the name and state of each existing process. A time value is also displayed; this is set to the time the last state-transition occurred. The associated output buffer, input and output procedures are also displayed.</P>
+<p>Displays a buffer containing the name and state of each existing process. A time value is also displayed; this is set to the time the last state-transition occurred. The associated output buffer, input and output procedures are also displayed.</p>
 
-<P>The possible process states include:</P>
+<p>The possible process states include:</p>
 
-<UL>
-<LI><B>RUNNING</B> --- indicates that an image is running in the process</LI>
+<ul>
+<li><b>RUNNING</b> --- indicates that an image is running in the process</li>
 
-<LI><B>PAUSED</B> --- indicates that the process has been explicitly suspended</LI>
+<li><b>PAUSED</b> --- indicates that the process has been explicitly suspended</li>
 
-<LI><B>IN-WAIT</B> --- indicates that the process has asked for input</LI>
+<li><b>IN-WAIT</b> --- indicates that the process has asked for input</li>
 
-<LI><B>OUT-WAIT</B> --- indicates that the process has generated some output, and that Emacs is waiting to process it</LI>
+<li><b>OUT-WAIT</b> --- indicates that the process has generated some output, and that Emacs is waiting to process it</li>
 
-<LI><B>DEAD</B> --- indicates that the process has terminated, and will soon be removed from the process list.</LI>
-</UL>
+<li><b>DEAD</b> --- indicates that the process has terminated, and will soon be removed from the process list.</li>
+</ul>
 
-<P><B>(pause-process <I>process-name</I>)</B></P>
+<p><b>(pause-process <i>process-name</i>)</b></p>
 
-<P>Allows a given process to be temporarily suspended by sending a VMS SUSPEND request to it. A paused process will remain paused until it is explicitly resumed or killed.</P>
+<p>Allows a given process to be temporarily suspended by sending a VMS SUSPEND request to it. A paused process will remain paused until it is explicitly resumed or killed.</p>
 
-<P><B>(resume-process <I>process-name</I>)</B></P>
+<p><b>(resume-process <i>process-name</i>)</b></p>
 
-<P>Resumes a process which has been paused with <CODE>pause-process</CODE>.</P>
+<p>Resumes a process which has been paused with <code>pause-process</code>.</p>
 
-<P><B>(force-exit-process <I>process-name reason</I>)</B></P>
+<p><b>(force-exit-process <i>process-name reason</i>)</b></p>
 
-<P>Causes the image running in the specified process to be terminated with the specified status code. Processes that are not running in user mode will not be affected by the exit until they resume execution in user mode. If the process is not running an image, the force exit will be issued on the next image run in the process.</P>
+<p>Causes the image running in the specified process to be terminated with the specified status code. Processes that are not running in user mode will not be affected by the exit until they resume execution in user mode. If the process is not running an image, the force exit will be issued on the next image run in the process.</p>
 
-<P><B>(set-process-termination-procedure <I>process-name function</I>)</B></P>
+<p><b>(set-process-termination-procedure <i>process-name function</i>)</b></p>
 
-<P>Associates an Emacs function with a process. The associated function will be called when the process terminates (not when an image exits). When the associated function is called, the current process is temporarily set to the associated process.</P>
+<p>Associates an Emacs function with a process. The associated function will be called when the process terminates (not when an image exits). When the associated function is called, the current process is temporarily set to the associated process.</p>
 
-<P><B>(current-process-name)</B></P>
+<p><b>(current-process-name)</b></p>
 
-<P>Returns a string containing the current process name. This name will be either the name of the last created process, the name of the process which was a target of the <CODE>set-current-process</CODE> function, or the name of the associated process for functions called as a result of process input, output or termination.</P>
+<p>Returns a string containing the current process name. This name will be either the name of the last created process, the name of the process which was a target of the <code>set-current-process</code> function, or the name of the associated process for functions called as a result of process input, output or termination.</p>
 
-<P><B>(set-current-process <I>process-name</I>)</B></P>
+<p><b>(set-current-process <i>process-name</i>)</b></p>
 
-<P>Changes the current process to the process with the specified name. If you change the current process name in an associated input, output or termination function, the effect will only last for the invocation of that function.</P>
+<p>Changes the current process to the process with the specified name. If you change the current process name in an associated input, output or termination function, the effect will only last for the invocation of that function.</p>
 
-<H3>Input and Output to Processes</H3>
+<h3>input and output to processes</h3>
 
-<P>The following functions exist to make input and output to and from processes convenient.</P>
+<p>The following functions exist to make input and output to and from processes convenient.</p>
 
-<P>For output, the data produced by the process can be inserted into a buffer associated with the process. This provides a convenient way for you to see the output. If, however, some processing of the output is required, then an Emacs function can be automatically called to obtain the output when it is available and perform the required processing.</P>
+<p>For output, the data produced by the process can be inserted into a buffer associated with the process. This provides a convenient way for you to see the output. If, however, some processing of the output is required, then an Emacs function can be automatically called to obtain the output when it is available and perform the required processing.</p>
 
-<P>The functions available for output include:</P>
+<p>The functions available for output include:</p>
 
-<P><B>(set-process-output-buffer <I>process-name buffer-name</I>)</B></P>
+<p><b>(set-process-output-buffer <i>process-name buffer-name</i>)</b></p>
 
-<P>Associates a buffer with a process. When output is available from the process, it is inserted at the end of the buffer. The screen will be updated if the buffer is associated with a window.</P>
+<p>Associates a buffer with a process. When output is available from the process, it is inserted at the end of the buffer. The screen will be updated if the buffer is associated with a window.</p>
 
-<P>If the number of characters exceeds the maximum for the process, characters will be deleted from the beginning of the buffer. This feature protects you from creating huge process buffers.</P>
+<p>If the number of characters exceeds the maximum for the process, characters will be deleted from the beginning of the buffer. This feature protects you from creating huge process buffers.</p>
 
-<P><B>(set-process-output-procedure <I>process-name function</I>)</B></P>
+<p><b>(set-process-output-procedure <i>process-name function</i>)</b></p>
 
-<P>Associates an Emacs function with a process. This function will be called once for every line that is produced by the process. It is assumed that the function will obtain the output line and process it in some way. When the procedure is called, the current process is temporarily set to the process that produced the output line.</P>
+<p>Associates an Emacs function with a process. This function will be called once for every line that is produced by the process. It is assumed that the function will obtain the output line and process it in some way. When the procedure is called, the current process is temporarily set to the process that produced the output line.</p>
 
-<P><B>(process-output <I>process-name</I>)</B></P>
+<p><b>(process-output <i>process-name</i>)</b></p>
 
-<P>Returns the next output line from the process.</P>
+<p>Returns the next output line from the process.</p>
 
-<P>For input, the user makes lines of input available to the process. If the process does not require input, an error is generated. To allow for co-ordination of input, the following functions are provided:</P>
+<p>For input, the user makes lines of input available to the process. If the process does not require input, an error is generated. To allow for co-ordination of input, the following functions are provided:</p>
 
-<P><B>(set-process-input-procedure <I>process-name function</I>)</B></P>
+<p><b>(set-process-input-procedure <i>process-name function</i>)</b></p>
 
-<P>Associates an Emacs function with the process. When the process requests some input, the designated function is called. It is assumed that the function will provide some input to the process. During the call of the associated function, the current process is temporarily set to the associated process.</P>
+<p>Associates an Emacs function with the process. When the process requests some input, the designated function is called. It is assumed that the function will provide some input to the process. During the call of the associated function, the current process is temporarily set to the associated process.</p>
 
-<P><B>(send-string-to-process <I>process-name input-line</I>)</B></P>
+<p><b>(send-string-to-process <i>process-name input-line</i>)</b></p>
 
-<P>Sends some input to the designated process. If that process is not requesting input, an error is generated.</P>
+<p>Sends some input to the designated process. If that process is not requesting input, an error is generated.</p>
 
-<P><B>(wait-for-process-input-request <I>process-name</I>)</B></P>
+<p><b>(wait-for-process-input-request <i>process-name</i>)</b></p>
 
-<P>Suspends Emacs execution until the designated process requests some input. Keyboard input will also cause this function to return to prevent Emacs from becoming wedged. When a process asks for input, the function returns 1; otherwise, it returns 0, indicating that the user pressed a key on the keyboard.</P>
+<p>Suspends Emacs execution until the designated process requests some input. Keyboard input will also cause this function to return to prevent Emacs from becoming wedged. When a process asks for input, the function returns 1; otherwise, it returns 0, indicating that the user pressed a key on the keyboard.</p>
 
-<HR align="LEFT" size="2" color="#800080">
-<A name="P1143_64796"></A> 
+<hr align="LEFT" size="2" color="#800080">
+<a name="P1143_64796"></a> 
 
-<H2>Minor Modes</H2>
+<h2>minor modes</h2>
 
-<P>Minor modes are used to alter the way Emacs performs an operation. All minor modes are independent of each other and of the selected major mode. The statuses of some minor modes are displayed in the mode lines for each window. Each minor mode is controlled by a variable that can be turned on or off. A non zero-value always turns the mode on, and an explicit zero value always turns the mode off.</P>
+<p>Minor modes are used to alter the way Emacs performs an operation. All minor modes are independent of each other and of the selected major mode. The statuses of some minor modes are displayed in the mode lines for each window. Each minor mode is controlled by a variable that can be turned on or off. A non zero-value always turns the mode on, and an explicit zero value always turns the mode off.</p>
 
-<P>The following minor modes are defined by Emacs:</P>
+<p>The following minor modes are defined by Emacs:</p>
 
-<P><B>Auto-fill Mode</B></P>
+<p><b>Auto-fill Mode</b></p>
 
-<P>This mode allows you to type text endlessly without worrying about the width of your screen. Line separators are inserted as required to prevent lines from becoming too long.</P>
+<p>This mode allows you to type text endlessly without worrying about the width of your screen. Line separators are inserted as required to prevent lines from becoming too long.</p>
 
-<P>Auto-fill Mode is controlled by setting the variable <CODE>right-margin</CODE>. When an attempt is made to insert a word character passed the right margin, auto-filling is invoked.</P>
+<p>Auto-fill Mode is controlled by setting the variable <code>right-margin</code>. When an attempt is made to insert a word character passed the right margin, auto-filling is invoked.</p>
 
-<P><B>Checkpoint Mode</B></P>
+<p><b>Checkpoint Mode</b></p>
 
-<P>Checkpoint Mode protects you from system crashes by periodically saving the buffers you are working with. Whenever you visit a file, checkpointing is enabled if the variable <CODE>checkpoint-frequency</CODE> is non-zero.</P>
+<p>Checkpoint Mode protects you from system crashes by periodically saving the buffers you are working with. Whenever you visit a file, checkpointing is enabled if the variable <code>checkpoint-frequency</code> is non-zero.</p>
 
-<P>Checkpointing for individual buffers is also controlled by the buffer-specific variable <CODE>current-buffer-checkpointable</CODE>.</P>
+<p>Checkpointing for individual buffers is also controlled by the buffer-specific variable <code>current-buffer-checkpointable</code>.</p>
 
-<P><B>Journal Mode</B></P>
+<p><b>Journal Mode</b></p>
 
-<P>Journal Mode protects you from system crashes by writing a journal of all the changes that are made to modified buffers. When you visit a file, journalling is automatically enabled if the variable <CODE>journal-frequency</CODE> is non-zero.</P>
+<p>Journal Mode protects you from system crashes by writing a journal of all the changes that are made to modified buffers. When you visit a file, journalling is automatically enabled if the variable <code>journal-frequency</code> is non-zero.</p>
 
-<P>Journalling for individual buffers is controlled by the buffer-specific variable <CODE>current-buffer-journalled</CODE>.</P>
+<p>Journalling for individual buffers is controlled by the buffer-specific variable <code>current-buffer-journalled</code>.</p>
 
-<P><B>Replace Mode</B></P>
+<p><b>Replace Mode</b></p>
 
-<P>Replace Mode causes ordinary printing characters to replace existing text rather than be inserted. For example, if dot is in front of the <CODE>B</CODE> in <CODE>FOOBAR</CODE>, then in Replace Mode, typing a <CODE>G</CODE> changes it to <CODE>FOOGAR</CODE>, instead of making it <CODE>FOOGBAR</CODE> as usual.</P>
+<p>Replace Mode causes ordinary printing characters to replace existing text rather than be inserted. For example, if dot is in front of the <code>B</code> in <code>FOOBAR</code>, then in Replace Mode, typing a <code>G</code> changes it to <code>FOOGAR</code>, instead of making it <code>FOOGBAR</code> as usual.</p>
 
-<P>This mode is controlled with variable <CODE>replace-mode</CODE>.</P>
+<p>This mode is controlled with variable <code>replace-mode</code>.</p>
 
-<P><B>Abbreviation Mode</B></P>
+<p><b>Abbreviation Mode</b></p>
 
-<P>Abbreviation Mode allows you to define abbreviations that automatically expand as you type them. For example, <CODE>am</CODE> might expand to <CODE>Abbrev mode</CODE>. The abbreviations also may depend on the active major mode.</P>
+<p>Abbreviation Mode allows you to define abbreviations that automatically expand as you type them. For example, <code>am</code> might expand to <code>Abbrev mode</code>. The abbreviations also may depend on the active major mode.</p>
 
-<P>This mode is controlled by the variable <CODE>abbrev-mode</CODE>.</P>
+<p>This mode is controlled by the variable <code>abbrev-mode</code>.</p>
 
-<P><B>Read-only Mode</B></P>
+<p><b>Read-only Mode</b></p>
 
-<P>Read-only Mode allows you to protect the data in a buffer from being altered. When Read-only Mode is enabled, attempts to insert characters into the buffer are ignored and cause the bell to be sounded.</P>
+<p>Read-only Mode allows you to protect the data in a buffer from being altered. When Read-only Mode is enabled, attempts to insert characters into the buffer are ignored and cause the bell to be sounded.</p>
 
-<P>This mode is controlled by the variable <CODE>read-only-buffer</CODE>.</P>
+<p>This mode is controlled by the variable <code>read-only-buffer</code>.</p>
 
-<HR align="LEFT" size="2" color="#800080">
-<A name="P1186_67157"></A> 
+<hr align="LEFT" size="2" color="#800080">
+<a name="P1186_67157"></a> 
 
-<H2>The Mode Line</H2>
+<h2>the mode line</h2>
 
-<P>As with most things in Emacs, the information in the mode line is customisable. A buffer-specific variable <CODE>mode-line-format</CODE> exists for this purpose. <CODE>mode-line-format</CODE> contains a format string which governs the way that the mode line information is displayed. It contains literal text and embedded format effectors. The literal text will be displayed in the mode line as it is typed, while the format effectors will be expanded with the appropriate information. You normally alter the default value of this variable (<CODE>default-mode-line-format</CODE>) so that when a new buffer is created, it displays your customised mode line immediately.</P>
+<p>As with most things in Emacs, the information in the mode line is customisable. A buffer-specific variable <code>mode-line-format</code> exists for this purpose. <code>mode-line-format</code> contains a format string which governs the way that the mode line information is displayed. It contains literal text and embedded format effectors. The literal text will be displayed in the mode line as it is typed, while the format effectors will be expanded with the appropriate information. You normally alter the default value of this variable (<code>default-mode-line-format</code>) so that when a new buffer is created, it displays your customised mode line immediately.</p>
 
-<P>The general form of the format effectors is <CODE>%nx</CODE>. <CODE>n</CODE> is the width of the string to be inserted and causes truncation or padding on the right. <CODE>x</CODE> is one of the letters in the following list:</P>
+<p>The general form of the format effectors is <code>%nx</code>. <code>n</code> is the width of the string to be inserted and causes truncation or padding on the right. <code>x</code> is one of the letters in the following list:</p>
 
-<P><B>a</B></P>
+<p><b>a</b></p>
 
-<P>Inserts the string <CODE>Abbrev</CODE> if Abbreviation Mode is on, otherwise it inserts nothing.</P>
+<p>Inserts the string <code>Abbrev</code> if Abbreviation Mode is on, otherwise it inserts nothing.</p>
 
-<P><B>b</B></P>
+<p><b>b</b></p>
 
-<P>Inserts the current buffer's name.</P>
+<p>Inserts the current buffer's name.</p>
 
-<P><B>c</B></P>
+<p><b>c</b></p>
 
-<P>Inserts the string <CODE>Checkpoint</CODE> if checkpointing is generally enabled and also enabled for the current buffer, otherwise it inserts nothing.</P>
+<p>Inserts the string <code>Checkpoint</code> if checkpointing is generally enabled and also enabled for the current buffer, otherwise it inserts nothing.</p>
 
-<P><B>f</B></P>
+<p><b>f</b></p>
 
-<P>Inserts the current file name for buffers associated with files, or <CODE>[No File]</CODE> for scratch buffers.</P>
+<p>Inserts the current file name for buffers associated with files, or <code>[No File]</code> for scratch buffers.</p>
 
-<P><B>h</B></P>
+<p><b>h</b></p>
 
-<P>Inserts the string <CODE>&lt;n&lt;</CODE> if the horizontal position of the window on the current buffer does not include column one. <CODE>n</CODE> indicates by how many characters column one is offset from the left-hand side of the window.</P>
+<p>Inserts the string <code>&lt;n&lt;</code> if the horizontal position of the window on the current buffer does not include column one. <code>n</code> indicates by how many characters column one is offset from the left-hand side of the window.</p>
 
-<P><B>j</B></P>
+<p><b>j</b></p>
 
-<P>Inserts the string <CODE>Journal</CODE> if journalling is enabled for the buffer, otherwise nothing is inserted.</P>
+<p>Inserts the string <code>Journal</code> if journalling is enabled for the buffer, otherwise nothing is inserted.</p>
 
-<P><B>m</B></P>
+<p><b>m</b></p>
 
-<P>Inserts the value of the buffer-specific variable <CODE>mode-string</CODE>. This variable defines the major mode for the buffer.</P>
+<p>Inserts the value of the buffer-specific variable <code>mode-string</code>. This variable defines the major mode for the buffer.</p>
 
-<P><B>M</B></P>
+<p><b>M</b></p>
 
-<P>Inserts the value of the global variable <CODE>global-mode-string</CODE> which defines the name of the currently running subsystem.</P>
+<p>Inserts the value of the global variable <code>global-mode-string</code> which defines the name of the currently running subsystem.</p>
 
-<P><B>p</B></P>
+<p><b>p</b></p>
 
-<P>Inserts the position of dot in the current buffer as a percentage. If dot is at the beginning of the buffer, the string <CODE>Top</CODE> is inserted. If dot is at the end of the buffer, the string <CODE>Bottom</CODE> is inserted.</P>
+<p>Inserts the position of dot in the current buffer as a percentage. If dot is at the beginning of the buffer, the string <code>Top</code> is inserted. If dot is at the end of the buffer, the string <code>Bottom</code> is inserted.</p>
 
-<P><B>r</B></P>
+<p><b>r</b></p>
 
-<P>Inserts the string <CODE>Overstrike</CODE> if Replace Mode is currently enabled.</P>
+<p>Inserts the string <code>Overstrike</code> if Replace Mode is currently enabled.</p>
 
-<P><B>R</B></P>
+<p><b>R</b></p>
 
-<P>Inserts the string <CODE>Readonly</CODE> if Read-only Mode is currently enabled.</P>
+<p>Inserts the string <code>Readonly</code> if Read-only Mode is currently enabled.</p>
 
-<P><B>*</B></P>
+<p><b>*</b></p>
 
-<P>Inserts a asterisk if the current buffer has been modified since it was last written to disk, otherwise it inserts nothing.</P>
+<p>Inserts a asterisk if the current buffer has been modified since it was last written to disk, otherwise it inserts nothing.</p>
 
-<P><B>[ and ]</B></P>
+<p><b>[ and ]</b></p>
 
-<P>Inserts zero or more square brackets depending on the depth of recursive editing. One bracket is inserted per level when the recursive edit depth is less than 5. When the edit depth is 5 or greater, the string <CODE>[n]</CODE> is inserted, where <CODE>n</CODE> is the recursive edit depth.</P>
+<p>Inserts zero or more square brackets depending on the depth of recursive editing. One bracket is inserted per level when the recursive edit depth is less than 5. When the edit depth is 5 or greater, the string <code>[n]</code> is inserted, where <code>n</code> is the recursive edit depth.</p>
 
-<P>The default value of <CODE>mode-line-format</CODE> is:</P>
+<p>The default value of <code>mode-line-format</code> is:</p>
 
-<P><CODE>%[%hBuffer: %b%* File: %f %M (%m%c%r%a) %p%]</CODE></P>
+<p><code>%[%hBuffer: %b%* File: %f %M (%m%c%r%a) %p%]</code></p>
 
-<HR align="LEFT" size="2" color="#800080">
-<A name="P1249_69710"></A> 
+<hr align="LEFT" size="2" color="#800080">
+<a name="P1249_69710"></a> 
 
-<H2><A NAME="syntaxtables"></A>Syntax Tables</H2>
+<h2><a name="syntaxtables"></a>Syntax Tables</h2>
 
-<P>The effects of all the Emacs commands which parse words or balance parentheses are controlled by syntax tables . Each ASCII character is represented by one entry in each syntax table. Each buffer has a syntax table associated with it. The default syntax table is called <CODE>global-syntax-table</CODE>. The name of the current syntax table (the syntax table associated with the current buffer) may be accessed through the variable <CODE>current-buffer-syntax-table</CODE>, and this table may be changed either by setting the variable, or by using the function <CODE>use-syntax-table</CODE>.</P>
+<p>The effects of all the Emacs commands which parse words or balance parentheses are controlled by syntax tables . Each ASCII character is represented by one entry in each syntax table. Each buffer has a syntax table associated with it. The default syntax table is called <code>global-syntax-table</code>. The name of the current syntax table (the syntax table associated with the current buffer) may be accessed through the variable <code>current-buffer-syntax-table</code>, and this table may be changed either by setting the variable, or by using the function <code>use-syntax-table</code>.</p>
 
-<P>To alter a syntax table, the function <CODE>modify-syntax-entry</CODE> is provided. This command takes a single string argument which describes the attributes to be applied to the specified characters as follows:</P>
+<p>To alter a syntax table, the function <code>modify-syntax-entry</code> is provided. This command takes a single string argument which describes the attributes to be applied to the specified characters as follows:</p>
 
-<P>&middot; The first character is one of the following:</P>
+<p>&middot; The first character is one of the following:</p>
 
-<P><B>w</B></P>
+<p><b>w</b></p>
 
-<P>A word character, as used by such functions as <CODE>forward-word</CODE> and <CODE>case-word-capitalize</CODE>.</P>
+<p>A word character, as used by such functions as <code>forward-word</code> and <code>case-word-capitalize</code>.</p>
 
-<P><B>Space</B></P>
+<p><b>Space</b></p>
 
-<P>A character with no special interpretation.</P>
+<p>A character with no special interpretation.</p>
 
-<P><B>(</B></P>
+<p><b>(</b></p>
 
-<P>A open parenthesis. Typical candidates for this type are the characters <CODE>(</CODE>, <CODE>[</CODE> and.</P>
+<p>A open parenthesis. Typical candidates for this type are the characters <code>(</code>, <code>[</code> and.</p>
 
-<P>Characters of this type also have a matching closing parenthesis specified which appears as the second character of the parameter to <CODE>modify-syntax-entry</CODE>.</P>
+<p>Characters of this type also have a matching closing parenthesis specified which appears as the second character of the parameter to <code>modify-syntax-entry</code>.</p>
 
-<P><B>)</B></P>
+<p><b>)</b></p>
 
-<P>A close parenthesis. Typical candidates for this type are the characters <CODE>)</CODE>, <CODE>]</CODE> and. Characters of this type also have a matching open parenthesis specified which appears as the second character of the parameter to <CODE>modify-syntax-entry</CODE>.</P>
+<p>A close parenthesis. Typical candidates for this type are the characters <code>)</code>, <code>]</code> and. Characters of this type also have a matching open parenthesis specified which appears as the second character of the parameter to <code>modify-syntax-entry</code>.</p>
 
-<P><B>"</B></P>
+<p><b>"</b></p>
 
-<P>A double-quote character. The C string delimiters <CODE>"</CODE> and <CODE>'</CODE> are usually given this class.</P>
+<p>A double-quote character. The C string delimiters <code>"</code> and <code>'</code> are usually given this class.</p>
 
-<P><B>\</B></P>
+<p><b>\</b></p>
 
-<P>A prefix character, like <CODE>\</CODE> in C.</P>
+<p>A prefix character, like <code>\</code> in C.</p>
 
-<P>&middot; The second character of the string is the matching parenthesis if the first character is of the open or close parenthesis type. If you specify that <CODE>(</CODE> is a left parenthesis matched by <CODE>)</CODE>, you should also specify that <CODE>)</CODE> is a right parenthesis matched by <CODE>(</CODE>.</P>
+<p>&middot; The second character of the string is the matching parenthesis if the first character is of the open or close parenthesis type. If you specify that <code>(</code> is a left parenthesis matched by <code>)</code>, you should also specify that <code>)</code> is a right parenthesis matched by <code>(</code>.</p>
 
-<P>&middot; The third character, if a <CODE>, indicates that the characters described by this syntax entry begin a comment.</CODE></P>
+<p>&middot; The third character, if a <code>, indicates that the characters described by this syntax entry begin a comment.</code></p>
 
-<P><CODE>&middot; The fourth character, if equal to</CODE> , indicates that the character described by this syntax entry ends a comment.</P>
+<p><code>&middot; The fourth character, if equal to</code> , indicates that the character described by this syntax entry ends a comment.</p>
 
-<P>&middot; If either the beginning or ending comment sequence is two characters long, then the fifth character provides the second character of the comment sequence.</P>
+<p>&middot; If either the beginning or ending comment sequence is two characters long, then the fifth character provides the second character of the comment sequence.</p>
 
-<P>&middot; The sixth and following characters specify which characters are described by the entry; a range of characters can be specified by using the sequence specifier <CODE>a-b</CODE>, where <CODE>a</CODE>and <CODE>b</CODE> are ASCII characters and <CODE>a</CODE> is less than <CODE>b</CODE>. <CODE>--</CODE> can be described if it appears as the sixth character.</P>
+<p>&middot; The sixth and following characters specify which characters are described by the entry; a range of characters can be specified by using the sequence specifier <code>a-b</code>, where <code>a</code>and <code>b</code> are ASCII characters and <code>a</code> is less than <code>b</code>. <code>--</code> can be described if it appears as the sixth character.</p>
 
-<P>Attribute entries that are not relevant should be spaces.</P>
+<p>Attribute entries that are not relevant should be spaces.</p>
 
-<P>For example:</P>
+<p>For example:</p>
 
-<P><CODE>(modify-syntax-entry "w -")</CODE></P>
+<p><code>(modify-syntax-entry "w -")</code></p>
 
-<P>makes <CODE>-</CODE> behave as a word character;</P>
+<p>makes <code>-</code> behave as a word character;</p>
 
-<P><CODE>(modify-syntax-entry "(] [")</CODE></P>
+<p><code>(modify-syntax-entry "(] [")</code></p>
 
-<P>makes <CODE>[</CODE> behave as a left bracket which is matched by <CODE>]</CODE>.</P>
+<p>makes <code>[</code> behave as a left bracket which is matched by <code>]</code>.</p>
 
-<P>The function <CODE>list-syntax-tables</CODE> is useful for finding out the names of all the syntax tables known to Emacs. Use <CODE>dump-syntax-table</CODE> to dump the contents of a syntax table. This function is very useful when trying to discover why a syntax table is not working as expected.</P>
-</BODY>
-</HTML>
+<p>The function <code>list-syntax-tables</code> is useful for finding out the names of all the syntax tables known to Emacs. Use <code>dump-syntax-table</code> to dump the contents of a syntax table. This function is very useful when trying to discover why a syntax table is not working as expected.</p>
+</body>
+</html>
 

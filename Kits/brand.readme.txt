@@ -21,13 +21,19 @@ Introduction
 
     There are kits available for:
         Windows 7 and later
-                Mac OS X 10.11
-        Linux (tested on: Fedora 23)
+        Mac OS X 10.11
+        Linux (tested on: Fedora 24)
 
 New in %(version)s
     New in this release
 
-    * UI has been implemented use PyQT
+    * New toolbar icons for Open and Save
+    * Preferences allows colours to be setup
+    * New syntax type of problem:
+      - intended use is to flags text that is a problem
+      - new package white-space-mini-mode allows trailing
+        white space and use of tabs to be pointed out
+    * MLisp will now parse hex constants 0x1ec etc
 
 Mac OS X notes:
 

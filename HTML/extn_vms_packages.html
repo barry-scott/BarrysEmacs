@@ -1,138 +1,138 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<HTML>
-<HEAD>
-<TITLE>Emacs OpenVMS Package and Subsystem Reference</TITLE>
+<html>
+<head>
+<title>Emacs OpenVMS Package and Subsystem Reference</title>
 
-<LINK REL="STYLESHEET" HREF="styles.css">
-</HEAD>
-<BODY>
-<H1><A name="packageandsubsystem"></A>Emacs OpenVMS Package and Subsystem Reference</H1>
+<link rel="STYLESHEET" href="styles.css">
+</head>
+<body>
+<h1><a name="packageandsubsystem"></a>Emacs OpenVMS Package and Subsystem Reference</h1>
 
-<HR>
-<H2><A name="help"></A>HELP, An Interface to VMS HELP</H2>
+<hr>
+<h2><a name="help"></a>HELP, An Interface to VMS HELP</h2>
 
-<!-- <P><I><STRONG>HELP, An Interface to VMS HELP </STRONG></I> HELP VMS HELP interface</P> -->
-<P>HELP is a subsystem that allows the user to read help pages from the system help files. It provides a paginated, structured interface allowing topics to be specified at each level, or from the root of the help tree. vms-help</P>
+<!-- <p><i><strong>HELP, An Interface to VMS HELP </strong></i> HELP VMS HELP interface</p> -->
+<p>HELP is a subsystem that allows the user to read help pages from the system help files. It provides a paginated, structured interface allowing topics to be specified at each level, or from the root of the help tree. vms-help</p>
 
-<P>You can enter the VMS HELP subsystem by pressing the Help key, and typing h at the Mini-buffer prompt. Alternatively, you can start the HELP subsystem directly by executing the vms-help function. When HELP is run, the screen is saved for later restoration, and a single window is displayed containing the names of available help libraries</P>
+<p>You can enter the VMS HELP subsystem by pressing the Help key, and typing h at the Mini-buffer prompt. Alternatively, you can start the HELP subsystem directly by executing the vms-help function. When HELP is run, the screen is saved for later restoration, and a single window is displayed containing the names of available help libraries</p>
 
-<P>The following commands are available to move around the help tree:</P>
+<p>The following commands are available to move around the help tree:</p>
 
-<TABLE>
-<TR>
-<TD><STRONG>Space</STRONG></TD>
-<TD>Moves forward one page of the current help display.</TD>
-</TR>
+<table>
+<tr>
+<td><strong>Space</strong></td>
+<td>Moves forward one page of the current help display.</td>
+</tr>
 
-<TR>
-<TD><STRONG>Backspace</STRONG></TD>
-<TD>Moves backward one page of the current help display.</TD>
-</TR>
+<tr>
+<td><strong>Backspace</strong></td>
+<td>Moves backward one page of the current help display.</td>
+</tr>
 
-<TR>
-<TD><STRONG>a</STRONG></TD>
-<TD>Scrolls the display one line up.</TD>
-</TR>
+<tr>
+<td><strong>a</strong></td>
+<td>Scrolls the display one line up.</td>
+</tr>
 
-<TR>
-<TD><STRONG>z</STRONG></TD>
-<TD>Scrolls the display one line down.</TD>
-</TR>
+<tr>
+<td><strong>z</strong></td>
+<td>Scrolls the display one line down.</td>
+</tr>
 
-<TR>
-<TD><STRONG>b</STRONG></TD>
-<TD>Moves the window to display the first page.</TD>
-</TR>
+<tr>
+<td><strong>b</strong></td>
+<td>Moves the window to display the first page.</td>
+</tr>
 
-<TR>
-<TD><STRONG>e</STRONG></TD>
-<TD>Moves the window to display the last page.</TD>
-</TR>
+<tr>
+<td><strong>e</strong></td>
+<td>Moves the window to display the last page.</td>
+</tr>
 
-<TR>
-<TD><STRONG>n</STRONG></TD>
-<TD>Specifies a new help topic and fills the window with information on that topic.</TD>
-</TR>
+<tr>
+<td><strong>n</strong></td>
+<td>Specifies a new help topic and fills the window with information on that topic.</td>
+</tr>
 
-<TR>
-<TD><STRONG>d</STRONG></TD>
-<TD>Specifies the next topic and fills the window with information on that topic.</TD>
-</TR>
+<tr>
+<td><strong>d</strong></td>
+<td>Specifies the next topic and fills the window with information on that topic.</td>
+</tr>
 
-<TR>
-<TD><STRONG>u</STRONG></TD>
-<TD>Removes one help level from the help path and fills the help window with the information for the new path.</TD>
-</TR>
+<tr>
+<td><strong>u</strong></td>
+<td>Removes one help level from the help path and fills the help window with the information for the new path.</td>
+</tr>
 
-<TR>
-<TD><STRONG>t</STRONG></TD>
-<TD>Goes to the top of the help tree and displays the options available.</TD>
-</TR>
+<tr>
+<td><strong>t</strong></td>
+<td>Goes to the top of the help tree and displays the options available.</td>
+</tr>
 
-<TR>
-<TD><STRONG>q</STRONG></TD>
-<TD>Exits HELP, and restores the saved screen.</TD>
-</TR>
+<tr>
+<td><strong>q</strong></td>
+<td>Exits HELP, and restores the saved screen.</td>
+</tr>
 
-<TR>
-<TD><STRONG>?</STRONG></TD>
-<TD>Displays a short help screen on how to use the HELP subsystem.</TD>
-</TR>
-</TABLE>
+<tr>
+<td><strong>?</strong></td>
+<td>Displays a short help screen on how to use the HELP subsystem.</td>
+</tr>
+</table>
 
-<HR>
-<H2><A name="notes"></A>NOTES, An Interface to VAX NOTES</H2>
+<hr>
+<h2><a name="notes"></a>NOTES, An Interface to VAX NOTES</h2>
 
-<!-- <P><I><STRONG>NOTES, An Interface to VAX NOTES </STRONG></I> NOTES VAX NOTES interface</P> -->
-<P>The NOTES package provides access to the VAX NOTES Computer Conferencing software. The following sections provide summary information on using the NOTES package and how to customise NOTES.</P>
+<!-- <p><i><strong>NOTES, An Interface to VAX NOTES </strong></i> NOTES VAX NOTES interface</p> -->
+<p>The NOTES package provides access to the VAX NOTES Computer Conferencing software. The following sections provide summary information on using the NOTES package and how to customise NOTES.</p>
 
-<P>To invoke NOTES from DCL, type:</P>
+<p>To invoke NOTES from DCL, type:</p>
 
-<PRE>
+<pre>
 $ EMACS/PACKAGE=NOTES
-</PRE>
+</pre>
 
-<P>To invoke NOTES from inside Emacs, use the <CODE>ESC-x notes</CODE> command.</P>
+<p>To invoke NOTES from inside Emacs, use the <code>ESC-x notes</code> command.</p>
 
-<H3>Using NOTES</H3>
+<h3>using notes</h3>
 
-<P>Emacs NOTES gives you access to all the features available in the default VAX NOTES interface, but the commands are different. To get help on the Emacs NOTES commands, press h or Help.</P>
+<p>Emacs NOTES gives you access to all the features available in the default VAX NOTES interface, but the commands are different. To get help on the Emacs NOTES commands, press h or Help.</p>
 
-<P>Before you can read the notes in a conference, you must first add the conference to your Notebook, then open the conference.</P>
+<p>Before you can read the notes in a conference, you must first add the conference to your Notebook, then open the conference.</p>
 
-<P>To add a conference to your Notebook, use the ADD ENTRY command. For example, to add the ETIQUETTE conference to your Notebook, type Ae. Fill in the form with the name of the conference, ETIQUETTE. Type ^C when the form is complete, then answer y to confirm that the entry should be added to your notebook:</P>
+<p>To add a conference to your Notebook, use the ADD ENTRY command. For example, to add the ETIQUETTE conference to your Notebook, type Ae. Fill in the form with the name of the conference, ETIQUETTE. Type ^C when the form is complete, then answer y to confirm that the entry should be added to your notebook:</p>
 
-<PRE>
+<pre>
 Notefile name: ETIQUETTE
 Entry name:
 Classes: MAIN
 Personal name:
-</PRE>
+</pre>
 
-<P>To open a conference, use the OPEN command. For example, to open the ETIQUETTE conference, move the cursor to the line containing the ETIQUETTE entry in your notebook and type o.</P>
+<p>To open a conference, use the OPEN command. For example, to open the ETIQUETTE conference, move the cursor to the line containing the ETIQUETTE entry in your notebook and type o.</p>
 
-<P>A conference is organised into discussions. Each discussion begins with a topic; each topic can have any number of replies. Topics are numbered consecutively, starting with topic number 1. Replies are also numbered consecutively, by topic, starting with .1. For example, if there are three replies to topic 4, they are numbered 4.1, 4.2, and 4.3.</P>
+<p>A conference is organised into discussions. Each discussion begins with a topic; each topic can have any number of replies. Topics are numbered consecutively, starting with topic number 1. Replies are also numbered consecutively, by topic, starting with .1. For example, if there are three replies to topic 4, they are numbered 4.1, 4.2, and 4.3.</p>
 
-<P>To see a listing of the topics in a conference, type dn.</P>
+<p>To see a listing of the topics in a conference, type dn.</p>
 
-<P>To read a specific topic or reply, type the number at the Read note (nn.rr) prompt. For example, to read the third reply to topic 6, type r and to the prompt type:</P>
+<p>To read a specific topic or reply, type the number at the Read note (nn.rr) prompt. For example, to read the third reply to topic 6, type r and to the prompt type:</p>
 
-<P>Read note (nn.rr) 6.3</P>
+<p>Read note (nn.rr) 6.3</p>
 
-<P>Use the Enter key to page through the replies in a discussion.</P>
+<p>Use the Enter key to page through the replies in a discussion.</p>
 
-<P>To add a reply to a discussion, use the ANSWER command. You must be reading a reply (or the topic) in the discussion before you issue the ANSWER command. For example, to add a reply to the discussion on topic 10, type:</P>
+<p>To add a reply to a discussion, use the ANSWER command. You must be reading a reply (or the topic) in the discussion before you issue the ANSWER command. For example, to add a reply to the discussion on topic 10, type:</p>
 
-<PRE>
+<pre>
 r10
 a
-</PRE>
+</pre>
 
-<P>To start a discussion on a new topic, use the WRITE command by pressing w.</P>
+<p>To start a discussion on a new topic, use the WRITE command by pressing w.</p>
 
-<P>To print notes, use the PRINT command. For example, to print topic 3 and all replies to that topic, press p to display the print form, then fill in the form and type ^C:</P>
+<p>To print notes, use the PRINT command. For example, to print topic 3 and all replies to that topic, press p to display the print form, then fill in the form and type ^C:</p>
 
-<PRE>
+<pre>
 Note-id: 3.*
 Mark as seen: n
 Print options:
@@ -143,488 +143,488 @@ Before:
 Title:
 Unseen: n
 Keyword:
-</PRE>
-
-<P>To leave a conference, use the CLOSE command by pressing c.</P>
-
-<P>To end your Emacs NOTES session, use the QUIT command, by pressing q.</P>
-
-<P>A complete list of the NOTES key bindings is given in the table, <A href="#emacsnotescommandandequiv">Emacs NOTES Commands and their VAX NOTES Equivalents</A></P>
-
-<TABLE>
-<TR>
-<TD><STRONG><A name="emacsnotescommandandequiv"></A>Emacs Command</STRONG></TD>
-<TD><STRONG>VAX NOTES Equivalent</STRONG></TD>
-</TR>
-
-<TR>
-<TD>Ae or AE</TD>
-<TD>ADD ENTRY</TD>
-</TR>
-
-<TR>
-<TD>Ak or AK</TD>
-<TD>ADD KEYWORD</TD>
-</TR>
-
-<TR>
-<TD>Am</TD>
-<TD>ADD MARKER</TD>
-</TR>
-
-<TR>
-<TD>AM</TD>
-<TD>ADD MEMBER</TD>
-</TR>
-
-<TR>
-<TD>a</TD>
-<TD>ANSWER</TD>
-</TR>
-
-<TR>
-<TD>bn or bN</TD>
-<TD>BACK NOTE</TD>
-</TR>
-
-<TR>
-<TD>br or bR</TD>
-<TD>BACK REPLY</TD>
-</TR>
-
-<TR>
-<TD>&lt;</TD>
-<TD>BACK REPLY</TD>
-</TR>
-
-<TR>
-<TD>bt or bT</TD>
-<TD>BACK TOPIC</TD>
-</TR>
-
-<TR>
-<TD>,</TD>
-<TD>BACK TOPIC</TD>
-</TR>
-
-<TR>
-<TD>c</TD>
-<TD>CLOSE</TD>
-</TR>
-
-<TR>
-<TD>Cc or CC</TD>
-<TD>CREATE CONFERENCE</TD>
-</TR>
-
-<TR>
-<TD>Ck or CK</TD>
-<TD>CREATE KEYWORD</TD>
-</TR>
-
-<TR>
-<TD>De or DE</TD>
-<TD>DELETE ENTRY</TD>
-</TR>
-
-<TR>
-<TD>Dk or DK</TD>
-<TD>DELETE KEYWORD</TD>
-</TR>
-
-<TR>
-<TD>Dm</TD>
-<TD>DELETE MARKER</TD>
-</TR>
-
-<TR>
-<TD>DM or Du or DU</TD>
-<TD>DELETE MEMBER</TD>
-</TR>
-
-<TR>
-<TD>Dn or DN</TD>
-<TD>DELETE NOTE</TD>
-</TR>
-
-<TR>
-<TD>dc or dC</TD>
-<TD>DIRECTORY/CONFERENCES</TD>
-</TR>
-
-<TR>
-<TD>de or dE</TD>
-<TD>DIRECTORY/ENTRIES</TD>
-</TR>
-
-<TR>
-<TD>dn or dN</TD>
-<TD>DIRECTORY (of notes)</TD>
-</TR>
-
-<TR>
-<TD>e</TD>
-<TD>EXTRACT</TD>
-</TR>
-
-<TR>
-<TD>f</TD>
-<TD>FORWARD</TD>
-</TR>
-
-<TR>
-<TD>h or H or ?</TD>
-<TD>HELP</TD>
-</TR>
-
-<TR>
-<TD>m</TD>
-<TD>ADD MARKER</TD>
-</TR>
-
-<TR>
-<TD>Me or ME</TD>
-<TD>MODIFY ENTRY</TD>
-</TR>
-
-<TR>
-<TD>Mk or MK</TD>
-<TD>MODIFY KEYWORD</TD>
-</TR>
-
-<TR>
-<TD>MM or Mu or MU</TD>
-<TD>MODIFY MEMBER</TD>
-</TR>
-
-<TR>
-<TD>MC</TD>
-<TD>SET CONFERENCE</TD>
-</TR>
-
-<TR>
-<TD>Mn or MN</TD>
-<TD>SET NOTE</TD>
-</TR>
-
-<TR>
-<TD>Mp or MP</TD>
-<TD>SET PROFILE</TD>
-</TR>
-
-<TR>
-<TD>nn or nN</TD>
-<TD>NEXT NOTE</TD>
-</TR>
-
-<TR>
-<TD>nr or nR</TD>
-<TD>NEXT REPLY</TD>
-</TR>
-
-<TR>
-<TD>&gt;</TD>
-<TD>NEXT REPLY</TD>
-</TR>
-
-<TR>
-<TD>nt or nT</TD>
-<TD>NEXT TOPIC</TD>
-</TR>
-
-<TR>
-<TD>.</TD>
-<TD>NEXT TOPIC</TD>
-</TR>
-
-<TR>
-<TD>nu or nU</TD>
-<TD>NEXT UNSEEN</TD>
-</TR>
-
-<TR>
-<TD>u</TD>
-<TD>NEXT UNSEEN</TD>
-</TR>
-
-<TR>
-<TD>o</TD>
-<TD>OPEN</TD>
-</TR>
-
-<TR>
-<TD>O</TD>
-<TD>OPEN (If there are any unseen notes)</TD>
-</TR>
-
-<TR>
-<TD>p or P</TD>
-<TD>PRINT</TD>
-</TR>
-
-<TR>
-<TD>r</TD>
-<TD>READ</TD>
-</TR>
-
-<TR>
-<TD>R</TD>
-<TD>(Last note read)</TD>
-</TR>
-
-<TR>
-<TD>s</TD>
-<TD>SEARCH</TD>
-</TR>
-
-<TR>
-<TD>Sc</TD>
-<TD>SET CLASS</TD>
-</TR>
-
-<TR>
-<TD>SC</TD>
-<TD>SET CONFERENCE</TD>
-</TR>
-
-<TR>
-<TD>Sm or SM</TD>
-<TD>SET MODERATOR</TD>
-</TR>
-
-<TR>
-<TD>Sn or SN</TD>
-<TD>SET NOTE</TD>
-</TR>
-
-<TR>
-<TD>Sp or SP</TD>
-<TD>SET PROFILE</TD>
-</TR>
-
-<TR>
-<TD>Ss or SS</TD>
-<TD>SET SEEN</TD>
-</TR>
-
-<TR>
-<TD>Se or SE</TD>
-<TD>MODIFY ENTRY</TD>
-</TR>
-
-<TR>
-<TD>Sk or SK</TD>
-<TD>MODIFY KEYWORD</TD>
-</TR>
-
-<TR>
-<TD>Su or SU</TD>
-<TD>MODIFY MEMBER</TD>
-</TR>
-
-<TR>
-<TD>lc</TD>
-<TD>SHOW CLASS</TD>
-</TR>
-
-<TR>
-<TD>lC</TD>
-<TD>SHOW CONFERENCE</TD>
-</TR>
-
-<TR>
-<TD>le</TD>
-<TD>SHOW ENTRY</TD>
-</TR>
-
-<TR>
-<TD>lE</TD>
-<TD>SHOW ERRORS</TD>
-</TR>
-
-<TR>
-<TD>lk or lK</TD>
-<TD>SHOW KEYWORDS</TD>
-</TR>
-
-<TR>
-<TD>lm</TD>
-<TD>SHOW MARKER</TD>
-</TR>
-
-<TR>
-<TD>lM</TD>
-<TD>SHOW MODERATOR</TD>
-</TR>
-
-<TR>
-<TD>lu or lU</TD>
-<TD>SHOW MEMBERS</TD>
-</TR>
-
-<TR>
-<TD>ln or lN</TD>
-<TD>SHOW NOTE</TD>
-</TR>
-
-<TR>
-<TD>lp or lP</TD>
-<TD>SHOW PROFILE</TD>
-</TR>
-
-<TR>
-<TD>lv or lV</TD>
-<TD>SHOW VERSION</TD>
-</TR>
-
-<TR>
-<TD>U</TD>
-<TD>UPDATE</TD>
-</TR>
-
-<TR>
-<TD>v</TD>
-<TD>(Change view)</TD>
-</TR>
-
-<TR>
-<TD>w</TD>
-<TD>WRITE NOTE</TD>
-</TR>
-
-<TR>
-<TD>q or Q</TD>
-<TD>EXIT</TD>
-</TR>
-
-<TR>
-<TD>Return</TD>
-<TD>(Continue command)</TD>
-</TR>
-
-<TR>
-<TD>KP1</TD>
-<TD>BACK REPLY</TD>
-</TR>
-
-<TR>
-<TD>KP2</TD>
-<TD>NEXT TOPIC</TD>
-</TR>
-
-<TR>
-<TD>KP3</TD>
-<TD>NEXT REPLY</TD>
-</TR>
-
-<TR>
-<TD>KP5</TD>
-<TD>BACK TOPIC</TD>
-</TR>
-
-<TR>
-<TD>KP7</TD>
-<TD>(Select key)</TD>
-</TR>
-
-<TR>
-<TD>COMMA</TD>
-<TD>NEXT UNSEEN</TD>
-</TR>
-
-<TR>
-<TD>MINUS</TD>
-<TD>(Last note read)</TD>
-</TR>
-
-<TR>
-<TD>PF2</TD>
-<TD>HELP</TD>
-</TR>
-
-<TR>
-<TD>ENTER</TD>
-<TD>(Enter key)</TD>
-</TR>
-</TABLE>
-
-<P>The Emacs NOTES commands behave differently when passed a prefix argument. Specifying a prefix argument causes a form to be popped up allowing you to specify command options different from the defaults supplied with the normal command. Use the <CODE>/</CODE> key to specify a prefix argument. For example, to specify a prefix argument for the DIRECTORY command, enter <CODE>/dn</CODE>.</P>
-
-<H3>Customising NOTES</H3>
-
-<P>You can customise NOTES in two ways:</P>
-
-<UL>
-<LI>By changing the default values of NOTES variables</LI>
-
-<LI>By creating your own NOTES key bindings</LI>
-</UL>
-
-<P>To modify the value of default NOTES variables, create a file in your EMACS_PATH called NOTES_SETUP.ML containing MLisp code that sets the NOTES variables as you require them. The NOTES package will load NOTES_SETUP.ML when you load the NOTES package.</P>
-
-<P>The variables that you can set and their default values are listed as follows:</P>
-
-<P><STRONG>notes-update-seen-map-frequency &laquo; 10</STRONG></P>
-
-<P>Indicates the frequency at which the seen map is updated. With the default value of 10, the seen map is updated after every ten unseen notes have been read. after n update operation, the unseen count in the conference header is updated to display the number of remaining unseen notes.</P>
-
-<P><STRONG>notes-put-form-in-write-buffer &laquo; 0</STRONG></P>
-
-<P>Indicates whether the new note/reply form should be popped up in the write buffer or in a buffer of its own.</P>
-
-<P><STRONG>notes-keypad-binding &laquo; 1</STRONG></P>
-
-<P>Defines whether the numeric keypad keys perform the same functions as they do in the standard VAX NOTES interface. If set to 0, the numeric keypad keys perform their normal functions as defined in the global keymap.</P>
-
-<P><STRONG>notes-entry-key-reads-text &laquo; 1</STRONG></P>
-
-<P>Defines whether the Enter key can be used to read successive pages of text in long notes.</P>
-
-<P><STRONG>notes-note-read-timeout &laquo; 0</STRONG></P>
-
-<P>Defines the timeout setting in seconds for a note read operation. A note read operation will fail if it does not complete within the timeout setting. There is no timeout setting by default. NOTES_USER.KEY</P>
-
-<P>You can also customise the NOTES package by creating your own NOTES key bindings. You can do this by creating a file called NOTES_USER.KEY in your EMACS_PATH which contains your key binding code. The NOTES package will automatically load this file when you run the NOTES package.</P>
-
-<HR>
-<H2><A name="vmsmail"></A>VMS_MAIL, A VMS MAIL Editing Package</H2>
-
-<!-- <P><I><STRONG>VMS_MAIL, A VMS MAIL Editing Package </STRONG></I>VMS_MAILVMS MAIL interface</P> -->
-<P>VMS_MAIL is a package that provides access to your Emacs from the VMS MAIL utility. It allows you to use Emacs as the editor in which VMS MAIL places you to edit text to be sent.</P>
-
-<H3>Using VMS_MAIL</H3>
-
-<P>You can use the VMS_MAIL package by setting the logical name MAIL$EDIT to the string CALLABLE_EMACS:</P>
-
-<PRE>
+</pre>
+
+<p>To leave a conference, use the CLOSE command by pressing c.</p>
+
+<p>To end your Emacs NOTES session, use the QUIT command, by pressing q.</p>
+
+<p>A complete list of the NOTES key bindings is given in the table, <a href="#emacsnotescommandandequiv">Emacs NOTES Commands and their VAX NOTES Equivalents</a></p>
+
+<table>
+<tr>
+<td><strong><a name="emacsnotescommandandequiv"></a>Emacs Command</strong></td>
+<td><strong>VAX NOTES Equivalent</strong></td>
+</tr>
+
+<tr>
+<td>Ae or AE</td>
+<td>ADD ENTRY</td>
+</tr>
+
+<tr>
+<td>Ak or AK</td>
+<td>ADD KEYWORD</td>
+</tr>
+
+<tr>
+<td>Am</td>
+<td>ADD MARKER</td>
+</tr>
+
+<tr>
+<td>AM</td>
+<td>ADD MEMBER</td>
+</tr>
+
+<tr>
+<td>a</td>
+<td>ANSWER</td>
+</tr>
+
+<tr>
+<td>bn or bN</td>
+<td>BACK NOTE</td>
+</tr>
+
+<tr>
+<td>br or bR</td>
+<td>BACK REPLY</td>
+</tr>
+
+<tr>
+<td>&lt;</td>
+<td>BACK REPLY</td>
+</tr>
+
+<tr>
+<td>bt or bT</td>
+<td>BACK TOPIC</td>
+</tr>
+
+<tr>
+<td>,</td>
+<td>BACK TOPIC</td>
+</tr>
+
+<tr>
+<td>c</td>
+<td>CLOSE</td>
+</tr>
+
+<tr>
+<td>Cc or CC</td>
+<td>CREATE CONFERENCE</td>
+</tr>
+
+<tr>
+<td>Ck or CK</td>
+<td>CREATE KEYWORD</td>
+</tr>
+
+<tr>
+<td>De or DE</td>
+<td>DELETE ENTRY</td>
+</tr>
+
+<tr>
+<td>Dk or DK</td>
+<td>DELETE KEYWORD</td>
+</tr>
+
+<tr>
+<td>Dm</td>
+<td>DELETE MARKER</td>
+</tr>
+
+<tr>
+<td>DM or Du or DU</td>
+<td>DELETE MEMBER</td>
+</tr>
+
+<tr>
+<td>Dn or DN</td>
+<td>DELETE NOTE</td>
+</tr>
+
+<tr>
+<td>dc or dC</td>
+<td>DIRECTORY/CONFERENCES</td>
+</tr>
+
+<tr>
+<td>de or dE</td>
+<td>DIRECTORY/ENTRIES</td>
+</tr>
+
+<tr>
+<td>dn or dN</td>
+<td>DIRECTORY (of notes)</td>
+</tr>
+
+<tr>
+<td>e</td>
+<td>EXTRACT</td>
+</tr>
+
+<tr>
+<td>f</td>
+<td>FORWARD</td>
+</tr>
+
+<tr>
+<td>h or H or ?</td>
+<td>HELP</td>
+</tr>
+
+<tr>
+<td>m</td>
+<td>ADD MARKER</td>
+</tr>
+
+<tr>
+<td>Me or ME</td>
+<td>MODIFY ENTRY</td>
+</tr>
+
+<tr>
+<td>Mk or MK</td>
+<td>MODIFY KEYWORD</td>
+</tr>
+
+<tr>
+<td>MM or Mu or MU</td>
+<td>MODIFY MEMBER</td>
+</tr>
+
+<tr>
+<td>MC</td>
+<td>SET CONFERENCE</td>
+</tr>
+
+<tr>
+<td>Mn or MN</td>
+<td>SET NOTE</td>
+</tr>
+
+<tr>
+<td>Mp or MP</td>
+<td>SET PROFILE</td>
+</tr>
+
+<tr>
+<td>nn or nN</td>
+<td>NEXT NOTE</td>
+</tr>
+
+<tr>
+<td>nr or nR</td>
+<td>NEXT REPLY</td>
+</tr>
+
+<tr>
+<td>&gt;</td>
+<td>NEXT REPLY</td>
+</tr>
+
+<tr>
+<td>nt or nT</td>
+<td>NEXT TOPIC</td>
+</tr>
+
+<tr>
+<td>.</td>
+<td>NEXT TOPIC</td>
+</tr>
+
+<tr>
+<td>nu or nU</td>
+<td>NEXT UNSEEN</td>
+</tr>
+
+<tr>
+<td>u</td>
+<td>NEXT UNSEEN</td>
+</tr>
+
+<tr>
+<td>o</td>
+<td>OPEN</td>
+</tr>
+
+<tr>
+<td>O</td>
+<td>OPEN (If there are any unseen notes)</td>
+</tr>
+
+<tr>
+<td>p or P</td>
+<td>PRINT</td>
+</tr>
+
+<tr>
+<td>r</td>
+<td>READ</td>
+</tr>
+
+<tr>
+<td>R</td>
+<td>(Last note read)</td>
+</tr>
+
+<tr>
+<td>s</td>
+<td>SEARCH</td>
+</tr>
+
+<tr>
+<td>Sc</td>
+<td>SET CLASS</td>
+</tr>
+
+<tr>
+<td>SC</td>
+<td>SET CONFERENCE</td>
+</tr>
+
+<tr>
+<td>Sm or SM</td>
+<td>SET MODERATOR</td>
+</tr>
+
+<tr>
+<td>Sn or SN</td>
+<td>SET NOTE</td>
+</tr>
+
+<tr>
+<td>Sp or SP</td>
+<td>SET PROFILE</td>
+</tr>
+
+<tr>
+<td>Ss or SS</td>
+<td>SET SEEN</td>
+</tr>
+
+<tr>
+<td>Se or SE</td>
+<td>MODIFY ENTRY</td>
+</tr>
+
+<tr>
+<td>Sk or SK</td>
+<td>MODIFY KEYWORD</td>
+</tr>
+
+<tr>
+<td>Su or SU</td>
+<td>MODIFY MEMBER</td>
+</tr>
+
+<tr>
+<td>lc</td>
+<td>SHOW CLASS</td>
+</tr>
+
+<tr>
+<td>lC</td>
+<td>SHOW CONFERENCE</td>
+</tr>
+
+<tr>
+<td>le</td>
+<td>SHOW ENTRY</td>
+</tr>
+
+<tr>
+<td>lE</td>
+<td>SHOW ERRORS</td>
+</tr>
+
+<tr>
+<td>lk or lK</td>
+<td>SHOW KEYWORDS</td>
+</tr>
+
+<tr>
+<td>lm</td>
+<td>SHOW MARKER</td>
+</tr>
+
+<tr>
+<td>lM</td>
+<td>SHOW MODERATOR</td>
+</tr>
+
+<tr>
+<td>lu or lU</td>
+<td>SHOW MEMBERS</td>
+</tr>
+
+<tr>
+<td>ln or lN</td>
+<td>SHOW NOTE</td>
+</tr>
+
+<tr>
+<td>lp or lP</td>
+<td>SHOW PROFILE</td>
+</tr>
+
+<tr>
+<td>lv or lV</td>
+<td>SHOW VERSION</td>
+</tr>
+
+<tr>
+<td>U</td>
+<td>UPDATE</td>
+</tr>
+
+<tr>
+<td>v</td>
+<td>(Change view)</td>
+</tr>
+
+<tr>
+<td>w</td>
+<td>WRITE NOTE</td>
+</tr>
+
+<tr>
+<td>q or Q</td>
+<td>EXIT</td>
+</tr>
+
+<tr>
+<td>Return</td>
+<td>(Continue command)</td>
+</tr>
+
+<tr>
+<td>KP1</td>
+<td>BACK REPLY</td>
+</tr>
+
+<tr>
+<td>KP2</td>
+<td>NEXT TOPIC</td>
+</tr>
+
+<tr>
+<td>KP3</td>
+<td>NEXT REPLY</td>
+</tr>
+
+<tr>
+<td>KP5</td>
+<td>BACK TOPIC</td>
+</tr>
+
+<tr>
+<td>KP7</td>
+<td>(Select key)</td>
+</tr>
+
+<tr>
+<td>COMMA</td>
+<td>NEXT UNSEEN</td>
+</tr>
+
+<tr>
+<td>MINUS</td>
+<td>(Last note read)</td>
+</tr>
+
+<tr>
+<td>PF2</td>
+<td>HELP</td>
+</tr>
+
+<tr>
+<td>ENTER</td>
+<td>(Enter key)</td>
+</tr>
+</table>
+
+<p>The Emacs NOTES commands behave differently when passed a prefix argument. Specifying a prefix argument causes a form to be popped up allowing you to specify command options different from the defaults supplied with the normal command. Use the <code>/</code> key to specify a prefix argument. For example, to specify a prefix argument for the DIRECTORY command, enter <code>/dn</code>.</p>
+
+<h3>customising notes</h3>
+
+<p>You can customise NOTES in two ways:</p>
+
+<ul>
+<li>By changing the default values of NOTES variables</li>
+
+<li>By creating your own NOTES key bindings</li>
+</ul>
+
+<p>To modify the value of default NOTES variables, create a file in your EMACS_PATH called NOTES_SETUP.ML containing MLisp code that sets the NOTES variables as you require them. The NOTES package will load NOTES_SETUP.ML when you load the NOTES package.</p>
+
+<p>The variables that you can set and their default values are listed as follows:</p>
+
+<p><strong>notes-update-seen-map-frequency &laquo; 10</strong></p>
+
+<p>Indicates the frequency at which the seen map is updated. With the default value of 10, the seen map is updated after every ten unseen notes have been read. after n update operation, the unseen count in the conference header is updated to display the number of remaining unseen notes.</p>
+
+<p><strong>notes-put-form-in-write-buffer &laquo; 0</strong></p>
+
+<p>Indicates whether the new note/reply form should be popped up in the write buffer or in a buffer of its own.</p>
+
+<p><strong>notes-keypad-binding &laquo; 1</strong></p>
+
+<p>Defines whether the numeric keypad keys perform the same functions as they do in the standard VAX NOTES interface. If set to 0, the numeric keypad keys perform their normal functions as defined in the global keymap.</p>
+
+<p><strong>notes-entry-key-reads-text &laquo; 1</strong></p>
+
+<p>Defines whether the Enter key can be used to read successive pages of text in long notes.</p>
+
+<p><strong>notes-note-read-timeout &laquo; 0</strong></p>
+
+<p>Defines the timeout setting in seconds for a note read operation. A note read operation will fail if it does not complete within the timeout setting. There is no timeout setting by default. NOTES_USER.KEY</p>
+
+<p>You can also customise the NOTES package by creating your own NOTES key bindings. You can do this by creating a file called NOTES_USER.KEY in your EMACS_PATH which contains your key binding code. The NOTES package will automatically load this file when you run the NOTES package.</p>
+
+<hr>
+<h2><a name="vmsmail"></a>VMS_MAIL, A VMS MAIL Editing Package</h2>
+
+<!-- <p><i><strong>VMS_MAIL, A VMS MAIL Editing Package </strong></i>VMS_MAILVMS MAIL interface</p> -->
+<p>VMS_MAIL is a package that provides access to your Emacs from the VMS MAIL utility. It allows you to use Emacs as the editor in which VMS MAIL places you to edit text to be sent.</p>
+
+<h3>using vms_mail</h3>
+
+<p>You can use the VMS_MAIL package by setting the logical name MAIL$EDIT to the string CALLABLE_EMACS:</p>
+
+<pre>
 $ DEFINE MAIL$EDIT CALLABLE_EMACSMAIL$EDITCALLABLE_EMACS
-</PRE>
+</pre>
 
-<P>This causes VMS MAIL to invoke the EMACSSHR shareable image with suitable parameters to run the VMS_MAIL package.</P>
+<p>This causes VMS MAIL to invoke the EMACSSHR shareable image with suitable parameters to run the VMS_MAIL package.</p>
 
-<P>You can also have VMS MAIL invoke Emacs to edit text by typing the following MAIL command:</P>
+<p>You can also have VMS MAIL invoke Emacs to edit text by typing the following MAIL command:</p>
 
-<PRE>
+<pre>
 MAIL&gt; SET EDITOR EMACS
-</PRE>
+</pre>
 
-<P>Every time the VMS_MAIL package is entered, it switches the current buffer to vms_mail_edit, erases this buffer, and removes other buffers from the screen. It then reads in any source file to be edited and lets you edit. When you have finished editing, use the ^C command. Emacs will then prompt in the Mini-buffer whether or not to send the text.</P>
+<p>Every time the VMS_MAIL package is entered, it switches the current buffer to vms_mail_edit, erases this buffer, and removes other buffers from the screen. It then reads in any source file to be edited and lets you edit. When you have finished editing, use the ^C command. Emacs will then prompt in the Mini-buffer whether or not to send the text.</p>
 
-<H3>Customising VMS_MAIL</H3>
+<h3>customising vms_mail</h3>
 
-<P>There are two ways to customise the behaviour of VMS_MAIL:</P>
+<p>There are two ways to customise the behaviour of VMS_MAIL:</p>
 
-<UL>
-<LI>Create a private VMS_MAIL.KEY file</LI>
+<ul>
+<li>Create a private VMS_MAIL.KEY file</li>
 
-<LI>Define a vms_mail_hook function.VMS_MAIL.KEY</LI>
-</UL>
+<li>Define a vms_mail_hook function.VMS_MAIL.KEY</li>
+</ul>
 
-<P>When VMS_MAIL starts for the first time, it loads the file VMS_MAIL.KEY to define which keys are used to send the mail message and which are used to abort the send operation. You can make your own copy of the file and make your own bindings for these functions. vms-mail-hook</P>
+<p>When VMS_MAIL starts for the first time, it loads the file VMS_MAIL.KEY to define which keys are used to send the mail message and which are used to abort the send operation. You can make your own copy of the file and make your own bindings for these functions. vms-mail-hook</p>
 
-<P>Also, when VMS_MAIL starts, it executes the function vms_mail_hook if it has been defined. You can define your own vms_mail_hook function in your EMACSINIT.ML to initialise the VMS_MAIL package as you require.</P>
+<p>Also, when VMS_MAIL starts, it executes the function vms_mail_hook if it has been defined. You can define your own vms_mail_hook function in your EMACSINIT.ML to initialise the VMS_MAIL package as you require.</p>
 
-<HR>
-</BODY>
-</HTML>
+<hr>
+</body>
+</html>
 

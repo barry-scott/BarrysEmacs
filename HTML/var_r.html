@@ -1,75 +1,75 @@
 <!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
-<HTML>
-<HEAD>
-<TITLE>Variables - R</TITLE>
+<html>
+<head>
+<title>Variables - R</title>
 
-<LINK REL="STYLESHEET" HREF="styles.css">
-</HEAD>
-<BODY>
-<HR>
-<P><A name="read-only"></A><B>read-only</B> &laquo; -1</P>
+<link rel="STYLESHEET" href="styles.css">
+</head>
+<body>
+<hr>
+<p><a name="read-only"></a><b>read-only</b> &laquo; -1</p>
 
-<BLOCKQUOTE>
-<P>The value of this constant is returned by the file-exists function to indicate that the target file is readable.</P>
-</BLOCKQUOTE>
+<blockquote>
+<p>The value of this constant is returned by the file-exists function to indicate that the target file is readable.</p>
+</blockquote>
 
-<HR>
-<P><A name="read-only-buffer"></A><B>read-only-buffer</B>&laquo; 0</P>
+<hr>
+<p><a name="read-only-buffer"></a><b>read-only-buffer</b>&laquo; 0</p>
 
-<BLOCKQUOTE>
-<P>Controls whether or not a buffer can be modified. When read-only-buffer is set to true, all attempts to modify the buffer will be ignored and will result in an error.</P>
-</BLOCKQUOTE>
+<blockquote>
+<p>Controls whether or not a buffer can be modified. When read-only-buffer is set to true, all attempts to modify the buffer will be ignored and will result in an error.</p>
+</blockquote>
 
-<HR>
-<P><A name="read-write"></A><B>read-write</B> &laquo; 1</P>
+<hr>
+<p><a name="read-write"></a><b>read-write</b> &laquo; 1</p>
 
-<BLOCKQUOTE>
-<P>The value of this constant is returned by the file-exists function to indicate that the target file can be read and written.</P>
-</BLOCKQUOTE>
+<blockquote>
+<p>The value of this constant is returned by the file-exists function to indicate that the target file can be read and written.</p>
+</blockquote>
 
-<HR>
-<P><A name="remove-help-window"></A><B>remove-help-window</B> &laquo; 1</P>
+<hr>
+<p><a name="remove-help-window"></a><b>remove-help-window</b> &laquo; 1</p>
 
-<BLOCKQUOTE>
-<P>Controls the removal of the help window. When non-zero, help windows that have been automatically popped up onto the screen are removed. Otherwise, the help window will stay on the screen after the help function has completed.</P>
-</BLOCKQUOTE>
+<blockquote>
+<p>Controls the removal of the help window. When non-zero, help windows that have been automatically popped up onto the screen are removed. Otherwise, the help window will stay on the screen after the help function has completed.</p>
+</blockquote>
 
-<HR>
-<P><A name="replace-case"></A><B>replace-case</B> &laquo; 0</P>
+<hr>
+<p><a name="replace-case"></a><b>replace-case</b> &laquo; 0</p>
 
-<BLOCKQUOTE>
-<P>Controls the case of replacement text. If non-zero, Emacs will alter the case of strings substituted with replace-string or query-replace-string to match the case of the original string.</P>
-</BLOCKQUOTE>
+<blockquote>
+<p>Controls the case of replacement text. If non-zero, Emacs will alter the case of strings substituted with replace-string or query-replace-string to match the case of the original string.</p>
+</blockquote>
 
-<HR>
-<P><A name="replace-mode"></A><B>replace-mode</B> &laquo; 0</P>
+<hr>
+<p><a name="replace-mode"></a><b>replace-mode</b> &laquo; 0</p>
 
-<BLOCKQUOTE>
-<P>Controls the Replace minor mode. If non-zero, characters inserted into the buffer replace existing characters, rather then inserting (the default). This can be useful when editing diagrams.</P>
-</BLOCKQUOTE>
+<blockquote>
+<p>Controls the Replace minor mode. If non-zero, characters inserted into the buffer replace existing characters, rather then inserting (the default). This can be useful when editing diagrams.</p>
+</blockquote>
 
-<HR>
-<P><A name="restored-environment"></A><B>restored-environment</B> &laquo; 0</P>
+<hr>
+<p><a name="restored-environment"></a><b>restored-environment</b> &laquo; 0</p>
 
-<BLOCKQUOTE>
-<P>This read-only variable is a count of the number of times that the current environment has been saved and restored. If Emacs has not been restored from a saved environment file, restored-environment is zero.</P>
-</BLOCKQUOTE>
+<blockquote>
+<p>This read-only variable is a count of the number of times that the current environment has been saved and restored. If Emacs has not been restored from a saved environment file, restored-environment is zero.</p>
+</blockquote>
 
-<HR>
-<P><A name="return-to-emacs-hook"></A><B>return-to-emacs-hook</B> &laquo;</P>
+<hr>
+<p><a name="return-to-emacs-hook"></a><b>return-to-emacs-hook</b> &laquo;</p>
 
-<BLOCKQUOTE>
-<P>Contains the name of an Emacs function which will be called when Emacs returns from DCL after a pause-emacs or return-to-monitor command. You can assign the name of any existing function to the variable.</P>
-</BLOCKQUOTE>
+<blockquote>
+<p>Contains the name of an Emacs function which will be called when Emacs returns from DCL after a pause-emacs or return-to-monitor command. You can assign the name of any existing function to the variable.</p>
+</blockquote>
 
-<HR>
-<P><A name="right-margin"></A><B>right-margin</B></P>
+<hr>
+<p><a name="right-margin"></a><b>right-margin</b></p>
 
-<BLOCKQUOTE>
-<P>Controls the right margin setting for automatic text justification. If a character is inserted at the end of a line to the right of right-margin, Emacs will automatically insert at the beginning of the preceding word a newline, tabs and spaces to indent to the left margin, and the prefix string. For example, with right-margin set to 72, you can type in a document without worrying about when to hit the Return key; Emacs will automatically do this for you at exactly the right place.</P>
-</BLOCKQUOTE>
+<blockquote>
+<p>Controls the right margin setting for automatic text justification. If a character is inserted at the end of a line to the right of right-margin, Emacs will automatically insert at the beginning of the preceding word a newline, tabs and spaces to indent to the left margin, and the prefix string. For example, with right-margin set to 72, you can type in a document without worrying about when to hit the Return key; Emacs will automatically do this for you at exactly the right place.</p>
+</blockquote>
 
-<HR>
-</BODY>
-</HTML>
+<hr>
+</body>
+</html>
 

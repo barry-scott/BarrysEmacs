@@ -1,491 +1,491 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<HTML>
-<HEAD>
-<TITLE>Mlisp Programmer's Guide</TITLE>
-<META name="GENERATOR" content="HTML Transit 3.0 by InfoAccess Inc. www.infoaccess.com">
+<html>
+<head>
+<title>Mlisp Programmer's Guide</title>
+<meta name="GENERATOR" content="HTML Transit 3.0 by InfoAccess Inc. www.infoaccess.com">
 
-<LINK REL="STYLESHEET" HREF="styles.css">
-</HEAD>
-<BODY>
-<A name="TopOfPage"></A>
+<link rel="STYLESHEET" href="styles.css">
+</head>
+<body>
+<a name="TopOfPage"></a>
 
-<H1><A name="P1309_72639"></A> Programming Emacs From Other Languages</H1>
+<h1><a name="P1309_72639"></a> Programming Emacs From Other Languages</h1>
 
-<P>You can program Emacs using the Mock Lisp programming language built in to Emacs, or you can use any other supported VMS programming language. This chapter describes the various ways you can program Emacs from other VMS programming languages.</P>
+<p>You can program Emacs using the Mock Lisp programming language built in to Emacs, or you can use any other supported VMS programming language. This chapter describes the various ways you can program Emacs from other VMS programming languages.</p>
 
-<P><A HREF="#emacsshrandcallableemacs">EMACSSHR and Callable Emacs</A> describes how to invoke Emacs from another program. <A HREF="#shareableimageaccess">Shareable Image Access</A> describes how to access internal Emacs routines from another program.</P>
+<p><a href="#emacsshrandcallableemacs">EMACSSHR and Callable Emacs</a> describes how to invoke Emacs from another program. <a href="#shareableimageaccess">Shareable Image Access</a> describes how to access internal Emacs routines from another program.</p>
 
-<HR align="LEFT" size="2" color="#800080">
-<A name="P1316_73113"></A> 
+<hr align="LEFT" size="2" color="#800080">
+<a name="P1316_73113"></a> 
 
-<H2><A NAME="emacsshrandcallableemacs"></A>EMACSSHR and Callable Emacs</H2>
+<h2><a name="emacsshrandcallableemacs"></a>EMACSSHR and Callable Emacs</h2>
 
-<P>The image SYS$SHARE:EMACSSHR.EXE is a callable interface to Emacs that allows you to access Emacs from a program.</P>
+<p>The image SYS$SHARE:EMACSSHR.EXE is a callable interface to Emacs that allows you to access Emacs from a program.</p>
 
-<P>EMACSSHR tries to access the Emacs running in the subprocess described by the logical name EMACS_PROCESSNAME. If this logical name does not exist, EMACSSHR uses the default Emacs subprocess name. If the target Emacs subprocess does not exist, EMACSSHR creates the subprocess and starts Emacs in the subprocess. Otherwise, it simply attaches to the specified Emacs as usual.</P>
+<p>EMACSSHR tries to access the Emacs running in the subprocess described by the logical name EMACS_PROCESSNAME. If this logical name does not exist, EMACSSHR uses the default Emacs subprocess name. If the target Emacs subprocess does not exist, EMACSSHR creates the subprocess and starts Emacs in the subprocess. Otherwise, it simply attaches to the specified Emacs as usual.</p>
 
-<P>The following sections describe the various entry points in EMACSSHR.</P>
+<p>The following sections describe the various entry points in EMACSSHR.</p>
 
-<H3>EMACS_EMACS</H3>
+<h3>emacs_emacs</h3>
 
-<P>This interface is the simplest entry point to EMACSSHR. You specify the address of a string descriptor as the only argument, and EMACSSHR treats the string as a DCL command line. The command is parsed in the usual way, and then the arguments are passed to the appropriate Emacs image.</P>
+<p>This interface is the simplest entry point to EMACSSHR. You specify the address of a string descriptor as the only argument, and EMACSSHR treats the string as a DCL command line. The command is parsed in the usual way, and then the arguments are passed to the appropriate Emacs image.</p>
 
-<H3>EMACS_EDIT</H3>
+<h3>emacs_edit</h3>
 
-<P>EMACSSHR conforms to the calling standards for callable VMS MAIL images. EMACSSHR has an appropriate universal symbol, EMACS_EDIT, which is the callable entry point for callable VMS MAIL. EMACS_EDIT takes the following parameters:</P>
+<p>EMACSSHR conforms to the calling standards for callable VMS MAIL images. EMACSSHR has an appropriate universal symbol, EMACS_EDIT, which is the callable entry point for callable VMS MAIL. EMACS_EDIT takes the following parameters:</p>
 
-<P><B>INFILE</B></P>
+<p><b>INFILE</b></p>
 
-<P>The address of a string descriptor containing the name of the file to be edited.</P>
+<p>The address of a string descriptor containing the name of the file to be edited.</p>
 
-<P><B>OUTFILE</B></P>
+<p><b>OUTFILE</b></p>
 
-<P>The address of a string descriptor containing the name of the file to be written with the completed edits. If this parameter is omitted, The default action is to write a new version of the input file.</P>
+<p>The address of a string descriptor containing the name of the file to be written with the completed edits. If this parameter is omitted, The default action is to write a new version of the input file.</p>
 
-<P><B>PACKAGENAME</B></P>
+<p><b>PACKAGENAME</b></p>
 
-<P>The address of a descriptor containing the name of the Emacs package to be run to edit the file. If this parameter is omitted, the default package Emacs is invoked.</P>
+<p>The address of a descriptor containing the name of the Emacs package to be run to edit the file. If this parameter is omitted, the default package Emacs is invoked.</p>
 
-<H3>EMACS_UTILITY</H3>
+<h3>emacs_utility</h3>
 
-<P>The EMACS_UTILITY entry point in EMACSSHR provides access to all of the functionality of the Emacs command interface. This entry point takes the following parameters:</P>
+<p>The EMACS_UTILITY entry point in EMACSSHR provides access to all of the functionality of the Emacs command interface. This entry point takes the following parameters:</p>
 
-<P><B>PROCESSNAME</B></P>
+<p><b>PROCESSNAME</b></p>
 
-<P>The address of a descriptor containing the name of the subprocess to which to attach when resuming a paused Emacs or to spawn when creating a new EMACS. Omit this parameter to use the current process name.</P>
+<p>The address of a descriptor containing the name of the subprocess to which to attach when resuming a paused Emacs or to spawn when creating a new EMACS. Omit this parameter to use the current process name.</p>
 
-<P><B>PACKAGE</B></P>
+<p><b>PACKAGE</b></p>
 
-<P>The address of a descriptor containing the name of the package to run when Emacs gains control. Omit this parameter to run the default package (EMACS).</P>
+<p>The address of a descriptor containing the name of the package to run when Emacs gains control. Omit this parameter to run the default package (EMACS).</p>
 
-<P><B>RESTORE</B></P>
+<p><b>RESTORE</b></p>
 
-<P>The address of a descriptor containing the name of the environment file to be restored by Emacs when it is starting a new subprocess. If you omit this argument, no environment is restored.</P>
+<p>The address of a descriptor containing the name of the environment file to be restored by Emacs when it is starting a new subprocess. If you omit this argument, no environment is restored.</p>
 
-<P><B>ARGCOUNT</B></P>
+<p><b>ARGCOUNT</b></p>
 
-<P>A longword containing the number of entries in the ARGS vector.</P>
+<p>A longword containing the number of entries in the ARGS vector.</p>
 
-<P><B>ARGS</B></P>
+<p><b>ARGS</b></p>
 
-<P>The address of a vector of descriptors containing the arguments for EMACS.</P>
+<p>The address of a vector of descriptors containing the arguments for EMACS.</p>
 
-<P><B>LOG</B></P>
+<p><b>LOG</b></p>
 
-<P>A longword used to control whether logging messages are displayed between Emacs and DCL transitions. If true, logging is performed.</P>
+<p>A longword used to control whether logging messages are displayed between Emacs and DCL transitions. If true, logging is performed.</p>
 
-<P><B>CURRENTPROCESS</B></P>
+<p><b>CURRENTPROCESS</b></p>
 
-<P>A longword used to control whether Emacs is run in the current process or in a subprocess. If true, Emacs runs in the current process.</P>
+<p>A longword used to control whether Emacs is run in the current process or in a subprocess. If true, Emacs runs in the current process.</p>
 
-<P><B>PATH</B></P>
+<p><b>PATH</b></p>
 
-<P>The address of a descriptor which contains the default directory of the parent process. If omitted, the default directory is used.</P>
+<p>The address of a descriptor which contains the default directory of the parent process. If omitted, the default directory is used.</p>
 
-<P><B>RETADR</B></P>
+<p><b>RETADR</b></p>
 
-<P>The address of a string descriptor that EMACS_UTILITY fills with any information returned from Emacs when it exits or pauses.</P>
+<p>The address of a string descriptor that EMACS_UTILITY fills with any information returned from Emacs when it exits or pauses.</p>
 
-<HR align="LEFT" size="2" color="#800080">
-<A name="P1385_76148"></A> 
+<hr align="LEFT" size="2" color="#800080">
+<a name="P1385_76148"></a> 
 
-<H2><A NAME="shareableimageaccess"></A>Shareable Image Access</H2>
+<h2><a name="shareableimageaccess"></a>Shareable Image Access</h2>
 
-<P>The Shareable Image Access facility allows you to access and execute any routines defined with the universal attribute in a VMS shareable image. You can access routines in external images from Emacs by defining an Emacs external function and by specifying the image location of the external function; Emacs will load in the specified shareable image file when the function is called.</P>
+<p>The Shareable Image Access facility allows you to access and execute any routines defined with the universal attribute in a VMS shareable image. You can access routines in external images from Emacs by defining an Emacs external function and by specifying the image location of the external function; Emacs will load in the specified shareable image file when the function is called.</p>
 
-<P>Emacs allows you to call an external function in exactly the same way as any other Emacs function. Arguments can be provided with the usual range of types.</P>
+<p>Emacs allows you to call an external function in exactly the same way as any other Emacs function. Arguments can be provided with the usual range of types.</p>
 
-<P>Emacs provides an external function with a set of call-back operations that enable it to perform operations such as fetching arguments and reading and writing buffers.</P>
+<p>Emacs provides an external function with a set of call-back operations that enable it to perform operations such as fetching arguments and reading and writing buffers.</p>
 
-<P>These features provide a layered interface to any shareable image by providing interfacing routines between Emacs and the shareable image. This is shown in ~~~Ref:layermodelfig~~~.</P>
+<p>These features provide a layered interface to any shareable image by providing interfacing routines between Emacs and the shareable image. This is shown in ~~~Ref:layermodelfig~~~.</p>
 
-<P><B>Figure: Layer Model of External Functions</B>FIGUREFILE: postscript:docs$src:emacspglayermodelfig.psFIGUREFILE: bookreader:docs$src:emacspglayermodelfig.fse</P>
+<p><b>Figure: Layer Model of External Functions</b>FIGUREFILE: postscript:docs$src:emacspglayermodelfig.psFIGUREFILE: bookreader:docs$src:emacspglayermodelfig.fse</p>
 
-<H3>Shareable Image Access Functions</H3>
+<h3>shareable image access functions</h3>
 
-<P><B>(external-function <I>function shareable-image symbol</I>)</B></P>
+<p><b>(external-function <i>function shareable-image symbol</i>)</b></p>
 
-<P>Defines an Emacs function which executes code in a shareable image. <I>function</I> is the name of the Emacs function to be defined. When this function is called, the code in the shareable image is executed. <I>shareable-image</I> is the filename of the shareable image in which the code is located. If no device or directory is specified, SYS$SHARE: is used. <I>symbol</I> is the name of the universal symbol defining the entry point to the routine to be executed. If this argument is omitted, <I>function</I> is used to define <I>symbol</I>.</P>
+<p>Defines an Emacs function which executes code in a shareable image. <i>function</i> is the name of the Emacs function to be defined. When this function is called, the code in the shareable image is executed. <i>shareable-image</i> is the filename of the shareable image in which the code is located. If no device or directory is specified, SYS$SHARE: is used. <i>symbol</i> is the name of the universal symbol defining the entry point to the routine to be executed. If this argument is omitted, <i>function</i> is used to define <i>symbol</i>.</p>
 
-<P><B>(list-images)</B></P>
+<p><b>(list-images)</b></p>
 
-<P>Creates a buffer called <CODE>Image list</CODE> and fills it with information about the images in which external functions have been referenced.</P>
+<p>Creates a buffer called <code>Image list</code> and fills it with information about the images in which external functions have been referenced.</p>
 
-<P>A call to <CODE>external-function</CODE> does not actually cause the shareable image to be loaded and no check is made to see that the required symbol is defined in the image---the image is loaded and symbol is checked when the function is first called.</P>
+<p>A call to <code>external-function</code> does not actually cause the shareable image to be loaded and no check is made to see that the required symbol is defined in the image---the image is loaded and symbol is checked when the function is first called.</p>
 
-<P>When a saved environment is restored, images are automatically re-loaded the first time an external function is called.</P>
+<p>When a saved environment is restored, images are automatically re-loaded the first time an external function is called.</p>
 
-<H3>External Function Interface</H3>
+<h3>external function interface</h3>
 
-<P>Each function called by Emacs must comply with a strict set of inputs and outputs. Emacs imposes these rules to limit the possibility of a called routine destroying EMACS' internal data structures.</P>
+<p>Each function called by Emacs must comply with a strict set of inputs and outputs. Emacs imposes these rules to limit the possibility of a called routine destroying EMACS' internal data structures.</p>
 
-<P>Each function called by Emacs must accept the following arguments:</P>
+<p>Each function called by Emacs must accept the following arguments:</p>
 
-<P><B>CALLBACK</B></P>
+<p><b>CALLBACK</b></p>
 
-<P>This is the address of the Emacs call-back routine that allows the code to access the call-back operations. You call this routine according to the rules described in the following sections.</P>
+<p>This is the address of the Emacs call-back routine that allows the code to access the call-back operations. You call this routine according to the rules described in the following sections.</p>
 
-<P><B>CONTEXT</B></P>
+<p><b>CONTEXT</b></p>
 
-<P>This is the address of a longword that the called routine can use to maintain some cross-call context. You could use this longword as the address of a context block, and allocate this block using the Emacs memory allocation call-back operation.</P>
+<p>This is the address of a longword that the called routine can use to maintain some cross-call context. You could use this longword as the address of a context block, and allocate this block using the Emacs memory allocation call-back operation.</p>
 
-<P><B>RESTORE</B></P>
+<p><b>RESTORE</b></p>
 
-<P>This is the address of a longword that contains the current value of the <CODE>restored-environment</CODE> variable. You should use this value in conjunction with the routine's context block to decide when to take any special action after a saved environment is restored.</P>
+<p>This is the address of a longword that contains the current value of the <code>restored-environment</code> variable. You should use this value in conjunction with the routine's context block to decide when to take any special action after a saved environment is restored.</p>
 
-<P>Any routine value that is returned to Emacs is ignored.</P>
+<p>Any routine value that is returned to Emacs is ignored.</p>
 
-<H3>Call-back Operations</H3>
+<h3>call-back operations</h3>
 
-<P>Each call-back operation is invoked by calling the passed call-back routine address. Each operation is identified by passing its operation code as the first argument. The argument codes are described below and the symbols are available for the supported VMS languages in the file SYS$-LIBRARY:-EMACS-CALL-BACK.*-0. Each operation may have additional arguments which are also described below.</P>
+<p>Each call-back operation is invoked by calling the passed call-back routine address. Each operation is identified by passing its operation code as the first argument. The argument codes are described below and the symbols are available for the supported VMS languages in the file SYS$-LIBRARY:-EMACS-CALL-BACK.*-0. Each operation may have additional arguments which are also described below.</p>
 
-<P>The call-back routine returns an indication of the success of the requested operation. When an operation fails, the Emacs error buffer is filled with a suitable error message and the error flag is set. Unless you decide to issue a better error message, your routine should exit and Emacs will display the generated error message; all further MLisp processing will be aborted.</P>
+<p>The call-back routine returns an indication of the success of the requested operation. When an operation fails, the Emacs error buffer is filled with a suitable error message and the error flag is set. Unless you decide to issue a better error message, your routine should exit and Emacs will display the generated error message; all further MLisp processing will be aborted.</p>
 
-<H4><B><I>emacs__k_message</I></B></H4>
+<h4><b><i>emacs__k_message</i></b></h4>
 
-<P>This operation is equivalent to the <CODE>message</CODE> MLisp function. You should provide one additional argument which is the address of a string descriptor containing the message text to be displayed.</P>
+<p>This operation is equivalent to the <code>message</code> MLisp function. You should provide one additional argument which is the address of a string descriptor containing the message text to be displayed.</p>
 
-<P>The message will be displayed when the screen is next updated.</P>
+<p>The message will be displayed when the screen is next updated.</p>
 
-<H4><B><I>emacs__k_error</I></B></H4>
+<h4><b><i>emacs__k_error</i></b></h4>
 
-<P>This operation is equivalent to the <CODE>error-message</CODE> MLisp function. You should provide one additional argument which is the address of a string descriptor containing the error message to be displayed.</P>
+<p>This operation is equivalent to the <code>error-message</code> MLisp function. You should provide one additional argument which is the address of a string descriptor containing the error message to be displayed.</p>
 
-<P>All further MLisp processing will be aborted (until the most enclosing <CODE>error-occurred</CODE> block is encountered), and the error message will be displayed when the screen is next updated.</P>
+<p>All further MLisp processing will be aborted (until the most enclosing <code>error-occurred</code> block is encountered), and the error message will be displayed when the screen is next updated.</p>
 
-<H4><B><I>emacs__k_sitfor</I></B></H4>
+<h4><b><i>emacs__k_sitfor</i></b></h4>
 
-<P>This operation is equivalent to the <CODE>sit-for</CODE> MLisp function. You provide one additional argument which is the number of tenths of a second that you want to pause the display and Emacs processing. You pass this argument by value.</P>
+<p>This operation is equivalent to the <code>sit-for</code> MLisp function. You provide one additional argument which is the number of tenths of a second that you want to pause the display and Emacs processing. You pass this argument by value.</p>
 
-<P>The display is updated, and Emacs pauses for the specified amount of time.</P>
+<p>The display is updated, and Emacs pauses for the specified amount of time.</p>
 
-<H4><B><I>emacs__k_arg_count</I></B></H4>
+<h4><b><i>emacs__k_arg_count</i></b></h4>
 
-<P>This operation is equivalent to the <CODE>nargs</CODE> MLisp function. You provide one additional argument which is the address of a longword where the argument count is returned.</P>
+<p>This operation is equivalent to the <code>nargs</code> MLisp function. You provide one additional argument which is the address of a longword where the argument count is returned.</p>
 
-<P>The returned value is the number of arguments with which the external function was called.</P>
+<p>The returned value is the number of arguments with which the external function was called.</p>
 
-<H4><B><I>emacs__k_check_args</I></B></H4>
+<h4><b><i>emacs__k_check_args</i></b></h4>
 
-<P>This operation implements an easy way for external functions to check that they were called with a satisfactory number of arguments. You provide the following arguments:</P>
+<p>This operation implements an easy way for external functions to check that they were called with a satisfactory number of arguments. You provide the following arguments:</p>
 
-<P><B>MIN</B></P>
+<p><b>MIN</b></p>
 
-<P>The minimum number of arguments acceptable. It is passed by value.</P>
+<p>The minimum number of arguments acceptable. It is passed by value.</p>
 
-<P><B>MAX</B></P>
+<p><b>MAX</b></p>
 
-<P>The maximum number of arguments acceptable. This parameter is passed by value.</P>
+<p>The maximum number of arguments acceptable. This parameter is passed by value.</p>
 
-<P>This request checks that the number of arguments supplied with the external function call is between the specified limits. If the argument count is unsatisfactory, Emacs generates a suitable error message, and the call-back function returns an error status. If the argument count is within the bounds, Emacs returns a success status.</P>
+<p>This request checks that the number of arguments supplied with the external function call is between the specified limits. If the argument count is unsatisfactory, Emacs generates a suitable error message, and the call-back function returns an error status. If the argument count is within the bounds, Emacs returns a success status.</p>
 
-<H4><B><I>emacs__k_string_arg</I></B></H4>
+<h4><b><i>emacs__k_string_arg</i></b></h4>
 
-<P>This operation provides access to the specified argument and returns it as a string.</P>
+<p>This operation provides access to the specified argument and returns it as a string.</p>
 
-<P>You provide the following arguments:</P>
+<p>You provide the following arguments:</p>
 
-<P><B>ARGNUM</B></P>
+<p><b>ARGNUM</b></p>
 
-<P>The number of the argument that you want to access. Argument number 1 is the first argument.</P>
+<p>The number of the argument that you want to access. Argument number 1 is the first argument.</p>
 
-<P><B>STRING</B></P>
+<p><b>STRING</b></p>
 
-<P>The address of a string descriptor which Emacs fills with the specified argument.</P>
+<p>The address of a string descriptor which Emacs fills with the specified argument.</p>
 
-<P><B>RETLEN</B></P>
+<p><b>RETLEN</b></p>
 
-<P>The address of a word which Emacs fills with the length of the returned string.</P>
+<p>The address of a word which Emacs fills with the length of the returned string.</p>
 
-<P>This operation evaluates the specified argument. If the argument is not a string, it is coerced into one. The resulting string is then copied into the provided buffer.</P>
+<p>This operation evaluates the specified argument. If the argument is not a string, it is coerced into one. The resulting string is then copied into the provided buffer.</p>
 
-<P>If the buffer is not big enough for the string, a suitable error status is returned, and the extra characters are ignored.</P>
+<p>If the buffer is not big enough for the string, a suitable error status is returned, and the extra characters are ignored.</p>
 
-<P>Note that each time this operation is performed on a particular argument,the expression that makes up the argument is evaluated. So, if the argument calls a function which has side effects, strange behaviour may result. It is better to access the argument once, and then maintain the argument in your code.</P>
+<p>Note that each time this operation is performed on a particular argument,the expression that makes up the argument is evaluated. So, if the argument calls a function which has side effects, strange behaviour may result. It is better to access the argument once, and then maintain the argument in your code.</p>
 
-<H4><B><I>emacs__k_numeric_arg</I></B></H4>
+<h4><b><i>emacs__k_numeric_arg</i></b></h4>
 
-<P>This operation provides access to the specified argument, and returns it as an integer.</P>
+<p>This operation provides access to the specified argument, and returns it as an integer.</p>
 
-<P>You provide the following arguments:</P>
+<p>You provide the following arguments:</p>
 
-<P><B>ARGNUM</B></P>
+<p><b>ARGNUM</b></p>
 
-<P>The number of the argument that you want to access. Argument number 1 is the first argument.</P>
+<p>The number of the argument that you want to access. Argument number 1 is the first argument.</p>
 
-<P><B>RESULT</B></P>
+<p><b>RESULT</b></p>
 
-<P>The address of a longword that Emacs fills with the required argument.</P>
+<p>The address of a longword that Emacs fills with the required argument.</p>
 
-<P>The specified argument is evaluated. If the argument is not an integer, it is coerced into one. The resulting integer value is then copied into the provided longword.</P>
+<p>The specified argument is evaluated. If the argument is not an integer, it is coerced into one. The resulting integer value is then copied into the provided longword.</p>
 
-<P>Note that each time this operation is requested on a particular argument,the expression that makes up the argument is evaluated. So, if the argument calls a function which has side effects, strange behaviour may result. It is better to access the argument once, and then maintain the argument in your code.</P>
+<p>Note that each time this operation is requested on a particular argument,the expression that makes up the argument is evaluated. So, if the argument calls a function which has side effects, strange behaviour may result. It is better to access the argument once, and then maintain the argument in your code.</p>
 
-<H4><B><I>emacs__k_string_result</I></B></H4>
+<h4><b><i>emacs__k_string_result</i></b></h4>
 
-<P>This request causes the specified text string to be returned as the result of the external function call. It takes a single argument which is the address of a descriptor containing the string to be returned.</P>
+<p>This request causes the specified text string to be returned as the result of the external function call. It takes a single argument which is the address of a descriptor containing the string to be returned.</p>
 
-<P>This request does not cause the calling routine to be terminated; it merely specifies the value to be returned when the code does eventually exit. If this call-back is requested more that once from the same routine, the value returned is the value specified in the last call to either the <CODE>emacs__k_string_result</CODE> or <CODE>emacs__k_numeric_result</CODE> operations.</P>
+<p>This request does not cause the calling routine to be terminated; it merely specifies the value to be returned when the code does eventually exit. If this call-back is requested more that once from the same routine, the value returned is the value specified in the last call to either the <code>emacs__k_string_result</code> or <code>emacs__k_numeric_result</code> operations.</p>
 
-<H4><B><I>emacs__k_numeric_result</I></B></H4>
+<h4><b><i>emacs__k_numeric_result</i></b></h4>
 
-<P>This request causes the specified integer to be returned as the result of the external function call. It takes a single argument which is the value to be returned.</P>
+<p>This request causes the specified integer to be returned as the result of the external function call. It takes a single argument which is the value to be returned.</p>
 
-<P>This request does not cause the calling routine to be terminated; it merely specifies the value to be returned when the routine does eventually exit. If this operation is requested more that once from the same routine, the value returned is the value specified in the last call to either the <CODE>emacs__k_string_result</CODE> or <CODE>emacs__k_numeric_result</CODE> operations.</P>
+<p>This request does not cause the calling routine to be terminated; it merely specifies the value to be returned when the routine does eventually exit. If this operation is requested more that once from the same routine, the value returned is the value specified in the last call to either the <code>emacs__k_string_result</code> or <code>emacs__k_numeric_result</code> operations.</p>
 
-<H4><B><I>emacs__k_allocate</I></B></H4>
+<h4><b><i>emacs__k_allocate</i></b></h4>
 
-<P>This request allocates some memory using the Emacs memory allocation scheme. Memory allocated by Emacs is saved in environment files when the <CODE>save-environment</CODE> function is executed.</P>
+<p>This request allocates some memory using the Emacs memory allocation scheme. Memory allocated by Emacs is saved in environment files when the <code>save-environment</code> function is executed.</p>
 
-<P>The following parameters are expected:</P>
+<p>The following parameters are expected:</p>
 
-<P><B>SIZE</B></P>
+<p><b>SIZE</b></p>
 
-<P>The number of bytes of memory you want Emacs to allocate. This argument is passed by value.</P>
+<p>The number of bytes of memory you want Emacs to allocate. This argument is passed by value.</p>
 
-<P><B>RETADR</B></P>
+<p><b>RETADR</b></p>
 
-<P>The address of a longword that Emacs fills with the address of the allocated memory.</P>
+<p>The address of a longword that Emacs fills with the address of the allocated memory.</p>
 
-<H4><B><I>emacs__k_reallocate</I></B></H4>
+<h4><b><i>emacs__k_reallocate</i></b></h4>
 
-<P>This request reallocates some memory using the Emacs memory allocation scheme. You provide some existing Emacs memory, and it is reallocated with an adjusted size. Existing data is copied into the new memory block and is truncated if the new block is shorter than the old block. You can use this call-back to grow some already-allocated memory by a specified amount.</P>
+<p>This request reallocates some memory using the Emacs memory allocation scheme. You provide some existing Emacs memory, and it is reallocated with an adjusted size. Existing data is copied into the new memory block and is truncated if the new block is shorter than the old block. You can use this call-back to grow some already-allocated memory by a specified amount.</p>
 
-<P>The following parameters are expected:</P>
+<p>The following parameters are expected:</p>
 
-<P><B>OLDBUF</B></P>
+<p><b>OLDBUF</b></p>
 
-<P>The address of the existing memory to be reallocated.</P>
+<p>The address of the existing memory to be reallocated.</p>
 
-<P><B>SIZE</B></P>
+<p><b>SIZE</b></p>
 
-<P>The size required for the reallocated memory.</P>
+<p>The size required for the reallocated memory.</p>
 
-<P><B>RETADR</B></P>
+<p><b>RETADR</b></p>
 
-<P>The address of a longword that Emacs fills with the address of the reallocated memory.</P>
+<p>The address of a longword that Emacs fills with the address of the reallocated memory.</p>
 
-<H4><B><I>emacs__k_free</I></B></H4>
+<h4><b><i>emacs__k_free</i></b></h4>
 
-<P>This request frees some Emacs memory previously allocated by <CODE>emacs__k_allocate</CODE> or <CODE>emacs__k_reallocate</CODE>. Memory freed that was not allocated by these routines will be ignored.</P>
+<p>This request frees some Emacs memory previously allocated by <code>emacs__k_allocate</code> or <code>emacs__k_reallocate</code>. Memory freed that was not allocated by these routines will be ignored.</p>
 
-<P>The following parameter is expected:</P>
+<p>The following parameter is expected:</p>
 
-<P><B>BUFFER</B></P>
+<p><b>BUFFER</b></p>
 
-<P>The address of the memory to be freed.</P>
+<p>The address of the memory to be freed.</p>
 
-<H4><B><I>emacs__k_buffer_size</I></B></H4>
+<h4><b><i>emacs__k_buffer_size</i></b></h4>
 
-<P>This routine is used to find out how many characters are in the current buffer. When narrowing is in force, only accessible characters are counted.</P>
+<p>This routine is used to find out how many characters are in the current buffer. When narrowing is in force, only accessible characters are counted.</p>
 
-<P>The following parameter is expected:</P>
+<p>The following parameter is expected:</p>
 
-<P><B>RETLEN</B></P>
+<p><b>RETLEN</b></p>
 
-<P>The address of a longword that Emacs fills with the size of the current buffer.</P>
+<p>The address of a longword that Emacs fills with the size of the current buffer.</p>
 
-<H4><B><I>emacs__k_dot</I></B></H4>
+<h4><b><i>emacs__k_dot</i></b></h4>
 
-<P>This request returns the current buffer name and current position of dot in the buffer. It is equivalent to the <CODE>dot</CODE> MLisp function.</P>
+<p>This request returns the current buffer name and current position of dot in the buffer. It is equivalent to the <code>dot</code> MLisp function.</p>
 
-<P>The following parameters are expected:</P>
+<p>The following parameters are expected:</p>
 
-<P><B>RETPOS</B></P>
+<p><b>RETPOS</b></p>
 
-<P>The address of a longword that Emacs fills with the current position of dot.</P>
+<p>The address of a longword that Emacs fills with the current position of dot.</p>
 
-<P><B>BUFFER</B></P>
+<p><b>BUFFER</b></p>
 
-<P>The address of a string descriptor into which Emacs puts the current buffer name.</P>
+<p>The address of a string descriptor into which Emacs puts the current buffer name.</p>
 
-<P><B>RETLEN</B></P>
+<p><b>RETLEN</b></p>
 
-<P>The address of a word that Emacs fills with the length of the current buffer's name.</P>
+<p>The address of a word that Emacs fills with the length of the current buffer's name.</p>
 
-<H4><B><I>emacs__k_mark</I></B></H4>
+<h4><b><i>emacs__k_mark</i></b></h4>
 
-<P>This request returns the current buffer name and current position of the mark in the buffer. It is equivalent to the <CODE>mark</CODE> MLisp function.</P>
+<p>This request returns the current buffer name and current position of the mark in the buffer. It is equivalent to the <code>mark</code> MLisp function.</p>
 
-<P>The following parameters are expected:</P>
+<p>The following parameters are expected:</p>
 
-<P><B>RETPOS</B></P>
+<p><b>RETPOS</b></p>
 
-<P>The address of a longword that Emacs fills with the current position of the mark.</P>
+<p>The address of a longword that Emacs fills with the current position of the mark.</p>
 
-<P><B>BUFFER</B></P>
+<p><b>BUFFER</b></p>
 
-<P>The address of a string descriptor into which Emacs puts the current buffer name.</P>
+<p>The address of a string descriptor into which Emacs puts the current buffer name.</p>
 
-<P><B>RETLEN</B></P>
+<p><b>RETLEN</b></p>
 
-<P>The address of a word that Emacs fills with the length of the current buffer's name.</P>
+<p>The address of a word that Emacs fills with the length of the current buffer's name.</p>
 
-<H4><B><I>emacs__k_set_mark</I></B></H4>
+<h4><b><i>emacs__k_set_mark</i></b></h4>
 
-<P>This request sets or unsets the current buffer's mark. If the mark is set, it is set to the current value of dot. It is equivalent to the <CODE>set-mark</CODE> and <CODE>unset-mark</CODE> MLisp functions.</P>
+<p>This request sets or unsets the current buffer's mark. If the mark is set, it is set to the current value of dot. It is equivalent to the <code>set-mark</code> and <code>unset-mark</code> MLisp functions.</p>
 
-<P>The following parameter is expected:</P>
+<p>The following parameter is expected:</p>
 
-<P><B>SETUNSET</B></P>
+<p><b>SETUNSET</b></p>
 
-<P>A longword indicating whether to set the mark (low bit set)or unset it (low bit clear).</P>
+<p>A longword indicating whether to set the mark (low bit set)or unset it (low bit clear).</p>
 
-<H4><B><I>emacs__k_use_buffer</I></B></H4>
+<h4><b><i>emacs__k_use_buffer</i></b></h4>
 
-<P>This function provides access to the MLisp <CODE>temp-use-buffer</CODE> function. It switches the current buffer to the named buffer without altering any windows. Note that if you use this function and you cause the screen to be updated (with <CODE>emacs__k_sitfor</CODE>), Emacs will bind the buffer to a window.</P>
+<p>This function provides access to the MLisp <code>temp-use-buffer</code> function. It switches the current buffer to the named buffer without altering any windows. Note that if you use this function and you cause the screen to be updated (with <code>emacs__k_sitfor</code>), Emacs will bind the buffer to a window.</p>
 
-<P>The following parameter is expected:</P>
+<p>The following parameter is expected:</p>
 
-<P><B>BUFFER</B></P>
+<p><b>BUFFER</b></p>
 
-<P>The address of a descriptor containing the name of the buffer to be used.</P>
+<p>The address of a descriptor containing the name of the buffer to be used.</p>
 
-<H4><B><I>emacs__k_goto_character</I></B></H4>
+<h4><b><i>emacs__k_goto_character</i></b></h4>
 
-<P>This request causes dot to be positioned at the specified character. If you specify a value before the start of the buffer, dot is moved to the start of the buffer. If you specify a value beyond the end of the buffer,dot is moved to the end of the buffer.</P>
+<p>This request causes dot to be positioned at the specified character. If you specify a value before the start of the buffer, dot is moved to the start of the buffer. If you specify a value beyond the end of the buffer,dot is moved to the end of the buffer.</p>
 
-<P><CODE>emacs__k_gotocharacter</CODE> call-back is equivalent to the <CODE>goto-character</CODE> MLisp function.</P>
+<p><code>emacs__k_gotocharacter</code> call-back is equivalent to the <code>goto-character</code> MLisp function.</p>
 
-<P>The following parameter is expected:</P>
+<p>The following parameter is expected:</p>
 
-<P><B>POSITION</B></P>
+<p><b>POSITION</b></p>
 
-<P>A longword describing the position required.</P>
+<p>A longword describing the position required.</p>
 
-<H4><B><I>emacs__k_insert_character</I></B></H4>
+<h4><b><i>emacs__k_insert_character</i></b></h4>
 
-<P>This request implements the <CODE>insert-character</CODE> MLisp function. It inserts the single character specified by the ASCII code provided.</P>
+<p>This request implements the <code>insert-character</code> MLisp function. It inserts the single character specified by the ASCII code provided.</p>
 
-<P>The following parameter is expected:</P>
+<p>The following parameter is expected:</p>
 
-<P><B>CHARACTER</B></P>
+<p><b>CHARACTER</b></p>
 
-<P>A longword containing the ASCII code for the character to be inserted.</P>
+<p>A longword containing the ASCII code for the character to be inserted.</p>
 
-<H4><B><I>emacs__k_insert_string</I></B></H4>
+<h4><b><i>emacs__k_insert_string</i></b></h4>
 
-<P>This request provides access to the <CODE>insert-string</CODE> MLisp function. It inserts the specified string into the current buffer.</P>
+<p>This request provides access to the <code>insert-string</code> MLisp function. It inserts the specified string into the current buffer.</p>
 
-<P>The following parameter is expected:</P>
+<p>The following parameter is expected:</p>
 
-<P><B>STRING</B></P>
+<p><b>STRING</b></p>
 
-<P>The address of a string descriptor containing the string to be inserted in the current buffer.</P>
+<p>The address of a string descriptor containing the string to be inserted in the current buffer.</p>
 
-<H4><B><I>emacs__k_delete_characters</I></B></H4>
+<h4><b><i>emacs__k_delete_characters</i></b></h4>
 
-<P>This request allows you to delete characters from the current buffer around dot. You provide the number of characters to be deleted. A request to delete 0 characters has no effect; positive character counts cause characters after dot to be deleted, while negative counts cause characters before dot to be deleted.</P>
+<p>This request allows you to delete characters from the current buffer around dot. You provide the number of characters to be deleted. A request to delete 0 characters has no effect; positive character counts cause characters after dot to be deleted, while negative counts cause characters before dot to be deleted.</p>
 
-<P>The following parameter is expected:</P>
+<p>The following parameter is expected:</p>
 
-<P><B>COUNT</B></P>
+<p><b>COUNT</b></p>
 
-<P>The number of characters to be deleted.</P>
+<p>The number of characters to be deleted.</p>
 
-<H4><B><I>emacs__k_fetch_character</I></B></H4>
+<h4><b><i>emacs__k_fetch_character</i></b></h4>
 
-<P>This request returns the value of the single character at the specified position in the current buffer. If the requested position is beyond the bounds of the current buffer, -1 is returned.</P>
+<p>This request returns the value of the single character at the specified position in the current buffer. If the requested position is beyond the bounds of the current buffer, -1 is returned.</p>
 
-<P>The following parameters are expected:</P>
+<p>The following parameters are expected:</p>
 
-<P><B>POSITION</B></P>
+<p><b>POSITION</b></p>
 
-<P>The character position of the character to be fetched.</P>
+<p>The character position of the character to be fetched.</p>
 
-<P><B>RETCHAR</B></P>
+<p><b>RETCHAR</b></p>
 
-<P>The address of a longword that Emacs fills with the character at the specified position.</P>
+<p>The address of a longword that Emacs fills with the character at the specified position.</p>
 
-<H4><B><I>emacs__k_return_string_to_param</I></B></H4>
+<h4><b><i>emacs__k_return_string_to_param</i></b></h4>
 
-<P>This request writes a string to the parameter specified in the original call of the external function. It can be used to pass multiple text values from an external function.</P>
+<p>This request writes a string to the parameter specified in the original call of the external function. It can be used to pass multiple text values from an external function.</p>
 
-<P>An error is generated if the designated argument is not a variable name.</P>
+<p>An error is generated if the designated argument is not a variable name.</p>
 
-<P>The following parameters are expected:</P>
+<p>The following parameters are expected:</p>
 
-<P><B>ARG</B></P>
+<p><b>ARG</b></p>
 
-<P>A longword indicating the parameter to be written.</P>
+<p>A longword indicating the parameter to be written.</p>
 
-<P><B>STRING</B></P>
+<p><b>STRING</b></p>
 
-<P>The address of a string descriptor containing the text to be written into the specified argument.</P>
+<p>The address of a string descriptor containing the text to be written into the specified argument.</p>
 
-<H4><B><I>emacs__k_return_number_to_param</I></B></H4>
+<h4><b><i>emacs__k_return_number_to_param</i></b></h4>
 
-<P>This request writes a number to the parameter specified in the original call of the external function. It can be used to pass multiple numeric values from an external function.</P>
+<p>This request writes a number to the parameter specified in the original call of the external function. It can be used to pass multiple numeric values from an external function.</p>
 
-<P>An error is generated if the designated argument is not a variable name.</P>
+<p>An error is generated if the designated argument is not a variable name.</p>
 
-<P>The following parameters are expected:</P>
+<p>The following parameters are expected:</p>
 
-<P><B>ARG</B></P>
+<p><b>ARG</b></p>
 
-<P>A longword indicating the parameter to be written.</P>
+<p>A longword indicating the parameter to be written.</p>
 
-<P><B>VALUE</B></P>
+<p><b>VALUE</b></p>
 
-<P>The value to be written into the specified argument.</P>
+<p>The value to be written into the specified argument.</p>
 
-<H4><B><I>emacs__k_buffer_extent</I></B></H4>
+<h4><b><i>emacs__k_buffer_extent</i></b></h4>
 
-<P>This request returns complex information about the current buffer. Emacs keeps the contents of a buffer in two regions of memory with an area in between used to insert and delete characters. The first region, which contains the top part of the buffer, is called P1 ; the second region, which contains the bottom of the buffer, is called P2 . The region between the two areas is called the Gap This call-back returns the sizes and addresses of the base of P1 and P2.</P>
+<p>This request returns complex information about the current buffer. Emacs keeps the contents of a buffer in two regions of memory with an area in between used to insert and delete characters. The first region, which contains the top part of the buffer, is called P1 ; the second region, which contains the bottom of the buffer, is called P2 . The region between the two areas is called the Gap This call-back returns the sizes and addresses of the base of P1 and P2.</p>
 
-<P>The following parameters are expected:</P>
+<p>The following parameters are expected:</p>
 
-<P><B>S1</B></P>
+<p><b>S1</b></p>
 
-<P>The address of a longword that Emacs fills with the size of the P1 region.</P>
+<p>The address of a longword that Emacs fills with the size of the P1 region.</p>
 
-<P><B>P1</B></P>
+<p><b>P1</b></p>
 
-<P>The address of a longword that Emacs fills with the address of the P1 region.</P>
+<p>The address of a longword that Emacs fills with the address of the P1 region.</p>
 
-<P><B>S2</B></P>
+<p><b>S2</b></p>
 
-<P>The address of a longword that Emacs fills with the size of the P2 region.</P>
+<p>The address of a longword that Emacs fills with the size of the P2 region.</p>
 
-<P><B>P2</B></P>
+<p><b>P2</b></p>
 
-<P>The address of a longword that Emacs fills with the address of the P2 region.</P>
+<p>The address of a longword that Emacs fills with the address of the P2 region.</p>
 
-<H4><B><I>emacs__k_gap_to</I></B></H4>
+<h4><b><i>emacs__k_gap_to</i></b></h4>
 
-<P>This request moves the Gap to the specified character. You can use this request to force the entire contents of the current buffer into either the P1 or P2 regions by selecting a suitable value for the Gap position.</P>
+<p>This request moves the Gap to the specified character. You can use this request to force the entire contents of the current buffer into either the P1 or P2 regions by selecting a suitable value for the Gap position.</p>
 
-<P>The following parameter is expected:</P>
+<p>The following parameter is expected:</p>
 
-<P><B>POSITION</B></P>
+<p><b>POSITION</b></p>
 
-<P>A longword containing the character position to which the Gap is set. A value of 0 puts Gap before all characters; -1 puts it after all characters.</P>
+<p>A longword containing the character position to which the Gap is set. A value of 0 puts Gap before all characters; -1 puts it after all characters.</p>
 
-<H4><B><I>emacs__k_gap_room</I></B></H4>
+<h4><b><i>emacs__k_gap_room</i></b></h4>
 
-<P>This request forces the Gap to be at least as big as the specified value.</P>
+<p>This request forces the Gap to be at least as big as the specified value.</p>
 
-<P>The following parameter is expected:</P>
+<p>The following parameter is expected:</p>
 
-<P><B>SIZE</B></P>
+<p><b>SIZE</b></p>
 
-<P>A longword containing the size to set the Gap. <!-- (This routine commented out from the LaTeX source.) --></P>
+<p>A longword containing the size to set the Gap. <!-- (This routine commented out from the LaTeX source.) --></p>
 
-<H4><B><I>emacs__k_change_buffer_extent</I></B></H4>
+<h4><b><i>emacs__k_change_buffer_extent</i></b></h4>
 
-<P>This request changes the size of the P1 and P2 regions for the current buffer.</P>
+<p>This request changes the size of the P1 and P2 regions for the current buffer.</p>
 
-<P>The following parameters are expected:</P>
+<p>The following parameters are expected:</p>
 
-<P><B>S1</B></P>
+<p><b>S1</b></p>
 
-<P>A longword containing the new size of P1.</P>
+<p>A longword containing the new size of P1.</p>
 
-<P><B>S2</B></P>
+<p><b>S2</b></p>
 
-<P>A longword containing the new size of P2.</P>
+<p>A longword containing the new size of P2.</p>
 
 <!-- TRANSIT - TEXTBAR -->
-</BODY>
-</HTML>
+</body>
+</html>
 

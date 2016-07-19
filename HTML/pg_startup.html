@@ -1,104 +1,104 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<HTML>
-<HEAD>
-<TITLE>Mlisp Programmer's Guide</TITLE>
+<html>
+<head>
+<title>Mlisp Programmer's Guide</title>
 
-<LINK REL="STYLESHEET" HREF="styles.css">
-</HEAD>
-<BODY>
-<A name="TopOfPage"></A>
+<link rel="STYLESHEET" href="styles.css">
+</head>
+<body>
+<a name="TopOfPage"></a>
 
-<H1><A name="P1783_92659"></A>Starting Up Emacs</H1>
+<h1><a name="P1783_92659"></a>Starting Up Emacs</h1>
 
-<P>This chapter describes the events involved in starting up Emacs, and the various facilities that you can use to change the way Emacs starts.</P>
+<p>This chapter describes the events involved in starting up Emacs, and the various facilities that you can use to change the way Emacs starts.</p>
 
-<P>The <a href="#startupprocedure">Emacs Start-Up Procedure</a> describes the Emacs start-up procedure.
+<p>The <a href="#startupprocedure">Emacs Start-Up Procedure</a> describes the Emacs start-up procedure.
 <a href="#emacsinitfles">Emacs Initialisation Files</a> describes how to use initialisation files to 
 customise EMACS. <a href="#emacsenvfiles">Emacs Environment Files</a> describes how to save customisations
-in environment files.</P>
+in environment files.</p>
 
-<HR align="LEFT" size="2" color="#800080">
-<A name="P1790_93089"></A> 
+<hr align="LEFT" size="2" color="#800080">
+<a name="P1790_93089"></a> 
 
-<H2><a name="startupprocedure">The Emacs Start-Up Procedure</a></H2>
+<h2><a name="startupprocedure">The Emacs Start-Up Procedure</a></h2>
 
-<P>This section describes in detail what happens when Emacs is initially started and
-re-started after an <CODE>ESC-x pause-emacs</CODE> command.
-The steps that are executed when returning to a paused Emacs are specifically noted.</P>
+<p>This section describes in detail what happens when Emacs is initially started and
+re-started after an <code>ESC-x pause-emacs</code> command.
+The steps that are executed when returning to a paused Emacs are specifically noted.</p>
 
-<P>This section describes in detail what happens when Emacs is initially started.</P>
+<p>This section describes in detail what happens when Emacs is initially started.</p>
 
-<P>The following steps are executed in order:</P>
+<p>The following steps are executed in order:</p>
 
-<OL>
-<LI>If the <FONT face="Courier New" size="2">/restore</FONT> qualifier has been specified,
-Emacs restores the specified environment file and initialisation continues from step 4.</LI>
+<ol>
+<li>If the <font face="Courier New" size="2">/restore</font> qualifier has been specified,
+Emacs restores the specified environment file and initialisation continues from step 4.</li>
 
-<LI>If /norestore qualifier is specified, Emacs executes the file
-<FONT face="Courier New" size="2">emacs_library:emacs_profile.ml</FONT> as a series of Mock Lisp (MLisp) expressions.</LI>
+<li>If /norestore qualifier is specified, Emacs executes the file
+<font face="Courier New" size="2">emacs_library:emacs_profile.ml</font> as a series of Mock Lisp (MLisp) expressions.</li>
 
-<LI><FONT face="Courier New" size="2">emacs_library:emacs_profile.ml</FONT> causes the
-file <FONT face="Courier New" size="2">sys$login:emacsinit.ml</FONT> to be executed as a
+<li><font face="Courier New" size="2">emacs_library:emacs_profile.ml</font> causes the
+file <font face="Courier New" size="2">sys$login:emacsinit.ml</font> to be executed as a
 series of MLisp expressions. If this file does not exist emacs searches the directories
-named in <FONT face="Courier New" size="2">emacs_path</FONT> for <FONT face="Courier New" size="2">emacsinit.ml</FONT>
-and executes the first one found instead.</LI>
+named in <font face="Courier New" size="2">emacs_path</font> for <font face="Courier New" size="2">emacsinit.ml</font>
+and executes the first one found instead.</li>
 
-<LI>If the variable <FONT face="Courier New" size="2">user-interface-hook</FONT> contains the name of an MLisp function,
-then this function is executed. Normally you will leave this variable alone and let Emacs set it up for you.</LI>
+<li>If the variable <font face="Courier New" size="2">user-interface-hook</font> contains the name of an MLisp function,
+then this function is executed. Normally you will leave this variable alone and let Emacs set it up for you.</li>
 
-<LI>If Emacs is starting and the variable <FONT face="Courier New" size="2">enter-emacs-hook</FONT>
-contains the name of an MLisp function, then this function is executed.</LI>
+<li>If Emacs is starting and the variable <font face="Courier New" size="2">enter-emacs-hook</font>
+contains the name of an MLisp function, then this function is executed.</li>
 
-<LI>This is the hook you may used to execute code each time emacs starts up.</LI>
+<li>This is the hook you may used to execute code each time emacs starts up.</li>
 
-<LI>If the <FONT face="Courier New" size="2">/package=<i>package-name</i></FONT> qualifier is specified on the 
+<li>If the <font face="Courier New" size="2">/package=<i>package-name</i></font> qualifier is specified on the 
 Emacs command line then the designated package is loaded and run otherwise the
- <FONT face="Courier New" size="2">emacs</FONT> package is loaded and run.
+ <font face="Courier New" size="2">emacs</font> package is loaded and run.
 This is achieved by taking the name specified and adding
-<FONT face="Courier New" size="2">.mlp</FONT> to it. 
+<font face="Courier New" size="2">.mlp</font> to it. 
 
-<P>The resulting name is then used as the name of a file to execute as a series of MLisp 
+<p>The resulting name is then used as the name of a file to execute as a series of MLisp 
 expressions. When the file has been completely executed, the function
- <FONT face="Courier New" size="2"><i>package-name</i>-com</FONT> is called.</P>
+ <font face="Courier New" size="2"><i>package-name</i>-com</font> is called.</p>
 
-<P>For example, a package called <FONT face="Courier New" size="2">dired</FONT> will have a
- file called <FONT face="Courier New" size="2">dired.mlp</FONT> that contains an MLisp
- function called <FONT face="Courier New" size="2">dired-com</FONT>.</P>
-</LI>
+<p>For example, a package called <font face="Courier New" size="2">dired</font> will have a
+ file called <font face="Courier New" size="2">dired.mlp</font> that contains an MLisp
+ function called <font face="Courier New" size="2">dired-com</font>.</p>
+</li>
 
-<LI>If the Emacs functions <FONT face="Courier New" size="2">argc</FONT> 
-and <FONT face="Courier New" size="2">argv</FONT> have not been used since the 
+<li>If the Emacs functions <font face="Courier New" size="2">argc</font> 
+and <font face="Courier New" size="2">argv</font> have not been used since the 
 Emacs command was issued, all the files specified on the command line are 
-automatically visited.</LI>
+automatically visited.</li>
 
-<LI>If no arguments were specified on the command line, Emacs attempts to restore 
+<li>If no arguments were specified on the command line, Emacs attempts to restore 
 the files that were displayed on the screen when Emacs last exited completely. 
 This information is maintained in the emacs memory file. The contents of this 
 file are private to Emacs, and should never be altered or edited. If the file 
 does not exist, no files will be automatically visited. Under Unix the Emacs 
-memory file is named <FONT face="Courier New" size="2">emacs_memory:.emacs_mem</FONT>. 
+memory file is named <font face="Courier New" size="2">emacs_memory:.emacs_mem</font>. 
 Under Windows the Emacs memory file is named 
-<FONT face="Courier New" size="2">emacs_memory:__emacs_.mem</FONT>.</LI>
+<font face="Courier New" size="2">emacs_memory:__emacs_.mem</font>.</li>
 
-<LI>Emacs now calls its display processor to display the screen, and then calls 
-its keyboard processor to process keyboard commands.</LI>
-</OL>
+<li>Emacs now calls its display processor to display the screen, and then calls 
+its keyboard processor to process keyboard commands.</li>
+</ol>
 
-<HR align="LEFT" size="2" color="#800080">
-<A name="P1823_96200"></A> 
+<hr align="LEFT" size="2" color="#800080">
+<a name="P1823_96200"></a> 
 
-<H2><a name="emacsinitfles">Emacs Initialisation Files</a></H2>
+<h2><a name="emacsinitfles">Emacs Initialisation Files</a></h2>
 
-<P>An initialisation file is an MLisp program which is executed whenever you start Emacs. 
-Emacs looks for an initialisation file using the file name emacs_path:emacsinit.ml or the MLisp program EMACSINIT.</P>
+<p>An initialisation file is an MLisp program which is executed whenever you start Emacs. 
+Emacs looks for an initialisation file using the file name emacs_path:emacsinit.ml or the MLisp program EMACSINIT.</p>
 
-<P>An initialisation file can ask you questions and do things, as well as just setting up commands for later use.</P>
+<p>An initialisation file can ask you questions and do things, as well as just setting up commands for later use.</p>
 
-<P>The example shows a sample initialisation file.</P>
+<p>The example shows a sample initialisation file.</p>
 
-<P><B>Example: Sample EMACSINIT.ML</B></P>
+<p><b>Example: Sample EMACSINIT.ML</b></p>
 
-<PRE>
+<pre>
 ;
 ; Setup EMACS in the windows UI style
 ;
@@ -136,12 +136,12 @@ Emacs looks for an initialisation file using the file name emacs_path:emacsinit.
 (bind-to-key "add-tag" "\[F2]")
 (bind-to-key "goto-tag" "\^XL")
 (bind-to-key "visit-function" "\^XP")
-</PRE>
+</pre>
 
-<HR align="LEFT" size="2" color="#800080">
-<A name="P1836_97506"></A> 
+<hr align="LEFT" size="2" color="#800080">
+<a name="P1836_97506"></a> 
 
-<H2><a name="emacsenvfiles">Emacs Environment Files</a></H2>
+<h2><a name="emacsenvfiles">Emacs Environment Files</a></h2>
 
 <p>On current computer hardware it is not usually worth bothering with the Emacs Environment feature.</p>
 
@@ -152,63 +152,63 @@ Emacs looks for an initialisation file using the file name emacs_path:emacsinit.
 </ul>
 
 
-<P>It may be more efficient to save your customisations, extensions and small amounts of data in an Emacs environment file.
+<p>It may be more efficient to save your customisations, extensions and small amounts of data in an Emacs environment file.
 Emacs can be started up using an environment file faster than it can when reading in initialisation files.</p>
 
 <p>However, environment files tend to be much larger than initialisation files because they contain all the volatile
-information needed to re-start an Emacs editing session.</P>
+information needed to re-start an Emacs editing session.</p>
 
 
-<P>Emacs saves the following information in environment files:</P>
+<p>Emacs saves the following information in environment files:</p>
 
-<UL>
-<LI>Buffers</LI>
+<ul>
+<li>Buffers</li>
 
-<LI>Variables</LI>
+<li>Variables</li>
 
-<LI>All loaded MLisp functions, packages and libraries</LI>
+<li>All loaded MLisp functions, packages and libraries</li>
 
-<LI>Macros (including the keyboard macro)</LI>
+<li>Macros (including the keyboard macro)</li>
 
-<LI>Global and local bindings</LI>
+<li>Global and local bindings</li>
 
-<LI>Syntax tables</LI>
+<li>Syntax tables</li>
 
-<LI>Abbreviation tables</LI>
+<li>Abbreviation tables</li>
 
-<LI>Database search-lists</LI>
+<li>Database search-lists</li>
 
-<LI>subprocesses</LI>
+<li>subprocesses</li>
 
-<LI>Scheduled procedures.</LI>
-</UL>
+<li>Scheduled procedures.</li>
+</ul>
 
-<P>Subprocesses stored in an environment file are re-started when the Emacs environment is restored.
+<p>Subprocesses stored in an environment file are re-started when the Emacs environment is restored.
 The input, output and termination procedures and buffers are also restored. Note, however, that 
 recreated subprocesses execute with the default directory of the new Emacs process. Symbols and 
-logical names defined in the saved process are not restored.</P>
+logical names defined in the saved process are not restored.</p>
 
-<P>Scheduled procedures saved in an environment file are delivered at the specified time. 
-If that time has already expired, they are delivered immediately.</P>
+<p>Scheduled procedures saved in an environment file are delivered at the specified time. 
+If that time has already expired, they are delivered immediately.</p>
 
-<P>You use the <CODE>ESC-x save-environment</CODE> command to save the current environment 
-in an Emacs environment file. <CODE>save-environment</CODE> asks for the name of the file
+<p>You use the <code>ESC-x save-environment</code> command to save the current environment 
+in an Emacs environment file. <code>save-environment</code> asks for the name of the file
  you want to create and will supply a default file type of ".EMACS_ENVIRONMENT" if no file
- type is specified.</P>
+ type is specified.</p>
 
-<P>Use the /RESTORE qualifier on the Emacs command line to cause Emacs to 
-restore an environment file.</P>
+<p>Use the /RESTORE qualifier on the Emacs command line to cause Emacs to 
+restore an environment file.</p>
 
-<P>You cannot restore an environment file that was saved by a previous version of 
+<p>You cannot restore an environment file that was saved by a previous version of 
 Emacs. Emacs will not be able to restore an environment file if the VMS shared 
 libraries that Emacs uses have changed significantly since the environment was 
-saved (this often happens when VMS is upgraded).</P>
+saved (this often happens when VMS is upgraded).</p>
 
-<P>If Emacs detects an attempt to restore an incompatible environment, an error
+<p>If Emacs detects an attempt to restore an incompatible environment, an error
  message is displayed and the editing session is aborted. If this happens to you, 
-you must rebuild your environment file.</P>
+you must rebuild your environment file.</p>
 
-<HR align="LEFT" size="2" color="#800080">
-</BODY>
-</HTML>
+<hr align="LEFT" size="2" color="#800080">
+</body>
+</html>
 

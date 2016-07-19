@@ -1,28 +1,28 @@
 <!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
-<HTML>
-<HEAD>
-<TITLE>Functions I*</TITLE>
+<html>
+<head>
+<title>Functions I*</title>
 
-<LINK REL="STYLESHEET" HREF="styles.css">
-</HEAD>
-<BODY>
-<HR>
-<P><A name="if"></A>(<B>if</B> <CODE>test then-clause else-clause</CODE>)</P>
+<link rel="STYLESHEET" href="styles.css">
+</head>
+<body>
+<hr>
+<p><a name="if"></a>(<b>if</b> <code>test then-clause else-clause</code>)</p>
 
-<BLOCKQUOTE>
-<P>Executes and returns the value of <I>then-clause</I> if <I>test</I> is not zero; otherwise it executes <I>else-clause</I> if it is present.</P>
+<blockquote>
+<p>Executes and returns the value of <i>then-clause</i> if <i>test</i> is not zero; otherwise it executes <i>else-clause</i> if it is present.</p>
 
-<P><B>Example:</B> Tab to column 33 if dot is currently at the start of a line:</P>
+<p><b>Example:</b> Tab to column 33 if dot is currently at the start of a line:</p>
 
-<PRE>
+<pre>
 (if (bolp)
     (to-col 33)
 )
-</PRE>
+</pre>
 
-<P>You can also have multiple tests, which gives you the equivalent of switch or case statements in other programming languages:</P>
+<p>You can also have multiple tests, which gives you the equivalent of switch or case statements in other programming languages:</p>
 
-<PRE>
+<pre>
 (defun
     (month
         response
@@ -37,137 +37,137 @@
         )                   ; if
     )
 )
-</PRE>
+</pre>
 
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-<P><A name="illegal-operation"></A>(<B>illegal-operation</B>) All keys not currently bound</P>
+<hr>
+<p><a name="illegal-operation"></a>(<b>illegal-operation</b>) All keys not currently bound</p>
 
-<BLOCKQUOTE>
-<P>illegal-operation is bound to those keys that do not have a defined interpretation. Executing illegal-operation is an error.</P>
-</BLOCKQUOTE>
+<blockquote>
+<p>illegal-operation is bound to those keys that do not have a defined interpretation. Executing illegal-operation is an error.</p>
+</blockquote>
 
-<HR>
-<P><A name="incremental-search"></A>(<B>incremental-search</B>) ^F</P>
+<hr>
+<p><a name="incremental-search"></a>(<b>incremental-search</b>) ^F</p>
 
-<BLOCKQUOTE>
-<P>Start incremental search in forward search mode.
-See <A href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;extn&#39;,&#39;#incsearch&#39;)">extension incsearch</A> for details
-</P>
-</BLOCKQUOTE>
+<blockquote>
+<p>Start incremental search in forward search mode.
+See <a href="Z" onmouseover="return top.bemacs.mouseOver()"
+onclick="return top.bemacs.loadDocument(&#39;extn&#39;,&#39;#incsearch&#39;)">extension incsearch</a> for details
+</p>
+</blockquote>
 
-<HR>
-<P><A name="indent-C-procedure"></A>(<B>indent-C-procedure</B>) ESC-j</P>
+<hr>
+<p><a name="indent-C-procedure"></a>(<b>indent-C-procedure</b>) ESC-j</p>
 
-<BLOCKQUOTE>
-<P>Locates the current C language procedure and passes it as the standard input to the INDENT program. The resulting indented C procedure will replace the initial C procedure. The old text is temporarily stored in Kill buffer.</P>
-</BLOCKQUOTE>
+<blockquote>
+<p>Locates the current C language procedure and passes it as the standard input to the INDENT program. The resulting indented C procedure will replace the initial C procedure. The old text is temporarily stored in Kill buffer.</p>
+</blockquote>
 
-<HR>
-<P><A name="insert-character"></A>(<B>insert-character</B> <CODE>expression</CODE>)</P>
+<hr>
+<p><a name="insert-character"></a>(<b>insert-character</b> <code>expression</code>)</p>
 
-<BLOCKQUOTE>
-<P>Inserts its numeric argument into the buffer as a single character prefix-argument times.</P>
+<blockquote>
+<p>Inserts its numeric argument into the buffer as a single character prefix-argument times.</p>
 
-<P><B>Example:</B> Each of the following inserts a zero into the current buffer:</P>
+<p><b>Example:</b> Each of the following inserts a zero into the current buffer:</p>
 
-<PRE>
+<pre>
 (insert-character 48)
 
 (insert-character '0')
-</PRE>
+</pre>
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-<P><A name="insert-file"></A>(<B>insert-file</B> <CODE>file-name</CODE>) ^X-^I</P>
+<hr>
+<p><a name="insert-file"></a>(<b>insert-file</b> <code>file-name</code>) ^X-^I</p>
 
-<BLOCKQUOTE>
-<P>Inserts the specified file's contents at dot in the current buffer.</P>
+<blockquote>
+<p>Inserts the specified file's contents at dot in the current buffer.</p>
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A HREF="fn_a.html#append-to-file">append-to-file</A></LI>
-<LI><A HREF="fn_r.html#read-file">read-file</A></LI>
-<LI><A HREF="fn_v.html#visit-file">visit-file</A></LI>
-<LI><A HREF="fn_w.html#write-current-file">write-current-file</A></LI>
-<LI><A HREF="fn_w.html#write-file-exit">write-file-exit</A></LI>
-<LI><A HREF="fn_w.html#write-modified-files">write-modified-files</A></LI>
-<LI><A HREF="fn_w.html#write-named-file">write-named-file</A></LI>
-</UL>
+<ul>
+<li><a href="fn_a.html#append-to-file">append-to-file</a></li>
+<li><a href="fn_r.html#read-file">read-file</a></li>
+<li><a href="fn_v.html#visit-file">visit-file</a></li>
+<li><a href="fn_w.html#write-current-file">write-current-file</a></li>
+<li><a href="fn_w.html#write-file-exit">write-file-exit</a></li>
+<li><a href="fn_w.html#write-modified-files">write-modified-files</a></li>
+<li><a href="fn_w.html#write-named-file">write-named-file</a></li>
+</ul>
 
 
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-<P><A name="insert-string"></A>(<B>insert-string</B> <CODE>expression</CODE>)</P>
+<hr>
+<p><a name="insert-string"></a>(<b>insert-string</b> <code>expression</code>)</p>
 
-<BLOCKQUOTE>
-<P>Inserts the string that results from evaluating the given <I>expression</I>. <CODE>insert-string</CODE> concatenates multiple string arguments.</P>
+<blockquote>
+<p>Inserts the string that results from evaluating the given <i>expression</i>. <code>insert-string</code> concatenates multiple string arguments.</p>
 
-<P><B>Examples:</B></P>
-<P>Insert the current date and time into the current buffer:</P>
+<p><b>Examples:</b></p>
+<p>Insert the current date and time into the current buffer:</p>
 
-<PRE>
+<pre>
 (insert-string (current-time))
-</PRE>
+</pre>
 
-<P>Insert the current time and buffer name:</P>
+<p>Insert the current time and buffer name:</p>
 
-<PRE>
+<pre>
 (insert-string "Time:   " (current-time) "\nBuffer: " (current-buffer-name) "\n") 
-</PRE>
+</pre>
 
-<P>Sample output from this line:</P>
+<p>Sample output from this line:</p>
 
-<PRE>
+<pre>
 Time:   Tue Sep 28 10:48:41 1999
 Buffer: fred
-</PRE>
+</pre>
 
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-<P><A name="interactive">(<B>interactive</B>)</A></P>
+<hr>
+<p><a name="interactive">(<b>interactive</b>)</a></p>
 
-<BLOCKQUOTE>
-<P>Returns 1 if the invoking MLisp function was called interactively.</P>
+<blockquote>
+<p>Returns 1 if the invoking MLisp function was called interactively.</p>
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-<P><A name="interrupt-key"></A>(<B>interrupt-key</B>) ^G</P>
+<hr>
+<p><a name="interrupt-key"></a>(<b>interrupt-key</b>) ^G</p>
 
-<BLOCKQUOTE>
-<P>When bound to a single key causes any current activity within Emacs to be aborted, and forces Emacs to accept commands from the keyboard when that key is struck.</P>
+<blockquote>
+<p>When bound to a single key causes any current activity within Emacs to be aborted, and forces Emacs to accept commands from the keyboard when that key is struck.</p>
 
-<P>Binding interrupt-key to a sequence longer than one character does not allow the key sequence to interrupt Emacs. Only single key sequences can be used for interrupting.</P>
-</BLOCKQUOTE>
+<p>Binding interrupt-key to a sequence longer than one character does not allow the key sequence to interrupt Emacs. Only single key sequences can be used for interrupting.</p>
+</blockquote>
 
-<HR>
-<P><A name="is-bound"></A>(<B>is-bound</B> <CODE>variable-name...</CODE>)</P>
+<hr>
+<p><a name="is-bound"></a>(<b>is-bound</b> <code>variable-name...</code>)</p>
 
-<BLOCKQUOTE>
-<P>Returns 1 if all of its variable name arguments are bound to some storage.</P>
-</BLOCKQUOTE>
+<blockquote>
+<p>Returns 1 if all of its variable name arguments are bound to some storage.</p>
+</blockquote>
 
-<HR>
-<P><A name="is-function"></A>(<B>is-function</B> <CODE>string</CODE>)</P>
+<hr>
+<p><a name="is-function"></a>(<b>is-function</b> <code>string</code>)</p>
 
-<BLOCKQUOTE>
-<P>Checks that its string parameter is a defined function. It returns 1 if it is defined and 0 otherwise.</P>
+<blockquote>
+<p>Checks that its string parameter is a defined function. It returns 1 if it is defined and 0 otherwise.</p>
 
-<P>You can use this function to determine whether a function is defined before attempting to execute it.</P>
+<p>You can use this function to determine whether a function is defined before attempting to execute it.</p>
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-</BODY>
-</HTML>
+<hr>
+</body>
+</html>
 

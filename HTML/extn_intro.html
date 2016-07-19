@@ -1,58 +1,58 @@
 <!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
-<HTML>
-<HEAD>
-<TITLE>Packages and Subsystems - Introduction</TITLE>
+<html>
+<head>
+<title>Packages and Subsystems - Introduction</title>
 
-<LINK REL="STYLESHEET" HREF="styles.css">
-</HEAD>
-<BODY>
-<H1>Packages and Subsystems</H1>
-<H2><A name="introduction"></A>Introduction</H2>
+<link rel="STYLESHEET" href="styles.css">
+</head>
+<body>
+<h1>packages and subsystems</h1>
+<h2><a name="introduction"></a>Introduction</h2>
 
-<P>Barry's Emacs is distributed with a number of packages, subsystems and libraries. These are Mock Lisp programs that extend Emacs to provide specific functions not built in to Emacs itself.</P>
+<p>Barry's Emacs is distributed with a number of packages, subsystems and libraries. These are Mock Lisp programs that extend Emacs to provide specific functions not built in to Emacs itself.</p>
 
-<P>The packages, subsystems and libraries of code distributed with Emacs are stored in the database library <CODE>emacs_library:emacslib</CODE></P>
+<p>The packages, subsystems and libraries of code distributed with Emacs are stored in the database library <code>emacs_library:emacslib</code></p>
 
-<HR>
-<H2><A name="subsystems"></A>Emacs Subsystems</H2>
+<hr>
+<h2><a name="subsystems"></a>Emacs Subsystems</h2>
 
-<P>A subsystem subsystem is an Emacs function which is an interactive program in its own right: it reads commands in a language of its own, and displays the results.</P>
+<p>A subsystem subsystem is an Emacs function which is an interactive program in its own right: it reads commands in a language of its own, and displays the results.</p>
 
-<P>A subsystem must be loaded before it can be used. Many subsystems are automtically loaded the first time you execute them. Emacs loads a subsystem by first searching the directories in the EMACS_PATH logical name search-list. If the package is not found in the Emacs path, it is searched for in the MLisp-library database search-list.</P>
+<p>A subsystem must be loaded before it can be used. Many subsystems are automtically loaded the first time you execute them. Emacs loads a subsystem by first searching the directories in the EMACS_PATH logical name search-list. If the package is not found in the Emacs path, it is searched for in the MLisp-library database search-list.</p>
 
-<P>You enter a subsystem by typing an Emacs command which invokes the subsystem. Once entered, the subsystem runs until a specific command to exit the subsystem is typed.</P>
+<p>You enter a subsystem by typing an Emacs command which invokes the subsystem. Once entered, the subsystem runs until a specific command to exit the subsystem is typed.</p>
 
-<P>The commands understood by a subsystem are not like normal Emacs commands, because their purpose is something other than editing text. In Emacs, most commands are control or escape sequences because printing characters insert themselves. In most subsystems, there is no insertion of text, so non-control characters can act as commands.</P>
+<p>The commands understood by a subsystem are not like normal Emacs commands, because their purpose is something other than editing text. In Emacs, most commands are control or escape sequences because printing characters insert themselves. In most subsystems, there is no insertion of text, so non-control characters can act as commands.</p>
 
-<P>While you are inside a subsystem, the mode line usually gives the name of the subsystem, as well as other information optionally supplied by the subsystem.</P>
+<p>While you are inside a subsystem, the mode line usually gives the name of the subsystem, as well as other information optionally supplied by the subsystem.</p>
 
-<HR>
-<H2><A name="packages"></A>Emacs Packages</H2>
+<hr>
+<h2><a name="packages"></a>Emacs Packages</h2>
 
-<P>Emacs packages are subsystems that can be invoked from the DCL command line as well as from inside Emacs.</P>
+<p>Emacs packages are subsystems that can be invoked from the DCL command line as well as from inside Emacs.</p>
 
-<P>To run a package from the DCL command line, use the /PACKAGE qualifier on the Emacs DCL command:</P>
+<p>To run a package from the DCL command line, use the /PACKAGE qualifier on the Emacs DCL command:</p>
 
-<P>$ EMACS/PACKAGE=<I>PACKAGE-NAME</I></P>
+<p>$ EMACS/PACKAGE=<i>PACKAGE-NAME</i></p>
 
-<P>Emacs loads packages by loading a file named <I>PACKAGE-NAME</I>.MLP (the .MLP filetype stands for Mock Lisp Package). Emacs searches for the package file by first looking in the directories in the EMACS_PATH logical name search-list. If the package is not found in the Emacs path, it is searched for in the in the MLisp-library database search-list. When the package has been found, it is loaded, and Emacs starts execution of the package by executing the routine <I>package-name</I>-com which is defined in the .MLP file.</P>
+<p>Emacs loads packages by loading a file named <i>PACKAGE-NAME</i>.MLP (the .MLP filetype stands for Mock Lisp Package). Emacs searches for the package file by first looking in the directories in the EMACS_PATH logical name search-list. If the package is not found in the Emacs path, it is searched for in the in the MLisp-library database search-list. When the package has been found, it is loaded, and Emacs starts execution of the package by executing the routine <i>package-name</i>-com which is defined in the .MLP file.</p>
 
-<P>When the package is running, you do not usually have access to the normal editing commands, as the package will define its own command language.</P>
+<p>When the package is running, you do not usually have access to the normal editing commands, as the package will define its own command language.</p>
 
-<P>While you are running a package, the mode line usually gives the name of the package, as well as other information optionally supplied by the package.</P>
+<p>While you are running a package, the mode line usually gives the name of the package, as well as other information optionally supplied by the package.</p>
 
-<HR>
-<H2><A name="libraries"></A>Emacs Libraries</H2>
+<hr>
+<h2><a name="libraries"></a>Emacs Libraries</h2>
 
-<P>Emacs libraries are Mock Lisp programs that define useful functions. They are not interactive programs in their own right like subsystems and packages; they are more like subroutines in a high-level programming language which provide the user (or Emacs itself) with features not built in to Emacs.</P>
+<p>Emacs libraries are Mock Lisp programs that define useful functions. They are not interactive programs in their own right like subsystems and packages; they are more like subroutines in a high-level programming language which provide the user (or Emacs itself) with features not built in to Emacs.</p>
 
-<P>The functions defined by a library are not accessible until the appropriate library has been loaded. Libraries can be loaded explicitly by the user, or they may be loaded automatically.execute-mlisp-fileMLisp-library</P>
+<p>The functions defined by a library are not accessible until the appropriate library has been loaded. Libraries can be loaded explicitly by the user, or they may be loaded automatically.execute-mlisp-fileMLisp-library</p>
 
-<P>To load a library while Emacs is running, use ESC-x execute-mlisp-file. Emacs looks for the library using the EMACS_PATH logical name. If the library is not found in the Emacs path, it is searched for in the in the MLisp-library database search-list. Once Emacs has located the library, it is loaded. All the functions defined in the library are then available for use.</P>
+<p>To load a library while Emacs is running, use ESC-x execute-mlisp-file. Emacs looks for the library using the EMACS_PATH logical name. If the library is not found in the Emacs path, it is searched for in the in the MLisp-library database search-list. Once Emacs has located the library, it is loaded. All the functions defined in the library are then available for use.</p>
 
-<P>Some libraries are loaded automatically in the course of executing certain functions. You will not normally notice this. This facility is known as autoloading autoloading. Autoloading is used to make library functions available without you having to know how to load the library; autoloading also saves space in Emacs by loading libraries only when you need them.</P>
+<p>Some libraries are loaded automatically in the course of executing certain functions. You will not normally notice this. This facility is known as autoloading autoloading. Autoloading is used to make library functions available without you having to know how to load the library; autoloading also saves space in Emacs by loading libraries only when you need them.</p>
 
-<P>In addition to making functions accessible to ESC-x, the library may bind some functions to key sequences. This is done by the library loading another file called <I>LIBRARY-NAME</I>.KEY, where <I>LIBRARY-NAME</I> is the name of the library being loaded. This separation of functions from key bindings allows you to define your own bindings for functions in the library that will override the default bindings. To do this, make a private copy of the .KEY file, edit it to make your own bindings, then put the modified file in your EMACS_PATH or in in your <CODE>emacslib</CODE> database file. When Emacs loads the <CODE>.key</CODE> file, your private copy will be loaded if it exists, rather than the default system copy.</P>
-</BODY>
-</HTML>
+<p>In addition to making functions accessible to ESC-x, the library may bind some functions to key sequences. This is done by the library loading another file called <i>LIBRARY-NAME</i>.KEY, where <i>LIBRARY-NAME</i> is the name of the library being loaded. This separation of functions from key bindings allows you to define your own bindings for functions in the library that will override the default bindings. To do this, make a private copy of the .KEY file, edit it to make your own bindings, then put the modified file in your EMACS_PATH or in in your <code>emacslib</code> database file. When Emacs loads the <code>.key</code> file, your private copy will be loaded if it exists, rather than the default system copy.</p>
+</body>
+</html>
 

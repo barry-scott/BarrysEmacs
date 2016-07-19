@@ -1,62 +1,62 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
-<HTML>
-<HEAD>
-<TITLE>Variables - P</TITLE>
+<html>
+<head>
+<title>Variables - P</title>
 
-<LINK REL="STYLESHEET" HREF="styles.css">
-</HEAD>
-<BODY>
-<HR>
-<P><A name="pop-up-windows"></A><B>pop-up-windows</B> &laquo; 1</P>
+<link rel="STYLESHEET" href="styles.css">
+</head>
+<body>
+<hr>
+<p><a name="pop-up-windows"></a><b>pop-up-windows</b> &laquo; 1</p>
 
-<BLOCKQUOTE>
-<P>Controls window pop-ups. If non-zero, Emacs will try to use a window other than the current window when it spontaneously generates a buffer that it wants you to see, or when you visit a file. If set to zero, the current window is always used.</P>
-</BLOCKQUOTE>
+<blockquote>
+<p>Controls window pop-ups. If non-zero, Emacs will try to use a window other than the current window when it spontaneously generates a buffer that it wants you to see, or when you visit a file. If set to zero, the current window is always used.</p>
+</blockquote>
 
-<HR>
-<P><A name="prefix-argument"></A><B>prefix-argument</B></P>
+<hr>
+<p><a name="prefix-argument"></a><b>prefix-argument</b></p>
 
-<BLOCKQUOTE>
-<P>Every function invocation is always prefixed by a numeric argument, either explicitly with prefix-argument or implicitly with provide-prefix-argument. The value of the variable prefix-argument is the argument prefixed to the invocation of the current MLisp function.</P>
-</BLOCKQUOTE>
+<blockquote>
+<p>Every function invocation is always prefixed by a numeric argument, either explicitly with prefix-argument or implicitly with provide-prefix-argument. The value of the variable prefix-argument is the argument prefixed to the invocation of the current MLisp function.</p>
+</blockquote>
 
-<HR>
-<P><A name="prefix-argument-provided"></A><B>prefix-argument-provided</B></P>
+<hr>
+<p><a name="prefix-argument-provided"></a><b>prefix-argument-provided</b></p>
 
-<BLOCKQUOTE>
-<P>If non-zero, a prefix argument has been provided for the current function. The value of prefix-argument-provided can be obtained from the prefix-argument variable.</P>
-</BLOCKQUOTE>
+<blockquote>
+<p>If non-zero, a prefix argument has been provided for the current function. The value of prefix-argument-provided can be obtained from the prefix-argument variable.</p>
+</blockquote>
 
-<HR>
-<P><A name="prefix-string"></A><B>prefix-string</B> &laquo;</P>
+<hr>
+<p><a name="prefix-string"></a><b>prefix-string</b> &laquo;</p>
 
-<BLOCKQUOTE>
-<P>Contains the string that is inserted after an automatic newline has been generated in response to moving the cursor past the right margin. This is generally used by the language-dependent commenting features.</P>
-</BLOCKQUOTE>
+<blockquote>
+<p>Contains the string that is inserted after an automatic newline has been generated in response to moving the cursor past the right margin. This is generally used by the language-dependent commenting features.</p>
+</blockquote>
 
-<HR>
-<P><A name="previous-directory"></A><B>previous-directory</B> &laquo;</P>
+<hr>
+<p><a name="previous-directory"></a><b>previous-directory</b> &laquo;</p>
 
-<BLOCKQUOTE>
-<P>This variable is used by Barry's Emacs as part of support its bemacs command line interface to the bemacs_server process.</P>
+<blockquote>
+<p>This variable is used by Barry's Emacs as part of support its bemacs command line interface to the bemacs_server process.</p>
 
-<P>Each time Barry's Emacs starts to process a new command line the current directory is recorded in the previous-directory variable.</P>
+<p>Each time Barry's Emacs starts to process a new command line the current directory is recorded in the previous-directory variable.</p>
 
-<P>Once the command line process finishes Emacs automatically sets the current directory to the value held in previous-directory.</P>
+<p>Once the command line process finishes Emacs automatically sets the current directory to the value held in previous-directory.</p>
 
-<P>The command line processing MLisp code can cause Emacs's current directory to change by setting previous-directory to a suitable directory.</P>
+<p>The command line processing MLisp code can cause Emacs's current directory to change by setting previous-directory to a suitable directory.</p>
 
-<P>The MLisp Programmers Guide has furthur information about <A href="Z" onmouseover="return top.bemacs.mouseOver()" onclick="return top.bemacs.loadDocument(&#39;pg&#39;,&#39;#commandlines&#39;)">Command Lines</A>. Including how to customise command line handling.</P>
-</BLOCKQUOTE>
+<p>The MLisp Programmers Guide has furthur information about <a href="Z" onmouseover="return top.bemacs.mouseOver()" onclick="return top.bemacs.loadDocument(&#39;pg&#39;,&#39;#commandlines&#39;)">Command Lines</a>. Including how to customise command line handling.</p>
+</blockquote>
 
-<HR>
-<P><A name="process-key-hook"></A><B>process-key-hook</B> &laquo;</P>
+<hr>
+<p><a name="process-key-hook"></a><b>process-key-hook</b> &laquo;</p>
 
-<BLOCKQUOTE>
-<P>This buffer-specific variable holds the name of a function to call after each keymap command. last-keys-struck holds the string of keys that invoked the last command.</P>
-</BLOCKQUOTE>
+<blockquote>
+<p>This buffer-specific variable holds the name of a function to call after each keymap command. last-keys-struck holds the string of keys that invoked the last command.</p>
+</blockquote>
 
-<HR>
-</BODY>
-</HTML>
+<hr>
+</body>
+</html>
 

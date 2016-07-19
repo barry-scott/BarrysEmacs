@@ -20,7 +20,4 @@ echo "Info: Create DMG"
     "Barry's Emacs" \
     tmp/${PKGNAME}.dmg
 
-#hdiutil create -size 100m -srcfolder tmp/${PKGNAME} tmp/tmp.dmg
-#hdiutil convert tmp/tmp.dmg -format UDZO -imagekey zlib-level=9 -o tmp/${PKGNAME}.dmg
-
 echo "Info: brand.make-macosx-kit.sh Kits/MacOSX - end"

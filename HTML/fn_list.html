@@ -1,954 +1,954 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML>
-<HEAD>
-<TITLE>Emacs functions</TITLE>
+<html>
+<head>
+<title>Emacs functions</title>
 
-<LINK REL="STYLESHEET" HREF="styles.css">
-</HEAD>
-<BODY onload="top.bemacs.indexLoadedHandler(window)">
-<P><A name="shriek"></A></P>
+<link rel="STYLESHEET" href="styles.css">
+</head>
+<body onload="top.bemacs.indexLoadedHandler(window)">
+<p><a name="shriek"></a></p>
 
-<P><A href="fn_shriek.html#complement" target="body">! <FONT size="-1">(complement)</FONT></A>
-<BR>
-<A href="fn_shriek.html#notequal" target="body">!= <FONT size="-1">(notequal)</FONT></A>
-<BR>
-<A href="fn_shriek.html#modulus" target="body">% <FONT size="-1">(modulus)</FONT></A>
-<BR>
-<A href="fn_shriek.html#and" target="body">&amp; <FONT size="-1">(and)</FONT></A>
-<BR>
-<A href="fn_shriek.html#multiply" target="body">* <FONT size="-1">(multiply)</FONT></A>
-<BR>
-<A href="fn_shriek.html#plus" target="body">+ <FONT size="-1">(plus)</FONT></A>
-<BR>
-<A href="fn_shriek.html#minus" target="body">- <FONT size="-1">(minus)</FONT></A>
-<BR>
-<A href="fn_shriek.html#divide" target="body">/ <FONT size="-1">(divide)</FONT></A>
-<BR>
-<A href="fn_shriek.html#lessthan" target="body">&lt; <FONT size="-1">(less than)</FONT></A>
-<BR>
-<A href="fn_shriek.html#shiftleft" target="body">&lt;&lt; <FONT size="-1">(shift left)</FONT></A>
-<BR>
-<A href="fn_shriek.html#lessorequal" target="body">&lt;= <FONT size="-1">(less or equal)</FONT></A>
-<BR>
-<A href="fn_shriek.html#equal" target="body">= <FONT size="-1">(equal)</FONT></A>
-<BR>
-<A href="fn_shriek.html#greater" target="body">&gt; <FONT size="-1">(greater)</FONT></A>
-<BR>
-<A href="fn_shriek.html#greaterorequal" target="body">&gt;= <FONT size="-1">(greater or equal)</FONT></A>
-<BR>
-<A href="fn_shriek.html#rightshift" target="body">&gt;&gt; <FONT size="-1">(rightshift)</FONT></A>
-<BR>
-<A href="fn_shriek.html#or" target="body">^ <FONT size="-1">(or)</FONT></A>
-<BR>
-<A href="fn_shriek.html#commandprefix" target="body">^X-prefix <FONT size="-1">(command prefix)</FONT></A>
-<BR>
-<A href="fn_shriek.html#logicalor" target="body">| <FONT size="-1">(logical or)</FONT></A>
-<BR>
-</P>
+<p><a href="fn_shriek.html#complement" target="body">! <font size="-1">(complement)</font></a>
+<br>
+<a href="fn_shriek.html#notequal" target="body">!= <font size="-1">(notequal)</font></a>
+<br>
+<a href="fn_shriek.html#modulus" target="body">% <font size="-1">(modulus)</font></a>
+<br>
+<a href="fn_shriek.html#and" target="body">&amp; <font size="-1">(and)</font></a>
+<br>
+<a href="fn_shriek.html#multiply" target="body">* <font size="-1">(multiply)</font></a>
+<br>
+<a href="fn_shriek.html#plus" target="body">+ <font size="-1">(plus)</font></a>
+<br>
+<a href="fn_shriek.html#minus" target="body">- <font size="-1">(minus)</font></a>
+<br>
+<a href="fn_shriek.html#divide" target="body">/ <font size="-1">(divide)</font></a>
+<br>
+<a href="fn_shriek.html#lessthan" target="body">&lt; <font size="-1">(less than)</font></a>
+<br>
+<a href="fn_shriek.html#shiftleft" target="body">&lt;&lt; <font size="-1">(shift left)</font></a>
+<br>
+<a href="fn_shriek.html#lessorequal" target="body">&lt;= <font size="-1">(less or equal)</font></a>
+<br>
+<a href="fn_shriek.html#equal" target="body">= <font size="-1">(equal)</font></a>
+<br>
+<a href="fn_shriek.html#greater" target="body">&gt; <font size="-1">(greater)</font></a>
+<br>
+<a href="fn_shriek.html#greaterorequal" target="body">&gt;= <font size="-1">(greater or equal)</font></a>
+<br>
+<a href="fn_shriek.html#rightshift" target="body">&gt;&gt; <font size="-1">(rightshift)</font></a>
+<br>
+<a href="fn_shriek.html#or" target="body">^ <font size="-1">(or)</font></a>
+<br>
+<a href="fn_shriek.html#commandprefix" target="body">^X-prefix <font size="-1">(command prefix)</font></a>
+<br>
+<a href="fn_shriek.html#logicalor" target="body">| <font size="-1">(logical or)</font></a>
+<br>
+</p>
 
-<P><A name="A"></A></P>
+<p><a name="A"></a></p>
 
-<P><A href="fn_a.html#append-region-to-buffer" target="body">append-region-to-buffer</A>
-<BR>
-<A href="fn_a.html#append-to-file" target="body">append-to-file</A>
-<BR>
-<A href="fn_a.html#apply-auto-execute" target="body">apply-auto-execute</A>
-<BR>
-<A href="fn_a.html#apply-colour-to-region" target="body">apply-colour-to-region</A>
-<BR>
-<A href="fn_a.html#apropos" target="body">apropos</A>
-<BR>
-<A href="fn_a.html#apropos-command" target="body">apropos-command</A>
-<BR>
-<A href="fn_a.html#apropos-variable" target="body">apropos-variable</A>
-<BR>
-<A href="fn_a.html#arg-is-qualifier" target="body">arg-is-qualifier</A>
-<BR>
-<A href="fn_a.html#arg" target="body">arg</A>
-<BR>
-<A href="fn_a.html#argc" target="body">argc</A>
-<BR>
-<A href="fn_a.html#argument-prefix" target="body">argument-prefix</A>
-<BR>
-<A href="fn_a.html#argv" target="body">argv</A>
-<BR>
-<A href="fn_a.html#array" target="body">array</A>
-<BR>
-<A href="fn_a.html#auto-execute" target="body">auto-execute</A>
-<BR>
-<A href="fn_a.html#autoload" target="body">autoload</A>
-<BR>
-</P>
+<p><a href="fn_a.html#append-region-to-buffer" target="body">append-region-to-buffer</a>
+<br>
+<a href="fn_a.html#append-to-file" target="body">append-to-file</a>
+<br>
+<a href="fn_a.html#apply-auto-execute" target="body">apply-auto-execute</a>
+<br>
+<a href="fn_a.html#apply-colour-to-region" target="body">apply-colour-to-region</a>
+<br>
+<a href="fn_a.html#apropos" target="body">apropos</a>
+<br>
+<a href="fn_a.html#apropos-command" target="body">apropos-command</a>
+<br>
+<a href="fn_a.html#apropos-variable" target="body">apropos-variable</a>
+<br>
+<a href="fn_a.html#arg-is-qualifier" target="body">arg-is-qualifier</a>
+<br>
+<a href="fn_a.html#arg" target="body">arg</a>
+<br>
+<a href="fn_a.html#argc" target="body">argc</a>
+<br>
+<a href="fn_a.html#argument-prefix" target="body">argument-prefix</a>
+<br>
+<a href="fn_a.html#argv" target="body">argv</a>
+<br>
+<a href="fn_a.html#array" target="body">array</a>
+<br>
+<a href="fn_a.html#auto-execute" target="body">auto-execute</a>
+<br>
+<a href="fn_a.html#autoload" target="body">autoload</a>
+<br>
+</p>
 
-<P><A name="B"></A></P>
+<p><a name="B"></a></p>
 
-<P><A href="fn_b.html#backward-balanced-paren-line" target="body">backward-balanced-paren-line</A>
-<BR>
-<A href="fn_b.html#backward-character" target="body">backward-character</A>
-<BR>
-<A href="fn_b.html#backward-paragraph" target="body">backward-paragraph</A>
-<BR>
-<A href="fn_b.html#backward-paren" target="body">backward-paren</A>
-<BR>
-<A href="fn_b.html#backward-word" target="body">backward-word</A>
-<BR>
-<A href="fn_b.html#backward-sentence" target="body">backward-sentence</A>
-<BR>
-<A href="fn_b.html#baud-rate" target="body">baud-rate</A>
-<BR>
-<A href="fn_b.html#beginning-of-file" target="body">beginning-of-file</A>
-<BR>
-<A href="fn_b.html#beginning-of-line" target="body">beginning-of-line</A>
-<BR>
-<A href="fn_b.html#beginning-of-window" target="body">beginning-of-window</A>
-<BR>
-<A href="fn_b.html#bind-to-key" target="body">bind-to-key</A>
-<BR>
-<A href="fn_b.html#bobp" target="body">bobp</A>
-<BR>
-<A href="fn_b.html#bolp" target="body">bolp</A>
-<BR>
-<A href="fn_b.html#bounds-of-array" target="body">bounds-of-array</A>
-<BR>
-<A href="fn_b.html#breakpoint" target="body">breakpoint</A>
-<BR>
-<A href="fn_b.html#buffer-size" target="body">buffer-size</A>
-<BR>
-</P>
+<p><a href="fn_b.html#backward-balanced-paren-line" target="body">backward-balanced-paren-line</a>
+<br>
+<a href="fn_b.html#backward-character" target="body">backward-character</a>
+<br>
+<a href="fn_b.html#backward-paragraph" target="body">backward-paragraph</a>
+<br>
+<a href="fn_b.html#backward-paren" target="body">backward-paren</a>
+<br>
+<a href="fn_b.html#backward-word" target="body">backward-word</a>
+<br>
+<a href="fn_b.html#backward-sentence" target="body">backward-sentence</a>
+<br>
+<a href="fn_b.html#baud-rate" target="body">baud-rate</a>
+<br>
+<a href="fn_b.html#beginning-of-file" target="body">beginning-of-file</a>
+<br>
+<a href="fn_b.html#beginning-of-line" target="body">beginning-of-line</a>
+<br>
+<a href="fn_b.html#beginning-of-window" target="body">beginning-of-window</a>
+<br>
+<a href="fn_b.html#bind-to-key" target="body">bind-to-key</a>
+<br>
+<a href="fn_b.html#bobp" target="body">bobp</a>
+<br>
+<a href="fn_b.html#bolp" target="body">bolp</a>
+<br>
+<a href="fn_b.html#bounds-of-array" target="body">bounds-of-array</a>
+<br>
+<a href="fn_b.html#breakpoint" target="body">breakpoint</a>
+<br>
+<a href="fn_b.html#buffer-size" target="body">buffer-size</a>
+<br>
+</p>
 
-<P><A name="C"></A></P>
+<p><a name="C"></a></p>
 
-<P><A href="fn_c.html#c-mode" target="body">c-mode</A>
-<BR>
-<A href="fn_c.html#cequals" target="body">c=</A>
-<BR>
-<A href="fn_c.html#case-capitalize" target="body">case-capitalize</A>
-<BR>
-<A href="fn_c.html#case-invert" target="body">case-invert</A>
-<BR>
-<A href="fn_c.html#case-lower" target="body">case-lower</A>
-<BR>
-<A href="fn_c.html#case-upper" target="body">case-upper</A>
-<BR>
-<A href="fn_c.html#case-region-capitalize" target="body">case-region-capitalize</A>
-<BR>
-<A href="fn_c.html#case-region-invert" target="body">case-region-invert</A>
-<BR>
-<A href="fn_c.html#case-region-lower" target="body">case-region-lower</A>
-<BR>
-<A href="fn_c.html#case-region-upper" target="body">case-region-upper</A>
-<BR>
-<A href="fn_c.html#case-string-capitalize" target="body">case-string-capitalize</A>
-<BR>
-<A href="fn_c.html#case-string-invert" target="body">case-string-invert</A>
-<BR>
-<A href="fn_c.html#case-string-lower" target="body">case-string-lower</A>
-<BR>
-<A href="fn_c.html#case-string-upper" target="body">case-string-upper</A>
-<BR>
-<A href="fn_c.html#case-word-capitalize" target="body">case-word-capitalize</A>
-<BR>
-<A href="fn_c.html#case-word-invert" target="body">case-word-invert</A>
-<BR>
-<A href="fn_c.html#case-word-lower" target="body">case-word-lower</A>
-<BR>
-<A href="fn_c.html#case-word-upper" target="body">case-word-upper</A>
-<BR>
-<A href="fn_c.html#change-directory" target="body">change-directory</A>
-<BR>
-<A href="fn_c.html#char-to-string" target="body">char-to-string</A>
-<BR>
-<A href="fn_c.html#checkpoint" target="body">checkpoint</A>
-<BR>
-<A href="fn_c.html#checkpoint-buffers" target="body">checkpoint-buffers</A>
-<BR>
-<A href="fn_c.html#column-to-left-of-window" target="body">column-to-left-of-window</A>
-<BR>
-<A href="fn_c.html#compile-it" target="body">compile-it</A>
-<BR>
-<A href="fn_c.html#concat" target="body">concat</A>
-<BR>
-<A href="fn_c.html#convert-key-string" target="body">convert-key-string</A>
-<BR>
-<A href="fn_c.html#copy-region-to-buffer" target="body">copy-region-to-buffer</A>
-<BR>
-<A href="fn_c.html#correct-word" target="body">correct-word</A>
-<BR>
-<A href="fn_c.html#current-buffer-name" target="body">current-buffer-name</A>
-<BR>
-<A href="fn_c.html#current-column" target="body">current-column</A>
-<BR>
-<A href="fn_c.html#current-directory" target="body">current-directory</A>
-<BR>
-<A href="fn_c.html#current-file-name" target="body">current-file-name</A>
-<BR>
-<A href="fn_c.html#current-indent" target="body">current-indent</A>
-<BR>
-<A href="fn_c.html#current-line-number" target="body">current-line-number</A>
-<BR>
-<A href="fn_c.html#current-process-name" target="body">current-process-name</A>
-<BR>
-<A href="fn_c.html#current-syntax-entity" target="body">current-syntax-entity</A>
-<BR>
-<A href="fn_c.html#current-time" target="body">current-time</A>
-<BR>
-</P>
+<p><a href="fn_c.html#c-mode" target="body">c-mode</a>
+<br>
+<a href="fn_c.html#cequals" target="body">c=</a>
+<br>
+<a href="fn_c.html#case-capitalize" target="body">case-capitalize</a>
+<br>
+<a href="fn_c.html#case-invert" target="body">case-invert</a>
+<br>
+<a href="fn_c.html#case-lower" target="body">case-lower</a>
+<br>
+<a href="fn_c.html#case-upper" target="body">case-upper</a>
+<br>
+<a href="fn_c.html#case-region-capitalize" target="body">case-region-capitalize</a>
+<br>
+<a href="fn_c.html#case-region-invert" target="body">case-region-invert</a>
+<br>
+<a href="fn_c.html#case-region-lower" target="body">case-region-lower</a>
+<br>
+<a href="fn_c.html#case-region-upper" target="body">case-region-upper</a>
+<br>
+<a href="fn_c.html#case-string-capitalize" target="body">case-string-capitalize</a>
+<br>
+<a href="fn_c.html#case-string-invert" target="body">case-string-invert</a>
+<br>
+<a href="fn_c.html#case-string-lower" target="body">case-string-lower</a>
+<br>
+<a href="fn_c.html#case-string-upper" target="body">case-string-upper</a>
+<br>
+<a href="fn_c.html#case-word-capitalize" target="body">case-word-capitalize</a>
+<br>
+<a href="fn_c.html#case-word-invert" target="body">case-word-invert</a>
+<br>
+<a href="fn_c.html#case-word-lower" target="body">case-word-lower</a>
+<br>
+<a href="fn_c.html#case-word-upper" target="body">case-word-upper</a>
+<br>
+<a href="fn_c.html#change-directory" target="body">change-directory</a>
+<br>
+<a href="fn_c.html#char-to-string" target="body">char-to-string</a>
+<br>
+<a href="fn_c.html#checkpoint" target="body">checkpoint</a>
+<br>
+<a href="fn_c.html#checkpoint-buffers" target="body">checkpoint-buffers</a>
+<br>
+<a href="fn_c.html#column-to-left-of-window" target="body">column-to-left-of-window</a>
+<br>
+<a href="fn_c.html#compile-it" target="body">compile-it</a>
+<br>
+<a href="fn_c.html#concat" target="body">concat</a>
+<br>
+<a href="fn_c.html#convert-key-string" target="body">convert-key-string</a>
+<br>
+<a href="fn_c.html#copy-region-to-buffer" target="body">copy-region-to-buffer</a>
+<br>
+<a href="fn_c.html#correct-word" target="body">correct-word</a>
+<br>
+<a href="fn_c.html#current-buffer-name" target="body">current-buffer-name</a>
+<br>
+<a href="fn_c.html#current-column" target="body">current-column</a>
+<br>
+<a href="fn_c.html#current-directory" target="body">current-directory</a>
+<br>
+<a href="fn_c.html#current-file-name" target="body">current-file-name</a>
+<br>
+<a href="fn_c.html#current-indent" target="body">current-indent</a>
+<br>
+<a href="fn_c.html#current-line-number" target="body">current-line-number</a>
+<br>
+<a href="fn_c.html#current-process-name" target="body">current-process-name</a>
+<br>
+<a href="fn_c.html#current-syntax-entity" target="body">current-syntax-entity</a>
+<br>
+<a href="fn_c.html#current-time" target="body">current-time</a>
+<br>
+</p>
 
-<P><A name="D"></A></P>
+<p><a name="D"></a></p>
 
-<P><A href="fn_d.html#dabbrev" target="body">dabbrev</A>
-<BR>
-<P><A href="fn_d.html#debug" target="body">debug</A>
-<BR>
-<A href="fn_d.html#debug-emacs" target="body">debug-emacs</A>
-<BR>
-<A href="fn_d.html#declare-buffer-specific" target="body">declare-buffer-specific</A>
-<BR>
-<A href="fn_d.html#declare-global" target="body">declare-global</A>
-<BR>
-<A href="fn_d.html#decompile-current-line" target="body">decompile-current-line</A>
-<BR>
-<A href="fn_d.html#decompile-mlisp-function" target="body">decompile-mlisp-function</A>
-<BR>
-<A href="fn_d.html#default-emacs-init" target="body">default-emacs-init</A>
-<BR>
-<A href="fn_d.html#default-global-keymap" target="body">default-global-keymap</A>
-<BR>
-<A href="fn_d.html#define-buffer-macro" target="body">define-buffer-macro</A>
-<BR>
-<A href="fn_d.html#define-global-abbrev" target="body">define-global-abbrev</A>
-<BR>
-<A href="fn_d.html#define-hooked-global-abbrev" target="body">define-hooked-global-abbrev</A>
-<BR>
-<A href="fn_d.html#define-hooked-local-abbrev" target="body">define-hooked-local-abbrev</A>
-<BR>
-<A href="fn_d.html#define-keyboard-macro" target="body">define-keyboard-macro</A>
-<BR>
-<A href="fn_d.html#define-keymap" target="body">define-keymap</A>
-<BR>
-<A href="fn_d.html#define-local-abbrev" target="body">define-local-abbrev</A>
-<BR>
-<A href="fn_d.html#define-string-macro" target="body">define-string-macro</A>
-<BR>
-<A href="fn_d.html#defun" target="body">defun</A>
-<BR>
-<A href="fn_d.html#delete-buffer" target="body">delete-buffer</A>
-<BR>
-<A href="fn_d.html#delete-next-character" target="body">delete-next-character</A>
-<BR>
-<A href="fn_d.html#delete-next-word" target="body">delete-next-word</A>
-<BR>
-<A href="fn_d.html#delete-other-windows" target="body">delete-other-windows</A>
-<BR>
-<A href="fn_d.html#delete-previous-character" target="body">delete-previous-character</A>
-<BR>
-<A href="fn_d.html#delete-previous-word" target="body">delete-previous-word</A>
-<BR>
-<A href="fn_d.html#delete-region-to-buffer" target="body">delete-region-to-buffer</A>
-<BR>
-<A href="fn_d.html#delete-to-killbuffer" target="body">delete-to-killbuffer</A>
-<BR>
-<A href="fn_d.html#delete-white-space" target="body">delete-white-space</A>
-<BR>
-<A href="fn_d.html#delete-window" target="body">delete-window</A>
-<BR>
-<A href="fn_d.html#describe-bindings" target="body">describe-bindings</A>
-<BR>
-<A href="fn_d.html#describe-command" target="body">describe-command</A>
-<BR>
-<A href="fn_d.html#describe-key" target="body">describe-key</A>
-<BR>
-<A href="fn_d.html#describe-variable" target="body">describe-variable</A>
-<BR>
-<A href="fn_d.html#describe-word-in-buffer" target="body">describe-word-in-buffer</A>
-<BR>
-<A href="fn_d.html#digit" target="body">digit</A>
-<BR>
-<A href="fn_d.html#dot" target="body">dot</A>
-<BR>
-<A href="fn_d.html#dot-is-visible" target="body">dot-is-visible</A>
-<BR>
-<A href="fn_d.html#down-window" target="body">down-window</A>
-<BR>
-<A href="fn_d.html#dump-abbreviation-tables" target="body">dump-abbreviation-tables</A>
-<BR>
-<A href="fn_d.html#dump-memory-statistics" target="body">dump-memory-statistics</A>
-<BR>
-<A href="fn_d.html#dump-stack-trace" target="body">dump-stack-trace</A>
-<BR>
-<A href="fn_d.html#dump-syntax-table" target="body">dump-syntax-table</A>
-<BR>
-</P>
+<p><a href="fn_d.html#dabbrev" target="body">dabbrev</a>
+<br>
+<p><a href="fn_d.html#debug" target="body">debug</a>
+<br>
+<a href="fn_d.html#debug-emacs" target="body">debug-emacs</a>
+<br>
+<a href="fn_d.html#declare-buffer-specific" target="body">declare-buffer-specific</a>
+<br>
+<a href="fn_d.html#declare-global" target="body">declare-global</a>
+<br>
+<a href="fn_d.html#decompile-current-line" target="body">decompile-current-line</a>
+<br>
+<a href="fn_d.html#decompile-mlisp-function" target="body">decompile-mlisp-function</a>
+<br>
+<a href="fn_d.html#default-emacs-init" target="body">default-emacs-init</a>
+<br>
+<a href="fn_d.html#default-global-keymap" target="body">default-global-keymap</a>
+<br>
+<a href="fn_d.html#define-buffer-macro" target="body">define-buffer-macro</a>
+<br>
+<a href="fn_d.html#define-global-abbrev" target="body">define-global-abbrev</a>
+<br>
+<a href="fn_d.html#define-hooked-global-abbrev" target="body">define-hooked-global-abbrev</a>
+<br>
+<a href="fn_d.html#define-hooked-local-abbrev" target="body">define-hooked-local-abbrev</a>
+<br>
+<a href="fn_d.html#define-keyboard-macro" target="body">define-keyboard-macro</a>
+<br>
+<a href="fn_d.html#define-keymap" target="body">define-keymap</a>
+<br>
+<a href="fn_d.html#define-local-abbrev" target="body">define-local-abbrev</a>
+<br>
+<a href="fn_d.html#define-string-macro" target="body">define-string-macro</a>
+<br>
+<a href="fn_d.html#defun" target="body">defun</a>
+<br>
+<a href="fn_d.html#delete-buffer" target="body">delete-buffer</a>
+<br>
+<a href="fn_d.html#delete-next-character" target="body">delete-next-character</a>
+<br>
+<a href="fn_d.html#delete-next-word" target="body">delete-next-word</a>
+<br>
+<a href="fn_d.html#delete-other-windows" target="body">delete-other-windows</a>
+<br>
+<a href="fn_d.html#delete-previous-character" target="body">delete-previous-character</a>
+<br>
+<a href="fn_d.html#delete-previous-word" target="body">delete-previous-word</a>
+<br>
+<a href="fn_d.html#delete-region-to-buffer" target="body">delete-region-to-buffer</a>
+<br>
+<a href="fn_d.html#delete-to-killbuffer" target="body">delete-to-killbuffer</a>
+<br>
+<a href="fn_d.html#delete-white-space" target="body">delete-white-space</a>
+<br>
+<a href="fn_d.html#delete-window" target="body">delete-window</a>
+<br>
+<a href="fn_d.html#describe-bindings" target="body">describe-bindings</a>
+<br>
+<a href="fn_d.html#describe-command" target="body">describe-command</a>
+<br>
+<a href="fn_d.html#describe-key" target="body">describe-key</a>
+<br>
+<a href="fn_d.html#describe-variable" target="body">describe-variable</a>
+<br>
+<a href="fn_d.html#describe-word-in-buffer" target="body">describe-word-in-buffer</a>
+<br>
+<a href="fn_d.html#digit" target="body">digit</a>
+<br>
+<a href="fn_d.html#dot" target="body">dot</a>
+<br>
+<a href="fn_d.html#dot-is-visible" target="body">dot-is-visible</a>
+<br>
+<a href="fn_d.html#down-window" target="body">down-window</a>
+<br>
+<a href="fn_d.html#dump-abbreviation-tables" target="body">dump-abbreviation-tables</a>
+<br>
+<a href="fn_d.html#dump-memory-statistics" target="body">dump-memory-statistics</a>
+<br>
+<a href="fn_d.html#dump-stack-trace" target="body">dump-stack-trace</a>
+<br>
+<a href="fn_d.html#dump-syntax-table" target="body">dump-syntax-table</a>
+<br>
+</p>
 
-<P><A name="E"></A></P>
+<p><a name="E"></a></p>
 
-<P><A href="fn_e.html#edit-macro" target="body">edit-macro</A>
-<BR>
-<A href="fn_e.html#emacs-version" target="body">emacs-version</A>
-<BR>
-<A href="fn_e.html#end-of-file" target="body">end-of-file</A>
-<BR>
-<A href="fn_e.html#end-of-line" target="body">end-of-line</A>
-<BR>
-<A href="fn_e.html#end-of-window" target="body">end-of-window</A>
-<BR>
-<A href="fn_e.html#enlarge-window" target="body">enlarge-window</A>
-<BR>
-<A href="fn_e.html#eobp" target="body">eobp</A>
-<BR>
-<A href="fn_e.html#eolp" target="body">eolp</A>
-<BR>
-<A href="fn_e.html#erase-buffer" target="body">erase-buffer</A>
-<BR>
-<A href="fn_e.html#erase-region" target="body">erase-region</A>
-<BR>
-<A href="fn_e.html#error-and-exit" target="body">error-and-exit</A>
-<BR>
-<A href="fn_e.html#error-message" target="body">error-message</A>
-<BR>
-<A href="fn_e.html#error-message-parser" target="body">error-message-parser</A>
-<BR>
-<A href="fn_e.html#error-occurred" target="body">error-occurred</A>
-<BR>
-<A href="fn_e.html#exchange-dot-and-mark" target="body">exchange-dot-and-mark</A>
-<BR>
-<A href="fn_e.html#execute-extended-command" target="body">execute-extended-command</A>
-<BR>
-<A href="fn_e.html#execute-keyboard-macro" target="body">execute-keyboard-macro</A>
-<BR>
-<A href="fn_e.html#execute-mlisp-buffer" target="body">execute-mlisp-buffer</A>
-<BR>
-<A href="fn_e.html#execute-mlisp-file" target="body">execute-mlisp-file</A>
-<BR>
-<A href="fn_e.html#execute-mlisp-line" target="body">execute-mlisp-line</A>
-<BR>
-<A href="fn_e.html#execute-monitor-command" target="body">execute-monitor-command</A>
-<BR>
-<A href="fn_e.html#exit-emacs" target="body">exit-emacs</A>
-<BR>
-<A href="fn_e.html#expand-and-exit" target="body">expand-and-exit</A>
-<BR>
-<A href="fn_e.html#expand-file-name" target="body">expand-file-name</A>
-<BR>
-<A href="fn_e.html#expand-file-name-recursive" target="body">expand-file-name-recursive</A>
-<BR>
-<A href="fn_e.html#expand-mlisp-variable" target="body">expand-mlisp-variable</A>
-<BR>
-<A href="fn_e.html#expand-from-string-table" target="body">expand-from-string-table</A>
-<BR>
-<A href="fn_e.html#expand-mlisp-word" target="body">expand-mlisp-word</A>
-<BR>
-<A href="fn_e.html#extend-database-search-list" target="body">extend-database-search-list</A>
-<BR>
-<A href="fn_e.html#external-function" target="body">external-function</A>
-<BR>
-</P>
+<p><a href="fn_e.html#edit-macro" target="body">edit-macro</a>
+<br>
+<a href="fn_e.html#emacs-version" target="body">emacs-version</a>
+<br>
+<a href="fn_e.html#end-of-file" target="body">end-of-file</a>
+<br>
+<a href="fn_e.html#end-of-line" target="body">end-of-line</a>
+<br>
+<a href="fn_e.html#end-of-window" target="body">end-of-window</a>
+<br>
+<a href="fn_e.html#enlarge-window" target="body">enlarge-window</a>
+<br>
+<a href="fn_e.html#eobp" target="body">eobp</a>
+<br>
+<a href="fn_e.html#eolp" target="body">eolp</a>
+<br>
+<a href="fn_e.html#erase-buffer" target="body">erase-buffer</a>
+<br>
+<a href="fn_e.html#erase-region" target="body">erase-region</a>
+<br>
+<a href="fn_e.html#error-and-exit" target="body">error-and-exit</a>
+<br>
+<a href="fn_e.html#error-message" target="body">error-message</a>
+<br>
+<a href="fn_e.html#error-message-parser" target="body">error-message-parser</a>
+<br>
+<a href="fn_e.html#error-occurred" target="body">error-occurred</a>
+<br>
+<a href="fn_e.html#exchange-dot-and-mark" target="body">exchange-dot-and-mark</a>
+<br>
+<a href="fn_e.html#execute-extended-command" target="body">execute-extended-command</a>
+<br>
+<a href="fn_e.html#execute-keyboard-macro" target="body">execute-keyboard-macro</a>
+<br>
+<a href="fn_e.html#execute-mlisp-buffer" target="body">execute-mlisp-buffer</a>
+<br>
+<a href="fn_e.html#execute-mlisp-file" target="body">execute-mlisp-file</a>
+<br>
+<a href="fn_e.html#execute-mlisp-line" target="body">execute-mlisp-line</a>
+<br>
+<a href="fn_e.html#execute-monitor-command" target="body">execute-monitor-command</a>
+<br>
+<a href="fn_e.html#exit-emacs" target="body">exit-emacs</a>
+<br>
+<a href="fn_e.html#expand-and-exit" target="body">expand-and-exit</a>
+<br>
+<a href="fn_e.html#expand-file-name" target="body">expand-file-name</a>
+<br>
+<a href="fn_e.html#expand-file-name-recursive" target="body">expand-file-name-recursive</a>
+<br>
+<a href="fn_e.html#expand-mlisp-variable" target="body">expand-mlisp-variable</a>
+<br>
+<a href="fn_e.html#expand-from-string-table" target="body">expand-from-string-table</a>
+<br>
+<a href="fn_e.html#expand-mlisp-word" target="body">expand-mlisp-word</a>
+<br>
+<a href="fn_e.html#extend-database-search-list" target="body">extend-database-search-list</a>
+<br>
+<a href="fn_e.html#external-function" target="body">external-function</a>
+<br>
+</p>
 
-<P><A name="F"></A></P>
+<p><a name="F"></a></p>
 
-<P><A href="fn_f.html#fetch-array" target="body">fetch-array</A>
-<BR>
-<A href="fn_f.html#fetch-database-entry" target="body">fetch-database-entry</A>
-<BR>
-<A href="fn_f.html#fetch-help-database-entry" target="body">fetch-help-database-entry</A>
-<BR>
-<A href="fn_f.html#file-exists" target="body">file-exists</A>
-<BR>
-<A href="fn_f.html#file-format-string" target="body">file-format-string</A>
-<BR>
-<A href="fn_f.html#file-is-a-directory" target="body">file-is-a-directory</A>
-<BR>
-<A href="fn_f.html#file-name-expand-and-default" target="body">file-name-expand-and-default</A>
-<BR>
-<A href="fn_f.html#filter-region" target="body">filter-region</A>
-<BR>
-<A href="fn_f.html#following-char" target="body">following-char</A>
-<BR>
-<A href="fn_f.html#force-exit-process" target="body">force-exit-process</A>
-<BR>
-<A href="fn_f.html#forward-balanced-paren-line" target="body">forward-balanced-paren-line</A>
-<BR>
-<A href="fn_f.html#forward-character" target="body">forward-character</A>
-<BR>
-<A href="fn_f.html#forward-paragraph" target="body">forward-paragraph</A>
-<BR>
-<A href="fn_f.html#forward-paren" target="body">forward-paren</A>
-<BR>
-<A href="fn_f.html#forward-sentence" target="body">forward-sentence</A>
-<BR>
-<A href="fn_f.html#forward-word" target="body">forward-word</A>
-<BR>
-<A href="fn_f.html#fundamental-mode" target="body">fundamental-mode</A>
-<BR>
-</P>
+<p><a href="fn_f.html#fetch-array" target="body">fetch-array</a>
+<br>
+<a href="fn_f.html#fetch-database-entry" target="body">fetch-database-entry</a>
+<br>
+<a href="fn_f.html#fetch-help-database-entry" target="body">fetch-help-database-entry</a>
+<br>
+<a href="fn_f.html#file-exists" target="body">file-exists</a>
+<br>
+<a href="fn_f.html#file-format-string" target="body">file-format-string</a>
+<br>
+<a href="fn_f.html#file-is-a-directory" target="body">file-is-a-directory</a>
+<br>
+<a href="fn_f.html#file-name-expand-and-default" target="body">file-name-expand-and-default</a>
+<br>
+<a href="fn_f.html#filter-region" target="body">filter-region</a>
+<br>
+<a href="fn_f.html#following-char" target="body">following-char</a>
+<br>
+<a href="fn_f.html#force-exit-process" target="body">force-exit-process</a>
+<br>
+<a href="fn_f.html#forward-balanced-paren-line" target="body">forward-balanced-paren-line</a>
+<br>
+<a href="fn_f.html#forward-character" target="body">forward-character</a>
+<br>
+<a href="fn_f.html#forward-paragraph" target="body">forward-paragraph</a>
+<br>
+<a href="fn_f.html#forward-paren" target="body">forward-paren</a>
+<br>
+<a href="fn_f.html#forward-sentence" target="body">forward-sentence</a>
+<br>
+<a href="fn_f.html#forward-word" target="body">forward-word</a>
+<br>
+<a href="fn_f.html#fundamental-mode" target="body">fundamental-mode</a>
+<br>
+</p>
 
-<P><A name="G"></A></P>
+<p><a name="G"></a></p>
 
-<P><A href="fn_g.html#get-tty-buffer" target="body">get-tty-buffer</A>
-<BR>
-<A href="fn_g.html#get-tty-character" target="body">get-tty-character</A>
-<BR>
-<A href="fn_g.html#get-tty-command" target="body">get-tty-command</A>
-<BR>
-<A href="fn_g.html#get-tty-directory" target="body">get-tty-directory</A>
-<BR>
-<A href="fn_g.html#get-tty-file" target="body">get-tty-file</A>
-<BR>
-<A href="fn_g.html#get-tty-string" target="body">get-tty-string</A>
-<BR>
-<A href="fn_g.html#get-tty-variable" target="body">get-tty-variable</A>
-<BR>
-<A href="fn_g.html#getenv" target="body">getenv</A>
-<BR>
-<A href="fn_g.html#global-binding-of" target="body">global-binding-of</A>
-<BR>
-<A href="fn_g.html#goto-character" target="body">goto-character</A>
-<BR>
-<A href="fn_g.html#goto-window-at-x-y" target="body">goto-window-at-x-y</A>
-<BR>
-</P>
+<p><a href="fn_g.html#get-tty-buffer" target="body">get-tty-buffer</a>
+<br>
+<a href="fn_g.html#get-tty-character" target="body">get-tty-character</a>
+<br>
+<a href="fn_g.html#get-tty-command" target="body">get-tty-command</a>
+<br>
+<a href="fn_g.html#get-tty-directory" target="body">get-tty-directory</a>
+<br>
+<a href="fn_g.html#get-tty-file" target="body">get-tty-file</a>
+<br>
+<a href="fn_g.html#get-tty-string" target="body">get-tty-string</a>
+<br>
+<a href="fn_g.html#get-tty-variable" target="body">get-tty-variable</a>
+<br>
+<a href="fn_g.html#getenv" target="body">getenv</a>
+<br>
+<a href="fn_g.html#global-binding-of" target="body">global-binding-of</a>
+<br>
+<a href="fn_g.html#goto-character" target="body">goto-character</a>
+<br>
+<a href="fn_g.html#goto-window-at-x-y" target="body">goto-window-at-x-y</a>
+<br>
+</p>
 
-<P><A name="H"></A></P>
+<p><a name="H"></a></p>
 
-<P><A href="fn_h.html#help-and-exit" target="body">help-and-exit</A></P>
+<p><a href="fn_h.html#help-and-exit" target="body">help-and-exit</a></p>
 
-<P><A name="I"></A></P>
+<p><a name="I"></a></p>
 
-<P><A href="fn_i.html#if" target="body">if</A>
-<BR>
-<A href="fn_i.html#illegal-operation" target="body">illegal-operation</A>
-<BR>
-<A href="fn_i.html#incremental-search" target="body">incremental-search</A>
-<BR>
-<A href="fn_i.html#indent-C-procedure" target="body">indent-C-procedure</A>
-<BR>
-<A href="fn_i.html#insert-character" target="body">insert-character</A>
-<BR>
-<A href="fn_i.html#insert-file" target="body">insert-file</A>
-<BR>
-<A href="fn_i.html#insert-string" target="body">insert-string</A>
-<BR>
-<A href="fn_i.html#interactive" target="body">interactive</A>
-<BR>
-<A href="fn_i.html#interrupt-key" target="body">interrupt-key</A>
-<BR>
-<A href="fn_i.html#is-bound" target="body">is-bound</A>
-<BR>
-<A href="fn_i.html#is-function" target="body">is-function</A>
-<BR>
-</P>
+<p><a href="fn_i.html#if" target="body">if</a>
+<br>
+<a href="fn_i.html#illegal-operation" target="body">illegal-operation</a>
+<br>
+<a href="fn_i.html#incremental-search" target="body">incremental-search</a>
+<br>
+<a href="fn_i.html#indent-C-procedure" target="body">indent-C-procedure</a>
+<br>
+<a href="fn_i.html#insert-character" target="body">insert-character</a>
+<br>
+<a href="fn_i.html#insert-file" target="body">insert-file</a>
+<br>
+<a href="fn_i.html#insert-string" target="body">insert-string</a>
+<br>
+<a href="fn_i.html#interactive" target="body">interactive</a>
+<br>
+<a href="fn_i.html#interrupt-key" target="body">interrupt-key</a>
+<br>
+<a href="fn_i.html#is-bound" target="body">is-bound</a>
+<br>
+<a href="fn_i.html#is-function" target="body">is-function</a>
+<br>
+</p>
 
-<P><A name="J"></A></P>
+<p><a name="J"></a></p>
 
-<P><A href="fn_j.html#journal-recover" target="body">journal-recover</A>
-<BR>
-<A href="fn_j.html#justify-paragraph" target="body">justify-paragraph</A>
-<BR>
-</P>
+<p><a href="fn_j.html#journal-recover" target="body">journal-recover</a>
+<br>
+<a href="fn_j.html#justify-paragraph" target="body">justify-paragraph</a>
+<br>
+</p>
 
-<P><A name="K"></A></P>
+<p><a name="K"></a></p>
 
-<P><A href="fn_k.html#kill-buffer" target="body">kill-buffer</A>
-<BR>
-<A href="fn_k.html#kill-process" target="body">kill-process</A>
-<BR>
-<A href="fn_k.html#kill-to-end-of-line" target="body">kill-to-end-of-line</A>
-<BR>
-</P>
+<p><a href="fn_k.html#kill-buffer" target="body">kill-buffer</a>
+<br>
+<a href="fn_k.html#kill-process" target="body">kill-process</a>
+<br>
+<a href="fn_k.html#kill-to-end-of-line" target="body">kill-to-end-of-line</a>
+<br>
+</p>
 
-<P><A name="L"></A></P>
+<p><a name="L"></a></p>
 
-<P><A href="fn_l.html#lambda" target="body">lambda</A>
-<BR>
-<A href="fn_l.html#last-key-struck" target="body">last-key-struck</A>
-<BR>
-<A href="fn_l.html#left-marker" target="body">left-marker</A>
-<BR>
-<A href="fn_l.html#left-window" target="body">left-window</A>
-<BR>
-<A href="fn_l.html#length" target="body">length</A>
-<BR>
-<A href="fn_l.html#line-to-top-of-window" target="body">line-to-top-of-window</A>
-<BR>
-<A href="fn_l.html#lisp-mode" target="body">lisp-mode</A>
-<BR>
-<A href="fn_l.html#list-abbreviation-tables" target="body">list-abbreviation-tables</A>
-<BR>
-<A href="fn_l.html#list-auto-executes" target="body">list-auto-executes</A>
-<BR>
-<A href="fn_l.html#list-breakpoints" target="body">list-breakpoints</A>
-<BR>
-<A href="fn_l.html#list-buffers" target="body">list-buffers</A>
-<BR>
-<A href="fn_l.html#list-databases" target="body">list-databases</A>
-<BR>
-<A href="fn_l.html#list-images" target="body">list-images</A>
-<BR>
-<A href="fn_l.html#list-processes" target="body">list-processes</A>
-<BR>
-<A href="fn_l.html#list-syntax-tables" target="body">list-syntax-tables</A>
-<BR>
-<A href="fn_l.html#load" target="body">load</A>
-<BR>
-<A href="fn_l.html#local-bind-to-key" target="body">local-bind-to-key</A>
-<BR>
-<A href="fn_l.html#local-binding-of" target="body">local-binding-of</A>
-<BR>
-<A href="fn_l.html#looking-at" target="body">looking-at</A>
-<BR>
-</P>
+<p><a href="fn_l.html#lambda" target="body">lambda</a>
+<br>
+<a href="fn_l.html#last-key-struck" target="body">last-key-struck</a>
+<br>
+<a href="fn_l.html#left-marker" target="body">left-marker</a>
+<br>
+<a href="fn_l.html#left-window" target="body">left-window</a>
+<br>
+<a href="fn_l.html#length" target="body">length</a>
+<br>
+<a href="fn_l.html#line-to-top-of-window" target="body">line-to-top-of-window</a>
+<br>
+<a href="fn_l.html#lisp-mode" target="body">lisp-mode</a>
+<br>
+<a href="fn_l.html#list-abbreviation-tables" target="body">list-abbreviation-tables</a>
+<br>
+<a href="fn_l.html#list-auto-executes" target="body">list-auto-executes</a>
+<br>
+<a href="fn_l.html#list-breakpoints" target="body">list-breakpoints</a>
+<br>
+<a href="fn_l.html#list-buffers" target="body">list-buffers</a>
+<br>
+<a href="fn_l.html#list-databases" target="body">list-databases</a>
+<br>
+<a href="fn_l.html#list-images" target="body">list-images</a>
+<br>
+<a href="fn_l.html#list-processes" target="body">list-processes</a>
+<br>
+<a href="fn_l.html#list-syntax-tables" target="body">list-syntax-tables</a>
+<br>
+<a href="fn_l.html#load" target="body">load</a>
+<br>
+<a href="fn_l.html#local-bind-to-key" target="body">local-bind-to-key</a>
+<br>
+<a href="fn_l.html#local-binding-of" target="body">local-binding-of</a>
+<br>
+<a href="fn_l.html#looking-at" target="body">looking-at</a>
+<br>
+</p>
 
-<P><A name="M"></A></P>
+<p><a name="M"></a></p>
 
-<P><A href="fn_m.html#mark" target="body">mark</A>
-<BR>
-<A href="fn_m.html#match-wild" target="body">match-wild</A>
-<BR>
-<A href="fn_m.html#message" target="body">message</A>
-<BR>
-<A href="fn_m.html#meta-digit" target="body">meta-digit</A>
-<BR>
-<A href="fn_m.html#meta-minus" target="body">meta-minus</A>
-<BR>
-<A href="fn_m.html#Minibuf-local-map" target="body">Minibuf-local-map</A>
-<BR>
-<A href="fn_m.html#Minibuf-local-NS-map" target="body">Minibuf-local-NS-map</A>
-<BR>
-<A href="fn_m.html#minus" target="body">minus</A>
-<BR>
-<A href="fn_m.html#modify-syntax-entry" target="body">modify-syntax-entry</A>
-<BR>
-<A href="fn_m.html#modify-syntax-table" target="body">modify-syntax-table</A>
-<BR>
-<A href="fn_m.html#move-to-comment-column" target="body">move-to-comment-column</A>
-<BR>
-</P>
+<p><a href="fn_m.html#mark" target="body">mark</a>
+<br>
+<a href="fn_m.html#match-wild" target="body">match-wild</a>
+<br>
+<a href="fn_m.html#message" target="body">message</a>
+<br>
+<a href="fn_m.html#meta-digit" target="body">meta-digit</a>
+<br>
+<a href="fn_m.html#meta-minus" target="body">meta-minus</a>
+<br>
+<a href="fn_m.html#Minibuf-local-map" target="body">Minibuf-local-map</a>
+<br>
+<a href="fn_m.html#Minibuf-local-NS-map" target="body">Minibuf-local-NS-map</a>
+<br>
+<a href="fn_m.html#minus" target="body">minus</a>
+<br>
+<a href="fn_m.html#modify-syntax-entry" target="body">modify-syntax-entry</a>
+<br>
+<a href="fn_m.html#modify-syntax-table" target="body">modify-syntax-table</a>
+<br>
+<a href="fn_m.html#move-to-comment-column" target="body">move-to-comment-column</a>
+<br>
+</p>
 
-<P><A name="N"></A></P>
+<p><a name="N"></a></p>
 
-<P><A href="fn_n.html#nargs" target="body">nargs</A>
-<BR>
-<A href="fn_n.html#narrow-region" target="body">narrow-region</A>
-<BR>
-<A href="fn_n.html#narrow-window" target="body">narrow-window</A>
-<BR>
-<A href="fn_n.html#newline" target="body">newline</A>
-<BR>
-<A href="fn_n.html#newline-and-backup" target="body">newline-and-backup</A>
-<BR>
-<A href="fn_n.html#newline-and-indent" target="body">newline-and-indent</A>
-<BR>
-<A href="fn_n.html#next-error" target="body">next-error</A>
-<BR>
-<A href="fn_n.html#next-line" target="body">next-line</A>
-<BR>
-<A href="fn_n.html#next-page" target="body">next-page</A>
-<BR>
-<A href="fn_n.html#next-window" target="body">next-window</A>
-<BR>
-<A href="fn_n.html#normal-mode" target="body">normal-mode</A>
-<BR>
-<A href="fn_n.html#novalue" target="body">novalue</A>
-<BR>
-</P>
+<p><a href="fn_n.html#nargs" target="body">nargs</a>
+<br>
+<a href="fn_n.html#narrow-region" target="body">narrow-region</a>
+<br>
+<a href="fn_n.html#narrow-window" target="body">narrow-window</a>
+<br>
+<a href="fn_n.html#newline" target="body">newline</a>
+<br>
+<a href="fn_n.html#newline-and-backup" target="body">newline-and-backup</a>
+<br>
+<a href="fn_n.html#newline-and-indent" target="body">newline-and-indent</a>
+<br>
+<a href="fn_n.html#next-error" target="body">next-error</a>
+<br>
+<a href="fn_n.html#next-line" target="body">next-line</a>
+<br>
+<a href="fn_n.html#next-page" target="body">next-page</a>
+<br>
+<a href="fn_n.html#next-window" target="body">next-window</a>
+<br>
+<a href="fn_n.html#normal-mode" target="body">normal-mode</a>
+<br>
+<a href="fn_n.html#novalue" target="body">novalue</a>
+<br>
+</p>
 
-<P><A name="P"></A></P>
+<p><a name="P"></a></p>
 
-<P><A href="fn_p.html#page-next-window" target="body">page-next-window</A>
-<BR>
-<A href="fn_p.html#parse-error-messages-in-region" target="body">parse-error-messages-in-region</A>
-<BR>
-<A href="fn_p.html#pause-emacs" target="body">pause-emacs</A>
-<BR>
-<A href="fn_p.html#pause-process" target="body">pause-process</A>
-<BR>
-<A href="fn_p.html#PC-home-key" target="body">PC-home-key</A>
-<BR>
-<A href="fn_p.html#pop-to-buffer" target="body">pop-to-buffer</A>
-<BR>
-<A href="fn_p.html#preceding-char" target="body">preceding-char</A>
-<BR>
-<A href="fn_p.html#prefix-argument" target="body">prefix-argument</A>
-<BR>
-<A href="fn_p.html#prefix-argument-loop" target="body">prefix-argument-loop</A>
-<BR>
-<A href="fn_p.html#prepend-region-to-buffer" target="body">prepend-region-to-buffer</A>
-<BR>
-<A href="fn_p.html#previous-command" target="body">previous-command</A>
-<BR>
-<A href="fn_p.html#previous-error" target="body">previous-error</A>
-<BR>
-<A href="fn_p.html#previous-line" target="body">previous-line</A>
-<BR>
-<A href="fn_p.html#previous-page" target="body">previous-page</A>
-<BR>
-<A href="fn_p.html#previous-window" target="body">previous-window</A>
-<BR>
-<A href="fn_p.html#print" target="body">print</A>
-<BR>
-<A href="fn_p.html#print-default" target="body">print-default</A>
-<BR>
-<A href="fn_p.html#process-id" target="body">process-id</A>
-<BR>
-<A href="fn_p.html#process-key" target="body">process-key</A>
-<BR>
-<A href="fn_p.html#process-output" target="body">process-output</A>
-<BR>
-<A href="fn_p.html#process-status" target="body">process-status</A>
-<BR>
-<A href="fn_p.html#progn" target="body">progn</A>
-<BR>
-<A href="fn_p.html#provide-prefix-argument" target="body">provide-prefix-argument</A>
-<BR>
-<A href="fn_p.html#push-back-character" target="body">push-back-character</A>
-<BR>
-<A href="fn_p.html#putenv" target="body">putenv</A>
-<BR>
-<A href="fn_p.html#put-database-entry" target="body">put-database-entry</A>
-<BR>
-</P>
+<p><a href="fn_p.html#page-next-window" target="body">page-next-window</a>
+<br>
+<a href="fn_p.html#parse-error-messages-in-region" target="body">parse-error-messages-in-region</a>
+<br>
+<a href="fn_p.html#pause-emacs" target="body">pause-emacs</a>
+<br>
+<a href="fn_p.html#pause-process" target="body">pause-process</a>
+<br>
+<a href="fn_p.html#PC-home-key" target="body">PC-home-key</a>
+<br>
+<a href="fn_p.html#pop-to-buffer" target="body">pop-to-buffer</a>
+<br>
+<a href="fn_p.html#preceding-char" target="body">preceding-char</a>
+<br>
+<a href="fn_p.html#prefix-argument" target="body">prefix-argument</a>
+<br>
+<a href="fn_p.html#prefix-argument-loop" target="body">prefix-argument-loop</a>
+<br>
+<a href="fn_p.html#prepend-region-to-buffer" target="body">prepend-region-to-buffer</a>
+<br>
+<a href="fn_p.html#previous-command" target="body">previous-command</a>
+<br>
+<a href="fn_p.html#previous-error" target="body">previous-error</a>
+<br>
+<a href="fn_p.html#previous-line" target="body">previous-line</a>
+<br>
+<a href="fn_p.html#previous-page" target="body">previous-page</a>
+<br>
+<a href="fn_p.html#previous-window" target="body">previous-window</a>
+<br>
+<a href="fn_p.html#print" target="body">print</a>
+<br>
+<a href="fn_p.html#print-default" target="body">print-default</a>
+<br>
+<a href="fn_p.html#process-id" target="body">process-id</a>
+<br>
+<a href="fn_p.html#process-key" target="body">process-key</a>
+<br>
+<a href="fn_p.html#process-output" target="body">process-output</a>
+<br>
+<a href="fn_p.html#process-status" target="body">process-status</a>
+<br>
+<a href="fn_p.html#progn" target="body">progn</a>
+<br>
+<a href="fn_p.html#provide-prefix-argument" target="body">provide-prefix-argument</a>
+<br>
+<a href="fn_p.html#push-back-character" target="body">push-back-character</a>
+<br>
+<a href="fn_p.html#putenv" target="body">putenv</a>
+<br>
+<a href="fn_p.html#put-database-entry" target="body">put-database-entry</a>
+<br>
+</p>
 
-<P><A name="Q"></A></P>
+<p><a name="Q"></a></p>
 
-<P><A href="fn_q.html#query-replace-string" target="body">query-replace-string</A>
-<BR>
-<A href="fn_q.html#quietly-read-abbrev-file" target="body">quietly-read-abbrev-file</A>
-<BR>
-<A href="fn_q.html#quit-process" target="body">quit-process</A>
-<BR>
-<A href="fn_q.html#quote" target="body">quote</A>
-<BR>
-<A href="fn_q.html#quote-character" target="body">quote-character</A>
-<BR>
-</P>
+<p><a href="fn_q.html#query-replace-string" target="body">query-replace-string</a>
+<br>
+<a href="fn_q.html#quietly-read-abbrev-file" target="body">quietly-read-abbrev-file</a>
+<br>
+<a href="fn_q.html#quit-process" target="body">quit-process</a>
+<br>
+<a href="fn_q.html#quote" target="body">quote</a>
+<br>
+<a href="fn_q.html#quote-character" target="body">quote-character</a>
+<br>
+</p>
 
-<P><A name="R"></A></P>
+<p><a name="R"></a></p>
 
-<P><A href="fn_r.html#re-query-replace-string" target="body">re-query-replace-string</A>
-<BR>
-<A href="fn_r.html#re-replace-search-text" target="body">re-replace-search-text</A>
-<BR>
-<A href="fn_r.html#re-replace-string" target="body">re-replace-string</A>
-<BR>
-<A href="fn_r.html#re-search-forward" target="body">re-search-forward</A>
-<BR>
-<A href="fn_r.html#re-search-reverse" target="body">re-search-reverse</A>
-<BR>
-<A href="fn_r.html#read-abbrev-file" target="body">read-abbrev-file</A>
-<BR>
-<A href="fn_r.html#read-file" target="body">read-file</A>
-<BR>
-<A href="fn_r.html#recursion-depth" target="body">recursion-depth</A>
-<BR>
-<A href="fn_r.html#recursive-edit" target="body">recursive-edit</A>
-<BR>
-<A href="fn_r.html#redraw-display" target="body">redraw-display</A>
-<BR>
-<A href="fn_r.html#region-around-match" target="body">region-around-match</A>
-<BR>
-<A href="fn_r.html#region-to-string" target="body">region-to-string</A>
-<BR>
-<A href="fn_r.html#remove-all-local-bindings" target="body">remove-all-local-bindings</A>
-<BR>
-<A href="fn_r.html#remove-binding" target="body">remove-binding</A>
-<BR>
-<A href="fn_r.html#remove-database" target="body">remove-database</A>
-<BR>
-<A href="fn_r.html#remove-local-binding" target="body">remove-local-binding</A>
-<BR>
-<A href="fn_r.html#rename-macro" target="body">rename-macro</A>
-<BR>
-<A href="fn_r.html#replace-search-text" target="body">replace-search-text</A>
-<BR>
-<A href="fn_r.html#replace-string" target="body">replace-string</A>
-<BR>
-<A href="fn_r.html#resume-process" target="body">resume-process</A>
-<BR>
-<A href="fn_r.html#return-prefix-argument" target="body">return-prefix-argument</A>
-<BR>
-<A href="fn_r.html#return-to-monitor" target="body">return-to-monitor</A>
-<BR>
-<A href="fn_r.html#reverse-incremental-search" target="body">reverse-incremental-search</A>
-<BR>
-<A href="fn_r.html#right-marker" target="body">right-marker</A>
-<BR>
-<A href="fn_r.html#right-window" target="body">right-window</A>
-<BR>
-</P>
+<p><a href="fn_r.html#re-query-replace-string" target="body">re-query-replace-string</a>
+<br>
+<a href="fn_r.html#re-replace-search-text" target="body">re-replace-search-text</a>
+<br>
+<a href="fn_r.html#re-replace-string" target="body">re-replace-string</a>
+<br>
+<a href="fn_r.html#re-search-forward" target="body">re-search-forward</a>
+<br>
+<a href="fn_r.html#re-search-reverse" target="body">re-search-reverse</a>
+<br>
+<a href="fn_r.html#read-abbrev-file" target="body">read-abbrev-file</a>
+<br>
+<a href="fn_r.html#read-file" target="body">read-file</a>
+<br>
+<a href="fn_r.html#recursion-depth" target="body">recursion-depth</a>
+<br>
+<a href="fn_r.html#recursive-edit" target="body">recursive-edit</a>
+<br>
+<a href="fn_r.html#redraw-display" target="body">redraw-display</a>
+<br>
+<a href="fn_r.html#region-around-match" target="body">region-around-match</a>
+<br>
+<a href="fn_r.html#region-to-string" target="body">region-to-string</a>
+<br>
+<a href="fn_r.html#remove-all-local-bindings" target="body">remove-all-local-bindings</a>
+<br>
+<a href="fn_r.html#remove-binding" target="body">remove-binding</a>
+<br>
+<a href="fn_r.html#remove-database" target="body">remove-database</a>
+<br>
+<a href="fn_r.html#remove-local-binding" target="body">remove-local-binding</a>
+<br>
+<a href="fn_r.html#rename-macro" target="body">rename-macro</a>
+<br>
+<a href="fn_r.html#replace-search-text" target="body">replace-search-text</a>
+<br>
+<a href="fn_r.html#replace-string" target="body">replace-string</a>
+<br>
+<a href="fn_r.html#resume-process" target="body">resume-process</a>
+<br>
+<a href="fn_r.html#return-prefix-argument" target="body">return-prefix-argument</a>
+<br>
+<a href="fn_r.html#return-to-monitor" target="body">return-to-monitor</a>
+<br>
+<a href="fn_r.html#reverse-incremental-search" target="body">reverse-incremental-search</a>
+<br>
+<a href="fn_r.html#right-marker" target="body">right-marker</a>
+<br>
+<a href="fn_r.html#right-window" target="body">right-window</a>
+<br>
+</p>
 
-<P><A name="S"></A></P>
+<p><a name="S"></a></p>
 
-<P><A href="fn_s.html#save-environment" target="body">save-environment</A>
-<BR>
-<A href="fn_s.html#save-excursion" target="body">save-excursion</A>
-<BR>
-<A href="fn_s.html#save-restriction" target="body">save-restriction</A>
-<BR>
-<A href="fn_s.html#save-window-excursion" target="body">save-window-excursion</A>
-<BR>
-<A href="fn_s.html#schedule-procedure" target="body">schedule-procedure</A>
-<BR>
-<A href="fn_s.html#scroll-one-column-left" target="body">scroll-one-column-left</A>
-<BR>
-<A href="fn_s.html#scroll-one-column-right" target="body">scroll-one-column-right</A>
-<BR>
-<A href="fn_s.html#scroll-one-line-down" target="body">scroll-one-line-down</A>
-<BR>
-<A href="fn_s.html#scroll-one-line-up" target="body">scroll-one-line-up</A>
-<BR>
-<A href="fn_s.html#search-forward" target="body">search-forward</A>
-<BR>
-<A href="fn_s.html#search-reverse" target="body">search-reverse</A>
-<BR>
-<A href="fn_s.html#self-insert" target="body">self-insert</A>
-<BR>
-<A href="fn_s.html#send-eof-to-process" target="body">send-eof-to-process</A>
-<BR>
-<A href="fn_s.html#send-string-to-process" target="body">send-string-to-process</A>
-<BR>
-<A href="fn_s.html#send-string-to-terminal" target="body">send-string-to-terminal</A>
-<BR>
-<A href="fn_s.html#set" target="body">set</A>
-<BR>
-<A href="fn_s.html#set-current-process" target="body">set-current-process</A>
-<BR>
-<A href="fn_s.html#set-default" target="body">set-default</A>
-<BR>
-<A href="fn_s.html#set-mark" target="body">set-mark</A>
-<BR>
-<A href="fn_s.html#set-process-input-procedure" target="body">set-process-input-procedure</A>
-<BR>
-<A href="fn_s.html#set-process-name" target="body">set-process-name</A>
-<BR>
-<A href="fn_s.html#set-process-output-buffer" target="body">set-process-output-buffer</A>
-<BR>
-<A href="fn_s.html#set-process-output-procedure" target="body">set-process-output-procedure</A>
-<BR>
-<A href="fn_s.html#set-process-termination-procedure" target="body">set-process-termination-procedure</A>
-<BR>
-<A href="fn_s.html#setq" target="body">setq</A>
-<BR>
-<A href="fn_s.html#setq-array" target="body">setq-array</A>
-<BR>
-<A href="fn_s.html#setq-default" target="body">setq-default</A>
-<BR>
-<A href="fn_s.html#shell" target="body">shell</A>
-<BR>
-<A href="fn_s.html#show-buffer" target="body">show-buffer</A>
-<BR>
-<A href="fn_s.html#shrink-window" target="body">shrink-window</A>
-<BR>
-<A href="fn_s.html#sit-for" target="body">sit-for</A>
-<BR>
-<A href="fn_s.html#spell-check-word" target="body">spell-check-word</A>
-<BR>
-<A href="fn_s.html#split-current-window" target="body">split-current-window</A>
-<BR>
-<A href="fn_s.html#split-current-window-vertically" target="body">split-current-window-vertically</A>
-<BR>
-<A href="fn_s.html#sprintf" target="body">sprintf</A>
-<BR>
-<A href="fn_s.html#start-DCL-process" target="body">start-DCL-process</A>
-<BR>
-<A href="fn_s.html#start-process" target="body">start-process</A>
-<BR>
-<A href="fn_s.html#start-remembering" target="body">start-remembering</A>
-<BR>
-<A href="fn_s.html#stop-remembering" target="body">stop-remembering</A>
-<BR>
-<A href="fn_s.html#string-extract" target="body">string-extract</A>
-<BR>
-<A href="fn_s.html#string-index-of-first" target="body">string-index-of-first</A>
-<BR>
-<A href="fn_s.html#string-index-of-last" target="body">string-index-of-last</A>
-<BR>
-<A href="fn_s.html#string-index-of-string" target="body">string-index-of-string</A>
-<BR>
-<A href="fn_s.html#string-to-char" target="body">string-to-char</A>
-<BR>
-<A href="fn_s.html#substr" target="body">substr</A>
-<BR>
-<A href="fn_s.html#switch-to-buffer" target="body">switch-to-buffer</A>
-<BR>
-<A href="fn_s.html#synchronise-files" target="body">synchronise-files</A>
-<BR>
-<A href="fn_s.html#sys$fao" target="body">sys$fao</A>
-<BR>
-<A href="fn_s.html#sys$filescan" target="body">sys$filescan</A>
-<BR>
-<A href="fn_s.html#sys$getdvi" target="body">sys$getdvi</A>
-<BR>
-<A href="fn_s.html#sys$getjpi" target="body">sys$getjpi</A>
-<BR>
-<A href="fn_s.html#sys$getmsg" target="body">sys$getmsg</A>
-<BR>
-<A href="fn_s.html#sys$getsyi" target="body">sys$getsyi</A>
-<BR>
-<A href="fn_s.html#sys$setprn" target="body">sys$setprn</A>
-<BR>
-<A href="fn_s.html#sys$sndjbc" target="body">sys$sndjbc</A>
-<BR>
-<A href="fn_s.html#system-name" target="body">system-name</A>
-<BR>
-</P>
+<p><a href="fn_s.html#save-environment" target="body">save-environment</a>
+<br>
+<a href="fn_s.html#save-excursion" target="body">save-excursion</a>
+<br>
+<a href="fn_s.html#save-restriction" target="body">save-restriction</a>
+<br>
+<a href="fn_s.html#save-window-excursion" target="body">save-window-excursion</a>
+<br>
+<a href="fn_s.html#schedule-procedure" target="body">schedule-procedure</a>
+<br>
+<a href="fn_s.html#scroll-one-column-left" target="body">scroll-one-column-left</a>
+<br>
+<a href="fn_s.html#scroll-one-column-right" target="body">scroll-one-column-right</a>
+<br>
+<a href="fn_s.html#scroll-one-line-down" target="body">scroll-one-line-down</a>
+<br>
+<a href="fn_s.html#scroll-one-line-up" target="body">scroll-one-line-up</a>
+<br>
+<a href="fn_s.html#search-forward" target="body">search-forward</a>
+<br>
+<a href="fn_s.html#search-reverse" target="body">search-reverse</a>
+<br>
+<a href="fn_s.html#self-insert" target="body">self-insert</a>
+<br>
+<a href="fn_s.html#send-eof-to-process" target="body">send-eof-to-process</a>
+<br>
+<a href="fn_s.html#send-string-to-process" target="body">send-string-to-process</a>
+<br>
+<a href="fn_s.html#send-string-to-terminal" target="body">send-string-to-terminal</a>
+<br>
+<a href="fn_s.html#set" target="body">set</a>
+<br>
+<a href="fn_s.html#set-current-process" target="body">set-current-process</a>
+<br>
+<a href="fn_s.html#set-default" target="body">set-default</a>
+<br>
+<a href="fn_s.html#set-mark" target="body">set-mark</a>
+<br>
+<a href="fn_s.html#set-process-input-procedure" target="body">set-process-input-procedure</a>
+<br>
+<a href="fn_s.html#set-process-name" target="body">set-process-name</a>
+<br>
+<a href="fn_s.html#set-process-output-buffer" target="body">set-process-output-buffer</a>
+<br>
+<a href="fn_s.html#set-process-output-procedure" target="body">set-process-output-procedure</a>
+<br>
+<a href="fn_s.html#set-process-termination-procedure" target="body">set-process-termination-procedure</a>
+<br>
+<a href="fn_s.html#setq" target="body">setq</a>
+<br>
+<a href="fn_s.html#setq-array" target="body">setq-array</a>
+<br>
+<a href="fn_s.html#setq-default" target="body">setq-default</a>
+<br>
+<a href="fn_s.html#shell" target="body">shell</a>
+<br>
+<a href="fn_s.html#show-buffer" target="body">show-buffer</a>
+<br>
+<a href="fn_s.html#shrink-window" target="body">shrink-window</a>
+<br>
+<a href="fn_s.html#sit-for" target="body">sit-for</a>
+<br>
+<a href="fn_s.html#spell-check-word" target="body">spell-check-word</a>
+<br>
+<a href="fn_s.html#split-current-window" target="body">split-current-window</a>
+<br>
+<a href="fn_s.html#split-current-window-vertically" target="body">split-current-window-vertically</a>
+<br>
+<a href="fn_s.html#sprintf" target="body">sprintf</a>
+<br>
+<a href="fn_s.html#start-DCL-process" target="body">start-DCL-process</a>
+<br>
+<a href="fn_s.html#start-process" target="body">start-process</a>
+<br>
+<a href="fn_s.html#start-remembering" target="body">start-remembering</a>
+<br>
+<a href="fn_s.html#stop-remembering" target="body">stop-remembering</a>
+<br>
+<a href="fn_s.html#string-extract" target="body">string-extract</a>
+<br>
+<a href="fn_s.html#string-index-of-first" target="body">string-index-of-first</a>
+<br>
+<a href="fn_s.html#string-index-of-last" target="body">string-index-of-last</a>
+<br>
+<a href="fn_s.html#string-index-of-string" target="body">string-index-of-string</a>
+<br>
+<a href="fn_s.html#string-to-char" target="body">string-to-char</a>
+<br>
+<a href="fn_s.html#substr" target="body">substr</a>
+<br>
+<a href="fn_s.html#switch-to-buffer" target="body">switch-to-buffer</a>
+<br>
+<a href="fn_s.html#synchronise-files" target="body">synchronise-files</a>
+<br>
+<a href="fn_s.html#sys$fao" target="body">sys$fao</a>
+<br>
+<a href="fn_s.html#sys$filescan" target="body">sys$filescan</a>
+<br>
+<a href="fn_s.html#sys$getdvi" target="body">sys$getdvi</a>
+<br>
+<a href="fn_s.html#sys$getjpi" target="body">sys$getjpi</a>
+<br>
+<a href="fn_s.html#sys$getmsg" target="body">sys$getmsg</a>
+<br>
+<a href="fn_s.html#sys$getsyi" target="body">sys$getsyi</a>
+<br>
+<a href="fn_s.html#sys$setprn" target="body">sys$setprn</a>
+<br>
+<a href="fn_s.html#sys$sndjbc" target="body">sys$sndjbc</a>
+<br>
+<a href="fn_s.html#system-name" target="body">system-name</a>
+<br>
+</p>
 
-<P><A name="T"></A></P>
+<p><a name="T"></a></p>
 
-<P><A href="fn_t.html#temp-use-buffer" target="body">temp-use-buffer</A>
-<BR>
-<A href="fn_t.html#test-abbrev-expand" target="body">test-abbrev-expand</A>
-<BR>
-<A href="fn_t.html#text-mode" target="body">text-mode</A>
-<BR>
-<A href="fn_t.html#to-col" target="body">to-col</A>
-<BR>
-<A href="fn_t.html#top-level" target="body">top-level</A>
-<BR>
-<A href="fn_t.html#trace" target="body">trace</A>
-<BR>
-<A href="fn_t.html#transpose-characters" target="body">transpose-characters</A>
-<BR>
-<A href="fn_t.html#type-of-expression" target="body">type-of-expression</A>
-<BR>
-</P>
+<p><a href="fn_t.html#temp-use-buffer" target="body">temp-use-buffer</a>
+<br>
+<a href="fn_t.html#test-abbrev-expand" target="body">test-abbrev-expand</a>
+<br>
+<a href="fn_t.html#text-mode" target="body">text-mode</a>
+<br>
+<a href="fn_t.html#to-col" target="body">to-col</a>
+<br>
+<a href="fn_t.html#top-level" target="body">top-level</a>
+<br>
+<a href="fn_t.html#trace" target="body">trace</a>
+<br>
+<a href="fn_t.html#transpose-characters" target="body">transpose-characters</a>
+<br>
+<a href="fn_t.html#type-of-expression" target="body">type-of-expression</a>
+<br>
+</p>
 
-<P><A name="U"></A></P>
+<p><a name="U"></a></p>
 
-<P><A href="fn_u.html#UI-add-menu" target="body">UI-add-menu</A>
-<BR>
-<A href="fn_u.html#UI-add-to-recent-file-list" target="body">UI-add-to-recent-file-list</A>
-<BR>
-<A href="fn_u.html#UI-edit-copy" target="body">UI-edit-copy</A>
-<BR>
-<A href="fn_u.html#UI-edit-paste" target="body">UI-edit-paste</A>
-<BR>
-<A href="fn_u.html#UI-file-open" target="body">UI-file-open</A>
-<BR>
-<A href="fn_u.html#UI-file-save-as" target="body">UI-file-save-as</A>
-<BR>
-<A href="fn_u.html#UI-find" target="body">UI-find</A>
-<BR>
-<A href="fn_u.html#UI-find-and-replace" target="body">UI-find-and-replace</A>
-<BR>
-<A href="fn_u.html#UI-frame-maximize" target="body">UI-frame-maximize</A>
-<BR>
-<A href="fn_u.html#UI-frame-minimize" target="body">UI-frame-minimize</A>
-<BR>
-<A href="fn_u.html#UI-frame-restore" target="body">UI-frame-restore</A>
-<BR>
-<A href="fn_u.html#UI-frame-to-foreground" target="body">UI-frame-to-foreground</A>
-<BR>
-<A href="fn_u.html#UI-list-menus" target="body">UI-list-menus</A>
-<BR>
-<A href="fn_u.html#UI-remove-menu" target="body">UI-remove-menu</A>
-<BR>
-<A href="fn_u.html#UI-switch-buffer" target="body">UI-switch-buffer</A>
-<BR>
-<A href="fn_u.html#UI-window-cascade" target="body">UI-window-cascade</A>
-<BR>
-<A href="fn_u.html#UI-window-maximize" target="body">UI-window-maximize</A>
-<BR>
-<A href="fn_u.html#UI-window-minimize" target="body">UI-window-minimize</A>
-<BR>
-<A href="fn_u.html#UI-window-new" target="body">UI-window-new</A>
-<BR>
-<A href="fn_u.html#UI-window-next" target="body">UI-window-next</A>
-<BR>
-<A href="fn_u.html#UI-window-restore" target="body">UI-window-restore</A>
-<BR>
-<A href="fn_u.html#UI-window-tile-horizontal" target="body">UI-window-tile-horizontal</A>
-<BR>
-<A href="fn_u.html#UI-window-tile-vertical" target="body">UI-window-tile-vertical</A>
-<BR>
-<A href="fn_u.html#UI-windows-execute-program" target="body">UI-windows-execute-program</A>
-<BR>
-<A href="fn_u.html#UI-windows-shell-execute" target="body">UI-windows-shell-execute</A>
-<BR>
-<A href="fn_u.html#UI-windows-help" target="body">UI-windows-help</A>
-<BR>
-<A href="fn_u.html#UI-view-tool-bar" target="body">UI-view-tool-bar</A>
-<BR>
-<A href="fn_u.html#UI-view-scroll-bars" target="body">UI-view-scroll-bars</A>
-<BR>
-<A href="fn_u.html#UI-view-status-bar" target="body">UI-view-status-bar</A>
-<BR>
-<!-- <A href="fn_u.html#UI-popup-menu" target="body">UI-popup-menu</A> -->
-<!-- <BR> -->
-<A href="fn_u.html#undo" target="body">undo</A>
-<BR>
-<A href="fn_u.html#undo-boundary" target="body">undo-boundary</A>
-<BR>
-<A href="fn_u.html#undo-more" target="body">undo-more</A>
-<BR>
-<A href="fn_u.html#unlink-file" target="body">unlink-file</A>
-<BR>
-<A href="fn_u.html#unset-mark" target="body">unset-mark</A>
-<BR>
-<A href="fn_u.html#up-window" target="body">up-window</A>
-<BR>
-<A href="fn_u.html#use-abbrev-table" target="body">use-abbrev-table</A>
-<BR>
-<A href="fn_u.html#use-global-map" target="body">use-global-map</A>
-<BR>
-<A href="fn_u.html#use-local-map" target="body">use-local-map</A>
-<BR>
-<A href="fn_u.html#use-old-buffer" target="body">use-old-buffer</A>
-<BR>
-<A href="fn_u.html#use-syntax-table" target="body">use-syntax-table</A>
-<BR>
-<A href="fn_u.html#use-variables-of-buffer" target="body">use-variables-of-buffer</A>
-<BR>
-<A href="fn_u.html#users-full-name" target="body">users-full-name</A>
-<BR>
-<A href="fn_u.html#users-login-name" target="body">users-login-name</A>
-<BR>
-</P>
+<p><a href="fn_u.html#UI-add-menu" target="body">UI-add-menu</a>
+<br>
+<a href="fn_u.html#UI-add-to-recent-file-list" target="body">UI-add-to-recent-file-list</a>
+<br>
+<a href="fn_u.html#UI-edit-copy" target="body">UI-edit-copy</a>
+<br>
+<a href="fn_u.html#UI-edit-paste" target="body">UI-edit-paste</a>
+<br>
+<a href="fn_u.html#UI-file-open" target="body">UI-file-open</a>
+<br>
+<a href="fn_u.html#UI-file-save-as" target="body">UI-file-save-as</a>
+<br>
+<a href="fn_u.html#UI-find" target="body">UI-find</a>
+<br>
+<a href="fn_u.html#UI-find-and-replace" target="body">UI-find-and-replace</a>
+<br>
+<a href="fn_u.html#UI-frame-maximize" target="body">UI-frame-maximize</a>
+<br>
+<a href="fn_u.html#UI-frame-minimize" target="body">UI-frame-minimize</a>
+<br>
+<a href="fn_u.html#UI-frame-restore" target="body">UI-frame-restore</a>
+<br>
+<a href="fn_u.html#UI-frame-to-foreground" target="body">UI-frame-to-foreground</a>
+<br>
+<a href="fn_u.html#UI-list-menus" target="body">UI-list-menus</a>
+<br>
+<a href="fn_u.html#UI-remove-menu" target="body">UI-remove-menu</a>
+<br>
+<a href="fn_u.html#UI-switch-buffer" target="body">UI-switch-buffer</a>
+<br>
+<a href="fn_u.html#UI-window-cascade" target="body">UI-window-cascade</a>
+<br>
+<a href="fn_u.html#UI-window-maximize" target="body">UI-window-maximize</a>
+<br>
+<a href="fn_u.html#UI-window-minimize" target="body">UI-window-minimize</a>
+<br>
+<a href="fn_u.html#UI-window-new" target="body">UI-window-new</a>
+<br>
+<a href="fn_u.html#UI-window-next" target="body">UI-window-next</a>
+<br>
+<a href="fn_u.html#UI-window-restore" target="body">UI-window-restore</a>
+<br>
+<a href="fn_u.html#UI-window-tile-horizontal" target="body">UI-window-tile-horizontal</a>
+<br>
+<a href="fn_u.html#UI-window-tile-vertical" target="body">UI-window-tile-vertical</a>
+<br>
+<a href="fn_u.html#UI-windows-execute-program" target="body">UI-windows-execute-program</a>
+<br>
+<a href="fn_u.html#UI-windows-shell-execute" target="body">UI-windows-shell-execute</a>
+<br>
+<a href="fn_u.html#UI-windows-help" target="body">UI-windows-help</a>
+<br>
+<a href="fn_u.html#UI-view-tool-bar" target="body">UI-view-tool-bar</a>
+<br>
+<a href="fn_u.html#UI-view-scroll-bars" target="body">UI-view-scroll-bars</a>
+<br>
+<a href="fn_u.html#UI-view-status-bar" target="body">UI-view-status-bar</a>
+<br>
+<!-- <a href="fn_u.html#UI-popup-menu" target="body">UI-popup-menu</a> -->
+<!-- <br> -->
+<a href="fn_u.html#undo" target="body">undo</a>
+<br>
+<a href="fn_u.html#undo-boundary" target="body">undo-boundary</a>
+<br>
+<a href="fn_u.html#undo-more" target="body">undo-more</a>
+<br>
+<a href="fn_u.html#unlink-file" target="body">unlink-file</a>
+<br>
+<a href="fn_u.html#unset-mark" target="body">unset-mark</a>
+<br>
+<a href="fn_u.html#up-window" target="body">up-window</a>
+<br>
+<a href="fn_u.html#use-abbrev-table" target="body">use-abbrev-table</a>
+<br>
+<a href="fn_u.html#use-global-map" target="body">use-global-map</a>
+<br>
+<a href="fn_u.html#use-local-map" target="body">use-local-map</a>
+<br>
+<a href="fn_u.html#use-old-buffer" target="body">use-old-buffer</a>
+<br>
+<a href="fn_u.html#use-syntax-table" target="body">use-syntax-table</a>
+<br>
+<a href="fn_u.html#use-variables-of-buffer" target="body">use-variables-of-buffer</a>
+<br>
+<a href="fn_u.html#users-full-name" target="body">users-full-name</a>
+<br>
+<a href="fn_u.html#users-login-name" target="body">users-login-name</a>
+<br>
+</p>
 
-<P><A name="V"></A></P>
+<p><a name="V"></a></p>
 
-<P><A href="fn_v.html#view-buffer" target="body">view-buffer</A>
-<BR>
-<A href="fn_v.html#view-file" target="body">view-file</A>
-<BR>
-<A href="fn_v.html#visit-file" target="body">visit-file</A>
-<BR>
-<A href="fn_v.html#VMS-load-averages" target="body">VMS-load-averages</A>
-<BR>
-</P>
+<p><a href="fn_v.html#view-buffer" target="body">view-buffer</a>
+<br>
+<a href="fn_v.html#view-file" target="body">view-file</a>
+<br>
+<a href="fn_v.html#visit-file" target="body">visit-file</a>
+<br>
+<a href="fn_v.html#VMS-load-averages" target="body">VMS-load-averages</a>
+<br>
+</p>
 
-<P><A name="W"></A></P>
+<p><a name="W"></a></p>
 
-<P><A href="fn_w.html#wait-for-process-input-request" target="body">wait-for-process-input-request</A>
-<BR>
-<A href="fn_w.html#what-cursor-position" target="body">what-cursor-position</A>
-<BR>
-<A href="fn_w.html#while" target="body">while</A>
-<BR>
-<A href="fn_w.html#widen-region" target="body">widen-region</A>
-<BR>
-<A href="fn_w.html#widen-window" target="body">widen-window</A>
-<BR>
-<A href="fn_w.html#window-dimensions" target="body">window-dimensions</A>
-<BR>
-<A href="fn_w.html#write-abbrev-file" target="body">write-abbrev-file</A>
-<BR>
-<A href="fn_w.html#write-current-file" target="body">write-current-file</A>
-<BR>
-<A href="fn_w.html#write-file-exit" target="body">write-file-exit</A>
-<BR>
-<A href="fn_w.html#write-modified-files" target="body">write-modified-files</A>
-<BR>
-<A href="fn_w.html#write-named-file" target="body">write-named-file</A>
-<BR>
-</P>
+<p><a href="fn_w.html#wait-for-process-input-request" target="body">wait-for-process-input-request</a>
+<br>
+<a href="fn_w.html#what-cursor-position" target="body">what-cursor-position</a>
+<br>
+<a href="fn_w.html#while" target="body">while</a>
+<br>
+<a href="fn_w.html#widen-region" target="body">widen-region</a>
+<br>
+<a href="fn_w.html#widen-window" target="body">widen-window</a>
+<br>
+<a href="fn_w.html#window-dimensions" target="body">window-dimensions</a>
+<br>
+<a href="fn_w.html#write-abbrev-file" target="body">write-abbrev-file</a>
+<br>
+<a href="fn_w.html#write-current-file" target="body">write-current-file</a>
+<br>
+<a href="fn_w.html#write-file-exit" target="body">write-file-exit</a>
+<br>
+<a href="fn_w.html#write-modified-files" target="body">write-modified-files</a>
+<br>
+<a href="fn_w.html#write-named-file" target="body">write-named-file</a>
+<br>
+</p>
 
-<P><A name="Y"></A></P>
+<p><a name="Y"></a></p>
 
-<P><A href="fn_y.html#yank-buffer" target="body">yank-buffer</A>
-<BR>
-<A href="fn_y.html#yank-from-killbuffer" target="body">yank-from-killbuffer</A>
-<BR>
-</P>
-</BODY>
-</HTML>
+<p><a href="fn_y.html#yank-buffer" target="body">yank-buffer</a>
+<br>
+<a href="fn_y.html#yank-from-killbuffer" target="body">yank-from-killbuffer</a>
+<br>
+</p>
+</body>
+</html>
 

@@ -1,246 +1,246 @@
 <!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
-<HTML>
-<HEAD>
-<TITLE>Functions L*</TITLE>
+<html>
+<head>
+<title>Functions L*</title>
 
-<LINK REL="STYLESHEET" HREF="styles.css">
-</HEAD>
-<BODY>
-<HR>
-<P><A name="lambda"></A>(<B>lambda</B>)</P>
+<link rel="STYLESHEET" href="styles.css">
+</head>
+<body>
+<hr>
+<p><a name="lambda"></a>(<b>lambda</b>)</p>
 
-<BLOCKQUOTE>
-<P>Provides a progn block with lamdba binding.</P>
-</BLOCKQUOTE>
+<blockquote>
+<p>Provides a progn block with lamdba binding.</p>
+</blockquote>
 
-<HR>
-<P><A name="last-key-struck"></A>(<B>last-key-struck</B>)</P>
+<hr>
+<p><a name="last-key-struck"></a>(<b>last-key-struck</b>)</p>
 
-<BLOCKQUOTE>
-<P>Returns the last command character struck. If you have a function bound to many keys, the function may use <CODE>last-key-struck</CODE> to determine which key was used to invoke it.</P>
-
-
-<P><B>See also:</B></P>
-
-<UL>
-<LI><A HREF="fn_p.html#previous-command">previous-command</A></LI>
-</UL>
+<blockquote>
+<p>Returns the last command character struck. If you have a function bound to many keys, the function may use <code>last-key-struck</code> to determine which key was used to invoke it.</p>
 
 
+<p><b>See also:</b></p>
 
-</BLOCKQUOTE>
+<ul>
+<li><a href="fn_p.html#previous-command">previous-command</a></li>
+</ul>
 
-<HR>
-<P><A name="left-marker"></A>(<B>left-marker</B> <CODE>marker-expression</CODE>)</P>
 
-<BLOCKQUOTE>
-<P>Takes a marker as a parameter and returns a new marker. The new marker will be at the same position as the original but with left-hand affinity. This means that text inserted at the position of the marker will not move the marker's position. Right-hand affinity markers move to the right as text is inserted.</P>
 
-<P><B>Example: </B> Set a left marker:</P>
+</blockquote>
 
-<PRE>
+<hr>
+<p><a name="left-marker"></a>(<b>left-marker</b> <code>marker-expression</code>)</p>
+
+<blockquote>
+<p>Takes a marker as a parameter and returns a new marker. The new marker will be at the same position as the original but with left-hand affinity. This means that text inserted at the position of the marker will not move the marker's position. Right-hand affinity markers move to the right as text is inserted.</p>
+
+<p><b>Example: </b> Set a left marker:</p>
+
+<pre>
 (setq left-hand-end (left-marker (dot))
-</PRE>
+</pre>
 
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A HREF="fn_r.html#right-marker">right-marker</A></LI>
-<LI><A HREF="fn_d.html#dot">dot</A></LI>
-</UL>
+<ul>
+<li><a href="fn_r.html#right-marker">right-marker</a></li>
+<li><a href="fn_d.html#dot">dot</a></li>
+</ul>
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-<P><A name="left-window"></A>(<B>left-window</B> <CODE>repeat-count</CODE>)</P>
+<hr>
+<p><a name="left-window"></a>(<b>left-window</b> <code>repeat-count</code>)</p>
 
-<BLOCKQUOTE>
-<P>Moves the cursor into the window that is to the left of the current window. (Unlike <CODE>next-window</CODE>, which moves the cursor without regard to the physical position of the windows on the screen).</P>
+<blockquote>
+<p>Moves the cursor into the window that is to the left of the current window. (Unlike <code>next-window</code>, which moves the cursor without regard to the physical position of the windows on the screen).</p>
 
-<P>If the <CODE>repeat-count</CODE> is given then the command is repeated that number of times.</P>
+<p>If the <code>repeat-count</code> is given then the command is repeated that number of times.</p>
 
-<P><CODE>left-window</CODE> reports an error if there is not a window to the left of the current window.</P>
+<p><code>left-window</code> reports an error if there is not a window to the left of the current window.</p>
 
-<P><B>Example:</B> Move to the window at the extreme left:</P>
+<p><b>Example:</b> Move to the window at the extreme left:</p>
 
-<PRE>
+<pre>
 (while 1 (left-window)
 )                               ; while
-</PRE>
+</pre>
 
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A HREF="fn_u.html#up-window">up-window</A></LI>
-<LI><A HREF="fn_d.html#down-window">down-window</A></LI>
-<LI><A HREF="fn_r.html#right-window">right-window</A></LI>
-</UL>
+<ul>
+<li><a href="fn_u.html#up-window">up-window</a></li>
+<li><a href="fn_d.html#down-window">down-window</a></li>
+<li><a href="fn_r.html#right-window">right-window</a></li>
+</ul>
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-<P><A name="length"></A>(<B>length</B> <CODE>string-expression</CODE>)</P>
+<hr>
+<p><a name="length"></a>(<b>length</b> <code>string-expression</code>)</p>
 
-<BLOCKQUOTE>
-<P>Returns the length of its string parameter.</P>
+<blockquote>
+<p>Returns the length of its string parameter.</p>
 
-<P><B>Example:</B></P> The length of "time" is 4:
+<p><b>Example:</b></p> The length of "time" is 4:
 
-<PRE>
+<pre>
 (length "time")
-</PRE>
+</pre>
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-<P><A name="line-to-top-of-window"></A>(<B>line-to-top-of-window</B>) ESC-!</P>
+<hr>
+<p><a name="line-to-top-of-window"></a>(<b>line-to-top-of-window</b>) ESC-!</p>
 
-<BLOCKQUOTE>
-<P>Moves the line in which dot resides to the top of the window associated with the current buffer.</P>
-</BLOCKQUOTE>
+<blockquote>
+<p>Moves the line in which dot resides to the top of the window associated with the current buffer.</p>
+</blockquote>
 
-<HR>
-<P><A name="lisp-mode"></A>(<B>lisp-mode</B>)</P>
+<hr>
+<p><a name="lisp-mode"></a>(<b>lisp-mode</b>)</p>
 
-<BLOCKQUOTE>
-<P>Enables Lisp Mode, a major mode for editing programs written in the Lisp language and also MLisp programs for Emacs.</P>
+<blockquote>
+<p>Enables Lisp Mode, a major mode for editing programs written in the Lisp language and also MLisp programs for Emacs.</p>
 
-<P>For more information, see the <A HREF="ug_specificedit.html#progmodes">User Guide</A></P>
-
-
-</BLOCKQUOTE>
-
-<HR>
-<P><A name="list-abbreviation-tables"></A>(<B>list-abbreviation-tables</B>)</P>
-
-<BLOCKQUOTE>
-<P>Creates a buffer called <CODE>Abbreviation table list</CODE> and inserts a list of the abbreviation tables that have been defined in Emacs.</P>
+<p>For more information, see the <a href="ug_specificedit.html#progmodes">User Guide</a></p>
 
 
-<P><B>See also:</B></P>
+</blockquote>
 
-<UL>
-<LI><A HREF="fn_d.html#dump-abbreviation-tables">dump-abbreviation-tables</A></LI>
-</UL>
+<hr>
+<p><a name="list-abbreviation-tables"></a>(<b>list-abbreviation-tables</b>)</p>
 
-
-</BLOCKQUOTE>
-
-<HR>
-<P><A name="list-auto-executes"></A>(<B>list-auto-executes</B>)</P>
-
-<BLOCKQUOTE>
-<P>Creates a buffer called <CODE>Auto Execute list</CODE> and inserts a list of all the auto-execute patterns and their functions.</P>
+<blockquote>
+<p>Creates a buffer called <code>Abbreviation table list</code> and inserts a list of the abbreviation tables that have been defined in Emacs.</p>
 
 
-</BLOCKQUOTE>
+<p><b>See also:</b></p>
 
-<HR>
-<P><A name="list-breakpoints"></A>(<B>list-breakpoints</B>)</P>
-
-<BLOCKQUOTE>
-<P>Creates a buffer called <CODE>Breakpoint list</CODE> and inserts a list of the functions that have breakpoints set.</P>
+<ul>
+<li><a href="fn_d.html#dump-abbreviation-tables">dump-abbreviation-tables</a></li>
+</ul>
 
 
-<P><B>See also:</B></P>
+</blockquote>
 
-<UL>
-<LI><A HREF="fn_b.html#breakpoint">breakpoint</A></LI>
-<LI><A HREF="var_b.html#breakpoint-hook">breakpoint-hook</A> variable</LI>
-</UL>
+<hr>
+<p><a name="list-auto-executes"></a>(<b>list-auto-executes</b>)</p>
 
-
-</BLOCKQUOTE>
-
-<HR>
-<P><A name="list-buffers"></A>(<B>list-buffers</B>) ^X-^B</P>
-
-<BLOCKQUOTE>
-<P>Produces a listing of all existing buffers giving their names, the name of the associated file (if there is one), the number of characters in the buffer and an indication of whether or not the buffer has been modified since it was read from or written to the associated file.</P>
-</BLOCKQUOTE>
-
-<HR>
-<P><A name="list-databases"></A>(<B>list-databases</B>)</P>
-
-<BLOCKQUOTE>
-<P>Lists all database search lists and the names of the database files contained in them.</P>
-</BLOCKQUOTE>
-
-<HR>
-<P><A name="list-images"></A>(<B>list-images</B>)</P>
-
-<BLOCKQUOTE>
-<P>Lists the names of all images referenced by the <CODE>external-function</CODE> command. The listing shows the image name, the value of the context and the name of the file that holds the image.</P>
+<blockquote>
+<p>Creates a buffer called <code>Auto Execute list</code> and inserts a list of all the auto-execute patterns and their functions.</p>
 
 
-<P><B>See also:</B></P>
+</blockquote>
 
-<UL>
-<LI><A HREF="fn_e.html#external-function">external-function</A></LI>
-</UL>
+<hr>
+<p><a name="list-breakpoints"></a>(<b>list-breakpoints</b>)</p>
 
-
-</BLOCKQUOTE>
-
-<HR>
-<P><A name="list-processes"></A>(<B>list-processes</B>)</P>
-
-<BLOCKQUOTE>
-<P>Lists the names of all existing subprocesses. The list includes the state in which each process is running, the time at which each process entered that state, and some information about the names of buffers and procedures associated with the process.</P>
-
-<P>Processes that have died appear once in this list before completely disappearing.</P>
-
-<P><B>See also:</B></P>
-
-<UL>
-<LI><A HREF="fn_c.html#current-process-name">current-process-name</A></LI>
-<LI><A HREF="fn_f.html#force-exit-process">force-exit-process</A></LI>
-<LI><A HREF="fn_k.html#kill-process">kill-process</A></LI>
-<LI><A HREF="fn_p.html#pause-process">pause-process</A></LI>
-<LI><A HREF="fn_r.html#resume-process">resume-process</A></LI>
-<LI><A HREF="fn_s.html#start-DCL-process">start-DCL-process</A></LI>
-<LI><A HREF="fn_w.html#wait-for-process-input-request">wait-for-process-input-request</A></LI>
-</UL>
-
-</BLOCKQUOTE>
-
-<HR>
-<P><A name="list-syntax-tables"></A>(<B>list-syntax-tables</B>)</P>
-
-<BLOCKQUOTE>
-<P>Lists all the syntax tables that have been defined.</P>
-</BLOCKQUOTE>
-
-<HR>
-<P><A name="load"></A>(<B>load</B> <CODE>file-name</CODE>)</P>
-
-<BLOCKQUOTE>
-<P>Loads the nominated file as a series of MLisp expressions executing each in turn. (This function is exactly the same as <CODE>execute-mlisp-file</CODE>).</P>
+<blockquote>
+<p>Creates a buffer called <code>Breakpoint list</code> and inserts a list of the functions that have breakpoints set.</p>
 
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A HREF="fn_e.html#execute-mlisp-file">execute-mlisp-file</A></LI>
-</UL>
+<ul>
+<li><a href="fn_b.html#breakpoint">breakpoint</a></li>
+<li><a href="var_b.html#breakpoint-hook">breakpoint-hook</a> variable</li>
+</ul>
 
-</BLOCKQUOTE>
 
-<HR>
-<P><A name="local-bind-to-key"></A>(<B>local-bind-to-key</B> <CODE>function key-sequence</CODE>)</P>
+</blockquote>
 
-<BLOCKQUOTE>
-<P>Binds the specified function to the given key sequence. Unlike <CODE>bind-to-key</CODE>, the binding has effect in only the current buffer. If called interactively, the function prompts for the name of the function to bind and also for the key.</P>
+<hr>
+<p><a name="list-buffers"></a>(<b>list-buffers</b>) ^X-^B</p>
 
-<P>See <A HREF="fn_b.html#bind-to-key"><CODE>bind-to-key</CODE></A> for details of key names.</P>
+<blockquote>
+<p>Produces a listing of all existing buffers giving their names, the name of the associated file (if there is one), the number of characters in the buffer and an indication of whether or not the buffer has been modified since it was read from or written to the associated file.</p>
+</blockquote>
 
-<P><B>Examples:</B></P>
+<hr>
+<p><a name="list-databases"></a>(<b>list-databases</b>)</p>
 
-<P>A function to insert the time, followed by a tab character, bound to the key Numlock-t:</P>
+<blockquote>
+<p>Lists all database search lists and the names of the database files contained in them.</p>
+</blockquote>
 
-<PRE>
+<hr>
+<p><a name="list-images"></a>(<b>list-images</b>)</p>
+
+<blockquote>
+<p>Lists the names of all images referenced by the <code>external-function</code> command. The listing shows the image name, the value of the context and the name of the file that holds the image.</p>
+
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_e.html#external-function">external-function</a></li>
+</ul>
+
+
+</blockquote>
+
+<hr>
+<p><a name="list-processes"></a>(<b>list-processes</b>)</p>
+
+<blockquote>
+<p>Lists the names of all existing subprocesses. The list includes the state in which each process is running, the time at which each process entered that state, and some information about the names of buffers and procedures associated with the process.</p>
+
+<p>Processes that have died appear once in this list before completely disappearing.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_c.html#current-process-name">current-process-name</a></li>
+<li><a href="fn_f.html#force-exit-process">force-exit-process</a></li>
+<li><a href="fn_k.html#kill-process">kill-process</a></li>
+<li><a href="fn_p.html#pause-process">pause-process</a></li>
+<li><a href="fn_r.html#resume-process">resume-process</a></li>
+<li><a href="fn_s.html#start-DCL-process">start-DCL-process</a></li>
+<li><a href="fn_w.html#wait-for-process-input-request">wait-for-process-input-request</a></li>
+</ul>
+
+</blockquote>
+
+<hr>
+<p><a name="list-syntax-tables"></a>(<b>list-syntax-tables</b>)</p>
+
+<blockquote>
+<p>Lists all the syntax tables that have been defined.</p>
+</blockquote>
+
+<hr>
+<p><a name="load"></a>(<b>load</b> <code>file-name</code>)</p>
+
+<blockquote>
+<p>Loads the nominated file as a series of MLisp expressions executing each in turn. (This function is exactly the same as <code>execute-mlisp-file</code>).</p>
+
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_e.html#execute-mlisp-file">execute-mlisp-file</a></li>
+</ul>
+
+</blockquote>
+
+<hr>
+<p><a name="local-bind-to-key"></a>(<b>local-bind-to-key</b> <code>function key-sequence</code>)</p>
+
+<blockquote>
+<p>Binds the specified function to the given key sequence. Unlike <code>bind-to-key</code>, the binding has effect in only the current buffer. If called interactively, the function prompts for the name of the function to bind and also for the key.</p>
+
+<p>See <a href="fn_b.html#bind-to-key"><code>bind-to-key</code></a> for details of key names.</p>
+
+<p><b>Examples:</b></p>
+
+<p>A function to insert the time, followed by a tab character, bound to the key Numlock-t:</p>
+
+<pre>
 (defun
     (time-and-tab
         (insert-string (current-time) "\t")
@@ -248,82 +248,82 @@
         
 )                               ; defun - delete-current-buffer
 (local-bind-to-key "time-and-tab" "\[num-lock]t")
-</PRE>
+</pre>
 
-<P>A single binding to do the same thing:</P>
+<p>A single binding to do the same thing:</p>
 
 
-<PRE>
+<pre>
 (local-bind-to-key "(insert-string (current-time) \"\\t\")" "\[num-lock]t")
-</PRE>
+</pre>
 
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A HREF="fn_b.html#bind-to-key">bind-to-key</A></LI>
-<LI><A HREF="fn_r.html#remove-local-binding">remove-local-binding</A></LI>
-<LI><A HREF="fn_l.html#local-binding-of">local-binding-of</A></LI>
-<LI><A HREF="fn_r.html#remove-all-local-bindings">remove-all-local-bindings</A></LI>
-<LI><A HREF="fn_d.html#describe-bindings">describe-bindings</A></LI>
-</UL>
-
-
-
-</BLOCKQUOTE>
-
-<HR>
-<P><A name="local-binding-of"></A>(<B>local-binding-of</B> <CODE>key-sequence</CODE>)</P>
-
-<BLOCKQUOTE>
-<P>Returns the name of the function that the key sequence provided will invoke using the current local keymap.</P>
+<ul>
+<li><a href="fn_b.html#bind-to-key">bind-to-key</a></li>
+<li><a href="fn_r.html#remove-local-binding">remove-local-binding</a></li>
+<li><a href="fn_l.html#local-binding-of">local-binding-of</a></li>
+<li><a href="fn_r.html#remove-all-local-bindings">remove-all-local-bindings</a></li>
+<li><a href="fn_d.html#describe-bindings">describe-bindings</a></li>
+</ul>
 
 
-<P><B>See also:</B></P>
 
-<UL>
-<LI><A HREF="#local-bind-to-key">local-bind-to-key</A></LI>
-<LI><A HREF="fn_g.html#global-binding-of">global-binding-of</A></LI>
-<LI><A HREF="fn_d.html#describe-bindings">describe-bindings</A></LI>
-<LI><A HREF="fn_r.html#remove-all-local-bindings">remove-all-local-bindings</A></LI>
-</UL>
+</blockquote>
+
+<hr>
+<p><a name="local-binding-of"></a>(<b>local-binding-of</b> <code>key-sequence</code>)</p>
+
+<blockquote>
+<p>Returns the name of the function that the key sequence provided will invoke using the current local keymap.</p>
 
 
-</BLOCKQUOTE>
+<p><b>See also:</b></p>
 
-<HR>
-<P><A name="looking-at"></A>(<B>looking-at</B> <CODE>regular-expression</CODE>)</P>
+<ul>
+<li><a href="#local-bind-to-key">local-bind-to-key</a></li>
+<li><a href="fn_g.html#global-binding-of">global-binding-of</a></li>
+<li><a href="fn_d.html#describe-bindings">describe-bindings</a></li>
+<li><a href="fn_r.html#remove-all-local-bindings">remove-all-local-bindings</a></li>
+</ul>
 
-<BLOCKQUOTE>
-<P>Deprecated: Use ere-looking-at for new code.</p>
-<P>Returns 1 if the given regular expression search string matches the text immediately following dot. This is for use in packages that want to do limited parsing.</P>
 
-<P>If a negative prefix argument is supplied, characters to the left of dot are checked, rather than those to the right.</P>
+</blockquote>
 
-<P>For example, if dot is at the beginning of a line then:</P>
+<hr>
+<p><a name="looking-at"></a>(<b>looking-at</b> <code>regular-expression</code>)</p>
 
-<PRE>
+<blockquote>
+<p>Deprecated: Use ere-looking-at for new code.</p>
+<p>Returns 1 if the given regular expression search string matches the text immediately following dot. This is for use in packages that want to do limited parsing.</p>
+
+<p>If a negative prefix argument is supplied, characters to the left of dot are checked, rather than those to the right.</p>
+
+<p>For example, if dot is at the beginning of a line then:</p>
+
+<pre>
 (looking-at "[ \t]*else")
-</PRE>
+</pre>
 
-<P>is true if the line starts with any number of spaces or tabs, followed by "else".  </P>
+<p>is true if the line starts with any number of spaces or tabs, followed by "else".  </p>
 
-<P>See <A HREF="fn_r.html#re-search-forward"><CODE>re-search-forward</CODE></A> for more information about regular expression searches.</P>
+<p>See <a href="fn_r.html#re-search-forward"><code>re-search-forward</code></a> for more information about regular expression searches.</p>
 
-<P><B>See also:</B></P>
+<p><b>See also:</b></p>
 
-<UL>
-<LI><A HREF="fn_e.html#eere-search-forward">ere-search-forward</A></LI>
-<LI><A HREF="fn_e.html#re-search-reverse">ere-search-reverse</A></LI>
-<LI><A HREF="fn_s.html#search-forward">search-forward</A></LI>
-<LI><A HREF="fn_s.html#search-reverse">search-reverse</A></LI>
-</UL>
+<ul>
+<li><a href="fn_e.html#eere-search-forward">ere-search-forward</a></li>
+<li><a href="fn_e.html#re-search-reverse">ere-search-reverse</a></li>
+<li><a href="fn_s.html#search-forward">search-forward</a></li>
+<li><a href="fn_s.html#search-reverse">search-reverse</a></li>
+</ul>
 
 
 
-</BLOCKQUOTE>
+</blockquote>
 
-<HR>
-</BODY>
-</HTML>
+<hr>
+</body>
+</html>
 
