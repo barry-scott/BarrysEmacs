@@ -18,6 +18,57 @@
 )
 
 (defun
+    (HTML-lower-case-elements-and-attributes
+        (save-window-excursion
+            ~old-case-fold-search
+            (setq ~old-case-fold-search case-fold-search)
+            
+            (beginning-of-file)
+            (setq case-fold-search 0)
+            (while
+                (! (error-occurred (ere-search-forward "<[ \t]*[A-Z]+")))
+                (progn
+                    ; lower case the element name
+                    (case-word-lower)
+                    ; see if there are any attributes
+                    (while (! (ere-looking-at "[ \t]*>|[ \t]/[ \t]*>"))
+                        (ere-search-forward "[A-Za-z]+")
+                        (progn
+                            (case-word-lower)
+                            ; make sure that its a attrib=value and not the
+                            ; old style attrib on its own
+                            (if (ere-looking-at "[ \t]*=")
+                                (progn
+                                    (ere-search-forward "=")
+                                    (if (ere-looking-at "[ \t]*\"")
+                                        (progn
+                                            ; skip "quoted param"
+                                            (ere-search-forward "\"")
+                                            (ere-search-forward "\"")
+                                        )
+                                        (progn
+                                            ; skip unquoted-param
+                                            (forward-word)
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            ; now deal with the closing tag
+            (beginning-of-file)
+            (setq case-fold-search 0)
+            (while
+                (! (error-occurred (ere-search-forward "< */ *[A-Z]+")))
+                (case-word-lower)
+            )
+        )
+    )
+)
+
+(defun
     (~mode-modify-syntax-table
         ~type
         ~arg
