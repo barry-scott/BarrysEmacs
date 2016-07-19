@@ -27,42 +27,62 @@ public:
     virtual ~MLispInputStream();
 
     // return the next char from the stream
-    int operator()();
+    EmacsChar_t operator()();
 
     // push back one character
-    void pushBack( int c ) { peekc = c; }
+    void pushBack( EmacsChar_t c );
 
     // look at the next char without reading
-    int peek();
+    EmacsChar_t peek();
 
     // returns true if the stream was constructed
     virtual bool isOk();
+    bool atEof();
 
     // return the current line number
-    int currentLine() const { return line_number; }
+    int currentLine() const { return m_line_number; }
 protected:
-    virtual int readCharacter() = 0;
+    virtual EmacsChar_t readCharacter() = 0;
+    bool        m_at_eof;
+
 private:
-    enum { PEEK_EMPTY = -2 };
-    int peekc;
-    int line_number;
+    bool        m_has_peekc;
+    EmacsChar_t m_peekc;
+    int         m_line_number;
 };
 
 
 MLispInputStream::MLispInputStream()
-    : peekc( PEEK_EMPTY )
-    , line_number(1)
+: m_at_eof( false )
+, m_has_peekc( false )
+, m_peekc( 0 )
+, m_line_number( 1 )
 { }
 
 MLispInputStream::~MLispInputStream()
 { }
 
-int MLispInputStream::peek()
+bool MLispInputStream::atEof()
 {
-    if( peekc == PEEK_EMPTY )
-        pushBack( readCharacter() );
+    return m_at_eof;
+}
 
-    return peekc;
+void MLispInputStream::pushBack( EmacsChar_t c )
+{
+    assert( !m_has_peekc );
+    m_has_peekc = true;
+    m_peekc = c;
+}
+
+
+EmacsChar_t MLispInputStream::peek()
+{
+    if( !m_has_peekc )
+    {
+        pushBack( readCharacter() );
+    }
+
+    return m_peekc;
 }
 
 bool MLispInputStream::isOk()
@@ -70,23 +90,25 @@ bool MLispInputStream::isOk()
     return true;
 }
 
-int MLispInputStream::operator()()
+EmacsChar_t MLispInputStream::operator()()
 {
-    int temp;
+    EmacsChar_t ch;
 
-    if( peekc != PEEK_EMPTY )
+    if( m_has_peekc )
     {
-        temp = peekc;
-        peekc = PEEK_EMPTY;
+        ch = m_peekc;
+        m_has_peekc = false;
     }
     else
     {
-        temp = readCharacter();
-        if( temp == '\n' )
-            line_number++;
+        ch = readCharacter();
+        if( ch == '\n' )
+        {
+            m_line_number++;
+        }
     }
 
-    return temp;
+    return ch;
 }
 
 //
@@ -102,14 +124,14 @@ public:
 
     int position();
 private:
-    virtual int readCharacter();
+    virtual EmacsChar_t readCharacter();
 
     int bufpos;
 };
 
 
 MLispBufferInputStream::MLispBufferInputStream()
-    : bufpos( bf_cur->first_character() )
+: bufpos( bf_cur->first_character() )
 { }
 
 MLispBufferInputStream::~MLispBufferInputStream()
@@ -120,15 +142,16 @@ int MLispBufferInputStream::position()
     return bufpos;
 }
 
-int MLispBufferInputStream::readCharacter( void )
+EmacsChar_t MLispBufferInputStream::readCharacter( void )
 {
-    int c;
-
     if( bufpos > bf_cur->num_characters() )
+    {
         // return end of file
-        return -1;
+        m_at_eof = true;
+        return 0;
+    }
 
-    c = bf_cur->char_at( bufpos );
+    EmacsChar_t c = bf_cur->char_at( bufpos );
     bufpos++;
 
     return c;
@@ -150,7 +173,7 @@ protected:
     // used by library input stream
     void setString( const EmacsString &_string );
 private:
-    virtual int readCharacter();
+    virtual EmacsChar_t readCharacter();
 
     int pos;
     EmacsString string;
@@ -176,12 +199,17 @@ bool MLispStringInputStream::isOk()
 MLispStringInputStream::~MLispStringInputStream()
 { }
 
-int MLispStringInputStream::readCharacter( void )
+EmacsChar_t MLispStringInputStream::readCharacter( void )
 {
     if( pos < string.length() )
+    {
         return string[pos++];
+    }
     else
-        return -1;
+    {
+        m_at_eof = true;
+        return 0;
+    }
 }
 
 //
@@ -197,7 +225,7 @@ public:
 
     virtual bool isOk();
 private:
-    virtual int readCharacter();
+    virtual EmacsChar_t readCharacter();
 
     EmacsString string;
 
@@ -232,23 +260,29 @@ bool MLispFileInputStream::isOk()
 MLispFileInputStream::~MLispFileInputStream()
 { }
 
-int MLispFileInputStream::readCharacter( void )
+EmacsChar_t MLispFileInputStream::readCharacter( void )
 {
     if( !fio_is_open() )
-        return -1;
+    {
+        m_at_eof = true;
+        return 0;
+    }
+
     if( file_size == 0 )
     {
         file_size = fio_get( f_buffer, BUF_SIZE );
         file_pointer = f_buffer;
     }
+
     if( file_size > 0 )
     {
         file_size--;
         return *file_pointer++;
     }
-    return -1;
-}
 
+    m_at_eof = true;
+    return 0;
+}
 
 //
 //
@@ -338,9 +372,9 @@ MLispLibraryInputStream::~MLispLibraryInputStream()
 //
 //
 Binding_list::Binding_list()
-    : bl_exp()
-    , bl_flink(NULL)
-    , bl_arg_index(0)
+: bl_exp()
+, bl_flink(NULL)
+, bl_arg_index(0)
 { }
 
 Binding_list::~Binding_list()
@@ -359,15 +393,17 @@ static EmacsString cur_mlisp_file( interactive_filename );
 //
 ProgramNode *ProgramNode::parse_node( MLispInputStream &input )
 {
-    int c;
+    EmacsChar_t c;
     //
     //    Trim all spaces and comments
     //
     for(;;)
     {
         do
+        {
             c = input();
-        while( c >= 0 && unicode_is_space( c ) );
+        }
+        while( !input.atEof() && unicode_is_space( c ) );
 
         if( c != ';' )
             break;
@@ -375,19 +411,30 @@ ProgramNode *ProgramNode::parse_node( MLispInputStream &input )
     }
 
     if( c == '(' )
+    {
         return paren_node( input );
-    if( c < 0 || c == ')' )
+    }
+
+    if( input.atEof() || c == ')' )
     {
         input.pushBack( c );
         return 0;
     }
+
     if( c == '"' )
+    {
         return string_node( input );
+    }
+
     input.pushBack( c );
-    if(c == '\'' || c == '-' || unicode_is_digit( c ) )
+    if( c == '\'' || c == '-' || unicode_is_digit( c ) )
+    {
         return number_node( input );
+    }
     else
+    {
         return name_node( input );
+    }
 }
 
 // LispComment handles lisp style comments
@@ -398,23 +445,27 @@ void ProgramNode::lisp_comment( MLispInputStream &input )
                 _dbg_msg( FormatString("Comment: line %d\n") << input.currentLine() );
 #endif
 
-    int c;
+    EmacsChar_t c;
     do
+    {
         c = input();
-    while( c > 0 && c != '\n' );
+    }
+    while( !input.atEof() && c != '\n' );
 }
 
 // ParseName parses a name from the MLisp input stream
 EmacsString ProgramNode::parse_name( MLispInputStream &input )
 {
     EmacsString name;
-    int c;
+    EmacsChar_t c;
 
     do
+    {
         c = input();
-    while( unicode_is_space( c ) );
+    }
+    while( !input.atEof() && unicode_is_space( c ) );
 
-    while( c > 0
+    while( !input.atEof()
     && ! unicode_is_space( c )
     && c != '(' && c != ')' && c != ';' )
     {
@@ -424,8 +475,8 @@ EmacsString ProgramNode::parse_name( MLispInputStream &input )
     input.pushBack( c );
 
 #if DBG_ML_PARSE
-        if( dbg_flags&DBG_ML_PARSE )
-                _dbg_msg( FormatString("Parse name: line %d name %s\n") << input.currentLine() << name );
+    if( dbg_flags&DBG_ML_PARSE )
+        _dbg_msg( FormatString("Parse name: line %d name %s\n") << input.currentLine() << name );
 #endif
 
     return name;
@@ -440,24 +491,28 @@ EmacsString ProgramNode::parse_name( MLispInputStream &input )
 
 ProgramNode *ProgramNode::paren_node( MLispInputStream &input )
 {
-    int c;
+    EmacsChar_t c;
     int nargs = 0;
     ProgramNode *args[MAXNODES];    // alas, yet another hard-wired limitation!
     ProgramNodeNode *p;
-    BoundName *who;
     ProgramNodeNode *converted_defun = NULL;
 
     EmacsString name = parse_name( input );
 
     if( name.isNull() )
+    {
         return 0;
-    who = BoundName::find( name );
+    }
+
+    BoundName *who = BoundName::find( name );
     if( who == NULL )
+    {
         who = EMACS_NEW BoundName( name );
+    }
 
 #if DBG_ML_PARSE
-        if( dbg_flags&DBG_ML_PARSE )
-                _dbg_msg( FormatString("Parse node: line %d ( name %s\n") << input.currentLine() << name );
+    if( dbg_flags&DBG_ML_PARSE )
+        _dbg_msg( FormatString("Parse node: line %d ( name %s\n") << input.currentLine() << name );
 #endif
 
     //
@@ -473,8 +528,10 @@ ProgramNode *ProgramNode::paren_node( MLispInputStream &input )
         for(;;)
         {
             do
+            {
                 c = input();
-            while( c >= 0 && unicode_is_space( c ) );
+            }
+            while( !input.atEof() && unicode_is_space( c ) );
 
             if( c != ';' )
                 break;
@@ -486,13 +543,15 @@ ProgramNode *ProgramNode::paren_node( MLispInputStream &input )
         //
         if( c == '('
         || c == ';'
-        || c < 0
+        || input.atEof()
         || c == ')'
         || c == '"'
         || c == '\''
         || c == '-'
         || unicode_is_digit( c ) )
+        {
             input.pushBack( c );
+        }
         else
         {
             //
@@ -510,15 +569,19 @@ ProgramNode *ProgramNode::paren_node( MLispInputStream &input )
             }
             who = BoundName::find( name );
             if( who == NULL )
+            {
                 who = EMACS_NEW BoundName( name );
+            }
 
             //
             //    Now scan for the open paren of the arg list
             //    THERE HAD BETTER BE ONE, OR THIS IS AN error
             //
             do
+            {
                 c = input();
-            while( c >= 0 && unicode_is_space( c ) );
+            }
+            while( !input.atEof() && unicode_is_space( c ) );
             if( c != '(' )
             {
                 error( "Syntax error in new-style defun -- incorrect arg list" );
@@ -544,7 +607,9 @@ ProgramNode *ProgramNode::paren_node( MLispInputStream &input )
             }
             // what does this do?
             if( input.peek() == ')' )
+            {
                 input();
+            }
 
             p = EMACS_NEW ProgramNodeNode( BoundName::find( "novalue" ), nargs );
             memcpy( p->pa_node, args, nargs*sizeof( ProgramNode * ) );
@@ -568,28 +633,31 @@ ProgramNode *ProgramNode::paren_node( MLispInputStream &input )
     {
         if( nargs >= MAXNODES )
         {
-            int i;
-
             error( FormatString("MLisp expression is too complex in %s") << cur_mlisp_file );
-            for( i=0; i<=nargs - 1; i += 1 )
+            for( int i=0; i<=nargs - 1; i += 1 )
+            {
                 delete args[ i ];
+            }
             return 0;
         }
         nargs++;
     }
 
     if( input.peek() == ')' )
+    {
         input();
-    else if( input.peek() < 0 )
+    }
+    else if( input.atEof() )
+    {
         error( FormatString("Unexpected EOF possible parens mismatched in %s") << cur_mlisp_file );
+    }
 
     p = EMACS_NEW ProgramNodeNode( who, nargs );
     memcpy( p->pa_node, args, nargs * sizeof( ProgramNode * ) );
 
-
 #if DBG_ML_PARSE
-        if( dbg_flags&DBG_ML_PARSE )
-                _dbg_msg( FormatString("Parse node: line %d %s )\n") << input.currentLine() << name );
+    if( dbg_flags&DBG_ML_PARSE )
+        _dbg_msg( FormatString("Parse node: line %d %s )\n") << input.currentLine() << name );
 #endif
 
     //
@@ -608,14 +676,12 @@ ProgramNode *ProgramNode::paren_node( MLispInputStream &input )
 }
 
 unsigned char msg_imp_char[] = "'%s' is an improper character constant.";
+unsigned char msg_imp_octal[] = "'%c' is an improper octal constant.";
 
 ProgramNode *ProgramNode::number_node( MLispInputStream &input )
 {
-    int n;
-    int c;
-
-    c = input();
-    n = 0;
+    int n = 0;
+    EmacsChar_t c = input();
 
     if( c == '\'' )
     {
@@ -685,44 +751,99 @@ ProgramNode *ProgramNode::number_node( MLispInputStream &input )
     }
     else
     {
-        int neg;
-        int base;
-        neg = 0;
-        base = 10;
+        bool neg = false;
+        int base = 10;
+
         if( c == '-' )
         {
-            neg++;
+            neg = true;
             c = input();
         }
         if( c == '0' )
-            base = 8;
-        while( unicode_is_digit( c ) )
         {
-            n = n * base + c - '0';
-            c = input();
+            if( input.peek() == 'x' || input.peek() == 'X' )
+            {
+                input();        // skip x
+                c = input();    // first digit
+                base = 16;
+            }
+            else
+            {
+                base = 8;
+            }
         }
+        switch( base )
+        {
+        case 8:
+            while( c >= '0' && c <= '9' )
+            {
+                if( c >= '7' )
+                {
+                    error( FormatString( msg_imp_octal ) << c );
+                    goto number_block;
+                }
+                n = n * base + c - '0';
+                c = input();
+            }
+            break;
+
+        case 10:
+            while( c >= '0' && c <= '9' )
+            {
+                n = n * base + c - '0';
+                c = input();
+            }
+            break;
+
+        case 16:
+            for(;;)
+            {
+                if( c >= '0' && c <= '9' )
+                {
+                    n = n * base + c - '0';
+                }
+                else if( c >= 'a' && c <= 'f' )
+                {
+                    n = n * base + c - 'a' + 10;
+                }
+                else if( c >= 'A' && c <= 'F' )
+                {
+                    n = n * base + c - 'A' + 10;
+                }
+                else
+                {
+                    break;
+                }
+                c = input();
+            }
+            break;
+        }
+
         if( neg )
+        {
             n = -n;
+        }
+
         input.pushBack( c );
     }
 number_block:
 
 #if DBG_ML_PARSE
-        if( dbg_flags&DBG_ML_PARSE )
-                _dbg_msg( FormatString("Parse number: line %d number %d\n") << input.currentLine() << n );
+    if( dbg_flags&DBG_ML_PARSE )
+        _dbg_msg( FormatString("Parse number: line %d number %d\n") << input.currentLine() << n );
 #endif
 
     return EMACS_NEW ProgramNodeInt( n );
-
 }
 
 ProgramNode *ProgramNode::string_node( MLispInputStream &input )
 {
-    int c;
+    EmacsChar_t c;
     EmacsString buf;
 
-    while( (c = input()) > 0 )
+    while( !input.atEof() )
     {
+        c = input();
         if( c != '\\' )
         {
             if( c == '"'
@@ -756,14 +877,16 @@ ProgramNode *ProgramNode::string_node( MLispInputStream &input )
 
             int final_char = ']';
             if( c == '(' )
+            {
                 final_char = ')';
+            }
 
             c = input();
             while( c != final_char )
             {
-                if( c == 0 || c == '"' || c < 0 )
+                if( c == '"' )
                 {
-                    error( "Closing \"\" missing in keyname escape sequence" );
+                    error( FormatString("Closing \"%c\" missing in keyname escape sequence") << final_char );
                     return 0;
                 }
                 key_name.append( c );
@@ -791,32 +914,37 @@ ProgramNode *ProgramNode::string_node( MLispInputStream &input )
         {
             if( '0' <= c && c <= '7' )
             {
-                int nc; int cnt;
-                nc = 0;
-                cnt = 3;
+                int nc = 0;
+                int cnt = 3;
                 do
+                {
                     nc = nc * 8 + c - '0';
+                }
                 while( (cnt = cnt - 1) > 0
                 && '0' <= (c = input())
                 && c <= '7' );
 
                 if( cnt > 0 )
+                {
                     input.pushBack( c );
+                }
                 c = nc;
             }
         }
         }
-        if( c < 0 )
+
+        if( input.atEof() )
         {
             error( "Unterminated string constant" );
             return 0;
         }
+
         buf.append( c );
     }
 
 #if DBG_ML_PARSE
-        if( dbg_flags&DBG_ML_PARSE )
-                _dbg_msg( FormatString("Parse string: line %d string %s\n") << input.currentLine() << buf );
+    if( dbg_flags&DBG_ML_PARSE )
+        _dbg_msg( FormatString("Parse string: line %d string %s\n") << input.currentLine() << buf );
 #endif
 
     return EMACS_NEW ProgramNodeString( buf );
@@ -825,21 +953,23 @@ ProgramNode *ProgramNode::string_node( MLispInputStream &input )
 
 int execute_mlisp_buffer( void )
 {
-    int rv;
-
     MLispBufferInputStream buffer_stream;
 
-    rv = ProgramNode::execute_mlisp_stream( buffer_stream );
+    int rv = ProgramNode::execute_mlisp_stream( buffer_stream );
     if( ml_err )
+    {
         set_dot( buffer_stream.position() - 1 );
+    }
+
     return rv;
 }
-
 
 ProgramNode *ProgramNode::parse_mlisp_line( const EmacsString &s )
 {
     if( s.isNull() )
+    {
         return NULL;
+    }
 
     MLispStringInputStream input_stream( s );
 
@@ -863,10 +993,14 @@ int execute_mlisp_line( void )
     if( !ml_err && interactive() )
     {
         if( ml_value.exp_type() == ISINTEGER )
+        {
             message( FormatString("%s => %d") << line << ml_value.asInt() );
+        }
         else
         if( ml_value.exp_type() == ISSTRING )
-                message( FormatString("%s => \"%s\"") << line << ml_value.asString() );
+        {
+            message( FormatString("%s => \"%s\"") << line << ml_value.asString() );
+        }
 
         ml_value = Expression();
     }
@@ -874,26 +1008,30 @@ int execute_mlisp_line( void )
     return rv;
 }
 
-
 int ProgramNode::execute_mlisp_stream( MLispInputStream &input )
 {
     int rv = 0;
 
-    while( input.peek() >= 0
+    // qqq atEof may not work here
+    while( !input.atEof()
     && rv == 0
     && ! ml_err )
     {
         ProgramNode *p = ProgramNode::parse_node( input );
         if( p == NULL )
+        {
             break;
+        }
 
         rv = exec_prog( p );
         delete p;
 
-        int c;
+        EmacsChar_t c;
         do
+        {
             c = input();
-        while( c >= 0 && unicode_is_space( c ) );
+        }
+        while( !input.atEof() && unicode_is_space( c ) );
 
         input.pushBack( c );
     }
@@ -909,11 +1047,13 @@ int ProgramNode::execute_mlisp_stream( MLispInputStream &input )
 int execute_mlisp_file( const EmacsString &fn, int missingOK )
 {
     if( fn.isNull() )
+    {
         return 0;
+    }
 
 #if DBG_EXECFILE
-        if( dbg_flags&DBG_EXECFILE )
-                _dbg_msg( FormatString("execute-mlisp-file >> %s") << fn );
+    if( dbg_flags&DBG_EXECFILE )
+        _dbg_msg( FormatString("execute-mlisp-file >> %s") << fn );
 #endif
 
     Save<EmacsString> saved_cur_mlisp_file( &cur_mlisp_file );
@@ -921,27 +1061,35 @@ int execute_mlisp_file( const EmacsString &fn, int missingOK )
 
     int rv = 0;
 
-{
+    {
     MLispFileInputStream file_stream( fn );
 
     if( file_stream.isOk() )
+    {
         rv = ProgramNode::execute_mlisp_stream( file_stream );
+    }
     else
     {
         MLispLibraryInputStream lib_stream( fn );
 
         if( lib_stream.isOk() )
+        {
             rv = ProgramNode::execute_mlisp_stream( lib_stream );
+        }
         else
+        {
             if( !missingOK )
+            {
                 error( FormatString("Cannot read %s") << fn );
+            }
+        }
     }
-}
+    }
 
 
 #if DBG_EXECFILE
-        if( dbg_flags&DBG_EXECFILE )
-                _dbg_msg( FormatString("execute-mlisp-file << %s") << fn );
+    if( dbg_flags&DBG_EXECFILE )
+        _dbg_msg( FormatString("execute-mlisp-file << %s") << fn );
 #endif
 
     return rv;
@@ -951,7 +1099,9 @@ int execute_mlisp_file_command( void )
 {
     EmacsString s = getstr( ": execute-mlisp-file " );
     if( s.isNull() )
+    {
         return 0;
+    }
     return execute_mlisp_file( s, 0 );
 }
 
@@ -976,7 +1126,9 @@ ProgramNode *ProgramNode::name_node( MLispInputStream &input )
 {
     EmacsString name = parse_name( input );
     if( name.isNull() )
+    {
         return 0;
+    }
 
     VariableName *v = VariableName::find( name );
     if( v == NULL )
@@ -988,18 +1140,22 @@ ProgramNode *ProgramNode::name_node( MLispInputStream &input )
 }
 
 ProgramNodeNode::ProgramNodeNode( BoundName *proc, int nargs )
-    : ProgramNode( proc )
-    , pa_node( (ProgramNode **)EMACS_MALLOC( sizeof(ProgramNode *) * nargs, malloc_type_star_star ) )
+: ProgramNode( proc )
+, pa_node( (ProgramNode **)EMACS_MALLOC( sizeof(ProgramNode *) * nargs, malloc_type_star_star ) )
 {
     p_nargs = nargs;
 
     for( int i=0; i<p_nargs; i++ )
+    {
         pa_node[i] = NULL;
+    }
 }
 
 ProgramNodeNode::~ProgramNodeNode()
 {
     for( int i=0; i<p_nargs; i++ )
+    {
         delete pa_node[i];
+    }
     EMACS_FREE( pa_node );
 }
