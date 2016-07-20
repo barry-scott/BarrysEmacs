@@ -1,11 +1,9 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
- 
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
 <html>
- 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"> 
 <title>User Guide - Basic Editing</title>
-<link rel="stylesheet" href="styles.css"> 
+<link rel="stylesheet" href="styles.css" /> 
 </head>
 
 <body>
@@ -32,27 +30,27 @@
 <ul>
 <li><a href="#files">Files</a> describes Emacs basic file handling commands.</li>
 </ul>
-<hr>
+<hr/>
  
 <h2><a name="theorganisationofthescreen"></a>The Organisation of the Screen</h2>
  
-<p align="center"><img src="ug_screen.gif" usemap="#screen" border="0" width="606" height="297"></p>
+<p align="center"><img src="ug_screen.gif" usemap="#screen" border="0" width="606" height="297" /></p>
 <map name="screen">
-<area shape="rect" coords="5,22,548,42" href="#theorganisationofthescreen" onmouseover="self.status='Menus'; return true"> 
-<area shape="rect" coords="5,43,224,72" href="#theorganisationofthescreen" onmouseover="self.status='Toolbar'; return true"> 
-<area shape="rect" coords="219,118,227,133" href="#theorganisationofthescreen" onmouseover="self.status='Text cursor'; return true"> 
-<area shape="rect" coords="5,74,574,239" href="#theorganisationofthescreen" onmouseover="self.status='Text area'; return true"> 
-<area shape="rect" coords="5,240,504,255" href="#theorganisationofthescreen" onmouseover="self.status='Mode line'; return true"> 
-<area shape="rect" coords="5,256,574,273" href="#theorganisationofthescreen" onmouseover="self.status='Minibuffer'; return true"> 
-<area shape="rect" coords="584,88,599,224" href="#theorganisationofthescreen" onmouseover="self.status='Vertical Scroll bar'; return true"> 
-<area shape="rect" coords="505,238,582,254" href="#theorganisationofthescreen" onmouseover="self.status='Horizontal Scroll bar'; return true"> 
-<area shape="rect" coords="5,274,418,292" href="#theorganisationofthescreen" onmouseover="self.status='Status bar'; return true"> 
-<area shape="rect" coords="419,274,445,292" href="#theorganisationofthescreen" onmouseover="self.status='Caps lock indicator'; return true"> 
-<area shape="rect" coords="446,274,476,292" href="#theorganisationofthescreen" onmouseover="self.status='Overstrike indicator'; return true"> 
-<area shape="rect" coords="477,274,514,292" href="#theorganisationofthescreen" onmouseover="self.status='Readonly buffer indicator'; return true"> 
-<area shape="rect" coords="515,274,557,292" href="#theorganisationofthescreen" onmouseover="self.status='Line number'; return true"> 
-<area shape="rect" coords="558,274,585,292" href="#theorganisationofthescreen" onmouseover="self.status='Column'; return true"> 
-<area shape="rect" coords="0,0,605,296" href="#theorganisationofthescreen" onmouseover="self.status=' '; return true;"> 
+<area shape="rect" coords="5,22,548,42" href="#theorganisationofthescreen" onmouseover="self.status='Menus'; return true" />
+<area shape="rect" coords="5,43,224,72" href="#theorganisationofthescreen" onmouseover="self.status='Toolbar'; return true" />
+<area shape="rect" coords="219,118,227,133" href="#theorganisationofthescreen" onmouseover="self.status='Text cursor'; return true" />
+<area shape="rect" coords="5,74,574,239" href="#theorganisationofthescreen" onmouseover="self.status='Text area'; return true" />
+<area shape="rect" coords="5,240,504,255" href="#theorganisationofthescreen" onmouseover="self.status='Mode line'; return true" />
+<area shape="rect" coords="5,256,574,273" href="#theorganisationofthescreen" onmouseover="self.status='Minibuffer'; return true" />
+<area shape="rect" coords="584,88,599,224" href="#theorganisationofthescreen" onmouseover="self.status='Vertical Scroll bar'; return true" />
+<area shape="rect" coords="505,238,582,254" href="#theorganisationofthescreen" onmouseover="self.status='Horizontal Scroll bar'; return true" />
+<area shape="rect" coords="5,274,418,292" href="#theorganisationofthescreen" onmouseover="self.status='Status bar'; return true" />
+<area shape="rect" coords="419,274,445,292" href="#theorganisationofthescreen" onmouseover="self.status='Caps lock indicator'; return true" />
+<area shape="rect" coords="446,274,476,292" href="#theorganisationofthescreen" onmouseover="self.status='Overstrike indicator'; return true" />
+<area shape="rect" coords="477,274,514,292" href="#theorganisationofthescreen" onmouseover="self.status='Readonly buffer indicator'; return true" />
+<area shape="rect" coords="515,274,557,292" href="#theorganisationofthescreen" onmouseover="self.status='Line number'; return true" />
+<area shape="rect" coords="558,274,585,292" href="#theorganisationofthescreen" onmouseover="self.status='Column'; return true" />
+<area shape="rect" coords="0,0,605,296" href="#theorganisationofthescreen" onmouseover="self.status=' '; return true;" />
 </map>
 <center>
 Figure 1. <i>The Emacs screen</i>
@@ -62,15 +60,15 @@ Figure 1. <i>The Emacs screen</i>
  
 <p>Emacs divides the screen into several areas, each of which contains its own kind of information. The biggest area is the one in which you usually see the text you are editing. The cursor usually appears in the middle of the text, showing the position of dot, the location at which editing takes place. The cursor is a vertical line by default. In <i>Figure 1</i> the cursor can be seen at end of the word &quot;me&quot; and before &quot;electronically&quot;.</p>
  
-<p>The line between the modeline and the status bar on the screen is called the Mini-buffer. This area is used to display messages and error text when a command is incorrectly used. It is also used to collect arguments for commands that require them when they are executed interactively. Normal editing commands can be used in the Mini-buffer. <br>
+<p>The line between the modeline and the status bar on the screen is called the Mini-buffer. This area is used to display messages and error text when a command is incorrectly used. It is also used to collect arguments for commands that require them when they are executed interactively. Normal editing commands can be used in the Mini-buffer. <br />
 </p>
-<hr>
+<hr/>
  
 <h3><a name="windows"></a>Windows</h3>
 <p>The main area of the screen may be divided up into a number of windows, as shown in <i>Figure 2</i>. A window is associated with a buffer which will contain the contents of a file.</p>
 
 <center>
-<img src="ug_windows.gif" border="1" width="594" height="199">
+<img src="ug_windows.gif" border="1" width="594" height="199" />
 </center>
 <center>
 Figure 2. <i>Emacs with three windows.</i>
@@ -79,7 +77,7 @@ Figure 2. <i>Emacs with three windows.</i>
 <p>Commands exist to change the association of windows to buffers and to change the number of windows displayed on the screen.</p>
  
 <p>A window must be at least two lines deep and at least two columns wide. You can therefore display a lot of windows on the screen at any one time. The variable <font face="Courier New" size="-1">split-height-threshold</font> controls the size of windows that may be divided, and therefore controls the minimum number of windows on the screen.</p>
-<hr>
+<hr/>
  
 <h3><a name="modelines"></a>Mode Lines</h3>
 
@@ -91,52 +89,52 @@ Figure 2. <i>Emacs with three windows.</i>
  
 <p>The format of the default mode line is shown in <i>Figure 3</i>. The figure will display the names of the parts of mode line in the browser status line. Clicking on parts of the figure will take you to the description of that part of the mode line.</p>
  
-<p align="center"><img usemap="#modeline" src="ug_modeline.gif" border="0" width="542" height="17"></p>
+<p align="center"><img usemap="#modeline" src="ug_modeline.gif" border="0" width="542" height="17" /></p>
 <center>
 Figure 3. <i>Default mode line format.</i>
 </center>
 <map name="modeline">
-<area shape="rect" coords="0,0,9,16" href="#modeline_recursion" onmouseover="self.status='Recursion depth'; return true"> 
-<area shape="rect" coords="10,0,59,16" href="#modeline_hscroll" onmouseover="self.status='Horizontal scroll'; return true"> 
-<area shape="rect" coords="134,0,164,16" href="#modeline_buffer" onmouseover="self.status='Buffer name'; return true"> 
-<area shape="rect" coords="232,0,307,16" href="#modeline_filename" onmouseover="self.status='Filename'; return true"> 
-<area shape="rect" coords="315,0,371,16" href="#modeline_subsys" onmouseover="self.status='Subsystem'; return true"> 
-<area shape="rect" coords="387,0,434,16" href="#modeline_major" onmouseover="self.status='Major mode'; return true"> 
-<area shape="rect" coords="439,0,487,16" href="#modeline_minor" onmouseover="self.status='Minor mode'; return true"> 
-<area shape="rect" coords="502,0,530,16" href="#modeline_position" onmouseover="self.status='Position'; return true"> 
-<area shape="rect" coords="531,0,540,16" href="#modeline_recursion" onmouseover="self.status='Recursion depth'; return true"> 
+<area shape="rect" coords="0,0,9,16" href="#modeline_recursion" onmouseover="self.status='Recursion depth'; return true" />
+<area shape="rect" coords="10,0,59,16" href="#modeline_hscroll" onmouseover="self.status='Horizontal scroll'; return true" />
+<area shape="rect" coords="134,0,164,16" href="#modeline_buffer" onmouseover="self.status='Buffer name'; return true" />
+<area shape="rect" coords="232,0,307,16" href="#modeline_filename" onmouseover="self.status='Filename'; return true" />
+<area shape="rect" coords="315,0,371,16" href="#modeline_subsys" onmouseover="self.status='Subsystem'; return true" />
+<area shape="rect" coords="387,0,434,16" href="#modeline_major" onmouseover="self.status='Major mode'; return true" />
+<area shape="rect" coords="439,0,487,16" href="#modeline_minor" onmouseover="self.status='Minor mode'; return true" />
+<area shape="rect" coords="502,0,530,16" href="#modeline_position" onmouseover="self.status='Position'; return true" />
+<area shape="rect" coords="531,0,540,16" href="#modeline_recursion" onmouseover="self.status='Recursion depth'; return true" />
 </map>
  
 <p>The components of the mode line are:</p>
  
-<p><a name="modeline_major"></a><i>major</i> <br>
+<p><a name="modeline_major"></a><i>major</i> <br />
 The name of the major mode you are in. At any time, Emacs is in one and only one of its possible major modes. The major modes available include Normal (in which buffers are created), Text, Lisp, Pascal, and others.</p>
  
-<p><a name="modeline_minor"></a><i>minor</i> <br>
+<p><a name="modeline_minor"></a><i>minor</i> <br />
 A list of some of the minor modes that are enabled. Journal means that journalling is enabled for this buffer. Checkpoint means that check pointing is enabled for this buffer and generally for all buffers. Overstrike means that character replace mode is switched on so that characters that you type replace the characters that exist in the buffer already. Abbrev means that abbreviation mode is on and that abbreviations are automatically expanded. Readonly means that you cannot alter the contents of the buffer.</p>
  
-<p><a name="modeline_buffer"></a><i>bfr</i> <br>
+<p><a name="modeline_buffer"></a><i>bfr</i> <br />
 The name of the buffer currently associated with the window. Each buffer has its own name and may hold a file being edited; this is how Emacs holds several files at once. At any time you can edit only one buffer, the current buffer, though you may have many files open within Emacs.</p>
  
-<p><a name="modeline_filename"></a><i>File</i> <br>
+<p><a name="modeline_filename"></a><i>File</i> <br />
 The name of the file that you are editing. It is the last file that was visited in the associated buffer. If the buffer does not contain the contents of a file, then <font face="Courier New" size="-1">[No File]</font> is displayed. Buffers of this type are called scratch buffers.</p>
  
-<p><a name="modeline_modified"></a><i>*</i> <br>
+<p><a name="modeline_modified"></a><i>*</i> <br />
 Indicates that there are unsaved changes in the buffer. If the buffer has not changed since it was read in or saved, no asterisk is displayed.</p>
  
-<p><a name="modeline_position"></a><i>pos</i> <br>
+<p><a name="modeline_position"></a><i>pos</i> <br />
 Tells you whether there is additional text above the top of the screen, or below the bottom. It is <font face="Courier New" size="-1">Top</font> if you are looking at the beginning of the file, <font face="Courier New" size="-1">Bottom</font> if you are looking at the end of the file, or <font face="Courier New" size="-1">nn%</font> where <font face="Courier New" size="-1">nn</font> is the percentage of the file above dot.</p>
  
-<p><a name="modeline_subsys"></a><i>subsys</i> <br>
+<p><a name="modeline_subsys"></a><i>subsys</i> <br />
 The name of the currently running subsystem. By default, this is blank.</p>
  
-<p><a name="modeline_recursion"></a><i>[</i> <br>
+<p><a name="modeline_recursion"></a><i>[</i> <br />
 Square brackets in the mode line indicate the current recursive edit depth. When the recursion depth is zero, square brackets are not displayed. When the recursion depth is less than five, recursion-depth number of square brackets are included in the mode line. When the recursion depth is greater than five, the depth is indicated by <font face="Courier New" size="-1">[n[</font> and <font face="Courier New" size="-1">]n]</font>, where <font face="Courier New" size="-1">n</font> is the recursion depth.</p>
  
-<p><a name="modeline_hscroll"></a><i>&lt;</i> <br>
-A marker indicating that the buffer is horizontally scrolled left by the indicated number of characters. When no left-scrolling is being used, the indicator is not included in the mode line. Otherwise, <font face="Courier New" size="-1">&lt;n&lt;</font> is displayed, where <font face="Courier New" size="-1">n</font> is the number of characters by which the screen is scrolled to the left. <br>
+<p><a name="modeline_hscroll"></a><i>&lt;</i> <br />
+A marker indicating that the buffer is horizontally scrolled left by the indicated number of characters. When no left-scrolling is being used, the indicator is not included in the mode line. Otherwise, <font face="Courier New" size="-1">&lt;n&lt;</font> is displayed, where <font face="Courier New" size="-1">n</font> is the number of characters by which the screen is scrolled to the left. <br />
 </p>
-<hr>
+<hr/>
  
 <h2><a name="selfdocumentationcommands"></a>Self-Documentation Commands</h2>
 
@@ -253,7 +251,7 @@ A marker indicating that the buffer is horizontally scrolled left by the indicat
 <td>syntax</td>
 </tr>
 </table>
-<hr>
+<hr/>
  
 <h2><a name="basiceditingkeyboardcommands"></a>Basic Editing Keyboard Commands</h2>
 <p>This section describes the basic text editing features of Emacs. It shows how to insert and erase text and how to move the cursor around the screen. </p>
@@ -297,8 +295,8 @@ A marker indicating that the buffer is horizontally scrolled left by the indicat
 </tr>
  
 <tr>
-<td>Move down one line, vertically.&nbsp; <br>
-If you start in the middle of one line,&nbsp; <br>
+<td>Move down one line, vertically.&#160; <br />
+If you start in the middle of one line,&#160; <br />
 you end up in the middle of the next line.</td>
 <td valign="top"><font face="Courier New" size="-1">^N or Down-arrow (next-line)</font></td>
 </tr>
@@ -350,7 +348,7 @@ you end up in the middle of the next line.</td>
 </table>
  
 <p>You already know about the <font face="Courier New" size="-1">Backspace</font> command, which deletes the character before the cursor. Another command, <font face="Courier New" size="-1">^D</font>, deletes the character after the cursor, causing the rest of the text on the line to shift left. If <font face="Courier New" size="-1">^D</font> is typed at the end of a line, that line and the next line are joined together. </p>
-<hr>
+<hr/>
  
 <h2><a name="basiceditingmousecommands"></a>Basic Editing Mouse Commands</h2>
 
@@ -390,9 +388,9 @@ you end up in the middle of the next line.</td>
  
 <p>Press the left mouse button in the mode line of a window and drag the mode line to resize the window.</p>
  
-<p>If you drag the mode line so that the window is less then one line high the window is deleted. <br>
+<p>If you drag the mode line so that the window is less then one line high the window is deleted. <br />
 </p>
-<hr>
+<hr/>
  
 <h2><a name="commandprefixarguments"></a>Command Prefix Arguments</h2>
  
@@ -412,9 +410,9 @@ you end up in the middle of the next line.</td>
  
 <p>To use Autoarg Mode, type the command <font face="Courier New" size="-1">ESC-x auto-arg-mode</font>.</p>
  
-<p>Auto-argument digits echo at the bottom of the screen; the first non-digit character causes the accumulated digits to be inserted or used as an argument. To insert some digits and nothing else, you must follow the digits with a <font face="Courier New" size="-1">Space</font>, then delete the space character. <font face="Courier New" size="-1">^G</font> cancels the digits. <br>
+<p>Auto-argument digits echo at the bottom of the screen; the first non-digit character causes the accumulated digits to be inserted or used as an argument. To insert some digits and nothing else, you must follow the digits with a <font face="Courier New" size="-1">Space</font>, then delete the space character. <font face="Courier New" size="-1">^G</font> cancels the digits. <br />
 </p>
-<hr>
+<hr/>
  
 <h2><a name="files"></a>Files</h2>
  
@@ -422,9 +420,8 @@ you end up in the middle of the next line.</td>
  
 <p>If the file does not exist and you want to create it, just visit it as if it did exist. When you save your text with <font face="Courier New" size="-1">^X-^S</font>, Emacs will create the file.</p>
  
-<p>See Advanced File Handling for more information on handling files. <br>
+<p>See Advanced File Handling for more information on handling files. <br />
 </p>
-<hr>
+<hr/>
 </body>
 </html>
-

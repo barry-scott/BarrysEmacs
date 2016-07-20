@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Mlisp Programmer's Guide</title>
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <a name="TopOfPage"></a> <!-- TRANSIT - TEXTBAR --> 
@@ -11,7 +12,7 @@
 
 <p>The Mock Lisp (MLisp) programming language provides access to all the Emacs extension facilities. This chapter describes how to use MLisp to extend Emacs by writing private functions or shareable libraries and subsystems.</p>
 
-<hr align="left" size="2" color="#800080">
+<hr align="left" size="2" color="#800080"/>
 <a name="P166_10893"></a> 
 
 <h2>mlisp syntax</h2>
@@ -327,7 +328,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p><b>Figure: LK201 Top-Row Function Key Escapes</b>FIGUREFILE: postscript:docs$src:emacspgfunkeysfig.psFIGUREFILE: bookreader:docs$src:emacspgfunkeysfig.fse</p>
 
-<hr align="left" size="2" color="#800080">
+<hr align="left" size="2" color="#800080"/>
 <a name="P287_15621"></a> 
 
 <h2>variables</h2>
@@ -501,7 +502,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p>Assigns a value to an element of an array.</p>
 
-<hr align="left" size="2" color="#800080">
+<hr align="left" size="2" color="#800080"/>
 <a name="P416_22342"></a> 
 
 <h2>defining functions</h2>
@@ -518,7 +519,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p>This defines a function with arguments. The arguments are entered into the variable name-space, and may have optional default expressions. The initialising expressions are executed just before the function in invoked. The result of the function is the value of the last expression executed in the expression list.</p>
 
-<hr align="left" size="2" color="#800080">
+<hr align="left" size="2" color="#800080"/>
 <a name="P431_23601"></a> 
 
 <h2>block structuring functions</h2>
@@ -547,7 +548,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p>Introduces a block, and evaluates expressions until an error occurs. If no error occurs, then the value of the block is 0, otherwise, the value of the block is 1. When an error occurs, the text of the error message is available in the system variable <code>error-message</code>, but is not displayed in the Mini-buffer.</p>
 
-<hr align="left" size="2" color="#800080">
+<hr align="left" size="2" color="#800080"/>
 <a name="P458_25499"></a> 
 
 <h2>flow control functions</h2>
@@ -580,7 +581,7 @@ ANAMEWITHCAPITALLETTERS
 )
 </pre>
 
-<hr align="left" size="2" color="#800080">
+<hr align="left" size="2" color="#800080"/>
 <a name="P475_26723"></a> 
 
 <h2>operator functions</h2>
@@ -808,7 +809,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p><code>following-char</code> returns the numeric value of the character to the right of dot in the current buffer. If dot is located at the end of the buffer, 0 is returned.</p>
 
-<hr align="left" size="2" color="#800080">
+<hr align="left" size="2" color="#800080"/>
 <a name="P583_29496"></a> 
 
 <h2>miscellaneous mlisp functions</h2>
@@ -943,7 +944,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p>This function is useful when displaying status information to the user. For example, if a function takes some time to execute, it may be helpful to indicate what the function is currently doing. An argument of zero to <code>sit-for</code> will update the screen, but will not pause Emacs processing.</p>
 
-<hr align="left" size="2" color="#800080">
+<hr align="left" size="2" color="#800080"/>
 <a name="P714_37262"></a> 
 
 <h2>how to compile an mlisp program</h2>
@@ -966,7 +967,7 @@ ANAMEWITHCAPITALLETTERS
 <li>If you wish to type a short MLisp program, you can use the MINIBUF package. See the Barry's Emacs Extensions Reference Manual for a description of the MINIBUF package.</li>
 </ul>
 
-<hr align="left" size="2" color="#800080">
+<hr align="left" size="2" color="#800080"/>
 <a name="P731_38934"></a> 
 
 <h2>libraries of commands</h2>
@@ -989,7 +990,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p>will define the <code>box-it</code> function, but will not actually load the definition from BOXIT.ML until you execute the <code>box-it</code> function.</p>
 
-<hr align="left" size="2" color="#800080">
+<hr align="left" size="2" color="#800080"/>
 <a name="P750_40825"></a> 
 
 <h2>debugging mlisp programs</h2>
@@ -1104,11 +1105,11 @@ stack-trace generation.</p>
 
 <p>Tracing of MLisp programs is controlled with three variables:</p>
 
-<p><code>&middot; trace-into</code></p>
+<p><code>&#183; trace-into</code></p>
 
-<p><code>&middot; trace-mode</code></p>
+<p><code>&#183; trace-mode</code></p>
 
-<p><code>&middot; trace-hook</code></p>
+<p><code>&#183; trace-hook</code></p>
 
 <p>When <code>trace-mode</code> is set, the function whose name is contained in <code>trace-hook</code> is called before each MLisp statement is executed. The decompiled form of the statement about to be executed is available using the <code>decompile-current-line</code> function.</p>
 
@@ -1121,34 +1122,37 @@ stack-trace generation.</p>
 <p>The variable <code>stack-trace-on-error</code> controls the generation of stack-traces when an error is detected. If set to <code>true</code>, when an error is generated, a buffer called <code>Stack-trace</code> is created, and the current MLisp stack is inserted into the buffer. No action is taken inside an <code>error-occurred</code> block. The first line of the stack trace contains the error message that caused the stack-trace to occur. The second and subsequent lines contain the decompiled expressions being executed when the error was detected. An end-of-stack marker is located at the end of the buffer.</p>
 
 <p>The variable  <code>stack-maximum-depth</code> limits the call
-depth of the running MLisp code.<p>
+depth of the running MLisp code.</p>
 
 <p>For example, if the following function is executed with a parameter of <code>1</code>:</p>
 
-<p><code>(defun x (a)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(if (&gt; a 3)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(error-message "Too deep")<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(x (+ a 1))<br>
-&nbsp;&nbsp;&nbsp;&nbsp;)<br>
+<p><code>(defun x (a)<br />
+&#160;&#160;&#160;&#160;(if (&gt; a 3)<br />
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;(error-message "Too deep")<br />
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;(x (+ a 1))<br />
+&#160;&#160;&#160;&#160;)<br />
 )</code></p>
 
 <p>then the buffer <code>Stack-trace</code> would contain:</p>
 
 <p><code>Message: Too deep
-<br>
+<br />
 Executing: (error-message "Too deep")
-<br>
+<br />
 (x (+ a 1))
-<br>
+<br />
 (x (+ a 1))
-<br>
+<br />
 (x (+ a 1))
-<br>
+<br />
 (x 1)
-<br>
+<br />
 --- bottom of stack ---</code></p>
 
-<p>The function <code>dump-stack-trace</code> can be used to generate a stack-trace at any time. The stack-trace will be located in buffer <code>Stack-trace</code>, which will be popped onto the screen. The stack-trace format is the same as that displayed for stack-traced errors, except that there will never be a <code>Message:</code> line.</p>
+<p>The function <code>dump-stack-trace</code> can be used to generate a stack-trace at any time.
+The stack-trace will be located in buffer <code>Stack-trace</code>, which will be popped onto the screen.
+The stack-trace format is the same as that displayed for stack-traced errors,
+except that there will never be a <code>Message:</code> line.</p>
 
 
 </body>

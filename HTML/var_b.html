@@ -1,13 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Variables - B</title>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<hr>
-<p><a name="backup-file-mode"></a><b>backup-file-mode</b> &laquo; "copy", ("none" on OpenVMS)</p>
+<hr/>
+<p><a name="backup-file-mode"></a><b>backup-file-mode</b> &#171; "copy", ("none" on OpenVMS)</p>
 
 <blockquote>
 <p>The value of this variable controls the way that Emacs creates backup files.</p>
@@ -41,8 +42,8 @@
 <p>Use backup "none" to prevent backup files being created.</p>
 </blockquote>
 
-<hr>
-<p><a name="backup-filename-format"></a><b>backup-filename-format</b> &laquo; "%pa%fn._%1ft"</p>
+<hr/>
+<p><a name="backup-filename-format"></a><b>backup-filename-format</b> &#171; "%pa%fn._%1ft"</p>
 
 <blockquote>
 <p>This variable controls how emacs names backup files. 
@@ -61,15 +62,15 @@ The equivilent MLisp would be:</p>
 <p>The default format create backup files in the same director as the original file but with a leading "_" prefixed to the file type. For example <code>c:\docs\readme.txt</code> is backed up as <code>c:\docs\readme._txt</code>.</p>
 </blockquote>
 
-<hr>
-<p><a name="black-on-white"></a><b>black-on-white</b> &laquo; 0</p>
+<hr/>
+<p><a name="black-on-white"></a><b>black-on-white</b> &#171; 0</p>
 
 <blockquote>
 <p>Records the type of screen on which Emacs is running. If non-zero, text is displayed on the screen as black characters on a white background. If zero, text is displayed as white characters on a black background. This information is used by some terminal interfaces to decide how to display a visible bell.</p>
 </blockquote>
 
-<hr>
-<p><a name="breakpoint-hook"></a><b>breakpoint-hook</b> &laquo;</p>
+<hr/>
+<p><a name="breakpoint-hook"></a><b>breakpoint-hook</b> &#171;</p>
 
 <blockquote>
 <p>Contains the name of the breakpoint function. When a breakpoint occurs, the function whose name is in breakpoint-hook is called.</p>
@@ -77,13 +78,14 @@ The equivilent MLisp would be:</p>
 <p>The breakpoint function may decompile the expression that will be executed by using the decompile-current-line function.</p>
 </blockquote>
 
-<hr>
-<p><a name="buffer-backup-filename-hook"></a><b>buffer-backup-filename-hook</b> &laquo; ""</p>
+<hr/>
+<p><a name="buffer-backup-filename-hook"></a><b>buffer-backup-filename-hook</b> &#171; ""</p>
 
 <blockquote>
 <p>Emacs calls the function in buffer-backup-filename-hook with the filename being backed up.
 The function is expected to return a string containing the filename to backup the file to.
-<p>
+</p>
+
 <pre>
     (defun
         my-backup-filename-maker(~filename)
@@ -94,13 +96,13 @@ The function is expected to return a string containing the filename to backup th
 </pre>
 </blockquote>
 
-<hr>
-<p><a name="buffer-choose-name-hook"></a><b>buffer-choose-name-hook</b> &laquo; ""</p>
+<hr/>
+<p><a name="buffer-choose-name-hook"></a><b>buffer-choose-name-hook</b> &#171; ""</p>
 
 <blockquote>
 <p>Emacs calls the function in buffer-choose-name-hook with the filename being loaded into a new buffer.
 The function is expected to return a string containing the name to use for the new buffer.
-<p>
+</p>
 <pre>
     (defun
         my-buffer-name-maker(~filename)
@@ -111,13 +113,13 @@ The function is expected to return a string containing the name to use for the n
 </pre>
 </blockquote>
 
-<hr>
-<p><a name="buffer-file-loaded-hook"></a><b>buffer-file-loaded-hook</b> &laquo; ""</p>
+<hr/>
+<p><a name="buffer-file-loaded-hook"></a><b>buffer-file-loaded-hook</b> &#171; ""</p>
 
 <blockquote>
 <p>Emacs calls the function in buffer-file-loaded-hook with the filename being loaded into a new buffer.
 The function is expected to return a string containing the name to use for the new buffer.
-<p>
+</p>
 <pre>
     (defun
         my-file-loaded-hook(~buf-name)
@@ -128,27 +130,27 @@ The function is expected to return a string containing the name to use for the n
 </pre>
 </blockquote>
 
-<hr>
-<p><a name="buffer-is-modified"></a><b>buffer-is-modified</b> &laquo; 0</p>
+<hr/>
+<p><a name="buffer-is-modified"></a><b>buffer-is-modified</b> &#171; 0</p>
 
 <blockquote>
 <p>Is positive if the current buffer has been modified since it was last written out to disk. You may set it to 0 if you want Emacs to ignore the modifications that have been made to a buffer. However, this does not restore the unmodified version of the buffer -- it merely tells Emacs not to write out the buffer with other modified files. Emacs sets buffer-is-modified positive any time the buffer is modified.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="buffer-names"></a><b>buffer-names</b></p>
 
 <blockquote>
 <p>A 1-dimensional array which contains all the buffer names currently in use in Emacs. Element 0 of the array is a count of the total number of buffers contained in the array.</p>
 </blockquote>
 
-<hr>
-<p><a name="buffer-saved-as-hook"></a><b>buffer-saved-as-hook</b> &laquo; 0</p>
+<hr/>
+<p><a name="buffer-saved-as-hook"></a><b>buffer-saved-as-hook</b> &#171; 0</p>
 
 <blockquote>
 <p>Emacs calls the function in buffer-saved-as-hook with the filename being loaded into a new buffer.
 The function is expected to return a string containing the name to use for the new buffer.
-<p>
+</p>
 <pre>
     (defun
         my-saved-as-hook(~filename)
@@ -159,6 +161,6 @@ The function is expected to return a string containing the name to use for the n
 </pre>
 </blockquote>
 
-<hr>
+<hr/>
 </body>
 </html>

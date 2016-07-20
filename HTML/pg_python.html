@@ -1,9 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Mlisp Programmer's Guide</title>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <a name="TopOfPage"></a> <!-- TRANSIT - TEXTBAR --> 
@@ -18,7 +19,7 @@
 
 <p>	If you  wish  to  use python with emacs install a Python 2.2
 	kit.   You  can get a Windows python kit from <a href="http://www.python.org">www.python.org</a>
-	or <a href="http://www.activestate.com">www.activestate.com</a>.</>
+	or <a href="http://www.activestate.com">www.activestate.com</a>.</p>
 
 <h2>Use the Python interface</h2>
 
@@ -30,18 +31,18 @@ output of the Python print command will appear in the console window.</p>
 
 <h2>Python integration commands</h2>
 
-<table border=1>
-<tr><th>Command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th><th>Description</th></tr>
-<tr><td valign=top>Python-console</td><td>enable Python integration.  You can
+<table border="1">
+<tr><th>Command&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</th><th>Description</th></tr>
+<tr><td valign="top">Python-console</td><td>enable Python integration.  You can
 	  execute  commands  in  the  Python  Console  buffer by
 	  typing <b>ENTER</b>.</td></tr>
 
-<tr><td valign=top>Python-exec</td><td>execute the string parameter in Python.</td></tr>
+<tr><td valign="top">Python-exec</td><td>execute the string parameter in Python.</td></tr>
 
-<tr><td valign=top>Python-eval</td><td>evaluate the string paramter in Python
+<tr><td valign="top">Python-eval</td><td>evaluate the string paramter in Python
 	  and return the result to emacs.</td></tr>
 
-<tr><td valign=top>Python-import</td><td>import the named module into Python</td></tr>
+<tr><td valign="top">Python-import</td><td>import the named module into Python</td></tr>
 
 </table>
 
@@ -55,52 +56,55 @@ import bemacs
 
 <p>The bemacs module implements the following interface:</p>
 
-<table border=1>
+<table border="1">
 <tr><th>bemacs interface</th><th>Description</th></tr>
-<tr><td valign=top>bemacs.variable.<i>mlisp_var_name</i></td>
+<tr><td valign="top">bemacs.variable.<i>mlisp_var_name</i></td>
 <td>get  or set variables in
 	emacs.  To access mlisp variables with hypens in their names
 	use  underscore  instead.  E.g.  to access journal-frequency
-	use bemacs.variable.journal_frequency
+	use bemacs.variable.journal_frequency</td>
+</tr>
 
-<tr><td valign=top>bemacs.call_function( <i>mlisp-func-name</i>,  arg,  arg )</td><td>call the
+<tr><td valign="top">bemacs.call_function( <i>mlisp-func-name</i>,  arg,  arg )</td><td>call the
 	emacs function name <i>mlisp-func-name</i>.</td></tr>
 
-<tr><td valign=top>bemacs.function.<i>mlisp_func_name</i>( arg,  arg  )</td>
+<tr><td valign="top">bemacs.function.<i>mlisp_func_name</i>( arg,  arg  )</td>
 <td>call emacs function. To access mlisp functions with hypens in their names
 	use  underscore  instead.  E.g.  to access forward-character
 	use bemacs.function.forward_character()</td></tr>
-<tr><td valign=top>bemacs.buffer</td>
+<tr><td valign="top">bemacs.buffer</td>
 <td>is a python dictionary like object of all the Emacs buffers.
-The indices of the dictionary can be either an integer index into the of buffers or a string with the name of a buffer. The values of the dictionary are "BEmacs buffer"objects.</td></tr>
-<tr><td>
+The indices of the dictionary can be either an integer index into the of buffers or a string with the name of a buffer.
+The values of the dictionary are "BEmacs buffer"objects.</td></tr>
 </table>
 
-<table border=1>
+<table border="1">
 <tr><th>"BEmacs buffer" interface</th><th>Description</th></tr>
-<tr><td valign=top>data</td><td>The data of the buffer. Acts like a string. Use slice syntax to access a range of characters. 
-<br>For example:
+<tr><td valign="top">data</td><td>The data of the buffer. Acts like a string. Use slice syntax to access a range of characters. 
+<br />For example:
 <ul>
 <li><pre>bemacs.buffers['Help'].data[0:100]</pre>
-gets the first 100 characters of the Help buffer.
+gets the first 100 characters of the Help buffer.</li>
 <li><pre>bemacs.buffers['Help'].data[0:0] = 'A new heading'</pre>
-inserts text into the buffer
+inserts text into the buffer</li>
 </ul>
 </td>
-<tr><td valign=top>syntax</td><td>The syntax infomation of the buffer. Acts like a list. 
-Use slice syntax to access a range of syntax information.<br>
+</tr>
+<tr><td valign="top">syntax</td><td>The syntax infomation of the buffer. Acts like a list. 
+Use slice syntax to access a range of syntax information.<br />
 For example:
 <ul>
-<li><pre>bemacs.buffers['Help'].syntax[10:20]</pre>get the synatx information for 10 characters in the Help buffer.
-</ul></td>
-<tr><td valign=top>extent</td><td>Returns a tuple of (first-buffer-possion,last-buffer-position) that the user wishs editing to effect.</td>
-<tr><td valign=top>file_name</td><td>If buffer is a file buffer: the file name this buffer was read from and will be saved to.</td>
-<tr><td valign=top>file_permissions</td><td>If buffer is a file buffer: the files permission bits</td>
-<tr><td valign=top>file_time</td><td>If buffer is a file buffer: the files time stamp</td>
-<tr><td valign=top>file_synchonise_permissions</td><td>If buffer is a file buffer: the files permission bits when last synchonised</td>
-<tr><td valign=top>file_synchonise_time</td><td>If buffer is a file buffer: the files time stamp when last synchonised</td>
-<tr><td valign=top>type</td><td>the buffer type.</td>
+<li><pre>bemacs.buffers['Help'].syntax[10:20]</pre>get the synatx information for 10 characters in the Help buffer.</li>
+</ul>
+</td>
 </tr>
+<tr><td valign="top">extent</td><td>Returns a tuple of (first-buffer-possion,last-buffer-position) that the user wishs editing to effect.</td></tr>
+<tr><td valign="top">file_name</td><td>If buffer is a file buffer: the file name this buffer was read from and will be saved to.</td></tr>
+<tr><td valign="top">file_permissions</td><td>If buffer is a file buffer: the files permission bits</td></tr>
+<tr><td valign="top">file_time</td><td>If buffer is a file buffer: the files time stamp</td></tr>
+<tr><td valign="top">file_synchonise_permissions</td><td>If buffer is a file buffer: the files permission bits when last synchonised</td></tr>
+<tr><td valign="top">file_synchonise_time</td><td>If buffer is a file buffer: the files time stamp when last synchonised</td></tr>
+<tr><td valign="top">type</td><td>the buffer type.</td></tr>
 </table>
 </body>
 </html>

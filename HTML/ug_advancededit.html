@@ -1,10 +1,10 @@
-<!DOCTYPE HTML PUBLIC "-//SoftQuad//DTD HTML 3.2 + extensions for HoTMetaL PRO 3.0(U) 19961211//EN" "hmpro3.dtd">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 <title>User Guide - Advanced editing</title>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <h1><a name="top"></a><a name="advancededitingfacilities"></a>Advanced Editing Facilities</h1>
@@ -45,7 +45,7 @@
 
 <p>The commands with long names are known as extended commands or functions because they extend the set of one-character and two-character commands.</p>
 
-<hr>
+<hr/>
 <h2><a name="issuingextendedcommands"></a>Issuing Extended Commands</h2>
 
 <p>ESC-x (execute-extended-command)</p>
@@ -100,7 +100,7 @@
 
 <p>to display information about the <font face="Courier New" size="2">print-default</font> function.</p>
 
-<hr>
+<hr/>
 <h2><a name="movingupanddownlevels"></a>Moving Up and Down Levels</h2>
 
 <p>Subsystems and recursive editing levels are two states in which you are temporarily doing something other than editing the visited files as usual. For example, you might be editing a word's definition for the <font face="Courier New" size="2">ESC-x describe-word-in-buffer</font> command, or looking at a documentation file with INFO. Running another subprocess under Emacs can also be thought of as a sublevel.</p>
@@ -268,7 +268,7 @@
 
 <p>All symbols and un-confined process logical names are propagated to the subprocess.</p>
 
-<hr>
+<hr/>
 <h2><a name="themarkandtheregion"></a>The Mark and the Region</h2>
 
 <p>In general, a command which processes an arbitrary part of the buffer must know where to start and where to stop. In Emacs, such commands usually operate on the text between dot and mark -- this range of text is called the region . To specify a region, you position dot at one end of the region, and set mark at the other end. It does not matter which end is positioned first, or which end comes earlier in the text. Here are some commands for manipulating the mark:</p>
@@ -325,7 +325,7 @@
 
 <p>If you have set a mark and wish to remove it, use the command <font face="Courier New" size="2">unset-mark</font> by typing <font face="Courier New" size="2">^X-^@</font>. The mark is removed, and dot remains unchanged. This is useful where a highlighted region may distract you when you have finished with it.</p>
 
-<hr>
+<hr/>
 <h2><a name="deletingandmovingtext"></a>Deleting and Moving Text</h2>
 
 <p>The commonest way to move or copy text in Emacs is to delete it, and then restore it in one or more places.</p>
@@ -433,7 +433,7 @@
 
 <p>Rather than accumulating text in an Emacs buffer, you can append text directly to a disk file with the command <font face="Courier New" size="2">ESC-x append-to-file</font>. This command adds the text of the region to the end of the specified file. The file is modified immediately on disk. This command is normally used with files that are not being visited in Emacs.</p>
 
-<hr>
+<hr/>
 <h2><a name="commandsforfixingtypos"></a>Commands for Fixing Typos</h2>
 
 <p>This section describes commands that are especially useful when you catch a mistake in your text just after you have made it, or change your mind while composing.</p>
@@ -494,7 +494,7 @@
 
 <p>A very common error is to type words in the wrong case. As this is such a common error, the word case-conversion commands <font face="Courier New" size="2">ESC-l</font>, <font face="Courier New" size="2">ESC-u</font> and <font face="Courier New" size="2">ESC-^</font> have a special feature: they do not move the cursor. As soon as you see you have mis-typed the last word, you can simply change its case and go on. See Case Conversion Commands for details on using the case-conversion commands.</p>
 
-<hr>
+<hr/>
 <h2><a name="advancedfilehandling"></a>Advanced File Handling</h2>
 
 <p>The basic unit of stored data is the file. Each document lives in its own file. To edit a document, you must tell Emacs the name of the file that contains it. This is called visiting the file. To make your changes to the file permanent on disk, you must save the file. Emacs also has facilities for deleting files conveniently.</p>
@@ -662,15 +662,14 @@ Emacs supports the end-of-line styles for Unix, Windows and Machintosh.</p>
 
 <p>The end-of-line style is displayed in the status bar. The indicator will be:</p>
 <ul>
-<li><font face="Courier New" size="2">CRLF</font> - for Windows and MSDOS text files
-<li><font face="Courier New" size="2">LF</font> - for Unix (Linux) text files
-<li><font face="Courier New" size="2">CR</font> - for Machintosh text files
-<li>The indicator will be blank for files that Emacs detects as binary.
+<li><font face="Courier New" size="2">CRLF</font> - for Windows and MSDOS text files</li>
+<li><font face="Courier New" size="2">LF</font> - for Unix (Linux) text files</li>
+<li><font face="Courier New" size="2">CR</font> - for Machintosh text files</li>
+<li>The indicator will be blank for files that Emacs detects as binary.</li>
 </ul>
 
 <p>Emacs uses the following variables to support the editing of files:</p>
 
-<center>
 <table>
 <tr>
 <td>
@@ -699,7 +698,6 @@ Emacs supports the end-of-line styles for Unix, Windows and Machintosh.</p>
 </td>
 </tr>
 </table>
-</center>
 
 <p>Every buffer created by Emacs is assigned the buffer-specific variable
 <font face="Courier New" size="2">current-buffer-end-of-line-style</font>. 
@@ -763,7 +761,7 @@ current-buffer-end-of-line-style
 described by the <font face="Courier New" size="2">current-buffer-end-of-line-style</font> variable.</p>
 
 <p>When you visit a new file, Emacs uses the <font face="Courier New" size="2">default-buffer-end-of-line-style</font>
-variable to set the equivalent buffer-specific variable. The default value is appropiate for your operating system.
+variable to set the equivalent buffer-specific variable. The default value is appropiate for your operating system.</p>
 
 <p>You can override the setting of <font face="Courier New" size="2">current-buffer-end-of-line-style</font>
 and force files to be written in a particular style by setting the
@@ -775,7 +773,7 @@ force all files to be written in <font face="Courier New" size="2">lf</font> for
 
 <p>(setq override-end-of-line-style "lf")</p>
 
-<hr>
+<hr/>
 <h2><a name="controllingthedisplay"></a>Controlling the Display</h2>
 
 <p>Since only part of a large buffer can fit on the screen, Emacs tries to show the part of the buffer that is likely to be most interesting. The display control commands allow you to tell Emacs that you want to see a different part of the buffer.</p>
@@ -879,7 +877,7 @@ force all files to be written in <font face="Courier New" size="2">lf</font> for
 
 <p>Scanning by screen-fulls through the buffer for some distance is most conveniently done with the <font face="Courier New" size="2">ESC-x view-buffer</font> command. This command enters a simple subsystem in which <font face="Courier New" size="2">Space</font> moves a screen-full forward and <font face="Courier New" size="2">Backspace</font> moves a screen-full backward. The <font face="Courier New" size="2">Return</font> character exits, leaving dot centred in whatever part of the buffer was visible. Any other character exits and returns dot to its former location, and is then executed as a command. <font face="Courier New" size="2">view-buffer</font> can be used to view another buffer by giving the buffer's name as a string argument.</p>
 
-<hr>
+<hr/>
 <h2><a name="usingmultiplebuffers"></a>Using Multiple Buffers</h2>
 
 <p>Emacs can contain a large number of buffers, each containing text. At any time, only one buffer can be selected and available for editing, but it is not difficult to switch to a different buffer. Each buffer individually remembers which file it is visiting, which modes are enabled, and whether there are any changes that need saving. Buffer manipulation commands are all prefixed with <font face="Courier New" size="2">^X</font>.</p>
@@ -950,7 +948,7 @@ force all files to be written in <font face="Courier New" size="2">lf</font> for
 
 <p>If you attempt to delete a buffer that has un-saved modifications, Emacs asks you to verify that you wish to discard the changes you have made.</p>
 
-<hr>
+<hr/>
 <h2><a name="usingmultiplewindows"></a>Using Multiple Windows</h2>
 
 <p>Emacs allows you to split the screen into many windows and use them to display parts of any buffer. The number of windows that can be fitted on the screen is dependent on the number of lines on the displaying terminal. Each window must be at least two lines long, one line for the text portion and the other line for the window's mode line. So, for a 24-line VT220 terminal, the maximum number of displayable windows is 11.</p>
@@ -1074,7 +1072,7 @@ force all files to be written in <font face="Courier New" size="2">lf</font> for
 
 <p>When you split a window, the space for the old window will be divided evenly between the two windows. You can redistribute screen space between the windows with the <font face="Courier New" size="2">^X-z</font> and <font face="Courier New" size="2">^X-^Z</font> commands. These make the currently selected window become one line bigger or smaller respectively (or as many lines as is specified with a numeric argument).</p>
 
-<hr>
+<hr/>
 <h2><a name="narrowing"></a>Narrowing</h2>
 
 <p>Narrowing means focussing-in on one portion of a buffer, making the rest of the buffer temporarily invisible and inaccessible.</p>
@@ -1107,7 +1105,7 @@ force all files to be written in <font face="Courier New" size="2">lf</font> for
 
 <p>Use the <font face="Courier New" size="2">ESC-x widen-region</font> command to remove the narrowing. This makes all the text in the buffer accessible again.</p>
 
-<hr>
+<hr/>
 <h2><a name="searching"></a>Searching</h2>
 
 <p>Like other text editors, Emacs has commands that search for an occurrence of a text string. The Emacs search commands are unusual in that they can be normal text searches or regular expression pattern matches.</p>
@@ -1173,7 +1171,7 @@ force all files to be written in <font face="Courier New" size="2">lf</font> for
 <p>Both these commands expect an extended regular expression pattern for which to search.
 The pattern is interpreted and matched against text according to the following rules:</p>
 
-<oL>
+<ol>
 <li>Any character except a special character matches itself. Special characters are 
 <font face="Courier New" size="2">\</font>, 
 <font face="Courier New" size="2">[</font>,
@@ -1229,28 +1227,28 @@ matches a copy of the string that the bracketed regular expression beginning wit
 <li>A regular expression of one of the preceding forms followed by:
 <ul>
 <li><font face="Courier New" size="2">*</font> matches the longest sequence of zero or more matches 
-of the regular expression.
+of the regular expression.</li>
 <li><font face="Courier New" size="2">+</font> matches the longest sequence of one or more matches 
-of the regular expression.
-<li><font face="Courier New" size="2">?</font> matches a sequence of zero or one match of the regular expression.
-<li><font face="Courier New" size="2">*?</font> matches the shortest sequence of zero or more 
-matches of the regular expression.
+of the regular expression.</li>
+<li><font face="Courier New" size="2">?</font> matches a sequence of zero or one match of the regular expression.</li>
+<li><font face="Courier New" size="2">*?</font> matches the shortest sequence of zero or more
+matches of the regular expression.</li>
 <li><font face="Courier New" size="2">+?</font> matches the shortest sequence of one or more
- matches of the regular expression.
+ matches of the regular expression.</li>
 <li><font face="Courier New" size="2">{n}</font> matches exactly <font face="Courier New" size="2">n</font> 
-matches of the regular expression.
+matches of the regular expression.</li>
 <li><font face="Courier New" size="2">{n,m}</font> matches the longest sequence of atleast 
 <font face="Courier New" size="2">n</font> but no more then <font face="Courier New" size="2">m</font>
- matches of the regular expression.
+ matches of the regular expression.</li>
 <li><font face="Courier New" size="2">{n,m}?</font> matches the shortest sequence of atleast 
 <font face="Courier New" size="2">n</font> but no more then <font face="Courier New" size="2">m</font>
- matches of the regular expression.
+ matches of the regular expression.</li>
 
 <li><font face="Courier New" size="2">{n,}</font> matches the longest sequence of
-<font face="Courier New" size="2">n</font> or more matches of the regular expression.
+<font face="Courier New" size="2">n</font> or more matches of the regular expression.</li>
 
 <li><font face="Courier New" size="2">{n,}?</font> matches the shortest sequence of
-<font face="Courier New" size="2">n</font> or more matches of the regular expression.
+<font face="Courier New" size="2">n</font> or more matches of the regular expression.</li>
 
 </ul>
 </li>
@@ -1264,27 +1262,27 @@ matches of the regular expression.
  <font face="Courier New" size="2">region-around-match</font> function. 
 The maximum number of partitioned strings is 99.</li>
 
-<li><font face="Courier New" size="2">(?%...)</font> - ... is a list of options (not yet implemented).
+<li><font face="Courier New" size="2">(?%...)</font> - ... is a list of options (not yet implemented).</li>
 
 <li>A regular expression, <font face="Courier New" size="2">x</font>, bracketed 
 <font face="Courier New" size="2">(?P&lt;name&gt;x)</font>
  matches what <font face="Courier New" size="2">x</font> matches and allows later reference to the matched string by
-<font face="Courier New" size="2">name</font>.
+<font face="Courier New" size="2">name</font>.</li>
 <li><font face="Courier New" size="2">(?P=name)</font> matches whatever the group named 
-<font face="Courier New" size="2">name</font> matched.
+<font face="Courier New" size="2">name</font> matched.</li>
 
 <li>The expression <font face="Courier New" size="2">(?#comment)</font> is ignored and allows comments to be embedded in
-complex regular expressions.
+complex regular expressions.</li>
 
 <li>A regular expression, <font face="Courier New" size="2">x</font>, bracketed 
 <font face="Courier New" size="2">(?=x)</font> matches if <font face="Courier New" size="2">x</font> matches but does
-not move dot forward.
+not move dot forward.</li>
 
 <li><font face="Courier New" size="2">(?!x)</font> matches if <font face="Courier New" size="2">x</font> does not matche
- but does not move dot forward.
+ but does not move dot forward.</li>
 
 <li>A regular expression, <font face="Courier New" size="2">x</font>, bracketed <font face="Courier New" size="2">(:x)</font>
- matches what <font face="Courier New" size="2">x</font> matches. The match string is not remembered for back referencing.
+ matches what <font face="Courier New" size="2">x</font> matches. The match string is not remembered for back referencing.</li>
 
 <li>A regular expression of this or one of the preceding forms, <font face="Courier New" size="2">x</font>,
  followed by a regular expression of one of the preceding forms, <font face="Courier New" size="2">y</font>,
@@ -1308,9 +1306,9 @@ not move dot forward.
 
 <p>Note: The functions re-search-forward, re-search-reverse and looking-at implement a less powerful
 regular expression language that is deprecated in favor of the simpler to use and more powerful
- ere-search-forward, ere-search-reverse and ere-looking-at functions.
+ ere-search-forward, ere-search-reverse and ere-looking-at functions.</p>
 
-<hr>
+<hr/>
 <h2><a name="replacementcommands"></a>Replacement Commands</h2>
 
 <p>Emacs has a normal text replacement function similar to that found in most text editors. Emacs also has a query replace operation which asks you, for each occurrence of the search string, whether or not to replace it. Emacs also allows you to use regular expressions in replace commands.</p>
@@ -1426,10 +1424,10 @@ and <font face="Courier New" size="2">ere-query-replace-string</font> commands i
 
 <p>Note: The functions re-replace-string and re-query-replace-string implement a less powerful
 regular expression language that is deprecated in favor of the simpler to use and more powerful
- ere-replace-string and ere-query-replace-string functions.
+ ere-replace-string and ere-query-replace-string functions.</p>
 
 
-<hr>
+<hr/>
 <h2><a name="abbreviatedinput"></a>Abbreviated Input</h2>
 
 <p>Abbreviation Mode allows you to abbreviate text with a single word. Emacs expands the abbreviation automatically as soon as you have finished typing the abbreviation.</p>
@@ -1507,7 +1505,7 @@ expand to <font face="Courier New" size="2">Abbrev Mode</font> since it should a
 
 <p>Abbreviations can be defined one at a time (adding them as you think of them), or many at a time from an abbreviation file. You can save them in a file and read them back later. If you turn off Abbreviation Mode, abbreviations stop expanding automatically, but their definitions are remembered in case you turn Abbreviation Mode back on.</p>
 
-<hr>
+<hr/>
 <h2><a name="keyboardmacros"></a>Keyboard Macros</h2>
 
 <center>
@@ -1551,7 +1549,10 @@ expand to <font face="Courier New" size="2">Abbrev Mode</font> since it should a
 
 <p>The newly-defined macro can then be invoked with the <font face="Courier New" size="2">^X-e</font> command. You can give <font face="Courier New" size="2">^X-e</font> a repeat count as a prefix argument to execute the several times.</p>
 
-<p>There are two ways of using a keyboard macro to perform some action on each line in the buffer. The first is to start by positioning dot on the line above the first line to be processed, then begin the macro definition with a <font face="Courier New" size="2">^N</font> (<font face="Courier New" size="2">next-line</font>). The second method is to start on the proper line, and end the macro with a <font face="Courier New" size="2">^N</font>. Repeating the macro will operate on successive lines using either method.</p>
+<p>There are two ways of using a keyboard macro to perform some action on each line in the buffer.
+The first is to start by positioning dot on the line above the first line to be processed, 
+then begin the macro definition with a <font face="Courier New" size="2">^N</font> (<font face="Courier New" size="2">next-line</font>).
+The second method is to start on the proper line, and end the macro with a <font face="Courier New" size="2">^N</font>. 
+Repeating the macro will operate on successive lines using either method.</p>
 </body>
 </html>
-

@@ -1,9 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Mlisp Programmer's Guide</title>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <a name="TopOfPage"></a> <!-- TRANSIT - TEXTBAR --> 
@@ -22,10 +23,11 @@ string parameters:</p>
 <p>Emacs will  change  its current directory to the value of
 the <i>current_directory</i> parameter.  Then the command line
 in <i>command_line</i> is parsed and executed by emacs.
+</p>
 
 <p>The following code VBA fragment creates the emacs command
 line object and opens the file "u:\work\emacs\emacs.cpp".
-The current directory is set to "u:\work".
+The current directory is set to "u:\work".</p>
 
 <pre>
 Set myServer = CreateObject("Barry Scott Emacs.CommandLine")

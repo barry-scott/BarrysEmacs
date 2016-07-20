@@ -1,16 +1,17 @@
-<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Emacs OpenVMS Library Reference</title>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <a name="top"></a> 
 
 <h1><a name="libraryreference"></a>Emacs OpenVMS Library Reference</h1>
 
-<hr>
+<hr/>
 <h2><a name="dclmode"></a>DCLMODE, A Mode for Writing DCL Command Procedures</h2>
 
 <!--<p><i><b>DCLMODE, A Mode for Writing DCL Command Procedures </b></i> DCLMODE DCL-mode</p>-->
@@ -18,7 +19,7 @@
 
 <p>DCL-mode provides facilities for DCL comment handling and automatic indentation of DCL command lines.</p>
 
-<hr>
+<hr/>
 <h2><a name="cms"></a>CMS, An Interface to DEC/CMS</h2>
 
 <!--<p><i><b>CMS, An Interface to DEC/CMS </b></i> CMS DEC/CMS interface</p>-->
@@ -32,7 +33,7 @@
 
 <p>The Emacs CMS interface functions are:</p>
 
-<hr>
+<hr/>
 <p><b>(cms-set-library)</b></p>
 
 <blockquote>
@@ -41,14 +42,14 @@
 <p>If provided a prefix argument, cms-set-library prompts for the name of the library in the Mini-buffer.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-show-library)</b></p>
 
 <blockquote>
 <p>Prints the name of the currently set CMS library in the Mini-buffer.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-show-elements)</b></p>
 
 <blockquote>
@@ -56,12 +57,12 @@
 
 <p>If a prefix argument is provided, a Show Elements form is popped onto the screen. The form contains the following fields:</p>
 
-<p>&middot; Elements</p>
+<p>&#183; Elements</p>
 
-<p>&middot; Include groups flag (default is 1).</p>
+<p>&#183; Include groups flag (default is 1).</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-show-class)</b></p>
 
 <blockquote>
@@ -70,14 +71,14 @@
 <p>If passed a prefix argument, cms-show-class prompts for the class to list in the Mini-buffer.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-show-group)</b></p>
 
 <blockquote>
 <p>Lists the groups in the current CMS library in the CMS listbuffer which is popped onto the screen. If passed a prefix argument, cms-show-group prompts for the group to list in the Mini-buffer.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-show-reservation)</b></p>
 
 <blockquote>
@@ -85,14 +86,14 @@
 
 <p>If passed a prefix argument, cms-show-reservations pops a Show Reservations form onto the screen. The fields in the form are:</p>
 
-<p>&middot; Elements</p>
+<p>&#183; Elements</p>
 
-<p>&middot; Generation</p>
+<p>&#183; Generation</p>
 
-<p>&middot; User name.</p>
+<p>&#183; User name.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-fetch)</b></p>
 
 <blockquote>
@@ -100,16 +101,16 @@
 
 <p>If passed a prefix argument, cms-fetch pops up a Fetch form. The fields in the form are:</p>
 
-<p>&middot; Element</p>
+<p>&#183; Element</p>
 
-<p>&middot; Generation (defaults to highest generation)</p>
+<p>&#183; Generation (defaults to highest generation)</p>
 
-<p>&middot; No history flag (default is 1)</p>
+<p>&#183; No history flag (default is 1)</p>
 
-<p>&middot; No notes flag (default is 1).</p>
+<p>&#183; No notes flag (default is 1).</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-reserve)</b></p>
 
 <blockquote>
@@ -117,18 +118,18 @@
 
 <p>If passed a prefix argument, cms-reserve pops a Reserve form onto the screen. The fields in the form are:</p>
 
-<p>&middot; Element</p>
+<p>&#183; Element</p>
 
-<p>&middot; Remark</p>
+<p>&#183; Remark</p>
 
-<p>&middot; Generation</p>
+<p>&#183; Generation</p>
 
-<p>&middot; No history flag (default is 1)</p>
+<p>&#183; No history flag (default is 1)</p>
 
-<p>&middot; No notes flag (default is 1).</p>
+<p>&#183; No notes flag (default is 1).</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-unreserve)</b></p>
 
 <blockquote>
@@ -137,7 +138,7 @@
 <p>If passed a prefix argument, cms-unreserve does not prompt for a remark.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-replace)</b></p>
 
 <blockquote>
@@ -145,16 +146,16 @@
 
 <p>If passed a prefix argument, cms-replace pops up a Replace form onto the screen. The fields in the form are:</p>
 
-<p>&middot; Element</p>
+<p>&#183; Element</p>
 
-<p>&middot; Remark</p>
+<p>&#183; Remark</p>
 
-<p>&middot; Variant</p>
+<p>&#183; Variant</p>
 
-<p>&middot; Reservation flag</p>
+<p>&#183; Reservation flag</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-create-element)</b></p>
 
 <blockquote>
@@ -162,22 +163,22 @@
 
 <p>If passed a prefix argument, cms-create-element pops up a Create Element form. The fields in the form are:</p>
 
-<p>&middot; Element</p>
+<p>&#183; Element</p>
 
-<p>&middot; Remark</p>
+<p>&#183; Remark</p>
 
-<p>&middot; History</p>
+<p>&#183; History</p>
 
-<p>&middot; Keep flag</p>
+<p>&#183; Keep flag</p>
 
-<p>&middot; Reservation flag</p>
+<p>&#183; Reservation flag</p>
 
-<p>&middot; Concurrency flag (default is 1)</p>
+<p>&#183; Concurrency flag (default is 1)</p>
 
-<p>&middot; Reference flag (default is 0).</p>
+<p>&#183; Reference flag (default is 0).</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-copy-element)</b></p>
 
 <blockquote>
@@ -185,14 +186,14 @@
 
 <p>If passed a prefix argument, cms-copy-element pops up a Copy Element form. The fields in the form are:</p>
 
-<p>&middot; Element</p>
+<p>&#183; Element</p>
 
-<p>&middot; New element</p>
+<p>&#183; New element</p>
 
-<p>&middot; Remark.</p>
+<p>&#183; Remark.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-insert-element)</b></p>
 
 <blockquote>
@@ -200,14 +201,14 @@
 
 <p>If passed a prefix argument, cms-insert-element pops up an Insert Element form. The fields in the form are:</p>
 
-<p>&middot; Element</p>
+<p>&#183; Element</p>
 
-<p>&middot; Group</p>
+<p>&#183; Group</p>
 
-<p>&middot; Remark.</p>
+<p>&#183; Remark.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-insert-group)</b></p>
 
 <blockquote>
@@ -215,14 +216,14 @@
 
 <p>If passed a prefix argument, cms-insert-group pops up an Insert Group form. The fields in the form are:</p>
 
-<p>&middot; Subgroup</p>
+<p>&#183; Subgroup</p>
 
-<p>&middot; Group</p>
+<p>&#183; Group</p>
 
-<p>&middot; Remark.</p>
+<p>&#183; Remark.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-insert-generation)</b></p>
 
 <blockquote>
@@ -230,71 +231,71 @@
 
 <p>If passed a prefix argument, cms-insert-generation pops up an Insert Generation form. The fields in the form are:</p>
 
-<p>&middot; Element</p>
+<p>&#183; Element</p>
 
-<p>&middot; Class</p>
+<p>&#183; Class</p>
 
-<p>&middot; Generation (default is highest generation)</p>
+<p>&#183; Generation (default is highest generation)</p>
 
-<p>&middot; Remark.</p>
+<p>&#183; Remark.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-modify-class)</b></p>
 
 <blockquote>
 <p>Pops up a Modify Class form which allows you to modify class attributes. The fields in the form are:</p>
 
-<p>&middot; Class</p>
+<p>&#183; Class</p>
 
-<p>&middot; Remark</p>
+<p>&#183; Remark</p>
 
-<p>&middot; New class</p>
+<p>&#183; New class</p>
 
-<p>&middot; New class remark</p>
+<p>&#183; New class remark</p>
 
-<p>&middot; Read-only flag.</p>
+<p>&#183; Read-only flag.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-modify-group)</b></p>
 
 <blockquote>
 <p>Pops up a Modify Group form which allows you to modify group attributes. The fields in the form are:</p>
 
-<p>&middot; Group</p>
+<p>&#183; Group</p>
 
-<p>&middot; Remark</p>
+<p>&#183; Remark</p>
 
-<p>&middot; New group</p>
+<p>&#183; New group</p>
 
-<p>&middot; New group remark</p>
+<p>&#183; New group remark</p>
 
-<p>&middot; Read-only flag.</p>
+<p>&#183; Read-only flag.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-modify-element)</b></p>
 
 <blockquote>
 <p>Pops up a Modify Element form which allows you to modify element attributes. The fields in the form are:</p>
 
-<p>&middot; Element</p>
+<p>&#183; Element</p>
 
-<p>&middot; Remark</p>
+<p>&#183; Remark</p>
 
-<p>&middot; New element</p>
+<p>&#183; New element</p>
 
-<p>&middot; New element remark</p>
+<p>&#183; New element remark</p>
 
-<p>&middot; History</p>
+<p>&#183; History</p>
 
-<p>&middot; Concurrency flag (default is 1)</p>
+<p>&#183; Concurrency flag (default is 1)</p>
 
-<p>&middot; Reference flag (default is 1).</p>
+<p>&#183; Reference flag (default is 1).</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-remove-element)</b></p>
 
 <blockquote>
@@ -302,14 +303,14 @@
 
 <p>If passed a prefix argument, cms-remove-element pops up a Remove Element form. The form contains the following fields:</p>
 
-<p>&middot; Element</p>
+<p>&#183; Element</p>
 
-<p>&middot; Group</p>
+<p>&#183; Group</p>
 
-<p>&middot; Remark.</p>
+<p>&#183; Remark.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-remove-generation)</b></p>
 
 <blockquote>
@@ -317,48 +318,48 @@
 
 <p>If passed a prefix argument, cms-remove-generation pops up a Remove Generation form containing the following fields:</p>
 
-<p>&middot; Element</p>
+<p>&#183; Element</p>
 
-<p>&middot; Class</p>
+<p>&#183; Class</p>
 
-<p>&middot; Remark.</p>
+<p>&#183; Remark.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-remove-group)</b></p>
 
 <blockquote>
 <p>Prompts for a subgroup name and a group name, then removes the subgroup from the specified group.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-delete-class)</b></p>
 
 <blockquote>
 <p>Prompts for a class name and deletes the specified class.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-delete-element)</b></p>
 
 <blockquote>
 <p>Prompts for an element name and a remark deletes the specified element. If a prefix argument is provided, the remark is not required.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-delete-group)</b></p>
 
 <blockquote>
 <p>Prompts for a group name and a remark, then deletes the specified group. If a prefix argument is provided, the remark is not required.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(cms-remark)</b></p>
 
 <blockquote>
 <p>Prompts for a remark and enters this into the CMS library's remark history.</p>
 
-<hr>
+<hr/>
 <h2><a name="messages"></a>MESSAGES, Displaying Broadcast Messages</h2>
 
 <!--<p><i><b>MESSAGES, Displaying Broadcast Messages </b></i> MESSAGES Broadcast message trapping Trapping broadcast messages</p>-->
@@ -368,7 +369,7 @@
 
 <p>The variable broadcast-feeps can be used to customise the behaviour of MESSAGES library; it contains the number of bell characters that are sent to the terminal when a new message is received. The default value of broadcast-feeps is 1.</p>
 
-<hr>
+<hr/>
 <h2><a name="spell"></a>SPELL, Spelling Error Detection And Correction</h2>
 
 <!--<p><i><b>SPELL, Spelling Error Detection And Correction </b></i> SPELL Spelling correction DECspell interface</p>-->
@@ -377,35 +378,35 @@
 <p>The following functions are provided:</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(spell-line)</b></p>
 
 <blockquote>
 <p>This function spell-checks each word on the line in which dot is located. For each spelling error reported by DECspell, a list of possible spelling corrections is displayed and you are asked to input the correct spelling. Full word expansion is available during this operation. If you type just a Return, the word will not be changed.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(spell-word-in-buffer)</b></p>
 
 <blockquote>
 <p>This function checks the spelling of the word in which dot is located. If the spelling is incorrect, a list of possible corrections are displayed and you are asked you to type one. Full word expansion is enabled.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(spell-newline)</b></p>
 
 <blockquote>
 <p>This function is used to replace the binding for the Return key in buffers that require automatic spell checking. It causes the current line to be checked before the newline function is executed.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(spell-newline-and-indent)</b></p>
 
 <blockquote>
 <p>This function is used to replace the binding of the Linefeedkey in buffers that require automatic spell checking. It causes the current line to be checked before the newline-and-indentfunction is executed.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(make-text-mode-spell)</b></p>
 
 <blockquote>
@@ -416,7 +417,7 @@
 <p>(make-text-mode-spell)</p>
 </blockquote>
 
-<hr>
+<hr/>
 <h2><a name="thesaurus"></a>THESAURUS, An Interface to the DECspell Thesaurus</h2>
 
 <!--<p><i><b>THESAURUS, An Interface to the DECspell Thesaurus </b></i> THESAURUS DECspell thesaurus interface</p>-->
@@ -424,14 +425,14 @@
 <p>The THESAURUS library defines two functions that provide an interface to the DECspell Thesaurus from within Emacs:</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(et-word)</b></p>
 
 <blockquote>
 <p>Prompts for a word in the Mini-buffer and checks this against the DECspell thesaurus. If the word is found in the thesaurus, Emacs pops up a buffer called Electronic Thesaurus and displays in the buffer alternatives for the specified word. If the specified word is not found in the thesaurus, an error message is displayed.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(et-word-in-buffer)</b></p>
 
 <blockquote>
@@ -440,7 +441,7 @@
 <p>There are no default key bindings for these functions, but you can define your own bindings by creating a file called THESAURUS.KEY in your EMACS_PATH. The file should contain appropriate MLisp commands to bind the thesaurus functions to the desired key bindings. The THESAURUS library will attempt to load this file automatically when you load the THESAURUS library.</p>
 </blockquote>
 
-<hr>
+<hr/>
 </body>
 </html>
 

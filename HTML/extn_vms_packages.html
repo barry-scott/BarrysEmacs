@@ -1,14 +1,15 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Emacs OpenVMS Package and Subsystem Reference</title>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <h1><a name="packageandsubsystem"></a>Emacs OpenVMS Package and Subsystem Reference</h1>
 
-<hr>
+<hr/>
 <h2><a name="help"></a>HELP, An Interface to VMS HELP</h2>
 
 <!-- <p><i><strong>HELP, An Interface to VMS HELP </strong></i> HELP VMS HELP interface</p> -->
@@ -80,7 +81,7 @@
 </tr>
 </table>
 
-<hr>
+<hr/>
 <h2><a name="notes"></a>NOTES, An Interface to VAX NOTES</h2>
 
 <!-- <p><i><strong>NOTES, An Interface to VAX NOTES </strong></i> NOTES VAX NOTES interface</p> -->
@@ -564,29 +565,29 @@ Keyword:
 
 <p>The variables that you can set and their default values are listed as follows:</p>
 
-<p><strong>notes-update-seen-map-frequency &laquo; 10</strong></p>
+<p><strong>notes-update-seen-map-frequency &#171; 10</strong></p>
 
 <p>Indicates the frequency at which the seen map is updated. With the default value of 10, the seen map is updated after every ten unseen notes have been read. after n update operation, the unseen count in the conference header is updated to display the number of remaining unseen notes.</p>
 
-<p><strong>notes-put-form-in-write-buffer &laquo; 0</strong></p>
+<p><strong>notes-put-form-in-write-buffer &#171; 0</strong></p>
 
 <p>Indicates whether the new note/reply form should be popped up in the write buffer or in a buffer of its own.</p>
 
-<p><strong>notes-keypad-binding &laquo; 1</strong></p>
+<p><strong>notes-keypad-binding &#171; 1</strong></p>
 
 <p>Defines whether the numeric keypad keys perform the same functions as they do in the standard VAX NOTES interface. If set to 0, the numeric keypad keys perform their normal functions as defined in the global keymap.</p>
 
-<p><strong>notes-entry-key-reads-text &laquo; 1</strong></p>
+<p><strong>notes-entry-key-reads-text &#171; 1</strong></p>
 
 <p>Defines whether the Enter key can be used to read successive pages of text in long notes.</p>
 
-<p><strong>notes-note-read-timeout &laquo; 0</strong></p>
+<p><strong>notes-note-read-timeout &#171; 0</strong></p>
 
 <p>Defines the timeout setting in seconds for a note read operation. A note read operation will fail if it does not complete within the timeout setting. There is no timeout setting by default. NOTES_USER.KEY</p>
 
 <p>You can also customise the NOTES package by creating your own NOTES key bindings. You can do this by creating a file called NOTES_USER.KEY in your EMACS_PATH which contains your key binding code. The NOTES package will automatically load this file when you run the NOTES package.</p>
 
-<hr>
+<hr/>
 <h2><a name="vmsmail"></a>VMS_MAIL, A VMS MAIL Editing Package</h2>
 
 <!-- <p><i><strong>VMS_MAIL, A VMS MAIL Editing Package </strong></i>VMS_MAILVMS MAIL interface</p> -->
@@ -624,7 +625,7 @@ MAIL&gt; SET EDITOR EMACS
 
 <p>Also, when VMS_MAIL starts, it executes the function vms_mail_hook if it has been defined. You can define your own vms_mail_hook function in your EMACSINIT.ML to initialise the VMS_MAIL package as you require.</p>
 
-<hr>
+<hr/>
 </body>
 </html>
 

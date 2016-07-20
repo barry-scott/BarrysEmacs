@@ -1,12 +1,13 @@
-<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Functions R*</title>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<hr>
+<hr/>
 <p><a name="re-query-replace-string">(<b>re-query-replace-string</b> <code>pattern replacement</code>)</a></p>
 
 <blockquote>
@@ -14,7 +15,7 @@
 <p>Replaces all occurrences of a pattern with a string, starting at dot and ending at the end of the buffer. For each occurrence of the old string, Emacs requests that the user type a character to indicate whether or not to replace the string. Dot will be positioned just after the found string.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="re-replace-search-text">(<b>re-replace-search-text</b> <code>replacement</code>)</a></p>
 
 <blockquote>
@@ -22,7 +23,7 @@
 <p>This function performs a regular expression replacement of the text matched by the last search operations.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="re-replace-string">(<b>re-replace-string</b> <code>pattern replacement</code>)</a></p>
 
 <blockquote>
@@ -30,7 +31,7 @@
 <p>Replaces all occurrences of a regular expression with a string, starting at dot and ending and the end of the buffer. See the Barry's Emacs User's Guide for information on how to specify regular expressions and replacement text.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="re-search-forward">(<b>re-search-forward</b> <code>pattern</code>)</a></p>
 
 <blockquote>
@@ -38,7 +39,7 @@
 <p>Searches for a pattern match in the current buffer, moving forwards from dot, stopping at the end of the buffer. Dot is left at the end of the matched string if a match is found, or is unmoved if the string is not found.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="re-search-reverse">(<b>re-search-reverse</b> <code>string</code>)</a></p>
 
 <blockquote>
@@ -46,28 +47,28 @@
 <p>Searches for a pattern match in the current buffer, moving backwards from dot, stopping at the beginning of the buffer. Dot is left at the beginning of the matched string if a match is found, or is unmoved if not. See the Barry's Emacs User's Guide for information on how to specify regular expressions.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="read-abbrev-file">(<b>read-abbrev-file</b> <code>file-name</code>)</a></p>
 
 <blockquote>
 <p>Reads in and defines abbreviations appearing in a named abbreviations file. An error message is printed if the file cannot be found.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="read-file">(<b>read-file</b> <code>file-name</code>) ^X-^R</a></p>
 
 <blockquote>
 <p>Erases the contents of the current buffer, reads the specified file into the buffer and associates the name with the buffer. Dot is set to the beginning of the buffer.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="recursion-depth">(<b>recursion-depth</b>)</a></p>
 
 <blockquote>
 <p>Returns the current number of active calls to recursive-edit.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="recursive-edit">(<b>recursive-edit</b>)</a></p>
 
 <blockquote>
@@ -76,98 +77,98 @@
 <p>See the Barry's Emacs User's Guide for a detailed description of recursive editing levels.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="redraw-display">(<b>redraw-display</b>) ^L</a></p>
 
 <blockquote>
 <p>Clears the screen and redraws it.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="region-around-match">(<b>region-around-match</b>)</a></p>
 
 <blockquote>
 <p>Sets dot and mark around the region matched by the last search. An argument of <code>n</code> puts dot and mark around the <code>n</code>th subpattern matched by \( and \). An argument of zero matches the entire string.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="region-to-string">(<b>region-to-string</b>)</a></p>
 
 <blockquote>
 <p>Returns the region between dot and mark as a string.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="remove-all-local-bindings">(<b>remove-all-local-bindings</b>)</a></p>
 
 <blockquote>
 <p>Performs a remove-local-binding command for all possible keys, This effectively undoes all local bindings.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="remove-binding">(<b>remove-binding</b> <code>key-sequence</code>)</a></p>
 
 <blockquote>
 <p>Removes the global binding of the given key sequence. Actually, it just rebinds the key sequence to illegal-operation.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="remove-database">(<b>remove-database</b> <code>dbsl database-file</code>)</a></p>
 
 <blockquote>
 <p>Removes a single database file from the specified database search-list. The database search-list will not be deleted when the last file has been removed.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="remove-local-binding">(<b>remove-local-binding</b> <code>key-sequence</code>)</a></p>
 
 <blockquote>
 <p>Removes the local binding of the given key sequence. The global binding will subsequently be used when interpreting the key sequence.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="rename-macro">(<b>rename-macro</b> <code>function new-function</code>)</a></p>
 
 <blockquote>
 <p>Renames the specified function to a new name. You cannot rename a function to a name used by an already existing wired-in function. If the <code>new-function</code> name exists, the existing code is replaced.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="replace-search-text">(<b>replace-search-text</b> <code>replacement</code>)</a></p>
 
 <blockquote>
 <p>This function performs a replacement of the text matched by the last search operations.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="replace-string">(<b>replace-string</b> <code>search replacement</code>) ESC-r</a></p>
 
 <blockquote>
 <p>Replaces all occurrences of one string for another, starting at dot and ending at the end of the buffer.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="resume-process">(<b>resume-process</b> <code>process-name</code>)</a></p>
 
 <blockquote>
 <p>Resumes a subprocess that has been paused. The image in the process starts working again. If the process is not paused, an error is generated.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="return-prefix-argument">(<b>return-prefix-argument</b> <code>expression</code>)</a></p>
 
 <blockquote>
 <p>Causes <code>expression</code> to be considered as the prefix argument to the next command executed (even if the command is initiated from the keyboard). This can be useful for writing alternate prefix argument packages.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="return-to-monitor">(<b>return-to-monitor</b>)</a></p>
 
 <blockquote>
 <p>Spawns a new DCL process, allowing the user to enter DCL commands. Return to Emacs by using the LOGOUT DCL command.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="reverse-incremental-search">(<b>reverse-incremental-search</b>)</a></p>
 
 <blockquote>
@@ -177,14 +178,14 @@ onclick="return top.bemacs.loadDocument(&#39;extn&#39;,&#39;#incsearch&#39;)">ex
 </p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="right-marker">(<b>right-marker</b>)</a></p>
 
 <blockquote>
 <p>Takes a marker as a parameter and returns a new marker. The new marker will at the same position as the original but with right-hand affinity. This means that text inserted at the position of the marker will move the marker's position to the right. Left-hand affinity markers do not move to the right as text is inserted.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="right-window">(<b>right-window</b> <code>repeat-count</code>)</a></p>
 
 <blockquote>
@@ -195,7 +196,7 @@ onclick="return top.bemacs.loadDocument(&#39;extn&#39;,&#39;#incsearch&#39;)">ex
 <p>right-window reports an error of there is not a window to the right of the current window.</p>
 </blockquote>
 
-<hr>
+<hr/>
 </body>
 </html>
 

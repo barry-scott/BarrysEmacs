@@ -1,92 +1,91 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Emacs Library Reference</title>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <a name="top"></a> 
 
 <h1><a name="libraryreference"></a>Emacs Library Reference</h1>
 
-<hr>
+<hr/>
 <h2><a name="abbrev"></a>ABBREV, Extended Abbreviation Support</h2>
 
-<!-- ABBREV Abbreviation handling</p>-->
 <p>The ABBREV library provides useful functions that allow you to manipulate abbreviations. To access these functions, you must load ABBREV using <kbd>ESC-x execute-mlisp-file</kbd>.</p>
 
 <p>The functions defined in the ABBREV library and their key bindings are as follows:</p>
 
-<hr>
+<hr/>
 <p><b>^X-G (define-global-abbrev-in-buffer)</b></p>
 
 <blockquote>
 <p>Takes the word to the left of dot and defines it as a global abbreviation. You are prompted for the expansion in the Mini-buffer.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>^X-L (define-local-abbrev-in-buffer)</b></p>
 
 <blockquote>
 <p>Takes the word to the left of dot and defines it as an abbreviation in the current buffer's local abbreviation table. You are prompted for the abbreviation's expansion in the Mini-buffer.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(list-local-abbrevs)</b></p>
 
 <blockquote>
 <p>Displays a buffer called Abbrev list and fills it with the abbreviations and their expansions in effect for the current buffer.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>^X-W (edit-local-abbrevs)</b></p>
 
 <blockquote>
 <p>Displays a buffer called Abbrev list, fills it with the abbreviations and their expansions in effect for the current buffer and then enters a recursive edit so that you can edit these definitions. When the recursive edit is exited, the buffer is used to define the new abbreviations.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(list-all-abbrevs)</b></p>
 
 <blockquote>
 <p>Displays a buffer called Abbrev list and fills it with the abbreviations and expansions currently defined in Emacs.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(edit-all-abbrevs)</b></p>
 
 <blockquote>
 <p>Displays a buffer called Abbrev list, fills it with all the abbreviations defined in the current Emacs, and then enters a recursive edit to let you alter these abbreviations. When you exit the recursive edit, the modified buffer contents are used to define the abbreviations.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>^X-R (define-global-abbrev-for-region)</b></p>
 
 <blockquote>
 <p>Uses the region as an expansion and prompts you for an abbreviation. The abbreviation is defined in the global abbreviation table.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>^X-S (define-local-abbrev-for-region)</b></p>
 
 <blockquote>
 <p>Uses the region as an expansion and prompts you for an abbreviation. The abbreviation is defined in the current buffer's local abbreviation table.</p>
 
-<!--<p><i><b>AREA, Vertically Bounded Cut And Paste </b></i> AREA Rectangular cut and paste</p>-->
 <p>The AREA package defines two functions that allow you to define a box and then remove the text from that box leaving the text not included in the box undisturbed. The removed text is stored in a buffer called Area. This text may be inserted later at some other location.</p>
 
 <p>The AREA functions and key bindings are:</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>ESC-w (delete-area)</b></p>
 
 <blockquote>
 <p>Deletes a vertically-bounded area, storing the deleted area in a buffer named Area.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>ESC-y (insert-area)</b></p>
 
 <blockquote>
@@ -95,7 +94,7 @@
 <p>The AREA library has been superceded by the RECTANGULAR library, but it is still supplied with Emacs for compatibility with existing MLisp code. For details on the RECTANGULAR library, see <a href="#rectangular">RECTANGULAR, Rectangular Cut and Paste</a></p>
 </blockquote>
 
-<hr>
+<hr/>
 <h2><a name="buff"></a>BUFF, One Line Buffer Listing</h2>
 
 <blockquote>
@@ -121,24 +120,22 @@
 </table>
 </blockquote>
 
-<hr>
+<hr/>
 <h2><a name="centerlin"></a>CENTERLIN, Line Centering</h2>
 
-<!--<p><i><b>CENTERLIN, Line Centering </b></i> CENTERLIN Line centering Centering lines center-line left-margin right-margin</p>-->
 <p>The CENTERLIN library package defines the single function center-line which can be used to centre the current line between the margins as defined by left-margin and right-margin.</p>
 
 <p>There is no default binding for the center-line function.</p>
 
-<hr>
+<hr/>
 <h2><a name="dabbrev"></a>DABBREV, Dynamic Abbreviation Expansion</h2>
 
-<!--<p><i><b>DABBREV, Dynamic Abbreviation Expansion </b></i> DABBREV dabbrev Dynamic abbrevation expansion Abbreviations, dynamic expansion of</p>-->
 
 <p>The DABBREV library defines the dabbrev function. The dabbrev function takes the word that the cursor is positioned in and looks through the buffer for a word for which the current word is a prefix. If a match is found, the current word is expanded into the full word.</p>
 
 <p>For example, if you have already typed the word FOOBAR into the buffer, you can then type the subword FOO, then execute the dabbrev function and FOO will be expanded to FOOBAR.</p>
 
-<hr>
+<hr/>
 <p><b>dabbrev-expand-whole-word 0</b></p>
 
 <blockquote>
@@ -148,23 +145,21 @@ the word and deletes the end of the word.</p>
 
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>^W (dabbrev)</b></p>
 
 <blockquote>
 <p>dabbrev.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <h2><a name="dent"></a>DENT, Region Indentation</h2>
 
-<!--<p><i><b>DENT, Region Indentation </b></i> DENT Indentation indent-region undent-region</p>-->
 <p>The DENT library defines the functions indent-region and undent-region. indent-region indents the currently selected region by logical-tab-size characters. If provided with a prefix argument, it performs the indentation the specified numbers of times. undent-region undents the current region.</p>
 
-<hr>
+<hr/>
 <h2><a name="edtsim"></a>EDTSIM, EDT Simulation</h2>
 
-<!--<p><i><b>EDTSIM, EDT Simulation </b></i> EDTSIM EDT simulation</p>-->
 <p>The EDTSIM package defines functions which emulate the EDT text editor found on the OpenVMS operating system from Digital Equipment Corporation.</p>
 
 <p>When you load the EDTSIM library (using <kbd>ESC-x execute-mlisp-file edtsim</kbd>), the numeric keypad keys are re-bound to perform the same actions as they would in the real EDT editor. The major mode string in the mode line is modified to indicate that EDT simulation is loaded.</p>
@@ -348,58 +343,57 @@ the word and deletes the end of the word.</p>
 </tr>
 </table>
 
-<hr>
+<hr/>
 <h2><a name="electricc"></a>ELECTRICC, A Mode for Writing C Programs</h2>
 
-<!--<p><i><b>ELECTRICC, A Mode for Writing C Programs </b></i> ELECTRICC Electric C Mode</p>-->
 <p>The ELECTRICC library defines functions for Electric C Mode, a major mode for writing C programs. Electric C Mode is an alternative library to the C Mode library described in the Barry's Emacs Programmer's Guide.</p>
 
 <p>Electric C Mode performs a number of useful functions for the C programmer, including:</p>
 
-<p>&middot; Balancing of parentheses</p>
+<p>&#183; Balancing of parentheses</p>
 
-<p>&middot; Proper indentation of compound statement blocks</p>
+<p>&#183; Proper indentation of compound statement blocks</p>
 
-<p>&middot; Comment handling</p>
+<p>&#183; Comment handling</p>
 
-<hr>
+<hr/>
 <h2><a name="flasher"></a>FLASHER, Parenthesis Balancing</h2>
 
-<blockquote><!--<p><i><b>FLASHER, Parenthesis Balancing </b></i> FLASHER Parenthesis balancing Balancing parentheses paren-flash</p>-->
+<blockquote>
 <p>The FLASHER library defines the single function paren-flashwhich can be used to cause parenthesis balancing The function paren-flash should be bound to the closing version of the brackets that are to be balanced.</p>
 
 <p>Two buffer-specific variables are used to provide input parameters to the functions:</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>paren-flash-wait</b></p>
 
 <blockquote>
 <p>A numeric variable used to control the maximum length of time the cursor stays over a matching parenthesis. The value is specified in tenths of a second. The default value is 10 (1 second).</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>paren-flash-message</b></p>
 
 <blockquote>
 <p>A boolean variable used to control the displaying of the error message when no matching bracket is found. If true, an error message is displayed; otherwise, the fact that the bracket is non-matching is ignored.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <h2><a name="globdel"></a>GLOBDEL, Global Deletion Of Lines</h2>
 
-<blockquote><!--<p><i><b>GLOBDEL, Global Deletion Of Lines </b></i> GLOBDEL Global deletion of lines Deletion of lines</p>-->
+<blockquote>
 <p>The GLOBDEL library provides the facility to nominate a set of lines by a search string, and then delete all the nominated lines. The library defines two functions:</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(global-delete-lines)</b></p>
 
 <blockquote>
 <p>Prompts for an ordinary search string, and deletes all lines containing that string.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(re-global-delete-lines)</b></p>
 
 <blockquote>
@@ -408,43 +402,42 @@ the word and deletes the end of the word.</p>
 <p>Both functions indicate the total number of lines deleted.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <h2><a name="goto"></a>GOTO, Goto Line/Page/Percent</h2>
 
-<!--<p><i><b>GOTO, Goto Line/Page/Percent </b></i> GOTO Goto, line Goto, page Goto, percent</p>-->
 <blockquote>
 <p>The GOTO library defines functions that move dot directly to a specified line, page, or percentage of the current buffer. The functions defined are:</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(goto-line)</b></p>
 
 <blockquote>
 <p>Moves dot to the beginning of the specified line. If a prefix argument is provided, use that as the line number to find. The first line in the buffer is line number 1.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(adjust-line-number)</b></p>
 
 <blockquote>
 <p>Makes the current line line number 1 so that goto-line starts counting from the current line rather than the beginning of the file.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(goto-page)</b></p>
 
 <blockquote>
 <p>Moves dot to the beginning of the specified page. If a prefix argument is provided, use that as the page number to find.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(goto-percent)</b></p>
 
 <blockquote>
 <p>Moves dot to the percentage position of the file indicated. If a prefix argument is provided, use that as the percentage position to find. The beginning of the file is percentage position 0. The end of the file is percentage position 100.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <h2><a name="html"></a>HTMLMODE, HTML mode</h2>
 
 <blockquote>
@@ -453,24 +446,24 @@ the word and deletes the end of the word.</p>
 <p>HTML-mode provides syntax colouring for HTML code. HTML version 3.2 is fully supported, however not all of HTML 4.0 is syntax coloured.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>ESC-c (HTML-view-buffer)</b></p>
 
 <blockquote>
 <p>Save the HTML document and then view the HTML document using the default Web browser.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(HTML-mode)</b></p>
 
 <blockquote>
 <p>Start HTML-mode for the current buffer.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <h2><a name="incsearch"></a>INCSEARCH, Incremental Searching</h2>
 
-<blockquote><!--<p><i><b>INCSEARCH, Incremental Searching </b></i> INCSEARCH Incremental searching Searching, incremental</p>-->
+<blockquote>
 <p>When you execute the normal Emacs search commands, you are prompted for the search string in the Mini-buffer. You type in the entire search string, press Return, and Emacs searches for the specified string. The INCSEARCH library defines functions which implement a different style of searching called incremental searching.</p>
 
 <p>Incremental searches begin searching before you have finished typing the search string. As you type in the search string, Emacs moves the cursor to where the string would be found. When you have typed enough characters to identify the place you want, you can stop. Depending on what you will do next, you may or may not need to terminate the search explicitly with an RETURN.</p>
@@ -478,21 +471,21 @@ the word and deletes the end of the word.</p>
 <p>Incremental searching is enabled by loading the INCSEARCH package. This package replaces the existing search commands with the following commands:</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>^F (incremental-search)</b></p>
 
 <blockquote>
 <p>Performs a forwards incremental search.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>^R (reverse-incremental-search)</b></p>
 
 <blockquote>
 <p>Performs a reverse incremental search.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>inc-search-use-region 0</b></p>
 
 <blockquote>
@@ -500,7 +493,7 @@ the word and deletes the end of the word.</p>
 as the default search string.</p>
 </blockquote>
 
-<hr>
+<hr/>
 
 <p>The ^F command initiates a forwards incremental search. It reads in characters and positions the cursor at the first occurrence of the characters that you have typed. If you type ^F-F, the cursor moves right after the first F. Type an O, and the cursor moves to the first FO. After another O, the cursor is moved to the first occurrence of FOO. At the same time, the text FOO is echoed at the bottom of the screen.</p>
 
@@ -522,7 +515,7 @@ If you highlighted some text in the buffer and then start incremental search the
  Type ^F again to find the next FOO.
 </p>
 
-<hr>
+<hr/>
 <p>
 While incremental search is active the default key bindings are:
 </p>
@@ -623,70 +616,70 @@ While incremental search is active the default key bindings are:
 </table>
 
 
-<hr>
+<hr/>
 <h2><a name="killer"></a>KILLER, A Kill Ring System</h2>
 
 <p>The KILLER library provides the ability to keep a history of killed objects, and to define a killed object as any combination of successive kill commands. The killed objects are stored in a kill ring and can be retrieved at any time.</p>
 
 <p>The KILLER text deletion functions replace the normal Emacs text deletion commands with versions that delete text and store it in the appropiate place in the kill ring. The kill ring functions and default key bindings are:</p>
 
-<hr>
+<hr/>
 <p><b>ESC-. (kr-set-mark)</b></p>
 
 <blockquote>
 <p>Sets the mark with reverse-video highlighting enabled.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>^X-. (kr-toggle-highlight)</b></p>
 
 <blockquote>
 <p>Toggles the highlight setting.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>ESC-d (kr-kill-forward-word)</b></p>
 
 <blockquote>
 <p>Deletes the next word and inserts it into the kill ring.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>ESC-Delete (kr-kill-bacward-word)</b></p>
 
 <blockquote>
 <p>Deletes the previous word and inserts it in the kill ring.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>^W (kr-kill-region)</b></p>
 
 <blockquote>
 <p>Deletes the region and inserts it into the kill ring.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>^K (kr-kill-forward-line)</b></p>
 
 <blockquote>
 <p>Deletes the current line from dot to the end-of-line and inserts the deleted text into the kill ring.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>ESC-k (kr-kill-backward-line)</b></p>
 
 <blockquote>
 <p>Deletes the current line from dot to the beginning of the line and inserts the deleted text into the kill ring.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>^Y (kr-yank)</b></p>
 
 <blockquote>
 <p>Yanks the text from the current buffer in the kill ring, placing the yanked text into the current buffer at dot and leaving the region around the yanked text.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>ESC-y (kr-more-yank)</b></p>
 
 <blockquote>
@@ -697,48 +690,48 @@ While incremental search is active the default key bindings are:
 <p>The default size of the kill ring is 10 buffers. The size of the kill ring is controlled by the kr-max-buf variable which is defined in KILLER.KEY. If you want to change the size of the kill ring, make a private copy of the KILLER.KEY file as described above and change the setting of the kr-max-buf variable.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <h2><a name="latexmode"></a>LATEXMODE, A Major Mode for writing LaTeX Documents</h2>
 
-<!--<p><i><b>LATEXMODE, A Major Mode for writing LaTeX Documents </b></i> LATEXMODE LaTeX Mode</p>-->
 <p>The LATEXMODE library implements the LaTeX Mode major mode which can be used to help write documents with the LaTeX document preparation system.</p>
 
 <p>LaTeX Mode works in the same way as the standard Emacs language modes C Mode and Bliss Mode by providing expansion of templates for LaTeXreserved words. LaTeX Mode also defines comment handling and parenthesis balancing.</p>
 
 <p>See the Barry's Emacs Programmer's Guide for details of how to use the Emacs language modes.</p>
 
-<hr>
+<hr/>
 <h2><a name="makebox"></a>MAKEBOX, Drawing Boxes Around Text</h2>
 
-<!--<p><i><b>MAKEBOX, Drawing Boxes Around Text </b></i> Boxes, Drawing MAKEBOX RECTANGULAR</p>-->
 <p>The MAKEBOX library can be used to draw rectangular boxes around text. It relies on functions defined in the RECTANGULAR library, so you must first load the RECTANGULAR library before loading MAKEBOX. See <a href="#rectangular">RECTANGULAR, Rectangular Cut and Paste</a> for a description of the RECTANGULAR library.</p>
 
 <p>The library defines the make-box function. To draw a box around text with make-box:</p>
 
-<p>&middot; Select one corner of the box using rectangular-select (which is bound to GOLD-Select by default).</p>
+<p>&#183; Select one corner of the box using rectangular-select (which is bound to GOLD-Select by default).</p>
 
-<p>&middot; Move to the diagonally opposite corner of the box.</p>
+<p>&#183; Move to the diagonally opposite corner of the box.</p>
 
-<p>&middot; Execute the make-box function.</p>
+<p>&#183; Execute the make-box function.</p>
 
-<p>By default, make-box will use the +, -- and | characters to draw boxes. You can override these default values by setting the following variables:</p>
+<blockquote>
+<p>By default, make-box will use the +, -- and | characters to draw boxes.
+You can override these default values by setting the following variables:</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>makebox-h-symbol</b></p>
 
 <blockquote>
 <p>Contains the character that make-box uses to draw horizontal lines.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>makebox-v-symbol</b></p>
 
 <blockquote>
 <p>Contains the character that make-box uses to draw vertical lines.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>makebox-corners</b></p>
 
 <blockquote>
@@ -757,32 +750,30 @@ While incremental search is active the default key bindings are:
 <p>The following convenience functions are defined to set the drawing variables:</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>makebox-use-lines</b></p>
 
 <blockquote>
 <p>Sets the make-box drawing variables to the default line-drawing set.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>makebox-use-stars</b></p>
 
 <blockquote>
 <p>Sets all the make-box drawing variables to *.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <h2><a name="minibuf"></a>MINIBUF, Writing and Executing Small MLisp Programs</h2>
 
-<!--<p><i><b>MINIBUF, Writing and Executing Small MLisp Programs </b></i> MINIBUF execute-mlisp-line</p>-->
 <p>The MINIBUF library provides a better interface for the execution simple MLisp programs than the execute-mlisp-line function. When loaded, MINIBUF rebinds <kbd>ESC-ESC</kbd> so that instead of collecting its arguments in the Mini-buffer at the bottom of the screen, it pops up a small buffer called minibuffer to collect the MLisp code. Lisp Mode is in effect in this buffer so that MLisp name expansion can be used.</p>
 
 <p>When you are satisfied that the MLisp in the minibuffer is correct, you can execute it with the command <kbd>ESC-ESC</kbd>. Subsequent uses of <kbd>ESC-ESC</kbd> will re-display the minibuffer containing the last program executed; you can re-execute the same code with <kbd>ESC-ESC</kbd>, or you can edit the code first before executing it with <kbd>ESC-ESC</kbd>.</p>
 
-<hr>
+<hr/>
 <h2><a name="minibufrecall"></a>MINIBUF-RECALL, Command Recall in the Mini-buffer</h2>
 
-<!--<p><i><b>MINIBUF-RECALL, Command Recall in the Mini-buffer </b></i> MINIBUF-RECALL Command recall, in the Mini-buffer Recalling commands, in the Mini-buffer</p>-->
 <p>The MINIBUF-RECALL library provides the ability to recall and edit commands in the Mini-buffer. The library remembers the last 60 commands executed. The following keys can be used to edit and recall commands when MINIBUF-RECALL has been loaded:</p>
 
 <h3>up-arrow or esc-r</h3>
@@ -817,7 +808,7 @@ While incremental search is active the default key bindings are:
 
 <p>Aborts the Mini-buffer command.</p>
 
-<hr>
+<hr/>
 <h2><a name="mouse"></a>MOUSE, Mouse Support</h2>
 
 <blockquote>
@@ -825,27 +816,27 @@ While incremental search is active the default key bindings are:
 
 <p>You can use the MOUSE library to:</p>
 
-<p>&middot; Select windows</p>
+<p>&#183; Select windows</p>
 
-<p>&middot; Position the cursor</p>
+<p>&#183; Position the cursor</p>
 
-<p>&middot; Cut and paste regions of text</p>
+<p>&#183; Cut and paste regions of text</p>
 
-<p>&middot; Change window sizes</p>
+<p>&#183; Change window sizes</p>
 
-<p>&middot; Scroll a window up or down</p>
+<p>&#183; Scroll a window up or down</p>
 
-<p>&middot; Scroll a window left or right</p>
+<p>&#183; Scroll a window left or right</p>
 
-<p>&middot; Execute the keyboard macro at a specific position</p>
+<p>&#183; Execute the keyboard macro at a specific position</p>
 
 <p>In addition, you can customise the MOUSE library to perform specialised mouse actions for buffers, and you can build mouse support into your own MLisp code.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <h2><a name="usingthemouselibrary"></a>Using the MOUSE Library</h2>
 
-<hr>
+<hr/>
 <h2><a name="enablingmousesupport"></a>Enabling and Disabling Mouse Support</h2>
 
 <p>To use the MOUSE library functions, add the following MLisp code to your EMACSINIT.ML:</p>
@@ -929,7 +920,7 @@ While incremental search is active the default key bindings are:
 (bind-to-key "togglemouse" "f14)")
 </pre>
 
-<hr>
+<hr/>
 <h2><a name="usingmousefeatures"></a>Using Mouse Features</h2>
 
 <p>The following list describes how to use the various features provided by the Emacs mouse support. In the descriptions of each feature, MB1refers to mouse button 1, MB2 refers to mouse button 2, and MB3 refers to mouse button 3.</p>
@@ -970,7 +961,7 @@ While incremental search is active the default key bindings are:
 
 <p>A double-click of MB3 yanks the Kill buffer into the selected position. If you click on the mode line, the yank is performed at the current location of dot in the selected window. A single click of MB3 performs the same functions as MB1. Moving the mouse between the press and release of MB3 performs the same scroll/pan/resize functions as MB1.</p>
 
-<hr>
+<hr/>
 <p><b>NOTE: The following features work only with the VWS terminal emulator, not with the DECwindows DECterm emulator.</b></p>
 
 <h3>copy region to local paste buffer</h3>
@@ -983,10 +974,10 @@ While incremental search is active the default key bindings are:
 <p>The keystroke <kbd>^X-^C</kbd> yanks the current contents of the terminal-wide cross-session paste buffer into the current buffer. The sequence <kbd>^X-MB3</kbd> pastes the paste buffer into the selected position.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <h2><a name="custommouselibrary"></a>Customising the MOUSE Library</h2>
 
-<hr>
+<hr/>
 <h3><a name="custommousecut"></a>Customising Mouse Cut and Paste</h3>
 
 <p>By default, MOUSE uses the standard Kill buffer handling routines for performing cut and paste operations. If you are using a modified version of cut and paste, or some kind of kill ring library, you can communicate this to the mouse library by setting the favorite-... series of global variables defined by the MOUSE library. These are:</p>
@@ -1030,7 +1021,7 @@ While incremental search is active the default key bindings are:
 
 <p>Note that you need a fast communications line or a fast Xwindows environment to use continuous scrolling.</p>
 
-<hr>
+<hr/>
 <h2><a name="mlispprogrammingwithmouse"></a>Mlisp Programming with the Mouse</h2>
 
 <p>To write MLisp code with a mouse interface, you must write a mouse action function in MLisp, then bind the function to a mouse button sequence. Pressing that mouse button sequence will then invoke the mouse action function.</p>
@@ -1175,10 +1166,9 @@ While incremental search is active the default key bindings are:
 (local-bind-to-key "novalue" "mouse-3-down)")
 </pre>
 
-<hr>
+<hr/>
 <h2><a name="mouserectangular"></a>MOUSE-RECTANGULAR, Mouse Interface to the RECTANGULAR Library</h2>
 
-<!--<p><i><b>MOUSE-RECTANGULAR, Mouse Interface to the RECTANGULAR Library   </b></i> MOUSE-RECTANGULAR Rectangular cut and paste, mouse interface</p>-->
 <p>The MOUSE-RECTANGULAR library provides a workstation mouse interface to the rectangular cut and paste routines defined in the RECTANGULAR library. You must load the RECTANGULAR library before loading the MOUSE-RECTANGULAR library. The RECTANGULAR library is described in <a href="#rectangular">RECTANGULAR, Rectangular Cut and Paste</a>.</p>
 
 <p>The MOUSE-RECTANGULAR mouse button bindings are:</p>
@@ -1197,18 +1187,16 @@ While incremental search is active the default key bindings are:
 
 <p>If Replace Mode is active, the Replace Mode versions of the rectangular cut and paste routines are used.</p>
 
-<hr>
+<hr/>
 <h2><a name="newcompil"></a>NEWCOMPIL, Compiling Programs</h2>
 
-<!--<p><i><b>NEWCOMPIL, Compiling Programs </b></i> NEWCOMPIL Compiling programs Program compilation compile-it next-error</p>-->
 <p>The NEWCOMPIL library provides a more convenient program compilation interface than the compile-it and next-errorfunctions built in to Emacs. After loading the NEWCOMPIL library, compile-it and next-error are modified so that while compilation is in progress, other work in Emacs can continue. The standard functions do not provide this capability. kill-compilation</p>
 
 <p>An extra command is provided to cater for this extra flexibility: <kbd>^X-^K</kbd> (kill-compilation), which aborts the currently active compilation.</p>
 
-<hr>
+<hr/>
 <h2><a name="number"></a>NUMBER, Number Base Conversion</h2>
 
-<!--<p><i><b>NUMBER, Number Base Conversion </b></i> NUMBER Base conversion</p>-->
 <p>The NUMBER library defines functions to convert a number into hexadecimal, octal and decimal notation and display the result in the Mini-buffer.</p>
 
 <p>The interface to the base conversion functions is the numberfunction. When executed, number prompts for a number to convert. The number can be one of the following forms:</p>
@@ -1246,35 +1234,35 @@ While incremental search is active the default key bindings are:
 
 <p>Converted 55 to: 0x37 067 55</p>
 
-<hr>
+<hr/>
 <h2><a name="python"></a>PYTHONMODE, Python mode</h2>
 
 <p>An editing mode for Python code. Python mode provide syntax colouring for Python code.</p>
 
 <p>Python is a well designed, object oriented, simple to learn, scripting language. Python is available for Windows, Unix and Mac systems. The home of Python is <a href="http://www.python.org">www.python.org</a></p>
 
-<hr>
+<hr/>
 <p><b>(Python-mode)</b></p>
 
 <blockquote>
 <p>Start Python mode on the current buffer</p>
 </blockquote>
 
-<hr>
+<hr/>
 <h2><a name="rectangular"></a>RECTANGULAR, Rectangular Cut and Paste</h2>
 
 <p>The RECTANGULAR library provides the ability to cut and paste rectangular areas of text bounded by any two opposite corners. The corners can be in the same row or column. RECTANGULAR handles Tab characters correctly and fixes problems in the AREA package. RECTANGULAR functions correctly in insert or replace mode.</p>
 
 <p>To handle all possible options, there are two modes for cut and two modes for paste which are controlled by the following variables:</p>
 
-<hr>
+<hr/>
 <p><b>replace-with-white-space</b></p>
 
 <blockquote>
 <p>Controls the action of the rectangular cut function. When this variable is set to 1, deleted text is replaced with white-space. When the variable is set to 0, text is deleted and is not replaced with white-space.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>overstrike-mode</b></p>
 
 <blockquote>
@@ -1283,35 +1271,35 @@ While incremental search is active the default key bindings are:
 <p>The rectangular cut and paste key bindings and commands are:</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>GOLD-Select (rectangular-select)</b></p>
 
 <blockquote>
 <p>Selects one corner of the area to be cut.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>Remove (rectangular-cut)</b></p>
 
 <blockquote>
 <p>Cuts the selected area from the buffer with replace-with-white-space set to 0.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>GOLD-Remove (rectangular-cut)</b></p>
 
 <blockquote>
 <p>Cuts the selected area from the buffer with replace-with-white-space set to 1.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>Insert Here (rectangular-paste)</b></p>
 
 <blockquote>
 <p>Pastes the previously-cut text into the buffer at dot in insert mode (overstrike-mode set to 0).</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>GOLD-Insert Here (rectangular-paste)</b></p>
 
 <blockquote>
@@ -1396,10 +1384,10 @@ While incremental search is active the default key bindings are:
 <p>be inserted text</p>
 </blockquote>
 
-<hr>
+<hr/>
 <h2><a name="tags"></a>TAGS, An Indexing System</h2>
 
-<blockquote><!--<p><i><b>TAGS, An Indexing System </b></i> TAGS Tagging source files Indexing source files</p>-->
+<blockquote>
 <p>The TAGS library defines functions which remember the locations of function definitions in a file, and enable you to go directly to the definition of any function without having to search the whole file.</p>
 
 <p>The TAGS package can be used to tag a set of files used to build a program as well as an individual file.</p>
@@ -1409,102 +1397,102 @@ While incremental search is active the default key bindings are:
 <p>The functions provided by the TAGS library are summarised here and are described in detail in the following sections.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(make-tag-table)</b></p>
 
 <blockquote>
 <p>Makes a tag table for a specified set of files.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(set-tag-language)</b></p>
 
 <blockquote>
 <p>Sets the tag language to a user-specified language. This is used when files being tagged are not known to the TAGS library.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(recompute-all-tags)</b></p>
 
 <blockquote>
 <p>Updates all the tags in the tag table.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(visit-tag-table)</b></p>
 
 <blockquote>
 <p>Tells Emacs which tag table file to use.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>^X-^L (goto-tag)</b></p>
 
 <blockquote>
 <p>Moves dot to the specified tag, visiting the appropriate file if necessary.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>^X-^A (add-tag)</b></p>
 
 <blockquote>
 <p>Adds a new tag to the current tag table.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(list-tags)</b></p>
 
 <blockquote>
 <p>Lists all tags in the current tag table.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(tag-replace-string)</b></p>
 
 <blockquote>
 <p>Replace a string in all files in the current tag table.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(tag-query-replace-string)</b></p>
 
 <blockquote>
 <p>Perform a query-replace operation on all files in the tag table.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>(tag-execute-mlisp)</b></p>
 
 <blockquote>
 <p>Execute an MLisp expression over all files in the tag table.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><b>How to Make a Tag Table for a Program</b></p>
 
 <blockquote>
 <p>To use the TAGS package, you must create a tag table from the source file or files in your program. Normally, the tag table does not reside in any of these files, but in a separate tag table file which contains the names of the text files which it describes. Tag table files are generated using the <kbd>ESC-x make-tag-table command</kbd>. make-tag-table asks you to specify the names of the files you wish to tag (which may contain wildcards), then proceeds to read all the files matching that file specification into Emacs. It then uses a set of built-in rules to tag the lines according to the source language. TAGS selects the language based on the file's extension. TAGS has built-in rules for building tag tables for the following languages:</p>
 
-<p>&middot; MLisp</p>
+<p>&#183; MLisp</p>
 
-<p>&middot; C, C++</p>
+<p>&#183; C, C++</p>
 
-<p>&middot; Python</p>
+<p>&#183; Python</p>
 
-<p>&middot; BLISS, BLISS-16, BLISS-32</p>
+<p>&#183; BLISS, BLISS-16, BLISS-32</p>
 
-<p>&middot; RUNOFF</p>
+<p>&#183; RUNOFF</p>
 
-<p>&middot; MACRO-32</p>
+<p>&#183; MACRO-32</p>
 
-<p>&middot; FORTRAN. set-tag-language</p>
+<p>&#183; FORTRAN. set-tag-language</p>
 
 <p>If the language you wish to tag does not have built-in rules, you will have to teach TAGS how to recognise the lines to be tagged by using the <kbd>ESC-x set-tag-language</kbd> command. This command asks for a file type for the language and a regular expression search string to use to select lines to be tagged. Only one extra language can be specified; multiple calls of set-tag-language overwrite previous language specifications. recompute-all-tags</p>
 
 <p>Once a tag table file exists, you must update it if you add new tags to the source files, or change the files extensively. You can do this by using the command <kbd>ESC-x recompute-all-tags</kbd>. TAGS finds the names and languages of the source files by reading the old tag table.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <h2><a name="howusetags"></a>How to Tell Emacs You Want to Use TAGS</h2>
 
 <p>Before you can use the TAGS package, you have to load the library using the <kbd>ESC-x execute-mlisp-file</kbd> command. visit-tag-table</p>
@@ -1515,7 +1503,7 @@ While incremental search is active the default key bindings are:
 
 <p>visit-tag-table is essentially equivalent to selecting the buffer *TAGS* (which is where the tags live) and visiting the tag table file in that buffer, then returning to the previously selected buffer. After execution of visit-tag-table, <kbd>ESC-x list-buffers</kbd> will show the buffer *TAGS* visiting the tag table file.</p>
 
-<hr>
+<hr/>
 <p><b>Jumping to a Tag</b></p>
 
 <blockquote>
@@ -1524,12 +1512,9 @@ While incremental search is active the default key bindings are:
 <p>You do not need to type the complete name of the tag to be found; any substring will do. If you use this feature, you may not always find the tag you expected; when this happens, <kbd>^U-^X-^L</kbd> will find the next definition matching the tag substring. For example, if you want to find the definition of X-SET-TYPE-1 and you specify just TYPE-1, you might find X-READ-TYPE-1 instead. You could then type <kbd>^U-^X-^L</kbd> until you reach X-SET-TYPE-1.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <h3><a name="otheroperationsontags"></a>Other Operations on Tag Tables</h3>
 
-<!--
-<hr>
-<p><b><i>Adding a New Function to a Tag Table </i></b> add-tag</p>-->
 <blockquote>
 <p>When you define a new function, its location does not go in the tag table automatically. This is because Emacs cannot tell that you have defined a function unless you tell it by invoking the command <kbd>^X-^A</kbd> (add-tag).</p>
 
@@ -1540,27 +1525,24 @@ While incremental search is active the default key bindings are:
 <p>Although local modifications to a file do not degrade the efficiency of the TAGS package or require that the tag table be rebuilt, moving a function a great distance makes finding that function much slower. In this case, you can add the function to the tag table with <kbd>^X-^A</kbd> to give the table its new location. Alternatively, you can run recompute-all-tags to update everything, as is usually done.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <h2><a name="vistingafunction"></a>Visiting a Function</h2>
 
 <p>The command <kbd>ESC-x visit-function</kbd> can be used to temporarily view a function in another window. Type the function's name in the buffer, then execute visit-function. The function's name is extracted from the buffer and used as a tag to find. Before the tag is located, TAGS enters a recursive edit, so that when you have finished viewing the function, your original windows and buffers are re-displayed.</p>
 
 <h3>finding out what has been tagged</h3>
 
-<!--<p><i><b>Finding Out What Has Been Tagged </b></i> list-tags</p>-->
 <p>The function list-tags can be used to list the files and functions that have been tagged for any tag table. Just load the tag table and call the function. When you use make-tag-table, the list-tags function is automatically called so that you can see exactly what TAGS has tagged.</p>
 
 <h3>replacing strings in a tagged program</h3>
 
-<!--<p><i><b>Replacing Strings in a Tagged Program </b></i> tag-replace-string tag-query-replace-string</p>-->
 <p>Two functions can be used to change all occurrences of a string in a set of files that have been tagged: tag-replace-string and tag-query-replace-string. Both of these functions require a regular expression search string and a replacement string as arguments, and apply the appropriate replace commands to all of the files tagged in the tag table.</p>
 
 <h3>applying mlisp to lines in a tagged program</h3>
 
-<!--<p><i><b>Applying MLisp to Lines in a Tagged Program </b></i> tag-execute-mlisp</p>-->
 <p>A more flexible approach to multiple file editing is provided by the function tag-execute-mlisp. This function requires a regular expression search string which is used to find lines in all the files specified in the tag table. For all of the lines that match the pattern, the function sets dot to the found line, and executes a specified MLisp expression at that location.</p>
 
-<hr>
+<hr/>
 <h2><a name="whatconstitutesatag"></a>What Constitutes a Tag?</h2>
 
 <p>The following list describes what defines an item to be tagged using the built-in tagging rules for the supported languages. Any of these definitions may be overriden using the set-tag-language command.</p>
@@ -1607,7 +1589,7 @@ While incremental search is active the default key bindings are:
 </tr>
 </table>
 
-<hr>
+<hr/>
 <h2><a name="addingorremovingsource"></a>Adding or Removing Source Files</h2>
 
 <p>A tag table file is a sequence of entries, one per file. Each entry looks like:</p>
@@ -1618,11 +1600,11 @@ While incremental search is active the default key bindings are:
 </pre>
 
 <p>where:
-<br>
+<br />
 <code>filename</code> is the file name and file type of the file for which the following lines are tag information.
-<br>
+<br />
 <code>data line</code> contains the tag's line
-<br>
+<br />
 <code>char pos</code> is the position of the start of the tagged line.</p>
 
 <p>If you are changing a source file's name, you should simply change the name where it is presently described in the tag table.</p>
@@ -1631,10 +1613,9 @@ While incremental search is active the default key bindings are:
 
 <p>You can delete a source file from a tag table by deleting its entire entry. Since the counts of the remaining entries are still valid, you need not run recompute-all-tags over the file again. You can also change the order of the entries without doing any harm. The order of the entries matters if there are tags which appear in more than one source file.</p>
 
-<hr>
+<hr/>
 <h2><a name="tabs"></a>TABS, Intelligent Tab Handling</h2>
 
-<!--<p><i><b>TABS, Intelligent Tab Handling </b></i> TABS Tab Handling</p>-->
 <p>The TABS library defines functions that insert and delete Tab characters in an intelligent way. The functions use the buffer-specific variable logical-tab-size to compute how much whitespace to insert or delete. The two functions defined are:</p>
 
 <p><b>(tab-key)</b></p>
@@ -1649,28 +1630,25 @@ While incremental search is active the default key bindings are:
 <p>Deletes enough tabs and spaces to move back to the previous tab stop as indicated by logical-tab-size.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <h2><a name="time"></a>TIME, A Running Time Display</h2>
 
-<!--<p><i><b>TIME, A Running Time Display </b></i> TIME Clock Digital clock time</p>-->
 <p>The TIME library defines the time function. When executed, the time function puts a running digital time display of the form HH:MM:SS in the mode line of the current window.</p>
 
 <p>When you move the cursor to a new window or visit a new file, the time display is added to the new mode line and is made active.</p>
 
 <p>The time display is only active in the current window's mode line. If the time display is enabled in any other window, the time shown is the time that the cursor was moved out of that window.</p>
 
-<hr>
+<hr/>
 <h2><a name="whereis"></a>WHEREIS, Where Is That Command?</h2>
 
-<!--<p><i><b>WHEREIS, Where Is That Command? </b></i> WHEREIS where-is</p>-->
 <p>The WHEREIS library defines the where-is function, which prompts for a function name and displays in the Mini-buffer the key binding (if any) to which the function is bound.</p>
 
 <p>where-is cannot be called from an MLisp program.</p>
 
-<hr>
+<hr/>
 <h2><a name="writereg"></a>WRITEREG, Write Region to File</h2>
 
-<!--<p><i><b>WRITEREG, Write Region to File </b></i> WRITEREG Region, write to file write-region-to-file</p>-->
 <p>The WRITEREG library defines the single function write-region-to-file which prompts for a file name and writes the region to the specified file.</p>
 </body>
 </html>

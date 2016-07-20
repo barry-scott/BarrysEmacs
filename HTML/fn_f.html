@@ -1,12 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Functions F*</title>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<hr>
+<hr/>
 <p><a name="fetch-array">(<b>fetch-array</b> <code>array indices...</code>)</a></p>
 
 <blockquote>
@@ -32,7 +33,7 @@
 
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="fetch-database-entry"></a>(<b>fetch-database-entry</b> <code>dbname</code> <code>key</code>)</p>
 
 <blockquote>
@@ -49,15 +50,15 @@
 
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="fetch-help-database-entry"></a>(<b>fetch-help-database-entry</b> <code>dbname</code> <code>keys-string</code>)</p>
 
 <blockquote>
 <p><b>VMS only</b></p>
 
-<p>Takes the entry in the help database corresponding to the given key string and inserts it into the current buffer.
+<p>Takes the entry in the help database corresponding to the given key string and inserts it into the current buffer.</p>
 
-<p>The key string is a sequence of up to 9 keys separated by whitespace. For example, to insert the help for the entry:
+<p>The key string is a sequence of up to 9 keys separated by whitespace. For example, to insert the help for the entry:</p>
 
 <pre>
 copy /log
@@ -68,6 +69,8 @@ copy /log
 <pre>
 "copy /log"
 </pre>
+
+</blockquote>
 
 <p>The variable <code>fetch-help-database-flags</code> is used to control the information retrieved from the help database file.</p>
 
@@ -82,9 +85,7 @@ copy /log
 <li><a href="var_f.html#fetch-help-database-flags">fetch-help-database-flags</a> (Variable)</li>
 </ul>
 
-</blockquote>
-
-<hr>
+<hr/>
 <p><a name="file-exists"></a>(<b>file-exists</b> <code>file-name</code>)</p>
 
 <blockquote>
@@ -99,7 +100,7 @@ copy /log
 
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="file-format-string"></a>(<b>file-format-string</b> <code>format</code> <code>file-name</code>)</p>
 
 <blockquote>
@@ -185,19 +186,19 @@ c:\users\barry\bemacs\emacsinit.ml
 
 </td>
 <td valign="top" align="left">path head</td>
-<td valign="top" align="left">%3ps%ph<br>%2ps%ph
-<br>%1ps%ph
-<br>%0ps%ph
-<br>%-1ps%ph
-<br>%-2ps%ph
-<br></td>
+<td valign="top" align="left">%3ps%ph<br />%2ps%ph
+<br />%1ps%ph
+<br />%0ps%ph
+<br />%-1ps%ph
+<br />%-2ps%ph
+<br /></td>
 <td valign="top" align="left">c:\users\barry\bemacs\
 
-<br>c:\users\barry\
-<br>c:\users\<br>
-c:\users\barry\bemacs\<br>
-c:\users\barry\<br>
-c:\users\<br>
+<br />c:\users\barry\
+<br />c:\users\<br />
+c:\users\barry\bemacs\<br />
+c:\users\barry\<br />
+c:\users\<br />
 
 </td>
 </tr>
@@ -205,14 +206,14 @@ c:\users\<br>
 <tr>
 <td valign="top" align="left">pt</td>
 <td valign="top" align="left">path tail</td>
-<td valign="top" align="left">%-2ps%pt<br>%3ps%pt
-<br>%2ps%pt
-<br>%1ps%pt
-<br>%0ps%pt
-<br>%-1ps%pt
+<td valign="top" align="left">%-2ps%pt<br />%3ps%pt
+<br />%2ps%pt
+<br />%1ps%pt
+<br />%0ps%pt
+<br />%-1ps%pt
 
-<br>%-2ps%pt</td>
-<td valign="top" align="left">barry\bemacs\<br>&nbsp;<br>bemacs\<br>barry\bemacs\<br>&nbsp;<br>bemacs\<br>barry\bemacs\</td>
+<br />%-2ps%pt</td>
+<td valign="top" align="left">barry\bemacs\<br />&#160;<br />bemacs\<br />barry\bemacs\<br />&#160;<br />bemacs\<br />barry\bemacs\</td>
 </tr>
 
 <tr>
@@ -233,7 +234,7 @@ c:\users\<br>
 
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="file-is-a-directory"></a>(<b>file-is-a-directory</b> <code>file-name</code>)</p>
 
 <blockquote>
@@ -256,14 +257,14 @@ c:\users\<br>
 
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="file-name-expand-and-default"></a>(<b>file-name-expand-and-default</b> <code>file-name</code> <code>default-file-name</code>)</p>
 
 <blockquote>
 <p>Returns a string containing a file name. The file name returned is the <code>file-name</code> will any missing part of the file name defaulted from the <code>default-file-name</code> parameter and the current working directory.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="filter-region"></a>(<b>filter-region</b> <code>command</code>)</p>
 
 <blockquote>
@@ -278,7 +279,7 @@ c:\users\<br>
 
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="following-char"></a>(<b>following-char</b>)</p>
 
 <blockquote>
@@ -294,7 +295,7 @@ c:\users\<br>
 
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="force-exit-process"></a>(<b>force-exit-process</b> <code>process-name exit-code</code>)</p>
 
 <blockquote>
@@ -318,7 +319,7 @@ c:\users\<br>
 
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="forward-balanced-paren-line"></a>(<b>forward-balanced-paren-line</b> <code>expression-1</code>)</p>
 
 <blockquote>
@@ -338,7 +339,7 @@ c:\users\<br>
 
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="forward-character"></a>(<b>forward-character</b> <code>repeat-count</code>) ^F or right-arrow</p>
 
 <blockquote>
@@ -352,7 +353,7 @@ c:\users\<br>
 
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="forward-paragraph"></a>(<b>forward-paragraph</b>) ESC-)</p>
 
 <blockquote>
@@ -368,7 +369,7 @@ c:\users\<br>
 
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="forward-paren"></a>(<b>forward-paren</b>)</p>
 
 <blockquote>
@@ -389,7 +390,7 @@ c:\users\<br>
 
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="forward-sentence"></a>(<b>forward-sentence</b>) ESC-e</p>
 
 <blockquote>
@@ -403,7 +404,7 @@ c:\users\<br>
 
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="forward-word"></a>(<b>forward-word</b> <code>repeat-count</code>) ESC-f</p>
 
 <blockquote>
@@ -421,7 +422,7 @@ c:\users\<br>
 
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="fundamental-mode"></a>(<b>fundamental-mode</b>)</p>
 
 <blockquote>
@@ -437,9 +438,7 @@ c:\users\<br>
 <li><a href="fn_l.html#lisp-mode">lisp-mode</a></li>
 </ul>
 
-
-
-<hr>
+<hr/>
 </body>
 </html>
 

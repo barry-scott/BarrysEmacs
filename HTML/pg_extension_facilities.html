@@ -1,9 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Mlisp Programmer's Guide</title>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <a name="TopOfPage"></a>
@@ -12,7 +13,7 @@
 
 <p>This chapter describes the various useful facilities which enable complex extensions to be built using MLisp programs.</p>
 
-<hr align="left" size="2" color="#800080">
+<hr align="left" size="2" color="#800080"/>
 <a name="P889_47699"></a> 
 
 <h2>keymaps and key bindings</h2>
@@ -69,15 +70,15 @@
 
 <pre>
 (bind-to-key "unset-mark"
-<br>
+<br />
  (concat
-<br>
+<br />
  ""
-<br>
+<br />
  (convert-key-string "select)")
-<br>
+<br />
  )
-<br>
+<br />
 )
 </pre>
 
@@ -105,7 +106,7 @@
 
 <p>Removes the association of a function to a command key sequence from the local keymap.</p>
 
-<hr align="left" size="2" color="#800080">
+<hr align="left" size="2" color="#800080"/>
 <a name="P966_52721"></a> 
 
 <h2>databases</h2>
@@ -190,7 +191,7 @@
 
 <p>The default value of the bit-mask is 7, meaning that all the information is returned.</p>
 
-<hr align="left" size="2" color="#800080">
+<hr align="left" size="2" color="#800080"/>
 <a name="P1049_58596"></a> 
 
 <h2>controlling processes from emacs</h2>
@@ -287,7 +288,7 @@
 
 <p>Suspends Emacs execution until the designated process requests some input. Keyboard input will also cause this function to return to prevent Emacs from becoming wedged. When a process asks for input, the function returns 1; otherwise, it returns 0, indicating that the user pressed a key on the keyboard.</p>
 
-<hr align="left" size="2" color="#800080">
+<hr align="left" size="2" color="#800080"/>
 <a name="P1143_64796"></a> 
 
 <h2>minor modes</h2>
@@ -332,7 +333,7 @@
 
 <p>This mode is controlled by the variable <code>read-only-buffer</code>.</p>
 
-<hr align="left" size="2" color="#800080">
+<hr align="left" size="2" color="#800080"/>
 <a name="P1186_67157"></a> 
 
 <h2>the mode line</h2>
@@ -397,7 +398,7 @@
 
 <p><code>%[%hBuffer: %b%* File: %f %M (%m%c%r%a) %p%]</code></p>
 
-<hr align="left" size="2" color="#800080">
+<hr align="left" size="2" color="#800080"/>
 <a name="P1249_69710"></a> 
 
 <h2><a name="syntaxtables"></a>Syntax Tables</h2>
@@ -406,7 +407,7 @@
 
 <p>To alter a syntax table, the function <code>modify-syntax-entry</code> is provided. This command takes a single string argument which describes the attributes to be applied to the specified characters as follows:</p>
 
-<p>&middot; The first character is one of the following:</p>
+<p>&#183; The first character is one of the following:</p>
 
 <p><b>w</b></p>
 
@@ -434,15 +435,15 @@
 
 <p>A prefix character, like <code>\</code> in C.</p>
 
-<p>&middot; The second character of the string is the matching parenthesis if the first character is of the open or close parenthesis type. If you specify that <code>(</code> is a left parenthesis matched by <code>)</code>, you should also specify that <code>)</code> is a right parenthesis matched by <code>(</code>.</p>
+<p>&#183; The second character of the string is the matching parenthesis if the first character is of the open or close parenthesis type. If you specify that <code>(</code> is a left parenthesis matched by <code>)</code>, you should also specify that <code>)</code> is a right parenthesis matched by <code>(</code>.</p>
 
-<p>&middot; The third character, if a <code>, indicates that the characters described by this syntax entry begin a comment.</code></p>
+<p>&#183; The third character, if a <code>, indicates that the characters described by this syntax entry begin a comment.</code></p>
 
-<p><code>&middot; The fourth character, if equal to</code> , indicates that the character described by this syntax entry ends a comment.</p>
+<p><code>&#183; The fourth character, if equal to</code> , indicates that the character described by this syntax entry ends a comment.</p>
 
-<p>&middot; If either the beginning or ending comment sequence is two characters long, then the fifth character provides the second character of the comment sequence.</p>
+<p>&#183; If either the beginning or ending comment sequence is two characters long, then the fifth character provides the second character of the comment sequence.</p>
 
-<p>&middot; The sixth and following characters specify which characters are described by the entry; a range of characters can be specified by using the sequence specifier <code>a-b</code>, where <code>a</code>and <code>b</code> are ASCII characters and <code>a</code> is less than <code>b</code>. <code>--</code> can be described if it appears as the sixth character.</p>
+<p>&#183; The sixth and following characters specify which characters are described by the entry; a range of characters can be specified by using the sequence specifier <code>a-b</code>, where <code>a</code>and <code>b</code> are ASCII characters and <code>a</code> is less than <code>b</code>. <code>--</code> can be described if it appears as the sixth character.</p>
 
 <p>Attribute entries that are not relevant should be spaces.</p>
 

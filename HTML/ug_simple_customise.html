@@ -1,9 +1,10 @@
-<!DOCTYPE HTML PUBLIC "-//SoftQuad//DTD HoTMetaL PRO 4.0::19980408::extensions to HTML 4.0 for Miva//EN" "hmpro4.dtd">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
  
 <html>
  
 <head>
-<link href="custom.css" rel="stylesheet"> 
+<link href="custom.css" /> rel="stylesheet" 
 <title>Customising Emacs</title>
 </head>
 
@@ -25,7 +26,7 @@ depending on the type of file that you are editing. </li>
 <li>Use command line parameters when starting Emacs, so that you specify
 particular packages to load.</li>
 </ul>
-<hr width="50%" align="left">
+<hr width="50%" align="left"/>
 <h2><a name="changingsettingsinmenus"></a>Emacs menus</h2>
  
 <p>Many of the options on the Emacs menus are similar to those found in other
@@ -44,13 +45,13 @@ face="Arial">Description</font></th>
 <td valign="top">Saves all details of the current Emacs setting in a binary
 file. Emacs automatically loads this file when starting a new session, rather
 than loading mlisp files. This means that Emacs can start up much more quickly.
-<br>
-<br>
+<br />
+<br />
 Note that Emacs saves the text in all buffers. If you are editing a file at the
 time, you will see that file every time you start Emacs, even if you delete the
-file itself, which is probably not what you want. <br>
-<br>
-The best way to use Save Environment is:<br>
+file itself, which is probably not what you want. <br />
+<br />
+The best way to use Save Environment is:<br />
 <ol>
 <li>Customise the startup files until Emacs behaves the way you want.</li>
 <li>Start a new Emacs session and immediately use Save Environment. This
@@ -58,12 +59,12 @@ ensures that you do not save any extra text or key definitions.</li>
 <li>Whenever you make further changes to Emacs, save the environment again. 
 </li>
 </ol>
-<br>
+<br />
 There is more information about Emacs environments in the Emacs User
 Guide.</td>
 </tr>
 </table>
-<hr width="50%" align="left">
+<hr width="50%" align="left"/>
 <h3><a name="theeditmenu"></a>The Edit menu</h3>
  
 <p>Many of the options on the Edit menu are similar to those found in other
@@ -147,11 +148,11 @@ library of Emacs programs and library files.</td>
 <tr>
 <td valign="top"><kbd><b>Emacs_Journal</b></kbd></td>
 <td valign="top">Emacs writes all journal files to the directory specified by
-this logical name.<br>
-<br>
+this logical name.<br />
+<br />
 When journalling is enabled, Emacs saves all the insertions and deletions made
 to your buffers in a journal file. The changes are saved to the journal file at
-the same time as you make them to the proper file.<br>
+the same time as you make them to the proper file.<br />
 See Barry's Emacs User Guide for
 <a href="ug_advancededit.html#protectionagainstdisasters">more information about
 journalling.</a></td>
@@ -159,14 +160,14 @@ journalling.</a></td>
 <tr>
 <td valign="top"><kbd><b>Emacs_Checkpoint</b></kbd></td>
 <td valign="top">Emacs writes all checkpoint files to the directory specified
-by this logical name.<br>
-<br>
+by this logical name.<br />
+<br />
 When checkpointing is enabled, Emacs saves buffers from time-to-time when a
 certain number of keystrokes have been made. The buffers are written
 automatically, but you can also force Emacs to checkpoint at any time you wish.
 Checkpointing prevents you from losing more than a limited amount of work if a
-disaster occurs.<br>
-<br>
+disaster occurs.<br />
+<br />
 See Barry's Emacs User Guide for
 <a href="ug_advancededit.html#protectionagainstdisasters">more information about
 checkpointing</a>.</td>
@@ -193,19 +194,19 @@ logical name as shorthand way of referring to that directory. For example, if
 you define a user logical name of <b>tmp</b> to point to
 <code>c:\windows\temp</code> you could then refer to a file,
 <code>myfile.tmp</code> within that directory as: <pre>tmp:myfile.tmp</pre>
-<br>
-<br>
+<br />
+<br />
 You can also use logical names when changing Emacs' default directory. You must
 use a colon (:) at the end of the name to force Emacs to translate the logical
 name. For example, to make Emacs change to the directory pointed to by the tmp
-logical name, you could use the following command:<br>
-<br>
+logical name, you could use the following command:<br />
+<br />
 <code>change-directory tmp:</code> 
 </td>
 </tr>
 <tr>
 <td valign="top"><font face="Arial">Preferences, Printing</font></td>
-<td valign="top">The strings you can enter to set up the print page are:<br>
+<td valign="top">The strings you can enter to set up the print page are:<br />
 <table width="75%" bgcolor="#8080FF" border="0">
 <tr>
 <td><kbd><b>%p</b></kbd></td>
@@ -243,7 +244,7 @@ Emacs can determine the correct setting automatically, so you are unlikely to
 need to use this option.</td>
 </tr>
 </table>
-<hr width="50%" align="left">
+<hr width="50%" align="left"/>
 <h2> <a name="theviewmenu"></a>The View menu</h2>
 <table width="90%" border="1" cellpadding="3" bgcolor="#C0C0C0">
 <tr>
@@ -268,7 +269,7 @@ Thus, next-line moves the cursor to the next proper line, which may mean moving
 past several wrapped lines.</td>
 </tr>
 </table>
-<hr>
+<hr/>
  
 <h1><a name="emacscommandline"></a>Using the Emacs command line</h1>
  
@@ -306,7 +307,7 @@ of the following:</p>
 <li>bemacs /cd</li>
 <li>bemacs -cd</li>
 </ul>
-<hr align="left">
+<hr align="left"/>
  
 <h1><a name="startupfiles"></a>Changing the Emacs startup files</h1>
  
@@ -325,7 +326,7 @@ Emacsinit.ml, which is in emacs_Library.</li>
 best way to start is to copy <kbd>emacs_Library:Emacsinit.ml</kbd> to
 <kbd>Emacs_User:Emacsinit.ml</kbd>. You can then add your own customisations to
 the bottom of the file.</p>
-<hr width="50%" align="left">
+<hr width="50%" align="left"/>
 <h2><a name="settingavariable"></a>Setting a variable</h2>
  
 <p>The simplest thing you can do when editing Emacsinit.ml is to make changes
@@ -341,7 +342,7 @@ starts up with <code>replace-case</code> turned on:</p>
 
  
 <p>The standard variables are listed in the Mlisp Reference.</p>
-<hr width="50%" align="left">
+<hr width="50%" align="left"/>
 <h2><a name="differentfiletypes"></a>Customising Emacs for different filetypes 
 </h2>
  
@@ -356,7 +357,7 @@ use an existing function. For example, to make Emacs execute a function called
 line to emacsinit.ml:</p>
 <pre>(auto-execute &quot;c-mode&quot; &quot;*.c&quot;)</pre>
 
-<hr color="#400080" size="4">
+<hr color="#400080" size="4"/>
 </body>
 </html>
 

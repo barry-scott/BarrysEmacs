@@ -1,13 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Variables - C</title>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<hr>
-<p><a name="CPU-type"></a><b>CPU-type</b> &laquo; 0</p>
+<hr/>
+<p><a name="CPU-type"></a><b>CPU-type</b> &#171; 0</p>
 
 <blockquote>
 <p>Contains a string decribing the type of CPU emacs is running on.</p>
@@ -47,50 +48,50 @@
 </table>
 </blockquote>
 
-<hr>
-<p><a name="case-fold-search"></a><b>case-fold-search</b> &laquo; 0</p>
+<hr/>
+<p><a name="case-fold-search"></a><b>case-fold-search</b> &#171; 0</p>
 
 <blockquote>
 <p>Controls search case-folding. If non-zero, all searches will ignore the case of alphabetic characters when doing comparisons.</p>
 </blockquote>
 
-<hr>
-<p><a name="checkpoint-frequency"></a><b>checkpoint-frequency</b> &laquo; 0</p>
+<hr/>
+<p><a name="checkpoint-frequency"></a><b>checkpoint-frequency</b> &#171; 0</p>
 
 <blockquote>
 <p>Contains the number of keystrokes between checkpoints. Every checkpoint-frequency keystrokes, all buffers which have been modified since they were last checkpointed and that have checkpointing enabled are written to disk. If the value is zero, checkpointing is disabled.</p>
 </blockquote>
 
-<hr>
-<p><a name="checkpoint-hook"></a><b>checkpoint-hook</b> &laquo; checkpoint-buffers</p>
+<hr/>
+<p><a name="checkpoint-hook"></a><b>checkpoint-hook</b> &#171; checkpoint-buffers</p>
 
 <blockquote>
 <p>Contains the name of an Emacs function which will be called when the checkpoint function is invoked. The checkpoint function should in some way checkpoint Emacs.</p>
 </blockquote>
 
-<hr>
-<p><a name="cli-name"></a><b>cli-name</b> &laquo; The name of the CLI that started Emacs</p>
+<hr/>
+<p><a name="cli-name"></a><b>cli-name</b> &#171; The name of the CLI that started Emacs</p>
 
 <blockquote>
 <p>Indicates the name of the CLI that invoked Emacs. The contents of this variable are used to tell subprocesses which CLI to use. You can alter its value to start a subprocess with a different CLI.</p>
 </blockquote>
 
-<hr>
-<p><a name="comment-column"></a><b>comment-column</b> &laquo; 33</p>
+<hr/>
+<p><a name="comment-column"></a><b>comment-column</b> &#171; 33</p>
 
 <blockquote>
 <p>Contains the column at which program comments are to start. This is used by the language-dependent commenting features through the move-to-comment-column command.</p>
 </blockquote>
 
-<hr>
-<p><a name="compile-it-command"></a><b>compile-it-command</b> &laquo;</p>
+<hr/>
+<p><a name="compile-it-command"></a><b>compile-it-command</b> &#171;</p>
 
 <blockquote>
 <p>Contains the string which will be used by the compile-it command if you type a null string to its prompt for a command to execute. Also, when you type a command, compile-it saves the command you type in the variable for later re-use.</p>
 </blockquote>
 
-<hr>
-<p><a name="confirm-expansion-choice"></a><b>confirm-expansion-choice</b> &laquo; 0</p>
+<hr/>
+<p><a name="confirm-expansion-choice"></a><b>confirm-expansion-choice</b> &#171; 0</p>
 
 <blockquote>
 <p>This variable changes the way that Emacs input completion logic works.</p>
@@ -98,8 +99,8 @@
 <p>When confirm-expansion-choice is true emacs will always prompt once more after expanding a unique input choice. It confirm-expansion-choice is false emacs will take the unique choice and use it with out further prompts.</p>
 </blockquote>
 
-<hr>
-<p><a name="control-string-convert-F-keys"></a><b>control-string-convert-F-keys</b> &laquo; 1</p>
+<hr/>
+<p><a name="control-string-convert-F-keys"></a><b>control-string-convert-F-keys</b> &#171; 1</p>
 
 <blockquote>
 <p>When control-string-convert-F-keys is true, the keys F6 to F20 and E1 to E6 are converted on input to a compact form. This improves Emacs' performance in a number of ways -- less memory used to store keymaps, and keyboard-handling uses less CPU time.</p>
@@ -113,8 +114,8 @@
 <p>See <a href="#control-string-processing">control-string-processing</a> for general information.</p>
 </blockquote>
 
-<hr>
-<p><a name="control-string-convert-mouse"></a><b>control-string-convert-mouse</b> &laquo; 1</p>
+<hr/>
+<p><a name="control-string-convert-mouse"></a><b>control-string-convert-mouse</b> &#171; 1</p>
 
 <blockquote>
 <p>When control-string-convert-mouse is true, all control sequences of the form:</p>
@@ -126,8 +127,8 @@
 <p>See <a href="#control-string-processing">control-string-processing</a> for general information.</p>
 </blockquote>
 
-<hr>
-<p><a name="control-string-convert-to-8-bit"></a><b>control-string-convert-to-8-bit</b> &laquo; [OP:</p>
+<hr/>
+<p><a name="control-string-convert-to-8-bit"></a><b>control-string-convert-to-8-bit</b> &#171; [OP:</p>
 
 <blockquote>
 <p>All control sequences which start with ESC &lt;char&gt; have an 8-bit equivalent control sequence. The string variable control-string-convert-to-8-bit contains all the &lt;char&gt;s that are to converted to their 8-bit form.</p>
@@ -135,8 +136,8 @@
 <p>See <a href="#control-string-processing">control-string-processing</a> for general information.</p>
 </blockquote>
 
-<hr>
-<p><a name="control-string-convert-to-CSI"></a><b>control-string-convert-to-CSI</b> &laquo; \217\220\232</p>
+<hr/>
+<p><a name="control-string-convert-to-CSI"></a><b>control-string-convert-to-CSI</b> &#171; \217\220\232</p>
 
 <blockquote>
 <p>Contains a list of characters to be coerced into the single code for CSI. This reduces the number of keymaps that Emacs must maintain.</p>
@@ -144,8 +145,8 @@
 <p>See <a href="#control-string-processing">control-string-processing</a> for general information.</p>
 </blockquote>
 
-<hr>
-<p><a name="control-string-final-characters"></a><b>control-string-final-characters</b> &laquo;ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}</p>
+<hr/>
+<p><a name="control-string-final-characters"></a><b>control-string-final-characters</b> &#171;ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}</p>
 
 <blockquote>
 <p>Contains all the characters that mark the end of a control sequence. See ISO 2020 for full details.</p>
@@ -153,8 +154,8 @@
 <p>See <a href="#control-string-processing">control-string-processing</a> for general information.</p>
 </blockquote>
 
-<hr>
-<p><a name="control-string-intermediate-characters"></a><b>control-string-intermediate-characters</b> &laquo; !"\#$&amp;'()*+,-./</p>
+<hr/>
+<p><a name="control-string-intermediate-characters"></a><b>control-string-intermediate-characters</b> &#171; !"\#$&amp;'()*+,-./</p>
 
 <blockquote>
 <p>Contains all the characters that follow the parameters and precede the final character of a control sequence. See ISO 2020 for full details.</p>
@@ -162,7 +163,7 @@
 <p>See <a href="#control-string-processing">control-string-processing</a> for general information.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="control-string-parameters"></a><b>control-string-parameters</b></p>
 
 <blockquote>
@@ -177,8 +178,8 @@
 <p>See <a href="#control-string-processing">control-string-processing</a> for general information.</p>
 </blockquote>
 
-<hr>
-<p><a name="control-string-parameter-characters"></a><b>control-string-parameter-characters</b> &laquo; 123456789:&lt;=&gt;?</p>
+<hr/>
+<p><a name="control-string-parameter-characters"></a><b>control-string-parameter-characters</b> &#171; 123456789:&lt;=&gt;?</p>
 
 <blockquote>
 <p>Contains all the characters that can be parameter characters. See ISO 2020 for full details.</p>
@@ -186,8 +187,8 @@
 <p>See <a href="#control-string-processing">control-string-processing</a> for general information.</p>
 </blockquote>
 
-<hr>
-<p><a name="control-string-parameter-separators"></a><b>control-string-parameter-separators</b> &laquo; ;</p>
+<hr/>
+<p><a name="control-string-parameter-separators"></a><b>control-string-parameter-separators</b> &#171; ;</p>
 
 <blockquote>
 <p>Contains all the characters that can be parameter separator characters. See ISO 2020 for full details.</p>
@@ -195,8 +196,8 @@
 <p>See <a href="#control-string-processing">control-string-processing</a> for general information.</p>
 </blockquote>
 
-<hr>
-<p><a name="control-string-processing"></a><b>control-string-processing</b> &laquo; 1</p>
+<hr/>
+<p><a name="control-string-processing"></a><b>control-string-processing</b> &#171; 1</p>
 
 <blockquote>
 <p>The master control for all the control string functions. Only when control-string-processing is true will any processing be performed.</p>
@@ -220,28 +221,28 @@
 </ol>
 </blockquote>
 
-<hr>
-<p><a name="ctlchar-with-^"></a><b>ctlchar-with-^</b> &laquo; 0</p>
+<hr/>
+<p><a name="ctlchar-with-^"></a><b>ctlchar-with-^</b> &#171; 0</p>
 
 <blockquote>
 <p>Controls the way that non-printing characters are displayed. If non-zero, control characters are printed with a leading up-arrow, otherwise they are printed as an octal number.</p>
 </blockquote>
 
-<hr>
-<p><a name="current-breakpoint"></a><b>current-breakpoint</b> &laquo;</p>
+<hr/>
+<p><a name="current-breakpoint"></a><b>current-breakpoint</b> &#171;</p>
 
 <blockquote>
 <p>This read-only variable contains the name of the function that caused the breakpoint function to run. This variable is not altered from MLisp in a trace or breakpoint function.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="current-buffer-abbrev-table"></a><b>current-buffer-abbrev-table</b></p>
 
 <blockquote>
 <p>Contains the name of te current buffer's abbreviation table. If you attempt to assign a value to it, the current buffer's abbreviation table is changed; the name you supply must be the name of an already-existing abbreviation table.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="current-buffer-allocation-size"></a><b>current-buffer-allocation-size</b></p>
 
 <blockquote>
@@ -254,7 +255,7 @@
 <p>If you plan to perform a complex set of operations on a buffer. These operations will cause the buffer to slowly grow to a much larger size. Assigning to current-buffer-allocation-size a suitable large value will reduce the CPU overhead of expanding the buffer is many small increments.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="current-buffer-checkpointable"></a><b>current-buffer-checkpointable</b></p>
 
 <blockquote>
@@ -263,7 +264,7 @@
 <p>A buffer can never be checkpointed if the checkpoint-frequency variable is set to zero.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="current-buffer-file-name"></a><b>current-buffer-file-name</b></p>
 
 <blockquote>
@@ -274,7 +275,7 @@
 <p>If the buffer is not a File buffer, a null string is returned.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="current-buffer-journalled"></a><b>current-buffer-journalled</b></p>
 
 <blockquote>
@@ -283,7 +284,7 @@
 <p>A buffer will never be journalled if the journal-frequency is set to zero.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="current-buffer-macro-name"></a><b>current-buffer-macro-name</b></p>
 
 <blockquote>
@@ -294,14 +295,14 @@
 <p>If this buffer is not a Macro buffer, a null string is returned.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="current-buffer-name"></a><b>current-buffer-name</b></p>
 
 <blockquote>
 <p>Contains the name of the currently selected buffer. You can change the name of the current buffer by assigning a new name to the variable. The new buffer name must not already exist.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="current-buffer-end-of-line-style"></a><b>current-buffer-end-of-line-style</b></p>
 
 <blockquote>
@@ -309,7 +310,7 @@
 The variable is one of variable, "crlf", "lf". The default value for new buffers is taken from the default-buffer-end-of-line-style variable.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="current-buffer-RMS-record-attribute"></a><b>current-buffer-RMS-record-attribute</b></p>
 
 <blockquote>
@@ -320,42 +321,42 @@ The variable is one of variable, stream, stream-lf, or stream-cr.
 The default value for new buffers is taken from the default-buffer-RMS-record-attribute variable.</p>
 </blockquote>
 
-<hr>
-<p><a name="current-buffer-syntax-table"></a><b>current-buffer-syntax-table</b> &laquo;</p>
+<hr/>
+<p><a name="current-buffer-syntax-table"></a><b>current-buffer-syntax-table</b> &#171;</p>
 
 <blockquote>
 <p>Contains the name of the current buffer's syntax table. Assigning to this variable changes the current buffer's syntax table. The specified syntax table must already exist.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="current-buffer-type"></a><b>current-buffer-type</b></p>
 
 <blockquote>
 <p>Contains a string describing the type of the current buffer.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="current-function"></a><b>current-function</b></p>
 
 <blockquote>
 <p>This read-only variable contains the name of the currently executing MLisp function. The value is not changed for functions executed in a trace or breakpoint function.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="current-local-keymap"></a><b>current-local-keymap</b></p>
 
 <blockquote>
 <p>Contains the name of the current buffer's local keymap as set by the use-local-map function. Assigning the variable has the same effect as executing use-local-map. An existing keymap must be specified.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="current-windows"></a><b>current-windows</b></p>
 
 <blockquote>
 <p>Contains the set of windows that are displayed on the screen. If read, current-windows returns a window-ring that represents the windows on the screen. When current-windows is set, the screen is restored from the window ring provided.</p>
 </blockquote>
 
-<hr>
+<hr/>
 </body>
 </html>
 

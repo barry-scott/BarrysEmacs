@@ -1,40 +1,41 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Functions W*</title>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<hr>
+<hr/>
 <p><a name="wait-for-process-input-request">(<b>wait-for-process-input-request</b> <code>process-name</code>)</a></p>
 
 <blockquote>
 <p>Suspends keyboard processing until an input request is made by the target process. The function returns 1 if the process wants input, or 0 if the user typed a key at the keyboard.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="what-cursor-position">(<b>what-cursor-position</b>) ^X-=</a></p>
 
 <blockquote>
 <p>Writes out a brief summary of the position of dot in the current window. It reports the co-ordinates of dot with respect to the current window, what the character to the right of dot is, what character number dot is at, the percentage of the file above dot, and what portion of the file is displayed in the window.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="while">(<b>while</b> <code>test expression...</code>)</a></p>
 
 <blockquote>
 <p>Executes the given expressions while the <code>test</code> is true (not equal to zero).</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="widen-region">(<b>widen-region</b>)</a></p>
 
 <blockquote>
 <p>Removes a restriction put on a buffer by narrow-region.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="widen-window">(<b>widen-window</b>)</a></p>
 
 <blockquote>
@@ -43,7 +44,7 @@
 
 
 
-<hr>
+<hr/>
 <p><a name="WIN-edit-copy"><b>WIN-edit-copy</b></a> ^C</p>
 <blockquote>
 
@@ -61,7 +62,7 @@
 </blockquote>
 
 
-<hr>
+<hr/>
 <p><a name="WIN-edit-cut"><b>WIN-edit-cut</b></a></p>
 <blockquote>
 
@@ -82,7 +83,7 @@
 </blockquote>
 
 
-<hr>
+<hr/>
 <p><a name="WIN-edit-paste"><b>WIN-edit-paste</b></a> ^V</p>
 <blockquote>
 
@@ -101,7 +102,7 @@
 
 
 
-<hr>
+<hr/>
 <p><a name="window-dimensions">(<b>window-dimensions</b>)</a></p>
 
 <blockquote>
@@ -137,42 +138,42 @@
 <p>The position values are the same as used by goto-window-at-x-y and returned in control-string-parameters for a mouse click.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="write-abbrev-file">(<b>write-abbrev-file</b> <code>file-name</code>)</a></p>
 
 <blockquote>
 <p>Writes all defined abbreviations to the named file. This file can be read back into Emacs with read-abbrev-file.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="write-current-file">(<b>write-current-file</b> <code>file-name</code>) ^X-^S</a></p>
 
 <blockquote>
 <p>Writes the contents of the current buffer to the file whose name is associated with the buffer.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="write-file-exit">(<b>write-file-exit</b>) ^X-^F</a></p>
 
 <blockquote>
 <p>Writes all modified buffers to their associated files and if the command succeeds, Emacs exits.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="write-modified-files">(<b>write-modified-files</b>) ^X-^M</a></p>
 
 <blockquote>
 <p>Writes each modified buffer into the file whose name is associated with the buffer. Emacs generates an error message if a modified buffer does not have an associated file.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="write-named-file">(<b>write-named-file</b> <code>file-name</code>) ^X-^W</a></p>
 
 <blockquote>
 <p>Writes the contents of the current buffer to the named file and changes the association of the buffer to the specified file name.</p>
 </blockquote>
 
-<hr>
+<hr/>
 </body>
 </html>
 

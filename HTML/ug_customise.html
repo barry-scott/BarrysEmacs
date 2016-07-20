@@ -1,10 +1,10 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 <title>User Guide - Customising Emacs</title>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <p><a name="top"></a></p>
@@ -38,7 +38,7 @@
 <li>Defining actions to be taken when files of a specific type are accessed.</li>
 </ul>
 
-<hr>
+<hr/>
 <h2><a name="emacsenvironments"></a>Emacs Environments</h2>
 
 <p>Most Emacs users find that they want to customise some features when they first start using Emacs. Later, as they become more familiar with Emacs features, new customisations become apparent.</p>
@@ -123,15 +123,15 @@
 
 <p>Since it is possible that an environment file can become out-of-date, it is best to build your environment file in such a way that it can be easily rebuilt.</p>
 
-<hr>
+<hr/>
 <h2><a name="customisingvariables"></a>Customising Variables</h2>
 
 <p>Some customisations in Emacs can be achieved by setting system variables . Some examples of system variables are:
-<br>
+<br />
  <font face="Courier New" size="2">ask-about-buffer-names</font>
-<br>
+<br />
  <font face="Courier New" size="2">split-height-threshold
-<br>
+<br />
  quick-redisplay</font>.</p>
 
 <p>To change a variable while Emacs is running, use the command <font face="Courier New" size="2">ESC-x set</font>. <font face="Courier New" size="2">set</font> will ask you for the name of the variable you want to change. You can use name completion to enter the variable name. <font face="Courier New" size="2">set</font> will then ask for the value to be inserted into the variable. All the usual Mini-buffer editing commands are available while entering the value. You can abort the whole command using <font face="Courier New" size="2">^G</font>.</p>
@@ -155,12 +155,12 @@
 <p>Some examples of setting variables are:</p>
 
 <p><font face="Courier New" size="2">(setq journal-frequency 30)
-<br>
+<br />
  (setq global-mode-string "Emacs")
-<br>
+<br />
  (setq-default highlight-region 1)</font></p>
 
-<hr>
+<hr/>
 <h2><a name="bindingkeystofunctions"></a>Binding Keys to Functions</h2>
 
 <p>Emacs allows you to associate arbitrary sequences of keystrokes with any Emacs function. This association is called a key binding -- the key sequence is said to be bound to the function. More than one key sequence can be bound to each function.</p>
@@ -178,9 +178,9 @@
 <p>Here are some examples of key bindings:</p>
 
 <p><font face="Courier New" size="2">(bind-to-key "new-undo" "\^Z")
-<br>
+<br />
  (bind-to-key "execute-extended-command" "\[f12]")
-<br>
+<br />
  (local-bind-to-key "execute-mlisp-file" "\^X\^X")</font></p>
 
 <h3><a name="keynames"></a>Key Names</h3>
@@ -188,7 +188,7 @@
 keyboard used on the VT220 video terminal.</p>
 <p>The second set of key names if based on the names of key from the PC keyboard.</p>
 
-<p>describe-binding, describe-key,  etc  use the name of keys on the PC key board, not the LK201 as before.
+<p>describe-binding, describe-key,  etc  use the name of keys on the PC key board, not the LK201 as before.</p>
 
 <p>Use \[pc-key-name]  to  bind  to  a key using the name of
 keys   as   they   appear   on   a   PC   keyboard.   Use
@@ -196,7 +196,7 @@ keys   as   they   appear   on   a   PC   keyboard.   Use
 
 <p>You can bind to seperately to a KEY and to ctrl-KEY. For example \[f5] and \[ctrl-f5]</p>
 
-<p>The full list of PC key names is:
+<p>The full list of PC key names is:</p>
 
 <table width="600" border="2" cellspacing="0" cellpadding="2">
 <caption><b>PC Key names</b></caption>
@@ -266,7 +266,7 @@ keys   as   they   appear   on   a   PC   keyboard.   Use
 
 </table>
 
-<hr>
+<hr/>
 <h2><a name="librariesofcommands"></a>Libraries of Commands</h2>
 
 <p>A considerable number of the functions in Emacs reside in libraries. A function is not accessible unless the library that defines the function is loaded. A number of libraries are provided with Emacs, and can be loaded automatically or on request to make their functions available.</p>
@@ -292,7 +292,7 @@ keys   as   they   appear   on   a   PC   keyboard.   Use
 <p>Some examples of autoloads are:</p>
 
 <p><font face="Courier New" size="2">(autoload "dabbrev" "dabbrev")
-<br>
+<br />
  (autoload "shell" "process")</font></p>
 
 <p>You can create your own libraries which you can share with other Emacs users if you know how to write MLisp code. See the Barry's Emacs Programmer's Guide for details on MLisp programming.</p>

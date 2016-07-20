@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Mlisp Programmer's Guide</title>
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <a name="TopOfPage"></a>
@@ -13,7 +14,7 @@
 
 <p>Macros differ from Mock Lisp (MLisp) functions because they are key sequences that are replayed into the Emacs keyboard processor and are subject to the current bindings. The effect of a macro will be unpredictable if the key bindings used in a macro change between the macro's definition and its use. There are no facilities to alter control flow while a macro is being executed.</p>
 
-<hr align="left" size="2" color="#800080">
+<hr align="left" size="2" color="#800080"/>
 <a name="P108_5867"></a> 
 
 <h2>keyboard macros</h2>
@@ -68,7 +69,7 @@
 
 <p>Emacs can have only one current keyboard macro. When you define a new keyboard macro, the old macro definition is lost. To save a keyboard macro definition, you must give it a name. If you execute <code>define-keyboard-macro</code>, the last keyboard macro defined is turned into a named macro . When a named macro has been created, you can bind it to any key sequence in the usual way.</p>
 
-<hr align="left" size="2" color="#800080">
+<hr align="left" size="2" color="#800080"/>
 <a name="P133_8015"></a> 
 
 <h2>named macros</h2>

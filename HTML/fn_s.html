@@ -1,10 +1,10 @@
-<!DOCTYPE HTML PUBLIC "-//SoftQuad//DTD HTML 3.2 + extensions for HoTMetaL PRO 3.0(U) 19961211//EN"
- "hmpro3.dtd">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Functions S*</title>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <p><a name="save-environment"></a>(<b>save-environment</b> <code>file-name</code>)</p>
@@ -13,84 +13,84 @@
 <p>Saves the current state of Emacs into an environment file. The default file type is .Emacs_ENVIRONMENT.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="save-excursion"></a>(<b>save-excursion</b> <code>local... expression...</code>)</p>
 
 <blockquote>
 <p>Evaluates the given expressions and returns the value of the last expression evaluated. It is much like progn except that before any expressions are executed, dot and the current buffer are marked (via the marker mechanism) and the search-string is saved.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="save-restriction"></a>(<b>save-restriction</b> <code>locals... expression ...</code>)</p>
 
 <blockquote>
 <p>Saves the current dot, mark, buffer, search-string and buffer restriction; executes the provided expressions; then restores the saved information.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="save-window-excursion"></a>(<b>save-window-excursion</b> <code>local... expression ...</code>)</p>
 
 <blockquote>
 <p>Saves the current dot, mark, buffer, search-string and window state; executes the expressions; then restores the saved information. save-window-excursion returns the value of the last expression evaluated. If the mark was not set before calling save-window-excursion, it will not be set afterwards.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="schedule-procedure"></a>(<b>schedule-procedure</b> <code>function seconds</code>)</p>
 
 <blockquote>
 <p>Executes the given <i>function</i> after the specified number of <i>seconds</i>. If the number of seconds is zero, then any outstanding schedule for the specified function is removed. If a schedule is specified for a procedure that already has a schedule, the old schedule is replaced.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="scroll-one-column-left"></a>(<b>scroll-one-column-left</b>)</p>
 
 <blockquote>
 <p>Scrolls the current window one column to the left.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="scroll-one-column-right"></a>(<b>scroll-one-column-right</b>)</p>
 
 <blockquote>
 <p>Scrolls the current window one column to the right.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="scroll-one-line-down"></a>(<b>scroll-one-line-down</b>) ESC-z</p>
 
 <blockquote>
 <p>Repositions the current window on the current buffer so that the line which is currently the second to the last line in the window becomes the last. This effectively moves the buffer down one line in the window.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="scroll-one-line-up"></a>(<b>scroll-one-line-up</b>) ^Z</p>
 
 <blockquote>
 <p>Repositions the current window on the current buffer so that the line which is currently the second line in the window becomes the first. This effectively move the buffer up one line in the window.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="search-forward"></a>(<b>search-forward</b> <code>search-string</code>) ^S</p>
 
 <blockquote>
 <p>Searches for a match in the current buffer, moving forwards from dot and stopping at the end of the buffer. Dot is left at the end of the matched string if a match is found, or is unmoved if a match is not found.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="search-reverse"></a>(<b>search-reverse</b> <code>search-string</code>) ^R</p>
 
 <blockquote>
 <p>Searches for a match in the current buffer, moving backwards from dot and stopping at the beginning of the buffer. Dot is left at the beginning of the matched string if a match is found, or is unmoved if a match is not found.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="self-insert"></a>(<b>self-insert</b>) All inserting keys</p>
 
 <blockquote>
 <p>This function is bound to those keys which insert themselves into the current buffer. It is roughly the same as (insert-character (last-key-struck) with the exception that it does not work unless it is bound to a key.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="send-eof-to-process"></a>(<b>send-eof-to-process</b> <code>process-name</code>)</p>
 
 <blockquote>
@@ -99,21 +99,21 @@
 <p>Sends the special end-of-file (eof) message to the specified subprocess. Use the wait-for-process-input-request command to ensure that the process is ready.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="send-string-to-process"></a>(<b>send-string-to-process</b> <code>process-name text</code>)</p>
 
 <blockquote>
 <p>Sends the specified string to the specified subprocess. Use the wait-for-process-input-request command to ensure that the process is ready.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="send-string-to-terminal"></a>(<b>send-string-to-terminal</b> <code>text</code>)</p>
 
 <blockquote>
 <p>Sends the string to the terminal with no conversion or interpretation. This should only be used for such applications as loading function keys when Emacs starts up. If you disrupt the screen, Emacs will not know about it and will not fix it up automatically -- you will have to use redraw-display to do this.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="set"></a>(<b>set</b> <code>variable-name expression</code>)</p>
 
 <blockquote>
@@ -122,14 +122,14 @@
 <p>If you require a value of 1, then from the terminal, you can type the string true or on. If you require a value of 0, then from the terminal, you can type the string false or off.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="set-current-process"></a>(<b>set-current-process</b> <code>process-name</code>)</p>
 
 <blockquote>
 <p>Sets the current subprocess to the specified process. The current subprocess name is used in all of the subprocess commands when a blank process name is specified.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="set-default"></a>(<b>set-default</b> <code>variable-name expression</code>)</p>
 
 <blockquote>
@@ -138,119 +138,119 @@
 <p>If you require a value of 1, then from the terminal, you can type the string true or on. If you require a value of 0, then from the terminal, you can type the string false or off.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="set-mark"></a>(<b>set-mark</b>) ^@ (NUL)</p>
 
 <blockquote>
 <p>Sets the mark at the current location of dot.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="set-process-input-procedure"></a>(<b>set-process-input-procedure</b> <code>process-name function</code>)</p>
 
 <blockquote>
 <p>Sets the input function for the specified subprocess. Whenever the subprocess asks for input, the specified procedure is run. This procedure may then supply the process with input (using send-string-to-process).</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="set-process-name"></a>(<b>set-process-name</b> <code>old-name new-name</code>)</p>
 
 <blockquote>
 <p>Changes the name of a subprocess. If the process is the current process, then the current process name is changed to the new name.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="set-process-output-buffer"></a>(<b>set-process-output-buffer</b> <code>process-name buffer-name</code>)</p>
 
 <blockquote>
 <p>Connects a buffer to the output of the specified process. All output from the process appears in this buffer. The buffer is not allowed to grow indefinitely: if it becomes larger than maximum-DCL-buffer-size characters, it will be truncated by DCL-buffer-reduction characters before the next output from the process is inserted into the buffer.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="set-process-output-procedure"></a>(<b>set-process-output-procedure</b> <code>process-name function</code>)</p>
 
 <blockquote>
 <p>Defines the name of an MLisp function to be called when a subprocess produces output. This function is called instead of the insertion of any output into an output buffer. Use the process-output function to obtain the latest line of output from the process.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="set-process-termination-procedure"></a>(<b>set-process-termination-procedure</b> <code>process-name function</code>)</p>
 
 <blockquote>
 <p>Defines an MLisp function to be called after a process has terminated. This function should be used to tidy up any resources or MLisp variables that the process may have used.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="setq"></a>(<b>setq</b> <code>variable-name expression</code>)</p>
 
 <blockquote>
 <p>Assigns a new value to a variable.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="setq-array"></a>(<b>setq-array</b> <code>array index... value</code>)</p>
 
 <blockquote>
 <p>Stores a value in an array.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="setq-default"></a>(<b>setq-default</b> <code>variable-name expression</code>)</p>
 
 <blockquote>
 <p>Assigns a new default value to a variable.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="shell"></a>(<b>shell</b>)</p>
 
 <blockquote>
 <p>Starts up an interactive DCL session in an Emacs buffer shell-n (where n is a sequence number used to identify multiple shells).</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="show-buffer"></a>(<b>show-buffer</b>)</p>
 
 <blockquote>
 <p>Describes the current buffer in a buffer called Show buffer.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="shrink-window"></a>(<b>shrink-window</b>) ^X-^Z</p>
 
 <blockquote>
 <p>Makes the current window prefix-argument lines shorter, and the window below (or the one above if there is no window below) prefix-argument lines taller. The command cannot be used if there is only one window on the screen.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="sit-for"></a>(<b>sit-for</b> <code>expression</code>)</p>
 
 <blockquote>
 <p>Updates the display and pauses for <i>expression</i> tenths of a second. (sit-for 10) waits for one second. If an argument of zero is used, then no pause is executed, but the display is still updated.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="spell-check-word"></a>(<b>spell-check-word</b> <code>word</code>)</p>
 
 <blockquote>
 <p>Checks the spelling of the supplied word. If the word is spelled correctly then 1 is returned, otherwise 0 is returned.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="split-current-window"></a>(<b>split-current-window</b>) ^X-2</p>
 
 <blockquote>
 <p>Splits the current window into two, dividing the space on the screen equally between the two windows.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="split-current-window-vertically"></a>(<b>split-current-window-vertically</b>) ^X-3</p>
 
 <blockquote>
 <p>Takes the current window and splits it into two windows side-by-side, dividing the space on the screen equally between the two windows. An arbitrary number of windows can be created -- the only limit is the width of the screen. Each window must be at least one column wide.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="sprintf"></a>(<b>sprintf</b> <code>format-string args...</code>)</p>
 
 <blockquote>
@@ -277,7 +277,7 @@
 </ul>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="start-DCL-process"></a>(<b>start-DCL-process</b> <code>process-name</code>)</p>
 
 <blockquote>
@@ -286,35 +286,35 @@
 <p>This function is a synonym for the start-process function.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="start-process"></a>(<b>start-process</b> <code>process-name</code>)</p>
 
 <blockquote>
 <p>Starts a DCL subprocess. Use the other subprocess commands to attach buffers and MLisp procedures to the process. The new process becomes the current process.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="start-remembering"></a>(<b>start-remembering</b>) ^X-(</p>
 
 <blockquote>
 <p>Causes all following keystrokes to be remembered by Emacs as the current keyboard macro. The functions to which the keys are bound will be executed. The stop-remembering function terminates the keyboard macro definition.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="stop-remembering"></a>(<b>stop-remembering</b>) ^X-)</p>
 
 <blockquote>
 <p>Stops remembering keystrokes, as initiated by start-remembering. The remembered keystrokes are not forgotten and may be re-executed with the execute-keyboard-macro command.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="string-to-char"></a>(<b>string-to-char</b> <code>string</code>)</p>
 
 <blockquote>
 <p>Returns the integer value of the first character of its string argument.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="string-extract"></a>(<b>string-extract</b> <code>string</code> <code>start</code> <code>end</code>)</p>
 
 <blockquote>
@@ -325,119 +325,119 @@
 <p>Any position that is outside of the strings length is set to the start, if its before the string, of the end of the string.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="string-index-of-first"></a>(<b>string-index-of-first</b> <code>string</code> <code>find</code>)</p>
 
 <blockquote>
 <p>Returns the zero based index into <code>string</code> of the first occurrance of the string <code>find</code>. -1 is returned if the string is not found.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="string-index-of-last"></a>(<b>string-index-of-last</b> <code>string</code> <code>find</code>)</p>
 
 <blockquote>
 <p>Returns the zero based index into <code>string</code> of the last occurrance of the string <code>find</code>. -1 is returned if the string is not found.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="string-index-of-string"></a>(<b>string-index-of-string</b> <code>string</code> <code>find</code> <code>pos</code>)</p>
 
 <blockquote>
 <p>Returns the zero based index into <code>string</code> of the first occurrance of the string <code>find</code> start at position <code>pos</code>. -1 is returned if the string is not found.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="substr"></a>(<b>substr</b> <code>str pos n</code>)</p>
 
 <blockquote>
 <p>Returns the substring of string <i>str</i> starting at position <i>pos</i> (numbering from 1) and running for <i>n</i> characters. If <i>pos</i> is less than 0, then the length of the string is added to it; the same is done for <i>n</i>.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="switch-to-buffer"></a>(<b>switch-to-buffer</b> <code>buffer-name</code>)^X-b</p>
 
 <blockquote>
 <p>Changes the buffer association of the current window to the selected buffer.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="system-name"></a>(<b>system-name</b>)</p>
 
 <blockquote>
 <p>Returns the name of the system on which Emacs is running. This should be the DECnet or ArpaNet (or whatever) host name of the machine.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="synchronise-files"></a>(<b>synchronise-files</b>)</p>
 
 <blockquote>
 <p>Use this command to have Emacs update all file buffers with newer copies of the files from the disk. For each file that has a newer version on the disk Emacs prompts asking you if you wish to read in the newer file.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="sys$fao"></a>(<b>sys$fao</b> <code>ctrstr par-desc P1...</code>)</p>
 
 <blockquote>
 <p>Calls the VMS system service SYS$FAO.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="sys$filescan"></a>(<b>sys$filescan</b> <code>sl srcstr item result...</code>)</p>
 
 <blockquote>
 <p>Calls the VMS system service SYS$FILESCAN.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="sys$getdvi"></a>(<b>sys$getdvi</b> <code>devnam item value...</code>)</p>
 
 <blockquote>
 <p>Calls the VMS system service SYS$GETDVI.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="sys$getjpi"></a>(<b>sys$getjpi</b> <code>ctrl-str pidadr prcnam item value...</code>)</p>
 
 <blockquote>
 <p>Calls the VMS system service SYS$GETJPI.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="sys$getmsg"></a>(<b>sys$getmsg</b> <code>msgid flags</code>)</p>
 
 <blockquote>
 <p>Calls the VMS system service SYS$GETMSG.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="sys$getsyi"></a>(<b>sys$getsyi</b> <code>ctrl-str csiddadr nodename item value...</code>)</p>
 
 <blockquote>
 <p>Calls the VMS system service SYS$GETSYI.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="sys$setprn"></a>(<b>sys$setprn</b> <code>prcnam</code>)</p>
 
 <blockquote>
 <p>Calls the VMS system service SYS$SETPRN.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="sys$sndjbc"></a>(<b>sys$sndjbc</b> <code>func item value...</code>)</p>
 
 <blockquote>
 <p>Calls the VMS system service SYS$SNDJBC.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="system-name"></a>(<b>system-name</b>)</p>
 
 <blockquote>
 <p>Returns the name of the system on which Emacs is running. This should be the DECnet or ArpaNet (or whatever) host name of the machine.</p>
 </blockquote>
 
-<hr>
+<hr/>
 </body>
 </html>
 

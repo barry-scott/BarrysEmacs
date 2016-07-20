@@ -1,13 +1,14 @@
-<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Variables - E</title>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<hr>
-<p><a name="elapse-time"></a><b>elapse-time</b> &laquo;</p>
+<hr/>
+<p><a name="elapse-time"></a><b>elapse-time</b> &#171;</p>
 
 <blockquote>
 <p>This read-only variable contains the number of milliseconds that have elapsed since emacs started.</p>
@@ -17,22 +18,22 @@
 <p>elapse-time's value will overflow after Emacs has been running for 24 days.</p>
 </blockquote>
 
-<hr>
-<p><a name="enter-emacs-hook"></a><b>enter-emacs-hook</b> &laquo;</p>
+<hr/>
+<p><a name="enter-emacs-hook"></a><b>enter-emacs-hook</b> &#171;</p>
 
 <blockquote>
 <p>Contains the name of an Emacs function which will be called when Emacs initially starts up. You can assign the variable in your EmacsINIT.ML file to contain the name of any already existing function.</p>
 </blockquote>
 
-<hr>
-<p><a name="error-file-name"></a><b>error-file-name</b> &laquo;</p>
+<hr/>
+<p><a name="error-file-name"></a><b>error-file-name</b> &#171;</p>
 
 <blockquote>
 <p>A string variable used by error message parsers (as specified in the variable error-message-parser) to indicate to the parse-error-messages-in-region function the file in which the current error is located. If an error message parser sets this variable to a null string, error message parsing is stopped.</p>
 </blockquote>
 
-<hr>
-<p><a name="error-hook"></a><b>error-hook</b> &laquo;</p>
+<hr/>
+<p><a name="error-hook"></a><b>error-hook</b> &#171;</p>
 
 <blockquote>
 <p>Defines the current error function. When an error occurs that would cause an error message to be displayed, the function whose name is contained in this variable is called. The variable error-message will contain the text of the error.</p>
@@ -40,22 +41,22 @@
 <p>When the error function exits, the error message will be displayed in the usual way unless exit-emacs is used to exit the error function.</p>
 </blockquote>
 
-<hr>
-<p><a name="error-line-number"></a><b>error-line-number</b> &laquo; 0</p>
+<hr/>
+<p><a name="error-line-number"></a><b>error-line-number</b> &#171; 0</p>
 
 <blockquote>
 <p>A numeric variable used by error message parsers (as specified in the variable error-message-parser) to indicate to the parse-error-messages-in-region function the line in which the current error is located. If an error message parser sets this to zero, error message parsing is stopped.</p>
 </blockquote>
 
-<hr>
-<p><a name="error-message"></a><b>error-message</b> &laquo;</p>
+<hr/>
+<p><a name="error-message"></a><b>error-message</b> &#171;</p>
 
 <blockquote>
 <p>This read-only string variable holds the text of the last error message. The variable will always hold the last error message, even if the error occurred inside an error-occurred block.</p>
 </blockquote>
 
-<hr>
-<p><a name="error-messages-buffer"></a><b>error-messages-buffer</b> &laquo;</p>
+<hr/>
+<p><a name="error-messages-buffer"></a><b>error-messages-buffer</b> &#171;</p>
 
 <blockquote>
 <p>The string variable error-messages-buffer is checked each time Emacs generates an error message. If the value is not a null string then the value is used as the name of a buffer. Emacs will add details of each error message and its context to the buffer. Emacs creates the buffer if nessesary.</p>
@@ -63,7 +64,7 @@
 <p>Using this variable is often the only way to find out why schedule-procedure functions fail. Its also useful for finding hard to reproduce bugs in long running MLisp.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="error-message-parser"></a><b>error-message-parser</b></p>
 
 <blockquote>
@@ -72,29 +73,29 @@
 <p>The error parser function should locate the error message, moving dot to its end, and fill the variables error-file-name, error-line-number and error-start-position with suitable information. Parsing is stopped if any of these variables are set to zero or a null string.</p>
 </blockquote>
 
-<hr>
-<p><a name="error-start-position"></a><b>error-start-position</b> &laquo; 0</p>
+<hr/>
+<p><a name="error-start-position"></a><b>error-start-position</b> &#171; 0</p>
 
 <blockquote>
 <p>A numeric variable used by error message parsers (as specified in the variable error-message-parser) to indicate to the parse-error-messages-in-region function the line in which the current error message starts. If an error message parser sets this to zero, then error message parsing is stopped.</p>
 </blockquote>
 
-<hr>
+<hr/>
 <p><a name="execute-monitor-command"></a><b>execute-monitor-command</b></p>
 
 <blockquote>
 <p>Contains the last string sent to the DCL subprocess executing for execute-monitor-command. If you specify no argument to the command, execute-monitor-command's contents are re-used as the command string.</p>
 </blockquote>
 
-<hr>
-<p><a name="exit-emacs-hook"></a><b>exit-emacs-hook</b> &laquo;</p>
+<hr/>
+<p><a name="exit-emacs-hook"></a><b>exit-emacs-hook</b> &#171;</p>
 
 <blockquote>
 <p>Contains the name of an Emacs function which will be called when Emacs exits to DCL. You can assign the name of any existing function to this variable.</p>
 </blockquote>
 
-<hr>
-<p><a name="expansion-only-completes-unique-choices"></a><b>expansion-only-completes-unique-choices</b> &laquo;</p>
+<hr/>
+<p><a name="expansion-only-completes-unique-choices"></a><b>expansion-only-completes-unique-choices</b> &#171;</p>
 
 <blockquote>
 <p>This variable changes the way that Emacs input completion logic works. It is only applicable is the case where some of the choice are prefixes of some of the other choice.</p>
@@ -106,7 +107,7 @@
 <p>If expansion-only-completes-unique-choices is 1 expand-and-exit does not choose anything. It is nessesary to press a key bound to exit-emacs to choose "set" and you need to type more text, atleast a "-" followed by expand-and-exit, to be able to choose "set-default".</p>
 </blockquote>
 
-<hr>
+<hr/>
 </body>
 </html>
 
