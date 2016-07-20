@@ -81,15 +81,15 @@
     )
 )
 (defun
-    ~HTML-setup()
+    ~HTML-setup-syntax( ~syntax-table ~keyword-modifier)
     (save-window-excursion
         (temp-use-buffer "~mode-hack")
-        (use-syntax-table "HTML")
+        (use-syntax-table ~syntax-table)
         (modify-syntax-table "word" "-_")
 
         (modify-syntax-table "comment" ">" "<")
         (modify-syntax-table "string" "\"")
-        (~mode-modify-syntax-table "keyword-1,case-fold"
+        (~mode-modify-syntax-table (concat "keyword-1" ~keyword-modifier)
             "a"
             "address"
             "applet"
@@ -190,7 +190,7 @@
             "wbr"
             "xmp"
         )
-        (~mode-modify-syntax-table "keyword-2,case-fold"
+        (~mode-modify-syntax-table (concat "keyword-2" ~keyword-modifier)
             "above="
             "accept-charset="
             "action="
@@ -325,6 +325,11 @@
             "wrap="
             "z-index="
         )
+    )
+)
+(defun 
+    (~HTML-setup-keymap
+        (temp-use-buffer "~mode-hack")
 
         (define-keymap "HTML-map")
         (use-local-map "HTML-map")
@@ -335,4 +340,5 @@
         (novalue)
     )
 )
-(~HTML-setup)
+(~HTML-setup-syntax "HTML" ",case-fold")
+(~HTML-setup-keymap)
