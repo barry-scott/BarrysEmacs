@@ -95,6 +95,7 @@
 (autoload "window-diff-continue" "windiff")
 (autoload "window-diff-start" "windiff")
 (autoload "write-region-to-file" "writereg")
+(autoload "XHTML-mode" "xhtml-mode")
 (autoload "XML-mode" "xml-mode")
 
 (if (= operating-system-name "unix")

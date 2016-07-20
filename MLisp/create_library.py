@@ -241,6 +241,8 @@ library_files =    [
     ('common',    'Library/windiff.ml'),
     ('common',    'Library/windows.ml'),
     ('common',    'Library/writereg.ml'),
+    ('common',    'Library/xhtml-mode.key'),
+    ('common',    'Library/xhtml-mode.ml'),
     ('common',    'Library/xml-mode.key'),
     ('common',    'Library/xml-mode.ml'),
 
