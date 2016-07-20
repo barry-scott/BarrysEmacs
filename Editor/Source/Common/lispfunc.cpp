@@ -904,84 +904,102 @@ int getenv_command( void )
 {
     EmacsString vname;
     if( cur_exec == NULL )
+    {
         vname = get_nb_string_interactive(": getenv ");
+    }
     else
+    {
         vname = get_string_mlisp();
-    EmacsString value;
-
+    }
     if( vname.isNull() )
         return 0;
 
+    EmacsString value;
+
     // check on the special cases first, and do the right thing
     if( vname == "USER" )
-        {
-        if( users_name.isNull() )
     {
-        users_name = users_login_name();
         if( users_name.isNull() )
-            users_name = unknown_str;
-    }
-        value = users_name;
+        {
+            users_name = users_login_name();
+            if( users_name.isNull() )
+            {
+                users_name = unknown_str;
+            }
         }
+        value = users_name;
+    }
 
 #ifdef vms
     else if( vname == "HOME" )
+    {
         vname = u_str ("SYS$LOGIN");
+    }
 
     else if( vname == "PATH" )
+    {
         value =  parent_path.isNull() ? current_directory : parent_path;
+    }
 
     else if( vname == "TERM" )
-        {
-        if (is_motif)
-        value = "MOTIF";
-        else
     {
-        int i;
-        int term;
-
-        term = tt->t_cur_attributes.b_type;
-                   i = 0;
-        while( terminal_idents[i] != 0)
-            if( terminal_idents[i] == term )
-                break;
-            else
-                i++;
-
-        if( terminal_idents[i] == 0 )
+        if (is_motif)
         {
-            static unsigned char term_name_buf[32];
-
-            sprintfl( term_name_buf, sizeof( term_name_buf ) - 1,
-                u_str("term-id-%d"), term );
-            value = term_name_buf;
+            value = "MOTIF";
         }
         else
-            value = terminal_names[i];
-        }
-        }
-    else
         {
-            get_log (vname, lognam);
-        value = lognam;
+            int term = tt->t_cur_attributes.b_type;
+            int i = 0;
+
+            while( terminal_idents[i] != 0)
+            {
+                if( terminal_idents[i] == term )
+                {
+                    break;
+                }
+                else
+                {
+                    i++;
+                }
+
+                if( terminal_idents[i] == 0 )
+                {
+                    static unsigned char term_name_buf[32];
+
+                    sprintfl( term_name_buf, sizeof( term_name_buf ) - 1,
+                        u_str("term-id-%d"), term );
+                    value = term_name_buf;
+                }
+                else
+                {
+                    value = terminal_names[i];
+                }
+            }
         }
+    }
+    else
+    {
+        get_log (vname, lognam);
+        value = lognam;
+    }
 #else
     else
     {
-            value = get_config_env(vname);
+        value = get_config_env( vname );
     }
 #endif
 
     if( value.isNull() )
-     {
-    error( FormatString("There is no environment variable named %s") << vname );
-    return 0;
+    {
+        error( FormatString("There is no environment variable named %s") << vname );
+        return 0;
     }
 
     ml_value = value;
 
     return 0;
-    }
+}
 
 extern int elapse_time(void);
 
