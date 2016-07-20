@@ -1,6 +1,6 @@
 ; 
 ; emacs.mlp
-; Copyright 1998-2006 (c) Barry A. Scott
+; Copyright 1998-2016 (c) Barry A. Scott
 ; 
 
 ; return true if this qualifier matches the candidate
@@ -157,20 +157,20 @@
             ~index-col-end
             
             (setq ~index-line-start (string-index-of-string ~filename ":" (+ 1 ~index-start)))
-            (setq ~index-col-start (string-index-of-string ~filename ":" (+ 1 ~index-line-start)))
-            (setq ~index-col-end (string-index-of-string ~filename ":" (+ 1 ~index-col-start)))
-
-            ;;;(get-tty-string (concat "indices start " ~index-start " line-start " ~index-line-start " col-start " ~index-col-start " col-end " ~index-col-end))
-
             (if (< ~index-line-start 0)
                 (setq ~index-line-start (length ~filename))
             )
+            (setq ~index-col-start (string-index-of-string ~filename ":" (+ 1 ~index-line-start)))
             (if (< ~index-col-start 0)
                 (setq ~index-col-start (length ~filename))
             )
+            (setq ~index-col-end (string-index-of-string ~filename ":" (+ 1 ~index-col-start)))
             (if (< ~index-col-end 0)
                 (setq ~index-col-end (length ~filename))
             )
+
+            ;;;(get-tty-string (concat "indices start " ~index-start " line-start " ~index-line-start " col-start " ~index-col-start " col-end " ~index-col-end))
+
             
             (setq ~line-num (string-extract ~filename (+ 1 ~index-line-start) ~index-col-start))
             ;;;(get-tty-string (concat "line number " ~index-start " " ~index-line-start " " ~index-col-start " " ~line-num))
