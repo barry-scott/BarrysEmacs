@@ -1,13 +1,13 @@
 ; 
 ; xhtml-mode.ml
 ; 
-(autoload "~HTML-setup-syntax" "HTML-mode" )
+(autoload "~HTML-setup-syntax" "html-mode" )
 
 (defun
     (XHTML-mode
         (setq mode-string "XHTML")
         (use-syntax-table "XHTML")
-        (use-local-map "XHTML-map")
+        (use-local-map "XHTML-keymap")
         (use-abbrev-table "XHTML")
         (novalue)
     )
@@ -17,8 +17,8 @@
     (~XHTML-setup-keymap
         (temp-use-buffer "~mode-hack")
 
-        (define-keymap "XHTML-map")
-        (use-local-map "XHTML-map")
+        (define-keymap "XHTML-keymap")
+        (use-local-map "XHTML-keymap")
 
         (execute-mlisp-file "xhtml-mode.key")
 
