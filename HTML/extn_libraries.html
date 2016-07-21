@@ -1039,35 +1039,28 @@ You can override these default values by setting the following variables:</p>
 
 <table>
 <tr>
-<td align="Left" valign="Top">
-<p>mouse-1-down</td>
-<td align="Left" valign="Top">
-<p>mouse-1-up</td>
+<td align="Left" valign="Top">mouse-1-down</td>
+<td align="Left" valign="Top">mouse-1-up</td>
 </tr>
 
 <tr>
-<td align="Left" valign="Top">
-<p>mouse-2-down</td>
-<td align="Left" valign="Top">
-<p>mouse-2-up</td>
+<td align="Left" valign="Top">mouse-2-down</td>
+<td align="Left" valign="Top">mouse-2-up</td>
 </tr>
 
 <tr>
-<td align="Left" valign="Top">
-<p>mouse-3-down</td>
-<td align="Left" valign="Top">
-<p>mouse-3-up</td>
+<td align="Left" valign="Top">mouse-3-down</td>
+<td align="Left" valign="Top">mouse-3-up</td>
 </tr>
 </table>
 
-<p>Note that it is possible to include Escape or function key prefixes in mouse button bindings. For example, the following bindings are all legal:</p>
+<p>Note that it is possible to include Escape or function key prefixes in mouse button bindings.
+For example, the following bindings are all legal:</p>
 
-<p>(local-bind-to-key "my-local-mouse-action" "mouse-1-down)")</p>
-
-<p>(local-bind-to-key "my-local-mouse-action" "xmouse-1-down)")</p>
-
-<p>(local-bind-to-key "my-local-mouse-action" "do)mouse-1-down)")</p>
-
+<pre>
+(local-bind-to-key "my-local-mouse-action" "\[mouse-1-down])")
+(local-bind-to-key "my-local-mouse-action" "\^c\[mouse-1-down])")
+</pre>
 <p><a href="#examplemousebindings">The example</a> contains a complete mouse programming example. The example is intended for use with the Emacs Notes package, and binds several useful actions to MB3. For example, clicking MB3 on a conference name in a conference directory will open the conference, and clicking MB3 on a note in a note directory will read the selected note.</p>
 
 <h3><a name="examplemousebindings"></a>Example: Example Mouse Bindings for the Notes Package</h3>
@@ -1081,35 +1074,35 @@ You can override these default values by setting the following variables:</p>
 ;
 (defun
     (my-notes-action
-  mousex
-  mousey
-  mouseevent
-  mouse-second-click
-  ;
-  ; Get the mouse parameters and position the cursor at the
-  ; selected position.
-  ;
-  (mouse-parameters)
-  (mouse-reposition mousex mousey mouseevent)
-  ;
-  ; Depending on which buffer was selected with the mouse,
-  ; perform the most appropriate action.
-  ;
-  (if
-      (= current-buffer-name notes-notebook-entry-directory)
-      (notes-c-open)
-      (= current-buffer-name notes-notebook-class-directory)
-      (notes-c-set-class)
-      (= current-buffer-name notes-notefile-directory)
-      (notes-c-read-note)
-      (= current-buffer-name notes-notefile-header)
-      (notes-c-close)
-      (= current-buffer-name notes-notebook-header)
-      (notes-c-exit)
-      (notes-c-enter-key)
-  )     ; if
+        mousex
+        mousey
+        mouseevent
+        mouse-second-click
+        ;
+        ; Get the mouse parameters and position the cursor at the
+        ; selected position.
+        ;
+        (mouse-parameters)
+        (mouse-reposition mousex mousey mouseevent)
+        ;
+        ; Depending on which buffer was selected with the mouse,
+        ; perform the most appropriate action.
+        ;
+        (if
+            (= current-buffer-name notes-notebook-entry-directory)
+            (notes-c-open)
+            (= current-buffer-name notes-notebook-class-directory)
+            (notes-c-set-class)
+            (= current-buffer-name notes-notefile-directory)
+            (notes-c-read-note)
+            (= current-buffer-name notes-notefile-header)
+            (notes-c-close)
+            (= current-buffer-name notes-notebook-header)
+            (notes-c-exit)
+            (notes-c-enter-key)
+        )
     )
-)       ; defun - my-notes-action
+)
 
 (local-bind-to-key "my-notes-action" "mouse-3-up)")
 (local-bind-to-key "novalue" "mouse-3-down)")
@@ -1152,31 +1145,24 @@ You can override these default values by setting the following variables:</p>
 
 <table>
 <tr>
-<td align="Left" valign="Top">
-<p>dddddd</td>
-<td align="Left" valign="Top">
-<p>Decimal</td>
+<td align="Left" valign="Top">dddddd</td>
+<td align="Left" valign="Top">Decimal</td>
 </tr>
 
 <tr>
-<td align="Left" valign="Top">
-<p>0ooooooo</td>
-<td align="Left" valign="Top">
-<p>Octal</td>
+<td align="Left" valign="Top">0ooooooo</td>
+<td align="Left" valign="Top">Octal</td>
 </tr>
 
 <tr>
-<td align="Left" valign="Top">
-<p>0xhhhhh</td>
-<td align="Left" valign="Top">
-<p>Hexadecimal</td>
+<td align="Left" valign="Top">0xhhhhh</td>
+<td align="Left" valign="Top">Hexadecimal</td>
 </tr>
 </table>
 
 <p>The number function then returns the specified value in hexadecimal, octal and decimal formats in the Mini-buffer. For example, if the value 55 is entered, number returns:</p>
 
 <p>Converted 55 to: 0x37 067 55</p>
-
 
 <h2><a name="python"></a>PYTHONMODE, Python mode</h2>
 

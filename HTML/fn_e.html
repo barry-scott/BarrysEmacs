@@ -644,8 +644,11 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 <p><a name="expand-from-string-table">(<b>expand-from-string-table</b> <span class="cmd">prompt word-list-string</span>)</a></p>
 
 <blockquote>
-<p>Provides access to the Emacs input expansion mechanism. The function has two parameters: the first is a prompt, the second is a string that contains a space-separated list of words from which the user can select. The result of the function is the selected word. <span class="cmd">
-expand-from-string-table</code> allows only one of the words in the list to be returned.</p>
+<p>Provides access to the Emacs input expansion mechanism.
+The function has two parameters: the first is a prompt, the second
+is a string that contains a space-separated list of words from which
+the user can select. The result of the function is the selected word.
+<span class="cmd">expand-from-string-table</span> allows only one of the words in the list to be returned.</p>
 
 <p><b>Example:</b> A function that prompt for the name of a fruit to insert into the current buffer</p>
 
@@ -655,10 +658,10 @@ expand-from-string-table</code> allows only one of the words in the list to be r
         (insert-string
             (expand-from-string-table
                 "choose a fruit: "
-                "strawberry apple banana")
+                "strawberry apple banana"
+            )
         )
     )
-    
 )
 </pre>
 

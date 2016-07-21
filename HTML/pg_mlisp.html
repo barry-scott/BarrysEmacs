@@ -15,7 +15,6 @@
 
 <p>The Mock Lisp (MLisp) programming language provides access to all the Emacs extension facilities. This chapter describes how to use MLisp to extend Emacs by writing private functions or shareable libraries and subsystems.</p>
 
-<hr align="left" size="2" color="#800080"/>
 <a name="P166_10893"></a> 
 
 <h2>mlisp syntax</h2>
@@ -86,89 +85,65 @@ ANAMEWITHCAPITALLETTERS
 
 <p align="center">Table 1 MLisp Character Constants</p>
 
-<table border="1">
+<table>
 <tr>
-<td valign="top" width="153">
-<p>Sequence</td>
-<td valign="top" width="236">
-<p>ASCII Character</td>
+<td>Sequence</td>
+<td>ASCII Character</td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\n</td>
-<td valign="top" width="236">
-<p>Linefeed</td>
+<td>\n</td>
+<td>Linefeed</td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\b</td>
-<td valign="top" width="236">
-<p>Backspace</td>
+<td>\b</td>
+<td>Backspace</td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\t</td>
-<td valign="top" width="236">
-<p>Tab</td>
+<td>\t</td>
+<td>Tab</td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\r</td>
-<td valign="top" width="236">
-<p>Return</td>
+<td>\r</td>
+<td>Return</td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\e</td>
-<td valign="top" width="236">
-<p>Escape</td>
+<td>\e</td>
+<td>Escape</td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\'</td>
-<td valign="top" width="236">
-<p>Quote</td>
+<td>\'</td>
+<td>Quote</td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\\</td>
-<td valign="top" width="236">
-<p>\</td>
+<td>\\</td>
+<td>\</td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\<i>xxx</i></td>
-<td valign="top" width="236">
-<p>Octal character <i>xxx</i></td>
+<td>\<i>xxx</i></td>
+<td>Octal character <i>xxx</i></td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>^<i>X</i></td>
-<td valign="top" width="236">
-<p>Control <i>X</i></td>
+<td>^<i>X</i></td>
+<td>Control <i>X</i></td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>^?</td>
-<td valign="top" width="236">
-<p>Delete</td>
+<td>^?</td>
+<td>Delete</td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\<i>x</i></td>
-<td valign="top" width="236">
-<p>character <i>x</i></td>
+<td>\<i>x</i></td>
+<td>character <i>x</i></td>
 </tr>
 </table>
 
@@ -180,96 +155,70 @@ ANAMEWITHCAPITALLETTERS
 
 <p>Table 2 MLisp String Constants</p>
 
-<table border="1">
+<table>
 <tr>
-<td valign="top" width="153">
-<p><u>Sequence</u></td>
-<td valign="top" width="236">
-<p><u>ASCII character</u></td>
+<th>Sequence</th>
+<th>ASCII character</th>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\n</td>
-<td valign="top" width="236">
-<p>Linefeed</td>
+<td>\n</td>
+<td>Linefeed</td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\b</td>
-<td valign="top" width="236">
-<p>Backspace</td>
+<td>\b</td>
+<td>Backspace</td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\t</td>
-<td valign="top" width="236">
-<p>Tab</td>
+<td>\t</td>
+<td>Tab</td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\r</td>
-<td valign="top" width="236">
-<p>Return</td>
+<td>\r</td>
+<td>Return</td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\e</td>
-<td valign="top" width="236">
-<p>Escape</td>
+<td>\e</td>
+<td>Escape</td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\"</td>
-<td valign="top" width="236">
-<p>Double quotes</td>
+<td>\"</td>
+<td>Double quotes</td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\\</td>
-<td valign="top" width="236">
-<p>\</td>
+<td>\\</td>
+<td>\</td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\<i>xxx</i></td>
-<td valign="top" width="236">
-<p>Octal character <i>xxx</i></td>
+<td>\<i>xxx</i></td>
+<td>Octal character <i>xxx</i></td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\^<i>X</i></td>
-<td valign="top" width="236">
-<p>Control <i>X</i></td>
+<td>\^<i>X</i></td>
+<td>Control <i>X</i></td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\^?</td>
-<td valign="top" width="236">
-<p>Delete</td>
+<td>\^?</td>
+<td>Delete</td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\<i>x</i></td>
-<td valign="top" width="236">
-<p>Character <i>x</i></td>
+<td>\<i>x</i></td>
+<td>Character <i>x</i></td>
 </tr>
 
 <tr>
-<td valign="top" width="153">
-<p>\<i>(key)</i></td>
-<td valign="top" width="236">
-<p>Key sequence for <i>key</i></td>
+<td>\<i>(key)</i></td>
+<td>Key sequence for <i>key</i></td>
 </tr>
 </table>
 
@@ -281,7 +230,6 @@ ANAMEWITHCAPITALLETTERS
 
 <p><b>Figure: LK201 Top-Row Function Key Escapes</b>FIGUREFILE: postscript:docs$src:emacspgfunkeysfig.psFIGUREFILE: bookreader:docs$src:emacspgfunkeysfig.fse</p>
 
-<hr align="left" size="2" color="#800080"/>
 <a name="P287_15621"></a> 
 
 <h2>variables</h2>
@@ -296,40 +244,30 @@ ANAMEWITHCAPITALLETTERS
 
 <p>There are five different types of variable:</p>
 
-<table border="1">
+<table>
 <tr>
-<td valign="top" width="141">
-<p align="right"><b>Numerics</b></td>
-<td valign="top" width="531">
-<p>which hold integer numbers in the range 2,147,483,647 to -2,147,483,648;</td>
+<td><b>Numerics</b></td>
+<td>which hold integer numbers in the range 2,147,483,647 to -2,147,483,648;</td>
 </tr>
 
 <tr>
-<td valign="top" width="141">
-<p align="right"><b>Strings</b></td>
-<td valign="top" width="531">
-<p>which contain arbitrary length text;</td>
+<td><b>Strings</b></td>
+<td>which contain arbitrary length text;</td>
 </tr>
 
 <tr>
-<td valign="top" width="141">
-<p align="right"><b>Markers</b></td>
-<td valign="top" width="531">
-<p>which contain a buffer name and positional information;</td>
+<td><b>Markers</b></td>
+<td>which contain a buffer name and positional information;</td>
 </tr>
 
 <tr>
-<td valign="top" width="141">
-<p align="right"><b>Array</b></td>
-<td valign="top" width="531">
-<p>which contains up to a 10 dimension array of variables</td>
+<td><b>Array</b></td>
+<td>which contains up to a 10 dimension array of variables</td>
 </tr>
 
 <tr>
-<td valign="top" width="141">
-<p align="right"><b>Window-rings</b></td>
-<td valign="top" width="531">
-<p>which contain a set of windows that make up a screen.</td>
+<td><b>Window-rings</b></td>
+<td>which contain a set of windows that make up a screen.</td>
 </tr>
 </table>
 
@@ -445,7 +383,6 @@ ANAMEWITHCAPITALLETTERS
 
 <p>Assigns a value to an element of an array.</p>
 
-<hr align="left" size="2" color="#800080"/>
 <a name="P416_22342"></a> 
 
 <h2>defining functions</h2>
@@ -462,7 +399,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p>This defines a function with arguments. The arguments are entered into the variable name-space, and may have optional default expressions. The initialising expressions are executed just before the function in invoked. The result of the function is the value of the last expression executed in the expression list.</p>
 
-<hr align="left" size="2" color="#800080"/>
+
 <a name="P431_23601"></a> 
 
 <h2>block structuring functions</h2>
@@ -491,7 +428,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p>Introduces a block, and evaluates expressions until an error occurs. If no error occurs, then the value of the block is 0, otherwise, the value of the block is 1. When an error occurs, the text of the error message is available in the system variable <span class="cmd">error-message</span>, but is not displayed in the Mini-buffer.</p>
 
-<hr align="left" size="2" color="#800080"/>
+
 <a name="P458_25499"></a> 
 
 <h2>flow control functions</h2>
@@ -524,7 +461,7 @@ ANAMEWITHCAPITALLETTERS
 )
 </pre>
 
-<hr align="left" size="2" color="#800080"/>
+
 <a name="P475_26723"></a> 
 
 <h2>operator functions</h2>
@@ -539,124 +476,90 @@ ANAMEWITHCAPITALLETTERS
 
 <p>Table 3 Arithmetic Operator Functions</p>
 
-<table border="1">
+<table>
 <tr>
-<td valign="top" width="141">
-<p>+</td>
-<td valign="top" width="224">
-<p>Addition</td>
+<td>+</td>
+<td>Addition</td>
 </tr>
 
 <tr>
-<td valign="top" width="141">
-<p>--</td>
-<td valign="top" width="224">
-<p>Subtraction</td>
+<td>--</td>
+<td>Subtraction</td>
 </tr>
 
 <tr>
-<td valign="top" width="141">
-<p>/</td>
-<td valign="top" width="224">
-<p>Division</td>
+<td>/</td>
+<td>Division</td>
 </tr>
 
 <tr>
-<td valign="top" width="141">
-<p>*</td>
-<td valign="top" width="224">
-<p>Multiplication</td>
+<td>*</td>
+<td>Multiplication</td>
 </tr>
 
 <tr>
-<td valign="top" width="141">
-<p>!</td>
-<td valign="top" width="224">
-<p>Complimentation</td>
+<td>!</td>
+<td>Complimentation</td>
 </tr>
 
 <tr>
-<td valign="top" width="141">
-<p>&amp;</td>
-<td valign="top" width="224">
-<p>And</td>
+<td>&amp;</td>
+<td>And</td>
 </tr>
 
 <tr>
-<td valign="top" width="141">
-<p>|</td>
-<td valign="top" width="224">
-<p>Inclusive-or</td>
+<td>|</td>
+<td>Inclusive-or</td>
 </tr>
 
 <tr>
-<td valign="top" width="141">
-<p>^</td>
-<td valign="top" width="224">
-<p>Exclusive-or</td>
+<td>^</td>
+<td>Exclusive-or</td>
 </tr>
 
 <tr>
-<td valign="top" width="141">
-<p>&lt;&lt;</td>
-<td valign="top" width="224">
-<p>Left shift</td>
+<td>&lt;&lt;</td>
+<td>Left shift</td>
 </tr>
 
 <tr>
-<td valign="top" width="141">
-<p>&gt;&gt;</td>
-<td valign="top" width="224">
-<p>Right shift</td>
+<td>&gt;&gt;</td>
+<td>Right shift</td>
 </tr>
 
 <tr>
-<td valign="top" width="141">
-<p>=</td>
-<td valign="top" width="224">
-<p>Equality</td>
+<td>=</td>
+<td>Equality</td>
 </tr>
 
 <tr>
-<td valign="top" width="141">
-<p>!=</td>
-<td valign="top" width="224">
-<p>Non-equality</td>
+<td>!=</td>
+<td>Non-equality</td>
 </tr>
 
 <tr>
-<td valign="top" width="141">
-<p>&lt;</td>
-<td valign="top" width="224">
-<p>Less than</td>
+<td>&lt;</td>
+<td>Less than</td>
 </tr>
 
 <tr>
-<td valign="top" width="141">
-<p>&gt;</td>
-<td valign="top" width="224">
-<p>Greater than</td>
+<td>&gt;</td>
+<td>Greater than</td>
 </tr>
 
 <tr>
-<td valign="top" width="141">
-<p>&lt;=</td>
-<td valign="top" width="224">
-<p>Less than or equal</td>
+<td>&lt;=</td>
+<td>Less than or equal</td>
 </tr>
 
 <tr>
-<td valign="top" width="141">
-<p>&gt;=</td>
-<td valign="top" width="224">
-<p>Greater than or equal</td>
+<td>&gt;=</td>
+<td>Greater than or equal</td>
 </tr>
 
 <tr>
-<td valign="top" width="141">
-<p>c=</td>
-<td valign="top" width="224">
-<p>Character equal</td>
+<td>c=</td>
+<td>Character equal</td>
 </tr>
 </table>
 
@@ -718,7 +621,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p><span class="cmd">following-char</span> returns the numeric value of the character to the right of dot in the current buffer. If dot is located at the end of the buffer, 0 is returned.</p>
 
-<hr align="left" size="2" color="#800080"/>
+
 <a name="P583_29496"></a> 
 
 <h2>miscellaneous mlisp functions</h2>
@@ -853,7 +756,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p>This function is useful when displaying status information to the user. For example, if a function takes some time to execute, it may be helpful to indicate what the function is currently doing. An argument of zero to <span class="cmd">sit-for</span> will update the screen, but will not pause Emacs processing.</p>
 
-<hr align="left" size="2" color="#800080"/>
+
 <a name="P714_37262"></a> 
 
 <h2>how to compile an mlisp program</h2>
@@ -876,7 +779,7 @@ ANAMEWITHCAPITALLETTERS
 <li>If you wish to type a short MLisp program, you can use the MINIBUF package. See the Barry's Emacs Extensions Reference Manual for a description of the MINIBUF package.</li>
 </ul>
 
-<hr align="left" size="2" color="#800080"/>
+
 <a name="P731_38934"></a> 
 
 <h2>libraries of commands</h2>
@@ -899,7 +802,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p>will define the <span class="cmd">box-it</span> function, but will not actually load the definition from BOXIT.ML until you execute the <span class="cmd">box-it</span> function.</p>
 
-<hr align="left" size="2" color="#800080"/>
+
 <a name="P750_40825"></a> 
 
 <h2>debugging mlisp programs</h2>
@@ -1035,28 +938,26 @@ depth of the running MLisp code.</p>
 
 <p>For example, if the following function is executed with a parameter of <span class="cmd">1</span>:</p>
 
-<p><span class="cmd">(defun x (a)<br />
-&#160;&#160;&#160;&#160;(if (&gt; a 3)<br />
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;(error-message "Too deep")<br />
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;(x (+ a 1))<br />
-&#160;&#160;&#160;&#160;)<br />
-)</code></p>
+<pre>
+(defun x (a)
+    (if (&gt; a 3)
+        (error-message "Too deep")
+        (x (+ a 1))
+    )
+)
+</pre>
 
 <p>then the buffer <span class="cmd">Stack-trace</span> would contain:</p>
 
-<p><span class="cmd">Message: Too deep
-<br />
+<pre>
+Message: Too deep
 Executing: (error-message "Too deep")
-<br />
 (x (+ a 1))
-<br />
 (x (+ a 1))
-<br />
 (x (+ a 1))
-<br />
 (x 1)
-<br />
---- bottom of stack ---</code></p>
+--- bottom of stack ---
+</pre>
 
 <p>The function <span class="cmd">dump-stack-trace</span> can be used to generate a stack-trace at any time.
 The stack-trace will be located in buffer <span class="cmd">Stack-trace</span>, which will be popped onto the screen.

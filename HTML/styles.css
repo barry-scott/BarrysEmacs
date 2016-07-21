@@ -108,12 +108,12 @@ div.contents th, div.contents td {
 
 span.cmd {
     font-family: monospace;
-    color: #008800;
+    color: #880000;
 }
 
 span.key {
     font-family: monospace;
-    color: #880000;
+    color: #008800;
 }
 
 span.cmd_description {
