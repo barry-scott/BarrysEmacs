@@ -2,23 +2,26 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
+
 <title>Functions L*</title>
 
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<hr/>
+<div class="contents">
+
 <p><a name="lambda"></a>(<b>lambda</b>)</p>
 
 <blockquote>
 <p>Provides a progn block with lamdba binding.</p>
 </blockquote>
 
-<hr/>
+
 <p><a name="last-key-struck"></a>(<b>last-key-struck</b>)</p>
 
 <blockquote>
-<p>Returns the last command character struck. If you have a function bound to many keys, the function may use <code>last-key-struck</code> to determine which key was used to invoke it.</p>
+<p>Returns the last command character struck. If you have a function bound to many keys, the function may use <span class="cmd">last-key-struck</span> to determine which key was used to invoke it.</p>
 
 
 <p><b>See also:</b></p>
@@ -31,8 +34,8 @@
 
 </blockquote>
 
-<hr/>
-<p><a name="left-marker"></a>(<b>left-marker</b> <code>marker-expression</code>)</p>
+
+<p><a name="left-marker"></a>(<b>left-marker</b> <span class="cmd">marker-expression</span>)</p>
 
 <blockquote>
 <p>Takes a marker as a parameter and returns a new marker. The new marker will be at the same position as the original but with left-hand affinity. This means that text inserted at the position of the marker will not move the marker's position. Right-hand affinity markers move to the right as text is inserted.</p>
@@ -53,15 +56,15 @@
 
 </blockquote>
 
-<hr/>
-<p><a name="left-window"></a>(<b>left-window</b> <code>repeat-count</code>)</p>
+
+<p><a name="left-window"></a>(<b>left-window</b> <span class="cmd">repeat-count</span>)</p>
 
 <blockquote>
-<p>Moves the cursor into the window that is to the left of the current window. (Unlike <code>next-window</code>, which moves the cursor without regard to the physical position of the windows on the screen).</p>
+<p>Moves the cursor into the window that is to the left of the current window. (Unlike <span class="cmd">next-window</span>, which moves the cursor without regard to the physical position of the windows on the screen).</p>
 
-<p>If the <code>repeat-count</code> is given then the command is repeated that number of times.</p>
+<p>If the <span class="cmd">repeat-count</span> is given then the command is repeated that number of times.</p>
 
-<p><code>left-window</code> reports an error if there is not a window to the left of the current window.</p>
+<p><span class="cmd">left-window</span> reports an error if there is not a window to the left of the current window.</p>
 
 <p><b>Example:</b> Move to the window at the extreme left:</p>
 
@@ -81,8 +84,8 @@
 
 </blockquote>
 
-<hr/>
-<p><a name="length"></a>(<b>length</b> <code>string-expression</code>)</p>
+
+<p><a name="length"></a>(<b>length</b> <span class="cmd">string-expression</span>)</p>
 
 <blockquote>
 <p>Returns the length of its string parameter.</p>
@@ -95,14 +98,14 @@
 
 </blockquote>
 
-<hr/>
+
 <p><a name="line-to-top-of-window"></a>(<b>line-to-top-of-window</b>) ESC-!</p>
 
 <blockquote>
 <p>Moves the line in which dot resides to the top of the window associated with the current buffer.</p>
 </blockquote>
 
-<hr/>
+
 <p><a name="lisp-mode"></a>(<b>lisp-mode</b>)</p>
 
 <blockquote>
@@ -113,11 +116,11 @@
 
 </blockquote>
 
-<hr/>
+
 <p><a name="list-abbreviation-tables"></a>(<b>list-abbreviation-tables</b>)</p>
 
 <blockquote>
-<p>Creates a buffer called <code>Abbreviation table list</code> and inserts a list of the abbreviation tables that have been defined in Emacs.</p>
+<p>Creates a buffer called <span class="cmd">Abbreviation table list</span> and inserts a list of the abbreviation tables that have been defined in Emacs.</p>
 
 
 <p><b>See also:</b></p>
@@ -129,20 +132,20 @@
 
 </blockquote>
 
-<hr/>
+
 <p><a name="list-auto-executes"></a>(<b>list-auto-executes</b>)</p>
 
 <blockquote>
-<p>Creates a buffer called <code>Auto Execute list</code> and inserts a list of all the auto-execute patterns and their functions.</p>
+<p>Creates a buffer called <span class="cmd">Auto Execute list</span> and inserts a list of all the auto-execute patterns and their functions.</p>
 
 
 </blockquote>
 
-<hr/>
+
 <p><a name="list-breakpoints"></a>(<b>list-breakpoints</b>)</p>
 
 <blockquote>
-<p>Creates a buffer called <code>Breakpoint list</code> and inserts a list of the functions that have breakpoints set.</p>
+<p>Creates a buffer called <span class="cmd">Breakpoint list</span> and inserts a list of the functions that have breakpoints set.</p>
 
 
 <p><b>See also:</b></p>
@@ -155,25 +158,25 @@
 
 </blockquote>
 
-<hr/>
+
 <p><a name="list-buffers"></a>(<b>list-buffers</b>) ^X-^B</p>
 
 <blockquote>
 <p>Produces a listing of all existing buffers giving their names, the name of the associated file (if there is one), the number of characters in the buffer and an indication of whether or not the buffer has been modified since it was read from or written to the associated file.</p>
 </blockquote>
 
-<hr/>
+
 <p><a name="list-databases"></a>(<b>list-databases</b>)</p>
 
 <blockquote>
 <p>Lists all database search lists and the names of the database files contained in them.</p>
 </blockquote>
 
-<hr/>
+
 <p><a name="list-images"></a>(<b>list-images</b>)</p>
 
 <blockquote>
-<p>Lists the names of all images referenced by the <code>external-function</code> command. The listing shows the image name, the value of the context and the name of the file that holds the image.</p>
+<p>Lists the names of all images referenced by the <span class="cmd">external-function</span> command. The listing shows the image name, the value of the context and the name of the file that holds the image.</p>
 
 
 <p><b>See also:</b></p>
@@ -185,7 +188,7 @@
 
 </blockquote>
 
-<hr/>
+
 <p><a name="list-processes"></a>(<b>list-processes</b>)</p>
 
 <blockquote>
@@ -207,18 +210,18 @@
 
 </blockquote>
 
-<hr/>
+
 <p><a name="list-syntax-tables"></a>(<b>list-syntax-tables</b>)</p>
 
 <blockquote>
 <p>Lists all the syntax tables that have been defined.</p>
 </blockquote>
 
-<hr/>
-<p><a name="load"></a>(<b>load</b> <code>file-name</code>)</p>
+
+<p><a name="load"></a>(<b>load</b> <span class="cmd">file-name</span>)</p>
 
 <blockquote>
-<p>Loads the nominated file as a series of MLisp expressions executing each in turn. (This function is exactly the same as <code>execute-mlisp-file</code>).</p>
+<p>Loads the nominated file as a series of MLisp expressions executing each in turn. (This function is exactly the same as <span class="cmd">execute-mlisp-file</span>).</p>
 
 
 <p><b>See also:</b></p>
@@ -229,13 +232,13 @@
 
 </blockquote>
 
-<hr/>
-<p><a name="local-bind-to-key"></a>(<b>local-bind-to-key</b> <code>function key-sequence</code>)</p>
+
+<p><a name="local-bind-to-key"></a>(<b>local-bind-to-key</b> <span class="cmd">function key-sequence</span>)</p>
 
 <blockquote>
-<p>Binds the specified function to the given key sequence. Unlike <code>bind-to-key</code>, the binding has effect in only the current buffer. If called interactively, the function prompts for the name of the function to bind and also for the key.</p>
+<p>Binds the specified function to the given key sequence. Unlike <span class="cmd">bind-to-key</span>, the binding has effect in only the current buffer. If called interactively, the function prompts for the name of the function to bind and also for the key.</p>
 
-<p>See <a href="fn_b.html#bind-to-key"><code>bind-to-key</code></a> for details of key names.</p>
+<p>See <a href="fn_b.html#bind-to-key"><span class="cmd">bind-to-key</span></a> for details of key names.</p>
 
 <p><b>Examples:</b></p>
 
@@ -273,8 +276,8 @@
 
 </blockquote>
 
-<hr/>
-<p><a name="local-binding-of"></a>(<b>local-binding-of</b> <code>key-sequence</code>)</p>
+
+<p><a name="local-binding-of"></a>(<b>local-binding-of</b> <span class="cmd">key-sequence</span>)</p>
 
 <blockquote>
 <p>Returns the name of the function that the key sequence provided will invoke using the current local keymap.</p>
@@ -292,8 +295,8 @@
 
 </blockquote>
 
-<hr/>
-<p><a name="looking-at"></a>(<b>looking-at</b> <code>regular-expression</code>)</p>
+
+<p><a name="looking-at"></a>(<b>looking-at</b> <span class="cmd">regular-expression</span>)</p>
 
 <blockquote>
 <p>Deprecated: Use ere-looking-at for new code.</p>
@@ -309,7 +312,7 @@
 
 <p>is true if the line starts with any number of spaces or tabs, followed by "else".  </p>
 
-<p>See <a href="fn_r.html#re-search-forward"><code>re-search-forward</code></a> for more information about regular expression searches.</p>
+<p>See <a href="fn_r.html#re-search-forward"><span class="cmd">re-search-forward</span></a> for more information about regular expression searches.</p>
 
 <p><b>See also:</b></p>
 
@@ -324,7 +327,8 @@
 
 </blockquote>
 
-<hr/>
+
+</div>
 </body>
 </html>
 

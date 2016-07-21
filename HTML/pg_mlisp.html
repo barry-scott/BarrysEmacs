@@ -2,10 +2,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
+
 <title>Mlisp Programmer's Guide</title>
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+<div class="contents">
 <a name="TopOfPage"></a> <!-- TRANSIT - TEXTBAR --> 
 
 <h1><a name="P161_10663"></a> Mock Lisp</h1>
@@ -53,7 +56,7 @@ left-margin
 
 <p>MLisp names in Emacs are held in two name-spaces: one for function names, and the other for variable names. A name in one name-space is not related to the same name in the other name-space. There is never any confusion about which name-space a particular name belongs in, as this information can always be deduced from the syntactic positioning of the name. Whenever you need to pass the name of a function to another function, you must pass it as a string.</p>
 
-<p>A name can consist of an arbitrary sequence of any characters excluding the MLisp syntax characters <code>(</code>, <code>)</code> and <code>;</code>. Names may not start with a digit or a minus sign. Upper-case letters are always distinguished from lowercase letters.</p>
+<p>A name can consist of an arbitrary sequence of any characters excluding the MLisp syntax characters <span class="cmd">(</span>, <span class="cmd">)</span> and <span class="cmd">;</span>. Names may not start with a digit or a minus sign. Upper-case letters are always distinguished from lowercase letters.</p>
 
 <p><b>Examples of names:</b></p>
 
@@ -67,7 +70,7 @@ ANAMEWITHCAPITALLETTERS
 
 <h3>comments</h3>
 
-<p>Comments are introduced in MLisp using the <code>;</code> character. The comment extends from the semicolon character to the end of the line. During MLisp compilation, all comments are removed.</p>
+<p>Comments are introduced in MLisp using the <span class="cmd">;</span> character. The comment extends from the semicolon character to the end of the line. During MLisp compilation, all comments are removed.</p>
 
 <h3>constants</h3>
 
@@ -86,114 +89,90 @@ ANAMEWITHCAPITALLETTERS
 <table border="1">
 <tr>
 <td valign="top" width="153">
-<p>Sequence</p>
-</td>
+<p>Sequence</td>
 <td valign="top" width="236">
-<p>ASCII Character</p>
-</td>
+<p>ASCII Character</td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\n</p>
-</td>
+<p>\n</td>
 <td valign="top" width="236">
-<p>Linefeed</p>
-</td>
+<p>Linefeed</td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\b</p>
-</td>
+<p>\b</td>
 <td valign="top" width="236">
-<p>Backspace</p>
-</td>
+<p>Backspace</td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\t</p>
-</td>
+<p>\t</td>
 <td valign="top" width="236">
-<p>Tab</p>
-</td>
+<p>Tab</td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\r</p>
-</td>
+<p>\r</td>
 <td valign="top" width="236">
-<p>Return</p>
-</td>
+<p>Return</td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\e</p>
-</td>
+<p>\e</td>
 <td valign="top" width="236">
-<p>Escape</p>
-</td>
+<p>Escape</td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\'</p>
-</td>
+<p>\'</td>
 <td valign="top" width="236">
-<p>Quote</p>
-</td>
+<p>Quote</td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\\</p>
-</td>
+<p>\\</td>
 <td valign="top" width="236">
-<p>\</p>
-</td>
+<p>\</td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\<i>xxx</i></p>
-</td>
+<p>\<i>xxx</i></td>
 <td valign="top" width="236">
-<p>Octal character <i>xxx</i></p>
-</td>
+<p>Octal character <i>xxx</i></td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>^<i>X</i></p>
-</td>
+<p>^<i>X</i></td>
 <td valign="top" width="236">
-<p>Control <i>X</i></p>
-</td>
+<p>Control <i>X</i></td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>^?</p>
-</td>
+<p>^?</td>
 <td valign="top" width="236">
-<p>Delete</p>
-</td>
+<p>Delete</td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\<i>x</i></p>
-</td>
+<p>\<i>x</i></td>
 <td valign="top" width="236">
-<p>character <i>x</i></p>
-</td>
+<p>character <i>x</i></td>
 </tr>
 </table>
 
-<p>It is best to use the <code>\</code> sequences for the characters that are available using that mechanism, rather than using the equivalent <code>^</code> sequences because the <code>\</code>sequences are more meaningful.</p>
+<p>It is best to use the <span class="cmd">\</span> sequences for the characters that are available using that mechanism, rather than using the equivalent <span class="key">^</span> sequences because the <span class="cmd">\</span>sequences are more meaningful.</p>
 
 <h4><b><i>String Constants</i></b></h4>
 
@@ -204,119 +183,93 @@ ANAMEWITHCAPITALLETTERS
 <table border="1">
 <tr>
 <td valign="top" width="153">
-<p><u>Sequence</u></p>
-</td>
+<p><u>Sequence</u></td>
 <td valign="top" width="236">
-<p><u>ASCII character</u></p>
-</td>
+<p><u>ASCII character</u></td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\n</p>
-</td>
+<p>\n</td>
 <td valign="top" width="236">
-<p>Linefeed</p>
-</td>
+<p>Linefeed</td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\b</p>
-</td>
+<p>\b</td>
 <td valign="top" width="236">
-<p>Backspace</p>
-</td>
+<p>Backspace</td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\t</p>
-</td>
+<p>\t</td>
 <td valign="top" width="236">
-<p>Tab</p>
-</td>
+<p>Tab</td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\r</p>
-</td>
+<p>\r</td>
 <td valign="top" width="236">
-<p>Return</p>
-</td>
+<p>Return</td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\e</p>
-</td>
+<p>\e</td>
 <td valign="top" width="236">
-<p>Escape</p>
-</td>
+<p>Escape</td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\"</p>
-</td>
+<p>\"</td>
 <td valign="top" width="236">
-<p>Double quotes</p>
-</td>
+<p>Double quotes</td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\\</p>
-</td>
+<p>\\</td>
 <td valign="top" width="236">
-<p>\</p>
-</td>
+<p>\</td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\<i>xxx</i></p>
-</td>
+<p>\<i>xxx</i></td>
 <td valign="top" width="236">
-<p>Octal character <i>xxx</i></p>
-</td>
+<p>Octal character <i>xxx</i></td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\^<i>X</i></p>
-</td>
+<p>\^<i>X</i></td>
 <td valign="top" width="236">
-<p>Control <i>X</i></p>
-</td>
+<p>Control <i>X</i></td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\^?</p>
-</td>
+<p>\^?</td>
 <td valign="top" width="236">
-<p>Delete</p>
-</td>
+<p>Delete</td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\<i>x</i></p>
-</td>
+<p>\<i>x</i></td>
 <td valign="top" width="236">
-<p>Character <i>x</i></p>
-</td>
+<p>Character <i>x</i></td>
 </tr>
 
 <tr>
 <td valign="top" width="153">
-<p>\<i>(key)</i></p>
-</td>
+<p>\<i>(key)</i></td>
 <td valign="top" width="236">
-<p>Key sequence for <i>key</i></p>
-</td>
+<p>Key sequence for <i>key</i></td>
 </tr>
 </table>
 
@@ -335,9 +288,9 @@ ANAMEWITHCAPITALLETTERS
 
 <p>A variable is a name which is associated with a value, either a number, mark, string, window-ring or an array. Emacs uses many variables internally, and provides many others which allow the user to customise various Emacs features.</p>
 
-<p>The easiest way to set a variable is to use the <code>setq</code> function. This function requires the name of the variable and the value to be assigned to the variable. Before the variable is set, the value being assigned may be checked so that you cannot set impossible values which might jeopardise other Emacs code. The variable to be set must already exist. You can set the value of a variable interactively using the <code>ESC-x set</code> command.</p>
+<p>The easiest way to set a variable is to use the <span class="cmd">setq</span> function. This function requires the name of the variable and the value to be assigned to the variable. Before the variable is set, the value being assigned may be checked so that you cannot set impossible values which might jeopardise other Emacs code. The variable to be set must already exist. You can set the value of a variable interactively using the <span class="key">ESC-x set</span> command.</p>
 
-<p>To fetch the value of a variable, simply reference it by name. You can also display the value of a single variable interactively with the <code>ESC-x print</code> command.</p>
+<p>To fetch the value of a variable, simply reference it by name. You can also display the value of a single variable interactively with the <span class="key">ESC-x print</span> command.</p>
 
 <h3>variable types</h3>
 
@@ -346,47 +299,37 @@ ANAMEWITHCAPITALLETTERS
 <table border="1">
 <tr>
 <td valign="top" width="141">
-<p align="right"><b>Numerics</b></p>
-</td>
+<p align="right"><b>Numerics</b></td>
 <td valign="top" width="531">
-<p>which hold integer numbers in the range 2,147,483,647 to -2,147,483,648;</p>
-</td>
+<p>which hold integer numbers in the range 2,147,483,647 to -2,147,483,648;</td>
 </tr>
 
 <tr>
 <td valign="top" width="141">
-<p align="right"><b>Strings</b></p>
-</td>
+<p align="right"><b>Strings</b></td>
 <td valign="top" width="531">
-<p>which contain arbitrary length text;</p>
-</td>
+<p>which contain arbitrary length text;</td>
 </tr>
 
 <tr>
 <td valign="top" width="141">
-<p align="right"><b>Markers</b></p>
-</td>
+<p align="right"><b>Markers</b></td>
 <td valign="top" width="531">
-<p>which contain a buffer name and positional information;</p>
-</td>
+<p>which contain a buffer name and positional information;</td>
 </tr>
 
 <tr>
 <td valign="top" width="141">
-<p align="right"><b>Array</b></p>
-</td>
+<p align="right"><b>Array</b></td>
 <td valign="top" width="531">
-<p>which contains up to a 10 dimension array of variables</p>
-</td>
+<p>which contains up to a 10 dimension array of variables</td>
 </tr>
 
 <tr>
 <td valign="top" width="141">
-<p align="right"><b>Window-rings</b></p>
-</td>
+<p align="right"><b>Window-rings</b></td>
 <td valign="top" width="531">
-<p>which contain a set of windows that make up a screen.</p>
-</td>
+<p>which contain a set of windows that make up a screen.</td>
 </tr>
 </table>
 
@@ -402,11 +345,11 @@ ANAMEWITHCAPITALLETTERS
 
 <p><b>System Variables</b></p>
 
-<p>System variables are used to set up a specific option upon which Emacs acts. They either modify the way Emacs presents information, or they contain some specific information. Some examples of system variables include <code>pop-up-windows</code>, which tells Emacs to pop a window up when one is needed, and <code>window-size</code> which tells you the size, in lines, of the currently selected window.</p>
+<p>System variables are used to set up a specific option upon which Emacs acts. They either modify the way Emacs presents information, or they contain some specific information. Some examples of system variables include <span class="cmd">pop-up-windows</span>, which tells Emacs to pop a window up when one is needed, and <span class="cmd">window-size</span> which tells you the size, in lines, of the currently selected window.</p>
 
 <p><b>Buffer-Specific Variables</b></p>
 
-<p>Buffer-specific variables are used to contain information which is private to each buffer. The name of the variable is the same for each buffer, but when its value is fetched or set, a private copy for the currently selected buffer is used. If you attempt to fetch the value of a buffer-specific variable before you have set it, the variable is preset with a default value. Buffer specific variables are created using the <code>declare-buffer-specific</code> function, and their default value is set using <code>setq-default</code> (or <code>ESC-x set-default</code>).</p>
+<p>Buffer-specific variables are used to contain information which is private to each buffer. The name of the variable is the same for each buffer, but when its value is fetched or set, a private copy for the currently selected buffer is used. If you attempt to fetch the value of a buffer-specific variable before you have set it, the variable is preset with a default value. Buffer specific variables are created using the <span class="cmd">declare-buffer-specific</span> function, and their default value is set using <span class="cmd">setq-default</span> (or <span class="key">ESC-x set-default</span>).</p>
 
 <p><b>Global Variables</b></p>
 
@@ -418,7 +361,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p><b>Local Variables</b></p>
 
-<p>Local variables are used to contain local information in a block inside an MLisp program. The lifetime of these variables is only while the block in which they are declared is executing. Local variables are declared by nominating them immediately after the block introducer (after <code>progn</code> and function names). For example:</p>
+<p>Local variables are used to contain local information in a block inside an MLisp program. The lifetime of these variables is only while the block in which they are declared is executing. Local variables are declared by nominating them immediately after the block introducer (after <span class="cmd">progn</span> and function names). For example:</p>
 
 <pre>
 (progn
@@ -463,11 +406,11 @@ ANAMEWITHCAPITALLETTERS
 
 <p><b>ESC-x print-default</b></p>
 
-<p>Displays the default value of a buffer-specific variable in the Mini-buffer. If the variable is not buffer-specific, <code>print-default</code> functions the same way as the <code>print</code> command.</p>
+<p>Displays the default value of a buffer-specific variable in the Mini-buffer. If the variable is not buffer-specific, <span class="cmd">print-default</span> functions the same way as the <span class="cmd">print</span> command.</p>
 
 <p><b>(use-variables-of-buffer <i>buffer</i> <i>expression</i>)</b></p>
 
-<p>This function provides access to the buffer-specific variables of the buffer named <i>buffer</i>. When <i>expression</i> uses a buffer-specific variable, it will be the instance of the variable from buffer <i>buffer</i>, not from the current buffer. The following example inserts the file name of buffer <code>fred</code> into the current buffer <code>joe</code>:</p>
+<p>This function provides access to the buffer-specific variables of the buffer named <i>buffer</i>. When <i>expression</i> uses a buffer-specific variable, it will be the instance of the variable from buffer <i>buffer</i>, not from the current buffer. The following example inserts the file name of buffer <span class="cmd">fred</span> into the current buffer <span class="cmd">joe</span>:</p>
 
 <pre>
 (switch-to-buffer "joe")
@@ -478,7 +421,7 @@ ANAMEWITHCAPITALLETTERS
 
 <h3>arrays</h3>
 
-<p>You create an array by using the <code>array</code> MLisp function, and assign the resulting structure to a variable. The target variable is then coerced into an array.</p>
+<p>You create an array by using the <span class="cmd">array</span> MLisp function, and assign the resulting structure to a variable. The target variable is then coerced into an array.</p>
 
 <p>Once the array has been created, you can use all the functions defined below to manipulate the array contents.</p>
 
@@ -492,7 +435,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p>Analyses an array, and returns another array describing the bounds of the supplied array.</p>
 
-<p>The output array is declared as <code>(array 1 2 0 <i>input-array-dimensions</i>)</code>. Element [1,0] contains the number of dimensions of the array. Element [2,0]contains the total size of the array. Other elements contain the lower and upper bounds for each dimension of the array.</p>
+<p>The output array is declared as <span class="cmd">(array 1 2 0 <i>input-array-dimensions</i>)</span>. Element [1,0] contains the number of dimensions of the array. Element [2,0]contains the total size of the array. Other elements contain the lower and upper bounds for each dimension of the array.</p>
 
 <p><b>(fetch-array <i>array</i> <i>index</i>...)</b></p>
 
@@ -507,13 +450,13 @@ ANAMEWITHCAPITALLETTERS
 
 <h2>defining functions</h2>
 
-<p>A function is the object through which Emacs runs programs written in MLisp. A function is defined, then compiled, and may then be run simply by nominating it using the <code>ESC-x</code> command, or by calling it in an MLisp program. MLisp functions may also have key sequences bound to them. In this way, key bindings may be altered in a way suitable for a given application.</p>
+<p>A function is the object through which Emacs runs programs written in MLisp. A function is defined, then compiled, and may then be run simply by nominating it using the <span class="key">ESC-x</span> command, or by calling it in an MLisp program. MLisp functions may also have key sequences bound to them. In this way, key bindings may be altered in a way suitable for a given application.</p>
 
-<p>Functions are defined using the MLisp <code>defun</code> function using either of the following syntaxes:</p>
+<p>Functions are defined using the MLisp <span class="cmd">defun</span> function using either of the following syntaxes:</p>
 
 <p><b>(defun (<i>name local</i>... <i>expression</i>...))</b></p>
 
-<p>This defines a function called <i>name</i> with local variables <i>local</i>s. The function executes <i>expression</i>s each time it is called. The local variables are separated by white-space. Any arguments that need to be passed to the function must be accessed using the <code>arg</code> MLisp function. All the components except <i>name</i> are optional. The result of the function is the result of the last expression executed.</p>
+<p>This defines a function called <i>name</i> with local variables <i>local</i>s. The function executes <i>expression</i>s each time it is called. The local variables are separated by white-space. Any arguments that need to be passed to the function must be accessed using the <span class="cmd">arg</span> MLisp function. All the components except <i>name</i> are optional. The result of the function is the result of the last expression executed.</p>
 
 <p><b>(defun <i>name</i> (<i>arg...</i>) <i>local... expression</i>...)</b></p>
 
@@ -546,7 +489,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p><b>(error-occurred <i>local... expression</i>...)</b></p>
 
-<p>Introduces a block, and evaluates expressions until an error occurs. If no error occurs, then the value of the block is 0, otherwise, the value of the block is 1. When an error occurs, the text of the error message is available in the system variable <code>error-message</code>, but is not displayed in the Mini-buffer.</p>
+<p>Introduces a block, and evaluates expressions until an error occurs. If no error occurs, then the value of the block is 0, otherwise, the value of the block is 1. When an error occurs, the text of the error message is available in the system variable <span class="cmd">error-message</span>, but is not displayed in the Mini-buffer.</p>
 
 <hr align="left" size="2" color="#800080"/>
 <a name="P458_25499"></a> 
@@ -563,7 +506,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p>This function implements an if-then-else statement common in most high level languages. <i>test-expression</i> is evaluated, and if non-zero, <i>true-expression</i> is evaluated, otherwise <i>false-expression</i> is evaluated.</p>
 
-<p>A multi-way <code>if</code> statement can be constructed by repeating <i>test-expression</i> and <i>true-expression</i> in place of the false expression. The last test in the list must have a <i>false-expression</i>. For example, for the variable <code>a</code>, the following prints out the power of ten if <code>a</code> is less than 1000:</p>
+<p>A multi-way <span class="cmd">if</span> statement can be constructed by repeating <i>test-expression</i> and <i>true-expression</i> in place of the false expression. The last test in the list must have a <i>false-expression</i>. For example, for the variable <span class="cmd">a</span>, the following prints out the power of ten if <span class="cmd">a</span> is less than 1000:</p>
 
 <pre>
 (message
@@ -599,159 +542,125 @@ ANAMEWITHCAPITALLETTERS
 <table border="1">
 <tr>
 <td valign="top" width="141">
-<p>+</p>
-</td>
+<p>+</td>
 <td valign="top" width="224">
-<p>Addition</p>
-</td>
+<p>Addition</td>
 </tr>
 
 <tr>
 <td valign="top" width="141">
-<p>--</p>
-</td>
+<p>--</td>
 <td valign="top" width="224">
-<p>Subtraction</p>
-</td>
+<p>Subtraction</td>
 </tr>
 
 <tr>
 <td valign="top" width="141">
-<p>/</p>
-</td>
+<p>/</td>
 <td valign="top" width="224">
-<p>Division</p>
-</td>
+<p>Division</td>
 </tr>
 
 <tr>
 <td valign="top" width="141">
-<p>*</p>
-</td>
+<p>*</td>
 <td valign="top" width="224">
-<p>Multiplication</p>
-</td>
+<p>Multiplication</td>
 </tr>
 
 <tr>
 <td valign="top" width="141">
-<p>!</p>
-</td>
+<p>!</td>
 <td valign="top" width="224">
-<p>Complimentation</p>
-</td>
+<p>Complimentation</td>
 </tr>
 
 <tr>
 <td valign="top" width="141">
-<p>&amp;</p>
-</td>
+<p>&amp;</td>
 <td valign="top" width="224">
-<p>And</p>
-</td>
+<p>And</td>
 </tr>
 
 <tr>
 <td valign="top" width="141">
-<p>|</p>
-</td>
+<p>|</td>
 <td valign="top" width="224">
-<p>Inclusive-or</p>
-</td>
+<p>Inclusive-or</td>
 </tr>
 
 <tr>
 <td valign="top" width="141">
-<p>^</p>
-</td>
+<p>^</td>
 <td valign="top" width="224">
-<p>Exclusive-or</p>
-</td>
+<p>Exclusive-or</td>
 </tr>
 
 <tr>
 <td valign="top" width="141">
-<p>&lt;&lt;</p>
-</td>
+<p>&lt;&lt;</td>
 <td valign="top" width="224">
-<p>Left shift</p>
-</td>
+<p>Left shift</td>
 </tr>
 
 <tr>
 <td valign="top" width="141">
-<p>&gt;&gt;</p>
-</td>
+<p>&gt;&gt;</td>
 <td valign="top" width="224">
-<p>Right shift</p>
-</td>
+<p>Right shift</td>
 </tr>
 
 <tr>
 <td valign="top" width="141">
-<p>=</p>
-</td>
+<p>=</td>
 <td valign="top" width="224">
-<p>Equality</p>
-</td>
+<p>Equality</td>
 </tr>
 
 <tr>
 <td valign="top" width="141">
-<p>!=</p>
-</td>
+<p>!=</td>
 <td valign="top" width="224">
-<p>Non-equality</p>
-</td>
+<p>Non-equality</td>
 </tr>
 
 <tr>
 <td valign="top" width="141">
-<p>&lt;</p>
-</td>
+<p>&lt;</td>
 <td valign="top" width="224">
-<p>Less than</p>
-</td>
+<p>Less than</td>
 </tr>
 
 <tr>
 <td valign="top" width="141">
-<p>&gt;</p>
-</td>
+<p>&gt;</td>
 <td valign="top" width="224">
-<p>Greater than</p>
-</td>
+<p>Greater than</td>
 </tr>
 
 <tr>
 <td valign="top" width="141">
-<p>&lt;=</p>
-</td>
+<p>&lt;=</td>
 <td valign="top" width="224">
-<p>Less than or equal</p>
-</td>
+<p>Less than or equal</td>
 </tr>
 
 <tr>
 <td valign="top" width="141">
-<p>&gt;=</p>
-</td>
+<p>&gt;=</td>
 <td valign="top" width="224">
-<p>Greater than or equal</p>
-</td>
+<p>Greater than or equal</td>
 </tr>
 
 <tr>
 <td valign="top" width="141">
-<p>c=</p>
-</td>
+<p>c=</td>
 <td valign="top" width="224">
-<p>Character equal</p>
-</td>
+<p>Character equal</td>
 </tr>
 </table>
 
-<p>All of these functions can be used with one or more arguments. Arguments are used singly or in pairs to form a running total. The only unary operator is <code>!</code> (complimentation).</p>
+<p>All of these functions can be used with one or more arguments. Arguments are used singly or in pairs to form a running total. The only unary operator is <span class="cmd">!</span> (complimentation).</p>
 
 <h3>string operator functions</h3>
 
@@ -795,19 +704,19 @@ ANAMEWITHCAPITALLETTERS
 
 <p><b>(dot)</b></p>
 
-<p><code>dot</code> returns a marker for the current position of dot in the current buffer.</p>
+<p><span class="cmd">dot</span> returns a marker for the current position of dot in the current buffer.</p>
 
 <p><b>(mark)</b></p>
 
-<p><code>mark</code> returns a marker for the current position of the current buffer's mark if the mark is set. An error is generated if no mark is set.</p>
+<p><span class="cmd">mark</span> returns a marker for the current position of the current buffer's mark if the mark is set. An error is generated if no mark is set.</p>
 
 <p><b>(preceding-char)</b></p>
 
-<p><code>preceding-char</code> returns the numeric value of the character to the left of dot in the current buffer. If dot is located at the beginning of the buffer, 0 is returned.</p>
+<p><span class="cmd">preceding-char</span> returns the numeric value of the character to the left of dot in the current buffer. If dot is located at the beginning of the buffer, 0 is returned.</p>
 
 <p><b>(following-char)</b></p>
 
-<p><code>following-char</code> returns the numeric value of the character to the right of dot in the current buffer. If dot is located at the end of the buffer, 0 is returned.</p>
+<p><span class="cmd">following-char</span> returns the numeric value of the character to the right of dot in the current buffer. If dot is located at the end of the buffer, 0 is returned.</p>
 
 <hr align="left" size="2" color="#800080"/>
 <a name="P583_29496"></a> 
@@ -822,49 +731,49 @@ ANAMEWITHCAPITALLETTERS
 
 <p><b>(eolp)</b></p>
 
-<p><code>eolp</code> returns <code>true</code> if dot is currently at the end of a line in the current buffer. Otherwise, it returns <code>false</code>.</p>
+<p><span class="cmd">eolp</span> returns <span class="cmd">true</span> if dot is currently at the end of a line in the current buffer. Otherwise, it returns <span class="cmd">false</span>.</p>
 
 <p><b>(eobp)</b></p>
 
-<p><code>eobp</code> returns <code>true</code> if dot is at the end of the current buffer. Otherwise, it returns <code>false</code>.</p>
+<p><span class="cmd">eobp</span> returns <span class="cmd">true</span> if dot is at the end of the current buffer. Otherwise, it returns <span class="cmd">false</span>.</p>
 
 <p><b>(bolp)</b></p>
 
-<p><code>bolp</code> returns <code>true</code> if dot is currently at the beginning of a line in the current buffer. Otherwise, it returns <code>false</code>.</p>
+<p><span class="cmd">bolp</span> returns <span class="cmd">true</span> if dot is currently at the beginning of a line in the current buffer. Otherwise, it returns <span class="cmd">false</span>.</p>
 
 <p><b>(bobp)</b></p>
 
-<p><code>bobp</code> returns <code>true</code> if dot is at the beginning of the current buffer. Otherwise, it returns <code>false</code>.</p>
+<p><span class="cmd">bobp</span> returns <span class="cmd">true</span> if dot is at the beginning of the current buffer. Otherwise, it returns <span class="cmd">false</span>.</p>
 
 <p><b>(dot-is-visible)</b></p>
 
-<p><code>dot-is-visible</code> returns <code>true</code> if the current location of dot is being displayed in a window on the screen. Otherwise, it returns <code>false</code>.</p>
+<p><span class="cmd">dot-is-visible</span> returns <span class="cmd">true</span> if the current location of dot is being displayed in a window on the screen. Otherwise, it returns <span class="cmd">false</span>.</p>
 
 <p><b>(interactive)</b></p>
 
-<p><code>interactive</code> returns <code>true</code> if the currently executing MLisp function was invoked either by using <code>ESC-x</code>, or as a result of a key binding. Otherwise, it returns <code>false</code>.</p>
+<p><span class="cmd">interactive</span> returns <span class="cmd">true</span> if the currently executing MLisp function was invoked either by using <span class="key">ESC-x</span>, or as a result of a key binding. Otherwise, it returns <span class="cmd">false</span>.</p>
 
 <p><b>(is-bound <i>name</i>...)</b></p>
 
-<p><code>is-bound</code> returns <code>true</code> if all the specified variables currently bound to storage. Otherwise, it returns <code>false</code>.</p>
+<p><span class="cmd">is-bound</span> returns <span class="cmd">true</span> if all the specified variables currently bound to storage. Otherwise, it returns <span class="cmd">false</span>.</p>
 
 <h3>accessing prefix and postfix arguments</h3>
 
-<p>Emacs has two argument systems: prefix arguments, which are always numerics; and post-fix arguments which may be numerics, strings, markers, arrays or window-rings. Prefix arguments are generally specified interactively from the keyboard using the <code>^U</code> command, but may also be manipulated from within an MLisp program by using the following functions and variables:</p>
+<p>Emacs has two argument systems: prefix arguments, which are always numerics; and post-fix arguments which may be numerics, strings, markers, arrays or window-rings. Prefix arguments are generally specified interactively from the keyboard using the <span class="key">^U</span> command, but may also be manipulated from within an MLisp program by using the following functions and variables:</p>
 
 <p><b>(provide-prefix-argument <i>prefix expression</i>)</b></p>
 
-<p>This function applies the numeric prefix argument <i>prefix</i> to the <i>expression</i> provided. The result of the function is the result of the execution of the expression. It is generally more efficient to use <code>provide-prefix-argument</code> to repeat a command many times than to use a <code>while</code> loop, or by repetition of the desired command. However, the command to be executed must interpret a prefix argument as a repetition count in order for this to work properly.</p>
+<p>This function applies the numeric prefix argument <i>prefix</i> to the <i>expression</i> provided. The result of the function is the result of the execution of the expression. It is generally more efficient to use <span class="cmd">provide-prefix-argument</span> to repeat a command many times than to use a <span class="cmd">while</span> loop, or by repetition of the desired command. However, the command to be executed must interpret a prefix argument as a repetition count in order for this to work properly.</p>
 
 <p><b>(prefix-argument-loop <i>expression</i>...)</b></p>
 
-<p><code>prefix-argument-loop</code> causes the <i>expression</i>s provided to be executed prefix argument number of times. If no prefix argument was provided to the MLisp function that calls <code>prefix-argument-loop</code>, the expressions will only be executed once. The result of the function is the result of the last expression in the expression list to be executed.</p>
+<p><span class="cmd">prefix-argument-loop</span> causes the <i>expression</i>s provided to be executed prefix argument number of times. If no prefix argument was provided to the MLisp function that calls <span class="cmd">prefix-argument-loop</span>, the expressions will only be executed once. The result of the function is the result of the last expression in the expression list to be executed.</p>
 
 <p><b>(return-prefix-argument <i>expression</i>)</b></p>
 
 <p>This function sets up the prefix argument for the next function to be executed. The value of the function is the value of the expression returned as the prefix argument.</p>
 
-<p>If you wish to provide a prefix argument for the next function to run after the current function has finished, <code>return-prefix-argument</code> must be the last expression to be executed.</p>
+<p>If you wish to provide a prefix argument for the next function to run after the current function has finished, <span class="cmd">return-prefix-argument</span> must be the last expression to be executed.</p>
 
 <p><b>(prefix-argument)</b></p>
 
@@ -872,11 +781,11 @@ ANAMEWITHCAPITALLETTERS
 
 <p><b>prefix-argument-provided</b></p>
 
-<p>This variable is <code>true</code> if an MLisp function has been called with a prefix argument, otherwise it is <code>false</code>. This variable is provided because there is no way to tell if a prefix argument has been provided by merely examining its value.</p>
+<p>This variable is <span class="cmd">true</span> if an MLisp function has been called with a prefix argument, otherwise it is <span class="cmd">false</span>. This variable is provided because there is no way to tell if a prefix argument has been provided by merely examining its value.</p>
 
 <p><b>(arg <i>num prompt</i>)</b></p>
 
-<p>This function causes the evaluation of the <i>num</i>th postfix argument provided to the function. If the required argument is an expression, then it will be re-evaluated every time <code>arg</code> accesses it. The left-most argument in a function call is argument number 1.</p>
+<p>This function causes the evaluation of the <i>num</i>th postfix argument provided to the function. If the required argument is an expression, then it will be re-evaluated every time <span class="cmd">arg</span> accesses it. The left-most argument in a function call is argument number 1.</p>
 
 <p>If the desired argument was not provided in the call, <i>prompt</i> is used as a terminal prompt string to read in the argument from the user. If <i>prompt</i> is omitted, this feature is disabled, and an error message is generated.</p>
 
@@ -892,7 +801,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p><b>(expand-from-string-table <i>prompt</i> <i>word-list-string</i>)</b></p>
 
-<p>This function provides access to the Emacs input expansion mechanism. The function has two parameters: the first is a prompt, the second is a string that contains a space-separated list of words from which the user can select a choice. The result of the function is the selected word. <code>expand-from-string-table</code> will only allow one of the words in the list to be returned. The following example, causes a <code>Command:</code> prompt to appear in the Mini-buffer; the user must then enter one of the four words from the supplied list:</p>
+<p>This function provides access to the Emacs input expansion mechanism. The function has two parameters: the first is a prompt, the second is a string that contains a space-separated list of words from which the user can select a choice. The result of the function is the selected word. <span class="cmd">expand-from-string-table</span> will only allow one of the words in the list to be returned. The following example, causes a <span class="cmd">Command:</span> prompt to appear in the Mini-buffer; the user must then enter one of the four words from the supplied list:</p>
 
 <pre>
 (expand-from-string-table "Command: " "exit" "read" "write" "quit")
@@ -904,11 +813,11 @@ ANAMEWITHCAPITALLETTERS
 
 <p><b>(get-tty-command <i>prompt</i>)</b></p>
 
-<p><code>get-tty-command</code> issues the prompt in the Mini-buffer and then reads in a string. Function name completion is enabled during this operation, and the only valid input is an existing function name. The value of this function is a string containing the name of the function selected.</p>
+<p><span class="cmd">get-tty-command</span> issues the prompt in the Mini-buffer and then reads in a string. Function name completion is enabled during this operation, and the only valid input is an existing function name. The value of this function is a string containing the name of the function selected.</p>
 
 <p><b>(get-tty-file <i>prompt</i>)</b></p>
 
-<p><code>get-tty-file</code> issues the prompt supplied in the Mini-buffer and then reads in a string. File name completion is enabled during this operation, although any string is valid when a <code>Return</code> is pressed. Multiple versions of the same file are ignored during completion. The value of this function is a string containing the name of the file selected.</p>
+<p><span class="cmd">get-tty-file</span> issues the prompt supplied in the Mini-buffer and then reads in a string. File name completion is enabled during this operation, although any string is valid when a <span class="key">Return</span> is pressed. Multiple versions of the same file are ignored during completion. The value of this function is a string containing the name of the file selected.</p>
 
 <p><b>(get-tty-string <i>prompt</i>)</b></p>
 
@@ -916,7 +825,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p><b>(get-tty-variable <i>prompt</i>)</b></p>
 
-<p><code>get-tty-variable</code> issues the prompt in the Mini-buffer and then reads in the name of a variable. Variable name completion is enabled during this operation. The value of the function is a string containing the variable name selected.</p>
+<p><span class="cmd">get-tty-variable</span> issues the prompt in the Mini-buffer and then reads in the name of a variable. Variable name completion is enabled during this operation. The value of the function is a string containing the variable name selected.</p>
 
 <p><b>(get-tty-buffer <i>prompt</i>)</b></p>
 
@@ -924,7 +833,7 @@ ANAMEWITHCAPITALLETTERS
 
 <p><b>(process-keys <i>keymap</i>)</b></p>
 
-<p>This function reads one key sequence from the keyboard by using the supplied keymap. The function selected by the key sequence is executed, and the result is returned as <code>process-key</code>'s value.</p>
+<p>This function reads one key sequence from the keyboard by using the supplied keymap. The function selected by the key sequence is executed, and the result is returned as <span class="cmd">process-key</span>'s value.</p>
 
 <h3>functions for displaying messages</h3>
 
@@ -936,13 +845,13 @@ ANAMEWITHCAPITALLETTERS
 
 <p><b>(error-message <i>string</i>...)</b></p>
 
-<p>Displays the concatenated <i>string</i>s in the Mini-buffer and declares an error. No further statements of an MLisp program will be executed, and the keyboard processor will resume operation (unless <code>error-message</code> has been issued from inside an <code>error-occurred</code> function).</p>
+<p>Displays the concatenated <i>string</i>s in the Mini-buffer and declares an error. No further statements of an MLisp program will be executed, and the keyboard processor will resume operation (unless <span class="cmd">error-message</span> has been issued from inside an <span class="cmd">error-occurred</span> function).</p>
 
 <p><b>(sit-for <i>length</i>)</b></p>
 
 <p>This function causes the display to be updated, and executes a pause for <i>length</i> tenths of a second. The pause may be interrupted by the user pressing a key.</p>
 
-<p>This function is useful when displaying status information to the user. For example, if a function takes some time to execute, it may be helpful to indicate what the function is currently doing. An argument of zero to <code>sit-for</code> will update the screen, but will not pause Emacs processing.</p>
+<p>This function is useful when displaying status information to the user. For example, if a function takes some time to execute, it may be helpful to indicate what the function is currently doing. An argument of zero to <span class="cmd">sit-for</span> will update the screen, but will not pause Emacs processing.</p>
 
 <hr align="left" size="2" color="#800080"/>
 <a name="P714_37262"></a> 
@@ -952,16 +861,16 @@ ANAMEWITHCAPITALLETTERS
 <p>Once you have written some MLisp, the code must be compiled before it can be executed. There are several ways to compile MLisp code:</p>
 
 <ul>
-<li>If the MLisp is located in a buffer in Emacs, make the buffer current and use the <code>ESC-x execute-mlisp-buffer</code> command. This command takes the Mlisp expressions in the buffer, compiles and executes them.</li>
+<li>If the MLisp is located in a buffer in Emacs, make the buffer current and use the <span class="key">ESC-x execute-mlisp-buffer</span> command. This command takes the Mlisp expressions in the buffer, compiles and executes them.</li>
 
-<li>If the MLisp is in a file, you can use the <code>ESC-x execute-mlisp-file</code> command. If no file type has been specified, then .ML is assumed. This command first searches for the specified file using the EMACS_PATH logical name. If no file is found, then a search is made in the database <code>MLisp-library</code> (if the file type is .ML, this is first removed). If no module is found in the database with the specified name, an error message is displayed. 
+<li>If the MLisp is in a file, you can use the <span class="key">ESC-x execute-mlisp-file</span> command. If no file type has been specified, then .ML is assumed. This command first searches for the specified file using the EMACS_PATH logical name. If no file is found, then a search is made in the database <span class="cmd">MLisp-library</span> (if the file type is .ML, this is first removed). If no module is found in the database with the specified name, an error message is displayed. 
 
 <p>When the file has been opened, all the MLisp expressions contained in the file are read in, compiled, and executed.</p>
 </li>
 
-<li>If you wish to type a one-line MLisp program, you can use <code>ESC-x execute-mlisp-line</code>. This prompts in the Mini-buffer for a single MLisp expression to compile and execute. When the expression has been executed, <code>execute-mlisp-line</code> prints the returned value of the expression in the Mini-buffer. 
+<li>If you wish to type a one-line MLisp program, you can use <span class="key">ESC-x execute-mlisp-line</span>. This prompts in the Mini-buffer for a single MLisp expression to compile and execute. When the expression has been executed, <span class="cmd">execute-mlisp-line</span> prints the returned value of the expression in the Mini-buffer. 
 
-<p><code>execute-mlisp-line</code> can also be used from MLisp programs to dynamically compile and execute a string. When called non-interactively, a single string argument can be specified. This string is compiled and executed as above, and the result returned as the result of the <code>execute-mlisp-line</code> function.</p>
+<p><span class="cmd">execute-mlisp-line</span> can also be used from MLisp programs to dynamically compile and execute a string. When called non-interactively, a single string argument can be specified. This string is compiled and executed as above, and the result returned as the result of the <span class="cmd">execute-mlisp-line</span> function.</p>
 </li>
 
 <li>If you wish to type a short MLisp program, you can use the MINIBUF package. See the Barry's Emacs Extensions Reference Manual for a description of the MINIBUF package.</li>
@@ -974,21 +883,21 @@ ANAMEWITHCAPITALLETTERS
 
 <p>A considerable number of the functions in Emacs reside in libraries. A library function is not accessible unless the library that contains it is loaded. A number of libraries are provided with Emacs, and can be loaded automatically or on request to make their functions available.</p>
 
-<p>To load a library, use <code>execute-mlisp-file</code>. Emacs loads the library by first looking in your own directory for the library file (or a directory you specify), then in the Emacs directory, then in the <code>MLisp-library</code> database search-list. Once the library has been loaded, all the functions defined in the library are then available for use.</p>
+<p>To load a library, use <span class="cmd">execute-mlisp-file</span>. Emacs loads the library by first looking in your own directory for the library file (or a directory you specify), then in the Emacs directory, then in the <span class="cmd">MLisp-library</span> database search-list. Once the library has been loaded, all the functions defined in the library are then available for use.</p>
 
-<p>For example, if you load the AREA library, you can then use the <code>delete-area</code> function to delete an area of the screen. <code>delete-area</code> is defined in the AREA library.</p>
+<p>For example, if you load the AREA library, you can then use the <span class="cmd">delete-area</span> function to delete an area of the screen. <span class="cmd">delete-area</span> is defined in the AREA library.</p>
 
-<p>In addition to making functions accessible to <code>ESC-x</code>, the library may bind some functions to key sequences. This is done by the library loading another file called <i>LIBRARY-NAME</i>.KEY, where <i>LIBRARY-NAME</i> is the name of the library being loaded.</p>
+<p>In addition to making functions accessible to <span class="key">ESC-x</span>, the library may bind some functions to key sequences. This is done by the library loading another file called <i>LIBRARY-NAME</i>.KEY, where <i>LIBRARY-NAME</i> is the name of the library being loaded.</p>
 
-<p>Some libraries are loaded automatically in the course of executing certain functions. You will not normally notice this. For example, the PROCESS library is automatically loaded when you use the <code>shell</code> function for the first time. This facility is known as autoloading. Autoloading is used to make library functions available without you having to know how to load the library. Autoloading also saves space in Emacs by loading libraries only when you need them.</p>
+<p>Some libraries are loaded automatically in the course of executing certain functions. You will not normally notice this. For example, the PROCESS library is automatically loaded when you use the <span class="cmd">shell</span> function for the first time. This facility is known as autoloading. Autoloading is used to make library functions available without you having to know how to load the library. Autoloading also saves space in Emacs by loading libraries only when you need them.</p>
 
-<p>Autoloading works by simply calling <code>execute-mlisp-file</code> on the required library. Autoloading is set up using the <code>autoload</code> function. For example, if you have a function named <code>box-it</code> which is defined in the file BOXIT.ML, then the command:</p>
+<p>Autoloading works by simply calling <span class="cmd">execute-mlisp-file</span> on the required library. Autoloading is set up using the <span class="cmd">autoload</span> function. For example, if you have a function named <span class="cmd">box-it</span> which is defined in the file BOXIT.ML, then the command:</p>
 
 <pre>
 (autoload "box-it" "boxit.ml")
 </pre>
 
-<p>will define the <code>box-it</code> function, but will not actually load the definition from BOXIT.ML until you execute the <code>box-it</code> function.</p>
+<p>will define the <span class="cmd">box-it</span> function, but will not actually load the definition from BOXIT.ML until you execute the <span class="cmd">box-it</span> function.</p>
 
 <hr align="left" size="2" color="#800080"/>
 <a name="P750_40825"></a> 
@@ -1003,9 +912,9 @@ ANAMEWITHCAPITALLETTERS
 providing the MLisp programmer with tracing, breakpointing, error
 trapping and stack-dumping facilities.</p>
 
-<p>To start DEBUG, load the DEBUG library. Each time you want to enter DEBUG mode, use the <code>ESC-^D</code> command (or execute the <code>ESC-x debug</code> command). The <code>debug</code> function loads up the breakpoint, error and trace handlers, binds debug commands to keys and pops up the DEBUG windows. Source code and other information displayed by DEBUG will appear in these windows.</p>
+<p>To start DEBUG, load the DEBUG library. Each time you want to enter DEBUG mode, use the <span class="key">ESC-^D</span> command (or execute the <span class="key">ESC-x debug</span> command). The <span class="cmd">debug</span> function loads up the breakpoint, error and trace handlers, binds debug commands to keys and pops up the DEBUG windows. Source code and other information displayed by DEBUG will appear in these windows.</p>
 
-<p>The following commands are available in the <code>DEBUG</code> window:</p>
+<p>The following commands are available in the <span class="cmd">DEBUG</span> window:</p>
 
 <p><b>b (set breakpoint)</b></p>
 
@@ -1017,7 +926,7 @@ trapping and stack-dumping facilities.</p>
 
 <p><b>c (show calls)</b></p>
 
-<p>Displays the current call stack in the <code>DEBUG</code> window.</p>
+<p>Displays the current call stack in the <span class="cmd">DEBUG</span> window.</p>
 
 <p><b>. or KP5 (display current source)</b></p>
 
@@ -1043,7 +952,7 @@ trapping and stack-dumping facilities.</p>
 
 <p><b>l (list breakpoints)</b></p>
 
-<p>Lists in the <code>DEBUG</code> window all functions which have their breakpoint flag set.</p>
+<p>Lists in the <span class="cmd">DEBUG</span> window all functions which have their breakpoint flag set.</p>
 
 <p><b>o or KP0 (step over)</b></p>
 
@@ -1055,7 +964,7 @@ trapping and stack-dumping facilities.</p>
 
 <p><b>q (quit)</b></p>
 
-<p>Exits DEBUG. The DEBUG windows are removed and all variables controlled by DEBUG are reset. Breakpoints remain intact, but will not cause DEBUG to be run. To restart debugging, use the <code>ESC-^D</code> command.</p>
+<p>Exits DEBUG. The DEBUG windows are removed and all variables controlled by DEBUG are reset. Breakpoints remain intact, but will not cause DEBUG to be run. To restart debugging, use the <span class="key">ESC-^D</span> command.</p>
 
 <p><b>s (step)</b></p>
 
@@ -1063,7 +972,7 @@ trapping and stack-dumping facilities.</p>
 
 <p><b>t (set trace mode)</b></p>
 
-<p>Enables trace-mode. During trace-mode, every MLisp expression that is executed will be displayed in the DEBUG windows for <code>debug-sit-for</code> tenths of a second. Execution will continue until all MLisp expression have been executed.</p>
+<p>Enables trace-mode. During trace-mode, every MLisp expression that is executed will be displayed in the DEBUG windows for <span class="cmd">debug-sit-for</span> tenths of a second. Execution will continue until all MLisp expression have been executed.</p>
 
 <p><b>T (Unset trace mode)</b></p>
 
@@ -1073,7 +982,7 @@ trapping and stack-dumping facilities.</p>
 
 <p>Prints the value of the last executed expression.</p>
 
-<p>DEBUG never displays debug information about any of the DEBUG functions or MLisp functions that are called while in the <code>DEBUG</code> window. This stops DEBUG from confusing you.</p>
+<p>DEBUG never displays debug information about any of the DEBUG functions or MLisp functions that are called while in the <span class="cmd">DEBUG</span> window. This stops DEBUG from confusing you.</p>
 
 <h3>tools for building mlisp debuggers</h3>
 
@@ -1085,57 +994,57 @@ stack-trace generation.</p>
 
 <h4><b><i>Breakpoints</i></b></h4>
 
-<p>Each function within Emacs can have a breakpoint applied to it. If, during the course of executing functions, Emacs attempts to execute a function which has a breakpoint, it calls the breakpoint function specified in the <code>breakpoint-hook</code> variable.</p>
+<p>Each function within Emacs can have a breakpoint applied to it. If, during the course of executing functions, Emacs attempts to execute a function which has a breakpoint, it calls the breakpoint function specified in the <span class="cmd">breakpoint-hook</span> variable.</p>
 
-<p>Breakpoints are set for a function using the <code>ESC-x breakpoint</code> command. This command asks for the name of a function and the value to which the function's breakpoint flag should be set. The execution of a function causes a breakpoint if the function's breakpoint flag is set and if the variable <code>breakpoint-hook</code> contains the name of an Emacs function.</p>
+<p>Breakpoints are set for a function using the <span class="key">ESC-x breakpoint</span> command. This command asks for the name of a function and the value to which the function's breakpoint flag should be set. The execution of a function causes a breakpoint if the function's breakpoint flag is set and if the variable <span class="cmd">breakpoint-hook</span> contains the name of an Emacs function.</p>
 
 <p>The breakpoint function is called just before the function that caused the breakpoint to occur is called.</p>
 
-<p><code>decompile-current-line</code> can be used to display the environment from which the breakpointing function was called.</p>
+<p><span class="cmd">decompile-current-line</span> can be used to display the environment from which the breakpointing function was called.</p>
 
 <h4><b><i>Error Trapping</i></b></h4>
 
 <p>If an error occurs during the execution of MLisp code, the normal action is to display the error message in the Mini-buffer, and to abort the execution of all macros and MLisp code.</p>
 
-<p>However, if the variable <code>error-hook</code> contains the name of a function, then this function is called instead. This means that a debugger can gain control when an error occurs. Further, during the execution of the error function, the error message that should have been displayed is available to the debugger in the variable <code>error-message</code>.</p>
+<p>However, if the variable <span class="cmd">error-hook</span> contains the name of a function, then this function is called instead. This means that a debugger can gain control when an error occurs. Further, during the execution of the error function, the error message that should have been displayed is available to the debugger in the variable <span class="cmd">error-message</span>.</p>
 
-<p>Error trapping does not occur for errors that happen in an <code>error-occurred</code> block.</p>
+<p>Error trapping does not occur for errors that happen in an <span class="cmd">error-occurred</span> block.</p>
 
 <h4><b><i>Trace Mode</i></b></h4>
 
 <p>Tracing of MLisp programs is controlled with three variables:</p>
 
-<p><code>&#183; trace-into</code></p>
+<p><span class="cmd">&#183; trace-into</span></p>
 
-<p><code>&#183; trace-mode</code></p>
+<p><span class="cmd">&#183; trace-mode</span></p>
 
-<p><code>&#183; trace-hook</code></p>
+<p><span class="cmd">&#183; trace-hook</span></p>
 
-<p>When <code>trace-mode</code> is set, the function whose name is contained in <code>trace-hook</code> is called before each MLisp statement is executed. The decompiled form of the statement about to be executed is available using the <code>decompile-current-line</code> function.</p>
+<p>When <span class="cmd">trace-mode</span> is set, the function whose name is contained in <span class="cmd">trace-hook</span> is called before each MLisp statement is executed. The decompiled form of the statement about to be executed is available using the <span class="cmd">decompile-current-line</span> function.</p>
 
-<p>On MLisp function calls, <code>trace-into</code> controls whether tracing continues into the called code. If <code>trace-into</code> is <code>true</code>, tracing continues into functions. Otherwise, tracing will be suspended until the inner function has completed execution.</p>
+<p>On MLisp function calls, <span class="cmd">trace-into</span> controls whether tracing continues into the called code. If <span class="cmd">trace-into</span> is <span class="cmd">true</span>, tracing continues into functions. Otherwise, tracing will be suspended until the inner function has completed execution.</p>
 
 <h4><b><i>Stack Tracing</i></b></h4>
 
 <p>The generation of an MLisp stack trace can be automatic when an error is detected, or can be generated by the user at any time from an MLisp function.</p>
 
-<p>The variable <code>stack-trace-on-error</code> controls the generation of stack-traces when an error is detected. If set to <code>true</code>, when an error is generated, a buffer called <code>Stack-trace</code> is created, and the current MLisp stack is inserted into the buffer. No action is taken inside an <code>error-occurred</code> block. The first line of the stack trace contains the error message that caused the stack-trace to occur. The second and subsequent lines contain the decompiled expressions being executed when the error was detected. An end-of-stack marker is located at the end of the buffer.</p>
+<p>The variable <span class="cmd">stack-trace-on-error</span> controls the generation of stack-traces when an error is detected. If set to <span class="cmd">true</span>, when an error is generated, a buffer called <span class="cmd">Stack-trace</span> is created, and the current MLisp stack is inserted into the buffer. No action is taken inside an <span class="cmd">error-occurred</span> block. The first line of the stack trace contains the error message that caused the stack-trace to occur. The second and subsequent lines contain the decompiled expressions being executed when the error was detected. An end-of-stack marker is located at the end of the buffer.</p>
 
-<p>The variable  <code>stack-maximum-depth</code> limits the call
+<p>The variable  <span class="cmd">stack-maximum-depth</span> limits the call
 depth of the running MLisp code.</p>
 
-<p>For example, if the following function is executed with a parameter of <code>1</code>:</p>
+<p>For example, if the following function is executed with a parameter of <span class="cmd">1</span>:</p>
 
-<p><code>(defun x (a)<br />
+<p><span class="cmd">(defun x (a)<br />
 &#160;&#160;&#160;&#160;(if (&gt; a 3)<br />
 &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;(error-message "Too deep")<br />
 &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;(x (+ a 1))<br />
 &#160;&#160;&#160;&#160;)<br />
 )</code></p>
 
-<p>then the buffer <code>Stack-trace</code> would contain:</p>
+<p>then the buffer <span class="cmd">Stack-trace</span> would contain:</p>
 
-<p><code>Message: Too deep
+<p><span class="cmd">Message: Too deep
 <br />
 Executing: (error-message "Too deep")
 <br />
@@ -1149,12 +1058,13 @@ Executing: (error-message "Too deep")
 <br />
 --- bottom of stack ---</code></p>
 
-<p>The function <code>dump-stack-trace</code> can be used to generate a stack-trace at any time.
-The stack-trace will be located in buffer <code>Stack-trace</code>, which will be popped onto the screen.
+<p>The function <span class="cmd">dump-stack-trace</span> can be used to generate a stack-trace at any time.
+The stack-trace will be located in buffer <span class="cmd">Stack-trace</span>, which will be popped onto the screen.
 The stack-trace format is the same as that displayed for stack-traced errors,
-except that there will never be a <code>Message:</code> line.</p>
+except that there will never be a <span class="cmd">Message:</span> line.</p>
 
 
+</div>
 </body>
 </html>
 

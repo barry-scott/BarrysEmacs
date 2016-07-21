@@ -2,12 +2,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
+
 <title>Functions M*</title>
 
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<hr/>
+<div class="contents">
+
 <p><a name="mark"></a>(<b>mark</b>)</p>
 
 <blockquote>
@@ -23,14 +26,14 @@
 
 </blockquote>
 
-<hr/>
-<p><a name="match-wild"></a>(<b>match-wild</b> <code>candidate</code> <code>pattern</code>)</p>
+
+<p><a name="match-wild"></a>(<b>match-wild</b> <span class="cmd">candidate</span> <span class="cmd">pattern</span>)</p>
 
 <blockquote>
 <p>match-wild performs MSDOS shell style wildcard matching.
-The <code>pattern</code> support * and ? as wildcard chars.</p>
+The <span class="cmd">pattern</span> support * and ? as wildcard chars.</p>
 
-<p>match-wild returns 1 if the <code>candidate</code> string matches the <code>pattern</code>.</p>
+<p>match-wild returns 1 if the <span class="cmd">candidate</span> string matches the <span class="cmd">pattern</span>.</p>
 <p>Example:</p>
 
 <pre>(match-wild ~file "*.txt") ; return true if ~file is a .txt file</pre>
@@ -39,15 +42,15 @@ The <code>pattern</code> support * and ? as wildcard chars.</p>
 
 </blockquote>
 
-<hr/>
-<p><a name="message"></a>(<b>message</b> <code>string...</code>)</p>
+
+<p><a name="message"></a>(<b>message</b> <span class="cmd">string...</span>)</p>
 
 <blockquote>
 <p>Concatenates its string arguments and displays them in the Mini-buffer at the bottom of the screen the next time the screen is updated.</p>
 
 <p>The screen is only updated when an input request needs to pause to obtain characters, 
 or the sit-for function is executed. If you want to display a message then 
-use <code>(sit-for 0)</code> to force a screen update.
+use <span class="cmd">(sit-for 0)</span> to force a screen update.
 </p>
 
 <p><b>See also:</b></p>
@@ -59,7 +62,7 @@ use <code>(sit-for 0)</code> to force a screen update.
 
 </blockquote>
 
-<hr/>
+
 <p><a name="meta-digit"></a>(<b>meta-digit</b>) ESC-0...ESC-9</p>
 
 <blockquote>
@@ -76,7 +79,7 @@ use <code>(sit-for 0)</code> to force a screen update.
 
 </blockquote>
 
-<hr/>
+
 <p><a name="meta-minus"></a>(<b>meta-minus</b>) ESC- -</p>
 
 <blockquote>
@@ -95,11 +98,11 @@ use <code>(sit-for 0)</code> to force a screen update.
 
 </blockquote>
 
-<hr/>
+
 <p><a name="Minibuf-local-map"></a>(<b>Minibuf-local-map</b>)</p>
 
 <blockquote>
-<p>This keymap is used to read commands in the Mini-buffer when spaces are command terminators. For example: reading a command name with <code>expand-mlisp-word</code>.</p>
+<p>This keymap is used to read commands in the Mini-buffer when spaces are command terminators. For example: reading a command name with <span class="cmd">expand-mlisp-word</span>.</p>
 
 <p>The following keys are bound in the keymap:</p>
 
@@ -146,7 +149,7 @@ use <code>(sit-for 0)</code> to force a screen update.
 
 </blockquote>
 
-<hr/>
+
 <p><a name="Minibuf-local-NS-map"></a>(<b>Minibuf-local-NS-map</b>)</p>
 
 <blockquote>
@@ -207,11 +210,11 @@ use <code>(sit-for 0)</code> to force a screen update.
 
 </blockquote>
 
-<hr/>
+
 <p><a name="minus">(<b>minus</b>) -</a></p>
 
 <blockquote>
-<p>This command is bound to the minus key after the <code>argument-prefix</code> command has been executed. It is used to negate the prefix argument.</p>
+<p>This command is bound to the minus key after the <span class="cmd">argument-prefix</span> command has been executed. It is used to negate the prefix argument.</p>
 
 <p><b>See also:</b></p>
 
@@ -223,11 +226,11 @@ use <code>(sit-for 0)</code> to force a screen update.
 
 </blockquote>
 
-<hr/>
-<p><a name="modify-`syntax-entry"></a>(<b>modify-syntax-entry</b> <code>syntax-string</code>)</p>
+
+<p><a name="modify-`syntax-entry"></a>(<b>modify-syntax-entry</b> <span class="cmd">syntax-string</span>)</p>
 
 <blockquote>
-<p>This function is provided for compatibility with old MLisp code only. Use <code>modify-syntax-table</code> for all new MLisp code.</p>
+<p>This function is provided for compatibility with old MLisp code only. Use <span class="cmd">modify-syntax-table</span> for all new MLisp code.</p>
 
 <p>Modifies a set of entries in the syntax table associated with the current buffer. See the Barry's Emacs Programmer's Guide for more information on <a href="pg_extension_facilities.html#syntaxtables">how to alter syntax tables</a>.</p>
 
@@ -242,23 +245,23 @@ use <code>(sit-for 0)</code> to force a screen update.
 
 </blockquote>
 
-<hr/>
-<p><a name="modify-syntax-table"></a>(<b>modify-syntax-table</b> <code>type</code> <code>args...</code>)</p>
+
+<p><a name="modify-syntax-table"></a>(<b>modify-syntax-table</b> <span class="cmd">type</span> <span class="cmd">args...</span>)</p>
 
 <blockquote>
 <p>Modifies a set of entries in the syntax table associated with the current buffer. See the Barry's Emacs Programmer's Guide for more information on <a href="pg_extension_facilities.html#syntaxtables">how to alter syntax tables</a>.</p>
 
-<p>Syntax tables are associated with buffers by using the <code>use-syntax-table</code> command. Syntax tables are used by commands like <code>forward-paren</code> to do a limited form of parsing for language-dependent routines. They define such things as which characters are parts of words, which quote strings, and which delimit comments.</p>
+<p>Syntax tables are associated with buffers by using the <span class="cmd">use-syntax-table</span> command. Syntax tables are used by commands like <span class="cmd">forward-paren</span> to do a limited form of parsing for language-dependent routines. They define such things as which characters are parts of words, which quote strings, and which delimit comments.</p>
 
 <p>Syntax colouring and regular expression searches depend on the information in the syntax table.</p>
 
-<p><code>modify-syntax-table</code> can be called in one of the following ways:</p>
+<p><span class="cmd">modify-syntax-table</span> can be called in one of the following ways:</p>
 
 
 <table border="1">
 <tr><th>Action</th><th>Command</th></tr>
 <tr>
-<td>Define the characters in <b>charset</b> as word characters, as used by such commands as <code>forward-word</code> and <code>case-word-capitalize</code>.</td>
+<td>Define the characters in <b>charset</b> as word characters, as used by such commands as <span class="cmd">forward-word</span> and <span class="cmd">case-word-capitalize</span>.</td>
 <td>
 <pre>
 (modify-syntax-table
@@ -396,7 +399,7 @@ Ranges of characters can be conveniently entered by giving the first and last ch
 
 </blockquote>
 
-<hr/>
+
 <p><a name="move-to-comment-column"></a>(<b>move-to-comment-column</b>)</p>
 
 <blockquote>
@@ -413,7 +416,8 @@ Ranges of characters can be conveniently entered by giving the first and last ch
 
 </blockquote>
 
-<hr/>
+
+</div>
 </body>
 </html>
 

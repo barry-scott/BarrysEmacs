@@ -2,13 +2,16 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
+
 <title>Functions I*</title>
 
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<hr/>
-<p><a name="if"></a>(<b>if</b> <code>test then-clause else-clause</code>)</p>
+<div class="contents">
+
+<p><a name="if"></a>(<b>if</b> <span class="cmd">test then-clause else-clause</span>)</p>
 
 <blockquote>
 <p>Executes and returns the value of <i>then-clause</i> if <i>test</i> is not zero; otherwise it executes <i>else-clause</i> if it is present.</p>
@@ -43,14 +46,14 @@
 
 </blockquote>
 
-<hr/>
+
 <p><a name="illegal-operation"></a>(<b>illegal-operation</b>) All keys not currently bound</p>
 
 <blockquote>
 <p>illegal-operation is bound to those keys that do not have a defined interpretation. Executing illegal-operation is an error.</p>
 </blockquote>
 
-<hr/>
+
 <p><a name="incremental-search"></a>(<b>incremental-search</b>) ^F</p>
 
 <blockquote>
@@ -60,15 +63,15 @@ onclick="return top.bemacs.loadDocument(&#39;extn&#39;,&#39;#incsearch&#39;)">ex
 </p>
 </blockquote>
 
-<hr/>
+
 <p><a name="indent-C-procedure"></a>(<b>indent-C-procedure</b>) ESC-j</p>
 
 <blockquote>
 <p>Locates the current C language procedure and passes it as the standard input to the INDENT program. The resulting indented C procedure will replace the initial C procedure. The old text is temporarily stored in Kill buffer.</p>
 </blockquote>
 
-<hr/>
-<p><a name="insert-character"></a>(<b>insert-character</b> <code>expression</code>)</p>
+
+<p><a name="insert-character"></a>(<b>insert-character</b> <span class="cmd">expression</span>)</p>
 
 <blockquote>
 <p>Inserts its numeric argument into the buffer as a single character prefix-argument times.</p>
@@ -83,8 +86,8 @@ onclick="return top.bemacs.loadDocument(&#39;extn&#39;,&#39;#incsearch&#39;)">ex
 
 </blockquote>
 
-<hr/>
-<p><a name="insert-file"></a>(<b>insert-file</b> <code>file-name</code>) ^X-^I</p>
+
+<p><a name="insert-file"></a>(<b>insert-file</b> <span class="cmd">file-name</span>) ^X-^I</p>
 
 <blockquote>
 <p>Inserts the specified file's contents at dot in the current buffer.</p>
@@ -105,11 +108,11 @@ onclick="return top.bemacs.loadDocument(&#39;extn&#39;,&#39;#incsearch&#39;)">ex
 
 </blockquote>
 
-<hr/>
-<p><a name="insert-string"></a>(<b>insert-string</b> <code>expression</code>)</p>
+
+<p><a name="insert-string"></a>(<b>insert-string</b> <span class="cmd">expression</span>)</p>
 
 <blockquote>
-<p>Inserts the string that results from evaluating the given <i>expression</i>. <code>insert-string</code> concatenates multiple string arguments.</p>
+<p>Inserts the string that results from evaluating the given <i>expression</i>. <span class="cmd">insert-string</span> concatenates multiple string arguments.</p>
 
 <p><b>Examples:</b></p>
 <p>Insert the current date and time into the current buffer:</p>
@@ -134,7 +137,7 @@ Buffer: fred
 
 </blockquote>
 
-<hr/>
+
 <p><a name="interactive">(<b>interactive</b>)</a></p>
 
 <blockquote>
@@ -142,7 +145,7 @@ Buffer: fred
 
 </blockquote>
 
-<hr/>
+
 <p><a name="interrupt-key"></a>(<b>interrupt-key</b>) ^G</p>
 
 <blockquote>
@@ -151,15 +154,15 @@ Buffer: fred
 <p>Binding interrupt-key to a sequence longer than one character does not allow the key sequence to interrupt Emacs. Only single key sequences can be used for interrupting.</p>
 </blockquote>
 
-<hr/>
-<p><a name="is-bound"></a>(<b>is-bound</b> <code>variable-name...</code>)</p>
+
+<p><a name="is-bound"></a>(<b>is-bound</b> <span class="cmd">variable-name...</span>)</p>
 
 <blockquote>
 <p>Returns 1 if all of its variable name arguments are bound to some storage.</p>
 </blockquote>
 
-<hr/>
-<p><a name="is-function"></a>(<b>is-function</b> <code>string</code>)</p>
+
+<p><a name="is-function"></a>(<b>is-function</b> <span class="cmd">string</span>)</p>
 
 <blockquote>
 <p>Checks that its string parameter is a defined function. It returns 1 if it is defined and 0 otherwise.</p>
@@ -168,7 +171,8 @@ Buffer: fred
 
 </blockquote>
 
-<hr/>
+
+</div>
 </body>
 </html>
 

@@ -2,22 +2,25 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
+
 <title>Functions K*</title>
 
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<hr/>
-<p><a name="kill-buffer"></a>(<b>kill-buffer</b> <code>buffer-name</code>)</p>
+<div class="contents">
+
+<p><a name="kill-buffer"></a>(<b>kill-buffer</b> <span class="cmd">buffer-name</span>)</p>
 
 <blockquote>
-<p><code>kill-buffer</code> has been replaced by <a href="fn_d.html#delete-buffer"><code>delete-buffer</code></a>. Use <a href="fn_d.html#delete-buffer"><code>delete-buffer</code></a> in preference to <code>kill-buffer</code>;</p>
+<p><span class="cmd">kill-buffer</span> has been replaced by <a href="fn_d.html#delete-buffer"><span class="cmd">delete-buffer</span></a>. Use <a href="fn_d.html#delete-buffer"><span class="cmd">delete-buffer</span></a> in preference to <span class="cmd">kill-buffer</span>;</p>
 
 
-<p><code>kill-buffer</code> removes a buffer from the list of buffers, and discards all the text it contains. It takes one argument which is the name of the buffer to delete.</p>
+<p><span class="cmd">kill-buffer</span> removes a buffer from the list of buffers, and discards all the text it contains. It takes one argument which is the name of the buffer to delete.</p>
 
-<p>If you use the <code>kill-buffer</code> interactively and the
- target buffer is modified, <code>kill-buffer</code> asks for confirmation that you want to delete the specified buffer.
+<p>If you use the <span class="cmd">kill-buffer</span> interactively and the
+ target buffer is modified, <span class="cmd">kill-buffer</span> asks for confirmation that you want to delete the specified buffer.
 </p>
 
 <p>If you delete the current buffer, then dot is moved to one of the other buffers displayed on the screen. If there are no other buffers, then "main" is used (and created if necessary).  </p>
@@ -33,8 +36,8 @@
 
 </blockquote>
 
-<hr/>
-<p><a name="kill-process"></a>(<b>kill-process</b> <code>process-name</code>)</p>
+
+<p><a name="kill-process"></a>(<b>kill-process</b> <span class="cmd">process-name</span>)</p>
 
 <blockquote>
 <p>Kills the specified subprocess. The subprocess is killed by executing a delete process request, so exit handlers for the target process will not be executed.</p>
@@ -59,16 +62,17 @@
 
 </blockquote>
 
-<hr/>
-<p><a name="kill-to-end-of-line"></a>(<b>kill-to-end-of-line</b> <code>repeat-count</code>) ^K</p>
+
+<p><a name="kill-to-end-of-line"></a>(<b>kill-to-end-of-line</b> <span class="cmd">repeat-count</span>) ^K</p>
 
 <blockquote>
 <p>Deletes characters forward from dot to, and including, the next end-of-line (or end of buffer if there is not an end of line). If dot is positioned at the end of a line, just the end-of-line character is deleted.</p>
 
-<p>Text deleted by the ^K command is placed into <code>Kill buffer</code>. A ^K command normally erases the contents of <code>Kill buffer</code> first; subsequent ^Ks in an unbroken sequence append text <code>Kill buffer</code>. The number of lines killed is controlled by <code>prefix-argument</code> times <code>repeat-count</code>. If <code>repeat-count</code> is omitted, 1 is assumed.</p>
+<p>Text deleted by the ^K command is placed into <span class="cmd">Kill buffer</span>. A ^K command normally erases the contents of <span class="cmd">Kill buffer</span> first; subsequent ^Ks in an unbroken sequence append text <span class="cmd">Kill buffer</span>. The number of lines killed is controlled by <span class="cmd">prefix-argument</span> times <span class="cmd">repeat-count</span>. If <span class="cmd">repeat-count</span> is omitted, 1 is assumed.</p>
 </blockquote>
 
-<hr/>
+
+</div>
 </body>
 </html>
 

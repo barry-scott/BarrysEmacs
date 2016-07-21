@@ -2,12 +2,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
+
 <title>Functions C*</title>
 
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<hr/>
+<div class="contents">
+
 <p><a name="c-mode">(<b>c-mode</b>)</a></p>
 
 <blockquote>
@@ -24,11 +27,11 @@
 </ul>
 </blockquote>
 
-<hr/>
-<p><a name="cequals"></a>(<b>c=</b> <code>char-1 char-2</code>)</p>
+
+<p><a name="cequals"></a>(<b>c=</b> <span class="cmd">char-1 char-2</span>)</p>
 
 <blockquote>
-<p>Returns 1 if <code>char-1</code> is equal to <code>char-2</code> taking into account the character translations indicated by variable case-fold-search. If case-fold-search is set, uppercase letters are c=to their lowercase equivalents.</p>
+<p>Returns 1 if <span class="cmd">char-1</span> is equal to <span class="cmd">char-2</span> taking into account the character translations indicated by variable case-fold-search. If case-fold-search is set, uppercase letters are c=to their lowercase equivalents.</p>
 
 <p><strong>Default binding:</strong> none</p>
 
@@ -61,7 +64,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="case-region-capitalize"></a>(<b>case-region-capitalize</b>)</p>
 
 <blockquote>
@@ -98,7 +101,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="case-region-invert"></a><b>(case-region-invert</b>)</p>
 
 <blockquote>
@@ -135,7 +138,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="case-region-lower"></a>(<b>case-region-lower</b>)</p>
 
 <blockquote>
@@ -172,7 +175,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="case-region-upper"></a>(<b>case-region-upper</b>)</p>
 
 <blockquote>
@@ -209,11 +212,11 @@
 </ul>
 </blockquote>
 
-<hr/>
-<p><a name="case-string-capitalize"></a>(<b>case-string-capitalize</b> <code>string</code>)</p>
+
+<p><a name="case-string-capitalize"></a>(<b>case-string-capitalize</b> <span class="cmd">string</span>)</p>
 
 <blockquote>
-<p>Capitalizes each word of <code>string</code> by making the first character of each word uppercase and the remaining characters lowercase. Returns the capitalized string as the result of the function.</p>
+<p>Capitalizes each word of <span class="cmd">string</span> by making the first character of each word uppercase and the remaining characters lowercase. Returns the capitalized string as the result of the function.</p>
 
 <p><strong>Default binding:</strong> none</p>
 
@@ -228,11 +231,11 @@
 </ul>
 </blockquote>
 
-<hr/>
-<p><a name="case-string-invert"></a>(<b>case-string-invert</b> <code>string</code>)</p>
+
+<p><a name="case-string-invert"></a>(<b>case-string-invert</b> <span class="cmd">string</span>)</p>
 
 <blockquote>
-<p>Inverts the case of all alphabetic characters in <code>string</code> and returns the inverted string as the result of the function.</p>
+<p>Inverts the case of all alphabetic characters in <span class="cmd">string</span> and returns the inverted string as the result of the function.</p>
 
 <p><strong>Default binding:</strong> none</p>
 
@@ -247,11 +250,11 @@
 </ul>
 </blockquote>
 
-<hr/>
-<p><a name="case-string-lower"></a>(<b>case-string-lower</b> <code>string</code>)</p>
+
+<p><a name="case-string-lower"></a>(<b>case-string-lower</b> <span class="cmd">string</span>)</p>
 
 <blockquote>
-<p>Changes the case of all alphabetic characters in <code>string</code> to lowercase and returns the changed string as the result of the function.</p>
+<p>Changes the case of all alphabetic characters in <span class="cmd">string</span> to lowercase and returns the changed string as the result of the function.</p>
 
 <p><strong>Default binding:</strong> none</p>
 
@@ -266,11 +269,11 @@
 </ul>
 </blockquote>
 
-<hr/>
-<p><a name="case-string-upper"></a>(<b>case-string-upper</b> <code>string</code>)</p>
+
+<p><a name="case-string-upper"></a>(<b>case-string-upper</b> <span class="cmd">string</span>)</p>
 
 <blockquote>
-<p>Changes the case of all alphabetic characters in <code>string</code> to uppercase and returns the changed string as the result of the function.</p>
+<p>Changes the case of all alphabetic characters in <span class="cmd">string</span> to uppercase and returns the changed string as the result of the function.</p>
 
 <p><strong>Default binding:</strong> none</p>
 
@@ -285,7 +288,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="case-word-capitalize"></a>(<b>case-word-capitalize</b>)</p>
 
 <blockquote>
@@ -322,7 +325,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="case-word-invert"></a>(<b>case-word-invert</b>)</p>
 
 <blockquote>
@@ -359,7 +362,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="case-word-lower"></a>(<b>case-word-lower</b>)</p>
 
 <blockquote>
@@ -396,7 +399,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="case-word-upper"></a>(<b>case-word-upper</b>)</p>
 
 <blockquote>
@@ -433,7 +436,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="case-upper"></a>(<b>case-upper</b>)</p>
 
 <blockquote>
@@ -472,7 +475,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="case-lower"></a>(<b>case-lower</b>)</p>
 
 <blockquote>
@@ -511,7 +514,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="case-capitalize"></a>(<b>case-capitalize</b>)</p>
 
 <blockquote>
@@ -550,7 +553,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="case-invert"></a>(<b>case-invert</b>)</p>
 
 <blockquote>
@@ -589,13 +592,13 @@
 </ul>
 </blockquote>
 
-<hr/>
-<p><a name="change-directory"></a>(<b>change-directory</b> <code>directory-string</code>)</p>
+
+<p><a name="change-directory"></a>(<b>change-directory</b> <span class="cmd">directory-string</span>)</p>
 
 <blockquote>
-<p>Changes the current directory for Emacs to <code>directory-string</code>. All future calls to commands which access named files will be interpreted relative to the new directory.</p>
+<p>Changes the current directory for Emacs to <span class="cmd">directory-string</span>. All future calls to commands which access named files will be interpreted relative to the new directory.</p>
 
-<p>If the <code>directory-string</code> is the special value "-" the directory is set to the value in the variable previous-directory.</p>
+<p>If the <span class="cmd">directory-string</span> is the special value "-" the directory is set to the value in the variable previous-directory.</p>
 
 <p><strong>Default binding:</strong> none</p>
 
@@ -606,11 +609,11 @@
 </ul>
 </blockquote>
 
-<hr/>
-<p><a name="char-to-string"></a>(<b>char-to-string</b> <code>expression</code>)</p>
+
+<p><a name="char-to-string"></a>(<b>char-to-string</b> <span class="cmd">expression</span>)</p>
 
 <blockquote>
-<p>Takes a numeric argument <code>expression</code> and returns the one-character string that results from considering the number as a member of the ASCII character set.</p>
+<p>Takes a numeric argument <span class="cmd">expression</span> and returns the one-character string that results from considering the number as a member of the ASCII character set.</p>
 
 <p><strong>Default binding:</strong> none</p>
 
@@ -621,7 +624,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="checkpoint"></a>(<b>checkpoint</b>)</p>
 
 <blockquote>
@@ -640,7 +643,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="checkpoint-buffers"></a>(<b>checkpoint-buffers</b>)</p>
 
 <blockquote>
@@ -659,7 +662,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="column-to-left-of-window"></a>(<b>column-to-left-of-window</b>)</p>
 
 <blockquote>
@@ -682,8 +685,8 @@
 </ul>
 </blockquote>
 
-<hr/>
-<p><a name="compile-it"></a>(<b>compile-it</b> <code>DCL-command</code>)</p>
+
+<p><a name="compile-it"></a>(<b>compile-it</b> <span class="cmd">DCL-command</span>)</p>
 
 <blockquote>
 <p>Writes out all the modified file buffers and executes a DCL command to compile and link the written files. If no prefix-argument is specified, then the command executed is MMS. Otherwise, the command to executed is requested as a string argument. Output from the command appears in the buffer <b>Error log</b> ready to be parsed for error messages with the next-error command.</p>
@@ -701,8 +704,8 @@
 </ul>
 </blockquote>
 
-<hr/>
-<p><a name="concat"></a>(<b>concat</b> <code>string-expression...</code>)</p>
+
+<p><a name="concat"></a>(<b>concat</b> <span class="cmd">string-expression...</span>)</p>
 
 <blockquote>
 <p>Takes a set of string arguments and returns their concatenation.</p>
@@ -710,8 +713,8 @@
 <p><strong>Default binding:</strong> None</p>
 </blockquote>
 
-<hr/>
-<p><a name="convert-key-string"></a>(<b>convert-key-string</b> <code>string-expression</code>)</p>
+
+<p><a name="convert-key-string"></a>(<b>convert-key-string</b> <span class="cmd">string-expression</span>)</p>
 
 <blockquote>
 <p>Takes a string and processes it according to Emacs' control string processing rules. The result of the function is a string that contains converted control sequences. See the control-string-... variables for details of the processing that is performed.</p>
@@ -743,8 +746,8 @@
 </ul>
 </blockquote>
 
-<hr/>
-<p><a name="copy-region-to-buffer"></a>(<b>copy-region-to-buffer</b> <code>buffer-name</code>)</p>
+
+<p><a name="copy-region-to-buffer"></a>(<b>copy-region-to-buffer</b> <span class="cmd">buffer-name</span>)</p>
 
 <blockquote>
 <p>Copies the region between dot and mark to the named buffer. The buffer is erased before the text is copied into it. The region between dot and mark is not disturbed.</p>
@@ -762,8 +765,8 @@
 </ul>
 </blockquote>
 
-<hr/>
-<p><a name="correct-word"></a>(<b>correct-word</b> <code>string</code>)</p>
+
+<p><a name="correct-word"></a>(<b>correct-word</b> <span class="cmd">string</span>)</p>
 
 <blockquote>
 <p>Uses the supplied incorrectly-spelt word and generates a list of possible spelling corrections for it, returning this list as a space-separated string.</p>
@@ -778,7 +781,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="current-buffer-name"></a>(<b>current-buffer-name</b>)</p>
 
 <blockquote>
@@ -799,7 +802,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="current-column"></a>(<b>current-column</b>)</p>
 
 <blockquote>
@@ -826,14 +829,14 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="current-directory"></a>(<b>current-directory</b>)</p>
 
 <blockquote>
 <p>Returns a string which is the default directory as set by the change-directory command, or set as the default directory when Emacs starts up.</p>
 </blockquote>
 
-<hr/>
+
 <p><a name="current-file-name"></a>(<b>current-file-name</b>)</p>
 
 <blockquote>
@@ -856,7 +859,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="current-indent"></a>(<b>current-indent</b>)</p>
 
 <blockquote>
@@ -881,7 +884,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="current-line-number"></a>(<b>current-line-number</b>)</p>
 
 <blockquote>
@@ -896,7 +899,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="current-process-name"></a>(<b>current-process-name</b>)</p>
 
 <blockquote>
@@ -921,11 +924,11 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="current-syntax-entity"></a>(<b>current-syntax-entity</b>)</p>
 
 <blockquote>
-<p>Returns an indication of the type of syntax entity in which dot is currently located, according to the current syntax table. The value returned is the value of one of the <code>is-...</code> named constants.</p>
+<p>Returns an indication of the type of syntax entity in which dot is currently located, according to the current syntax table. The value returned is the value of one of the <span class="cmd">is-...</span> named constants.</p>
 
 <p><strong>Default binding:</strong> None</p>
 
@@ -944,7 +947,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="current-time"></a>(<b>current-time</b>)</p>
 
 <blockquote>
@@ -973,7 +976,8 @@ Sun Jan 04 15:26:35 1998
 </ul>
 </blockquote>
 
-<hr/>
+
+</div>
 </body>
 </html>
 

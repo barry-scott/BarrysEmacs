@@ -2,11 +2,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
 <title>User Guide - Editing Specific File Types</title>
-
 <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
+<div class="contents">
 <p><a name="top"></a></p>
 
 <ul>
@@ -29,16 +31,16 @@
 <li>Editing Programs on describes special features for editing programs.</li>
 </ul>
 
-<hr/>
+
 <h2><a name="majormodes"></a>Major Modes</h2>
 
 <p>Emacs has many different major modes, each of which customises Emacs for editing text of a particular file type. The major modes are mutually exclusive -- that is, only one major mode can be active at a time. When at top level, Emacs indicates in the mode line which major mode is active for each buffer displayed on the screen.</p>
 
 <p>When Emacs creates a buffer, it is in what is called Normal Mode , which means that the character commands are defined so as to be convenient for general use. More precisely, in Normal Mode every Emacs binding is set to its default state. For editing any specific type of text, such as Lisp code or English text, you should switch to the appropriate major mode. This tells Emacs to change the meanings of a few commands to become more specifically adapted to the language being edited. Most commands remain unchanged.</p>
 
-<p>Selecting a new major mode is done with an <font face="Courier New" size="2">ESC-x</font> command. Each major mode is the name of the function that selects that mode. Thus, you can enter <b>Lisp Mode</b> by typing <font face="Courier New" size="2">ESC-x lisp-mode</font>. Emacs can be made to enter the correct major mode for a file simply based on the file's type, so you do not have to worry about selecting a mode. This is achieved by using the <font face="Courier New" size="2">auto-execute</font> function.</p>
+<p>Selecting a new major mode is done with an <span class="key">ESC-x</span> command. Each major mode is the name of the function that selects that mode. Thus, you can enter <b>Lisp Mode</b> by typing <span class="key">ESC-x lisp-mode</span>. Emacs can be made to enter the correct major mode for a file simply based on the file's type, so you do not have to worry about selecting a mode. This is achieved by using the <span class="cmd">auto-execute</span> function.</p>
 
-<p>The <font face="Courier New" size="2">ESC-x auto-execute</font> command causes the nominated command to be executed every time a file is manipulated which matches the specified file pattern. The file pattern is specified as a wildcard pattern.</p>
+<p>The <span class="key">ESC-x auto-execute</span> command causes the nominated command to be executed every time a file is manipulated which matches the specified file pattern. The file pattern is specified as a wildcard pattern.</p>
 
 <p>The "*" and "?" characters are treated specially, all other characters stand for themselves. A "*" match zero or more characters and a "?" matches a single character.</p>
 
@@ -52,8 +54,8 @@
 </tr>
 
 <tr>
-<td><font face="Courier New" size="2">*.cxx</font></td>
-<td>Matches all files whoes names end in <font face="Courier New" size="2">.cxx</font>.</td>
+<td><span class="cmd">*.cxx</span></td>
+<td>Matches all files whoes names end in <span class="cmd">.cxx</span>.</td>
 <td><font face="Courier New" size="2">emacs.cxx
 <br />
 search.cxx
@@ -62,8 +64,8 @@ search.cxx
 </tr>
 
 <tr>
-<td><font face="Courier New" size="2">*?.cxx</font></td>
-<td>Matches all files whoes names has atleast one characters before ending with <font face="Courier New" size="2">.cxx</font>.</td>
+<td><span class="cmd">*?.cxx</span></td>
+<td>Matches all files whoes names has atleast one characters before ending with <span class="cmd">.cxx</span>.</td>
 <td><font face="Courier New" size="2">emacs.cxx
 <br />
 search.cxx
@@ -72,246 +74,174 @@ a.cxx</font></td>
 </tr>
 
 <tr>
-<td><font face="Courier New" size="2">readme*</font></td>
-<td>Matches all files that start with <font face="Courier New" size="2">readme</font>.</td>
+<td><span class="cmd">readme*</span></td>
+<td>Matches all files that start with <span class="cmd">readme</span>.</td>
 <td><font face="Courier New" size="2">readme.txt
 <br />
 readme.1st</font></td>
 </tr>
 </table>
 
-<p>The command is executed whenever the file name matches the pattern. If you wish to use Lisp Mode when visiting files with a type of <font face="Courier New" size="2">.ML</font>, use the command <font face="Courier New" size="2">ESC-x auto-execute lisp-mode *.ml</font>.</p>
+<p>The command is executed whenever the file name matches the pattern. If you wish to use Lisp Mode when visiting files with a type of <span class="cmd">.ML</span>, use the command <span class="key">ESC-x auto-execute lisp-mode *.ml</span>.</p>
 
-<p>Syntax tables define how Emacs commands (such as <font face="Courier New" size="2">forward-word</font>) react to the characters in a buffer. Many major modes alter syntax tables so that characters are treated in the most suitable way for the particular mode. For example, most programming language major modes specify that only blank lines separate paragraphs. This is so that the paragraph commands remain useful when writing program source code rather than natural language text.</p>
+<p>Syntax tables define how Emacs commands (such as <span class="cmd">forward-word</span>) react to the characters in a buffer. Many major modes alter syntax tables so that characters are treated in the most suitable way for the particular mode. For example, most programming language major modes specify that only blank lines separate paragraphs. This is so that the paragraph commands remain useful when writing program source code rather than natural language text.</p>
 
-<p>To find out which keys a particular major mode redefines, use the command <font face="Courier New" size="2">ESC-x describe-bindings</font> while the required mode is in effect. This command displays all the key bindings for the current buffer. The specific bindings for the current major mode will be displayed under the heading <font face="Courier New" size="2">Local bindings</font>, along with any other local bindings you have defined yourself.</p>
+<p>To find out which keys a particular major mode redefines, use the command <span class="key">ESC-x describe-bindings</span> while the required mode is in effect. This command displays all the key bindings for the current buffer. The specific bindings for the current major mode will be displayed under the heading <span class="cmd">Local bindings</span>, along with any other local bindings you have defined yourself.</p>
 
-<hr/>
+
 <h2><a name="editingtext"></a>Editing Text</h2>
 
 <p>Emacs enables you to easily manipulate words, sentences, or paragraphs of text. In addition, there are commands to fill text and convert character cases.</p>
 
 <h3>word commands</h3>
 
-<p>Emacs has commands for moving over or operating on words. By convention, they are all <font face="Courier New" size="2">Escape</font> prefixed commands. All of these commands may be used in any major mode.</p>
+<p>Emacs has commands for moving over or operating on words. By convention, they are all <span class="key">Escape</span> prefixed commands. All of these commands may be used in any major mode.</p>
 
 <table>
 <tr>
-<td>
-<p>Move forward over a word.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-f or Ctrl-Right</font></p>
-</td>
+<td>Move forward over a word.</td>
+<td><span class="key">ESC-f or Ctrl-Right</span></td>
 </tr>
 
 <tr>
-<td>
-<p>Move backward over a word.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-b or Ctrl-Left</font></p>
-</td>
+<td>Move backward over a word.</td>
+<td><span class="key">ESC-b or Ctrl-Left</span></td>
 </tr>
 
 <tr>
-<td>
-<p>Delete up to the end of a word.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-d or Ctrl-Delete</font></p>
-</td>
+<td>Delete up to the end of a word.</td>
+<td><span class="key">ESC-d or Ctrl-Delete</span></td>
 </tr>
 
 <tr>
-<td>
-<p>Delete back to the beginning of a word.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-h</font></p>
-</td>
+<td>Delete back to the beginning of a word.</td>
+<td><span class="key">ESC-h</span></td>
 </tr>
 </table>
 
-<p>Notice how these commands form a group that parallels the character-based commands <font face="Courier New" size="2">^F</font>, <font face="Courier New" size="2">^B</font>, <font face="Courier New" size="2">^D</font> and <font face="Courier New" size="2">Delete</font>.</p>
+<p>Notice how these commands form a group that parallels the character-based commands <span class="key">^F</span>, <span class="key">^B</span>, <span class="key">^D</span> and <span class="key">Delete</span>.</p>
 
-<p>The commands <font face="Courier New" size="2">ESC-f</font> and <font face="Courier New" size="2">ESC-b</font> move forward and backward over words. They are analogous to <font face="Courier New" size="2">^F</font> and <font face="Courier New" size="2">^B</font>, which move over single characters. Like their <font face="Courier New" size="2">Control-</font> analogues, <font face="Courier New" size="2">ESC-f</font> and <font face="Courier New" size="2">ESC-b</font> move over several words if they are given a prefix argument. <font face="Courier New" size="2">ESC-f</font> with a negative argument moves backwards like <font face="Courier New" size="2">ESC-b</font>, and <font face="Courier New" size="2">ESC-b</font> with a negative argument moves forwards. Forward motion stops exactly after the last letter of the word, while backward motion stops exactly before the first letter.</p>
+<p>The commands <span class="key">ESC-f</span> and <span class="key">ESC-b</span> move forward and backward over words. They are analogous to <span class="key">^F</span> and <span class="key">^B</span>, which move over single characters. Like their <span class="cmd">Control-</span> analogues, <span class="key">ESC-f</span> and <span class="key">ESC-b</span> move over several words if they are given a prefix argument. <span class="key">ESC-f</span> with a negative argument moves backwards like <span class="key">ESC-b</span>, and <span class="key">ESC-b</span> with a negative argument moves forwards. Forward motion stops exactly after the last letter of the word, while backward motion stops exactly before the first letter.</p>
 
-<p>It is easy to delete a word at a time. <font face="Courier New" size="2">ESC-d</font> deletes the word after dot. To be precise, it deletes everything from dot to the place that <font face="Courier New" size="2">ESC-f</font> would move dot. Therefore, if dot is in the middle of a word, only the part of the word after dot is deleted. If some punctuation comes after dot and before the next word, it is deleted along with the word. If you wish to delete only the next word but not the punctuation, use <font face="Courier New" size="2">ESC-f</font> to go to the end, then delete the word backwards with <font face="Courier New" size="2">ESC-h</font>. <font face="Courier New" size="2">ESC-d</font> takes arguments just like <font face="Courier New" size="2">ESC-f</font>.</p>
+<p>It is easy to delete a word at a time. <span class="key">ESC-d</span> deletes the word after dot. To be precise, it deletes everything from dot to the place that <span class="key">ESC-f</span> would move dot. Therefore, if dot is in the middle of a word, only the part of the word after dot is deleted. If some punctuation comes after dot and before the next word, it is deleted along with the word. If you wish to delete only the next word but not the punctuation, use <span class="key">ESC-f</span> to go to the end, then delete the word backwards with <span class="key">ESC-h</span>. <span class="key">ESC-d</span> takes arguments just like <span class="key">ESC-f</span>.</p>
 
-<p><font face="Courier New" size="2">ESC-h</font> deletes the word before dot. It deletes everything from dot back to where <font face="Courier New" size="2">ESC-b</font> would move dot. If dot is after the space in <font face="Courier New" size="2">FOO, BAR</font>, then <font face="Courier New" size="2">FOO,</font> is deleted. If you wish to delete just <font face="Courier New" size="2">FOO</font>, use <font face="Courier New" size="2">ESC-b</font> then <font face="Courier New" size="2">ESC-d</font> instead of an <font face="Courier New" size="2">ESC-h</font>.</p>
+<p><span class="key">ESC-h</span> deletes the word before dot. It deletes everything from dot back to where <span class="key">ESC-b</span> would move dot. If dot is after the space in <span class="cmd">FOO, BAR</span>, then <span class="cmd">FOO,</span> is deleted. If you wish to delete just <span class="cmd">FOO</span>, use <span class="key">ESC-b</span> then <span class="key">ESC-d</span> instead of an <span class="key">ESC-h</span>.</p>
 
 <p>The definition of a word as used by the word commands is completely controlled by the current syntax table. Any character can, for example, be declared as a word-delimiter.</p>
 
 <h3>sentence and paragraph commands</h3>
 
-<p>The Emacs commands for manipulating sentences and paragraphs are mostly <font face="Courier New" size="2">Escape</font> prefixed commands so as to resemble the word-handling commands.</p>
+<p>The Emacs commands for manipulating sentences and paragraphs are mostly <span class="key">Escape</span> prefixed commands so as to resemble the word-handling commands.</p>
 
 <table>
 <tr>
-<td>
-<p>Move back to the beginning of a sentence.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-a</font></p>
-</td>
+<td>Move back to the beginning of a sentence.</td>
+<td><span class="key">ESC-a</span></td>
 </tr>
 
 <tr>
-<td>
-<p>Move forward to the end of a sentence.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-e</font></p>
-</td>
+<td>Move forward to the end of a sentence.</td>
+<td><span class="key">ESC-e</span></td>
 </tr>
 
 <tr>
-<td>
-<p>Move back to the beginning of the previous paragraph.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-(</font></p>
-</td>
+<td>Move back to the beginning of the previous paragraph.</td>
+<td><span class="key">ESC-(</span></td>
 </tr>
 
 <tr>
-<td>
-<p>Move forward to the end of the next paragraph.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-)</font></p>
-</td>
+<td>Move forward to the end of the next paragraph.</td>
+<td><span class="key">ESC-)</span></td>
 </tr>
 </table>
 
-<p>The commands <font face="Courier New" size="2">ESC-a</font> and <font face="Courier New" size="2">ESC-e</font> move to the beginning and end of the current sentence respectively. They were choosen to resemble <font face="Courier New" size="2">^A</font> and <font face="Courier New" size="2">^E</font>, which move to the beginning and end of the current line. Emacs considers a sentence to end wherever there is a <font face="Courier New" size="2">.</font>, <font face="Courier New" size="2">?</font> or <font face="Courier New" size="2">!</font> character followed by white-space or an end-of-line. Neither <font face="Courier New" size="2">ESC-a</font> nor <font face="Courier New" size="2">ESC-e</font> move past the white-space which delimits the sentence.</p>
+<p>The commands <span class="key">ESC-a</span> and <span class="key">ESC-e</span> move to the beginning and end of the current sentence respectively. They were choosen to resemble <span class="key">^A</span> and <span class="key">^E</span>, which move to the beginning and end of the current line. Emacs considers a sentence to end wherever there is a <span class="cmd">.</span>, <span class="cmd">?</span> or <span class="cmd">!</span> character followed by white-space or an end-of-line. Neither <span class="key">ESC-a</span> nor <span class="key">ESC-e</span> move past the white-space which delimits the sentence.</p>
 
-<p>The variable <font face="Courier New" size="2">sentence-delimiters</font> is a regular expression search-string composed of the various strings that define a sentence boundary. The default value of this variable is:</p>
+<p>The variable <span class="cmd">sentence-delimiters</span> is a regular expression search-string composed of the various strings that define a sentence boundary. The default value of this variable is:</p>
 
-<p><font face="Courier New" size="2">[.!?][\040\t\n][\040\t\n]*</font></p>
+<p><span class="cmd">[.!?][\040\t\n][\040\t\n]*</span></p>
 
-<p><font face="Courier New" size="2">ESC-(</font> moves to the beginning of the current or previous paragraph, while <font face="Courier New" size="2">ESC-)</font> moves to the end of the current or next paragraph. Blank lines and text formatter command lines are not considered part of any paragraph. Also, an indented line starts a new paragraph.</p>
+<p><span class="key">ESC-(</span> moves to the beginning of the current or previous paragraph, while <span class="key">ESC-)</span> moves to the end of the current or next paragraph. Blank lines and text formatter command lines are not considered part of any paragraph. Also, an indented line starts a new paragraph.</p>
 
-<p>The variable <font face="Courier New" size="2">paragraph-delimiters</font> is a regular expression search string composed of the various strings that define a paragraph boundary. The default value of this variable is:</p>
+<p>The variable <span class="cmd">paragraph-delimiters</span> is a regular expression search string composed of the various strings that define a paragraph boundary. The default value of this variable is:</p>
 
-<p><font face="Courier New" size="2">\f\n\|[\040\t]*\n</font></p>
+<p><span class="cmd">\f\n\|[\040\t]*\n</span></p>
 
 <h3>indentation commands for code</h3>
 
 <center>
 <table>
 <tr>
-<td>
-<p><font face="Courier New" size="2">Tab</font></p>
-</td>
-<td>
-<p>Indents appropriately in a mode-dependent fashion.</p>
-</td>
+<td><span class="key">Tab</span></td>
+<td>Indents appropriately in a mode-dependent fashion.</td>
 </tr>
 
 <tr>
-<td>
-<p><font face="Courier New" size="2">Linefeed</font></p>
-</td>
-<td>
-<p>Performs the same action as <font face="Courier New" size="2">Return</font> followed by <font face="Courier New" size="2">Tab</font>.</p>
-</td>
+<td><span class="key">Linefeed</span></td>
+<td>Performs the same action as <span class="key">Return</span> followed by <span class="key">Tab</span>.</td>
 </tr>
 </table>
 </center>
 
-<p>Use the <font face="Courier New" size="2">Tab</font> command to request indentation. Its precise effect depends on the major mode. In Text and Normal Modes, it indents to the next tab-stop.</p>
+<p>Use the <span class="key">Tab</span> command to request indentation. Its precise effect depends on the major mode. In Text and Normal Modes, it indents to the next tab-stop.</p>
 
-<p>When you type normal text, if you use the <font face="Courier New" size="2">Linefeed</font> key to terminate a line, the indentation of the current line will be duplicated at the start of the next line. So to type in several lines of text all starting at a specified indent, use the <font face="Courier New" size="2">Linefeed</font> key to terminate each line.</p>
+<p>When you type normal text, if you use the <span class="key">Linefeed</span> key to terminate a line, the indentation of the current line will be duplicated at the start of the next line. So to type in several lines of text all starting at a specified indent, use the <span class="key">Linefeed</span> key to terminate each line.</p>
 
 <h3>text filling and text mode</h3>
 
-<p>Emacs has a major mode called Text Mode which provides functions for setting margins, filling, justifying and centering text. Use the <font face="Courier New" size="2">ESC-x text-mode</font> command to enter Text Mode.</p>
+<p>Emacs has a major mode called Text Mode which provides functions for setting margins, filling, justifying and centering text. Use the <span class="key">ESC-x text-mode</span> command to enter Text Mode.</p>
 
 <p>The Text Mode functions can be used without needing to switch to Text Mode -- they can be used from any major mode. This is usually more convenient than having to change the major mode to Text Mode when you need to format some text. Text Mode is included in Emacs for backwards compatibility only.</p>
 
-<p>If you enable the Text Mode functions explicitly using <font face="Courier New" size="2">ESC-x text-mode</font>, the Text Mode functions are bound to keys. If you do not switch to Text Mode to use the functions, you must either provide your own bindings for the functions, or execute the functions as extended commands using <font face="Courier New" size="2">ESC-x</font>.</p>
+<p>If you enable the Text Mode functions explicitly using <span class="key">ESC-x text-mode</span>, the Text Mode functions are bound to keys. If you do not switch to Text Mode to use the functions, you must either provide your own bindings for the functions, or execute the functions as extended commands using <span class="key">ESC-x</span>.</p>
 
 <p>The Text Mode functions and key bindings are:</p>
 
 <table>
 <tr>
-<td>
-<p>Set the left margin.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-1</font></p>
-</td>
+<td>Set the left margin.</td>
+<td><span class="key">ESC-1</span></td>
 </tr>
 
 <tr>
-<td>
-<p>Set the right margin.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-^H</font></p>
-</td>
+<td>Set the right margin.</td>
+<td><span class="key">ESC-^H</span></td>
 </tr>
 
 <tr>
-<td>
-<p>Set the margins to the values indicated by text in the current paragraph. The right margin is defined as the right-most column in which text appears for paragraphs with a ragged-right margin.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">(set-margins)</font></p>
-</td>
+<td>Set the margins to the values indicated by text in the current paragraph. The right margin is defined as the right-most column in which text appears for paragraphs with a ragged-right margin.</td>
+<td><span class="cmd">(set-margins)</span></td>
 </tr>
 
 <tr>
-<td>
-<p>Set the paragraph indent offset.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-i</font></p>
-</td>
+<td>Set the paragraph indent offset.</td>
+<td><span class="key">ESC-i</span></td>
 </tr>
 
 <tr>
-<td>
-<p>Fill or justifies the current paragraph between the currently set margins.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-j</font></p>
-</td>
+<td>Fill or justifies the current paragraph between the currently set margins.</td>
+<td><span class="key">ESC-j</span></td>
 </tr>
 
 <tr>
-<td>
-<p>Fill or justifies the region between the currently set margins.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-J</font></p>
-</td>
+<td>Fill or justifies the region between the currently set margins.</td>
+<td><span class="key">ESC-J</span></td>
 </tr>
 
 <tr>
-<td>
-<p>Toggle the current justify mode to either a ragged or straight right margin.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-m</font></p>
-</td>
+<td>Toggle the current justify mode to either a ragged or straight right margin.</td>
+<td><span class="key">ESC-m</span></td>
 </tr>
 
 <tr>
-<td>
-<p>Centre the current line between the currently set margins.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-c</font></p>
-</td>
+<td>Centre the current line between the currently set margins.</td>
+<td><span class="key">ESC-c</span></td>
 </tr>
 </table>
 
-<p>The fill-and-justify functions will fill the current paragraph between the current margin settings. If you edit text in the middle of a paragraph, the paragraph may no longer be correctly filled -- just type <font face="Courier New" size="2">ESC-j</font> to fill the paragraph. The effect of <font face="Courier New" size="2">ESC-j</font> can be undone with <font face="Courier New" size="2">^X-^U</font> (<font face="Courier New" size="2">undo</font>). See Undoing Changes to the Buffer for more information on undoing changes.</p>
+<p>The fill-and-justify functions will fill the current paragraph between the current margin settings. If you edit text in the middle of a paragraph, the paragraph may no longer be correctly filled -- just type <span class="key">ESC-j</span> to fill the paragraph. The effect of <span class="key">ESC-j</span> can be undone with <span class="key">^X-^U</span> (<span class="cmd">undo</span>). See Undoing Changes to the Buffer for more information on undoing changes.</p>
 
-<p>Paragraphs can be indented using <font face="Courier New" size="2">ESC-i</font> to set an indent offset. A positive value for the indent offset causes the first line of the paragraph to be indented by the specified number of characters. For example, with an indent offset of 5, paragraphs will appear as:</p>
+<p>Paragraphs can be indented using <span class="key">ESC-i</span> to set an indent offset. A positive value for the indent offset causes the first line of the paragraph to be indented by the specified number of characters. For example, with an indent offset of 5, paragraphs will appear as:</p>
 
 <pre>
       Here is the beginning of the
@@ -349,33 +279,33 @@ Here is the beginning  of the paragraph
 
 </pre>
 
-<p>The Text Mode functions access several buffer-specific variables. You can use either use the Text Mode bindings listed above to set the values of these variables, or you can set them directly using <font face="Courier New" size="2">ESC-x set</font>. If you want to change their default values, use <font face="Courier New" size="2">ESC-x set-default</font>.</p>
+<p>The Text Mode functions access several buffer-specific variables. You can use either use the Text Mode bindings listed above to set the values of these variables, or you can set them directly using <span class="key">ESC-x set</span>. If you want to change their default values, use <span class="key">ESC-x set-default</span>.</p>
 
 <p>The Text Mode variables are:</p>
 
-<p><font face="Courier New" size="2">left-margin</font></p>
+<p><span class="cmd">left-margin</span></p>
 
 <p>Contains the left margin setting for the current buffer. The default setting for the left margin is 1.</p>
 
-<p><font face="Courier New" size="2">right-margin</font></p>
+<p><span class="cmd">right-margin</span></p>
 
-<p>Contains the right margin setting for the current buffer. The default setting for the right margin is 1000 -- if you use the Text Mode fill functions from any mode other than Text Mode, be sure to set <font face="Courier New" size="2">right-margin</font> to a reasonable value.</p>
+<p>Contains the right margin setting for the current buffer. The default setting for the right margin is 1000 -- if you use the Text Mode fill functions from any mode other than Text Mode, be sure to set <span class="cmd">right-margin</span> to a reasonable value.</p>
 
-<p><font face="Courier New" size="2">index-offset</font></p>
+<p><span class="cmd">index-offset</span></p>
 
 <p>Contains the index offset for the current buffer.</p>
 
-<p><font face="Courier New" size="2">buffer-display-margins</font></p>
+<p><span class="cmd">buffer-display-margins</span></p>
 
 <p>Controls whether the current margin settings are displayed in the buffer's mode line. This variable is set to 1 by default, so margins are displayed. If you do not want margins displayed, set the variable to 0.</p>
 
-<p><font face="Courier New" size="2">autowrap-mode-flag</font></p>
+<p><span class="cmd">autowrap-mode-flag</span></p>
 
 <p>Controls whether text is automatically wrapped as you type it. This is set to 1 by default, so that when you type text beyond the right margin, a line separator is automatically inserted, and you can continue typing without worrying about breaking the line yourself. This feature is known as auto-filling.</p>
 
-<p><font face="Courier New" size="2">buffer-justify-flag</font></p>
+<p><span class="cmd">buffer-justify-flag</span></p>
 
-<p>Controls the appearance of text at the right margin. If set to 1 (the default), text will be be filled with a straight right margin; if <font face="Courier New" size="2">buffer-display-margins</font> is set to 1, the right margin indicator in the mode line will be a <font face="Courier New" size="2">J</font>. If <font face="Courier New" size="2">buffer-justify-flag</font> is set to 0, text will be filled with a ragged right margin; if <font face="Courier New" size="2">buffer-display-margins</font> is set to 1, the right margin indicator in the mode line will be an <font face="Courier New" size="2">R</font>.</p>
+<p>Controls the appearance of text at the right margin. If set to 1 (the default), text will be be filled with a straight right margin; if <span class="cmd">buffer-display-margins</span> is set to 1, the right margin indicator in the mode line will be a <span class="cmd">J</span>. If <span class="cmd">buffer-justify-flag</span> is set to 0, text will be filled with a ragged right margin; if <span class="cmd">buffer-display-margins</span> is set to 1, the right margin indicator in the mode line will be an <span class="cmd">R</span>.</p>
 
 <h3>case conversion commands</h3>
 
@@ -383,39 +313,23 @@ Here is the beginning  of the paragraph
 
 <table>
 <tr>
-<td>
-<p>Convert the current word or region to lower-case.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-l</font> (case-lower)</p>
-</td>
+<td>Convert the current word or region to lower-case.</td>
+<td><span class="key">ESC-l</span> (case-lower)</td>
 </tr>
 
 <tr>
-<td>
-<p>Convert the current word or region to upper-case.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-u</font> (case-upper)</p>
-</td>
+<td>Convert the current word or region to upper-case.</td>
+<td><span class="key">ESC-u</span> (case-upper)</td>
 </tr>
 
 <tr>
-<td>
-<p>Invert the case of the current word or region.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-i</font> (case-invert)</p>
-</td>
+<td>Invert the case of the current word or region.</td>
+<td><span class="key">ESC-i</span> (case-invert)</td>
 </tr>
 
 <tr>
-<td>
-<p>Capitalize the current word or region.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-C</font> (case-capitalize)</p>
-</td>
+<td>Capitalize the current word or region.</td>
+<td><span class="key">ESC-C</span> (case-capitalize)</td>
 </tr>
 </table>
 
@@ -423,7 +337,7 @@ Here is the beginning  of the paragraph
 
 <p>To convert the case of part of a word set the region around the part to be converted.</p>
 
-<hr/>
+
 <h2><a name="editingprograms"></a>Editing Programs</h2>
 
 <p>Special features for editing programs include automatic indentation, comment alignment, parenthesis matching, and the ability to move over balanced, parenthesised expressions. Many of these features are generalised so that they can work for any programming language.</p>
@@ -435,57 +349,33 @@ Here is the beginning  of the paragraph
 <center>
 <table>
 <tr>
-<td>
-<p>C</p>
-</td>
-<td>
-<p>C Mode or Electric C Mode</p>
-</td>
+<td>C</td>
+<td>C Mode or Electric C Mode</td>
 </tr>
 
 <tr>
-<td>
-<p>C++</p>
-</td>
-<td>
-<p>C Mode or Electric C Mode</p>
-</td>
+<td>C++</td>
+<td>C Mode or Electric C Mode</td>
 </tr>
 
 <tr>
-<td>
-<p>MLisp</p>
-</td>
-<td>
-<p>Lisp Mode</p>
-</td>
+<td>MLisp</td>
+<td>Lisp Mode</td>
 </tr>
 
 <tr>
-<td>
-<p>Lisp</p>
-</td>
-<td>
-<p>Lisp Mode</p>
-</td>
+<td>Lisp</td>
+<td>Lisp Mode</td>
 </tr>
 
 <tr>
-<td>
-<p>PASCAL</p>
-</td>
-<td>
-<p>PASCAL Mode</p>
-</td>
+<td>PASCAL</td>
+<td>PASCAL Mode</td>
 </tr>
 
 <tr>
-<td>
-<p>Bliss</p>
-</td>
-<td>
-<p>Bliss Mode</p>
-</td>
+<td>Bliss</td>
+<td>Bliss Mode</td>
 </tr>
 </table>
 </center>
@@ -494,69 +384,57 @@ Here is the beginning  of the paragraph
 
 <h3>compiling your program</h3>
 
-<p>The command <font face="Courier New" size="2">^X-^E</font> (<font face="Courier New" size="2">compile-it</font>) is used to compile a program within Emacs. Normally, <font face="Courier New" size="2">^X-^E</font> uses the <font face="Courier New" size="2">make</font> command to compile a program. <font face="Courier New" size="2">make</font> knows how to build your program based on a description file that you give it.</p>
+<p>The command <span class="key">^X-^E</span> (<span class="cmd">compile-it</span>) is used to compile a program within Emacs. Normally, <span class="key">^X-^E</span> uses the <span class="cmd">make</span> command to compile a program. <span class="cmd">make</span> knows how to build your program based on a description file that you give it.</p>
 
-<p>The first thing <font face="Courier New" size="2">^X-^E</font> does is to write out all modified files. This is because it is likely that other buffers contain parts of the same program that you are about to compile.</p>
+<p>The first thing <span class="key">^X-^E</span> does is to write out all modified files. This is because it is likely that other buffers contain parts of the same program that you are about to compile.</p>
 
-<p>Then <font face="Courier New" size="2">^X-^E</font> invokes the <font face="Courier New" size="2">make</font> command. All output from <font face="Courier New" size="2">make</font> goes into the empty buffer <font face="Courier New" size="2">Error log</font>, which will be displayed in a window on the screen. Messages that the compilation generates are displayed in the <font face="Courier New" size="2">Error Log</font> buffer as they are generated.</p>
+<p>Then <span class="key">^X-^E</span> invokes the <span class="cmd">make</span> command. All output from <span class="cmd">make</span> goes into the empty buffer <span class="cmd">Error log</span>, which will be displayed in a window on the screen. Messages that the compilation generates are displayed in the <span class="cmd">Error Log</span> buffer as they are generated.</p>
 
-<p>When the compilation is complete, the function <font face="Courier New" size="2">parse-error-messages-in-region</font> is applied to the entire buffer. This command uses the function specified in the variable <font face="Courier New" size="2">error-message-parser</font> to find all the compiler error messages. For each error message generated, the source file in which the error was detected is visited and the line on which the compilation detected an error is marked. This process generates a list of marks in various buffers for viewing with the <font face="Courier New" size="2">^X-^N</font> (<font face="Courier New" size="2">next-error</font>) command. When all errors have been visited, <font face="Courier New" size="2">^X-^N</font> says so.</p>
+<p>When the compilation is complete, the function <span class="cmd">parse-error-messages-in-region</span> is applied to the entire buffer. This command uses the function specified in the variable <span class="cmd">error-message-parser</span> to find all the compiler error messages. For each error message generated, the source file in which the error was detected is visited and the line on which the compilation detected an error is marked. This process generates a list of marks in various buffers for viewing with the <span class="key">^X-^N</span> (<span class="cmd">next-error</span>) command. When all errors have been visited, <span class="key">^X-^N</span> says so.</p>
 
 <p>In summary, a typical use of the compilation facility is as follows:</p>
 
 <ul>
 <li>Prepare some source files;</li>
 
-<li>Type <font face="Courier New" size="2">^X-^E</font> to compile the program;</li>
+<li>Type <span class="key">^X-^E</span> to compile the program;</li>
 
-<li>Use <font face="Courier New" size="2">^X-^N</font> until Emacs says there are no more errors, then go back to step 2;</li>
+<li>Use <span class="key">^X-^N</span> until Emacs says there are no more errors, then go back to step 2;</li>
 
 <li>When no more errors are detected, the program is ready to run.</li>
 </ul>
 
-<p>You can also compile programs with the <font face="Courier New" size="2">ESC-x shell</font> command. In <font face="Courier New" size="2">shell</font>, you are put into <font face="Courier New" size="2">shell</font> window in Emacs where every line that you type and end with a <font face="Courier New" size="2">Return</font> is executed as a DCL command. The output from the commands is displayed in the <font face="Courier New" size="2">shell</font> window. Several key sequences are re-bound in <font face="Courier New" size="2">shell</font> to be more useful. <font face="Courier New" size="2">^R</font> is bound to insert the last command sent to DCL into the buffer at dot. So, if you make a mistake, you can easily edit the command and try it again. The last 20 commands are remembered and can be recalled with successive <font face="Courier New" size="2">^R</font> commands. The <font face="Courier New" size="2">shell</font> command is described more fully in the Barry's Emacs
+<p>You can also compile programs with the <span class="key">ESC-x shell</span> command. In <span class="cmd">shell</span>, you are put into <span class="cmd">shell</span> window in Emacs where every line that you type and end with a <span class="key">Return</span> is executed as a DCL command. The output from the commands is displayed in the <span class="cmd">shell</span> window. Several key sequences are re-bound in <span class="cmd">shell</span> to be more useful. <span class="key">^R</span> is bound to insert the last command sent to DCL into the buffer at dot. So, if you make a mistake, you can easily edit the command and try it again. The last 20 commands are remembered and can be recalled with successive <span class="key">^R</span> commands. The <span class="cmd">shell</span> command is described more fully in the Barry's Emacs
 Extensions Reference Manual.</p>
 
 <h3>indentation commands for code</h3>
 
 <table>
 <tr>
-<td>
-<p>Indent the current line.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">Tab</font></p>
-</td>
+<td>Indent the current line.</td>
+<td><span class="key">Tab</span></td>
 </tr>
 
 <tr>
-<td>
-<p>Equivalent to <font face="Courier New" size="2">Return</font> followed by <font face="Courier New" size="2">Tab</font>.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">Linefeed</font></p>
-</td>
+<td>Equivalent to <span class="key">Return</span> followed by <span class="key">Tab</span>.</td>
+<td><span class="key">Linefeed</span></td>
 </tr>
 
 <tr>
-<td>
-<p>Delete all spaces and tabs around dot.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-x delete-white-space</font></p>
-</td>
+<td>Delete all spaces and tabs around dot.</td>
+<td><span class="key">ESC-x delete-white-space</span></td>
 </tr>
 </table>
 
 <p>Most programming languages have some indentation convention. For Lisp, lines are indented according to their nesting in parentheses. For assembler code, almost all lines start with a single tab, but some have one or more spaces as well.</p>
 
-<p>Whatever the language, to indent a line, use the <font face="Courier New" size="2">Tab</font> command. Each major mode defines this command to perform the sort of indentation appropriate for the particular language. In Lisp Mode, <font face="Courier New" size="2">Tab</font> aligns the line according to its depth in parentheses. This only happens if the tab is the first character on a line.</p>
+<p>Whatever the language, to indent a line, use the <span class="key">Tab</span> command. Each major mode defines this command to perform the sort of indentation appropriate for the particular language. In Lisp Mode, <span class="key">Tab</span> aligns the line according to its depth in parentheses. This only happens if the tab is the first character on a line.</p>
 
-<p>The command <font face="Courier New" size="2">Linefeed</font> does a <font face="Courier New" size="2">Return</font>, then does a <font face="Courier New" size="2">Tab</font> on the next line. Thus, <font face="Courier New" size="2">Linefeed</font> at the end of the line makes a following blank line and supplies it with the appropriate amount of indentation. <font face="Courier New" size="2">Linefeed</font> in the middle of a line breaks the line and supplies the indentation in front of the new line.</p>
+<p>The command <span class="key">Linefeed</span> does a <span class="key">Return</span>, then does a <span class="key">Tab</span> on the next line. Thus, <span class="key">Linefeed</span> at the end of the line makes a following blank line and supplies it with the appropriate amount of indentation. <span class="key">Linefeed</span> in the middle of a line breaks the line and supplies the indentation in front of the new line.</p>
 
-<p>To delete just the indentation of a line, go to the beginning of the line and use <font face="Courier New" size="2">ESC-x delete-white-space</font>, which deletes all spaces and tabs around the cursor.</p>
+<p>To delete just the indentation of a line, go to the beginning of the line and use <span class="key">ESC-x delete-white-space</span>, which deletes all spaces and tabs around the cursor.</p>
 
-<p>To insert an indented line before the current line, use <font face="Courier New" size="2">^A-^O-Tab</font>. To make an indented line after the current one, use <font face="Courier New" size="2">^E-Linefeed</font>.</p>
+<p>To insert an indented line before the current line, use <span class="key">^A-^O-Tab</span>. To make an indented line after the current one, use <span class="key">^E-Linefeed</span>.</p>
 
 <h3>automatic display of matching parentheses</h3>
 
@@ -574,71 +452,47 @@ Extensions Reference Manual.</p>
 
 <p>Paragraphs are defined to start only with blank lines so that the paragraph commands can be useful. Auto-fill Mode indents the new lines which it creates. Comments start with a semicolon ";". For example:</p>
 
-<p><font face="Courier New" size="2">; This is a comment</font></p>
+<p><span class="cmd">; This is a comment</span></p>
 
-<p>The command <font face="Courier New" size="2">`</font> (<font face="Courier New" size="2">expand-mlisp-word</font>) helps you to insert Emacs function names; it gives you name completion, which saves a lot of typing.</p>
+<p>The command <span class="cmd">`</span> (<span class="cmd">expand-mlisp-word</span>) helps you to insert Emacs function names; it gives you name completion, which saves a lot of typing.</p>
 
 <p>Lisp Mode commands include:</p>
 
 <table>
 <tr>
-<td>
-<p>Move back one s-expression.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-(</font></p>
-</td>
+<td>Move back one s-expression.</td>
+<td><span class="key">ESC-(</span></td>
 </tr>
 
 <tr>
-<td>
-<p>Move forward one s-expression.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-)</font></p>
-</td>
+<td>Move forward one s-expression.</td>
+<td><span class="key">ESC-)</span></td>
 </tr>
 
 <tr>
-<td>
-<p>Compile and execute the first MLisp expression in the current buffer.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-c</font></p>
-</td>
+<td>Compile and execute the first MLisp expression in the current buffer.</td>
+<td><span class="key">ESC-c</span></td>
 </tr>
 
 <tr>
-<td>
-<p>Re-indent the current MLisp function.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-j</font></p>
-</td>
+<td>Re-indent the current MLisp function.</td>
+<td><span class="key">ESC-j</span></td>
 </tr>
 
 <tr>
-<td>
-<p>Re-indent the current MLisp line.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">ESC-i</font></p>
-</td>
+<td>Re-indent the current MLisp line.</td>
+<td><span class="key">ESC-i</span></td>
 </tr>
 
 <tr>
-<td>
-<p>Insert a Lisp comment.</p>
-</td>
-<td>
-<p><font face="Courier New" size="2">;</font></p>
-</td>
+<td>Insert a Lisp comment.</td>
+<td><span class="cmd">;</span></td>
 </tr>
 </table>
 
-<p><font face="Courier New" size="2">ESC-c</font> can be used to take the single MLisp expression in the current buffer and compile it in Emacs as MLisp. The compiled MLisp is then executed. Thus, if you write some MLisp, the easiest way to test and debug it is to run it using <font face="Courier New" size="2">ESC-c</font>.</p>
+<p><span class="key">ESC-c</span> can be used to take the single MLisp expression in the current buffer and compile it in Emacs as MLisp. The compiled MLisp is then executed. Thus, if you write some MLisp, the easiest way to test and debug it is to run it using <span class="key">ESC-c</span>.</p>
 
-<p>To re-indent the current function (as defined by lines staring with <font face="Courier New" size="2">(defun</font>) use the <font face="Courier New" size="2">ESC-j</font> command. This command uses the same indenting algorithm as the <font face="Courier New" size="2">Linefeed</font> and <font face="Courier New" size="2">Tab</font> commands.</p>
+<p>To re-indent the current function (as defined by lines staring with <span class="cmd">(defun</span>) use the <span class="key">ESC-j</span> command. This command uses the same indenting algorithm as the <span class="key">Linefeed</span> and <span class="key">Tab</span> commands.</p>
 
 <p>Lisp Mode works in exactly the right way only for the MLisp dialect of Lisp. For other Lisps, the syntax tables may have to be modified.</p>
 
@@ -646,13 +500,13 @@ Extensions Reference Manual.</p>
 
 <p>When you type a C keyword in C Mode and complete it with a non-word character, C Mode automatically recognises the word, and performs the expansion. If a word is not recognised, it is not expanded.</p>
 
-<p>If you do not require automatic expansion, set the variable <font face="Courier New" size="2">c-auto-expansion</font> to zero. The function <font face="Courier New" size="2">expand-c-keyword</font> can then be used directly after each keyword to force the expansion to take place.</p>
+<p>If you do not require automatic expansion, set the variable <span class="cmd">c-auto-expansion</span> to zero. The function <span class="cmd">expand-c-keyword</span> can then be used directly after each keyword to force the expansion to take place.</p>
 
-<p>C Mode works by reading templates from the Emacs language template library accessed through the <font face="Courier New" size="2">language</font> database search-list.</p>
+<p>C Mode works by reading templates from the Emacs language template library accessed through the <span class="cmd">language</span> database search-list.</p>
 
-<p>This search-list contains the provided template library database, and also the database <font face="Courier New" size="2">sys$login:language-template</font>. The database <font face="Courier New" size="2">language-template</font> is searched first, so your customised templates are used before the system's templates.</p>
+<p>This search-list contains the provided template library database, and also the database <span class="cmd">sys$login:language-template</span>. The database <span class="cmd">language-template</span> is searched first, so your customised templates are used before the system's templates.</p>
 
-<p>To cause the expansion for <font face="Courier New" size="2">module</font> and <font face="Courier New" size="2">function</font> headers, enter the appropriate word and use the <font face="Courier New" size="2">expand-c-keyword</font> function.</p>
+<p>To cause the expansion for <span class="cmd">module</span> and <span class="cmd">function</span> headers, enter the appropriate word and use the <span class="cmd">expand-c-keyword</span> function.</p>
 
 <p>If you try to expand a C word that C Mode does not understand, an error message is issued. All C keywords, braces, comments and tertiary operators are recognised by C Mode.</p>
 
@@ -662,240 +516,106 @@ Extensions Reference Manual.</p>
 
 <table>
 <tr>
-<td>
-<p>AND</p>
-</td>
-<td>
-<p>ARRAY</p>
-</td>
-<td>
-<p>BEGIN</p>
-</td>
-<td>
-<p>BOOLEAN</p>
-</td>
-<td>
-<p>CAND</p>
-</td>
-<td>
-<p>CASE</p>
-</td>
+<td>AND</td>
+<td>ARRAY</td>
+<td>BEGIN</td>
+<td>BOOLEAN</td>
+<td>CAND</td>
+<td>CASE</td>
 </tr>
 
 <tr>
-<td>
-<p>CHR</p>
-</td>
-<td>
-<p>CONST</p>
-</td>
-<td>
-<p>COR</p>
-</td>
-<td>
-<p>DIV</p>
-</td>
-<td>
-<p>DO</p>
-</td>
-<td>
-<p>DOWNTO</p>
-</td>
+<td>CHR</td>
+<td>CONST</td>
+<td>COR</td>
+<td>DIV</td>
+<td>DO</td>
+<td>DOWNTO</td>
 </tr>
 
 <tr>
-<td>
-<p>ELSE</p>
-</td>
-<td>
-<p>END</p>
-</td>
-<td>
-<p>EXIT</p>
-</td>
-<td>
-<p>EXPORTS</p>
-</td>
-<td>
-<p>FALSE</p>
-</td>
-<td>
-<p>FILE</p>
-</td>
+<td>ELSE</td>
+<td>END</td>
+<td>EXIT</td>
+<td>EXPORTS</td>
+<td>FALSE</td>
+<td>FILE</td>
 </tr>
 
 <tr>
-<td>
-<p>FOR</p>
-</td>
-<td>
-<p>FORWARD</p>
-</td>
-<td>
-<p>FROM</p>
-</td>
-<td>
-<p>FUNCTION</p>
-</td>
-<td>
-<p>GET</p>
-</td>
-<td>
-<p>GOTO</p>
-</td>
+<td>FOR</td>
+<td>FORWARD</td>
+<td>FROM</td>
+<td>FUNCTION</td>
+<td>GET</td>
+<td>GOTO</td>
 </tr>
 
 <tr>
-<td>
-<p>IF</p>
-</td>
-<td>
-<p>IMPORTS</p>
-</td>
-<td>
-<p>IN</p>
-</td>
-<td>
-<p>INPUT</p>
-</td>
-<td>
-<p>INTEGER</p>
-</td>
-<td>
-<p>LABEL</p>
-</td>
+<td>IF</td>
+<td>IMPORTS</td>
+<td>IN</td>
+<td>INPUT</td>
+<td>INTEGER</td>
+<td>LABEL</td>
 </tr>
 
 <tr>
-<td>
-<p>LONG</p>
-</td>
-<td>
-<p>MOD</p>
-</td>
-<td>
-<p>MODULE</p>
-</td>
-<td>
-<p>NEW</p>
-</td>
-<td>
-<p>NIL</p>
-</td>
-<td>
-<p>NOT</p>
-</td>
+<td>LONG</td>
+<td>MOD</td>
+<td>MODULE</td>
+<td>NEW</td>
+<td>NIL</td>
+<td>NOT</td>
 </tr>
 
 <tr>
-<td>
-<p>OF</p>
-</td>
-<td>
-<p>OR</p>
-</td>
-<td>
-<p>ORD</p>
-</td>
-<td>
-<p>OTHERWISE</p>
-</td>
-<td>
-<p>OUTPUT</p>
-</td>
-<td>
-<p>PACKED</p>
-</td>
+<td>OF</td>
+<td>OR</td>
+<td>ORD</td>
+<td>OTHERWISE</td>
+<td>OUTPUT</td>
+<td>PACKED</td>
 </tr>
 
 <tr>
-<td>
-<p>PRIVATE</p>
-</td>
-<td>
-<p>PROCEDURE</p>
-</td>
-<td>
-<p>PROGRAM</p>
-</td>
-<td>
-<p>PUT</p>
-</td>
-<td>
-<p>READ</p>
-</td>
-<td>
-<p>READLN</p>
-</td>
+<td>PRIVATE</td>
+<td>PROCEDURE</td>
+<td>PROGRAM</td>
+<td>PUT</td>
+<td>READ</td>
+<td>READLN</td>
 </tr>
 
 <tr>
-<td>
-<p>REAL</p>
-</td>
-<td>
-<p>RECORD</p>
-</td>
-<td>
-<p>REPEAT</p>
-</td>
-<td>
-<p>RESET</p>
-</td>
-<td>
-<p>REWRITE</p>
-</td>
-<td>
-<p>SET</p>
-</td>
+<td>REAL</td>
+<td>RECORD</td>
+<td>REPEAT</td>
+<td>RESET</td>
+<td>REWRITE</td>
+<td>SET</td>
 </tr>
 
 <tr>
-<td>
-<p>SET</p>
-</td>
-<td>
-<p>STRING</p>
-</td>
-<td>
-<p>TEXT</p>
-</td>
-<td>
-<p>THEN</p>
-</td>
-<td>
-<p>TO</p>
-</td>
-<td>
-<p>TRUE</p>
-</td>
+<td>SET</td>
+<td>STRING</td>
+<td>TEXT</td>
+<td>THEN</td>
+<td>TO</td>
+<td>TRUE</td>
 </tr>
 
 <tr>
-<td>
-<p>TYPE</p>
-</td>
-<td>
-<p>UNTIL</p>
-</td>
-<td>
-<p>VAR</p>
-</td>
-<td>
-<p>WHILE</p>
-</td>
-<td>
-<p>WITH</p>
-</td>
-<td>
-<p>WRITE</p>
-</td>
+<td>TYPE</td>
+<td>UNTIL</td>
+<td>VAR</td>
+<td>WHILE</td>
+<td>WITH</td>
+<td>WRITE</td>
 </tr>
 
 <tr>
-<td>
-<p>WRITELN</p>
-</td>
+<td>WRITELN</td>
 <td>&#160;</td>
 <td>&#160;</td>
 <td>&#160;</td>
@@ -904,32 +624,32 @@ Extensions Reference Manual.</p>
 </tr>
 </table>
 
-<p>Two types of PASCAL comment are recognised: <font face="Courier New" size="2">(*</font> with <font face="Courier New" size="2">*)</font> and <font face="Courier New" size="2">{</font> with <font face="Courier New" size="2">}</font>.</p>
+<p>Two types of PASCAL comment are recognised: <span class="cmd">(*</span> with <span class="cmd">*)</span> and <span class="cmd">{</span> with <span class="cmd">}</span>.</p>
 
-<p>The function <font face="Courier New" size="2">Pascal-Skeleton</font> can be used to create a function or procedure template and fills in the appropriate parameters and types.</p>
+<p>The function <span class="cmd">Pascal-Skeleton</span> can be used to create a function or procedure template and fills in the appropriate parameters and types.</p>
 
 <p>Bliss Mode</p>
 
 <p>Bliss Mode is a major programming mode for writing any dialect of Bliss code. It provides optional automatic expansion of Bliss keywords, formatting them according to Software Engineering standards.</p>
 
-<p>When you type a Bliss keyword in Bliss Mode and complete it with a non-word character, Bliss Mode automatically recognises the word, and performs the expansion. If a word is not recognised by Bliss Mode, it will not be expanded. Some words in Bliss may be grouped together to form strings of keywords (for example, EXTERNAL ROUTINE). To solve the problem of whether or not to expand a word, Bliss Mode looks at the word separator. If a word may form a string of words, Bliss Mode assumes that there are no more words to be input if the separator is a <font face="Courier New" size="2">Return</font>. So, to define a <font face="Courier New" size="2">GLOBAL BIND ROUTINE</font>, type <font face="Courier New" size="2">GLOBAL BIND ROUTINE Return</font>.</p>
+<p>When you type a Bliss keyword in Bliss Mode and complete it with a non-word character, Bliss Mode automatically recognises the word, and performs the expansion. If a word is not recognised by Bliss Mode, it will not be expanded. Some words in Bliss may be grouped together to form strings of keywords (for example, EXTERNAL ROUTINE). To solve the problem of whether or not to expand a word, Bliss Mode looks at the word separator. If a word may form a string of words, Bliss Mode assumes that there are no more words to be input if the separator is a <span class="key">Return</span>. So, to define a <span class="cmd">GLOBAL BIND ROUTINE</span>, type <span class="cmd">GLOBAL BIND ROUTINE Return</span>.</p>
 
-<p>If you do not require automatic expansion, set the variable <font face="Courier New" size="2">bliss-auto-expansion</font> to zero. The function <font face="Courier New" size="2">expand-bliss-keyword</font> can then be used directly after each keyword to be expanded to force the expansion to take place.</p>
+<p>If you do not require automatic expansion, set the variable <span class="cmd">bliss-auto-expansion</span> to zero. The function <span class="cmd">expand-bliss-keyword</span> can then be used directly after each keyword to be expanded to force the expansion to take place.</p>
 
-<p>Bliss Mode works by reading templates from the Emacs language template library accessed through the <font face="Courier New" size="2">language</font> database search-list.</p>
+<p>Bliss Mode works by reading templates from the Emacs language template library accessed through the <span class="cmd">language</span> database search-list.</p>
 
-<p>This search-list contains the provided template library database, and also the database <font face="Courier New" size="2">sys$login:language-template</font>. The database <font face="Courier New" size="2">language-template</font> is searched first, so your customised templates are used before the system's templates.</p>
+<p>This search-list contains the provided template library database, and also the database <span class="cmd">sys$login:language-template</span>. The database <span class="cmd">language-template</span> is searched first, so your customised templates are used before the system's templates.</p>
 
 <p>For example, when you need to write a new Bliss module, do the following:</p>
 
 <ul>
 <li>Obtain a new buffer and switch to Bliss Mode.</li>
 
-<li>Type the word <font face="Courier New" size="2">module</font> Bliss Mode fills in the module bracket at the end of the line, and expects you to type in the module name by prompting with <font face="Courier New" size="2">[Module Name]</font> in the Mini-buffer.</li>
+<li>Type the word <span class="cmd">module</span> Bliss Mode fills in the module bracket at the end of the line, and expects you to type in the module name by prompting with <span class="cmd">[Module Name]</span> in the Mini-buffer.</li>
 
-<li>Type in the module name. Use <font face="Courier New" size="2">^C</font> (<font face="Courier New" size="2">exit-emacs</font>) to terminate the field.</li>
+<li>Type in the module name. Use <span class="key">^C</span> (<span class="cmd">exit-emacs</span>) to terminate the field.</li>
 
-<li>Bliss Mode proceeds to fill in the <font face="Courier New" size="2">%TITLE</font> line above the module name, and asks you to fill in the rest of the title. It prompts <font face="Courier New" size="2">[Module title]</font></li>
+<li>Bliss Mode proceeds to fill in the <span class="cmd">%TITLE</span> line above the module name, and asks you to fill in the rest of the title. It prompts <span class="cmd">[Module title]</span></li>
 </ul>
 
 <ul>
@@ -937,6 +657,7 @@ Extensions Reference Manual.</p>
 </ul>
 
 <p>If you try to expand a Bliss word that Bliss Mode does not understand, an error message is issued. All Bliss reserved keywords and comment characters are recognised.</p>
+</div>
 </body>
 </html>
 

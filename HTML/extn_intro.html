@@ -2,24 +2,28 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
 <title>Packages and Subsystems - Introduction</title>
 
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<h1>packages and subsystems</h1>
+<div class="contents">
+<h1>Packages and Subsystems</h1>
 <h2><a name="introduction"></a>Introduction</h2>
 
-<p>Barry's Emacs is distributed with a number of packages, subsystems and libraries. These are Mock Lisp programs that extend Emacs to provide specific functions not built in to Emacs itself.</p>
+<p>Barry's Emacs is distributed with a number of packages, subsystems and libraries.
+These are Mock Lisp programs that extend Emacs to provide specific functions not built in to Emacs itself.</p>
 
-<p>The packages, subsystems and libraries of code distributed with Emacs are stored in the database library <code>emacs_library:emacslib</code></p>
+<p>The packages, subsystems and libraries of code distributed with Emacs are stored
+in the database library <span class="cmd">emacs_library:emacslib</span></p>
 
-<hr/>
+
 <h2><a name="subsystems"></a>Emacs Subsystems</h2>
 
-<p>A subsystem subsystem is an Emacs function which is an interactive program in its own right: it reads commands in a language of its own, and displays the results.</p>
+<p>A subsystem is an Emacs function which is an interactive program in its own right: it reads commands in a language of its own, and displays the results.</p>
 
-<p>A subsystem must be loaded before it can be used. Many subsystems are automtically loaded the first time you execute them. Emacs loads a subsystem by first searching the directories in the EMACS_PATH logical name search-list. If the package is not found in the Emacs path, it is searched for in the MLisp-library database search-list.</p>
+<p>A subsystem must be loaded before it can be used. Many subsystems are automtically loaded the first time you execute them. Emacs loads a subsystem by first searching the directories in the <span class="cmd">emacs_path</span> logical name search-list. If the package is not found in the Emacs path, it is searched for in the MLisp-library database search-list.</p>
 
 <p>You enter a subsystem by typing an Emacs command which invokes the subsystem. Once entered, the subsystem runs until a specific command to exit the subsystem is typed.</p>
 
@@ -27,7 +31,7 @@
 
 <p>While you are inside a subsystem, the mode line usually gives the name of the subsystem, as well as other information optionally supplied by the subsystem.</p>
 
-<hr/>
+
 <h2><a name="packages"></a>Emacs Packages</h2>
 
 <p>Emacs packages are subsystems that can be invoked from the DCL command line as well as from inside Emacs.</p>
@@ -42,18 +46,28 @@
 
 <p>While you are running a package, the mode line usually gives the name of the package, as well as other information optionally supplied by the package.</p>
 
-<hr/>
+
 <h2><a name="libraries"></a>Emacs Libraries</h2>
 
 <p>Emacs libraries are Mock Lisp programs that define useful functions. They are not interactive programs in their own right like subsystems and packages; they are more like subroutines in a high-level programming language which provide the user (or Emacs itself) with features not built in to Emacs.</p>
 
 <p>The functions defined by a library are not accessible until the appropriate library has been loaded. Libraries can be loaded explicitly by the user, or they may be loaded automatically.execute-mlisp-fileMLisp-library</p>
 
-<p>To load a library while Emacs is running, use ESC-x execute-mlisp-file. Emacs looks for the library using the EMACS_PATH logical name. If the library is not found in the Emacs path, it is searched for in the in the MLisp-library database search-list. Once Emacs has located the library, it is loaded. All the functions defined in the library are then available for use.</p>
+<p>To load a library while Emacs is running, use <span class="key">ESC-x execute-mlisp-file</span>. Emacs looks for the library using the <span class="cmd">emacs_path</span> logical name. If the library is not found in the Emacs path, it is searched for in the in the MLisp-library database search-list. Once Emacs has located the library, it is loaded. All the functions defined in the library are then available for use.</p>
 
 <p>Some libraries are loaded automatically in the course of executing certain functions. You will not normally notice this. This facility is known as autoloading autoloading. Autoloading is used to make library functions available without you having to know how to load the library; autoloading also saves space in Emacs by loading libraries only when you need them.</p>
 
-<p>In addition to making functions accessible to ESC-x, the library may bind some functions to key sequences. This is done by the library loading another file called <i>LIBRARY-NAME</i>.KEY, where <i>LIBRARY-NAME</i> is the name of the library being loaded. This separation of functions from key bindings allows you to define your own bindings for functions in the library that will override the default bindings. To do this, make a private copy of the .KEY file, edit it to make your own bindings, then put the modified file in your EMACS_PATH or in in your <code>emacslib</code> database file. When Emacs loads the <code>.key</code> file, your private copy will be loaded if it exists, rather than the default system copy.</p>
+<p>In addition to making functions accessible to <span class="key">ESC-x</span>,
+the library may bind some functions to key sequences.
+This is done by the library loading another file called <span class="cmd"><i>LIBRARY-NAME</i>.key</span>, 
+where <i>LIBRARY-NAME</i> is the name of the library being loaded.
+This separation of functions from key bindings allows you to define your own
+bindings for functions in the library that will override the default bindings.
+To do this, make a private copy of the .KEY file, edit it to make your own bindings,
+then put the modified file in your EMACS_PATH or in in your <span class="cmd">emacslib</span> database file.
+When Emacs loads the <span class="cmd">.key</span> file, 
+your private copy will be loaded if it exists, rather than the default system copy.</p>
+</div>
 </body>
 </html>
 

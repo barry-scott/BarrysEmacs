@@ -2,26 +2,29 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
+
 <title>Variables - A</title>
 
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<hr/>
+<div class="contents">
+
 <p><a name="abbrev-expansion"></a><b>abbrev-expansion</b></p>
 
 <blockquote>
 <p>Holds the expansion of the abbreviation when an abbreviation hook function is called. At all other times it contains a null string.</p>
 </blockquote>
 
-<hr/>
+
 <p><a name="abbrev-mode"></a><b>abbrev-mode</b> &#171; 0</p>
 
 <blockquote>
 <p>Controls whether abbreviations are expanded. If set to true, abbreviations are checked and expanded as required, otherwise, no expansion takes place. This variable is buffer-specific and its state is displayed in the mode line of each window.</p>
 </blockquote>
 
-<hr/>
+
 <p><a name="activity-indicator"></a><b>activity-indicator</b> &#171; 0</p>
 
 <blockquote>
@@ -42,21 +45,21 @@
 <p>To make room for the activity indicator, the Mini-buffer is moved over two columns to the right.</p>
 </blockquote>
 
-<hr/>
+
 <p><a name="animated-journal-recovery"></a><b>animated-journal-recovery</b> &#171; 0</p>
 
 <blockquote>
 <p>When set to true, the journal-recovercommand will update the screen while recovering the contents of a buffer. If animated-journal-recovery is false, the screen is updated after all the journal has been used to recover the buffer.</p>
 </blockquote>
 
-<hr/>
+
 <p><a name="ask-about-buffer-names"></a><b>ask-about-buffer-names</b> &#171; 1</p>
 
 <blockquote>
-<p>Controls what the visit-file function does if the buffer name it constructs is already in use. If it is non-zero, Emacs will ask for a new buffer name, or for Return to be typed which will overwrite the old buffer. If the variable is zero, a buffer name will be created by appending <code>n</code> to the buffer name, (where <code>n</code> is a unique sequence number).</p>
+<p>Controls what the visit-file function does if the buffer name it constructs is already in use. If it is non-zero, Emacs will ask for a new buffer name, or for Return to be typed which will overwrite the old buffer. If the variable is zero, a buffer name will be created by appending <span class="cmd">n</span> to the buffer name, (where <span class="cmd">n</span> is a unique sequence number).</p>
 </blockquote>
 
-<hr/>
+
 <p><a name="ask-about-synchronise-for-none-modified-buffers"></a><b>ask-about-synchronise-for-none-modified-buffers</b> &#171; 0</p>
 
 <blockquote>
@@ -65,21 +68,22 @@
 <p>If ask-about-synchronise-for-none-modified-buffers is 1 then synchronise-files will not ask for permission to delete or reread the contents of buffers that have not been modified.</p>
 </blockquote>
 
-<hr/>
+
 <p><a name="auto-fill-hook"></a><b>auto-fill-hook</b> &#171; default-auto-fill-hook</p>
 
 <blockquote>
 <p>Controls the calling of a function to fill the current line. The variable is set to the name of the function to be called to fill the line, or the null string if no function is to be called.</p>
 </blockquote>
 
-<hr/>
+
 <p><a name="automatic-horizontal-scrolling"></a><b>automatic-horizontal-scrolling</b> &#171; 0</p>
 
 <blockquote>
 <p>When automatic-horizontal-scrolling is set to 1 emacs will automatic scroll the current window until dot is visible. Otherwise emacs will allow dot to be horizontally outside of the window.</p>
 </blockquote>
 
-<hr/>
+
+</div>
 </body>
 </html>
 

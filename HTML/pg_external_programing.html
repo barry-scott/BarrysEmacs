@@ -2,10 +2,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
+
 <title>Mlisp Programmer's Guide</title>
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+<div class="contents">
 <a name="TopOfPage"></a>
 
 <h1><a name="P1309_72639"></a> Programming Emacs From Other Languages</h1>
@@ -108,9 +111,9 @@
 
 <p><b>(list-images)</b></p>
 
-<p>Creates a buffer called <code>Image list</code> and fills it with information about the images in which external functions have been referenced.</p>
+<p>Creates a buffer called <span class="cmd">Image list</span> and fills it with information about the images in which external functions have been referenced.</p>
 
-<p>A call to <code>external-function</code> does not actually cause the shareable image to be loaded and no check is made to see that the required symbol is defined in the image---the image is loaded and symbol is checked when the function is first called.</p>
+<p>A call to <span class="cmd">external-function</span> does not actually cause the shareable image to be loaded and no check is made to see that the required symbol is defined in the image---the image is loaded and symbol is checked when the function is first called.</p>
 
 <p>When a saved environment is restored, images are automatically re-loaded the first time an external function is called.</p>
 
@@ -130,7 +133,7 @@
 
 <p><b>RESTORE</b></p>
 
-<p>This is the address of a longword that contains the current value of the <code>restored-environment</code> variable. You should use this value in conjunction with the routine's context block to decide when to take any special action after a saved environment is restored.</p>
+<p>This is the address of a longword that contains the current value of the <span class="cmd">restored-environment</span> variable. You should use this value in conjunction with the routine's context block to decide when to take any special action after a saved environment is restored.</p>
 
 <p>Any routine value that is returned to Emacs is ignored.</p>
 
@@ -142,25 +145,25 @@
 
 <h4><b><i>emacs__k_message</i></b></h4>
 
-<p>This operation is equivalent to the <code>message</code> MLisp function. You should provide one additional argument which is the address of a string descriptor containing the message text to be displayed.</p>
+<p>This operation is equivalent to the <span class="cmd">message</span> MLisp function. You should provide one additional argument which is the address of a string descriptor containing the message text to be displayed.</p>
 
 <p>The message will be displayed when the screen is next updated.</p>
 
 <h4><b><i>emacs__k_error</i></b></h4>
 
-<p>This operation is equivalent to the <code>error-message</code> MLisp function. You should provide one additional argument which is the address of a string descriptor containing the error message to be displayed.</p>
+<p>This operation is equivalent to the <span class="cmd">error-message</span> MLisp function. You should provide one additional argument which is the address of a string descriptor containing the error message to be displayed.</p>
 
-<p>All further MLisp processing will be aborted (until the most enclosing <code>error-occurred</code> block is encountered), and the error message will be displayed when the screen is next updated.</p>
+<p>All further MLisp processing will be aborted (until the most enclosing <span class="cmd">error-occurred</span> block is encountered), and the error message will be displayed when the screen is next updated.</p>
 
 <h4><b><i>emacs__k_sitfor</i></b></h4>
 
-<p>This operation is equivalent to the <code>sit-for</code> MLisp function. You provide one additional argument which is the number of tenths of a second that you want to pause the display and Emacs processing. You pass this argument by value.</p>
+<p>This operation is equivalent to the <span class="cmd">sit-for</span> MLisp function. You provide one additional argument which is the number of tenths of a second that you want to pause the display and Emacs processing. You pass this argument by value.</p>
 
 <p>The display is updated, and Emacs pauses for the specified amount of time.</p>
 
 <h4><b><i>emacs__k_arg_count</i></b></h4>
 
-<p>This operation is equivalent to the <code>nargs</code> MLisp function. You provide one additional argument which is the address of a longword where the argument count is returned.</p>
+<p>This operation is equivalent to the <span class="cmd">nargs</span> MLisp function. You provide one additional argument which is the address of a longword where the argument count is returned.</p>
 
 <p>The returned value is the number of arguments with which the external function was called.</p>
 
@@ -224,17 +227,17 @@
 
 <p>This request causes the specified text string to be returned as the result of the external function call. It takes a single argument which is the address of a descriptor containing the string to be returned.</p>
 
-<p>This request does not cause the calling routine to be terminated; it merely specifies the value to be returned when the code does eventually exit. If this call-back is requested more that once from the same routine, the value returned is the value specified in the last call to either the <code>emacs__k_string_result</code> or <code>emacs__k_numeric_result</code> operations.</p>
+<p>This request does not cause the calling routine to be terminated; it merely specifies the value to be returned when the code does eventually exit. If this call-back is requested more that once from the same routine, the value returned is the value specified in the last call to either the <span class="cmd">emacs__k_string_result</span> or <span class="cmd">emacs__k_numeric_result</span> operations.</p>
 
 <h4><b><i>emacs__k_numeric_result</i></b></h4>
 
 <p>This request causes the specified integer to be returned as the result of the external function call. It takes a single argument which is the value to be returned.</p>
 
-<p>This request does not cause the calling routine to be terminated; it merely specifies the value to be returned when the routine does eventually exit. If this operation is requested more that once from the same routine, the value returned is the value specified in the last call to either the <code>emacs__k_string_result</code> or <code>emacs__k_numeric_result</code> operations.</p>
+<p>This request does not cause the calling routine to be terminated; it merely specifies the value to be returned when the routine does eventually exit. If this operation is requested more that once from the same routine, the value returned is the value specified in the last call to either the <span class="cmd">emacs__k_string_result</span> or <span class="cmd">emacs__k_numeric_result</span> operations.</p>
 
 <h4><b><i>emacs__k_allocate</i></b></h4>
 
-<p>This request allocates some memory using the Emacs memory allocation scheme. Memory allocated by Emacs is saved in environment files when the <code>save-environment</code> function is executed.</p>
+<p>This request allocates some memory using the Emacs memory allocation scheme. Memory allocated by Emacs is saved in environment files when the <span class="cmd">save-environment</span> function is executed.</p>
 
 <p>The following parameters are expected:</p>
 
@@ -266,7 +269,7 @@
 
 <h4><b><i>emacs__k_free</i></b></h4>
 
-<p>This request frees some Emacs memory previously allocated by <code>emacs__k_allocate</code> or <code>emacs__k_reallocate</code>. Memory freed that was not allocated by these routines will be ignored.</p>
+<p>This request frees some Emacs memory previously allocated by <span class="cmd">emacs__k_allocate</span> or <span class="cmd">emacs__k_reallocate</span>. Memory freed that was not allocated by these routines will be ignored.</p>
 
 <p>The following parameter is expected:</p>
 
@@ -286,7 +289,7 @@
 
 <h4><b><i>emacs__k_dot</i></b></h4>
 
-<p>This request returns the current buffer name and current position of dot in the buffer. It is equivalent to the <code>dot</code> MLisp function.</p>
+<p>This request returns the current buffer name and current position of dot in the buffer. It is equivalent to the <span class="cmd">dot</span> MLisp function.</p>
 
 <p>The following parameters are expected:</p>
 
@@ -304,7 +307,7 @@
 
 <h4><b><i>emacs__k_mark</i></b></h4>
 
-<p>This request returns the current buffer name and current position of the mark in the buffer. It is equivalent to the <code>mark</code> MLisp function.</p>
+<p>This request returns the current buffer name and current position of the mark in the buffer. It is equivalent to the <span class="cmd">mark</span> MLisp function.</p>
 
 <p>The following parameters are expected:</p>
 
@@ -322,7 +325,7 @@
 
 <h4><b><i>emacs__k_set_mark</i></b></h4>
 
-<p>This request sets or unsets the current buffer's mark. If the mark is set, it is set to the current value of dot. It is equivalent to the <code>set-mark</code> and <code>unset-mark</code> MLisp functions.</p>
+<p>This request sets or unsets the current buffer's mark. If the mark is set, it is set to the current value of dot. It is equivalent to the <span class="cmd">set-mark</span> and <span class="cmd">unset-mark</span> MLisp functions.</p>
 
 <p>The following parameter is expected:</p>
 
@@ -332,7 +335,7 @@
 
 <h4><b><i>emacs__k_use_buffer</i></b></h4>
 
-<p>This function provides access to the MLisp <code>temp-use-buffer</code> function. It switches the current buffer to the named buffer without altering any windows. Note that if you use this function and you cause the screen to be updated (with <code>emacs__k_sitfor</code>), Emacs will bind the buffer to a window.</p>
+<p>This function provides access to the MLisp <span class="cmd">temp-use-buffer</span> function. It switches the current buffer to the named buffer without altering any windows. Note that if you use this function and you cause the screen to be updated (with <span class="cmd">emacs__k_sitfor</span>), Emacs will bind the buffer to a window.</p>
 
 <p>The following parameter is expected:</p>
 
@@ -344,7 +347,7 @@
 
 <p>This request causes dot to be positioned at the specified character. If you specify a value before the start of the buffer, dot is moved to the start of the buffer. If you specify a value beyond the end of the buffer,dot is moved to the end of the buffer.</p>
 
-<p><code>emacs__k_gotocharacter</code> call-back is equivalent to the <code>goto-character</code> MLisp function.</p>
+<p><span class="cmd">emacs__k_gotocharacter</span> call-back is equivalent to the <span class="cmd">goto-character</span> MLisp function.</p>
 
 <p>The following parameter is expected:</p>
 
@@ -354,7 +357,7 @@
 
 <h4><b><i>emacs__k_insert_character</i></b></h4>
 
-<p>This request implements the <code>insert-character</code> MLisp function. It inserts the single character specified by the ASCII code provided.</p>
+<p>This request implements the <span class="cmd">insert-character</span> MLisp function. It inserts the single character specified by the ASCII code provided.</p>
 
 <p>The following parameter is expected:</p>
 
@@ -364,7 +367,7 @@
 
 <h4><b><i>emacs__k_insert_string</i></b></h4>
 
-<p>This request provides access to the <code>insert-string</code> MLisp function. It inserts the specified string into the current buffer.</p>
+<p>This request provides access to the <span class="cmd">insert-string</span> MLisp function. It inserts the specified string into the current buffer.</p>
 
 <p>The following parameter is expected:</p>
 
@@ -485,6 +488,7 @@
 <p>A longword containing the new size of P2.</p>
 
 <!-- TRANSIT - TEXTBAR -->
+</div>
 </body>
 </html>
 

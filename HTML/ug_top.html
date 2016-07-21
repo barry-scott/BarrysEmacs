@@ -2,12 +2,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
+
 
 <title>Barry's Emacs User Guide</title>
 
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+<div class="contents">
 <p><a name="top"></a></p>
 
 <h1><a name="barrysemacsuserguide"></a>Barry's Emacs User Guide</h1>
@@ -38,14 +41,11 @@
 
 <p>There is also other documentation supplied with Barry's Emacs.</p>
 
-<p>Software Version: Barry's Emacs V7.0</p>
-
 <p>The Barry's Emacs software and documentation is <b>Copyright &#169; 1980-2016 Barry Scott</b>.</p>
 
 <p>This document is intended for all users of Barry's Emacs.</p>
 
-<hr/>
-<p><a name="otherdocs"><i><font face="Arial" size="4" color="#000080">Other Emacs documentation</font></i></a></p>
+<h2><a name="otherdocs">Other Emacs documentation</a></h2>
 
 <p>The Barry's Emacs Programmer's Guide describes how to extend Emacs using the Mock Lisp programming language.</p>
 
@@ -53,65 +53,40 @@
 
 <p>The Barry's Emacs Extensions Reference Manual documents the Emacs extensions (packages, subsystems and libraries) that are distributed with Barry's Emacs.</p>
 
-<hr/>
-<p><a name="conventions"><i><font face="Arial" size="4" color="#000080">Conventions</font></i></a></p>
+<h2><a name="conventions">Conventions</a></h2>
 
 <p>Throughout this text, key sequences are described as causing specific actions to occur (functions to run, for example). These key sequences are those set up when Emacs is started (they are the default key bindings).</p>
 
 <p>Key sequences are displayed with each key separated by a dash. When using these sequences, do not include the dashes. The dashes are displayed for clarity only.</p>
 
-<p>Many Emacs key sequences use <font face="Courier New" size="2">Control</font> keys. These are indicated by a caret character (^) appearing in the key sequence. For example, to type the <font face="Courier New" size="2">^O</font> key sequence, press and hold down the <font face="Courier New" size="2">Ctrl</font> key and simlutaneously press the <font face="Courier New" size="2">O</font> key. The special sequence <font face="Courier New" size="2">^^</font> is used in some Emacs key sequences. To type <font face="Courier New" size="2">^^</font>, press and hold down the <font face="Courier New" size="2">Ctrl</font> key, then simultaneously type the <font face="Courier New" size="2">^</font> key.</p>
+<p>Many Emacs key sequences use <span class="key">Control</span> keys. These are indicated by a caret character (^) appearing in the key sequence. For example, to type the <span class="key">^O</span> key sequence, press and hold down the <span class="key">Ctrl</span> key and simlutaneously press the <span class="key">O</span> key. The special sequence <span class="key">^^</span> is used in some Emacs key sequences. To type <span class="key">^^</span>, press and hold down the <span class="key">Ctrl</span> key, then simultaneously type the <span class="key">^</span> key.</p>
 
-<p>Many other Emacs key sequences use <font face="Courier New" size="2">Escape</font> keys. These are indicated with an <font face="Courier New" size="2">ESC-</font> in the key sequence. For example, to type the <font face="Courier New" size="2">ESC-e</font> key sequence, press the key labelled <font face="Courier New" size="2">ESC</font>, then press the <font face="Courier New" size="2">e</font> key. Note that <font face="Courier New" size="2">ESC-</font> key sequences are case-sensitive; this means that <font face="Courier New" size="2">ESC-e</font> is not the same as <font face="Courier New" size="2">ESC-E</font>.</p>
+<p>Many other Emacs key sequences use <span class="key">Escape</span> keys. These are indicated with an <span class="key">ESC-</span> in the key sequence. For example, to type the <span class="key">ESC-e</span> key sequence, press the key labelled <span class="key">ESC</span>, then press the <span class="key">e</span> key. Note that <span class="key">ESC-</span> key sequences are case-sensitive; this means that <span class="key">ESC-e</span> is not the same as <span class="key">ESC-E</span>.</p>
 
 <p>Different typefaces used in this book are used to distinguish between normal text and special symbols. These are described as follows:</p>
 
-<center>
-<table border="1">
+<table>
 <tr>
-<td><font face="Courier New" size="2">Return</font></td>
-<td>
-<p>The following special keys are displayed as shown:
-<br />
-</p>
-
-<table cellpadding="5">
-<tr>
-<td><font face="Courier New" size="2">Backspace</font></td>
-<td><font face="Courier New" size="2">Return</font></td>
-<td><font face="Courier New" size="2">Escape</font></td>
-<td><font face="Courier New" size="2">Tab</font></td>
+<td><span class="key">Return</span></td>
+<td>The following special characters are displayed as shown:
+<span class="key">Return</span>, <span class="key">Delete</span>, 
+<span class="key">Escape</span>, <span class="key">Tab</span>, 
+<span class="key">Backspace</span>, <span class="key">Linefeed</span> 
+and <span class="key">Space</span>.</td>
 </tr>
 
 <tr>
-<td><font face="Courier New" size="2">Linefeed</font></td>
-<td><font face="Courier New" size="2">Delete</font></td>
-<td><font face="Courier New" size="2">Space</font></td>
-<td></td>
+<td><pre>This is an example</pre></td>
+<td>All examples and system displays are shown like this.</td>
+</tr>
+
+<tr>
+<td><span class="cmd">execute-mlisp-file</span></td>
+<td>All keystroke sequences, function names, command names and variable names are displayed in this typeface.</td>
 </tr>
 </table>
-</td>
-</tr>
 
-<tr>
-<td>
-<p><font face="Courier New" size="2">This is an example</font></p>
-</td>
-<td>
-<p>All examples and system displays are displayed in <font face="Courier New" size="2">this</font> typeface.</p>
-</td>
-</tr>
-
-<tr>
-<td>
-<p>execute-mlisp-file</p>
-</td>
-<td>
-<p>All keystroke sequences, function names, command names and variable names are displayed in this typeface.</p>
-</td>
-</tr>
-</table>
-</center>
+</div>
 </body>
 </html>
 

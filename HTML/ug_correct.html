@@ -2,11 +2,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
+
 <title>User Guide - Correcting Mistakes</title>
 
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+<div class="contents">
 <p><a name="top"></a></p>
 
 <ul>
@@ -32,30 +35,30 @@
 </ul>
 
 
-<hr/>
+
 <h2><a name="interruptingandaborting"></a>Interrupting and Aborting Emacs Commands</h2>
 
 <table>
 <tr>
 <td>Cancel a running or partially-typed command.</td>
-<td><code>^G (interrupt-key)</code></td>
+<td><span class="key">^G (interrupt-key)</span></td>
 </tr>
 
 <tr>
 <td>Abort all recursive editing levels and subsystems that are currently executing.</td>
-<td><code>ESC-x top-level</code></td>
+<td><span class="key">ESC-x top-level</span></td>
 </tr>
 </table>
 
-<p>There are two ways of cancelling commands which have not finished executing: interrupting the command with <font face="Courier New" size="2">^G</font>, or aborting all recursive edits with <font face="Courier New" size="2">ESC-x top-level</font>.</p>
+<p>There are two ways of cancelling commands which have not finished executing: interrupting the command with <span class="key">^G</span>, or aborting all recursive edits with <span class="key">ESC-x top-level</span>.</p>
 
-<p>Interrupting with <font face="Courier New" size="2">^G</font> is used to abort a partially-typed command or a numeric argument that you do not want. It also stops a running command in a safe way, so you can use <font face="Courier New" size="2">^G</font> if you accidentally give a command which takes a long time to execute.</p>
+<p>Interrupting with <span class="key">^G</span> is used to abort a partially-typed command or a numeric argument that you do not want. It also stops a running command in a safe way, so you can use <span class="key">^G</span> if you accidentally give a command which takes a long time to execute.</p>
 
-<p>When you are in a position to use <font face="Courier New" size="2">ESC-x</font>, you can use <font face="Courier New" size="2">ESC-x top-level</font>. This command aborts all active recursive edits and subsystems. <font face="Courier New" size="2">ESC-x top-level</font> is like all other commands (apart from <font face="Courier New" size="2">^G</font>) in that it is effective only when Emacs is waiting for keyboard input, whereas <font face="Courier New" size="2">^G</font> can be used at any time.</p>
+<p>When you are in a position to use <span class="key">ESC-x</span>, you can use <span class="key">ESC-x top-level</span>. This command aborts all active recursive edits and subsystems. <span class="key">ESC-x top-level</span> is like all other commands (apart from <span class="key">^G</span>) in that it is effective only when Emacs is waiting for keyboard input, whereas <span class="key">^G</span> can be used at any time.</p>
 
 <p><a name="Dealingwithcommonproblems"></a></p>
 
-<hr/>
+
 <h2><a name="dealingwithcommonproblems"></a>Dealing with Common Emacs Problems</h2>
 
 <p>This section describes various conditions which can cause Emacs to function incorrectly or which can cause it to display strange things, and describes how to correct such conditions.</p>
@@ -64,25 +67,26 @@
 
 <p>Subsystems and recursive editing levels are important and useful features of Emacs, but they can make Emacs appear to behave strangely to the user who does not understand them or has never used them before.</p>
 
-<p>If the mode line starts with a <font face="Courier New" size="2">[</font>, or does not look like the standard mode line, you have probably entered a subsystem or a recursive editing level.</p>
+<p>If the mode line starts with a <span class="cmd">[</span>, or does not look like the standard mode line, you have probably entered a subsystem or a recursive editing level.</p>
 
-<p>In such a situation, first try typing <font face="Courier New" size="2">ESC-x exit-emacs</font>. This will exit from any recursive editing level or subsystem. The usual mode line and text display will reappear. If <font face="Courier New" size="2">exit-emacs</font> does not seem to work, try typing <font face="Courier New" size="2">^G</font> to abort the current command. This may have the desired effect. Otherwise, use <font face="Courier New" size="2">ESC-x top-level</font>.</p>
+<p>In such a situation, first try typing <span class="key">ESC-x exit-emacs</span>. This will exit from any recursive editing level or subsystem. The usual mode line and text display will reappear. If <span class="cmd">exit-emacs</span> does not seem to work, try typing <span class="key">^G</span> to abort the current command. This may have the desired effect. Otherwise, use <span class="key">ESC-x top-level</span>.</p>
 
 <h2><a name="undoingchanges"></a>Undoing Changes to the Buffer</h2>
 
-<p>If you mistakenly issue commands that make changes to the buffer, you can often undo the changes without having to know precisely how they came about. This is done by using the <font face="Courier New" size="2">^X-^U</font> command (<font face="Courier New" size="2">undo</font>). Type <font face="Courier New" size="2">^X-^U</font> and a change is undone. <font face="Courier New" size="2">undo</font> then displays the message <font face="Courier New" size="2">Hit &lt;Space&gt; to undo more</font> in the Mini-buffer. For every <font face="Courier New" size="2">Space</font> that you press, another change you made to the buffers will be undone. When you press the first non-space character, that character is treated in the usual way and <font face="Courier New" size="2">undo</font> exits with the message <font face="Courier New" size="2">Finished undoing</font>. If the command is not a <font face="Courier New" size="2">Return</font>, its usual action is also executed.</p>
+<p>If you mistakenly issue commands that make changes to the buffer, you can often undo the changes without having to know precisely how they came about. This is done by using the <span class="key">^X-^U</span> command (<span class="cmd">undo</span>). Type <span class="key">^X-^U</span> and a change is undone. <span class="cmd">undo</span> then displays the message <span class="cmd">Hit &lt;Space&gt; to undo more</span> in the Mini-buffer. For every <span class="key">Space</span> that you press, another change you made to the buffers will be undone. When you press the first non-space character, that character is treated in the usual way and <span class="cmd">undo</span> exits with the message <span class="cmd">Finished undoing</span>. If the command is not a <span class="key">Return</span>, its usual action is also executed.</p>
 
-<p>The changes that <font face="Courier New" size="2">^X-^U</font> undoes include all buffer insertions and deletions and any movement of dot in a buffer. Side-effects of MLisp functions, including creation of buffers and setting of variables, are not undone.</p>
+<p>The changes that <span class="key">^X-^U</span> undoes include all buffer insertions and deletions and any movement of dot in a buffer. Side-effects of MLisp functions, including creation of buffers and setting of variables, are not undone.</p>
 
-<p>For commands that have not affected a buffer, <font face="Courier New" size="2">^X-^U</font> appears to have no effect. So, if you use <font face="Courier New" size="2">undo</font> and nothing happens when an undo step is requested, this may well be because a non-buffer-modifying command was executed.</p>
+<p>For commands that have not affected a buffer, <span class="key">^X-^U</span> appears to have no effect. So, if you use <span class="cmd">undo</span> and nothing happens when an undo step is requested, this may well be because a non-buffer-modifying command was executed.</p>
 
-<p>The <font face="Courier New" size="2">undo</font> function maintains a database of changes made to buffers. This database has a finite size; if you attempt to undo more than is contained in the database, <font face="Courier New" size="2">undo</font> will issue the following message:</p>
+<p>The <span class="cmd">undo</span> function maintains a database of changes made to buffers. This database has a finite size; if you attempt to undo more than is contained in the database, <span class="cmd">undo</span> will issue the following message:</p>
 
 <pre>
 I can't undo that. What's done is done.
 </pre>
 
-<p>Note that, when you undo changes, you can redo the changes by using undo again. For example, if you undo too many changes, use <font face="Courier New" size="2">^X-^U</font> again to undo the unwanted undos.</p>
+<p>Note that, when you undo changes, you can redo the changes by using undo again. For example, if you undo too many changes, use <span class="key">^X-^U</span> again to undo the unwanted undos.</p>
+</div>
 </body>
 </html>
 

@@ -2,13 +2,16 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
+
 <title>Functions E*</title>
 
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<hr/>
-<p><a name="edit-macro">(<b>edit-macro</b> <code>macro-name</code>)</a></p>
+<div class="contents">
+
+<p><a name="edit-macro">(<b>edit-macro</b> <span class="cmd">macro-name</span>)</a></p>
 
 <blockquote>
 <p>Takes the body of a named macro and places it in a buffer called Macro edit. The name of the macro is associated with the buffer and appears in the mode line at the bottom of the window. The buffer may be edited just like any other buffer. After the macro body has been edited it may be redefined using <a href="fn_d.html#define-buffer-macro">define-buffer-macro</a>.</p>
@@ -25,7 +28,7 @@
 
 </blockquote>
 
-<hr/>
+
 <p><a name="emacs-version">(<b>emacs-version</b>)</a></p>
 
 <blockquote>
@@ -40,7 +43,7 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 <p>When reporting bugs or suggestions about Emacs, always quote the version number of Emacs to which the comments refer.</p>
 </blockquote>
 
-<hr/>
+
 <p><a name="end-of-file">(<b>end-of-file</b>) ESC-&gt;</a></p>
 
 <blockquote>
@@ -56,7 +59,7 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
+
 <p><a name="end-of-line">(<b>end-of-line</b>) ^E</a></p>
 
 <blockquote>
@@ -72,7 +75,7 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
+
 <p><a name="end-of-window">(<b>end-of-window</b>) ESC-.</a></p>
 
 <blockquote>
@@ -89,11 +92,11 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
+
 <p><a name="enlarge-window">(<b>enlarge-window</b>) ^X-z</a></p>
 
 <blockquote>
-<p>Makes the current window <code>prefix-argument</code> lines taller, and the window below (or the one above if there is no window below) <code>prefix-argument</code> lines shorter. This function cannot be used if there is only one window on the screen.</p>
+<p>Makes the current window <span class="cmd">prefix-argument</span> lines taller, and the window below (or the one above if there is no window below) <span class="cmd">prefix-argument</span> lines shorter. This function cannot be used if there is only one window on the screen.</p>
 
 <p><b>Example:</b> Make the current window twice as high as it is currently:</p>
 
@@ -122,7 +125,7 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
+
 <p><a name="eobp">(<b>eobp</b>)</a></p>
 
 <blockquote>
@@ -138,7 +141,7 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
+
 <p><a name="eolp">(<b>eolp</b>)</a></p>
 
 <blockquote>
@@ -162,7 +165,7 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
+
 <p><a name="erase-buffer">(<b>erase-buffer</b>)</a></p>
 
 <blockquote>
@@ -189,7 +192,7 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
+
 <p><a name="erase-region">(<b>erase-region</b>)</a></p>
 
 <blockquote>
@@ -205,8 +208,8 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
-<p><a name="ere-looking-at"></a>(<b>ere-looking-at</b> <code>regular-expression</code>)</p>
+
+<p><a name="ere-looking-at"></a>(<b>ere-looking-at</b> <span class="cmd">regular-expression</span>)</p>
 
 <blockquote>
 <p>Returns 1 if the given regular expression search string matches the text immediately following dot. This is for use in packages that want to do limited parsing.</p>
@@ -221,7 +224,7 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 <p>is true if the line starts with any number of spaces or tabs, followed by "else".  </p>
 
-<p>See <a href="fn_e.html#ere-search-forward"><code>ere-search-forward</code></a> for more information about regular expression searches.</p>
+<p>See <a href="fn_e.html#ere-search-forward"><span class="cmd">ere-search-forward</span></a> for more information about regular expression searches.</p>
 
 <p><b>See also:</b></p>
 
@@ -234,42 +237,42 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
-<p><a name="ere-query-replace-string">(<b>ere-query-replace-string</b> <code>pattern replacement</code>)</a></p>
+
+<p><a name="ere-query-replace-string">(<b>ere-query-replace-string</b> <span class="cmd">pattern replacement</span>)</a></p>
 
 <blockquote>
 <p>Replaces all occurrences of a pattern with a string, starting at dot and ending at the end of the buffer. For each occurrence of the old string, Emacs requests that the user type a character to indicate whether or not to replace the string. Dot will be positioned just after the found string.</p>
 </blockquote>
 
-<hr/>
-<p><a name="ere-replace-search-text">(<b>ere-replace-search-text</b> <code>replacement</code>)</a></p>
+
+<p><a name="ere-replace-search-text">(<b>ere-replace-search-text</b> <span class="cmd">replacement</span>)</a></p>
 
 <blockquote>
 <p>This function performs a regular expression replacement of the text matched by the last search operations.</p>
 </blockquote>
 
-<hr/>
-<p><a name="ere-replace-string">(<b>ere-replace-string</b> <code>pattern replacement</code>)</a></p>
+
+<p><a name="ere-replace-string">(<b>ere-replace-string</b> <span class="cmd">pattern replacement</span>)</a></p>
 
 <blockquote>
 <p>Replaces all occurrences of a regular expression with a string, starting at dot and ending and the end of the buffer. See the Barry's Emacs User's Guide for information on how to specify regular expressions and replacement text.</p>
 </blockquote>
 
-<hr/>
-<p><a name="ere-search-forward">(<b>ere-search-forward</b> <code>pattern</code>)</a></p>
+
+<p><a name="ere-search-forward">(<b>ere-search-forward</b> <span class="cmd">pattern</span>)</a></p>
 
 <blockquote>
 <p>Searches for a pattern match in the current buffer, moving forwards from dot, stopping at the end of the buffer. Dot is left at the end of the matched string if a match is found, or is unmoved if the string is not found.</p>
 </blockquote>
 
-<hr/>
-<p><a name="ere-search-reverse">(<b>ere-search-reverse</b> <code>string</code>)</a></p>
+
+<p><a name="ere-search-reverse">(<b>ere-search-reverse</b> <span class="cmd">string</span>)</a></p>
 
 <blockquote>
 <p>Searches for a pattern match in the current buffer, moving backwards from dot, stopping at the beginning of the buffer. Dot is left at the beginning of the matched string if a match is found, or is unmoved if not. See the Barry's Emacs User's Guide for information on how to specify regular expressions.</p>
 </blockquote>
 
-<hr/>
+
 <p><a name="error-and-exit">(<b>error-and-exit</b>) ^G (in the Mini-buffer)</a></p>
 
 <blockquote>
@@ -289,14 +292,14 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
-<p><a name="error-message">(<b>error-message</b> <code>string-expression...</code>)</a></p>
+
+<p><a name="error-message">(<b>error-message</b> <span class="cmd">string-expression...</span>)</a></p>
 
 <blockquote>
 <p>Concatenates the supplied string expressions and sends them to the screen as an error message where they will appear in the Mini-buffer. Emacs returns to keyboard level and sounds the terminal's bell.</p>
 </blockquote>
 
-<hr/>
+
 <p><a name="error-message-parser">(<b>error-message-parser</b>)</a></p>
 
 <blockquote>
@@ -318,13 +321,13 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
-<p><a name="error-occurred">(<b>error-occurred</b> <code>expression...</code>)</a></p>
+
+<p><a name="error-occurred">(<b>error-occurred</b> <span class="cmd">expression...</span>)</a></p>
 
 <blockquote>
 <p>Executes the given expressions and ignores their values. If all expressions execute successfully, it returns 0. Otherwise, it returns 1 and all expressions after the one which encountered the error will not be executed.</p>
 
-<p>The text of any error message is available for processing in the string variable <code>error-message</code>.</p>
+<p>The text of any error message is available for processing in the string variable <span class="cmd">error-message</span>.</p>
 
 
 <p><b>See also:</b></p>
@@ -339,7 +342,7 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
+
 <p><a name="exchange-dot-and-mark">(<b>exchange-dot-and-mark</b>) ^X-^X</a></p>
 
 <blockquote>
@@ -358,8 +361,8 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
-<p><a name="execute-extended-command">(<b>execute-extended-command</b> <code>extended-command</code>) ESC-x, Do</a></p>
+
+<p><a name="execute-extended-command">(<b>execute-extended-command</b> <span class="cmd">extended-command</span>) ESC-x, Do</a></p>
 
 
 <blockquote>
@@ -369,7 +372,7 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
+
 <p><a name="execute-keyboard-macro">(<b>execute-keyboard-macro</b>) ^X-e</a></p>
 
 <blockquote>
@@ -386,7 +389,7 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
+
 <p><a name="execute-mlisp-buffer">(<b>execute-mlisp-buffer</b>)</a></p>
 
 <blockquote>
@@ -406,17 +409,17 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 
 
-<hr/>
-<p><a name="execute-mlisp-file">(<b>execute-mlisp-file</b> <code>filename</code>)</a></p>
+
+<p><a name="execute-mlisp-file">(<b>execute-mlisp-file</b> <span class="cmd">filename</span>)</a></p>
 
 <blockquote>
 <p>Reads the named file as a series of MLisp expressions and executes them.</p>
 
-<p>The file name given is interpreted relative to the <code> EMACS_PATH</code> logical name. <code>EMACS_PATH</code> is defined as a logical name search-list. If the file cannot be located using <code>EMACS_PATH</code>, a search is made in the database search-list MLisp-library.</p>
+<p>The file name given is interpreted relative to the <span class="cmd"> EMACS_PATH</span> logical name. <span class="cmd">EMACS_PATH</span> is defined as a logical name search-list. If the file cannot be located using <span class="cmd">EMACS_PATH</span>, a search is made in the database search-list MLisp-library.</p>
 
 <p>The default file type is .ML</p>
 
-<p>To modify <code>EMACS_PATH</code>, select <b>Edit</b>, <b>Preferences</b>, <b>Directories</b>.</p>
+<p>To modify <span class="cmd">EMACS_PATH</span>, select <b>Edit</b>, <b>Preferences</b>, <b>Directories</b>.</p>
 
 <p><b>See also:</b></p>
 
@@ -432,8 +435,8 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 
 
-<hr/>
-<p><a name="execute-mlisp-line">(<b>execute-mlisp-line</b> <code>MLisp-expression</code>) ESC-ESC</a></p>
+
+<p><a name="execute-mlisp-line">(<b>execute-mlisp-line</b> <span class="cmd">MLisp-expression</span>) ESC-ESC</a></p>
 
 <blockquote>
 <p>Prompts for a string in the Mini-buffer, parses it as an MLisp expression, and executes it.</p>
@@ -452,11 +455,11 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
-<p><a name="execute-monitor-command">(<b>execute-monitor-command</b> <code>DCL-command</code>) ^X-!</a></p>
+
+<p><a name="execute-monitor-command">(<b>execute-monitor-command</b> <span class="cmd">DCL-command</span>) ^X-!</a></p>
 
 <blockquote>
-<p>Passes the command to the operating system and places the command output into a buffer called <b>Command execution</b>, making that buffer visible in a window. The command that is run cannot read from its standard input, so <code>execute-monitor-command</code> cannot be used if the command that is run will prompt for information.</p>
+<p>Passes the command to the operating system and places the command output into a buffer called <b>Command execution</b>, making that buffer visible in a window. The command that is run cannot read from its standard input, so <span class="cmd">execute-monitor-command</span> cannot be used if the command that is run will prompt for information.</p>
 
 <p><b>See also:</b></p>
 
@@ -467,7 +470,7 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
+
 <p><a name="exit-emacs">(<b>exit-emacs</b>) ^C or ESC-^C</a></p>
 
 <blockquote>
@@ -486,7 +489,7 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
+
 <p><a name="expand-and-exit">(<b>expand-and-exit</b>) ESC (in the Mini-buffer)</a></p>
 
 <blockquote>
@@ -505,13 +508,13 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
-<p><a name="expand-file-name">(<b>expand-file-name</b> <code>file-name</code>)</a></p>
+
+<p><a name="expand-file-name">(<b>expand-file-name</b> <span class="cmd">file-name</span>)</a></p>
 
 <blockquote>
 <p>Returns the fully-expanded file specification of the file name argument.</p>
 
-<p>Wildcards may be specified to obtain a sequence of file names. Call <code>expand-file-name</code> first with the wildcard file specification. Then call <code>expand-file-name</code> specifying a null filename until an error occurs.</p>
+<p>Wildcards may be specified to obtain a sequence of file names. Call <span class="cmd">expand-file-name</span> first with the wildcard file specification. Then call <span class="cmd">expand-file-name</span> specifying a null filename until an error occurs.</p>
 
 <p><b>Example:</b> a function to prompt for a file specification and then insert, into the current buffer, the names of all the files that match the specification.</p>
 
@@ -541,15 +544,15 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
-<p><a name="expand-file-name-recursive">(<b>expand-file-name-recursive</b> <code>file-name</code>)</a></p>
+
+<p><a name="expand-file-name-recursive">(<b>expand-file-name-recursive</b> <span class="cmd">file-name</span>)</a></p>
 
 <blockquote>
 <p>Returns the fully-expanded file specification of the file name argument.</p>
 
-<p>Wildcards may be specified to obtain a sequence of file names. Call expand-file-name-recursive first with the wildcard file specification. Then call <code>expand-file-name-recursive</code> specifying a null filename until an error occurs.</p>
+<p>Wildcards may be specified to obtain a sequence of file names. Call expand-file-name-recursive first with the wildcard file specification. Then call <span class="cmd">expand-file-name-recursive</span> specifying a null filename until an error occurs.</p>
 
-<p><code>expand-file-name-recursive</code> starts looking for files in the directory specified in <code>file-name</code>. It then looks in all of the subdirectories under the starting directory.</p>
+<p><span class="cmd">expand-file-name-recursive</span> starts looking for files in the directory specified in <span class="cmd">file-name</span>. It then looks in all of the subdirectories under the starting directory.</p>
 
 <p><b>Example:</b> A function prompts for an mlisp function and executes that function on all files that match the given file specification.</p>
 
@@ -605,8 +608,8 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
-<p><a name="expand-mlisp-variable">(<b>expand-mlisp-variable</b> <code>variable-name</code>)</a></p>
+
+<p><a name="expand-mlisp-variable">(<b>expand-mlisp-variable</b> <span class="cmd">variable-name</span>)</a></p>
 
 <blockquote>
 <p>Inserts the name of the specified variable in a buffer, using variable name completion.</p>
@@ -620,12 +623,12 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
 
-<p><a name="expand-mlisp-word">(<b>expand-mlisp-word</b> <code>command-name</code>)</a></p>
+
+<p><a name="expand-mlisp-word">(<b>expand-mlisp-word</b> <span class="cmd">command-name</span>)</a></p>
 
 <blockquote>
-<p>Prompts for the name of a command and then inserts the name as text into the current buffer. This is very handy when you are editing an MLisp function. It's useful to bind <code>expand-mlisp-word</code> to a key for easy access. </p>
+<p>Prompts for the name of a command and then inserts the name as text into the current buffer. This is very handy when you are editing an MLisp function. It's useful to bind <span class="cmd">expand-mlisp-word</span> to a key for easy access. </p>
 
 
 <p><b>See also:</b></p>
@@ -637,11 +640,11 @@ X7.0.81 of Emacs Copyright Barry A. Scott (c) Sun Mar 14 09:30:14 1999
 
 </blockquote>
 
-<hr/>
-<p><a name="expand-from-string-table">(<b>expand-from-string-table</b> <code>prompt word-list-string</code>)</a></p>
+
+<p><a name="expand-from-string-table">(<b>expand-from-string-table</b> <span class="cmd">prompt word-list-string</span>)</a></p>
 
 <blockquote>
-<p>Provides access to the Emacs input expansion mechanism. The function has two parameters: the first is a prompt, the second is a string that contains a space-separated list of words from which the user can select. The result of the function is the selected word. <code>
+<p>Provides access to the Emacs input expansion mechanism. The function has two parameters: the first is a prompt, the second is a string that contains a space-separated list of words from which the user can select. The result of the function is the selected word. <span class="cmd">
 expand-from-string-table</code> allows only one of the words in the list to be returned.</p>
 
 <p><b>Example:</b> A function that prompt for the name of a fruit to insert into the current buffer</p>
@@ -667,22 +670,22 @@ expand-from-string-table</code> allows only one of the words in the list to be r
 
 </blockquote>
 
-<hr/>
-<p><a name="expand-mlisp-word">(<b>expand-mlisp-word</b> <code>command-name</code>)</a></p>
+
+<p><a name="expand-mlisp-word">(<b>expand-mlisp-word</b> <span class="cmd">command-name</span>)</a></p>
 
 <blockquote>
 <p>Inserts the name of the specified function in a buffer using variable name completion.</p>
 </blockquote>
 
-<hr/>
-<p><a name="extend-database-search-list">(<b>extend-database-search-list</b> <code>dbname filename access</code>)</a></p>
+
+<p><a name="extend-database-search-list">(<b>extend-database-search-list</b> <span class="cmd">dbname filename access</span>)</a></p>
 
 <blockquote>
-<p>Adds the given database file to the database search list <code>dbname</code>. If the database is already in the search list, it is left there. Otherwise, the new database is added at the beginning of the database list.</p>
+<p>Adds the given database file to the database search list <span class="cmd">dbname</span>. If the database is already in the search list, it is left there. Otherwise, the new database is added at the beginning of the database list.</p>
 
 <p>Databases are help or macro libraries.</p>
 
-<p>Access is a bit mask that specifies the type of access required and it is optional. The allowable values of <code>access</code> are:</p>
+<p>Access is a bit mask that specifies the type of access required and it is optional. The allowable values of <span class="cmd">access</span> are:</p>
 
 <ul>
 <li>Bit 0: force read-only access</li>
@@ -705,14 +708,15 @@ expand-from-string-table</code> allows only one of the words in the list to be r
 
 </blockquote>
 
-<hr/>
-<p><a name="external-function">(<b>external-function</b> <code>function file routine</code>)</a></p>
+
+<p><a name="external-function">(<b>external-function</b> <span class="cmd">function file routine</span>)</a></p>
 
 <blockquote>
-<p>Declares <code>function</code> as being provided by <code>routine</code> in the image <code>file</code>. This image is dynamically linked into the Emacs process when the function is called.</p>
+<p>Declares <span class="cmd">function</span> as being provided by <span class="cmd">routine</span> in the image <span class="cmd">file</span>. This image is dynamically linked into the Emacs process when the function is called.</p>
 </blockquote>
 
-<hr/>
+
+</div>
 </body>
 </html>
 

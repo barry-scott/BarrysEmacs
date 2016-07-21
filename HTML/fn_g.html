@@ -2,18 +2,21 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
+
 <title>Functions G*</title>
 
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<hr/>
-<p><a name="get-tty-buffer"></a>(<b>get-tty-buffer</b> <code>prompt-string [default-value]</code>)</p>
+<div class="contents">
+
+<p><a name="get-tty-buffer"></a>(<b>get-tty-buffer</b> <span class="cmd">prompt-string [default-value]</span>)</p>
 
 <blockquote>
 <p>Prompts for a buffer name using command completion and providing help. The function returns the name of the buffer as a string.</p>
 
-<p>The optional <code>default-value</code> parameter provides the default input.</p>
+<p>The optional <span class="cmd">default-value</span> parameter provides the default input.</p>
 
 <p><b>Example</b> To insert a buffer name into the current buffer:</p>
 
@@ -35,7 +38,7 @@
 
 </blockquote>
 
-<hr/>
+
 <p><a name="get-tty-character"></a>(<b>get-tty-character</b>)</p>
 
 <blockquote>
@@ -55,15 +58,15 @@
 
 </blockquote>
 
-<hr/>
-<p><a name="get-tty-command"></a>(<b>get-tty-command</b> <code>command-name [default-value]</code>)</p>
+
+<p><a name="get-tty-command"></a>(<b>get-tty-command</b> <span class="cmd">command-name [default-value]</span>)</p>
 
 <blockquote>
 <p>Prompts for the name of a declared function (using command completion and providing help) and returns the name of the function as a string.</p>
 
-<p>The optional <code>default-value</code> parameter provides the default input.</p>
+<p>The optional <span class="cmd">default-value</span> parameter provides the default input.</p>
 
-<p><b>Example:</b> The <code>expand-mlisp-word</code> function is simply:</p>
+<p><b>Example:</b> The <span class="cmd">expand-mlisp-word</span> function is simply:</p>
 
 <pre>
 (insert-string (get-tty-command ": expand-mlisp-word "))
@@ -81,23 +84,23 @@
 
 </blockquote>
 
-<hr/>
-<p><a name="get-tty-directory"></a>(<b>get-tty-directory</b> <code>prompt [default-value]</code>)</p>
+
+<p><a name="get-tty-directory"></a>(<b>get-tty-directory</b> <span class="cmd">prompt [default-value]</span>)</p>
 
 <blockquote>
 <p>Prompts for a directory name using command completion and providing help. The function returns the name of the directory as a string.</p>
 
-<p>The optional <code>default-value</code> parameter provides the default input.</p>
+<p>The optional <span class="cmd">default-value</span> parameter provides the default input.</p>
 
 </blockquote>
 
-<hr/>
-<p><a name="get-tty-file"></a>(<b>get-tty-file</b> <code>prompt [default-value]</code>)</p>
+
+<p><a name="get-tty-file"></a>(<b>get-tty-file</b> <span class="cmd">prompt [default-value]</span>)</p>
 
 <blockquote>
 <p>Prompts for a file name using command completion and providing help. The function returns the name of the file as a string.</p>
 
-<p>The optional <code>default-value</code> parameter provides the default input.</p>
+<p>The optional <span class="cmd">default-value</span> parameter provides the default input.</p>
 
 
 <p><b>Example: </b>Insert a file name into the buffer:</p>
@@ -118,13 +121,13 @@
 
 </blockquote>
 
-<hr/>
-<p><a name="get-tty-string"></a>(<b>get-tty-string</b> <code>prompt [default-value]</code>)</p>
+
+<p><a name="get-tty-string"></a>(<b>get-tty-string</b> <span class="cmd">prompt [default-value]</span>)</p>
 
 <blockquote>
 <p>Reads a string from the terminal using its single string parameter as a prompt. Generally use inside MLisp programs to ask questions.</p>
 
-<p>The optional <code>default-value</code> parameter provides the default input.</p>
+<p>The optional <span class="cmd">default-value</span> parameter provides the default input.</p>
 
 <p><b>See also:</b></p>
 
@@ -138,13 +141,13 @@
 
 </blockquote>
 
-<hr/>
-<p><a name="get-tty-variable"></a>(<b>get-tty-variable</b> <code>prompt [default-value]</code>)</p>
+
+<p><a name="get-tty-variable"></a>(<b>get-tty-variable</b> <span class="cmd">prompt [default-value]</span>)</p>
 
 <blockquote>
 <p>Prompts for the name of a declared variable (using command completion and providing help) and returns the name of the variable as a string.</p>
 
-<p>The optional <code>default-value</code> parameter provides the default input.</p>
+<p>The optional <span class="cmd">default-value</span> parameter provides the default input.</p>
 
 <p><b>See also:</b></p>
 
@@ -158,8 +161,8 @@
 
 </blockquote>
 
-<hr/>
-<p><a name="getenv"></a>(<b>getenv</b> <code>env-name</code>)</p>
+
+<p><a name="getenv"></a>(<b>getenv</b> <span class="cmd">env-name</span>)</p>
 
 <blockquote>
 <p>Returns the value of the named environment symbol.</p>
@@ -174,8 +177,8 @@
 
 </blockquote>
 
-<hr/>
-<p><a name="global-binding-of"></a>(<b>global-binding-of</b> <code>key-sequence</code>)</p>
+
+<p><a name="global-binding-of"></a>(<b>global-binding-of</b> <span class="cmd">key-sequence</span>)</p>
 
 <blockquote>
 <p>Returns the name of the function that the provided key sequence will invoke, using the global keymap.</p>
@@ -190,8 +193,8 @@
 
 </blockquote>
 
-<hr/>
-<p><a name="goto-character"></a>(<b>goto-character</b> <code>expression</code>)</p>
+
+<p><a name="goto-character"></a>(<b>goto-character</b> <span class="cmd">expression</span>)</p>
 
 <blockquote>
 <p>Moves dot to the specified character position.</p>
@@ -204,13 +207,13 @@
 
 </blockquote>
 
-<hr/>
-<p><a name="goto-window-at-x-y"></a>(<b>goto-window-at-x-y</b> <code>X-coordinate Y-coordinate</code>)</p>
+
+<p><a name="goto-window-at-x-y"></a>(<b>goto-window-at-x-y</b> <span class="cmd">X-coordinate Y-coordinate</span>)</p>
 
 <blockquote>
 <p>This MLisp function is for supporting a mouse-style pointing device. The function takes two arguments, the X and Y co-ordinates of the pointer on the screen.</p>
 
-<p><code>goto-window-at-x-y</code> performs two operations:</p>
+<p><span class="cmd">goto-window-at-x-y</span> performs two operations:</p>
 
 <ul>
 <li>It changes the current window to be the one at the X and Y co-ordinates. A window is considered to be the mode line of the window, the vertical dividing line to its right and the content region of the window.</li>
@@ -218,7 +221,7 @@
 <li>If the co-ordinates are in the contents of the window, dot is set to the position nearest the co-ordinates, otherwise dot is left unchanged.</li>
 </ul>
 
-<p><code>goto-window-at-x-y</code> returns an integer result that tells you which part of a window the co-ordinates are in. The result is one of the following:</p>
+<p><span class="cmd">goto-window-at-x-y</span> returns an integer result that tells you which part of a window the co-ordinates are in. The result is one of the following:</p>
 
 <ul>
 <li>0 -- in the content region of the window</li>
@@ -231,7 +234,8 @@
 </ul>
 </blockquote>
 
-<hr/>
+
+</div>
 </body>
 </html>
 

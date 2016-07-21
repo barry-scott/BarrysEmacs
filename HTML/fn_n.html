@@ -2,12 +2,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
+
 <title>Functions N*</title>
 
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<hr/>
+<div class="contents">
+
 <p><a name="nargs"></a>(<b>nargs</b>)</p>
 
 <blockquote>
@@ -24,13 +27,13 @@
 
 </blockquote>
 
-<hr/>
+
 <p><a name="narrow-region"></a>(<b>narrow-region</b>)</p>
 
 <blockquote>
-<p>Restricts the amount of a buffer that can be manipulated to the region between dot and mark. <code>widen-region</code> will remove the restriction.</p>
+<p>Restricts the amount of a buffer that can be manipulated to the region between dot and mark. <span class="cmd">widen-region</span> will remove the restriction.</p>
 
-<p>File operations ignore this restriction so, for example, you can save a file after performing <code>narrow-region</code> and the whole file is saved, not just the visible portion.</p>
+<p>File operations ignore this restriction so, for example, you can save a file after performing <span class="cmd">narrow-region</span> and the whole file is saved, not just the visible portion.</p>
 
 <p>This function is useful for replacing strings over a small parts of a buffer or for running packages that usually affect the whole of a buffer but a required to operate on a portion of it.</p>
 
@@ -43,7 +46,7 @@
 
 </blockquote>
 
-<hr/>
+
 <p><a name="narrow-window"></a>(<b>narrow-window</b>)</p>
 
 <blockquote>
@@ -59,7 +62,7 @@
 
 </blockquote>
 
-<hr/>
+
 <p><a name="newline"></a>(<b>newline</b>) ^M (Return)</p>
 
 <blockquote>
@@ -75,7 +78,7 @@
 
 </blockquote>
 
-<hr/>
+
 <p><a name="newline-and-backup"></a>(<b>newline-and-backup</b>) ^O</p>
 
 <blockquote>
@@ -90,7 +93,7 @@
 
 </blockquote>
 
-<hr/>
+
 <p><a name="newline-and-indent"></a>(<b>newline-and-indent</b>) ^J</p>
 
 <blockquote>
@@ -108,11 +111,11 @@
 
 </blockquote>
 
-<hr/>
+
 <p><a name="next-error"></a>(<b>next-error</b>) ^X-^N</p>
 
 <blockquote>
-<p>Takes the next error message (as returned from the ESC-x <code>compile-it</code> command), visits the file in which the error occurred and sets dot to the line in which that error occurred. The error message will be displayed at the top of the window associated with the Error log buffer.</p>
+<p>Takes the next error message (as returned from the ESC-x <span class="cmd">compile-it</span> command), visits the file in which the error occurred and sets dot to the line in which that error occurred. The error message will be displayed at the top of the window associated with the Error log buffer.</p>
 
 <p><b>See also:</b></p>
 
@@ -123,11 +126,11 @@
 
 </blockquote>
 
-<hr/>
-<p><a name="next-line"></a>(<b>next-line</b> <code>repeat-count</code>) ^N</p>
+
+<p><a name="next-line"></a>(<b>next-line</b> <span class="cmd">repeat-count</span>) ^N</p>
 
 <blockquote>
-<p>Moves dot down <code>prefix-argument</code> times <code>repeat-count</code> lines. If <code>repeat-count</code> is omitted, 1 is assumed. <code>next-line</code> attempts to keep dot at the same horizontal character position as you move from line to line.</p>
+<p>Moves dot down <span class="cmd">prefix-argument</span> times <span class="cmd">repeat-count</span> lines. If <span class="cmd">repeat-count</span> is omitted, 1 is assumed. <span class="cmd">next-line</span> attempts to keep dot at the same horizontal character position as you move from line to line.</p>
 
 <p><b>See also:</b></p>
 
@@ -139,7 +142,7 @@
 
 </blockquote>
 
-<hr/>
+
 <p><a name="next-page"></a>(<b>next-page</b>) page-down</p>
 
 <blockquote>
@@ -154,7 +157,7 @@
 
 </blockquote>
 
-<hr/>
+
 <p><a name="next-window"></a>(<b>next-window</b>) ^X-n</p>
 
 <blockquote>
@@ -171,7 +174,7 @@
 
 </blockquote>
 
-<hr/>
+
 <p><a name="normal-mode"></a>(<b>normal-mode</b>)</p>
 
 <blockquote>
@@ -188,17 +191,18 @@
 
 </blockquote>
 
-<hr/>
+
 <p><a name="novalue"></a>(<b>novalue</b>)</p>
 
 <blockquote>
-<p>Does nothing. <code>novalue</code> is a complete no-op -- it performs no action and returns no value.</p>
+<p>Does nothing. <span class="cmd">novalue</span> is a complete no-op -- it performs no action and returns no value.</p>
 
-<p>Normally, the value of an MLisp function is the value of the last expression evaluated in the body of the function. If you do not want the function to return a value, use <code>novalue</code>as the last expression in the function.</p>
+<p>Normally, the value of an MLisp function is the value of the last expression evaluated in the body of the function. If you do not want the function to return a value, use <span class="cmd">novalue</span>as the last expression in the function.</p>
 
 </blockquote>
 
-<hr/>
+
+</div>
 </body>
 </html>
 

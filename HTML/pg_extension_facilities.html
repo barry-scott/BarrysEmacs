@@ -2,11 +2,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
+
 <title>Mlisp Programmer's Guide</title>
 
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+<div class="contents">
 <a name="TopOfPage"></a>
 
 <h1><a name="P884_47561"></a> Extension Facilities</h1>
@@ -46,7 +49,7 @@
 
 <p><b>current-local-keymap</b></p>
 
-<p>This variable contains the name of a buffer's current local keymap. The name it contains may be used with a <code>use-local-map</code> function.</p>
+<p>This variable contains the name of a buffer's current local keymap. The name it contains may be used with a <span class="cmd">use-local-map</span> function.</p>
 
 <p><b>default-global-keymap</b></p>
 
@@ -58,15 +61,15 @@
 
 <p><b>(bind-to-key <i>name keys</i>)</b></p>
 
-<p>Makes a global binding to a function. The function binding will be usable from any buffer. The function <i>name</i> must have already been declared in the function name-space. <i>keys</i> can be an arbitrary sequence of characters used to access the function. The following example binds the function <code>set-mark</code> to the <code>Select</code> key:</p>
+<p>Makes a global binding to a function. The function binding will be usable from any buffer. The function <i>name</i> must have already been declared in the function name-space. <i>keys</i> can be an arbitrary sequence of characters used to access the function. The following example binds the function <span class="cmd">set-mark</span> to the <span class="cmd">Select</span> key:</p>
 
 <pre>
 (bind-to-key "set-mark" "select)")
 </pre>
 
-<p>If <i>keys</i> is a character constant, then the binding is entered into the current global keymap. If <i>keys</i> is a string, then enough keymaps are automatically generated to define the entire path to the function. Automatically generated keymaps have names of the form <code>auto-defined-keymap-n</code>, where <code>n</code> is a sequence number.</p>
+<p>If <i>keys</i> is a character constant, then the binding is entered into the current global keymap. If <i>keys</i> is a string, then enough keymaps are automatically generated to define the entire path to the function. Automatically generated keymaps have names of the form <span class="cmd">auto-defined-keymap-n</span>, where <span class="cmd">n</span> is a sequence number.</p>
 
-<p>If the key sequence specified is a control sequence, it must be a valid ISO control sequence. For example, the key sequence <code>ESC-Select</code> is not a valid ISO control sequence because it generates two consecutive <code>ESC</code> characters. However, Emacs allows you to bind commands to such sequences by providing the <code>convert-key-string</code> function. <code>convert-key-string</code> will convert a control sequence according to Emacs' control-string processing rules to a valid ISO control sequence. For example, to bind the <code>unset-mark</code> function to the <code>ESC-Select</code> key sequence, use the <code>convert-key-string</code> function as follows:</p>
+<p>If the key sequence specified is a control sequence, it must be a valid ISO control sequence. For example, the key sequence <span class="key">ESC-Select</span> is not a valid ISO control sequence because it generates two consecutive <span class="key">ESC</span> characters. However, Emacs allows you to bind commands to such sequences by providing the <span class="cmd">convert-key-string</span> function. <span class="cmd">convert-key-string</span> will convert a control sequence according to Emacs' control-string processing rules to a valid ISO control sequence. For example, to bind the <span class="cmd">unset-mark</span> function to the <span class="key">ESC-Select</span> key sequence, use the <span class="cmd">convert-key-string</span> function as follows:</p>
 
 <pre>
 (bind-to-key "unset-mark"
@@ -84,7 +87,7 @@
 
 <p><b>(local-bind-to-key <i>name keys</i>)</b></p>
 
-<p>Defines a local binding to a function. The binding is entered into the current buffer's local keymap. Character and string <i>keys</i> parameters are treated as described under <code>bind-to-key</code>. If a buffer does not have a local keymap, an error is reported.</p>
+<p>Defines a local binding to a function. The binding is entered into the current buffer's local keymap. Character and string <i>keys</i> parameters are treated as described under <span class="cmd">bind-to-key</span>. If a buffer does not have a local keymap, an error is reported.</p>
 
 <p><b>(global-binding-of <i>keys</i>)</b></p>
 
@@ -137,11 +140,11 @@
 
 <p><b>describe</b></p>
 
-<p>This search-list is used by the <code>describe-command</code>, <code>describe-variable</code> and <code>Help</code> functions. The files in the list contain the Emacs help database. This search-list can grow as new packages are added into the running Emacs.</p>
+<p>This search-list is used by the <span class="cmd">describe-command</span>, <span class="cmd">describe-variable</span> and <span class="cmd">Help</span> functions. The files in the list contain the Emacs help database. This search-list can grow as new packages are added into the running Emacs.</p>
 
 <p><b>subr-names</b></p>
 
-<p>This search-list is used by the <code>describe-word-in-buffer</code> function as the source of one-line information about words. It contains the supplied quick-information database files and the user's SYS$LOGIN:SUBRNAMES.TLB database if it exists.</p>
+<p>This search-list is used by the <span class="cmd">describe-word-in-buffer</span> function as the source of one-line information about words. It contains the supplied quick-information database files and the user's SYS$LOGIN:SUBRNAMES.TLB database if it exists.</p>
 
 <h3>database functions</h3>
 
@@ -163,11 +166,11 @@
 
 <p><b>(list-databases)</b></p>
 
-<p>Creates a buffer called <code>Database list</code> and inserts the names and file names of all the database search-lists. This buffer is then displayed in a window.</p>
+<p>Creates a buffer called <span class="cmd">Database list</span> and inserts the names and file names of all the database search-lists. This buffer is then displayed in a window.</p>
 
 <p><b>(put-database-entry <i>dbname key</i>)</b></p>
 
-<p>Inserts the current buffer into the first library in the designated database search-list using the specified key. You cannot use <code>put-database-entry</code> on a read-only database. Completion is enabled for both the database search-list name and the key.</p>
+<p>Inserts the current buffer into the first library in the designated database search-list using the specified key. You cannot use <span class="cmd">put-database-entry</span> on a read-only database. Completion is enabled for both the database search-list name and the key.</p>
 
 <p><b>(fetch-database-entry <i>dbname key</i>)</b></p>
 
@@ -175,11 +178,11 @@
 
 <p><b>(fetch-help-database-entry <i>dbname keys</i>)</b></p>
 
-<p>Performs the special operation of fetching help from a VMS HELP library and formats it in the same way as the DCL HELP command. The location of the key must be a help library. The formatted help text is inserted into the buffer at dot. Dot remains in the same place. An error is reported if the keys are not found. The keys are defined as a space-separated list of up to 8 keys which access the required help text. <code>fetch-help-database-flags</code> controls the amount of information fetched from the entry.</p>
+<p>Performs the special operation of fetching help from a VMS HELP library and formats it in the same way as the DCL HELP command. The location of the key must be a help library. The formatted help text is inserted into the buffer at dot. Dot remains in the same place. An error is reported if the keys are not found. The keys are defined as a space-separated list of up to 8 keys which access the required help text. <span class="cmd">fetch-help-database-flags</span> controls the amount of information fetched from the entry.</p>
 
 <p><b>fetch-help-database-flags</b></p>
 
-<p>Controls the amount of help text that is inserted into the current buffer when the <code>fetch-help-database-entry</code> function is executed. It contains a bit-mask which can take the following values:</p>
+<p>Controls the amount of help text that is inserted into the current buffer when the <span class="cmd">fetch-help-database-entry</span> function is executed. It contains a bit-mask which can take the following values:</p>
 
 <ul>
 <li><b>1 (text)</b> --- includes the help text for this entry</li>
@@ -234,7 +237,7 @@
 
 <p><b>(resume-process <i>process-name</i>)</b></p>
 
-<p>Resumes a process which has been paused with <code>pause-process</code>.</p>
+<p>Resumes a process which has been paused with <span class="cmd">pause-process</span>.</p>
 
 <p><b>(force-exit-process <i>process-name reason</i>)</b></p>
 
@@ -246,7 +249,7 @@
 
 <p><b>(current-process-name)</b></p>
 
-<p>Returns a string containing the current process name. This name will be either the name of the last created process, the name of the process which was a target of the <code>set-current-process</code> function, or the name of the associated process for functions called as a result of process input, output or termination.</p>
+<p>Returns a string containing the current process name. This name will be either the name of the last created process, the name of the process which was a target of the <span class="cmd">set-current-process</span> function, or the name of the associated process for functions called as a result of process input, output or termination.</p>
 
 <p><b>(set-current-process <i>process-name</i>)</b></p>
 
@@ -301,50 +304,50 @@
 
 <p>This mode allows you to type text endlessly without worrying about the width of your screen. Line separators are inserted as required to prevent lines from becoming too long.</p>
 
-<p>Auto-fill Mode is controlled by setting the variable <code>right-margin</code>. When an attempt is made to insert a word character passed the right margin, auto-filling is invoked.</p>
+<p>Auto-fill Mode is controlled by setting the variable <span class="cmd">right-margin</span>. When an attempt is made to insert a word character passed the right margin, auto-filling is invoked.</p>
 
 <p><b>Checkpoint Mode</b></p>
 
-<p>Checkpoint Mode protects you from system crashes by periodically saving the buffers you are working with. Whenever you visit a file, checkpointing is enabled if the variable <code>checkpoint-frequency</code> is non-zero.</p>
+<p>Checkpoint Mode protects you from system crashes by periodically saving the buffers you are working with. Whenever you visit a file, checkpointing is enabled if the variable <span class="cmd">checkpoint-frequency</span> is non-zero.</p>
 
-<p>Checkpointing for individual buffers is also controlled by the buffer-specific variable <code>current-buffer-checkpointable</code>.</p>
+<p>Checkpointing for individual buffers is also controlled by the buffer-specific variable <span class="cmd">current-buffer-checkpointable</span>.</p>
 
 <p><b>Journal Mode</b></p>
 
-<p>Journal Mode protects you from system crashes by writing a journal of all the changes that are made to modified buffers. When you visit a file, journalling is automatically enabled if the variable <code>journal-frequency</code> is non-zero.</p>
+<p>Journal Mode protects you from system crashes by writing a journal of all the changes that are made to modified buffers. When you visit a file, journalling is automatically enabled if the variable <span class="cmd">journal-frequency</span> is non-zero.</p>
 
-<p>Journalling for individual buffers is controlled by the buffer-specific variable <code>current-buffer-journalled</code>.</p>
+<p>Journalling for individual buffers is controlled by the buffer-specific variable <span class="cmd">current-buffer-journalled</span>.</p>
 
 <p><b>Replace Mode</b></p>
 
-<p>Replace Mode causes ordinary printing characters to replace existing text rather than be inserted. For example, if dot is in front of the <code>B</code> in <code>FOOBAR</code>, then in Replace Mode, typing a <code>G</code> changes it to <code>FOOGAR</code>, instead of making it <code>FOOGBAR</code> as usual.</p>
+<p>Replace Mode causes ordinary printing characters to replace existing text rather than be inserted. For example, if dot is in front of the <span class="cmd">B</span> in <span class="cmd">FOOBAR</span>, then in Replace Mode, typing a <span class="cmd">G</span> changes it to <span class="cmd">FOOGAR</span>, instead of making it <span class="cmd">FOOGBAR</span> as usual.</p>
 
-<p>This mode is controlled with variable <code>replace-mode</code>.</p>
+<p>This mode is controlled with variable <span class="cmd">replace-mode</span>.</p>
 
 <p><b>Abbreviation Mode</b></p>
 
-<p>Abbreviation Mode allows you to define abbreviations that automatically expand as you type them. For example, <code>am</code> might expand to <code>Abbrev mode</code>. The abbreviations also may depend on the active major mode.</p>
+<p>Abbreviation Mode allows you to define abbreviations that automatically expand as you type them. For example, <span class="cmd">am</span> might expand to <span class="cmd">Abbrev mode</span>. The abbreviations also may depend on the active major mode.</p>
 
-<p>This mode is controlled by the variable <code>abbrev-mode</code>.</p>
+<p>This mode is controlled by the variable <span class="cmd">abbrev-mode</span>.</p>
 
 <p><b>Read-only Mode</b></p>
 
 <p>Read-only Mode allows you to protect the data in a buffer from being altered. When Read-only Mode is enabled, attempts to insert characters into the buffer are ignored and cause the bell to be sounded.</p>
 
-<p>This mode is controlled by the variable <code>read-only-buffer</code>.</p>
+<p>This mode is controlled by the variable <span class="cmd">read-only-buffer</span>.</p>
 
 <hr align="left" size="2" color="#800080"/>
 <a name="P1186_67157"></a> 
 
 <h2>the mode line</h2>
 
-<p>As with most things in Emacs, the information in the mode line is customisable. A buffer-specific variable <code>mode-line-format</code> exists for this purpose. <code>mode-line-format</code> contains a format string which governs the way that the mode line information is displayed. It contains literal text and embedded format effectors. The literal text will be displayed in the mode line as it is typed, while the format effectors will be expanded with the appropriate information. You normally alter the default value of this variable (<code>default-mode-line-format</code>) so that when a new buffer is created, it displays your customised mode line immediately.</p>
+<p>As with most things in Emacs, the information in the mode line is customisable. A buffer-specific variable <span class="cmd">mode-line-format</span> exists for this purpose. <span class="cmd">mode-line-format</span> contains a format string which governs the way that the mode line information is displayed. It contains literal text and embedded format effectors. The literal text will be displayed in the mode line as it is typed, while the format effectors will be expanded with the appropriate information. You normally alter the default value of this variable (<span class="cmd">default-mode-line-format</span>) so that when a new buffer is created, it displays your customised mode line immediately.</p>
 
-<p>The general form of the format effectors is <code>%nx</code>. <code>n</code> is the width of the string to be inserted and causes truncation or padding on the right. <code>x</code> is one of the letters in the following list:</p>
+<p>The general form of the format effectors is <span class="cmd">%nx</span>. <span class="cmd">n</span> is the width of the string to be inserted and causes truncation or padding on the right. <span class="cmd">x</span> is one of the letters in the following list:</p>
 
 <p><b>a</b></p>
 
-<p>Inserts the string <code>Abbrev</code> if Abbreviation Mode is on, otherwise it inserts nothing.</p>
+<p>Inserts the string <span class="cmd">Abbrev</span> if Abbreviation Mode is on, otherwise it inserts nothing.</p>
 
 <p><b>b</b></p>
 
@@ -352,39 +355,39 @@
 
 <p><b>c</b></p>
 
-<p>Inserts the string <code>Checkpoint</code> if checkpointing is generally enabled and also enabled for the current buffer, otherwise it inserts nothing.</p>
+<p>Inserts the string <span class="cmd">Checkpoint</span> if checkpointing is generally enabled and also enabled for the current buffer, otherwise it inserts nothing.</p>
 
 <p><b>f</b></p>
 
-<p>Inserts the current file name for buffers associated with files, or <code>[No File]</code> for scratch buffers.</p>
+<p>Inserts the current file name for buffers associated with files, or <span class="cmd">[No File]</span> for scratch buffers.</p>
 
 <p><b>h</b></p>
 
-<p>Inserts the string <code>&lt;n&lt;</code> if the horizontal position of the window on the current buffer does not include column one. <code>n</code> indicates by how many characters column one is offset from the left-hand side of the window.</p>
+<p>Inserts the string <span class="cmd">&lt;n&lt;</span> if the horizontal position of the window on the current buffer does not include column one. <span class="cmd">n</span> indicates by how many characters column one is offset from the left-hand side of the window.</p>
 
 <p><b>j</b></p>
 
-<p>Inserts the string <code>Journal</code> if journalling is enabled for the buffer, otherwise nothing is inserted.</p>
+<p>Inserts the string <span class="cmd">Journal</span> if journalling is enabled for the buffer, otherwise nothing is inserted.</p>
 
 <p><b>m</b></p>
 
-<p>Inserts the value of the buffer-specific variable <code>mode-string</code>. This variable defines the major mode for the buffer.</p>
+<p>Inserts the value of the buffer-specific variable <span class="cmd">mode-string</span>. This variable defines the major mode for the buffer.</p>
 
 <p><b>M</b></p>
 
-<p>Inserts the value of the global variable <code>global-mode-string</code> which defines the name of the currently running subsystem.</p>
+<p>Inserts the value of the global variable <span class="cmd">global-mode-string</span> which defines the name of the currently running subsystem.</p>
 
 <p><b>p</b></p>
 
-<p>Inserts the position of dot in the current buffer as a percentage. If dot is at the beginning of the buffer, the string <code>Top</code> is inserted. If dot is at the end of the buffer, the string <code>Bottom</code> is inserted.</p>
+<p>Inserts the position of dot in the current buffer as a percentage. If dot is at the beginning of the buffer, the string <span class="cmd">Top</span> is inserted. If dot is at the end of the buffer, the string <span class="cmd">Bottom</span> is inserted.</p>
 
 <p><b>r</b></p>
 
-<p>Inserts the string <code>Overstrike</code> if Replace Mode is currently enabled.</p>
+<p>Inserts the string <span class="cmd">Overstrike</span> if Replace Mode is currently enabled.</p>
 
 <p><b>R</b></p>
 
-<p>Inserts the string <code>Readonly</code> if Read-only Mode is currently enabled.</p>
+<p>Inserts the string <span class="cmd">Readonly</span> if Read-only Mode is currently enabled.</p>
 
 <p><b>*</b></p>
 
@@ -392,26 +395,26 @@
 
 <p><b>[ and ]</b></p>
 
-<p>Inserts zero or more square brackets depending on the depth of recursive editing. One bracket is inserted per level when the recursive edit depth is less than 5. When the edit depth is 5 or greater, the string <code>[n]</code> is inserted, where <code>n</code> is the recursive edit depth.</p>
+<p>Inserts zero or more square brackets depending on the depth of recursive editing. One bracket is inserted per level when the recursive edit depth is less than 5. When the edit depth is 5 or greater, the string <span class="cmd">[n]</span> is inserted, where <span class="cmd">n</span> is the recursive edit depth.</p>
 
-<p>The default value of <code>mode-line-format</code> is:</p>
+<p>The default value of <span class="cmd">mode-line-format</span> is:</p>
 
-<p><code>%[%hBuffer: %b%* File: %f %M (%m%c%r%a) %p%]</code></p>
+<p><span class="cmd">%[%hBuffer: %b%* File: %f %M (%m%c%r%a) %p%]</span></p>
 
 <hr align="left" size="2" color="#800080"/>
 <a name="P1249_69710"></a> 
 
 <h2><a name="syntaxtables"></a>Syntax Tables</h2>
 
-<p>The effects of all the Emacs commands which parse words or balance parentheses are controlled by syntax tables . Each ASCII character is represented by one entry in each syntax table. Each buffer has a syntax table associated with it. The default syntax table is called <code>global-syntax-table</code>. The name of the current syntax table (the syntax table associated with the current buffer) may be accessed through the variable <code>current-buffer-syntax-table</code>, and this table may be changed either by setting the variable, or by using the function <code>use-syntax-table</code>.</p>
+<p>The effects of all the Emacs commands which parse words or balance parentheses are controlled by syntax tables . Each ASCII character is represented by one entry in each syntax table. Each buffer has a syntax table associated with it. The default syntax table is called <span class="cmd">global-syntax-table</span>. The name of the current syntax table (the syntax table associated with the current buffer) may be accessed through the variable <span class="cmd">current-buffer-syntax-table</span>, and this table may be changed either by setting the variable, or by using the function <span class="cmd">use-syntax-table</span>.</p>
 
-<p>To alter a syntax table, the function <code>modify-syntax-entry</code> is provided. This command takes a single string argument which describes the attributes to be applied to the specified characters as follows:</p>
+<p>To alter a syntax table, the function <span class="cmd">modify-syntax-entry</span> is provided. This command takes a single string argument which describes the attributes to be applied to the specified characters as follows:</p>
 
 <p>&#183; The first character is one of the following:</p>
 
 <p><b>w</b></p>
 
-<p>A word character, as used by such functions as <code>forward-word</code> and <code>case-word-capitalize</code>.</p>
+<p>A word character, as used by such functions as <span class="cmd">forward-word</span> and <span class="cmd">case-word-capitalize</span>.</p>
 
 <p><b>Space</b></p>
 
@@ -419,45 +422,46 @@
 
 <p><b>(</b></p>
 
-<p>A open parenthesis. Typical candidates for this type are the characters <code>(</code>, <code>[</code> and.</p>
+<p>A open parenthesis. Typical candidates for this type are the characters <span class="cmd">(</span>, <span class="cmd">[</span> and.</p>
 
-<p>Characters of this type also have a matching closing parenthesis specified which appears as the second character of the parameter to <code>modify-syntax-entry</code>.</p>
+<p>Characters of this type also have a matching closing parenthesis specified which appears as the second character of the parameter to <span class="cmd">modify-syntax-entry</span>.</p>
 
 <p><b>)</b></p>
 
-<p>A close parenthesis. Typical candidates for this type are the characters <code>)</code>, <code>]</code> and. Characters of this type also have a matching open parenthesis specified which appears as the second character of the parameter to <code>modify-syntax-entry</code>.</p>
+<p>A close parenthesis. Typical candidates for this type are the characters <span class="cmd">)</span>, <span class="cmd">]</span> and. Characters of this type also have a matching open parenthesis specified which appears as the second character of the parameter to <span class="cmd">modify-syntax-entry</span>.</p>
 
 <p><b>"</b></p>
 
-<p>A double-quote character. The C string delimiters <code>"</code> and <code>'</code> are usually given this class.</p>
+<p>A double-quote character. The C string delimiters <span class="cmd">"</span> and <span class="cmd">'</span> are usually given this class.</p>
 
 <p><b>\</b></p>
 
-<p>A prefix character, like <code>\</code> in C.</p>
+<p>A prefix character, like <span class="cmd">\</span> in C.</p>
 
-<p>&#183; The second character of the string is the matching parenthesis if the first character is of the open or close parenthesis type. If you specify that <code>(</code> is a left parenthesis matched by <code>)</code>, you should also specify that <code>)</code> is a right parenthesis matched by <code>(</code>.</p>
+<p>&#183; The second character of the string is the matching parenthesis if the first character is of the open or close parenthesis type. If you specify that <span class="cmd">(</span> is a left parenthesis matched by <span class="cmd">)</span>, you should also specify that <span class="cmd">)</span> is a right parenthesis matched by <span class="cmd">(</span>.</p>
 
-<p>&#183; The third character, if a <code>, indicates that the characters described by this syntax entry begin a comment.</code></p>
+<p>&#183; The third character, if a <span class="cmd">, indicates that the characters described by this syntax entry begin a comment.</span></p>
 
-<p><code>&#183; The fourth character, if equal to</code> , indicates that the character described by this syntax entry ends a comment.</p>
+<p><span class="cmd">&#183; The fourth character, if equal to</span> , indicates that the character described by this syntax entry ends a comment.</p>
 
 <p>&#183; If either the beginning or ending comment sequence is two characters long, then the fifth character provides the second character of the comment sequence.</p>
 
-<p>&#183; The sixth and following characters specify which characters are described by the entry; a range of characters can be specified by using the sequence specifier <code>a-b</code>, where <code>a</code>and <code>b</code> are ASCII characters and <code>a</code> is less than <code>b</code>. <code>--</code> can be described if it appears as the sixth character.</p>
+<p>&#183; The sixth and following characters specify which characters are described by the entry; a range of characters can be specified by using the sequence specifier <span class="cmd">a-b</span>, where <span class="cmd">a</span>and <span class="cmd">b</span> are ASCII characters and <span class="cmd">a</span> is less than <span class="cmd">b</span>. <span class="cmd">--</span> can be described if it appears as the sixth character.</p>
 
 <p>Attribute entries that are not relevant should be spaces.</p>
 
 <p>For example:</p>
 
-<p><code>(modify-syntax-entry "w -")</code></p>
+<p><span class="cmd">(modify-syntax-entry "w -")</span></p>
 
-<p>makes <code>-</code> behave as a word character;</p>
+<p>makes <span class="cmd">-</span> behave as a word character;</p>
 
-<p><code>(modify-syntax-entry "(] [")</code></p>
+<p><span class="cmd">(modify-syntax-entry "(] [")</span></p>
 
-<p>makes <code>[</code> behave as a left bracket which is matched by <code>]</code>.</p>
+<p>makes <span class="cmd">[</span> behave as a left bracket which is matched by <span class="cmd">]</span>.</p>
 
-<p>The function <code>list-syntax-tables</code> is useful for finding out the names of all the syntax tables known to Emacs. Use <code>dump-syntax-table</code> to dump the contents of a syntax table. This function is very useful when trying to discover why a syntax table is not working as expected.</p>
+<p>The function <span class="cmd">list-syntax-tables</span> is useful for finding out the names of all the syntax tables known to Emacs. Use <span class="cmd">dump-syntax-table</span> to dump the contents of a syntax table. This function is very useful when trying to discover why a syntax table is not working as expected.</p>
+</div>
 </body>
 </html>
 

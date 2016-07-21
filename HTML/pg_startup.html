@@ -2,11 +2,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
+
 <title>Mlisp Programmer's Guide</title>
 
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+<div class="contents">
 <a name="TopOfPage"></a>
 
 <h1><a name="P1783_92659"></a>Starting Up Emacs</h1>
@@ -24,7 +27,7 @@ in environment files.</p>
 <h2><a name="startupprocedure">The Emacs Start-Up Procedure</a></h2>
 
 <p>This section describes in detail what happens when Emacs is initially started and
-re-started after an <code>ESC-x pause-emacs</code> command.
+re-started after an <span class="key">ESC-x pause-emacs</span> command.
 The steps that are executed when returning to a paused Emacs are specifically noted.</p>
 
 <p>This section describes in detail what happens when Emacs is initially started.</p>
@@ -32,43 +35,43 @@ The steps that are executed when returning to a paused Emacs are specifically no
 <p>The following steps are executed in order:</p>
 
 <ol>
-<li>If the <font face="Courier New" size="2">/restore</font> qualifier has been specified,
+<li>If the <span class="cmd">/restore</span> qualifier has been specified,
 Emacs restores the specified environment file and initialisation continues from step 4.</li>
 
 <li>If /norestore qualifier is specified, Emacs executes the file
-<font face="Courier New" size="2">emacs_library:emacs_profile.ml</font> as a series of Mock Lisp (MLisp) expressions.</li>
+<span class="cmd">emacs_library:emacs_profile.ml</span> as a series of Mock Lisp (MLisp) expressions.</li>
 
-<li><font face="Courier New" size="2">emacs_library:emacs_profile.ml</font> causes the
-file <font face="Courier New" size="2">sys$login:emacsinit.ml</font> to be executed as a
+<li><span class="cmd">emacs_library:emacs_profile.ml</span> causes the
+file <span class="cmd">sys$login:emacsinit.ml</span> to be executed as a
 series of MLisp expressions. If this file does not exist emacs searches the directories
-named in <font face="Courier New" size="2">emacs_path</font> for <font face="Courier New" size="2">emacsinit.ml</font>
+named in <span class="cmd">emacs_path</span> for <span class="cmd">emacsinit.ml</span>
 and executes the first one found instead.</li>
 
-<li>If the variable <font face="Courier New" size="2">user-interface-hook</font> contains the name of an MLisp function,
+<li>If the variable <span class="cmd">user-interface-hook</span> contains the name of an MLisp function,
 then this function is executed. Normally you will leave this variable alone and let Emacs set it up for you.</li>
 
-<li>If Emacs is starting and the variable <font face="Courier New" size="2">enter-emacs-hook</font>
+<li>If Emacs is starting and the variable <span class="cmd">enter-emacs-hook</span>
 contains the name of an MLisp function, then this function is executed.</li>
 
 <li>This is the hook you may used to execute code each time emacs starts up.</li>
 
-<li>If the <font face="Courier New" size="2">/package=<i>package-name</i></font> qualifier is specified on the 
+<li>If the <span class="cmd">/package=<i>package-name</i></span> qualifier is specified on the 
 Emacs command line then the designated package is loaded and run otherwise the
- <font face="Courier New" size="2">emacs</font> package is loaded and run.
+ <span class="cmd">emacs</span> package is loaded and run.
 This is achieved by taking the name specified and adding
-<font face="Courier New" size="2">.mlp</font> to it. 
+<span class="cmd">.mlp</span> to it. 
 
 <p>The resulting name is then used as the name of a file to execute as a series of MLisp 
 expressions. When the file has been completely executed, the function
- <font face="Courier New" size="2"><i>package-name</i>-com</font> is called.</p>
+ <span class="cmd"><i>package-name</i>-com</span> is called.</p>
 
-<p>For example, a package called <font face="Courier New" size="2">dired</font> will have a
- file called <font face="Courier New" size="2">dired.mlp</font> that contains an MLisp
- function called <font face="Courier New" size="2">dired-com</font>.</p>
+<p>For example, a package called <span class="cmd">dired</span> will have a
+ file called <span class="cmd">dired.mlp</span> that contains an MLisp
+ function called <span class="cmd">dired-com</span>.</p>
 </li>
 
-<li>If the Emacs functions <font face="Courier New" size="2">argc</font> 
-and <font face="Courier New" size="2">argv</font> have not been used since the 
+<li>If the Emacs functions <span class="cmd">argc</span> 
+and <span class="cmd">argv</span> have not been used since the 
 Emacs command was issued, all the files specified on the command line are 
 automatically visited.</li>
 
@@ -77,9 +80,9 @@ the files that were displayed on the screen when Emacs last exited completely.
 This information is maintained in the emacs memory file. The contents of this 
 file are private to Emacs, and should never be altered or edited. If the file 
 does not exist, no files will be automatically visited. Under Unix the Emacs 
-memory file is named <font face="Courier New" size="2">emacs_memory:.emacs_mem</font>. 
+memory file is named <span class="cmd">emacs_memory:.emacs_mem</span>. 
 Under Windows the Emacs memory file is named 
-<font face="Courier New" size="2">emacs_memory:__emacs_.mem</font>.</li>
+<span class="cmd">emacs_memory:__emacs_.mem</span>.</li>
 
 <li>Emacs now calls its display processor to display the screen, and then calls 
 its keyboard processor to process keyboard commands.</li>
@@ -192,8 +195,8 @@ logical names defined in the saved process are not restored.</p>
 <p>Scheduled procedures saved in an environment file are delivered at the specified time. 
 If that time has already expired, they are delivered immediately.</p>
 
-<p>You use the <code>ESC-x save-environment</code> command to save the current environment 
-in an Emacs environment file. <code>save-environment</code> asks for the name of the file
+<p>You use the <span class="key">ESC-x save-environment</span> command to save the current environment 
+in an Emacs environment file. <span class="cmd">save-environment</span> asks for the name of the file
  you want to create and will supply a default file type of ".EMACS_ENVIRONMENT" if no file
  type is specified.</p>
 
@@ -210,6 +213,7 @@ saved (this often happens when VMS is upgraded).</p>
 you must rebuild your environment file.</p>
 
 <hr align="left" size="2" color="#800080"/>
+</div>
 </body>
 </html>
 

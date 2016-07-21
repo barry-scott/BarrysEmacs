@@ -2,13 +2,16 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
+
 <title>Functions J*</title>
 
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<hr/>
-<p><a name="journal-recover"></a>(<b>journal-recover</b> <code>journal-filename</code>)</p>
+<div class="contents">
+
+<p><a name="journal-recover"></a>(<b>journal-recover</b> <span class="cmd">journal-filename</span>)</p>
 
 <blockquote>
 <p>Recovers a file or buffer after a system crash or other disaster.</p>
@@ -17,7 +20,7 @@
 
 <p>There is a journal file for each buffer that has journaling enabled and has not been saved. For buffers with associated files the journal name is based on the name of file. For buffers without associated files the journal has a name that is based on the buffer name.</p>
 
-<p>If no journal filename parameter is supplied, <code>journal-recover</code> prompts for the name of the journal file, which must be in EMACS_JOURNAL:</p>
+<p>If no journal filename parameter is supplied, <span class="cmd">journal-recover</span> prompts for the name of the journal file, which must be in EMACS_JOURNAL:</p>
 
 <p>Emacs checks that the journal file is valid before attempting to apply it.</p>
 
@@ -31,7 +34,7 @@
 
 </blockquote>
 
-<hr/>
+
 <p><a name="justify-paragraph"></a>(<b>justify-paragraph</b>)</p>
 
 <blockquote>
@@ -48,7 +51,8 @@
 
 </blockquote>
 
-<hr/>
+
+</div>
 </body>
 </html>
 

@@ -183,6 +183,7 @@ this kit.
         self.all_file_items.extend( [
                 r'''Source: "..\..\Readme.txt"; DestDir: "{app}";''',
 
+                r'''Source: "..\..\..\Editor\PyQtBEmacs\bemacs.png";  DestDir: "{app}\Documentation";''',
                 r'''Source: "..\..\..\HTML\*.css";  DestDir: "{app}\Documentation";''',
                 r'''Source: "..\..\..\HTML\*.html"; DestDir: "{app}\Documentation";''',
                 r'''Source: "..\..\..\HTML\*.gif";  DestDir: "{app}\Documentation";''',

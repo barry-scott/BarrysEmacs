@@ -59,6 +59,7 @@ quick_info:
 docs:
 	@ echo Info: Copying documentation...
 	cp -f ../Kits/readme.txt "$(BEMACS_DOC_DIR)";chmod ugo=r "$(BEMACS_DOC_DIR)/readme.txt"
+	cp -f ../Editor/PyQtBEmacs/bemacs.png "$(BEMACS_DOC_DIR)"; chmod ugo=r "$(BEMACS_DOC_DIR)"/*.png
 	cp -f ../HTML/*.html	"$(BEMACS_DOC_DIR)"; chmod ugo=r "$(BEMACS_DOC_DIR)"/*.html
 	cp -f ../HTML/*.gif	"$(BEMACS_DOC_DIR)"; chmod ugo=r "$(BEMACS_DOC_DIR)"/*.gif
 	cp -f ../HTML/*.css	"$(BEMACS_DOC_DIR)"; chmod ugo=r "$(BEMACS_DOC_DIR)"/*.css

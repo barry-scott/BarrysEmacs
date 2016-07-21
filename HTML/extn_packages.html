@@ -2,14 +2,16 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
 <title>Emacs Package and Subsystem Reference</title>
-
 <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
+<div class="contents">
 <h1><a name="packageandsubsystem"></a>Emacs Package and Subsystem Reference</h1>
 
-<hr/>
+
 <p><b>Contents:</b></p>
 
 <ul>
@@ -26,7 +28,7 @@
 <li><a href="#teach">TEACH, A Computer-Based Instruction Package</a></li>
 </ul>
 
-<hr/>
+
 <h2><a name="bufdired"></a>BUFDIRED, A Buffer Editing Subsystem</h2>
 
 <!-- <p><strong><i>BUFDIRED, A Buffer Editing Subsystem </i></strong> BUFDIRED Buffer editing Editing buffers buffer-dired</p> -->
@@ -130,15 +132,15 @@
 </tr>
 </table>
 
-<hr/>
+
 <h2><a name="debug"></a>DEBUG, A Mock Lisp Debugger</h2>
 
 <!-- <p><i><strong>DEBUG, A Mock Lisp Debugger </strong></i> DEBUG Debugging Mock Lisp Mock Lisp debugger</p> -->
 <p>The DEBUG subsystem uses the Emacs tracing, breakpointing, error trapping and stack dumping facilities to provide a powerful source line Mock Lisp debugger.</p>
 
-<p>To start DEBUG, load in the DEBUG subsystem. Each time you want to enter DEBUG mode, use the <code>ESC-^D</code> (or <code>ESC-x debug</code>) command.</p>
+<p>To start DEBUG, load in the DEBUG subsystem. Each time you want to enter DEBUG mode, use the <span class="key">ESC-^D</span> (or <span class="key">ESC-x debug</span>) command.</p>
 
-<p>The <code>ESC-x debug</code> command loads up the breakpoint, error and trace handlers, binds DEBUG functions to keys and pops up the Debug and show expression windows. Source code and other information displayed by DEBUG will appear in these windows.</p>
+<p>The <span class="key">ESC-x debug</span> command loads up the breakpoint, error and trace handlers, binds DEBUG functions to keys and pops up the Debug and show expression windows. Source code and other information displayed by DEBUG will appear in these windows.</p>
 
 <p>The show expression window is used to display the type and value that the last expression returned or variable requested.</p>
 
@@ -213,7 +215,7 @@
 <p><strong>q (quit)</strong></p>
 
 <blockquote>
-<p>Exits DEBUG. The Debug window is removed and all variables controlled by DEBUG are reset. Breakpoints remain intact, but will not cause DEBUG to be run. To re-start debugging, use the <code>ESC-^D</code> (<code>ESC-x debug</code>) command.</p>
+<p>Exits DEBUG. The Debug window is removed and all variables controlled by DEBUG are reset. Breakpoints remain intact, but will not cause DEBUG to be run. To re-start debugging, use the <span class="key">ESC-^D</span> (<span class="key">ESC-x debug</span>) command.</p>
 </blockquote>
 
 <p><strong>s or PF1-KP0 (step)</strong></p>
@@ -242,7 +244,7 @@
 <p>DEBUG never displays information about any of the DEBUG functions, nor about MLisp functions that are called while in the Debug window. This stops DEBUG from confusing you.</p>
 </blockquote>
 
-<hr/>
+
 <h2><a name="dired"></a>DIRED, The Directory Editor</h2>
 
 <!-- <p><i><strong>DIRED, The Directory Editor </strong></i> DIRED Directory Editor Editing directories</p> -->
@@ -256,7 +258,7 @@
 $ EMACS/package=DIRED files
 </pre>
 
-<p>where <code>files</code> is any valid VMS file specification (which may include wildcards). If you invoke DIRED from DCL, when you exit DIRED, Emacs will also exit.</p>
+<p>where <span class="cmd">files</span> is any valid VMS file specification (which may include wildcards). If you invoke DIRED from DCL, when you exit DIRED, Emacs will also exit.</p>
 
 <p>You can also invoke DIRED from Emacs by typing the ESC-x dired files command.</p>
 
@@ -287,12 +289,12 @@ $ EMACS/package=DIRED files
 
 <tr>
 <td valign="top"><strong>e</strong></td>
-<td>If you are not sure whether you want to delete a file, you can examine it by typing <code>E</code>. This enters a recursive edit and switches to a buffer containing the file. You can exit with <code>ESC-x exit-Emacs</code> (<code>^C</code>). Modifications to the file are not permitted. When you exit the recursive editing level, you return to DIRED.</td>
+<td>If you are not sure whether you want to delete a file, you can examine it by typing <span class="cmd">E</span>. This enters a recursive edit and switches to a buffer containing the file. You can exit with <span class="key">ESC-x exit-Emacs</span> (<span class="key">^C</span>). Modifications to the file are not permitted. When you exit the recursive editing level, you return to DIRED.</td>
 </tr>
 
 <tr>
 <td><strong>q</strong></td>
-<td valign="top">When you have marked the files you wish to delete, you can exit DIRED with <code>Q</code>. If any files were marked for deletion, DIRED lists them in a concise forma. Then DIRED asks whether you really want to delete the files. You can type <code>Y</code> to go ahead and delete them, <code>R</code> to return to editing the directory or any other character to quit DIRED and delete nothing. No Return character is needed.</td>
+<td valign="top">When you have marked the files you wish to delete, you can exit DIRED with <span class="cmd">Q</span>. If any files were marked for deletion, DIRED lists them in a concise forma. Then DIRED asks whether you really want to delete the files. You can type <span class="cmd">Y</span> to go ahead and delete them, <span class="cmd">R</span> to return to editing the directory or any other character to quit DIRED and delete nothing. No Return character is needed.</td>
 </tr>
 
 <tr>
@@ -301,7 +303,7 @@ $ EMACS/package=DIRED files
 </tr>
 </table>
 
-<hr/>
+
 <h2><a name="info"></a>INFO, A Tree-structured Documentation Reader</h2>
 
 <!-- <p><i><strong>INFO, A Tree-structured Documentation Reader </strong></i> INFO Documentation reader</p> -->
@@ -472,7 +474,7 @@ $ EMACS/package=INFO
 </tr>
 </table>
 
-<hr/>
+
 <h2><a name="shell"></a>SHELL, A Command Shell Interaction Package</h2>
 
 <!-- <p><i><strong>SHELL, A DCL Interaction Package </strong></i> SHELL DCL interaction</p> -->
@@ -482,7 +484,7 @@ $ EMACS/package=INFO
 $ EMACS/package=SHELL
 </pre>
 
-<p>Emacs will spawn a shell subprocess and will pop up a window called DCL Interaction Window <code>n</code>, where <code>n</code> is a sequence number.</p>
+<p>Emacs will spawn a shell subprocess and will pop up a window called DCL Interaction Window <span class="cmd">n</span>, where <span class="cmd">n</span> is a sequence number.</p>
 
 <p>When dot is in the DCL Interaction window, you can type any DCL command terminated by a Return, and this command will be executed in the shell subprocess with the command output appearing in the window.</p>
 
@@ -538,7 +540,7 @@ $ EMACS/package=SHELL
 </tr>
 </table>
 
-<hr/>
+
 <h2><a name="teach"></a>TEACH, A Computer-Based Instruction Package</h2>
 
 <!-- <p><i><strong>TEACH, A Computer-Based Instruction Package </strong></i> TEACH Computer-based instruction CBI</p> -->
@@ -552,7 +554,8 @@ $ EMACS/package=TEACH
 
 <p>When you start the TEACH package, Emacs visits a file called EMACS.CBI. This file contains the text of the tutorial, and contains examples and directions for you to try out various Emacs commands.</p>
 
-<hr/>
+
+</div>
 </body>
 </html>
 

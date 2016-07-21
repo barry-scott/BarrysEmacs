@@ -2,14 +2,17 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
+
 <title>Emacs OpenVMS Package and Subsystem Reference</title>
 
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+<div class="contents">
 <h1><a name="packageandsubsystem"></a>Emacs OpenVMS Package and Subsystem Reference</h1>
 
-<hr/>
+
 <h2><a name="help"></a>HELP, An Interface to VMS HELP</h2>
 
 <!-- <p><i><strong>HELP, An Interface to VMS HELP </strong></i> HELP VMS HELP interface</p> -->
@@ -81,7 +84,7 @@
 </tr>
 </table>
 
-<hr/>
+
 <h2><a name="notes"></a>NOTES, An Interface to VAX NOTES</h2>
 
 <!-- <p><i><strong>NOTES, An Interface to VAX NOTES </strong></i> NOTES VAX NOTES interface</p> -->
@@ -93,7 +96,7 @@
 $ EMACS/PACKAGE=NOTES
 </pre>
 
-<p>To invoke NOTES from inside Emacs, use the <code>ESC-x notes</code> command.</p>
+<p>To invoke NOTES from inside Emacs, use the <span class="key">ESC-x notes</span> command.</p>
 
 <h3>using notes</h3>
 
@@ -549,7 +552,7 @@ Keyword:
 </tr>
 </table>
 
-<p>The Emacs NOTES commands behave differently when passed a prefix argument. Specifying a prefix argument causes a form to be popped up allowing you to specify command options different from the defaults supplied with the normal command. Use the <code>/</code> key to specify a prefix argument. For example, to specify a prefix argument for the DIRECTORY command, enter <code>/dn</code>.</p>
+<p>The Emacs NOTES commands behave differently when passed a prefix argument. Specifying a prefix argument causes a form to be popped up allowing you to specify command options different from the defaults supplied with the normal command. Use the <span class="cmd">/</span> key to specify a prefix argument. For example, to specify a prefix argument for the DIRECTORY command, enter <span class="cmd">/dn</span>.</p>
 
 <h3>customising notes</h3>
 
@@ -587,7 +590,7 @@ Keyword:
 
 <p>You can also customise the NOTES package by creating your own NOTES key bindings. You can do this by creating a file called NOTES_USER.KEY in your EMACS_PATH which contains your key binding code. The NOTES package will automatically load this file when you run the NOTES package.</p>
 
-<hr/>
+
 <h2><a name="vmsmail"></a>VMS_MAIL, A VMS MAIL Editing Package</h2>
 
 <!-- <p><i><strong>VMS_MAIL, A VMS MAIL Editing Package </strong></i>VMS_MAILVMS MAIL interface</p> -->
@@ -625,7 +628,8 @@ MAIL&gt; SET EDITOR EMACS
 
 <p>Also, when VMS_MAIL starts, it executes the function vms_mail_hook if it has been defined. You can define your own vms_mail_hook function in your EMACSINIT.ML to initialise the VMS_MAIL package as you require.</p>
 
-<hr/>
+
+</div>
 </body>
 </html>
 

@@ -2,12 +2,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
+
 <title>Functions B*</title>
 
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<p><a name="backward-balanced-paren-line">(<b>backward-balanced-paren-line</b> <code>expression</code>)</a></p>
+<div class="contents">
+<p><a name="backward-balanced-paren-line">(<b>backward-balanced-paren-line</b> <span class="cmd">expression</span>)</a></p>
 
 <blockquote>
 <p>Moves dot backwards until either the beginning of the buffer is reached, or an unmatched open parenthesis is encountered, or the beginning of a line is encountered at parenthesis level zero, that is, a line without an unmatched ")" existing between that position and the starting position of dot).</p>
@@ -35,13 +38,13 @@
 </ul>
 </blockquote>
 
-<hr/>
-<p><a name="backward-character"></a>(<b>backward-character</b> <code>repeat-count</code>) ^B</p>
+
+<p><a name="backward-character"></a>(<b>backward-character</b> <span class="cmd">repeat-count</span>) ^B</p>
 
 <blockquote>
-<p>Moves dot backwards <code>repeat-count</code> characters. If <code>repeat-count</code> is omitted, 1 is assumed. End-of-line and tab each count as one character. You cannot move back further than the beginning of the buffer.</p>
+<p>Moves dot backwards <span class="cmd">repeat-count</span> characters. If <span class="cmd">repeat-count</span> is omitted, 1 is assumed. End-of-line and tab each count as one character. You cannot move back further than the beginning of the buffer.</p>
 
-<p>You can also use <code>prefix-argument</code> to specify how far to move back.</p>
+<p>You can also use <span class="cmd">prefix-argument</span> to specify how far to move back.</p>
 
 <p><strong>Examples: two ways to move backwards 22 characters</strong></p>
 
@@ -58,7 +61,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="backward-paragraph">(<b>backward-paragraph</b>)</a></p>
 
 <blockquote>
@@ -77,15 +80,15 @@
 </ul>
 </blockquote>
 
-<hr/>
-<p><a name="backward-paren">(<b>backward-paren</b> <code>expression</code>)</a></p>
+
+<p><a name="backward-paren">(<b>backward-paren</b> <span class="cmd">expression</span>)</a></p>
 
 <blockquote>
 <p>Moves dot backward until an unmatched open parenthesis or the beginning of the buffer is found. This can be used to quickly skip over Lisp S-expressions.</p>
 
 <p>The definition of a parenthesis is derived from the syntax table for the current buffer.</p>
 
-<p><code>expression</code> is the number of parentheses to skip before applying the match.</p>
+<p><span class="cmd">expression</span> is the number of parentheses to skip before applying the match.</p>
 
 <p><b>See also:</b></p>
 
@@ -100,11 +103,11 @@
 </ul>
 </blockquote>
 
-<hr/>
-<p><a name="backward-word"></a>(<b>backward-word</b> <code>repeat-count</code>) ESC-f</p>
+
+<p><a name="backward-word"></a>(<b>backward-word</b> <span class="cmd">repeat-count</span>) ESC-f</p>
 
 <blockquote>
-<p>Moves dot backward to the start of the prefix-argument times <code>repeat-count</code> word. If <code>repeat-count</code> is omitted, 1 is assumed. If dot is not currently in the middle of a word, the command skips all intervening punctuation. It then skips over the words, leaving dot positioned after the last character of the word.</p>
+<p>Moves dot backward to the start of the prefix-argument times <span class="cmd">repeat-count</span> word. If <span class="cmd">repeat-count</span> is omitted, 1 is assumed. If dot is not currently in the middle of a word, the command skips all intervening punctuation. It then skips over the words, leaving dot positioned after the last character of the word.</p>
 
 <p>A word is defined by the current syntax table.</p>
 
@@ -115,7 +118,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="backward-sentence">(<b>backward-sentence</b>)</a></p>
 
 <blockquote>
@@ -135,7 +138,7 @@
 <!-- <li><a href="var_s.html#sentence-delimiters">sentence-delimiters</a> variable</li> --></ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="baud-rate"></a>(<b>baud-rate</b>)</p>
 
 <blockquote>
@@ -146,7 +149,7 @@
 <p><strong>Default binding:</strong> none</p>
 </blockquote>
 
-<hr/>
+
 <p><a name="beginning-of-file"></a>(<b>beginning-of-file</b>)</p>
 
 <blockquote>
@@ -161,7 +164,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="beginning-of-line"></a>(<b>beginning-of-line</b>)</p>
 
 <blockquote>
@@ -176,7 +179,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="beginning-of-window"></a>(<b>beginning-of-window</b>)</p>
 
 <blockquote>
@@ -191,13 +194,13 @@
 </ul>
 </blockquote>
 
-<hr/>
-<p><a name="bind-to-key"></a>(<b>bind-to-key</b> "<code>command-name</code>" "<code>key-sequence</code>")</p>
+
+<p><a name="bind-to-key"></a>(<b>bind-to-key</b> "<span class="cmd">command-name</span>" "<span class="cmd">key-sequence</span>")</p>
 
 <blockquote>
-<p>Bind the extended command <code>command-name</code> to a given key sequence. All future hits on the key sequence will cause the extended command to be called.</p>
+<p>Bind the extended command <span class="cmd">command-name</span> to a given key sequence. All future hits on the key sequence will cause the extended command to be called.</p>
 
-<p>For example, if you want ESC-= to behave the way ESC-X print does, then typing <code>ESC-X bind-to-key print ESC-=</code> will do it. The binding will be in effect in all buffer except those with an identical local binding. If a key sequence specifies a keymap that does not exist, then the keymap is automatically generated.</p>
+<p>For example, if you want ESC-= to behave the way ESC-X print does, then typing <span class="key">ESC-x bind-to-key print ESC-=</span> will do it. The binding will be in effect in all buffer except those with an identical local binding. If a key sequence specifies a keymap that does not exist, then the keymap is automatically generated.</p>
 
 <p>The &lt;keys&gt; parameter can use the symbolic key names that Emacs supports:</p>
 
@@ -218,7 +221,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="bobp"></a>(<b>bobp</b>)</p>
 
 <blockquote>
@@ -237,7 +240,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="bolp"></a>(<b>bolp</b>)</p>
 
 <blockquote>
@@ -256,7 +259,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="bounds-of-array"></a>(<b>bounds-of-array</b>)</p>
 
 <blockquote>
@@ -301,8 +304,8 @@
 </ul>
 </blockquote>
 
-<hr/>
-<p><a name="breakpoint"></a>(<b>breakpoint</b> <code>"function-name"</code> <code>value</code>)</p>
+
+<p><a name="breakpoint"></a>(<b>breakpoint</b> <span class="cmd">"function-name"</span> <span class="cmd">value</span>)</p>
 
 <blockquote>
 <p>Sets the breakpoint flag on the specified function. If the flag is set non-zero for a particular function, and the variable breakpoint-hook contains the name of a function, just before the function is executed, the breakpoint function will be invoked.</p>
@@ -318,7 +321,7 @@
 </ul>
 </blockquote>
 
-<hr/>
+
 <p><a name="buffer-size"></a>(<b>buffer-size</b>)</p>
 
 <blockquote>
@@ -327,7 +330,8 @@
 <p><strong>Default binding:</strong> none</p>
 </blockquote>
 
-<hr/>
+
+</div>
 </body>
 </html>
 

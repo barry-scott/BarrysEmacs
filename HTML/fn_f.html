@@ -2,16 +2,19 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
+
 <title>Functions F*</title>
 
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<hr/>
-<p><a name="fetch-array">(<b>fetch-array</b> <code>array indices...</code>)</a></p>
+<div class="contents">
+
+<p><a name="fetch-array">(<b>fetch-array</b> <span class="cmd">array indices...</span>)</a></p>
 
 <blockquote>
-<p>Retrieves a value from an array. The arguments to this function are the array and the indices of the array. <code>fetch-array</code> checks that there are exactly the right number of indices and range-checks them.</p>
+<p>Retrieves a value from an array. The arguments to this function are the array and the indices of the array. <span class="cmd">fetch-array</span> checks that there are exactly the right number of indices and range-checks them.</p>
 
 
 
@@ -33,8 +36,8 @@
 
 </blockquote>
 
-<hr/>
-<p><a name="fetch-database-entry"></a>(<b>fetch-database-entry</b> <code>dbname</code> <code>key</code>)</p>
+
+<p><a name="fetch-database-entry"></a>(<b>fetch-database-entry</b> <span class="cmd">dbname</span> <span class="cmd">key</span>)</p>
 
 <blockquote>
 <p>Reads the entry in the database corresponding to the given key and inserts it into the current buffer.</p>
@@ -50,8 +53,8 @@
 
 </blockquote>
 
-<hr/>
-<p><a name="fetch-help-database-entry"></a>(<b>fetch-help-database-entry</b> <code>dbname</code> <code>keys-string</code>)</p>
+
+<p><a name="fetch-help-database-entry"></a>(<b>fetch-help-database-entry</b> <span class="cmd">dbname</span> <span class="cmd">keys-string</span>)</p>
 
 <blockquote>
 <p><b>VMS only</b></p>
@@ -72,7 +75,7 @@ copy /log
 
 </blockquote>
 
-<p>The variable <code>fetch-help-database-flags</code> is used to control the information retrieved from the help database file.</p>
+<p>The variable <span class="cmd">fetch-help-database-flags</span> is used to control the information retrieved from the help database file.</p>
 
 
 <p><b>See also:</b></p>
@@ -85,8 +88,8 @@ copy /log
 <li><a href="var_f.html#fetch-help-database-flags">fetch-help-database-flags</a> (Variable)</li>
 </ul>
 
-<hr/>
-<p><a name="file-exists"></a>(<b>file-exists</b> <code>file-name</code>)</p>
+
+<p><a name="file-exists"></a>(<b>file-exists</b> <span class="cmd">file-name</span>)</p>
 
 <blockquote>
 <p>Returns 1 if the specified file exists and is writeable, -1 if the file exists but is only readable, and 0 otherwise.</p>
@@ -100,13 +103,13 @@ copy /log
 
 </blockquote>
 
-<hr/>
-<p><a name="file-format-string"></a>(<b>file-format-string</b> <code>format</code> <code>file-name</code>)</p>
+
+<p><a name="file-format-string"></a>(<b>file-format-string</b> <span class="cmd">format</span> <span class="cmd">file-name</span>)</p>
 
 <blockquote>
-<p><code>file-format-string</code> is used to create formatted string based on parts of filenames.</p>
+<p><span class="cmd">file-format-string</span> is used to create formatted string based on parts of filenames.</p>
 
-<p>The <code>format</code> string is made of format specifications and literal characters. literal characters are copied to the output as is. Format specifications are replaced with appropriate text.</p>
+<p>The <span class="cmd">format</span> string is made of format specifications and literal characters. literal characters are copied to the output as is. Format specifications are replaced with appropriate text.</p>
 
 <p>The format specification syntax is:</p>
 
@@ -234,11 +237,11 @@ c:\users\<br />
 
 </blockquote>
 
-<hr/>
-<p><a name="file-is-a-directory"></a>(<b>file-is-a-directory</b> <code>file-name</code>)</p>
+
+<p><a name="file-is-a-directory"></a>(<b>file-is-a-directory</b> <span class="cmd">file-name</span>)</p>
 
 <blockquote>
-<p>Returns 1 if the specified <code>file-name</code> is a directory and 0 otherwise.</p>
+<p>Returns 1 if the specified <span class="cmd">file-name</span> is a directory and 0 otherwise.</p>
 
 <p><b>Examples:</b></p>
 
@@ -257,18 +260,18 @@ c:\users\<br />
 
 </blockquote>
 
-<hr/>
-<p><a name="file-name-expand-and-default"></a>(<b>file-name-expand-and-default</b> <code>file-name</code> <code>default-file-name</code>)</p>
+
+<p><a name="file-name-expand-and-default"></a>(<b>file-name-expand-and-default</b> <span class="cmd">file-name</span> <span class="cmd">default-file-name</span>)</p>
 
 <blockquote>
-<p>Returns a string containing a file name. The file name returned is the <code>file-name</code> will any missing part of the file name defaulted from the <code>default-file-name</code> parameter and the current working directory.</p>
+<p>Returns a string containing a file name. The file name returned is the <span class="cmd">file-name</span> will any missing part of the file name defaulted from the <span class="cmd">default-file-name</span> parameter and the current working directory.</p>
 </blockquote>
 
-<hr/>
-<p><a name="filter-region"></a>(<b>filter-region</b> <code>command</code>)</p>
+
+<p><a name="filter-region"></a>(<b>filter-region</b> <span class="cmd">command</span>)</p>
 
 <blockquote>
-<p>Takes the region and passes it as input to the given operating system command. The output from the command replaces the region. The contets of the region are saved in <code>Kill buffer</code>.</p>
+<p>Takes the region and passes it as input to the given operating system command. The output from the command replaces the region. The contets of the region are saved in <span class="cmd">Kill buffer</span>.</p>
 
 <p><b>See also:</b></p>
 
@@ -279,7 +282,7 @@ c:\users\<br />
 
 </blockquote>
 
-<hr/>
+
 <p><a name="following-char"></a>(<b>following-char</b>)</p>
 
 <blockquote>
@@ -295,8 +298,8 @@ c:\users\<br />
 
 </blockquote>
 
-<hr/>
-<p><a name="force-exit-process"></a>(<b>force-exit-process</b> <code>process-name exit-code</code>)</p>
+
+<p><a name="force-exit-process"></a>(<b>force-exit-process</b> <span class="cmd">process-name exit-code</span>)</p>
 
 <blockquote>
 <p>Forces the image running is the specified subprocess to exit with the specified code. This can be used to stop an image that has run amok. All exit handlers for the image will be run.</p>
@@ -319,8 +322,8 @@ c:\users\<br />
 
 </blockquote>
 
-<hr/>
-<p><a name="forward-balanced-paren-line"></a>(<b>forward-balanced-paren-line</b> <code>expression-1</code>)</p>
+
+<p><a name="forward-balanced-paren-line"></a>(<b>forward-balanced-paren-line</b> <span class="cmd">expression-1</span>)</p>
 
 <blockquote>
 <p>Moves dot forward until either the end of the buffer is reached, or an unmatched closing parenthesis is encountered, or the beginning of a line is encountered at parenthesis level zero, that is, without an unmatched parenthesis existing between the line and the starting position of dot.</p>
@@ -339,11 +342,11 @@ c:\users\<br />
 
 </blockquote>
 
-<hr/>
-<p><a name="forward-character"></a>(<b>forward-character</b> <code>repeat-count</code>) ^F or right-arrow</p>
+
+<p><a name="forward-character"></a>(<b>forward-character</b> <span class="cmd">repeat-count</span>) ^F or right-arrow</p>
 
 <blockquote>
-<p>Moves dot forward prefix-argument times <code>repeat-count</code> characters. If <code>repeat-count</code> is omitted, 1 is assumed. End-of-lines and tabs each count as one character. You cannot move past the end of the buffer.</p>
+<p>Moves dot forward prefix-argument times <span class="cmd">repeat-count</span> characters. If <span class="cmd">repeat-count</span> is omitted, 1 is assumed. End-of-lines and tabs each count as one character. You cannot move past the end of the buffer.</p>
 
 <p><b>See also:</b></p>
 
@@ -353,7 +356,7 @@ c:\users\<br />
 
 </blockquote>
 
-<hr/>
+
 <p><a name="forward-paragraph"></a>(<b>forward-paragraph</b>) ESC-)</p>
 
 <blockquote>
@@ -369,7 +372,7 @@ c:\users\<br />
 
 </blockquote>
 
-<hr/>
+
 <p><a name="forward-paren"></a>(<b>forward-paren</b>)</p>
 
 <blockquote>
@@ -390,11 +393,11 @@ c:\users\<br />
 
 </blockquote>
 
-<hr/>
+
 <p><a name="forward-sentence"></a>(<b>forward-sentence</b>) ESC-e</p>
 
 <blockquote>
-<p>Moves dot forward to the end of a sentence. A sentence is bounded by the string variable <code>sentence-delimiters</code>.</p>
+<p>Moves dot forward to the end of a sentence. A sentence is bounded by the string variable <span class="cmd">sentence-delimiters</span>.</p>
 
 <p><b>See also:</b></p>
 
@@ -404,11 +407,11 @@ c:\users\<br />
 
 </blockquote>
 
-<hr/>
-<p><a name="forward-word"></a>(<b>forward-word</b> <code>repeat-count</code>) ESC-f</p>
+
+<p><a name="forward-word"></a>(<b>forward-word</b> <span class="cmd">repeat-count</span>) ESC-f</p>
 
 <blockquote>
-<p>Moves dot forward to the end of the prefix-argument times <code>repeat-count</code> word. If <code>repeat-count</code> is omitted, 1 is assumed. If dot is not currently in the middle of a word, the command skips all intervening punctuation. It then skips over the words, leaving dot positioned after the last character of the word.</p>
+<p>Moves dot forward to the end of the prefix-argument times <span class="cmd">repeat-count</span> word. If <span class="cmd">repeat-count</span> is omitted, 1 is assumed. If dot is not currently in the middle of a word, the command skips all intervening punctuation. It then skips over the words, leaving dot positioned after the last character of the word.</p>
 
 <p>A word is defined by the current syntax table.</p>
 
@@ -422,7 +425,7 @@ c:\users\<br />
 
 </blockquote>
 
-<hr/>
+
 <p><a name="fundamental-mode"></a>(<b>fundamental-mode</b>)</p>
 
 <blockquote>
@@ -438,7 +441,8 @@ c:\users\<br />
 <li><a href="fn_l.html#lisp-mode">lisp-mode</a></li>
 </ul>
 
-<hr/>
+
+</div>
 </body>
 </html>
 
