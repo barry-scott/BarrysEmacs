@@ -53,6 +53,7 @@ ${CORE}/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister 
  -r -domain local -domain system -domain user
 
 DMG=$( find .. -name '*.dmg' )
+echo "Info: DMG ${DMG}"
 if [ "$1" = "--install" ]
 then
     open ${DMG}
