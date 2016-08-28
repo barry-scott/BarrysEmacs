@@ -78,4 +78,4 @@ const int DBG_NO_DBG_MSG    (0x00001000&DBG___ON);  // always defined
 //
 //    typedefs for fundemental types
 //
-typedef PY_UNICODE_TYPE EmacsChar_t;
+typedef Py_UNICODE EmacsChar_t;

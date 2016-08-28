@@ -40,11 +40,6 @@ public:
     EmacsString( const Py::String &str );
 #endif
 
-#if defined( NEED_EMSTRING_WCHAR_T )
-    EmacsString( const wchar_t *string );
-    EmacsString( const wchar_t *string, int length );
-#endif
-
     EmacsString( enum string_type type );
     EmacsString( enum string_type type, const char *string );
     EmacsString( enum string_type type, const char *string, int length );
@@ -167,19 +162,13 @@ public:
 
     enum { string_growth_room=32 };                             // amount of space to allow for growth
 
+    // ------------------------------------------------------------
     EmacsString &append( char ch )
         { return append( EmacsString( copy, &ch, 1 ) ); }
     EmacsString &append( unsigned char ch )
         { return append( EmacsString( copy, &ch, 1 ) ); }
-    EmacsString &append( int ch )
-        { return append( (EmacsChar_t)ch ); }
     EmacsString &append( EmacsChar_t ch )
-    {
-        EmacsChar_t str[1];
-        str[0] = ch;
-        return append( 1, str );
-    }
-
+        {return append( 1, &ch ); }
     EmacsString &append( const char *str )
         { return append( EmacsString( str ) ); }
     EmacsString &append( const unsigned char *str )
@@ -193,19 +182,13 @@ public:
 
     EmacsString &append( int length, const EmacsChar_t *data );
 
+    // ------------------------------------------------------------
     EmacsString &insert( int pos, char ch )
         { return insert( pos, EmacsString( copy, &ch, 1 ) ); }
     EmacsString &insert( int pos, unsigned char ch )
         { return insert( pos, EmacsString( copy, &ch, 1 ) ); }
     EmacsString &insert( int pos, EmacsChar_t ch )
-        { return insert( pos, static_cast<int>( ch ) ); }
-    EmacsString &insert( int pos, int ch )
-        {
-            EmacsChar_t str[1];
-            str[0] = ch;
-            return insert( pos, 1, str );
-        }
-
+        { return insert( pos, 1, &ch ); }
     EmacsString &insert( int pos, const char *str )
         { return insert( pos, EmacsString( str ) ); }
     EmacsString &insert( int pos, const unsigned char *str )
@@ -215,6 +198,7 @@ public:
 
     EmacsString &insert( int pos, int length, const EmacsChar_t *data );
 
+    // ------------------------------------------------------------
     EmacsString operator ()( int first, int last ) const;       // return a substring
 
     EmacsString &toLower();
@@ -231,8 +215,6 @@ public:
 
     int caseBlindCompare( const char *str2 ) const
         { return caseBlindCompare( EmacsString( str2 ) ); }
-//    int caseBlindCompare( const EmacsChar_t *str2 ) const
-//        { return caseBlindCompare( EmacsString( str2 ) ); }
     int caseBlindCompare( const EmacsString &str2 ) const;
 
 private:
@@ -269,15 +251,6 @@ public:
         int _length,
         const EmacsChar_t *_data
         );
-#if defined( NEED_EMSTRING_WCHAR_T )
-    EmacsStringRepresentation
-        (
-        enum EmacsString::string_type _type,
-        int _alloc_length,
-        int _length,
-        const wchar_t *_data
-        );
-#endif
     virtual ~EmacsStringRepresentation();
 
     friend class EmacsString;

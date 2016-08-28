@@ -90,4 +90,4 @@ extern unsigned char *get_tmp_path(void);
 
 #include <io.h>
 
-typedef unsigned short EmacsChar_t;
+typedef unsigned int EmacsChar_t;

@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 2010 Barry A. Scott
+//    Copyright (c) 2010-2016 Barry A. Scott
 //
 #if defined( UNIT_TEST )
 typedef unsigned int EmacsChar_t;
@@ -325,7 +325,10 @@ int length_utf8_to_unicode( int utf8_length, const unsigned char *utf8_data, int
         }
         else
         {
-            break;
+            // decode error - just insert the vaue as is
+            i += 1;
+            remaining -= 1;
+            ++length;
         }
     }
 
@@ -534,6 +537,193 @@ void convert_unicode_to_utf8( int unicode_length, const EmacsChar_t *unicode_dat
     }
 }
 
+//
+//  UCS-4 range (hex.)      UTF-16 word sequence (binary)
+//  0000 0000-0000 D7FF     xxxxxxxx-xxxxxxxx (AS-IS)
+//  0000 D800-0000 DFFF     (reserved for UTF-16 encoded form)
+//  0000 E000-0000 EFFF     xxxxxxxx-xxxxxxxx (AS-IS)
+//  0001 0000-0010 FFFF     110110xx-xxxxxxxx 110110yy yyyyyyyy
+//                          10 bit x is ((USC-4)-0x10000) >> 10)) & 0x3fff
+//                          10 bit y is ((USC-4)-0x10000) & 0x3fff
+//
+int length_utf16_to_unicode( int utf16_length, const unsigned short *utf16_data )
+{
+    int length = 0;
+    int remaining = utf16_length;
+    int i=0;
+    while( remaining > 0 )
+    {
+        unsigned short ch = utf16_data[i];
+
+        if( (ch <= 0xd7ff) && remaining >= 1 )
+        {
+            i += 1;
+            remaining -= 1;
+            ++length;
+        }
+        else if( (ch >= 0xe000) && remaining >= 1 )
+        {
+            i += 1;
+            remaining -= 1;
+            ++length;
+        }
+        else if( (ch >= 0xd800 && ch <= 0xdfff) && remaining >= 2 )
+        {
+            i += 2;
+            remaining -= 2;
+            ++length;
+        }
+        else
+        {
+            i += 1;
+            remaining -= 1;
+            ++length;
+        }
+    }
+
+    return length;
+}
+
+int length_utf16_to_unicode( int utf16_length, const unsigned short *utf16_data, int unicode_limit, int &utf16_usable_length )
+{
+    int length = 0;
+    int remaining = utf16_length;
+    int i=0;
+    while( remaining > 0 && length < unicode_limit )
+    {
+        unsigned short ch = utf16_data[i];
+
+        if( (ch <= 0xd7ff) && remaining >= 1 )
+        {
+            i += 1;
+            remaining -= 1;
+            ++length;
+        }
+        else if( (ch >= 0xe000) && remaining >= 1 )
+        {
+            i += 1;
+            remaining -= 1;
+            ++length;
+        }
+        else if( (ch >= 0xd800 && ch <= 0xdfff) && remaining >= 2 )
+        {
+            i += 2;
+            remaining -= 2;
+            ++length;
+        }
+        else
+        {
+            i += 1;
+            remaining -= 1;
+            ++length;
+        }
+    }
+
+    utf16_usable_length = i;
+    return length;
+}
+
+void convert_utf16_to_unicode( const unsigned short *utf16_data, int unicode_length, EmacsChar_t *unicode_data )
+{
+    while( unicode_length-- > 0 )
+    {
+        unsigned short ch = *utf16_data++;
+        if( (ch <= 0xd7ff) )
+        {
+            *unicode_data++ = ch;
+        }
+        else if( (ch >= 0xe000) )
+        {
+            *unicode_data++ = ch;
+        }
+        else if( (ch >= 0xd800 && ch <= 0xdfff) && unicode_length >= 1 )
+        {
+            int high = ch;
+            int low = *utf16_data++;
+            unicode_length--;
+
+            *unicode_data++ = ((high << 10)&0x3ff) + (low&0x3ff) + 0x10000;
+        }
+        else
+        {
+            // Error in the encoding
+            *unicode_data++ = ch;
+        }
+    }
+}
+
+int length_unicode_to_utf16( int unicode_length, const EmacsChar_t *unicode_data )
+{
+    int length = 0;
+
+    for( int i=0; i<unicode_length; --unicode_length )
+    {
+        int uni_ch = *unicode_data++;
+        if( uni_ch >= 0x10000 )
+        {
+            length += 2;
+        }
+        else
+        {
+            length += 1;
+        }
+    }
+    return length;
+}
+
+int length_unicode_to_utf16( int unicode_length, const EmacsChar_t *unicode_data, int utf16_limit, int &unicode_usable_length )
+{
+    int length = 0;
+
+    for( int i=0; i<unicode_length; ++i )
+    {
+        int next_char_length = 0;
+        int uni_ch = *unicode_data++;
+
+        if( uni_ch >= 0x10000 )
+        {
+            next_char_length += 2;
+        }
+        else
+        {
+            next_char_length += 1;
+        }
+
+        if( (length + next_char_length) <= utf16_limit )
+        {
+            length += next_char_length;
+        }
+        else
+        {
+            unicode_usable_length = i;
+            return length;
+        }
+    }
+
+    unicode_usable_length = unicode_length;
+    return length;
+}
+
+void convert_unicode_to_utf16( int unicode_length, const EmacsChar_t *unicode_data, unsigned short *utf16_data )
+{
+    for( int i=0; i<unicode_length; --unicode_length )
+    {
+        EmacsChar_t uni_ch = *unicode_data++;
+        if( uni_ch <= 0x10000 )
+        {
+            *utf16_data++ = uni_ch;
+        }
+        else
+        {
+            *utf16_data++ = 0xd800 | ((uni_ch>>10)&0x3ff);
+            *utf16_data++ = 0xdc00 | (uni_ch&0x3fff);
+        }
+    }
+}
+
+//
+//  unicode string operations
+//
 int unicode_strcmp( int len1, const EmacsChar_t *str1, int len2, const EmacsChar_t *str2 )
 {
     for( int common_length = std::min( len1, len2 ); common_length > 0; --common_length )

@@ -45,18 +45,22 @@ class Setup:
     def setupCompile( self ):
         if self.platform == 'win32':
             self.c_utils = Win32CompilerMSVC90( self )
+            self.c_python_tools = Win32CompilerMSVC90( self )
             self.c_pybemacs = Win32CompilerMSVC90( self )
 
         elif self.platform == 'win64':
             self.c_utils = Win64CompilerVC14( self )
+            self.c_python_tools = Win64CompilerVC14( self )
             self.c_pybemacs = Win64CompilerVC14( self )
 
         elif self.platform == 'macosx':
             self.c_utils = MacOsxCompilerGCC( self )
+            self.c_python_tools = MacOsxCompilerGCC( self )
             self.c_pybemacs = MacOsxCompilerGCC( self )
 
         elif self.platform == 'linux':
             self.c_utils = LinuxCompilerGCC( self )
+            self.c_python_tools = LinuxCompilerGCC( self )
             self.c_pybemacs = LinuxCompilerGCC( self )
 
         else:
@@ -64,6 +68,7 @@ class Setup:
 
         self.c_utils.setupUtilities()
         self.c_pybemacs.setupPythonEmacs()
+        self.c_python_tools.setupPythonTools()
 
         self.unicode_header = UnicodeDataHeader( self.c_utils )
 
@@ -191,7 +196,10 @@ class Setup:
             Program( self.c_utils, 'dbdel',      [Source( self.c_utils, 'Utilities/dbdel/dbdel.cpp' )]       +self.db_files ),
             Program( self.c_utils, 'dblist',     [Source( self.c_utils, 'Utilities/dblist/dblist.cpp' )]     +self.db_files ),
             Program( self.c_utils, 'mll2db',     [Source( self.c_utils, 'Utilities/mll2db/mll2db.cpp' )]     +self.db_files ),
+
+            # test tools
             Program( self.c_utils, 'dumpjnl',    [Source( self.c_utils, 'Source/Common/dumpjnl.cpp' )] ),
+            Program( self.c_python_tools, 'python-types',[Source( self.c_python_tools, 'Source/pybemacs/python-types.cpp' )] + self.pycxx_obj_file ),
             ]
 
     def generateMakefile( self ):
@@ -385,6 +393,18 @@ class Win64CompilerVC14(Compiler):
                                         r'-U_DEBUG '
                                         r'-D%(DEBUG)s' )
 
+    def setupPythonTools( self ):
+        self._addVar( 'EDIT_OBJ',       r'obj-python-tools' )
+        self._addVar( 'EDIT_EXE',       r'exe-python-tools' )
+        self._addVar( 'CCCFLAGS',
+                                        r'/Zi /MT /EHsc '
+                                        r'-DPYBEMACS=1 '
+                                        r'-IInclude\Common -IInclude\Windows '
+                                        r'-DPYCXX_PYTHON_2TO3 -I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
+                                        r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
+                                        r'-U_DEBUG '
+                                        r'-D%(DEBUG)s' )
+
 class Win32CompilerMSVC90(Compiler):
     def __init__( self, setup ):
         Compiler.__init__( self, setup )
@@ -500,6 +520,17 @@ class Win32CompilerMSVC90(Compiler):
                                         r'-U_DEBUG '
                                         r'-D%(DEBUG)s' )
 
+    def setupPythonTools( self ):
+        self._addVar( 'EDIT_OBJ',       r'obj-python-tools' )
+        self._addVar( 'EDIT_EXE',       r'exe-python-tools' )
+        self._addVar( 'CCCFLAGS',
+                                        r'/Zi /MT /EHsc '
+                                        r'-DPYBEMACS=1 '
+                                        r'-IInclude\Common -IInclude\Windows '
+                                        r'-DPYCXX_PYTHON_2TO3 -I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
+                                        r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
+                                        r'-U_DEBUG '
+                                        r'-D%(DEBUG)s' )
 
 class CompilerGCC(Compiler):
     def __init__( self, setup ):
@@ -643,6 +674,33 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-framework Kerberos '
                                         '-framework Security' )
 
+    def setupPythonTools( self ):
+        self._addVar( 'PYTHON',         sys.executable )
+
+        self._addVar( 'EDIT_OBJ',       'obj-python-tools' )
+        self._addVar( 'EDIT_EXE',       'exe-python-tools' )
+
+        self._addFromEnv( 'PYTHON_VERSION' )
+        self._addVar( 'PYTHONDIR',      '/Library/Frameworks/Python.framework/Versions/%(PYTHON_VERSION)s' )
+        self._addVar( 'PYTHON_FRAMEWORK', '/Library/Frameworks/Python.framework/Versions/%(PYTHON_VERSION)s/Python' )
+
+        self._addVar( 'PYTHON',         '%(PYTHONDIR)s/Resources/Python.app/Contents/MacOS/Python' )
+        if self.expand( '%(PYTHON_VERSION)s' ).startswith( '3.' ):
+            self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)sm' )
+        else:
+            self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)s' )
+
+        self._addVar( 'CCCFLAGS',
+                                        '-g '
+                                        '-Wall -fPIC -fexceptions -frtti '
+                                        '-DPYBEMACS=1 '
+                                        '-IInclude/Common -IInclude/Unix '
+                                        '-DPYCXX_PYTHON_2TO3 -I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
+                                        '-D%(DEBUG)s' )
+
+        self._addVar( 'LDEXE',          '%(CCC)s -g '
+                                        '-framework System '
+                                        '%(PYTHON_FRAMEWORK)s ' )
 
 class LinuxCompilerGCC(CompilerGCC):
     def __init__( self, setup ):
@@ -688,6 +746,29 @@ class LinuxCompilerGCC(CompilerGCC):
 
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
         self._addVar( 'LDSHARED',       '%(CCC)s -shared -g ' )
+
+    def setupPythonTools( self ):
+        self._addVar( 'PYTHON',         sys.executable )
+
+
+        self._addVar( 'EDIT_OBJ',       'obj-python-tools' )
+        self._addVar( 'EDIT_EXE',       'exe-python-tools' )
+
+        self._addFromEnv( 'PYTHON_VERSION' )
+        if self.expand( '%(PYTHON_VERSION)s' ).startswith( '3.' ):
+            self._addVar( 'PYTHON_INCLUDE', '/usr/include/python%(PYTHON_VERSION)sm' )
+        else:
+            self._addVar( 'PYTHON_INCLUDE', '/usr/include/python%(PYTHON_VERSION)s' )
+
+        self._addVar( 'CCCFLAGS',
+                                        '-g '
+                                        '-Wall -fPIC -fexceptions -frtti '
+                                        '-DPYBEMACS=1 '
+                                        '-IInclude/Common -IInclude/Unix '
+                                        '-DPYCXX_PYTHON_2TO3 -I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
+                                        '-D%(DEBUG)s' )
+
+        self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
 
 #--------------------------------------------------------------------------------

@@ -291,12 +291,12 @@ static void scan_map_inner
     hist.hist_this = kmap;
 
     int last_char = keys.length();
-    keys.append( 0 );
+    keys.append( EmacsChar_t( 0 ) );
 
     // QQQ - not unicode safe
 
     EmacsChar_t c = 0;
-    while( c <= 65534 )
+    while( c <= 0x10ffff )
     {
         EmacsChar_t c2 = c + 1;
 
