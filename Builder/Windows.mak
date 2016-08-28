@@ -42,12 +42,12 @@ $(KITROOT)\bemacs_server.exe:
 	cd $(BUILDER_TOP_DIR)\Editor && .\build-windows.cmd
 	cd $(BUILDER_TOP_DIR)\Editor\PyQtBEmacs && .\build-windows.cmd $(KITFILES) all
 	echo Info: Copying images...
-	copy $(BUILDER_TOP_DIR)\Editor\obj-utils\dbadd.exe $(KITFILES)
-	copy $(BUILDER_TOP_DIR)\Editor\obj-utils\dbcreate.exe $(KITFILES) >NUL
-	copy $(BUILDER_TOP_DIR)\Editor\obj-utils\dbdel.exe $(KITFILES) >NUL
-	copy $(BUILDER_TOP_DIR)\Editor\obj-utils\dblist.exe $(KITFILES) >NUL
-	copy $(BUILDER_TOP_DIR)\Editor\obj-utils\dbprint.exe $(KITFILES) >NUL
-	copy $(BUILDER_TOP_DIR)\Editor\obj-utils\mll2db.exe $(KITFILES) >NUL
+	copy $(BUILDER_TOP_DIR)\Editor\exe-utils\dbadd.exe $(KITFILES) >NUL
+	copy $(BUILDER_TOP_DIR)\Editor\exe-utils\dbcreate.exe $(KITFILES) >NUL
+	copy $(BUILDER_TOP_DIR)\Editor\exe-utils\dbdel.exe $(KITFILES) >NUL
+	copy $(BUILDER_TOP_DIR)\Editor\exe-utils\dblist.exe $(KITFILES) >NUL
+	copy $(BUILDER_TOP_DIR)\Editor\exe-utils\dbprint.exe $(KITFILES) >NUL
+	copy $(BUILDER_TOP_DIR)\Editor\exe-utils\mll2db.exe $(KITFILES) >NUL
 
 mlisp:
 	echo Info: Copying Mlisp files...
