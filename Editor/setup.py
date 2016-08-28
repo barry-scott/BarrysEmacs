@@ -20,8 +20,6 @@ class Setup:
         if len(args) < 2:
             raise ValueError( 'Usage: setup.py win32|win64|macosx|linux> <makefile>' )
 
-        self.opt_debug = False
-
         self.platform = args[0]
         del args[0]
 
@@ -30,7 +28,8 @@ class Setup:
 
         while len(args) > 0:
             if args[0] == '--debug':
-                self.opt_debug = True
+                global _debug
+                _debug = True
                 del args[0]
 
             else:
@@ -217,7 +216,7 @@ class Setup:
             return 0
 
         except ValueError as e:
-            sys.stderr.write( 'Error: %s\n' % (e,) )
+            sys.stderr.write( 'Error: generateMakefile %s\n' % (e,) )
             return 1
 
 #--------------------------------------------------------------------------------
@@ -270,7 +269,7 @@ class Compiler:
         try:
             return s % self.__variables
 
-        except (TypeError, KeyError) as e:
+        except (ValueError, TypeError, KeyError) as e:
             print( 'Error: %s' % (e,) )
             print( 'String: %s' % (s,) )
             print( 'Vairables: %r' % (self.__variables,) )
@@ -290,6 +289,8 @@ class Win64CompilerVC14(Compiler):
         self._addVar( 'PYTHON_INCLUDE', r'%(PYTHONDIR)s\include' )
         self._addVar( 'PYTHON_LIB',     r'%(PYTHONDIR)s\libs' )
         self._addVar( 'PYTHON',         r'%(PYTHONDIR)s\python.exe' )
+
+        self._addVar( 'LINK_LIBS',      '' )
 
     def platformFilename( self, filename ):
         return filename.replace( '/', '\\' )
@@ -313,23 +314,7 @@ class Win64CompilerVC14(Compiler):
 
     def ruleLinkProgram( self, target ):
         pyd_filename = target.getTargetFilename()
-        pdf_filename = target.getTargetFilename( '.pdf' )
-
-        all_objects = [source.getTargetFilename() for source in target.all_sources]
-
-        rules = ['']
-
-        rules.append( '' )
-        rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo Link %s' % (pyd_filename,) )
-        rules.append( '\t@$(LDEXE)  %%(CCCFLAGS)s /Fe%s /Fd%s %s' %
-                            (pyd_filename, pdf_filename, ' '.join( all_objects )) )
-
-        self.makePrint( self.expand( '\n'.join( rules ) ) )
-
-    def ruleLinkShared( self, target ):
-        pyd_filename = target.getTargetFilename()
-        pdf_filename = target.getTargetFilename( '.pdf' )
+        pdb_filename = target.getTargetFilename( '.pdb' )
 
         all_objects = [source.getTargetFilename() for source in target.all_sources]
 
@@ -339,8 +324,25 @@ class Win64CompilerVC14(Compiler):
         rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
         rules.append( '\t@echo Link %s' % (pyd_filename,) )
         rules.append( '\t@if not exist %(EDIT_EXE)s mkdir %(EDIT_EXE)s' )
-        rules.append( '\t@$(LDSHARED)  %%(CCCFLAGS)s /Fe%s /Fd%s %s %%(PYTHON_LIB)s\python%d%d.lib' %
-                            (pyd_filename, pdf_filename, ' '.join( all_objects ), sys.version_info.major, sys.version_info.minor) )
+        rules.append( '\t@$(LDEXE)  %%(CCCFLAGS)s /Fe%s /Fd%s %s %%(LINK_LIBS)s' %
+                            (pyd_filename, pdb_filename, ' '.join( all_objects )) )
+
+        self.makePrint( self.expand( '\n'.join( rules ) ) )
+
+    def ruleLinkShared( self, target ):
+        pyd_filename = target.getTargetFilename()
+        pdb_filename = target.getTargetFilename( '.pdb' )
+
+        all_objects = [source.getTargetFilename() for source in target.all_sources]
+
+        rules = ['']
+
+        rules.append( '' )
+        rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
+        rules.append( '\t@echo Link %s' % (pyd_filename,) )
+        rules.append( '\t@if not exist %(EDIT_EXE)s mkdir %(EDIT_EXE)s' )
+        rules.append( '\t@$(LDSHARED)  %%(CCCFLAGS)s /Fe%s /Fd%s %s %%(LINK_LIBS)s' %
+                            (pyd_filename, pdb_filename, ' '.join( all_objects )) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
@@ -352,6 +354,7 @@ class Win64CompilerVC14(Compiler):
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
         rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, target.getTargetFilename()) )
         rules.append( '\t@if not exist %(EDIT_OBJ)s mkdir %(EDIT_OBJ)s' )
+        rules.append( '\t@if not exist %(EDIT_EXE)s mkdir %(EDIT_EXE)s' )   # For .pdb file
         rules.append( '\t@$(CCC) /c %%(CCCFLAGS)s /Fo%s /Fd%s %s' % (obj_filename, target.dependent.getTargetFilename( '.pdb' ), target.src_filename) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
@@ -382,6 +385,8 @@ class Win64CompilerVC14(Compiler):
     def setupPythonEmacs( self ):
         self._addVar( 'EDIT_OBJ',       r'obj-pybemacs' )
         self._addVar( 'EDIT_EXE',       r'exe-pybemacs' )
+        self._addVar( 'LINK_LIBS',      '%%(PYTHON_LIB)s\python%d%d.lib' %
+                                        (sys.version_info.major, sys.version_info.minor) )
         self._addVar( 'CCCFLAGS',
                                         r'/Zi /MT /EHsc '
                                         r'-DPYBEMACS=1 '
@@ -396,6 +401,8 @@ class Win64CompilerVC14(Compiler):
     def setupPythonTools( self ):
         self._addVar( 'EDIT_OBJ',       r'obj-python-tools' )
         self._addVar( 'EDIT_EXE',       r'exe-python-tools' )
+        self._addVar( 'LINK_LIBS',      '%%(PYTHON_LIB)s\python%d%d.lib' %
+                                        (sys.version_info.major, sys.version_info.minor) )
         self._addVar( 'CCCFLAGS',
                                         r'/Zi /MT /EHsc '
                                         r'-DPYBEMACS=1 '
@@ -440,7 +447,7 @@ class Win32CompilerMSVC90(Compiler):
 
     def ruleLinkProgram( self, target ):
         pyd_filename = target.getTargetFilename()
-        pdf_filename = target.getTargetFilename( '.pdf' )
+        pdb_filename = target.getTargetFilename( '.pdb' )
 
         all_objects = [source.getTargetFilename() for source in target.all_sources]
 
@@ -450,13 +457,13 @@ class Win32CompilerMSVC90(Compiler):
         rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
         rules.append( '\t@echo Link %s' % (pyd_filename,) )
         rules.append( '\t@$(LDEXE)  %%(CCCFLAGS)s /Fe%s /Fd%s %s Advapi32.lib' %
-                            (pyd_filename, pdf_filename, ' '.join( all_objects )) )
+                            (pyd_filename, pdb_filename, ' '.join( all_objects )) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
     def ruleLinkShared( self, target ):
         pyd_filename = target.getTargetFilename()
-        pdf_filename = target.getTargetFilename( '.pdf' )
+        pdb_filename = target.getTargetFilename( '.pdb' )
 
         all_objects = [source.getTargetFilename() for source in target.all_sources]
 
@@ -467,7 +474,7 @@ class Win32CompilerMSVC90(Compiler):
         rules.append( '\t@echo Link %s' % (pyd_filename,) )
         rules.append( '\t@mkdir %(EDIT_EXE)s' )
         rules.append( '\t@$(LDSHARED)  %%(CCCFLAGS)s /Fe%s /Fd%s %s %%(PYTHON_LIB)s\python%d%d.lib Advapi32.lib' %
-                            (pyd_filename, pdf_filename, ' '.join( all_objects ), sys.version_info.major, sys.version_info.minor) )
+                            (pyd_filename, pdb_filename, ' '.join( all_objects ), sys.version_info.major, sys.version_info.minor) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
@@ -826,8 +833,7 @@ class Program(Target):
         if ext is None:
             ext = self.compiler.getProgramExt()
 
-        return self.compiler.platformFilename( self.compiler.expand( '%%(EDIT_OBJ)s/%s%s' % (self.output, ext) ) )
-
+        return self.compiler.platformFilename( self.compiler.expand( '%%(EDIT_EXE)s/%s%s' % (self.output, ext) ) )
 
     def _generateMakefile( self ):
         debug( 'Program:0x%8.8x.generateMakefile() for %r dependent %r' % (id(self), self.output, self.dependent) )
@@ -839,7 +845,6 @@ class Program(Target):
 
         for source in self.all_sources:
             source.generateMakefile()
-
 
 class PythonExtension(Target):
     def __init__( self, compiler, output, all_sources ):
@@ -858,8 +863,8 @@ class PythonExtension(Target):
     def getTargetFilename( self, ext=None ):
         if ext is None:
             ext = self.compiler.getPythonExtensionFileExt()
-        return self.compiler.platformFilename( self.compiler.expand( '%%(EDIT_OBJ)s/%s%s' % (self.output, ext) ) )
 
+        return self.compiler.platformFilename( self.compiler.expand( '%%(EDIT_EXE)s/%s%s' % (self.output, ext) ) )
 
     def _generateMakefile( self ):
         debug( 'PythonExtension:0x%8.8x.generateMakefile() for %r' % (id(self), self.output,) )
@@ -936,8 +941,7 @@ class UnicodeDataHeader(Target):
 def main( argv ):
     try:
         s = Setup( argv )
-        s.generateMakefile()
-        return 0
+        return s.generateMakefile()
 
     except ValueError as e:
         sys.stderr.write( 'Error: %s\n' % (e,) )

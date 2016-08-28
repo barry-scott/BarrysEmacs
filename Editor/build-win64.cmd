@@ -1,2 +1,4 @@
-%PYTHON% setup.py win64 Makefile.mak
-if not errorlevel 1 nmake /nologo -e -f Makefile.mak %*
+%PYTHON% setup.py win64 Makefile
+    if errorlevel 1 goto :eof
+
+nmake /nologo -e -f Makefile %*
