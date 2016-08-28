@@ -23,8 +23,12 @@ class Setup:
         self.platform = args[0]
         del args[0]
 
-        self.__makefile = open( args[0], 'wt' )
+        self.makefile_name = args[0]
         del args[0]
+
+        print( 'Info: Creating makefile for platform %s in %s' % (self.platform, self.makefile_name) )
+        print( 'Info: Working folder %s' % (os.getcwd(),) )
+        sys.stdout.flush()
 
         while len(args) > 0:
             if args[0] == '--debug':
@@ -35,9 +39,13 @@ class Setup:
             else:
                 raise ValueError( 'Unknown arg %r' % (args[0],) )
 
+        for name in sorted( os.environ ):
+            debug( 'Env %s:%r' % (name, os.environ[ name ]) )
+
         self.setupCompile()
 
     def makePrint( self, line ):
+        debug( 'makePrint( %r )' % (line,) )
         self.__makefile.write( line )
         self.__makefile.write( '\n' )
 
@@ -69,7 +77,8 @@ class Setup:
         self.c_pybemacs.setupPythonEmacs()
         self.c_python_tools.setupPythonTools()
 
-        self.unicode_header = UnicodeDataHeader( self.c_utils )
+        self.unicode_header = UnicodeDataHeader( self.c_pybemacs )
+        print( 'self.unicode_header %r' % (self.unicode_header,) )
 
         self.db_files = [
             Source( self.c_utils, 'Utilities/db_rtl/db_rtl.cpp' ),
@@ -104,6 +113,8 @@ class Setup:
             ] + self.pycxx_obj_file
 
         self.obj_files = [
+            Source( self.c_pybemacs, 'Source/Common/emunicode.cpp',
+                                    ['Include/Common/em_unicode_data.h'] ),
             Source( self.c_pybemacs, 'Source/Common/abbrev.cpp' ),
             Source( self.c_pybemacs, 'Source/Common/abspath.cpp' ),
             Source( self.c_pybemacs, 'Source/Common/arith.cpp' ),
@@ -125,8 +136,6 @@ class Setup:
             Source( self.c_pybemacs, 'Source/Common/emacsrtl.cpp' ),
             Source( self.c_pybemacs, 'Source/Common/emarray.cpp' ),
             Source( self.c_pybemacs, 'Source/Common/emstring.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/emunicode.cpp',
-                                    ['Include/Common/em_unicode_data.h'] ),
             Source( self.c_pybemacs, 'Source/Common/emstrtab.cpp' ),
             Source( self.c_pybemacs, 'Source/Common/errlog.cpp' ),
             Source( self.c_pybemacs, 'Source/Common/file_name_compare.cpp' ),
@@ -203,15 +212,16 @@ class Setup:
 
     def generateMakefile( self ):
         try:
-            self.c_pybemacs.generateMakefileHeader()
+            with open( self.makefile_name, 'wt' ) as self.__makefile:
+                self.c_pybemacs.generateMakefileHeader()
 
-            self.makePrint( 'all: %s' % (' '.join( [exe.getTargetFilename() for exe in self.all_exe] )) )
-            self.makePrint( '' )
+                self.makePrint( 'all: %s' % (' '.join( [exe.getTargetFilename() for exe in self.all_exe] )) )
+                self.makePrint( '' )
 
-            for exe in self.all_exe:
-                exe.generateMakefile()
+                for exe in self.all_exe:
+                    exe.generateMakefile()
 
-            self.unicode_header.generateMakefile()
+                self.unicode_header.generateMakefile()
 
             return 0
 
@@ -780,14 +790,12 @@ class LinuxCompilerGCC(CompilerGCC):
 
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
-
 #--------------------------------------------------------------------------------
 class Target:
     def __init__( self, compiler, all_sources ):
         self.compiler = compiler
         self.__generated = False
         self.dependent = None
-
 
         self.all_sources = all_sources
         for source in self.all_sources:
@@ -815,7 +823,7 @@ class Target:
         self.compiler.ruleClean( target_filename )
 
     def setDependent( self, dependent ):
-        debug( '%r.setDependent( %r )' % (self, dependent,) )
+        debug( '%r.setDependent( %r )' % (self, dependent) )
         self.dependent = dependent
 
 
@@ -824,10 +832,10 @@ class Program(Target):
         self.output = output
 
         Target.__init__( self, compiler, all_sources )
-        debug( 'Program:0x%8.8x.__init__( %r, ... )' % (id(self), output,) )
+        debug( '%r.__init__( %r )' % (self, self.all_sources) )
 
     def __repr__( self ):
-        return '<Program:0x%8.8x %s>' % (id(self), self.output)
+        return '<Program:%s>' % (self.output,)
 
     def getTargetFilename( self, ext=None ):
         if ext is None:
@@ -836,7 +844,7 @@ class Program(Target):
         return self.compiler.platformFilename( self.compiler.expand( '%%(EDIT_EXE)s/%s%s' % (self.output, ext) ) )
 
     def _generateMakefile( self ):
-        debug( 'Program:0x%8.8x.generateMakefile() for %r dependent %r' % (id(self), self.output, self.dependent) )
+        debug( '%r._generateMakefile() dependent %r' % (self, self.dependent) )
 
         self.compiler.ruleLinkProgram( self )
 
@@ -851,14 +859,13 @@ class PythonExtension(Target):
         self.output = output
 
         Target.__init__( self, compiler, all_sources )
-        debug( 'PythonExtension:0x%8.8x.__init__( %r, ... )' % (id(self), output,) )
-
+        debug( '%r.__init__( %r )' % (self, self.all_sources) )
 
         for source in self.all_sources:
             source.setDependent( self )
 
     def __repr__( self ):
-        return '<PythonExtension:0x%8.8x %s>' % (id(self), self.output)
+        return '<PythonExtension:%s>' % (self.output,)
 
     def getTargetFilename( self, ext=None ):
         if ext is None:
@@ -867,7 +874,7 @@ class PythonExtension(Target):
         return self.compiler.platformFilename( self.compiler.expand( '%%(EDIT_EXE)s/%s%s' % (self.output, ext) ) )
 
     def _generateMakefile( self ):
-        debug( 'PythonExtension:0x%8.8x.generateMakefile() for %r' % (id(self), self.output,) )
+        debug( '%s.generateMakefile() for %r' % (self, self.output,) )
 
         self.compiler.ruleLinkShared( self )
         self.compiler.ruleClean( self.getTargetFilename( '.*' ) )
@@ -881,14 +888,14 @@ class Source(Target):
 
         Target.__init__( self, compiler, [] )
 
-        debug( 'Source:0x%8.8x.__init__( %r, %r )' % (id(self), src_filename, all_dependencies) )
+        debug( '%r.__init__( %r )' % (self, self.all_sources) )
 
         self.all_dependencies = all_dependencies
         if self.all_dependencies is None:
             self.all_dependencies = []
 
     def __repr__( self ):
-        return '<Source:0x%8.8x %s>' % (id(self), self.src_filename)
+        return '<Source:%s>' % (self.src_filename)
 
     def getTargetFilename( self ):
         #if not os.path.exists( self.src_filename ):
@@ -907,7 +914,7 @@ class Source(Target):
         raise ValueError( 'unknown source %r' % (self.src_filename,) )
 
     def _generateMakefile( self ):
-        debug( 'Source:0x%8.8x.generateMakefile() for %r' % (id(self), self.src_filename,) )
+        debug( '%r._generateMakefile()' % (self,) )
 
         self.compiler.ruleCxx( self )
         self.compiler.ruleClean( self.getTargetFilename() )
@@ -916,10 +923,10 @@ class UnicodeDataHeader(Target):
     def __init__( self, compiler ):
         Target.__init__( self, compiler, [] )
 
-        debug( 'UnicodeDataHeader:0x%8.8x.__init__()' % (id(self),) )
+        debug( '%r.__init__( %r )' % (self, self.all_sources) )
 
     def __repr__( self ):
-        return '<UnicodeDataHeader:0x%8.8x>' % (id(self),)
+        return '<UnicodeDataHeader:%s>' % (self.getTargetFilename(),)
 
     def makePrint( self, line ):
         self.compiler.makePrint( line )
@@ -928,11 +935,13 @@ class UnicodeDataHeader(Target):
         return self.compiler.platformFilename( 'Include/Common/em_unicode_data.h' )
 
     def generateMakefile( self ):
+        debug( '%r.generateMakefile()' % (self,) )
         rules = ['']
 
-        rules.append( '%s : make_unicode_data.py' % self.getTargetFilename() )
-        rules.append( '\t@ echo Info: Make %s' % self.getTargetFilename() )
-        rules.append( '\t%%(PYTHON)s make_unicode_data.py %%(UCDDIR)s/UnicodeData.txt %%(UCDDIR)s/CaseFolding.txt %s' % self.getTargetFilename() )
+        rules.append( '%s : make_unicode_data.py' % (self.getTargetFilename(),) )
+        rules.append( '\t@ echo Info: Make %s' % (self.getTargetFilename(),) )
+        rules.append( '\t%%(PYTHON)s make_unicode_data.py %%(UCDDIR)s/UnicodeData.txt %%(UCDDIR)s/CaseFolding.txt %s' %
+                            (self.getTargetFilename(),) )
 
         self.makePrint( self.compiler.expand( '\n'.join( rules ) ) )
         self.ruleClean()
@@ -940,11 +949,14 @@ class UnicodeDataHeader(Target):
 #--------------------------------------------------------------------------------
 def main( argv ):
     try:
+        print( "Info: setup.py for Barry's Emacs" )
         s = Setup( argv )
-        return s.generateMakefile()
+        rc =  s.generateMakefile()
+        print( "Info: setup.py complete - %d" % (rc,) )
+        return rc
 
     except ValueError as e:
-        sys.stderr.write( 'Error: %s\n' % (e,) )
+        sys.stderr.write( 'Error: setup.py %s\n' % (e,) )
         return 1
 
 if __name__ == '__main__':

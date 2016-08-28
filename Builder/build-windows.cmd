@@ -1,3 +1,4 @@
+@echo off
 if "%BUILDER_TOP_DIR%" == "" (
     echo Error: BUILDER_TOP_DIR is not set. Hint: run builder_custom_init.cmd
     goto :eof
@@ -23,10 +24,11 @@ if errorlevel 1 (
     echo Error: QScintilla is not installed for %PYTHON%. Hint: %PYTHON% -m pip isntall QScintilla
     goto :eof
 )
+echo on
 
-nmake -f %BUILDER_CFG_PLATFORM%.mak PYTHON=%python% clean
+nmake -f Windows.mak PYTHON=%python% clean
 if exist c:\unxutils\tee.exe (
-    nmake -f %BUILDER_CFG_PLATFORM%.mak PYTHON=%python% build 2>&1 | c:\unxutils\tee build.log
+    nmake -f Windows.mak PYTHON=%PYTHON% build 2>&1 | c:\unxutils\tee build.log
 ) else (
-    nmake -f %BUILDER_CFG_PLATFORM%.mak PYTHON=%python% build
+    nmake -f Windows.mak PYTHON=%PYTHON% build
 )
