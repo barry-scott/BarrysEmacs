@@ -87,4 +87,4 @@ extern unsigned char *get_tmp_path(void);
 //
 //    typedefs for fundemental types
 //
-typedef PY_UNICODE_TYPE EmacsChar_t;
+typedef Py_UNICODE EmacsChar_t;

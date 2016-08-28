@@ -83,7 +83,8 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
 
         self.executeEnterHooks()
 
-        self.clientCommand( os.getcwd(), ['emacs'] + self.app.args[1:] )
+        if sys.platform != 'darwin':
+            self.clientCommand( os.getcwd(), ['emacs'] + self.app.args[1:] )
 
     def guiCloseWindow( self ):
         self.__event_queue.put( (self.closeWindow, ()) )
