@@ -4,7 +4,7 @@ export BEMACS_EMACS_LIBRARY=${BUILDER_TOP_DIR}/Kits/MacOSX/pkg/Barry\'s\ Emacs-D
 # BArry's quote handling...
 export BEMACS_FIFO=.bemacs8devel/.emacs_command
 
-if [ "$1" = "--gdb" ]
+if [ "$1" = "--lldb" ]
 then
     shift 1
     echo
@@ -15,7 +15,7 @@ then
     fi
     echo "run -u be_main.py " "$@" >>.gdbinit
     echo
-    gdb python${PYTHON_VERSION}
+    lldb -- python${PYTHON_VERSION} -u be_main.py "$@"
 
 else
     which python${PYTHON_VERSION}
