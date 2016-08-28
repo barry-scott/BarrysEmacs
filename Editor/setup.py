@@ -549,6 +549,8 @@ class CompilerGCC(Compiler):
             self._addVar( 'CCC',            'g++' )
             self._addVar( 'CC',             'gcc' )
 
+        self._addVar( 'LINK_LIBS',      '' )
+
     def getPythonExtensionFileExt( self ):
         return '.so'
 
@@ -571,7 +573,7 @@ class CompilerGCC(Compiler):
         rules.append( '%s : %s' % (target_filename, ' '.join( all_objects )) )
         rules.append( '\t@echo Link %s' % (target_filename,) )
         rules.append( '\t@mkdir -p %(EDIT_EXE)s' )
-        rules.append( '\t@%%(LDEXE)s -o %s %%(CCCFLAGS)s %s' % (target_filename, ' '.join( all_objects )) )
+        rules.append( '\t@%%(LDEXE)s -o %s %%(CCCFLAGS)s %%(LINK_LIBS)s %s' % (target_filename, ' '.join( all_objects )) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
@@ -706,7 +708,6 @@ class LinuxCompilerGCC(CompilerGCC):
     def __init__( self, setup ):
         CompilerGCC.__init__( self, setup )
 
-
     def setupUtilities( self ):
         self._addVar( 'PYTHON',         sys.executable )
 
@@ -757,8 +758,10 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addFromEnv( 'PYTHON_VERSION' )
         if self.expand( '%(PYTHON_VERSION)s' ).startswith( '3.' ):
             self._addVar( 'PYTHON_INCLUDE', '/usr/include/python%(PYTHON_VERSION)sm' )
+            self._addVar( 'LINK_LIBS', '-lpython%d.%dm' % (sys.version_info.major, sys.version_info.minor) )
         else:
             self._addVar( 'PYTHON_INCLUDE', '/usr/include/python%(PYTHON_VERSION)s' )
+            self._addVar( 'LINK_LIBS', '-lpython%d.%d' % (sys.version_info.major, sys.version_info.minor) )
 
         self._addVar( 'CCCFLAGS',
                                         '-g '
