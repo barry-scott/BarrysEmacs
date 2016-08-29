@@ -970,10 +970,10 @@ int dump_syntax_table( void )
         "----------------------------------------\n" );
 
     int i = 0;
-    while( i < 65536 )
+    while( i < unicode_max_code_point )
     {
         int j = i;
-        while( j < 65535
+        while( j < (unicode_max_code_point - 1)
         && p->getSyntaxKind( i ) == p->getSyntaxKind( j+1 )
         && !p->hasSyntaxStrings( i )
         && !p->hasSyntaxStrings( j+1 ) )

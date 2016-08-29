@@ -6,7 +6,7 @@ import sys
 
 _debug = False
 
-pycxx_version = (7,0,0)
+pycxx_version = (7,0,1)
 pycxx_version_str = '%d.%d.%d' % pycxx_version
 
 def debug( msg ):
@@ -384,7 +384,7 @@ class Win64CompilerVC14(Compiler):
         self._addVar( 'EDIT_OBJ',       r'obj-utils' )
         self._addVar( 'EDIT_EXE',       r'exe-utils' )
         self._addVar( 'CCCFLAGS',
-                                        r'/Zi /MT /EHsc '
+                                        r'/Zi /MT /EHsc /W4 '
                                         r'-IInclude\Common -IInclude\Windows '
                                         r'"-DOS_NAME=\"Windows\"" "-DOS_VERSION=\"win64\"" '
                                         r'"-DCPU_TYPE=\"x86_64\"" "-DUI_TYPE=\"console\"" '

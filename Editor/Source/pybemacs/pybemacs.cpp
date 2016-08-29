@@ -597,8 +597,7 @@ public:
             attr.append( Py::Long( *values++ ) );
         }
         Py::Tuple t( 2 );
-        EmacsChar_t *qqq = line->line_body;
-        t[0] = Py::String( qqq, line_length );
+        t[0] = Py::String( line->line_body, line_length );
         t[1] = attr;
 
         return t;

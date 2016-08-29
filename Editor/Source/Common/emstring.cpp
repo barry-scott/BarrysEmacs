@@ -1,10 +1,10 @@
 //
-//    Copyright (c) 1995-2010 Barry A. Scott
+//    Copyright (c) 1995-2016 Barry A. Scott
 //
 #include <emacsutl.h>
 #include <emobject.h>
 #include <emstring.h>
-#include <assert.h>
+#include <cassert>
 #include <emunicode.h>
 
 #include <iostream>
@@ -76,8 +76,10 @@ EmacsString::EmacsString( const unsigned char *string )
 
 #if defined( PYBEMACS )
 EmacsString::EmacsString( const Py::String &str )
-: _rep( EMACS_NEW EmacsStringRepresentation( copy, 0, str.size(), str.unicode_data() ) )
+: _rep( NULL )
 {
+    Py::ucs4string ucs4( str.as_ucs4string() );
+    _rep = EMACS_NEW EmacsStringRepresentation( copy, 0, ucs4.size(), ucs4.data() );
 }
 #endif
 

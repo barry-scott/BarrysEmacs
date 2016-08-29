@@ -12,6 +12,9 @@
 typedef std::map<EmacsChar_t, EmacsChar_t> EmacsCharToCharMap_t;
 typedef std::set<EmacsChar_t> EmacsCharCategorySet_t;
 
+extern const int unicode_max_code_point;
+
+
 extern int length_utf8_to_unicode( int utf8_length, const unsigned char *utf8_data );
 extern int length_utf8_to_unicode( int utf8_length, const unsigned char *utf8_data, int unicode_limit, int &utf8_usable_length );
 extern void convert_utf8_to_unicode( const unsigned char *utf8_data, int unicode_length, EmacsChar_t *unicode_data );
@@ -48,6 +51,8 @@ inline bool unicode_is_alphabetic_numeric( EmacsChar_t code_point )
     else
         return unicode_is_numeric( code_point );
 }
+
+extern bool unicode_is_glyph( EmacsChar_t code_point );
 
 extern bool unicode_is_upper( EmacsChar_t code_point );
 extern bool unicode_has_upper_translation( EmacsChar_t code_point );

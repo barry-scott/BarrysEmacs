@@ -36,58 +36,85 @@ void init_unicode()
 {
     for( struct unicode_category *p = unicode_init_numeric; p->code_point != 0; ++p )
     {
-        if( (sizeof( EmacsChar_t ) == 2 && p->code_point <= 65535)
-        || sizeof( EmacsChar_t ) >= 4 )
-            __numeric.insert( p->code_point );
+        __numeric.insert( p->code_point );
     }
     for( struct unicode_category *p = unicode_init_alphabetic; p->code_point != 0; ++p )
     {
-        if( (sizeof( EmacsChar_t ) == 2 && p->code_point <= 65535)
-        || sizeof( EmacsChar_t ) >= 4 )
-            __alphabetic.insert( p->code_point );
+        __alphabetic.insert( p->code_point );
     }
     for( struct unicode_category *p = unicode_init_is_upper; p->code_point != 0; ++p )
     {
-        if( (sizeof( EmacsChar_t ) == 2 && p->code_point <= 65535)
-        || sizeof( EmacsChar_t ) >= 4 )
-            __is_upper.insert( p->code_point );
+        __is_upper.insert( p->code_point );
     }
     for( struct unicode_category *p = unicode_init_is_lower; p->code_point != 0; ++p )
     {
-        if( (sizeof( EmacsChar_t ) == 2 && p->code_point <= 65535)
-        || sizeof( EmacsChar_t ) >= 4 )
-            __is_lower.insert( p->code_point );
+        __is_lower.insert( p->code_point );
     }
     for( struct unicode_category *p = unicode_init_is_title; p->code_point != 0; ++p )
     {
-        if( (sizeof( EmacsChar_t ) == 2 && p->code_point <= 65535)
-        || sizeof( EmacsChar_t ) >= 4 )
-            __is_title.insert( p->code_point );
+        __is_title.insert( p->code_point );
     }
     for( struct unicode_data *p = unicode_init_to_upper; p->code_point != 0; ++p )
     {
-        if( (sizeof( EmacsChar_t ) == 2 && p->code_point <= 65535 && p->replacement <= 65535 )
-        || sizeof( EmacsChar_t ) >= 4 )
-            __to_upper[ p->code_point ] = p->replacement;
+        __to_upper[ p->code_point ] = p->replacement;
     }
     for( struct unicode_data *p = unicode_init_to_lower; p->code_point != 0; ++p )
     {
-        if( (sizeof( EmacsChar_t ) == 2 && p->code_point <= 65535 && p->replacement <= 65535 )
-        || sizeof( EmacsChar_t ) >= 4 )
-            __to_lower[ p->code_point ] = p->replacement;
+        __to_lower[ p->code_point ] = p->replacement;
     }
     for( struct unicode_data *p = unicode_init_to_title; p->code_point != 0; ++p )
     {
-        if( (sizeof( EmacsChar_t ) == 2 && p->code_point <= 65535 && p->replacement <= 65535 )
-        || sizeof( EmacsChar_t ) >= 4 )
-            __to_title[ p->code_point ] = p->replacement;
+        __to_title[ p->code_point ] = p->replacement;
     }
     for( struct unicode_data *p = unicode_init_casefold; p->code_point != 0; ++p )
     {
-        if( (sizeof( EmacsChar_t ) == 2 && p->code_point <= 65535 && p->replacement <= 65535 )
-        || sizeof( EmacsChar_t ) >= 4 )
-            __casefold[ p->code_point ] = p->replacement;
+        __casefold[ p->code_point ] = p->replacement;
     }
+}
+
+bool unicode_is_glyph( EmacsChar_t code_point )
+{
+    // is it a control char?
+    if( code_point < 32 )
+    {
+        return false;
+    }
+
+    // is it DEL
+    if( code_point == 0x7f )
+    {
+        return false;
+    }
+
+    // is it a control char?
+    if( code_point >= 0x80 && code_point <= 0x9f )
+    {
+        return false;
+    }
+
+    // is it reserved for surigate pairs (UTF-16 encoding)
+    if( code_point >= 0xdc00 && code_point <= 0xdfff )
+    {
+        return false;
+    }
+
+    // is it private use area
+    if( code_point >= 0xe000 && code_point <= 0xf8ff )
+    {
+        return false;
+    }
+
+    if( code_point >= 0xf0000 && code_point <= 0x10fffd )
+    {
+        return false;
+    }
+
+    if( code_point > unicode_max_code_point )
+    {
+        return false;
+    }
+
+    return true;
 }
 
 bool unicode_is_space( EmacsChar_t code_point )

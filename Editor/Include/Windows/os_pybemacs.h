@@ -87,4 +87,4 @@ extern unsigned char *get_tmp_path(void);
 //
 //    typedefs for fundemental types
 //
-typedef Py_UNICODE EmacsChar_t;
+typedef Py_UCS4 EmacsChar_t;    // Py_UNICODE is 2 bytes on windows so use Py_UCS4

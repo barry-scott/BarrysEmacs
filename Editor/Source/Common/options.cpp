@@ -7,6 +7,7 @@
 // and package loading.
 //
 #include <emacs.h>
+#include <emunicode.h>
 
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -293,10 +294,8 @@ static void scan_map_inner
     int last_char = keys.length();
     keys.append( EmacsChar_t( 0 ) );
 
-    // QQQ - not unicode safe
-
     EmacsChar_t c = 0;
-    while( c <= 65535 )
+    while( c <= unicode_max_code_point )
     {
         EmacsChar_t c2 = c + 1;
 
@@ -308,7 +307,7 @@ static void scan_map_inner
         {
             keys[last_char] = c;
 
-            while( c2 <= 65534
+            while( c2 <= (unicode_max_code_point - 1)
             && (kmap->getBinding( c2 ) == b)
             && (c < c2 && !(c2 == 0x20 || c2 == 0xa0 || c2 == 0x7f || c2 == 0x80 || c2 == 0xff || c2 == 0x100)) )
                 c2++;

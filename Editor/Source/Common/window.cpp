@@ -2215,11 +2215,7 @@ int EmacsView::dump_line_from_buffer
             last_char_type = char_type;
         }
 
-            if( (c >= ' ' && c <= '~')      // printing chars
-            || (c >= 128+32 && c <= 254)
-            || (c >= 256 && c < 0xef00)     // QQQ: what ef00 and f100
-            || (c >= 0xf100)
-            )
+            if( unicode_is_glyph( c ) )
             {
                 col++;
 
@@ -2269,12 +2265,23 @@ int EmacsView::dump_line_from_buffer
                         }
                     }
                 }
-                else
+                else if( c <= 0xffff )
                 {
                     col = col + 6;
                     _if_wraped( col )
                     {
                         EmacsString repr( FormatString("\\x%4.4x") << c );
+
+                        for( int i=0; i<repr.length(); i++ )
+                            dsputc( repr[i], highlight );
+                    }
+                }
+                else
+                {
+                    col = col + 8;
+                    _if_wraped( col )
+                    {
+                        EmacsString repr( FormatString("\\x%6.6x") << c );
 
                         for( int i=0; i<repr.length(); i++ )
                             dsputc( repr[i], highlight );
@@ -2292,7 +2299,7 @@ dump_line_from_buffer_loop:
         setMouseHitPosition( n-1, window );
     }
 
-{
+    {
     //
     //    Only put a '$' or '\' at the end of the line if :-
     //
@@ -2333,7 +2340,7 @@ dump_line_from_buffer_loop:
         if( wrap_lines )
             line_wrapped = true;
     }
-}
+    }
 
     if( _found_dot != NULL )
         *_found_dot = flags.found_dot;
@@ -2342,7 +2349,6 @@ dump_line_from_buffer_loop:
 
     return n;
 }
-
 
 //
 //
