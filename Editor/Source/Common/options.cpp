@@ -296,7 +296,7 @@ static void scan_map_inner
     // QQQ - not unicode safe
 
     EmacsChar_t c = 0;
-    while( c <= 0x10ffff )
+    while( c <= 65535 )
     {
         EmacsChar_t c2 = c + 1;
 
