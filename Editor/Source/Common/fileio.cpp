@@ -1327,7 +1327,6 @@ EmacsString makeBufferName( EmacsString &fullname, EmacsBuffer *existing_buffer 
 
 int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const EmacsString &dn )
 {
-    int r_stat;
     EmacsString fullname;
     EmacsBufferRef oldb( bf_cur );
 
@@ -1384,7 +1383,7 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
     bf_cur->b_fname = EmacsString::null;
 
     // Read in the file
-    r_stat = bf_cur->read_file( fullname, 1, createnew );
+    int r_stat = bf_cur->read_file( fullname, 1, createnew );
 
     //
     // When the read is interrupted, leave what has already been
@@ -1438,8 +1437,6 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
 // Read a file into a buffer
 int EmacsBuffer::read_file( const EmacsString &fn, int erase, int createnew )
 {
-    EmacsString fullname;
-
     if( fn.isNull() )
     {
         error( null_file_spec );
@@ -1453,6 +1450,7 @@ int EmacsBuffer::read_file( const EmacsString &fn, int erase, int createnew )
     }
 
     // allow * and % to be expanded
+    EmacsString fullname;
     expand_and_default( fn, EmacsString::null, fullname );
 
     EmacsFile fd;

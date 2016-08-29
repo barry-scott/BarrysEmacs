@@ -546,8 +546,11 @@ void convert_unicode_to_utf8( int unicode_length, const EmacsChar_t *unicode_dat
 //                          10 bit x is ((USC-4)-0x10000) >> 10)) & 0x3fff
 //                          10 bit y is ((USC-4)-0x10000) & 0x3fff
 //
-int length_utf16_to_unicode( int utf16_length, const unsigned short *utf16_data )
+int length_utf16_to_unicode( int data_length, const unsigned char *data )
 {
+    int utf16_length = data_length/sizeof( unsigned short );
+    const unsigned short *utf16_data = reinterpret_cast<const unsigned short *>( data );
+
     int length = 0;
     int remaining = utf16_length;
     int i=0;
@@ -584,8 +587,11 @@ int length_utf16_to_unicode( int utf16_length, const unsigned short *utf16_data 
     return length;
 }
 
-int length_utf16_to_unicode( int utf16_length, const unsigned short *utf16_data, int unicode_limit, int &utf16_usable_length )
+int length_utf16_to_unicode( int data_length, const unsigned char *data, int unicode_limit, int &utf16_usable_length )
 {
+    int utf16_length = data_length/sizeof( unsigned short );
+    const unsigned short *utf16_data = reinterpret_cast<const unsigned short *>( data );
+
     int length = 0;
     int remaining = utf16_length;
     int i=0;
@@ -619,12 +625,14 @@ int length_utf16_to_unicode( int utf16_length, const unsigned short *utf16_data,
         }
     }
 
-    utf16_usable_length = i;
+    utf16_usable_length = i*sizeof( unsigned short );
     return length;
 }
 
-void convert_utf16_to_unicode( const unsigned short *utf16_data, int unicode_length, EmacsChar_t *unicode_data )
+void convert_utf16_to_unicode( const unsigned char *data, int unicode_length, EmacsChar_t *unicode_data )
 {
+    const unsigned short *utf16_data = reinterpret_cast<const unsigned short *>( data );
+
     while( unicode_length-- > 0 )
     {
         unsigned short ch = *utf16_data++;

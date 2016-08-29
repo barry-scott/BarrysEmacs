@@ -35,6 +35,14 @@ enum FIO_EOL_Attribute
     FIO_EOL__StreamLF                   // Unix lines
 };
 
+enum FIO_Encoding_Attribute
+{
+    FIO_Encoding_None,                  // Unknown
+    FIO_Encoding_UTF_8,                 // UTF-8
+    FIO_Encoding_UTF_16_BE,             // UTF-16 big endian
+    FIO_Encoding_UTF_16_LE              // UTF-16 little endian
+};
+
 class EmacsFile
 {
 public:
@@ -47,7 +55,7 @@ public:
     bool fio_open( FILE *existing_file, FIO_EOL_Attribute attr )
     {
         m_file = existing_file;
-        m_attr = attr;
+        m_eol_attr = attr;
         return true;
     }
     bool fio_is_open()
@@ -79,7 +87,8 @@ public:
     time_t fio_modify_date();
     int fio_access_mode();
     const EmacsString &fio_getname();
-    FIO_EOL_Attribute fio_get_eol_attribute() { return m_attr; }
+    FIO_EOL_Attribute fio_get_eol_attribute() { return m_eol_attr; }
+    FIO_Encoding_Attribute fio_get_encoding_attribute() { return m_encoding_attr; }
 
     //
     //    Manipulate files by name
@@ -91,12 +100,11 @@ public:
 
 private:
     int get_fixup_buffer( unsigned char *buf, int len );
-    int get_fixup_buffer( EmacsChar_t *buf, int len );
-
 
     EmacsString m_full_file_name;
     FILE *m_file;
-    FIO_EOL_Attribute m_attr;
+    FIO_EOL_Attribute m_eol_attr;
+    FIO_Encoding_Attribute m_encoding_attr;
 
     int m_convert_size;
     enum { CONVERT_BUFFER_SIZE = 1024 * 1024 };

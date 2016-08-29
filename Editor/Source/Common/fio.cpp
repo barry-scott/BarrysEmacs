@@ -39,7 +39,8 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 EmacsFile::EmacsFile( FIO_EOL_Attribute attr )
 : m_full_file_name()
 , m_file( NULL )
-, m_attr( attr )
+, m_eol_attr( attr )
+, m_encoding_attr( FIO_Encoding_None )
 , m_convert_size( 0 )
 , m_convert_buffer( new unsigned char[ CONVERT_BUFFER_SIZE ] )
 { }
@@ -47,7 +48,9 @@ EmacsFile::EmacsFile( FIO_EOL_Attribute attr )
 EmacsFile::~EmacsFile()
 {
     if( m_file != NULL && m_file != stdin )
+    {
         fclose( m_file );
+    }
 
     delete [] m_convert_buffer;
 }
@@ -98,7 +101,7 @@ bool EmacsFile::fio_create
     expand_and_default( name, defnam, m_full_file_name );
     m_file = fopen( m_full_file_name, "w" BINARY_MODE SHARE_NONE );
 
-    m_attr = attr;
+    m_eol_attr = attr;
 
     return m_file != NULL;
 }
@@ -120,7 +123,7 @@ bool EmacsFile::fio_open
     {
         // open for append
         m_file = fopen( m_full_file_name, "a" BINARY_MODE SHARE_NONE );
-        m_attr = attr;
+        m_eol_attr = attr;
     }
     else
         // open for read
@@ -133,13 +136,16 @@ int EmacsFile::fio_get( unsigned char *buf, int len )
 {
     int status = fread( buf, 1, len, m_file );
     if( ferror( m_file ) )
+    {
         return -1;
+    }
+
     if( status == 0 && feof( m_file ) )
+    {
         return 0;
+    }
 
-    status = get_fixup_buffer( buf, status );
-
-    return status;
+    return get_fixup_buffer( buf, status );
 }
 
 int EmacsFile::fio_get_line( unsigned char *buf, int len )
@@ -166,7 +172,7 @@ int EmacsFile::fio_get_with_prompt( unsigned char *buf, int len, const unsigned 
 int EmacsFile::fio_put( const unsigned char *buf , int len )
 {
     int written_length = 0;
-    switch( m_attr )
+    switch( m_eol_attr )
     {
     case FIO_EOL__StreamCR:
     {
@@ -288,21 +294,40 @@ int EmacsFile::fio_get( EmacsChar_t *buf, int len )
         m_convert_size += size;
     }
 
-    int utf8_usable_len = 0;
-    int unicode_len = length_utf8_to_unicode(
-            m_convert_size, m_convert_buffer,   // convert these bytes
-            len,                                // upto this number of unicode chars
-            utf8_usable_len );                  // and return the number of bytes required
+    if( m_encoding_attr == FIO_Encoding_UTF_8 )
+    {
+        int utf8_usable_len = 0;
+        int unicode_len = length_utf8_to_unicode(
+                m_convert_size, m_convert_buffer,   // convert these bytes
+                len,                                // upto this number of unicode chars
+                utf8_usable_len );                  // and return the number of bytes required
 
-    
-    // convert
-    convert_utf8_to_unicode( m_convert_buffer, unicode_len, buf );
+        // convert
+        convert_utf8_to_unicode( m_convert_buffer, unicode_len, buf );
 
-    // remove converted chars from the buffer
-    m_convert_size -= utf8_usable_len;
-    memmove( m_convert_buffer, m_convert_buffer+utf8_usable_len, m_convert_size );
+        // remove converted chars from the buffer
+        m_convert_size -= utf8_usable_len;
+        memmove( m_convert_buffer, m_convert_buffer+utf8_usable_len, m_convert_size );
 
-    return unicode_len;
+        return unicode_len;
+    }
+    else
+    {
+        int utf16_usable_len = 0;
+        int unicode_len = length_utf16_to_unicode(
+                m_convert_size, m_convert_buffer,   // convert these bytes
+                len,                                // upto this number of unicode chars
+                utf16_usable_len );                 // and return the number of bytes required
+
+        // convert
+        convert_utf16_to_unicode( m_convert_buffer, unicode_len, buf );
+
+        // remove converted chars from the buffer
+        m_convert_size -= utf16_usable_len;
+        memmove( m_convert_buffer, m_convert_buffer+utf16_usable_len, m_convert_size );
+
+        return unicode_len;
+    }
 }
 
 int EmacsFile::fio_put( const EmacsChar_t *buf, int len )
@@ -396,38 +421,138 @@ int EmacsFile::fio_access_mode()
     return (s.data().st_mode&_S_IWRITE) == 0;
 }
 
-int EmacsFile::get_fixup_buffer( unsigned char *buf, int len )
+template <typename T> static FIO_EOL_Attribute detectEolType( unsigned char *ch_buf, int ch_buf_len )
 {
-    if( m_attr == FIO_EOL__None )
-    {
-        //
-        //    this makes a snap judgement of the buffers record type
-        //
-        unsigned char *nl_pointer = (unsigned char *)memchr( buf, '\n', len );
-        if( nl_pointer != NULL )
-        {
-            int nl_index = nl_pointer - buf;
+    T *buf = reinterpret_cast<T *>( ch_buf );
+    int len = ch_buf_len/sizeof( T );
 
-            if( nl_index > 0 )
-            {
-                if( buf[nl_index-1] =='\r' )
-                    m_attr = FIO_EOL__StreamCRLF;
-                else
-                    m_attr = FIO_EOL__StreamLF;
-            }
-            else
-                // LF is first char in buffer cannot have a CR before it
-                m_attr = FIO_EOL__StreamLF;
-        }
-        else
+    //
+    //    this makes a snap judgement of the buffers record type
+    //
+    int nl_index = -1;
+    int cr_index = -1;
+    for( int i=0; i<len; ++i )
+    {
+        if( nl_index < 0 && buf[i] == '\n' )
         {
-            unsigned char *cr_pointer = (unsigned char *)memchr( buf, '\r', len );
-            if( cr_pointer != NULL )
-                m_attr = FIO_EOL__StreamCR;
+            nl_index = i;
+        }
+
+        if( cr_index < 0 && buf[i] == '\r' )
+        {
+            cr_index = i;
+        }
+
+        if( nl_index >= 0 && cr_index >= 0 )
+        {
+            break;
         }
     }
 
-    switch( m_attr )
+    if( nl_index > 0 && (cr_index == nl_index-1) )
+    {
+        return FIO_EOL__StreamCRLF;
+    }
+
+    if( nl_index >= 0 )
+    {
+        return FIO_EOL__StreamLF;
+    }
+
+    if( cr_index >= 0 )
+    {
+        return FIO_EOL__StreamCR;
+    }
+
+    return FIO_EOL__None;
+}
+
+template <typename T> static int stripCr( unsigned char *ch_buf, int ch_buf_len )
+{
+    T *buf = reinterpret_cast<T *>( ch_buf );
+    int len = ch_buf_len/sizeof( T );
+
+    // strip CR's from the buf
+    T *end = &buf[ len ];
+    T *put = buf;
+    T *get = put;
+
+    while( get < end )
+    {
+        T c = *get++;
+        if( c != '\r' )
+        {
+            *put++ = c;
+        }
+    }
+
+    // return the length in bytes
+    return (put - buf)*sizeof( T );
+}
+
+template <typename T> static void replaceCrWithNl( unsigned char *ch_buf, int ch_buf_len )
+{
+    T *buf = reinterpret_cast<T *>( ch_buf );
+    int len = ch_buf_len/sizeof( T );
+
+    // strip CR's from the buf
+    T *end = &buf[ len ];
+    T *ptr = buf;
+
+    for( int i=0; i<len; ++i )
+    {
+        if( buf[i] == '\r' )
+        {
+            buf[i] = '\n';
+        }
+    }
+}
+
+int EmacsFile::get_fixup_buffer( unsigned char *buf, int len )
+{
+    if( m_encoding_attr == FIO_Encoding_None && len >= 2 )
+    {
+        // look for the utf-16 BOM
+        if( buf[0] == 0xff && buf[1] == 0xfe )
+        {
+            m_encoding_attr = FIO_Encoding_UTF_16_LE;
+            len -= 2;
+            memmove( buf, buf+2, len );
+        }
+        else if( buf[0] == 0xfe && buf[1] == 0xff )
+        {
+            m_encoding_attr = FIO_Encoding_UTF_16_BE;
+            len -= 2;
+            memmove( buf, buf+2, len );
+        }
+        else
+        {
+            m_encoding_attr = FIO_Encoding_UTF_8;
+        }
+    }
+
+    // convert to native - assuming little endian
+    if( m_encoding_attr == FIO_Encoding_UTF_16_BE )
+    {
+        for( int i=0; i<len; i += 2 )
+        {
+            std::swap( buf[i], buf[i+1] );
+        }
+    }
+
+    if( m_eol_attr == FIO_EOL__None )
+    {
+        if( m_encoding_attr == FIO_Encoding_UTF_8 )
+        {
+            m_eol_attr = detectEolType<unsigned char>( buf, len );
+        }
+        else
+        {
+            m_eol_attr = detectEolType<unsigned short>( buf, len );
+        }
+    }
+
+    switch( m_eol_attr )
     {
     default:
         // default never gets hit...
@@ -447,32 +572,27 @@ int EmacsFile::get_fixup_buffer( unsigned char *buf, int len )
 
     case FIO_EOL__StreamCR:
     {
-        // each CR becomes a LF
-        for( int i=0; i<len; i++ )
-            if( buf[i] == '\r' )
-                buf[i] = '\n';
+        if( m_encoding_attr == FIO_Encoding_UTF_8 )
+        {
+            replaceCrWithNl<unsigned char>( buf, len );
+        }
+        else
+        {
+            replaceCrWithNl<unsigned short>( buf, len );
+        }
         return len;
     }
 
     case FIO_EOL__StreamCRLF:
     {
-        // strip CR's from the buf
-        unsigned char *end = &buf[ len ];
-        unsigned char *put = (unsigned char *)memchr( buf, '\r', len );
-        unsigned char *get = put;
-
-        if( put == NULL )
-            return len;
-        get++;
-        while( get < end )
+        if( m_encoding_attr == FIO_Encoding_UTF_8 )
         {
-            unsigned char c = *get++;
-            if( c != '\r' )
-                *put++ = c;
+            return stripCr<unsigned char>( buf, len );
         }
-
-        // return the length
-        return put - buf;
+        else
+        {
+            return stripCr<unsigned short>( buf, len );
+        }
     }
     }
 }
