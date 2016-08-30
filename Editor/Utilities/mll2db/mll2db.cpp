@@ -1,6 +1,6 @@
 //
 //    mll-2-db.c
-//    Copyright (c) 1994 Barry A. Scott
+//    Copyright (c) 1994-2016 Barry A. Scott
 //    Date: 28-Mar-1994
 //
 #include <emacsutl.h>
@@ -80,7 +80,7 @@ int main(int argc,char **argv)
                 {
                     if( verbose )
                     {
-                        printf("Adding %.*s (%d bytes)\n", module_length, &buf[module_start], line_start-section_start );
+                        printf("Adding %.*s (%d bytes)\n", (int)module_length, &buf[module_start], (int)(line_start-section_start) );
                     }
 
                     int status = db.put_db
@@ -109,7 +109,7 @@ int main(int argc,char **argv)
 
     if( verbose )
     {
-        printf("Adding %.*s (%d bytes)\n", module_length, &buf[module_start], line_start-section_start );
+        printf("Adding %.*s (%d bytes)\n", (int)module_length, &buf[module_start], (int)(line_start-section_start) );
     }
 
     int status = db.put_db

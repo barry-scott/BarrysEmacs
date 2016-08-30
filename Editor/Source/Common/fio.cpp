@@ -492,12 +492,10 @@ template <typename T> static int stripCr( unsigned char *ch_buf, int ch_buf_len 
 
 template <typename T> static void replaceCrWithNl( unsigned char *ch_buf, int ch_buf_len )
 {
+    // strip CR's from the buf
+
     T *buf = reinterpret_cast<T *>( ch_buf );
     int len = ch_buf_len/sizeof( T );
-
-    // strip CR's from the buf
-    T *end = &buf[ len ];
-    T *ptr = buf;
 
     for( int i=0; i<len; ++i )
     {

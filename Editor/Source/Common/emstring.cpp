@@ -81,7 +81,7 @@ EmacsString::EmacsString( const Py::String &str )
 : _rep( NULL )
 {
     Py::ucs4string ucs4( str.as_ucs4string() );
-    _rep = EMACS_NEW EmacsStringRepresentation( copy, 0, ucs4.size(), ucs4.data() );
+    _rep = EMACS_NEW EmacsStringRepresentation( copy, 0, ucs4.size(), reinterpret_cast<const EmacsChar_t *>( ucs4.data() ) );
 }
 #endif
 
