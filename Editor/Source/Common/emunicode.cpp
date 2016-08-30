@@ -519,7 +519,7 @@ void convert_unicode_to_utf8( int unicode_length, const EmacsChar_t *unicode_dat
         int uni_ch = *unicode_data++;
         if( uni_ch <= 0x0000007f )
         {
-            *utf8_data++ = uni_ch;
+            *utf8_data++ = uni_ch&0xff;
         }
         else if( uni_ch <= 0x000007ff )
         {
@@ -746,7 +746,7 @@ void convert_unicode_to_utf16( int unicode_length, const EmacsChar_t *unicode_da
         EmacsChar_t uni_ch = *unicode_data++;
         if( uni_ch <= 0x10000 )
         {
-            *utf16_data++ = uni_ch;
+            *utf16_data++ = uni_ch&0xffff;
         }
         else
         {

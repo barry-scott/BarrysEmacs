@@ -32,11 +32,9 @@ extern int match_wild( const EmacsString &, const EmacsString & );
 extern int dbg_flags;
 
 # if DBG_EXEC
+#if defined( CHECK_FILEDES )
 void database::dbg_check_fildes( const char *title )
 {
-#if defined( CHECK_FILEDES )
-    int i;
-
     printf("\n\rDBG: check fildes - %s\n\r", title );
     printf("Database: %s\n\r", db_name.sdata() );
     printf("db_dirf: %d  %s\n\r", db_dirf, dirnm.sdata() );
@@ -44,7 +42,7 @@ void database::dbg_check_fildes( const char *title )
     printf("db_datf: %d  %s\n\r", db_datf, datnm.sdata() );
 
     printf("Fildes\tInode\tSize\n" );
-    for( i=1; i<20; i++ )
+    for( int i=1; i<20; i++ )
     {
         EmacsFileStat s;
         bool result = s.stat( i );
@@ -54,8 +52,13 @@ void database::dbg_check_fildes( const char *title )
         else
             printf("%d\tclosed\t%d\n\r", i, errno );
     }
-#endif
 }
+
+#else
+void database::dbg_check_fildes( const char * /*title*/ )
+{
+}
+#endif
 # endif
 
 database * database::lastdatabase;
@@ -837,7 +840,7 @@ int database::put_db( const EmacsString &key, const unsigned char *content, int 
 
     datum value( fetch( keyd ) );
 
-    keyd.val2 = contentlen;
+    keyd.val2 = (int)contentlen;
 
     setup_db();
 

@@ -66,7 +66,7 @@ char *fromUnicode( EmacsChar_t *unicode, int length )
 
     for( int i=0; i<length; ++i )
     {
-        charbuf[i] = unicode[i];
+        charbuf[i] = static_cast<char>( unicode[i] );
     }
     charbuf[length] = 0;
 
@@ -75,9 +75,17 @@ char *fromUnicode( EmacsChar_t *unicode, int length )
 
 int main( int argc, char **argv )
 {
+    if( argc != 2 )
+    {
+        return 1;
+    }
+
     FILE *file = fopen(argv[1], "rb");
     if( file == NULL )
+    {
         return 1;
+    }
+
     //
     //    Read the first record from the journal.
     //    It will be the file or buffer that is
@@ -88,9 +96,9 @@ int main( int argc, char **argv )
 
     union journal_record buf[JNL_BUF_SIZE];
 
-    int status = fread( (unsigned char *)buf, JNL_BYTE_SIZE, JNL_BUF_SIZE, file );
+    size_t status = fread( (unsigned char *)buf, JNL_BYTE_SIZE, JNL_BUF_SIZE, file );
 
-    printf("Block offset: 0x%lx (0x%x)\n", file_offset, status );
+    printf("Block offset: 0x%lx (0x%zx)\n", file_offset, status );
 
     if( status == 0 || ferror( file ) )
     {
@@ -180,7 +188,7 @@ exit_loop:
         offset = 0;
         file_offset += JNL_BYTE_SIZE*JNL_BUF_SIZE;
         status = fread( buf, JNL_BYTE_SIZE, JNL_BUF_SIZE, file );
-        printf("Block offset: 0x%lx (0x%x)\n", file_offset, status );
+        printf("Block offset: 0x%lx (0x%zx)\n", file_offset, status );
     }
     while( !(status != JNL_BUF_SIZE || feof( file ) || ferror( file )) );
 

@@ -578,7 +578,7 @@ EmacsString file_format_string( const EmacsString &format, const FileParse &fab 
 
     EmacsStringIterator format_iterator( format );
 
-    char ch = 0;
+    EmacsChar_t ch = 0;
     while( format_iterator.next( ch ) )
     {
         if( ch != '%' )
@@ -587,7 +587,7 @@ EmacsString file_format_string( const EmacsString &format, const FileParse &fab 
         }
         else
         {
-            char format_ch_1 = 0;
+            EmacsChar_t format_ch_1 = 0;
             int format_arg = 0;
             bool negative_arg = false;
 
@@ -627,7 +627,7 @@ EmacsString file_format_string( const EmacsString &format, const FileParse &fab 
 
             case 'p':    // path operations
             {
-                char format_ch_2 = 0;
+                EmacsChar_t format_ch_2 = 0;
                 if( !format_iterator.next( format_ch_2 ) )
                 {
                     error("file-format-string format string too short");
@@ -667,7 +667,7 @@ EmacsString file_format_string( const EmacsString &format, const FileParse &fab 
 
             case 'f':    // file operations
             {
-                char format_ch_2 = 0;
+                EmacsChar_t format_ch_2 = 0;
                 if( !format_iterator.next( format_ch_2 ) )
                 {
                     error("file-format-string format string too short");

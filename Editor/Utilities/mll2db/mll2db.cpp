@@ -48,7 +48,7 @@ int main(int argc,char **argv)
         exit( EXIT_FAILURE );
     }
 
-    buf_size = fread( buf, sizeof( char ), (size_t)size, in );
+    buf_size = fread( buf, sizeof( char ), size, in );
     if( buf_size > size )
     {
         std::cerr <<"fread overflowed buf!" << std::endl;
@@ -62,57 +62,66 @@ int main(int argc,char **argv)
         exit (EXIT_FAILURE);
     }
 
-    int status;
-    int line_start=0;
-    int section_start=0;
-    int module_start=0;
-    int module_length=0;
-    int num_updates(0);
-    size_t pos;
+    size_t line_start = 0;
+    size_t section_start = 0;
+    size_t module_start = 0;
+    size_t module_length = 0;
+    int num_updates = 0;
 
+    size_t pos;
     for( pos=0; pos < buf_size; pos++ )
-        if( buf[pos] == '\n' )
     {
-        if( buf[line_start] == '['
-        && buf[pos-1] == ']' )
+        if( buf[pos] == '\n' )
+        {
+            if( buf[line_start] == '['
+            && buf[pos-1] == ']' )
             {
-            if( section_start != 0 )
-            {
-                if( verbose )
-                    printf("Adding %.*s (%d bytes)\n", module_length, &buf[module_start], line_start-section_start );
-                status = db.put_db
-                    (
-                    EmacsString( EmacsString::copy, u_str(&buf[module_start]), module_length ),
-                    u_str(&buf[section_start]), line_start-section_start
-                    );
-                if( status < 0 )
+                if( section_start != 0 )
                 {
-                    std::cerr << "Database update failed" << std::endl;
-                    exit( EXIT_FAILURE );
+                    if( verbose )
+                    {
+                        printf("Adding %.*s (%d bytes)\n", module_length, &buf[module_start], line_start-section_start );
+                    }
+
+                    int status = db.put_db
+                        (
+                        EmacsString( EmacsString::copy, u_str(&buf[module_start]), module_length ),
+                        u_str( &buf[section_start] ),
+                        line_start-section_start
+                        );
+                    if( status < 0 )
+                    {
+                        std::cerr << "Database update failed" << std::endl;
+                        exit( EXIT_FAILURE );
+                    }
+
+                    num_updates++;
                 }
 
-                num_updates++;
+                module_start = line_start + 1;
+                module_length = pos - 1 - module_start;
+                section_start = pos + 1;
             }
 
-            module_start = line_start + 1;
-            module_length = pos - 1 - module_start;
-            section_start = pos + 1;
-            }
-
-        line_start=pos+1;
+            line_start = pos+1;
+        }
     }
 
     if( verbose )
+    {
         printf("Adding %.*s (%d bytes)\n", module_length, &buf[module_start], line_start-section_start );
-    status = db.put_db
+    }
+
+    int status = db.put_db
         (
         EmacsString( EmacsString::copy, u_str(&buf[module_start]), module_length ),
         u_str(&buf[section_start]), pos-section_start
         );
+
     if( status < 0 )
     {
         printf ("Database update failed\n");
-        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 
     num_updates++;

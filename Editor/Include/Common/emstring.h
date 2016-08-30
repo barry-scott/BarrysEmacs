@@ -360,9 +360,9 @@ public:
     EmacsStringIterator( const EmacsString &string, int index=0 );
     virtual ~EmacsStringIterator();
 
-    bool next( char &ch );
+    bool next( EmacsChar_t &ch );
 private:
-    const EmacsString string;
-    int index;
-    int remaining;
+    const EmacsString m_string;
+    int m_index;
+    int m_remaining;
 };

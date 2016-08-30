@@ -61,14 +61,16 @@ EmacsString::EmacsString( void )
     _rep->ref_count++;
 }
 
+#define char_strlen( str ) static_cast<int>( strlen( str ) )
+
 EmacsString::EmacsString( const char *string )
-: _rep( EMACS_NEW EmacsStringRepresentation( keep, 0, strlen( string ), (unsigned char *)string ) )
+: _rep( EMACS_NEW EmacsStringRepresentation( keep, 0, char_strlen( string ), (const unsigned char *)string ) )
 {
     check_for_bad_value( _rep );
 }
 
 EmacsString::EmacsString( const unsigned char *string )
-: _rep( EMACS_NEW EmacsStringRepresentation( keep, 0, strlen( (const char *)string ), string ) )
+: _rep( EMACS_NEW EmacsStringRepresentation( keep, 0, char_strlen( (const char *)string ), string ) )
 {
     check_for_bad_value( _rep );
 }
@@ -90,7 +92,7 @@ static int EmacsChar_strlen( const EmacsChar_t *string )
     while( *p != 0 )
         p++;
 
-    return p - string;
+    return static_cast<int>( p - string );
 }
 
 EmacsString::EmacsString( const EmacsChar_t *string )
@@ -113,7 +115,7 @@ EmacsString::EmacsString( enum string_type type )
 }
 
 EmacsString::EmacsString( enum string_type type, const unsigned char *string )
-: _rep( EMACS_NEW EmacsStringRepresentation( type, strlen( (const char *)string )+1, strlen( (const char *)string ), string ) )
+: _rep( EMACS_NEW EmacsStringRepresentation( type, char_strlen( (const char *)string )+1, char_strlen( (const char *)string ), string ) )
 {
     check_for_bad_value( _rep );
 }
@@ -122,14 +124,6 @@ EmacsString::EmacsString( enum string_type type, const unsigned char *string, in
 : _rep( EMACS_NEW EmacsStringRepresentation( type, length+1, length, string ) )
 {
     check_for_bad_value( _rep );
-}
-
-size_t strlen( const EmacsChar_t *str )
-{
-    const EmacsChar_t *p = str;
-    while( *p++ != 0 )
-        ;
-    return p - str;
 }
 
 EmacsString::EmacsString( enum string_type type, const EmacsChar_t *string )
@@ -145,7 +139,7 @@ EmacsString::EmacsString( enum string_type type, const EmacsChar_t *string, int 
 }
 
 EmacsString::EmacsString( enum string_type type, const char *string )
-: _rep( EMACS_NEW EmacsStringRepresentation( type, strlen( (const char *)string )+1, strlen( (const char *)string ), (unsigned char *)string ) )
+: _rep( EMACS_NEW EmacsStringRepresentation( type, char_strlen( (const char *)string )+1, char_strlen( (const char *)string ), (unsigned char *)string ) )
 {
     check_for_bad_value( _rep );
 }
@@ -608,22 +602,22 @@ const unsigned char *EmacsStringRepresentation::get_utf8_data()
 //    EmacsStringIterator
 //
 //================================================================================
-EmacsStringIterator::EmacsStringIterator( const EmacsString &_string, int _index )
-: string( _string )
-, index( _index )
-, remaining( _string.length() - index )
+EmacsStringIterator::EmacsStringIterator( const EmacsString &string, int index )
+: m_string( string )
+, m_index( index )
+, m_remaining( string.length() - index )
 {}
 
 EmacsStringIterator::~EmacsStringIterator()
 {}
 
-bool EmacsStringIterator::next( char &ch )
+bool EmacsStringIterator::next( EmacsChar_t &ch )
 {
-    if( remaining > 0 )
+    if( m_remaining > 0 )
     {
-        ch = string[index];
-        index++;
-        remaining--;
+        ch = m_string[ m_index ];
+        m_index++;
+        m_remaining--;
         return true;
     }
 
