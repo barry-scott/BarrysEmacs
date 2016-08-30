@@ -78,7 +78,6 @@ class Setup:
         self.c_python_tools.setupPythonTools()
 
         self.unicode_header = UnicodeDataHeader( self.c_pybemacs )
-        print( 'self.unicode_header %r' % (self.unicode_header,) )
 
         self.db_files = [
             Source( self.c_utils, 'Utilities/db_rtl/db_rtl.cpp' ),
