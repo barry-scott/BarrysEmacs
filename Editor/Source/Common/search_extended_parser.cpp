@@ -1,7 +1,7 @@
 //
 //    search_advanced_parser.cpp
 //
-//    Copyright (c) 2002-2006
+//    Copyright (c) 2002-2016
 //        Barry A. Scott
 //
 #include <emacs.h>
@@ -12,7 +12,7 @@ static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
 #if DBG_EXT_SEARCH != 0
-#define S_dbg_msg( msg )        do { if( dbg_flags&DBG_EXT_SEARCH ) _dbg_msg( msg ); } while( 0 )
+#define S_dbg_msg( msg )        _dbg_msg( msg )
 #define S_dbg_fn_trace( msg )   _dbg_fn_trace t____( msg )
 #else
 #define S_dbg_msg( msg )        do { (void)0; } while( 0 )
@@ -49,7 +49,11 @@ void SearchAdvancedAlgorithm::compile( const EmacsString &pattern, EmacsSearch::
 {
     S_dbg_fn_trace( "SearchAdvancedAlgorithm::compile" );
     if( pattern.isNull() && m_expression != NULL )
+    {
         return;
+    }
+
+    S_dbg_msg( FormatString("Pattern '%s'") << pattern );
 
     switch( RE )
     {
@@ -114,15 +118,18 @@ private:
 class EmacsStringStream
 {
 public:
-    EmacsStringStream( EmacsStringStreamData &stream_data_ );
-    EmacsStringStream( EmacsStringStream &stream_ );
-    virtual ~EmacsStringStream();
 
     EmacsChar_t nextChar( bool quoted=false );      // return next char from pattern and move position
     EmacsChar_t peekNextChar( bool quoted=false );  // return following char, don't move position
     void undoNextChar();                            // undo the effect of the last nextChar()
     virtual bool atEnd( bool quoted=false ) = 0;    // at the end?
+
+    EmacsString remaining();                        // for debug return the remaining string
 protected:
+    EmacsStringStream( EmacsStringStreamData &stream_data_ );
+    EmacsStringStream( EmacsStringStream &stream_ );
+    virtual ~EmacsStringStream();
+
     EmacsStringStreamData &data;
 };
 
@@ -181,9 +188,13 @@ EmacsChar_t EmacsStringStream::nextChar( bool quoted )
     S_dbg_fn_trace( "EmacsStringStream::nextChar" );
 
     if( atEnd( quoted ) )
+    {
+        S_dbg_msg( "nextChar throw" );
         throw RegularExpressionSyntaxError( "expecting more characters in regular expression" );
+    }
 
-    S_dbg_msg( FormatString( "next char %c" ) << data.string[ data.position ] );
+    S_dbg_msg( FormatString( "next char '%c' pos %d of %d" )
+                        << data.string[ data.position ] << data.position << data.string.length());
     return data.string[ data.position++ ];
 }
 
@@ -192,9 +203,11 @@ EmacsChar_t EmacsStringStream::peekNextChar( bool quoted )
 {
     S_dbg_fn_trace( "EmacsStringStream::peekNextChar" );
     if( atEnd( quoted ) )
+    {
+        S_dbg_msg( "peekNextChar throw" );
         throw RegularExpressionSyntaxError( "expecting more characters in regular expression" );
-
-    S_dbg_msg( FormatString( "peek char %c" ) << data.string[ data.position ] );
+    }
+    S_dbg_msg( FormatString( "peek char '%c'" ) << data.string[ data.position ] );
     return data.string[ data.position ];
 }
 
@@ -204,6 +217,10 @@ void EmacsStringStream::undoNextChar()
     data.position--;
 }
 
+EmacsString EmacsStringStream::remaining()
+{
+    return data.string( data.position, data.string.length() );
+}
 
 //--------------------------------------------------------------------------------
 //
@@ -283,7 +300,8 @@ void SearchAdvancedAlgorithm::compile_expression( const EmacsString &pattern )
         if( !stream.atEnd() )
         {
             delete term;
-            throw RegularExpressionSyntaxError("not all string parsed");
+            S_dbg_msg( FormatString("compile_expression throw: not all string parsed: %s") << stream.remaining() );
+            throw RegularExpressionSyntaxError( FormatString("not all string parsed: %s") << stream.remaining() );
         }
 
         RegularExpressionGroupStart *group_start = new RegularExpressionNumberedGroup( *this, 0 );
@@ -320,12 +338,14 @@ void SearchAdvancedAlgorithm::compile_for_syntax( const EmacsString &pattern )
         if( !stream.atEnd() )
         {
             delete term;
+            S_dbg_msg( "compile_for_syntax throw" );
             throw RegularExpressionSyntaxError( "syntax table ere not all string parsed" );
         }
 
         if( !term->isStringTerm() )
         {
             delete term;
+            S_dbg_msg( "compile_for_syntax throw" );
             throw RegularExpressionSyntaxError( "syntax table ere must start with a simple char" );
         }
 
@@ -339,6 +359,8 @@ void SearchAdvancedAlgorithm::compile_for_syntax( const EmacsString &pattern )
 
 RegularExpressionTerm *SearchAdvancedAlgorithm::parse_re( EmacsStringStream &pattern )
 {
+    S_dbg_fn_trace( FormatString("parse_re( '%s' )") << pattern.remaining() );
+
     //
     //    parse the string into a list of terms
     //
@@ -371,6 +393,8 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_re( EmacsStringStream &pat
 
 RegularExpressionTerm *SearchAdvancedAlgorithm::parse_repeat( RegularExpressionTerm *term, EmacsStringStream &pattern )
 {
+    S_dbg_fn_trace( FormatString("parse_repeat( '%s' )") << pattern.remaining() );
+
     if( pattern.atEnd() )
         return term;
 
@@ -436,15 +460,23 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_repeat( RegularExpressionT
 //
 void SearchAdvancedAlgorithm::parse_min_max( EmacsStringStream &pattern, int &repeat_min, int &repeat_max )
 {
+    S_dbg_fn_trace( FormatString("parse_min_max( '%s' )") << pattern.remaining() );
+
     if( pattern.atEnd() )
+    {
+        S_dbg_msg( "parse_min_max throw" );
         throw RegularExpressionSyntaxError( "incomplete {} repeat term" );
+    }
 
     //
     // parse first mandatory
     //
     EmacsChar_t ch = pattern.nextChar();
     if( ch < '0' || ch > '9' )
+    {
+        S_dbg_msg( "compile_for_syntax throw" );
         throw RegularExpressionSyntaxError( "{} repeat must start with a digit" );
+    }
     repeat_min = int( ch - '0' );
     while( !pattern.atEnd() )
     {
@@ -462,7 +494,10 @@ void SearchAdvancedAlgorithm::parse_min_max( EmacsStringStream &pattern, int &re
     }
 
     if( ch != ',' )
-        throw RegularExpressionSyntaxError( FormatString( "%c unexpected in {} repeat" ) << ch );
+    {
+        S_dbg_msg( "parse_min_max throw" );
+        throw RegularExpressionSyntaxError( FormatString( "'%c' unexpected in {} repeat" ) << ch );
+    }
 
     ch = pattern.nextChar();
     if( ch == '}' )
@@ -477,7 +512,10 @@ void SearchAdvancedAlgorithm::parse_min_max( EmacsStringStream &pattern, int &re
     while( ch != '}' )
     {
         if( ch < '0' || ch > '9' )
-            throw RegularExpressionSyntaxError( FormatString( "%c unexpected in {} repeat" ) << ch );
+        {
+            S_dbg_msg( "parse_min_max throw" );
+            throw RegularExpressionSyntaxError( FormatString( "'%c' unexpected in {} repeat" ) << ch );
+        }
 
         repeat_max = repeat_max * 10 + int( ch - '0' );
 
@@ -495,18 +533,23 @@ static int hex_to_int(  EmacsChar_t ch )
     if( ch >= 'A' && ch <= 'F' )
         return ch - 'A' + 10;
 
-    throw RegularExpressionSyntaxError( FormatString("expecting \"%c\" to be a hexadecimal character") << ch );
+    S_dbg_msg( "hex_to_int throw" );
+    throw RegularExpressionSyntaxError( FormatString("expecting '%c' to be a hexadecimal character") << ch );
 }
 
 RegularExpressionTerm *SearchAdvancedAlgorithm::parse_term( EmacsStringStream &pattern )
 {
+    S_dbg_fn_trace( FormatString("parse_term( '%s' )") << pattern.remaining() );
+
     EmacsChar_t ch = pattern.nextChar();
 
     // check for chars that are not allowed
     switch( ch )
     {
     case '?': case '*': case '+': case '{':
-        throw RegularExpressionSyntaxError( FormatString( "%c unexpected" ) << ch );
+        S_dbg_msg( "parse_term throw" );
+        throw RegularExpressionSyntaxError( FormatString( "repeat character '%c' is not allowed at the start of a RE term" ) << ch );
+
     default:
         break;
     }
@@ -660,12 +703,13 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_term( EmacsStringStream &p
                 return parse_repeated_char( (EmacsChar_t)code, pattern );
                 }
             default:
-                throw RegularExpressionSyntaxError( FormatString("reserved \"\\%c\" escape code") << ch );
+                S_dbg_msg( "parse_term throw" );
+                throw RegularExpressionSyntaxError( FormatString("reserved '\\%c' escape code") << ch );
             }
         else if( ch == '<' )
             return new RegularExpressionWordStart( *this );
 
-        else if( ch == '<' )
+        else if( ch == '>' )
             return new RegularExpressionWordEnd( *this );
 
         else if( ch >= '1' && ch <= '9' )
@@ -683,7 +727,10 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_term( EmacsStringStream &p
                 }
             }
             if( back_ref > m_max_group_number )
+            {
+                S_dbg_msg( "parse_term throw" );
                 throw RegularExpressionSyntaxError( FormatString("back reference \\%d invalid, only %d groups") << back_ref << m_max_group_number );
+            }
 
             return parse_repeat( new RegularExpressionBackReference( *this, back_ref ), pattern );
         }
@@ -699,6 +746,8 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_term( EmacsStringStream &p
 
 RegularExpressionTerm *SearchAdvancedAlgorithm::parse_repeated_char( EmacsChar_t ch, EmacsStringStream &pattern )
 {
+    S_dbg_fn_trace( FormatString("parse_repeated_char( '%s' )") << pattern.remaining() );
+
     EmacsString ch_in_string;
     ch_in_string.append( ch );
     return parse_repeat( new RegularExpressionString( *this, ch_in_string ), pattern );
@@ -711,6 +760,8 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_repeated_char( EmacsChar_t
 //
 RegularExpressionTerm *SearchAdvancedAlgorithm::parse_set( EmacsStringStream &pattern )
 {
+    S_dbg_fn_trace( FormatString("parse_set( '%s' )") << pattern.remaining() );
+
     // need a stream that will allow ) and | to be read
     EmacsStringStreamStringEnd raw_pattern( pattern );
 
@@ -751,12 +802,13 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_set( EmacsStringStream &pa
                 char_set.append( '\n' );
                 break;
             case 't':
-                char_set.append( '\n' );
+                char_set.append( '\t' );
                 break;
             case '0':
                 char_set.append( '\000' );
             default:
-                throw RegularExpressionSyntaxError( FormatString("reserved [\"\\%c\"] escape code") << ch );
+                S_dbg_msg( "parse_set throw" );
+                throw RegularExpressionSyntaxError( FormatString("reserved ['\\%c' escape code") << ch );
             }
         }
         else
@@ -801,23 +853,44 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_set( EmacsStringStream &pa
 }
 
 //
-//    Figure out which sort of group this is
+//      Figure out which sort of group this is
 //
-//    (?%...) - ... is a list of options
-//    (?P<name>...) - group named name
-//    (?P=name) - back ref to group named name
-//    (?#...) - comment
-//    (?=...) - look ahead positive assertion
-//    (?!...) - look ahead negative assertion
-//    (?<=...) - look behind positive assertion
-//    (?<!...) - look behind negative assertion
-//    (?:...) - group, but don't remember
-//    Any other character following ? is reserved
-//    (...) - numbered group
+//   syntax mark with * are implemented
 //
+//      (?%...) - ... is a list of options
+//      (?P<name>...) - group named name
+//      (?P=name) - back ref to group named name
+//    * (?#...) - comment
+//    * (?=...) - look ahead positive assertion
+//    * (?!...) - look ahead negative assertion
+//      (?<=...) - look behind positive assertion
+//      (?<!...) - look behind negative assertion
+//    * (?:...) - group, but don't remember
+//      (...) - numbered group
+//
+//    (?sdwsc[123]k[123]p) - matches all syntax kind listed for the next char
+//            lowercase letter mean match, uppercase letter means does not match
+//                = - look ahead, do not consume
+//                d - dull - no special meaning
+//                w - word
+//                p - problem
+//                s - string
+//                c - comment all types
+//                c1 - comment type 1
+//                c2 - comment type 2
+//                c3 - comment type 3
+//                k - keyword all types
+//                k1 - keyword type 1
+//                k2 - keyword type 2
+//                k3 - keyword type 3
+//            Only once of the s, c and k types combine meaningfully
+//
+//      Any other character following ? is reserved
 //
 RegularExpressionTerm *SearchAdvancedAlgorithm::parse_group( EmacsStringStream &pattern )
 {
+    S_dbg_fn_trace( FormatString("parse_group( '%s' )") << pattern.remaining() );
+
     RegularExpressionTerm *term = NULL;
     EmacsStringStreamStringEnd raw_stream( pattern );
 
@@ -830,29 +903,52 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_group( EmacsStringStream &
         {
         case '#':
             // comment - skip its contents and return the next term
-            while( raw_stream.peekNextChar() != ')' )
-                raw_stream.nextChar();
+            while( raw_stream.nextChar() != ')' )
+            {
+            }
             // now return a term
             return parse_term( pattern );
+
+        case '=':
+        {
+            // look ahead, cannot repeat
+            RegularExpressionTerm *term = new RegularExpressionPositiveLookAhead
+                (
+                *this,
+                parse_group_contents( pattern )
+                );
+            ch = raw_stream.nextChar();
+            if( ch != ')' )
+            {
+                throw RegularExpressionSyntaxError( "expecting group to finish with a \")\"" );
+            }
+            return term;
+        }
+
+        case '!':
+        {
+            // look ahead, cannot repeat
+            RegularExpressionTerm *term = new RegularExpressionNegativeLookAhead
+                (
+                *this,
+                parse_group_contents( pattern )
+                );
+            ch = raw_stream.nextChar();
+            if( ch != ')' )
+            {
+                throw RegularExpressionSyntaxError( "expecting group to finish with a \")\"" );
+            }
+            return term;
+        }
+
         case ':':
             // don't remember, but can repeat
             term = parse_group_contents( pattern );
             break;
-        case '=':
-            // look ahead, cannot repeat
-            return new RegularExpressionPositiveLookAhead
-                (
-                *this,
-                parse_group_contents( pattern )
-                );
-        case '!':
-            // look ahead, cannot repeat
-            return new RegularExpressionNegativeLookAhead
-                (
-                *this,
-                parse_group_contents( pattern )
-                );
+
+
         default:
+            S_dbg_msg( "parse_group throw" );
             throw RegularExpressionSyntaxError( "reserved (? ) sequence" );
         }
     }
@@ -862,7 +958,7 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_group( EmacsStringStream &
         m_max_group_number++;
         RegularExpressionTerm *contents = parse_group_contents( pattern );
 
-        RegularExpressionGroupStart * group_start = new RegularExpressionNumberedGroup( *this, group_number );
+        RegularExpressionGroupStart *group_start = new RegularExpressionNumberedGroup( *this, group_number );
         RegularExpressionGroupEnd *group_end = new RegularExpressionGroupEnd( *this, *group_start );
 
         group_start->setNextTerm( contents );
@@ -873,6 +969,7 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_group( EmacsStringStream &
     if( raw_stream.nextChar() != ')' )
     {
         delete term;
+        S_dbg_msg( "parse_group throw" );
         throw RegularExpressionSyntaxError( "expecting group to finish with a \")\"" );
     }
 
@@ -882,6 +979,8 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_group( EmacsStringStream &
 
 RegularExpressionTerm *SearchAdvancedAlgorithm::parse_group_contents( EmacsStringStream &pattern )
 {
+    S_dbg_fn_trace( FormatString("parse_group_contents( '%s' )") << pattern.remaining() );
+
     EmacsStringStreamStringEnd raw_stream( pattern );
     EmacsStringStreamExpressionEnd group_parse_stream( pattern );
 
@@ -894,7 +993,9 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_group_contents( EmacsStrin
         if( raw_stream.atEnd() )
         {
             if( alternation == NULL )
+            {
                 return term;
+            }
 
             alternation->addAlternative( term );
             return alternation;
@@ -904,14 +1005,18 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_group_contents( EmacsStrin
         {
         case ')':
             if( alternation == NULL )
+            {
                 return term;
+            }
 
             alternation->addAlternative( term );
             return alternation;
 
         case '|':
             if( alternation == NULL )
+            {
                 alternation = new RegularExpressionAlternation( *this );
+            }
             alternation->addAlternative( term );
 
             raw_stream.nextChar();
