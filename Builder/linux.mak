@@ -76,14 +76,14 @@ $(BEMACS_BIN_DIR)::
 editor:
 	@ echo Info: Building BEmacs images...
 	cd ../Editor && ./build-linux.sh all
-	cp ../Editor/obj-pybemacs/_bemacs.so $(BEMACS_LIB_DIR)
+	cp ../Editor/exe-pybemacs/_bemacs.so $(BEMACS_LIB_DIR)
 	@ echo Info: Copy db utils...
-	cp ../Editor/obj-utils/dbadd	$(BEMACS_BIN_DIR)/bemacs-dbadd
-	cp ../Editor/obj-utils/dbcreate $(BEMACS_BIN_DIR)/bemacs-dbcreate
-	cp ../Editor/obj-utils/dbdel	$(BEMACS_BIN_DIR)/bemacs-dbdel
-	cp ../Editor/obj-utils/dbprint	$(BEMACS_BIN_DIR)/bemacs-dbprint
-	cp ../Editor/obj-utils/dblist	$(BEMACS_BIN_DIR)/bemacs-dblist
-	cp ../Editor/obj-utils/mll2db	$(BEMACS_BIN_DIR)/bemacs-mll2db
+	cp ../Editor/exe-utils/dbadd	$(BEMACS_BIN_DIR)/bemacs-dbadd
+	cp ../Editor/exe-utils/dbcreate $(BEMACS_BIN_DIR)/bemacs-dbcreate
+	cp ../Editor/exe-utils/dbdel	$(BEMACS_BIN_DIR)/bemacs-dbdel
+	cp ../Editor/exe-utils/dbprint	$(BEMACS_BIN_DIR)/bemacs-dbprint
+	cp ../Editor/exe-utils/dblist	$(BEMACS_BIN_DIR)/bemacs-dblist
+	cp ../Editor/exe-utils/mll2db	$(BEMACS_BIN_DIR)/bemacs-mll2db
 
 bemacs:
 	@ echo Info: Copy PyQtBEmacs...
