@@ -28,7 +28,7 @@ echo on
 
 nmake -f Windows.mak PYTHON=%python% clean
 if exist c:\unxutils\tee.exe (
-    nmake -f Windows.mak PYTHON=%PYTHON% build 2>&1 | c:\unxutils\tee build.log
+    nmake -f Windows.mak INSTALL=%1 PYTHON=%PYTHON% build 2>&1 | c:\unxutils\tee build.log
 ) else (
-    nmake -f Windows.mak PYTHON=%PYTHON% build
+    nmake -f Windows.mak INSTALL=%1 PYTHON=%PYTHON% build
 )

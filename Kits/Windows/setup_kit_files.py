@@ -60,6 +60,8 @@ this kit.
                     (bemacs_version.VERSION,) )
         f.write( r'dir /s /b bemacs-%s-setup.exe' '\n' %
                     (bemacs_version.VERSION,) )
+        f.write( r'if "%%1" == "--install" start bemacs-%s-setup.exe' '\n' %
+                    (bemacs_version.VERSION,) )
         f.close()
 
         self.all_setup_items.extend( [

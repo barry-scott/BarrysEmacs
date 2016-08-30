@@ -33,7 +33,7 @@ inno_debug:
 	"c:\Program Files (x86)\Inno Setup 5\Compil32.exe" $(KITSRC)\bemacs.iss
 
 $(KITROOT)\Output\setup.exe: $(KITSRC)\setup_kit_files.py
-	cd $(KITSRC) && .\build-windows.cmd
+	cd $(KITSRC) && .\build-windows.cmd $(INSTALL)
 
 editor: kitdir $(KITROOT)\bemacs_server.exe
 
