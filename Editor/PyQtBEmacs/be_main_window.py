@@ -120,7 +120,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
 
         self.addEmacsMenu( menu_edit, 'ec', T_('Copy'), 'toolbar_images/editcopy.png' )
         self.addEmacsMenu( menu_edit, 'ex', T_('Cut'), 'toolbar_images/editcut.png' )
-        self.addEmacsMenu( menu_edit, 'ep', T_('Paste'), 'toolbar_images/editpaste.png' )
+        self.addEmacsMenu( menu_edit, 'ev', T_('Paste'), 'toolbar_images/editpaste.png' )
         menu_edit.addSeparator()
 
         self.addEmacsMenu( menu_edit, 'ea', T_('Select All') )
