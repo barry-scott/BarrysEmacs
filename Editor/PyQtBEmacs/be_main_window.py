@@ -99,11 +99,11 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         mb = self.menuBar()
 
         menu_file = mb.addMenu( T_('&File') )
-        self.addEmacsMenu( menu_file, 'fo', T_('&Open…') )
+        self.addEmacsMenu( menu_file, 'fo', T_('&Open…'), 'toolbar_images/file_open.png' )
         menu_file.addSeparator()
-        self.addEmacsMenu( menu_file, 'fs', T_('&Save') )
-        self.addEmacsMenu( menu_file, 'fa', T_('Save &As…') )
-        self.addEmacsMenu( menu_file, 'fl', T_('Save A&ll Modified Files') )
+        self.addEmacsMenu( menu_file, 'fs', T_('&Save'), 'toolbar_images/file_save.png' )
+        self.addEmacsMenu( menu_file, 'fa', T_('Save &As…'), 'toolbar_images/file_save.png' )
+        self.addEmacsMenu( menu_file, 'fl', T_('Save A&ll Modified Files'), 'toolbar_images/file_save_all.png' )
 
         if sys.platform == 'darwin':
             # on OS X Preferences and exit are not in the file menu
@@ -118,9 +118,9 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
 
         menu_edit = mb.addMenu( T_('&Edit') )
 
-        self.addEmacsMenu( menu_edit, 'ec', T_('Copy') )
-        self.addEmacsMenu( menu_edit, 'ex', T_('Cut') )
-        self.addEmacsMenu( menu_edit, 'ep', T_('Paste') )
+        self.addEmacsMenu( menu_edit, 'ec', T_('Copy'), 'toolbar_images/editcopy.png' )
+        self.addEmacsMenu( menu_edit, 'ex', T_('Cut'), 'toolbar_images/editcut.png' )
+        self.addEmacsMenu( menu_edit, 'ep', T_('Paste'), 'toolbar_images/editpaste.png' )
         menu_edit.addSeparator()
 
         self.addEmacsMenu( menu_edit, 'ea', T_('Select All') )
@@ -131,10 +131,10 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         menu_edit.addSeparator()
         menu_edit_advanced = menu_edit.addMenu( T_('Advanced…') )
 
-        self.addEmacsMenu( menu_edit_advanced, 'cu', T_('Case Upper') )
-        self.addEmacsMenu( menu_edit_advanced, 'cl', T_('Case Lower') )
-        self.addEmacsMenu( menu_edit_advanced, 'cc', T_('Case Capitalise') )
-        self.addEmacsMenu( menu_edit_advanced, 'ci', T_('Case Invert') )
+        self.addEmacsMenu( menu_edit_advanced, 'cu', T_('Case UPPER'), 'toolbar_images/case_upper.png' )
+        self.addEmacsMenu( menu_edit_advanced, 'cl', T_('Case lower'), 'toolbar_images/case_lower.png' )
+        self.addEmacsMenu( menu_edit_advanced, 'cc', T_('Case Capitalise'), 'toolbar_images/case_capitalise.png' )
+        self.addEmacsMenu( menu_edit_advanced, 'ci', T_('Case inVERT'), 'toolbar_images/case_invert.png' )
         menu_edit_advanced.addSeparator()
         self.addEmacsMenu( menu_edit_advanced, 'ri', T_('Indent Region') )
         self.addEmacsMenu( menu_edit_advanced, 'rI', T_('Undent Region') )
@@ -143,13 +143,13 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.addEmacsMenu( menu_edit_advanced, 'rw', T_('Widen Region') )
 
         menu_view = mb.addMenu( T_('&View') )
-        self.addEmacsMenu( menu_view, 'vw', T_('View white space') )
-        self.addEmacsMenu( menu_view, 'vl', T_('Wrap long lines') )
+        self.addEmacsMenu( menu_view, 'vw', T_('View white space'), 'toolbar_images/view_white_space.png' )
+        self.addEmacsMenu( menu_view, 'vl', T_('Wrap long lines'), 'toolbar_images/view_wrap_long.png' )
 
         menu_macro = mb.addMenu( T_('&Macro') )
-        self.addEmacsMenu( menu_macro, 'mr', T_('Record') )
-        self.addEmacsMenu( menu_macro, 'ms', T_('Stop Recording') )
-        self.addEmacsMenu( menu_macro, 'mp', T_('Run') )
+        self.addEmacsMenu( menu_macro, 'mr', T_('Record'), 'toolbar_images/macro_record.png' )
+        self.addEmacsMenu( menu_macro, 'ms', T_('Stop Recording'), 'toolbar_images/macro_stop.png' )
+        self.addEmacsMenu( menu_macro, 'mp', T_('Run'), 'toolbar_images/macro_play.png' )
 
         menu_build = mb.addMenu( T_('Build') )
         self.addEmacsMenu( menu_build, 'bc', T_('Compile') )
@@ -157,7 +157,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.addEmacsMenu( menu_build, 'bp', T_('Previous Error') )
 
         menu_tool = mb.addMenu( T_('&Tool') )
-        self.addEmacsMenu( menu_tool, 'tg', T_('Grep in files…') )
+        self.addEmacsMenu( menu_tool, 'tg', T_('Grep in files…'), 'toolbar_images/tools_grep.png' )
         self.addEmacsMenu( menu_tool, 'tb', T_('Grep in buffers…') )
         self.addEmacsMenu( menu_tool, 'tc', T_('Grep current buffer…') )
         self.addEmacsMenu( menu_tool, 'rf', T_('Filter region…') )
@@ -168,10 +168,10 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.addEmacsMenu( menu_buffer, 'bl', T_('List buffers') )
 
         menu_window = mb.addMenu( T_('&Window') )
-        self.addEmacsMenu( menu_window, 'wh', T_('Split Horizontal') )
-        self.addEmacsMenu( menu_window, 'wv', T_('Delete Vertical') )
-        self.addEmacsMenu( menu_window, 'wo', T_('Delete Other') )
-        self.addEmacsMenu( menu_window, 'wt', T_('Delete This') )
+        self.addEmacsMenu( menu_window, 'wh', T_('Split Horizontal'), 'toolbar_images/window_split_horiz.png' )
+        self.addEmacsMenu( menu_window, 'wv', T_('Split Vertical'), 'toolbar_images/window_split_vert.png' )
+        self.addEmacsMenu( menu_window, 'wo', T_('Delete Other'), 'toolbar_images/window_del_other.png' )
+        self.addEmacsMenu( menu_window, 'wt', T_('Delete This'), 'toolbar_images/window_del_this.png' )
 
         menu_help = mb.addMenu( T_('&Help' ) )
         act = menu_help.addAction( T_('Documentation…') )
@@ -179,14 +179,15 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         act = menu_help.addAction( T_("&About…") )
         act.triggered.connect( self.onActAbout )
 
-    def addEmacsMenu( self, container, code, title, icon=None ):
+    def addEmacsMenu( self, menu, code, title, icon_name=None ):
         if code not in self.__all_actions:
             self.__all_actions[ code ] = BemacsAction( self.app, code )
 
-        if icon is None:
-            action = container.addAction( title )
+        if icon_name is None:
+            action = menu.addAction( title )
         else:
-            action = container.addAction( icon, title )
+            icon = be_images.getIcon( icon_name )
+            action = menu.addAction( icon, title )
 
         self.__all_actions[ code ].connect( action )
 
@@ -202,10 +203,10 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.addEmacsToolbar( t, 'ec', T_('Copy'), 'toolbar_images/editcopy.png' )
         self.addEmacsToolbar( t, 'ev', T_('Paste'), 'toolbar_images/editpaste.png' )
 
-        self.addEmacsToolbar( t, 'wo', T_('wo'), 'toolbar_images/window_del_other.png' )
-        self.addEmacsToolbar( t, 'wt', T_('wt'), 'toolbar_images/window_del_this.png' )
-        self.addEmacsToolbar( t, 'wh', T_('wh'), 'toolbar_images/window_split_horiz.png' )
-        self.addEmacsToolbar( t, 'wv', T_('wv'), 'toolbar_images/window_split_vert.png' )
+        self.addEmacsToolbar( t, 'wo', T_('Delete other window'), 'toolbar_images/window_del_other.png' )
+        self.addEmacsToolbar( t, 'wt', T_('Delete this window'), 'toolbar_images/window_del_this.png' )
+        self.addEmacsToolbar( t, 'wh', T_('Split Horizontal'), 'toolbar_images/window_split_horiz.png' )
+        self.addEmacsToolbar( t, 'wv', T_('Split Vertical'), 'toolbar_images/window_split_vert.png' )
 
         t.addSeparator()
         self.addEmacsToolbar( t, 'cu', T_('UPPER'), 'toolbar_images/case_upper.png' )
@@ -216,17 +217,17 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         t.addSeparator()
         self.addEmacsToolbar( t, 'mr', T_('Record'), 'toolbar_images/macro_record.png' )
         self.addEmacsToolbar( t, 'ms', T_('Stop'), 'toolbar_images/macro_stop.png' )
-        self.addEmacsToolbar( t, 'mp', T_('Play'), 'toolbar_images/macro_play.png' )
+        self.addEmacsToolbar( t, 'mp', T_('Run'), 'toolbar_images/macro_play.png' )
 
         t.addSeparator()
         self.addEmacsToolbar( t, 'vw', T_('White Space'), 'toolbar_images/view_white_space.png' )
         self.addEmacsToolbar( t, 'vl', T_('Wrap Long'), 'toolbar_images/view_wrap_long.png' )
 
         t.addSeparator()
-        self.addEmacsToolbar( t, 'tg', T_('Grep Files'), 'toolbar_images/tools_grep.png' )
+        self.addEmacsToolbar( t, 'tg', T_('Grep in files…'), 'toolbar_images/tools_grep.png' )
 
-    def addEmacsToolbar( self, container, code, title, icon_filename ):
-        icon = be_images.getIcon( icon_filename )
+    def addEmacsToolbar( self, container, code, title, icon_name ):
+        icon = be_images.getIcon( icon_name )
 
         if code not in self.__all_actions:
             self.__all_actions[ code ] = BemacsAction( self.app, code )
