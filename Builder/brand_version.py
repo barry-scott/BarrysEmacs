@@ -2,6 +2,7 @@
 import sys
 import os
 import time
+import subprocess
 
 template_file_prefix = 'brand.'
 
@@ -13,7 +14,7 @@ def main( argv ):
         print( 'Usage: %s <version-info-file> <wc-path>' % argv[0] )
         return 1
 
-    vi = VersionInfo()
+    vi = VersionInfo( argv[2] )
     try:
         vi.parseVersionInfo( argv[1] )
 
@@ -46,19 +47,24 @@ class FileFinder:
             full_path = os.path.join( path, filename )
             if( os.path.isdir( full_path )
             and not os.path.islink( full_path )
-            and not full_path.endswith( '.svn' )
-            and not full_path.endswith( '_svn' ) ):
+            and not full_path.endswith( '.git' )):
                 self.findAndBrandFiles( full_path )
 
 class VersionInfo:
-    def __init__( self ):
+    def __init__( self, wc_path ):
         self.__info = {}
         now = time.localtime( time.time() )
         self.__info['year'] = time.strftime( '%Y', now )
         self.__info['date'] = time.strftime( '%Y-%m-%d', now )
         self.__info['time'] = time.strftime( '%H:%M:%S', now )
 
-        self.is_svn_wc = True
+        commit_id_file = os.path.join( wc_path, 'Builder/commit_id.txt' )
+        if os.path.exists( commit_id_file ):
+            with open( commit_id_file, 'rb' ) as f:
+                result = f.read()
+        else:
+            result = subprocess.run( ['git', 'show-ref', '--head', '--hash', 'head'], stdout=subprocess.PIPE )
+        self.__info['commit'] = result.stdout.decode('utf-8').strip()
 
     def parseVersionInfo( self, filename ):
         f = open( filename, 'r', encoding='utf-8' )
@@ -86,9 +92,8 @@ class VersionInfo:
             print( 'Info: %10s: %s' % (key, self.__info[ key ]) )
 
     def brandOneFile( self, filename ):
-        f = open( filename, 'r', encoding='utf-8' )
-        template_contents = f.readlines()
-        f.close()
+        with open( filename, 'r', encoding='utf-8' ) as f:
+            template_contents = f.readlines()
 
         try:
             branded_contents = []
@@ -103,9 +108,8 @@ class VersionInfo:
         new_filename = os.path.join( parent_dir, base[len(template_file_prefix):] )
         print( 'Info: Creating', new_filename )
 
-        f = open( new_filename, 'w', encoding='utf-8' )
-        f.writelines( branded_contents )
-        f.close()
+        with open( new_filename, 'w', encoding='utf-8' ) as f:
+            f.writelines( branded_contents )
 
 if __name__ == '__main__':
     sys.exit( main( sys.argv ) )

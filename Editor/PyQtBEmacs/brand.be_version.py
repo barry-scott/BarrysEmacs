@@ -16,3 +16,4 @@ minor = %(minor)s
 patch = %(patch)s
 build = ''
 year = "%(year)s"
+commit = '%(commit)s'
