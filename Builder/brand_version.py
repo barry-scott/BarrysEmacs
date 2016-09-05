@@ -60,11 +60,13 @@ class VersionInfo:
 
         commit_id_file = os.path.join( wc_path, 'Builder/commit_id.txt' )
         if os.path.exists( commit_id_file ):
-            with open( commit_id_file, 'rb' ) as f:
+            with open( commit_id_file, 'r', encoding='utf-8' ) as f:
                 result = f.read()
         else:
             result = subprocess.run( ['git', 'show-ref', '--head', '--hash', 'head'], stdout=subprocess.PIPE )
-        self.__info['commit'] = result.stdout.decode('utf-8').strip()
+            result = result.stdout.decode('utf-8')
+
+        self.__info['commit'] = result.strip()
 
     def parseVersionInfo( self, filename ):
         f = open( filename, 'r', encoding='utf-8' )
