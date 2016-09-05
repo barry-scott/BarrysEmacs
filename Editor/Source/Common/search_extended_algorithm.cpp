@@ -14,6 +14,17 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
+#if DBG_EXT_SEARCH != 0
+#define S_dbg_msg( msg )        _dbg_msg( msg )
+#define S_dbg_fn_trace( msg )   _dbg_fn_trace t____( msg )
+extern EmacsString syntax_bits_as_string( int syntax );
+
+#else
+#define S_dbg_msg( msg )        do { (void)0; } while( 0 )
+#define S_dbg_fn_trace( msg )   do { (void)0; } while( 0 )
+#define syntax_bits_as_string( arg ) arg
+#endif
+
 //
 //
 //    SearchAdvancedAlgorithm implementation
@@ -452,10 +463,10 @@ RegularExpressionCharSet::~RegularExpressionCharSet()
 
 bool RegularExpressionCharSet::matchTerm( int pos, int &end_pos )
 {
-    EmacsChar_t ch( bf_cur->char_at( pos ) );
-
     if( pos > bf_cur->num_characters() )
         return false;
+
+    EmacsChar_t ch( bf_cur->char_at( pos ) );
 
     // true if including word chars and its a word char
     if( m_include_word_chars && bf_cur->char_at_is( pos, SYNTAX_WORD ) )
@@ -1053,4 +1064,103 @@ bool RegularExpressionBackReference::matchTerm( int pos, int &end_pos )
     EmacsString group_contents( EmacsString::copy, bf_cur->ref_char_at( group_start ), group_end - group_start );
 
     return m_owner.matchLiteralString( group_contents, pos, end_pos );
+}
+
+//
+//    syntax match
+//
+RegularExpressionSyntaxMatch::RegularExpressionSyntaxMatch( SearchAdvancedAlgorithm &owner )
+: RegularExpressionTerm( owner )
+, m_any_of()
+, m_none_of()
+{
+    S_dbg_msg( FormatString("c'tor m_any_of size %d") << m_any_of.size() );
+    S_dbg_msg( FormatString("c'tor m_none_of size %d") << m_none_of.size() );
+}
+
+RegularExpressionSyntaxMatch::~RegularExpressionSyntaxMatch()
+{ }
+
+bool RegularExpressionSyntaxMatch::matchTerm( int pos, int &end_pos )
+{
+    if( pos > bf_cur->num_characters() )
+        return false;
+
+#if DBG_EXT_SEARCH!=0
+    EmacsChar_t ch( bf_cur->char_at( pos ) );
+#endif
+    SyntaxKind_t syn( bf_cur->syntax_at( pos ) );
+    S_dbg_msg( FormatString("matchTerm( %d ) ch \"%c\" syn 0x%x(%s)") << pos << ch << syn << syntax_bits_as_string( syn ) );
+
+    bool any_of = m_any_of.empty();
+    for( SyntaxMatchList_t::iterator it = m_any_of.begin(); it != m_any_of.end(); ++it )
+    {
+        SyntaxKind_t mask = (*it).first;
+        SyntaxKind_t value = (*it).second;
+
+        S_dbg_msg( FormatString("matchTerm any_of syn 0x%x(%s)mask 0x%x(%s) value0x%x(%s)")
+                << syn << syntax_bits_as_string( syn )
+                << mask << syntax_bits_as_string( mask )
+                << value << syntax_bits_as_string( value ) );
+
+        if( (syn&mask) == value )
+        {
+            S_dbg_msg( "matchTerm any_of matched" );
+            any_of = true;
+            break;
+        }
+    }
+
+    S_dbg_msg( FormatString("matchTerm any_of %d") << any_of );
+    if( !any_of )
+    {
+        return false;
+    }
+
+    bool none_of = m_none_of.empty();
+    for( SyntaxMatchList_t::iterator it = m_none_of.begin(); it != m_none_of.end(); ++it )
+    {
+        SyntaxMatchPair_t &pair = *it;
+
+        SyntaxKind_t mask = pair.first;
+        SyntaxKind_t value = pair.second;
+
+        S_dbg_msg( FormatString("matchTerm none_of syn 0x%x(%s)mask 0x%x(%s) value0x%x(%s)")
+                << syn << syntax_bits_as_string( syn )
+                << mask << syntax_bits_as_string( mask )
+                << value << syntax_bits_as_string( value ) );
+
+        if( (syn&mask) == value )
+        {
+            S_dbg_msg( "matchTerm none_of matched" );
+            none_of = false;
+            break;
+        }
+    }
+
+    S_dbg_msg( FormatString("matchTerm none_of %d") << none_of );
+
+    if( none_of )
+    {
+        end_pos = pos + 1;
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void RegularExpressionSyntaxMatch::addAnyOf( SyntaxKind_t mask, SyntaxKind_t value )
+{
+    S_dbg_msg( FormatString("addAnyOf( mask 0x%x, value 0x%x )") << mask << value );
+    m_any_of.push_back( std::make_pair( mask, value ) );
+    S_dbg_msg( FormatString("addAnyOf size %d") << m_any_of.size() );
+}
+
+void RegularExpressionSyntaxMatch::addNoneOf( SyntaxKind_t mask, SyntaxKind_t value )
+{
+    S_dbg_msg( FormatString("addNoneOf( mask 0x%x, value 0x%x )") << mask << value );
+    m_none_of.push_back( std::make_pair( mask, value ) );
+    S_dbg_msg( FormatString("addNoneOf size %d") << m_none_of.size() );
 }

@@ -1513,8 +1513,10 @@ static const char *state_to_string( syn_states st )
         return "UNKNOWN";
     }
 }
+#endif
 
-static EmacsString syntax_bits_as_string( int syntax )
+#if DEBUG_SYNTAX || DBG_EXT_SEARCH != 0
+EmacsString syntax_bits_as_string( int syntax )
 {
     EmacsString result;
     if( syntax == 0 )

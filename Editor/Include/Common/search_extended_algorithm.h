@@ -71,6 +71,7 @@ private:
     RegularExpressionTerm *parse_set( EmacsStringStream &pattern );
     RegularExpressionTerm *parse_group( EmacsStringStream &pattern );
     RegularExpressionTerm *parse_group_contents( EmacsStringStream &pattern );
+    RegularExpressionTerm *parse_syntax_match( EmacsStringStream &pattern );
 
     RegularExpressionTerm *m_expression;
 
@@ -407,3 +408,21 @@ private:
     int m_back_ref;
 };
 
+class RegularExpressionSyntaxMatch : public RegularExpressionTerm
+{
+public:
+    RegularExpressionSyntaxMatch( SearchAdvancedAlgorithm &owner );
+    virtual ~RegularExpressionSyntaxMatch();
+
+    bool matchTerm( int pos, int &end_pos );
+
+    void addAnyOf( SyntaxKind_t mask, SyntaxKind_t value );
+    void addNoneOf( SyntaxKind_t mask, SyntaxKind_t value );
+
+private:
+    typedef std::pair<SyntaxKind_t, SyntaxKind_t> SyntaxMatchPair_t;
+    typedef std::list<SyntaxMatchPair_t> SyntaxMatchList_t;
+
+    SyntaxMatchList_t   m_any_of;
+    SyntaxMatchList_t   m_none_of;
+};

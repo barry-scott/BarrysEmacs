@@ -808,7 +808,7 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_set( EmacsStringStream &pa
                 char_set.append( '\000' );
             default:
                 S_dbg_msg( "parse_set throw" );
-                throw RegularExpressionSyntaxError( FormatString("reserved ['\\%c' escape code") << ch );
+                throw RegularExpressionSyntaxError( FormatString("reserved ['\\%c'] escape code") << ch );
             }
         }
         else
@@ -868,18 +868,20 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_set( EmacsStringStream &pa
 //    * (?:...) - group, but don't remember
 //      (...) - numbered group
 //
-//    (?sdwsc[123]k[123]p) - matches all syntax kind listed for the next char
+//      (?Sws1s2s3c1c2c3k1k2k3p<>) - matches all syntax kind listed for the next char
 //            lowercase letter mean match, uppercase letter means does not match
 //                = - look ahead, do not consume
 //                d - dull - no special meaning
 //                w - word
 //                p - problem
-//                s - string
-//                c - comment all types
+//                < - begin paren
+//                > - end paren
+//                s1 - string type 1
+//                s2 - string type 2
+//                s3 - string type 3
 //                c1 - comment type 1
 //                c2 - comment type 2
 //                c3 - comment type 3
-//                k - keyword all types
 //                k1 - keyword type 1
 //                k2 - keyword type 2
 //                k3 - keyword type 3
@@ -946,10 +948,14 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_group( EmacsStringStream &
             term = parse_group_contents( pattern );
             break;
 
+        case 'S':
+            // can repeat
+            term = parse_syntax_match( pattern );
+            break;
 
         default:
             S_dbg_msg( "parse_group throw" );
-            throw RegularExpressionSyntaxError( "reserved (? ) sequence" );
+            throw RegularExpressionSyntaxError( FormatString("reserved (?%c) sequence") << ch );
         }
     }
     else
@@ -975,6 +981,126 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_group( EmacsStringStream &
 
     // now parse the repeat for the term
     return parse_repeat( term, pattern );
+}
+
+static void addAnyOf( EmacsStringStream &pattern, RegularExpressionSyntaxMatch &match, SyntaxKind_t mask, SyntaxKind_t type1, SyntaxKind_t type2, SyntaxKind_t type3 )
+{
+    EmacsChar_t ch = pattern.nextChar();
+    switch( ch )
+    {
+    case '1':   match.addAnyOf( mask, type1 ); break;
+    case '2':   match.addAnyOf( mask, type2 ); break;
+    case '3':   match.addAnyOf( mask, type3 ); break;
+    default:
+        throw RegularExpressionSyntaxError( "expecting 1, 2 or 3" );
+    };
+}
+
+static void addNoneOf( EmacsStringStream &pattern, RegularExpressionSyntaxMatch &match, SyntaxKind_t mask, SyntaxKind_t type1, SyntaxKind_t type2, SyntaxKind_t type3 )
+{
+    EmacsChar_t ch = pattern.nextChar();
+    switch( ch )
+    {
+    case '1':   match.addNoneOf( mask, type1 ); break;
+    case '2':   match.addNoneOf( mask, type2 ); break;
+    case '3':   match.addNoneOf( mask, type3 ); break;
+    default:
+        throw RegularExpressionSyntaxError( "expecting 1, 2 or 3" );
+    };
+}
+
+RegularExpressionTerm *SearchAdvancedAlgorithm::parse_syntax_match( EmacsStringStream &pattern )
+{
+    S_dbg_fn_trace( FormatString("parse_syntax_match( '%s' )") << pattern.remaining() );
+
+    EmacsStringStreamExpressionEnd raw_stream( pattern );
+
+    RegularExpressionSyntaxMatch *match = new RegularExpressionSyntaxMatch( *this );
+
+    if( raw_stream.atEnd() )
+    {
+        throw RegularExpressionSyntaxError( "empty (?S) is not allowed" );
+    }
+
+    for(;;)
+    {
+        EmacsChar_t ch = raw_stream.nextChar();
+
+        switch( ch )
+        {
+        case 'w':
+            match->addAnyOf( SYNTAX_WORD, SYNTAX_WORD );
+            break;
+
+        case 'W':
+            match->addNoneOf( SYNTAX_WORD, SYNTAX_WORD );
+            break;
+
+        case 'p':
+            match->addAnyOf( SYNTAX_TYPE_PROBLEM, SYNTAX_TYPE_PROBLEM );
+            break;
+
+        case 'P':
+            match->addNoneOf( SYNTAX_TYPE_PROBLEM, SYNTAX_TYPE_PROBLEM );
+            break;
+
+        case '<':
+            match->addAnyOf( SYNTAX_BEGIN_PAREN, SYNTAX_BEGIN_PAREN );
+            break;
+
+        case '>':
+            match->addNoneOf( SYNTAX_BEGIN_PAREN, SYNTAX_BEGIN_PAREN );
+            break;
+
+        default:
+            if( raw_stream.atEnd() )
+            {
+                throw RegularExpressionSyntaxError( FormatString("expecting 1, 2 or 3 after %c") << ch );
+            }
+
+            int ch2 = raw_stream.peekNextChar();
+            if( ch2 != '1' && ch2 != '2' && ch2 != '3' )
+            {
+                throw RegularExpressionSyntaxError( FormatString("expecting 1, 2 or 3 after %c") << ch );
+            }
+
+            switch( ch )
+            {
+            case 's':
+                addAnyOf( raw_stream, *match, SYNTAX_STRING_MASK, SYNTAX_TYPE_STRING1, SYNTAX_TYPE_STRING2, SYNTAX_TYPE_STRING3 );
+                break;
+
+            case 'S':
+                addNoneOf( raw_stream, *match, SYNTAX_STRING_MASK, SYNTAX_TYPE_STRING1, SYNTAX_TYPE_STRING2, SYNTAX_TYPE_STRING3 );
+                break;
+
+            case 'c':
+                addAnyOf( raw_stream, *match, SYNTAX_COMMENT_MASK, SYNTAX_TYPE_COMMENT1, SYNTAX_TYPE_COMMENT2, SYNTAX_TYPE_COMMENT3 );
+                break;
+
+            case 'C':
+                addNoneOf( raw_stream, *match, SYNTAX_COMMENT_MASK, SYNTAX_TYPE_COMMENT1, SYNTAX_TYPE_COMMENT2, SYNTAX_TYPE_COMMENT3 );
+                break;
+
+            case 'k':
+                addAnyOf( raw_stream, *match, SYNTAX_KEYWORD_MASK, SYNTAX_TYPE_KEYWORD1, SYNTAX_TYPE_KEYWORD2, SYNTAX_TYPE_KEYWORD3 );
+                break;
+
+            case 'K':
+                addNoneOf( raw_stream, *match, SYNTAX_KEYWORD_MASK, SYNTAX_TYPE_KEYWORD1, SYNTAX_TYPE_KEYWORD2, SYNTAX_TYPE_KEYWORD3 );
+                break;
+
+            default:
+                throw RegularExpressionSyntaxError( FormatString("expecting one of s, S, c, C, k, K, w, W, p or P not %c") << ch );
+            };
+        };
+        if( raw_stream.atEnd() )
+        {
+            break;
+        }
+    }
+
+    return match;
 }
 
 RegularExpressionTerm *SearchAdvancedAlgorithm::parse_group_contents( EmacsStringStream &pattern )
