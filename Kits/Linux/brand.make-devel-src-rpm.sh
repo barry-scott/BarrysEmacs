@@ -40,9 +40,8 @@ tag)
 esac
 
 popd
-popd
 
-git show-ref --head --hash head >tmp/Builder/commit_id.txt
+git show-ref --head --hash head >${KIT_BASENAME}/Builder/commit_id.txt
 
 tar czf ${KIT_BASENAME}.tar.gz ${KIT_BASENAME}
 popd
