@@ -158,6 +158,8 @@ extern void conditional_wake(void);
 extern void DebugPrintf( const EmacsString &str );    //...
 extern int get_yes_or_no( int yes, const EmacsString &prompt );    //...
 
+extern bool isValidFilenameChar( EmacsChar_t ch );
+
 #ifndef get_config_env
 extern EmacsString get_config_env( const EmacsString & );
 #endif

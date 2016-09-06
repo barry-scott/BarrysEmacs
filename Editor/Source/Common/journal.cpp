@@ -1,7 +1,7 @@
 //
 //    Copyright (c) 1987
 //    Barry A. Scott and nick Emery
-//    Copyright (c) 1988-2010
+//    Copyright (c) 1988-2016
 //    Barry A. Scott
 //
 
@@ -75,7 +75,7 @@ static void stopJournalTimer( void )
 
 void SystemExpressionRepresentationJournalFrequency::assign_value( ExpressionRepresentation *new_value )
 {
-    enum{
+    enum {
         MIN_FREQ = 10,
         MAX_FREQ = 210
     };
@@ -256,7 +256,6 @@ EmacsBufferJournal *EmacsBufferJournal::_journalStart( void )
     //
     for( int i=0;; i++ )
     {
-
         //
         //    If this is a file buffer use the filename to
         //    to make the journal file name. Otherwise use the
@@ -287,7 +286,7 @@ EmacsBufferJournal *EmacsBufferJournal::_journalStart( void )
         }
 
         EmacsString jfilename;
-        expand_and_default( "emacs_journal:", p, jfilename );
+        expand_and_default( p, "emacs_user:", jfilename );
         if( i == 0 )
         {
             jnl->m_jnl_jname = FormatString( "%s.bj~") << jfilename;
@@ -340,34 +339,31 @@ EmacsBufferJournal *EmacsBufferJournal::_journalStart( void )
     return jnl;
 }
 
-// QQQ: what is this function solving? filename for journal or buffer
+// need a filename for a buffer's journal
 EmacsString EmacsBufferJournal::_concoctFilename( EmacsString &in )
 {
-    const int FILE_NAME_SIZE(31);
-    EmacsString out;
-    unsigned char ch;
+    // prefixing with buf- avoid reserved filenames on windows and make the filename more obvious
+    EmacsString out( "buf-" );
+
+    const int FILE_NAME_SIZE(80);
     int limit = min( in.length(), FILE_NAME_SIZE );
 
-    // QQQ: Unicode???
     for( int i=0; i<limit; i++ )
     {
-        ch = in[i];
-        if( ('a' <= ch && ch <= 'z')
-        || ('A' <= ch && ch <= 'Z')
-        || ('0' <= ch && ch <= '9')
-        || ch == '$' || ch == '-' || ch == '_' )
+        EmacsChar_t ch = in[i];
+
+        if( isValidFilenameChar( ch ) && unicode_is_glyph( ch ) )
         {
-            out.append(ch);
+            out.append( ch );
         }
         else
         {
-            out.append('_');
+            out.append( '-' );
         }
     }
-    out[FILE_NAME_SIZE] = 0;
+
     return out;
 }
-
 
 void EmacsBufferJournal::journal_pause( void )
 {
