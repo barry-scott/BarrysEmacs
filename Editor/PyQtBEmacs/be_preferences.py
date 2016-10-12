@@ -51,6 +51,9 @@ class Window(PreferencesNode):
             self.font = Font()
             self.font.finaliseNode()
 
+        if self.cursor is None:
+            self.cursor = Cursor( be_emacs_panel.cursor_fg_default )
+
         for colour_info in be_emacs_panel.all_colour_defaults:
             if colour_info.name not in self.all_colours:
                 self.all_colours[ colour_info.name ] = Colour( colour_info.name, colour_info.fg, colour_info.bg )
