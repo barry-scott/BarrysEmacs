@@ -63,8 +63,8 @@ class VersionInfo:
             with open( commit_id_file, 'r', encoding='utf-8' ) as f:
                 result = f.read()
         else:
-            result = subprocess.run( ['git', 'show-ref', '--head', '--hash', 'head'], stdout=subprocess.PIPE )
-            result = result.stdout.decode('utf-8')
+            result = subprocess.check_output( ['git', 'show-ref', '--head', '--hash', 'head'] )
+            result = result.decode('utf-8')
 
         self.__info['commit'] = result.strip()
 
