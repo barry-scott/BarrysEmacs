@@ -2,6 +2,7 @@
 export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/PyQtBEmacs:${BUILDER_TOP_DIR}/Editor/exe-pybemacs
 case "${BUILDER_CFG_PLATFORM}" in
 Linux-Fedora)
+
     export BEMACS_EMACS_LIBRARY=${BUILDER_TOP_DIR}/Kits/Linux/RPM/ROOT/usr/local/bemacs8/lib/bemacs
     ;;
 Linux-Debian)
@@ -16,11 +17,12 @@ if [ "$1" = "--gdb" ]
 then
     shift 1
     echo
-    echo "run -u be_main.py " "$@" >.gdbinit
+    echo >.gdbinit
     if [ -e init.gdb ]
     then
-        cat init.gdb >.gdbinit
+        cat init.gdb >>.gdbinit
     fi
+    echo "run -u be_main.py " "$@" >>.gdbinit
     echo
     gdb python${PYTHON_VERSION}
 
