@@ -1746,3 +1746,241 @@ void re_init_keyboard( void )
         }
     }
 }
+
+//------------------------------------------------------------
+//
+//  KeyMap::const_iterator
+//
+//------------------------------------------------------------
+KeyMap::const_iterator::const_iterator( const KeyMap::const_iterator &it )
+: m_state( it.m_state )
+, m_keymap( it.m_keymap )
+, m_it( it.m_it )
+, m_first_char( it.m_first_char )
+, m_length( it.m_length )
+, m_bound_name( it.m_bound_name )
+{ }
+
+KeyMap::const_iterator::const_iterator( const KeyMap &map )
+: m_state( state_init )
+, m_keymap( map )
+, m_it( map.k_binding.begin() )
+, m_first_char( 0 )
+, m_length( 0 )
+, m_bound_name( NULL )
+{
+   // if empty set to end
+    if( m_keymap.k_binding.empty() )
+    {
+        m_state = state_end;
+    }
+    // if have a default and first char is not 0
+    else if( m_keymap.k_default_binding != NULL && m_it->first != EmacsChar_t( 0 ) )
+    {
+        m_state = state_iterator;   // use iterator next
+        m_first_char = EmacsChar_t( 0 );
+        m_length = m_it->first - m_first_char;
+        m_bound_name = m_keymap.k_default_binding;
+    }
+    else
+    {
+        m_first_char = m_it->first;
+        m_length = 1;
+        m_bound_name = m_it->second;
+        ++m_it;
+
+        while( m_it != m_keymap.k_binding.end() )
+        {
+            if( m_bound_name == m_it->second
+            && (m_first_char+m_length) == m_it->first )
+            {
+                ++m_length;
+                ++m_it;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        if( m_keymap.k_default_binding != NULL
+        &&  (m_it == m_keymap.k_binding.end()
+            || (m_first_char+m_length) != m_it->first ) )
+        {
+            m_state = state_default_binding;    // use default binding next
+        }
+        else
+        {
+            m_state = state_iterator;
+        }
+    }
+}
+
+KeyMap::const_iterator &KeyMap::const_iterator::operator++()
+{
+    // if at end then stay at the end
+    switch( m_state )
+    {
+    case state_end:
+    {
+        break;
+    }
+
+    // use the default to cover the next gap
+    case state_default_binding:
+    {
+        m_state = state_iterator;   // next use the iterator
+        m_bound_name = m_keymap.k_default_binding;
+        emacs_assert( m_bound_name != NULL );
+        m_first_char += m_length;
+
+        if( m_it == m_keymap.k_binding.end() )
+        {
+            m_length = unicode_max_code_point - m_first_char;
+        }
+        else
+        {
+            m_length = m_it->first - m_first_char;
+        }
+
+        if( m_length == 0 )
+        {
+            m_state = state_end;
+        }
+        break;
+    }
+
+    case state_iterator:
+    {
+        if( m_it == m_keymap.k_binding.end() )
+        {
+            m_state = state_end;
+            break;
+        }
+
+        m_first_char = m_it->first;
+        m_length = 1;
+        m_bound_name = m_it->second;
+        emacs_assert( m_bound_name != NULL );
+
+        ++m_it;
+        while( m_it != m_keymap.k_binding.end() )
+        {
+            if( m_bound_name == m_it->second
+            && (m_first_char+m_length) == m_it->first )
+            {
+                ++m_length;
+                ++m_it;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        if( m_keymap.k_default_binding != NULL
+        &&  (m_it == m_keymap.k_binding.end()
+            || (m_first_char+m_length) != m_it->first ) )
+        {
+            m_state = state_default_binding;    // use default binding next
+        }
+        else
+        {
+            m_state = state_iterator;
+        }
+
+        break;
+    }
+
+    default:
+    {
+        fatal_error( 200 );
+        break;
+    }
+
+    }
+    if( m_state != state_end )
+    {
+        emacs_assert( m_bound_name != NULL );
+    }
+
+    return *this;
+}
+
+KeyMap::const_iterator::const_iterator( const KeyMap &map, KeyMap::const_iterator::state_t /*state*/ )
+: m_state( state_end )
+, m_keymap( map )
+, m_it( map.k_binding.end() )
+{ }
+
+KeyMap::const_iterator KeyMap::begin() const
+{
+    return const_iterator( *this );
+}
+
+KeyMap::const_iterator KeyMap::end() const
+{
+    return const_iterator( *this, const_iterator::state_end );
+}
+
+bool KeyMap::const_iterator::operator==( const KeyMap::const_iterator &other ) const
+{
+    return &m_keymap == &other.m_keymap && m_state == other.m_state && m_it == other.m_it;
+}
+
+bool KeyMap::const_iterator::operator!=( const KeyMap::const_iterator &other ) const
+{
+    return &m_keymap != &other.m_keymap || m_state != other.m_state || m_it != other.m_it;
+}
+
+class ScanMapHistory
+{
+public:
+    ScanMapHistory( const ScanMapHistory *prev, const KeyMap *map )
+    : m_prev( prev )
+    , m_keymap( map )
+    { }
+    ~ScanMapHistory()
+    { }
+
+    bool containsKeyMap( const KeyMap *map )
+    {
+        const ScanMapHistory *h = this;
+
+        // have we already tranversed this KeyMap?
+        while( h != NULL && h->m_keymap != map )
+        {
+            h = h->m_prev;
+        }
+
+        return h != NULL;
+    }
+
+    const ScanMapHistory *m_prev;
+    const KeyMap *m_keymap;
+};
+
+void KeyMap::scan_map
+    (
+    void (*proc)( BoundName *b, EmacsString &keys, int range ),
+    ScanMapHistory *prev_history,
+    const EmacsString &prev_keys,
+    bool fold_case
+    )
+{
+    ScanMapHistory history( prev_history, this );
+
+    for( const_iterator it( begin() ); it != end(); ++it )
+    {
+        EmacsString keys( prev_keys );
+        keys.append( it.firstChar() );
+        BoundName *b = it.boundName();
+
+        proc( b, keys, it.length() );  // call back
+
+        if( b != NULL && b->getKeyMap() != NULL && !prev_history->containsKeyMap( this ) )
+        {
+            b->getKeyMap()->scan_map( proc, &history, keys, fold_case );
+        }
+    }
+}

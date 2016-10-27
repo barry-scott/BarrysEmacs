@@ -34,6 +34,7 @@ inline bool control_character( int c)
 //      %x    - hexadecimal
 //      %o    - octal
 //      %-ns    - fixed field width string
+//      %p    - pointer in hexadecimal
 //
 
 //
@@ -95,10 +96,24 @@ FormatString &FormatString::operator <<( int v )
     return *this;
 }
 
+FormatString &FormatString::operator <<( const void *v )
+{
+    if( next_arg_type == argInt )
+    {
+        intArg = reinterpret_cast<long int>( v );
+
+        process_format();
+
+        return *this;
+    }
+
+//    throw EmacsInternalError( "FormatString - int arg not expected" );
+    return *this;
+}
 
 FormatString &FormatString::operator <<( const EmacsString *v )
 {
-    return operator <<( *v );
+    return operator << (*v);
 }
 
 FormatString &FormatString::operator <<( const EmacsString &v )
@@ -245,14 +260,8 @@ void FormatString::process_format()
         case 'p':
         {
             long int val = intArg;
-#ifdef    _MSDOS
-            width = 4;
-            print_hexadecimal( val >> 16l );
+            width = 16;
             print_hexadecimal( val );
-#else
-            width = 8;
-            print_hexadecimal( val );
-#endif
         }
             break;
 
@@ -437,7 +446,7 @@ void FormatString::print_decimal( long int n )
 
 void FormatString::print_hexadecimal( long int n )
 {
-    EmacsChar_t buf[8];
+    EmacsChar_t buf[16];
 
     int w = width;
     for( int i=w-1; i >= 0; i--)

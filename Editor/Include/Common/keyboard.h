@@ -61,6 +61,9 @@ const int M_CS_INT_CHAR( 32 );
 
 typedef std::map< EmacsChar_t, BoundName * >    EmacsCharToBoundName_t;
 
+class KeyMap;
+class ScanMapHistory;
+
 class KeyMap : public EmacsObject
 {
 public:
@@ -74,11 +77,56 @@ public:
     void removeBinding( EmacsChar_t c );
     void removeAllBindings( void );
 
+    void scan_map(
+        void (*proc)( BoundName *b, EmacsString &keys, int range ),
+        ScanMapHistory *history,
+        const EmacsString &keys,        // get a copy not a ref - important
+        bool fold_case );
+
     EmacsString k_name;
 
     void q() const;
+
+    class const_iterator
+    {
+        friend class KeyMap;
+    public:
+        const_iterator( const const_iterator &it );
+
+        EmacsChar_t firstChar() const   { return m_first_char; }
+        int length() const              { return m_length; }
+        BoundName *boundName() const    { return m_bound_name; }
+
+        bool operator==( const const_iterator &other ) const;
+        bool operator!=( const const_iterator &other ) const;
+        const_iterator &operator++();
+
+    private:
+        enum state_t
+        {
+            state_init,
+            state_default_binding,  // returning from k_default_binding
+            state_iterator,         // returning from k_binding
+            state_end               // no more keys
+        };
+        const_iterator( const KeyMap &map );
+        const_iterator( const KeyMap &map, state_t state );
+
+    private:
+        // iterator state
+        state_t                                 m_state;
+        const KeyMap                            &m_keymap;
+        EmacsCharToBoundName_t::const_iterator  m_it;
+        // value of iterator
+        EmacsChar_t                             m_first_char;
+        int                                     m_length;
+        BoundName                               *m_bound_name;
+    };
+
+    const_iterator begin() const;
+    const_iterator end() const;
+
 private:
-    
     BoundName *k_default_binding;
     EmacsCharToBoundName_t k_binding;
 };
@@ -94,6 +142,7 @@ public:
     static void processQueue(void);
     static bool enableWorkQueue(void) { return enabled; }
     static bool enableWorkQueue( bool enable);
+
 private:
     static QueueHeader<EmacsWorkItem> work_queue;
     static bool enabled;

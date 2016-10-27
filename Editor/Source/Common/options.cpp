@@ -13,19 +13,12 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
-struct key_scan_history
-{
-    struct key_scan_history *hist_prev;
-    KeyMap *hist_this;
-};
-
 int change_directory( void );
 int describe_key( void );
 int local_binding_of( void );
 int global_binding_of( void );
 static int binding_of_inner(int local_bind);
 void scan_map( KeyMap *kmap, void (*proc)( BoundName *b, EmacsString &keys, int range ), bool fold_case );
-static void scan_map_inner( KeyMap *kmap, void (*proc)( BoundName *b, EmacsString &keys, int range ), struct key_scan_history *history, EmacsString keys, bool fold_case );
 static void describe1( BoundName *b, EmacsString &keys, int range );
 int describe_bindings( void );
 int define_keyboard_macro( void );
@@ -260,8 +253,7 @@ static int binding_of_inner( int local_bind )
 // Recursively scan a keymap tree. It gets passed a pointer to a map and a
 // function. For each bound_name the function is called with these
 // parameters: the bound_name, the keystrokes leading to it
-// (as a unsigned char * and
-// an int) and a count of the number of following keys that are bound to the
+// EmacsString and a count of the number of following keys that are bound to the
 // same bound_name. A run of equal bound_names in a keymap is only passed to
 // the procedure once.
 //
@@ -274,62 +266,9 @@ void scan_map
 {
     EmacsString keys;
     if( kmap != NULL )
-        scan_map_inner( kmap, proc, 0, keys, fold_case );
+        kmap->scan_map( proc, NULL, keys, fold_case );
 }
 
-static void scan_map_inner
-    (
-    KeyMap *kmap,
-    void (*proc)( BoundName *b, EmacsString &keys, int range ),
-    struct key_scan_history *history,
-    EmacsString keys,        // get a copy not a ref - important
-    bool fold_case
-    )
-{
-    struct key_scan_history hist;
-
-    hist.hist_prev = history;
-    hist.hist_this = kmap;
-
-    int last_char = keys.length();
-    keys.append( EmacsChar_t( 0 ) );
-
-    EmacsChar_t c = 0;
-    while( c <= unicode_max_code_point )
-    {
-        EmacsChar_t c2 = c + 1;
-
-        BoundName *b = kmap->getBinding( c );
-
-        if( !fold_case
-        || !unicode_is_upper( c )
-        || (b != kmap->getBinding( unicode_to_lower( c ) )) )
-        {
-            keys[last_char] = c;
-
-            while( c2 <= (unicode_max_code_point - 1)
-            && (kmap->getBinding( c2 ) == b)
-            && (c < c2 && !(c2 == 0x20 || c2 == 0xa0 || c2 == 0x7f || c2 == 0x80 || c2 == 0xff || c2 == 0x100)) )
-                c2++;
-
-            if( b != NULL || kmap == current_global_map )
-            {
-                proc( b, keys, c2 - c );
-                if( b != NULL && b->getKeyMap() != NULL )
-                {
-                    struct key_scan_history *h = history;
-
-                    while( h != NULL && h->hist_this != kmap )
-                        h = h->hist_prev;
-
-                    if( h == NULL )
-                        scan_map_inner( b->getKeyMap(), proc, &hist, keys, fold_case );
-                }
-            }
-        }
-        c = c2;
-    }
-}
 
 // Helper function for DescribeBindings -- inserts one line of info for the
 // given bound_name

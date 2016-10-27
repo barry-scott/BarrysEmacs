@@ -318,6 +318,7 @@ public:
     FormatString &operator <<( const EmacsString * );
     FormatString &operator <<( const char * );
     FormatString &operator <<( const EmacsChar_t * );
+    FormatString &operator <<( const void * );
 
 private:
     enum arg_type { argNone, argString, argInt };
@@ -348,7 +349,7 @@ private:
 
     int next_format_char_index;
 
-    int intArg;
+    long int intArg;
     EmacsString stringArg;
     // keep some compilers for complaining (C Set++)
     FormatString( const FormatString &other );
