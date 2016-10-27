@@ -77,7 +77,7 @@ int change_directory( void )
 }
 
 //
-// Given a sequence of keystrokes (at "keys" for "len" characters) return a
+// Given a sequence of keystrokes (in "keys") return a
 // printable representation of them -- with ESCs for escapes, and similar rot
 //
 EmacsString key_to_str( const EmacsString &keys, bool replace_key_names )
@@ -94,7 +94,15 @@ EmacsString key_to_str( const EmacsString &keys, bool replace_key_names )
         EmacsChar_t ch;
 
         if( replace_key_names )
+        {
             matched = PC_key_names.keyNameOfValue( keys( i, INT_MAX ), name );
+        }
+
+        // knock out the special value "default"
+        if( name == "default" )
+        {
+            matched = false;
+        }
 
         if( matched > 0 )
         {
@@ -112,7 +120,6 @@ EmacsString key_to_str( const EmacsString &keys, bool replace_key_names )
             }
             else
             {
-                // QQQ - does not work for unicode
                 if( ch <= 31 )
                 {
                     buf.append( '^' );
@@ -130,17 +137,24 @@ EmacsString key_to_str( const EmacsString &keys, bool replace_key_names )
                 }
                 else
                 if( (ch >= 0x80 && ch <= 0x9f)
-                || ch == 0xff )
+                || ch == 0xff
+                || (ch >= 0x00e000 && ch <= 0x00f8ff)       // Unicode Private Use Area
+                || (ch >= 0x0f0000 && ch <= 0x0ffffd)       // Unicode Supplementary Private Use Area-A
+                || (ch >= 0x100000 && ch <= 0x10fffd) )     // Unicode Supplementary Private Use Area-B
                 {
                     buf.append( "\\x" );
-                    buf.append( FormatString("%x") << ch );
+                    buf.append( FormatString("%*x") << 6 << ch );
                 }
                 else
+                {
                     buf.append( ch );
+                }
             }
         }
         if( i < (keys.length()-1) )
+        {
             buf.append( '-' );
+        }
     }
 
     return buf;
