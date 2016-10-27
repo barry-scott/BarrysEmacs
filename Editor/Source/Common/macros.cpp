@@ -90,7 +90,7 @@ BoundNameBuiltin::BoundNameBuiltin( int (*builtin_function)(void) )
 
 BoundNameBuiltin::~BoundNameBuiltin()
 {
-    fatal_error(9999);    // cannot every delete a builtin command
+    fatal_error(9999);    // cannot ever delete a builtin command
 }
 
 int BoundNameBuiltin::canDelete(void) const    // true if you can delete this item
