@@ -26,6 +26,7 @@ public:
     int search( const EmacsString &s, int n, int dot, sea_type RE );
     int search( int n, int dot );
     int looking_at( const EmacsString &s, sea_type RE );
+    int syntax_looking_at( int pos );
     void compile( const EmacsString &strp, sea_type RE );
 
     void search_replace_once( const EmacsString &new_string );
@@ -51,6 +52,7 @@ public:
 
     virtual int search( int n, int dot ) = 0;
     virtual int looking_at( int dot ) = 0;
+    virtual int syntax_looking_at( int dot ) = 0;
     virtual void compile( const EmacsString &strp, EmacsSearch::sea_type RE ) = 0;
 
     virtual void search_replace_once( const EmacsString &new_string ) = 0;

@@ -55,6 +55,7 @@ private:
 
     int search( int n, int dot );
     int looking_at( int dot );
+    int syntax_looking_at( int dot );
     void place( int l1, int l2);
     int perform_replace( int query, EmacsSearch::sea_type RE);
     void search_replace_once( const EmacsString &new_string );

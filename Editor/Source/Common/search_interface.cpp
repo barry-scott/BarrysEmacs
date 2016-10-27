@@ -98,6 +98,7 @@ void EmacsSearch::compile( const EmacsString &pattern, EmacsSearch::sea_type RE 
             m_search_implementation = new SearchSimpleAlgorithm;
             break;
         case sea_type__RE_extended:
+        case sea_type__RE_syntax:
             m_search_implementation = new SearchAdvancedAlgorithm;
             break;
         default:
@@ -140,6 +141,18 @@ int EmacsSearch::looking_at( const EmacsString &s, EmacsSearch::sea_type RE )
         return m_search_implementation->looking_at( dot );
     else
         return 0;
+}
+
+int EmacsSearch::syntax_looking_at( int pos )
+{
+    if( m_search_implementation != NULL )
+    {
+        return m_search_implementation->syntax_looking_at( dot );
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 void EmacsSearch::search_replace_once( const EmacsString &new_string )

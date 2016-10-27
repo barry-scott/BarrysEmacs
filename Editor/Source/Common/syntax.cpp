@@ -417,10 +417,9 @@ void SyntaxTable::modify_table( int type, int properties, const EmacsString &str
 // check its an ERE that we can use in the syntax code
 void SyntaxTable::modify_table_ere( int type, int properties, const EmacsString &str1, const EmacsString &str2 )
 {
-    SearchAdvancedAlgorithm ere;
-    SearchImplementation &si = ere;
+    EmacsSearch search;
 
-    si.compile( str1, EmacsSearch::sea_type__RE_syntax );
+    search.compile( str1, EmacsSearch::sea_type__RE_syntax );
     if( ml_err )
         return;
 
@@ -1336,7 +1335,7 @@ bool SyntaxString::last_is_word( const SyntaxTable &table ) const
 //
 int SyntaxString::ere_looking_at_main( int pos ) const
 {
-    SearchAdvancedAlgorithm ere;
+    EmacsSearch ere;
     ere.compile( s_main_str, EmacsSearch::sea_type__RE_syntax );
     int end_pos = ere.syntax_looking_at( pos );
     if( end_pos == 0 )
