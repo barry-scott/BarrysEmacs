@@ -112,12 +112,12 @@ all_colour_defaults = (
     ColourInfo('LINE_ATTR_USER_8',        U_('User 8' ),      LINE_ATTR_USER+8,       (192,192,192),  (255,255,255)),
     )
 
-default_binding =   '\uef00'
-prefix_key =        '\uef01'
-prefix_mouse =      '\uef02'
-prefix_menu =       '\uef03'
-key_base =          0xef20
-mouse_base =        0xef20
+default_binding =   '\U0010ff00'
+prefix_key =        '\U0010ff01'
+prefix_mouse =      '\U0010ff02'
+prefix_menu =       '\U0010ff03'
+key_base =           0x0010ff20
+mouse_base =         0x0010ff20
 
 def __nextKeyMapping():
     global key_base
