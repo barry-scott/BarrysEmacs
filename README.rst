@@ -1,7 +1,7 @@
 Barry's Emacs
 -------------
 
-Barry's Emacs is easy to use and accessable, yet powerful.
+Barry's Emacs is easy to use and accessible, yet powerful.
 
 You can start using Barry's Emacs as a notepad replacement. Then, at your own speed use more advanced features.
 
