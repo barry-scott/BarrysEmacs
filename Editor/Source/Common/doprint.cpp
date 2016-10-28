@@ -33,7 +33,7 @@ inline bool control_character( int c)
 //      %d    - decimal number
 //      %x    - hexadecimal
 //      %o    - octal
-//      %-ns    - fixed field width string
+//      %-ns  - fixed field width string
 //      %p    - pointer in hexadecimal
 //
 
