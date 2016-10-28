@@ -147,7 +147,7 @@ int EmacsSearch::syntax_looking_at( int pos )
 {
     if( m_search_implementation != NULL )
     {
-        return m_search_implementation->syntax_looking_at( dot );
+        return m_search_implementation->syntax_looking_at( pos );
     }
     else
     {
