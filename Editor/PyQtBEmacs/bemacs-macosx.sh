@@ -8,12 +8,11 @@ if [ "$1" = "--lldb" ]
 then
     shift 1
     echo
-    rm -f .gdbinit
-    if [ -e init.gdb ]
+    rm -f .lldbinit
+    if [ -e init.lldb ]
     then
-        cat init.gdb >>.gdbinit
+        cat init.lldb >.lldbinit
     fi
-    echo "run -u be_main.py " "$@" >>.gdbinit
     echo
     lldb -- python${PYTHON_VERSION} -u be_main.py "$@"
 
