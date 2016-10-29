@@ -12,6 +12,8 @@ else
     DIST_DIR=dist
 fi
 
+PY_VER=$( ${PYTHON} -c 'import sys;print( "%d.%d" % (sys.version_info.major, sys.version_info.minor) )' )
+
 rm -rf build ${DIST_DIR}
 
 mkdir -p ${DIST_DIR}
@@ -22,14 +24,7 @@ ${PYTHON} setup-macosx.py py2app --dist-dir ${DIST_DIR} --no-strip 2>&1 | tee a.
 set -x
 pushd "${DIST_DIR}/Barry's Emacs-Devel.app/Contents" >/dev/null
 
-if false
-then
-cp -R \
-    /Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/PyQt5/Qt \
-    Resources/lib/python3.5/lib-dynload/PyQt5
-
-else
-${PYTHON} ${SRC_DIR}/build_fix_install_rpath.py fix Resources/lib/python3.5/lib-dynload/PyQt5/*.so
+${PYTHON} ${SRC_DIR}/build_fix_install_rpath.py fix Resources/lib/python${PY_VER}/lib-dynload/PyQt5/*.so
 
 for LIBNAME in \
     QtCore \
@@ -76,7 +71,6 @@ do
 
     ${PYTHON} ${SRC_DIR}/build_fix_install_rpath.py fix "Resources/plugins/${PLUGIN}"
 done
-fi
 
 mkdir -p "Resources/emacs_library"
 mkdir -p "Resources/documentation"
