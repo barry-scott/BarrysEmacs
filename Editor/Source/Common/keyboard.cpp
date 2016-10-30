@@ -123,6 +123,9 @@ BoundName *KeyMap::getBinding( EmacsChar_t c )
 
 void KeyMap::addBinding( EmacsChar_t c, BoundName *proc )
 {
+    // proc can be passed in as NULL from
+    // initialize_local_map() in options.cpp
+    // QQQ can that be fixed?
     if( !default_key_set )
     {
         EmacsString default_value( PC_key_names.valueOfKeyName( "default" ) );
@@ -154,11 +157,11 @@ void KeyMap::removeBinding( EmacsChar_t c )
     }
     else
     {
-        EmacsCharToBoundName_t::iterator i = k_binding.find( c );
-        if( i != k_binding.end() )
+        EmacsCharToBoundName_t::iterator it = k_binding.find( c );
+        if( it != k_binding.end() )
         {
-            free_sexpr_defun( i->second );
-            k_binding.erase( i );
+            free_sexpr_defun( it->second );
+            k_binding.erase( it );
         }
     }
 }
@@ -181,9 +184,7 @@ void KeyMap::removeAllBindings()
 
 KeyMap *define_keymap( const EmacsString &name )
 {
-    KeyMap *kmap;
-
-    kmap = EMACS_NEW KeyMap( name );
+    KeyMap *kmap = EMACS_NEW KeyMap( name );
     if( kmap == NULL )
         return 0;
 
@@ -1781,9 +1782,11 @@ KeyMap::const_iterator::const_iterator( const KeyMap &map )
         m_first_char = EmacsChar_t( 0 );
         m_length = m_it->first - m_first_char;
         m_bound_name = m_keymap.k_default_binding;
+        emacs_assert( m_bound_name != NULL );
     }
     else
     {
+        emacs_assert( m_it != m_keymap.k_binding.end() );
         m_first_char = m_it->first;
         m_length = 1;
         m_bound_name = m_it->second;
@@ -1861,7 +1864,6 @@ KeyMap::const_iterator &KeyMap::const_iterator::operator++()
         m_first_char = m_it->first;
         m_length = 1;
         m_bound_name = m_it->second;
-        emacs_assert( m_bound_name != NULL );
 
         ++m_it;
         while( m_it != m_keymap.k_binding.end() )
@@ -1897,11 +1899,6 @@ KeyMap::const_iterator &KeyMap::const_iterator::operator++()
         fatal_error( 200 );
         break;
     }
-
-    }
-    if( m_state != state_end )
-    {
-        emacs_assert( m_bound_name != NULL );
     }
 
     return *this;
@@ -1975,10 +1972,13 @@ void KeyMap::scan_map
         EmacsString keys( prev_keys );
         keys.append( it.firstChar() );
         BoundName *b = it.boundName();
+        emacs_assert( b != NULL );
 
         proc( b, keys, it.length() );  // call back
 
-        // QQQ why is b NULL?
+        // b can be passed in as NULL from
+        // initialize_local_map() in options.cpp
+        // QQQ can that be fixed?
         if( b != NULL && b->getKeyMap() != NULL && !prev_history->containsKeyMap( this ) )
         {
             b->getKeyMap()->scan_map( proc, &history, keys, fold_case );
