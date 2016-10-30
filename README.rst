@@ -8,7 +8,7 @@ You can start using Barry's Emacs as a notepad replacement. Then, at your own sp
 It's user interface uses the familiar Windows style user interface, key bindings, menus, toolbar and dialogs.
 Barry's Emacs is integrated with the Windows explorer.
 
-.. Barry's Emacs main web site: http://barrys-emacs.org
+Barry's Emacs main web site: http://barrys-emacs.org
 
 Features
 
