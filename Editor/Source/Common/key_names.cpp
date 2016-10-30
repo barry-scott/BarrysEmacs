@@ -13,13 +13,13 @@ key_name_entry::key_name_entry( const char *n, const char *v )
 : name( n )
 , value( v )
 , compressed_value()
-    {}
+{}
 
 key_name_entry::key_name_entry( const key_name_entry &from )
 : name( from.name )
-, value( from.name )
+, value( from.value )
 , compressed_value()
-    {}
+{}
 
 #if defined( PYBEMACS )
 key_name PC_key_names;
