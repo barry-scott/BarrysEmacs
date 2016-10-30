@@ -554,7 +554,7 @@ static void initialize_local_map( void )
         ml_value = ctrl_x_key;
         if( bf_cur->b_mode.md_keys == NULL
         || bf_cur->b_mode.md_keys->getBinding( ctl('X') ) == NULL )
-            perform_bind( (KeyMap **)&bf_cur->b_mode.md_keys, 0 );
+            perform_bind( &bf_cur->b_mode.md_keys, 0 );
     }
 }
 
@@ -569,8 +569,7 @@ static BoundName *autodefinekeymap( void )
     }
     while( BoundName::find( auto_name ) != NULL );
 
-    if( define_keymap( auto_name ) == NULL )
-        return 0;
+    define_keymap( auto_name );
 
     return BoundName::find( auto_name );
 }
