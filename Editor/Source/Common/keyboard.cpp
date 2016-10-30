@@ -1978,7 +1978,8 @@ void KeyMap::scan_map
 
         proc( b, keys, it.length() );  // call back
 
-        if( b->getKeyMap() != NULL && !prev_history->containsKeyMap( this ) )
+        // QQQ why is b NULL?
+        if( b != NULL && b->getKeyMap() != NULL && !prev_history->containsKeyMap( this ) )
         {
             b->getKeyMap()->scan_map( proc, &history, keys, fold_case );
         }
