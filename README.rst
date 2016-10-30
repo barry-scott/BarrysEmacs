@@ -23,5 +23,6 @@ Features
 
 Installation instructions.
 
-Please see
-.. INSTALL.html: http://htmlpreview.github.io/?https://github.com/barry-scott/BarrysEmacs/blob/master/INSTALL.html
+Please see the
+.. _Installation: http://htmlpreview.github.io/?https://github.com/barry-scott/BarrysEmacs/blob/master/INSTALL.html
+instructions page.
