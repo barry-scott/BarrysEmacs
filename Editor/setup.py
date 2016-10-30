@@ -16,6 +16,8 @@ def debug( msg ):
 #--------------------------------------------------------------------------------
 class Setup:
     def __init__( self, argv ):
+        self.enable_debug = False
+
         args = argv[1:]
         if len(args) < 2:
             raise ValueError( 'Usage: setup.py win32|win64|macosx|linux> <makefile>' )
@@ -34,6 +36,10 @@ class Setup:
             if args[0] == '--debug':
                 global _debug
                 _debug = True
+                del args[0]
+
+            elif args[0] == '--enable-debug':
+                self.enable_debug = True
                 del args[0]
 
             else:
@@ -237,7 +243,10 @@ class Compiler:
         self.__variables = {}
 
         self._addVar( 'PYCXX_VER',       pycxx_version_str )
-        self._addVar( 'DEBUG',           'NDEBUG')
+        if setup.enable_debug:
+            self._addVar( 'DEBUG',           '_DEBUG')
+        else:
+            self._addVar( 'DEBUG',           'NDEBUG')
 
         self._addFromEnv( 'BUILDER_TOP_DIR' )
 
