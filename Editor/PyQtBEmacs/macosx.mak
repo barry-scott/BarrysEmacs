@@ -2,7 +2,7 @@
 #	Mac OS X makefile for BEmacs
 #
 PYTHON=python${PYTHON_VERSION}
-PYTHONPATH=${BUILDER_TOP_DIR}/Editor/PyQtBEmacs:${BUILDER_TOP_DIR}/Editor/obj-pybemacs 
+PYTHONPATH=${BUILDER_TOP_DIR}/Editor/PyQtBEmacs:${BUILDER_TOP_DIR}/Editor/exe-pybemacs 
 
 all: dist/be_main.app 
 
