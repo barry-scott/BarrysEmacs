@@ -1972,7 +1972,6 @@ void KeyMap::scan_map
         EmacsString keys( prev_keys );
         keys.append( it.firstChar() );
         BoundName *b = it.boundName();
-        emacs_assert( b != NULL );
 
         proc( b, keys, it.length() );  // call back
 
