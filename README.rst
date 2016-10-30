@@ -1,5 +1,6 @@
+=============
 Barry's Emacs
--------------
+=============
 
 Barry's Emacs is easy to use and accessible, yet powerful.
 
@@ -11,6 +12,7 @@ Barry's Emacs is integrated with the Windows explorer.
 Barry's Emacs main web site: http://barrys-emacs.org
 
 Features
+--------
 
 * full HTML documentation
 * windows style user interface
@@ -21,6 +23,10 @@ Features
 * fully programmable
 * integrated Python extension language
 
-Installation instructions.
+Installation instructions
+-------------------------
 
-Please see the `Installation instructions <http://htmlpreview.github.io/?https://github.com/barry-scott/BarrysEmacs/blob/master/INSTALL.html>`_  page.
+Pre-built kits for Windows and macOS are available from the http://barrys-emacs.org/emacs8.html page.
+
+Details on how to build and install Barry's Emacs for Linux, macOS and Windows from source are covered in
+`INSTALL.html <http://htmlpreview.github.io/?https://github.com/barry-scott/BarrysEmacs/blob/master/INSTALL.html>`_.
