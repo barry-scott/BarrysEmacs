@@ -100,7 +100,7 @@ FormatString &FormatString::operator <<( const void *v )
 {
     if( next_arg_type == argInt )
     {
-        intArg = reinterpret_cast<long int>( v );
+        intArg = reinterpret_cast<int64_t>( v );
 
         process_format();
 
@@ -185,12 +185,12 @@ void FormatString::process_format()
         switch( format_char )
         {
         case 'c':
-            put( intArg );
+            put( EmacsChar_t( intArg ) );
             break;
 
         case 'C':    // ensure are in a printable char
         {
-            EmacsChar_t ch = intArg;
+            EmacsChar_t ch = EmacsChar_t( intArg );
             if( control_character( ch ) )
                 ch = '.';
             put( ch );
@@ -203,43 +203,31 @@ void FormatString::process_format()
 
         case 'd':
         {
-            long val = (long)intArg;
-
-            print_decimal( val );
-
+            print_decimal( intArg );
             break;
         }
 
         case 'D':
         {
-            long int val = intArg;
-
-            print_decimal( val );
-
+            print_decimal( intArg );
             break;
         }
 
         case 'o':
         {
-            long val = (long)intArg;
-
-            print_octal( val );
-
+            print_octal( intArg );
             break;
         }
 
         case 'O':
         {
-            long int val = intArg;
-
-            print_octal( val );
-
+            print_octal( intArg );
             break;
         }
 
         case 'x':
         {
-            long int val = (long)intArg;
+            uint64_t val = static_cast<uint64_t>( intArg );
 
             if( width == 0 )
                 width = 4;
@@ -249,7 +237,7 @@ void FormatString::process_format()
         }
         case 'X':
         {
-            long int val = intArg;
+            uint64_t val = static_cast<uint64_t>( intArg );
 
             if( width == 0 )
                 width = 8;
@@ -259,7 +247,7 @@ void FormatString::process_format()
         }
         case 'p':
         {
-            long int val = intArg;
+            uint64_t  val = static_cast<uint64_t>( intArg );
             width = 16;
             print_hexadecimal( val );
         }
@@ -268,14 +256,15 @@ void FormatString::process_format()
         case 'e':
         {
             // errno value
-            EmacsString str( strerror( intArg ) );
+            EmacsString str( strerror( static_cast<int>( intArg ) ) );
             print_string( str );
         }
             break;
+
         case 'E':
         {
             // win32 error code
-            EmacsString str( os_error_code( intArg ) );
+            EmacsString str( os_error_code( static_cast<int>( intArg ) ) );
             print_string( str );
             break;
         }
@@ -407,13 +396,13 @@ void FormatString::put( const EmacsChar_t *str, unsigned int len )
     result.append( len, str );
 }
 
-void FormatString::print_decimal( long int n )
+void FormatString::print_decimal( int64_t n )
 {
     EmacsChar_t digits[12];
 
-    if( (unsigned long int)n == 0x80000000 )
+    if( n == INT64_MIN )
     {
-        EmacsString value( "-2147483648" );
+        EmacsString value( "-9223372036854775808" );
         put( value.unicode_data(), value.length() );
         return;
     }
@@ -444,7 +433,7 @@ void FormatString::print_decimal( long int n )
         put( digits[i] );
 }
 
-void FormatString::print_hexadecimal( long int n )
+void FormatString::print_hexadecimal( uint64_t n )
 {
     EmacsChar_t buf[16];
 
@@ -460,13 +449,13 @@ void FormatString::print_hexadecimal( long int n )
 //
 //  print a number "n" in octal into buffer "buf"
 //
-void FormatString::print_octal( long int n )
+void FormatString::print_octal( int64_t n )
 {
-    unsigned char digits[12];
+    unsigned char digits[24];
 
-    if( (unsigned long int)n == 0x80000000 )
+    if( n == INT64_MIN )
     {
-        EmacsString value( "-20000000000" );
+        EmacsString value( "-1000000000000000000000" );
         put( value.unicode_data(), value.length() );
         return;
     }

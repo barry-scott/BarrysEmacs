@@ -329,9 +329,9 @@ private:
     void put( EmacsChar_t );
     void put( const EmacsChar_t *chars, unsigned int len );
 
-    void print_decimal( long int );
-    void print_hexadecimal( long int );
-    void print_octal( long int );
+    void print_decimal( int64_t );
+    void print_hexadecimal( uint64_t );
+    void print_octal( int64_t );
     void print_string( const EmacsString &str );
 
     EmacsString format;
@@ -349,7 +349,7 @@ private:
 
     int next_format_char_index;
 
-    long int intArg;
+    int64_t intArg;
     EmacsString stringArg;
     // keep some compilers for complaining (C Set++)
     FormatString( const FormatString &other );
