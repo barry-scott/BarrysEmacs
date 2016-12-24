@@ -1,10 +1,5 @@
 #!/bin/echo Usage: . $0
 
-if [ "$BUILDER_TOP_DIR" = "" ]
-then
-    export BUILDER_TOP_DIR=$( cd ..; pwd )
-fi
-
 export BUILDER_CFG_PLATFORM=$(uname -s)
 export PYTHON_VERSION=${1:-3.5}
 
@@ -17,7 +12,6 @@ case ${BUILDER_CFG_PLATFORM} in
 Darwin)
     export BUILDER_CFG_PLATFORM=MacOSX
     export PYTHON=python${PYTHON_VERSION}
-    export BUILDER_QTDIR=$HOME/Qt-5.7.0/5.7
     ;;
 
 Linux)

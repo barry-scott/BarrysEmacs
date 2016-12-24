@@ -24,7 +24,13 @@ ${PYTHON} setup-macosx.py py2app --dist-dir ${DIST_DIR} --no-strip 2>&1 | tee a.
 set -x
 pushd "${DIST_DIR}/Barry's Emacs-Devel.app/Contents" >/dev/null
 
-${PYTHON} ${SRC_DIR}/build_fix_install_rpath.py fix Resources/lib/python${PY_VER}/lib-dynload/PyQt5/*.so
+mkdir -p "Resources/emacs_library"
+mkdir -p "Resources/documentation"
+
+# copy all the installed PyQt5 files as py2app does not copy them all
+cp -R \
+    "/Library/Frameworks/Python.framework/Versions/${PY_VER}/lib/python${PY_VER}/site-packages/PyQt5" \
+    "Resources/lib/python${PY_VER}/lib-dynload"
 
 for LIBNAME in \
     QtCore \
@@ -35,45 +41,8 @@ for LIBNAME in \
     QtWidgets \
     ;
 do
-    echo "Info: Copy framework ${LIBNAME}"
-    cp -R \
-        "${BUILDER_QTDIR}/clang_64/lib/${LIBNAME}.framework" \
-        "Frameworks"
-
-    ${PYTHON} ${SRC_DIR}/build_fix_install_rpath.py show "Frameworks/${LIBNAME}.framework/${LIBNAME}"
+    echo "Info: framework used ${LIBNAME}"
 done
-
-echo "Info: remove Headers links"
-find "Frameworks" -type l -name 'Headers' -exec rm -f {} ';'
-echo "Info: remove Headers dirs"
-find -d "Frameworks" -type d -name 'Headers' -exec rm -rf {} ';'
-
-for PLUGIN in \
-    imageformats/libqdds.dylib \
-    imageformats/libqgif.dylib \
-    imageformats/libqicns.dylib \
-    imageformats/libqico.dylib \
-    imageformats/libqjpeg.dylib \
-    imageformats/libqsvg.dylib \
-    imageformats/libqtga.dylib \
-    imageformats/libqtiff.dylib \
-    imageformats/libqwbmp.dylib \
-    imageformats/libqwebp.dylib \
-    platforms/libqcocoa.dylib \
-    ;
-do
-    echo "Info: Copy plugin ${PLUGIN}"
-    TARGET_DIR=$( dirname "Resources/plugins/${PLUGIN}" )
-    mkdir -p "${TARGET_DIR}"
-    cp \
-        "${BUILDER_QTDIR}/clang_64/plugins/${PLUGIN}" \
-        "${TARGET_DIR}"
-
-    ${PYTHON} ${SRC_DIR}/build_fix_install_rpath.py fix "Resources/plugins/${PLUGIN}"
-done
-
-mkdir -p "Resources/emacs_library"
-mkdir -p "Resources/documentation"
 
 if [ "$1" != "--package" ]
 then
@@ -84,5 +53,6 @@ then
         "${PKG_DIST_DIR}/Barry's Emacs-Devel.app/Contents/Resources/documentation"/* \
         "Resources/documentation"
 fi
+
 popd >/dev/null
 echo "Info: build-macosx.sh Editor/PyQtBEmacs - end"

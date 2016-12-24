@@ -28,7 +28,6 @@ def getUserDir():
 def getLibraryDir():
     assert app_dir is not None
     folder = pathlib.Path( os.environ.get( 'BEMACS_EMACS_LIBRARY', app_dir / 'emacs_library' ) )
-    assert folder.exists()
     return folder
 
 def getLocalePath( app ):
