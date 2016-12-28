@@ -25,7 +25,7 @@ setup(
         ['be_main.py'],
     data_files =
         [],
-    options =       
+    options =
         {'py2app':
             {
             'argv_emulation':
