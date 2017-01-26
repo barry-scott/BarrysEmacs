@@ -162,17 +162,6 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         self.log.info( 'Qt argv[0] %r' % (sys.argv[0],) )
         self.log.info( 'Qt libraryPaths %r' % (QtWidgets.QApplication.libraryPaths(),) )
 
-        py_ver_dir = 'python%d.%d' % (sys.version_info[0], sys.version_info[1])
-
-        qt_plugin_dir = be_platform_specific.getAppDir() / 'lib' / py_ver_dir / 'lib-dynload/PyQt5/Qt/plugins'
-
-        if qt_plugin_dir.exists():
-            self.log.info( 'Settings Qt libraryPaths to %s' % (qt_plugin_dir,) )
-            QtWidgets.QApplication.setLibraryPaths( [str(qt_plugin_dir)] )
-
-        else:
-            self.log.info( 'Qt libraryPaths not found at %s' % (qt_plugin_dir,) )
-
         # init QApplication now that we have the plugin dir setup
         QtWidgets.QApplication.__init__( self, [sys.argv[0]] )
 
