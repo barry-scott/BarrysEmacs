@@ -529,7 +529,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
     def __pixelPoint( self, x, y ):
         return  (self.client_padding + self.char_width  * (x-1)
                 ,self.client_padding + self.char_length * (y-1))
-        
+
 
     def __geometryChanged( self ):
         self.__pending_geometryChanged = False
@@ -1113,6 +1113,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
                     x, y = self.__pixelPoint( draw_cols[ start ] + 1, row )
 
+                    self.qp.fillRect( x, y, (end-start)*self.char_width, self.char_length, self.bg_brushes[ cur_mode ] )
                     self.qp.drawText( x, y+self.char_ascent, ''.join( draw_chars[ start:end ] ) )
 
                     start = end
@@ -1191,7 +1192,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             x, y = self.__pixelPoint( col+1, row )
 
             # draw text may not fill the rectange of the char leaving lines on the screen
-            #self.dc.DrawRectangle( x, y, self.char_width, self.char_length )
+            #self.qp.fillRect( x, y, self.char_width, self.char_length, self.bg_brushes[ cur_mode ] ) #qqq
             self.qp.drawText( x, y+self.char_ascent, new_ch )
 
         remaining_width = self.term_width - new_line_length
