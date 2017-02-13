@@ -116,7 +116,7 @@ default_binding =   '\U0010ff00'
 prefix_key =        '\U0010ff01'
 prefix_mouse =      '\U0010ff02'
 prefix_menu =       '\U0010ff03'
-key_base =           0x0010ff20
+key_base =           0x0010ff20􏼠
 mouse_base =         0x0010ff20
 
 def __nextKeyMapping():
@@ -484,8 +484,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         #self.font.setFixedPitch( True )
         #self.font.setKerning( False )
         #self.font.setStyleStrategy( self.font.NoAntialias )
-        if sys.platform == 'darwin':
-            self.font.setStyleStrategy( self.font.NoSubpixelAntialias )
+        #if sys.platform == 'darwin':
+        #    self.font.setStyleStrategy( self.font.NoSubpixelAntialias )
 
         fi = QtGui.QFontInfo( self.font )
         self.log.info( 'Font family: %r %dpt' % (fi.family(), fi.pointSize()) )
