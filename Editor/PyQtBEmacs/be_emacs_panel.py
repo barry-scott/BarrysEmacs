@@ -116,7 +116,7 @@ default_binding =   '\U0010ff00'
 prefix_key =        '\U0010ff01'
 prefix_mouse =      '\U0010ff02'
 prefix_menu =       '\U0010ff03'
-key_base =           0x0010ff20􏼠
+key_base =           0x0010ff20
 mouse_base =         0x0010ff20
 
 def __nextKeyMapping():
@@ -1005,7 +1005,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             index += 1
             while index < len( self.all_horz_scroll_bars ):
                 self.all_horz_scroll_bars[ index ].hide()
-                self._debugTermCalls1( 'termUpdateEnd: Hß scroll hode %d extra' % (index,) )
+                self._debugTermCalls1( 'termUpdateEnd: H scroll hode %d extra' % (index,) )
                 index += 1
 
         del self.qp
