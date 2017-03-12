@@ -22,7 +22,7 @@
         (save-window-excursion
             ~old-case-fold-search
             (setq ~old-case-fold-search case-fold-search)
-            
+
             (beginning-of-file)
             (setq case-fold-search 0)
             (while
@@ -119,6 +119,8 @@
             "dt"
             "em"
             "embed"
+            "figcapture"
+            "figure"
             "font"
             "form"
             "frame"
