@@ -119,7 +119,7 @@
             "dt"
             "em"
             "embed"
-            "figcapture"
+            "figcaption"
             "figure"
             "font"
             "form"
