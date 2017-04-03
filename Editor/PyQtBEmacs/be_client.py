@@ -322,7 +322,7 @@ class ClientUnix(ClientPosix):
             app_dir = os.path.dirname( os.path.abspath( argv0 ) )
 
         else:
-            for folder in [p.strip() for s in os.environ.get( 'PATH', '' ).split( ':' )]:
+            for folder in [p.strip() for p in os.environ.get( 'PATH', '' ).split( ':' )]:
                 app_path = os.path.abspath( os.path.join( folder, argv0 ) )
                 if os.path.exists( app_path ):
                     app_dir = os.path.dirname( app_path )
