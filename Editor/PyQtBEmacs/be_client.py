@@ -87,6 +87,9 @@ class ClientBase:
 
             self.bringTofront()
 
+            if self.opt_wait:
+                self.waitCommand()
+
         except ClientError as e:
             print( 'Error: %s' % (str(e),) )
 
@@ -152,6 +155,9 @@ class ClientBase:
     def processCommand( self ):
         raise NotImplementedError()
 
+    def waitCommand( self ):
+        pass
+
     def _encodeCommandString( self ):
         all_byte_elements = []
 
@@ -188,7 +194,11 @@ class ClientPosix(ClientBase):
         if '=' in arg:
             arg, value = arg.split( '=', 1 )
 
-        return arg[2:]
+        if arg.startswith( '--' ):
+            return arg[2:]
+
+        else:
+            return arg[1:]
 
     def getArgValue( self, arg, argv ):
         if '=' in arg:
@@ -199,7 +209,27 @@ class ClientPosix(ClientBase):
             return Next( argv )
 
     def processCommand( self ):
-        debugClient( 'processCommand' )
+        completed, reply = self.__sendCommand( b'C'+self._encodeCommandString() )
+        if len(reply) > 1:
+            print( reply[1:] )
+
+        return completed
+
+    def waitCommand( self ):
+        while True:
+            debugClient( 'Poll for Wait' )
+            completed, reply = self.__sendCommand( b'W' )
+            debugClient( '-> %r, %r' % (completed, reply) )
+            if completed and reply[0] == 'w':
+                if len(reply) > 1:
+                    print( reply[1:] )
+
+                return True
+
+            time.sleep( 0.1 )
+
+    def __sendCommand( self, cmd ):
+        debugClient( '__sendCommand( %r )' % (cmd,) )
         import pwd
 
         fifo_name = os.environ.get( 'BEMACS_FIFO', '.bemacs8/.emacs_command' )
@@ -231,13 +261,12 @@ class ClientPosix(ClientBase):
 
         try:
             fd_command = os.open( server_fifo, os.O_WRONLY|os.O_NONBLOCK )
+
         except OSError:
             debugClient( 'failed to open server_fifo' )
-            return False
+            return False, ''
 
         fd_response = os.open( client_fifo, os.O_RDONLY|os.O_NONBLOCK )
-
-        cmd = b'C'+self._encodeCommandString()
 
         debugClient( 'processCommand command %r' % (cmd,) )
 
@@ -247,8 +276,7 @@ class ClientPosix(ClientBase):
 
         os.close( fd_command )
 
-        seen_ack = False
-
+        # first send off the command
         try:
             while True:
                 try:
@@ -259,24 +287,15 @@ class ClientPosix(ClientBase):
 
                 debugClient( 'processCommand response %r' % (response,) )
 
-                if response == b' ':
-                    seen_ack = True
-                    if not self.opt_wait:
-                        break
-
-                elif seen_ack:
-                    if response[0] == b'R':
-                        break
+                if len(response) > 0:
+                    break
 
                 time.sleep( 0.1 )
 
-            if len(response) > 1:
-                print( response[1:] )
-
-            return True
+            return True, response.decode( 'utf-8' )
 
         except IOError:
-            return False
+            return False, ''
 
     def __makeFifo( self, fifo_name ):
         if os.path.exists( fifo_name ):
@@ -315,6 +334,8 @@ class ClientUnix(ClientPosix):
 
         argv0 = sys.argv[0]
 
+        app_dir = ''
+
         if argv0.startswith( '/' ):
             app_dir = os.path.dirname( argv0 )
 
@@ -332,6 +353,7 @@ class ClientUnix(ClientPosix):
             app_dir = os.getcwd()
 
         server_path = os.path.join( app_dir, 'bemacs_server' )
+        server_path = '/usr/bin/bemacs_server'
         debugClient( 'server_path %r' % (server_path,) )
 
         args = [server_path]

@@ -22,7 +22,7 @@ class CommandLineHandlerPosix:
     def __init__( self, app, opt_name ):
         self.app = app
         self.opt_name = opt_name
-        
+
     def processCommandLines( self ):
         self.app._debugApp( 'CommandLineHandlerPosix' )
 
@@ -77,6 +77,13 @@ class CommandLineHandlerPosix:
                         new_argv = [b.decode('utf-8') for b in client_command[1:].split( b'\x00' )]
                         self.app.handleClientCommand( new_argv )
                         reply = b' '
+
+                    elif client_command[0] == ord('W'):
+                        if self.app.release_waiting_client_reply is not None:
+                            reply = b'w' + self.app.release_waiting_client_reply.encode('utf-8')
+                            self.app.release_waiting_client_reply = None
+                        else:
+                            reply = b' '
 
                 emacs_client_write_fd = os.open( client_fifo, os.O_WRONLY|os.O_NONBLOCK );
                 if emacs_client_write_fd < 0:

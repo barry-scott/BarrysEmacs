@@ -49,6 +49,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
 
         self.args = args
         self.opt_name = None
+        self.release_waiting_client_reply = None
 
         self.startup_dir = os.getcwd()
 
@@ -336,6 +337,9 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
             self.log.exception( 'command line exception' )
 
             self.marshallToGuiThread( self.guiReportException, (str(e), 'Command line Exception') )
+
+    def releaseWaitingClient( self, reply ):
+        self.release_waiting_client_reply = reply
 
     def handleClientCommand( self, all_client_args ):
         self.marshallToGuiThread( self.guiClientCommandHandler, (all_client_args,) )

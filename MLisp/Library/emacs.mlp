@@ -1,15 +1,15 @@
 ; 
 ; emacs.mlp
-; Copyright 1998-2016 (c) Barry A. Scott
+; Copyright 1998-2017 (c) Barry A. Scott
 ; 
 
 ; return true if this qualifier matches the candidate
 (defun
     ~emacs-com-is-qualifier (~qualifier ~min-length ~has-value ~candidate-name ~candidate-value)
     (&
-	(>= (length ~candidate-name) ~min-length)
-	(= 0 (string-index-of-first ~qualifier ~candidate-name))
-	(= ~has-value (> (length ~candidate-value) 0))
+        (>= (length ~candidate-name) ~min-length)
+        (= 0 (string-index-of-first ~qualifier ~candidate-name))
+        (= ~has-value (> (length ~candidate-value) 0))
     )
 )
 
@@ -128,6 +128,7 @@
         (if ~wait
             (progn
                 (recursive-edit)
+                (UI-python-hook "release-waiting-client" "")
             )
         )
     )

@@ -55,6 +55,7 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
             "set-window-title": self.uiHookSetWindowTitle,
             "filter-string":    self.uiHookFilterString,
             "open-file-dialog": self.uiHookOpenFileDialog,
+            "release-waiting-client":   self.uiHookReleaseWaitingClient,
             "test1":            self.uiHookTest1,
             "test2":            self.uiHookTest2,
             }
@@ -148,6 +149,10 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
         self.__event_queue.put( (self.scrollSetVert, (window_id, position) ) )
 
     #--------------------------------------------------------------------------------
+    def uiHookReleaseWaitingClient( self, cmd, arg ):
+        self.app.releaseWaitingClient( arg )
+        self.setGuiResultSuccess( '' )
+
     def uiHookTest1( self, cmd ):
         self.setGuiResultSuccess( 99 )
 
