@@ -194,8 +194,6 @@ static void do_auto( const EmacsString &filename )
     }
 #endif
 
-    fn.toLower();
-
     //
     // Scan the list of autoexecutes. For each pattern that matches the
     // supplied file name, execute the supplied function
