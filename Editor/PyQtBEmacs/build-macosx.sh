@@ -30,17 +30,17 @@ mkdir -p "Resources/documentation"
 # fixup 3. only keep the frameworks that we need, saving space
 # Resources/lib/python3.5/lib-dynload/PyQt5 - QtXxx.so
 mkdir \
-    Resources/lib/python3.5/PyQt5/tmp
+    Resources/lib/python${PYTHON_VERSION}/PyQt5/tmp
 mv \
-    Resources/lib/python3.5/PyQt5/Qt?*.so \
-    Resources/lib/python3.5/PyQt5/tmp
+    Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt?*.so \
+    Resources/lib/python${PYTHON_VERSION}/PyQt5/tmp
 
 # Resources/lib/python3.5/PyQt5/Qt/lib - QtXxx.framework
 mkdir \
-    Resources/lib/python3.5/PyQt5/Qt/lib/tmp
+    Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/lib/tmp
 mv \
-    Resources/lib/python3.5/PyQt5/Qt/lib/Qt*.framework \
-    Resources/lib/python3.5/PyQt5/Qt/lib/tmp
+    Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/lib/Qt*.framework \
+    Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/lib/tmp
 
 for LIBNAME in \
     QtCore \
@@ -53,21 +53,21 @@ for LIBNAME in \
 do
     echo "Info: framework used ${LIBNAME}"
     mv \
-            Resources/lib/python3.5/PyQt5/tmp/${LIBNAME}.so \
-            Resources/lib/python3.5/PyQt5
+            Resources/lib/python${PYTHON_VERSION}/PyQt5/tmp/${LIBNAME}.so \
+            Resources/lib/python${PYTHON_VERSION}/PyQt5
     mv \
-        Resources/lib/python3.5/PyQt5/Qt/lib/tmp/${LIBNAME}.framework \
-        Resources/lib/python3.5/PyQt5/Qt/lib
+        Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/lib/tmp/${LIBNAME}.framework \
+        Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/lib
 done
 
 # fixup 4. remove the unused frameworks
-rm -rf Resources/lib/python3.5/PyQt5/tmp
-rm -rf Resources/lib/python3.5/PyQt5/Qt/lib/tmp
+rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/tmp
+rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/lib/tmp
 
 # remove qml stuff
-rm -rf Resources/lib/python3.5/PyQt5/Qt/qml
-rm -rf Resources/lib/python3.5/PyQt5/Qt/translations
-rm -rf Resources/lib/python3.5/PyQt5/Qt/qsci
+rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/qml
+rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/translations
+rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/qsci
 
 if [ "$1" != "--package" ]
 then
