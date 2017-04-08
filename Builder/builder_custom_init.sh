@@ -1,7 +1,7 @@
 #!/bin/echo Usage: . $0
 
 export BUILDER_CFG_PLATFORM=$(uname -s)
-export PYTHON_VERSION=${1:-3.5}
+export PYTHON_VERSION=${1:-3.6}
 
 # ether set to tag:<ver> or trunk:<ver>
 export PYCXX_VER=tag7.0.1
@@ -15,7 +15,7 @@ Darwin)
     ;;
 
 Linux)
-    for version in ${PYTHON_VERSION} 3.4
+    for version in ${PYTHON_VERSION} 3.6 3.5 3.4
     do
         if [ -e /usr/bin/python${version} ]
         then
