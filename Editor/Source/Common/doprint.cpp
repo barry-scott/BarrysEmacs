@@ -1,4 +1,4 @@
-//    Copyright (c) 1984-2010
+//    Copyright (c) 1984-2017
 //      Barry A. Scott
 
 //
@@ -10,6 +10,11 @@
 #include <emobject.h>
 #include <emstring.h>
 #include <emexcept.h>
+#include <climits>
+
+#if !defined( INT64_MIN )
+#define INT64_MIN -9223372036854775808
+#endif
 
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;

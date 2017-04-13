@@ -30,4 +30,4 @@ then
     exit 1
 fi
 
-make -f linux.mak PYTHON=${PYTHON:?missing python def} clean build
+make -f linux.mak PYTHON=${PYTHON:?missing python def} clean build_${BUILDER_CFG_PLATFORM}

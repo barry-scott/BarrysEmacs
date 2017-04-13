@@ -27,11 +27,17 @@ Linux)
     then
         export BUILDER_CFG_PLATFORM=Linux-Fedora
 
+    else if [ -e /etc/centos-release ]
+    then
+        export BUILDER_CFG_PLATFORM=Linux-Fedora
+
     else
         # assume a debian type of system
         export BUILDER_CFG_PLATFORM=Linux-Debian
 
     fi
+    fi
+
     export PYTHON=python${PYTHON_VERSION}
     ;;
 *)

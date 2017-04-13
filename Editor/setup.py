@@ -782,11 +782,11 @@ class LinuxCompilerGCC(CompilerGCC):
 
         self._addFromEnv( 'PYTHON_VERSION' )
         if self.expand( '%(PYTHON_VERSION)s' ).startswith( '3.' ):
-            self._addVar( 'PYTHON_INCLUDE', '/usr/include/python%(PYTHON_VERSION)sm' )
-            self._addVar( 'LINK_LIBS', '-lpython%d.%dm' % (sys.version_info.major, sys.version_info.minor) )
+            self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
+            self._addVar( 'LINK_LIBS', '-L%s/lib64 -lpython%d.%dm' % (sys.prefix, sys.version_info.major, sys.version_info.minor) )
         else:
-            self._addVar( 'PYTHON_INCLUDE', '/usr/include/python%(PYTHON_VERSION)s' )
-            self._addVar( 'LINK_LIBS', '-lpython%d.%d' % (sys.version_info.major, sys.version_info.minor) )
+            self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)s' % (sys.prefix,) )
+            self._addVar( 'LINK_LIBS', '-L%s/lib64 -lpython%d.%d' % (sys.prefix, sys.version_info.major, sys.version_info.minor) )
 
         self._addVar( 'CCCFLAGS',
                                         '-g '
