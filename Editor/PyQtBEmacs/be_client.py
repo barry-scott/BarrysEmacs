@@ -353,7 +353,6 @@ class ClientUnix(ClientPosix):
             app_dir = os.getcwd()
 
         server_path = os.path.join( app_dir, 'bemacs_server' )
-        server_path = '/usr/bin/bemacs_server'
         debugClient( 'server_path %r' % (server_path,) )
 
         args = [server_path]
