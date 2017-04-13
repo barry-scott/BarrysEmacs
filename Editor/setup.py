@@ -756,9 +756,9 @@ class LinuxCompilerGCC(CompilerGCC):
 
         self._addFromEnv( 'PYTHON_VERSION' )
         if self.expand( '%(PYTHON_VERSION)s' ).startswith( '3.' ):
-            self._addVar( 'PYTHON_INCLUDE', '/usr/include/python%(PYTHON_VERSION)sm' )
+            self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
         else:
-            self._addVar( 'PYTHON_INCLUDE', '/usr/include/python%(PYTHON_VERSION)s' )
+            self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)s' % (sys.prefix,) )
 
         self._addVar( 'CCCFLAGS',
                                         '-g '
