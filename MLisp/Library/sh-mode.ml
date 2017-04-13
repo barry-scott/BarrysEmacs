@@ -20,6 +20,7 @@
         (modify-syntax-table "string-1" "\"")
         (modify-syntax-table "string-1" "'")
         (modify-syntax-table "string-2,paired" "${" "}")
+        (modify-syntax-table "string-2" "`")
         (modify-syntax-table "prefix" "\\")
         (modify-syntax-table "word" "_")
 
