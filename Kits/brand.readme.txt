@@ -25,8 +25,17 @@ Introduction
         Linux (tested on: Fedora 24)
 
 New in %(version)s
-    New in this release
+    * The disk space required for Barry's Emacs has been reduced
+      to about 1/2 what 8.3.3 used on Windows and macOS.
+    * Drawing problem with pixels left on screen fixed
+    * On macOS text on retina screens is no longer faint
+    * make bemacs -wait work on linux
+    * Small improvements to HTML-mode and sh-mode
+    * Small docs improvements
+    * fix auto-execute to no longer lowercase the filename
+      before comparing to the auto-execute pattern
 
+New in 8.3.3
     * New toolbar icons for Open and Save
     * Preferences allows colours to be setup
     * New syntax type of problem:
