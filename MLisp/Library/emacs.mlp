@@ -25,6 +25,8 @@
         ~col-num
         ~read-only
         ~wait
+        ~windows
+        ~delete-other-windows
         ~restore
 
         (synchronise-files)
@@ -36,6 +38,8 @@
         (setq ~col-num 0)
         (setq ~read-only 0)
         (setq ~wait 0)
+        (setq ~delete-other-windows 0)
+        (setq ~windows current-windows)
         (setq ~restore 1)
 
         (while (< ~arg (argc))
@@ -81,7 +85,10 @@
                         (~emacs-com-is-qualifier "name" 4 1 ~qual-name ~qual-value)
                         (novalue); ignore the name=xxx parameter
                         (~emacs-com-is-qualifier "wait" 4 0 ~qual-name ~qual-value)
-                        (setq ~wait 1)
+                        (progn
+                            (setq ~wait 1)
+                            (setq ~delete-other-windows 1)
+                        )
                         (~emacs-com-report-error (concat "Unknown qualifier " ~qual))
                     )
                 )
@@ -100,10 +107,24 @@
                                     (while (length ~filename)
                                         (setq ~filename-pattern "")
                                         (~emacs-com-visit-file ~filename)
+                                        (if ~delete-other-windows
+                                            (progn
+                                                (delete-other-windows)
+                                                (setq ~delete-other-windows 0)
+                                            )
+                                        )
                                         (setq ~filename (expand-file-name ~filename-pattern))
                                     )
                                 )
-                                (~emacs-com-visit-file ~filename-pattern)
+                                (progn
+                                    (~emacs-com-visit-file ~filename-pattern)
+                                    (if ~delete-other-windows
+                                        (progn
+                                            (delete-other-windows)
+                                            (setq ~delete-other-windows 0)
+                                        )
+                                    )
+                                )
                             )
                         )
                         (if (!= (substr error-message 1 10) "New file: ")
@@ -129,6 +150,7 @@
             (progn
                 (recursive-edit)
                 (UI-python-hook "release-waiting-client" "")
+                (setq current-windows ~windows)
             )
         )
     )
@@ -156,7 +178,7 @@
             ~index-line-start
             ~index-col-start
             ~index-col-end
-            
+
             (setq ~index-line-start (string-index-of-string ~filename ":" (+ 1 ~index-start)))
             (if (< ~index-line-start 0)
                 (setq ~index-line-start (length ~filename))
@@ -172,22 +194,22 @@
 
             ;;;(get-tty-string (concat "indices start " ~index-start " line-start " ~index-line-start " col-start " ~index-col-start " col-end " ~index-col-end))
 
-            
+
             (setq ~line-num (string-extract ~filename (+ 1 ~index-line-start) ~index-col-start))
             ;;;(get-tty-string (concat "line number " ~index-start " " ~index-line-start " " ~index-col-start " " ~line-num))
-            
+
             (setq ~col-num (string-extract ~filename (+ 1 ~index-col-start) ~index-col-end))
             ;;;(get-tty-string (concat "col number " ~index-start " " ~index-line-start " " ~index-col-start " Line:" ~line-num " Col:" ~col-num ))
-            
+
             (setq ~filename (string-extract ~filename 0 ~index-line-start))
             ;;;(get-tty-string (concat "~filename " ~filename))
         )
     )
     (visit-file ~filename)
-    
+
     (if (> ~line-num 0)
         (goto-line ~line-num))
-    
+
     (while (& (! (eolp)) (< (current-column) ~col-num))
         (forward-character)
     )
