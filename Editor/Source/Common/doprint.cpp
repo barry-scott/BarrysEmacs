@@ -53,8 +53,8 @@ FormatString::FormatString( EmacsString _format )
 , next_arg_type( argNone )
 , next_width_type( argNone )
 , next_precision_type( argNone )
-, format_char(0)
-, pad_char(' ')
+, format_char( 0 )
+, pad_char( ' ' )
 , width( 0 )
 , precision( INT_MAX )
 , left_justify( 0 )
@@ -315,7 +315,9 @@ void FormatString::process_format()
         else
         {
             if( ch == '0' )
+            {
                 pad_char = '0';
+            }
             while( ch >= '0' && ch <= '9' )
             {
                 width = width*10 + ch - '0';

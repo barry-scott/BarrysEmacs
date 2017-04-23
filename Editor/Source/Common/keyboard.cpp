@@ -503,8 +503,8 @@ static int _get_char( void )
 
     int remember = remembering;
 
-#if DBG_KEY && DBG_TMP
-    if( dbg_flags&DBG_KEY && dbg_flags&DBG_TMP )
+#if DBG_KEY
+    if( dbg_flags&DBG_KEY )
     {
         _dbg_msg( "get_char: start" );
         {
@@ -813,8 +813,8 @@ having_found_char:    // leave this block
     ;
     }
 
-#if DBG_KEY && DBG_TMP
-    if( dbg_flags&DBG_KEY && dbg_flags&DBG_TMP )
+#if DBG_KEY
+    if( dbg_flags&DBG_KEY )
     {
         _dbg_msg( FormatString("get_char: return %C(0x%x)") << c << c );
     }
@@ -850,8 +850,8 @@ having_found_char:    // leave this block
 int get_char( void )
 {
     int ch = _get_char();
-#if DBG_KEY && DBG_TMP
-    if( dbg_flags&DBG_KEY && dbg_flags&DBG_TMP )
+#if DBG_KEY
+    if( dbg_flags&DBG_KEY )
     {
         _dbg_msg( FormatString("get_char() return %C(0x%x)") << ch << ch );
     }

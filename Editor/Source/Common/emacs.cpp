@@ -718,52 +718,70 @@ int parse_dbg_flags( const EmacsString &flags )
 
         if( keyword == "dumptofile" )
             flags_value |= DBG_DUMPTOFILE|DBG_NO_DBG_MSG;
+
         else if( keyword == "alloc_check" )
             flags_value |= DBG_ALLOC_CHECK;
+
         else if( keyword == "exec" )
             flags_value |= DBG_EXEC;
+
         else if( keyword == "key" )
             flags_value |= DBG_KEY;
+
         else if( keyword == "display" )
             flags_value |= DBG_DISPLAY;
+
         else if( keyword == "queue" )
             flags_value |= DBG_QUEUE;
+
         else if( keyword == "buffer" )
             flags_value |= DBG_BUFFER;
+
         else if( keyword == "profile" )
             flags_value |= DBG_PROFILE;
+
         else if( keyword == "vector" )
             flags_value |= DBG_VECTOR;
+
         else if( keyword == "calc_ins_del" )
             flags_value |= DBG_CALC_INS_DEL;
+
         else if( keyword == "execfile" )
             flags_value |= DBG_EXECFILE;
+
         else if( keyword == "no_dbg_msg" )
             flags_value |= DBG_NO_DBG_MSG;
+
         else if( keyword == "syntax" )
             flags_value |= DBG_SYNTAX;
+
         else if( keyword == "emstring" )
             flags_value |= DBG_EMSTRING;
+
         else if( keyword == "ser" )
             flags_value |= DBG_SER;
+
         else if( keyword == "ml_parse" )
             flags_value |= DBG_ML_PARSE;
+
         else if( keyword == "ml_error" )
             flags_value |= DBG_ML_ERROR;
+
         else if( keyword == "process" )
             flags_value |= DBG_PROCESS;
-#ifdef DBG_SYSLOG
-        else if( keyword == "syslog" )
-            flags_value |= DBG_SYSLOG;
-#endif
+
         else if( keyword == "verbose" )
             flags_value |= DBG_VERBOSE;
+
         else if( keyword == "tmp" )
             flags_value |= DBG_TMP;
+
         else if( keyword == "timer" )
             flags_value |= DBG_TIMER;
+
         else if( keyword == "ext_search" )
             flags_value |= DBG_EXT_SEARCH;
+
         else
             _dbg_msg( FormatString("Unknown debug flag %s") << keyword );
     }

@@ -34,7 +34,45 @@ unsigned char output_buffer[OUTPUT_LENGTH];
 void TerminalControl_CHAR::t_io_flush()
 {
     if( output_size > 0 )
+    {
+#if DBG_DISPLAY
+        if( dbg_flags&DBG_DISPLAY )
+        {
+            EmacsString repr;
+            for( int i=0; i<output_size; ++i )
+            {
+                unsigned char ch = output_buffer[i];
+                switch( ch )
+                {
+                case 7:
+                    repr.append( "\\a" ); break;
+                case 8:
+                    repr.append( "\\b" ); break;
+                case 9:
+                    repr.append( "\\t" ); break;
+                case 10:
+                    repr.append( "\\n" ); break;
+                case 13:
+                    repr.append( "\\r" ); break;
+                case 27:
+                    repr.append( "\\e" ); break;
+                default:
+                    if( ch < 32
+                    || (ch > 126 && ch < 192) )
+                    {
+                        repr.append( FormatString("\\%03.3o") << ch );
+                    }
+                    else
+                    {
+                        repr.append( ch );
+                    }
+                }
+             }
+            _dbg_msg( FormatString("t_io_flush: '%s'") << repr );
+        }
+#endif
         write( output_channel, &output_buffer, output_size );
+    }
     output_size = 0;
 }
 
@@ -77,10 +115,8 @@ int check_term_output_size(int value, int v)
 
 void TerminalControl_CHAR::t_io_print( const unsigned char *str )
 {
-    const unsigned char *s;
     int ch;
-
-    s = str;
+    const unsigned char *s = str;
 
     if( ! term_expand_c1 )
     {
@@ -108,7 +144,9 @@ void TerminalControl_CHAR::t_io_print( const unsigned char *str )
     }
 
     if( output_size > term_output_buffer_size )
+    {
         t_io_flush();
+    }
 }
 
 void TerminalControl_CHAR::t_io_putchar( unsigned char ch )
