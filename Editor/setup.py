@@ -741,7 +741,7 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-g '
                                         '-Wall -fPIC -fexceptions -frtti '
                                         '-IInclude/Common -IInclude/Unix '
-                                        '"-DOS_NAME=\\"Linux\\"" '
+                                        '"-DOS_NAME=\\"MacOSX\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
                                         '-D%(DEBUG)s' )
 

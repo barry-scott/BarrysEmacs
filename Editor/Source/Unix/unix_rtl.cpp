@@ -687,9 +687,3 @@ void emacs_sleep( int milli_seconds )
     }
     emacs_assert( errno == EINTR );
 }
-
-bool isValidFilenameChar( EmacsChar_t ch )
-{
-    EmacsString invalid( "/\000" );
-    return invalid.index( ch ) < 0;
-}

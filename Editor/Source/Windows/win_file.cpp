@@ -27,6 +27,12 @@ FileNameCompare *file_name_compare = &file_name_compare_case_blind;
 #include    <win_incl.h>
 #include    <direct.h>
 
+bool isValidFilenameChar( EmacsChar_t ch )
+{
+    EmacsString invalid( "\\:/\000?<>*|\"" );
+    return invalid.index( ch ) < 0;
+}
+
 int file_is_regular( const EmacsString &file )
 {
     if( file.isNull() )

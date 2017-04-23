@@ -64,8 +64,8 @@ SynchroniseFilesWorkItem synchronise_files_work_item;
 
 BemacsEditorAccessControl editor_access_control;
 
-extern EmacsString env_emacs_library;
-extern EmacsString env_emacs_user;
+EmacsString env_emacs_library;
+EmacsString env_emacs_user;
 
 class BemacsEditor: public Py::PythonClass< BemacsEditor >
 {

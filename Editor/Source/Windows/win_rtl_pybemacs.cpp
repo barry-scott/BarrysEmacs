@@ -308,9 +308,3 @@ EmacsString os_error_code( unsigned int code )
 
     return EmacsString( FormatString( "%s (0x%x)" ) << EmacsString(msg) << code );
 }
-
-bool isValidFilenameChar( EmacsChar_t ch )
-{
-    EmacsString invalid( "\\:/\000?<>*|\"" );
-    return invalid.index( ch ) < 0;
-}

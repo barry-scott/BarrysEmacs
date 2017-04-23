@@ -24,6 +24,12 @@ FileNameCompare *file_name_compare = &file_name_compare_case_sensitive;
 #include <pwd.h>
 const int IS_SUBDIR( 1 );
 
+bool isValidFilenameChar( EmacsChar_t ch )
+{
+    EmacsString invalid( "/\000" );
+    return invalid.index( ch ) < 0;
+}
+
 int get_file_attr( const EmacsString &filename, unsigned *attr )
 {
     EmacsFileStat s;
