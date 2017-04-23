@@ -130,7 +130,9 @@ void TerminalControl_CHAR::t_io_putchar( unsigned char ch )
     output_size++;
 
     if( output_size > term_output_buffer_size )
+    {
         t_io_flush();
+    }
 }
 
 void TerminalControl_CHAR::t_change_attributes()
@@ -141,21 +143,16 @@ void TerminalControl_CHAR::t_change_attributes()
     t_cur_attributes.c_iflag &= ~(INLCR|ICRNL|IGNCR|ISTRIP);
     t_cur_attributes.c_oflag &= ~(OPOST);
 
-//#if defined( __hpux ) && !defined( _XPG4_EXTENDED )
-    // HP-UX 9
     t_cur_attributes.c_lflag &= ~(ECHO|ICANON|ISIG|IEXTEN);
-//#else
-//    // HP-UX 10+
-//    t_cur_attributes.c_lflag &= ~(ECHO|ISIG|IEXTEN);
-//    t_cur_attributes.c_lflag |= ICANON;
-//#endif
 
     t_cur_attributes.c_cc[VMIN] = 1;
     t_cur_attributes.c_cc[VTIME] = 0;
 
     int status = tcsetattr( input_channel, TCSADRAIN, &t_cur_attributes );
     if( status == -1 )
+    {
         _dbg_msg( FormatString("tcsetattr errno: %s") << strerror( errno ) );
+    }
 }
 
 #if defined( CBAUD )
@@ -175,9 +172,13 @@ void TerminalControl_CHAR::t_select()
         t_width = ws.ws_col;
         t_length = ws.ws_row;
         if( t_width < 20 )
+        {
             t_width = 80;
+        }
         if( t_length < 4 )
+        {
             t_length = 25;
+        }
 #else
         t_width = 80;
         t_length = 25;

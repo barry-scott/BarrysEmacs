@@ -60,27 +60,32 @@ class Setup:
             self.c_utils = Win32CompilerMSVC90( self )
             self.c_python_tools = Win32CompilerMSVC90( self )
             self.c_pybemacs = Win32CompilerMSVC90( self )
+            self.c_clibemacs = Win32CompilerMSVC90( self )
 
         elif self.platform == 'win64':
             self.c_utils = Win64CompilerVC14( self )
             self.c_python_tools = Win64CompilerVC14( self )
             self.c_pybemacs = Win64CompilerVC14( self )
+            self.c_clibemacs = Win64CompilerVC14( self )
 
         elif self.platform == 'macosx':
             self.c_utils = MacOsxCompilerGCC( self )
             self.c_python_tools = MacOsxCompilerGCC( self )
             self.c_pybemacs = MacOsxCompilerGCC( self )
+            self.c_clibemacs = MacOsxCompilerGCC( self )
 
         elif self.platform == 'linux':
             self.c_utils = LinuxCompilerGCC( self )
             self.c_python_tools = LinuxCompilerGCC( self )
             self.c_pybemacs = LinuxCompilerGCC( self )
+            self.c_clibemacs = LinuxCompilerGCC( self )
 
         else:
             raise ValueError( 'Unknown platform %r' % (self.platform,) )
 
         self.c_utils.setupUtilities()
         self.c_pybemacs.setupPythonEmacs()
+        self.c_clibemacs.setupCliEmacs()
         self.c_python_tools.setupPythonTools()
 
         self.unicode_header = UnicodeDataHeader( self.c_pybemacs )
@@ -117,92 +122,110 @@ class Setup:
             Source( self.c_pybemacs, 'Source/pybemacs/python_thread_control.cpp' ),
             ] + self.pycxx_obj_file
 
-        self.obj_files = [
-            Source( self.c_pybemacs, 'Source/Common/emunicode.cpp',
-                                    ['Include/Common/em_unicode_data.h'] ),
-            Source( self.c_pybemacs, 'Source/Common/abbrev.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/abspath.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/arith.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/buf_man.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/buffer.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/caseconv.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/columns.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/CommandLine.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/dbman.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/display.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/display_insert_delete.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/display_line.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/doprint.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/em_stat.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/em_time.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/emacs.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/emacs_init.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/emacs_proc.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/emacsrtl.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/emarray.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/emstring.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/emstrtab.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/errlog.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/file_name_compare.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/fileio.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/fio.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/function.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/getdb.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/getdirectory.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/getfile.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/glob_var.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/gui_input_mode.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/journal.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/key_names.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/keyboard.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/lispfunc.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/macros.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/mem_man.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/metacomm.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/minibuf.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/mlispars.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/mlispexp.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/mlisproc.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/mlprintf.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/ndbm.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/options.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/queue.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/save_env.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/search.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/search_extended_algorithm.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/search_extended_parser.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/search_interface.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/search_simple_algorithm.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/search_simple_engine.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/simpcomm.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/string_map.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/subproc.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/syntax.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/term.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/timer.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/undo.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/variable.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/varthunk.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/windman.cpp' ),
-            Source( self.c_pybemacs, 'Source/Common/window.cpp' ),
+        if self.platform in ('linux', 'macosx'):
+            self.pybemacs_specific_obj_files.extend( [
+                Source( self.c_pybemacs, 'Source/Unix/unix_rtl_pybemacs.cpp' ),
+                ] )
+        elif self.platform in ('win32', 'win64'):
+            self.pybemacs_specific_obj_files.extend( [
+                Source( self.c_pybemacs, 'Source/Windows/win_rtl_pybemacs.cpp' ),
+                ] )
+
+        self.cli_specific_obj_files = [
+            Source( self.c_clibemacs, 'Source/Unix/unix_main.cpp',
+                                        ['Source/Unix/unix_rtl.cpp'] ),
+            Source( self.c_clibemacs, 'Source/Unix/unix_trm.cpp' ),
+            Source( self.c_clibemacs, 'Source/Unix/trm_ansi.cpp' ),
             ]
 
-        if self.platform in ['linux', 'macosx']:
-            self.obj_files.extend( [
-                Source( self.c_pybemacs, 'Source/Unix/unix_rtl_pybemacs.cpp' ),
-                #Source( self.c_pybemacs, 'Source/Unix/unix_ext_func.cpp' ),
-                Source( self.c_pybemacs, 'Source/Unix/unixfile.cpp' ),
-                ] )
+        def makeObjFiles( compiler ):
+            obj_files = [
+                Source( compiler, 'Source/Common/emunicode.cpp',
+                                    ['Include/Common/em_unicode_data.h'] ),
+                Source( compiler, 'Source/Common/abbrev.cpp' ),
+                Source( compiler, 'Source/Common/abspath.cpp' ),
+                Source( compiler, 'Source/Common/arith.cpp' ),
+                Source( compiler, 'Source/Common/buf_man.cpp' ),
+                Source( compiler, 'Source/Common/buffer.cpp' ),
+                Source( compiler, 'Source/Common/caseconv.cpp' ),
+                Source( compiler, 'Source/Common/columns.cpp' ),
+                Source( compiler, 'Source/Common/CommandLine.cpp' ),
+                Source( compiler, 'Source/Common/dbman.cpp' ),
+                Source( compiler, 'Source/Common/display.cpp' ),
+                Source( compiler, 'Source/Common/display_insert_delete.cpp' ),
+                Source( compiler, 'Source/Common/display_line.cpp' ),
+                Source( compiler, 'Source/Common/doprint.cpp' ),
+                Source( compiler, 'Source/Common/em_stat.cpp' ),
+                Source( compiler, 'Source/Common/em_time.cpp' ),
+                Source( compiler, 'Source/Common/emacs.cpp' ),
+                Source( compiler, 'Source/Common/emacs_init.cpp' ),
+                Source( compiler, 'Source/Common/emacs_proc.cpp' ),
+                Source( compiler, 'Source/Common/emacsrtl.cpp' ),
+                Source( compiler, 'Source/Common/emarray.cpp' ),
+                Source( compiler, 'Source/Common/emstring.cpp' ),
+                Source( compiler, 'Source/Common/emstrtab.cpp' ),
+                Source( compiler, 'Source/Common/errlog.cpp' ),
+                Source( compiler, 'Source/Common/file_name_compare.cpp' ),
+                Source( compiler, 'Source/Common/fileio.cpp' ),
+                Source( compiler, 'Source/Common/fio.cpp' ),
+                Source( compiler, 'Source/Common/function.cpp' ),
+                Source( compiler, 'Source/Common/getdb.cpp' ),
+                Source( compiler, 'Source/Common/getdirectory.cpp' ),
+                Source( compiler, 'Source/Common/getfile.cpp' ),
+                Source( compiler, 'Source/Common/glob_var.cpp' ),
+                Source( compiler, 'Source/Common/gui_input_mode.cpp' ),
+                Source( compiler, 'Source/Common/journal.cpp' ),
+                Source( compiler, 'Source/Common/key_names.cpp' ),
+                Source( compiler, 'Source/Common/keyboard.cpp' ),
+                Source( compiler, 'Source/Common/lispfunc.cpp' ),
+                Source( compiler, 'Source/Common/macros.cpp' ),
+                Source( compiler, 'Source/Common/mem_man.cpp' ),
+                Source( compiler, 'Source/Common/metacomm.cpp' ),
+                Source( compiler, 'Source/Common/minibuf.cpp' ),
+                Source( compiler, 'Source/Common/mlispars.cpp' ),
+                Source( compiler, 'Source/Common/mlispexp.cpp' ),
+                Source( compiler, 'Source/Common/mlisproc.cpp' ),
+                Source( compiler, 'Source/Common/mlprintf.cpp' ),
+                Source( compiler, 'Source/Common/ndbm.cpp' ),
+                Source( compiler, 'Source/Common/options.cpp' ),
+                Source( compiler, 'Source/Common/queue.cpp' ),
+                Source( compiler, 'Source/Common/save_env.cpp' ),
+                Source( compiler, 'Source/Common/search.cpp' ),
+                Source( compiler, 'Source/Common/search_extended_algorithm.cpp' ),
+                Source( compiler, 'Source/Common/search_extended_parser.cpp' ),
+                Source( compiler, 'Source/Common/search_interface.cpp' ),
+                Source( compiler, 'Source/Common/search_simple_algorithm.cpp' ),
+                Source( compiler, 'Source/Common/search_simple_engine.cpp' ),
+                Source( compiler, 'Source/Common/simpcomm.cpp' ),
+                Source( compiler, 'Source/Common/string_map.cpp' ),
+                Source( compiler, 'Source/Common/subproc.cpp' ),
+                Source( compiler, 'Source/Common/syntax.cpp' ),
+                Source( compiler, 'Source/Common/term.cpp' ),
+                Source( compiler, 'Source/Common/timer.cpp' ),
+                Source( compiler, 'Source/Common/undo.cpp' ),
+                Source( compiler, 'Source/Common/variable.cpp' ),
+                Source( compiler, 'Source/Common/varthunk.cpp' ),
+                Source( compiler, 'Source/Common/windman.cpp' ),
+                Source( compiler, 'Source/Common/window.cpp' ),
+                ]
+            if self.platform in ('linux', 'macosx'):
+                obj_files.extend( [
+                    #Source( compiler, 'Source/Unix/unix_ext_func.cpp' ),
+                    Source( compiler, 'Source/Unix/unixfile.cpp' ),
+                    ] )
+            elif self.platform in ('win32', 'win64'):
+                self.obj_files.extend( [
+                    Source( compiler, 'Source/Windows/win_file.cpp' ),
+                    #Source( compiler, 'Source/Windows/win_ext_func.cpp' ),
+                    ] )
+            return obj_files
 
-        elif self.platform in ('win32', 'win64'):
-            self.obj_files.extend( [
-                Source( self.c_pybemacs, 'Source/Windows/win_rtl_pybemacs.cpp' ),
-                Source( self.c_pybemacs, 'Source/Windows/win_file.cpp' ),
-                #Source( self.c_pybemacs, 'Source/Windows/win_ext_func.cpp' ),
-                ] )
+        self.py_obj_files = makeObjFiles( self.c_pybemacs )
+        self.cli_obj_files = makeObjFiles( self.c_clibemacs )
 
         self.all_exe = [
-            PythonExtension( self.c_pybemacs, '_bemacs', self.pybemacs_specific_obj_files + self.obj_files ),
+            PythonExtension( self.c_pybemacs, '_bemacs', self.pybemacs_specific_obj_files + self.py_obj_files ),
+            Program( self.c_clibemacs, 'bemacs-cli', self.cli_specific_obj_files + self.cli_obj_files ),
             Program( self.c_utils, 'dbadd',      [Source( self.c_utils, 'Utilities/dbadd/dbadd.cpp' )]       +self.db_files ),
             Program( self.c_utils, 'dbcreate',   [Source( self.c_utils, 'Utilities/dbcreate/dbcreate.cpp' )] +self.db_files ),
             Program( self.c_utils, 'dbprint',    [Source( self.c_utils, 'Utilities/dbprint/dbprint.cpp' )]   +self.db_files ),
@@ -219,6 +242,7 @@ class Setup:
         try:
             with open( self.makefile_name, 'wt' ) as self.__makefile:
                 self.c_pybemacs.generateMakefileHeader()
+                self.c_clibemacs.generateMakefileHeader()
 
                 self.makePrint( 'all: %s' % (' '.join( [exe.getTargetFilename() for exe in self.all_exe] )) )
                 self.makePrint( '' )
@@ -416,6 +440,9 @@ class Win64CompilerVC14(Compiler):
                                         r'-U_DEBUG '
                                         r'-D%(DEBUG)s' )
 
+    def setupCliEmacs( self ):
+        raise ValueError( 'no support for CLI on Windows' )
+
     def setupPythonTools( self ):
         self._addVar( 'EDIT_OBJ',       r'obj-python-tools' )
         self._addVar( 'EDIT_EXE',       r'exe-python-tools' )
@@ -544,6 +571,9 @@ class Win32CompilerMSVC90(Compiler):
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
                                         r'-U_DEBUG '
                                         r'-D%(DEBUG)s' )
+
+    def setupCliEmacs( self ):
+        raise ValueError( 'no support for CLI on Windows' )
 
     def setupPythonTools( self ):
         self._addVar( 'EDIT_OBJ',       r'obj-python-tools' )
@@ -701,6 +731,22 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-framework Kerberos '
                                         '-framework Security' )
 
+    def setupCliEmacs( self ):
+        self._addVar( 'PYTHON',         sys.executable )
+
+        self._addVar( 'EDIT_OBJ',       'obj-cli-bemacs' )
+        self._addVar( 'EDIT_EXE',       'exe-cli-bemacs' )
+
+        self._addVar( 'CCCFLAGS',
+                                        '-g '
+                                        '-Wall -fPIC -fexceptions -frtti '
+                                        '-IInclude/Common -IInclude/Unix '
+                                        '"-DOS_NAME=\\"Linux\\"" '
+                                        '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
+                                        '-D%(DEBUG)s' )
+
+        self._addVar( 'LDEXE',          '%(CCC)s -g' )
+
     def setupPythonTools( self ):
         self._addVar( 'PYTHON',         sys.executable )
 
@@ -739,7 +785,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_OBJ',       'obj-utils' )
         self._addVar( 'EDIT_EXE',       'exe-utils' )
         self._addVar( 'CCCFLAGS',
-                                        '-g  '
+                                        '-g -O0 '
                                         '-Wall -fPIC -fexceptions -frtti '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
@@ -749,7 +795,6 @@ class LinuxCompilerGCC(CompilerGCC):
 
     def setupPythonEmacs( self ):
         self._addVar( 'PYTHON',         sys.executable )
-
 
         self._addVar( 'EDIT_OBJ',       'obj-pybemacs' )
         self._addVar( 'EDIT_EXE',       'exe-pybemacs' )
@@ -773,9 +818,24 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
         self._addVar( 'LDSHARED',       '%(CCC)s -shared -g ' )
 
-    def setupPythonTools( self ):
+    def setupCliEmacs( self ):
         self._addVar( 'PYTHON',         sys.executable )
 
+        self._addVar( 'EDIT_OBJ',       'obj-cli-bemacs' )
+        self._addVar( 'EDIT_EXE',       'exe-cli-bemacs' )
+
+        self._addVar( 'CCCFLAGS',
+                                        '-g '
+                                        '-Wall -fPIC -fexceptions -frtti '
+                                        '-IInclude/Common -IInclude/Unix '
+                                        '"-DOS_NAME=\\"Linux\\"" '
+                                        '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
+                                        '-D%(DEBUG)s' )
+
+        self._addVar( 'LDEXE',          '%(CCC)s -g' )
+
+    def setupPythonTools( self ):
+        self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-python-tools' )
         self._addVar( 'EDIT_EXE',       'exe-python-tools' )

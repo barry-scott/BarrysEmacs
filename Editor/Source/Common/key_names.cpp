@@ -130,6 +130,7 @@ static key_name_entry PC_key_name_entries[] =
     key_name_entry("mouse-wheel",                   "\033[#w"),
     key_name_entry("mouse-wheel-neg",               "\033[1#w"),
     key_name_entry("mouse-wheel-pos",               "\033[0#w"),
+    key_name_entry("mouse-motion",                  "\033[901~"),   // QQQ what is the real sequence?
     key_name_entry("num-lock",                      "\033OP" ),
     key_name_entry("page-down",                     "\033[6~" ),
     key_name_entry("page-up",                       "\033[5~" ),
@@ -164,6 +165,7 @@ static key_name_entry PC_key_name_entries[] =
     key_name_entry("shift-print-screen",            "\033[132~" ),
     key_name_entry("shift-right",                   "\033[109~" ),
     key_name_entry("shift-scroll-lock",             "\033[133~" ),
+    key_name_entry("shift-tab",                     "\033[900~" ),  // QQQ does this exist on a konsole?
     key_name_entry("shift-up",                      "\033[107~" ),
     key_name_entry("ss3",                           "\033O" ),
     key_name_entry("up",                            "\033[A" )

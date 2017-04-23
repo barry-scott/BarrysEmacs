@@ -551,11 +551,6 @@ int get_yes_or_no( int yes, const EmacsString &prompt )
     answer = win_yes_or_no( yes, prompt );
 #else
 
-#if defined( XWINDOWS )
-    if( is_motif )
-        answer = motif_yes_or_no( yes, prompt );
-    else
-#endif
     {
         Save<ProgramNode *> lcur_exec( &cur_exec );
         cur_exec = NULL;

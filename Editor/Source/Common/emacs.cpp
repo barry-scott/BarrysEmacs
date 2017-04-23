@@ -21,7 +21,6 @@ int argv_command( void );
 int argIsQualifier_command( void );
 int emacs_version( void );
 #if !defined( PYBEMACS )
-#pragma message( "Defining emacsMain" )
 int emacsMain( const EmacsString &rest_fn, const EmacsString &device, const EmacsString &term_type );
 static void read_emacs_memory_file();
 static void write_emacs_memory_file();
@@ -45,6 +44,8 @@ extern void init_scheduled_timeout(void);
 extern void restore_scheduled_timeout(void);
 extern void init_dsp(void);
 extern void init_memory(void);
+extern void init_unicode(void);
+extern void init_syntax(void);
 extern void init_lisp(void);
 extern void init_abs(void);
 extern void init_srch(void);
@@ -194,6 +195,8 @@ int emacsMain
 
     {
         // init logic without a restore
+        init_unicode();
+        init_syntax();
         init_fncs();                            // initialise the key bindings
         init_var();                             // " the variables
         init_bf();                              // " the buffer system
@@ -412,17 +415,14 @@ void EmacsCommandLineServerWorkItem::workAction()
     previous_directory = current_directory.asString();
 
     // first change directory
-    chdir_and_set_global_record( command_current_directory );
+    chdir_and_set_global_record( m_command_current_directory );
 
-    EmacsString full_command_line("emacs ");
-    full_command_line.append( command_line );
-
-    command_line_arguments.setArguments( full_command_line );
+    command_line_arguments = m_command_line;
 
     int arg=1;
     while( arg<command_line_arguments.argumentCount() )
     {
-        EmacsArgument argument( command_line_arguments.argument( arg ) );
+        const EmacsArgument &argument( command_line_arguments.argument( arg ) );
 
         if( argument.isQualifier() )
         {
@@ -785,7 +785,7 @@ void EmacsCommandLineServerWorkItem::newCommandLine( const EmacsString &current_
 
     if( g_initialCurrentDirectory.isNull() )
     {
-        //_dbg_msg( FormatString("newCommandLine: setting g_initialCurrentDirectory to %s") << command_current_directory );
+        //_dbg_msg( FormatString("newCommandLine: setting g_initialCurrentDirectory to %s") << m_command_current_directory );
         g_initialCurrentDirectory = m_command_current_directory;
     }
 

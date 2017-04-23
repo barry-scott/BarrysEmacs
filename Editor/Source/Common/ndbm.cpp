@@ -35,11 +35,11 @@ extern int dbg_flags;
 #if defined( CHECK_FILEDES )
 void database::dbg_check_fildes( const char *title )
 {
-    printf("\n\rDBG: check fildes - %s\n\r", title );
-    printf("Database: %s\n\r", db_name.sdata() );
-    printf("db_dirf: %d  %s\n\r", db_dirf, dirnm.sdata() );
-    printf("db_pagf: %d  %s\n\r", db_pagf, pagnm.sdata() );
-    printf("db_datf: %d  %s\n\r", db_datf, datnm.sdata() );
+    printf("\nDBG: check fildes - %s\n", title );
+    printf("Database: %s\n", db_name.sdata() );
+    printf("db_dirf: %d  %s\n", db_dirf, dirnm.sdata() );
+    printf("db_pagf: %d  %s\n", db_pagf, pagnm.sdata() );
+    printf("db_datf: %d  %s\n", db_datf, datnm.sdata() );
 
     printf("Fildes\tInode\tSize\n" );
     for( int i=1; i<20; i++ )
@@ -48,9 +48,9 @@ void database::dbg_check_fildes( const char *title )
         bool result = s.stat( i );
 
         if( result )
-            printf("%d\t%ld\t%ld\n\r", i, (long)s.data().st_ino, (long)s.data().st_size );
+            printf("%d\t%ld\t%ld\n", i, (long)s.data().st_ino, (long)s.data().st_size );
         else
-            printf("%d\tclosed\t%d\n\r", i, errno );
+            printf("%d\tclosed\t%d\n", i, errno );
     }
 }
 
@@ -364,26 +364,34 @@ database::datum database::fetch( datum &key )
 {
 # if DBG_EXEC
     if( dbg_flags&DBG_EXEC )
-        _dbg_msg( FormatString("fetch( ..., %s )\n\r") << db_name );
+    {
+        _dbg_msg( FormatString("fetch( '%s', '%s' )\n") << key.asString() << db_name );
+    }
 # endif
 
     ndbm_access( key.calchash() );
-    for( int i = 0;; i ++ )
+    for( int i = 0;; i++ )
     {
         datum item( *this, pagbuf, i );
 
         if( item.dptr == 0 )
+        {
             return item;
+        }
 
         if( key.cmpdatum( item ) == 0 )
+        {
             return item;
+        }
     }
 }
 
 int database::delete_key( datum &key )
 {
     if( db_rdonly )
+    {
         return -1;
+    }
 
     ndbm_access( key.calchash() );
     for( int i = 0;; i ++ )
@@ -391,7 +399,9 @@ int database::delete_key( datum &key )
         datum item( *this, pagbuf, i );
 
         if( item.dptr == 0 )
+        {
             return -1;
+        }
 
         if( key.cmpdatum( item ) == 0 )
         {
@@ -401,7 +411,9 @@ int database::delete_key( datum &key )
     }
 
     if( setup_db() < 0 )
+    {
         return -1;
+    }
 
     lseek( db_pagf, blkno * PBLKSIZ, 0 );
     write( db_pagf, pagbuf, PBLKSIZ );
@@ -660,6 +672,11 @@ database::datum::datum( database &_db, unsigned char *buf, int n )
     dsize = t - sp[n + 1] - 2*sizeof( int );
 }
 
+const EmacsString database::datum::asString() const
+{
+    return EmacsString( EmacsString::copy, dptr, dsize );
+}
+
 int database::datum::cmpdatum( const datum &d2 )
 {
     int n;
@@ -873,7 +890,9 @@ int database::get_db
 
 # if DBG_EXEC
     if( dbg_flags&DBG_EXEC )
+    {
         dbg_check_fildes( "start of get_db" );
+    }
 # endif
 
     datum value(*this);
@@ -882,7 +901,15 @@ int database::get_db
 
     value = fetch( value );
     if( value.dptr == 0 )
+    {
+# if DBG_EXEC
+        if( dbg_flags&DBG_EXEC )
+        {
+            _dbg_msg( FormatString("get_db( %s, %s ) => not found") << key << db_name );
+        }
+# endif
         return -1;
+    }
 
     int contentlen = (int)value.val2;
     unsigned char *content = malloc_ustr( contentlen );
@@ -899,7 +926,7 @@ int database::get_db
     if( dbg_flags&DBG_EXEC )
     {
         dbg_check_fildes( "after read in get_db" );
-        printf("lseek = %d, read = %d\n\r", (int)lseek_val, read_size );
+        _dbg_msg( FormatString("lseek = %d, read = %d") << lseek_val << read_size );
     }
 # endif
 
@@ -919,9 +946,24 @@ int database::get_db
 # endif
 
     if( read_size != contentlen )
-        return -1;
+    {
+# if DBG_EXEC
+        if( dbg_flags&DBG_EXEC )
+        {
+            _dbg_msg( FormatString("get_db( %s, %s ) => not found") << key << db_name );
+        }
+# endif
 
+        return -1;
+    }
     result_value = new_value;
+
+# if DBG_EXEC
+        if( dbg_flags&DBG_EXEC )
+        {
+            _dbg_msg( FormatString("get_db( %s, %s ) => found") << key << db_name );
+        }
+# endif
 
     return 1;
 }

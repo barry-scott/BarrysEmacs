@@ -6,6 +6,7 @@
 // keyboard manipulation primitives
 
 #include <emacs.h>
+#include <iostream>
 
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -611,7 +612,9 @@ static int _get_char( void )
 
             interrupt_key_struck = 0;
             if( wait_for_activity() < 0 )
+            {
                 return -1;     // we are quitting emacs
+            }
 
             // check for timeouts
             time_call_timeout_handler();
@@ -715,7 +718,9 @@ having_dequeued_a_char:    // leave this block
             if( char_cell->ce_type == CE_TYPE_PAR_SEP )
             {
                 if( num_params >= MAX_ARGS-1 )
+                {
                     return get_char();
+                }
 
                 args[0][ num_params ] = EmacsString
                         (
@@ -744,7 +749,9 @@ having_dequeued_a_char:    // leave this block
 
             interlock_dec( &input_pending );
             if( (char_cell = input_queue.queueRemoveFirst()) == NULL )
+            {
                 return get_char();              // cannot happen error
+            }
         }
 
         //
@@ -808,10 +815,14 @@ having_found_char:    // leave this block
 
 #if DBG_KEY && DBG_TMP
     if( dbg_flags&DBG_KEY && dbg_flags&DBG_TMP )
+    {
         _dbg_msg( FormatString("get_char: return %C(0x%x)") << c << c );
+    }
 #endif
     if( c < 0 )
+    {
         return -1;
+    }
 
     //
     //    Have Character now remember it if nessesary
@@ -841,7 +852,9 @@ int get_char( void )
     int ch = _get_char();
 #if DBG_KEY && DBG_TMP
     if( dbg_flags&DBG_KEY && dbg_flags&DBG_TMP )
+    {
         _dbg_msg( FormatString("get_char() return %C(0x%x)") << ch << ch );
+    }
 #endif
     return ch;
 }
@@ -1370,8 +1383,6 @@ exit_loop:
     free_queue.queue_validate();
 #endif
 }
-
-#include <iostream>
 
 void TerminalControl::k_input_mouse( const EmacsString &keys, bool shift, const std::vector<int> &all_params )
 {

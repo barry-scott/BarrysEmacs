@@ -8,6 +8,15 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
+SystemExpressionRepresentationIntBoolean force_redisplay;
+
+SystemExpressionRepresentationInt ui_open_file_readonly;
+SystemExpressionRepresentationString ui_open_file_name;
+SystemExpressionRepresentationString ui_save_as_file_name;
+SystemExpressionRepresentationString ui_filter_file_list;
+
+SystemExpressionRepresentationString ui_search_string;
+SystemExpressionRepresentationString ui_replace_string;
 
 extern SystemExpressionRepresentationIntBoolean complete_unique_choices;
 extern SystemExpressionRepresentationIntBoolean confirm_expansion_choice;

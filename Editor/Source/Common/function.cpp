@@ -46,26 +46,6 @@ extern int dump_histogram(void);
 # if defined( PYBEMACS )
 extern int ui_python_hook(void);
 # endif
-# ifdef XWINDOWS
-extern int motif_add_menu_keys_command(void);
-extern int motif_add_menu_proc_command(void);
-extern int ui_edit_copy(void);
-extern int ui_frame_state(void);
-extern int ui_frame_restore(void);
-extern int ui_frame_to_foreground(void);
-extern int motif_list_menus_command(void);
-extern int ui_frame_minimize(void);
-extern int ui_edit_paste(void);
-extern int motif_remove_menu_command(void);
-extern int ui_view_tool_bar(void);
-extern int ui_view_scroll_bars(void);
-extern int ui_view_status_bar(void);
-extern int motif_add_tool_bar_button_keys_command(void);
-extern int motif_add_tool_bar_button_proc_command(void);
-extern int motif_add_tool_bar_separator_command(void);
-extern int motif_remove_tool_bar_button_command(void);
-extern int motif_list_tool_bars_command(void);
-# endif
 # if defined( _WINDOWS ) || defined( _MSDOS )
 extern int ui_add_menu(void);
 extern int ui_add_named_menu(void);
@@ -107,30 +87,6 @@ extern int ui_popup_menu(void);
 extern int vms_load_averages(void);
 # endif
 
-# ifdef XWINDOWS
-extern int motif_XmCheckBox(void);
-extern int motif_XmDestroyDialog(void);
-extern int motif_XmDumpDialogs(void);
-extern int motif_XmFileSelectionDialog(void);
-extern int motif_XmFormDialog(void);
-extern int motif_XmFrame(void);
-extern int motif_XmIsDialog(void);
-extern int motif_XmLabel(void);
-extern int motif_XmMessageDialog(void);
-extern int motif_XmOperateModalDialog(void);
-extern int motif_XmOperateModelessDialog(void);
-extern int motif_XmPushButtonApply(void);
-extern int motif_XmPushButtonCancel(void);
-extern int motif_XmPushButtonOK(void);
-extern int motif_XmPushButtonUser(void);
-extern int motif_XmRadioBox(void);
-extern int motif_XmRowColumn(void);
-extern int motif_XmScale(void);
-extern int motif_XmSeparator(void);
-extern int motif_XmTextField(void);
-extern int motif_XmToggleButton(void);
-extern int motif_XmUpdatedLabel(void);
-# endif
 extern int xor_command(void);
 extern int append_region_to_buffer(void);
 extern int append_to_file(void);
@@ -540,26 +496,6 @@ static void init_fncs_a( void )
 # if defined( PYBEMACS )
     EMACS_NEW BoundName( "UI-python-hook", ui_python_hook );
 # endif
-# ifdef XWINDOWS
-    EMACS_NEW BoundName( "UI-add-menu-keys", motif_add_menu_keys_command );
-    EMACS_NEW BoundName( "UI-add-menu-procedure", motif_add_menu_proc_command );
-    EMACS_NEW BoundName( "UI-add-tool-bar-button-keys", motif_add_tool_bar_button_keys_command );
-    EMACS_NEW BoundName( "UI-add-tool-bar-button-procedure", motif_add_tool_bar_button_proc_command );
-    EMACS_NEW BoundName( "UI-add-tool-bar-separator", motif_add_tool_bar_separator_command );
-    EMACS_NEW BoundName( "UI-edit-copy", ui_edit_copy );
-    EMACS_NEW BoundName( "UI-edit-paste", ui_edit_paste );
-    EMACS_NEW BoundName( "UI-frame-state", ui_frame_state );
-    EMACS_NEW BoundName( "UI-frame-minimize", ui_frame_minimize );
-    EMACS_NEW BoundName( "UI-frame-restore", ui_frame_restore );
-    EMACS_NEW BoundName( "UI-frame-to-foreground", ui_frame_to_foreground );
-    EMACS_NEW BoundName( "UI-list-menus", motif_list_menus_command );
-    EMACS_NEW BoundName( "UI-list-tool-bars", motif_list_tool_bars_command );
-    EMACS_NEW BoundName( "UI-remove-menu", motif_remove_menu_command );
-    EMACS_NEW BoundName( "UI-remove-tool-bar-button", motif_remove_tool_bar_button_command );
-    EMACS_NEW BoundName( "UI-view-scroll-bars", ui_view_scroll_bars );
-    EMACS_NEW BoundName( "UI-view-status-bar", ui_view_status_bar );
-    EMACS_NEW BoundName( "UI-view-tool-bar", ui_view_tool_bar );
-# endif
 # if defined( _WINDOWS ) || defined( _MSDOS )
     EMACS_NEW BoundName( "UI-add-menu", ui_add_menu );
     EMACS_NEW BoundName( "UI-add-named-menu", ui_add_named_menu );
@@ -599,30 +535,6 @@ static void init_fncs_a( void )
 # endif
 # if defined( vms )
     EMACS_NEW BoundName( "VMS-load-averages", vms_load_averages );
-# endif
-# ifdef XWINDOWS
-    EMACS_NEW BoundName( "XmCheckBox", motif_XmCheckBox );
-    EMACS_NEW BoundName( "XmDestroyDialog", motif_XmDestroyDialog );
-    EMACS_NEW BoundName( "XmDumpDialogs", motif_XmDumpDialogs );
-    EMACS_NEW BoundName( "XmFileSelectionDialog", motif_XmFileSelectionDialog );
-    EMACS_NEW BoundName( "XmFormDialog", motif_XmFormDialog );
-    EMACS_NEW BoundName( "XmFrame", motif_XmFrame );
-    EMACS_NEW BoundName( "XmIsDialog", motif_XmIsDialog );
-    EMACS_NEW BoundName( "XmLabel", motif_XmLabel );
-    EMACS_NEW BoundName( "XmMessageDialog", motif_XmMessageDialog );
-    EMACS_NEW BoundName( "XmOperateModalDialog", motif_XmOperateModalDialog );
-    EMACS_NEW BoundName( "XmOperateModelessDialog", motif_XmOperateModelessDialog );
-    EMACS_NEW BoundName( "XmPushButtonApply", motif_XmPushButtonApply );
-    EMACS_NEW BoundName( "XmPushButtonCancel", motif_XmPushButtonCancel );
-    EMACS_NEW BoundName( "XmPushButtonOK", motif_XmPushButtonOK );
-    EMACS_NEW BoundName( "XmPushButtonUser", motif_XmPushButtonUser );
-    EMACS_NEW BoundName( "XmRadioBox", motif_XmRadioBox );
-    EMACS_NEW BoundName( "XmRowColumn", motif_XmRowColumn );
-    EMACS_NEW BoundName( "XmScale", motif_XmScale );
-    EMACS_NEW BoundName( "XmSeparator", motif_XmSeparator );
-    EMACS_NEW BoundName( "XmTextField", motif_XmTextField );
-    EMACS_NEW BoundName( "XmToggleButton", motif_XmToggleButton );
-    EMACS_NEW BoundName( "XmUpdatedLabel", motif_XmUpdatedLabel );
 # endif
     EMACS_NEW BoundName( "^", xor_command );
     EMACS_NEW BoundName( "append-region-to-buffer", append_region_to_buffer );

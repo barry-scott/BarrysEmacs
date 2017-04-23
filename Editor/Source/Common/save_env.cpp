@@ -38,9 +38,6 @@ EmacsSaveRestoreEnvironment *EmacsSaveRestoreEnvironmentObject;
 #   include <vms_comm.h>
 #  endif
 #  ifdef __unix__
-#   ifdef XWINDOWS
-#    include <X11/Intrinsic.h>
-#   endif
 #   include <unixcomm.h>
 #  endif
 #  if defined(_NT)

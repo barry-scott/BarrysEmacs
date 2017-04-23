@@ -32,6 +32,7 @@ public:
 
         int calchash();
         int cmpdatum( const datum &other );
+        const EmacsString asString() const;
 
         const unsigned char *dptr;
         int dsize;

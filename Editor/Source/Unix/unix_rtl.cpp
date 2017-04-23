@@ -10,7 +10,7 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
-#include <syslog.h>
+#include <unistd.h>
 
 #include <mem_man.h>
 
@@ -24,49 +24,35 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 #include <assert.h>
 #include <time.h>
 
-#ifdef XWINDOWS
-#include <emacs_motif.h>
-#endif
 #include <fcntl.h>
 #include <sys/stat.h>
-#ifdef __hpux
-#include <symlink.h>
 
-// define openlog and syslog as it is missing on hpux 9
-extern "C" void syslog(int priority, const char *message, ...);
-extern "C" void openlog(const char *ident, int logopt, int facility);
-extern "C" void closelog(void);
-#endif
-
-#if defined( __hpux ) && !defined( _XPG4_EXTENDED )
-// HP-UX 9 does not prototype select with the fd_set as the args
-#define Select( a, b, c, d, e ) select( a, (int *)b, (int *)c, (int *)d, e )
-#else
-#define Select( a, b, c, d, e ) select( a, b, c, d, e )
-#endif
-#ifdef _AIX
 #include <sys/select.h>
-#endif
 
 //#define exception math_exception
 //#include <exception>
 #include <math.h>
 
-
 static struct timeval emacs_start_time;
 
 static fd_set readfds, writefds, excepfds;
 static fd_set readfds_resp, writefds_resp;
-struct fd_info
-    {
-    XtPointer param;            // Parameter for function
-    XtInputCallbackProc cb;        // Fucntion to call for event
-    };
 
-static struct fd_info read_info[MAXFDS], write_info[MAXFDS];
+typedef unsigned int EmacsPollFdId;
+typedef void *EmacsPollFdParam;
+typedef void (*EmacsPollFdCallBack)( EmacsPollFdParam param, int fd );
+const int EmacsPollInputReadMask(  0x01 );
+const int EmacsPollInputWriteMask( 0x02 );
+
+struct fd_info
+{
+    EmacsPollFdParam param;
+    EmacsPollFdCallBack cb;
+};
+
+static struct fd_info read_info[FD_SETSIZE], write_info[FD_SETSIZE];
 static int fd_max = 0;
 static EmacsString unix_path;
-static EmacsString image_path;
 EmacsString name_arg;
 
 static void process_args( int argc, char **argv );
@@ -74,14 +60,7 @@ static bool isFileDescriptorOpen( int fd );
 
 static EmacsString restore_arg;
 static EmacsString package_arg;
-static int nodisplay_arg = 0;
 
-int motif_argc = 0;
-char *motif_argv[32];
-
-
-
-#if !defined(XWINDOWS)
 int init_gui_terminal( const EmacsString & )
 {
     return 0;
@@ -90,12 +69,10 @@ int init_gui_terminal( const EmacsString & )
 void UI_update_window_title( void )
 { }
 
-const int TIMER_TICK_VALUE( 50 );
-static unsigned int due_tick_count;
 static void( *timeout_handler )(void );
 struct timeval timeout_time;
 
-void time_schedule_timeout( void( *time_handle_timeout )(void ), int delta  )
+void time_schedule_timeout( void (*time_handle_timeout)( void ), int delta  )
 {
     struct timezone tzp;
     gettimeofday( &timeout_time, &tzp  );
@@ -103,20 +80,12 @@ void time_schedule_timeout( void( *time_handle_timeout )(void ), int delta  )
     timeout_time.tv_sec += delta/1000;
     timeout_time.tv_usec +=( delta%1000 )*1000;
     if( timeout_time.tv_usec > 1000000  )
-        {
-            timeout_time.tv_sec += 1;
-            timeout_time.tv_usec -= 1000000;
-        }
+    {
+        timeout_time.tv_sec += 1;
+        timeout_time.tv_usec -= 1000000;
+    }
     timeout_handler = time_handle_timeout;
 }
-
-void time_cancel_timeout(void)
-{
-    timeout_time.tv_sec = 0;
-    timeout_time.tv_usec = 0;
-    timeout_handler = NULL;
-}
-#endif
 
 void wait_abit(void)
 {
@@ -130,23 +99,19 @@ void wait_abit(void)
 #else
     FD_ZERO( &rfds );
 #endif
-    {
-#ifdef XWINDOWS
-    if (is_motif)
-        fd = theMotifGUI->application.dpy_fd;
-    else
-#endif
-        fd = 1<<0;
-    }
+
+    fd = 1<<0;
     FD_SET( fd, &rfds );
 
-    if (Select (MAXFDS, &rfds, NULL, NULL, &tmo))
-        {
+    if( select( FD_SETSIZE, &rfds, NULL, NULL, &tmo ) )
+    {
         wait_for_activity ();
-        }
+    }
 #if defined( SUBPROCESSES )
-        if( child_changed )
+    if( child_changed )
+    {
         change_msgs ();
+    }
 #endif
     return;
 }
@@ -168,23 +133,12 @@ void debug_exception(void)
 
 void _dbg_msg( const EmacsString &msg )
 {
-    if( dbg_flags&DBG_SYSLOG )
+    fprintf( stderr, "%s", msg.sdata() );
+    if( msg[-1] != '\n' )
     {
-        syslog( LOG_DEBUG, "%s", msg.sdata() );
+        fprintf( stderr, "\n" );
     }
-    else
-    {
-        static FILE *dbg = NULL;
-        if( dbg == NULL )
-        {
-            dbg = fopen( "/tmp/bemacs_debug.log", "a" );
-        }
-
-        fprintf( dbg,"%s", msg.sdata() );
-        if( msg[-1] != '\n' )
-            fprintf( dbg, "\n" );
-        fflush( dbg );
-    }
+    fflush( stderr );
 }
 
 int win_emacs_quit = 0;
@@ -195,7 +149,10 @@ int wait_for_activity(void)
 
     int size = theActiveView->k_input_event( buf, sizeof( buf ) );
     if( size < 0 )
+    {
         return -1;
+    }
+
     if( size >= 1 )
     {
         for( int i=0; i<size; i++ )
@@ -218,22 +175,34 @@ int interlock_dec( volatile int *cell )
 {
     (*cell)--;
     if( *cell == 0 )
+    {
         return 0;
+    }
     if( *cell < 0 )
+    {
         return -1;
+    }
     else
+    {
         return 1;
+    }
 }
 
 int interlock_inc( volatile int *cell )
 {
     (*cell)++;
     if( *cell == 0 )
+    {
         return 0;
+    }
     if( *cell < 0 )
+    {
         return -1;
+    }
     else
+    {
         return 1;
+    }
 }
 
 void conditional_wake(void)
@@ -247,9 +216,11 @@ EmacsString get_user_full_name()
     struct passwd *pw = getpwuid( uid );
 
     if( pw == NULL )
+    {
         return EmacsString::null;
-    else
-        return EmacsString( pw->pw_gecos );
+    }
+
+    return EmacsString( pw->pw_gecos );
 }
 
 EmacsString users_login_name()
@@ -258,7 +229,9 @@ EmacsString users_login_name()
     struct passwd *pw = getpwuid( uid );
 
     if( pw == NULL )
+    {
         return EmacsString::null;
+    }
 
     return EmacsString( pw->pw_name );
 }
@@ -267,29 +240,26 @@ EmacsString get_system_name()
 {
     char system_name[256];
     if( gethostname( system_name, sizeof( system_name ) ) == 0 )
+    {
         return EmacsString( system_name );
-    else
-        return EmacsString::null;
+    }
+
+    return EmacsString::null;
 }
 
 void fatal_error( int code )
 {
     printf("\nFatal Error %d\n", code );
-    exit(1);
+    exit( 1 );
 }
 
 int put_config_env( const EmacsString &name, const EmacsString &value )
 {
-    EmacsString buf;
-    buf.append( name );
-    buf.append( "=" );
-    buf.append( value );
-
-    return putenv( buf.sdataHack() );
+    return setenv( name, value, 1 );
 }
 
-extern EmacsString env_emacs_user;
-extern EmacsString env_emacs_library;
+EmacsString env_emacs_user;
+EmacsString env_emacs_library;
 
 EmacsString get_config_env( const EmacsString &name )
 {
@@ -315,96 +285,111 @@ EmacsString get_config_env( const EmacsString &name )
     return EmacsString::null;
 }
 
-XtInputId add_select_fd (int fd, long int mask, XtInputCallbackProc cb, XtPointer p)
+EmacsPollFdId add_select_fd( int fd, long int mask, EmacsPollFdCallBack cb, EmacsPollFdParam p )
     {
-    XtInputId resp = 0;
+    EmacsPollFdId resp = 0;
 
-    if (fd < MAXFDS)
-{
-    if (fd > fd_max)
-        fd_max = fd;
-    if (mask & XtInputReadMask)
+    if( fd < FD_SETSIZE )
+    {
+        if( fd > fd_max )
         {
-        read_info[fd].param = p;
-        read_info[fd].cb = cb;
-        FD_SET( fd, &readfds );
-        resp = fd << 8;
+            fd_max = fd;
         }
-    if (mask & XtInputWriteMask)
+        if( mask & EmacsPollInputReadMask )
         {
-        write_info[fd].param = p;
-        write_info[fd].cb = cb;
-        FD_SET( fd, &writefds );
-        resp |= fd << 16;
+            read_info[fd].param = p;
+            read_info[fd].cb = cb;
+            FD_SET( fd, &readfds );
+            resp = fd << 8;
         }
-}
+        if( mask & EmacsPollInputWriteMask )
+        {
+            write_info[fd].param = p;
+            write_info[fd].cb = cb;
+            FD_SET( fd, &writefds );
+            resp |= fd << 16;
+        }
+    }
+    else
+    {
+        fatal_error( 314 );
+    }
     return resp;
-    }
+}
 
-void remove_select_fd (XtInputId id)
-    {
-    int fd = 0, i;
-
-    if (id & 0xff00)
+void remove_select_fd( EmacsPollFdId id )
 {
-    fd = (int)((id >> 8) & 0xff);
-    read_info[fd].param = NULL;
-    read_info[fd].cb = NULL;
+    int fd = 0;
+
+    if( id & 0xff00 )
+    {
+        fd = (int)((id >> 8) & 0xff);
+        read_info[fd].param = NULL;
+        read_info[fd].cb = NULL;
         FD_CLR( fd, &readfds );
-}
+    }
 
-    if (id & 0xff0000)
-{
-    fd = (int)((id >> 16) & 0xff);
-    write_info[fd].param = NULL;
-    write_info[fd].cb = NULL;
-        FD_CLR( fd, &writefds );
-}
-
-    if (fd == fd_max)
-{
-    for (i = fd_max; i >= 0; i--)
-        if (read_info[fd].cb != NULL || write_info[fd].cb != NULL)
+    if( id & 0xff0000 )
     {
-        fd_max = i;
-        break;
+        fd = (int)((id >> 16) & 0xff);
+        write_info[fd].param = NULL;
+        write_info[fd].cb = NULL;
+        FD_CLR( fd, &writefds );
     }
-    if (i < 0)
-        fd_max = 0;
+
+    if( fd == fd_max )
+    {
+        for( int i = fd_max; i >= 0; i-- )
+        {
+            if( read_info[fd].cb != NULL || write_info[fd].cb != NULL )
+            {
+                fd_max = i;
+                break;
+            }
+            if( i < 0 )
+            {
+                fd_max = 0;
+            }
+        }
+    }
 }
-    }
-int read_inputs (int fd, unsigned char *buf, unsigned int count)
+
+int read_inputs( int fd, unsigned char *buf, unsigned int count )
 {
-    int i, status;
+    int status;
 
     do
-        {
+    {
         memcpy( &readfds_resp, &readfds, sizeof( fd_set ) );
         memcpy( &writefds_resp, &writefds, sizeof( fd_set ) );
         FD_SET( fd, &readfds_resp );
-        status = Select (MAXFDS, &readfds_resp, &writefds_resp, &excepfds, 0);
-        }
+        status = select( FD_SETSIZE, &readfds_resp, &writefds_resp, &excepfds, 0 );
+    }
     while (status < 0 && errno == EINTR);
 
-//    _dbg_msg( FormatString("read_inputs( %d, buf, %d ) => status = %d") << fd << count << status );
+    //_dbg_msg( FormatString("read_inputs( %d, buf, %d ) => status = %d") << fd << count << status );
 
-    for (i = 1; i <= fd_max; i++)
+    for( int fd_scan = 1; fd_scan <= fd_max; fd_scan++ )
+    {
+        //_dbg_msg( FormatString("fd %d read %d write %d")
+        //      << i << FD_ISSET( i, &readfds_resp ) << FD_ISSET( i, &writefds_resp ) );
+        if( read_info[fd_scan].cb != NULL
+        && FD_ISSET( fd_scan, &readfds_resp ) )
         {
-//        _dbg_msg( FormatString("fd %d read %d write %d")
-//            << i << FD_ISSET( i, &readfds_resp ) << FD_ISSET( i, &writefds_resp ) );
-        if( read_info[i].cb != NULL
-        && FD_ISSET( i, &readfds_resp ) )
-        read_info[i].cb(read_info[i].param, &i, NULL);
-        if( write_info[i].cb != NULL
-        && FD_ISSET( i, &writefds_resp ) )
-        write_info[i].cb(write_info[i].param, &i, NULL);
+            read_info[fd_scan].cb( read_info[fd_scan].param, fd_scan );
         }
+        if( write_info[fd_scan].cb != NULL
+        && FD_ISSET( fd_scan, &writefds_resp ) )
+        {
+            write_info[fd_scan].cb( write_info[fd_scan].param, fd_scan );
+        }
+    }
 
     if( FD_ISSET( fd, &readfds_resp ) )
-        {
-//        _dbg_msg( FormatString("read_inputs() calling read( %d, ... )") << fd );
-        return read (fd, buf, count);
-        }
+    {
+        //_dbg_msg( FormatString("read_inputs() calling read( %d, ... )") << fd );
+        return read( fd, buf, count );
+    }
 
     return 0;
 }
@@ -413,25 +398,6 @@ void OutputDebugString( const char *message )
 {
     printf( "Debug: %s\n", message );
 }
-
-
-int elapse_time()
-{
-    struct timeval now;
-    gettimeofday( &now, NULL );
-
-    //
-    //    calculate the time since startup in mSec.
-    //    we ignore the usec part of the start time
-    //    (assuming its 0)
-    //
-    int elapse_time = (int)(now.tv_sec - emacs_start_time.tv_sec);
-    elapse_time *= 1000;
-    elapse_time += (int)(now.tv_usec/1000);
-
-    return elapse_time;
-}
-
 
 extern void init_memory();
 
@@ -446,6 +412,7 @@ void EmacsInitialisation::os_specific_init()
 #endif
 }
 
+#if 0
 //
 //    Emacs server code
 //
@@ -453,7 +420,7 @@ void EmacsInitialisation::os_specific_init()
 static EmacsString server_fifo;
 static EmacsString client_fifo;
 
-static XtInputId emacs_server_input_id;
+static EmacsPollFdId emacs_server_input_id;
 static int emacs_server_read_fd = -1;
 static int emacs_server_write_fd = -1;
 
@@ -461,8 +428,8 @@ class EmacsServerWorkItem : public EmacsWorkItem
 {
 public:
     EmacsServerWorkItem()
-        : EmacsWorkItem(),
-        bytes_read(0)
+    : EmacsWorkItem()
+    , bytes_read(0)
     {}
     virtual ~EmacsServerWorkItem()
     {}
@@ -493,7 +460,9 @@ void EmacsServerWorkItem::workAction()
 
     // quit if last read failed
     if( bytes_read <= 0 )
+    {
         return;
+    }
 
     // get focus if we need it
     theMotifGUI->getKeyboardFocus();
@@ -519,7 +488,10 @@ void EmacsServerWorkItem::workAction()
     // this will fail until the client is synced up
     emacs_client_write_fd = open( client_fifo, O_WRONLY|O_NONBLOCK );
     if( emacs_client_write_fd < 0 )
+    {
         return;
+    }
+
     // send a 1 byte <space> string
     write( emacs_client_write_fd, " ", 1 );
     close( emacs_client_write_fd );
@@ -530,7 +502,10 @@ bool send_exit_message( const EmacsString &command )
     // this will fail until the client is synced up
     int emacs_client_write_fd = open( client_fifo, O_WRONLY|O_NONBLOCK );
     if( emacs_client_write_fd < 0 )
+    {
         return false;
+    }
+
     // send a 1 byte header on the response string
     EmacsString response("R");    // R for response
     response.append( command );
@@ -539,7 +514,7 @@ bool send_exit_message( const EmacsString &command )
     return true;
 }
 
-void emacs_server_callback(XtPointer PNOTUSED(str), int *fd, XtInputId* PNOTUSED(id) )
+void emacs_server_callback(EmacsPollFdParam PNOTUSED(str), int *fd, EmacsPollFdId* PNOTUSED(id) )
 {
     emacs_server_work_item.readCommand( *fd );
 }
@@ -554,9 +529,8 @@ void EmacsServerWorkItem::readCommand( int fd )
     }
 }
 
-
-extern XtInputId add_to_select( int fd, long int mask, XtInputCallbackProc input_request, EmacsProcess *npb );
-extern void remove_input( XtInputId id );
+extern EmacsPollFdId add_to_select( int fd, long int mask, EmacsPollFdCallBack input_request, EmacsProcess *npb );
+extern void remove_input( EmacsPollFdId id );
 
 void start_emacs_server()
 {
@@ -575,16 +549,24 @@ void start_emacs_server()
         if( home != NULL )
         {
             for( const char *p = home; *p; p++ )
+            {
                 if( *p == '/' )
+                {
                     name = p;
+                }
+            }
         }
         else
         {
             struct passwd *pwd = getpwuid( geteuid() );
             if( pwd == NULL )
+            {
                 name = "default";
+            }
             else
+            {
                 name = pwd->pw_name;
+            }
         }
 
         server_fifo = "/tmp/";
@@ -613,13 +595,15 @@ void start_emacs_server()
         return;
 
 
-    emacs_server_input_id = add_to_select( emacs_server_read_fd, XtInputReadMask, emacs_server_callback, NULL );
+    emacs_server_input_id = add_to_select( emacs_server_read_fd, EmacsPollInputReadMask, emacs_server_callback, NULL );
 }
 
 void stop_emacs_server()
 {
     if( emacs_server_read_fd < 0 )
+    {
         return;
+    }
 
     remove_input( emacs_server_input_id );
     close( emacs_server_read_fd );
@@ -632,6 +616,12 @@ bool emacs_internal_init_done_event(void)
 
     return true;
 }
+#else
+bool emacs_internal_init_done_event(void)
+{
+    return true;
+}
+#endif
 
 static bool isFileDescriptorOpen( int fd )
 {
@@ -645,7 +635,6 @@ EmacsDateTime EmacsDateTime::now(void)
 {
     EmacsDateTime now;
 
-
     struct timeval t;
     gettimeofday(  &t, NULL );
 
@@ -655,30 +644,15 @@ EmacsDateTime EmacsDateTime::now(void)
     return now;
 }
 
-EmacsString EmacsDateTime::asString(void) const
-{
-    double int_part, frac_part;
-
-    frac_part = modf( time_value, &int_part );
-    frac_part *= 1000.0;
-
-    time_t clock = int( int_part );
-    int milli_sec = int( frac_part );
-
-    struct tm *tm = localtime( &clock );
-
-    return FormatString("%4d-%2d-%2d %2d:%2d:%2d.%3.3d")
-        << tm->tm_year + 1900 << tm->tm_mon + 1 << tm->tm_mday
-        << tm->tm_hour << tm->tm_min << tm->tm_sec << milli_sec;
-}
-
 EmacsString os_error_code( unsigned int code )
 {
     const char *error_string = strerror( code );
     if( error_string == NULL )
+    {
         return EmacsString( FormatString("Unix error code %d") << code );
-    else
-        return EmacsString( error_string );
+    }
+
+    return EmacsString( error_string );
 }
 
 #undef NDEBUG
@@ -708,6 +682,14 @@ void emacs_sleep( int milli_seconds )
     request.tv_nsec = (milli_seconds%1000)*1000000;    // convert milli to nano
     int rc = nanosleep( &request, NULL );
     if( rc == 0 )
+    {
         return;
+    }
     emacs_assert( errno == EINTR );
+}
+
+bool isValidFilenameChar( EmacsChar_t ch )
+{
+    EmacsString invalid( "/\000" );
+    return invalid.index( ch ) < 0;
 }

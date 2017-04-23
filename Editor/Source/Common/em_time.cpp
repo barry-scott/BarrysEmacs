@@ -4,6 +4,8 @@
 //
 #include <emacs.h>
 
+#include <math.h>
+
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );

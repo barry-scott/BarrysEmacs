@@ -19,8 +19,8 @@ int is_windows_nt;
 
 unsigned long main_thread_id;
 
-extern EmacsString env_emacs_user;
-extern EmacsString env_emacs_library;
+EmacsString env_emacs_user;
+EmacsString env_emacs_library;
 
 void EmacsInitialisation::os_specific_init()
 {

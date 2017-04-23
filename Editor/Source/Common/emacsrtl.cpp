@@ -33,32 +33,3 @@ _dbg_fn_trace::~_dbg_fn_trace()
 
     s_call_depth = m_call_depth;
 }
-
-#ifdef vms
-void _dbg_msg( EmacsString fmt, ... )
-{
-    EmacsString buf;
-    va_list argp;
-    struct dsc$descriptor str;
-    va_start( argp, fmt );
-
-    do_print( fmt, &argp, buf );
-
-    DSC_SZ( str, buf.sdata() );
-    lib$put_output( &str );
-}
-
-// save a string in managed memory
-unsigned char * savestr( const unsigned char *s )
-{
-    if( s == NULL )
-        // return a nul string
-        return savestr( u_str("") );
-
-    // copy the string
-    int size = _str_len( s ) + 1;
-    unsigned char *ret = malloc_ustr( size );
-    _str_cpy( ret, s );
-    return ret;
-}
-#endif

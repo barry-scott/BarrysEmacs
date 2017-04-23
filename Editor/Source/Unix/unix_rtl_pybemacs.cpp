@@ -49,17 +49,12 @@ void debug_exception(void)
 
 void _dbg_msg( const EmacsString &msg )
 {
-    if( dbg_flags&DBG_SYSLOG )
+    fprintf( stderr, "%s", msg.sdata() );
+    if( msg[-1] != '\n' )
     {
-        syslog( LOG_DEBUG, "%s", msg.sdata() );
+        fprintf( stderr, "\n" );
     }
-    else
-    {
-        fprintf( stderr,"%s", msg.sdata() );
-        if( msg[-1] != '\n' )
-            fprintf( stderr, "\n" );
-        fflush( stderr );
-    }
+    fflush( stderr );
 }
 
 int interlock_dec( volatile int *cell )
@@ -232,10 +227,4 @@ void emacs_sleep( int milli_seconds )
     if( rc == 0 )
         return;
     emacs_assert( errno == EINTR );
-}
-
-bool isValidFilenameChar( EmacsChar_t ch )
-{
-    EmacsString invalid( "/\000" );
-    return invalid.index( ch ) < 0;
 }

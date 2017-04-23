@@ -6,9 +6,6 @@
 #include <emacs.h>
 #include <em_stat.h>
 #include <emacs_signal.h>
-#ifdef XWINDOWS
-#include <emacs_motif.h>
-#endif
 
 # undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -17,7 +14,6 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 extern int ptym_open( char *pts_name );
 extern int ptys_open( int fdm, char *pts_name );
 
-SystemExpressionRepresentationIntBoolean force_redisplay;
 SystemExpressionRepresentationIntPositive maximum_dcl_buffer_size( 10000 );
 SystemExpressionRepresentationIntPositive dcl_buffer_reduction( 500 );
 
@@ -61,10 +57,6 @@ extern "C" void openlog(const char *ident, int logopt, int facility);
 # include <termios.h>
 # include <sys/time.h>
 # include <sys/stat.h>
-# ifdef XWINDOWS
-#  include <X11/Intrinsic.h>
-extern XtAppContext app_context;
-# endif
 
 #include <unixcomm.h>
 
@@ -218,45 +210,12 @@ XtInputId add_to_select( int fd, long int mask, XtInputCallbackProc input_reques
 {
     FD_SET( fd, &process_fds );
 
-# ifdef XWINDOWS
-    if( is_motif )
-    {
-        // this is the way to pass the mask in without an error or warning
-        union xt_arg
-        {
-            long l;
-            XtPointer p;
-        } xt_arg;
-        xt_arg.l = mask;
-        XtInputId id = XtAppAddInput
-            (
-            theMotifGUI->application.app_context,
-            fd,
-            xt_arg.p,
-            input_request,
-            (XtPointer)npb
-            );
-        if( dbg_flags&DBG_PROCESS )
-        { int t=elapse_time(); syslog( LOG_DEBUG, TIME_STAMP_STR "XtAppAddInput fd=%d, mask=0x%lx => id=0x%lx", t/1000, t%1000, fd, mask, id ); }
-        return id;
-    }
-    else
-# endif
-        return add_select_fd( fd, mask, input_request, npb );
+    return add_select_fd( fd, mask, input_request, npb );
 }
 
 void remove_input( XtInputId id )
 {
-# ifdef XWINDOWS
-    if( is_motif )
-    {
-        if( dbg_flags&DBG_PROCESS )
-        { int t=elapse_time(); syslog( LOG_DEBUG, TIME_STAMP_STR "XtRemoveInput id=0x%lx", t/1000, t%1000, id ); }
-        XtRemoveInput( id );
-    }
-    else
-# endif
-        remove_select_fd( id );
+    remove_select_fd( id );
 }
 
 

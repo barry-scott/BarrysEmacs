@@ -24,8 +24,6 @@ void qqq()
 
 EmacsString name_arg;
 
-static EmacsString image_path;
-
 extern void init_fncs( void );
 extern void init_var( void );
 extern void init_bf( void );
@@ -66,8 +64,8 @@ SynchroniseFilesWorkItem synchronise_files_work_item;
 
 BemacsEditorAccessControl editor_access_control;
 
-EmacsString env_emacs_library;
-EmacsString env_emacs_user;
+extern EmacsString env_emacs_library;
+extern EmacsString env_emacs_user;
 
 class BemacsEditor: public Py::PythonClass< BemacsEditor >
 {
@@ -1043,17 +1041,6 @@ extern "C" EXPORT_SYMBOL void init_bemacs_d()
 #else
 #error "Unsupported Python version"
 #endif
-
-// QQQ
-SystemExpressionRepresentationIntBoolean force_redisplay;
-
-SystemExpressionRepresentationInt ui_open_file_readonly;
-SystemExpressionRepresentationString ui_open_file_name;
-SystemExpressionRepresentationString ui_save_as_file_name;
-SystemExpressionRepresentationString ui_filter_file_list;
-
-SystemExpressionRepresentationString ui_search_string;
-SystemExpressionRepresentationString ui_replace_string;
 
 class TerminalControl_Python: public EmacsView
 {

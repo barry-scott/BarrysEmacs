@@ -438,7 +438,6 @@ void TerminalControl_CHAR::t_reset()
 
 void TerminalControl_CHAR::t_cleanup()
 {
-    t_highlight_mode( 0 );
     t_window( 0 );
     t_io_printf( "\233?6l\233%dH\233K", window_size );
     t_io_flush();

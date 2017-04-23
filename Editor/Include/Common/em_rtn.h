@@ -186,11 +186,6 @@ extern void vms_set_term_is_terminal(unsigned char *);
 extern int lib$signal( int, ... );
 #endif
 
-#ifdef XWINDOWS
-extern int xwin__init( TerminalControl *, char * );
-extern int motif_yes_or_no( int yes, const EmacsString &prompt );
-extern void motif_message_box( const EmacsString &message );
-#endif
 #ifdef __unix__
 extern int ansi__init( TerminalControl *, unsigned char * );
 extern void start_unix_timer( int );

@@ -69,7 +69,7 @@ bool MLispInputStream::atEof()
 
 void MLispInputStream::pushBack( EmacsChar_t c )
 {
-    assert( !m_has_peekc );
+    emacs_assert( !m_has_peekc );
     m_has_peekc = true;
     m_peekc = c;
 }

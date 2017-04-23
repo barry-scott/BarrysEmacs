@@ -109,8 +109,8 @@ public:
     //
     //    casts
     //
-    operator const unsigned char *();
-    operator const char *();
+    operator const unsigned char *() const;
+    operator const char *() const;
 
     //
     //    description of the data

@@ -301,12 +301,12 @@ Py::Object EmacsString::asPyString() const
 }
 #endif
 
-EmacsString::operator const char *()
+EmacsString::operator const char *() const
 {
     return (const char *)_rep->get_utf8_data();
 }
 
-EmacsString::operator const unsigned char *()
+EmacsString::operator const unsigned char *() const
 {
     return _rep->get_utf8_data();
 }
