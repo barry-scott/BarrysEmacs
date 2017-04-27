@@ -106,32 +106,36 @@ int list_buffers( void )
     EmacsBufferRef old( bf_cur );
     EmacsBuffer::scratch_bfn( "Buffer list", interactive() );
     bf_cur->ins_str(
-"   Size  Type   Buffer                         Mode               File\n"
-"   ----  ----   ------                         ----               ----\n" );
+"      Size  Type   Mode                Buffer                         File\n"
+"      ----  ----   ----                ------                         ----\n" );
     EmacsBuffer *p = buffers;
     while( p != NULL )
     {
         ModeSpecific &mode = p->b_mode;
 
-            EmacsString entry( FormatString("%7d%6s %c %-30s %c%c%c%c %-14s %s\n" ) <<
-            (p->unrestrictedSize()) <<
-            (p->b_kind == FILEBUFFER ? "File" :
-                p->b_kind == MACROBUFFER ? "Macro" :
-                    "Scr") <<
-            (p->b_modified != 0 ?  'M' : ' ') <<
-            p->b_buf_name <<
-            (mode.md_abbrevon ?  'A' : ' ') <<
-            (p->b_checkpointed != -1 ?  'C' : ' ') <<
-            (p->b_journalling && (p->b_kind == SCRATCHBUFFER ? int(journal_scratch_buffers) : 1) ?  'J' : ' ') <<
-            (mode.md_replace ?  'R' : ' ') <<
-            mode.md_modestring <<
-            p->b_fname
-            );
+        EmacsString entry( FormatString("%10d%6s %c %c%c%c%c %-14s %-30s  %s\n" )
+                            << (p->unrestrictedSize())
+                            << (p->b_kind == FILEBUFFER ? "File" :
+                                p->b_kind == MACROBUFFER ? "Macro" :
+                                    "Scr")
+                            << (p->b_modified != 0 ?  'M' : ' ')
+                            << (mode.md_abbrevon ?  'A' : ' ')
+                            << (p->b_checkpointed != -1 ?  'C' : ' ')
+                            << (p->b_journalling && (p->b_kind == SCRATCHBUFFER ? int(journal_scratch_buffers) : 1) ?  'J' : ' ')
+                            << (mode.md_replace ?  'R' : ' ')
+                            << mode.md_modestring
+                            << p->b_buf_name
+                            << p->b_fname
+                            );
 
         if( p->b_kind == FILEBUFFER )
+        {
             file_buffers.insert( p->b_buf_name, entry );
+        }
         else
+        {
             other_buffers.insert( p->b_buf_name, entry );
+        }
 
         p = p->b_next;
     }
@@ -140,7 +144,9 @@ int list_buffers( void )
 
     file_buffers.init_iterator();
     while( (value = file_buffers.next_value()) != NULL )
+    {
         bf_cur->ins_cstr( *value );
+    }
 
     other_buffers.init_iterator();
     while( (value = other_buffers.next_value()) != NULL )

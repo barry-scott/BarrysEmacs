@@ -244,10 +244,10 @@
     (~BUF-get-buffer-name buffer-name
         (save-window-excursion
             (beginning-of-line)
-            (while (& (!= (current-column) 17) (! (eolp)))
+            (while (& (!= (current-column) 40) (! (eolp)))
                 (forward-character))
             (set-mark)
-            (re-search-forward " [ A]")
+            (search-forward "  ")
             (backward-character)
             (backward-character)
             (setq buffer-name (region-to-string))
