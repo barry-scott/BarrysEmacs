@@ -273,6 +273,7 @@ EmacsString get_config_env( const EmacsString &name )
         return env_emacs_path;
 
     if( name == "emacs_user" )
+    {
         if( env_emacs_user.isNull() )
         {
             char *home = getenv( "HOME" );
@@ -282,12 +283,13 @@ EmacsString get_config_env( const EmacsString &name )
             }
         }
         return env_emacs_user;
+    }
 
     if( name == "emacs_library" )
     {
-        if( env_emacs_user.isNull() )
+        if( env_emacs_library.isNull() )
         {
-            env_emacs_user = "/usr/share/bemacs/lib";
+            env_emacs_library = "/usr/share/bemacs/lib";
         }
         return env_emacs_library;
     }
@@ -300,7 +302,7 @@ EmacsString get_config_env( const EmacsString &name )
 }
 
 EmacsPollFdId add_select_fd( int fd, long int mask, EmacsPollFdCallBack cb, EmacsPollFdParam p )
-    {
+{
     EmacsPollFdId resp = 0;
 
     if( fd < FD_SETSIZE )
