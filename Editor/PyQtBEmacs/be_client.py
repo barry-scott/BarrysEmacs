@@ -292,9 +292,12 @@ class ClientPosix(ClientBase):
 
                 time.sleep( 0.1 )
 
+
+            os.close( fd_response )
             return True, response.decode( 'utf-8' )
 
         except IOError:
+            os.close( fd_response )
             return False, ''
 
     def __makeFifo( self, fifo_name ):
