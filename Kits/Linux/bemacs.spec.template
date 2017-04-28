@@ -47,6 +47,7 @@ cp ${BUILDER_TOP_DIR}/Kits/Linux/bemacs.desktop %{buildroot}/usr/share/applicati
 %files
 %defattr(-, root, root, -)
 /usr/bin/bemacs
+/usr/bin/bemacs-cli
 /usr/bin/bemacs_server
 /usr/bin/bemacs-dbadd
 /usr/bin/bemacs-dbcreate

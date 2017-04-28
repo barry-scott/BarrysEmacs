@@ -273,10 +273,24 @@ EmacsString get_config_env( const EmacsString &name )
         return env_emacs_path;
 
     if( name == "emacs_user" )
+        if( env_emacs_user.isNull() )
+        {
+            char *home = getenv( "HOME" );
+            if( home != NULL )
+            {
+                env_emacs_user = FormatString("%s/bemacs") << home;
+            }
+        }
         return env_emacs_user;
 
     if( name == "emacs_library" )
+    {
+        if( env_emacs_user.isNull() )
+        {
+            env_emacs_user = "/usr/share/bemacs/lib";
+        }
         return env_emacs_library;
+    }
 
     static EmacsString env_sys_login(  "HOME:/" );
     if( name == "sys_login" )

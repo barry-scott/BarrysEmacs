@@ -77,6 +77,7 @@ editor:
 	@ echo Info: Building BEmacs images...
 	cd ../Editor && ./build-linux.sh all
 	cp ../Editor/exe-pybemacs/_bemacs.so $(BEMACS_LIB_DIR)
+	cp ../Editor/exe-cli-bemacs/bemacs-cli $(BEMACS_BIN_DIR)
 	@ echo Info: Copy db utils...
 	cp ../Editor/exe-utils/dbadd	$(BEMACS_BIN_DIR)/bemacs-dbadd
 	cp ../Editor/exe-utils/dbcreate $(BEMACS_BIN_DIR)/bemacs-dbcreate
