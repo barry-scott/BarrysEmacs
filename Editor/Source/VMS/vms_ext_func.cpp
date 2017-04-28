@@ -181,7 +181,7 @@ static int call_back (int function, ... )
                 lib$analyze_sdesc( dst, &len, &addr );
                 rv = SS$_NORMAL;
 
-                *p = min( (unsigned short)ml_value.exp_int, len );
+                *p = std::min( (unsigned short)ml_value.exp_int, len );
             }
             void_result();
             return rv;
@@ -314,7 +314,7 @@ static int call_back (int function, ... )
                 bf_cur->b_buf_name))) )
             return rv;
         lib$analyze_sdesc( p_str, &maximum, &addr );
-        *p_size = min( len, maximum );
+        *p_size = std::min( len, maximum );
         return SS$_NORMAL;
     }
 
@@ -350,7 +350,7 @@ static int call_back (int function, ... )
                 bf_cur->b_buf_name))) )
             return rv;
         lib$analyze_sdesc( p_str, &maximum, &addr );
-        p_str->dsc$w_length = min( len, maximum );
+        p_str->dsc$w_length = std::min( len, maximum );
         return rv;
     }
 

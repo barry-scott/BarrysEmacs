@@ -340,29 +340,31 @@ void EmacsView::updateLine
 #if DBG_CALC_INS_DEL
     if( dbg_flags&DBG_CALC_INS_DEL )
     {
-        enum {dump_size=30};
-        const char *old_line_start = "";
+        const EmacsChar_t nul( 0 );
+
+        const int dump_size = 30;
+        const EmacsChar_t *old_line_start = &nul;
         int old_line_len = 0;
         if( !old_line.isNull() )
         {
-            old_line_start = (const char *)old_line->line_body;
+            old_line_start = old_line->line_body;
             old_line_len = old_line->line_length;
         }
-        const char *new_line_start = "";
+        const EmacsChar_t *new_line_start = &nul;
         int new_line_len = 0;
         if( !new_line.isNull() )
         {
-            new_line_start = (const char *)new_line->line_body;
+            new_line_start = new_line->line_body;
             new_line_len = new_line->line_length;
         }
 
         _dbg_msg( FormatString( "        updateLine(   %3d:'%.*s'%*s,    %3d:'%.*s'%*s, %d )" )
             << old_line_len
-                << min( old_line_len, dump_size ) << old_line_start
-                    << max( dump_size-old_line_len, 0 ) << ""
+                << std::min( old_line_len, dump_size ) << old_line_start
+                    << std::max( dump_size-old_line_len, 0 ) << ""
             << new_line_len
-                << min( new_line_len, dump_size ) << new_line_start
-                    << max( dump_size-new_line_len, 0 ) << ""
+                << std::min( new_line_len, dump_size ) << new_line_start
+                    << std::max( dump_size-new_line_len, 0 ) << ""
             << ln
             );
     }
@@ -379,34 +381,35 @@ void EmacsView::moveLine
 #if DBG_CALC_INS_DEL
     if( dbg_flags&DBG_CALC_INS_DEL )
     {
+        const EmacsChar_t nul( 0 );
         EmacsLinePtr &old_line = t_phys_screen[ old_line_num ];
         EmacsLinePtr &new_line = t_desired_screen[ new_line_num ];
 
-        enum {dump_size=30};
-        const char *old_line_start = "";
+        const int dump_size = 30;
+        const EmacsChar_t *old_line_start = &nul;
         int old_line_len = 0;
         if( !old_line.isNull() )
         {
-            old_line_start = (const char *)old_line->line_body;
+            old_line_start = old_line->line_body;
             old_line_len = old_line->line_length;
         }
-        const char *new_line_start = "";
+        const EmacsChar_t *new_line_start = &nul;
         int new_line_len = 0;
         if( !new_line.isNull() )
         {
-            new_line_start = (const char *)new_line->line_body;
+            new_line_start = new_line->line_body;
             new_line_len = new_line->line_length;
         }
 
         _dbg_msg( FormatString( "        move line( %2d %3d:'%.*s'%*s, %2d %3d:'%.*s'%*s )" )
             << old_line_num
             << old_line_len
-                << min( old_line_len, dump_size ) << old_line_start
-                    << max( dump_size-old_line_len, 0 ) << ""
+                << std::min( old_line_len, dump_size ) << old_line_start
+                    << std::max( dump_size-old_line_len, 0 ) << ""
             << new_line_num
             << new_line_len
-                << min( new_line_len, dump_size ) << new_line_start
-                    << max( dump_size-new_line_len, 0 ) << ""
+                << std::min( new_line_len, dump_size ) << new_line_start
+                    << std::max( dump_size-new_line_len, 0 ) << ""
             );
     }
 #endif
@@ -444,22 +447,26 @@ void EmacsView::dbg_dump_screen( const char *title )
     _dbg_msg( FormatString("Dump of t_phys_screen and t_desired_screen: %s") << title );
     for( int ln=1; ln<=t_length; ln++ )
     {
-        enum {dump_size=30};
-        const char *old_line_start = "";
+        const EmacsChar_t nul( 0 );
+        const int dump_size = 30;
+        const EmacsChar_t *old_line_start = &nul;
         int old_line_len = 0;
         int old_line_hash = 0;
+
         if( !t_phys_screen[ln].isNull() )
         {
-            old_line_start = (const char *)t_phys_screen[ln]->line_body;
+            old_line_start = t_phys_screen[ln]->line_body;
             old_line_len = t_phys_screen[ln]->line_length;
             old_line_hash = t_phys_screen[ln]->lineHash();
         }
-        const char *new_line_start = "";
+
+        const EmacsChar_t *new_line_start = &nul;
         int new_line_len = 0;
         int new_line_hash = 0;
+
         if( !t_desired_screen[ln].isNull() )
         {
-            new_line_start = (const char *)t_desired_screen[ln]->line_body;
+            new_line_start = t_desired_screen[ln]->line_body;
             new_line_len = t_desired_screen[ln]->line_length;
             new_line_hash = t_desired_screen[ln]->lineHash();
         }
@@ -467,14 +474,12 @@ void EmacsView::dbg_dump_screen( const char *title )
         _dbg_msg( FormatString( "   %2d [%3d(0x%8.8x):'%.*s'%*s, %3d(0x%8.8x):'%.*s'%*s]" )
             << ln
             << old_line_len << old_line_hash
-                << min( old_line_len, dump_size ) << old_line_start
-                    << max( dump_size-old_line_len, 0 ) << ""
+                << std::min( old_line_len, dump_size ) << old_line_start
+                    << std::max( dump_size-old_line_len, 0 ) << ""
             << new_line_len << new_line_hash
-                << min( new_line_len, dump_size ) << new_line_start
-                    << max( dump_size-new_line_len, 0 ) << ""
+                << std::min( new_line_len, dump_size ) << new_line_start
+                    << std::max( dump_size-new_line_len, 0 ) << ""
             );
     }
 }
 #endif
-
-

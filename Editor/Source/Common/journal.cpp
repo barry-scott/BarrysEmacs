@@ -346,7 +346,7 @@ EmacsString EmacsBufferJournal::_concoctFilename( EmacsString &in )
     EmacsString out( "buf-" );
 
     const int FILE_NAME_SIZE(80);
-    int limit = min( in.length(), FILE_NAME_SIZE );
+    int limit = std::min( in.length(), FILE_NAME_SIZE );
 
     for( int i=0; i<limit; i++ )
     {
@@ -465,7 +465,7 @@ void EmacsBufferJournal::insertChars
     && in_rec->jnl_insert.jnl_dot + in_rec->jnl_insert.jnl_insert_length == dot
     && free_records > 0 )
     {
-        int writing = min( len, jnlRecordsToChars( free_records ) );
+        int writing = std::min( len, jnlRecordsToChars( free_records ) );
         jnlCharsCopy
             (
             &in_rec[1].jnl_data.jnl_chars[in_rec->jnl_insert.jnl_insert_length],
@@ -493,7 +493,7 @@ void EmacsBufferJournal::insertChars
         }
         in_rec = &m_jnl_buf[ m_jnl_used ];
 
-        int writing = min( len - written, jnlRecordsToChars( free_records ) );
+        int writing = std::min( len - written, jnlRecordsToChars( free_records ) );
         in_rec->jnl_insert.jnl_type = JNL_INSERT;
         in_rec->jnl_insert.jnl_dot = dot + written;
         in_rec->jnl_insert.jnl_insert_length = writing;

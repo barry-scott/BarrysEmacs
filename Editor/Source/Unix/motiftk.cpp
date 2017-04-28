@@ -2218,7 +2218,7 @@ int motif_XmPushButtonApply(void)
     return 0;
 }
 
-void EmacsPushButtonWidget::button_press_cb( Widget w, void *d_, void *PNOTUSED(junk) )
+void EmacsPushButtonWidget::button_press_cb( Widget w, void *d_, void *junk )
 {
     EmacsDialog *d = (EmacsDialog *)d_;
 

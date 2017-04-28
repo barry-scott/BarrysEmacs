@@ -313,7 +313,10 @@ public:
 
     operator const EmacsString() const;
 
-    FormatString &operator <<( int v );
+    FormatString &operator <<( int v ) { setNextIntArg( v ); return *this; }
+    FormatString &operator <<( long v ) { setNextIntArg( v ); return *this; }
+    FormatString &operator <<( unsigned int v ) { setNextIntArg( v ); return *this; }
+    FormatString &operator <<( unsigned long v ) { setNextIntArg( v ); return *this; }
     FormatString &operator <<( const EmacsString & );
     FormatString &operator <<( const EmacsString * );
     FormatString &operator <<( const char * );
@@ -321,6 +324,8 @@ public:
     FormatString &operator <<( const void * );
 
 private:
+    void setNextIntArg( int );
+
     enum arg_type { argNone, argString, argInt };
 
     void process_format();
@@ -333,6 +338,7 @@ private:
     void print_hexadecimal( uint64_t );
     void print_octal( int64_t );
     void print_string( const EmacsString &str );
+    void print_repr( const EmacsString &str );
 
     EmacsString format;
     EmacsString result;

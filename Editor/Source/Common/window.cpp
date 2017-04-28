@@ -1410,7 +1410,7 @@ void EmacsView::dump_str
             break;
         if( c == '\t' )    // expand tab to spaces
         {
-            int new_col = min( (col / bf_cur->b_mode.md_tabsize + 1) *
+            int new_col = std::min( (col / bf_cur->b_mode.md_tabsize + 1) *
                     bf_cur->b_mode.md_tabsize, limit );
 
             while( col < new_col )
@@ -1986,8 +1986,8 @@ int EmacsView::dump_line_from_buffer
     //
     //    Setup the region highlight stuff
     //
-    int r_start     = min( dot, mark );
-    int r_end       = max( dot, mark );
+    int r_start     = std::min( dot, mark );
+    int r_end       = std::max( dot, mark );
     int highlight   = r_start <= n && r_end > n ? LINE_M_ATTR_HIGHLIGHT : 0;
 
     // turn markers into ints
@@ -2552,7 +2552,7 @@ void TerminalControl::k_input_scroll_set_horz( int window_id, int position )
     if( win == NULL )
         return;
 
-    win->w_horizontal_scroll = max( position, 0 );
+    win->w_horizontal_scroll = std::max( position, 0 );
 
     cant_1line_opt = 1;
     redo_modes = 1;
@@ -2566,7 +2566,7 @@ void TerminalControl::k_input_scroll_change_horz( int window_id, int change )
     if( win == NULL )
         return;
 
-    win->w_horizontal_scroll = max( win->w_horizontal_scroll + change, 0 );
+    win->w_horizontal_scroll = std::max( win->w_horizontal_scroll + change, 0 );
 
     cant_1line_opt = 1;
     redo_modes = 1;

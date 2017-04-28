@@ -106,8 +106,8 @@ int ui_frame_to_foreground(void)
 
 static void insert_func
     (
-    Widget PNOTUSED(w), void *PNOTUSED(junk), Atom *PNOTUSED(sel),
-    Atom *PNOTUSED(type), void * value, unsigned long *length, int *PNOTUSED(format)
+    Widget w, void *junk, Atom *sel,
+    Atom *type, void * value, unsigned long *length, int *format
     )
 {
     EmacsString text( EmacsString::copy, static_cast<unsigned char *>( value ), *length );
@@ -184,7 +184,7 @@ int ui_edit_paste()
 // Convert string in selection to required type
 static Boolean cvt_proc
     (
-    Widget PNOTUSED(w),
+    Widget w,
     Atom *sel, Atom *target, Atom *type_return,
     void **value_return, unsigned long *length_return, int *format_return
     )
@@ -219,7 +219,7 @@ static Boolean cvt_proc
     return FALSE;
 }
 
-static void lose_proc( Widget PNOTUSED(w), Atom *sel)
+static void lose_proc( Widget w, Atom *sel)
 {
     if( debug_selection )
         _dbg_msg( FormatString("lose_proc: selection_type=%s sel=%s")
@@ -230,7 +230,7 @@ static void lose_proc( Widget PNOTUSED(w), Atom *sel)
         selection = EmacsString::null;
 }
 
-static void done_proc( Widget PNOTUSED(w), Atom *PNOTUSED(sel), Atom *PNOTUSED(target) )
+static void done_proc( Widget w, Atom *sel, Atom *target )
 {
     if( debug_selection )
         _dbg_msg( FormatString("done_proc") );
@@ -335,7 +335,7 @@ int motif_list_menus_command( void)
 }
 
 // convert a menu push to a key sequence
-static void menu_to_keys( Widget PNOTUSED(w), void *button_, void * PNOTUSED(info))
+static void menu_to_keys( Widget w, void *button_, void * info)
 {
     EmacsMotifMenuButton *button = (EmacsMotifMenuButton *)button_;
 

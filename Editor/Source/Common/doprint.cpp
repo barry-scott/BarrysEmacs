@@ -34,12 +34,13 @@ inline bool control_character( int c)
 
 //
 //  The only format characters used by emacs are
-//      %s    - asciz string
+//      %s    - string
 //      %d    - decimal number
 //      %x    - hexadecimal
 //      %o    - octal
 //      %-ns  - fixed field width string
 //      %p    - pointer in hexadecimal
+//      %r    - repr of string
 //
 
 //
@@ -68,38 +69,38 @@ FormatString::FormatString( EmacsString _format )
 FormatString::operator const EmacsString () const
 {
     if( next_arg_type != argNone )
+    {
         throw EmacsInternalError( "FormatString - not enough arguments" );
+    }
 
     return result;
 }
 
-FormatString &FormatString::operator <<( int v )
+void FormatString::setNextIntArg( int v )
 {
     if( next_width_type == argInt )
     {
         next_width_type = argNone;
         width = v;
-        return *this;
     }
 
-    if( next_precision_type == argInt )
+    else if( next_precision_type == argInt )
     {
         next_precision_type = argNone;
         precision = v;
-        return *this;
+        return;
     }
-    if( next_arg_type == argInt )
+
+    else if( next_arg_type == argInt )
     {
         intArg = v;
 
         process_format();
 
-        return *this;
+        return;
     }
-
-//    throw EmacsInternalError( "FormatString - int arg not expected" );
-    return *this;
 }
+
 
 FormatString &FormatString::operator <<( const void *v )
 {
@@ -143,7 +144,9 @@ FormatString &FormatString::operator <<( const char *v )
     if( next_width_type == argInt
     && next_precision_type == argInt
     && next_arg_type == argInt )
+    {
         throw EmacsInternalError( "FormatString - string arg not expected" );
+    }
 
     if( next_arg_type == argString )
     {
@@ -160,7 +163,9 @@ FormatString &FormatString::operator <<( const EmacsChar_t *v )
     if( next_width_type == argInt
     && next_precision_type == argInt
     && next_arg_type == argInt )
+    {
         throw EmacsInternalError( "FormatString - string arg not expected" );
+    }
 
     if( next_arg_type == argString )
     {
@@ -194,85 +199,81 @@ void FormatString::process_format()
             break;
 
         case 'C':    // ensure are in a printable char
-        {
-            EmacsChar_t ch = EmacsChar_t( intArg );
-            if( control_character( ch ) )
-                ch = '.';
-            put( ch );
-        }
+            {
+                EmacsChar_t ch = EmacsChar_t( intArg );
+                if( control_character( ch ) )
+                    ch = '.';
+                put( ch );
+            }
             break;
 
         case 's':
             print_string( stringArg );
             break;
 
+        case 'r':
+            print_repr( stringArg );
+            break;
+
         case 'd':
-        {
             print_decimal( intArg );
             break;
-        }
 
         case 'D':
-        {
             print_decimal( intArg );
             break;
-        }
 
         case 'o':
-        {
             print_octal( intArg );
             break;
-        }
 
         case 'O':
-        {
             print_octal( intArg );
             break;
-        }
 
         case 'x':
-        {
-            uint64_t val = static_cast<uint64_t>( intArg );
+            {
+                uint64_t val = static_cast<uint64_t>( intArg );
 
-            if( width == 0 )
-                width = 4;
-            print_hexadecimal( val );
-
+                if( width == 0 )
+                    width = 4;
+                print_hexadecimal( val );
+            }
             break;
-        }
+
         case 'X':
-        {
-            uint64_t val = static_cast<uint64_t>( intArg );
+            {
+                uint64_t val = static_cast<uint64_t>( intArg );
 
-            if( width == 0 )
-                width = 8;
-            print_hexadecimal( val );
-
+                if( width == 0 )
+                    width = 8;
+                print_hexadecimal( val );
+            }
             break;
-        }
+
         case 'p':
-        {
-            uint64_t  val = static_cast<uint64_t>( intArg );
-            width = 16;
-            print_hexadecimal( val );
-        }
+            {
+                uint64_t  val = static_cast<uint64_t>( intArg );
+                width = sizeof( uint64_t )*2;
+                print_hexadecimal( val );
+            }
             break;
 
         case 'e':
-        {
-            // errno value
-            EmacsString str( strerror( static_cast<int>( intArg ) ) );
-            print_string( str );
-        }
+            {
+                // errno value
+                EmacsString str( strerror( static_cast<int>( intArg ) ) );
+                print_string( str );
+            }
             break;
 
         case 'E':
-        {
-            // win32 error code
-            EmacsString str( os_error_code( static_cast<int>( intArg ) ) );
-            print_string( str );
-            break;
-        }
+            {
+                // win32 error code
+                EmacsString str( os_error_code( static_cast<int>( intArg ) ) );
+                print_string( str );
+                break;
+            }
         default:
             throw EmacsInternalError( "FormatString - unknown format char" );
         }
@@ -329,19 +330,23 @@ void FormatString::process_format()
         {
             ch = next_format_char();
             if( ch == '*' )
-                {
+            {
                 next_precision_type = argInt;
                 ch = next_format_char();
-                }
+            }
             else
-                while( ch >= '0' && ch <= '9' )
             {
-                precision = precision*10 + ch - '0';
-                ch = next_format_char();
+                while( ch >= '0' && ch <= '9' )
+                {
+                    precision = precision*10 + ch - '0';
+                    ch = next_format_char();
+                }
             }
         }
         else
+        {
             precision = 9999;
+        }
 
         format_char = ch;
         switch( ch )
@@ -352,6 +357,7 @@ void FormatString::process_format()
             put(  '%' );
             continue;
         case 's':
+        case 'r':
             next_arg_type = argString;
             return;
         case 'd':
@@ -382,7 +388,7 @@ void FormatString::print_string( const EmacsString &str )
             put( ' ' );
     }
 
-    int limit = min( precision, str.length() );
+    int limit = std::min( precision, str.length() );
 
     EmacsString s2( str( 0, limit ) );
     put( s2.unicode_data(), s2.length() );
@@ -390,6 +396,42 @@ void FormatString::print_string( const EmacsString &str )
     width -= limit;
     while( width-- > 0 )
         put( ' ' );
+}
+
+void FormatString::print_repr( const EmacsString &arg )
+{
+    EmacsString repr;
+    for( int i=0; i<arg.length(); ++i )
+    {
+        EmacsChar_t ch = arg[i];
+        switch( ch )
+        {
+        case 7:
+            repr.append( "\\a" ); break;
+        case 8:
+            repr.append( "\\b" ); break;
+        case 9:
+            repr.append( "\\t" ); break;
+        case 10:
+            repr.append( "\\n" ); break;
+        case 13:
+            repr.append( "\\r" ); break;
+        case 27:
+            repr.append( "\\e" ); break;
+        default:
+            if( ch < 32
+            || (ch > 126 && ch < 192) )
+            {
+                repr.append( FormatString("\\%03.3o") << ch );
+            }
+            else
+            {
+                repr.append( ch );
+            }
+        }
+    }
+
+    print_string( repr );
 }
 
 
@@ -442,7 +484,7 @@ void FormatString::print_decimal( int64_t n )
 
 void FormatString::print_hexadecimal( uint64_t n )
 {
-    EmacsChar_t buf[16];
+    EmacsChar_t buf[sizeof( uint64_t )*2];
 
     int w = width;
     for( int i=w-1; i >= 0; i--)

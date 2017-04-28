@@ -9,12 +9,6 @@
 #include <emstrtab.h>
 #include <ndbm.h>
 
-#ifdef __cplusplus
-#define PNOTUSED(arg) // arg
-#else
-#define PNOTUSED(arg) arg
-#endif
-
 //static const char *THIS_FILE = __FILE__;
 
 #if defined( SAVEENVIRONMENT )

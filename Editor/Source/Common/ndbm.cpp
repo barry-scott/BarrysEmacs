@@ -885,8 +885,6 @@ int database::get_db
     EmacsString &result_value
     )
 {
-    int read_size;
-    off_t lseek_val;
 
 # if DBG_EXEC
     if( dbg_flags&DBG_EXEC )
@@ -916,8 +914,8 @@ int database::get_db
 
     setup_db();
 
-    lseek_val = lseek( db_datf, value.val1, 0 );
-    read_size = read( db_datf, content, contentlen );
+    off_t lseek_val = lseek( db_datf, value.val1, 0 );
+    ssize_t read_size = read( db_datf, content, contentlen );
 
     EmacsString new_value( EmacsString::copy, content, contentlen );
     EMACS_FREE( content );

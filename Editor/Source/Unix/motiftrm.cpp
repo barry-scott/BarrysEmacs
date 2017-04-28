@@ -643,7 +643,7 @@ void TerminalControl_GUI::t_insert_lines( int n )
         0,( newtop-1 ) * application.fth + application.innerBorder
         );
 
-    newtop = min( newtop, flexlines );
+    newtop = std::min( newtop, flexlines );
     length = newtop - topregion;
 
     if(length > 0 )
@@ -888,7 +888,7 @@ void time_cancel_timeout(void)
 
 static XtIntervalId timer_id = 0;
 
-void xwin_timeout_callback( XtPointer PNOTUSED(p), XtIntervalId *PNOTUSED(id ) )
+void xwin_timeout_callback( XtPointer p, XtIntervalId *PNOTUSED(id ) )
 {
     timer_id = 0;
     due_tick_count--;
@@ -917,7 +917,7 @@ static void timeout_check()
 
 extern int win_emacs_quit;
 
-int TerminalControl_GUI::k_input_event( unsigned char *PNOTUSED(bufp), unsigned int PNOTUSED(numchars) )
+int TerminalControl_GUI::k_input_event( unsigned char *bufp, unsigned int numchars )
 {
     // set a timeout on the event processing of 50mS
     if( timer_id == 0 && timeout_handler != NULL )
@@ -1189,7 +1189,7 @@ void EmacsMotif_Screen_DrawingArea::input( void *PNOTUSED(junk ), void *event_ )
 }
 
 // Handle an exposure event from the drawing area widget
-void EmacsMotif_Screen_DrawingArea::expose( void * PNOTUSED(junk), void *event_ )
+void EmacsMotif_Screen_DrawingArea::expose( void * junk, void *event_ )
 {
     XmDrawingAreaCallbackStruct *event = (XmDrawingAreaCallbackStruct *)event_;
     initializing = 0;
@@ -1416,12 +1416,12 @@ void TerminalControl_GUI::updateWindowTitle()
 
 static int motif_yes;
 
-static void yes_cb( Widget PNOTUSED(w), void *PNOTUSED(d_), void *PNOTUSED(junk) )
+static void yes_cb( Widget w, void *d_, void *junk )
 {
     motif_yes = 1;
 }
 
-static void no_cb( Widget PNOTUSED(w), void *PNOTUSED(d_), void *PNOTUSED(junk) )
+static void no_cb( Widget w, void *d_, void *junk )
 {
     motif_yes = 0;
 }

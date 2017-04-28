@@ -514,7 +514,7 @@ bool send_exit_message( const EmacsString &command )
     return true;
 }
 
-void emacs_server_callback(EmacsPollFdParam PNOTUSED(str), int *fd, EmacsPollFdId* PNOTUSED(id) )
+void emacs_server_callback(EmacsPollFdParam str, int *fd, EmacsPollFdId* id )
 {
     emacs_server_work_item.readCommand( *fd );
 }

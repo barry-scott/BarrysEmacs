@@ -83,34 +83,6 @@ extern EmacsString get_config_env( const EmacsString & );
 #define malloc_struct( s ) ((struct s *)EMACS_MALLOC( sizeof( struct s ), malloc_type_struct_##s ))
 #define malloc_ustr( i ) ((unsigned char *)EMACS_MALLOC( i, malloc_type_char ))
 
-#ifdef __cplusplus
-# define PNOTUSED(arg) // arg
-# ifdef min
-#  undef min
-# endif
-inline int min( int a, int b )
-{
-    return a < b ? a : b;
-}
-
-# ifdef max
-#  undef max
-# endif
-inline int max( int a, int b )
-{
-    return a > b ? a : b;
-}
-#else
-# define PNOTUSED(arg) arg
-# ifndef min
-#  define min(a,b) ((a) < (b) ? (a) : (b))
-# endif
-
-# ifndef max
-#  define max(a,b) ((a) > (b) ? (a) : (b))
-# endif
-
-#endif
 //
 //    Use this class's constructor to
 //    initialise any subsystem required for

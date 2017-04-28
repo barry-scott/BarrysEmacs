@@ -24,105 +24,48 @@ int term_expand_c1 = 1;
 //    output.
 //
 
-#define OUTPUT_MINIMUM 1
-#define OUTPUT_OVERRUN 128
-#define OUTPUT_LENGTH 512 + OUTPUT_OVERRUN
+const int OUTPUT_MINIMUM( 1 );
+const int OUTPUT_OVERRUN( 128 );
+const int OUTPUT_LENGTH( 512 + OUTPUT_OVERRUN );
 
 int output_size = 0;
-unsigned char output_buffer[OUTPUT_LENGTH];
+EmacsChar_t output_buffer[OUTPUT_LENGTH];
 
 void TerminalControl_CHAR::t_io_flush()
 {
-    if( output_size > 0 )
+    if( output_size == 0 )
     {
-#if DBG_DISPLAY
-        if( dbg_flags&DBG_DISPLAY )
-        {
-            EmacsString repr;
-            for( int i=0; i<output_size; ++i )
-            {
-                unsigned char ch = output_buffer[i];
-                switch( ch )
-                {
-                case 7:
-                    repr.append( "\\a" ); break;
-                case 8:
-                    repr.append( "\\b" ); break;
-                case 9:
-                    repr.append( "\\t" ); break;
-                case 10:
-                    repr.append( "\\n" ); break;
-                case 13:
-                    repr.append( "\\r" ); break;
-                case 27:
-                    repr.append( "\\e" ); break;
-                default:
-                    if( ch < 32
-                    || (ch > 126 && ch < 192) )
-                    {
-                        repr.append( FormatString("\\%03.3o") << ch );
-                    }
-                    else
-                    {
-                        repr.append( ch );
-                    }
-                }
-             }
-            _dbg_msg( FormatString("t_io_flush: '%s'") << repr );
-        }
-#endif
-        write( output_channel, &output_buffer, output_size );
+        return;
     }
-    output_size = 0;
-}
 
-#if defined(vms)
-int check_term_output_size(int value, int v)
-{
-
-    int status;
-    volatile int max_qio_size;
-    struct $itmlst_decl get_syi_list;
-
-    $itmlst_init
-    (
-    itmlst = get_syi_list,
-    (itmcod=syi$_maxbuf, bufadr=max_qio_size) );
-    status = $getsyiw( itmlst = get_syi_list );
-    if( ! status ) value = 0;
-
-    if( value <= output_minimum )
-        term_output_buffer_size = output_length - output_overrun
-    else
-        //
-        //    The 38 is the over head on the IO in the TT driver
-        //    At this time it is TTY$C_WB_LENGTH = 38. See
-        //    TTYFDT.MAR and TTYDEF.SDL
-        //
-        term_output_buffer_size =
-            min( value, max_qio_size - 38 - output_overrun );
-
-    //
-    //    allocate a buffer of the correct size
-    //
-    if( output_buffer != 0 ) efree( output_buffer );
-    output_buffer = emalloc( term_output_buffer_size + output_overrun );
-    output_size = 0;
-
-    return 0;
-}
+#if DBG_DISPLAY
+    if( dbg_flags&DBG_DISPLAY )
+    {
+        EmacsString repr( EmacsString::copy, output_buffer, output_size );
+        _dbg_msg( FormatString("t_io_flush: '%r'") << repr );
+    }
 #endif
+
+    // convert to utf-8
+    int  utf8_length = length_unicode_to_utf8( output_size, output_buffer );
+    unsigned char utf8_buffer[ utf8_length ];
+    convert_unicode_to_utf8( output_size, output_buffer, utf8_buffer );
+
+    write( output_channel, &utf8_buffer, utf8_length );
+
+    output_size = 0;
+}
 
 void TerminalControl_CHAR::t_io_print( const unsigned char *str )
 {
-    int ch;
+    EmacsChar_t ch;
     const unsigned char *s = str;
 
-    if( ! term_expand_c1 )
+    if( !term_expand_c1 )
     {
         while( (ch = *s++) != 0 )
         {
-            output_buffer[ output_size ] = (unsigned char)ch;
+            output_buffer[ output_size ] = ch;
             output_size++;
         }
     }
@@ -132,13 +75,13 @@ void TerminalControl_CHAR::t_io_print( const unsigned char *str )
         {
             if( ch >= 128 && ch <= 128+31 )
             {
-                output_buffer[ output_size ] = 0x1b;
+                output_buffer[ output_size ] = EmacsChar_t( 0x1b );
                 output_size++;
 
                 ch = ch - 0x40;
             }
 
-            output_buffer[ output_size ] = (unsigned char)ch;
+            output_buffer[ output_size ] = ch;
             output_size++;
         }
     }
@@ -149,7 +92,7 @@ void TerminalControl_CHAR::t_io_print( const unsigned char *str )
     }
 }
 
-void TerminalControl_CHAR::t_io_putchar( unsigned char ch )
+void TerminalControl_CHAR::t_io_putchar( EmacsChar_t ch )
 {
     //
     //    If there is no eightbit support on the terminal
@@ -176,7 +119,7 @@ void TerminalControl_CHAR::t_io_putchar( unsigned char ch )
 void TerminalControl_CHAR::t_change_attributes()
 {
 
-    term_output_buffer_size = OUTPUT_LENGTH -OUTPUT_OVERRUN;
+    term_output_buffer_size = OUTPUT_LENGTH - OUTPUT_OVERRUN;
     t_cur_attributes.c_iflag |= IGNBRK;
     t_cur_attributes.c_iflag &= ~(INLCR|ICRNL|IGNCR|ISTRIP);
     t_cur_attributes.c_oflag &= ~(OPOST);
@@ -263,6 +206,6 @@ void TerminalControl_CHAR::term_restore_charactistics()
 {
     if( t_attr_valid )
     {
-            tcsetattr( input_channel, TCSADRAIN, &t_user_attributes );
+        tcsetattr( input_channel, TCSADRAIN, &t_user_attributes );
     }
 }

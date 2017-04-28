@@ -310,7 +310,7 @@ static void describe1
         keys[ len - 1 ] = keys[ len - 1 ] - range - 1;
     }
 
-    bf_cur->ins_cstr( "                                ", 32 - min( indent, 31 ) );
+    bf_cur->ins_cstr( "                                ", 32 - std::min( indent, 31 ) );
 
     if( b == NULL )
     {

@@ -135,7 +135,7 @@ void TerminalControl::t_cleanup()
     theActiveView->t_wipe_line( 0 );
 }
 
-void TerminalControl::t_io_printf(const char *fmt, ...)
+void TerminalControl::t_io_printf( const char *fmt, ... )
 {
     va_list argp;
 
@@ -304,7 +304,7 @@ void set_protocol(int flag)
     theActiveView->t_change_attributes();
 }
 #else
-void set_protocol(int PNOTUSED(flag))
+void set_protocol(int flag)
     {
     theActiveView->t_change_attributes();
 }

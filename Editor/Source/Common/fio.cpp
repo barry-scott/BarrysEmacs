@@ -92,8 +92,8 @@ int EmacsFile::fio_delete( const EmacsString &filename )
 bool EmacsFile::fio_create
     (
     const EmacsString &name,
-    int PNOTUSED(size),
-    FIO_CreateMode PNOTUSED(mode),
+    int size,
+    FIO_CreateMode mode,
     const EmacsString &defnam,
     FIO_EOL_Attribute attr
     )

@@ -87,7 +87,7 @@ void TerminalControl_CHAR::t_delete_lines( int n )
     else
     {
         t_io_printf( "\233%d;%dr\233%dM\233r",
-            ansi_cur_y, window_size, n );
+                ansi_cur_y, window_size, n );
     }
 
     ansi_cur_x = ansi_cur_y = 1;
@@ -116,7 +116,7 @@ void TerminalControl_CHAR::ansi_topos
     )
 {
     //
-    //    This test check_ to see if we may have hit the
+    //    This test checks to see if we may have hit the
     //    edge of the hardware screen. If so the cursor
     //    is in fact in ansi_cur_x - 1. Except if the terminal
     //    is a VWS or a VTxxx in column 80 or 132.
@@ -144,9 +144,8 @@ void TerminalControl_CHAR::ansi_topos
         goto done;
     }
 
-    if (ansi_cur_y == row)
+    if( ansi_cur_y == row )
     {
-        int diff;
         //
         //    movement within a line
         //
@@ -163,7 +162,7 @@ void TerminalControl_CHAR::ansi_topos
         if( column > ansi_cur_x )
         {
             // moving forward along the line
-            diff = column - ansi_cur_x;
+            int diff = column - ansi_cur_x;
 
             if( cur_line == 0 )
             {
@@ -195,7 +194,7 @@ void TerminalControl_CHAR::ansi_topos
         else
         {
             // moving backward along the line
-            diff = ansi_cur_x - column;
+            int diff = ansi_cur_x - column;
             switch( diff )
             {
             case 3:    t_io_putchar( '\010');
@@ -209,7 +208,7 @@ void TerminalControl_CHAR::ansi_topos
         }
         goto done;
     }
-    if (ansi_cur_y + 1 == row && (column == 1 || column==ansi_cur_x))
+    if( ansi_cur_y + 1 == row && (column == 1 || column==ansi_cur_x) )
     {
         if( column != ansi_cur_x )
         {
@@ -224,6 +223,7 @@ void TerminalControl_CHAR::ansi_topos
         t_io_print( u_str( "\233H" ));
         goto done;
     }
+
     t_io_printf( "\233%d;%dH", row, column );
 done:
     ansi_cur_x = column;
@@ -296,6 +296,22 @@ void TerminalControl_CHAR::t_update_line( EmacsLinePtr old_line, EmacsLinePtr ne
         old_line = empty_line_ptr;
     }
 
+#if DBG_DISPLAY
+    if( dbg_flags&DBG_DISPLAY )
+    {
+        // flush out every thing before this lines is worked on
+        t_io_flush();
+        _dbg_msg( FormatString("Old %2d: %3d '%r'")
+                        << ln
+                        << old_line->line_length
+                        << EmacsString( EmacsString::keep, old_line->line_body, old_line->line_length ) );
+        _dbg_msg( FormatString("New %2d: %3d '%r'")
+                        << ln
+                        << new_line->line_length
+                        << EmacsString( EmacsString::keep, new_line->line_body, new_line->line_length ) );
+    }
+#endif
+
     int n_len = new_line->line_length;
     int o_len = old_line->line_length;
     int len = std::min( o_len, n_len );
@@ -339,7 +355,7 @@ void TerminalControl_CHAR::t_update_line( EmacsLinePtr old_line, EmacsLinePtr ne
     //
     //    If we have character editing see if it can be used
     //
-    if( term_edit && false )
+    if( term_edit )
     {
         //
         //    Only bother to use insert delete if the old and new lines
@@ -397,6 +413,7 @@ void TerminalControl_CHAR::t_update_line( EmacsLinePtr old_line, EmacsLinePtr ne
         ansi_putchar( *new_t_p, *new_a_p );
         ansi_cur_x++;
     }
+
     //
     //    If the old line is longer than the new erase to end of line
     //
@@ -418,7 +435,7 @@ void TerminalControl_CHAR::t_update_line( EmacsLinePtr old_line, EmacsLinePtr ne
             ansi_cur_x++;
             break;
 
-        default:    t_io_print( u_str( "\233K" ));
+        default:    t_io_print( u_str("\233K") );
             break;
         }
         goto tidy_up_and_exit;
@@ -581,13 +598,15 @@ void TerminalControl_CHAR::t_update_end()
     t_io_flush();
 }
 
-void TerminalControl_CHAR::t_display_activity( unsigned char it )
+void TerminalControl_CHAR::t_display_activity( EmacsChar_t it )
 {
     if( in_update )
     {
         return;
     }
-    t_io_printf( "\033" "7" "\033[%d;1H%c\033" "8", t_length, it );
+    t_io_printf( "\033" "7" "\033[%d;1H", t_length );
+    t_io_putchar( it );
+    t_io_print( u_str("\033" "8") );
     t_io_flush();
 }
 

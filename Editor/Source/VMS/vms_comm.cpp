@@ -1499,7 +1499,7 @@ static int VLAR( struct dsc$descriptor *str )
      ml_value.exp_type = ISSTRING;
     ml_value.exp_v.v_string = buf;
     ml_value.exp_release = 0;
-    ml_value.exp_int = min( sizeof( buf )-1, str->dsc$w_length );
+    ml_value.exp_int = std::min( sizeof( buf )-1, str->dsc$w_length );
 
     memcpy( buf, str->dsc$a_pointer, ml_value.exp_int );
 

@@ -29,8 +29,9 @@ void EmacsView::executeInsertDelete()
 {
 #if DBG_CALC_INS_DEL
     if( dbg_flags&DBG_CALC_INS_DEL )
+    {
         dbg_dump_screen( "start of executeInsertDelete" );
-
+    }
 #endif
 
     //
@@ -41,7 +42,9 @@ void EmacsView::executeInsertDelete()
     int update_line_from[ MSCREENLENGTH + 1 ];
 
     for( int i=0; i<int(sizeof(update_line_from)/sizeof(update_line_from[0])); i++ )
+    {
         update_line_from[i] = 0;
+    }
 
     // find line that have not moved that match
     for( int line_num=1; line_num <= t_length; line_num++ )
@@ -68,13 +71,17 @@ void EmacsView::executeInsertDelete()
         {
             int new_line_hash = 0;
             if( !t_desired_screen[new_line_num].isNull() )
+            {
                 new_line_hash = t_desired_screen[new_line_num]->lineHash();
+            }
 
             // for each new line find a matching old line
             for( int old_line_num = old_line_num_start_point; old_line_num <= t_length; old_line_num++ )
             {
                 if( update_line_from[ old_line_num ] != 0 )
+                {
                     break;
+                }
 
                 // assume a match if the hash is the same
                 if( !t_phys_screen[ old_line_num ].isNull()
@@ -104,7 +111,9 @@ void EmacsView::executeInsertDelete()
 
 #if DBG_CALC_INS_DEL
     if( dbg_flags&DBG_CALC_INS_DEL )
+    {
         _dbg_msg( "executeInsertDelete: update pass 1" );
+    }
 #endif
     // find the lines that need moving down out of the way of an over write
     // scan from bottom to top
@@ -121,9 +130,12 @@ void EmacsView::executeInsertDelete()
             updateLine( t_phys_screen[ old_line_num ], t_desired_screen[ new_line_num ], new_line_num );
         }
     }
+
 #if DBG_CALC_INS_DEL
     if( dbg_flags&DBG_CALC_INS_DEL )
+    {
         _dbg_msg( "executeInsertDelete: update pass 2" );
+    }
 #endif
 
     // update all the rest of the lines on the screen not covered by the move own pass
@@ -134,11 +146,18 @@ void EmacsView::executeInsertDelete()
     {
         int old_line_num = update_line_from[ new_line_num ];
 
-        // no old line, just write the new one out
+#if DBG_CALC_INS_DEL
+        if( dbg_flags&DBG_CALC_INS_DEL )
+        {
+            _dbg_msg( FormatString("update pass 2 old %d new %d") << old_line_num << new_line_num );
+        }
+#endif
+
+        // no old line, update from the old contents to new at the new line position
         if( old_line_num == 0 )
         {
             debugSleep();
-            updateLine( empty, t_desired_screen[new_line_num], new_line_num );
+            updateLine( t_phys_screen[new_line_num], t_desired_screen[new_line_num], new_line_num );
         }
         // update changed new from old
         else if( new_line_num == old_line_num )
@@ -162,6 +181,8 @@ void EmacsView::executeInsertDelete()
 
 #if DBG_CALC_INS_DEL
     if( dbg_flags&DBG_CALC_INS_DEL )
+    {
         dbg_dump_screen( "end of executeInsertDelete" );
+    }
 #endif
 }

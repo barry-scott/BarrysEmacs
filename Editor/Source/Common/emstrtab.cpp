@@ -24,7 +24,7 @@ unsigned char *msg_please_use_one = u_str("Please use one of the following words
 EmacsStringTable::EmacsStringTable( int initial_size, int growth )
     : num_entries( 0 )
     , allocated_entries( initial_size )
-    , grow_by( min( growth, 32 ) )
+    , grow_by( std::min( growth, 32 ) )
 {
     keys = (EmacsString **)EMACS_MALLOC( allocated_entries * sizeof( EmacsString * ), malloc_type_star_star );
     values = (void **)EMACS_MALLOC( allocated_entries * sizeof( void * ), malloc_type_star_star );
@@ -326,7 +326,7 @@ void EmacsStringTable::fillHelpBuffer( const EmacsString &prefix, int nfound )
     int longest_string;
     int p;
     for( longest_string=0, p=0; p<num_entries; p++ )
-        longest_string = max( longest_string, keys[p]->length() );
+        longest_string = std::max( longest_string, keys[p]->length() );
     longest_string += 2;
 
     int len = prefix.length();
