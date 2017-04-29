@@ -25,14 +25,7 @@ int main( int argc, char **argv )
 
     init_memory();
 
-    unix_path = getenv( "PATH" );
-    for( int i=0; i<unix_path.length(); i++ )
-    {
-        if( unix_path[i] == ':' )
-        {
-            unix_path[i] = PATH_SEP;
-            }
-    }
+    init_unix_environ( argv[0] );
 
     // record the start time
     gettimeofday( &emacs_start_time, NULL );

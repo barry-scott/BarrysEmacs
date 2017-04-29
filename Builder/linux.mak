@@ -9,41 +9,23 @@ endif
 
 ifdef DESTDIR
 BEMACS_ROOT_DIR=$(DESTDIR)
-BEMACS_DOC_DIR=$(DESTDIR)/usr/share/bemacs/doc
-BEMACS_LIB_DIR=$(DESTDIR)/usr/share/bemacs/lib
-BEMACS_BIN_DIR=$(DESTDIR)/usr/bin
+
+INSTALL_BEMACS_DOC_DIR=/usr/share/bemacs/doc
+INSTALL_BEMACS_LIB_DIR=/usr/share/bemacs/lib
+INSTALL_BEMACS_BIN_DIR=/usr/bin
 
 else
-ifeq (${BUILDER_CFG_PLATFORM},Linux-Fedora)
-BEMACS_ROOT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM/ROOT
-BEMACS_DOC_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM/ROOT/usr/local/bemacs8/share/doc/bemacs
-BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM/ROOT/usr/local/bemacs8/lib/bemacs
-BEMACS_BIN_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM/ROOT/usr/local/bemacs8/bin
-BUILD_KIT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/RPM
+BEMACS_ROOT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/ROOT
 
-else
-ifeq (${BUILDER_CFG_PLATFORM},Linux-Ubuntu)
-BEMACS_ROOT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree
-BEMACS_DOC_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree/usr/local/bemacs8/share/doc/bemacs
-BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree/usr/local/bemacs8/lib/bemacs
-BEMACS_BIN_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree/usr/local/bemacs8/bin
-BUILD_KIT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG
-
-else
-ifeq (${BUILDER_CFG_PLATFORM},Linux-Debian)
-BEMACS_ROOT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree
-BEMACS_DOC_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree/usr/local/bemacs8/share/doc/bemacs
-BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree/usr/local/bemacs8/lib/bemacs
-BEMACS_BIN_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG/tree/usr/local/bemacs8/bin
-BUILD_KIT_DIR=$(BUILDER_TOP_DIR)/Kits/Linux/DPKG
-
-else
-$(error unsupported BUILDER_CFG_PLATFORM of $(BUILDER_CFG_PLATFORM) )
+INSTALL_BEMACS_DOC_DIR=/usr/local/share/bemacs/doc
+INSTALL_BEMACS_LIB_DIR=/usr/local/lib/bemacs
+INSTALL_BEMACS_BIN_DIR=/usr/local/bin
 
 endif
-endif
-endif
-endif
+
+BUILD_BEMACS_DOC_DIR=$(BEMACS_ROOT_DIR)$(INSTALL_BEMACS_DOC_DIR)
+BUILD_BEMACS_LIB_DIR=$(BEMACS_ROOT_DIR)$(INSTALL_BEMACS_LIB_DIR)
+BUILD_BEMACS_BIN_DIR=$(BEMACS_ROOT_DIR)$(INSTALL_BEMACS_BIN_DIR)
 
 usage:
 	@ echo "Usage: make -f unix.mak build"
@@ -61,64 +43,64 @@ build_Linux-Ubuntu: build_Linux # Debian_pkg
 
 build_Linux-Debian: build_Linux # Debian_pkg
 
-build_Linux: brand $(BEMACS_DOC_DIR) $(BEMACS_LIB_DIR) $(BEMACS_BIN_DIR) editor bemacs mlisp describe language quick_info docs
+build_Linux: brand $(BUILD_BEMACS_DOC_DIR) $(BUILD_BEMACS_LIB_DIR) $(BUILD_BEMACS_BIN_DIR) editor bemacs mlisp describe language quick_info docs
 	@ echo Info: Linux kitting
 
-$(BEMACS_DOC_DIR)::
+$(BUILD_BEMACS_DOC_DIR)::
 	 if [ ! -e $@ ]; then mkdir -p $@; fi
 
-$(BEMACS_LIB_DIR)::
+$(BUILD_BEMACS_LIB_DIR)::
 	 if [ ! -e $@ ]; then mkdir -p $@; fi
 
-$(BEMACS_BIN_DIR)::
+$(BUILD_BEMACS_BIN_DIR)::
 	 if [ ! -e $@ ]; then mkdir -p $@; fi
 
 editor:
 	@ echo Info: Building BEmacs images...
-	cd ../Editor && ./build-linux.sh all
-	cp ../Editor/exe-pybemacs/_bemacs.so $(BEMACS_LIB_DIR)
-	cp ../Editor/exe-cli-bemacs/bemacs-cli $(BEMACS_BIN_DIR)
+	cd ../Editor && INSTALL_BEMACS_LIB_DIR=$(INSTALL_BEMACS_LIB_DIR) ./build-linux.sh all
+	cp ../Editor/exe-pybemacs/_bemacs.so $(BUILD_BEMACS_LIB_DIR)
+	cp ../Editor/exe-cli-bemacs/bemacs-cli $(BUILD_BEMACS_BIN_DIR)
 	@ echo Info: Copy db utils...
-	cp ../Editor/exe-utils/dbadd	$(BEMACS_BIN_DIR)/bemacs-dbadd
-	cp ../Editor/exe-utils/dbcreate $(BEMACS_BIN_DIR)/bemacs-dbcreate
-	cp ../Editor/exe-utils/dbdel	$(BEMACS_BIN_DIR)/bemacs-dbdel
-	cp ../Editor/exe-utils/dbprint	$(BEMACS_BIN_DIR)/bemacs-dbprint
-	cp ../Editor/exe-utils/dblist	$(BEMACS_BIN_DIR)/bemacs-dblist
-	cp ../Editor/exe-utils/mll2db	$(BEMACS_BIN_DIR)/bemacs-mll2db
+	cp ../Editor/exe-utils/dbadd	$(BUILD_BEMACS_BIN_DIR)/bemacs-dbadd
+	cp ../Editor/exe-utils/dbcreate $(BUILD_BEMACS_BIN_DIR)/bemacs-dbcreate
+	cp ../Editor/exe-utils/dbdel	$(BUILD_BEMACS_BIN_DIR)/bemacs-dbdel
+	cp ../Editor/exe-utils/dbprint	$(BUILD_BEMACS_BIN_DIR)/bemacs-dbprint
+	cp ../Editor/exe-utils/dblist	$(BUILD_BEMACS_BIN_DIR)/bemacs-dblist
+	cp ../Editor/exe-utils/mll2db	$(BUILD_BEMACS_BIN_DIR)/bemacs-mll2db
 
 bemacs:
 	@ echo Info: Copy PyQtBEmacs...
-	cd ../Editor/PyQtBEmacs && ./build-linux.sh $(BEMACS_ROOT_DIR) $(BEMACS_BIN_DIR) $(BEMACS_LIB_DIR) $(BEMACS_DOC_DIR)
+	cd ../Editor/PyQtBEmacs && ./build-linux.sh $(BEMACS_ROOT_DIR) $(INSTALL_BEMACS_BIN_DIR) $(INSTALL_BEMACS_LIB_DIR) $(INSTALL_BEMACS_DOC_DIR)
 
 mlisp:
 	@ echo Info: Copying Mlisp files...
-	cp -f ../MLisp/emacsinit.ml	$(BEMACS_LIB_DIR); chmod ugo=r $(BEMACS_LIB_DIR)/emacsinit.ml
-	cp -f ../MLisp/emacs_profile.ml	$(BEMACS_LIB_DIR); chmod ugo=r $(BEMACS_LIB_DIR)/emacs_profile.ml
-	cd ../MLisp; $(PYTHON) create_library.py common $(BEMACS_LIB_DIR)/emacslib $(BEMACS_BIN_DIR); chmod ugo=r $(BEMACS_LIB_DIR)/emacslib.*
+	cp -f ../MLisp/emacsinit.ml	$(BUILD_BEMACS_LIB_DIR); chmod ugo=r $(BUILD_BEMACS_LIB_DIR)/emacsinit.ml
+	cp -f ../MLisp/emacs_profile.ml	$(BUILD_BEMACS_LIB_DIR); chmod ugo=r $(BUILD_BEMACS_LIB_DIR)/emacs_profile.ml
+	cd ../MLisp; $(PYTHON) create_library.py common $(BUILD_BEMACS_LIB_DIR)/emacslib $(BUILD_BEMACS_BIN_DIR); chmod ugo=r $(BUILD_BEMACS_LIB_DIR)/emacslib.*
 
 describe:
 	@ echo Info: Making describe...
-	@ $(BEMACS_BIN_DIR)/bemacs-dbcreate $(BEMACS_LIB_DIR)/emacsdesc -c
-	@ $(BEMACS_BIN_DIR)/bemacs-mll2db ../Describe/em_desc.mll $(BEMACS_LIB_DIR)/emacsdesc; chmod ugo=r $(BEMACS_LIB_DIR)/emacsdesc.*
+	@ $(BUILD_BEMACS_BIN_DIR)/bemacs-dbcreate $(BUILD_BEMACS_LIB_DIR)/emacsdesc -c
+	@ $(BUILD_BEMACS_BIN_DIR)/bemacs-mll2db ../Describe/em_desc.mll $(BUILD_BEMACS_LIB_DIR)/emacsdesc; chmod ugo=r $(BUILD_BEMACS_LIB_DIR)/emacsdesc.*
 
 language:
 	@ echo Info: Making language...
-	@ $(BEMACS_BIN_DIR)/bemacs-dbcreate $(BEMACS_LIB_DIR)/emacslang -c
-	@ $(BEMACS_BIN_DIR)/bemacs-mll2db ../Language/language.mll $(BEMACS_LIB_DIR)/emacslang; chmod ugo=r $(BEMACS_LIB_DIR)/emacslang.*
+	@ $(BUILD_BEMACS_BIN_DIR)/bemacs-dbcreate $(BUILD_BEMACS_LIB_DIR)/emacslang -c
+	@ $(BUILD_BEMACS_BIN_DIR)/bemacs-mll2db ../Language/language.mll $(BUILD_BEMACS_LIB_DIR)/emacslang; chmod ugo=r $(BUILD_BEMACS_LIB_DIR)/emacslang.*
 
 quick_info:
 	@ echo Info: Making quick info...
-	@ $(BEMACS_BIN_DIR)/bemacs-dbcreate $(BEMACS_LIB_DIR)/emacs_qinfo_c -c
-	@ $(BEMACS_BIN_DIR)/bemacs-mll2db ../Describe/qi_cc.mll $(BEMACS_LIB_DIR)/emacs_qinfo_c; chmod ugo=r $(BEMACS_LIB_DIR)/emacs_qinfo_c.*
+	@ $(BUILD_BEMACS_BIN_DIR)/bemacs-dbcreate $(BUILD_BEMACS_LIB_DIR)/emacs_qinfo_c -c
+	@ $(BUILD_BEMACS_BIN_DIR)/bemacs-mll2db ../Describe/qi_cc.mll $(BUILD_BEMACS_LIB_DIR)/emacs_qinfo_c; chmod ugo=r $(BUILD_BEMACS_LIB_DIR)/emacs_qinfo_c.*
 
 docs:
 	@ echo Info: Copying documentation...
-	cp -f ../Kits/readme.txt $(BEMACS_DOC_DIR);chmod ugo=r $(BEMACS_DOC_DIR)/readme.txt
-	cp -f ../Editor/PyQtBEmacs/bemacs.png "$(BEMACS_DOC_DIR)"; chmod ugo=r "$(BEMACS_DOC_DIR)"/*.png
-	cp -f ../HTML/*.html $(BEMACS_DOC_DIR); chmod ugo=r $(BEMACS_DOC_DIR)/*.html
-	cp -f ../HTML/*.gif $(BEMACS_DOC_DIR); chmod ugo=r $(BEMACS_DOC_DIR)/*.gif
-	cp -f ../HTML/*.css $(BEMACS_DOC_DIR); chmod ugo=r $(BEMACS_DOC_DIR)/*.css
-	cp -f ../HTML/*.js $(BEMACS_DOC_DIR); chmod ugo=r $(BEMACS_DOC_DIR)/*.js
+	cp -f ../Kits/readme.txt $(BUILD_BEMACS_DOC_DIR);chmod ugo=r $(BUILD_BEMACS_DOC_DIR)/readme.txt
+	cp -f ../Editor/PyQtBEmacs/bemacs.png "$(BUILD_BEMACS_DOC_DIR)"; chmod ugo=r "$(BUILD_BEMACS_DOC_DIR)"/*.png
+	cp -f ../HTML/*.html $(BUILD_BEMACS_DOC_DIR); chmod ugo=r $(BUILD_BEMACS_DOC_DIR)/*.html
+	cp -f ../HTML/*.gif $(BUILD_BEMACS_DOC_DIR); chmod ugo=r $(BUILD_BEMACS_DOC_DIR)/*.gif
+	cp -f ../HTML/*.css $(BUILD_BEMACS_DOC_DIR); chmod ugo=r $(BUILD_BEMACS_DOC_DIR)/*.css
+	cp -f ../HTML/*.js $(BUILD_BEMACS_DOC_DIR); chmod ugo=r $(BUILD_BEMACS_DOC_DIR)/*.js
 
 Fedora_rpm: Fedora_rpm_$(BUILDER_CFG_PLATFORM)
 
@@ -130,8 +112,8 @@ Fedora_rpm_Any:
 	echo %_topdir $(BUILD_KIT_DIR) >$(BUILD_KIT_DIR)/rpmmacros
 	echo BuildRoot: $(BUILD_KIT_DIR)/ROOT >$(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
 	cat $(BUILD_KIT_DIR)/SPECS/bemacs.spec >>$(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
-	cd $(BEMACS_DOC_DIR); for docfile in *.css *.html *.js *.gif; do echo %doc $$docfile >>$(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec; done
-	cd $(BEMACS_LIB_DIR); chmod u+w *
+	cd $(BUILD_BEMACS_DOC_DIR); for docfile in *.css *.html *.js *.gif; do echo %doc $$docfile >>$(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec; done
+	cd $(BUILD_BEMACS_LIB_DIR); chmod u+w *
 	rpmbuild --rcfile=/usr/lib/rpm/rpmrc:$(BUILD_KIT_DIR)/rpmrc -bb $(BUILD_KIT_DIR)/SPECS/bemacs-with-build-root.spec
 
 Debian_pkg:

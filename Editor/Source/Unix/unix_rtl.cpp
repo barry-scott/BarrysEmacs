@@ -258,8 +258,84 @@ int put_config_env( const EmacsString &name, const EmacsString &value )
     return setenv( name, value, 1 );
 }
 
+EmacsString image_path;
+
+static void calcImagePath( EmacsString argv0 )
+{
+    unix_path = getenv( "PATH" );
+    for( int i=0; i<unix_path.length(); i++ )
+    {
+        if( unix_path[i] == ':' )
+        {
+            unix_path[i] = PATH_SEP;
+        }
+    }
+
+    {
+        EmacsFile image;
+        image.fio_open_using_path( unix_path, argv0, 0, "" );
+        if( !image.fio_is_open() )
+        {
+            _dbg_msg( "Emacs is unable to find itself!\n" );
+            return;
+        }
+        image_path = image.fio_getname();
+    }
+
+    // find the stat of the path and don't hide links
+    struct stat stat_buf;
+    if( lstat( (const char *)image_path, &stat_buf ) == 0
+    // its a symbolic link
+    && (stat_buf.st_mode&S_IFMT) == 0120000 )
+    {
+        char link_path[MAXPATHLEN+1];
+        // get the value of the link
+        int size = readlink( image_path.sdata(), link_path, MAXPATHLEN );
+        if( size != -1 )
+        {
+            link_path[size] = '\0';
+
+            // printf( "The sym link is %s\n", link_path );
+            // if its an absolute path just replace image_path
+            if( link_path[0] == '/' )
+            {
+                image_path = link_path;
+            }
+            else
+            {
+                // add the link to the end of the image_path less the last file name
+                int pos = image_path.last( PATH_CH );
+                if( pos > 0 )
+                {
+                    image_path.remove( pos+1 );
+                    image_path.append( link_path );
+                }
+            }
+        }
+
+        // printf( "New image path is %s\n", image_path.data() );
+    }
+
+    int pos = image_path.last( PATH_CH );
+    if( pos < 0 )
+    {
+        return;
+    }
+
+    image_path.remove( pos );
+}
+
+void init_unix_environ( const char *argv0 )
+{
+    calcImagePath( argv0 );
+}
+
 EmacsString env_emacs_user;
+#if defined( BEMACS_LIB_DIR )
+EmacsString env_emacs_library( BEMACS_LIB_DIR );
+#else
 EmacsString env_emacs_library;
+#endif
 
 EmacsString get_config_env( const EmacsString &name )
 {
@@ -289,7 +365,7 @@ EmacsString get_config_env( const EmacsString &name )
     {
         if( env_emacs_library.isNull() )
         {
-            env_emacs_library = "/usr/share/bemacs/lib";
+            expand_and_default( FormatString( "%s%s..%semacs_library" ) << image_path << PATH_STR << PATH_STR, EmacsString::null, env_emacs_library );
         }
         return env_emacs_library;
     }

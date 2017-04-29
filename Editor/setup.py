@@ -17,6 +17,7 @@ def debug( msg ):
 class Setup:
     def __init__( self, argv ):
         self.enable_debug = False
+        self.opt_lib_dir = '/usr/local/lib/bemacs'
 
         args = argv[1:]
         if len(args) < 2:
@@ -40,6 +41,10 @@ class Setup:
 
             elif args[0] == '--enable-debug':
                 self.enable_debug = True
+                del args[0]
+
+            elif args[0].startswith( '--lib-dir=' ):
+                self.opt_lib_dir = args[0][len('--lib-dir='):]
                 del args[0]
 
             else:
@@ -824,13 +829,16 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_OBJ',       'obj-cli-bemacs' )
         self._addVar( 'EDIT_EXE',       'exe-cli-bemacs' )
 
+        self._addVar( 'BEMACS_LIB_DIR', self.setup.opt_lib_dir )
+
         self._addVar( 'CCCFLAGS',
                                         '-g '
                                         '-Wall -fPIC -fexceptions -frtti '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
-                                        '-D%(DEBUG)s' )
+                                        '-D%(DEBUG)s '
+                                        '-DBEMACS_LIB_DIR=\\"%(BEMACS_LIB_DIR)s\\"' )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
