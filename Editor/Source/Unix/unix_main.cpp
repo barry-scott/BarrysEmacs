@@ -33,10 +33,6 @@ int main( int argc, char **argv )
     struct utsname uname_data;
     uname( &uname_data );
 
-    EmacsString default_binding;
-    default_binding.append( EmacsChar_t( 0x0010ff00 ) );    // '\U0010ff00'
-    PC_key_names.addMapping( "default", default_binding );
-
     process_args( argc, argv );
 
     return emacsMain( EmacsString::null, u_str("char"), u_str("") );

@@ -9,6 +9,7 @@ class key_name_entry
 {
 public:
     key_name_entry( const char *n, const char *v );
+    key_name_entry( const char *n, const EmacsChar_t *v );
     key_name_entry( const key_name_entry &from );
     EmacsString name;
     EmacsString value;
