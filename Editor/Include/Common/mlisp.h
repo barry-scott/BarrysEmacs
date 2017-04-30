@@ -443,6 +443,7 @@ private:
     static ProgramNode *name_node( MLispInputStream &stream );
     static ProgramNode *number_node( MLispInputStream &stream );
     static ProgramNode *string_node( MLispInputStream &stream );
+    static int parse_hexadecimal_number( MLispInputStream &stream, int min_digits, int max_digits, bool &parse_ok );
 
 };
 

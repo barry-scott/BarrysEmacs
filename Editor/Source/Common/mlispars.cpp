@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1982-2016
+//    Copyright (c) 1982-2017
 //        Barry A. Scott
 //
 
@@ -675,8 +675,9 @@ ProgramNode *ProgramNode::paren_node( MLispInputStream &input )
     return p;
 }
 
-unsigned char msg_imp_char[] = "'%s' is an improper character constant.";
-unsigned char msg_imp_octal[] = "'%c' is an improper octal constant.";
+unsigned char msg_improper_char[] = "'%s' is an improper character constant.";
+unsigned char msg_improper_octal[] = "'%c' is an improper octal constant.";
+unsigned char msg_improper_hex[] = "'%c' is an improper hexadecimal constant.";
 
 ProgramNode *ProgramNode::number_node( MLispInputStream &input )
 {
@@ -698,7 +699,7 @@ ProgramNode *ProgramNode::number_node( MLispInputStream &input )
         buf[ n ] = 0;
         if( n > 10 )
         {
-            error( FormatString(msg_imp_char) << buf );
+            error( FormatString(msg_improper_char) << buf );
             goto number_block;
         }
         if( n == 1 )
@@ -739,12 +740,12 @@ ProgramNode *ProgramNode::number_node( MLispInputStream &input )
                             n = n * 8 + c - '0';
                         if( c != 0 )
                         {
-                            error( FormatString(msg_imp_char) << buf );
+                            error( FormatString(msg_improper_char) << buf );
                             goto number_block;
                         }
                     }
                     else
-                        error( FormatString(msg_imp_char) << buf );
+                        error( FormatString(msg_improper_char) << buf );
                 }
             }
         }
@@ -764,7 +765,6 @@ ProgramNode *ProgramNode::number_node( MLispInputStream &input )
             if( input.peek() == 'x' || input.peek() == 'X' )
             {
                 input();        // skip x
-                c = input();    // first digit
                 base = 16;
             }
             else
@@ -779,7 +779,7 @@ ProgramNode *ProgramNode::number_node( MLispInputStream &input )
             {
                 if( c >= '7' )
                 {
-                    error( FormatString( msg_imp_octal ) << c );
+                    error( FormatString( msg_improper_octal ) << c );
                     goto number_block;
                 }
                 n = n * base + c - '0';
@@ -796,26 +796,13 @@ ProgramNode *ProgramNode::number_node( MLispInputStream &input )
             break;
 
         case 16:
-            for(;;)
+            bool parse_ok = true;
+            n = parse_hexadecimal_number( input, 1, 100, parse_ok );
+            if( !parse_ok )
             {
-                if( c >= '0' && c <= '9' )
-                {
-                    n = n * base + c - '0';
-                }
-                else if( c >= 'a' && c <= 'f' )
-                {
-                    n = n * base + c - 'a' + 10;
-                }
-                else if( c >= 'A' && c <= 'F' )
-                {
-                    n = n * base + c - 'A' + 10;
-                }
-                else
-                {
-                    break;
-                }
-                c = input();
+                goto number_block;
             }
+            c = input();
             break;
         }
 
@@ -861,6 +848,26 @@ ProgramNode *ProgramNode::string_node( MLispInputStream &input )
         case 't': c =  9; break;    // TAB
         case 'r': c = 13; break;    // CR
         case 'e': c = 27; break;    // ESC
+        case 'u':
+        {
+            bool parse_ok = false;
+            c = parse_hexadecimal_number( input, 4, 4, parse_ok );
+            if( !parse_ok )
+            {
+                return 0;
+            }
+            break;
+        }
+        case 'U':
+        {
+            bool parse_ok = false;
+            c = parse_hexadecimal_number( input, 8, 8, parse_ok );
+            if( !parse_ok ) 
+            {
+                return 0;
+            }
+            break;
+        }
         case '^':
         {
             c = input();
@@ -875,7 +882,7 @@ ProgramNode *ProgramNode::string_node( MLispInputStream &input )
         {
             EmacsString key_name;
 
-            int final_char = ']';
+            EmacsChar_t final_char = ']';
             if( c == '(' )
             {
                 final_char = ')';
@@ -1158,4 +1165,46 @@ ProgramNodeNode::~ProgramNodeNode()
         delete pa_node[i];
     }
     EMACS_FREE( pa_node );
+}
+
+int ProgramNode::parse_hexadecimal_number( MLispInputStream &input, int min_digits, int max_digits, bool &parse_ok )
+{
+    int n = 0;
+    int num_digits = 0;
+    EmacsChar_t c = input();
+
+    for( num_digits=0; num_digits<max_digits; ++num_digits )
+    {
+        if( c >= '0' && c <= '9' )
+        {
+            n = n * 16 + c - '0';
+        }
+        else if( c >= 'a' && c <= 'f' )
+        {
+            n = n * 16 + c - 'a' + 10;
+        }
+        else if( c >= 'A' && c <= 'F' )
+        {
+            n = n * 16 + c - 'A' + 10;
+        }
+        else
+        {
+            break;
+        }
+
+        c = input();
+    }
+
+    if( num_digits < min_digits )
+    {
+        error( FormatString( msg_improper_hex ) << c );
+        parse_ok = false;
+        return n;
+    }
+    else
+    {
+        input.pushBack( c );
+        parse_ok = true;
+        return n;
+    }
 }
