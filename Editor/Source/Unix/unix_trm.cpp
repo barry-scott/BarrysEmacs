@@ -121,10 +121,13 @@ void TerminalControl_CHAR::t_change_attributes()
 
     term_output_buffer_size = OUTPUT_LENGTH - OUTPUT_OVERRUN;
     t_cur_attributes.c_iflag |= IGNBRK;
-    t_cur_attributes.c_iflag &= ~(INLCR|ICRNL|IGNCR|ISTRIP);
+    t_cur_attributes.c_iflag &= ~(INLCR|ICRNL|IGNCR|ISTRIP|IXON);
     t_cur_attributes.c_oflag &= ~(OPOST);
 
     t_cur_attributes.c_lflag &= ~(ECHO|ICANON|ISIG|IEXTEN);
+
+    t_cur_attributes.c_cflag &= ~(CSIZE | PARENB);
+    t_cur_attributes.c_cflag |= CS8;
 
     t_cur_attributes.c_cc[VMIN] = 1;
     t_cur_attributes.c_cc[VTIME] = 0;
