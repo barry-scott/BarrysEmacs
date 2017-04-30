@@ -249,6 +249,19 @@ EmacsChar_t unicode_casefold( EmacsChar_t code_point )
 //   0020 0000-03FF FFFF   111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
 //   0400 0000-7FFF FFFF   1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
 //
+int length_utf8_code_point( unsigned char first_byte )
+{
+    if( (first_byte&0x80) == 0x00 ) return 1;
+    if( (first_byte&0xe0) == 0xc0 ) return 2;
+    if( (first_byte&0xf0) == 0xe0 ) return 3;
+    if( (first_byte&0xf8) == 0xf0 ) return 4;
+    if( (first_byte&0xfc) == 0xf8 ) return 5;
+    if( (first_byte&0xfe) == 0xfc ) return 6;
+
+    // encoding error
+    return 1;
+}
+
 int length_utf8_to_unicode( int utf8_length, const unsigned char *utf8_data )
 {
     int length = 0;
@@ -257,49 +270,11 @@ int length_utf8_to_unicode( int utf8_length, const unsigned char *utf8_data )
     while( remaining > 0 )
     {
         unsigned char ch = utf8_data[i];
+        int code_point_len = length_utf8_code_point( ch );
 
-        if( (ch&0x80) == 0x00 && remaining >= 1 )
-        {
-            i += 1;
-            remaining -= 1;
-            ++length;
-        }
-        else if( (ch&0xe0) == 0xc0 && remaining >= 2 )
-        {
-            i += 2;
-            remaining -= 2;
-            ++length;
-        }
-        else if( (ch&0xf0) == 0xe0 && remaining >= 3 )
-        {
-            i += 3;
-            remaining -= 3;
-            ++length;
-        }
-        else if( (ch&0xf8) == 0xf0 && remaining >= 4 )
-        {
-            i += 4;
-            remaining -= 4;
-            ++length;
-        }
-        else if( (ch&0xfc) == 0xf8 && remaining >= 5 )
-        {
-            i += 5;
-            remaining -= 5;
-            ++length;
-        }
-        else if( (ch&0xfe) == 0xfc && remaining >= 6 )
-        {
-            i += 6;
-            remaining -= 6;
-            ++length;
-        }
-        else
-        {
-            i += 1;
-            remaining -= 1;
-            ++length;
-        }
+        i += code_point_len;
+        remaining -= code_point_len;
+        ++length;
     }
 
     return length;
@@ -313,50 +288,10 @@ int length_utf8_to_unicode( int utf8_length, const unsigned char *utf8_data, int
     while( remaining > 0 && length < unicode_limit )
     {
         unsigned char ch = utf8_data[i];
-
-        if( (ch&0x80) == 0x00 && remaining >= 1 )
-        {
-            i += 1;
-            remaining -= 1;
-            ++length;
-        }
-        else if( (ch&0xe0) == 0xc0 && remaining >= 2 )
-        {
-            i += 2;
-            remaining -= 2;
-            ++length;
-        }
-        else if( (ch&0xf0) == 0xe0 && remaining >= 3 )
-        {
-            i += 3;
-            remaining -= 3;
-            ++length;
-        }
-        else if( (ch&0xf8) == 0xf0 && remaining >= 4 )
-        {
-            i += 4;
-            remaining -= 4;
-            ++length;
-        }
-        else if( (ch&0xfc) == 0xf8 && remaining >= 5 )
-        {
-            i += 5;
-            remaining -= 5;
-            ++length;
-        }
-        else if( (ch&0xfe) == 0xfc && remaining >= 6 )
-        {
-            i += 6;
-            remaining -= 6;
-            ++length;
-        }
-        else
-        {
-            // decode error - just insert the vaue as is
-            i += 1;
-            remaining -= 1;
-            ++length;
-        }
+        int code_point_len = length_utf8_code_point( ch );
+        i += code_point_len;
+        remaining -= code_point_len;
+        ++length;
     }
 
     utf8_usable_length = i;

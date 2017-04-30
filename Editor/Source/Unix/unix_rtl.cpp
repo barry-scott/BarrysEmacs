@@ -145,19 +145,32 @@ int win_emacs_quit = 0;
 
 int wait_for_activity(void)
 {
-    unsigned char buf[128];
+    unsigned char utf8_buf[128];
+    int used = 0;
 
-    int size = theActiveView->k_input_event( buf, sizeof( buf ) );
-    if( size < 0 )
+    for(;;)
     {
-        return -1;
-    }
-
-    if( size >= 1 )
-    {
-        for( int i=0; i<size; i++ )
+        int size = theActiveView->k_input_event( utf8_buf, sizeof( utf8_buf )-used );
+        if( size < 0 )
         {
-            theActiveView->k_input_char( buf[i], false );
+            return -1;
+        }
+
+        used += size;
+        if( used >= length_utf8_code_point( utf8_buf[0] ) )
+        {
+            break;
+        }
+    }
+    EmacsChar_t uni_buf[128];
+    int uni_len = length_utf8_to_unicode( used, utf8_buf );
+    convert_utf8_to_unicode( utf8_buf, uni_len, uni_buf );
+
+    if( uni_len >= 1 )
+    {
+        for( int i=0; i<uni_len; i++ )
+        {
+            theActiveView->k_input_char( uni_buf[i], false );
         }
         return 1;
     }

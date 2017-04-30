@@ -15,6 +15,7 @@ typedef std::set<EmacsChar_t> EmacsCharCategorySet_t;
 extern const int unicode_max_code_point;
 
 
+extern int length_utf8_code_point( unsigned char first_byte );
 extern int length_utf8_to_unicode( int utf8_length, const unsigned char *utf8_data );
 extern int length_utf8_to_unicode( int utf8_length, const unsigned char *utf8_data, int unicode_limit, int &utf8_usable_length );
 extern void convert_utf8_to_unicode( const unsigned char *utf8_data, int unicode_length, EmacsChar_t *unicode_data );
