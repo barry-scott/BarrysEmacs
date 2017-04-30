@@ -102,7 +102,9 @@ TerminalControl::TerminalControl()
 { }
 
 TerminalControl::~TerminalControl()
-{ }
+{
+    t_cleanup();
+}
 
 void TerminalControl::k_input_enable()
 {
@@ -236,9 +238,7 @@ TerminalControl_FILE::TerminalControl_FILE( const unsigned char *file )
 }
 
 TerminalControl_FILE::~TerminalControl_FILE()
-{
-    t_cleanup();
-}
+{ }
 
 void TerminalControl_FILE::t_cleanup()
 {
