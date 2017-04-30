@@ -505,25 +505,38 @@ void TerminalControl_CHAR::t_init()
 void TerminalControl_CHAR::t_reset()
 {
     //
-    //    Too reset terminal
-    //        scroll-region        r
-    //        graphic rendition    m
-    //        Insert replace        4l
-    //        Jump scroll        ?4l
-    //        Wrap around        ?7l
-    //        Clear screen        2J
-    //        Select US chars as G0    (B
-    //        Select Special graphics
-    //            chars as G1    )0
-    //        G0 as current chars    ^O
+    //  To reset terminal
+    //      Alt Screen        ?1049l
+    //      scroll-region           r
+    //      graphic rendition       m
+    //      Insert replace          4l
+    //      Jump scroll             ?4l
+    //      Wrap around             ?7l
+    //      Clear screen            2J
+    //      Select US chars as G0   (B
+    //      Select Special graphics
+    //          chars as G1         )0
+    //      G0 as current chars     ^O
     //
-    //        Origin mode set        ?6h     for EDIT
-    //        Origin mode reset    ?6l     for NOEDIT
+    //      Origin mode set         ?6h for EDIT
+    //      Origin mode reset       ?6l for NOEDIT
+    //
+
     //
     t_io_printf
     (
-    "\233r\233m\2334l\233?4l\233?6%c\233?7l\2332J\033(B\033)0\017",
-    term_edit ? 'h' : 'l'
+        "\233?1049h"
+        "\233r"
+        "\233m"
+        "\2334l"
+        "\233?4l"
+        "\233?6%c"
+        "\233?7l"
+        "\2332J"
+        "\033(B"
+        "\033)0"
+        "\017",
+        term_edit ? 'h' : 'l'
     );
     PAD (1, 100.);
     window_size = t_length;
@@ -534,7 +547,14 @@ void TerminalControl_CHAR::t_reset()
 void TerminalControl_CHAR::t_cleanup()
 {
     t_window( 0 );
-    t_io_printf( "\233?6l\233%dH\233K", window_size );
+    t_io_printf
+    (
+        "\233?6l"
+        "\233%dH"
+        "\233K"
+        "\233?1049l",
+        window_size
+    );
     t_io_flush();
     term_restore_charactistics();
 }
