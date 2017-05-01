@@ -891,10 +891,7 @@ class Target:
         raise NotImplementedError( '_generateMakefile' )
 
     def ruleClean( self, ext=None ):
-        if ext is None:
-            target_filename = self.getTargetFilename()
-        else:
-            target_filename = self.getTargetFilename( ext )
+        target_filename = self.getTargetFilename( ext )
 
         self.compiler.ruleClean( target_filename )
 
@@ -924,8 +921,12 @@ class Program(Target):
 
         self.compiler.ruleLinkProgram( self )
 
-        # QQQ only good for MSVC90 builds where program.* makes sense
-        self.compiler.ruleClean( self.getTargetFilename( '.*' ) )
+        if self.getProgramExt() != ''
+            # assume windows compiler that creates more them just the .exe
+            self.compiler.ruleClean( self.getTargetFilename( '.*' ) )
+
+        else:
+            self.compiler.ruleClean( self.getTargetFilename() )
 
         for source in self.all_sources:
             source.generateMakefile()
