@@ -24,7 +24,6 @@ int term_expand_c1 = 1;
 //    output.
 //
 
-const int OUTPUT_MINIMUM( 1 );
 const int OUTPUT_OVERRUN( 128 );
 const int OUTPUT_LENGTH( 512 + OUTPUT_OVERRUN );
 
