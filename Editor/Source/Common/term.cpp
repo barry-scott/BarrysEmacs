@@ -137,6 +137,25 @@ void TerminalControl::t_cleanup()
     theActiveView->t_wipe_line( 0 );
 }
 
+void TerminalControl::t_move_line( int old_line_num, int new_line_num )
+{
+    int delta = new_line_num - old_line_num;
+
+    if( delta > 0 )
+    {
+        t_window( new_line_num );
+        t_topos( old_line_num, 1 );
+        t_insert_lines( delta );
+    }
+    else
+    {
+        t_window( old_line_num );
+        t_topos( new_line_num, 1 );
+        t_delete_lines( -delta );
+    }
+}
+
+
 void TerminalControl::t_io_printf( const char *fmt, ... )
 {
     va_list argp;
