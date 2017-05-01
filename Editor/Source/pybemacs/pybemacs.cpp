@@ -18,10 +18,6 @@ extern int execute_package( const EmacsString &package );
 
 extern SystemExpressionRepresentationIntBoolean synchronise_buffers_on_focus;
 
-void qqq()
-{
-}
-
 EmacsString name_arg;
 
 extern void init_fncs( void );
@@ -636,7 +632,7 @@ public:
         }
     }
 
-    void termDisplayActivity( unsigned char ch )
+    void termDisplayActivity( EmacsChar_t ch )
     {
         PythonDisallowThreads permission( editor_access_control );
 
@@ -1151,7 +1147,7 @@ public:
     {
     }
 
-    virtual void t_display_activity( unsigned char ch )
+    virtual void t_display_activity( EmacsChar_t ch )
     {
         m_editor.termDisplayActivity( ch );
     }

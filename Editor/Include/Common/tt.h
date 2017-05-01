@@ -29,7 +29,7 @@ public:
     virtual bool t_window( int ) { return false; }    // set the screen window so that IDline operations only affect the first n lines of the screen
     virtual void t_flash() { }                  // Flash the screen -- not set if this terminal type won't support it.
     virtual void t_geometry_change();
-    virtual void t_display_activity( unsigned char ) { }
+    virtual void t_display_activity( EmacsChar_t ) { }
     virtual void t_move_line( int old_line_num, int new_line_num );
     //
     // costs are expressed as number_affected*mf + ov
