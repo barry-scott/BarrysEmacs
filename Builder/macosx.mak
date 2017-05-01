@@ -5,6 +5,7 @@
 #
 PYTHON=python${PYTHON_VERSION}
 
+BEMACS_BIN_DIR=$(BUILDER_TOP_DIR)/Kits/MacOSX/pkg/Barry's Emacs-Devel.app/Contents/MacOS
 BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/MacOSX/pkg/Barry's Emacs-Devel.app/Contents/Resources/emacs_library
 BEMACS_DOC_DIR=$(BUILDER_TOP_DIR)/Kits/MacOSX/pkg/Barry's Emacs-Devel.app/Contents/Resources/documentation
 
@@ -23,13 +24,15 @@ editor:
 	cd ../Editor && ./build-macosx.sh all
 	@ echo Info: Building BEmacs application...
 	cd ../Editor/PyQtBEmacs && ./build-macosx.sh --package
+	@ echo Info: Copy beamcs-cli...
+	cp ../Editor/exe-cli-bemacs/bemacs-cli "$(BEMACS_BIN_DIR)"; chmod ugo=rx "$(BEMACS_BIN_DIR)/bemacs-cli"
 	@ echo Info: Copy db utils...
-	cp ../Editor/exe-utils/dbadd	"$(BEMACS_LIB_DIR)"; chmod ugo=rx "$(BEMACS_LIB_DIR)/dbadd"
-	cp ../Editor/exe-utils/dbcreate	"$(BEMACS_LIB_DIR)"; chmod ugo=rx "$(BEMACS_LIB_DIR)/dbcreate"
-	cp ../Editor/exe-utils/dbdel	"$(BEMACS_LIB_DIR)"; chmod ugo=rx "$(BEMACS_LIB_DIR)/dbdel"
-	cp ../Editor/exe-utils/dbprint	"$(BEMACS_LIB_DIR)"; chmod ugo=rx "$(BEMACS_LIB_DIR)/dbprint"
-	cp ../Editor/exe-utils/dblist	"$(BEMACS_LIB_DIR)"; chmod ugo=rx "$(BEMACS_LIB_DIR)/dblist"
-	cp ../Editor/exe-utils/mll2db	"$(BEMACS_LIB_DIR)"; chmod ugo=rx "$(BEMACS_LIB_DIR)/mll2db"
+	cp ../Editor/exe-utils/dbadd	"$(BEMACS_BIN_DIR)"; chmod ugo=rx "$(BEMACS_BIN_DIR)/dbadd"
+	cp ../Editor/exe-utils/dbcreate	"$(BEMACS_BIN_DIR)"; chmod ugo=rx "$(BEMACS_BIN_DIR)/dbcreate"
+	cp ../Editor/exe-utils/dbdel	"$(BEMACS_BIN_DIR)"; chmod ugo=rx "$(BEMACS_BIN_DIR)/dbdel"
+	cp ../Editor/exe-utils/dbprint	"$(BEMACS_BIN_DIR)"; chmod ugo=rx "$(BEMACS_BIN_DIR)/dbprint"
+	cp ../Editor/exe-utils/dblist	"$(BEMACS_BIN_DIR)"; chmod ugo=rx "$(BEMACS_BIN_DIR)/dblist"
+	cp ../Editor/exe-utils/mll2db	"$(BEMACS_BIN_DIR)"; chmod ugo=rx "$(BEMACS_BIN_DIR)/mll2db"
 
 mlisp:
 	@ echo Info: Copying Mlisp files...
