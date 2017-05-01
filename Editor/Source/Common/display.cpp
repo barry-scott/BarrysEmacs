@@ -358,14 +358,14 @@ void EmacsView::updateLine
             new_line_len = new_line->line_length;
         }
 
-        _dbg_msg( FormatString( "        updateLine(   %3d:'%.*s'%*s,    %3d:'%.*s'%*s, %d )" )
+        _dbg_msg( FormatString( "        updateLine( Ln:%d:  Sz:%3d:'%.*s'%*s,       Sz:%3d:'%.*s'%*s )" )
+            << ln
             << old_line_len
                 << std::min( old_line_len, dump_size ) << old_line_start
                     << std::max( dump_size-old_line_len, 0 ) << ""
             << new_line_len
                 << std::min( new_line_len, dump_size ) << new_line_start
                     << std::max( dump_size-new_line_len, 0 ) << ""
-            << ln
             );
     }
 #endif
@@ -401,7 +401,7 @@ void EmacsView::moveLine
             new_line_len = new_line->line_length;
         }
 
-        _dbg_msg( FormatString( "        move line( %2d %3d:'%.*s'%*s, %2d %3d:'%.*s'%*s )" )
+        _dbg_msg( FormatString( "         moveLine( Ln:%2d Sz%3d:'%.*s'%*s, Ln:%2d Sz%3d:'%.*s'%*s )" )
             << old_line_num
             << old_line_len
                 << std::min( old_line_len, dump_size ) << old_line_start
@@ -425,6 +425,13 @@ void EmacsView::updateLine
     int ln
     )
 {
+#if DBG_DISPLAY
+    if( dbg_flags&DBG_DISPLAY )
+    {
+        _dbg_msg( "EmacsView::updateLine() {!MEMMAP}" );
+    }
+#endif
+
     t_update_line( old_line, new_line, ln );
     check_for_input--;
     if( check_for_input < 0
@@ -471,7 +478,7 @@ void EmacsView::dbg_dump_screen( const char *title )
             new_line_hash = t_desired_screen[ln]->lineHash();
         }
 
-        _dbg_msg( FormatString( "   %2d [%3d(0x%8.8x):'%.*s'%*s, %3d(0x%8.8x):'%.*s'%*s]" )
+        _dbg_msg( FormatString( "   Ln:%2d [Sz:%3d Hash:0x%8.8x:'%.*s'%*s, Sz:%3d Hash:0x%8.8x:'%.*s'%*s]" )
             << ln
             << old_line_len << old_line_hash
                 << std::min( old_line_len, dump_size ) << old_line_start

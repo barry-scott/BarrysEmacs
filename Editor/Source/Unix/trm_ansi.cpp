@@ -1,3 +1,4 @@
+//
 //    Copyright (c) 1982-1995
 //        Barry A. Scott
 
@@ -47,6 +48,13 @@ void TerminalControl_CHAR::t_insert_mode( int on )
 
 void TerminalControl_CHAR::t_insert_lines( int n )
 {
+#if DBG_DISPLAY
+    if( dbg_flags&DBG_DISPLAY )
+    {
+        _dbg_msg( FormatString("t_insert_lines( %d )") << n );
+    }
+#endif
+
     if( !term_edit )
     {
         t_io_printf( "\233%d;%dr\233%d;1H",
@@ -66,10 +74,23 @@ void TerminalControl_CHAR::t_insert_lines( int n )
             ansi_cur_y, window_size, n );
     }
     ansi_cur_x = ansi_cur_y = 1;
+
+#if DBG_DISPLAY
+    if( dbg_flags&DBG_DISPLAY )
+    {
+        t_io_flush();
+    }
+#endif
 }
 
 void TerminalControl_CHAR::t_delete_lines( int n )
 {
+#if DBG_DISPLAY
+    if( dbg_flags&DBG_DISPLAY )
+    {
+        _dbg_msg( FormatString("t_delete_lines( %d )") << n );
+    }
+#endif
     if( !term_edit )
     {
         t_io_printf( "\233%d;%dr\233%dH",
@@ -91,6 +112,13 @@ void TerminalControl_CHAR::t_delete_lines( int n )
     }
 
     ansi_cur_x = ansi_cur_y = 1;
+
+#if DBG_DISPLAY
+    if( dbg_flags&DBG_DISPLAY )
+    {
+        t_io_flush();
+    }
+#endif
 }
 
 static float baud_factor;
@@ -301,11 +329,11 @@ void TerminalControl_CHAR::t_update_line( EmacsLinePtr old_line, EmacsLinePtr ne
     {
         // flush out every thing before this lines is worked on
         t_io_flush();
-        _dbg_msg( FormatString("Old %2d: %3d '%r'")
+        _dbg_msg( FormatString("t_update_line Old Ln%2d: %3d '%r'")
                         << ln
                         << old_line->line_length
                         << EmacsString( EmacsString::keep, old_line->line_body, old_line->line_length ) );
-        _dbg_msg( FormatString("New %2d: %3d '%r'")
+        _dbg_msg( FormatString("t_update_line New Ln%2d: %3d '%r'")
                         << ln
                         << new_line->line_length
                         << EmacsString( EmacsString::keep, new_line->line_body, new_line->line_length ) );
@@ -494,6 +522,12 @@ tidy_up_and_exit:
         cur_special_graphics = 0;
         t_io_putchar( SI );
     }
+#if DBG_DISPLAY
+    if( dbg_flags&DBG_DISPLAY )
+    {
+        t_io_flush();
+    }
+#endif
 }
 
 void TerminalControl_CHAR::t_init()
@@ -561,6 +595,12 @@ void TerminalControl_CHAR::t_cleanup()
 
 void TerminalControl_CHAR::t_wipe_line( int line )
 {
+#if DBG_DISPLAY
+    if( dbg_flags&DBG_DISPLAY )
+    {
+        _dbg_msg( FormatString("t_wipe_line( %d )") << line );
+    }
+#endif
     t_topos( line, 0 );
     t_io_print( u_str( "\233K" ));
     PAD (1, 3.);
@@ -568,6 +608,12 @@ void TerminalControl_CHAR::t_wipe_line( int line )
 
 bool TerminalControl_CHAR::t_window( int n )
 {
+#if DBG_DISPLAY
+    if( dbg_flags&DBG_DISPLAY )
+    {
+        _dbg_msg( FormatString("t_window( %d )") << n );
+    }
+#endif
     if (n <= 0 || n > t_length)
     {
         n = t_length;
@@ -608,6 +654,13 @@ int TerminalControl_CHAR::k_input_event( unsigned char *b, unsigned int s )
 static int in_update;
 bool TerminalControl_CHAR::t_update_begin()
 {
+#if DBG_DISPLAY
+    if( dbg_flags&DBG_DISPLAY )
+    {
+        _dbg_msg( "t_update_begin()" );
+    }
+#endif
+
     in_update = 1;
     return true;
 }
@@ -616,6 +669,13 @@ void TerminalControl_CHAR::t_update_end()
 {
     in_update = 0;
     t_io_flush();
+
+#if DBG_DISPLAY
+    if( dbg_flags&DBG_DISPLAY )
+    {
+        _dbg_msg( "t_update_end()" );
+    }
+#endif
 }
 
 void TerminalControl_CHAR::t_display_activity( EmacsChar_t it )
