@@ -315,8 +315,10 @@ public:
 
     FormatString &operator <<( int v ) { setNextIntArg( v ); return *this; }
     FormatString &operator <<( long v ) { setNextIntArg( v ); return *this; }
+    FormatString &operator <<( long long v ) { setNextIntArg( v ); return *this; }
     FormatString &operator <<( unsigned int v ) { setNextIntArg( v ); return *this; }
     FormatString &operator <<( unsigned long v ) { setNextIntArg( v ); return *this; }
+    FormatString &operator <<( unsigned long long v ) { setNextIntArg( v ); return *this; }
     FormatString &operator <<( const EmacsString & );
     FormatString &operator <<( const EmacsString * );
     FormatString &operator <<( const char * );
@@ -324,7 +326,7 @@ public:
     FormatString &operator <<( const void * );
 
 private:
-    void setNextIntArg( int );
+    void setNextIntArg( int64_t );
 
     enum arg_type { argNone, argString, argInt };
 
