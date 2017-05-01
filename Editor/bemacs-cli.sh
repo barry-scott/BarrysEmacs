@@ -2,7 +2,14 @@
 export EMACS_DEBUG=
 export EMACS_DEBUG_FILE="$TMPDIR/bemacs.log"
 export emacs_user="$HOME/bemacs"
-export emacs_library="${BUILDER_TOP_DIR:?builder_init}/Kits/Linux/RPM/ROOT/usr/local/bemacs8/lib/bemacs"
+case "$( uname )" in
+Darwin)
+    export emacs_library="/Applications/Barry's Emacs.app/Contents/Resources/emacs_library"
+    ;;
+*)
+    export emacs_library="${BUILDER_TOP_DIR:?builder_init}/Kits/Linux/RPM/ROOT/usr/local/bemacs8/lib/bemacs"
+    ;;
+esac
 
 
 case "$1" in
