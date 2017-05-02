@@ -877,7 +877,7 @@ class Target:
         for source in self.all_sources:
             source.setDependent( self )
 
-    def getTargetFilename( self ):
+    def getTargetFilename( self, ext=None ):
         raise NotImplementedError( '%s.getTargetFilename' % self.__class__.__name__ )
 
     def generateMakefile( self ):
@@ -921,7 +921,7 @@ class Program(Target):
 
         self.compiler.ruleLinkProgram( self )
 
-        if self.getProgramExt() != ''
+        if self.compiler.getProgramExt() != '':
             # assume windows compiler that creates more them just the .exe
             self.compiler.ruleClean( self.getTargetFilename( '.*' ) )
 
@@ -974,7 +974,7 @@ class Source(Target):
     def __repr__( self ):
         return '<Source:%s>' % (self.src_filename)
 
-    def getTargetFilename( self ):
+    def getTargetFilename( self, ext=None ):
         #if not os.path.exists( self.src_filename ):
         #    raise ValueError( 'Cannot find source %s' % (self.src_filename,) )
 
@@ -1008,7 +1008,7 @@ class UnicodeDataHeader(Target):
     def makePrint( self, line ):
         self.compiler.makePrint( line )
 
-    def getTargetFilename( self ):
+    def getTargetFilename( self, ext=None ):
         return self.compiler.platformFilename( 'Include/Common/em_unicode_data.h' )
 
     def generateMakefile( self ):
