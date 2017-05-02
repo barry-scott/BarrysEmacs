@@ -76,7 +76,7 @@ FormatString::operator const EmacsString () const
     return result;
 }
 
-void FormatString::setNextIntArg( long long v )
+void FormatString::setNextIntArg( int64_t v )
 {
     if( next_width_type == argInt )
     {

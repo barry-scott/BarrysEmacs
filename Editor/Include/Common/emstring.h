@@ -297,7 +297,10 @@ inline EmacsChar_t &EmacsString::operator[]( int index )
 
     // allow negative index to be relative to the end of the string
     if( index < 0 )
+    {
         index += _rep->length;
+    }
+
     emacs_assert( index >= 0 );
     emacs_assert( index < _rep->length );
 
@@ -313,12 +316,12 @@ public:
 
     operator const EmacsString() const;
 
-    FormatString &operator <<( int v ) { setNextIntArg( v ); return *this; }
-    FormatString &operator <<( long v ) { setNextIntArg( v ); return *this; }
-    FormatString &operator <<( long long v ) { setNextIntArg( v ); return *this; }
-    FormatString &operator <<( unsigned int v ) { setNextIntArg( v ); return *this; }
-    FormatString &operator <<( unsigned long v ) { setNextIntArg( v ); return *this; }
-    FormatString &operator <<( unsigned long long v ) { setNextIntArg( v ); return *this; }
+    FormatString &operator <<( int v ) { setNextIntArg( int64_t(v) ); return *this; }
+    FormatString &operator <<( long v ) { setNextIntArg( int64_t(v) ); return *this; }
+    FormatString &operator <<( long long v ) { setNextIntArg( int64_t(v) ); return *this; }
+    FormatString &operator <<( unsigned int v ) { setNextIntArg( int64_t(v) ); return *this; }
+    FormatString &operator <<( unsigned long v ) { setNextIntArg( int64_t(v) ); return *this; }
+    FormatString &operator <<( unsigned long long v ) { setNextIntArg( int64_t(v) ); return *this; }
     FormatString &operator <<( const EmacsString & );
     FormatString &operator <<( const EmacsString * );
     FormatString &operator <<( const char * );
