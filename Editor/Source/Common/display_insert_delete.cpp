@@ -62,9 +62,13 @@ void EmacsView::executeInsertDelete()
     int old_line_num_start_point = 1;
     for( int new_line_num=1; new_line_num <= t_length; new_line_num++ )
     {
-        _dbg_msg( FormatString("executeInsertDelete old_line_num_start_point %d new_line_num %d update_line_from[%d]=>%d")
+#if DBG_CALC_INS_DEL
+        if( dbg_flags&DBG_CALC_INS_DEL )
+        {
+            _dbg_msg( FormatString("executeInsertDelete old_line_num_start_point %d new_line_num %d update_line_from[%d]=>%d")
                     << old_line_num_start_point << new_line_num << new_line_num << update_line_from[ new_line_num ] );
-
+        }
+#endif
         if( update_line_from[ new_line_num ] != 0 )
         {
             // we have already used up the old lines up to here
@@ -77,7 +81,12 @@ void EmacsView::executeInsertDelete()
             {
                 new_line_hash = t_desired_screen[new_line_num]->lineHash();
             }
-            _dbg_msg( FormatString("executeInsertDelete new_line_hash 0x%8.8x") << new_line_hash );
+#if DBG_CALC_INS_DEL
+            if( dbg_flags&DBG_CALC_INS_DEL )
+            {
+                _dbg_msg( FormatString("executeInsertDelete new_line_hash 0x%8.8x") << new_line_hash );
+            }
+#endif
 
             // for each new line find a matching old line
             for( int old_line_num = old_line_num_start_point; old_line_num <= t_length; old_line_num++ )
@@ -95,7 +104,12 @@ void EmacsView::executeInsertDelete()
                     old_line_num_start_point = old_line_num + 1;
                     // record which line we update from
                     update_line_from[ new_line_num ] = old_line_num;
-                    _dbg_msg( FormatString("executeInsertDelete found old line %d") << old_line_num );
+#if DBG_CALC_INS_DEL
+                    if( dbg_flags&DBG_CALC_INS_DEL )
+                   {
+                        _dbg_msg( FormatString("executeInsertDelete found old line %d") << old_line_num );
+                    }
+#endif
 
                     break;    // stop look now a match has been found
                 }
