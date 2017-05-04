@@ -110,8 +110,6 @@
             )
         )
 
-        (get-tty-string ~cmd)
-
         (temp-use-buffer "Python Compile")
         (erase-buffer)
         (set-mark)
