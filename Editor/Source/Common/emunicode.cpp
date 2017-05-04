@@ -289,6 +289,11 @@ int length_utf8_to_unicode( int utf8_length, const unsigned char *utf8_data, int
     {
         unsigned char ch = utf8_data[i];
         int code_point_len = length_utf8_code_point( ch );
+        if( code_point_len > remaining )
+        {
+            break;
+        }
+
         i += code_point_len;
         remaining -= code_point_len;
         ++length;
@@ -330,7 +335,7 @@ void convert_utf8_to_unicode( const unsigned char *utf8_data, int unicode_length
         }
         else if( (ch&0xfc) == 0xf8 )
         {
-            *unicode_data++ = ((ch&0x07) << 24) |
+            *unicode_data++ = ((ch&0x03) << 24) |
                                 ((utf8_data[0]&0x3f) << 18 ) |
                                 ((utf8_data[1]&0x3f) << 12 ) |
                                 ((utf8_data[2]&0x3f) << 6 ) |
@@ -339,7 +344,7 @@ void convert_utf8_to_unicode( const unsigned char *utf8_data, int unicode_length
         }
         else if( (ch&0xfe) == 0xfc )
         {
-            *unicode_data++ = ((ch&0x07) << 30) |
+            *unicode_data++ = ((ch&0x01) << 30) |
                                 ((utf8_data[0]&0x3f) << 24 ) |
                                 ((utf8_data[1]&0x3f) << 18 ) |
                                 ((utf8_data[2]&0x3f) << 12 ) |
@@ -729,8 +734,35 @@ int pass_count = 0;
 int fail_count = 0;
 
 const int buf_size = 32;
-EmacsChar_t unicode_buffer[ buf_size ];
-unsigned char utf8_buffer[ buf_size ];
+const int guard_size = 16;
+const int total_size = guard_size + buf_size + guard_size;
+
+const int unicode_poison = 0x7ededede;
+const unsigned char utf8_poison = 0xde;
+
+EmacsChar_t guard_unicode_buffer[ total_size ];
+unsigned char guard_utf8_buffer[ total_size ];
+EmacsChar_t *unicode_buffer = &guard_unicode_buffer[ guard_size ];
+unsigned char *utf8_buffer = &guard_utf8_buffer[ guard_size ];
+
+
+void test_code_point_length( const char *title, unsigned char first_byte, int expected_length )
+{
+    bool failed = false;
+    std::cout << "test_code_point_length: " << title << " ------------------------------------------------------------" << std::endl;
+
+    int code_point_length = length_utf8_code_point( first_byte );
+    if( code_point_length != expected_length )
+    {
+        std::cout << "FAILURE: code_point_length not as expected " << code_point_length << "!=" << expected_length << std::endl;
+        failed = true;
+    }
+
+    if( failed )
+        fail_count++;
+    else
+        pass_count++;
+}
 
 void test_utf8_unicode( const char *title, int str_length, const char *str, int expected_length )
 {
@@ -746,9 +778,9 @@ void test_utf8_unicode( const char *title, int str_length, const char *str, int 
         failed = true;
     }
 
-    for( int i=0; i<buf_size; i++ )
+    for( int i=0; i<total_size; i++ )
     {
-        unicode_buffer[i] = 0;
+        guard_unicode_buffer[i] = unicode_poison;
     }
 
     std::cout << "    convert_unicode_to_utf8..." << std::endl;
@@ -759,11 +791,19 @@ void test_utf8_unicode( const char *title, int str_length, const char *str, int 
         std::cout << "        unicode_buffer[" << i << "] = 0x" << std::hex << unicode_buffer[i] << std::dec << std::endl;
     }
 
-    for( int i=unicode_length; i<buf_size; i++ )
+    for( int i=0; i<guard_size; i++ )
     {
-        if( unicode_buffer[i] != 0 )
+        if( guard_unicode_buffer[i] != unicode_poison )
         {
-            std::cout << "FAILURE: unicode_buffer overwritten at index " << i << std::endl;
+            std::cout << "FAILURE: guard_unicode_buffer overwritten at index " << i << std::endl;
+            failed = true;
+        }
+    }
+    for( int i=guard_size+expected_length; i<total_size; i++ )
+    {
+        if( guard_unicode_buffer[i] != unicode_poison )
+        {
+            std::cout << "FAILURE: guard_unicode_buffer overwritten at index " << i << std::endl;
             failed = true;
         }
     }
@@ -789,8 +829,10 @@ void test_unicode_utf8( const char *title, int unicode_length, const EmacsChar_t
 
     std::cout << "    convert_unicode_to_utf8..." << std::endl;
 
-    for( int i=0; i<buf_size; i++ )
-        utf8_buffer[i] = 0;
+    for( int i=0; i<total_size; i++ )
+    {
+        guard_utf8_buffer[i] = utf8_poison;
+    }
 
     convert_unicode_to_utf8( unicode_length, unicode_buffer, utf8_buffer );
 
@@ -804,11 +846,19 @@ void test_unicode_utf8( const char *title, int unicode_length, const EmacsChar_t
         }
     }
 
-    for( int i=utf8_length; i<buf_size; i++ )
+    for( int i=0; i<guard_size; i++ )
     {
-        if( utf8_buffer[i] != 0 )
+        if( guard_utf8_buffer[i] != utf8_poison )
         {
-            std::cout << "FAILURE: utf8_buffer overwritten at index " << i << std::endl;
+            std::cout << "FAILURE: guard_utf8_buffer overwritten at index " << i << std::endl;
+            failed = true;
+        }
+    }
+    for( int i=guard_size+expected_length; i<total_size; i++ )
+    {
+        if( guard_utf8_buffer[i] != utf8_poison )
+        {
+            std::cout << "FAILURE: guard_utf8_buffer overwritten at index " << i << std::endl;
             failed = true;
         }
     }
@@ -818,42 +868,59 @@ void test_unicode_utf8( const char *title, int unicode_length, const EmacsChar_t
         pass_count++;
 }
 
-void test_fio_usage()
+void test_fio_usage( const char *utf8_data, int unicode_limit, int expected_unicode_length, int expected_utf8_useble_length )
 {
+    bool failed = false;
     int utf8_usable_length = 0;
-    int unicode_length = 0;
+    int utf8_length = 0;
+    for( const char *p=utf8_data; *p != 0; ++p )
+    {
+        utf8_length++;
+    }
+    int unicode_length = length_utf8_to_unicode( utf8_length, (unsigned char *)utf8_data, unicode_limit, utf8_usable_length );
 
-    //--------------------------------------------------------------------------------
-    unicode_length = length_utf8_to_unicode( 3, (unsigned char *)("\xe2\x82\xac"), 1, utf8_usable_length );
-    std::cout << "test_fio_usage"
-        << " unicode_length(1) " << unicode_length
-        << " utf8_usable_length(3) " << utf8_usable_length
+    std::cout << "test_fio_usage utf8_data";
+
+    for( int i=0; i<utf8_length; i++ )
+    {
+        std::cout << " " << std::hex << ((unsigned int)utf8_data[i]&0xff) << std::dec;
+    }
+
+    std::cout
+        << " unicode_length expected " << expected_unicode_length << " -> actual " << unicode_length
+        << " utf8_usable_length expected " << expected_utf8_useble_length << " -> actual " << utf8_usable_length
         << std::endl;
 
-    //--------------------------------------------------------------------------------
-    unicode_length = length_utf8_to_unicode( 5, (unsigned char *)("[\xe2\x82\xac]"), 3, utf8_usable_length );
-    std::cout << "test_fio_usage"
-        << " unicode_length(3) " << unicode_length
-        << " utf8_usable_length(5) " << utf8_usable_length
-        << std::endl;
+    if( unicode_length != expected_unicode_length )
+    {
+        std::cout << "FAILURE: unicode_length(" << unicode_length << ") != expected_unicode_length(" << expected_unicode_length << ")" << std::endl;
+        failed = true;
+    }
 
-    //--------------------------------------------------------------------------------
-    unicode_length = length_utf8_to_unicode( 5, (unsigned char *)("[\xe2\x82\xac]"), 2, utf8_usable_length );
-    std::cout << "test_fio_usage"
-        << " unicode_length(2) " << unicode_length
-        << " utf8_usable_length(4) " << utf8_usable_length
-        << std::endl;
+    if( utf8_usable_length != expected_utf8_useble_length )
+    {
+        std::cout << "FAILURE: utf8_usable_length(" << utf8_usable_length << ") != expected_utf8_useble_length(" << expected_utf8_useble_length << ")" << std::endl;
+        failed = true;
+    }
 
-    //--------------------------------------------------------------------------------
-    unicode_length = length_utf8_to_unicode( 3, (unsigned char *)("[\xe2\x82"), 2, utf8_usable_length );
-    std::cout << "test_fio_usage"
-        << " unicode_length(1) " << unicode_length
-        << " utf8_usable_length(1) " << utf8_usable_length
-        << std::endl;
+    if( failed )
+        fail_count++;
+    else
+        pass_count++;
 }
 
 int main( int argc, char **argv )
 {
+    test_code_point_length( "0x41", 0x41, 1 );
+    test_code_point_length( "0xc0", 0xc0, 2 );
+    test_code_point_length( "0ce0", 0xe0, 3 );
+    test_code_point_length( "0xf0", 0xf0, 4 );
+    test_code_point_length( "0xf8", 0xf8, 5 );
+    test_code_point_length( "0xfc", 0xfc, 6 );
+    test_code_point_length( "0xff", 0xff, 1);
+    test_code_point_length( "0x10", 0x10, 1 );
+    test_code_point_length( "0xff", 0xff, 1);
+
     test_utf8_unicode( "str_1", 3, "abc", 3 );
     test_unicode_utf8( "str_2", 3, unicode_buffer, 3, "abc" );
     test_utf8_unicode( "str_3", 5, "[\xe2\x82\xac]", 3 );
@@ -935,7 +1002,10 @@ int main( int argc, char **argv )
     test_unicode_utf8( "str 0x7fffffff", 1, unicode_buffer, 6, "\xfd\xbf\xbf\xbf\xbf\xbf" );
     test_utf8_unicode( "str 0x7fffffff", 6, "\xfd\xbf\xbf\xbf\xbf\xbf", 1 );
 
-    test_fio_usage();
+    test_fio_usage( "\xe2\x82\xac", 1, 1, 3 );
+    test_fio_usage( "[\xe2\x82\xac]", 3, 3, 5 );
+    test_fio_usage( "[\xe2\x82\xac]", 2, 2, 4 );
+    test_fio_usage( "[\xe2\x82", 2, 1, 1 );
 
     if( fail_count > 0 )
         std::cout << "FAILURE: " << fail_count << " tests failed" << std::endl;
