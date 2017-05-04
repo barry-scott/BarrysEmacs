@@ -63,24 +63,28 @@ class Setup:
     def setupCompile( self ):
         if self.platform == 'win32':
             self.c_utils = Win32CompilerMSVC90( self )
+            self.c_unit_tests = Win32CompilerMSVC90( self )
             self.c_python_tools = Win32CompilerMSVC90( self )
             self.c_pybemacs = Win32CompilerMSVC90( self )
             self.c_clibemacs = Win32CompilerMSVC90( self )
 
         elif self.platform == 'win64':
             self.c_utils = Win64CompilerVC14( self )
+            self.c_unit_tests = Win64CompilerVC14( self )
             self.c_python_tools = Win64CompilerVC14( self )
             self.c_pybemacs = Win64CompilerVC14( self )
             self.c_clibemacs = Win64CompilerVC14( self )
 
         elif self.platform == 'macosx':
             self.c_utils = MacOsxCompilerGCC( self )
+            self.c_unit_tests = MacOsxCompilerGCC( self )
             self.c_python_tools = MacOsxCompilerGCC( self )
             self.c_pybemacs = MacOsxCompilerGCC( self )
             self.c_clibemacs = MacOsxCompilerGCC( self )
 
         elif self.platform == 'linux':
             self.c_utils = LinuxCompilerGCC( self )
+            self.c_unit_tests = LinuxCompilerGCC( self )
             self.c_python_tools = LinuxCompilerGCC( self )
             self.c_pybemacs = LinuxCompilerGCC( self )
             self.c_clibemacs = LinuxCompilerGCC( self )
@@ -88,6 +92,7 @@ class Setup:
         else:
             raise ValueError( 'Unknown platform %r' % (self.platform,) )
 
+        self.c_unit_tests.setupUnittests()
         self.c_utils.setupUtilities()
         self.c_pybemacs.setupPythonEmacs()
         self.c_clibemacs.setupCliEmacs()
@@ -241,6 +246,9 @@ class Setup:
             # test tools
             Program( self.c_utils, 'dumpjnl',    [Source( self.c_utils, 'Source/Common/dumpjnl.cpp' )] ),
             Program( self.c_python_tools, 'python-types',[Source( self.c_python_tools, 'Source/pybemacs/python-types.cpp' )] + self.pycxx_obj_file ),
+
+            # unit tests
+            Program( self.c_unit_tests, 'emunicode',  [Source( self.c_unit_tests, 'Source/Common/emunicode.cpp' )] ),
             ]
 
     def generateMakefile( self ):
@@ -429,6 +437,19 @@ class Win64CompilerVC14(Compiler):
                                         r'-U_DEBUG '
                                         r'-D%(DEBUG)s' )
 
+    def setupUnittests( self ):
+        self._addVar( 'EDIT_OBJ',       r'obj-unit-tests' )
+        self._addVar( 'EDIT_EXE',       r'exe-unit-tests' )
+        self._addVar( 'CCCFLAGS',
+                                        r'/Zi /MT /EHsc /W4 '
+                                        r'/DUNIT_TEST=1 '
+                                        r'-IInclude\Common -IInclude\Windows '
+                                        r'"-DOS_NAME=\"Windows\"" "-DOS_VERSION=\"win64\"" '
+                                        r'"-DCPU_TYPE=\"x86_64\"" "-DUI_TYPE=\"console\"" '
+                                        r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
+                                        r'-U_DEBUG '
+                                        r'-D%(DEBUG)s' )
+
     def setupPythonEmacs( self ):
         self._addVar( 'EDIT_OBJ',       r'obj-pybemacs' )
         self._addVar( 'EDIT_EXE',       r'exe-pybemacs' )
@@ -556,6 +577,19 @@ class Win32CompilerMSVC90(Compiler):
         self._addVar( 'EDIT_EXE',       r'exe-utils' )
         self._addVar( 'CCCFLAGS',
                                         r'/Zi /MT /EHsc '
+                                        r'-IInclude\Common -IInclude\Windows '
+                                        r'"-DOS_NAME=\"Windows\"" "-DOS_VERSION=\"win32\"" '
+                                        r'"-DCPU_TYPE=\"i386\"" "-DUI_TYPE=\"console\"" '
+                                        r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
+                                        r'-U_DEBUG '
+                                        r'-D%(DEBUG)s' )
+
+    def setupUnittests( self ):
+        self._addVar( 'EDIT_OBJ',       r'obj-unit-tests' )
+        self._addVar( 'EDIT_EXE',       r'exe-unit-tests' )
+        self._addVar( 'CCCFLAGS',
+                                        r'/Zi /MT /EHsc '
+                                        r'/DUNIT_TEST=1 '
                                         r'-IInclude\Common -IInclude\Windows '
                                         r'"-DOS_NAME=\"Windows\"" "-DOS_VERSION=\"win32\"" '
                                         r'"-DCPU_TYPE=\"i386\"" "-DUI_TYPE=\"console\"" '
@@ -702,6 +736,22 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-D%(DEBUG)s' )
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
+    def setupUnittests( self ):
+        self._addVar( 'PYTHON',         sys.executable )
+
+        self._addVar( 'EDIT_OBJ',       'obj-unit-tests' )
+        self._addVar( 'EDIT_EXE',       'exe-unit-tests' )
+        self._addVar( 'CCCFLAGS',
+                                        '-g -O0 '
+                                        '-DUNIT_TEST=1 '
+                                        '-Wall -fPIC -fexceptions -frtti '
+                                        '-IInclude/Common -IInclude/Unix '
+                                        '"-DOS_NAME=\\"MacOSX\\"" '
+                                        '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
+                                        '-DDARWIN '
+                                        '-D%(DEBUG)s' )
+        self._addVar( 'LDEXE',          '%(CCC)s -g' )
+
     def setupPythonEmacs( self ):
         self._addVar( 'PYTHON',         sys.executable )
 
@@ -791,6 +841,21 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_EXE',       'exe-utils' )
         self._addVar( 'CCCFLAGS',
                                         '-g -O0 '
+                                        '-Wall -fPIC -fexceptions -frtti '
+                                        '-IInclude/Common -IInclude/Unix '
+                                        '"-DOS_NAME=\\"Linux\\"" '
+                                        '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
+                                        '-D%(DEBUG)s' )
+        self._addVar( 'LDEXE',          '%(CCC)s -g' )
+
+    def setupUnittests( self ):
+        self._addVar( 'PYTHON',         sys.executable )
+
+        self._addVar( 'EDIT_OBJ',       'obj-unit-tests' )
+        self._addVar( 'EDIT_EXE',       'exe-unit-tests' )
+        self._addVar( 'CCCFLAGS',
+                                        '-g -O0 '
+                                        '-DUNIT_TEST=1 '
                                         '-Wall -fPIC -fexceptions -frtti '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
