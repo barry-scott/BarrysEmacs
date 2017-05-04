@@ -49,7 +49,6 @@ echo "Info: Exporting source code"
 (cd ${BUILDER_TOP_DIR}; git archive --format=tar --prefix=${KIT_BASENAME}/ master) | tar xf -
 
 pushd ${KIT_BASENAME}/Imports
-
 case "${PYCXX_VER%%:*}" in
 trunk)
     svn export --quiet https://svn.code.sf.net/p/cxx/code/trunk/CXX pycxx-${PYCXX_VER#*:}
@@ -64,10 +63,14 @@ tag)
     exit 1
     ;;
 esac
-
 popd
 
 git show-ref --head --hash head >${KIT_BASENAME}/Builder/commit_id.txt
+
+# xml-preferences is not packaged on Fedora
+XML_PREF_PATH=$( ${PYTHON} -c "import xml_preferences, os.path; print( os.path.dirname( xml_preferences.__file__ ) )" )
+mkdir ${KIT_BASENAME}/Editor/PyQtBEmacs/xml_preferences
+cp  ${XML_PREF_PATH}/*.py ${KIT_BASENAME}/Editor/PyQtBEmacs/xml_preferences
 
 tar czf ${KIT_BASENAME}.tar.gz ${KIT_BASENAME}
 popd

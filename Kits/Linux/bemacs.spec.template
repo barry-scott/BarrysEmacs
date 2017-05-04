@@ -37,6 +37,8 @@ export PYTHON_VERSION=$( python3 -c 'import sys; print( "%d.%d" % (sys.version_i
 
 cd ${BUILDER_TOP_DIR}/Builder
 make -f linux.mak PYTHON=/usr/bin/python3 DESTDIR=%{buildroot} build_Linux
+mkdir -p %{buildroot}/usr/share/bemacs/lib/xml_preferences
+cp ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/xml_preferences/*.py %{buildroot}/usr/share/bemacs/lib/xml_preferences
 
 mkdir -p %{buildroot}%{_mandir}/man1
 gzip -c ${BUILDER_TOP_DIR}/Kits/Linux/bemacs.1 > %{buildroot}%{_mandir}/man1/bemacs.1.gz
