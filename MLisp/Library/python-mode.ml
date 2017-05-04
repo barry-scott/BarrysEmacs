@@ -104,15 +104,17 @@
             (write-current-file)
         )
 
-        (temp-use-buffer "Python Compile")
-        (erase-buffer)
-        (set-mark)
-
         (setq ~cmd
             (concat
                 Python-command " -c \"import py_compile,sys;sys.stderr = sys.stdout;py_compile.compile('" (~Python-quote-file ~file) "')\""
             )
         )
+
+        (get-tty-string ~cmd)
+
+        (temp-use-buffer "Python Compile")
+        (erase-buffer)
+        (set-mark)
 
         (filter-region ~cmd)
 
