@@ -3,6 +3,7 @@
 //
 
 #include <emacs.h>
+#include <algorithm>
 
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;

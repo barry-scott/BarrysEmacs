@@ -10,6 +10,7 @@
 #include <emacs.h>
 #define exception math_exception
 #include <math.h>
+#include <algorithm>
 
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;

@@ -639,7 +639,8 @@ public:
         static std::string fn_name( "termDisplayActivity" );
         try
         {
-            callOnSelf( fn_name, Py::Long( ch ) );
+            // QQQ: Windows: Why is the long cast needed?
+            callOnSelf( fn_name, Py::Long( long( ch ) ) );
         }
         catch( Py::Exception &e )
         {

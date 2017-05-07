@@ -11,6 +11,7 @@
 #include <emstring.h>
 #include <emexcept.h>
 #include <climits>
+#include <algorithm>
 
 #if !defined( INT64_MIN )
 #define INT64_MIN -9223372036854775808
@@ -81,13 +82,13 @@ void FormatString::setNextIntArg( int64_t v )
     if( next_width_type == argInt )
     {
         next_width_type = argNone;
-        width = v;
+        width = int( v );
     }
 
     else if( next_precision_type == argInt )
     {
         next_precision_type = argNone;
-        precision = v;
+        precision = int( v );
         return;
     }
 

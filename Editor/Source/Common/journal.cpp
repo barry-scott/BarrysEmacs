@@ -22,6 +22,8 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 #include <io.h>
 #endif
 
+#include <algorithm>
+
 SystemExpressionRepresentationJournalFrequency journalling_frequency;
 SystemExpressionRepresentationIntBoolean journal_scratch_buffers( 1 );
 SystemExpressionRepresentationIntBoolean animate_journal_recovery;

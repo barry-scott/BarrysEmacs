@@ -13,14 +13,13 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 #include <stdio.h>
 #include <windows.h>
 
+extern EmacsString env_emacs_user;
+extern EmacsString env_emacs_library;
 
 int win_emacs_quit;
 int is_windows_nt;
 
 unsigned long main_thread_id;
-
-EmacsString env_emacs_user;
-EmacsString env_emacs_library;
 
 void EmacsInitialisation::os_specific_init()
 {

@@ -10,6 +10,7 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
+#include <algorithm>
 
 #ifdef vms
 #include <ttdef.h>

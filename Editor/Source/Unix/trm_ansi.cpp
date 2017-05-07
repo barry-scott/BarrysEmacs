@@ -9,6 +9,7 @@
 //
 
 #include <emacs.h>
+#include <algorithm>
 
 #include <tt_unix.h>
 

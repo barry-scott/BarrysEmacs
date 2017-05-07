@@ -8,6 +8,7 @@
 //
 #include <emacs.h>
 #include <emunicode.h>
+#include <algorithm>
 
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
