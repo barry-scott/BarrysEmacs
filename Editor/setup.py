@@ -6,7 +6,7 @@ import sys
 
 _debug = False
 
-pycxx_version = (7,0,1)
+pycxx_version = (7,0,2)
 pycxx_version_str = '%d.%d.%d' % pycxx_version
 
 def debug( msg ):
@@ -66,14 +66,14 @@ class Setup:
             self.c_unit_tests = Win32CompilerMSVC90( self )
             self.c_python_tools = Win32CompilerMSVC90( self )
             self.c_pybemacs = Win32CompilerMSVC90( self )
-            self.c_clibemacs = Win32CompilerMSVC90( self )
+            self.c_clibemacs = None
 
         elif self.platform == 'win64':
             self.c_utils = Win64CompilerVC14( self )
             self.c_unit_tests = Win64CompilerVC14( self )
             self.c_python_tools = Win64CompilerVC14( self )
             self.c_pybemacs = Win64CompilerVC14( self )
-            self.c_clibemacs = Win64CompilerVC14( self )
+            self.c_clibemacs = None
 
         elif self.platform == 'macosx':
             self.c_utils = MacOsxCompilerGCC( self )
@@ -95,8 +95,9 @@ class Setup:
         self.c_unit_tests.setupUnittests()
         self.c_utils.setupUtilities()
         self.c_pybemacs.setupPythonEmacs()
-        self.c_clibemacs.setupCliEmacs()
         self.c_python_tools.setupPythonTools()
+        if self.c_clibemacs is not None:
+            self.c_clibemacs.setupCliEmacs()
 
         self.unicode_header = UnicodeDataHeader( self.c_pybemacs )
 
@@ -141,12 +142,13 @@ class Setup:
                 Source( self.c_pybemacs, 'Source/Windows/win_rtl_pybemacs.cpp' ),
                 ] )
 
-        self.cli_specific_obj_files = [
-            Source( self.c_clibemacs, 'Source/Unix/unix_main.cpp',
-                                        ['Source/Unix/unix_rtl.cpp'] ),
-            Source( self.c_clibemacs, 'Source/Unix/unix_trm.cpp' ),
-            Source( self.c_clibemacs, 'Source/Unix/trm_ansi.cpp' ),
-            ]
+        if self.c_clibemacs is not None:
+            self.cli_specific_obj_files = [
+                Source( self.c_clibemacs, 'Source/Unix/unix_main.cpp',
+                                            ['Source/Unix/unix_rtl.cpp'] ),
+                Source( self.c_clibemacs, 'Source/Unix/unix_trm.cpp' ),
+                Source( self.c_clibemacs, 'Source/Unix/trm_ansi.cpp' ),
+                ]
 
         def makeObjFiles( compiler ):
             obj_files = [
@@ -224,18 +226,16 @@ class Setup:
                     Source( compiler, 'Source/Unix/unixfile.cpp' ),
                     ] )
             elif self.platform in ('win32', 'win64'):
-                self.obj_files.extend( [
+                obj_files.extend( [
                     Source( compiler, 'Source/Windows/win_file.cpp' ),
                     #Source( compiler, 'Source/Windows/win_ext_func.cpp' ),
                     ] )
             return obj_files
 
         self.py_obj_files = makeObjFiles( self.c_pybemacs )
-        self.cli_obj_files = makeObjFiles( self.c_clibemacs )
 
         self.all_exe = [
             PythonExtension( self.c_pybemacs, '_bemacs', self.pybemacs_specific_obj_files + self.py_obj_files ),
-            Program( self.c_clibemacs, 'bemacs-cli', self.cli_specific_obj_files + self.cli_obj_files ),
             Program( self.c_utils, 'dbadd',      [Source( self.c_utils, 'Utilities/dbadd/dbadd.cpp' )]       +self.db_files ),
             Program( self.c_utils, 'dbcreate',   [Source( self.c_utils, 'Utilities/dbcreate/dbcreate.cpp' )] +self.db_files ),
             Program( self.c_utils, 'dbprint',    [Source( self.c_utils, 'Utilities/dbprint/dbprint.cpp' )]   +self.db_files ),
@@ -250,12 +250,16 @@ class Setup:
             # unit tests
             Program( self.c_unit_tests, 'emunicode',  [Source( self.c_unit_tests, 'Source/Common/emunicode.cpp' )] ),
             ]
+        if self.c_clibemacs is not None:
+            self.cli_obj_files = makeObjFiles( self.c_clibemacs )
+            self.all_exe.append( Program( self.c_clibemacs, 'bemacs-cli', self.cli_specific_obj_files + self.cli_obj_files ) )
 
     def generateMakefile( self ):
         try:
             with open( self.makefile_name, 'wt' ) as self.__makefile:
                 self.c_pybemacs.generateMakefileHeader()
-                self.c_clibemacs.generateMakefileHeader()
+                if self.c_clibemacs is not None:
+                    self.c_clibemacs.generateMakefileHeader()
 
                 self.makePrint( 'all: %s' % (' '.join( [exe.getTargetFilename() for exe in self.all_exe] )) )
                 self.makePrint( '' )
