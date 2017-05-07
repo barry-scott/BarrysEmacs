@@ -13,18 +13,14 @@ if "%PYTHON%" == "" (
     goto :eof
 )
 
-%PYTHON% -c "from PyQt5 import QtWidgets, QtGui, QtCore" >nul
-if errorlevel 1 (
-    echo Error: PyQt5 is not installed for %PYTHON%. Hint: install windows PyQt5
-    goto :eof
-)
-
-%PYTHON% -c "from PyQt5 import Qsci" 2>nul
-if errorlevel 1 (
-    echo Error: QScintilla is not installed for %PYTHON%. Hint: %PYTHON% -m pip isntall QScintilla
-    goto :eof
-)
-echo on
+call :check_for_pip_dependency PyQt5 "from PyQt5 import QtWidgets, QtGui, QtCore"
+if errorlevel 1 goto :eof
+call :check_for_pip_dependency QScintilla "from PyQt5 import Qsci"
+if errorlevel 1 goto :eof
+call :check_for_pip_dependency xml-preferences "import xml_preferences"
+if errorlevel 1 goto :eof
+call :check_for_pip_dependency win-app-packager "import win_app_packager"
+if errorlevel 1 goto :eof
 
 nmake -f Windows.mak PYTHON=%python% clean
 if exist c:\unxutils\tee.exe (
@@ -32,3 +28,13 @@ if exist c:\unxutils\tee.exe (
 ) else (
     nmake -f Windows.mak INSTALL=%1 PYTHON=%PYTHON% build
 )
+
+goto :eof
+
+:check_for_pip_dependency
+    %PYTHON% -c %2 2>nul
+    if errorlevel 1 (
+        echo Error: %1 is not installed for %PYTHON%. Hint: %PYTHON% -m pip install %1
+        exit /b 1
+    )
+    exit /b 0
