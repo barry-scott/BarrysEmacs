@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "Info: build-macosx.sh Builder - start"
+echo "Info: build-linux.sh Builder - start"
 
 echo "Info: Checking for Python"
 if [ "${PYTHON}" = "" ]

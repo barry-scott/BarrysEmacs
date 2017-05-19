@@ -29,10 +29,13 @@ BUILD_BEMACS_BIN_DIR=$(BEMACS_ROOT_DIR)$(INSTALL_BEMACS_BIN_DIR)
 
 usage:
 	@ echo "Usage: make -f unix.mak build"
+	@ echo "Usage: make -f unix.mak build-cli"
 	@ echo "Usage: make -f unix.mak clean"
 	exit 1
 
 build: build_$(BUILDER_CFG_PLATFORM)
+
+build-cli: build_cli_$(BUILDER_CFG_PLATFORM)
 
 brand:
 	$(PYTHON) brand_version.py version_info.txt ..
@@ -43,7 +46,16 @@ build_Linux-Ubuntu: build_Linux # Debian_pkg
 
 build_Linux-Debian: build_Linux # Debian_pkg
 
-build_Linux: brand $(BUILD_BEMACS_DOC_DIR) $(BUILD_BEMACS_LIB_DIR) $(BUILD_BEMACS_BIN_DIR) editor bemacs mlisp describe language quick_info docs
+build_Linux: brand $(BUILD_BEMACS_DOC_DIR) $(BUILD_BEMACS_LIB_DIR) $(BUILD_BEMACS_BIN_DIR) bemacs-gui utils mlisp describe language quick_info docs
+	@ echo Info: Linux kitting
+
+build_cli_Linux-Fedora: build_cli_Linux # Fedora_rpm
+
+build_cli_Linux-Ubuntu: build_cli_Linux # Debian_pkg
+
+build_cli_Linux-Debian: build_cli_Linux # Debian_pkg
+
+build_cli_Linux: brand $(BUILD_BEMACS_DOC_DIR) $(BUILD_BEMACS_LIB_DIR) $(BUILD_BEMACS_BIN_DIR)  ../Editor/exe-cli-bemacs/bemacs-cli utils mlisp describe language quick_info docs
 	@ echo Info: Linux kitting
 
 $(BUILD_BEMACS_DOC_DIR)::
@@ -55,11 +67,22 @@ $(BUILD_BEMACS_LIB_DIR)::
 $(BUILD_BEMACS_BIN_DIR)::
 	 if [ ! -e $@ ]; then mkdir -p $@; fi
 
-editor:
+bemacs-gui: bemacs-so bemacs-cli
+	@ echo Info: Copy PyQtBEmacs...
+	cd ../Editor/PyQtBEmacs && ./build-linux.sh $(BEMACS_ROOT_DIR) $(INSTALL_BEMACS_BIN_DIR) $(INSTALL_BEMACS_LIB_DIR) $(INSTALL_BEMACS_DOC_DIR)
+
+bemacs-so:
 	@ echo Info: Building BEmacs images...
 	cd ../Editor && INSTALL_BEMACS_LIB_DIR=$(INSTALL_BEMACS_LIB_DIR) ./build-linux.sh all
 	cp ../Editor/exe-pybemacs/_bemacs.so $(BUILD_BEMACS_LIB_DIR)
 	cp ../Editor/exe-cli-bemacs/bemacs-cli $(BUILD_BEMACS_BIN_DIR)
+
+ ../Editor/exe-cli-bemacs/bemacs-cli: 
+	@ echo Info: Building BEmacs images...
+	cd ../Editor && INSTALL_BEMACS_LIB_DIR=$(INSTALL_BEMACS_LIB_DIR) ./build-linux.sh --no-bemacs-gui all
+	cp ../Editor/exe-cli-bemacs/bemacs-cli $(BUILD_BEMACS_BIN_DIR)
+
+utils:
 	@ echo Info: Copy db utils...
 	cp ../Editor/exe-utils/dbadd	$(BUILD_BEMACS_BIN_DIR)/bemacs-dbadd
 	cp ../Editor/exe-utils/dbcreate $(BUILD_BEMACS_BIN_DIR)/bemacs-dbcreate
@@ -67,10 +90,6 @@ editor:
 	cp ../Editor/exe-utils/dbprint	$(BUILD_BEMACS_BIN_DIR)/bemacs-dbprint
 	cp ../Editor/exe-utils/dblist	$(BUILD_BEMACS_BIN_DIR)/bemacs-dblist
 	cp ../Editor/exe-utils/mll2db	$(BUILD_BEMACS_BIN_DIR)/bemacs-mll2db
-
-bemacs:
-	@ echo Info: Copy PyQtBEmacs...
-	cd ../Editor/PyQtBEmacs && ./build-linux.sh $(BEMACS_ROOT_DIR) $(INSTALL_BEMACS_BIN_DIR) $(INSTALL_BEMACS_LIB_DIR) $(INSTALL_BEMACS_DOC_DIR)
 
 mlisp:
 	@ echo Info: Copying Mlisp files...
