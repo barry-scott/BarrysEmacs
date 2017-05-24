@@ -1,0 +1,225 @@
+;
+; puppet mode
+;
+(declare-buffer-specific puppet-command)
+
+(defun
+    (puppet-mode
+        (setq mode-string "Puppet")
+        (use-syntax-table "puppet")
+        (use-local-map "puppet-map")
+        (use-abbrev-table "puppet")
+        (setq puppet-command "puppet")
+        (novalue)
+    )
+)
+
+(defun
+    (puppet-syntax-check
+        ~file
+        ~cmd
+
+        (setq ~file current-buffer-file-name)
+        (if buffer-is-modified
+            (write-current-file)
+        )
+
+        (setq ~cmd
+            (concat
+                puppet-command " parse validate \"" ~file "\""
+            )
+        )
+
+        (temp-use-buffer "Puppet Syntax Check")
+        (erase-buffer)
+        (set-mark)
+
+        (get-tty-string (concat "Cmd: " ~cmd))
+        (filter-region ~cmd)
+        (beginning-of-file)
+        (novalue)
+    )
+)
+
+
+;
+; puppet syntax table
+;
+(save-window-excursion
+    (temp-use-buffer "~puppet-hack")
+    (use-syntax-table "puppet")
+
+    (if 0
+        (progn
+            (if (is-bound check-for-white-space-problems)
+                (if check-for-white-space-problems
+                    (add-check-for-white-space-problems-to-syntax-table)
+                )
+            )
+
+            (if (is-bound check-for-use-of-tabs-problems)
+                (if check-for-use-of-tabs-problems
+                    (add-check-for-use-of-tabs-problems-syntax-table)
+                )
+            )
+
+            (modify-syntax-table "problem,ere" "  *\t+")
+            (modify-syntax-table "problem,ere" " [ \t]*$")
+            (modify-syntax-table "problem,ere" "\t[ \t]*$")
+        )
+    )
+    (modify-syntax-table "paren" "{" "}")
+    (modify-syntax-table "paren" "(" ")")
+    (modify-syntax-table "paren" "[" "]")
+    (modify-syntax-table "string" "'")
+    (modify-syntax-table "string" "\"")
+    (modify-syntax-table "prefix" "\\")
+    (modify-syntax-table "word" "_")
+    (modify-syntax-table "comment" "#" "\n")
+
+    ; keywords
+    (modify-syntax-table "keyword-1" "include")
+    (modify-syntax-table "keyword-1" "import")
+    (modify-syntax-table "keyword-1" "define")
+    (modify-syntax-table "keyword-1" "if")
+    (modify-syntax-table "keyword-1" "unless")
+    (modify-syntax-table "keyword-1" "else")
+    (modify-syntax-table "keyword-1" "elsif")
+    (modify-syntax-table "keyword-1" "template")
+    (modify-syntax-table "keyword-1" "inline_template")
+    (modify-syntax-table "keyword-1" "case")
+    (modify-syntax-table "keyword-1" "default")
+    (modify-syntax-table "keyword-1" "in")
+    (modify-syntax-table "keyword-1" "or")
+    (modify-syntax-table "keyword-1" "and")
+
+    ; resource types
+    (modify-syntax-table "keyword-2" "augeas")
+    (modify-syntax-table "keyword-2" "class")
+    (modify-syntax-table "keyword-2" "Class")
+    (modify-syntax-table "keyword-2" "computer")
+    (modify-syntax-table "keyword-2" "cron")
+    (modify-syntax-table "keyword-2" "Cron")
+    (modify-syntax-table "keyword-2" "exec")
+    (modify-syntax-table "keyword-2" "Exec")
+    (modify-syntax-table "keyword-2" "file")
+    (modify-syntax-table "keyword-2" "File")
+    (modify-syntax-table "keyword-2" "filebucket")
+    (modify-syntax-table "keyword-2" "group")
+    (modify-syntax-table "keyword-2" "host")
+    (modify-syntax-table "keyword-2" "interface")
+    (modify-syntax-table "keyword-2" "k5login")
+    (modify-syntax-table "keyword-2" "macauthorization")
+    (modify-syntax-table "keyword-2" "mailalias")
+    (modify-syntax-table "keyword-2" "maillist")
+    (modify-syntax-table "keyword-2" "mcx")
+    (modify-syntax-table "keyword-2" "mount")
+    (modify-syntax-table "keyword-2" "nagios_command")
+    (modify-syntax-table "keyword-2" "nagios_contact")
+    (modify-syntax-table "keyword-2" "nagios_contactgroup")
+    (modify-syntax-table "keyword-2" "nagios_host")
+    (modify-syntax-table "keyword-2" "nagios_hostdependency")
+    (modify-syntax-table "keyword-2" "nagios_hostescalation")
+    (modify-syntax-table "keyword-2" "nagios_hostextinfo")
+    (modify-syntax-table "keyword-2" "nagios_hostgroup")
+    (modify-syntax-table "keyword-2" "nagios_service")
+    (modify-syntax-table "keyword-2" "nagios_servicedependency")
+    (modify-syntax-table "keyword-2" "nagios_serviceescalation")
+    (modify-syntax-table "keyword-2" "nagios_serviceextinfo")
+    (modify-syntax-table "keyword-2" "nagios_servicegroup")
+    (modify-syntax-table "keyword-2" "nagios_timeperiod")
+    (modify-syntax-table "keyword-2" "node")
+    (modify-syntax-table "keyword-2" "notify")
+    (modify-syntax-table "keyword-2" "package")
+    (modify-syntax-table "keyword-2" "Package")
+    (modify-syntax-table "keyword-2" "resources")
+    (modify-syntax-table "keyword-2" "router")
+    (modify-syntax-table "keyword-2" "schedule")
+    (modify-syntax-table "keyword-2" "scheduled_task")
+    (modify-syntax-table "keyword-2" "selboolean")
+    (modify-syntax-table "keyword-2" "selmodule")
+    (modify-syntax-table "keyword-2" "service")
+    (modify-syntax-table "keyword-2" "Service")
+    (modify-syntax-table "keyword-2" "ssh_authorized_key")
+    (modify-syntax-table "keyword-2" "sshkey")
+    (modify-syntax-table "keyword-2" "stage")
+    (modify-syntax-table "keyword-2" "tidy")
+    (modify-syntax-table "keyword-2" "user")
+    (modify-syntax-table "keyword-2" "vlan")
+    (modify-syntax-table "keyword-2" "whit")
+    (modify-syntax-table "keyword-2" "yumrepo")
+    (modify-syntax-table "keyword-2" "zfs")
+    (modify-syntax-table "keyword-2" "zone")
+    (modify-syntax-table "keyword-2" "zpool")
+
+    ; attributes
+    (modify-syntax-table "keyword-3" "content")
+    (modify-syntax-table "keyword-3" "ensure")
+    (modify-syntax-table "keyword-3" "enable")
+    (modify-syntax-table "keyword-3" "hasstatus")
+    (modify-syntax-table "keyword-3" "unless")
+    (modify-syntax-table "keyword-3" "command")
+    (modify-syntax-table "keyword-3" "logoutput")
+    (modify-syntax-table "keyword-3" "returns")
+    (modify-syntax-table "keyword-3" "require")
+    (modify-syntax-table "keyword-3" "image")
+    (modify-syntax-table "keyword-3" "image_tag")
+    (modify-syntax-table "keyword-3" "volumes")
+    (modify-syntax-table "keyword-3" "privileged")
+    (modify-syntax-table "keyword-3" "net")
+    (modify-syntax-table "keyword-3" "path")
+    (modify-syntax-table "keyword-3" "mode")
+    (modify-syntax-table "keyword-3" "module")
+    (modify-syntax-table "keyword-3" "owner")
+    (modify-syntax-table "keyword-3" "user")
+    (modify-syntax-table "keyword-3" "password")
+    (modify-syntax-table "keyword-3" "group")
+    (modify-syntax-table "keyword-3" "refreshonly")
+    (modify-syntax-table "keyword-3" "source")
+    (modify-syntax-table "keyword-3" "minute")
+    (modify-syntax-table "keyword-3" "hour")
+    (modify-syntax-table "keyword-3" "weekday")
+    (modify-syntax-table "keyword-3" "month")
+    (modify-syntax-table "keyword-3" "monthday")
+    (modify-syntax-table "keyword-3" "ignore")
+    (modify-syntax-table "keyword-3" "purge")
+    (modify-syntax-table "keyword-3" "recurse")
+    (modify-syntax-table "keyword-3" "source")
+    (modify-syntax-table "keyword-3" "options")
+    (modify-syntax-table "keyword-3" "home")
+    (modify-syntax-table "keyword-3" "managehome")
+    (modify-syntax-table "keyword-3" "comment")
+    (modify-syntax-table "keyword-3" "type")
+    (modify-syntax-table "keyword-3" "key")
+    (modify-syntax-table "keyword-3" "cwd")
+    (modify-syntax-table "keyword-3" "creates")
+    (modify-syntax-table "keyword-3" "onlyif")
+    (modify-syntax-table "keyword-3" "backup")
+
+    ; attribute special values
+    (modify-syntax-table "keyword-3" "true")
+    (modify-syntax-table "keyword-3" "false")
+    (modify-syntax-table "keyword-3" "present")
+    (modify-syntax-table "keyword-3" "absent")
+    (modify-syntax-table "keyword-3" "directory")
+    (modify-syntax-table "keyword-3" "installed")
+    (modify-syntax-table "keyword-3" "latest")
+    (modify-syntax-table "keyword-3" "enable")
+    (modify-syntax-table "keyword-3" "pattern")
+    (modify-syntax-table "keyword-3" "status")
+    (modify-syntax-table "keyword-3" "restart")
+    (modify-syntax-table "keyword-3" "on_failure")
+
+
+)
+
+(save-window-excursion
+    (temp-use-buffer "~puppet-hack")
+    (define-keymap "puppet-map")
+    (define-keymap "puppet-ESC-map")
+    (use-local-map "puppet-map")
+    (local-bind-to-key "puppet-ESC-map" "\e")
+    (execute-mlisp-file "puppet-mode.key")
+    (kill-buffer "~puppet-hack")
+)
+(novalue)
