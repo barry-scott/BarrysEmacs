@@ -4,8 +4,8 @@ export BUILDER_CFG_PLATFORM=$(uname -s)
 export PYTHON_VERSION=${1:-3.6}
 
 # ether set to tag:<ver> or trunk:<ver>
-export PYCXX_VER=tag7.0.1
-export PYCXX_VER=trunk:7.0.1
+export PYCXX_VER=tag7.0.3
+export PYCXX_VER=trunk:7.0.3
 
 case ${BUILDER_CFG_PLATFORM} in
 
