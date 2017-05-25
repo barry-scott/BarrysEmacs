@@ -1,5 +1,5 @@
 ;
-; EMACS_DEFAULT_AUTOLOADS.ML for EMACS V7.0
+; emacs_default_autoloads.ml
 ;
 ; This file contains the default set of autoloading functions. These
 ; functions are set up before the default bindings are set up.
@@ -67,6 +67,7 @@
 (autoload "paren-flash" "flasher")
 (autoload "paren-flash-only" "flasher")
 (autoload "previous-file-buffer" "buffer-commands")
+(autoload "puppet-mode" "puppet-mode")
 (autoload "Python-console-mode" "python-mode")
 (autoload "Python-console" "python-console")
 (autoload "Python-mode" "python-mode")

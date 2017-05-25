@@ -4,7 +4,7 @@
 ; This module can be used as the basis of the users emacsinit.ml
 ; initialisation procedure.
 ;
-; Copyright (c) 1998-2005 Barry A. Scott
+; Copyright (c) 1998-2017 Barry A. Scott
 ;
 
 ;
@@ -164,6 +164,8 @@
     (auto-execute "electric-c-mode" "*.hxx")
     ; Install Shield files
     (auto-execute "install-shield-mode" "*.rul")
+    ; puppet files
+    (auto-execute "puppet-mode" "*.pp")
     ; Python files
     (auto-execute "Python-mode" "*.py")
     (auto-execute "Python-mode" "*.pyw")
@@ -223,7 +225,7 @@
     default-buffer-choose-name(~filename)
 
     ; try to add to the recnet file list,
-    but don;t worry about errors
+    ; but don't worry about errors
     (error-occurred (UI-add-to-recent-file-list ~filename))
 
     ; return the name of the filename ~filename
