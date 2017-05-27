@@ -36,7 +36,7 @@ export BUILDER_TOP_DIR=$( pwd )
 export PYTHON_VERSION=$( python3 -c 'import sys; print( "%d.%d" % (sys.version_info[0], sys.version_info[1]) )' )
 
 cd ${BUILDER_TOP_DIR}/Builder
-make -f linux.mak PYTHON=/usr/bin/python3 DESTDIR=%{buildroot} build_Linux
+make -f linux.mak PYTHON=/usr/bin/python3 DESTDIR=%{buildroot} build-gui
 mkdir -p %{buildroot}/usr/share/bemacs/lib/xml_preferences
 cp ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/xml_preferences/*.py %{buildroot}/usr/share/bemacs/lib/xml_preferences
 
