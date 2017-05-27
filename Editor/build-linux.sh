@@ -16,11 +16,12 @@ then
 else
     LIB_DIR_OPTION="--lib-dir=/usr/local/lib/bemacs"
 fi
-${PYTHON} setup.py linux Makefile${TARGET} ${SETUP_OPTIONS} ${TARGET} ${LIB_DIR_OPTION}
+${PYTHON} setup.py linux ${TARGET} Makefile-${TARGET} ${SETUP_OPTIONS} ${LIB_DIR_OPTION}
 if [ -e /proc/cpuinfo ]
 then
     NUM_PROC=$( grep -i ^processor /proc/cpuinfo |wc -l )
 else
     NUM_PROC=4
 fi
-make -j ${NUM_PROC} -f Makefile${TARGET} "$@" 2>&1 | tee build.log
+set -x
+make -j ${NUM_PROC} -f Makefile-${TARGET} "$@" 2>&1 | tee build.log

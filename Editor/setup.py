@@ -24,8 +24,8 @@ class Setup:
         self.opt_unit_tests = False
 
         args = argv[1:]
-        if len(args) < 2:
-            raise ValueError( 'Usage: setup.py win32|win64|macosx|linux> <gui|cli|utils|unit-tests> <makefile>' )
+        if len(args) < 3:
+            raise ValueError( 'Usage: setup.py win32|win64|macosx|linux> <gui|cli|utils|unit-tests> <makefile> [<options>]' )
 
         self.platform = args[0]
         del args[0]
@@ -34,7 +34,7 @@ class Setup:
         del args[0]
 
         if 'all' in target:
-                target = ['gui', 'cli', 'utils', 'unit-tests']
+            target = ['gui', 'cli', 'utils', 'unit-tests']
 
         if 'gui' in target:
             self.opt_bemacs_gui = True
@@ -161,7 +161,7 @@ class Setup:
 
         if self.opt_bemacs_cli:
             self.c_clibemacs.setupCliEmacs()
-            if self.unicode_header is not None:
+            if self.unicode_header is None:
                 self.unicode_header = UnicodeDataHeader( self.c_clibemacs )
 
         if self.opt_utils:

@@ -2,6 +2,19 @@
 set -e
 
 echo "Info: build-linux.sh Builder - start"
+case "$1" in
+cli)
+    target=cli
+    ;;
+
+gui)
+    target=gui
+    ;;
+
+*)
+    target=gui
+    ;;
+esac
 
 echo "Info: Checking for Python"
 if [ "${PYTHON}" = "" ]
@@ -16,18 +29,21 @@ then
     exit 1
 fi
 
-echo "Info: checking for python library PyQt5"
-if ! ${PYTHON} -c 'from PyQt5 import QtWidgets, QtGui, QtCore' 2>/dev/null
+if [ "$target" != "cli" ]
 then
-    echo "Error: PyQt5 is not installed for ${PYTHON}. Hint: dnf install PyQt5"
-    exit 1
+    echo "Info: checking for python library PyQt5"
+    if ! ${PYTHON} -c 'from PyQt5 import QtWidgets, QtGui, QtCore' 2>/dev/null
+    then
+        echo "Error: PyQt5 is not installed for ${PYTHON}. Hint: dnf install PyQt5"
+        exit 1
+    fi
+
+    echo "Info: checking for python library QScintilla"
+    if ! ${PYTHON} -c 'from PyQt5 import Qsci' 3>/dev/null
+    then
+        echo "Error: QScintilla is not installed for ${PYTHON}. Hint: pip3 install QScintilla"
+        exit 1
+    fi
 fi
 
-echo "Info: checking for python library QScintilla"
-if ! ${PYTHON} -c 'from PyQt5 import Qsci' 3>/dev/null
-then
-    echo "Error: QScintilla is not installed for ${PYTHON}. Hint: pip3 install QScintilla"
-    exit 1
-fi
-
-make -f linux.mak PYTHON=${PYTHON:?missing python def} clean build_${BUILDER_CFG_PLATFORM}
+make -f linux.mak PYTHON=${PYTHON:?missing python def} clean build-${target}
