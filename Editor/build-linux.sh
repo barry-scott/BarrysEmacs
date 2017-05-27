@@ -7,11 +7,8 @@ then
     SETUP_OPTIONS=--enable-debug
 fi
 
-if [ "$1" == "--no-bemacs-gui" ]
-then
-    shift
-    SETUP_OPTIONS=--no-bemacs-gui
-fi
+TARGET=${1:-all}
+shift
 
 if [ "${INSTALL_BEMACS_LIB_DIR}" != "" ]
 then
@@ -19,11 +16,11 @@ then
 else
     LIB_DIR_OPTION="--lib-dir=/usr/local/lib/bemacs"
 fi
-${PYTHON} setup.py linux Makefile ${SETUP_OPTIONS} ${LIB_DIR_OPTION}
+${PYTHON} setup.py linux Makefile${TARGET} ${SETUP_OPTIONS} ${TARGET} ${LIB_DIR_OPTION}
 if [ -e /proc/cpuinfo ]
 then
     NUM_PROC=$( grep -i ^processor /proc/cpuinfo |wc -l )
 else
     NUM_PROC=4
 fi
-make -j ${NUM_PROC} -f Makefile "$@" 2>&1 | tee build.log
+make -j ${NUM_PROC} -f Makefile${TARGET} "$@" 2>&1 | tee build.log

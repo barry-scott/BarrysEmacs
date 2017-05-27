@@ -18,15 +18,35 @@ class Setup:
     def __init__( self, argv ):
         self.enable_debug = False
         self.opt_lib_dir = '/usr/local/lib/bemacs'
-        self.opt_bemacs_gui = True
-        self.opt_bemacs_cli = True
+        self.opt_bemacs_gui = False
+        self.opt_bemacs_cli = False
+        self.opt_utils = False
+        self.opt_unit_tests = False
 
         args = argv[1:]
         if len(args) < 2:
-            raise ValueError( 'Usage: setup.py win32|win64|macosx|linux> <makefile>' )
+            raise ValueError( 'Usage: setup.py win32|win64|macosx|linux> <gui|cli|utils|unit-tests> <makefile>' )
 
         self.platform = args[0]
         del args[0]
+
+        target = args[0].split( ',' )
+        del args[0]
+
+        if 'all' in target:
+                target = ['gui', 'cli', 'utils', 'unit-tests']
+
+        if 'gui' in target:
+            self.opt_bemacs_gui = True
+
+        if 'cli' in target:
+            self.opt_bemacs_cli = True
+
+        if 'utils' in target:
+            self.opt_utils = True
+
+        if 'unit-tests' in target:
+            self.opt_unit_tests = True
 
         self.makefile_name = args[0]
         del args[0]
@@ -49,14 +69,6 @@ class Setup:
                 self.opt_lib_dir = args[0][len('--lib-dir='):]
                 del args[0]
 
-            elif args[0] == '--no-bemacs-gui':
-                self.opt_bemacs_gui = False
-                del args[0]
-
-            elif args[0] == '--no-bemacs-cli':
-                self.opt_bemacs_cli = False
-                del args[0]
-
             else:
                 raise ValueError( 'Unknown arg %r' % (args[0],) )
 
@@ -74,12 +86,22 @@ class Setup:
         print( 'Info: Setup Compiler' )
         if self.opt_bemacs_gui:
             print( 'Info: Build bemacs GUI' )
+
         if self.opt_bemacs_cli:
             print( 'Info: Build bemacs CLI' )
+
+        if self.opt_utils:
+            print( 'Info: Build bemacs Utils' )
+
+        if self.opt_unit_tests:
+            print( 'Info: Build bemacs Unit tests' )
 
         self.c_python_tools = None
         self.c_pybemacs = None
         self.c_clibemacs = None
+        self.c_utils = None
+        self.c_unit_tests = None
+        self.unicode_header = None
 
         if self.platform == 'win32':
             self.c_utils = Win32CompilerMSVC90( self )
@@ -94,66 +116,74 @@ class Setup:
             self.c_pybemacs = Win64CompilerVC14( self )
 
         elif self.platform == 'macosx':
-            self.c_utils = MacOsxCompilerGCC( self )
-            self.c_unit_tests = MacOsxCompilerGCC( self )
+            if self.opt_utils:
+                self.c_utils = MacOsxCompilerGCC( self )
+
+            if self.opt_unit_tests:
+                self.c_unit_tests = MacOsxCompilerGCC( self )
+
             if self.opt_bemacs_gui:
                 self.c_python_tools = MacOsxCompilerGCC( self )
                 self.c_pybemacs = MacOsxCompilerGCC( self )
+
             if self.opt_bemacs_cli:
                 self.c_clibemacs = MacOsxCompilerGCC( self )
 
         elif self.platform == 'linux':
-            self.c_utils = LinuxCompilerGCC( self )
-            self.c_unit_tests = LinuxCompilerGCC( self )
+            if self.opt_utils:
+                self.c_utils = LinuxCompilerGCC( self )
+
+            if self.opt_unit_tests:
+                self.c_unit_tests = LinuxCompilerGCC( self )
+
             if self.opt_bemacs_gui:
                 self.c_python_tools = LinuxCompilerGCC( self )
                 self.c_pybemacs = LinuxCompilerGCC( self )
+
             if self.opt_bemacs_cli:
                 self.c_clibemacs = LinuxCompilerGCC( self )
 
         else:
             raise ValueError( 'Unknown platform %r' % (self.platform,) )
 
-        self.c_unit_tests.setupUnittests()
-        self.c_utils.setupUtilities()
+        if self.opt_unit_tests:
+            self.c_unit_tests.setupUnittests()
 
-        if self.c_pybemacs is not None:
+        if self.opt_utils:
+            self.c_utils.setupUtilities()
+
+        if self.opt_bemacs_gui:
             self.c_pybemacs.setupPythonEmacs()
 
-        if self.c_python_tools is not None:
+        if self.opt_bemacs_gui:
             self.c_python_tools.setupPythonTools()
-
-        if self.c_clibemacs is not None:
-            self.c_clibemacs.setupCliEmacs()
-
-        if self.c_pybemacs is not None:
             self.unicode_header = UnicodeDataHeader( self.c_pybemacs )
 
-        elif self.c_clibemacs is not None:
-            self.unicode_header = UnicodeDataHeader( self.c_clibemacs )
+        if self.opt_bemacs_cli:
+            self.c_clibemacs.setupCliEmacs()
+            if self.unicode_header is not None:
+                self.unicode_header = UnicodeDataHeader( self.c_clibemacs )
 
-        else:
-            raise ValueError( 'need to build one of GUI or CLI' )
+        if self.opt_utils:
+            self.db_files = [
+                Source( self.c_utils, 'Utilities/db_rtl/db_rtl.cpp' ),
+                Source( self.c_utils, 'Source/Common/doprint.cpp' ),
+                Source( self.c_utils, 'Source/Common/em_stat.cpp' ),
+                Source( self.c_utils, 'Source/Common/emstring.cpp' ),
+                Source( self.c_utils, 'Source/Common/emunicode.cpp',
+                                        ['Include/Common/em_unicode_data.h'] ),
+                Source( self.c_utils, 'Source/Common/file_name_compare.cpp' ),
+                Source( self.c_utils, 'Source/Common/ndbm.cpp' ),
+                Source( self.c_utils, 'Utilities/db_rtl/stub_rtl.cpp' ),
+                ]
 
-        self.db_files = [
-            Source( self.c_utils, 'Utilities/db_rtl/db_rtl.cpp' ),
-            Source( self.c_utils, 'Source/Common/doprint.cpp' ),
-            Source( self.c_utils, 'Source/Common/em_stat.cpp' ),
-            Source( self.c_utils, 'Source/Common/emstring.cpp' ),
-            Source( self.c_utils, 'Source/Common/emunicode.cpp',
-                                    ['Include/Common/em_unicode_data.h'] ),
-            Source( self.c_utils, 'Source/Common/file_name_compare.cpp' ),
-            Source( self.c_utils, 'Source/Common/ndbm.cpp' ),
-            Source( self.c_utils, 'Utilities/db_rtl/stub_rtl.cpp' ),
-            ]
+            if self.platform in ['linux', 'macosx']:
+                self.db_files.append( Source( self.c_utils, 'Source/Unix/unixfile.cpp' ) )
 
-        if self.platform in ['linux', 'macosx']:
-            self.db_files.append( Source( self.c_utils, 'Source/Unix/unixfile.cpp' ) )
+            elif self.platform in ('win32', 'win64'):
+                self.db_files.append( Source( self.c_utils, 'Source/Windows/win_file.cpp' ) )
 
-        elif self.platform in ('win32', 'win64'):
-            self.db_files.append( Source( self.c_utils, 'Source/Windows/win_file.cpp' ) )
-
-        if self.c_pybemacs is not None:
+        if self.opt_bemacs_gui:
             self.pycxx_obj_file = [
                 Source( self.c_pybemacs, '%(PYCXXSRC)s/cxxsupport.cxx' ),
                 Source( self.c_pybemacs, '%(PYCXXSRC)s/cxx_extensions.cxx' ),
@@ -177,7 +207,7 @@ class Setup:
                     Source( self.c_pybemacs, 'Source/Windows/win_rtl_pybemacs.cpp' ),
                     ] )
 
-        if self.c_clibemacs is not None:
+        if self.opt_bemacs_cli:
             self.cli_specific_obj_files = [
                 Source( self.c_clibemacs, 'Source/Unix/unix_main.cpp',
                                             ['Source/Unix/unix_rtl.cpp'] ),
@@ -267,44 +297,50 @@ class Setup:
                     ] )
             return obj_files
 
-        if self.c_pybemacs is not None:
+        if self.opt_bemacs_gui:
             self.py_obj_files = makeObjFiles( self.c_pybemacs )
 
         self.all_exe = []
-        if self.c_pybemacs is not None:
+        if self.opt_bemacs_gui:
             self.all_exe.append(
                 PythonExtension( self.c_pybemacs, '_bemacs', self.pybemacs_specific_obj_files + self.py_obj_files ) )
 
-        self.all_exe.extend( [
-            Program( self.c_utils, 'dbadd',      [Source( self.c_utils, 'Utilities/dbadd/dbadd.cpp' )]       +self.db_files ),
-            Program( self.c_utils, 'dbcreate',   [Source( self.c_utils, 'Utilities/dbcreate/dbcreate.cpp' )] +self.db_files ),
-            Program( self.c_utils, 'dbprint',    [Source( self.c_utils, 'Utilities/dbprint/dbprint.cpp' )]   +self.db_files ),
-            Program( self.c_utils, 'dbdel',      [Source( self.c_utils, 'Utilities/dbdel/dbdel.cpp' )]       +self.db_files ),
-            Program( self.c_utils, 'dblist',     [Source( self.c_utils, 'Utilities/dblist/dblist.cpp' )]     +self.db_files ),
-            Program( self.c_utils, 'mll2db',     [Source( self.c_utils, 'Utilities/mll2db/mll2db.cpp' )]     +self.db_files ),
+        if self.opt_utils:
+            self.all_exe.extend( [
+                Program( self.c_utils, 'dbadd',      [Source( self.c_utils, 'Utilities/dbadd/dbadd.cpp' )]       +self.db_files ),
+                Program( self.c_utils, 'dbcreate',   [Source( self.c_utils, 'Utilities/dbcreate/dbcreate.cpp' )] +self.db_files ),
+                Program( self.c_utils, 'dbprint',    [Source( self.c_utils, 'Utilities/dbprint/dbprint.cpp' )]   +self.db_files ),
+                Program( self.c_utils, 'dbdel',      [Source( self.c_utils, 'Utilities/dbdel/dbdel.cpp' )]       +self.db_files ),
+                Program( self.c_utils, 'dblist',     [Source( self.c_utils, 'Utilities/dblist/dblist.cpp' )]     +self.db_files ),
+                Program( self.c_utils, 'mll2db',     [Source( self.c_utils, 'Utilities/mll2db/mll2db.cpp' )]     +self.db_files ),
+                # test tools
+                Program( self.c_utils, 'dumpjnl',    [Source( self.c_utils, 'Source/Common/dumpjnl.cpp' )] ),
+                ] )
 
-            # test tools
-            Program( self.c_utils, 'dumpjnl',    [Source( self.c_utils, 'Source/Common/dumpjnl.cpp' )] ),
+        if self.opt_unit_tests:
+            self.all_exe.extend( [
+                # unit tests
+                Program( self.c_unit_tests, 'emunicode',  [Source( self.c_unit_tests, 'Source/Common/emunicode.cpp' )] ),
+                ] )
 
-            # unit tests
-            Program( self.c_unit_tests, 'emunicode',  [Source( self.c_unit_tests, 'Source/Common/emunicode.cpp' )] ),
-            ] )
-
-        if self.c_python_tools is not None:
+        if self.opt_bemacs_gui:
             self.all_exe.append(
                 Program( self.c_python_tools, 'python-types',[Source( self.c_python_tools, 'Source/pybemacs/python-types.cpp' )] + self.pycxx_obj_file ) )
 
-        if self.c_clibemacs is not None:
+        if self.opt_bemacs_cli:
             self.cli_obj_files = makeObjFiles( self.c_clibemacs )
             self.all_exe.append( Program( self.c_clibemacs, 'bemacs-cli', self.cli_specific_obj_files + self.cli_obj_files ) )
 
     def generateMakefile( self ):
         try:
             with open( self.makefile_name, 'wt' ) as self.__makefile:
-                if self.c_pybemacs is not None:
+                if self.opt_bemacs_gui:
                     self.c_pybemacs.generateMakefileHeader()
-                if self.c_clibemacs is not None:
+
+                if self.opt_bemacs_cli:
                     self.c_clibemacs.generateMakefileHeader()
+
+                assert len(self.all_exe) > 0
 
                 self.makePrint( 'all: %s' % (' '.join( [exe.getTargetFilename() for exe in self.all_exe] )) )
                 self.makePrint( '' )
@@ -312,7 +348,8 @@ class Setup:
                 for exe in self.all_exe:
                     exe.generateMakefile()
 
-                self.unicode_header.generateMakefile()
+                if self.opt_bemacs_gui or self.opt_bemacs_cli:
+                    self.unicode_header.generateMakefile()
 
             return 0
 
