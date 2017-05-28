@@ -34,7 +34,10 @@ class Setup:
         del args[0]
 
         if 'all' in target:
-            target = ['gui', 'cli', 'utils', 'unit-tests']
+            if self.platform in ('linux', 'macosx'):
+                target = ['gui', 'cli', 'utils', 'unit-tests']
+            else:
+                target = ['gui', 'utils', 'unit-tests']
 
         if 'gui' in target:
             self.opt_bemacs_gui = True
