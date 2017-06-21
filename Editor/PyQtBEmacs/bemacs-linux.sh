@@ -1,17 +1,6 @@
 #!/bin/bash
 export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/PyQtBEmacs:${BUILDER_TOP_DIR}/Editor/exe-pybemacs
-case "${BUILDER_CFG_PLATFORM}" in
-Linux-Fedora)
-
-    export BEMACS_EMACS_LIBRARY=${BUILDER_TOP_DIR}/Kits/Linux/RPM/ROOT/usr/local/bemacs8/lib/bemacs
-    ;;
-Linux-Debian)
-    export BEMACS_EMACS_LIBRARY=${BUILDER_TOP_DIR}/Kits/Linux/DPKG/tree/usr/local/bemacs8/lib/bemacs
-    ;;
-*)
-    exit 1
-    ;;
-esac
+export BEMACS_EMACS_LIBRARY=${BUILDER_TOP_DIR}/Kits/Linux/ROOT/usr/local/lib/bemacs
 
 if [ "$1" = "--gdb" ]
 then
