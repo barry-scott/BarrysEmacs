@@ -18,36 +18,32 @@
 
 (defun
     (smart-auto-execute
-        (save-window-excursion
-            (save-excursion
-                ~looking ~next ~last ~pattern ~handler
+        ~looking ~next ~last ~pattern ~handler
 
-                (setq ~looking 1)
+        (setq ~looking 1)
 
-                (beginning-of-file)
-                (setq ~next 1)
-                (setq ~last (fetch-array smart-auto-handlers 0 1))
+        (beginning-of-file)
+        (setq ~next 1)
+        (setq ~last (fetch-array smart-auto-handlers 0 1))
 
-                (while (< ~next ~last)
-                    (if (looking-at (fetch-array smart-auto-handlers ~next 1))
-                        (progn
-                            (setq ~last 0)
-                            (setq ~looking 0)
-                            (execute-mlisp-line
-                                (concat
-                                    "("
-                                    (fetch-array smart-auto-handlers ~next 2)
-                                    ")"))
-                        )
-                        (progn
-                            (setq ~next (+ 1 ~next))
-                        )
-                    )
+        (while (< ~next ~last)
+            (if (looking-at (fetch-array smart-auto-handlers ~next 1))
+                (progn
+                    (setq ~last 0)
+                    (setq ~looking 0)
+                    (execute-mlisp-line
+                        (concat
+                            "("
+                            (fetch-array smart-auto-handlers ~next 2)
+                            ")"))
                 )
-                (if ~looking
-                    (normal-mode)
+                (progn
+                    (setq ~next (+ 1 ~next))
                 )
             )
+        )
+        (if ~looking
+            (normal-mode)
         )
     )
 )
