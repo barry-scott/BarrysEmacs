@@ -97,6 +97,7 @@ library_files =    [
     ('common',    'Library/centerlin.ml'),
     ('common',    'Library/cmode.key'),
     ('common',    'Library/cmode.ml'),
+    ('common',    'Library/console-ui.ml'),
     ('common',    'Library/dabbrev.ml'),
     ('common',    'Library/debug.key'),
     ('common',    'Library/debug.ml'),

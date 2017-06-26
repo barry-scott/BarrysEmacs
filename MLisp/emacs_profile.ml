@@ -67,7 +67,12 @@
 ;
 ; Load up the EMACS default keys and autoloads
 ;
-(execute-mlisp-file "pybemacs-ui")
+(if
+    (= terminal-is-terminal 3)
+    (execute-mlisp-file "pybemacs-ui")
+    (= terminal-is-terminal 1)
+    (execute-mlisp-file "console-ui")
+)
 
 ;(execute-mlisp-file "emacs_control_strings")
 (execute-mlisp-file "emacs_default_autoloads")

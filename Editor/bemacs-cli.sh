@@ -7,7 +7,7 @@ Darwin)
     export emacs_library="/Applications/Barry's Emacs.app/Contents/Resources/emacs_library"
     ;;
 *)
-    export emacs_library="${BUILDER_TOP_DIR:?builder_init}/Kits/Linux/RPM/ROOT/usr/local/bemacs8/lib/bemacs"
+    export emacs_library="${BUILDER_TOP_DIR:?builder_init}/Kits/Linux/ROOT/usr/local/lib/bemacs"
     ;;
 esac
 
