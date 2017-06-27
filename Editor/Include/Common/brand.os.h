@@ -106,10 +106,5 @@
 extern void debug( int row, const EmacsString &text );
 void debug_bpt(void);
 
-#ifdef _DEBUG
-// assert macro based on <assert.h> assert
-extern void _emacs_assert(const char *, const char *, unsigned);
-#define emacs_assert(exp) (void)( (exp) || (_emacs_assert(#exp, __FILE__, __LINE__), 0) )
-#else
-#define emacs_assert(exp) ((void)0)
-#endif
+#include <cassert>
+#define emacs_assert( exp ) assert( exp )

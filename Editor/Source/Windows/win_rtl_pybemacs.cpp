@@ -76,13 +76,6 @@ void DebugPrintf( const EmacsString &text )
     }
 }
 
-#ifdef _DEBUG
-void _emacs_assert( const char *exp, const char *file, unsigned line )
-{
-    _assert( exp, file, line );
-
-}
-#endif
 void emacs_sleep( int milli_seconds )
 {
     //Sleep( milli_seconds );
