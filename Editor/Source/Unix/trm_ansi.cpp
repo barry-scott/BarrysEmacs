@@ -535,6 +535,11 @@ void TerminalControl_CHAR::t_init()
 {
     t_change_attributes();
     baud_factor = t_baud_rate/9600.0;
+    EmacsString term = get_config_env( "TERM" );
+    if( term.startswith( "screen" ) )
+    {
+        term_edit = 0;
+    }
 }
 
 void TerminalControl_CHAR::t_reset()

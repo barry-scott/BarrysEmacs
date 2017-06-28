@@ -153,6 +153,8 @@ public:
 
     int commonPrefix( const EmacsString &str ) const;           // length of common prefix case sensitive
     int caseBlindCommonPrefix( const EmacsString &str ) const;  // length of common prefix case blind
+    bool startswith( const EmacsString &str ) const;
+    bool endswith( const EmacsString &str ) const;
 
     //
     //    string modifiers

@@ -393,6 +393,27 @@ int EmacsString::last( EmacsChar_t ch, int start_pos ) const
     return -1;
 }
 
+bool EmacsString::startswith( const EmacsString &str ) const
+{
+    if( _rep->length < str._rep->length )
+    {
+        return 0;
+    }
+
+    return unicode_strcmp( str.length(), unicode_data(), str.length(), str.unicode_data() ) == 0;
+}
+
+bool EmacsString::endswith( const EmacsString &str ) const
+{
+    if( _rep->length < str._rep->length )
+    {
+        return 0;
+    }
+
+    int offset = _rep->length - str._rep->length;
+    return unicode_strcmp( str.length(), unicode_data() + offset, str.length(), str.unicode_data() ) == 0;
+}
+
 //
 //    returns the length of the prefix common to both strings
 //
