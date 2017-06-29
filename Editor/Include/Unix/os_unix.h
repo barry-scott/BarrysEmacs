@@ -51,7 +51,7 @@ const int DBG_NO_DBG_MSG    (0x00001000&DBG___ON);  // always defined
 #define CHECKPOINT_EXTENSION ".ckp"
 
 #define EMACS_INIT_PROFILE  u_str("emacs_profile.ml")
-#define MEMORY_FILE_STR     u_str("emacs_memory:.emacs_mem")
+#define MEMORY_FILE_STR     get_config_env("emacs_memory")
 #define MEMORY_FILE_ARG     0
 #define EMACS_PATH          get_config_env("emacs_path")
 #define EMACS_TMP_PATH      u_str("/tmp")
