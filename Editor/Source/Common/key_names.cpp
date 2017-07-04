@@ -385,8 +385,6 @@ static key_name_entry console_key_name_entries[] =
 
 
 key_name PC_key_names;
-#endif
-
 void init_key_names( const EmacsString &term )
 {
     if( term.startswith( "xterm" ) )
@@ -398,6 +396,8 @@ void init_key_names( const EmacsString &term )
         PC_key_names.loadMappings( console_key_name_entries, sizeof( console_key_name_entries ) );
     }
 }
+#endif
+
 
 void key_name::loadMappings( key_name_entry *_key_names, int sizeof_key_names )
 {
