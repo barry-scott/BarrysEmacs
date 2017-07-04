@@ -536,7 +536,12 @@ void TerminalControl_CHAR::t_init()
     t_change_attributes();
     baud_factor = t_baud_rate/9600.0;
     EmacsString term = get_config_env( "TERM" );
-    if( term.startswith( "screen" ) )
+    if( term.startswith( "xterm" ) )
+    {
+        // assume only xterm and xterm-256color etc have edit
+        term_edit = 1;
+    }
+    else
     {
         term_edit = 0;
     }

@@ -29,7 +29,7 @@ int convert_key_string_command( void );
 int convert_key_string( const EmacsString &input, EmacsString &output );
 void init_key( void );
 void re_init_keyboard( void );
-
+extern void init_key_names( const EmacsString &term );
 extern void record_keystoke_history( const EmacsString &keys, BoundName *proc );
 
 //
@@ -1718,6 +1718,8 @@ bool EmacsWorkItem::enableWorkQueue( bool enable )
 
 void init_key( void )
 {
+    init_key_names( get_config_env( "TERM" ) );
+
     re_init_keyboard();
 
     checkpoint_frequency = 300;

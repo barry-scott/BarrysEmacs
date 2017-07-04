@@ -19,10 +19,10 @@ public:
 class key_name
 {
 public:
-    key_name( key_name_entry *_key_names, int sizeof_key_names );
     key_name();
     virtual ~key_name();
 
+    void loadMappings( key_name_entry *_key_names, int sizeof_key_names );
     void addMapping( const EmacsString &name, const EmacsString &keys );
 
     // return the value of a named key
