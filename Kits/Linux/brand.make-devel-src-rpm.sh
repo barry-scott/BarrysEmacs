@@ -114,12 +114,14 @@ sudo \
 
 sudo ls -l ${MOCK_BUILD_DIR}/RPMS
 
-for BIN_KITNAME in \
-    ${KITNAME} \
-    ${KITNAME}-gui \
-    ${KITNAME}-cli \
-    ${KITNAME}-common \
-    ${KITNAME}-debuginfo
+ALL_BIN_KITNAMES="
+${KITNAME}
+${KITNAME}-cli
+${KITNAME}-gui
+${KITNAME}-common
+${KITNAME}-debuginfo"
+
+for BIN_KITNAME in ${ALL_BIN_KITNAMES}
 do
     sudo cp -v "${MOCK_BUILD_DIR}/RPMS/${BIN_KITNAME}-${V}-1.${DISTRO}.x86_64.rpm" tmp
 done
@@ -131,6 +133,13 @@ ls -l tmp
 if [ "$CMD" = "--install" ]
 then
     echo "Info: Installing RPM"
-    sudo dnf -y remove ${KITNAME}
-    sudo dnf -y install "tmp/${SRPM_BASENAME}.x86_64.rpm"
+
+    for BIN_KITNAME in ${ALL_BIN_KITNAMES}
+    do
+        if rpm -q ${BIN_KITNAME}
+        then
+            sudo dnf -y remove ${BIN_KITNAME}
+        fi
+    done
+    sudo dnf -y install tmp/${KITNAME}*.x86_64.rpm
 fi
