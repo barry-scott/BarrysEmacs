@@ -114,7 +114,15 @@ sudo \
 
 sudo ls -l ${MOCK_BUILD_DIR}/RPMS
 
-sudo cp -v "${MOCK_BUILD_DIR}/RPMS/${SRPM_BASENAME}.x86_64.rpm" tmp
+for BIN_KITNAME in \
+    ${KITNAME} \
+    ${KITNAME}-gui \
+    ${KITNAME}-cli \
+    ${KITNAME}-common \
+    ${KITNAME}-debuginfo
+do
+    sudo cp -v "${MOCK_BUILD_DIR}/RPMS/${BIN_KITNAME}-${V}-1.${DISTRO}.x86_64.rpm" tmp
+done
 sudo chown ${USER}: tmp/*.rpm
 
 echo "Info: Results in ${PWD}/tmp:"

@@ -10,14 +10,9 @@ Source0:        http://barrys-emacs.org/source_kits/%{name}-%{version}.tar.gz
 BuildRequires:  python3-devel >= 3.4
 BuildRequires:  python3-qt5 >= 5.5.1
 BuildRequires:  unicode-ucd >= 7.0
-Requires:       python3 >= 3.4
-Requires:       python3-qt5 >= 5.5.1
 
-%description
-Barry's Emacs
-* Easy to get start Emacs
-* Uses original MockLisp extension language
-* UI implemented using Python3 and PyQt
+Requires:       bemacs-gui
+Requires:       bemacs-cli
 
 %prep
 # unpack Source0
@@ -46,11 +41,58 @@ gzip -c ${BUILDER_TOP_DIR}/Kits/Linux/bemacs.1 > %{buildroot}%{_mandir}/man1/bem
 mkdir -p %{buildroot}/usr/share/applications
 cp ${BUILDER_TOP_DIR}/Kits/Linux/bemacs.desktop %{buildroot}/usr/share/applications
 
+%description
+Barry's Emacs
+* Easy to get start with Emacs
+* Uses original MockLisp extension language
+* UI implemented using Python3 and PyQt
+
+%package gui
+Summary: Barry's Emacs GUI version
+Group: Applications/Editors
+Requires: bemacs-common
+Requires: python3 >= 3.4
+Requires: python3-qt5 >= 5.5.1
+
+%description gui
+Barry's Emacs
+* Easy to get start with Emacs
+* Uses original MockLisp extension language
+* UI implemented using Python3 and PyQt
+
+%package cli
+Summary: Barry's Emacs CLI version
+Group: Applications/Editors
+Requires: bemacs-common
+Requires: python3 >= 3.4
+
+%description cli
+Barry's Emacs
+* Easy to get start with Emacs
+* Uses original MockLisp extension language
+* Command line version for terminal
+
+%package common
+Summary: Barry's Emacs common files
+Group: Applications/Editors
+
+%description common
+Barry's Emacs common files used by
+bemacs-gui and bemacs-cli
+
 %files
+
+%files gui
 %defattr(-, root, root, -)
 /usr/bin/bemacs
-/usr/bin/bemacs-cli
 /usr/bin/bemacs_server
+
+%files cli
+%defattr(-, root, root, -)
+/usr/bin/bemacs-cli
+
+%files common
+%defattr(-, root, root, -)
 /usr/bin/bemacs-dbadd
 /usr/bin/bemacs-dbcreate
 /usr/bin/bemacs-dbdel
