@@ -417,14 +417,16 @@ bool FileParse::sys_parse( const EmacsString &name, const EmacsString &def )
 
 int match_wild( const EmacsString &candidate, const EmacsString &pattern )
 {
-    const unsigned char *cp, *pp;        // candidate and pattern pointers
-    const unsigned char *scp, *spp;    // saved cp and pp
-    unsigned char cch, pch;        // candidate and pattern char
+    static EmacsChar_t null_str[1] = {0};
 
-    scp = spp = u_str("");        // init to null string
+    const EmacsChar_t *cp, *pp;        // candidate and pattern pointers
+    const EmacsChar_t *scp, *spp;    // saved cp and pp
+    EmacsChar_t cch, pch;        // candidate and pattern char
 
-    cp = candidate.data();
-    pp = pattern.data();
+    scp = spp = null_str;
+
+    cp = candidate.unicode_data();
+    pp = pattern.unicode_data();
 
     for(;;)
         if( *pp )    // while there is pattern chars left
@@ -435,6 +437,7 @@ int match_wild( const EmacsString &candidate, const EmacsString &pattern )
             {
                 if( *pp == '\0' )// pattern null after a *
                     return 1;
+
                 scp = cp;// save pointers for back tracking
                 spp = pp;
                 continue;
@@ -445,12 +448,14 @@ int match_wild( const EmacsString &candidate, const EmacsString &pattern )
 
             if( pch == cch )
                 continue;
+
             if( pch == '?' )
                 continue;
 
             // mismatch detected
             if( *scp++ == '\0' )
                 break;
+
             cp = scp;
             pp = spp;
         }
@@ -458,12 +463,15 @@ int match_wild( const EmacsString &candidate, const EmacsString &pattern )
         {
             if( *cp == '\0' )
                 return 1;
+
             // mismatch detected
             if( *scp++ == '\0' )
                 break;
+
             cp = scp;
             pp = spp;
         }
+
     return 0;
 }
 
