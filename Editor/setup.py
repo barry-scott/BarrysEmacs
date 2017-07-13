@@ -180,6 +180,9 @@ class Setup:
                 Source( self.c_utils, 'Utilities/db_rtl/stub_rtl.cpp' ),
                 ]
 
+            if self.unicode_header is None:
+                self.unicode_header = UnicodeDataHeader( self.c_utils )
+
             if self.platform in ['linux', 'macosx']:
                 self.db_files.append( Source( self.c_utils, 'Source/Unix/unixfile.cpp' ) )
 
@@ -351,7 +354,7 @@ class Setup:
                 for exe in self.all_exe:
                     exe.generateMakefile()
 
-                if self.opt_bemacs_gui or self.opt_bemacs_cli:
+                if self.unicode_header is not None:
                     self.unicode_header.generateMakefile()
 
             return 0
