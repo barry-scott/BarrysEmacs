@@ -427,7 +427,6 @@ void SyntaxTable::modify_table_ere( int type, int properties, const EmacsString 
 }
 
 void SyntaxTable::modify_table_dull_type( const EmacsString &str1 )
-    throw( SyntaxTable::SyntaxErrorException, SyntaxTable::SyntaxMemoryException )
 {
     //
     // mark the chars are not interesting
@@ -490,7 +489,6 @@ void SyntaxTable::modify_table_set_paired_type( int type, int ch )
 }
 
 void SyntaxTable::modify_table_range_type( int type, const EmacsString &str1, void (SyntaxTable::*set_func)( int type, int ch ) )
-    throw( SyntaxTable::SyntaxErrorException, SyntaxTable::SyntaxMemoryException )
 {
     EmacsChar_t ch = 0;
 
@@ -521,7 +519,6 @@ void SyntaxTable::modify_table_range_type( int type, const EmacsString &str1, vo
 
 
 void SyntaxTable::modify_table_paired_type( int type, int properties, const EmacsString &str1, const EmacsString &str2 )
-    throw( SyntaxTable::SyntaxErrorException, SyntaxTable::SyntaxMemoryException )
 {
     if( str1.isNull() )
         throw SyntaxErrorException();

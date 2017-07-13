@@ -260,16 +260,13 @@ private:
     // handlers used by modify_table to deal with type of syntax entry
 
     // Dull type
-    void modify_table_dull_type( const EmacsString &str1 )
-        throw( SyntaxErrorException, SyntaxMemoryException );
+    void modify_table_dull_type( const EmacsString &str1 );
 
     // range of characters type like word A-Z
-    void modify_table_range_type( int type, const EmacsString &str1, void (SyntaxTable::*set_func)( int type, int ch ) )
-        throw( SyntaxErrorException, SyntaxMemoryException );
+    void modify_table_range_type( int type, const EmacsString &str1, void (SyntaxTable::*set_func)( int type, int ch ) );
 
     // paired strings like comments // to
-    void modify_table_paired_type( int type, int properties, const EmacsString &str1, const EmacsString &str2  )
-        throw( SyntaxErrorException, SyntaxMemoryException );
+    void modify_table_paired_type( int type, int properties, const EmacsString &str1, const EmacsString &str2  );
 
     void modify_table_set_simple_type( int type, int ch );
     void modify_table_set_paired_type( int type, int ch );
