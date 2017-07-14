@@ -156,6 +156,7 @@ int pause_emacs( void )
         error("Unable to send response to bemacs client");
     }
 #endif
+
     return 0;
 }
 # endif

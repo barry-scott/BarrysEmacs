@@ -263,18 +263,11 @@ void FormatString::process_format()
         case 'e':
             {
                 // errno value
-                EmacsString str( strerror( static_cast<int>( intArg ) ) );
+                EmacsString str( os_error_code( static_cast<int>( intArg ) ) );
                 print_string( str );
             }
             break;
 
-        case 'E':
-            {
-                // win32 error code
-                EmacsString str( os_error_code( static_cast<int>( intArg ) ) );
-                print_string( str );
-                break;
-            }
         default:
             throw EmacsInternalError( "FormatString - unknown format char" );
         }

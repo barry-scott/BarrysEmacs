@@ -43,13 +43,14 @@
         (setq last-line (region-to-string))
         (newline)
         ;(erase-region)
+        (end-of-file)
+        (set-mark)
         (send-string-to-process current-buffer-name
             (concat last-line "\n"))
-        (set-mark)
     )
 )
 ; Similar to pr-newline except that if it is invoked on a line in the middle
-; of the buffer, that line is set to the subprocess and the rest of the
+; of the buffer, that line is sent to the subprocess and the rest of the
 ; buffer is erased.
 (defun
     (pr-newline-kill
@@ -110,7 +111,7 @@
 )
 (defun
     (send-quit-signal
-        (quit-process (active-process))
+        (quit-process (current-process-name))
     )
 )
 ; Insert the last line the user sent to the process in this buffer.

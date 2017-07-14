@@ -31,3 +31,4 @@ case "$1" in
     exe-cli-bemacs/bemacs-cli "$@"
     ;;
 esac
+stty sane
