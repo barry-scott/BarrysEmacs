@@ -214,7 +214,7 @@ void init_terminal( const EmacsString &term_type, const EmacsString &device_name
 class TerminalControl_FILE : public EmacsView
 {
 public:
-    TerminalControl_FILE( const unsigned char *file );
+    TerminalControl_FILE( const EmacsString &file );
     virtual ~TerminalControl_FILE();
     //
     //    Screen control
@@ -226,13 +226,13 @@ public:
 
 int init_file_terminal( const EmacsString &file )
 {
-    theActiveView = new TerminalControl_FILE( file.data() );
+    theActiveView = new TerminalControl_FILE( file );
 
     return 1;
 }
 
-TerminalControl_FILE::TerminalControl_FILE( const unsigned char *file )
-    : EmacsView()
+TerminalControl_FILE::TerminalControl_FILE( const EmacsString &file )
+: EmacsView()
 {
     //
     //    open the (message "...") stream
@@ -243,17 +243,26 @@ TerminalControl_FILE::TerminalControl_FILE( const unsigned char *file )
     message_file.fio_open( stdout, default_end_of_line_style );
 #endif
     if( !message_file.fio_is_open() )
+    {
         emacs_exit( errno );
+    }
 
     //
     //    open the get-tty- stream
     //
-    if( file != NULL && file[0] != '\0' )
+    if( !file.isNull() )
+    {
         command_file.fio_open( file, 0, EmacsString::null );
+    }
     else
+    {
         command_file.fio_open( stdin, FIO_EOL__None );
+    }
+
     if( !command_file.fio_is_open() )
+    {
         emacs_exit( errno );
+    }
 }
 
 TerminalControl_FILE::~TerminalControl_FILE()

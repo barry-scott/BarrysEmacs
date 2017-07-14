@@ -217,7 +217,9 @@ extern int fetch_array_command(void);
 extern int fetch_database_entry(void);
 extern int fetch_help_database_entry(void);
 extern int file_exists(void);
+# if defined (SUBPROCESSES)
 extern int filter_region(void);
+# endif
 extern int following_char_command(void);
 extern int force_exit_process(void);
 extern int forward_paren_bl(void);
@@ -669,6 +671,9 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "file-name-expand-and-default", file_name_expand_and_default );
     EMACS_NEW BoundName( "file-is-a-directory", file_is_a_directory_cmd );
     EMACS_NEW BoundName( "file-format-string", file_format_string_cmd );
+# if defined (SUBPROCESSES)
+    EMACS_NEW BoundName( "filter-region", filter_region );
+# endif
     EMACS_NEW BoundName( "following-char", following_char_command );
 # if defined (SUBPROCESSES)
     EMACS_NEW BoundName( "force-exit-process", force_exit_process );

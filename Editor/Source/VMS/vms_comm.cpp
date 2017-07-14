@@ -1410,7 +1410,7 @@ int list_processes( void )
 
     EmacsBuffer::scratch_bfn( "Process list", interactive() );
     ins_str(u_str("Process                 State   Time      Buffer           In Proc         Out Proc\n"));
-    ins_str(u_str("-------               -----   ----      ------           -------         --------\n"));
+    ins_str(u_str("-------                 -----   ----      ------           -------         --------\n"));
 //                  "..................... ....... ... ..... ............... ............... ...............
     for( i=0; i<n_processes; i++ )
     {

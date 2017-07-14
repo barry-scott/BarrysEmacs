@@ -858,8 +858,8 @@ int database::chkblk( unsigned char buf[database::PBLKSIZ] )
 int database::put_db( const EmacsString &key, const unsigned char *content, int contentlen )
 {
     datum keyd( *this );
-    keyd.dptr = key.data();
-    keyd.dsize = key.length();
+    keyd.dptr = key.utf8_data();
+    keyd.dsize = key.utf8_data_length();
 
     datum value( fetch( keyd ) );
 
@@ -900,8 +900,8 @@ int database::get_db
 # endif
 
     datum value(*this);
-    value.dptr = key.data();
-    value.dsize = key.length();
+    value.dptr = key.utf8_data();
+    value.dsize = key.utf8_data_length();
 
     value = fetch( value );
     if( value.dptr == 0 )

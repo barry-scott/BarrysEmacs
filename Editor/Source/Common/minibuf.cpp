@@ -67,7 +67,7 @@ void error( const EmacsString &text )
         }
         else
         {
-            message_file.fio_put( text.data(),text.length() );
+            message_file.fio_put( text );
         }
     }
     if( error_handled == 0 )
@@ -118,7 +118,7 @@ void message( const EmacsString &text )
     if( term_is_terminal != 0 )
         minibuf_body.setMessageBody( text );
     else
-        message_file.fio_put( text.data(), text.length() );
+        message_file.fio_put( text );
 }
 
 
@@ -277,7 +277,7 @@ EmacsString br_get_string_interactive( int breaksp, const EmacsString &prefix, c
         unsigned char lbuf[BUFFERSIZE + 1];
         int read_size;
 
-        read_size = command_file.fio_get_with_prompt( lbuf, sizeof(lbuf), prompt.data() );
+        read_size = command_file.fio_get_with_prompt( lbuf, sizeof(lbuf), prompt.utf8_data() );
         if( read_size <= 0 )
         {
             error("No more input available");

@@ -18,7 +18,3 @@
 (defun UI-frame-state()
     "normal"
 )
-
-(defun filter-region( ~cmd (get-tty-string ": filter-region (through command) "))
-    (error-message "filter-region is not implemented")
-)

@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
+#include <sys/stat.h>
 #include <string.h>
 #include <stdio.h>
 #include <fcntl.h>

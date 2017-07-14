@@ -356,7 +356,7 @@ public:
 //    virtual const EmacsString &asString() const;
     virtual int asInt(void) const;
 
-    const unsigned char *data() { return exp_string.data(); }
+    const unsigned char *utf8_data() { return exp_string.utf8_data(); }
     const char *sdata() { return exp_string.sdata(); }
     int length() const { return exp_string.length(); }
     int isNull() const { return exp_string.isNull(); }

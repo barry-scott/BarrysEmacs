@@ -83,7 +83,7 @@ mlisp: utils
 	@ echo Info: Copying Mlisp files...
 	cp -f ../MLisp/emacsinit.ml	$(BUILD_BEMACS_LIB_DIR); chmod ugo=r $(BUILD_BEMACS_LIB_DIR)/emacsinit.ml
 	cp -f ../MLisp/emacs_profile.ml	$(BUILD_BEMACS_LIB_DIR); chmod ugo=r $(BUILD_BEMACS_LIB_DIR)/emacs_profile.ml
-	cd ../MLisp; $(PYTHON) create_library.py common $(BUILD_BEMACS_LIB_DIR)/emacslib $(BUILD_BEMACS_BIN_DIR); chmod ugo=r $(BUILD_BEMACS_LIB_DIR)/emacslib.*
+	cd ../MLisp; $(PYTHON) create_library.py common,unix $(BUILD_BEMACS_LIB_DIR)/emacslib $(BUILD_BEMACS_BIN_DIR); chmod ugo=r $(BUILD_BEMACS_LIB_DIR)/emacslib.*
 
 describe: utils
 	@ echo Info: Making describe...

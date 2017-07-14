@@ -34,7 +34,7 @@ int main(int argc,char **argv)
     }
     else
     {
-        write( 1, contents.data(), contents.length() );
+        write( 1, contents.utf8_data(), contents.utf8_data_length() );
     }
 
     return 0;

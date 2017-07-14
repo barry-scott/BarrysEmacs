@@ -737,7 +737,9 @@ int send_string_to_terminal( void )
         s = get_string_mlisp();
 #ifndef _WINDOWS
     if( !s.isNull() && term_is_terminal == 1)
-        theActiveView->t_io_print( s.data() );
+    {
+        theActiveView->t_io_print( s.utf8_data() );
+    }
 #endif
     void_result();
     return 0;

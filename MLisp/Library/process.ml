@@ -14,6 +14,8 @@
     (execute-mlisp-file "windows-process.ml")
     (= operating-system-name "unix")
     (execute-mlisp-file "unix-process.ml")
+    (= operating-system-name "Linux")
+    (execute-mlisp-file "unix-process.ml")
     (= operating-system-name "MacOSX")
     (execute-mlisp-file "unix-process.ml")
     (error-message "process.ml does not support operating system " operating-system-name)

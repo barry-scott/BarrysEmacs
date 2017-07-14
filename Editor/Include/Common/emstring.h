@@ -115,9 +115,10 @@ public:
     //
     //    description of the data
     //
-    const EmacsChar_t *unicode_data() const; // unsigned char data
+    const EmacsChar_t *unicode_data() const;
 
-    const unsigned char *data() const;  // unsigned char data
+    int utf8_data_length() const;
+    const unsigned char *utf8_data() const;  // unsigned char data
     const char *sdata() const;          // signed char data
                                         // these two function give unsafe access to the inside of representation
 
@@ -265,6 +266,7 @@ private:
     int alloc_length;
     int length;
     EmacsChar_t *data;
+    int length_utf8_data;
     unsigned char *utf8_data;
 };
 

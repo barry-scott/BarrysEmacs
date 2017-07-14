@@ -217,6 +217,10 @@ class Setup:
             self.cli_specific_obj_files = [
                 Source( self.c_clibemacs, 'Source/Unix/unix_main.cpp',
                                             ['Source/Unix/unix_rtl.cpp'] ),
+                Source( self.c_clibemacs, 'Source/Unix/unixcomm.cpp' ),
+                # need to make this conditional for NetBSD etc.
+                Source( self.c_clibemacs, 'Source/Unix/ptyopen_linux.cpp' ),
+                Source( self.c_clibemacs, 'Source/Unix/emacs_signal.cpp' ),
                 Source( self.c_clibemacs, 'Source/Unix/unix_trm.cpp' ),
                 Source( self.c_clibemacs, 'Source/Unix/trm_ansi.cpp' ),
                 ]
@@ -890,6 +894,7 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"MacOSX\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
+                                        '-DSUBPROCESSES=1 '
                                         '-D%(DEBUG)s' )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
@@ -995,6 +1000,7 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
                                         '-D%(DEBUG)s '
+                                        '-DSUBPROCESSES=1 '
                                         '-DBEMACS_LIB_DIR=\\"%(BEMACS_LIB_DIR)s\\"' )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g' )

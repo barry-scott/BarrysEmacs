@@ -17,6 +17,10 @@ extern int ptys_open( int fdm, char *pts_name );
 SystemExpressionRepresentationIntPositive maximum_dcl_buffer_size( 10000 );
 SystemExpressionRepresentationIntPositive dcl_buffer_reduction( 500 );
 
+#ifndef MAXFDS
+#define MAXFDS 254
+#endif
+
 #if defined( SUBPROCESSES )
 
 # include <sys/types.h>
@@ -62,18 +66,18 @@ extern "C" void openlog(const char *ident, int logopt, int facility);
 
 #if DBG_PROCESS && DBG_TMP
 extern int elapse_time(void);
-#define Trace( s )    do {    int t=elapse_time(); \
-                if( dbg_flags&DBG_PROCESS && dbg_flags&DBG_TMP ) \
-                    _dbg_msg( FormatString(TIME_STAMP_STR "%s") << t/1000 << t%1000 << (s) ); } \
-            while(0)
+#define Trace( s )  do { int t=elapse_time(); \
+                         if( dbg_flags&DBG_PROCESS && dbg_flags&DBG_TMP ) \
+                            _dbg_msg( FormatString(TIME_STAMP_STR "%s") << t/1000 << t%1000 << (s) ); } \
+                    while(0)
 #else
 #define Trace( s ) // do nothing
 #endif
 
 const int STOPPED(1<<0);    // 1
 const int RUNNING(1<<1);    // 2
-const int EXITED(1<<2);        // 4
-const int SIGNALED(1<<3);    // 8
+const int EXITED(1<<2);     // 4
+const int SIGNALED(1<<3);   // 8
 const int CHANGED(1<<6);    // 64
 
 inline bool EmacsProcess::activeProcess()
@@ -129,26 +133,23 @@ const char *SIG_names[] = {
     "", "", "", "", "", "", ""
 };
 
-extern const char *shell();
 void stuff_buffer( ProcessChannelInput & );
-extern XtInputId add_select_fd( int, long int, XtInputCallbackProc, XtPointer );
-extern void remove_select_fd( XtInputId );
 
 EmacsString str_process( "Process: " );
 EmacsString str_err_proc( "Cannot find the specified process" );
 EmacsString str_is_blocked( "There is data already waiting to be send to the blocked process" );
 
 EmacsProcess::EmacsProcess( const EmacsString &name, const EmacsString &_command)
-    : EmacsProcessCommon( name )
-    , chan_in()
-    , command( _command )
-    , term_proc( NULL )
-    , in_id(0)
-    , out_id(0)
-    , p_id(0)
-    , p_flag(0)
-    , p_reason(0)
-    , out_id_valid(0)
+: EmacsProcessCommon( name )
+, chan_in()
+, command( _command )
+, term_proc( NULL )
+, in_id(0)
+, out_id(0)
+, p_id(0)
+, p_flag(0)
+, p_reason(0)
+, out_id_valid(0)
 {
     if( maximum_dcl_buffer_size < 1000 )
         maximum_dcl_buffer_size = 10000;
@@ -168,11 +169,11 @@ EmacsProcess::~EmacsProcess()
 }
 
 ProcessChannelInput::ProcessChannelInput()
-    : ch_fd(-1)
-    , ch_ptr( NULL )
-    , ch_count( 0 )
-    , ch_buffer( NULL )
-    , ch_proc( NULL )
+: ch_fd(-1)
+, ch_ptr( NULL )
+, ch_count( 0 )
+, ch_buffer( NULL )
+, ch_proc( NULL )
 { }
 
 ProcessChannelInput::~ProcessChannelInput()
@@ -188,11 +189,11 @@ ProcessChannelInput::~ProcessChannelInput()
 }
 
 ProcessChannelOutput::ProcessChannelOutput()
-    : ch_fd(-1)
-    , ch_count(0)
-    , ch_ccount(0)
-    , ch_buf( NULL )
-    , ch_data( NULL )
+: ch_fd(-1)
+, ch_count(0)
+, ch_ccount(0)
+, ch_buf( NULL )
+, ch_data( NULL )
 { }
 
 ProcessChannelOutput::~ProcessChannelOutput()
@@ -206,27 +207,26 @@ ProcessChannelOutput::~ProcessChannelOutput()
         EMACS_FREE( ch_buf );
 }
 
-XtInputId add_to_select( int fd, long int mask, XtInputCallbackProc input_request, EmacsProcess *npb )
+EmacsPollFdId add_to_select( int fd, long int mask, EmacsPollFdCallBack input_request, EmacsProcess *npb )
 {
     FD_SET( fd, &process_fds );
 
     return add_select_fd( fd, mask, input_request, npb );
 }
 
-void remove_input( XtInputId id )
+void remove_input( EmacsPollFdId id )
 {
     remove_select_fd( id );
 }
 
 
 // Callback to handle an input request
-void input_request( XtPointer p_, int *fdp, XtInputId *id )
+void input_request( EmacsPollFdParam p_, int fdp )
 {
     EmacsProcess *p = (EmacsProcess *)p_;
     ProcessChannelInput &chan = p->chan_in;
 
-    Trace( FormatString( "input_request( XtPointer p_, int *fdp(%d), XtInputId *id(0x%x) )")
-        << *fdp << int(*id) );
+    Trace( FormatString( "input_request( XtPointer p_, int fdp(%d) )") << fdp );
 
     int read_count = 5;
     int cc;
@@ -267,13 +267,13 @@ void input_request( XtPointer p_, int *fdp, XtInputId *id )
 }
 
 // Callback to handle an output request
-void output_request( XtPointer p_, int *fdp, XtInputId * id )
+void output_request( EmacsPollFdParam p_, int fdp )
 {
     EmacsProcess *p = (EmacsProcess *)p_;
     ProcessChannelOutput &chan = p->chan_out;
 
-    Trace( FormatString("output_request( XtPointer p_, int *fdp(%d), XtInputId *id(0x%x) ) ch_ccount %d ch_count %d")
-        << *fdp << int(*id) << chan.ch_ccount << chan.ch_count );
+    Trace( FormatString("output_request( XtPointer p_, int fdp(%d) ) ch_ccount %d ch_count %d")
+        << fdp << chan.ch_ccount << chan.ch_count );
     if( chan.ch_ccount > 0 )
     {
         int cc = write( chan.ch_fd, "\004", 1 );
@@ -323,10 +323,12 @@ class ChildSignalHandler : public EmacsPosixSignalHandler
 {
 public:
     ChildSignalHandler()
-        : EmacsPosixSignalHandler( SIGCHLD )
+    : EmacsPosixSignalHandler( SIGCHLD )
     { }
+
     virtual ~ChildSignalHandler()
     { }
+
 private:
     void signalHandler();
 };
@@ -382,7 +384,7 @@ void ChildSignalHandler::signalHandler()
 # if DBG_PROCESS
         if( dbg_flags&DBG_PROCESS )
             _dbg_msg( FormatString("Found emacs process 0x%x (%s)\n")
-                     << (unsigned)p << p->proc_name );
+                     << (void *)p << p->proc_name );
 # endif
         if( WIFSTOPPED( stat_loc ) )
         {
@@ -465,7 +467,6 @@ void change_msgs( void )
 
     int dodsp = 0, restore = 0;
     EmacsBufferRef old( bf_cur );
-    unsigned char line[50];
     int OldBufferIsVisible = (theActiveView->currentWindow()->w_buf == bf_cur );
     int old_cc = child_changed;
     int change_processed = 0;
@@ -480,17 +481,18 @@ void change_msgs( void )
 # endif
         if( p->p_flag & CHANGED )
         {
-            line[0] = '\0';
+            EmacsString status;
+
             p->p_flag &= ~CHANGED;
             change_processed ++;
 
             switch( p->p_flag & ( SIGNALED | EXITED ) )
             {
             case SIGNALED:
-                sprintf( s_str(line), "%s\n", SIG_names[int(p->p_reason)] );
+                status = FormatString("%s\n") << SIG_names[int(p->p_reason)];
                 break;
             case EXITED:
-                sprintf( s_str(line), "Exited %d\n", p->p_reason );
+                status = FormatString("Exited %d\n") << p->p_reason;
                 break;
             }
 
@@ -500,9 +502,9 @@ void change_msgs( void )
                 int larg = arg;
 
                 arg_state = no_arg;
-                MPX_chan = &p->chan_in;    // User will be able to get the output for
-                MPX_chan->ch_ptr = line;
-                MPX_chan->ch_count = _str_len( line );
+                MPX_chan = &p->chan_in;    // User will be able to get the output from process-output
+                MPX_chan->ch_ptr = const_cast<unsigned char *>( status.utf8_data() );
+                MPX_chan->ch_count = status.utf8_data_length();
 # if DBG_PROCESS
                 if( dbg_flags&DBG_PROCESS )
                     _dbg_msg( FormatString("change_msgs() calling term_proc=%s proc_name=\"%s\" p_flags=0x%x\n")
@@ -512,7 +514,10 @@ void change_msgs( void )
                 p->term_proc->execute();
                 arg_state = LArgState;
                 arg = larg;
-                MPX_chan = NULL;    // a very short time only
+                // remove refs to status's address.
+                MPX_chan->ch_ptr = NULL;
+                MPX_chan->ch_count = 0;
+                MPX_chan = NULL;
                 dodsp++;
                 EmacsProcess::flushProcess( p );
             }
@@ -520,7 +525,7 @@ void change_msgs( void )
             {
                 p->chan_in.ch_buffer->set_bf();
                 set_dot( bf_cur->unrestrictedSize() + 1 );
-                bf_cur->ins_str( line );
+                bf_cur->ins_cstr( status );
                 if( ( bf_cur->unrestrictedSize() ) > maximum_dcl_buffer_size )
                 {
                     bf_cur->del_frwd( 1, dcl_buffer_reduction );
@@ -599,7 +604,7 @@ void send_chan( EmacsProcess *process )
     }
     if( !process->out_id_valid )
     {
-        process->out_id = add_to_select( output.ch_fd, XtInputWriteMask, output_request, process );
+        process->out_id = add_to_select( output.ch_fd, EmacsPollInputReadMask, output_request, process );
         process->out_id_valid = 1;
     }
 }
@@ -771,28 +776,7 @@ bool EmacsProcess::startProcess( EmacsPosixSignal &sig_child )
         return false;
     }
 
-    char **term_is = NULL;
-    char **termcap_is = NULL;
-    // Find and nobble TERM and TERMCAP
-    for( char **p = environ; *p && ( term_is == NULL || termcap_is == NULL ); p++ )
-        if( _str_ncmp( "TERM=", *p, 5 ) == 0 )
-            term_is = p;
-        else if( _str_ncmp( "TERMCAP=", *p, 8 ) == 0 )
-            termcap_is = p;
-
-    char *old_term;
-    if( term_is )
-    {
-        old_term = *term_is;
-        *term_is = "TERM=unknown";
-    }
-
-    char *old_termcap;
-    if( termcap_is )
-    {
-        old_termcap = *termcap_is;
-        *termcap_is = "NOTERMCAP=none";
-    }
+    unsetenv( "TERM" );
 
     // Fork the child
     pid_t pid = fork();
@@ -932,45 +916,39 @@ bool EmacsProcess::startProcess( EmacsPosixSignal &sig_child )
         int line_discipline = 0;
         status = ioctl( STDIN_FILENO, TIOCSETD, &line_discipline );
         if( dbg_flags&DBG_PROCESS )
-        { t=elapse_time(); syslog( LOG_DEBUG, TIME_STAMP_STR "ioctl( %d, TIOCSETD, ld=%d ) => %d, errno: %d", t/1000, t%1000, STDIN_FILENO, line_discipline, status, errno ); }
+            { t=elapse_time(); syslog( LOG_DEBUG, TIME_STAMP_STR "ioctl( %d, TIOCSETD, ld=%d ) => %d, errno: %d", t/1000, t%1000, STDIN_FILENO, line_discipline, status, errno ); }
 # endif
 
         if( ld == 0 )
         {
             // csh version
             if( dbg_flags&DBG_PROCESS )
-            { t=elapse_time(); syslog( LOG_DEBUG, TIME_STAMP_STR "execlp( %s, %s, -f, -c, %s, 0 )",
-                    t/1000, t%1000, shname.data(), shname.data(), command.data() ); }
-            status = execlp( shname, shname, "-f", "-c", command.sdata(), 0 );
+                { t=elapse_time(); syslog( LOG_DEBUG, TIME_STAMP_STR "execlp( %s, %s, -f, -c, %s, 0 )",
+                    t/1000, t%1000, shname.utf8_data(), shname.utf8_data(), command.utf8_data() ); }
+            status = execlp( shname, shname, "-f", "-c", command.sdata(), NULL );
         }
         else
         {
             if( dbg_flags&DBG_PROCESS )
-            { t=elapse_time(); syslog( LOG_DEBUG, TIME_STAMP_STR "execlp( %s, %s, -c, %s, 0 )",
-                    t/1000, t%1000, shname.data(), shname.data(), command.data() ); }
+                { t=elapse_time(); syslog( LOG_DEBUG, TIME_STAMP_STR "execlp( %s, %s, -c, %s, 0 )",
+                    t/1000, t%1000, shname.utf8_data(), shname.utf8_data(), command.utf8_data() ); }
 //            if( command.isNull() )
 //                status = execlp( shname, shname, "-i", 0 );
 //            else
-                status = execlp( shname, shname, "-c", command.sdata(), 0 );
+                status = execlp( shname, shname, "-c", command.sdata(), NULL );
         }
 
         if( dbg_flags&DBG_PROCESS )
-        { t=elapse_time(); syslog( LOG_DEBUG, TIME_STAMP_STR "could not start the shell", t/1000, t%1000 ); }
+            { t=elapse_time(); syslog( LOG_DEBUG, TIME_STAMP_STR "could not start the shell", t/1000, t%1000 ); }
         write( STDOUT_FILENO, "Could not start the shell\n", 24 );
         _exit( 1 );
     }
 
-    // Unnobble the TERM and TERMCAP entries
-    if( term_is )
-        *term_is = old_term;
-    if( termcap_is )
-        *termcap_is = old_termcap;
-
     // Handle parent side of fork
     p_id = pid;
     p_flag = RUNNING;
-    in_id = add_to_select( channel, XtInputReadMask, input_request, this );
-    out_id = add_to_select( channel, XtInputWriteMask, output_request, this );
+    in_id = add_to_select( channel, EmacsPollInputReadMask, input_request, this );
+    out_id = add_to_select( channel, EmacsPollInputWriteMask, output_request, this );
     out_id_valid = 1;
 
     chan_in.ch_fd = channel;
@@ -1167,8 +1145,8 @@ int list_processes(void)
     EmacsBufferRef old( bf_cur );
 
     EmacsBuffer::scratch_bfn( "Process list", interactive() );
-    bf_cur->ins_str("Name                    Buffer            Status           Command\n"
-            "----                    ------            ------           -------\n" );
+    bf_cur->ins_str("Name                    Buffer                  Status           Command\n"
+                    "----                    ------                  ------           -------\n" );
 
     EmacsPosixSignal sig( SIGCHLD );
     // block now and release as the routine returns
@@ -1197,8 +1175,7 @@ int list_processes(void)
         default:
             continue;
         }
-        bf_cur->ins_cstr( FormatString("  %-32s\n") << p->command );
-
+        bf_cur->ins_cstr( FormatString("  %s\n") << p->command );
 
         if( p->term_proc != NULL )
             bf_cur->ins_cstr( FormatString("  Termination procedure: %s") << p->term_proc->b_proc_name );
@@ -1226,9 +1203,9 @@ static unsigned char * savestr( const unsigned char *s )
         return savestr( u_str("") );
 
     // copy the string
-    int size = _str_len( s ) + 1;
+    size_t size = strlen( reinterpret_cast<const char *>( s ) ) + 1;
     unsigned char *ret = malloc_ustr( size );
-    _str_cpy( ret, s );
+    memcpy( ret, s, size );
     return ret;
 }
 
@@ -1465,7 +1442,7 @@ int process_channel_interrupts( void )
     return 0;
 }
 
-void proc_de_ref_buf( EmacsBuffer *PNOTUSED( b ) )
+void proc_de_ref_buf( EmacsBuffer * )
 {
     return;
 }
@@ -1584,10 +1561,3 @@ void init_vms( void )
     return;
 }
 #endif
-
-SystemExpressionRepresentationInt ui_open_file_readonly;
-SystemExpressionRepresentationString ui_open_file_name;
-SystemExpressionRepresentationString ui_save_as_file_name;
-SystemExpressionRepresentationString ui_filter_file_list;
-SystemExpressionRepresentationString ui_search_string;
-SystemExpressionRepresentationString ui_replace_string;

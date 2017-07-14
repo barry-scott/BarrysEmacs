@@ -316,9 +316,15 @@ const char *EmacsString::sdata() const
     return (const char *)_rep->get_utf8_data();
 }
 
-const unsigned char *EmacsString::data() const
+const unsigned char *EmacsString::utf8_data() const
 {
     return _rep->get_utf8_data();
+}
+
+int EmacsString::utf8_data_length() const
+{
+    _rep->get_utf8_data();
+    return _rep->length_utf8_data;
 }
 
 int EmacsString::length() const
@@ -609,10 +615,10 @@ const unsigned char *EmacsStringRepresentation::get_utf8_data()
 
     if( utf8_data == NULL )
     {
-        int utf8_length = length_unicode_to_utf8( length, data );
-        utf8_data = malloc_ustr( utf8_length + 1 );
+        length_utf8_data = length_unicode_to_utf8( length, data );
+        utf8_data = malloc_ustr( length_utf8_data + 1 );
         convert_unicode_to_utf8( length, data, utf8_data );
-        utf8_data[ utf8_length ] = 0;
+        utf8_data[ length_utf8_data ] = 0;
     }
 
     return utf8_data;

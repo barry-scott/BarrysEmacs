@@ -6,6 +6,8 @@
 #include <emacs.h>
 #include <sys/utsname.h>
 
+#include <unixcomm.h>
+
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
@@ -37,12 +39,6 @@ static struct timeval emacs_start_time;
 
 static fd_set readfds, writefds, excepfds;
 static fd_set readfds_resp, writefds_resp;
-
-typedef unsigned int EmacsPollFdId;
-typedef void *EmacsPollFdParam;
-typedef void (*EmacsPollFdCallBack)( EmacsPollFdParam param, int fd );
-const int EmacsPollInputReadMask(  0x01 );
-const int EmacsPollInputWriteMask( 0x02 );
 
 struct fd_info
 {
@@ -92,7 +88,7 @@ void wait_abit(void)
     static struct timeval tmo = {0, 100000};
     fd_set rfds;
     int fd;
-#ifdef SUBPROCESSES
+#if defined( SUBPROCESSES )
     extern fd_set process_fds;
 
     memcpy( &rfds, &process_fds, sizeof( fd_set ) );
@@ -105,12 +101,12 @@ void wait_abit(void)
 
     if( select( FD_SETSIZE, &rfds, NULL, NULL, &tmo ) )
     {
-        wait_for_activity ();
+        wait_for_activity();
     }
 #if defined( SUBPROCESSES )
     if( child_changed )
     {
-        change_msgs ();
+        change_msgs();
     }
 #endif
     return;
@@ -634,9 +630,6 @@ void EmacsServerWorkItem::readCommand( int fd )
         addItem();
     }
 }
-
-extern EmacsPollFdId add_to_select( int fd, long int mask, EmacsPollFdCallBack input_request, EmacsProcess *npb );
-extern void remove_input( EmacsPollFdId id );
 
 void start_emacs_server()
 {

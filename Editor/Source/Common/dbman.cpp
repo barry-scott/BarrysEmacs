@@ -239,13 +239,17 @@ int put_database_entry( void )
     EmacsString key;
     getescword( table., FormatString(": put-database-entry (list) %s (entry) ") << dbs->dbs_name, key );
     if( key.isNull() )
+    {
         return 0;
+    }
 
     bf_cur->gap_to( bf_cur->unrestrictedSize() + 1 );
 
     EmacsString content( EmacsString::copy, bf_cur->ref_char_at(1), bf_cur->unrestrictedSize() );
-    if( dbx->put_db( key, content.data(), content.length() ) < 0 )
+    if( dbx->put_db( key, content.utf8_data(), content.utf8_data_length() ) < 0 )
+    {
         error( "Database put failed");
+    }
 
     return 0;
 }

@@ -129,25 +129,33 @@ unsigned int parent_pid;
 # if defined( __unix )
 int pause_emacs( void )
 {
+#if 0
     //
     // See if the user wants to specify a command, fetch it, and send
     // it down the restart mailbox
     //
+    EmacsString pause_command;
+
     if( arg_state == have_arg
     || (! interactive() && cur_exec != 0 && cur_exec->p_nargs > 0) )
     {
-        EmacsString pause_command;
         pause_command = getstr( ": pause-emacs " );
     }
     else
+    {
         send_exit_message( EmacsString::null );
+    }
 
     if( leave_emacs_proc != NULL )
+    {
         execute_bound_saved_environment( leave_emacs_proc );
+    }
 
     if( !send_exit_message( pause_command ) )
+    {
         error("Unable to send response to bemacs client");
-
+    }
+#endif
     return 0;
 }
 # endif
@@ -192,7 +200,7 @@ void filter_through( int n, const EmacsString &command )
     exec_bf( bf_cur->b_buf_name, 0, tempfile, 0, command.data(), NULL );
 # endif
 # ifdef __unix__
-    exec_bf( bf_cur->b_buf_name, 0, tempfile, 0, shell(), "-c", command.data(), NULL );
+    exec_bf( bf_cur->b_buf_name, 0, tempfile, 0, shell(), "-c", command.utf8_data(), NULL );
 # endif
 # ifdef _NT
     exec_bf( bf_cur->b_buf_name, 0, tempfile, 0, command.data(), NULL );
@@ -395,10 +403,10 @@ int execute_monitor_command( void )
 # endif
 # ifdef __unix__
     exec_bf( "command execution", 1, "/dev/null", 1,
-        shell(), "-c", execute_command.data(), NULL );
+        shell(), "-c", execute_command.utf8_data(), NULL );
 # endif
 # ifdef _NT
-    exec_bf( "Command execution", 1, "nul", 1, execute_command.data(), NULL );
+    exec_bf( "Command execution", 1, "nul", 1, execute_command.utf8_data(), NULL );
 # endif
     return 0;
 }

@@ -81,6 +81,8 @@ public:
 
     int fio_put( const EmacsChar_t *, int );
 
+    int fio_put( const EmacsString & );
+
     bool fio_close();
 
     long int fio_size();

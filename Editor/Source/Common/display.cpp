@@ -123,15 +123,16 @@ void SystemExpressionRepresentationDisplayBoolean::assign_value( ExpressionRepre
 void SystemExpressionRepresentationGraphicRendition::assign_value( ExpressionRepresentation *new_value )
 {
     EmacsString value( new_value->asString() );
-    const unsigned char *p = value.data();
-    int c;
 
-    while( *p != '\0' )
-        if( !((c = *p++) == ';' || (c >= '0' && c <= '9') ))
+    for( int i=0; i<value.length(); ++i )
+    {
+        int c = value[i];
+        if( !(c == ';' || (c >= '0' && c <= '9') ) )
         {
             error( "graphic-rendition must be 0-9 and ;" );
             return;
         }
+    }
 
     SystemExpressionRepresentationString::assign_value( new_value );
 

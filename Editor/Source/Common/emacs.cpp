@@ -397,7 +397,7 @@ static void write_emacs_memory_file()
                     break;
             }
             EmacsString mem_line( FormatString("%s\001%d\n") << bf_cur->b_fname << dot );
-            args.fio_put( mem_line, mem_line.length() );
+            args.fio_put( mem_line );
         }
         w = w->w_next;
     }

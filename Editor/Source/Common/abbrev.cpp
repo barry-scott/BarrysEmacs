@@ -386,8 +386,8 @@ int dump_abbreviation_tables( void )
 //
 static void write_abbrevs( EmacsFile &f, AbbrevTable *table )
 {
-    EmacsString header( FormatString("%s\n") << table->abbrev_name.data() );
-    f.fio_put( header.data(), header.length() );
+    EmacsString header( FormatString("%s\n") << table->abbrev_name );
+    f.fio_put( header );
 
     for( int i=0; i<AbbrevTable::ABBREVSIZE; i++ )
     {
@@ -397,7 +397,7 @@ static void write_abbrevs( EmacsFile &f, AbbrevTable *table )
             EmacsString buf( FormatString(" %s    %s\n") <<
                         p->abbrev_abbrev <<
                         p->abbrev_phrase );
-            f.fio_put( buf.data(), buf.length() );
+            f.fio_put( buf );
             p = p->abbrev_next;
         }
     }

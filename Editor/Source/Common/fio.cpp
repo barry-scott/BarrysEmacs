@@ -169,6 +169,11 @@ int EmacsFile::fio_get_with_prompt( unsigned char *buf, int len, const unsigned 
     return status;
 }
 
+int EmacsFile::fio_put( const EmacsString &str )
+{
+    return fio_put( str.utf8_data(), str.utf8_data_length() );
+}
+
 int EmacsFile::fio_put( const unsigned char *buf , int len )
 {
     int written_length = 0;
@@ -188,6 +193,7 @@ int EmacsFile::fio_put( const unsigned char *buf , int len )
                 int status = fwrite( from, 1, end-from, m_file );
                 if( ferror( m_file ) )
                     return -1;
+
                 written_length += status;
                 break;
             }
@@ -195,11 +201,13 @@ int EmacsFile::fio_put( const unsigned char *buf , int len )
             int status = fwrite( from, 1, to-from, m_file );
             if( ferror( m_file ) )
                 return -1;
+
             written_length += status;
 
             status = fwrite( "\r", 1, 1, m_file );
             if( ferror( m_file ) )
                 return -1;
+
             written_length += status;
             from = &to[1];
         }

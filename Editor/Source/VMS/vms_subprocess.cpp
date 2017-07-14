@@ -99,20 +99,22 @@ int pause_emacs( void )
     // See if the user wants to specify a command, fetch it, and send
     // it down the restart mailbox
     //
+    EmacsString pause_command;
     if( arg_state == have_arg
     || (! interactive() && cur_exec != 0 && cur_exec->p_nargs > 0) )
     {
-        EmacsString pause_command;
         pause_command = getstr( ": pause-emacs " );
     }
     else
         send_exit_message( EmacsString::null );
+
     if( leave_emacs_proc != NULL )
         execute_bound_saved_environment( leave_emacs_proc );
 
     if( !send_exit_message( pause_command ) )
         error("Unable to send response to bemacs client");
 # endif
+
 # ifdef vms
     rst_dsp();
     journal_pause();

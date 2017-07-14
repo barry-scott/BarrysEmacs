@@ -58,7 +58,7 @@ int main(int argc,char **argv)
             EmacsString result;
             db.get_db ( list_key, result );
             printf ("dbadd %s \"%.*s\" <<\"</FoO ThE bAr/>\"\n%s",
-                    ndb, key.dsize, key.dptr, result.data());
+                    ndb, key.dsize, key.dptr, result.utf8_data());
             if (result[-1] != '\n')
                 printf("\n");
             printf ("</FoO ThE bAr/>\n");
