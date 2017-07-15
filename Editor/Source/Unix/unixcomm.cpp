@@ -107,7 +107,6 @@ static EmacsProcess *get_process_arg()
 fd_set process_fds;                             // The set of subprocess fds
 EmacsProcess *EmacsProcess::current_process;    // the one that we're current dealing with
 int child_changed;                              // Flag when a child process has ceased to be
-static unsigned char cbuffer[BUFSIZ];           // Used for reading mpx file
 ProcessChannelInput *MPX_chan;
 
 const char *SIG_names[] = {
@@ -174,6 +173,7 @@ ProcessChannelInput::ProcessChannelInput()
 , ch_count( 0 )
 , ch_buffer( NULL )
 , ch_proc( NULL )
+, ch_utf8_buffer_used( 0 )
 { }
 
 ProcessChannelInput::~ProcessChannelInput()
@@ -232,13 +232,34 @@ void readProcessOutputHandler( EmacsPollFdParam p_, int fdp )
     int cc;
     do
     {
-        cc = read( chan.ch_fd, cbuffer, sizeof( cbuffer ) );
-        Trace( FormatString( "readProcessOutputHandler read( %d, ... ) => \"%r\" %d errno %e" )
-                            << chan.ch_fd << EmacsString( EmacsString::copy, cbuffer, std::max( cc, 0 ) ) << cc << errno );
+        cc = read( chan.ch_fd, &chan.ch_utf8_buffer[chan.ch_utf8_buffer_used], ProcessChannelInput::ch_buffer_size-chan.ch_utf8_buffer_used );
+        Trace( FormatString( "readProcessOutputHandler read( %d, ... ) =>  %d errno %e" )
+                            << chan.ch_fd << cc << errno );
         if( cc > 0 )
         {
-            chan.ch_ptr = cbuffer;
-            chan.ch_count = cc;
+            chan.ch_utf8_buffer_used += cc;
+
+            // find out the usable bytes in buf
+            int utf8_usable_length = 0;
+            int unicode_length = length_utf8_to_unicode(
+                        chan.ch_utf8_buffer_used, chan.ch_utf8_buffer,
+                        ProcessChannelInput::ch_buffer_size,
+                        utf8_usable_length );
+
+            // convert to unicode
+            convert_utf8_to_unicode( chan.ch_utf8_buffer, unicode_length, chan.ch_unicode_buffer );
+            if( chan.ch_utf8_buffer_used > utf8_usable_length )
+            {
+                memmove( &chan.ch_utf8_buffer[0], &chan.ch_utf8_buffer[utf8_usable_length], chan.ch_utf8_buffer_used - utf8_usable_length );
+            }
+
+            chan.ch_utf8_buffer_used -= utf8_usable_length;
+
+            Trace( FormatString( "readProcessOutputHandler unicode_buffer \"%r\"" )
+                                << EmacsString( EmacsString::copy, chan.ch_unicode_buffer, unicode_length ) );
+
+            chan.ch_ptr = chan.ch_unicode_buffer;
+            chan.ch_count = unicode_length;
             stuff_buffer( chan );
         }
         else if( (cc == 0 && p->p_flag&(EXITED|SIGNALED) )  // end-of-file and process has exited
@@ -257,7 +278,7 @@ void readProcessOutputHandler( EmacsPollFdParam p_, int fdp )
                 p->out_id_valid = 0;
             }
             int status = close( chan.ch_fd );
-            Trace( FormatString("readProcessOutputHandler close(%d) => %d") << chan.ch_fd << status );
+            Trace( FormatString("readProcessOutputHandler close(%d) => %d errno %e") << chan.ch_fd << status << errno );
             FD_CLR( chan.ch_fd, &process_fds );
 
             chan.ch_fd = -1;
@@ -394,8 +415,8 @@ void change_msgs( void )
 
                 arg_state = no_arg;
                 MPX_chan = &p->chan_in;    // User will be able to get the output from process-output
-                MPX_chan->ch_ptr = const_cast<unsigned char *>( status.utf8_data() );
-                MPX_chan->ch_count = status.utf8_data_length();
+                MPX_chan->ch_ptr = const_cast<EmacsChar_t *>( status.unicode_data() );
+                MPX_chan->ch_count = status.length();
 # if DBG_PROCESS
                 if( dbg_flags&DBG_PROCESS )
                     _dbg_msg( FormatString("change_msgs() calling term_proc=%s proc_name=\"%s\" p_flags=0x%x\n")
@@ -485,7 +506,7 @@ void send_chan( EmacsProcess *process )
         {
             int cc = write( output.ch_fd, output.ch_data, output.ch_count );
             Trace( FormatString("send_chan write( %d, \"%*r\", %d ) => %d errno %e")
-                                << output.ch_fd << output.ch_count << output.ch_data << cc << cc << errno );
+                                << output.ch_fd << EmacsString( EmacsString::copy, output.ch_data, output.ch_count ) << output.ch_count << cc << errno );
             if( cc > 0 )
             {
                 output.ch_data += cc;
@@ -521,33 +542,48 @@ void stuff_buffer( ProcessChannelInput &chan )
     if( chan.ch_proc == NULL )
     {
         if( chan.ch_buffer == NULL )
+        {
             error( "Process output available with no destination buffer" );
+        }
         else
         {
-            unsigned char *p, *q;
-
             chan.ch_buffer->set_bf();
             set_dot( bf_cur->unrestrictedSize() + 1 );
+
+            EmacsChar_t *p, *q;
             for( p = q = chan.ch_ptr; p < &chan.ch_ptr[chan.ch_count]; p++ )
+            {
                 if( *p == '\r' )
                 {
                     if( p - q > 0 )
+                    {
                         bf_cur->ins_cstr( q, p - q );
+                    }
                     q = &p[1];
                 }
+            }
             if( p - q > 0 )
+            {
                 bf_cur->ins_cstr( q, p - q );
+            }
+
             if( ( bf_cur->unrestrictedSize() ) > maximum_dcl_buffer_size )
             {
                 bf_cur->del_frwd( 1, dcl_buffer_reduction );
                 set_dot( bf_cur->unrestrictedSize() + 1 );
             }
+
             if( bf_cur->b_mark.isSet() )
+            {
                 bf_cur->set_mark( bf_cur->unrestrictedSize() + 1, 0, false );
+            }
+
             theActiveView->do_dsp();
             old_buffer.set_bf();
             if( interactive() && OldBufferIsVisible )
+            {
                 theActiveView->window_on( bf_cur );
+            }
         }
     }
     else
@@ -562,6 +598,7 @@ void stuff_buffer( ProcessChannelInput &chan )
         arg = larg;
         MPX_chan = NULL;    // a very short time only
     }
+
     chan.ch_count = 0;
     lockout = 0;
 }
