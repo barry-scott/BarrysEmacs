@@ -35,6 +35,7 @@ extern void init_key( void );
 extern void init_fncs2( void );
 extern void init_unicode( void );
 extern void init_syntax( void );
+extern void init_subprocesses( void );
 
 extern int vertical_bar_width;
 
@@ -169,6 +170,9 @@ public:
             init_undo();                            // " the undo facility
             init_lisp();                            // " the MLisp system
             init_abs();                             // " the current directory name
+#if defined( SUBPROCESSES ) || defined( EXEC_BF )
+            init_subprocesses();                    // " sub process and exec_bf
+#endif
             init_key();                             // " commands that deal with options
             current_global_map = global_map;
 

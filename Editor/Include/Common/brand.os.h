@@ -19,6 +19,7 @@
 //    REAL_TTY      - there is a real terminal as I/O device
 //    MOUSE         - has a mouse device
 //    INODE         - file system has unix like inodes
+//    EXEC_BF       - support exec_bf and the commands that use it
 //    SUBPROCESSES  - Support subprocesses
 //    ALIGN_ACCESS  - True if the hardware only supports aligned memory
 //    USER_ID       - A system with usernames and the like

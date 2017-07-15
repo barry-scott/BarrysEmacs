@@ -24,7 +24,7 @@ extern unsigned char *get_config_env( unsigned char * );
 # define DBG_PROFILE    0
 #endif
 #define DBG_VECTOR    (0x0200&0)
-#define    DBG_CALC_M_PRINT 0x0400
+#define DBG_CALC_M_PRINT 0x0400
 
 # define MEMMAP 1
 # define INODE    0
@@ -46,20 +46,20 @@ extern int _fstat( int fileno, struct _stat *buffer );
 # define PATH_STR ":"
 # define PATH_SEP '#'
 
-# define MAXNAMLEN    (31)
-# define MAXPATHLEN    (255)
-# define ROOT_CHAR_POS    0    // root is "x:\\"
+# define MAXNAMLEN      (31)
+# define MAXPATHLEN     (255)
+# define ROOT_CHAR_POS  0       // root is "x:\\"
 
-#define BACKUP_EXTENSION ".BAK"
-#define CHECKPOINT_EXTENSION ".CKP"
+#define BACKUP_EXTENSION        ".BAK"
+#define CHECKPOINT_EXTENSION    ".CKP"
 
-#define EMACS_INIT_PROFILE    u_str("emacs_profile.ml")
-#define MEMORY_FILE_STR        get_config_env(u_str("Emacs Memory"))
-#define MEMORY_FILE_ARG        0
-#define EMACS_PATH        get_config_env(u_str("emacs_path"))
+#define EMACS_INIT_PROFILE      u_str("emacs_profile.ml")
+#define MEMORY_FILE_STR         get_config_env(u_str("Emacs Memory"))
+#define MEMORY_FILE_ARG         0
+#define EMACS_PATH              get_config_env(u_str("emacs_path"))
 extern unsigned char *get_tmp_path(void);
-#define    EMACS_TMP_PATH        get_tmp_path()
-#define    EMACS_DB_DEFAULT    u_str(".mll")
+#define    EMACS_TMP_PATH       get_tmp_path()
+#define    EMACS_DB_DEFAULT     u_str(".mll")
 
 #define TEXT_MODE
 #define BINARY_MODE

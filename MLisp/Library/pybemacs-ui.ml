@@ -17,10 +17,12 @@
     "normal"
 )
 
-(defun filter-region( ~cmd (get-tty-string ": filter-region (through command) "))
-    ~input-string
-    (setq ~input-string (region-to-string))
-    (erase-region)
-    (insert-string (UI-python-hook "filter-string" ~cmd ~input-string))
-    (novalue)
-)
+;(if (! (is-bound filter-region))
+;    (defun filter-region( ~cmd (get-tty-string ": filter-region (through command) "))
+;        ~input-string
+;        (setq ~input-string (region-to-string))
+;        (erase-region)
+;        (insert-string (UI-python-hook "filter-string" ~cmd ~input-string))
+;        (novalue)
+;    )
+;)

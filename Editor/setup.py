@@ -13,6 +13,10 @@ def debug( msg ):
     if _debug:
         sys.stderr.write( 'Debug: %s\n' % (msg,) )
 
+class SetupError(Exception):
+    pass
+
+
 #--------------------------------------------------------------------------------
 class Setup:
     def __init__( self, argv ):
@@ -25,7 +29,7 @@ class Setup:
 
         args = argv[1:]
         if len(args) < 3:
-            raise ValueError( 'Usage: setup.py win32|win64|macosx|linux> <gui|cli|utils|unit-tests> <makefile> [<options>]' )
+            raise SetupError( 'Usage: setup.py win32|win64|macosx|linux> <gui|cli|utils|unit-tests> <makefile> [<options>]' )
 
         self.platform = args[0]
         del args[0]
@@ -73,7 +77,7 @@ class Setup:
                 del args[0]
 
             else:
-                raise ValueError( 'Unknown arg %r' % (args[0],) )
+                raise SetupError( 'Unknown arg %r' % (args[0],) )
 
         for name in sorted( os.environ ):
             debug( 'Env %s:%r' % (name, os.environ[ name ]) )
@@ -112,11 +116,15 @@ class Setup:
             self.c_python_tools = Win32CompilerMSVC90( self )
             self.c_pybemacs = Win32CompilerMSVC90( self )
 
+            pybemacs_feature_defines = [('EXEC_BF', '1')]
+
         elif self.platform == 'win64':
             self.c_utils = Win64CompilerVC14( self )
             self.c_unit_tests = Win64CompilerVC14( self )
             self.c_python_tools = Win64CompilerVC14( self )
             self.c_pybemacs = Win64CompilerVC14( self )
+
+            pybemacs_feature_defines = [('EXEC_BF', '1')]
 
         elif self.platform == 'macosx':
             if self.opt_utils:
@@ -132,6 +140,9 @@ class Setup:
             if self.opt_bemacs_cli:
                 self.c_clibemacs = MacOsxCompilerGCC( self )
 
+            pybemacs_feature_defines = [('EXEC_BF', '1')]
+            cli_feature_defines = [('EXEC_BF', '1')]
+
         elif self.platform == 'linux':
             if self.opt_utils:
                 self.c_utils = LinuxCompilerGCC( self )
@@ -146,8 +157,11 @@ class Setup:
             if self.opt_bemacs_cli:
                 self.c_clibemacs = LinuxCompilerGCC( self )
 
+            pybemacs_feature_defines = [('EXEC_BF', '1')]
+            cli_feature_defines = [('EXEC_BF', '1')]
+
         else:
-            raise ValueError( 'Unknown platform %r' % (self.platform,) )
+            raise SetupError( 'Unknown platform %r' % (self.platform,) )
 
         if self.opt_unit_tests:
             self.c_unit_tests.setupUnittests()
@@ -156,14 +170,14 @@ class Setup:
             self.c_utils.setupUtilities()
 
         if self.opt_bemacs_gui:
-            self.c_pybemacs.setupPythonEmacs()
+            self.c_pybemacs.setupPythonEmacs( pybemacs_feature_defines )
 
         if self.opt_bemacs_gui:
             self.c_python_tools.setupPythonTools()
             self.unicode_header = UnicodeDataHeader( self.c_pybemacs )
 
         if self.opt_bemacs_cli:
-            self.c_clibemacs.setupCliEmacs()
+            self.c_clibemacs.setupCliEmacs( cli_feature_defines )
             if self.unicode_header is None:
                 self.unicode_header = UnicodeDataHeader( self.c_clibemacs )
 
@@ -217,10 +231,6 @@ class Setup:
             self.cli_specific_obj_files = [
                 Source( self.c_clibemacs, 'Source/Unix/unix_main.cpp',
                                             ['Source/Unix/unix_rtl.cpp'] ),
-                Source( self.c_clibemacs, 'Source/Unix/unixcomm.cpp' ),
-                # need to make this conditional for NetBSD etc.
-                Source( self.c_clibemacs, 'Source/Unix/ptyopen_linux.cpp' ),
-                Source( self.c_clibemacs, 'Source/Unix/emacs_signal.cpp' ),
                 Source( self.c_clibemacs, 'Source/Unix/unix_trm.cpp' ),
                 Source( self.c_clibemacs, 'Source/Unix/trm_ansi.cpp' ),
                 ]
@@ -299,6 +309,10 @@ class Setup:
                 obj_files.extend( [
                     #Source( compiler, 'Source/Unix/unix_ext_func.cpp' ),
                     Source( compiler, 'Source/Unix/unixfile.cpp' ),
+                    Source( compiler, 'Source/Unix/emacs_signal.cpp' ),
+                    Source( compiler, 'Source/Unix/unixcomm.cpp' ),
+                    # need to make this conditional for NetBSD etc.
+                    Source( compiler, 'Source/Unix/ptyopen_linux.cpp' ),
                     ] )
             elif self.platform in ('win32', 'win64'):
                 obj_files.extend( [
@@ -411,10 +425,17 @@ class Compiler:
             self.__variables[ name ] = value
 
         except TypeError:
-            raise ValueError( 'Cannot translate name %r value %r' % (name, value) )
+            raise SetupError( 'Cannot translate name %r value %r' % (name, value) )
 
         except KeyError as e:
-            raise ValueError( 'Cannot translate name %r value %r - %s' % (name, value, e) )
+            raise SetupError( 'Cannot translate name %r value %r - %s' % (name, value, e) )
+
+    def addFeatureDefines( self, feature_defines=None ):
+        if feature_defines is None:
+            feature_defines = []
+
+        print( 'feature_defines', feature_defines )
+        self._addVar( 'FEATURE_DEFINES',' '.join( '-D%s=%s' % (name, value) for name, value in feature_defines ) )
 
     def expand( self, s ):
         try:
@@ -425,7 +446,7 @@ class Compiler:
             print( 'String: %s' % (s,) )
             print( 'Vairables: %r' % (self.__variables,) )
 
-            raise ValueError( 'Cannot translate string (%s)' % (e,) )
+            raise SetupError( 'Cannot translate string (%s)' % (e,) )
 
 
 class Win64CompilerVC14(Compiler):
@@ -546,7 +567,8 @@ class Win64CompilerVC14(Compiler):
                                         r'-U_DEBUG '
                                         r'-D%(DEBUG)s' )
 
-    def setupPythonEmacs( self ):
+    def setupPythonEmacs( self, feature_defines=None ):
+        self.addFeatureDefines( feature_defines )
         self._addVar( 'EDIT_OBJ',       r'obj-pybemacs' )
         self._addVar( 'EDIT_EXE',       r'exe-pybemacs' )
         self._addVar( 'LINK_LIBS',      '%%(PYTHON_LIB)s\python%d%d.lib' %
@@ -560,10 +582,11 @@ class Win64CompilerVC14(Compiler):
                                         r'"-DCPU_TYPE=\"x86_64\"" "-DUI_TYPE=\"python\"" '
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
                                         r'-U_DEBUG '
+                                        r'%(FEATURE_DEFINES)s '
                                         r'-D%(DEBUG)s' )
 
-    def setupCliEmacs( self ):
-        raise ValueError( 'no support for CLI on Windows' )
+    def setupCliEmacs( self, feature_defines=None ):
+        raise SetupError( 'no support for CLI on Windows' )
 
     def setupPythonTools( self ):
         self._addVar( 'EDIT_OBJ',       r'obj-python-tools' )
@@ -693,7 +716,8 @@ class Win32CompilerMSVC90(Compiler):
                                         r'-U_DEBUG '
                                         r'-D%(DEBUG)s' )
 
-    def setupPythonEmacs( self ):
+    def setupPythonEmacs( self, feature_defines=None ):
+        self.addFeatureDefines( feature_defines )
         self._addVar( 'EDIT_OBJ',       r'obj-pybemacs' )
         self._addVar( 'EDIT_EXE',       r'exe-pybemacs' )
         self._addVar( 'CCCFLAGS',
@@ -704,11 +728,12 @@ class Win32CompilerMSVC90(Compiler):
                                         r'"-DOS_NAME=\"Windows\"" "-DOS_VERSION=\"win32\"" '
                                         r'"-DCPU_TYPE=\"i386\"" "-DUI_TYPE=\"python\"" '
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
+                                        r'%(FEATURE_DEFINES)s '
                                         r'-U_DEBUG '
                                         r'-D%(DEBUG)s' )
 
-    def setupCliEmacs( self ):
-        raise ValueError( 'no support for CLI on Windows' )
+    def setupCliEmacs( self, feature_defines=None ):
+        raise SetupError( 'no support for CLI on Windows' )
 
     def setupPythonTools( self ):
         self._addVar( 'EDIT_OBJ',       r'obj-python-tools' )
@@ -848,7 +873,9 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-D%(DEBUG)s' )
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
-    def setupPythonEmacs( self ):
+    def setupPythonEmacs( self, feature_defines=None ):
+        self.addFeatureDefines( feature_defines )
+
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-pybemacs' )
@@ -873,6 +900,7 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '"-DOS_NAME=\\"MacOSX\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"python\\"" '
                                         '-DDARWIN '
+                                        '%(FEATURE_DEFINES)s '
                                         '-D%(DEBUG)s' )
 
         self._addVar( 'LDSHARED',       '%(CCC)s -bundle -g '
@@ -882,7 +910,9 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-framework Kerberos '
                                         '-framework Security' )
 
-    def setupCliEmacs( self ):
+    def setupCliEmacs( self, feature_defines=None ):
+        self.addFeatureDefines( feature_defines )
+
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-cli-bemacs' )
@@ -894,7 +924,7 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"MacOSX\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
-                                        '-DSUBPROCESSES=1 '
+                                        '%(FEATURE_DEFINES)s '
                                         '-D%(DEBUG)s' )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
@@ -960,7 +990,9 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '-D%(DEBUG)s' )
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
-    def setupPythonEmacs( self ):
+    def setupPythonEmacs( self, feature_defines=None ):
+        self.addFeatureDefines( feature_defines )
+
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-pybemacs' )
@@ -980,12 +1012,15 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '-DPYCXX_PYTHON_2TO3 -I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"python\\"" '
+                                        '%(FEATURE_DEFINES)s '
                                         '-D%(DEBUG)s' )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
         self._addVar( 'LDSHARED',       '%(CCC)s -shared -g ' )
 
-    def setupCliEmacs( self ):
+    def setupCliEmacs( self, feature_defines=None ):
+        self.addFeatureDefines( feature_defines )
+
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-cli-bemacs' )
@@ -1000,7 +1035,7 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
                                         '-D%(DEBUG)s '
-                                        '-DSUBPROCESSES=1 '
+                                        '%(FEATURE_DEFINES)s '
                                         '-DBEMACS_LIB_DIR=\\"%(BEMACS_LIB_DIR)s\\"' )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
@@ -1151,7 +1186,7 @@ class Source(Target):
         if basename.endswith( '.c' ):
             return self.compiler.platformFilename( self.compiler.expand( r'%%(EDIT_OBJ)s/%s.obj' % (basename[:-len('.c')],) ) )
 
-        raise ValueError( 'unknown source %r' % (self.src_filename,) )
+        raise SetupError( 'unknown source %r' % (self.src_filename,) )
 
     def _generateMakefile( self ):
         debug( '%r._generateMakefile()' % (self,) )
@@ -1195,7 +1230,7 @@ def main( argv ):
         print( "Info: setup.py complete - %d" % (rc,) )
         return rc
 
-    except ValueError as e:
+    except SetupError as e:
         sys.stderr.write( 'Error: setup.py %s\n' % (e,) )
         return 1
 

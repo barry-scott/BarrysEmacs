@@ -60,7 +60,7 @@ extern void init_key(void);
 extern void init_fncs2(void);
 extern void init_var(void);
 extern void restore_var(void);
-extern void init_vms(void);
+extern void init_subprocesses(void);
 extern void restore_timer(void);
 extern void init_win(void);
 
@@ -209,8 +209,8 @@ int emacsMain
         init_undo();                            // " the undo facility
         init_lisp();                            // " the MLisp system
         init_abs();                             // " the current directory name
-#if defined( SUBPROCESSES )
-        init_vms();                             // " VMS specific commands
+#if defined( SUBPROCESSES ) || defined( EXEC_BF )
+        init_subprocesses();                    // " sub process and exec_bf
 #endif
 
         init_key();                             // " commands that deal with options

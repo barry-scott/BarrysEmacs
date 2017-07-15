@@ -6,7 +6,6 @@
 
 #define DB 1
 
-
 #define O_BINARY 0
 
 // debug flag bits

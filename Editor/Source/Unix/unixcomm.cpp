@@ -7,7 +7,7 @@
 #include <em_stat.h>
 #include <emacs_signal.h>
 
-# undef THIS_FILE
+#undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
@@ -18,68 +18,68 @@ SystemExpressionRepresentationIntPositive maximum_dcl_buffer_size( 10000 );
 SystemExpressionRepresentationIntPositive dcl_buffer_reduction( 500 );
 
 #ifndef MAXFDS
-#define MAXFDS 254
+# define MAXFDS 254
 #endif
 
-#if defined( SUBPROCESSES )
-
-# include <sys/types.h>
-# include <sys/time.h>
-# include <unistd.h>
-# include <fcntl.h>
-# include <stdio.h>
-# include <signal.h>
-# include <errno.h>
-# include <sys/param.h>
-# include <sys/ioctl.h>
-# include <syslog.h>
+#include <sys/types.h>
+#include <sys/time.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <signal.h>
+#include <errno.h>
+#include <sys/param.h>
+#include <sys/ioctl.h>
+#include <syslog.h>
 //# ifndef _BSD
 //#  define _BSD    // define this to get the wait() family of calls defined
 //# endif
-# include <sys/wait.h>
+#include <sys/wait.h>
 #ifdef _AIX
 //# include <sys/m_wait.h>
 # include <sys/select.h>
 #endif
 
-# if defined( __hpux )
-#  include <sys/pty.h>
+#if defined( __hpux )
+# include <sys/pty.h>
 
-#  if !defined( _XPG4_EXTENDED )
+# if !defined( _XPG4_EXTENDED )
 // define openlog and syslog as it is missing on hpux 9
 extern "C" void syslog(int priority, const char *message, ...);
 extern "C" void openlog(const char *ident, int logopt, int facility);
-#  endif
 # endif
-
-#if defined( __linux__ ) || defined( __FreeBSD__ )
-#define TIME_STAMP_STR "%d.%3.3d "
-#else
-#define TIME_STAMP_STR "%d.%03.3d "
 #endif
 
-# include <termios.h>
-# include <sys/time.h>
-# include <sys/stat.h>
+#if defined( __linux__ ) || defined( __FreeBSD__ )
+# define TIME_STAMP_STR "%d.%3.3d "
+#else
+# define TIME_STAMP_STR "%d.%03.3d "
+#endif
+
+#include <termios.h>
+#include <sys/time.h>
+#include <sys/stat.h>
 
 #include <unixcomm.h>
 
-#if DBG_PROCESS && DBG_TMP
+#if defined( SUBPROCESSES )
+
+# if DBG_PROCESS && DBG_TMP
 extern int elapse_time(void);
-#define Trace( s )  do { \
+#  define Trace( s )  do { \
                         if( dbg_flags&DBG_PROCESS && dbg_flags&DBG_TMP ) { \
                             int t=elapse_time(); \
                             _dbg_msg( FormatString(TIME_STAMP_STR "%s") << t/1000 << t%1000 << (s) ); } \
                     } while(0)
-#else
-#define Trace( s ) // do nothing
-#endif
+# else
+#  define Trace( s ) // do nothing
+# endif
 
-const int STOPPED(1<<0);    // 1
-const int RUNNING(1<<1);    // 2
-const int EXITED(1<<2);     // 4
-const int SIGNALED(1<<3);   // 8
-const int CHANGED(1<<6);    // 64
+const int STOPPED(  1<<0 ); // 1
+const int RUNNING(  1<<1 ); // 2
+const int EXITED(   1<<2 ); // 4
+const int SIGNALED( 1<<3 ); // 8
+const int CHANGED(  1<<6 ); // 64
 
 inline bool EmacsProcess::activeProcess()
 {
@@ -104,12 +104,11 @@ static EmacsProcess *get_process_arg()
     return proc;
 }
 
-fd_set process_fds;                // The set of subprocess fds
+fd_set process_fds;                             // The set of subprocess fds
 EmacsProcess *EmacsProcess::current_process;    // the one that we're current dealing with
-int child_changed;                // Flag when a child process has ceased to be
-static unsigned char cbuffer[BUFSIZ];        // Used for reading mpx file
+int child_changed;                              // Flag when a child process has ceased to be
+static unsigned char cbuffer[BUFSIZ];           // Used for reading mpx file
 ProcessChannelInput *MPX_chan;
-extern int subproc_id;                // The process id of a subprocess started by the old subproc stuff.
 
 const char *SIG_names[] = {
     "",
@@ -315,117 +314,6 @@ void writeProcessInputHandler( EmacsPollFdParam p_, int fdp )
 }
 
 
-//
-// Process a signal from a child process and make the appropriate change in
-// the process block. Since signals are NOT queued, if two signals are
-// received before this routine gets called, then only the first process in
-// the process list will be handled.  We will try to get the MPX file stuff
-// to help us out since it passes along signals from subprocesses.
-//
-class ChildSignalHandler : public EmacsPosixSignalHandler
-{
-public:
-    ChildSignalHandler()
-    : EmacsPosixSignalHandler( SIGCHLD )
-    { }
-
-    virtual ~ChildSignalHandler()
-    { }
-
-private:
-    void signalHandler();
-};
-
-ChildSignalHandler child_sig;
-
-void ChildSignalHandler::signalHandler()
-{
-    for(;;)
-    {
-        pid_t pid;
-        EmacsProcess *p;
-        int stat_loc;
-
-        pid = waitpid( -1, &stat_loc, WUNTRACED | WNOHANG );
-
-# if DBG_PROCESS
-        if( dbg_flags&DBG_PROCESS )
-            _dbg_msg( FormatString("waitpid => pid: %d, stat_loc: 0x%x\n")
-                << int(pid) << stat_loc );
-# endif
-        if( pid <= 0 )
-        {
-            if( errno == EINTR )
-            {
-                errno = 0;
-                continue;
-            }
-            if( pid == -1 )
-            {
-                if( EmacsProcess::current_process == NULL
-                || !EmacsProcess::current_process->activeProcess() )
-                    EmacsProcess::current_process = EmacsProcess::getNextProcess();
-            }
-            return;
-        }
-        if( pid == subproc_id )
-        {
-            // Take care of those subprocesses first
-            subproc_id = 0;
-            continue;
-        }
-        p = NULL;
-        for( int index=0; index<EmacsProcessCommon::name_table.entries(); index++ )
-        {
-            p = EmacsProcessCommon::name_table.value( index );
-            if( pid == p->p_id )
-                break;
-        }
-        if( p == NULL )
-            continue;        // We don't know who this is
-
-# if DBG_PROCESS
-        if( dbg_flags&DBG_PROCESS )
-            _dbg_msg( FormatString("Found emacs process 0x%x (%s)\n")
-                     << (void *)p << p->proc_name );
-# endif
-        if( WIFSTOPPED( stat_loc ) )
-        {
-            p->p_flag = STOPPED;
-            p->p_reason = WSTOPSIG( stat_loc );
-
-# if DBG_PROCESS
-            if( dbg_flags&DBG_PROCESS )
-                _dbg_msg( "p_flags <= STOPPED\n" );
-# endif
-        }
-        else if( WIFEXITED( stat_loc ) )
-        {
-            p->p_flag = EXITED | CHANGED;
-            child_changed++;
-            p->p_reason = WEXITSTATUS( stat_loc );
-
-# if DBG_PROCESS
-            if( dbg_flags&DBG_PROCESS )
-                _dbg_msg( "p_flags <= EXITED | CHANGED\n" );
-# endif
-        }
-        else if( WIFSIGNALED( stat_loc ) )
-        {
-            p->p_flag = SIGNALED | CHANGED;
-            child_changed++;
-            p->p_reason = WTERMSIG( stat_loc );
-
-# if DBG_PROCESS
-            if( dbg_flags&DBG_PROCESS )
-                _dbg_msg( "p_flags <= SIGNALED | CHANGED\n" );
-# endif
-        }
-        if( EmacsProcess::current_process == NULL
-        || !EmacsProcess::current_process->activeProcess() )
-            EmacsProcess::current_process = EmacsProcess::getNextProcess();
-    }
-}
 
 //
 // Find the process which is connected to proc_name.
@@ -829,11 +717,11 @@ bool EmacsProcess::startProcess( EmacsPosixSignal &sig_child )
         status = close( newfd );
 
         // become the controlling terminal
-#if defined( TIOCSCTTY )
+# if defined( TIOCSCTTY )
         status = ioctl( STDIN_FILENO, TIOCSCTTY, 0 );
-#elif defined( TIOCNOTTY )
+#  elif defined( TIOCNOTTY )
         status = ioctl( STDIN_FILENO, TIOCNOTTY, 0 );
-#endif
+# endif
 
         // get the pty terminal attributes
         status = tcgetattr( STDIN_FILENO, &sg );
@@ -1152,7 +1040,7 @@ int list_processes(void)
     return 0;
 }
 
-static unsigned char * savestr( const unsigned char *s )
+static unsigned char *savestr( const unsigned char *s )
 {
     if( s == NULL )
         // return a nul string
@@ -1368,11 +1256,6 @@ int process_id( void )
 // standard input to a channel on the  mpx file.  Someday we will be brave and
 // close 0.
 //
-void init_vms()
-{
-    child_sig.installHandler();
-}
-
 int set_process_input_procedure( void )
 {
     return no_value_command();
@@ -1511,9 +1394,134 @@ int force_exit_process( void )
 {
     return 0;
 }
+#endif
 
-void init_vms( void )
+#if defined( SUBPROCESSES ) || defined( EXEC_BF )
+//
+// Process a signal from a child process and make the appropriate change in
+// the process block. Since signals are NOT queued, if two signals are
+// received before this routine gets called, then only the first process in
+// the process list will be handled.  We will try to get the MPX file stuff
+// to help us out since it passes along signals from subprocesses.
+//
+class ChildSignalHandler : public EmacsPosixSignalHandler
 {
-    return;
+public:
+    ChildSignalHandler()
+    : EmacsPosixSignalHandler( SIGCHLD )
+    { }
+
+    virtual ~ChildSignalHandler()
+    { }
+
+private:
+    void signalHandler();
+};
+
+ChildSignalHandler child_sig;
+
+extern int subproc_id;  // The process id of a subprocess started by the old subproc stuff.
+
+void ChildSignalHandler::signalHandler()
+{
+    for(;;)
+    {
+        pid_t pid;
+        int stat_loc;
+
+        pid = waitpid( -1, &stat_loc, WUNTRACED | WNOHANG );
+
+# if DBG_PROCESS
+        if( dbg_flags&DBG_PROCESS )
+            _dbg_msg( FormatString("waitpid => pid: %d, stat_loc: 0x%x\n")
+                << int(pid) << stat_loc );
+# endif
+        if( pid <= 0 )
+        {
+            if( errno == EINTR )
+            {
+                errno = 0;
+                continue;
+            }
+# if defined( SUBPROCESSES )
+            if( pid == -1 )
+            {
+                if( EmacsProcess::current_process == NULL
+                || !EmacsProcess::current_process->activeProcess() )
+                {
+                    EmacsProcess::current_process = EmacsProcess::getNextProcess();
+                }
+            }
+# endif
+            return;
+        }
+# if defined( EXEC_BF )
+        if( pid == subproc_id )
+        {
+            // Take care of those subprocesses first
+            subproc_id = 0;
+            continue;
+        }
+# endif
+# if defined( SUBPROCESSES )
+        EmacsProcess *p = NULL;
+        for( int index=0; index<EmacsProcessCommon::name_table.entries(); index++ )
+        {
+            p = EmacsProcessCommon::name_table.value( index );
+            if( pid == p->p_id )
+                break;
+        }
+        if( p == NULL )
+            continue;        // We don't know who this is
+
+#  if DBG_PROCESS
+        if( dbg_flags&DBG_PROCESS )
+            _dbg_msg( FormatString("Found emacs process 0x%x (%s)\n")
+                     << (void *)p << p->proc_name );
+#  endif
+        if( WIFSTOPPED( stat_loc ) )
+        {
+            p->p_flag = STOPPED;
+            p->p_reason = WSTOPSIG( stat_loc );
+
+#  if DBG_PROCESS
+            if( dbg_flags&DBG_PROCESS )
+                _dbg_msg( "p_flags <= STOPPED\n" );
+#  endif
+        }
+        else if( WIFEXITED( stat_loc ) )
+        {
+            p->p_flag = EXITED | CHANGED;
+            child_changed++;
+            p->p_reason = WEXITSTATUS( stat_loc );
+
+#  if DBG_PROCESS
+            if( dbg_flags&DBG_PROCESS )
+                _dbg_msg( "p_flags <= EXITED | CHANGED\n" );
+#  endif
+        }
+        else if( WIFSIGNALED( stat_loc ) )
+        {
+            p->p_flag = SIGNALED | CHANGED;
+            child_changed++;
+            p->p_reason = WTERMSIG( stat_loc );
+
+#  if DBG_PROCESS
+            if( dbg_flags&DBG_PROCESS )
+                _dbg_msg( "p_flags <= SIGNALED | CHANGED\n" );
+#  endif
+        }
+        if( EmacsProcess::current_process == NULL
+        || !EmacsProcess::current_process->activeProcess() )
+        {
+            EmacsProcess::current_process = EmacsProcess::getNextProcess();
+        }
+# endif
+    }
+}
+
+void init_subprocesses()
+{
+    child_sig.installHandler();
 }
 #endif
