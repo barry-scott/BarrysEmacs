@@ -223,21 +223,44 @@ void filter_through( int n, const EmacsString &command )
 // Copy stuff from indicated file descriptor into the current
 // buffer; return the number of characters read.  This routine is
 // useful when reading from pipes and such.
-static int readPipe( int fd, int display )
-    {
-    int red = 0;
-    int n;
-    unsigned char buf[1000];
+static void readPipe( int fd, int display )
+{
+    const int buf_size = 16 * 1024;
+
     if( display )
     {
         message("Starting up...");
         theActiveView->do_dsp();
     }
 
-    while( (n = read( fd, buf, sizeof(buf) )) > 0 )
+    unsigned char utf8_buf[ buf_size ];
+    EmacsChar_t unicode_buf[ buf_size ];
+
+    int n;
+    int utf8_buf_used = 0;
+    while( (n = read( fd, &utf8_buf[utf8_buf_used], buf_size - utf8_buf_used )) > 0 )
     {
-        bf_cur->ins_cstr(buf, n);
-        red += n;
+        utf8_buf_used += n;
+
+        // find out the usable bytes in buf
+        int utf8_usable_length = 0;
+        int unicode_length = length_utf8_to_unicode(
+                    utf8_buf_used, utf8_buf,
+                    buf_size,
+                    utf8_usable_length );
+
+        // convert to unicode
+        convert_utf8_to_unicode( utf8_buf, unicode_length, unicode_buf );
+
+        // insert unicode
+        bf_cur->ins_cstr( unicode_buf, unicode_length );
+
+        // move left over bytes to the start of the buffer
+        if( n > utf8_usable_length )
+        {
+            memmove( &utf8_buf[0], &utf8_buf[utf8_usable_length], utf8_buf_used - utf8_usable_length );
+        }
+
         if( display )
         {
             message("Chugging along...");
@@ -249,8 +272,6 @@ static int readPipe( int fd, int display )
     {
         message("Done!");
     }
-
-    return red;
 }
 
 // execute a subprocess with the output being stuffed into the named

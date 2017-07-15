@@ -141,7 +141,7 @@ class Setup:
                 self.c_clibemacs = MacOsxCompilerGCC( self )
 
             pybemacs_feature_defines = [('EXEC_BF', '1')]
-            cli_feature_defines = [('EXEC_BF', '1')]
+            cli_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
 
         elif self.platform == 'linux':
             if self.opt_utils:
@@ -158,7 +158,7 @@ class Setup:
                 self.c_clibemacs = LinuxCompilerGCC( self )
 
             pybemacs_feature_defines = [('EXEC_BF', '1')]
-            cli_feature_defines = [('EXEC_BF', '1')]
+            cli_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
 
         else:
             raise SetupError( 'Unknown platform %r' % (self.platform,) )

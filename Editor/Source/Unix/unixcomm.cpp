@@ -485,7 +485,7 @@ void send_chan( EmacsProcess *process )
         {
             int cc = write( output.ch_fd, output.ch_data, output.ch_count );
             Trace( FormatString("send_chan write( %d, \"%*r\", %d ) => %d errno %e")
-                                << chan.ch_fd << chan.ch_count << chan.ch_data << cc << cc << errno );
+                                << output.ch_fd << output.ch_count << output.ch_data << cc << cc << errno );
             if( cc > 0 )
             {
                 output.ch_data += cc;
@@ -683,7 +683,6 @@ bool EmacsProcess::startProcess( EmacsPosixSignal &sig_child )
     {
         // Handle child side of fork
         struct termios sg;
-        int status;
 
         EmacsPosixSignal sig_int( SIGINT ); sig_int.defaultSignalAction();
         EmacsPosixSignal sig_quit( SIGQUIT ); sig_quit.defaultSignalAction();
@@ -691,7 +690,8 @@ bool EmacsProcess::startProcess( EmacsPosixSignal &sig_child )
         sig_child.defaultSignalAction();
         sig_child.permitSignal();
 
-        pid_t group = setsid();
+        setsid();
+
         int newfd = ptys_open( channel, pts_name );
         if( newfd < 0 )
         {
@@ -706,25 +706,25 @@ bool EmacsProcess::startProcess( EmacsPosixSignal &sig_child )
 //        status = setpgrp();
 
         // close std in, out, ml_err
-        status = close( STDIN_FILENO );
-        status = close( STDOUT_FILENO );
-        status = close( STDERR_FILENO );
+        close( STDIN_FILENO );
+        close( STDOUT_FILENO );
+        close( STDERR_FILENO );
         // dup the pty channel to std in, out, ml_err
-        status = dup2( newfd, STDIN_FILENO );
-        status = dup2( newfd, STDOUT_FILENO );
-        status = dup2( newfd, STDERR_FILENO );
+        dup2( newfd, STDIN_FILENO );
+        dup2( newfd, STDOUT_FILENO );
+        dup2( newfd, STDERR_FILENO );
         // close off pty channel
-        status = close( newfd );
+        close( newfd );
 
         // become the controlling terminal
 # if defined( TIOCSCTTY )
-        status = ioctl( STDIN_FILENO, TIOCSCTTY, 0 );
+        ioctl( STDIN_FILENO, TIOCSCTTY, 0 );
 #  elif defined( TIOCNOTTY )
-        status = ioctl( STDIN_FILENO, TIOCNOTTY, 0 );
+        ioctl( STDIN_FILENO, TIOCNOTTY, 0 );
 # endif
 
         // get the pty terminal attributes
-        status = tcgetattr( STDIN_FILENO, &sg );
+        tcgetattr( STDIN_FILENO, &sg );
 
         // setup the attributes the way we want them
         sg.c_cc[VERASE] = 0xff;
@@ -758,7 +758,7 @@ bool EmacsProcess::startProcess( EmacsPosixSignal &sig_child )
         // turn off echo
         sg.c_lflag &= ~ECHO;
 
-        status = tcsetattr( STDIN_FILENO, TCSANOW, &sg );
+        tcsetattr( STDIN_FILENO, TCSANOW, &sg );
 
         int ld = 2;
         EmacsString shname( shell() );
@@ -771,17 +771,17 @@ bool EmacsProcess::startProcess( EmacsPosixSignal &sig_child )
 
 # ifdef TIOCSETD
         int line_discipline = 0;
-        status = ioctl( STDIN_FILENO, TIOCSETD, &line_discipline );
+        ioctl( STDIN_FILENO, TIOCSETD, &line_discipline );
 # endif
 
         if( ld == 0 )
         {
             // csh version
-            status = execlp( shname, shname, "-f", "-c", command.sdata(), NULL );
+            execlp( shname, shname, "-f", "-c", command.sdata(), NULL );
         }
         else
         {
-            status = execlp( shname, shname, "-c", command.sdata(), NULL );
+            execlp( shname, shname, "-c", command.sdata(), NULL );
         }
 
         write( STDOUT_FILENO, "Could not start the shell\n", 24 );
@@ -1271,11 +1271,6 @@ int vms_load_averages( void )
     return no_value_command();
 }
 
-void restore_vms( void )
-{
-    child_sig.installHandler();
-}
-
 int process_channel_interrupts( void )
 {
     return 0;
@@ -1521,6 +1516,11 @@ void ChildSignalHandler::signalHandler()
 }
 
 void init_subprocesses()
+{
+    child_sig.installHandler();
+}
+
+void restore_subprocesses( void )
 {
     child_sig.installHandler();
 }

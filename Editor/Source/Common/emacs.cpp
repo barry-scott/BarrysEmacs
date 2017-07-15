@@ -51,7 +51,7 @@ extern void init_abs(void);
 extern void init_srch(void);
 extern void init_terminal(const EmacsString &, const EmacsString &);
 extern void restore_db(void);
-extern void restore_vms(void);
+extern void restore_subprocesses(void);
 extern void init_fncs(void);
 extern void init_bf(void);
 extern void init_display(void);
@@ -187,7 +187,7 @@ int emacsMain
         restore_timer();
         restore_scheduled_timeout();
         restore_db();                           // Restart the database manager
-        restore_vms();                          // Restart the sub-process code
+        restore_subprocesses();                 // Restart the sub-process code
         EmacsBufferJournal::restore_journal();  // Restore the journal system
     }
     else
