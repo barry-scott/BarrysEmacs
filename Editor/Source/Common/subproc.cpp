@@ -317,35 +317,37 @@ static void exec_bf
         sig.permitSignal();
         sig.defaultSignalAction();
 
-        close(0);
-        close(1);
-        close(2);
+        close( 0 );
+        close( 1 );
+        close( 2 );
 
-        if(open( input, 0) != 0)
+        if( open( input, 0 ) != 0 )
         {
-            write(fd[1], "Couldn't open input file\n", 25);
-            _exit(-1);
+            const char *msg = "Couldn't open input file\n";
+            write( fd[1], msg, sizeof( msg ) );
+            _exit( -1 );
         }
 
-        dup(fd[1]);
-        dup(fd[1]);
-        close(fd[1]);
-        close(fd[0]);
+        dup( fd[1] );
+        dup( fd[1] );
+        close( fd[1] );
+        close( fd[0] );
         execvp( command, (char **)args );
-        write(1, "Couldn't execute the program!\n", 30);
-        _exit(-1);
+        const char *msg = "Couldn't execute the program!\n";
+        write( fd[1], msg, sizeof( msg ) );
+        _exit( -1 );
     }
-    close(fd[1]);
+    close( fd[1] );
 
-    readPipe(fd[0], interactive() && display);
-    close(fd[0]);
+    readPipe( fd[0], interactive() && display );
+    close( fd[0] );
     }
 
     while( subproc_id != 0 )
     {
-        sleep(1);
+        sleep( 1 );
     }
-    if( interactive() && old.bufferValid())
+    if( interactive() && old.bufferValid() )
     {
         theActiveView->window_on( old.buffer() );
     }
@@ -401,20 +403,25 @@ int execute_monitor_command( void )
 {
     EmacsString com = getstr( "Command: " );
     if( com.isNull() )
+    {
         return 0;
+    }
     if( !com.isNull() )
+    {
         execute_command = com;
+    }
 
 #if defined( vms )
     exec_bf( "command execution", 1, "NLA0:", 1,
-        execute_command.data(), NULL );
+                execute_command.data(), NULL );
 # endif
 #if defined( __unix__ )
     exec_bf( "command execution", 1, "/dev/null", 1,
-        shell(), "-c", execute_command.utf8_data(), NULL );
+                shell(), "-c", execute_command.utf8_data(), NULL );
 # endif
 #if defined( _NT )
-    exec_bf( "Command execution", 1, "nul", 1, execute_command.utf8_data(), NULL );
+    exec_bf( "Command execution", 1, "nul", 1,
+                execute_command.utf8_data(), NULL );
 # endif
     return 0;
 }
