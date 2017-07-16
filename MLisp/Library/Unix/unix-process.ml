@@ -28,16 +28,17 @@
     (pr-newline
         (end-of-line)
         (if (| (! (eobp)) (error-occurred (mark)))
-            (progn com
+            (progn
+                ~com
                 (beginning-of-line)
                 (if (looking-at shell-prompt-template)
                     (region-around-match 0))
                 (set-mark)
                 (end-of-line)
-                (setq com (region-to-string))
+                (setq ~com (region-to-string))
                 (end-of-file)
                 (set-mark)
-                (insert-string com)
+                (insert-string ~com)
             )
         )
         (setq last-line (region-to-string))
@@ -111,7 +112,7 @@
 )
 (defun
     (send-quit-signal
-        (quit-process (current-process-name))
+        (quit-process current-buffer-name)
     )
 )
 ; Insert the last line the user sent to the process in this buffer.
@@ -153,7 +154,8 @@
 ; Clever hook to cd emacs with shell cds.
 (defun
     (shell-cd
-        (if (= (- (dot) (mark)) 2)
+        (if
+            (= (- (dot) (mark)) 2)
             (progn
                 (if (error-occurred (change-directory (get-tty-file ": cd ")))
                     (progn
@@ -165,8 +167,10 @@
                         (pr-newline)
                     )
                 )
-                0)
-            1)
+                0
+            )
+            1
+        )
     )
 )
 (defun
@@ -189,16 +193,16 @@
 )
 ; Go to a shell buffer and run a shell there.
 (defun
-    (new-shell name
-        (setq name (arg 1 ": new-shell (buffer name) "))
-        (pop-to-buffer name)
+    (new-shell ~name
+        (setq ~name (arg 1 ": new-shell (buffer name) "))
+        (pop-to-buffer ~name)
         (setq highlight-region 0)
         (set-mark)
-        (if (< (process-status name) 0)
+        (if (< (process-status ~name) 0)
             (progn
-                cmd
-                (setq cmd (if (= (substr ~shell-command -3 3) "csh") "exec " ""))
-                (start-process name (concat cmd ~shell-command))
+                ~cmd
+                (setq ~cmd (if (= (substr ~shell-command -3 3) "csh") "exec " ""))
+                (start-process ~name (concat ~cmd ~shell-command))
                 (use-abbrev-table "shell")
                 (use-syntax-table "shell")
                 (setq abbrev-mode 1)
