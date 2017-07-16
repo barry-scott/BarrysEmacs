@@ -23,6 +23,7 @@ SystemExpressionRepresentationIntPositive dcl_buffer_reduction( 500 );
 
 #include <sys/types.h>
 #include <sys/time.h>
+#include <termios.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -31,6 +32,7 @@ SystemExpressionRepresentationIntPositive dcl_buffer_reduction( 500 );
 #include <sys/param.h>
 #include <sys/ioctl.h>
 #include <syslog.h>
+
 //# ifndef _BSD
 //#  define _BSD    // define this to get the wait() family of calls defined
 //# endif
@@ -41,18 +43,9 @@ SystemExpressionRepresentationIntPositive dcl_buffer_reduction( 500 );
 #endif
 
 #if defined( __hpux )
-# include <sys/pty.h>
-
-# if !defined( _XPG4_EXTENDED )
-// define openlog and syslog as it is missing on hpux 9
-extern "C" void syslog(int priority, const char *message, ...);
-extern "C" void openlog(const char *ident, int logopt, int facility);
-# endif
-#endif
-
-#include <termios.h>
-#include <sys/time.h>
+#include <sys/pty.h>
 #include <sys/stat.h>
+#endif
 
 #include <unixcomm.h>
 
