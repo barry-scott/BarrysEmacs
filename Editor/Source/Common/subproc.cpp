@@ -338,9 +338,9 @@ static void exec_bf
         sig.permitSignal();
         sig.defaultSignalAction();
 
-        close( 0 );
-        close( 1 );
-        close( 2 );
+        close( STDIN_FILENO );
+        close( STDOUT_FILENO );
+        close( STDERR_FILENO );
 
         if( open( input, 0 ) != 0 )
         {
