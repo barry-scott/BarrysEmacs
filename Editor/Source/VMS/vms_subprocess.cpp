@@ -94,7 +94,7 @@ int pause_emacs( void )
     }
 # endif
 {
-# if defined( __unix ) && defined( vms )
+# if defined( vms )
     //
     // See if the user wants to specify a command, fetch it, and send
     // it down the restart mailbox

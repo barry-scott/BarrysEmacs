@@ -125,7 +125,7 @@ void filter_through(int n, const EmacsString &command );
 
 unsigned int parent_pid;
 
-# if defined( __unix )
+# if defined( __unix__ )
 pid_t subproc_id;
 
 static void exec_bf( const EmacsString &bufname, int display, const EmacsString &input, int erase, const char *command, ... );

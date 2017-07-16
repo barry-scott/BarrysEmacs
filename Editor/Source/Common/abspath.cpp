@@ -52,7 +52,7 @@ int cur_dir( void );
 void init_abs( void );
 
 EmacsString null_path("");
-#ifdef __unix
+#if defined( __unix__ )
 EmacsString HOME_path;
 EmacsString HOME_absolute_path;
 #endif
@@ -115,7 +115,7 @@ int chdir_and_set_global_record( const EmacsString &dirname )
         return ret;
 
     current_directory = path2;
-#ifdef __unix
+#if defined( __unix__ )
     if( path2 == HOME_absolute_path )
         current_directory = HOME_path;
     else if( path2.length() > HOME_absolute_path.length()    // long enough for HOME + "/"
@@ -151,7 +151,7 @@ EmacsString save_abs( const EmacsString &fn )
 
 void init_abs( void )
 {
-#ifdef __unix
+#if defined( __unix__ )
     char *home = getenv("HOME");
     int cd_fd = open(".",O_RDONLY);
     if( home != NULL && cd_fd >= 0)
