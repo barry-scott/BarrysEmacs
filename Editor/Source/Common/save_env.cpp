@@ -963,8 +963,8 @@ void EmacsSaveRestoreEnvironment::serialize_savres_globals(void)
     _serialize_object( user_8_rendition );
 #endif
     _serialize_object( force_redisplay );
-    _serialize_object( maximum_dcl_buffer_size );
-    _serialize_object( dcl_buffer_reduction );
+    _serialize_object( maximum_shell_buffer_size );
+    _serialize_object( shell_buffer_reduction );
 # ifdef SUBPROCESSES
 #  ifdef vms
     _ptr_i( current_process );

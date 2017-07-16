@@ -14,8 +14,8 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 extern int ptym_open( char *pts_name );
 extern int ptys_open( int fdm, char *pts_name );
 
-SystemExpressionRepresentationIntPositive maximum_dcl_buffer_size( 10000 );
-SystemExpressionRepresentationIntPositive dcl_buffer_reduction( 500 );
+SystemExpressionRepresentationIntPositive maximum_shell_buffer_size( 10000 );
+SystemExpressionRepresentationIntPositive shell_buffer_reduction( 500 );
 
 #ifndef MAXFDS
 # define MAXFDS 254
@@ -141,14 +141,14 @@ EmacsProcess::EmacsProcess( const EmacsString &name, const EmacsString &_command
 , p_reason(0)
 , out_id_valid(0)
 {
-    if( maximum_dcl_buffer_size < 1000 )
+    if( maximum_shell_buffer_size < 1000 )
     {
-        maximum_dcl_buffer_size = 10000;
+        maximum_shell_buffer_size = 10000;
     }
-    if( dcl_buffer_reduction > maximum_dcl_buffer_size - 500
-    || dcl_buffer_reduction < 500 )
+    if( shell_buffer_reduction > maximum_shell_buffer_size - 500
+    || shell_buffer_reduction < 500 )
     {
-        dcl_buffer_reduction = 500;
+        shell_buffer_reduction = 500;
     }
 
     Trace( FormatString("EmacsProcess object created %s %s") << proc_name << command );
@@ -442,9 +442,9 @@ void change_msgs( void )
                 p->chan_in.ch_buffer->set_bf();
                 set_dot( bf_cur->unrestrictedSize() + 1 );
                 bf_cur->ins_cstr( status );
-                if( ( bf_cur->unrestrictedSize() ) > maximum_dcl_buffer_size )
+                if( ( bf_cur->unrestrictedSize() ) > maximum_shell_buffer_size )
                 {
-                    bf_cur->del_frwd( 1, dcl_buffer_reduction );
+                    bf_cur->del_frwd( 1, shell_buffer_reduction );
                     set_dot( bf_cur->unrestrictedSize() + 1 );
                 }
                 if( bf_cur->b_mark.isSet() )
@@ -583,9 +583,9 @@ void stuff_buffer( ProcessChannelInput &chan )
                 bf_cur->ins_cstr( q, p - q );
             }
 
-            if( ( bf_cur->unrestrictedSize() ) > maximum_dcl_buffer_size )
+            if( ( bf_cur->unrestrictedSize() ) > maximum_shell_buffer_size )
             {
-                bf_cur->del_frwd( 1, dcl_buffer_reduction );
+                bf_cur->del_frwd( 1, shell_buffer_reduction );
                 set_dot( bf_cur->unrestrictedSize() + 1 );
             }
 

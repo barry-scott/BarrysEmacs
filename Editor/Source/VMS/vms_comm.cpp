@@ -11,8 +11,8 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 
 SystemExpressionRepresentationInt force_redisplay;
-SystemExpressionRepresentationInt maximum_dcl_buffer_size( 10000 );
-SystemExpressionRepresentationInt dcl_buffer_reduction( 500 );
+SystemExpressionRepresentationInt maximum_shell_buffer_size( 10000 );
+SystemExpressionRepresentationInt shell_buffer_reduction( 500 );
 
 #if defined( vms )
 
@@ -766,14 +766,14 @@ int start_DCL_process( void )
     proc->proc_input_channel.chan_reads_to_go_before_redisplay = 1;
     proc->proc_input_channel.chan_read_channel = 1;
 
-    if( maximum_dcl_buffer_size < 1000 )
-        maximum_dcl_buffer_size = 10000;
-    if( dcl_buffer_reduction > maximum_dcl_buffer_size - 500
-    || dcl_buffer_reduction < 500 )
-        dcl_buffer_reduction = 500;
+    if( maximum_shell_buffer_size < 1000 )
+        maximum_shell_buffer_size = 10000;
+    if( shell_buffer_reduction > maximum_shell_buffer_size - 500
+    || shell_buffer_reduction < 500 )
+        shell_buffer_reduction = 500;
 
-    proc->proc_input_channel.chan_maximum_buffer_size = maximum_dcl_buffer_size;
-    proc->proc_input_channel.chan_buffer_reduction_size = dcl_buffer_reduction;
+    proc->proc_input_channel.chan_maximum_buffer_size = maximum_shell_buffer_size;
+    proc->proc_input_channel.chan_buffer_reduction_size = shell_buffer_reduction;
 
     //
     //    Setup the Input and Output Channels

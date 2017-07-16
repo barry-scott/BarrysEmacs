@@ -58,21 +58,7 @@ void restore_var(void)
     SystemExpression *se = NULL;
     ExpressionRepresentation *ser = NULL;
 
-#if defined( SUBPROCESS )
-    //
-    // here a a set of VMS specific names which now have
-    // neutral or more generally applicable names
-    //
-    VarRep("maximum-DCL-buffer-size", &maximum_dcl_buffer_size)
-    VarRep("DCL-buffer-reduction", &dcl_buffer_reduction)
-
-    DefVarRep("default-buffer-RMS-record-attribute", &default_end_of_line_style)
-    VarRep("current-buffer-RMS-record-attribute", &buffer_eol_attribute)
-    VarRep("override-RMS-record-attribute", &end_of_line_style_override)
-#endif
     VarRep("fetch-help-database-flags", &get_db_help_flags)
-
-    // end of VMS inspired variable
 
 #ifdef EMACS_PYTHON_EXTENSION
     VarRep("Python-flags", &python_flags)
@@ -84,9 +70,9 @@ void restore_var(void)
     VarRep("UI-search-string", &ui_search_string)
     VarRep("UI-replace-string", &ui_replace_string)
 
-#if defined( SUBPROCESS )
-    VarRep("shell-buffer-reduction", &dcl_buffer_reduction)
-    VarRep("maximum-shell-buffer-size", &maximum_dcl_buffer_size)
+#if defined( SUBPROCESSES )
+    VarRep("shell-buffer-reduction", &shell_buffer_reduction)
+    VarRep("maximum-shell-buffer-size", &maximum_shell_buffer_size)
 #endif
 
     DefVarRep("default-buffer-end-of-line-style", &default_end_of_line_style)
