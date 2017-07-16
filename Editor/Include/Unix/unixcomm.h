@@ -22,7 +22,7 @@ public:
     ~ProcessChannelOutput();
     int ch_fd;              // Channel index
     int ch_count;           // Count of remaining chars in data
-    int ch_ccount;          // Cound of control chars
+    bool ch_send_eof;       // Cound of control chars
     unsigned char *ch_buf;  // Base buffer containing data
     unsigned char *ch_data; // Pointer to next segment to send
 };

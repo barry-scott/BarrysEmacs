@@ -70,7 +70,7 @@ extern int elapse_time(void);
                         if( dbg_flags&DBG_PROCESS && dbg_flags&DBG_TMP ) { \
                             int t=elapse_time(); \
                             _dbg_msg( FormatString(TIME_STAMP_STR "%s") << t/1000 << t%1000 << (s) ); } \
-                    } while(0)
+                    } while( false )
 # else
 #  define Trace( s ) // do nothing
 # endif
@@ -90,9 +90,13 @@ static EmacsProcess *get_process_arg()
 {
     EmacsString name;
     if( cur_exec == NULL )
+    {
         EmacsProcess::name_table.get_word_interactive( "Process: ", name );
+    }
     else
+    {
         EmacsProcess::name_table.get_word_mlisp( name );
+    }
 
     EmacsProcess *proc = EmacsProcess::name_table.find( name );
     if(  proc == NULL )
@@ -151,13 +155,14 @@ EmacsProcess::EmacsProcess( const EmacsString &name, const EmacsString &_command
 , out_id_valid(0)
 {
     if( maximum_dcl_buffer_size < 1000 )
+    {
         maximum_dcl_buffer_size = 10000;
+    }
     if( dcl_buffer_reduction > maximum_dcl_buffer_size - 500
     || dcl_buffer_reduction < 500 )
+    {
         dcl_buffer_reduction = 500;
-
-//    proc_input_channel.chan_maximum_buffer_size = maximum_dcl_buffer_size;
-//    proc_input_channel.chan_buffer_reduction_size = dcl_buffer_reduction;
+    }
 
     Trace( FormatString("EmacsProcess object created %s %s") << proc_name << command );
 }
@@ -189,9 +194,9 @@ ProcessChannelInput::~ProcessChannelInput()
 }
 
 ProcessChannelOutput::ProcessChannelOutput()
-: ch_fd(-1)
-, ch_count(0)
-, ch_ccount(0)
+: ch_fd( -1 )
+, ch_count( 0 )
+, ch_send_eof( false )
 , ch_buf( NULL )
 , ch_data( NULL )
 { }
@@ -204,7 +209,9 @@ ProcessChannelOutput::~ProcessChannelOutput()
         Trace( FormatString("ProcessChannelOutput::~ProcessChannelOutput close(%d) => %d") << ch_fd << status );
     }
     if( ch_buf )
+    {
         EMACS_FREE( ch_buf );
+    }
 }
 
 EmacsPollFdId add_to_select( int fd, long int mask, EmacsPollFdCallBack cb, EmacsProcess *npb )
@@ -294,9 +301,9 @@ void writeProcessInputHandler( EmacsPollFdParam p_, int fdp )
     EmacsProcess *p = (EmacsProcess *)p_;
     ProcessChannelOutput &chan = p->chan_out;
 
-    Trace( FormatString("writeProcessInputHandler( Param p_, fdp %d ) ch_ccount %d ch_count %d")
-        << fdp << chan.ch_ccount << chan.ch_count );
-    if( chan.ch_ccount > 0 )
+    Trace( FormatString("writeProcessInputHandler( Param p_, fdp %d ) ch_send_eof %d ch_count %d")
+        << fdp << chan.ch_send_eof << chan.ch_count );
+    if( chan.ch_send_eof )
     {
         int cc = write( chan.ch_fd, "\004", 1 );
         Trace( FormatString("writeProcessInputHandler write( %d, ^D, 1 ) => %d errno %e") << chan.ch_fd << cc << errno );
@@ -306,7 +313,7 @@ void writeProcessInputHandler( EmacsPollFdParam p_, int fdp )
             p->out_id_valid = 0;
             return;
         }
-        chan.ch_ccount = 0;
+        chan.ch_send_eof = false;
     }
     if( chan.ch_count > 0 )
     {
@@ -343,7 +350,9 @@ EmacsProcess *EmacsProcess::findProcess( const EmacsString &proc_name )
 {
     EmacsProcess *p = EmacsProcessCommon::name_table.find( proc_name );
     if( p != NULL && p->activeProcess() )
+    {
         return p;
+    }
 
     return NULL;
 }
@@ -358,7 +367,9 @@ EmacsProcess *EmacsProcess::getNextProcess()
     {
         EmacsProcess *p = EmacsProcessCommon::name_table.value( index );
         if( p->activeProcess() )
+        {
             return p;
+        }
     }
 
     return NULL;
@@ -374,7 +385,9 @@ void change_msgs( void )
 {
 # if DBG_PROCESS
     if( dbg_flags&DBG_PROCESS )
+    {
         _dbg_msg( "change_msgs() starting\n" );
+    }
 # endif
 
     int dodsp = 0, restore = 0;
@@ -389,7 +402,9 @@ void change_msgs( void )
 
 # if DBG_PROCESS
         if( dbg_flags&DBG_PROCESS )
+        {
             _dbg_msg( FormatString("change_msgs() found \"%s\" p_flags=0x%x\n") << p->proc_name << p->p_flag );
+        }
 # endif
         if( p->p_flag & CHANGED )
         {
@@ -419,8 +434,10 @@ void change_msgs( void )
                 MPX_chan->ch_count = status.length();
 # if DBG_PROCESS
                 if( dbg_flags&DBG_PROCESS )
+                {
                     _dbg_msg( FormatString("change_msgs() calling term_proc=%s proc_name=\"%s\" p_flags=0x%x\n")
                         << p->term_proc->b_proc_name << p->proc_name << p->p_flag );
+                }
 # endif
 
                 p->term_proc->execute();
@@ -444,7 +461,9 @@ void change_msgs( void )
                     set_dot( bf_cur->unrestrictedSize() + 1 );
                 }
                 if( bf_cur->b_mark.isSet() )
+                {
                     bf_cur->set_mark( dot, 0, false );
+                }
                 dodsp++;
                 restore++;
             }
@@ -458,7 +477,9 @@ void change_msgs( void )
         {
             old.set_bf();
             if( interactive() && OldBufferIsVisible )
+            {
                 theActiveView->window_on( bf_cur );
+            }
         }
         theActiveView->do_dsp();
     }
@@ -467,14 +488,18 @@ void change_msgs( void )
     if( change_processed == 0 )
     {
         if( child_changed == old_cc )
+        {
             child_changed = 0;
+        }
     }
     else
         child_changed -= change_processed;
 # if DBG_PROCESS
     if( dbg_flags&DBG_PROCESS )
+    {
         _dbg_msg( FormatString("change_msgs() done child_changed=%d change_processed=%d\n")
                 << child_changed << change_processed );
+    }
 # endif
 }
 
@@ -486,18 +511,20 @@ void send_chan( EmacsProcess *process )
 {
     ProcessChannelOutput &output = process->chan_out;
 
-    Trace( FormatString("send_chan( process %d) ch_ccount %d ch_count %d")
-        << int(process->p_id) << output.ch_ccount << output.ch_count );
-    if( output.ch_count == 0 && output.ch_ccount == 0 )
-        ;
-    else if( output.ch_ccount )
+    Trace( FormatString("send_chan( process %d) ch_send_eof %d ch_count %d")
+        << int(process->p_id) << output.ch_send_eof << output.ch_count );
+    if( output.ch_count == 0 && !output.ch_send_eof )
+    {
+        // nothing to do
+    }
+    else if( output.ch_send_eof )
     {
         // write Ctrl-D to process
         int cc = write( output.ch_fd, "\004", 1 );
         Trace( FormatString("send_chan write( %d, ^D, 1 ) => %d errno %e") << output.ch_fd << cc << errno );
         if( cc >= 0 )
         {
-            output.ch_ccount = 0;
+            output.ch_send_eof = false;
         }
     }
     else
@@ -527,7 +554,7 @@ void send_chan( EmacsProcess *process )
 void stuff_buffer( ProcessChannelInput &chan )
 {
     EmacsBufferRef old_buffer( bf_cur );
-    static int lockout;
+    static bool lockout = false;
     int OldBufferIsVisible = theActiveView->currentWindow()->w_buf == bf_cur;
 
     // Check the lock
@@ -537,7 +564,9 @@ void stuff_buffer( ProcessChannelInput &chan )
         return;
     }
     else
-        lockout = 1;
+    {
+        lockout = true;
+    }
 
     if( chan.ch_proc == NULL )
     {
@@ -600,7 +629,7 @@ void stuff_buffer( ProcessChannelInput &chan )
     }
 
     chan.ch_count = 0;
-    lockout = 0;
+    lockout = false;
 }
 
 //
@@ -614,7 +643,9 @@ int EmacsProcess::countProcesses()
     {
         EmacsProcess *p = EmacsProcessCommon::name_table.value( index );
         if( p->activeProcess() )
+        {
             count++;
+        }
     }
 
     return count;
@@ -638,9 +669,13 @@ void EmacsProcess::flushProcess( EmacsProcess *process )
     }
 
     if( process->in_id )
+    {
         remove_input( process->in_id );
+    }
     if( process->out_id_valid )
+    {
         remove_input( process->out_id );
+    }
     process->in_id = 0;
     process->out_id = 0;
     process->out_id_valid = 0;
@@ -658,11 +693,13 @@ void EmacsProcess::killProcesses( void )
     {
         EmacsProcess *p = EmacsProcessCommon::name_table.value( index );
         if( p->activeProcess() )
+        {
 # ifdef __hpux
             kill( p->p_id, SIGKILL );
 # else
             killpg( p->p_id, SIGKILL );
 # endif
+        }
     }
 }
 
@@ -803,7 +840,9 @@ bool EmacsProcess::startProcess( EmacsPosixSignal &sig_child )
         {
             EmacsString shname_tail( shname( -3, -1 ) );
             if( shname_tail.caseBlindCompare( "csh" ) == 0 )
+            {
                 ld = 0;
+            }
         }
 
 # ifdef TIOCSETD
@@ -838,14 +877,16 @@ bool EmacsProcess::startProcess( EmacsPosixSignal &sig_child )
 
     chan_out.ch_fd = channel;
     chan_out.ch_count = 0;
-    chan_out.ch_ccount = 0;
+    chan_out.ch_send_eof = false;
     chan_out.ch_buf = NULL;
 
     term_proc = NULL;
 
     EmacsBuffer::set_bfn( proc_name );
     if( interactive() )
+    {
         theActiveView->window_on( bf_cur );
+    }
 
     chan_in.ch_buffer = bf_cur;
     chan_in.ch_proc = NULL;
@@ -859,7 +900,10 @@ void EmacsProcess::stopProcess()
     Trace( FormatString("stopProcess pid=%d") << int(p_id) );
     // see if there is nothing to do
     if( !activeProcess() )
+    {
         return;
+    }
+
 # ifdef __hpux
     kill( p_id, SIGKILL );
 # else
@@ -925,7 +969,9 @@ static BoundName * get_procedure_arg( const EmacsString &prompt )
     BoundName *procedure = getword( BoundName::, prompt );
 
     if( procedure == NULL || procedure->b_proc_name == "novalue" )
+    {
         return NULL;
+    }
 
     return procedure;
 }
@@ -939,7 +985,9 @@ int set_process_output_procedure( void )
 {
     EmacsProcess *process = get_process_arg();
     if( process == NULL )
+    {
         return 0;
+    }
 
     process->chan_in.ch_proc = get_procedure_arg( "On-output procedure: " );
     return 0;
@@ -952,7 +1000,9 @@ int set_process_termination_proc( void )
 {
     EmacsProcess *process = get_process_arg();
     if( process == NULL )
+    {
         return 0;
+    }
 
     process->term_proc = get_procedure_arg( "On-termination procedure: ");
 
@@ -964,8 +1014,10 @@ int set_process_termination_proc( void )
 
 # if DBG_PROCESS
         if( dbg_flags&DBG_PROCESS )
+        {
             _dbg_msg( FormatString("set_process_termination_proc after exit (%s) \n")
                      << process->proc_name );
+        }
 # endif
     }
 
@@ -979,11 +1031,16 @@ int set_process_name( void )
 {
     EmacsProcess *process = get_process_arg();
     if( process == NULL )
+    {
         return 0;
+    }
 
     EmacsString new_name = getstr( "New name: " );
     if( new_name.isNull() )
+    {
         return 0;
+    }
+
     if( EmacsProcess::findProcess( new_name ) != NULL )
     {
         error( FormatString("A process named %s already exists") << new_name );
@@ -1002,15 +1059,21 @@ int set_process_output_buffer( void )
 {
     EmacsProcess *process = get_process_arg();
     if( process == NULL )
+    {
         return 0;
+    }
 
     EmacsString new_name = getstr( "New buffer: " );
     if( new_name.isNull() )
+    {
         return 0;
+    }
 
     EmacsBuffer::set_bfn( new_name.isNull() ? EmacsString( "Command Execution" ) : new_name );
     if( interactive() )
+    {
         theActiveView->window_on( bf_cur );
+    }
 
     process->chan_in.ch_buffer = bf_cur;
 
@@ -1059,15 +1122,23 @@ int list_processes(void)
         bf_cur->ins_cstr( FormatString("  %s\n") << p->command );
 
         if( p->term_proc != NULL )
+        {
             bf_cur->ins_cstr( FormatString("  Termination procedure: %s") << p->term_proc->b_proc_name );
+        }
         if( p->chan_in.ch_proc != NULL )
+        {
             bf_cur->ins_cstr( FormatString("  Input procedure: %s") << p->chan_in.ch_proc->b_proc_name );
-        if( p->term_proc != NULL || p->term_proc != NULL )
+        }
+        if( p->term_proc != NULL || p->chan_in.ch_proc != NULL)
+        {
             bf_cur->ins_cstr( "\n" );
+        }
 
         // if the process has died then flush it
         if( (p->p_flag & (EXITED | SIGNALED)) != 0 )
+        {
             EmacsProcess::flushProcess( p );
+        }
     }
 
     bf_cur->b_modified = 0;
@@ -1080,8 +1151,10 @@ int list_processes(void)
 static unsigned char *savestr( const unsigned char *s )
 {
     if( s == NULL )
+    {
         // return a nul string
         return savestr( u_str("") );
+    }
 
     // copy the string
     size_t size = strlen( reinterpret_cast<const char *>( s ) ) + 1;
@@ -1097,20 +1170,28 @@ int send_string_to_process( void )
 {
     EmacsProcess *process = get_process_arg();
     if( process == NULL )
+    {
         return 0;
+    }
 
     EmacsString input_string = getstr( "String: " );
-    ProcessChannelOutput &output = process->chan_out;
+    if( input_string.isNull() )
+    {
+        error( "Attempt to send null string to process" );
+        return 0;
+    }
 
-    if( output.ch_count || output.ch_ccount )
+    ProcessChannelOutput &output = process->chan_out;
+    if( output.ch_count > 0 || output.ch_send_eof )
+    {
         error( str_is_blocked );
+        return 0;
+    }
 
     output.ch_fd = process->chan_in.ch_fd;
-    output.ch_ccount = 0;
-    output.ch_count = input_string.length();
-    if( output.ch_count <= 0 )
-        error( "Attempt to send null string to process" );
-    output.ch_data = output.ch_buf = savestr( input_string );
+    output.ch_send_eof = false;
+    output.ch_data = output.ch_buf = savestr( input_string.utf8_data() );
+    output.ch_count = input_string.utf8_data_length();
 
     send_chan( process );
 
@@ -1141,7 +1222,9 @@ int sig_process( int signal )
 {
     EmacsProcess *process = get_process_arg();
     if( process == NULL )
+    {
         return 0;
+    }
 
     Trace( FormatString("sig_process name %s pid %d signal %d")
         << process->proc_name << int(process->p_id) << signal );
@@ -1170,7 +1253,7 @@ int sig_process( int signal )
     }
 # endif
         process->chan_out.ch_count = 0;
-        process->chan_out.ch_ccount = 0;
+        process->chan_out.ch_send_eof = false;
         break;
     }
 
@@ -1213,15 +1296,20 @@ int send_eof_to_process( void )
 {
     EmacsProcess *process = get_process_arg();
     if( process == NULL )
+    {
         return 0;
+    }
 
     ProcessChannelOutput &output = process->chan_out;
-    if( output.ch_count || output.ch_ccount )
+    if( output.ch_count > 0 || output.ch_send_eof )
+    {
         error( str_is_blocked );
+        return 0;
+    }
 
     output.ch_count = 0;
     output.ch_data = output.ch_buf = NULL;
-    output.ch_ccount = 1;
+    output.ch_send_eof = true;
 
     send_chan( process );
 
@@ -1234,9 +1322,13 @@ int send_eof_to_process( void )
 int current_process_name( void )
 {
     if( EmacsProcess::current_process == NULL )
+    {
         ml_value = EmacsString("");
+    }
     else
+    {
         ml_value = EmacsProcess::current_process->proc_name;
+    }
 
     return 0;
 }
@@ -1248,12 +1340,15 @@ int set_current_process( void )
 {
     EmacsProcess *process = get_process_arg();
     if( process == NULL )
+    {
         return 0;
+    }
 
     EmacsProcess::current_process = process;
 
     return 0;
 }
+
 //
 // Return the process' status
 //    -1 - not an active process
@@ -1265,12 +1360,20 @@ int process_status(void)
     EmacsString proc_name = getstr( "Process: " );
     EmacsProcess *process = EmacsProcess::findProcess( proc_name );
     if( process == NULL )
+    {
         ml_value = int(-1);
+    }
     else
+    {
         if( process->p_flag & RUNNING )
+        {
             ml_value = int(1);
+        }
         else
+        {
             ml_value = int(0);
+        }
+    }
 
     return 0;
 }
@@ -1282,9 +1385,13 @@ int process_id( void )
     EmacsProcess *process = EmacsProcess::findProcess( proc_name );
 
     if( process == NULL )
+    {
         ml_value = int( 0 );
+    }
     else
+    {
         ml_value = int( process->p_id );
+    }
 
     return 0;
 }
@@ -1465,8 +1572,10 @@ void ChildSignalHandler::signalHandler()
 
 # if DBG_PROCESS
         if( dbg_flags&DBG_PROCESS )
+        {
             _dbg_msg( FormatString("waitpid => pid: %d, stat_loc: 0x%x\n")
                 << int(pid) << stat_loc );
+        }
 # endif
         if( pid <= 0 )
         {
@@ -1501,15 +1610,21 @@ void ChildSignalHandler::signalHandler()
         {
             p = EmacsProcessCommon::name_table.value( index );
             if( pid == p->p_id )
+            {
                 break;
+            }
         }
         if( p == NULL )
+        {
             continue;        // We don't know who this is
+        }
 
 #  if DBG_PROCESS
         if( dbg_flags&DBG_PROCESS )
+        {
             _dbg_msg( FormatString("Found emacs process 0x%x (%s)\n")
                      << (void *)p << p->proc_name );
+        }
 #  endif
         if( WIFSTOPPED( stat_loc ) )
         {
@@ -1518,7 +1633,9 @@ void ChildSignalHandler::signalHandler()
 
 #  if DBG_PROCESS
             if( dbg_flags&DBG_PROCESS )
+            {
                 _dbg_msg( "p_flags <= STOPPED\n" );
+            }
 #  endif
         }
         else if( WIFEXITED( stat_loc ) )
@@ -1529,7 +1646,9 @@ void ChildSignalHandler::signalHandler()
 
 #  if DBG_PROCESS
             if( dbg_flags&DBG_PROCESS )
+            {
                 _dbg_msg( "p_flags <= EXITED | CHANGED\n" );
+            }
 #  endif
         }
         else if( WIFSIGNALED( stat_loc ) )
@@ -1540,7 +1659,9 @@ void ChildSignalHandler::signalHandler()
 
 #  if DBG_PROCESS
             if( dbg_flags&DBG_PROCESS )
+            {
                 _dbg_msg( "p_flags <= SIGNALED | CHANGED\n" );
+            }
 #  endif
         }
         if( EmacsProcess::current_process == NULL
