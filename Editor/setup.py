@@ -305,16 +305,22 @@ class Setup:
                 Source( compiler, 'Source/Common/windman.cpp' ),
                 Source( compiler, 'Source/Common/window.cpp' ),
                 ]
-            if self.platform in ('linux', 'macosx'):
+            if self.platform in ('linux'):
                 obj_files.extend( [
-                    #Source( compiler, 'Source/Unix/unix_ext_func.cpp' ),
                     Source( compiler, 'Source/Unix/unixfile.cpp' ),
                     Source( compiler, 'Source/Unix/emacs_signal.cpp' ),
                     Source( compiler, 'Source/Unix/unixcomm.cpp' ),
                     # need to make this conditional for NetBSD etc.
                     Source( compiler, 'Source/Unix/ptyopen_linux.cpp' ),
                     ] )
-            elif self.platform in ('win32', 'win64'):
+            if self.platform in ('macosx'):
+                obj_files.extend( [
+                    Source( compiler, 'Source/Unix/unixfile.cpp' ),
+                    Source( compiler, 'Source/Unix/emacs_signal.cpp' ),
+                    Source( compiler, 'Source/Unix/unixcomm.cpp' ),
+                    Source( compiler, 'Source/Unix/ptyopen_bsd.cpp' ),
+                    ] )
+            if self.platform in ('win32', 'win64'):
                 obj_files.extend( [
                     Source( compiler, 'Source/Windows/win_file.cpp' ),
                     #Source( compiler, 'Source/Windows/win_ext_func.cpp' ),
