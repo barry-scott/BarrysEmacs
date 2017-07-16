@@ -85,7 +85,7 @@ public:
     //
     // Support for TTY terminals
     //
-    virtual void t_io_putchar( unsigned char ) { }
+    virtual void t_io_putchar( EmacsChar_t ) { }
     virtual void t_io_print( const unsigned char * ) { }
     virtual void t_io_printf( const char *, ... );
     virtual void t_io_flush() { }
