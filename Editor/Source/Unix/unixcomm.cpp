@@ -50,12 +50,6 @@ extern "C" void openlog(const char *ident, int logopt, int facility);
 # endif
 #endif
 
-#if defined( __linux__ ) || defined( __FreeBSD__ )
-# define TIME_STAMP_STR "%d.%3.3d "
-#else
-# define TIME_STAMP_STR "%d.%03.3d "
-#endif
-
 #include <termios.h>
 #include <sys/time.h>
 #include <sys/stat.h>
@@ -69,7 +63,7 @@ extern int elapse_time(void);
 #  define Trace( s )  do { \
                         if( dbg_flags&DBG_PROCESS && dbg_flags&DBG_TMP ) { \
                             int t=elapse_time(); \
-                            _dbg_msg( FormatString(TIME_STAMP_STR "%s") << t/1000 << t%1000 << (s) ); } \
+                            _dbg_msg( FormatString("%d.%03.3d " "%s") << t/1000 << t%1000 << (s) ); } \
                     } while( false )
 # else
 #  define Trace( s ) // do nothing
