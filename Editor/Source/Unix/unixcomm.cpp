@@ -43,24 +43,24 @@ SystemExpressionRepresentationIntPositive shell_buffer_reduction( 500 );
 #endif
 
 #if defined( __hpux )
-#include <sys/pty.h>
-#include <sys/stat.h>
+# include <sys/pty.h>
+# include <sys/stat.h>
 #endif
 
 #include <unixcomm.h>
 
-#if defined( SUBPROCESSES )
-
-# if DBG_PROCESS && DBG_TMP
+#if DBG_PROCESS && DBG_TMP
 extern int elapse_time(void);
-#  define Trace( s )  do { \
+# define Trace( s )  do { \
                         if( dbg_flags&DBG_PROCESS && dbg_flags&DBG_TMP ) { \
                             int t=elapse_time(); \
                             _dbg_msg( FormatString("%d.%03.3d " "%s") << t/1000 << t%1000 << (s) ); } \
                     } while( false )
-# else
-#  define Trace( s ) // do nothing
-# endif
+#else
+# define Trace( s ) // do nothing
+#endif
+
+#if defined( SUBPROCESSES )
 
 const int STOPPED(  1<<0 ); // 1
 const int RUNNING(  1<<1 ); // 2
@@ -1587,6 +1587,8 @@ void ChildSignalHandler::signalHandler()
         if( pid == subproc_id )
         {
             // Take care of those subprocesses first
+            Trace( FormatString("ChildSignalHandler::signalHandler() subproc_id %d exited") << subproc_id );
+
             subproc_id = 0;
             continue;
         }
@@ -1662,6 +1664,7 @@ void ChildSignalHandler::signalHandler()
 
 void init_subprocesses()
 {
+    Trace( "init_subprocesses install child sig handler" );
     child_sig.installHandler();
 }
 

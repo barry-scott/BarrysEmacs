@@ -24,6 +24,17 @@ BoundName *return_to_emacs_proc;
 
 extern void filter_through( int n, const EmacsString &command );
 
+#if DBG_PROCESS && DBG_TMP
+extern int elapse_time(void);
+# define Trace( s )  do { \
+                        if( dbg_flags&DBG_PROCESS && dbg_flags&DBG_TMP ) { \
+                            int t=elapse_time(); \
+                            _dbg_msg( FormatString("%d.%03.3d " "%s") << t/1000 << t%1000 << (s) ); } \
+                    } while( false )
+#else
+# define Trace( s ) // do nothing
+#endif
+
 #if !defined( EXEC_BF )
 int indent_c_procedure( void )
 {
@@ -63,7 +74,7 @@ static int tmp_name_count = 1;
 #  include <unistd.h>
 # endif
 
-#if defined( __unix__ ) || defined( _NT )
+# if defined( __unix__ ) || defined( _NT )
 static EmacsString emacs_tmpnam()
 {
     char *tmp_dir = getenv("TMP");
@@ -132,7 +143,7 @@ static void exec_bf( const EmacsString &bufname, int display, const EmacsString 
 
 int pause_emacs( void )
 {
-#if 0
+#  if 0
     //
     // See if the user wants to specify a command, fetch it, and send
     // it down the restart mailbox
@@ -158,7 +169,7 @@ int pause_emacs( void )
     {
         error("Unable to send response to bemacs client");
     }
-#endif
+#  endif
 
     return 0;
 }
@@ -200,13 +211,13 @@ void filter_through( int n, const EmacsString &command )
     bf_cur->write_file( tempfile, EmacsBuffer::CHECKPOINT_WRITE );
     old.set_bf();
 
-#if defined( vms )
+# if defined( vms )
     exec_bf( bf_cur->b_buf_name, 0, tempfile, 0, command.data(), NULL );
 # endif
-#if defined( __unix__ )
+# if defined( __unix__ )
     exec_bf( bf_cur->b_buf_name, 0, tempfile, 0, shell(), "-c", command.utf8_data(), NULL );
 # endif
-#if defined( _NT )
+# if defined( _NT )
     exec_bf( bf_cur->b_buf_name, 0, tempfile, 0, command.data(), NULL );
 # endif
 
@@ -218,7 +229,7 @@ void filter_through( int n, const EmacsString &command )
     EmacsFile::fio_delete( tempfile );
 }
 
-#if defined( __unix__ )
+# if defined( __unix__ )
 
 // Copy stuff from indicated file descriptor into the current
 // buffer; return the number of characters read.  This routine is
@@ -287,6 +298,7 @@ static void exec_bf
     ...
     )
 {
+    Trace( FormatString("exec_bf( %s, %d, %.32s, %d, %s )") << buffer << display << input << erase << command );
     EmacsBufferRef old( bf_cur );
     int fd[2];
     const char *args[100];
@@ -333,6 +345,7 @@ static void exec_bf
     sig.blockSignal();
 
     subproc_id = fork();
+    Trace( FormatString("exec_bf() fork() => %d errno %e") << subproc_id << errno );
     if( subproc_id == 0 )
     {
         sig.permitSignal();
@@ -366,12 +379,14 @@ static void exec_bf
 
     while( subproc_id != 0 )
     {
+        Trace( "exec_bf() waiting for process to exit" );
         sleep( 1 );
     }
     if( interactive() && old.bufferValid() )
     {
         theActiveView->window_on( old.buffer() );
     }
+    Trace( "exec_bf() done" );
 }
 
 int return_to_monitor( void )
@@ -432,15 +447,15 @@ int execute_monitor_command( void )
         execute_command = com;
     }
 
-#if defined( vms )
+# if defined( vms )
     exec_bf( "command execution", 1, "NLA0:", 1,
                 execute_command.data(), NULL );
 # endif
-#if defined( __unix__ )
+# if defined( __unix__ )
     exec_bf( "command execution", 1, "/dev/null", 1,
                 shell(), "-c", execute_command.utf8_data(), NULL );
 # endif
-#if defined( _NT )
+# if defined( _NT )
     exec_bf( "Command execution", 1, "nul", 1,
                 execute_command.utf8_data(), NULL );
 # endif
