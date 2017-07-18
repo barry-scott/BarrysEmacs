@@ -3,6 +3,16 @@ export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/PyQtBEmacs:${BUILDER_TOP_DIR}/Editor
 export BEMACS_EMACS_LIBRARY="${BUILDER_TOP_DIR}/Kits/MacOSX/pkg/Barry's Emacs-Devel.app/Contents/Resources/emacs_library"
 export BEMACS_FIFO=.bemacs8devel/.emacs_command
 
+case "$1" in
+--debug=*)
+    export EMACS_DEBUG="${1#--debug=}"
+    rm -f ${EMACS_DEBUG_FILE}
+    shift
+    ;;
+*)
+    ;;
+esac
+
 if [ "$1" = "--lldb" ]
 then
     shift 1
