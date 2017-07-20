@@ -137,7 +137,6 @@ void filter_through(int n, const EmacsString &command );
 unsigned int parent_pid;
 
 # if defined( __unix__ )
-pid_t subproc_id;
 
 static void exec_bf( const EmacsString &bufname, int display, const EmacsString &input, int erase, const char *command, ... );
 
@@ -247,10 +246,23 @@ static void readPipe( int fd, int display )
     unsigned char utf8_buf[ buf_size ];
     EmacsChar_t unicode_buf[ buf_size ];
 
-    int n;
     int utf8_buf_used = 0;
-    while( (n = read( fd, &utf8_buf[utf8_buf_used], buf_size - utf8_buf_used )) > 0 )
+    for(;;)
     {
+        Trace( FormatString("readPipe utf8_buf_used %d available %d") << utf8_buf_used << buf_size - utf8_buf_used );
+        int n = read( fd, &utf8_buf[utf8_buf_used], buf_size - utf8_buf_used );
+        Trace( FormatString("readPipe read() -> %d") << n );
+        if( n == 0 )
+        {
+            Trace( "readPipe end-of-file reached" );
+            break;
+        }
+        if( n <= 0 )
+        {
+            Trace( FormatString("readPipe read() -> errno %e") << errno );
+            break;
+        }
+
         utf8_buf_used += n;
 
         // find out the usable bytes in buf
@@ -259,6 +271,7 @@ static void readPipe( int fd, int display )
                     utf8_buf_used, utf8_buf,
                     buf_size,
                     utf8_usable_length );
+        Trace( FormatString("readPipe length_utf8_to_unicode() utf8_usable_length %d unicode_length %d") << utf8_usable_length << unicode_length );
 
         // convert to unicode
         convert_utf8_to_unicode( utf8_buf, unicode_length, unicode_buf );
@@ -267,9 +280,10 @@ static void readPipe( int fd, int display )
         bf_cur->ins_cstr( unicode_buf, unicode_length );
 
         // move left over bytes to the start of the buffer
-        if( n > utf8_usable_length )
+        if( utf8_usable_length > 0 )
         {
             memmove( &utf8_buf[0], &utf8_buf[utf8_usable_length], utf8_buf_used - utf8_usable_length );
+            utf8_buf_used -= utf8_usable_length;
         }
 
         if( display )
@@ -278,6 +292,8 @@ static void readPipe( int fd, int display )
             theActiveView->do_dsp();
         }
     }
+
+    Trace( FormatString("readPipe() utf8_buf_used %d at exit") << utf8_buf_used );
 
     if( display )
     {
@@ -298,7 +314,7 @@ static void exec_bf
     ...
     )
 {
-    Trace( FormatString("exec_bf( %s, %d, %.32s, %d, %s )") << buffer << display << input << erase << command );
+    Trace( FormatString("exec_bf( %s, %d, \"%.20s\", %d, %s )") << buffer << display << input << erase << command );
     EmacsBufferRef old( bf_cur );
     int fd[2];
     const char *args[100];
@@ -339,18 +355,10 @@ static void exec_bf
     }
     pipe( fd );
 
-    {
-    EmacsPosixSignal sig( SIGCHLD );
-    // block now and release as the block ends
-    sig.blockSignal();
-
-    subproc_id = fork();
+    pid_t subproc_id = fork();
     Trace( FormatString("exec_bf() fork() => %d errno %e") << subproc_id << errno );
     if( subproc_id == 0 )
     {
-        sig.permitSignal();
-        sig.defaultSignalAction();
-
         close( STDIN_FILENO );
         close( STDOUT_FILENO );
         close( STDERR_FILENO );
@@ -375,13 +383,11 @@ static void exec_bf
 
     readPipe( fd[0], interactive() && display );
     close( fd[0] );
-    }
 
-    while( subproc_id != 0 )
-    {
-        Trace( "exec_bf() waiting for process to exit" );
-        sleep( 1 );
-    }
+    int stat_loc = 0;
+    pid_t rc = waitpid( subproc_id, &stat_loc, 0 );
+    Trace( FormatString("exec_bf() waitpid() -> %d") << rc );
+
     if( interactive() && old.bufferValid() )
     {
         theActiveView->window_on( old.buffer() );

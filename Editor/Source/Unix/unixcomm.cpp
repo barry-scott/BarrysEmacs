@@ -1546,8 +1546,6 @@ private:
 
 ChildSignalHandler child_sig;
 
-extern int subproc_id;  // The process id of a subprocess started by the old subproc stuff.
-
 void ChildSignalHandler::signalHandler()
 {
     for(;;)
@@ -1583,16 +1581,6 @@ void ChildSignalHandler::signalHandler()
 # endif
             return;
         }
-# if defined( EXEC_BF )
-        if( pid == subproc_id )
-        {
-            // Take care of those subprocesses first
-            Trace( FormatString("ChildSignalHandler::signalHandler() subproc_id %d exited") << subproc_id );
-
-            subproc_id = 0;
-            continue;
-        }
-# endif
 # if defined( SUBPROCESSES )
         EmacsProcess *p = NULL;
         for( int index=0; index<EmacsProcessCommon::name_table.entries(); index++ )
@@ -1664,8 +1652,10 @@ void ChildSignalHandler::signalHandler()
 
 void init_subprocesses()
 {
+#if defined( SUBPROCESSES )
     Trace( "init_subprocesses install child sig handler" );
     child_sig.installHandler();
+#endif
 }
 
 void restore_subprocesses( void )
