@@ -10,91 +10,91 @@
 </head>
 <body>
 <div class="contents">
-<p><a name="save-environment"></a>(<b>save-environment</b> <span class="cmd">file-name</span>)</p>
+<p><a name="save-environment">(<b>save-environment</b> <span class="cmd">file-name</span>)</a></p>
 
 <blockquote>
 <p>Saves the current state of Emacs into an environment file. The default file type is .Emacs_ENVIRONMENT.</p>
 </blockquote>
 
 
-<p><a name="save-excursion"></a>(<b>save-excursion</b> <span class="cmd">local... expression...</span>)</p>
+<p><a name="save-excursion">(<b>save-excursion</b> <span class="cmd">local... expression...</span>)</a></p>
 
 <blockquote>
 <p>Evaluates the given expressions and returns the value of the last expression evaluated. It is much like progn except that before any expressions are executed, dot and the current buffer are marked (via the marker mechanism) and the search-string is saved.</p>
 </blockquote>
 
 
-<p><a name="save-restriction"></a>(<b>save-restriction</b> <span class="cmd">locals... expression ...</span>)</p>
+<p><a name="save-restriction">(<b>save-restriction</b> <span class="cmd">locals... expression ...</span>)</a></p>
 
 <blockquote>
 <p>Saves the current dot, mark, buffer, search-string and buffer restriction; executes the provided expressions; then restores the saved information.</p>
 </blockquote>
 
 
-<p><a name="save-window-excursion"></a>(<b>save-window-excursion</b> <span class="cmd">local... expression ...</span>)</p>
+<p><a name="save-window-excursion">(<b>save-window-excursion</b> <span class="cmd">local... expression ...</span>)</a></p>
 
 <blockquote>
 <p>Saves the current dot, mark, buffer, search-string and window state; executes the expressions; then restores the saved information. save-window-excursion returns the value of the last expression evaluated. If the mark was not set before calling save-window-excursion, it will not be set afterwards.</p>
 </blockquote>
 
 
-<p><a name="schedule-procedure"></a>(<b>schedule-procedure</b> <span class="cmd">function seconds</span>)</p>
+<p><a name="schedule-procedure">(<b>schedule-procedure</b> <span class="cmd">function seconds</span>)</a></p>
 
 <blockquote>
 <p>Executes the given <i>function</i> after the specified number of <i>seconds</i>. If the number of seconds is zero, then any outstanding schedule for the specified function is removed. If a schedule is specified for a procedure that already has a schedule, the old schedule is replaced.</p>
 </blockquote>
 
 
-<p><a name="scroll-one-column-left"></a>(<b>scroll-one-column-left</b>)</p>
+<p><a name="scroll-one-column-left">(<b>scroll-one-column-left</b>)</a></p>
 
 <blockquote>
 <p>Scrolls the current window one column to the left.</p>
 </blockquote>
 
 
-<p><a name="scroll-one-column-right"></a>(<b>scroll-one-column-right</b>)</p>
+<p><a name="scroll-one-column-right">(<b>scroll-one-column-right</b>)</a></p>
 
 <blockquote>
 <p>Scrolls the current window one column to the right.</p>
 </blockquote>
 
 
-<p><a name="scroll-one-line-down"></a>(<b>scroll-one-line-down</b>) ESC-z</p>
+<p><a name="scroll-one-line-down">(<b>scroll-one-line-down</b>) ESC-z</a></p>
 
 <blockquote>
 <p>Repositions the current window on the current buffer so that the line which is currently the second to the last line in the window becomes the last. This effectively moves the buffer down one line in the window.</p>
 </blockquote>
 
 
-<p><a name="scroll-one-line-up"></a>(<b>scroll-one-line-up</b>) ^Z</p>
+<p><a name="scroll-one-line-up">(<b>scroll-one-line-up</b>) ^Z</a></p>
 
 <blockquote>
 <p>Repositions the current window on the current buffer so that the line which is currently the second line in the window becomes the first. This effectively move the buffer up one line in the window.</p>
 </blockquote>
 
 
-<p><a name="search-forward"></a>(<b>search-forward</b> <span class="cmd">search-string</span>) ^S</p>
+<p><a name="search-forward">(<b>search-forward</b> <span class="cmd">search-string</span>) ^S</a></p>
 
 <blockquote>
 <p>Searches for a match in the current buffer, moving forwards from dot and stopping at the end of the buffer. Dot is left at the end of the matched string if a match is found, or is unmoved if a match is not found.</p>
 </blockquote>
 
 
-<p><a name="search-reverse"></a>(<b>search-reverse</b> <span class="cmd">search-string</span>) ^R</p>
+<p><a name="search-reverse">(<b>search-reverse</b> <span class="cmd">search-string</span>) ^R</a></p>
 
 <blockquote>
 <p>Searches for a match in the current buffer, moving backwards from dot and stopping at the beginning of the buffer. Dot is left at the beginning of the matched string if a match is found, or is unmoved if a match is not found.</p>
 </blockquote>
 
 
-<p><a name="self-insert"></a>(<b>self-insert</b>) All inserting keys</p>
+<p><a name="self-insert">(<b>self-insert</b>) All inserting keys</a></p>
 
 <blockquote>
 <p>This function is bound to those keys which insert themselves into the current buffer. It is roughly the same as (insert-character (last-key-struck) with the exception that it does not work unless it is bound to a key.</p>
 </blockquote>
 
 
-<p><a name="send-eof-to-process"></a>(<b>send-eof-to-process</b> <span class="cmd">process-name</span>)</p>
+<p><a name="send-eof-to-process">(<b>send-eof-to-process</b> <span class="cmd">process-name</span>)</a></p>
 
 <blockquote>
 <p>Unix only</p>
@@ -103,21 +103,21 @@
 </blockquote>
 
 
-<p><a name="send-string-to-process"></a>(<b>send-string-to-process</b> <span class="cmd">process-name text</span>)</p>
+<p><a name="send-string-to-process">(<b>send-string-to-process</b> <span class="cmd">process-name text</span>)</a></p>
 
 <blockquote>
 <p>Sends the specified string to the specified subprocess. Use the wait-for-process-input-request command to ensure that the process is ready.</p>
 </blockquote>
 
 
-<p><a name="send-string-to-terminal"></a>(<b>send-string-to-terminal</b> <span class="cmd">text</span>)</p>
+<p><a name="send-string-to-terminal">(<b>send-string-to-terminal</b> <span class="cmd">text</span>)</a></p>
 
 <blockquote>
 <p>Sends the string to the terminal with no conversion or interpretation. This should only be used for such applications as loading function keys when Emacs starts up. If you disrupt the screen, Emacs will not know about it and will not fix it up automatically -- you will have to use redraw-display to do this.</p>
 </blockquote>
 
 
-<p><a name="set"></a>(<b>set</b> <span class="cmd">variable-name expression</span>)</p>
+<p><a name="set">(<b>set</b> <span class="cmd">variable-name expression</span>)</a></p>
 
 <blockquote>
 <p>Sets the value of a variable.</p>
@@ -126,14 +126,14 @@
 </blockquote>
 
 
-<p><a name="set-current-process"></a>(<b>set-current-process</b> <span class="cmd">process-name</span>)</p>
+<p><a name="set-current-process">(<b>set-current-process</b> <span class="cmd">process-name</span>)</a></p>
 
 <blockquote>
 <p>Sets the current subprocess to the specified process. The current subprocess name is used in all of the subprocess commands when a blank process name is specified.</p>
 </blockquote>
 
 
-<p><a name="set-default"></a>(<b>set-default</b> <span class="cmd">variable-name expression</span>)</p>
+<p><a name="set-default">(<b>set-default</b> <span class="cmd">variable-name expression</span>)</a></p>
 
 <blockquote>
 <p>Sets the default value of a variable.</p>
@@ -142,119 +142,119 @@
 </blockquote>
 
 
-<p><a name="set-mark"></a>(<b>set-mark</b>) ^@ (NUL)</p>
+<p><a name="set-mark">(<b>set-mark</b>) ^@ (NUL)</a></p>
 
 <blockquote>
 <p>Sets the mark at the current location of dot.</p>
 </blockquote>
 
 
-<p><a name="set-process-input-procedure"></a>(<b>set-process-input-procedure</b> <span class="cmd">process-name function</span>)</p>
+<p><a name="set-process-input-procedure">(<b>set-process-input-procedure</b> <span class="cmd">process-name function</span>)</a></p>
 
 <blockquote>
 <p>Sets the input function for the specified subprocess. Whenever the subprocess asks for input, the specified procedure is run. This procedure may then supply the process with input (using send-string-to-process).</p>
 </blockquote>
 
 
-<p><a name="set-process-name"></a>(<b>set-process-name</b> <span class="cmd">old-name new-name</span>)</p>
+<p><a name="set-process-name">(<b>set-process-name</b> <span class="cmd">old-name new-name</span>)</a></p>
 
 <blockquote>
 <p>Changes the name of a subprocess. If the process is the current process, then the current process name is changed to the new name.</p>
 </blockquote>
 
 
-<p><a name="set-process-output-buffer"></a>(<b>set-process-output-buffer</b> <span class="cmd">process-name buffer-name</span>)</p>
+<p><a name="set-process-output-buffer">(<b>set-process-output-buffer</b> <span class="cmd">process-name buffer-name</span>)</a></p>
 
 <blockquote>
 <p>Connects a buffer to the output of the specified process. All output from the process appears in this buffer. The buffer is not allowed to grow indefinitely: if it becomes larger than maximum-DCL-buffer-size characters, it will be truncated by DCL-buffer-reduction characters before the next output from the process is inserted into the buffer.</p>
 </blockquote>
 
 
-<p><a name="set-process-output-procedure"></a>(<b>set-process-output-procedure</b> <span class="cmd">process-name function</span>)</p>
+<p><a name="set-process-output-procedure">(<b>set-process-output-procedure</b> <span class="cmd">process-name function</span>)</a></p>
 
 <blockquote>
 <p>Defines the name of an MLisp function to be called when a subprocess produces output. This function is called instead of the insertion of any output into an output buffer. Use the process-output function to obtain the latest line of output from the process.</p>
 </blockquote>
 
 
-<p><a name="set-process-termination-procedure"></a>(<b>set-process-termination-procedure</b> <span class="cmd">process-name function</span>)</p>
+<p><a name="set-process-termination-procedure">(<b>set-process-termination-procedure</b> <span class="cmd">process-name function</span>)</a></p>
 
 <blockquote>
 <p>Defines an MLisp function to be called after a process has terminated. This function should be used to tidy up any resources or MLisp variables that the process may have used.</p>
 </blockquote>
 
 
-<p><a name="setq"></a>(<b>setq</b> <span class="cmd">variable-name expression</span>)</p>
+<p><a name="setq">(<b>setq</b> <span class="cmd">variable-name expression</span>)</a></p>
 
 <blockquote>
 <p>Assigns a new value to a variable.</p>
 </blockquote>
 
 
-<p><a name="setq-array"></a>(<b>setq-array</b> <span class="cmd">array index... value</span>)</p>
+<p><a name="setq-array">(<b>setq-array</b> <span class="cmd">array index... value</span>)</a></p>
 
 <blockquote>
 <p>Stores a value in an array.</p>
 </blockquote>
 
 
-<p><a name="setq-default"></a>(<b>setq-default</b> <span class="cmd">variable-name expression</span>)</p>
+<p><a name="setq-default">(<b>setq-default</b> <span class="cmd">variable-name expression</span>)</a></p>
 
 <blockquote>
 <p>Assigns a new default value to a variable.</p>
 </blockquote>
 
 
-<p><a name="shell"></a>(<b>shell</b>)</p>
+<p><a name="shell">(<b>shell</b>)</a></p>
 
 <blockquote>
 <p>Starts up an interactive DCL session in an Emacs buffer shell-n (where n is a sequence number used to identify multiple shells).</p>
 </blockquote>
 
 
-<p><a name="show-buffer"></a>(<b>show-buffer</b>)</p>
+<p><a name="show-buffer">(<b>show-buffer</b>)</a></p>
 
 <blockquote>
 <p>Describes the current buffer in a buffer called Show buffer.</p>
 </blockquote>
 
 
-<p><a name="shrink-window"></a>(<b>shrink-window</b>) ^X-^Z</p>
+<p><a name="shrink-window">(<b>shrink-window</b>) ^X-^Z</a></p>
 
 <blockquote>
 <p>Makes the current window prefix-argument lines shorter, and the window below (or the one above if there is no window below) prefix-argument lines taller. The command cannot be used if there is only one window on the screen.</p>
 </blockquote>
 
 
-<p><a name="sit-for"></a>(<b>sit-for</b> <span class="cmd">expression</span>)</p>
+<p><a name="sit-for">(<b>sit-for</b> <span class="cmd">expression</span>)</a></p>
 
 <blockquote>
 <p>Updates the display and pauses for <i>expression</i> tenths of a second. (sit-for 10) waits for one second. If an argument of zero is used, then no pause is executed, but the display is still updated.</p>
 </blockquote>
 
 
-<p><a name="spell-check-word"></a>(<b>spell-check-word</b> <span class="cmd">word</span>)</p>
+<p><a name="spell-check-word">(<b>spell-check-word</b> <span class="cmd">word</span>)</a></p>
 
 <blockquote>
 <p>Checks the spelling of the supplied word. If the word is spelled correctly then 1 is returned, otherwise 0 is returned.</p>
 </blockquote>
 
 
-<p><a name="split-current-window"></a>(<b>split-current-window</b>) ^X-2</p>
+<p><a name="split-current-window">(<b>split-current-window</b>) ^X-2</a></p>
 
 <blockquote>
 <p>Splits the current window into two, dividing the space on the screen equally between the two windows.</p>
 </blockquote>
 
 
-<p><a name="split-current-window-vertically"></a>(<b>split-current-window-vertically</b>) ^X-3</p>
+<p><a name="split-current-window-vertically">(<b>split-current-window-vertically</b>) ^X-3</a></p>
 
 <blockquote>
 <p>Takes the current window and splits it into two windows side-by-side, dividing the space on the screen equally between the two windows. An arbitrary number of windows can be created -- the only limit is the width of the screen. Each window must be at least one column wide.</p>
 </blockquote>
 
 
-<p><a name="sprintf"></a>(<b>sprintf</b> <span class="cmd">format-string args...</span>)</p>
+<p><a name="sprintf">(<b>sprintf</b> <span class="cmd">format-string args...</span>)</a></p>
 
 <blockquote>
 <p>sprintf provides a string formating command modelled after the C runtime library function of the same name.</p>
@@ -281,7 +281,7 @@
 </blockquote>
 
 
-<p><a name="start-DCL-process"></a>(<b>start-DCL-process</b> <span class="cmd">process-name</span>)</p>
+<p><a name="start-DCL-process">(<b>start-DCL-process</b> <span class="cmd">process-name</span>)</a></p>
 
 <blockquote>
 <p>Starts a DCL subprocess. Use the other subprocess commands to attach buffers and MLisp procedures to the process. The new process becomes the current process.</p>
@@ -290,35 +290,35 @@
 </blockquote>
 
 
-<p><a name="start-process"></a>(<b>start-process</b> <span class="cmd">process-name</span>)</p>
+<p><a name="start-process">(<b>start-process</b> <span class="cmd">process-name</span>)</a></p>
 
 <blockquote>
 <p>Starts a DCL subprocess. Use the other subprocess commands to attach buffers and MLisp procedures to the process. The new process becomes the current process.</p>
 </blockquote>
 
 
-<p><a name="start-remembering"></a>(<b>start-remembering</b>) ^X-(</p>
+<p><a name="start-remembering">(<b>start-remembering</b>) ^X-(</a></p>
 
 <blockquote>
 <p>Causes all following keystrokes to be remembered by Emacs as the current keyboard macro. The functions to which the keys are bound will be executed. The stop-remembering function terminates the keyboard macro definition.</p>
 </blockquote>
 
 
-<p><a name="stop-remembering"></a>(<b>stop-remembering</b>) ^X-)</p>
+<p><a name="stop-remembering">(<b>stop-remembering</b>) ^X-)</a></p>
 
 <blockquote>
 <p>Stops remembering keystrokes, as initiated by start-remembering. The remembered keystrokes are not forgotten and may be re-executed with the execute-keyboard-macro command.</p>
 </blockquote>
 
 
-<p><a name="string-to-char"></a>(<b>string-to-char</b> <span class="cmd">string</span>)</p>
+<p><a name="string-to-char">(<b>string-to-char</b> <span class="cmd">string</span>)</a></p>
 
 <blockquote>
 <p>Returns the integer value of the first character of its string argument.</p>
 </blockquote>
 
 
-<p><a name="string-extract"></a>(<b>string-extract</b> <span class="cmd">string</span> <span class="cmd">start</span> <span class="cmd">end</span>)</p>
+<p><a name="string-extract">(<b>string-extract</b> <span class="cmd">string</span> <span class="cmd">start</span> <span class="cmd">end</span>)</a></p>
 
 <blockquote>
 <p>Extract a subpart of the <span class="cmd">string</span> between positions <span class="cmd">start</span> and <span class="cmd">end</span>. The first string position is at 0, zero. Use negative position values to index from the end of the string.</p>
@@ -329,49 +329,49 @@
 </blockquote>
 
 
-<p><a name="string-index-of-first"></a>(<b>string-index-of-first</b> <span class="cmd">string</span> <span class="cmd">find</span>)</p>
+<p><a name="string-index-of-first">(<b>string-index-of-first</b> <span class="cmd">string</span> <span class="cmd">find</span>)</a></p>
 
 <blockquote>
 <p>Returns the zero based index into <span class="cmd">string</span> of the first occurrance of the string <span class="cmd">find</span>. -1 is returned if the string is not found.</p>
 </blockquote>
 
 
-<p><a name="string-index-of-last"></a>(<b>string-index-of-last</b> <span class="cmd">string</span> <span class="cmd">find</span>)</p>
+<p><a name="string-index-of-last">(<b>string-index-of-last</b> <span class="cmd">string</span> <span class="cmd">find</span>)</a></p>
 
 <blockquote>
 <p>Returns the zero based index into <span class="cmd">string</span> of the last occurrance of the string <span class="cmd">find</span>. -1 is returned if the string is not found.</p>
 </blockquote>
 
 
-<p><a name="string-index-of-string"></a>(<b>string-index-of-string</b> <span class="cmd">string</span> <span class="cmd">find</span> <span class="cmd">pos</span>)</p>
+<p><a name="string-index-of-string">(<b>string-index-of-string</b> <span class="cmd">string</span> <span class="cmd">find</span> <span class="cmd">pos</span>)</a></p>
 
 <blockquote>
 <p>Returns the zero based index into <span class="cmd">string</span> of the first occurrance of the string <span class="cmd">find</span> start at position <span class="cmd">pos</span>. -1 is returned if the string is not found.</p>
 </blockquote>
 
 
-<p><a name="substr"></a>(<b>substr</b> <span class="cmd">str pos n</span>)</p>
+<p><a name="substr">(<b>substr</b> <span class="cmd">str pos n</span>)</a></p>
 
 <blockquote>
 <p>Returns the substring of string <i>str</i> starting at position <i>pos</i> (numbering from 1) and running for <i>n</i> characters. If <i>pos</i> is less than 0, then the length of the string is added to it; the same is done for <i>n</i>.</p>
 </blockquote>
 
 
-<p><a name="switch-to-buffer"></a>(<b>switch-to-buffer</b> <span class="cmd">buffer-name</span>)^X-b</p>
+<p><a name="switch-to-buffer">(<b>switch-to-buffer</b> <span class="cmd">buffer-name</span>)^X-b</a></p>
 
 <blockquote>
 <p>Changes the buffer association of the current window to the selected buffer.</p>
 </blockquote>
 
 
-<p><a name="system-name"></a>(<b>system-name</b>)</p>
+<p><a name="system-name">(<b>system-name</b>)</a></p>
 
 <blockquote>
 <p>Returns the name of the system on which Emacs is running. This should be the DECnet or ArpaNet (or whatever) host name of the machine.</p>
 </blockquote>
 
 
-<p><a name="synchronise-files"></a>(<b>synchronise-files</b>)</p>
+<p><a name="synchronise-files">(<b>synchronise-files</b>)</a></p>
 
 <blockquote>
 <p>Use this command to have Emacs update all file buffers with newer copies of the files from the disk. For each file that has a newer version on the disk Emacs prompts asking you if you wish to read in the newer file.</p>
@@ -434,7 +434,7 @@
 </blockquote>
 
 
-<p><a name="system-name"></a>(<b>system-name</b>)</p>
+<p><a name="system-name">(<b>system-name</b>)</a></p>
 
 <blockquote>
 <p>Returns the name of the system on which Emacs is running. This should be the DECnet or ArpaNet (or whatever) host name of the machine.</p>

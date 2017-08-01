@@ -11,7 +11,7 @@
 <body>
 <div class="contents">
 
-<p><a name="nargs"></a>(<b>nargs</b>)</p>
+<p><a name="nargs">(<b>nargs</b>)</a></p>
 
 <blockquote>
 <p>Returns the number of arguments passed to the invoking MLisp function.</p>
@@ -28,7 +28,7 @@
 </blockquote>
 
 
-<p><a name="narrow-region"></a>(<b>narrow-region</b>)</p>
+<p><a name="narrow-region">(<b>narrow-region</b>)</a></p>
 
 <blockquote>
 <p>Restricts the amount of a buffer that can be manipulated to the region between dot and mark. <span class="cmd">widen-region</span> will remove the restriction.</p>
@@ -47,7 +47,7 @@
 </blockquote>
 
 
-<p><a name="narrow-window"></a>(<b>narrow-window</b>)</p>
+<p><a name="narrow-window">(<b>narrow-window</b>)</a></p>
 
 <blockquote>
 <p>Reduces the width of a vertically-split window. A window has to be at least one column wide.</p>
@@ -63,7 +63,7 @@
 </blockquote>
 
 
-<p><a name="newline"></a>(<b>newline</b>) ^M (Return)</p>
+<p><a name="newline">(<b>newline</b>) ^M (Return)</a></p>
 
 <blockquote>
 <p>Inserts a newline character into the buffer.</p>
@@ -79,7 +79,7 @@
 </blockquote>
 
 
-<p><a name="newline-and-backup"></a>(<b>newline-and-backup</b>) ^O</p>
+<p><a name="newline-and-backup">(<b>newline-and-backup</b>) ^O</a></p>
 
 <blockquote>
 <p>Inserts an end-of-line immediately after dot, effectively opening up the line. If dot is positioned at the beginning of a line, then ^O will create a blank line preceding the current line and will position dot on that new line.</p>
@@ -94,7 +94,7 @@
 </blockquote>
 
 
-<p><a name="newline-and-indent"></a>(<b>newline-and-indent</b>) ^J</p>
+<p><a name="newline-and-indent">(<b>newline-and-indent</b>) ^J</a></p>
 
 <blockquote>
 <p>Inserts a newline just as Return does, but also inserts enough tabs and spaces so that the newly-created line has the same indentation as the old line.</p>
@@ -112,7 +112,7 @@
 </blockquote>
 
 
-<p><a name="next-error"></a>(<b>next-error</b>) ^X-^N</p>
+<p><a name="next-error">(<b>next-error</b>) ^X-^N</a></p>
 
 <blockquote>
 <p>Takes the next error message (as returned from the ESC-x <span class="cmd">compile-it</span> command), visits the file in which the error occurred and sets dot to the line in which that error occurred. The error message will be displayed at the top of the window associated with the Error log buffer.</p>
@@ -127,7 +127,7 @@
 </blockquote>
 
 
-<p><a name="next-line"></a>(<b>next-line</b> <span class="cmd">repeat-count</span>) ^N</p>
+<p><a name="next-line">(<b>next-line</b> <span class="cmd">repeat-count</span>) ^N</a></p>
 
 <blockquote>
 <p>Moves dot down <span class="cmd">prefix-argument</span> times <span class="cmd">repeat-count</span> lines. If <span class="cmd">repeat-count</span> is omitted, 1 is assumed. <span class="cmd">next-line</span> attempts to keep dot at the same horizontal character position as you move from line to line.</p>
@@ -143,7 +143,7 @@
 </blockquote>
 
 
-<p><a name="next-page"></a>(<b>next-page</b>) page-down</p>
+<p><a name="next-page">(<b>next-page</b>) page-down</a></p>
 
 <blockquote>
 <p>Repositions the current window on the current buffer so that the page prefix-argument pages forward is visible in the window (where a page is a group of lines 4/5th's the size of the window). If possible, dot is kept where it is, otherwise it is moved to the middle of the new page.</p>
@@ -158,7 +158,7 @@
 </blockquote>
 
 
-<p><a name="next-window"></a>(<b>next-window</b>) ^X-n</p>
+<p><a name="next-window">(<b>next-window</b>) ^X-n</a></p>
 
 <blockquote>
 <p>Switches to the window (and associated buffer) that is below the current window. If there is no lower window, moves to the window at the top of the screen.</p>
@@ -175,7 +175,7 @@
 </blockquote>
 
 
-<p><a name="normal-mode"></a>(<b>normal-mode</b>)</p>
+<p><a name="normal-mode">(<b>normal-mode</b>)</a></p>
 
 <blockquote>
 <p>Turns on Normal Mode -- default major mode which Emacs gives to all new buffers that it creates. It provides a general text manipulating environment with no special features.</p>
@@ -192,7 +192,7 @@
 </blockquote>
 
 
-<p><a name="novalue"></a>(<b>novalue</b>)</p>
+<p><a name="novalue">(<b>novalue</b>)</a></p>
 
 <blockquote>
 <p>Does nothing. <span class="cmd">novalue</span> is a complete no-op -- it performs no action and returns no value.</p>

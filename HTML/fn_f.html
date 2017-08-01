@@ -37,7 +37,7 @@
 </blockquote>
 
 
-<p><a name="fetch-database-entry"></a>(<b>fetch-database-entry</b> <span class="cmd">dbname</span> <span class="cmd">key</span>)</p>
+<p><a name="fetch-database-entry">(<b>fetch-database-entry</b> <span class="cmd">dbname</span> <span class="cmd">key</span>)</a></p>
 
 <blockquote>
 <p>Reads the entry in the database corresponding to the given key and inserts it into the current buffer.</p>
@@ -54,7 +54,7 @@
 </blockquote>
 
 
-<p><a name="fetch-help-database-entry"></a>(<b>fetch-help-database-entry</b> <span class="cmd">dbname</span> <span class="cmd">keys-string</span>)</p>
+<p><a name="fetch-help-database-entry">(<b>fetch-help-database-entry</b> <span class="cmd">dbname</span> <span class="cmd">keys-string</span>)</a></p>
 
 <blockquote>
 <p><b>VMS only</b></p>
@@ -89,7 +89,7 @@ copy /log
 </ul>
 
 
-<p><a name="file-exists"></a>(<b>file-exists</b> <span class="cmd">file-name</span>)</p>
+<p><a name="file-exists">(<b>file-exists</b> <span class="cmd">file-name</span>)</a></p>
 
 <blockquote>
 <p>Returns 1 if the specified file exists and is writeable, -1 if the file exists but is only readable, and 0 otherwise.</p>
@@ -104,7 +104,7 @@ copy /log
 </blockquote>
 
 
-<p><a name="file-format-string"></a>(<b>file-format-string</b> <span class="cmd">format</span> <span class="cmd">file-name</span>)</p>
+<p><a name="file-format-string">(<b>file-format-string</b> <span class="cmd">format</span> <span class="cmd">file-name</span>)</a></p>
 
 <blockquote>
 <p><span class="cmd">file-format-string</span> is used to create formatted string based on parts of filenames.</p>
@@ -238,7 +238,7 @@ c:\users\<br />
 </blockquote>
 
 
-<p><a name="file-is-a-directory"></a>(<b>file-is-a-directory</b> <span class="cmd">file-name</span>)</p>
+<p><a name="file-is-a-directory">(<b>file-is-a-directory</b> <span class="cmd">file-name</span>)</a></p>
 
 <blockquote>
 <p>Returns 1 if the specified <span class="cmd">file-name</span> is a directory and 0 otherwise.</p>
@@ -261,14 +261,14 @@ c:\users\<br />
 </blockquote>
 
 
-<p><a name="file-name-expand-and-default"></a>(<b>file-name-expand-and-default</b> <span class="cmd">file-name</span> <span class="cmd">default-file-name</span>)</p>
+<p><a name="file-name-expand-and-default">(<b>file-name-expand-and-default</b> <span class="cmd">file-name</span> <span class="cmd">default-file-name</span>)</a></p>
 
 <blockquote>
 <p>Returns a string containing a file name. The file name returned is the <span class="cmd">file-name</span> will any missing part of the file name defaulted from the <span class="cmd">default-file-name</span> parameter and the current working directory.</p>
 </blockquote>
 
 
-<p><a name="filter-region"></a>(<b>filter-region</b> <span class="cmd">command</span>)</p>
+<p><a name="filter-region">(<b>filter-region</b> <span class="cmd">command</span>)</a></p>
 
 <blockquote>
 <p>Takes the region and passes it as input to the given operating system command. The output from the command replaces the region. The contets of the region are saved in <span class="cmd">Kill buffer</span>.</p>
@@ -283,7 +283,7 @@ c:\users\<br />
 </blockquote>
 
 
-<p><a name="following-char"></a>(<b>following-char</b>)</p>
+<p><a name="following-char">(<b>following-char</b>)</a></p>
 
 <blockquote>
 <p>Returns the character immediately following dot as an integer. The null character (0) is returned if dot is at the end of the buffer.</p>
@@ -299,7 +299,7 @@ c:\users\<br />
 </blockquote>
 
 
-<p><a name="force-exit-process"></a>(<b>force-exit-process</b> <span class="cmd">process-name exit-code</span>)</p>
+<p><a name="force-exit-process">(<b>force-exit-process</b> <span class="cmd">process-name exit-code</span>)</a></p>
 
 <blockquote>
 <p>Forces the image running is the specified subprocess to exit with the specified code. This can be used to stop an image that has run amok. All exit handlers for the image will be run.</p>
@@ -323,7 +323,7 @@ c:\users\<br />
 </blockquote>
 
 
-<p><a name="forward-balanced-paren-line"></a>(<b>forward-balanced-paren-line</b> <span class="cmd">expression-1</span>)</p>
+<p><a name="forward-balanced-paren-line">(<b>forward-balanced-paren-line</b> <span class="cmd">expression-1</span>)</a></p>
 
 <blockquote>
 <p>Moves dot forward until either the end of the buffer is reached, or an unmatched closing parenthesis is encountered, or the beginning of a line is encountered at parenthesis level zero, that is, without an unmatched parenthesis existing between the line and the starting position of dot.</p>
@@ -343,7 +343,7 @@ c:\users\<br />
 </blockquote>
 
 
-<p><a name="forward-character"></a>(<b>forward-character</b> <span class="cmd">repeat-count</span>) ^F or right-arrow</p>
+<p><a name="forward-character">(<b>forward-character</b> <span class="cmd">repeat-count</span>) ^F or right-arrow</a></p>
 
 <blockquote>
 <p>Moves dot forward prefix-argument times <span class="cmd">repeat-count</span> characters. If <span class="cmd">repeat-count</span> is omitted, 1 is assumed. End-of-lines and tabs each count as one character. You cannot move past the end of the buffer.</p>
@@ -357,7 +357,7 @@ c:\users\<br />
 </blockquote>
 
 
-<p><a name="forward-paragraph"></a>(<b>forward-paragraph</b>) ESC-)</p>
+<p><a name="forward-paragraph">(<b>forward-paragraph</b>) ESC-)</a></p>
 
 <blockquote>
 <p>Moves dot to the end of the current or following paragraph. Blank lines that separate paragraphs and are not considered parts of paragraphs.</p>
@@ -373,7 +373,7 @@ c:\users\<br />
 </blockquote>
 
 
-<p><a name="forward-paren"></a>(<b>forward-paren</b>)</p>
+<p><a name="forward-paren">(<b>forward-paren</b>)</a></p>
 
 <blockquote>
 <p>Moves dot forward until an unmatched closing parenthesis, or the end of the buffer is found. This can be used to aid in skipping over Lisp S-expressions.</p>
@@ -394,7 +394,7 @@ c:\users\<br />
 </blockquote>
 
 
-<p><a name="forward-sentence"></a>(<b>forward-sentence</b>) ESC-e</p>
+<p><a name="forward-sentence">(<b>forward-sentence</b>) ESC-e</a></p>
 
 <blockquote>
 <p>Moves dot forward to the end of a sentence. A sentence is bounded by the string variable <span class="cmd">sentence-delimiters</span>.</p>
@@ -408,7 +408,7 @@ c:\users\<br />
 </blockquote>
 
 
-<p><a name="forward-word"></a>(<b>forward-word</b> <span class="cmd">repeat-count</span>) ESC-f</p>
+<p><a name="forward-word">(<b>forward-word</b> <span class="cmd">repeat-count</span>) ESC-f</a></p>
 
 <blockquote>
 <p>Moves dot forward to the end of the prefix-argument times <span class="cmd">repeat-count</span> word. If <span class="cmd">repeat-count</span> is omitted, 1 is assumed. If dot is not currently in the middle of a word, the command skips all intervening punctuation. It then skips over the words, leaving dot positioned after the last character of the word.</p>
@@ -426,7 +426,7 @@ c:\users\<br />
 </blockquote>
 
 
-<p><a name="fundamental-mode"></a>(<b>fundamental-mode</b>)</p>
+<p><a name="fundamental-mode">(<b>fundamental-mode</b>)</a></p>
 
 <blockquote>
 <p>Turns on a major mode similar to Normal Mode. It provides a natural environment for processing ordinary text, or program sources for which there is no specialised language mode. The main advantage of Fundamental Mode over Normal mode is that it displays parenthesis balancing.</p>
