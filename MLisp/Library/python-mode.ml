@@ -219,6 +219,7 @@
 (defun
     (Python-within-class
         (save-window-excursion
+            (end-of-line)       ; cover the case of being on the class line
             (ere-search-reverse "^class\\s+(\\w+)")
             (region-around-match 1)
             (region-to-string)
@@ -229,6 +230,7 @@
 (defun
     (Python-within-def
         (save-window-excursion
+            (end-of-line)       ; cover the case of being on the def line
             (ere-search-reverse "\\bdef\\s+(\\w+)")
             (region-around-match 1)
             (region-to-string)
@@ -238,8 +240,20 @@
 
 (defun
     (Python-within-class-def
-        (concat (Python-within-class) "." (Python-within-def))
+        (save-window-excursion
+            (set-mark)
+            (ere-search-reverse "^class\\s+(\\w+)")
+            (exchange-dot-and-mark)
+            (end-of-line)
+            (save-restriction
+                (narrow-region)
+                (if (error-occurred (Python-within-def))
+                    (Python-within-class)
+                    (concat (Python-within-class) "." (Python-within-def)))
+            )
+        )
     )
+)
 )
 
 (defun
