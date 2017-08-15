@@ -9,7 +9,7 @@ ${PYTHON} make_be_images.py
 cp be_*.py ${ROOT_DIR}${LIB_DIR}
 
 cat <<EOF >${ROOT_DIR}${BIN_DIR}/bemacs_server
-#/usr/bin/python3
+#!/usr/bin/python3
 import sys
 sys.path.insert( 0, "${LIB_DIR}" )
 import be_main
