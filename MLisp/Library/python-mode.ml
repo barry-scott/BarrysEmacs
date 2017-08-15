@@ -3,6 +3,8 @@
 ;
 (declare-global Python-checker-command)
 (declare-global Python-default-version)
+(declare-global Python2-executable)
+(declare-global Python3-executable)
 (declare-buffer-specific Python-command)
 
 (defun
@@ -15,12 +17,16 @@
     (progn
         (setq Python-checker-command "nmake.exe check")
         (setq Python-default-version 3)
-        (setq-default Python-command "py -3")
+        (setq Python2-executable "py -2")
+        (setq Python3-executable "py -3")
+        (setq-default Python-command Python3-executable)
     )
     (progn
         (setq Python-checker-command "make check")
         (setq Python-default-version 3)
-        (setq-default Python-command "python3")
+        (setq Python2-executable "python2")
+        (setq Python3-executable "python3")
+        (setq-default Python-command Python3-executable)
     )
 )
 
@@ -41,11 +47,7 @@
         (use-syntax-table "Python2")
         (use-local-map "Python-map")
         (use-abbrev-table "Python2")
-        (if
-            (is-windows)
-            (setq Python-command "py -2")
-            (setq Python-command "python")
-        )
+        (setq Python-command Python2-executable)
         (novalue)
     )
 )
@@ -56,11 +58,7 @@
         (use-syntax-table "Python3")
         (use-local-map "Python-map")
         (use-abbrev-table "Python3")
-        (if
-            (is-windows)
-            (setq Python-command "py -3")
-            (setq Python-command "python")
-        )
+        (setq Python-command Python3-executable)
         (novalue)
     )
 )
@@ -218,6 +216,31 @@
     )
 )
 
+(defun
+    (Python-within-class
+        (save-window-excursion
+            (ere-search-reverse "^class\\s+(\\w+)")
+            (region-around-match 1)
+            (region-to-string)
+        )
+    )
+)
+
+(defun
+    (Python-within-def
+        (save-window-excursion
+            (ere-search-reverse "\\bdef\\s+(\\w+)")
+            (region-around-match 1)
+            (region-to-string)
+        )
+    )
+)
+
+(defun
+    (Python-within-class-def
+        (concat (Python-within-class) "." (Python-within-def))
+    )
+)
 
 (defun
     ~Python-quote-file( ~file )
