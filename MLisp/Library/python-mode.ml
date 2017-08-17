@@ -217,10 +217,65 @@
 )
 
 (defun
+    (Python-previous-class
+        (if
+            (error-occurred
+                (beginning-of-line)
+                (ere-search-reverse "^[ \t]*class\\s+(\\w+)")
+            )
+            (error-message "Python class not found")
+        )
+    )
+)
+
+(defun
+    (Python-next-class
+        (if
+            (error-occurred
+                (end-of-line)
+                (ere-search-forward "^[ \t]*class\\s+(\\w+)")
+                (beginning-of-line)
+            )
+            (error-message "Python class not found")
+        )
+    )
+)
+
+(defun
+    (Python-previous-def
+        (if
+            (error-occurred
+                (beginning-of-line)
+                (ere-search-reverse "^[ \t]*\\bdef\\s+(\\w+)")
+                (beginning-of-line)
+                (error-occurred
+                    (message "In " (Python-within-class-def)))
+            )
+            (error-message "Python function def not found")
+        )
+    )
+)
+
+(defun
+    (Python-next-def
+        (if
+            (error-occurred
+                (end-of-line)
+                (ere-search-forward "^[ \t]*\\bdef\\s+(\\w+)")
+                (beginning-of-line)
+                (error-occurred
+                    (message "In " (Python-within-class-def)))
+            )
+            (error-message "Python function def not found")
+        )
+    )
+)
+
+(defun
     (Python-within-class
         (save-window-excursion
             (end-of-line)       ; cover the case of being on the class line
-            (ere-search-reverse "^class\\s+(\\w+)")
+            (ere-search-reverse "^[ \t]*class\\s+(\\w+)")
             (region-around-match 1)
             (region-to-string)
         )
@@ -231,7 +286,7 @@
     (Python-within-def
         (save-window-excursion
             (end-of-line)       ; cover the case of being on the def line
-            (ere-search-reverse "\\bdef\\s+(\\w+)")
+            (ere-search-reverse "^[ \t]*\\bdef\\s+(\\w+)")
             (region-around-match 1)
             (region-to-string)
         )
@@ -242,18 +297,33 @@
     (Python-within-class-def
         (save-window-excursion
             (set-mark)
-            (ere-search-reverse "^class\\s+(\\w+)")
-            (exchange-dot-and-mark)
             (end-of-line)
-            (save-restriction
-                (narrow-region)
-                (if (error-occurred (Python-within-def))
-                    (Python-within-class)
-                    (concat (Python-within-class) "." (Python-within-def)))
+            (if
+                (error-occurred (ere-search-reverse "^[ \t]*class\\s+(\\w+)"))
+                ; no class
+                (if
+                    (error-occurred (Python-within-def))
+                    ; no def or class
+                    "module level"
+                    (Python-within-def)
+                )
+                (progn
+                    (exchange-dot-and-mark)
+                    (end-of-line)
+                    (save-restriction
+                        (narrow-region)
+                        (if
+                            (error-occurred (Python-within-def))
+                            ; no def found
+                            (Python-within-class)
+                            ; have a class and def
+                            (concat (Python-within-class) "." (Python-within-def))
+                        )
+                    )
+                )
             )
         )
     )
-)
 )
 
 (defun
