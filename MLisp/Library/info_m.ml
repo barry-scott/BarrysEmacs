@@ -1,12 +1,12 @@
 (defun
     (~info-m
-        s
-        (if (setq s (info-check-menu))
+        ~s-pos
+        (if (setq ~s-pos (info-check-menu))
             (progn
                 (save-window-excursion
-                    (if (> (+ s 0) (+ 0 (dot)))
+                    (if (> (+ ~s-pos 0) (+ 0 (dot)))
                         (progn
-                            (goto-character s)
+                            (goto-character ~s-pos)
                             (if (! (dot-is-visible))
                                 (error-occurred
                                     (line-to-top-of-window)
@@ -15,9 +15,9 @@
                             )
                         )
                     )
-                    (setq s (get-tty-string "Menu item: "))
+                    (setq ~s-pos (get-tty-string "Menu item: "))
                 )
-                (info-goto-menu-item s)
+                (info-goto-menu-item ~s-pos)
             )
             (error-message "This node has no menu.")
         )

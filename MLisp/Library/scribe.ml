@@ -1,13 +1,13 @@
 (defun
     (apply-look go-forward
-        (save-excursion c
+        (save-excursion ~char
             (if (! (eolp)) (forward-character))
             (setq go-forward -1)
             (backward-word)
-            (setq c (get-tty-character))
-            (if (> c ' ')
+            (setq ~char (get-tty-character))
+            (if (> ~char ' ')
                 (progn (insert-character '@')
-                    (insert-character c)
+                    (insert-character ~char)
                     (insert-character '[')
                     (forward-word)
                     (setq go-forward (dot))

@@ -13,15 +13,15 @@
     )
 )
 (defun
-    (dedent-relative i col
-        (setq i (current-indent))
-        (setq col 1)
+    (dedent-relative ~indent ~col
+        (setq ~indent (current-indent))
+        (setq ~col 1)
         (if (! (save-excursion (beginning-of-line) (bobp)))
             (save-excursion
                 (previous-line)
                 (beginning-of-line)
                 (while (& (! (bobp))
-                           (>= (current-indent) i)
+                           (>= (current-indent) ~indent)
                            (!= (current-indent)
                                (save-excursion
                                    (end-of-line) (current-column)
@@ -30,17 +30,17 @@
                        )
                     (previous-line)
                 )
-                (if (! (bobp)) (setq col (current-indent)))
+                (if (! (bobp)) (setq ~col (current-indent)))
             )
         )
-        (save-excursion (delete-white-space) (to-col col))
+        (save-excursion (delete-white-space) (to-col ~col))
     )
 )
 (defun
-    (indent-relative col i
+    (indent-relative ~col ~indent
 
-        (setq col 0)
-        (setq i (current-column))
+        (setq ~col 0)
+        (setq ~indent (current-column))
         (if (! (save-excursion (beginning-of-line) (bobp)))
             (save-excursion
                 (previous-line)
@@ -59,11 +59,11 @@
                         )
                     )
                     (forward-character))
-                (if (! (eolp)) (setq col (current-column)))
+                (if (! (eolp)) (setq ~col (current-column)))
             )
         )
-        (if col
-            (progn (delete-white-space) (to-col col))
+        (if ~col
+            (progn (delete-white-space) (to-col ~col))
             (to-col
                 (+
                     (* logical-tab-size (/ (current-column) logical-tab-size))

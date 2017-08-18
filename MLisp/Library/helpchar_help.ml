@@ -1,6 +1,6 @@
 (defun
     (~helpchar-help
-        x
+        ~char
         (save-window-excursion
             (switch-to-buffer "Help h window")
             (erase-buffer)
@@ -27,10 +27,10 @@
             )
             (beginning-of-file)
             (message "-- Type any character to continue HELP --")
-            (setq x (get-tty-character))
-            (if (| (= x 'a') (= x 'd') (= x 'i') (= x 'n') (= x 'v')
-                    (= x 'h') (= x 'k') (= x 'b') (= x 'c') (= x 'w'))
-                (push-back-character x)
+            (setq ~char (get-tty-character))
+            (if (| (= ~char 'a') (= ~char 'd') (= ~char 'i') (= ~char 'n') (= ~char 'v')
+                    (= ~char 'h') (= ~char 'k') (= ~char 'b') (= ~char 'c') (= ~char 'w'))
+                (push-back-character ~char)
             )
             (help-key)
         )
