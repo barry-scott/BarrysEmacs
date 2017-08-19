@@ -346,6 +346,36 @@
     )
     ~new-file
 )
+
+(defun
+    (Python-traceback-visit-file
+        ~filename ~line
+        (setq ~filename "")
+        (beginning-of-line)
+        (if
+            (error-occurred
+                (ere-search-forward "File \"(.*)\", line (\\d+),")
+                (save-excursion
+                    (region-around-match 1)
+                    (setq ~filename (region-to-string))
+                    (region-around-match 2)
+                    (setq ~line (region-to-string))
+                )
+                (beginning-of-line)
+                (next-line)
+            )
+            (message "Python traceback not found")
+            (= ~filename "<stdin>")
+            (message "traceback in <stdin>")
+            (progn
+                (visit-file ~filename)
+                (goto-line ~line)
+                (message "foo")
+            )
+        )
+    )
+)
+
 ;
 ; Python 2 syntax table
 ;
