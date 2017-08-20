@@ -26,6 +26,10 @@ case "$1" in
     shift
     gdb exe-cli-bemacs/bemacs-cli
     ;;
+--lldb)
+    shift
+    lldb exe-cli-bemacs/bemacs-cli
+    ;;
 *)
     exe-cli-bemacs/bemacs-cli "$@"
     ;;
