@@ -1,21 +1,21 @@
 (progn
 ;
-;    Copyright (c) 1983-2016 Barry A. Scott
+;    Copyright (c) 1983-2017 Barry A. Scott
 ;
 ;       lisp mode package
 ;
 (defun
-    (paren-pause dot instabs
+    (paren-pause ~dot ~ins-tabs
         (if (eolp) (delete-white-space))
-        (setq instabs (bolp))
-        (setq dot (dot))
+        (setq ~ins-tabs (bolp))
+        (setq ~dot (dot))
         (insert-character ')')
         (save-excursion
             (backward-paren 0)
-            (if instabs
+            (if ~ins-tabs
                 (save-excursion descol
                     (setq descol (current-column))
-                    (goto-character dot)
+                    (goto-character ~dot)
                     (to-col descol)
                 )
             )
@@ -25,49 +25,44 @@
     )
 )
 (defun
-    (nl-indent column
+    (nl-indent ~column
         (delete-white-space)
-
         (save-excursion
-            (backward-balanced-paren-line 0)
-            (setq column
-                (if (bolp)
-                    (current-indent)
-                    (+ (current-column) 4)
-                )
-            )
-            (if (< column 5) (setq column 5))
+            (backward-balanced-paren-line 1)
+            (setq ~column (+ (current-indent) 4))
+            (if (< ~column 5)
+                (setq ~column 5))
         )
         (newline)
-        (to-col column)
+        (to-col ~column)
     )
 )
 (defun
     (re-indent-line
-        (save-excursion column
+        (save-excursion ~column
             (beginning-of-line)
             (delete-white-space)
-            (save-excursion
-                (if (= (following-char) ')')
-                    (progn
-                        (forward-character)
-                        (backward-paren 0)
-                        (setq column (current-column))
-                    )
-                    (progn
-                        (backward-character)
-                        (backward-balanced-paren-line 0)
-                        (setq column
-                            (if (bolp)
-                                (current-indent)
-                                (+ (current-column) 4)
+            (if (! (eolp))
+                (progn
+                    (save-excursion
+                        (if (= (following-char) ')')
+                            (progn
+                                (forward-character)
+                                (backward-paren 0)
+                                (setq ~column (current-column))
+                            )
+                            (progn
+                                (backward-character)
+                                (backward-balanced-paren-line 1)
+                                (setq ~column (+ (current-indent) 4))
+                                (if (< ~column 5)
+                                    (setq ~column 5))
                             )
                         )
-                        (if (< column 5) (setq column 5))
                     )
+                    (to-col ~column)
                 )
             )
-            (to-col column)
         )
     )
 )
@@ -75,11 +70,10 @@
     (indent-lisp-function
         (message "Indenting function...") (sit-for 0)
         (save-excursion
-            (if (error-occurred (end-of-line) (search-reverse "(defun"))
+            (if (error-occurred (end-of-line) (ere-search-reverse "\\(defun(?S=C*S*)"))
                 (error-message "Cannot find function")
             )
             (set-mark)
-            ;       (forward-character)
             (forward-paren 0)
             (exchange-dot-and-mark)
             (delete-white-space)
@@ -177,7 +171,7 @@
     (zap-defun
         (save-excursion
             (end-of-line)
-            (re-search-reverse "\\S\\C(defun")
+            (ere-search-reverse "(defun(?S=C*S*)")
             (set-mark)
             (forward-paren 0)
             (end-of-line)
