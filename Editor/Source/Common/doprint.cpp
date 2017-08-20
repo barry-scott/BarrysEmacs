@@ -199,7 +199,7 @@ void FormatString::process_format()
             put( EmacsChar_t( intArg ) );
             break;
 
-        case 'C':    // ensure are in a printable char
+        case 'C':    // show non-printable char as .
             {
                 EmacsChar_t ch = EmacsChar_t( intArg );
                 if( control_character( ch ) )
