@@ -311,7 +311,6 @@ void SearchAdvancedAlgorithm::compile_expression( const EmacsString &pattern )
         term->appendTerm( group_end );
         m_expression = group_start;
 
-
         last_search_string = pattern;
     }
     catch( RegularExpressionSyntaxError &e )
@@ -374,7 +373,7 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_re( EmacsStringStream &pat
     while( !pattern.atEnd() );
 
     //
-    // link all ther terms together
+    // link all the terms together
     //
     std::list<RegularExpressionTerm *>::iterator a = re_list.begin();
     std::list<RegularExpressionTerm *>::iterator b = re_list.begin();
@@ -879,12 +878,15 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_set( EmacsStringStream &pa
 //                s1 - string type 1
 //                s2 - string type 2
 //                s3 - string type 3
+//                s* - string type 1, 2 and 3
 //                c1 - comment type 1
 //                c2 - comment type 2
 //                c3 - comment type 3
+//                c* - comment type 1, 2 and 3
 //                k1 - keyword type 1
 //                k2 - keyword type 2
 //                k3 - keyword type 3
+//                k* - keyword type 1, 2 and 3
 //            Only once of the s, c and k types combine meaningfully
 //
 //      Any other character following ? is reserved
@@ -991,6 +993,11 @@ static void addAnyOf( EmacsStringStream &pattern, RegularExpressionSyntaxMatch &
     case '1':   match.addAnyOf( mask, type1 ); break;
     case '2':   match.addAnyOf( mask, type2 ); break;
     case '3':   match.addAnyOf( mask, type3 ); break;
+    case '*':
+                match.addAnyOf( mask, type1 );
+                match.addAnyOf( mask, type2 );
+                match.addAnyOf( mask, type3 );
+                break;
     default:
         throw RegularExpressionSyntaxError( "expecting 1, 2 or 3" );
     };
@@ -1004,6 +1011,11 @@ static void addNoneOf( EmacsStringStream &pattern, RegularExpressionSyntaxMatch 
     case '1':   match.addNoneOf( mask, type1 ); break;
     case '2':   match.addNoneOf( mask, type2 ); break;
     case '3':   match.addNoneOf( mask, type3 ); break;
+    case '*':
+                match.addNoneOf( mask, type1 );
+                match.addNoneOf( mask, type2 );
+                match.addNoneOf( mask, type3 );
+                break;
     default:
         throw RegularExpressionSyntaxError( "expecting 1, 2 or 3" );
     };
@@ -1028,6 +1040,10 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_syntax_match( EmacsStringS
 
         switch( ch )
         {
+        case '=':
+            match->setLookingAt();
+            break;
+
         case 'w':
             match->addAnyOf( SYNTAX_WORD, SYNTAX_WORD );
             break;
@@ -1055,13 +1071,13 @@ RegularExpressionTerm *SearchAdvancedAlgorithm::parse_syntax_match( EmacsStringS
         default:
             if( raw_stream.atEnd() )
             {
-                throw RegularExpressionSyntaxError( FormatString("expecting 1, 2 or 3 after %c") << ch );
+                throw RegularExpressionSyntaxError( FormatString("expecting 1, 2, 3 or * after %c") << ch );
             }
 
             int ch2 = raw_stream.peekNextChar();
-            if( ch2 != '1' && ch2 != '2' && ch2 != '3' )
+            if( ch2 != '1' && ch2 != '2' && ch2 != '3' && ch2 != '*')
             {
-                throw RegularExpressionSyntaxError( FormatString("expecting 1, 2 or 3 after %c") << ch );
+                throw RegularExpressionSyntaxError( FormatString("expecting 1, 2, 3 or * after %c") << ch );
             }
 
             switch( ch )

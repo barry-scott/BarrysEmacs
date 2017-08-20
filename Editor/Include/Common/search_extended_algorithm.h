@@ -418,6 +418,7 @@ public:
 
     void addAnyOf( SyntaxKind_t mask, SyntaxKind_t value );
     void addNoneOf( SyntaxKind_t mask, SyntaxKind_t value );
+    void setLookingAt();
 
 private:
     typedef std::pair<SyntaxKind_t, SyntaxKind_t> SyntaxMatchPair_t;
@@ -425,4 +426,5 @@ private:
 
     SyntaxMatchList_t   m_any_of;
     SyntaxMatchList_t   m_none_of;
+    bool m_looking_at;
 };
