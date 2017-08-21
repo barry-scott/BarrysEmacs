@@ -71,7 +71,6 @@ class BemacsDatabaseTools:
         if output != '':
             sys.stdout.write( output.decode( 'utf-8' ) )
 
-
     def create( self, lib_name ):
         self._run_command( [self.__dbcreate, lib_name, '-c'] )
 
@@ -201,6 +200,8 @@ library_files =    [
     ('common',    'Library/page.ml'),
     ('common',    'Library/paragraph.ml'),
     ('common',    'Library/pascal.ml'),
+    ('common',    'Library/puppet-mode.ml'),
+    ('common',    'Library/puppet-mode.key'),
     ('common',    'Library/pc-keyboard.ml'),
     ('common',    'Library/pc-mouse.ml'),
     ('common',    'Library/process.key'),
