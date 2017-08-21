@@ -7,44 +7,37 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
-# if defined( _WINDOWS )
+# if defined( _WIN32 )
 #  include <win_incl.h>
-//# include <emacs_process.h>
-extern "C" { int _getpid(void); };
+#  include <process.h>
 
-unsigned int getpid()
+extern EmacsString emacs_tmpnam();
+
+void init_subprocesses()
 {
-    return _getpid();
 }
 
-# endif
-# if defined( _NT )
-static void exec_bf
-    (
-    const EmacsString &bufname,
-    int display,
-    const EmacsString &input,
-    int erase,
-    ...
-    );
-# endif
-
-# if defined( _WINDOWS )
 int return_to_monitor( void )
 {
     return no_value_command();
 }
-# endif
-# if defined( _NT)
-static void exec_bf
+
+int pause_emacs( void )
+{
+    return 0;
+}
+
+void exec_bf
     (
     const EmacsString &bufname,
     int display,
     const EmacsString &input,
     int erase,
+    const char *command,
     ...
     )
 {
+    EmacsBufferRef old( bf_cur );
     va_list argp;
 
     EmacsString output = emacs_tmpnam();
@@ -54,26 +47,19 @@ static void exec_bf
         return;
     }
 
-    va_start( argp, erase );
-
-    if( saved_buffer_count >= SAVED_BUFFER_MAX - 2 )
-    {
-        error( "not enough space to remember buffers" );
-        return;
-    }
+    va_start( argp, command );
 
     int disp_flag = display;
 
-    saved_buffers[saved_buffer_count] = bf_cur;
-    saved_buffer_count++;
-
     EmacsBuffer::set_bfn( bufname );
-
     if( interactive() )
+    {
         theActiveView->window_on( bf_cur );
-
+    }
     if( erase )
+    {
         bf_cur->erase_bf();
+    }
 
     if( disp_flag )
     {
@@ -132,8 +118,9 @@ static void exec_bf
             error( "Failed to close process handle in exec_bf" );
     }
     else
+    {
         error( FormatString("Failed to execute shell, error = %d\n") << GetLastError() );
-
+    }
 
     // insert the output file
     bf_cur->read_file( output, 0, 0 );
@@ -142,12 +129,9 @@ static void exec_bf
 
     bf_cur->b_modified = 0;
 
-    saved_buffer_count--;
-    if( interactive() )
-        theActiveView->window_on( saved_buffers[saved_buffer_count] );
-
     if( disp_flag )
+    {
         message( "Done." );
-    return;
+    }
 }
 # endif

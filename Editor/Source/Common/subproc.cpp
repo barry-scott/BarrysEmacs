@@ -74,8 +74,12 @@ static int tmp_name_count = 1;
 #  include <unistd.h>
 # endif
 
-# if defined( __unix__ ) || defined( _NT )
-static EmacsString emacs_tmpnam()
+#if defined( WIN32 )
+#include <process.h>
+#endif
+
+# if defined( __unix__ ) || defined( WIN32 )
+EmacsString emacs_tmpnam()
 {
     char *tmp_dir = getenv("TMP");
     if( tmp_dir == NULL )
@@ -88,8 +92,11 @@ static EmacsString emacs_tmpnam()
     if( tmp[-1] != PATH_CH )
         tmp.append( PATH_CH );
 
+#if defined( WIN32 )
+    unsigned int pid = _getpid();
+#else
     unsigned int pid = getpid();
-
+#endif
     for( int attempt=0; attempt < 10; attempt++ )
     {
         EmacsString result = FormatString("%semacs_%x_%d.tmp")
@@ -136,10 +143,11 @@ void filter_through(int n, const EmacsString &command );
 
 unsigned int parent_pid;
 
+#if defined( EXEC_BF )
+extern void exec_bf( const EmacsString &bufname, int display, const EmacsString &input, int erase, const char *command, ... );
+#endif
+
 # if defined( __unix__ )
-
-static void exec_bf( const EmacsString &bufname, int display, const EmacsString &input, int erase, const char *command, ... );
-
 int pause_emacs( void )
 {
 #  if 0
@@ -211,13 +219,13 @@ void filter_through( int n, const EmacsString &command )
     old.set_bf();
 
 # if defined( vms )
-    exec_bf( bf_cur->b_buf_name, 0, tempfile, 0, command.data(), NULL );
+    exec_bf( bf_cur->b_buf_name, 0, tempfile, 0, "notused", command.data(), NULL );
 # endif
 # if defined( __unix__ )
     exec_bf( bf_cur->b_buf_name, 0, tempfile, 0, shell(), "-c", command.utf8_data(), NULL );
 # endif
-# if defined( _NT )
-    exec_bf( bf_cur->b_buf_name, 0, tempfile, 0, command.data(), NULL );
+# if defined( WIN32 )
+    exec_bf( bf_cur->b_buf_name, 0, tempfile, 0, "notused", command.utf8_data(), NULL );
 # endif
 
     if( bf_cur->b_modified == 0 )
@@ -304,7 +312,7 @@ static void readPipe( int fd, int display )
 // execute a subprocess with the output being stuffed into the named
 // buffer. exec_bf is called with the command as a list of strings as
 // seperate arguments
-static void exec_bf
+void exec_bf
     (
     const EmacsString &buffer,
     int display,

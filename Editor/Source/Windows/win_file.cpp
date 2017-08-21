@@ -485,57 +485,6 @@ static EmacsString convertShortPathToLongPath( const EmacsString &short_path )
     return longPath;
 }
 
-int match_wild( const EmacsString &candidate, const EmacsString &pattern )
-{
-    const unsigned char *cp, *pp;    // candidate and pattern pointers
-    const unsigned char *scp, *spp;    // saved cp and pp
-    unsigned char cch, pch;        // candidate and pattern char
-
-    scp = spp = u_str("");        // init to null string
-
-    cp = candidate.data();
-    pp = pattern.data();
-
-    for(;;)
-        if( *pp )    // while there is pattern chars left
-        {
-            pch = *pp++;
-
-            if( pch == '*' )
-            {
-                if( *pp == '\0' )// pattern null after a *
-                    return 1;
-                scp = cp;// save pointers for back tracking
-                spp = pp;
-                continue;
-            }
-            cch = *cp++;
-            if( cch == '\0' )// if candidate exhausted match fails
-                break;
-
-            if( pch == cch )
-                continue;
-            if( pch == '?' )
-                continue;
-
-            // mismatch detected
-            if( *scp++ == '\0' )
-                break;
-            cp = scp;
-            pp = spp;
-        }
-        else
-        {
-            if( *cp == '\0' )
-                return 1;
-            // mismatch detected
-            if( *scp++ == '\0' )
-                break;
-            cp = scp;
-            pp = spp;
-        }
-    return 0;
-}
 
 class FileFindWindowsNT : public FileFindInternal
 {

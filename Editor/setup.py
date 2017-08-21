@@ -323,6 +323,7 @@ class Setup:
             if self.platform in ('win32', 'win64'):
                 obj_files.extend( [
                     Source( compiler, 'Source/Windows/win_file.cpp' ),
+                    Source( compiler, 'Source/Windows/win_subproc.cpp' ),
                     #Source( compiler, 'Source/Windows/win_ext_func.cpp' ),
                     ] )
             return obj_files

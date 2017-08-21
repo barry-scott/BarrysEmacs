@@ -415,65 +415,6 @@ bool FileParse::sys_parse( const EmacsString &name, const EmacsString &def )
     return true;
 }
 
-int match_wild( const EmacsString &candidate, const EmacsString &pattern )
-{
-    static EmacsChar_t null_str[1] = {0};
-
-    const EmacsChar_t *cp, *pp;        // candidate and pattern pointers
-    const EmacsChar_t *scp, *spp;    // saved cp and pp
-    EmacsChar_t cch, pch;        // candidate and pattern char
-
-    scp = spp = null_str;
-
-    cp = candidate.unicode_data();
-    pp = pattern.unicode_data();
-
-    for(;;)
-        if( *pp )    // while there is pattern chars left
-        {
-            pch = *pp++;
-
-            if( pch == '*' )
-            {
-                if( *pp == '\0' )// pattern null after a *
-                    return 1;
-
-                scp = cp;// save pointers for back tracking
-                spp = pp;
-                continue;
-            }
-            cch = *cp++;
-            if( cch == '\0' )// if candidate exhausted match fails
-                break;
-
-            if( pch == cch )
-                continue;
-
-            if( pch == '?' )
-                continue;
-
-            // mismatch detected
-            if( *scp++ == '\0' )
-                break;
-
-            cp = scp;
-            pp = spp;
-        }
-        else
-        {
-            if( *cp == '\0' )
-                return 1;
-
-            // mismatch detected
-            if( *scp++ == '\0' )
-                break;
-
-            cp = scp;
-            pp = spp;
-        }
-
-    return 0;
-}
 
 #if defined( _POSIX_VERSION )
 # define struct_direct struct dirent
