@@ -469,8 +469,8 @@ int execute_monitor_command( void )
     exec_bf( "command execution", 1, "/dev/null", 1,
                 shell(), "-c", execute_command.utf8_data(), NULL );
 # endif
-# if defined( _NT )
-    exec_bf( "Command execution", 1, "nul", 1,
+# if defined( WIN32 )
+    exec_bf( "Command execution", 1, "nul", 1, "unused",
                 execute_command.utf8_data(), NULL );
 # endif
     return 0;
