@@ -221,7 +221,7 @@
         (if
             (error-occurred
                 (beginning-of-line)
-                (ere-search-reverse "^[ \t]*class\\s+(\\w+)")
+                (ere-search-reverse "^[ \t]*class\\s+(\\w+)(?S=C*S*)")
             )
             (error-message "Python class not found")
         )
@@ -233,7 +233,7 @@
         (if
             (error-occurred
                 (end-of-line)
-                (ere-search-forward "^[ \t]*class\\s+(\\w+)")
+                (ere-search-forward "^[ \t]*class\\s+(\\w+)(?S=C*S*)")
                 (beginning-of-line)
             )
             (error-message "Python class not found")
@@ -246,7 +246,7 @@
         (if
             (error-occurred
                 (beginning-of-line)
-                (ere-search-reverse "^[ \t]*\\bdef\\s+(\\w+)")
+                (ere-search-reverse "^[ \t]*\\bdef\\s+(\\w+)(?S=C*S*)")
                 (beginning-of-line)
                 (error-occurred
                     (message "In " (Python-within-class-def)))
@@ -261,7 +261,7 @@
         (if
             (error-occurred
                 (end-of-line)
-                (ere-search-forward "^[ \t]*\\bdef\\s+(\\w+)")
+                (ere-search-forward "^[ \t]*\\bdef\\s+(\\w+)(?S=C*S*)")
                 (beginning-of-line)
                 (error-occurred
                     (message "In " (Python-within-class-def)))
@@ -275,7 +275,7 @@
     (Python-within-class
         (save-window-excursion
             (end-of-line)       ; cover the case of being on the class line
-            (ere-search-reverse "^[ \t]*class\\s+(\\w+)")
+            (ere-search-reverse "^[ \t]*class\\s+(\\w+)(?S=C*S*)")
             (region-around-match 1)
             (region-to-string)
         )
@@ -286,7 +286,7 @@
     (Python-within-def
         (save-window-excursion
             (end-of-line)       ; cover the case of being on the def line
-            (ere-search-reverse "^[ \t]*\\bdef\\s+(\\w+)")
+            (ere-search-reverse "^[ \t]*\\bdef\\s+(\\w+)(?S=C*S*)")
             (region-around-match 1)
             (region-to-string)
         )
@@ -296,10 +296,13 @@
 (defun
     (Python-within-class-def
         (save-window-excursion
+            ~class-name ~class-column
+            ~def-name ~def-column
+
             (set-mark)
             (end-of-line)
             (if
-                (error-occurred (ere-search-reverse "^[ \t]*class\\s+(\\w+)"))
+                (error-occurred (ere-search-reverse "^([ \t]*)class\\s+(\\w+)(?S=C*S*)"))
                 ; no class
                 (if
                     (error-occurred (Python-within-def))
@@ -307,17 +310,34 @@
                     "module level"
                     (Python-within-def)
                 )
+                ; have a class
                 (progn
+                    (save-excursion
+                        (region-around-match 1)
+                        (setq ~class-column (current-column))
+                        (region-around-match 2)
+                        (setq ~class-name (region-to-string))
+                    )
                     (exchange-dot-and-mark)
                     (end-of-line)
+
                     (save-restriction
                         (narrow-region)
-                        (if
-                            (error-occurred (Python-within-def))
+                        (if (error-occurred (ere-search-reverse "^([ \t]*)\\bdef\\s+(\\w+)(?S=C*S*)"))
                             ; no def found
-                            (Python-within-class)
-                            ; have a class and def
-                            (concat (Python-within-class) "." (Python-within-def))
+                            ~class-name
+
+                            ; have a class and def maybe
+                            (progn
+                                (region-around-match 1)
+                                (setq ~def-column (current-column))
+                                (region-around-match 2)
+                                (setq ~def-name (region-to-string))
+                                (if (> ~def-column ~class-column)
+                                    (concat ~class-name "." ~def-name)
+                                    ~def-name
+                                )
+                            )
                         )
                     )
                 )
