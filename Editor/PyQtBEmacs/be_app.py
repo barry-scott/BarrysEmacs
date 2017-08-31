@@ -386,7 +386,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
                 if not mod:
                     break
 
-                can_exit = self.callGuiFunction( self.guiYesNoDialog, (False, 'Modifier files exist', 'Do you really want to quit Emacs?') );
+                can_exit = self.callGuiFunction( self.guiYesNoDialog, (False, 'Modified files exist', 'Do you really want to quit Emacs?') );
                 if can_exit:
                     break
 

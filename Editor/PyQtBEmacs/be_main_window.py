@@ -91,7 +91,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
             event.accept()
 
         else:
-            # set the editor decide
+            # let the editor decide
             self.app.onCloseEditor()
             event.ignore()
 
