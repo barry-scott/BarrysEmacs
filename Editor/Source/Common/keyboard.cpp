@@ -235,15 +235,21 @@ int process_keys( void )
         if( next_global_keymap == 0 )
         {
             if( remembering )
+            {
                 end_of_mac = key_mem.length();
+            }
             if( arg_state != have_arg
             && macro_replay_next < 0
             && bf_cur != minibuf )
+            {
                 undo_boundary();
+            }
         }
 
         if( bf_cur != minibuf )
+        {
             can_checkpoint = 1;
+        }
 
         int ic = get_char();
 
@@ -259,11 +265,19 @@ int process_keys( void )
         keys_struck.append( c );
 
         if( next_global_keymap == NULL )
+        {
             next_global_keymap = current_global_map;
+        }
+
         if( next_local_keymap == NULL )
+        {
             next_local_keymap = bf_cur->b_mode.md_keys;
+        }
+
         if( theActiveView->currentWindow()->w_buf != bf_cur )
+        {
             theActiveView->currentWindow()->w_buf->set_bf();
+        }
 
         KeyMap *kmap = next_local_keymap;
         if( kmap != NULL )
@@ -284,7 +298,14 @@ int process_keys( void )
                     record_keystoke_history( last_keys_struck.asString(), p );
                 }
 
-                //std::cout << "process_keys:272 char 0x" << std::hex << c << std::dec << " execute " << p->b_proc_name.sdata() << std::endl;
+#if DBG_KEY
+                if( dbg_flags&DBG_KEY )
+                {
+                    _dbg_msg( FormatString("process_keys:%d char %C(0x%x) execute %s")
+                             << __LINE__ << c << c << p->b_proc_name );
+                }
+#endif
+
                 if( p->execute() < 0 )
                     return 0;
 
@@ -331,7 +352,13 @@ int process_keys( void )
                 }
                 if( p->IsAKeyMap() || lmap == NULL )
                 {
-                    //std::cout << "process_keys:318 char 0x" << std::hex << c << std::dec << " execute " << p->b_proc_name.sdata() << std::endl;
+#if DBG_KEY
+                    if( dbg_flags&DBG_KEY )
+                    {
+                        _dbg_msg( FormatString("process_keys:%d char %C(0x%x) execute %s")
+                                 << __LINE__ << c << c << p->b_proc_name );
+                    }
+#endif
                     if( p->execute() < 0 )
                         return 0;
                 }
