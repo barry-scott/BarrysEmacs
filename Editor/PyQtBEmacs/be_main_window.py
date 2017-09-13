@@ -105,7 +105,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.addEmacsMenu( menu_file, 'fa', T_('Save &As…'), 'toolbar_images/file_save.png' )
         self.addEmacsMenu( menu_file, 'fl', T_('Save A&ll Modified Files'), 'toolbar_images/file_save_all.png' )
 
-        if sys.platform == 'darwin':
+        if sys.platform != 'darwin':
             # on OS X Preferences and exit are not in the file menu
             # so no need for a separator
             menu_file.addSeparator()
