@@ -509,8 +509,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.pixel_width = self.width()
         self.pixel_length = self.height()
 
-        self.term_width  = min( MSCREENWIDTH,  (self.pixel_width  - 2*self.client_padding) // self.char_width )
-        self.term_length = min( MSCREENLENGTH, (self.pixel_length - 2*self.client_padding) // self.char_length )
+        self.term_width  = max( 10, min( MSCREENWIDTH,  (self.pixel_width  - 2*self.client_padding) // self.char_width ) )
+        self.term_length = max( 4, min( MSCREENLENGTH, (self.pixel_length - 2*self.client_padding) // self.char_length ) )
 
         self._debugPanel( '__calculateWindowSize char: %dpx x %dpx window: %dpx X %dpx -> text window: %d X %d' %
                         (self.char_width, self.char_length
