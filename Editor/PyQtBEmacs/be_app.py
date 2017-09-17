@@ -157,7 +157,8 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
 
         self.prefs_mgr = be_preferences.BemacsPreferenceManager(
                 self,
-                be_platform_specific.getPreferencesFilename() )
+                be_platform_specific.getPreferencesFilename(),
+                be_platform_specific.getSessionFilename() )
 
         self.main_window = None
         self.log.info( 'Qt argv[0] %r' % (sys.argv[0],) )
@@ -169,6 +170,12 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         self.main_window = be_main_window.BemacsMainWindow( self )
 
         self.MarshallToGuiThreadSignal.connect( self.handleMarshallToGuiThread )
+
+    def getFrameGeometry( self ):
+        return self.prefs_mgr.getFrameGeometry()
+
+    def setFrameGeometry( self, geometry ):
+        self.prefs_mgr.setFrameGeometry( geometry )
 
     def getPrefs( self ):
         return self.prefs_mgr.getPrefs()

@@ -24,6 +24,9 @@ else:
 def getPreferencesFilename():
     return getUserDir() / 'bemacs.xml'
 
+def getSessionFilename():
+    return getUserDir() / 'bemacs-session.xml'
+
 def getLogFilename():
     return pathlib.Path( os.environ.get( 'BEMACS_GUI_LOG', getUserDir() / 'bemacs.log' ) )
 

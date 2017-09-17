@@ -1,6 +1,6 @@
 '''
  ====================================================================
- Copyright (c) 2003-2016 Barry A Scott.  All rights reserved.
+ Copyright (c) 2003-2017 Barry A Scott.  All rights reserved.
 
  This software is licensed as described in the file LICENSE.txt,
  which you should have received as part of this distribution.
@@ -18,7 +18,19 @@ from  xml_preferences import XmlPreferences, Scheme, SchemeNode, PreferencesNode
 
 import be_emacs_panel
 
+# ------------------------------------------------------------
+class Session(PreferencesNode):
+    def __init__( self ):
+        super().__init__()
+        self.geometry = None
 
+    def getFrameGeometry( self ):
+        return self.geometry
+
+    def setFrameGeometry( self, geometry ):
+        self.geometry = geometry.decode('utf-8')
+
+# ------------------------------------------------------------
 class Preferences(PreferencesNode):
     def __init__( self ):
         super().__init__()
@@ -39,9 +51,6 @@ class Window(PreferencesNode):
 
     def getFrameGeometry( self ):
         return self.geometry
-
-    def setFrameGeometry( self, geometry ):
-        self.geometry = geometry.decode('utf-8')
 
     def getColour( self, name ):
         return self.all_colours[ name ]
@@ -159,15 +168,29 @@ bemacs_preferences_scheme = (Scheme(
         )
     ) )
 
+bemacs_session_scheme = (Scheme(
+        SchemeNode( Session, 'session', ('geometry',) )
+    ) )
+
 class BemacsPreferenceManager:
-    def __init__( self, app, filename ):
+    def __init__( self, app, prefs_filename, session_filename ):
         self.xml_prefs = XmlPreferences( bemacs_preferences_scheme )
+        self.xml_session = XmlPreferences( bemacs_session_scheme )
 
         self.app = app
 
-        self.prefs_filename = filename
+        self.prefs_filename = prefs_filename
+        self.session_filename = session_filename
 
-        assert isinstance( filename, pathlib.Path )
+        assert isinstance( prefs_filename, pathlib.Path )
+        assert isinstance( session_filename, pathlib.Path )
+
+        try:
+            self.session = self.xml_session.load( self.session_filename )
+
+        except IOError:
+            self.session = Session()
+            self.session.finaliseNode()
 
         try:
             self.prefs = self.xml_prefs.load( self.prefs_filename )
@@ -180,16 +203,31 @@ class BemacsPreferenceManager:
         return self.prefs
 
     def writePreferences( self ):
-        tmp_filename = self.prefs_filename.with_suffix( '.tmp' )
+        self.prefs.window.geometry = None
 
-        self.xml_prefs.saveAs( self.prefs, tmp_filename )
+        for filename, xml_scheme, data in (
+                (self.prefs_filename, self.xml_prefs, self.prefs),
+                (self.session_filename, self.xml_session, self.session)):
+            tmp_filename = filename.with_suffix( '.tmp' )
 
-        old_filename = self.prefs_filename.with_suffix( '.old.xml' )
+            xml_scheme.saveAs( data, tmp_filename )
 
-        if self.prefs_filename.exists():
-            if old_filename.exists():
-                old_filename.unlink()
+            old_filename = filename.with_suffix( '.old.xml' )
 
-            self.prefs_filename.rename( old_filename )
+            if filename.exists():
+                if old_filename.exists():
+                    old_filename.unlink()
 
-        tmp_filename.rename( self.prefs_filename )
+                filename.rename( old_filename )
+
+            tmp_filename.rename( filename )
+
+    def getFrameGeometry( self ):
+        geometry = self.session.getFrameGeometry()
+        if geometry is not None:
+            return geometry
+
+        return self.prefs.window.getFrameGeometry()
+
+    def setFrameGeometry( self, geometry ):
+        self.session.setFrameGeometry( geometry )

@@ -58,8 +58,6 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
 
         title = T_("Barry's Emacs")
 
-        win_prefs = self.app.getPrefs().window
-
         super().__init__()
         self.setWindowTitle( title )
         self.setWindowIcon( be_images.getIcon( 'bemacs.png' ) )
@@ -71,10 +69,13 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.__setupToolBar()
         self.__setupStatusBar( self.emacs_panel.font )
 
-        geometry = win_prefs.getFrameGeometry()
+        geometry = self.app.getFrameGeometry()
         if geometry is not None:
             geometry = QtCore.QByteArray( geometry.encode('utf-8') )
             self.restoreGeometry( QtCore.QByteArray.fromHex( geometry ) )
+            if( self.size().width() < 100
+            or self.size().height() < 100 ):
+                self.resize( 800, 600 )
 
         else:
             self.resize( 800, 600 )
@@ -85,8 +86,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         if self.app.may_quit:
             self.log.info( 'closeEvent()' )
 
-            win_prefs = win_prefs = self.app.getPrefs().window
-            win_prefs.setFrameGeometry( self.saveGeometry().toHex().data() )
+            self.app.setFrameGeometry( self.saveGeometry().toHex().data() )
             self.app.writePreferences()
             event.accept()
 
