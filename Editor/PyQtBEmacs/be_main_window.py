@@ -38,29 +38,52 @@ import be_config
 ellipsis = '…'
 
 class BemacsAction:
-    def __init__( self, app, code ):
+    def __init__( self, app, code, check_state ):
         self.app = app
         self.code = code
+        self.check_state = check_state
+        self.action = None
+
+    def __repr__( self ):
+        return '<BemacsAction: code=%r check_state=%r>' % (self.code, self.check_state)
 
     def sendCode( self ):
         for ch in be_emacs_panel.prefix_menu + self.code:
             self.app.editor.guiEventChar( ch, False )
 
     def connect( self, action ):
-        action.triggered.connect( self.sendCode )
+        self.action = action
+        if self.check_state is not None:
+            action.setCheckable( True )
+
+        if action.isCheckable():
+            action.toggled.connect( self.sendCode )
+        else:
+            action.triggered.connect( self.sendCode )
+
+    def setChecked( self, all_status ):
+        # setting checked calls back into the handler, sendCode
+        # block the signals to prevent this
+        self.action.blockSignals( True )
+        self.action.setChecked( all_status[ self.check_state ] )
+        self.action.blockSignals( False )
 
 class BemacsMainWindow(QtWidgets.QMainWindow):
     def __init__( self, app ):
         self.app = app
         self.log = self.app.log
 
-        self.__all_actions = {}
+        self.__all_actions = []
+        self.__all_check_actions = []
 
         title = T_("Barry's Emacs")
 
         super().__init__()
         self.setWindowTitle( title )
         self.setWindowIcon( be_images.getIcon( 'bemacs.png' ) )
+
+        # want to catch exceptions here
+        self.setStatus = be_exceptions.TryWrapper( self.app.log, self._setStatus )
 
         self.emacs_panel = be_emacs_panel.EmacsPanel( self.app, self )
         self.setCentralWidget( self.emacs_panel )
@@ -126,6 +149,10 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.addEmacsMenu( menu_edit, 'ea', T_('Select All') )
 
         menu_edit.addSeparator()
+        self.addEmacsMenu( menu_edit, 'eS', T_('case-fold-search'), check_state='case-fold-search' )
+        self.addEmacsMenu( menu_edit, 'eR', T_('replace-case'), check_state='replace-case' )
+
+        menu_edit.addSeparator()
         self.addEmacsMenu( menu_edit, 'eg', T_('Goto Line…') )
 
         menu_edit.addSeparator()
@@ -143,8 +170,10 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.addEmacsMenu( menu_edit_advanced, 'rw', T_('Widen Region') )
 
         menu_view = mb.addMenu( T_('&View') )
-        self.addEmacsMenu( menu_view, 'vw', T_('View white space'), 'toolbar_images/view_white_space.png' )
-        self.addEmacsMenu( menu_view, 'vl', T_('Wrap long lines'), 'toolbar_images/view_wrap_long.png' )
+        self.addEmacsMenu( menu_view, 'vw', T_('View white space'),
+            'toolbar_images/view_white_space.png', check_state='display-non-printing-characters' )
+        self.addEmacsMenu( menu_view, 'vl', T_('Wrap long lines'),
+            'toolbar_images/view_wrap_long.png', check_state='wrap-long-lines' )
 
         menu_macro = mb.addMenu( T_('&Macro') )
         self.addEmacsMenu( menu_macro, 'mr', T_('Record'), 'toolbar_images/macro_record.png' )
@@ -179,17 +208,19 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         act = menu_help.addAction( T_("&About…") )
         act.triggered.connect( self.onActAbout )
 
-    def addEmacsMenu( self, menu, code, title, icon_name=None ):
-        if code not in self.__all_actions:
-            self.__all_actions[ code ] = BemacsAction( self.app, code )
+    def addEmacsMenu( self, menu, code, title, icon_name=None, check_state=None ):
+        action = BemacsAction( self.app, code, check_state )
+        self.__all_actions.append( action )
+        if check_state is not None:
+            self.__all_check_actions.append( action )
 
         if icon_name is None:
-            action = menu.addAction( title )
+            qt_action = menu.addAction( title )
         else:
             icon = be_images.getIcon( icon_name )
-            action = menu.addAction( icon, title )
+            qt_action = menu.addAction( icon, title )
 
-        self.__all_actions[ code ].connect( action )
+        action.connect( qt_action )
 
     def __setupToolBar( self ):
         # Add tool bar
@@ -203,6 +234,11 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.addEmacsToolbar( t, 'ec', T_('Copy'), 'toolbar_images/editcopy.png' )
         self.addEmacsToolbar( t, 'ev', T_('Paste'), 'toolbar_images/editpaste.png' )
 
+        t.addSeparator()
+        self.addEmacsToolbar( t, 'eS', T_('Fold'), check_state='case-fold-search' )
+        self.addEmacsToolbar( t, 'eR', T_('Replace'), check_state='replace-case' )
+
+        t.addSeparator()
         self.addEmacsToolbar( t, 'wo', T_('Delete other window'), 'toolbar_images/window_del_other.png' )
         self.addEmacsToolbar( t, 'wt', T_('Delete this window'), 'toolbar_images/window_del_this.png' )
         self.addEmacsToolbar( t, 'wh', T_('Split Horizontal'), 'toolbar_images/window_split_horiz.png' )
@@ -220,21 +256,28 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.addEmacsToolbar( t, 'mp', T_('Run'), 'toolbar_images/macro_play.png' )
 
         t.addSeparator()
-        self.addEmacsToolbar( t, 'vw', T_('White Space'), 'toolbar_images/view_white_space.png' )
-        self.addEmacsToolbar( t, 'vl', T_('Wrap Long'), 'toolbar_images/view_wrap_long.png' )
+        self.addEmacsToolbar( t, 'vw', T_('White Space'),
+            'toolbar_images/view_white_space.png', check_state='display-non-printing-characters' )
+        self.addEmacsToolbar( t, 'vl', T_('Wrap Long'),
+            'toolbar_images/view_wrap_long.png', check_state='wrap-long-lines' )
 
         t.addSeparator()
         self.addEmacsToolbar( t, 'tg', T_('Grep in files…'), 'toolbar_images/tools_grep.png' )
 
-    def addEmacsToolbar( self, container, code, title, icon_name ):
-        icon = be_images.getIcon( icon_name )
+    def addEmacsToolbar( self, container, code, title, icon_name=None, check_state=None ):
+        action = BemacsAction( self.app, code, check_state )
+        self.__all_actions.append( action )
+        if check_state is not None:
+            self.__all_check_actions.append( action )
 
-        if code not in self.__all_actions:
-            self.__all_actions[ code ] = BemacsAction( self.app, code )
+        if icon_name is not None:
+            icon = be_images.getIcon( icon_name )
+            qt_action = container.addAction( icon, title )
 
-        action = container.addAction( icon, title )
+        else:
+            qt_action = container.addAction( title )
 
-        self.__all_actions[ code ].connect( action )
+        action.connect( qt_action )
 
     def __setupStatusBar( self, font ):
         s = self.statusBar()
@@ -329,12 +372,15 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
 
         QtWidgets.QMessageBox.information( self, T_("About Barry's Emacs"), '\n'.join( all_about_info ) )
 
-    def setStatus( self, all_status ):
+    def _setStatus( self, all_status ):
         self.status_read_only   .setText( {True: 'RO', False: ''}[all_status['readonly']] )
         self.status_insert_mode .setText( {True: 'Over', False: 'Ins '}[all_status['overstrike']] )
         self.status_eol         .setText( all_status['eol'].upper() )
         self.status_line_num    .setText( '%d' % (all_status['line'],) )
         self.status_col_num     .setText( '%d' % (all_status['column'],) )
+
+        for action in self.__all_check_actions:
+            action.setChecked( all_status )
 
     def dragEnterEvent( self, event ):
         if not event.mimeData().hasUrls():

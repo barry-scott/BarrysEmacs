@@ -279,7 +279,7 @@ public:
 
     //------------------------------------------------------------
     void hookUserInterface();
-    
+
     int yesNoDialog( int yes, const EmacsString &prompt )
     {
         PythonDisallowThreads permission( editor_access_control );
@@ -450,21 +450,32 @@ public:
             // line number
             int value = 1;
             if( bf_cur != NULL )
+            {
                 for( int n=1; n<=dot - 1; n += 1 )
+                {
                     if( bf_cur->char_at (n) == '\n' )
+                    {
                         value++;
+                    }
+                }
+            }
             if( value > 9999999 )
+            {
                 value = 9999999;
+            }
 
             all_status_values[ "line" ] = Py::Long( value );
 
             // column
             value = 1;
             if( bf_cur != NULL )
+            {
                 value = cur_col();
-
+            }
             if( value > 9999 )
+            {
                 value = 9999;
+            }
 
             all_status_values[ "column" ] = Py::Long( value );
 
@@ -477,6 +488,7 @@ public:
             // record type
             const char *record_type = "unknown";
             if( bf_cur != NULL )
+            {
                 switch( bf_cur->b_eol_attribute )
                 {
                 case FIO_EOL__Binary:       // literal read and write no
@@ -495,8 +507,15 @@ public:
                 default:
                     break;
                 }
+            }
 
             all_status_values[ "eol" ] = Py::String( record_type );
+
+            all_status_values["case-fold-search"] = Py::Boolean( bf_cur != NULL && bf_cur->b_mode.md_foldcase );
+            all_status_values["replace-case"] = Py::Boolean( bf_cur != NULL && replace_case );
+            all_status_values["wrap-long-lines"] = Py::Boolean( bf_cur != NULL && bf_cur->b_mode.md_wrap_lines );
+            all_status_values["display-non-printing-characters"] = Py::Boolean( bf_cur != NULL && bf_cur->b_mode.md_displaynonprinting );
+            all_status_values["buffer-name"] = bf_cur == NULL ? Py::None() : Py::String( bf_cur->b_buf_name );
         }
 
         Py::List horz_scroll_bar;
