@@ -175,33 +175,49 @@ int current_buffer_name_command( void )
     return 0;
     }
 
-int current_file_name_command( void )
+int previous_buffer_name_command( void )
+{
+    if( bf_prev != NULL )
     {
-    ml_value = bf_cur->b_fname;
-    return 0;
+        ml_value = bf_prev->b_buf_name;
+    }
+    else
+    {
+        ml_value = EmacsString::null;
     }
 
-int users_login_name_command( void )
-    {
-    if( users_name.isNull() )
-{
-    EmacsString id = users_login_name();
-    if( id.isNull() )
-        users_name = unknown_str;
-    else
-        users_name = id;
+    return 0;
 }
+
+int current_file_name_command( void )
+{
+    ml_value = bf_cur->b_fname;
+    return 0;
+}
+
+
+
+int users_login_name_command( void )
+{
+    if( users_name.isNull() )
+    {
+        EmacsString id = users_login_name();
+        if( id.isNull() )
+            users_name = unknown_str;
+        else
+            users_name = id;
+    }
 
     ml_value = users_name;
     return 0;
-    }
+}
 
 int users_full_name_command( void )
-    {
-    if( users_full_name.isNull() )
 {
-    users_full_name = get_user_full_name();
-}
+    if( users_full_name.isNull() )
+    {
+        users_full_name = get_user_full_name();
+    }
 
     ml_value = users_full_name;
     return 0;

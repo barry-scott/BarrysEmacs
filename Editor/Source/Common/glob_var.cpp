@@ -18,6 +18,7 @@ SystemExpressionRepresentationIntReadOnly is_true(0 == 0);
 int arg;
 enum arg_states arg_state;
 EmacsBuffer *bf_cur;
+EmacsBuffer *bf_prev;   // buffer before entering the minibuffer
 int cant_1line_opt;
 int cant_1win_opt;
 int col_valid;

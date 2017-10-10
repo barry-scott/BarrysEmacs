@@ -33,6 +33,7 @@ extern int minibuf_depth;
 extern int remembering;
 extern ProgramNode *cur_exec;
 extern EmacsBuffer *bf_cur;
+extern EmacsBuffer *bf_prev;
 extern EmacsBuffer *minibuf;
 extern MiniBufferBody minibuf_body;
 extern KeyMap *minibuf_local_ns_map;

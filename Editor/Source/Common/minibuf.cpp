@@ -29,6 +29,8 @@ extern int gui_error;
 
 SystemExpressionRepresentationString error_messages_buffer;
 
+EmacsBuffer *minibuf_context = NULL;
+
 void error( const EmacsString &text )
 {
     int error_handled = 0;
@@ -328,9 +330,20 @@ EmacsString br_get_string_interactive( int breaksp, const EmacsString &prefix, c
     bf_cur->erase_bf();
     bf_cur->ins_cstr( prefix );
 
+    // setup (previous-buffer-name)
+    if( minibuf_depth == 0 )
+    {
+        bf_prev = olddot.m_buf;
+    }
+    else
+    {
+        bf_prev = NULL;
+    }
     minibuf_depth++;
     recursive_edit();
     minibuf_depth--;
+
+    bf_prev = NULL;
 
     arg = larg;
     arg_state = larg_state;

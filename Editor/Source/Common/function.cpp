@@ -138,6 +138,7 @@ extern int concat_command(void);
 extern int convert_key_string_command (void);
 extern int copy_region_to_buffer(void);
 extern int current_buffer_name_command(void);
+extern int previous_buffer_name_command(void);
 extern int cur_col_func_command(void);
 extern int cur_dir(void);
 extern int current_file_name_command(void);
@@ -760,6 +761,7 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "preceding-char", preceding_char_command );
     EMACS_NEW BoundName( "prefix-argument-loop", prefix_argument_loop );
     EMACS_NEW BoundName( "prepend-region-to-buffer", prepend_region_to_buffer );
+    EMACS_NEW BoundName( "previous-buffer-name", previous_buffer_name_command );
     EMACS_NEW BoundName( "previous-command", fetch_previous_command );
     EMACS_NEW BoundName( "previous-error", previous_error );
     EMACS_NEW BoundName( "previous-line", previous_line );
