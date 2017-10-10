@@ -7,20 +7,17 @@ int main( int argc, char **argv )
 {
     if( !isFileDescriptorOpen( STDIN_FILENO ) )
     {
-        FILE *file = freopen( "/dev/null", "r", stdin );
-        assert( fileno(file) == STDIN_FILENO );
+        freopen( "/dev/null", "r", stdin );
     }
 
     if( !isFileDescriptorOpen( STDOUT_FILENO ) )
     {
-        FILE *file = freopen( "/dev/null", "w", stdout );
-        assert( fileno(file) == STDOUT_FILENO );
+        freopen( "/dev/null", "w", stdout );
     }
 
     if( !isFileDescriptorOpen( STDERR_FILENO ) )
     {
-        FILE *file = freopen( "/dev/null", "w", stderr );
-        assert( fileno(file) == STDERR_FILENO );
+        freopen( "/dev/null", "w", stderr );
     }
 
     init_memory();
