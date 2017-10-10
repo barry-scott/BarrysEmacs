@@ -193,6 +193,14 @@
 ;
 ; Menu binding
 ;
+(defun PC-toggle-bool-var(~var)
+    (save-excursion
+        (if (!= "" (previous-buffer-name))
+            (temp-use-buffer (previous-buffer-name))
+        )
+        (set ~var (! (execute-mlisp-line ~var)))
+    )
+)
 
 ; File
 (bind-to-key "PC-open-file"                                 "\[menu]fo")
@@ -205,8 +213,8 @@
 (bind-to-key "PC-edit-cut"                                  "\[menu]ex")
 (bind-to-key "PC-edit-copy"                                 "\[menu]ec")
 (bind-to-key "UI-edit-paste"                                "\[menu]ev")
-(bind-to-key "(setq case-fold-search (! case-fold-search))" "\[menu]eS")
-(bind-to-key "(setq replace-case (! replace-case))"         "\[menu]eR")
+(bind-to-key "(PC-toggle-bool-var \"case-fold-search\")"    "\[menu]eS")
+(bind-to-key "(PC-toggle-bool-var \"replace-case\")"        "\[menu]eR")
 (bind-to-key "goto-line"                                    "\[menu]eg")
 (bind-to-key "PC-select-all"                                "\[menu]ea")
 ; Edit Advanced...
@@ -222,9 +230,9 @@
 (bind-to-key "narrow-region"                                "\[menu]rn")
 (bind-to-key "widen-region"                                 "\[menu]rw")
 ; View
-(bind-to-key "(setq display-non-printing-characters (! display-non-printing-characters))"
+(bind-to-key "(PC-toggle-bool-var \"display-non-printing-characters\")"
                                                             "\[menu]vw")
-(bind-to-key "(setq wrap-long-lines (! wrap-long-lines))"   "\[menu]vl")
+(bind-to-key "(PC-toggle-bool-var \"wrap-long-lines\")"     "\[menu]vl")
 ; Macro
 (bind-to-key "start-remembering"                            "\[menu]mr")
 (bind-to-key "stop-remembering"                             "\[menu]ms")

@@ -511,11 +511,16 @@ public:
 
             all_status_values[ "eol" ] = Py::String( record_type );
 
-            all_status_values["case-fold-search"] = Py::Boolean( bf_cur != NULL && bf_cur->b_mode.md_foldcase );
-            all_status_values["replace-case"] = Py::Boolean( bf_cur != NULL && replace_case );
-            all_status_values["wrap-long-lines"] = Py::Boolean( bf_cur != NULL && bf_cur->b_mode.md_wrap_lines );
-            all_status_values["display-non-printing-characters"] = Py::Boolean( bf_cur != NULL && bf_cur->b_mode.md_displaynonprinting );
-            all_status_values["buffer-name"] = bf_cur == NULL ? Py::None() : Py::String( bf_cur->b_buf_name );
+            EmacsBuffer *buf = bf_prev;
+            if( buf == NULL )
+            {
+                buf = bf_cur;
+            }
+            all_status_values["case-fold-search"] = Py::Boolean( buf != NULL && buf->b_mode.md_foldcase );
+            all_status_values["replace-case"] = Py::Boolean( replace_case );
+            all_status_values["wrap-long-lines"] = Py::Boolean( buf != NULL && buf->b_mode.md_wrap_lines );
+            all_status_values["display-non-printing-characters"] = Py::Boolean( buf != NULL && buf->b_mode.md_displaynonprinting );
+            all_status_values["buffer-name"] = buf == NULL ? Py::None() : Py::String( buf->b_buf_name );
         }
 
         Py::List horz_scroll_bar;
