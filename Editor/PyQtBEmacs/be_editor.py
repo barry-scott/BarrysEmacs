@@ -93,6 +93,19 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
     def closeWindow( self ):
         self.__quit_editor = True
 
+    def guiCheckIfModifiedFilesExist( self ):
+        self.__modified_files_exist = None
+        self.__event_queue.put( (self.checkIfModifiedFilesExist, ()) )
+
+        while self.__modified_files_exist is None:
+            time.sleep( 0.01 )
+
+        return self.__modified_files_exist
+
+    def checkIfModifiedFilesExist( self ):
+        self.__modified_files_exist = self.modifiedFilesExist()
+
+
     def openFile( self, filename ):
         self.log.info( 'openFile( %s ) start' % (filename,) )
         try:
@@ -283,6 +296,7 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
 
     #--------------------------------------------------------------------------------
     def termCheckForInput( self ):
+        # dispatch events from the GUI thread
         try:
             event_hander_and_args = self.__event_queue.getNoWait()
 
@@ -307,6 +321,8 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
         try:
             wait_timeout = wait_until_time - time.time()
             self._debugEditor( 'termWaitForActivity %r' % (wait_timeout,) )
+
+            # dispatch events from the GUI thread
             if wait_timeout <= 0:
                 event_hander_and_args = self.__event_queue.getNoWait()
             else:

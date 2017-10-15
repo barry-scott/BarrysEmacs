@@ -171,6 +171,27 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
 
         self.MarshallToGuiThreadSignal.connect( self.handleMarshallToGuiThread )
 
+        self.setFallbackSessionManagementEnabled( False )
+
+        self.saveStateRequest.connect( self.saveStateHandler )
+        self.commitDataRequest.connect( self.commitDataHandler )
+
+    # called at start up to find the setting for session management
+    def saveStateHandler( self, mgr ):
+        self.log.info( 'Session Manager probing save state' )
+
+    def commitDataHandler( self, mgr ):
+        self.log.info( 'Session Manager calls commitDataHandler' )
+        if self.editor.guiCheckIfModifiedFilesExist():
+            if mgr.allowsInteraction():
+                if not self.guiYesNoDialog( False, 'Modified files exist', 'Do you really want to quit Emacs?'):
+                    self.log.info( 'User wants session manager to cancel' )
+                    mgr.cancel()
+
+            else:
+                self.log.info( 'Modified files exist - telling session manager to cancel' )
+                mgr.cancel()
+
     def getFrameGeometry( self ):
         return self.prefs_mgr.getFrameGeometry()
 
@@ -393,7 +414,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
                 if not mod:
                     break
 
-                can_exit = self.callGuiFunction( self.guiYesNoDialog, (False, 'Modified files exist', 'Do you really want to quit Emacs?') );
+                can_exit = self.callGuiFunction( self.guiYesNoDialog, (False, 'Modified files exist', 'Do you really want to quit Emacs?') )
                 if can_exit:
                     break
 
