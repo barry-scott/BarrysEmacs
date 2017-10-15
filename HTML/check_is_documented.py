@@ -17,12 +17,12 @@ class CheckIsDocumented:
 
     def main( self ):
         all_variables = self.loadDefinedVariables( self.builder_top_dir / 'Editor/Source/Common/variable.cpp' )
-        self.checkVariableAreDocumented( all_variables )
-        self.checkVariableAreIndexed( all_variables )
+        all_documented_variables = self.checkVariableAreDocumented( all_variables )
+        self.checkVariableAreIndexed( all_documented_variables )
 
         all_functions = self.loadDefinedFunctions( self.builder_top_dir / 'Editor/Source/Common/function.cpp' )
-        self.checkFunctionsAreDocumented( all_functions )
-        self.checkFunctionsAreIndexed( all_functions )
+        all_documented_functions = self.checkFunctionsAreDocumented( all_functions )
+        self.checkFunctionsAreIndexed( all_documented_functions )
 
         return 0
 
@@ -45,6 +45,8 @@ class CheckIsDocumented:
     def checkVariableAreDocumented( self, all_variables ):
         html_folder = self.builder_top_dir / 'HTML'
 
+        all_documented = set()
+
         all_variables.sort()
         for varname in all_variables:
             definition_line = '<p><a name="%(varname)s"></a><b>%(varname)s</b>' % {'varname': varname}
@@ -54,10 +56,13 @@ class CheckIsDocumented:
                 for line in f:
                     if line.startswith( definition_line ):
                         found = True
+                        all_documented.add( varname )
                         break
 
                 if not found:
                     print( 'No documentation for variable "%s"' % (varname,) )
+
+        return all_documented
 
     anchor_name_map = {
         'c=': 'cequals',
@@ -83,6 +88,8 @@ class CheckIsDocumented:
     def checkFunctionsAreDocumented( self, all_functions ):
         html_folder = self.builder_top_dir / 'HTML'
 
+        all_documented = set()
+
         all_functions.sort()
         for funcname in all_functions:
             definition_line = ('<p><a name="%(aname)s">(<b>%(funcname)s</b>' %
@@ -97,11 +104,14 @@ class CheckIsDocumented:
                 found = False
                 for line in f:
                     if line.startswith( definition_line ):
+                        all_documented.add( funcname )
                         found = True
                         break
 
                 if not found:
                     print( 'No documentation for function "%s"' % (funcname,) )
+
+        return all_documented
 
     def checkVariableAreIndexed( self, all_variables ):
         index = self.builder_top_dir / 'HTML/var_list.html'
@@ -115,9 +125,15 @@ class CheckIsDocumented:
                     varname = html.unescape( varname )
                     all_indexed.add( varname )
 
-        missing = set(all_variables) - all_indexed
+        missing = all_variables - all_indexed
         for varname in sorted(missing):
             print( 'No index for variable "%s"' % (varname,) )
+
+        if False:
+            # for now this is misleading as the function in MLisp library are not taken into account
+            missing = all_indexed - all_variables
+            for varname in sorted(missing):
+                print( 'Not documented but indexed variable "%s"' % (varname,) )
 
     def checkFunctionsAreIndexed( self, all_functions ):
         index = self.builder_top_dir / 'HTML/fn_list.html'
@@ -131,9 +147,15 @@ class CheckIsDocumented:
                     funcname = html.unescape( funcname )
                     all_indexed.add( funcname )
 
-        missing = set(all_functions) - all_indexed
+        missing = all_functions - all_indexed
         for funcname in sorted(missing):
             print( 'No index for function "%s"' % (funcname,) )
+
+        if False:
+            # for now this is misleading as the function in MLisp library are not taken into account
+            missing = all_indexed - all_functions
+            for funcname in sorted(missing):
+                print( 'Not documented but indexed function "%s"' % (funcname,) )
 
 if __name__ == '__main__':
     sys.exit( CheckIsDocumented( sys.argv ).main() )

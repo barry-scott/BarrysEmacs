@@ -247,6 +247,11 @@ int re_replace_search_text_command()
     return search_replace_helper();
 }
 
+int ere_replace_search_text_command()
+{
+    return search_replace_helper();
+}
+
 //
 // put dot and mark around the region matched by the n th parenthesised
 // expression from the last search( n=0 = gtr the whole thing)

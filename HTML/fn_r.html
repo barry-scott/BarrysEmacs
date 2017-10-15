@@ -19,6 +19,14 @@
 </blockquote>
 
 
+<p><a name="re-quote">(<b>re-quote</b> <span class="cmd">string</span>)</a></p>
+
+<blockquote>
+<p>Deprecated: Use ere-quote for new code.</p>
+<p>Quotes all special re characters in string so that the string can be searched for literally using re search functions.</p>
+</blockquote>
+
+
 <p><a name="re-replace-search-text">(<b>re-replace-search-text</b> <span class="cmd">replacement</span>)</a></p>
 
 <blockquote>
@@ -149,6 +157,16 @@
 <blockquote>
 <p>Replaces all occurrences of one string for another, starting at dot and ending at the end of the buffer.</p>
 </blockquote>
+
+
+
+<p><a name="reset-buffer-name-from-filename">(<b>reset-buffer-name-from-filename</b>)</a></p>
+
+<blockquote>
+<p>Resets the current buffers name using the algorithm used when a new file is first visited.</p>
+<p>Useful to call after the <a href="var_b.html#buffer-saved-as-hook">buffer-saved-as-hook</a> has been changed.</p>
+</blockquote>
+
 
 
 <p><a name="resume-process">(<b>resume-process</b> <span class="cmd">process-name</span>)</a></p>

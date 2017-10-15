@@ -335,6 +335,7 @@ extern int re_replace_search_text_command(void);
 extern int re_replace_string(void);
 extern int re_search_forward(void);
 extern int re_search_reverse(void);
+extern int ere_replace_search_text_command(void);
 extern int ere_replace_string(void);
 extern int ere_search_forward(void);
 extern int ere_search_reverse(void);
@@ -794,6 +795,7 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "re-search-forward", re_search_forward );
     EMACS_NEW BoundName( "re-search-reverse", re_search_reverse );
     EMACS_NEW BoundName( "ere-quote", ere_quote_command );
+    EMACS_NEW BoundName( "ere-replace-search-text", ere_replace_search_text_command );
     EMACS_NEW BoundName( "ere-replace-string", ere_replace_string );
     EMACS_NEW BoundName( "ere-search-forward", ere_search_forward );
     EMACS_NEW BoundName( "ere-search-reverse", ere_search_reverse );
