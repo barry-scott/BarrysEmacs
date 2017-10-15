@@ -25,6 +25,13 @@ Introduction
         Linux (tested on: Fedora 26)
 
 New in %(version)s
+    * TBD
+
+New in 8.4.0
+    * Added toggling toolbar and menu items
+    * new case-fold-search and replace-mode added to the menus and toolbar
+
+New in 8.3.4
     * The disk space required for Barry's Emacs has been reduced
       to about 1/2 what 8.3.3 used on Windows and macOS.
     * Drawing problem with pixels left on screen fixed
@@ -34,8 +41,6 @@ New in %(version)s
     * Small docs improvements
     * fix auto-execute to no longer lowercase the filename
       before comparing to the auto-execute pattern
-    * Added toggling toolbar and menu items
-    * new case-fold-search and replace-mode added to the menus and toolbar
 
 New in 8.3.3
     * New toolbar icons for Open and Save
