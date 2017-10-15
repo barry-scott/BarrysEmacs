@@ -18,9 +18,11 @@ class CheckIsDocumented:
     def main( self ):
         all_variables = self.loadDefinedVariables( self.builder_top_dir / 'Editor/Source/Common/variable.cpp' )
         self.checkVariableAreDocumented( all_variables )
+        self.checkVariableAreIndexed( all_variables )
 
         all_functions = self.loadDefinedFunctions( self.builder_top_dir / 'Editor/Source/Common/function.cpp' )
         self.checkFunctionsAreDocumented( all_functions )
+        self.checkFunctionsAreIndexed( all_functions )
 
         return 0
 
@@ -55,7 +57,7 @@ class CheckIsDocumented:
                         break
 
                 if not found:
-                    print( 'Variable "%s" not documented' % (varname,) )
+                    print( 'No documentation for variable "%s"' % (varname,) )
 
     anchor_name_map = {
         'c=': 'cequals',
@@ -77,6 +79,7 @@ class CheckIsDocumented:
         '>>': 'rightshift',
         '<<': 'shiftleft',
         }
+
     def checkFunctionsAreDocumented( self, all_functions ):
         html_folder = self.builder_top_dir / 'HTML'
 
@@ -93,16 +96,44 @@ class CheckIsDocumented:
             with open( html_folder / ('fn_%s.html' % (suffix,)), 'r' ) as f:
                 found = False
                 for line in f:
-                    #print( 'qqq 1 %r' % (definition_line,) )
-                    #print( 'qqq 2 %r' % (line,) )
                     if line.startswith( definition_line ):
                         found = True
                         break
 
                 if not found:
-                    print( 'Function "%s" not documented' % (funcname,) )
+                    print( 'No documentation for function "%s"' % (funcname,) )
 
+    def checkVariableAreIndexed( self, all_variables ):
+        index = self.builder_top_dir / 'HTML/var_list.html'
+        all_indexed = set()
 
+        with index.open() as f:
+            for line in f:
+                if '<a href="var_' in line:
+                    parts = line.strip().split( '>' )
+                    varname = parts[-2].split('<')[0].strip()
+                    varname = html.unescape( varname )
+                    all_indexed.add( varname )
+
+        missing = set(all_variables) - all_indexed
+        for varname in sorted(missing):
+            print( 'No index for variable "%s"' % (varname,) )
+
+    def checkFunctionsAreIndexed( self, all_functions ):
+        index = self.builder_top_dir / 'HTML/fn_list.html'
+        all_indexed = set()
+
+        with index.open() as f:
+            for line in f:
+                if '<a href="fn_' in line:
+                    parts = line.strip().split( 'target="body">' )
+                    funcname = parts[-1].split()[0].split('<')[0]
+                    funcname = html.unescape( funcname )
+                    all_indexed.add( funcname )
+
+        missing = set(all_functions) - all_indexed
+        for funcname in sorted(missing):
+            print( 'No index for function "%s"' % (funcname,) )
 
 if __name__ == '__main__':
     sys.exit( CheckIsDocumented( sys.argv ).main() )
