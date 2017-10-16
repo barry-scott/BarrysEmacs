@@ -103,7 +103,7 @@
         ;  only cot if a region is set
         (if (! (error-occurred (mark)))
             (progn
-                (UI-edit-copy)
+                (save-excursion (UI-edit-copy))
                 (erase-region)
                 (unset-mark)
             )
