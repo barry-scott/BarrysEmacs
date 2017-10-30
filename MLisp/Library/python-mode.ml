@@ -617,6 +617,8 @@
     (modify-syntax-table "keyword-1" "and")
     (modify-syntax-table "keyword-1" "as")
     (modify-syntax-table "keyword-1" "assert")
+    (modify-syntax-table "keyword-1" "async")
+    (modify-syntax-table "keyword-1" "await")
     (modify-syntax-table "keyword-1" "break")
     (modify-syntax-table "keyword-1" "class")
     (modify-syntax-table "keyword-1" "continue")
