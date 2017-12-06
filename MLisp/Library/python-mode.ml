@@ -396,6 +396,22 @@
     )
 )
 
+(defun
+    (Python-insert-main-boiler-plate
+        (insert-string
+            "#!/usr/bin/env python" "\n"
+            "import sys" "\n"
+            "\n"
+            "def main( argv ):" "\n"
+            "    return 0" "\n"
+            "\n"
+            "if __name__ == '__main__':" "\n"
+            "    sys.exit( main( sys.argv )" "\n"
+        )
+        (novalue)
+    )
+)
+
 ;
 ; Python 2 syntax table
 ;
