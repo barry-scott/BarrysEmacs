@@ -141,12 +141,14 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
 
         menu_edit = mb.addMenu( T_('&Edit') )
 
-        self.addEmacsMenu( menu_edit, 'ec', T_('Copy'), 'toolbar_images/editcopy.png' )
-        self.addEmacsMenu( menu_edit, 'ex', T_('Cut'), 'toolbar_images/editcut.png' )
-        self.addEmacsMenu( menu_edit, 'ev', T_('Paste'), 'toolbar_images/editpaste.png' )
+        # need to add the standard shotcuts to the edit menu items
+        # otherwise cut/copy/paste does not work in dialogs like save as
+        self.addEmacsMenu( menu_edit, 'ec', T_('Copy'), 'toolbar_images/editcopy.png', shortcut=(QtCore.Qt.ControlModifier + QtCore.Qt.Key_C) )
+        self.addEmacsMenu( menu_edit, 'ex', T_('Cut'), 'toolbar_images/editcut.png', shortcut=(QtCore.Qt.ControlModifier + QtCore.Qt.Key_X) )
+        self.addEmacsMenu( menu_edit, 'ev', T_('Paste'), 'toolbar_images/editpaste.png', shortcut=(QtCore.Qt.ControlModifier + QtCore.Qt.Key_V) )
         menu_edit.addSeparator()
 
-        self.addEmacsMenu( menu_edit, 'ea', T_('Select All') )
+        self.addEmacsMenu( menu_edit, 'ea', T_('Select All'), shortcut=(QtCore.Qt.ControlModifier + QtCore.Qt.Key_A) )
 
         menu_edit.addSeparator()
         self.addEmacsMenu( menu_edit, 'eS', T_('case-fold-search'), check_state='case-fold-search' )
@@ -208,7 +210,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         act = menu_help.addAction( T_("&About…") )
         act.triggered.connect( self.onActAbout )
 
-    def addEmacsMenu( self, menu, code, title, icon_name=None, check_state=None ):
+    def addEmacsMenu( self, menu, code, title, icon_name=None, check_state=None, shortcut=None ):
         action = BemacsAction( self.app, code, check_state )
         self.__all_actions.append( action )
         if check_state is not None:
@@ -219,6 +221,9 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         else:
             icon = be_images.getIcon( icon_name )
             qt_action = menu.addAction( icon, title )
+
+        if shortcut is not None:
+            qt_action.setShortcuts( [QtGui.QKeySequence( shortcut )] )
 
         action.connect( qt_action )
 
