@@ -9,6 +9,24 @@ template_file_prefix = 'brand.'
 class Error(Exception):
     pass
 
+if sys.version_info[0] == 3:
+    def readFile( filename ):
+        with open( filename, 'r', encoding='utf-8' ) as f:
+            return f.read()
+
+    def writeFile( filename, data ):
+        with open( filename, 'w', encoding='utf-8' ) as f:
+            f.write( data )
+
+else:
+    def readFile( filename ):
+        with open( filename, 'rb' ) as f:
+            return f.read().decode( 'utf-8' )
+
+    def writeFile( filename, data ):
+        with open( filename, 'wb' ) as f:
+            f.write( data.encode( 'utf-8' ) )
+
 def main( argv ):
     if len(argv) < 3:
         print( 'Usage: %s <version-info-file> <wc-path>' % argv[0] )
@@ -60,8 +78,8 @@ class VersionInfo:
 
         commit_id_file = os.path.join( wc_path, 'Builder/commit_id.txt' )
         if os.path.exists( commit_id_file ):
-            with open( commit_id_file, 'r', encoding='utf-8' ) as f:
-                result = f.read()
+            result = readFile( commit_id_file )
+
         else:
             result = subprocess.check_output( ['git', 'show-ref', '--head', '--hash', 'head'] )
             result = result.decode('utf-8')
@@ -69,8 +87,8 @@ class VersionInfo:
         self.__info['commit'] = result.strip()
 
     def parseVersionInfo( self, filename ):
-        f = open( filename, 'r', encoding='utf-8' )
-        for line in f:
+        contents = readFile( filename )
+        for line in contents.split('\n'):
             line = line.strip()
 
             if line.startswith( '#' ):
@@ -85,8 +103,6 @@ class VersionInfo:
             except (ValueError,TypeError,KeyError) as e:
                 raise Error( 'Cannot format key %s with value "%s" because %s' % (key.strip(), value.strip(), str(e)) )
 
-        f.close()
-
     def printInfo( self ):
         all_keys = self.__info.keys()
         all_keys.sort()
@@ -94,8 +110,7 @@ class VersionInfo:
             print( 'Info: %10s: %s' % (key, self.__info[ key ]) )
 
     def brandOneFile( self, filename ):
-        with open( filename, 'r', encoding='utf-8' ) as f:
-            template_contents = f.readlines()
+        template_contents = readFile( filename ).split('\n')
 
         try:
             branded_contents = []
@@ -110,8 +125,7 @@ class VersionInfo:
         new_filename = os.path.join( parent_dir, base[len(template_file_prefix):] )
         print( 'Info: Creating', new_filename )
 
-        with open( new_filename, 'w', encoding='utf-8' ) as f:
-            f.writelines( branded_contents )
+        writeFile( new_filename, '\n'.join( branded_contents ) )
 
 if __name__ == '__main__':
     sys.exit( main( sys.argv ) )

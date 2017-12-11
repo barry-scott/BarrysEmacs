@@ -10,7 +10,12 @@ import time
 
 def main( argv ):
     # uncode data
-    ucd = open( argv[1], 'r', encoding='utf-8' )
+    if sys.version[0] == 3:
+        with open( argv[1], 'r', encoding='utf-8' ) as f:
+            ucd = f.read()
+    else:
+        with open( argv[1], 'rb' ) as f:
+            ucd = f.read().decode('utf-8')
 
     alphabetic = set()
     numeric = set()
@@ -23,7 +28,9 @@ def main( argv ):
 
     last_code_point = None
 
-    for line in ucd:
+    for line in ucd.split('\n'):
+        if line == '':
+            continue
         parts = line.strip().split(';')
         code = parts[0]
         category = parts[2]
@@ -55,7 +62,7 @@ def main( argv ):
         if len(title) > 0:
             to_title[ code ] = title
 
-    print( 'alphabetic',len(alphabetic) )
+    print( 'alphabetic', len(alphabetic) )
     print( 'numeric', len(numeric) )
     print( 'to_upper', len(to_upper) )
     print( 'to_lower', len(to_lower) )
@@ -65,14 +72,17 @@ def main( argv ):
     print( 'is_title', len(is_title) )
     print( 'last code point', last_code_point )
 
-    ucd.close()
-
     # case folding
-    ucd = open( argv[2], 'r', encoding='utf-8' )
+    if sys.version[0] == 3:
+        with open( argv[2], 'r', encoding='utf-8' ) as f:
+            ucd = f.read()
+    else:
+        with open( argv[2], 'rb' ) as f:
+            ucd = f.read().decode('utf-8')
 
     casefold = {}
 
-    for line in ucd:
+    for line in ucd.split('\n'):
         line = line.strip()
         if len(line) == 0:
             continue
@@ -81,19 +91,16 @@ def main( argv ):
         line = line.strip()
         if len(line) == 0:
             continue
+
         code, status, mapping = [v.strip() for v in line.split(';')][0:3]
         # choose common C and simple S not full F or turkic T
         if status in ('C','S'):
             casefold[ code ] = mapping
 
-    ucd.close()
-
     print( 'casefold', len(casefold) )
 
-    cxx = open( argv[3], 'w', encoding='utf-8' )
-
-    cxx.write( 
-'''//
+    cxx = [
+u'''//
 //  written by %s on %s
 //
 struct unicode_category
@@ -107,76 +114,82 @@ struct unicode_data
     unsigned int replacement;
 };
 
-''' % (argv[0], time.strftime( '%Y-%d-%m %H:%M:%S' )) )
+''' % (argv[0], time.strftime( '%Y-%d-%m %H:%M:%S' ))]
 
-    cxx.write( 'const int unicode_max_code_point( 0x%x );\n' % (last_code_point,) )
+    cxx.append( u'const int unicode_max_code_point( 0x%x );\n' % (last_code_point,) )
 
-    cxx.write( 'struct unicode_category unicode_init_alphabetic[ %d ] = {\n' % (len(alphabetic)+1,))
+    cxx.append( u'struct unicode_category unicode_init_alphabetic[ %d ] = {\n' % (len(alphabetic)+1,))
     for code in sorted( alphabetic ):
-        cxx.write( '    {0x%s},\n' % (code,) )
+        cxx.append( u'    {0x%s},\n' % (code,) )
 
-    cxx.write( '    {0x0000}\n' )
-    cxx.write( '};\n\n' )
+    cxx.append( u'    {0x0000}\n' )
+    cxx.append( u'};\n\n' )
 
-    cxx.write( 'struct unicode_category unicode_init_numeric[ %d ] = {\n' % (len(numeric)+1,))
+    cxx.append( u'struct unicode_category unicode_init_numeric[ %d ] = {\n' % (len(numeric)+1,))
     for code in sorted( numeric ):
-        cxx.write( '    {0x%s},\n' % (code,) )
+        cxx.append( u'    {0x%s},\n' % (code,) )
 
-    cxx.write( '    {0x0000}\n' )
-    cxx.write( '};\n\n' )
+    cxx.append( u'    {0x0000}\n' )
+    cxx.append( u'};\n\n' )
 
-    cxx.write( 'struct unicode_category unicode_init_is_upper[ %d ] = {\n' % (len(is_upper)+1,))
+    cxx.append( u'struct unicode_category unicode_init_is_upper[ %d ] = {\n' % (len(is_upper)+1,))
     for code in sorted( is_upper ):
-        cxx.write( '    {0x%s},\n' % (code,) )
+        cxx.append( u'    {0x%s},\n' % (code,) )
 
-    cxx.write( '    {0x0000}\n' )
-    cxx.write( '};\n\n' )
+    cxx.append( u'    {0x0000}\n' )
+    cxx.append( u'};\n\n' )
 
-    cxx.write( 'struct unicode_category unicode_init_is_lower[ %d ] = {\n' % (len(is_lower)+1,))
+    cxx.append( u'struct unicode_category unicode_init_is_lower[ %d ] = {\n' % (len(is_lower)+1,))
     for code in sorted( is_lower ):
-        cxx.write( '    {0x%s},\n' % (code,) )
+        cxx.append( u'    {0x%s},\n' % (code,) )
 
-    cxx.write( '    {0x0000}\n' )
-    cxx.write( '};\n\n' )
+    cxx.append( u'    {0x0000}\n' )
+    cxx.append( u'};\n\n' )
 
-    cxx.write( 'struct unicode_category unicode_init_is_title[ %d ] = {\n' % (len(is_title)+1,))
+    cxx.append( u'struct unicode_category unicode_init_is_title[ %d ] = {\n' % (len(is_title)+1,))
     for code in sorted( is_title ):
-        cxx.write( '    {0x%s},\n' % (code,) )
+        cxx.append( u'    {0x%s},\n' % (code,) )
 
-    cxx.write( '    {0x0000}\n' )
-    cxx.write( '};\n\n' )
+    cxx.append( u'    {0x0000}\n' )
+    cxx.append( u'};\n\n' )
 
-    cxx.write( 'struct unicode_data unicode_init_to_upper[ %d ] = {\n' % (len(to_upper)+1,))
+    cxx.append( u'struct unicode_data unicode_init_to_upper[ %d ] = {\n' % (len(to_upper)+1,))
     for code, value in sorted( to_upper.items() ):
-        cxx.write( '    {0x%s, 0x%s},\n' % (code, value) )
+        cxx.append( u'    {0x%s, 0x%s},\n' % (code, value) )
 
-    cxx.write( '    {0x0000, 0x0000}\n' )
-    cxx.write( '};\n\n' )
+    cxx.append( u'    {0x0000, 0x0000}\n' )
+    cxx.append( u'};\n\n' )
 
-    cxx.write( 'struct unicode_data unicode_init_to_lower[ %d ] = {\n' % (len(to_lower)+1,))
+    cxx.append( u'struct unicode_data unicode_init_to_lower[ %d ] = {\n' % (len(to_lower)+1,))
     for code, value in sorted( to_lower.items() ):
-        cxx.write( '    {0x%s, 0x%s},\n' % (code, value) )
+        cxx.append( u'    {0x%s, 0x%s},\n' % (code, value) )
 
-    cxx.write( '    {0x0000, 0x0000}\n' )
-    cxx.write( '};\n\n' )
+    cxx.append( u'    {0x0000, 0x0000}\n' )
+    cxx.append( u'};\n\n' )
 
-    cxx.write( 'struct unicode_data unicode_init_to_title[ %d ] = {\n' % (len(to_title)+1,))
+    cxx.append( u'struct unicode_data unicode_init_to_title[ %d ] = {\n' % (len(to_title)+1,))
     for code, value in sorted( to_title.items() ):
-        cxx.write( '    {0x%s, 0x%s},\n' % (code, value) )
+        cxx.append( u'    {0x%s, 0x%s},\n' % (code, value) )
 
-    cxx.write( '    {0x0000, 0x0000}\n' )
-    cxx.write( '};\n\n' )
+    cxx.append( u'    {0x0000, 0x0000}\n' )
+    cxx.append( u'};\n\n' )
 
-    cxx.write( 'struct unicode_data unicode_init_casefold[ %d ] = {\n' % (len(casefold)+1,))
+    cxx.append( u'struct unicode_data unicode_init_casefold[ %d ] = {\n' % (len(casefold)+1,))
     for code, value in sorted( casefold.items() ):
-        cxx.write( '    {0x%s, 0x%s},\n' % (code, value) )
+        cxx.append( u'    {0x%s, 0x%s},\n' % (code, value) )
 
-    cxx.write( '    {0x0000, 0x0000}\n' )
-    cxx.write( '};\n\n' )
+    cxx.append( u'    {0x0000, 0x0000}\n' )
+    cxx.append( u'};\n\n' )
 
+    cxx.append( u'// end of file\n' )
 
-    cxx.write( '// end of file\n' )
-    cxx.close()
+    if sys.version[0] == 3:
+        with open( argv[1], 'w', encoding='utf-8' ) as f:
+            f.write( ''.join( cxx ) )
+    else:
+        with open( argv[1], 'rb' ) as f:
+            f.write( ''.join( cxx ).encode('utf-8') )
+
     return 0
 
 sys.exit( main( sys.argv ) )
