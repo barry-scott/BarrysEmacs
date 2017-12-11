@@ -406,7 +406,7 @@
             "    return 0" "\n"
             "\n"
             "if __name__ == '__main__':" "\n"
-            "    sys.exit( main( sys.argv )" "\n"
+            "    sys.exit( main( sys.argv ) )" "\n"
         )
         (novalue)
     )
