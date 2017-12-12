@@ -187,7 +187,7 @@ struct unicode_data
         with open( argv[3], 'w', encoding='utf-8' ) as f:
             f.write( ''.join( cxx ) )
     else:
-        with open( argv[3], 'rb' ) as f:
+        with open( argv[3], 'wb' ) as f:
             f.write( ''.join( cxx ).encode('utf-8') )
 
     return 0
