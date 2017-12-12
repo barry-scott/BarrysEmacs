@@ -2,7 +2,7 @@
 #
 #   make_unicode_data.py
 #
-#   Copyright (c) 2010  Barry A. Scott
+#   Copyright (c) 2010-2017  Barry A. Scott
 #
 import sys
 import os
@@ -10,7 +10,7 @@ import time
 
 def main( argv ):
     # uncode data
-    if sys.version[0] == 3:
+    if sys.version_info[0] == 3:
         with open( argv[1], 'r', encoding='utf-8' ) as f:
             ucd = f.read()
     else:
@@ -73,7 +73,7 @@ def main( argv ):
     print( 'last code point', last_code_point )
 
     # case folding
-    if sys.version[0] == 3:
+    if sys.version_info[0] == 3:
         with open( argv[2], 'r', encoding='utf-8' ) as f:
             ucd = f.read()
     else:
@@ -183,11 +183,11 @@ struct unicode_data
 
     cxx.append( u'// end of file\n' )
 
-    if sys.version[0] == 3:
-        with open( argv[1], 'w', encoding='utf-8' ) as f:
+    if sys.version_info[0] == 3:
+        with open( argv[3], 'w', encoding='utf-8' ) as f:
             f.write( ''.join( cxx ) )
     else:
-        with open( argv[1], 'rb' ) as f:
+        with open( argv[3], 'rb' ) as f:
             f.write( ''.join( cxx ).encode('utf-8') )
 
     return 0
