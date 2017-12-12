@@ -143,12 +143,12 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
 
         # need to add the standard shotcuts to the edit menu items
         # otherwise cut/copy/paste does not work in dialogs like save as
-        self.addEmacsMenu( menu_edit, 'ec', T_('Copy'), 'toolbar_images/editcopy.png', shortcut=(QtCore.Qt.ControlModifier + QtCore.Qt.Key_C) )
-        self.addEmacsMenu( menu_edit, 'ex', T_('Cut'), 'toolbar_images/editcut.png', shortcut=(QtCore.Qt.ControlModifier + QtCore.Qt.Key_X) )
-        self.addEmacsMenu( menu_edit, 'ev', T_('Paste'), 'toolbar_images/editpaste.png', shortcut=(QtCore.Qt.ControlModifier + QtCore.Qt.Key_V) )
+        self.addEmacsMenu( menu_edit, 'ec', T_('Copy'), 'toolbar_images/editcopy.png' )
+        self.addEmacsMenu( menu_edit, 'ex', T_('Cut'), 'toolbar_images/editcut.png' )
+        self.addEmacsMenu( menu_edit, 'ev', T_('Paste'), 'toolbar_images/editpaste.png' )
         menu_edit.addSeparator()
 
-        self.addEmacsMenu( menu_edit, 'ea', T_('Select All'), shortcut=(QtCore.Qt.ControlModifier + QtCore.Qt.Key_A) )
+        self.addEmacsMenu( menu_edit, 'ea', T_('Select All') )
 
         menu_edit.addSeparator()
         self.addEmacsMenu( menu_edit, 'eS', T_('case-fold-search'), check_state='case-fold-search' )
