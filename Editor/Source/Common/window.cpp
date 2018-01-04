@@ -749,20 +749,30 @@ EmacsWindow *EmacsWindowGroup::LRU_win( void )
     while( w->w_next != NULL )
     {
         if( w->w_buf->unrestrictedSize() == 0 )
+            // use an window with an empty buffer
             return w;
+
         if( w->w_lastuse < youngest && w != current_window )
         {
             bestw = w;
             youngest = w->w_lastuse;
         }
+
         if( w->w_height > largest_height )
             largest_height = w->w_height;
+
         w = w->w_next;
     }
-    if( view->t_length > 5 && (bestw == NULL || largest_height >= split_height_threshold) )
+    if( view->t_length > 5 && bestw == NULL && largest_height >= split_height_threshold )
+    {
         bestw = split_largest_window();
+    }
+
     if( bestw == NULL )
+    {
         bestw = windows;
+    }
+
     return bestw;
 }
 
