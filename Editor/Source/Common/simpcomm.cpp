@@ -468,14 +468,15 @@ int delete_white_space( void )
     p1 = dot;
     p2 = bf_cur->num_characters();
 
-    while( p1 <= p2 && ((c = bf_cur->char_at (p1)) == ' ' || c == '\t'))
+    // space, tab, EN space (0x2002)
+    while( p1 <= p2 && ((c = bf_cur->char_at( p1 )) == ' ' || c == '\t' || c == 0x2002))
         p1++;
 
     p2 = dot;
     do
         p2--;
     while( p2 >= bf_cur->first_character()
-    && ((c = bf_cur->char_at (p2)) == ' ' || c == '\t') );
+    && ((c = bf_cur->char_at( p2 )) == ' ' || c == '\t' || c == 0x2002) );
 
     set_dot (p2 + 1);
     if( (p1 = p1 - p2 - 1) > 0 )
