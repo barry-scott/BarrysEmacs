@@ -559,23 +559,30 @@ BooleanWordsNameTable::~BooleanWordsNameTable()
 #if !defined( PYBEMACS )
 int get_yes_or_no( int yes, const EmacsString &prompt )
 {
-    int answer;
-#if defined( _WINDOWS )
-    answer = win_yes_or_no( yes, prompt );
-#else
-
+    try
     {
-        Save<ProgramNode *> lcur_exec( &cur_exec );
-        cur_exec = NULL;
+        int answer;
+    #if defined( _WINDOWS )
+        answer = win_yes_or_no( yes, prompt );
+    #else
 
-        EmacsString word;
-        boolean_words.get_word_interactive( prompt, word );
+        {
+            Save<ProgramNode *> lcur_exec( &cur_exec );
+            cur_exec = NULL;
 
-        void *ptr_answer = boolean_words.find( word );
-        answer = *(int *)ptr_answer;
+            EmacsString word;
+            boolean_words.get_word_interactive( prompt, word );
+
+            void *ptr_answer = boolean_words.find( word );
+            answer = *(int *)ptr_answer;
+        }
+    #endif
+        return answer == 0 || answer == 1 ? answer : yes;
     }
-#endif
-    return answer == 0 || answer == 1 ? answer : yes;
+    catch( EmacsExceptionUserInputAbort & )
+    {
+        return yes;
+    }
 }
 #endif
 
