@@ -33,11 +33,14 @@ fi
 echo "Info: make macosx.mak"
 make -f macosx.mak PYTHON=$PYTHON clean build 2>&1 | tee build.log
 
-echo "Info: rebuild the OS X launch service database"
-CORE=/System/Library/Frameworks/CoreServices.framework/Versions/Current
-${CORE}/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister \
- -kill \
- -r -domain local -domain system -domain user
+if false
+then
+    echo "Info: rebuild the OS X launch service database"
+    CORE=/System/Library/Frameworks/CoreServices.framework/Versions/Current
+    ${CORE}/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister \
+     -kill \
+     -r -domain local -domain system -domain user
+fi
 
 DMG=$( find .. -name '*.dmg' )
 echo "Info: DMG ${DMG}"
