@@ -18,40 +18,51 @@
                 ~buffer
                 ~filename
                 ~backup-filename
-                ~buffer-is-not-modified
+                ~buffer-is-modified
 
                 (setq ~buffer current-buffer-name)
                 (setq ~filename current-buffer-file-name)
-                (setq ~buffer-is-not-modified (= buffer-is-modified 0))
+                (setq ~buffer-is-modified (!= buffer-is-modified 0))
 
                 (setq ~backup-filename (file-format-string backup-filename-format ~filename))
-                (save-excursion
-                    (save-restriction
-                        (widen-region)
-                        (beginning-of-file)
-                        (set-mark)
-                        (end-of-file)
-                        (write-region-to-file "_diff_.tmp")
+                (if ~buffer-is-modified
+                    (save-excursion
+                        (save-restriction
+                            (widen-region)
+                            (beginning-of-file)
+                            (set-mark)
+                            (end-of-file)
+                            (write-region-to-file "_diff_.tmp")
+                        )
                     )
                 )
+                ; see it is possible to do the diff
+                (if (| ~buffer-is-modified (file-exists ~backup-filename))
+                    (progn
+                        (pop-to-buffer "diff")
+                        (setq diff-buffer ~buffer)
+                        (diff-mode)
+                        (erase-buffer)
+                        (set-mark)
 
-                (pop-to-buffer "diff")
-                (setq diff-buffer ~buffer)
-                (diff-mode)
-                (erase-buffer)
-                (set-mark)
+                        (if (| ~prefix (! ~buffer-is-modified))
+                            (filter-region
+                                (concat diff-command " \"" ~backup-filename "\" \"" ~filename "\"") )
+                            (filter-region
+                                (concat diff-command " \"" ~filename "\"  _diff_.tmp") )
+                        )
 
-                (if (| ~buffer-is-not-modified ~prefix)
-                    (filter-region
-                        (concat diff-command " \"" ~backup-filename "\" _diff_.tmp") )
-                    (filter-region
-                        (concat diff-command " \"" ~filename "\"  _diff_.tmp") )
+
+                        (beginning-of-file)
+                        (unset-mark)
+                        (if ~buffer-is-modified
+                            (unlink-file "_diff_.tmp")
+                        )
+                        (novalue)
+                    )
+                    ; else nothing to do
+                    (message "Nothing to diff")
                 )
-
-                (beginning-of-file)
-                (unset-mark)
-                (unlink-file "_diff_.tmp")
-                (novalue)
             )
             ; else nothing to do
             (message "Nothing to diff")
