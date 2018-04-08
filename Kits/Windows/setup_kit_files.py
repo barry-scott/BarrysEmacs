@@ -56,7 +56,7 @@ this kit.
 
         print( 'Info: Create setup_copy.cmd' )
         f = open( r'tmp\setup_copy.cmd', 'w' )
-        f.write( r'copy tmp\Output\setup.exe bemacs-%s-setup.exe' '\n' %
+        f.write( r'copy tmp\Output\mysetup.exe bemacs-%s-setup.exe' '\n' %
                     (bemacs_version.VERSION,) )
         f.write( r'dir /s /b bemacs-%s-setup.exe' '\n' %
                     (bemacs_version.VERSION,) )
