@@ -36,6 +36,7 @@ extern int unicode_strcmp(  int len1, const EmacsChar_t *str1, int len2, const E
 extern int unicode_stricmp( int len1, const EmacsChar_t *str1, int len2, const EmacsChar_t *str2 );
 
 bool unicode_is_space( EmacsChar_t code_point );
+bool unicode_is_mlisp_space( EmacsChar_t code_point );
 bool unicode_is_digit( EmacsChar_t code_point );
 bool unicode_is_numeric( EmacsChar_t code_point );
 EmacsCharCategorySet_t::const_iterator getNumericBegin();

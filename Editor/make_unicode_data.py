@@ -25,6 +25,7 @@ def main( argv ):
     is_upper = set()
     is_lower = set()
     is_title = set()
+    is_space = set()
 
     last_code_point = None
 
@@ -55,6 +56,9 @@ def main( argv ):
         if category.startswith( 'N' ):
             numeric.add( code )
 
+        if category.startswith( 'Zs' ):
+            is_space.add( code )
+
         if len(upper) > 0:
             to_upper[ code ] = upper
         if len(lower) > 0:
@@ -70,6 +74,7 @@ def main( argv ):
     print( 'is_upper', len(is_upper) )
     print( 'is_lower', len(is_lower) )
     print( 'is_title', len(is_title) )
+    print( 'is_space', len(is_space) )
     print( 'last code point', last_code_point )
 
     # case folding
@@ -148,6 +153,13 @@ struct unicode_data
 
     cxx.append( u'struct unicode_category unicode_init_is_title[ %d ] = {\n' % (len(is_title)+1,))
     for code in sorted( is_title ):
+        cxx.append( u'    {0x%s},\n' % (code,) )
+
+    cxx.append( u'    {0x0000}\n' )
+    cxx.append( u'};\n\n' )
+
+    cxx.append( u'struct unicode_category unicode_init_is_space[ %d ] = {\n' % (len(is_space)+1,))
+    for code in sorted( is_space ):
         cxx.append( u'    {0x%s},\n' % (code,) )
 
     cxx.append( u'    {0x0000}\n' )

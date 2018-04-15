@@ -461,26 +461,26 @@ int meta_digit (void)
 
 int delete_white_space( void )
 {
-    int c;
-    int p1;
-    int p2;
-
-    p1 = dot;
-    p2 = bf_cur->num_characters();
+    int p1 = dot;
+    int p2 = bf_cur->num_characters();
 
     // space, tab, EN space (0x2002)
-    while( p1 <= p2 && ((c = bf_cur->char_at( p1 )) == ' ' || c == '\t' || c == 0x2002))
+    while( p1 <= p2 && unicode_is_space( bf_cur->char_at( p1 ) ) )
+    {
         p1++;
+    }
 
     p2 = dot;
-    do
+    do {
         p2--;
-    while( p2 >= bf_cur->first_character()
-    && ((c = bf_cur->char_at( p2 )) == ' ' || c == '\t' || c == 0x2002) );
+    } while( p2 >= bf_cur->first_character()
+    && unicode_is_space( bf_cur->char_at( p2 ) ) );
 
     set_dot (p2 + 1);
     if( (p1 = p1 - p2 - 1) > 0 )
+    {
         bf_cur->del_frwd (dot, p1);
+    }
 
     return 0;
 }

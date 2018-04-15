@@ -403,7 +403,7 @@ ProgramNode *ProgramNode::parse_node( MLispInputStream &input )
         {
             c = input();
         }
-        while( !input.atEof() && unicode_is_space( c ) );
+        while( !input.atEof() && unicode_is_mlisp_space( c ) );
 
         if( c != ';' )
             break;
@@ -463,10 +463,10 @@ EmacsString ProgramNode::parse_name( MLispInputStream &input )
     {
         c = input();
     }
-    while( !input.atEof() && unicode_is_space( c ) );
+    while( !input.atEof() && unicode_is_mlisp_space( c ) );
 
     while( !input.atEof()
-    && ! unicode_is_space( c )
+    && ! unicode_is_mlisp_space( c )
     && c != '(' && c != ')' && c != ';' )
     {
         name.append( c );
@@ -531,7 +531,7 @@ ProgramNode *ProgramNode::paren_node( MLispInputStream &input )
             {
                 c = input();
             }
-            while( !input.atEof() && unicode_is_space( c ) );
+            while( !input.atEof() && unicode_is_mlisp_space( c ) );
 
             if( c != ';' )
                 break;
@@ -581,7 +581,7 @@ ProgramNode *ProgramNode::paren_node( MLispInputStream &input )
             {
                 c = input();
             }
-            while( !input.atEof() && unicode_is_space( c ) );
+            while( !input.atEof() && unicode_is_mlisp_space( c ) );
             if( c != '(' )
             {
                 error( "Syntax error in new-style defun -- incorrect arg list" );
@@ -1038,7 +1038,7 @@ int ProgramNode::execute_mlisp_stream( MLispInputStream &input )
         {
             c = input();
         }
-        while( !input.atEof() && unicode_is_space( c ) );
+        while( !input.atEof() && unicode_is_mlisp_space( c ) );
 
         input.pushBack( c );
     }

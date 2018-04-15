@@ -31,6 +31,8 @@ EmacsCharCategorySet_t __numeric;
 EmacsCharCategorySet_t __is_upper;
 EmacsCharCategorySet_t __is_lower;
 EmacsCharCategorySet_t __is_title;
+EmacsCharCategorySet_t __is_space;
+EmacsCharCategorySet_t __is_mlisp_space;
 
 void init_unicode()
 {
@@ -70,6 +72,15 @@ void init_unicode()
     {
         __casefold[ p->code_point ] = p->replacement;
     }
+    for( struct unicode_category *p = unicode_init_is_space; p->code_point != 0; ++p )
+    {
+        __is_space.insert( p->code_point );
+        __is_mlisp_space.insert( p->code_point );
+    }
+    __is_mlisp_space.insert( '\n' );
+    __is_mlisp_space.insert( '\v' );
+    __is_mlisp_space.insert( '\f' );
+    __is_mlisp_space.insert( '\r' );
 }
 
 bool unicode_is_glyph( EmacsChar_t code_point )
@@ -117,23 +128,6 @@ bool unicode_is_glyph( EmacsChar_t code_point )
     return true;
 }
 
-bool unicode_is_space( EmacsChar_t code_point )
-{
-    switch( code_point )
-    {
-    case ' ':
-    case '\t':
-    case '\n':
-    case '\v':
-    case '\f':
-    case '\r':
-        return true;
-
-    default:
-        return false;
-    }
-}
-
 bool unicode_is_digit( EmacsChar_t code_point )
 {
     return code_point >= '0' && code_point <= '9';
@@ -167,6 +161,16 @@ EmacsCharCategorySet_t::const_iterator getAlphabeticBegin()
 EmacsCharCategorySet_t::const_iterator getAlphabeticEnd()
 {
     return __alphabetic.end();
+}
+
+bool unicode_is_mlisp_space( EmacsChar_t code_point )
+{
+    return __is_mlisp_space.count( code_point ) > 0;
+}
+
+bool unicode_is_space( EmacsChar_t code_point )
+{
+    return __is_space.count( code_point ) > 0;
 }
 
 bool unicode_is_upper( EmacsChar_t code_point )
