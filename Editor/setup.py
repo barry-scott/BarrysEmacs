@@ -764,8 +764,8 @@ class CompilerGCC(Compiler):
 
 
         if self.setup.platform == 'macosx':
-            self._addVar( 'CCC',            'g++ -arch i386 -arch x86_64' )
-            self._addVar( 'CC',             'gcc -arch i386 -arch x86_64' )
+            self._addVar( 'CCC',            'g++ -arch x86_64' )
+            self._addVar( 'CC',             'gcc -arch x86_64' )
 
         else:
             self._addVar( 'CCC',            'g++' )
