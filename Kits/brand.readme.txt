@@ -25,7 +25,12 @@ Introduction
         Linux (tested on: Fedora 26)
 
 New in %(version)s
-    * TBD
+    * Add all unicode space characters as spaces
+    * Add some missing documenation for ere functions
+    * fix for PC-edit-cut
+    * fix for incsearch keys on a linux console
+    * Improved Python-mode
+    * Improve diff to be smarter about what to diff between
 
 New in 8.4.0
     * Added toggling toolbar and menu items
