@@ -77,6 +77,11 @@ void init_unicode()
         __is_space.insert( p->code_point );
         __is_mlisp_space.insert( p->code_point );
     }
+    // emacs treats TAB as a space
+    __is_space.insert( '\t' );
+
+    // mlisp treat all the following as spaces
+    __is_mlisp_space.insert( '\t' );
     __is_mlisp_space.insert( '\n' );
     __is_mlisp_space.insert( '\v' );
     __is_mlisp_space.insert( '\f' );
