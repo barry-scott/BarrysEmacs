@@ -27,7 +27,7 @@ Introduction
 New in %(version)s
     * Fix TAB missing from list of space characters
 
-New in 8.4.0
+New in 8.4.1
     * Add all unicode space characters as spaces
     * Add some missing documenation for ere functions
     * fix for PC-edit-cut
