@@ -584,7 +584,7 @@ class Win64CompilerVC14(Compiler):
                                         r'/Zi /MT /EHsc '
                                         r'-DPYBEMACS=1 '
                                         r'-IInclude\Common -IInclude\Windows '
-                                        r'-DPYCXX_PYTHON_2TO3 -I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
+                                        r'-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
                                         r'"-DOS_NAME=\"Windows\"" "-DOS_VERSION=\"win64\"" '
                                         r'"-DCPU_TYPE=\"x86_64\"" "-DUI_TYPE=\"python\"" '
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
@@ -604,7 +604,7 @@ class Win64CompilerVC14(Compiler):
                                         r'/Zi /MT /EHsc '
                                         r'-DPYBEMACS=1 '
                                         r'-IInclude\Common -IInclude\Windows '
-                                        r'-DPYCXX_PYTHON_2TO3 -I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
+                                        r'-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
                                         r'-U_DEBUG '
                                         r'-D%(DEBUG)s' )
@@ -731,7 +731,7 @@ class Win32CompilerMSVC90(Compiler):
                                         r'/Zi /MT /EHsc '
                                         r'-DPYBEMACS=1 '
                                         r'-IInclude\Common -IInclude\Windows '
-                                        r'-DPYCXX_PYTHON_2TO3 -I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
+                                        r'-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
                                         r'"-DOS_NAME=\"Windows\"" "-DOS_VERSION=\"win32\"" '
                                         r'"-DCPU_TYPE=\"i386\"" "-DUI_TYPE=\"python\"" '
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
@@ -749,7 +749,7 @@ class Win32CompilerMSVC90(Compiler):
                                         r'/Zi /MT /EHsc '
                                         r'-DPYBEMACS=1 '
                                         r'-IInclude\Common -IInclude\Windows '
-                                        r'-DPYCXX_PYTHON_2TO3 -I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
+                                        r'-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
                                         r'-U_DEBUG '
                                         r'-D%(DEBUG)s' )
@@ -903,7 +903,7 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-Wall -fPIC -fexceptions -frtti '
                                         '-DPYBEMACS=1 '
                                         '-IInclude/Common -IInclude/Unix '
-                                        '-DPYCXX_PYTHON_2TO3 -I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
+                                        '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
                                         '"-DOS_NAME=\\"MacOSX\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"python\\"" '
                                         '-DDARWIN '
@@ -957,7 +957,7 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-Wall -fPIC -fexceptions -frtti '
                                         '-DPYBEMACS=1 '
                                         '-IInclude/Common -IInclude/Unix '
-                                        '-DPYCXX_PYTHON_2TO3 -I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
+                                        '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
                                         '-D%(DEBUG)s' )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g '
@@ -1016,7 +1016,7 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '-Wall -fPIC -fexceptions -frtti '
                                         '-DPYBEMACS=1 '
                                         '-IInclude/Common -IInclude/Unix '
-                                        '-DPYCXX_PYTHON_2TO3 -I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
+                                        '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"python\\"" '
                                         '%(FEATURE_DEFINES)s '
@@ -1066,7 +1066,7 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '-Wall -fPIC -fexceptions -frtti '
                                         '-DPYBEMACS=1 '
                                         '-IInclude/Common -IInclude/Unix '
-                                        '-DPYCXX_PYTHON_2TO3 -I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
+                                        '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
                                         '-D%(DEBUG)s' )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g' )

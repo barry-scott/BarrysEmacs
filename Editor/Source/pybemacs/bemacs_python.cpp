@@ -303,7 +303,7 @@ Py_ssize_t BemacsBufferData::sequence_length()
     if( !buffer.bufferValid() )
         throw Py::ValueError("buffer has been deleted");
 
-    return Py::Int( buffer.buffer()->restrictedSize() );
+    return Py::Long( buffer.buffer()->restrictedSize() );
 }
 
 Py::Object BemacsBufferData::sequence_concat( const Py::Object & )
@@ -431,7 +431,7 @@ Py_ssize_t BemacsBufferSyntax::sequence_length()
     if( !buffer.bufferValid() )
         throw Py::ValueError("buffer has been deleted");
 
-    return Py::Int( buffer->restrictedSize() );
+    return Py::Long( buffer->restrictedSize() );
 }
 
 Py::Object BemacsBufferSyntax::sequence_concat( const Py::Object & )
@@ -463,7 +463,7 @@ Py::Object BemacsBufferSyntax::sequence_item( Py_ssize_t position )
 
     int syntax = buffer->syntax_at( position + buffer->first_character() );
 
-    return Py::Int( syntax );
+    return Py::Long( syntax );
 }
 
 Py::Object BemacsBufferSyntax::sequence_slice( Py_ssize_t start, Py_ssize_t end )
@@ -493,7 +493,7 @@ Py::Object BemacsBufferSyntax::sequence_slice( Py_ssize_t start, Py_ssize_t end 
     Py::List slice( end-start );
 
     for( int pos=start; pos<end; pos++ )
-        slice[pos-start] = Py::Int( buffer->syntax_at( pos ) );
+        slice[pos-start] = Py::Long( buffer->syntax_at( pos ) );
 
     return slice;
 }
@@ -573,8 +573,8 @@ Py::Object BemacsBuffer::getattr( const char *c_name )
     if( name == "extent" )
     {
         Py::Tuple extent(2);
-        extent[0] = Py::Int( buffer->first_character() );
-        extent[1] = Py::Int( buffer->num_characters() );
+        extent[0] = Py::Long( buffer->first_character() );
+        extent[1] = Py::Long( buffer->num_characters() );
         result = extent;
     }
     else
@@ -591,22 +591,22 @@ Py::Object BemacsBuffer::getattr( const char *c_name )
     else
     if( name == "file_time" )
     {
-        result = Py::LongLong( buffer->b_file_time );
+        result = Py::Long( buffer->b_file_time );
     }
     else
     if( name == "file_synchonise_time" )
     {
-        result = Py::LongLong( buffer->b_synch_file_time );
+        result = Py::Long( buffer->b_synch_file_time );
     }
     else
     if( name == "file_permissions" )
     {
-        result = Py::Int( buffer->b_file_access );
+        result = Py::Long( buffer->b_file_access );
     }
     else
     if( name == "file_synchonise_permissions" )
     {
-        result = Py::Int( buffer->b_synch_file_access );
+        result = Py::Long( buffer->b_synch_file_access );
     }
     else
     if( name == "__name__" )
@@ -705,7 +705,7 @@ Py::Object BemacsBuffersDict::mapping_subscript( const Py::Object &key )
 
     if( key.isNumeric() )
     {
-        Py::Int index( key );
+        Py::Long index( key );
 
         if( (int)index < 0 || (int)index >= EmacsBuffer::name_table.entries() )
             throw Py::ValueError("index out of range");
@@ -784,7 +784,7 @@ Py::Object BemacsMarker::getattr( const char *c_name )
     Py::Object result;
 
     if( name == "position" )
-        result = Py::Int( marker.get_mark() );
+        result = Py::Long( marker.get_mark() );
     else
     if( name == "buffer_name" )
         result = Py::String( marker.m_buf->b_buf_name.sdata() );
@@ -815,7 +815,7 @@ Py::Object BemacsMarker::as_tuple( const Py::Tuple &args )
     Py::Tuple result( 2 );
 
     result[0] = Py::String( marker.m_buf->b_buf_name.sdata() );
-    result[1] = Py::Int( marker.get_mark() );
+    result[1] = Py::Long( marker.get_mark() );
 
     return result;
 }
@@ -922,7 +922,7 @@ Expression convertPyObjectToEmacsExpression( const Py::Object &obj )
 
     if( obj.isNumeric() )
     {
-        expr = Expression( int( long( Py::Int( obj ) ) ) );
+        expr = Expression( int( long( Py::Long( obj ) ) ) );
     }
     else
     if( obj.isString() )
@@ -960,7 +960,7 @@ Py::Object convertEmacsExpressionToPyObject( const Expression &expr )
     switch( expr.exp_type() )
     {
     case ISINTEGER:
-        obj = Py::Int( expr.asInt() );
+        obj = Py::Long( expr.asInt() );
         break;
 
     case ISSTRING:
