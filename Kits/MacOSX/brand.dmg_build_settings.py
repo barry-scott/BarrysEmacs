@@ -26,23 +26,26 @@ with open( path, 'w' ) as f:
     print( 'Info: Writing %%s' %% (path,) )
     f.write( __text.encode( 'utf-8' ) )
 
-path = os.path.join( os.environ['BUILDER_TOP_DIR'], 'Editor', 'PyQtBEmacs', 'be_client.py')
-with open( path, 'r' ) as f:
-    print( 'Info: Reading %%s' %% (path,) )
-    __text = f.read().decode( 'utf-8' )
+client_name = 'bemacs_client'
+client_path = os.path.join( 'tmp', PKGNAME, client_name )
 
-__text = __text.replace( 'org.barrys-emacs.bemacs-devel', 'org.barrys-emacs.bemacs' )
-__text = __text.replace( '#!/usr/bin/env python3\n', '#!/usr/bin/python\n' )
+cli_name = 'bemacs-cli'
+cli_path = os.path.join( 'tmp', PKGNAME, cli_name )
 
-cli_client_name = 'bemacs_client'
-cli_client_path = os.path.join( 'tmp', PKGNAME, cli_client_name )
+for tool_name, tool_path in [(cli_name, cli_path), (client_name, client_path)]:
+    __text = '''#!/bin/bash
+    exec "/Applications/Barry's Emacs.app/Contents/Resources/bin/%%s" "$@"
+    ''' %% (tool_name,)
 
-with open( cli_client_path, 'w' )  as f:
-    print( 'Info: Writing %%s' %% (cli_client_path,) )
-    f.write( __text.encode( 'utf-8' ) )
+    tool_path = os.path.join( 'tmp', PKGNAME, tool_name )
 
-print( 'Info: chmod 555 %%s' %% (cli_client_path,) )
-os.chmod( cli_client_path, 0o555 )
+    with open( tool_path, 'w' )  as f:
+        print( 'Info: Writing %%s' %% (tool_path,) )
+        f.write( __text.encode( 'utf-8' ) )
+
+    print( 'Info: chmod 555 %%s' %% (tool_path,) )
+    os.chmod( tool_path, 0o555 )
+
 
 # .. Useful stuff ..............................................................
 
@@ -66,8 +69,10 @@ size = '400M'
 
 # Files to include
 files = [app_path
-        ,cli_client_path
-        ,'../readme.txt']
+        ,cli_path
+        ,client_path
+        ,'../readme.txt'
+        ,'../readme-macos.txt']
 
 # Symlinks to create
 symlinks = {
@@ -87,8 +92,11 @@ badge_icon = __iconFromApp( app_path )
 icon_locations = {
     app_name:           (140, 120),
     'Applications':     (500, 120),
-    'readme.txt':       (140, 320),
-    cli_client_name:    (500, 320),
+
+    'readme.txt':       (100, 320),
+    'readme-macos.txt': (230, 350),
+    client_name:        (380, 320),
+    cli_name:           (520, 350),
     }
 
 # .. Window configuration ......................................................

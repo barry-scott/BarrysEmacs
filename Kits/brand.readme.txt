@@ -22,7 +22,7 @@ Introduction
     There are kits available for:
         Windows 7 and later
         Mac OS X 10.11
-        Linux (tested on: Fedora 26)
+        Linux (tested on: Fedora 28)
 
 New in %(version)s
     * Fix TAB missing from list of space characters

@@ -5,7 +5,7 @@
 #
 PYTHON=python${PYTHON_VERSION}
 
-BEMACS_BIN_DIR=$(BUILDER_TOP_DIR)/Kits/MacOSX/pkg/Barry's Emacs-Devel.app/Contents/MacOS
+BEMACS_BIN_DIR=$(BUILDER_TOP_DIR)/Kits/MacOSX/pkg/Barry's Emacs-Devel.app/Contents/Resources/bin
 BEMACS_LIB_DIR=$(BUILDER_TOP_DIR)/Kits/MacOSX/pkg/Barry's Emacs-Devel.app/Contents/Resources/emacs_library
 BEMACS_DOC_DIR=$(BUILDER_TOP_DIR)/Kits/MacOSX/pkg/Barry's Emacs-Devel.app/Contents/Resources/documentation
 
@@ -24,6 +24,7 @@ editor:
 	cd ../Editor && ./build-macosx.sh all
 	@ echo Info: Building BEmacs application...
 	cd ../Editor/PyQtBEmacs && ./build-macosx.sh --package
+	mkdir -p "$(BEMACS_BIN_DIR)"
 	@ echo Info: Copy bemacs-cli...
 	cp ../Editor/exe-cli-bemacs/bemacs-cli "$(BEMACS_BIN_DIR)"; chmod ugo=rx "$(BEMACS_BIN_DIR)/bemacs-cli"
 	@ echo Info: Copy db utils...

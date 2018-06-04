@@ -20,12 +20,14 @@ mkdir -p ${DIST_DIR}
 ${PYTHON} make_be_images.py
 export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/exe-pybemacs
 ${PYTHON} setup-macosx.py py2app --dist-dir ${DIST_DIR} --no-strip 2>&1 | tee a.log
-
 set -x
 pushd "${DIST_DIR}/Barry's Emacs-Devel.app/Contents" >/dev/null
 
 mkdir -p "Resources/emacs_library"
 mkdir -p "Resources/documentation"
+mkdir -p "Resources/bin"
+
+${PYTHON} "${SRC_DIR}/create_bemacs_client.py" "${SRC_DIR}" "Resources/bin/bemacs_client"
 
 # fixup 3. only keep the frameworks that we need, saving space
 # Resources/lib/python3.5/lib-dynload/PyQt5 - QtXxx.so
