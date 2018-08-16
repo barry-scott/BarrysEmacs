@@ -1,0 +1,12 @@
+Mac OS notes
+    There are some command line tools include on Barry's Emacs
+    install disk. 
+
+    * bemacs-cli is the command line version of bemacs.
+
+    * bemacs_client is the command line client that can be used to start
+      the Barry's Emacs Application.
+
+    Copy these to a folder on your PATH, typically this is ~/bin.
+
+[end readme-macos.txt]
