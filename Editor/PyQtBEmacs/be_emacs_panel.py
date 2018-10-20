@@ -1072,7 +1072,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         for col in range( len( new_line_contents ) ):
             new_attr = new_line_attrs[ col ]
             new_ch = new_line_contents[ col ]
-            if( col < len(old_line_contents) 
+            if( col < len(old_line_contents)
             and old_line_contents[ col ] == new_ch
             and old_line_attrs[ col ] == new_attr ):
                 continue
@@ -1186,7 +1186,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
                 if cur_mode != mode:
                     cur_mode = mode
-                    self.qp.setPen( self.fg_pens[ cur_mode ] ) 
+                    self.qp.setPen( self.fg_pens[ cur_mode ] )
                     self.qp.setBackground( self.bg_brushes[ cur_mode ] )
 
             x, y = self.__pixelPoint( col+1, row )

@@ -367,10 +367,10 @@ class ColourTableModel(QtCore.QAbstractTableModel):
 
         else:
             # skip first row
-            row -= 1    
+            row -= 1
             name = self.all_names[ row ]
             colour = self.all_colours[ name ]
-    
+
             if role == QtCore.Qt.DisplayRole:
                 if col == self.col_name:
                     return T_( self.all_presentation_names[ row ] )

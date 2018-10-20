@@ -43,7 +43,7 @@ def debugClient( msg ):
                 _debug_log = sys.stderr
 
         now = time.time()
-        frac = math.modf( now )[0]        
+        frac = math.modf( now )[0]
         local_now = time.localtime( now )
         prefix = '%s.%03d' % (time.strftime( '%Y-%m-%d %H:%M:%S', local_now ), int( frac*1000 ))
         _debug_log.write( '%s CLIENT %s\n' % (prefix, msg) )

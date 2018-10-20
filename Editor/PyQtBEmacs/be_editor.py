@@ -8,7 +8,7 @@
  ====================================================================
 
     be_editor.py
-    
+
 
 '''
 from __future__ import with_statement
@@ -314,7 +314,7 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
             self.log.exception( 'Error: checkForInput: %s' % (str(e),) )
             self.app.debugShowCallers( 5 )
             return -1
- 
+
     def termWaitForActivity( self, wait_until_time ):
         self._debugQueue( 'termWaitForActivity( %r )' % (wait_until_time,) )
 
