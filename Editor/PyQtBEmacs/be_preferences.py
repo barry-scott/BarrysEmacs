@@ -44,6 +44,7 @@ class Preferences(PreferencesNode):
 class Window(PreferencesNode):
     def __init__( self ):
         super().__init__()
+        self.theme = None
         self.geometry = None
         self.font = None
         self.all_colours = {}
@@ -56,6 +57,9 @@ class Window(PreferencesNode):
         return self.all_colours[ name ]
 
     def finaliseNode( self ):
+        if self.theme is None:
+            self.theme = Theme( name='Light' )
+
         if self.font is None:
             self.font = Font()
             self.font.finaliseNode()
@@ -63,7 +67,7 @@ class Window(PreferencesNode):
         if self.cursor is None:
             self.cursor = Cursor( be_emacs_panel.cursor_fg_default )
 
-        for colour_info in be_emacs_panel.all_colour_defaults:
+        for colour_info in be_emacs_panel.all_themes[self.theme.name].all_colours:
             if colour_info.name not in self.all_colours:
                 self.all_colours[ colour_info.name ] = Colour( colour_info.name, colour_info.fg, colour_info.bg )
 
@@ -158,12 +162,36 @@ class Cursor(PreferencesNode):
         if self.fg is None:
             self.fg = be_emacs_panel.cursor_fg_default
 
+class Theme(PreferencesNode):
+    def __init__( self, name=None ):
+        super().__init__()
+        self.name = name
+
+    def setAttr( self, name, value ):
+        if name == 'name':
+            self.name = value
+
+        else:
+            super().setAttr( name, value )
+
+    def getAttr( self, name ):
+        if name == 'name':
+            return self.name
+
+        else:
+            return super().getAttr( name )
+
+    def finaliseNode( self ):
+        if self.name is None:
+            self.name = be_emacs_panel.theme_name_default
+
 bemacs_preferences_scheme = (Scheme(
         (SchemeNode( Preferences, 'preferences',  )
         <<  (SchemeNode( Window, 'window', ('geometry',) )
             << SchemeNode( Font, 'font', ('point_size', 'face') )
+            << SchemeNode( Theme, 'theme', ('name',) )
             << SchemeNode( Colour, 'colour', ('fg', 'bg'), key_attribute='name' )
-            << SchemeNode( Cursor, 'cursor', ('fg',), default_attributes={'fg': '%d,%d,%d,%d' % be_emacs_panel.cursor_fg_default} )
+            << SchemeNode( Cursor, 'cursor', ('fg',), default_attributes={'fg': '%d,%d,%d,%d' % be_emacs_panel.all_themes[be_emacs_panel.theme_name_default].cursor_fg} )
             )
         )
     ) )

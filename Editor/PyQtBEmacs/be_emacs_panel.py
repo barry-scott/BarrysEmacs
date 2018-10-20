@@ -85,32 +85,73 @@ class ColourInfo:
         self.fg = fg
         self.bg = bg
 
-cursor_fg_default = (128,0,0,64)
+class Theme:
+    def __init__( self, name, cursor_fg, all_colours ):
+        self.name = name
+        self.cursor_fg = cursor_fg
+        self.all_colours = all_colours
 
-all_colour_defaults = (
-    ColourInfo('LINE_ATTR_MODELINE',      U_('Mode line'),    LINE_ATTR_MODELINE,     (255,255,128),  (  0,  0,255)),
-    ColourInfo('LINE_M_ATTR_HIGHLIGHT',   U_('Highlight'),    LINE_M_ATTR_HIGHLIGHT,  (  0,  0,  0),  (255,204,102)),
-    ColourInfo('SYNTAX_TYPE_PROBLEM',     U_('Problem'),      SYNTAX_TYPE_PROBLEM,    (255,  0,  0),  (255,255,255)),
-    ColourInfo('SYNTAX_DULL',             U_('Dull'),         SYNTAX_DULL,            (  0,  0,  0),  (255,255,255)),
-    ColourInfo('SYNTAX_WORD',             U_('Word'),         SYNTAX_WORD,            (  0,  0,  0),  (255,255,255)),
-    ColourInfo('SYNTAX_TYPE_STRING1',     U_('String 1'),     SYNTAX_TYPE_STRING1,    (  0,128,  0),  (255,255,255)),
-    ColourInfo('SYNTAX_TYPE_STRING2',     U_('String 2'),     SYNTAX_TYPE_STRING2,    (  0,128,  0),  (255,255,255)),
-    ColourInfo('SYNTAX_TYPE_STRING3',     U_('String 3'),     SYNTAX_TYPE_STRING3,    (  0,128,  0),  (255,255,255)),
-    ColourInfo('SYNTAX_TYPE_COMMENT1',    U_('Comment 1'),    SYNTAX_TYPE_COMMENT1,   (  0,128,  0),  (255,255,255)),
-    ColourInfo('SYNTAX_TYPE_COMMENT2',    U_('Comment 2'),    SYNTAX_TYPE_COMMENT2,   (  0,128,  0),  (255,255,255)),
-    ColourInfo('SYNTAX_TYPE_COMMENT3',    U_('Comment 3'),    SYNTAX_TYPE_COMMENT3,   (  0,128,  0),  (255,255,255)),
-    ColourInfo('SYNTAX_TYPE_KEYWORD1',    U_('Keyword 1'),    SYNTAX_TYPE_KEYWORD1,   (  0,  0,255),  (255,255,255)),
-    ColourInfo('SYNTAX_TYPE_KEYWORD2',    U_('Keyword 2'),    SYNTAX_TYPE_KEYWORD2,   (255,  0,  0),  (255,255,255)),
-    ColourInfo('SYNTAX_TYPE_KEYWORD3',    U_('Keyword 3'),    SYNTAX_TYPE_KEYWORD3,   (255,  0,  0),  (000,255,255)),
-    ColourInfo('LINE_ATTR_USER_1',        U_('User 1' ),      LINE_ATTR_USER+1,       (255,  0,  0),  (255,255,255)),
-    ColourInfo('LINE_ATTR_USER_2',        U_('User 2' ),      LINE_ATTR_USER+2,       (  0,255,  0),  (255,255,255)),
-    ColourInfo('LINE_ATTR_USER_3',        U_('User 3' ),      LINE_ATTR_USER+3,       (  0,  0,255),  (255,255,255)),
-    ColourInfo('LINE_ATTR_USER_4',        U_('User 4' ),      LINE_ATTR_USER+4,       (255,255,  0),  (255,255,255)),
-    ColourInfo('LINE_ATTR_USER_5',        U_('User 5' ),      LINE_ATTR_USER+5,       (255,  0,255),  (255,255,255)),
-    ColourInfo('LINE_ATTR_USER_6',        U_('User 6' ),      LINE_ATTR_USER+6,       (  0,255,255),  (255,255,255)),
-    ColourInfo('LINE_ATTR_USER_7',        U_('User 7' ),      LINE_ATTR_USER+7,       (255,255,255),  (192,192,192)),
-    ColourInfo('LINE_ATTR_USER_8',        U_('User 8' ),      LINE_ATTR_USER+8,       (192,192,192),  (255,255,255)),
-    )
+theme_light = Theme(
+    name='Light',
+    cursor_fg=(128,  0,  0, 64),
+    all_colours=(
+        ColourInfo('LINE_ATTR_MODELINE',      U_('Mode line'),    LINE_ATTR_MODELINE,     (255,255,128),  (  0,  0,255)),
+        ColourInfo('LINE_M_ATTR_HIGHLIGHT',   U_('Highlight'),    LINE_M_ATTR_HIGHLIGHT,  (  0,  0,  0),  (255,204,102)),
+        ColourInfo('SYNTAX_TYPE_PROBLEM',     U_('Problem'),      SYNTAX_TYPE_PROBLEM,    (255,  0,  0),  (255,255,255)),
+        ColourInfo('SYNTAX_DULL',             U_('Dull'),         SYNTAX_DULL,            (  0,  0,  0),  (255,255,255)),
+        ColourInfo('SYNTAX_WORD',             U_('Word'),         SYNTAX_WORD,            (  0,  0,  0),  (255,255,255)),
+        ColourInfo('SYNTAX_TYPE_STRING1',     U_('String 1'),     SYNTAX_TYPE_STRING1,    (  0,128,  0),  (255,255,255)),
+        ColourInfo('SYNTAX_TYPE_STRING2',     U_('String 2'),     SYNTAX_TYPE_STRING2,    (  0,128,  0),  (255,255,255)),
+        ColourInfo('SYNTAX_TYPE_STRING3',     U_('String 3'),     SYNTAX_TYPE_STRING3,    (  0,128,  0),  (255,255,255)),
+        ColourInfo('SYNTAX_TYPE_COMMENT1',    U_('Comment 1'),    SYNTAX_TYPE_COMMENT1,   (  0,128,  0),  (255,255,255)),
+        ColourInfo('SYNTAX_TYPE_COMMENT2',    U_('Comment 2'),    SYNTAX_TYPE_COMMENT2,   (  0,128,  0),  (255,255,255)),
+        ColourInfo('SYNTAX_TYPE_COMMENT3',    U_('Comment 3'),    SYNTAX_TYPE_COMMENT3,   (  0,128,  0),  (255,255,255)),
+        ColourInfo('SYNTAX_TYPE_KEYWORD1',    U_('Keyword 1'),    SYNTAX_TYPE_KEYWORD1,   (  0,  0,255),  (255,255,255)),
+        ColourInfo('SYNTAX_TYPE_KEYWORD2',    U_('Keyword 2'),    SYNTAX_TYPE_KEYWORD2,   (255,  0,  0),  (255,255,255)),
+        ColourInfo('SYNTAX_TYPE_KEYWORD3',    U_('Keyword 3'),    SYNTAX_TYPE_KEYWORD3,   (255,  0,  0),  (000,255,255)),
+        ColourInfo('LINE_ATTR_USER_1',        U_('User 1' ),      LINE_ATTR_USER+1,       (255,  0,  0),  (255,255,255)),
+        ColourInfo('LINE_ATTR_USER_2',        U_('User 2' ),      LINE_ATTR_USER+2,       (  0,255,  0),  (255,255,255)),
+        ColourInfo('LINE_ATTR_USER_3',        U_('User 3' ),      LINE_ATTR_USER+3,       (  0,  0,255),  (255,255,255)),
+        ColourInfo('LINE_ATTR_USER_4',        U_('User 4' ),      LINE_ATTR_USER+4,       (255,255,  0),  (255,255,255)),
+        ColourInfo('LINE_ATTR_USER_5',        U_('User 5' ),      LINE_ATTR_USER+5,       (255,  0,255),  (255,255,255)),
+        ColourInfo('LINE_ATTR_USER_6',        U_('User 6' ),      LINE_ATTR_USER+6,       (  0,255,255),  (255,255,255)),
+        ColourInfo('LINE_ATTR_USER_7',        U_('User 7' ),      LINE_ATTR_USER+7,       (255,255,255),  (192,192,192)),
+        ColourInfo('LINE_ATTR_USER_8',        U_('User 8' ),      LINE_ATTR_USER+8,       (192,192,192),  (255,255,255)),
+    ) )
+
+theme_dark = Theme(
+    name='Dark',
+    cursor_fg=(255,255,255,128),
+    all_colours=(
+        ColourInfo('LINE_ATTR_MODELINE',      U_('Mode line'),    LINE_ATTR_MODELINE,     (255,255,128),  (  0,  0,255)),
+        ColourInfo('LINE_M_ATTR_HIGHLIGHT',   U_('Highlight'),    LINE_M_ATTR_HIGHLIGHT,  (  0,  0,  0),  (255,204,102)),
+        ColourInfo('SYNTAX_TYPE_PROBLEM',     U_('Problem'),      SYNTAX_TYPE_PROBLEM,    (255,  0,  0),  (255,255,255)),
+        ColourInfo('SYNTAX_DULL',             U_('Dull'),         SYNTAX_DULL,            (255,255,255),  (  0,  0,  0)),
+        ColourInfo('SYNTAX_WORD',             U_('Word'),         SYNTAX_WORD,            (255,255,255),  (  0,  0,  0)),
+        ColourInfo('SYNTAX_TYPE_STRING1',     U_('String 1'),     SYNTAX_TYPE_STRING1,    (255,255,255),  (  0,128,  0)),
+        ColourInfo('SYNTAX_TYPE_STRING2',     U_('String 2'),     SYNTAX_TYPE_STRING2,    (255,255,255),  (  0,128,  0)),
+        ColourInfo('SYNTAX_TYPE_STRING3',     U_('String 3'),     SYNTAX_TYPE_STRING3,    (255,255,255),  (  0,128,  0)),
+        ColourInfo('SYNTAX_TYPE_COMMENT1',    U_('Comment 1'),    SYNTAX_TYPE_COMMENT1,   (255,255,255),  (  0,128,  0)),
+        ColourInfo('SYNTAX_TYPE_COMMENT2',    U_('Comment 2'),    SYNTAX_TYPE_COMMENT2,   (255,255,255),  (  0,128,  0)),
+        ColourInfo('SYNTAX_TYPE_COMMENT3',    U_('Comment 3'),    SYNTAX_TYPE_COMMENT3,   (255,255,255),  (  0,128,  0)),
+        ColourInfo('SYNTAX_TYPE_KEYWORD1',    U_('Keyword 1'),    SYNTAX_TYPE_KEYWORD1,   (255,255,255),  (  0,  0,255)),
+        ColourInfo('SYNTAX_TYPE_KEYWORD2',    U_('Keyword 2'),    SYNTAX_TYPE_KEYWORD2,   (255,255,255),  (  0,  0,255)),
+        ColourInfo('SYNTAX_TYPE_KEYWORD3',    U_('Keyword 3'),    SYNTAX_TYPE_KEYWORD3,   (255,255,255),  (  0,  0,255)),
+        ColourInfo('LINE_ATTR_USER_1',        U_('User 1' ),      LINE_ATTR_USER+1,       (255,255,255),  (  0,  0,255)),
+        ColourInfo('LINE_ATTR_USER_2',        U_('User 2' ),      LINE_ATTR_USER+2,       (255,255,255),  (  0,255,  0)),
+        ColourInfo('LINE_ATTR_USER_3',        U_('User 3' ),      LINE_ATTR_USER+3,       (255,255,255),  (  0,  0,255)),
+        ColourInfo('LINE_ATTR_USER_4',        U_('User 4' ),      LINE_ATTR_USER+4,       (255,255,255),  (255,255,  0)),
+        ColourInfo('LINE_ATTR_USER_5',        U_('User 5' ),      LINE_ATTR_USER+5,       (255,255,255),  (255,  0,255)),
+        ColourInfo('LINE_ATTR_USER_6',        U_('User 6' ),      LINE_ATTR_USER+6,       (255,255,255),  (  0,255,255)),
+        ColourInfo('LINE_ATTR_USER_7',        U_('User 7' ),      LINE_ATTR_USER+7,       (192,192,192),  (255,255,255)),
+        ColourInfo('LINE_ATTR_USER_8',        U_('User 8' ),      LINE_ATTR_USER+8,       (192,192,192),  (255,255,255)),
+    ) )
+
+theme_name_default = 'Light'
+all_themes = {
+    theme_light.name: theme_light,
+    theme_dark.name:  theme_dark,
+    }
 
 default_binding =   '\U0010ff00'
 prefix_key =        '\U0010ff01'
@@ -491,7 +532,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.log.info( 'Font family: %r %dpt' % (fi.family(), fi.pointSize()) )
 
     def __setupColours( self, win_prefs ):
-        for colour_info in all_colour_defaults:
+        theme = all_themes[ win_prefs.theme.name ]
+        for colour_info in theme.all_colours:
             colour_pref = win_prefs.getColour( colour_info.name )
             mask = colour_info.mask
 

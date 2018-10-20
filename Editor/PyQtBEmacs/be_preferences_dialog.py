@@ -141,7 +141,7 @@ class ColoursTab(QtWidgets.QWidget):
     def initControls( self ):
         p = self.app.getPrefs().window
 
-        self.model = ColourTableModel( p.cursor, p.all_colours )
+        self.model = ColourTableModel( p.cursor, p.all_colours, be_emacs_panel.all_themes[ p.theme.name ] )
         self.view = ColourTableView()
         self.view.setModel( self.model )
         self.view.resizeColumnsToContents()
@@ -214,7 +214,7 @@ class ColourTableModel(QtCore.QAbstractTableModel):
     col_fg = 2
     col_bg = 3
 
-    def __init__( self, cursor, all_colours ):
+    def __init__( self, cursor, all_colours, theme ):
         super().__init__()
 
         self.column_titles = [U_('Name'), U_('Example'), U_('Foreground'), U_('Background')]
@@ -222,8 +222,8 @@ class ColourTableModel(QtCore.QAbstractTableModel):
         self.cursor = cursor
         self.all_colours = all_colours
 
-        self.all_names = [colour_info.name for colour_info in be_emacs_panel.all_colour_defaults]
-        self.all_presentation_names = [colour_info.presentation_name for colour_info in be_emacs_panel.all_colour_defaults]
+        self.all_names = [colour_info.name for colour_info in theme.all_colours]
+        self.all_presentation_names = [colour_info.presentation_name for colour_info in theme.all_colours]
 
         self.__all_brushes = {}
 
