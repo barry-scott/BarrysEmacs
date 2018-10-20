@@ -262,21 +262,57 @@ done:
 void TerminalControl_CHAR::ansi_putchar( DisplayBody_t ch, DisplayAttr_t region_highlight )
 {
     // we only support these attr
-    region_highlight &= LINE_ATTR_MODELINE|LINE_M_ATTR_HIGHLIGHT;
+    //region_highlight &= LINE_ATTR_MODELINE|LINE_M_ATTR_HIGHLIGHT;
 
     if( region_highlight != cur_region_highlight )
     {
-        if (region_highlight & LINE_M_ATTR_HIGHLIGHT)
+        if( region_highlight & LINE_M_ATTR_HIGHLIGHT )
         {
             t_io_printf( "\233;%sm", region_rendition.sdata() );
         }
-        else if (region_highlight & LINE_ATTR_MODELINE)
+        else if( (region_highlight & LINE_ATTR_MODELINE) && !mode_line_rendition.isNull() )
         {
             t_io_printf( "\233;%sm", mode_line_rendition.sdata() );
         }
+        else if( (region_highlight & SYNTAX_TYPE_COMMENT1) && !syntax_comment1_rendition.isNull() )
+        {
+            t_io_printf( "\233%sm", syntax_comment1_rendition.sdata() );
+        }
+        else if( (region_highlight & SYNTAX_TYPE_COMMENT2) && !syntax_comment2_rendition.isNull() )
+        {
+            t_io_printf( "\233%sm", syntax_comment2_rendition.sdata() );
+        }
+        else if( (region_highlight & SYNTAX_TYPE_COMMENT3) && !syntax_comment3_rendition.isNull() )
+        {
+            t_io_printf( "\233%sm", syntax_comment3_rendition.sdata() );
+        }
+        else if( (region_highlight & SYNTAX_TYPE_STRING1) && !syntax_string1_rendition.isNull() )
+        {
+            t_io_printf( "\233%sm", syntax_string1_rendition.sdata() );
+        }
+        else if( (region_highlight & SYNTAX_TYPE_STRING2) && !syntax_string2_rendition.isNull() )
+        {
+            t_io_printf( "\233%sm", syntax_string2_rendition.sdata() );
+        }
+        else if( (region_highlight & SYNTAX_TYPE_STRING3) && !syntax_string3_rendition.isNull() )
+        {
+            t_io_printf( "\233%sm", syntax_string3_rendition.sdata() );
+        }
+        else if( (region_highlight & SYNTAX_TYPE_KEYWORD1) && !syntax_keyword1_rendition.isNull() )
+        {
+            t_io_printf( "\233%sm", syntax_keyword1_rendition.sdata() );
+        }
+        else if( (region_highlight & SYNTAX_TYPE_KEYWORD2) && !syntax_keyword2_rendition.isNull() )
+        {
+            t_io_printf( "\233%sm", syntax_keyword2_rendition.sdata() );
+        }
+        else if( (region_highlight & SYNTAX_TYPE_KEYWORD3) && !syntax_keyword3_rendition.isNull() )
+        {
+            t_io_printf( "\233%sm", syntax_keyword3_rendition.sdata() );
+        }
         else
         {
-            t_io_printf( "\233%sm", window_rendition.sdata() );
+            t_io_printf( "\233m" );
         }
 
         cur_region_highlight = region_highlight;
