@@ -167,6 +167,12 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         # init QApplication now that we have the plugin dir setup
         QtWidgets.QApplication.__init__( self, [sys.argv[0]] )
 
+        is_dark_mode = self.palette().text().color().lightnessF() > self.palette().window().color().lightnessF()
+
+        prefs = self.getPrefs()
+        if not is_dark_mode and prefs.window.theme.name == 'Dark':
+            self.setDarkPalette()
+
         self.main_window = be_main_window.BemacsMainWindow( self )
 
         self.MarshallToGuiThreadSignal.connect( self.handleMarshallToGuiThread )
@@ -175,6 +181,28 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
 
         self.saveStateRequest.connect( self.saveStateHandler )
         self.commitDataRequest.connect( self.commitDataHandler )
+
+    def setDarkPalette( self ):
+        # thanks to https://gist.github.com/QuantumCD/6245215
+        self.setStyle( QtWidgets.QStyleFactory.create( "Fusion" ) )
+        self.dark_palette = QtGui.QPalette()
+        self.dark_palette.setColor( QtGui.QPalette.Window, QtGui.QColor( 53,53,53 ) )
+        self.dark_palette.setColor( QtGui.QPalette.WindowText, QtCore.Qt.white )
+        self.dark_palette.setColor( QtGui.QPalette.Base, QtGui.QColor( 25,25,25 ) )
+        self.dark_palette.setColor( QtGui.QPalette.AlternateBase, QtGui.QColor( 53,53,53 ) )
+        self.dark_palette.setColor( QtGui.QPalette.ToolTipBase, QtCore.Qt.white )
+        self.dark_palette.setColor( QtGui.QPalette.ToolTipText, QtCore.Qt.white )
+        self.dark_palette.setColor( QtGui.QPalette.Text, QtCore.Qt.white )
+        self.dark_palette.setColor( QtGui.QPalette.Button, QtGui.QColor( 53,53,53 ) )
+        self.dark_palette.setColor( QtGui.QPalette.ButtonText, QtCore.Qt.white )
+        self.dark_palette.setColor( QtGui.QPalette.BrightText, QtCore.Qt.red )
+        self.dark_palette.setColor( QtGui.QPalette.Link, QtGui.QColor( 42, 130, 218 ) )
+        self.dark_palette.setColor( QtGui.QPalette.Highlight, QtGui.QColor( 42, 130, 218 ) )
+        self.dark_palette.setColor( QtGui.QPalette.HighlightedText, QtCore.Qt.black )
+
+        self.setPalette( self.dark_palette )
+
+        self.setStyleSheet( "QToolTip { color: white; background-color: black; border: 1px solid #1e1e1e; }" )
 
     # called at start up to find the setting for session management
     def saveStateHandler( self, mgr ):

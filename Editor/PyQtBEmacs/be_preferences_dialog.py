@@ -104,16 +104,6 @@ class FontTab(QtWidgets.QWidget):
         p.point_size = self.point_size
 
     def validate( self ):
-        valid = True
-
-        if not valid:
-            wx.MessageBox(
-                T_('You must enter a valid something'),
-                T_('Warning'),
-                wx.OK | wx.ICON_EXCLAMATION,
-                self )
-            return False
-
         return True
 
     def onSelectFont( self, *args ):
@@ -141,20 +131,41 @@ class ColoursTab(QtWidgets.QWidget):
     def initControls( self ):
         p = self.app.getPrefs().window
 
-        self.model = ColourTableModel( p.cursor, p.all_colours, be_emacs_panel.all_themes[ p.theme.name ] )
-        self.view = ColourTableView()
-        self.view.setModel( self.model )
-        self.view.resizeColumnsToContents()
+        self.label_theme = QtWidgets.QLabel( T_('Theme') )
+        self.theme = QtWidgets.QComboBox()
+        self.theme.addItems( sorted(be_emacs_panel.all_themes.keys()) )
+        self.theme.setCurrentText( p.theme.name )
+        self.theme.currentTextChanged.connect( self.themeChanged )
+
+        self.label_custom_colours = QtWidgets.QLabel( T_('Custom Colors') )
+        self.custom_colours_model = ColourTableModel( p.cursor, p.all_colours, p.theme.name )
+        self.custom_colours_view = ColourTableView()
+        self.custom_colours_view.setModel( self.custom_colours_model )
+        self.custom_colours_view.resizeColumnsToContents()
+
+        self.reset_button = QtWidgets.QPushButton( T_("Reset all custom colours to the theme's colors") )
+        self.reset_button.clicked.connect( self.resetColours )
 
         self.grid_sizer = QtWidgets.QGridLayout()
-        self.grid_sizer.addWidget( self.view, 0, 0 )
+        self.grid_sizer.addWidget( self.label_theme, 0, 0 )
+        self.grid_sizer.addWidget( self.theme, 0, 1 )
+        self.grid_sizer.addWidget( self.label_custom_colours, 1, 0 )
+        self.grid_sizer.addWidget( self.custom_colours_view, 1, 1 )
+        self.grid_sizer.addWidget( self.reset_button, 2, 1 )
 
         self.setLayout( self.grid_sizer )
 
-        self.view.doubleClicked.connect( self.model.tableDoubleClicked )
+        self.custom_colours_view.doubleClicked.connect( self.custom_colours_model.tableDoubleClicked )
+
+    def themeChanged( self, theme_name ):
+        self.custom_colours_model.setTheme( theme_name )
+
+    def resetColours( self, *args ):
+        self.custom_colours_model.resetColours()
 
     def savePreferences( self ):
-        p = self.app.getPrefs().window
+        p = self.app.getPrefs().window.theme
+        p.name = self.theme.currentText()
 
     def validate( self ):
         return True
@@ -214,7 +225,7 @@ class ColourTableModel(QtCore.QAbstractTableModel):
     col_fg = 2
     col_bg = 3
 
-    def __init__( self, cursor, all_colours, theme ):
+    def __init__( self, cursor, all_colours, theme_name ):
         super().__init__()
 
         self.column_titles = [U_('Name'), U_('Example'), U_('Foreground'), U_('Background')]
@@ -222,10 +233,27 @@ class ColourTableModel(QtCore.QAbstractTableModel):
         self.cursor = cursor
         self.all_colours = all_colours
 
-        self.all_names = [colour_info.name for colour_info in theme.all_colours]
-        self.all_presentation_names = [colour_info.presentation_name for colour_info in theme.all_colours]
-
+        self.theme = None
+        self.all_names = None
+        self.all_presentation_names = None
         self.__all_brushes = {}
+
+        self.setTheme( theme_name )
+
+    def setTheme( self, theme_name ):
+        self.theme = be_emacs_panel.all_themes[ theme_name ]
+        self.all_names = [colour_info.name for colour_info in self.theme.all_colours]
+        self.all_presentation_names = [colour_info.presentation_name for colour_info in self.theme.all_colours]
+
+    def resetColours( self ):
+        self.beginResetModel()
+
+        self.cursor.fg = self.theme.cursor_fg
+        for colour_info in self.theme.all_colours:
+            self.all_colours[ colour_info.name ].fg = colour_info.fg
+            self.all_colours[ colour_info.name ].bg = colour_info.bg
+
+        self.endResetModel()
 
     def tableDoubleClicked( self, index ):
         self.editColour( index )
@@ -236,14 +264,14 @@ class ColourTableModel(QtCore.QAbstractTableModel):
 
         if row == 0:
             if col == self.col_fg:
-                self.cursor.fg = be_emacs_panel.cursor_fg_default
+                self.cursor.fg = self.theme.cursor_fg
 
             return
 
-        colour = self.all_colours[ self.all_names[ row-1 ] ]
+        colour = self.theme.all_colours[ self.all_names[ row-1 ] ]
 
         if col == self.col_fg:
-            fg = be_emacs_panel.all_colour_defaults[ row-1 ].fg
+            fg = self.theme.all_colours[ row-1 ].fg
             if fg is not None:
                 colour.fg = fg
 
@@ -252,7 +280,7 @@ class ColourTableModel(QtCore.QAbstractTableModel):
                     self.createIndex( row, self.col_fg ) )
 
         if col == self.col_bg:
-            bg = be_emacs_panel.all_colour_defaults[ row-1 ].bg
+            bg = self.theme.all_colours[ row-1 ].bg
             if bg is not None:
                 colour.bg = bg
 
