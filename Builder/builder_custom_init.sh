@@ -5,7 +5,7 @@ export PYTHON_VERSION=${1:-3.6}
 
 # ether set to tag:<ver> or trunk:<ver>
 export PYCXX_VER=tag7.0.3
-export PYCXX_VER=trunk:7.0.3
+export PYCXX_VER=trunk:7.1.0
 
 case ${BUILDER_CFG_PLATFORM} in
 

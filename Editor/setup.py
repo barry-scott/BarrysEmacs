@@ -1,12 +1,12 @@
 #
-#   Copyright (c) 2010-2017 Barry A. Scott
+#   Copyright (c) 2010-2018 Barry A. Scott
 #
 import os
 import sys
 
 _debug = False
 
-pycxx_version = (7,0,3)
+pycxx_version = (7,1,0)
 pycxx_version_str = '%d.%d.%d' % pycxx_version
 
 def debug( msg ):

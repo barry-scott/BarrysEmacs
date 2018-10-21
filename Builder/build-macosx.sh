@@ -30,6 +30,12 @@ then
     exit 1
 fi
 
+if [ -e "/Volumes/Barry's Emacs" ]
+then
+    echo "Info: unmount old kit dmg"
+    umount "/Volumes/Barry's Emacs"
+fi
+
 echo "Info: make macosx.mak"
 make -f macosx.mak PYTHON=$PYTHON clean build 2>&1 | tee build.log
 
