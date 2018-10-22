@@ -631,6 +631,7 @@ void TerminalControl_CHAR::t_cleanup()
     t_io_printf
     (
         "\233?6l"
+        "\233?7h"
         "\233%dH"
         "\233K"
         "\233?1049l",
