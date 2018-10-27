@@ -8,6 +8,7 @@ def main( argv ):
 
     if target == 'cli':
         spec_targets = 'build-cli'
+        python = '/usr/bin/python2'
         all_parts = (
             spec_file_head,
             spec_file_requires_cli,
@@ -18,6 +19,7 @@ def main( argv ):
             spec_file_tail)
     elif target == 'gui':
         spec_targets = 'build-gui build-cli'
+        python = '/usr/bin/python3'
         all_parts = (
             spec_file_head,
             spec_file_requires_cli,
@@ -36,7 +38,8 @@ def main( argv ):
     fmt_spec_file = fmt_spec_file.replace( '%', '%%' )
     fmt_spec_file = fmt_spec_file.replace( './.', '%' )
     spec_vars = {'TARGETS': spec_targets
-                ,'VERSION': version}
+                ,'VERSION': version
+                ,'PYTHON':  python}
     spec_file = fmt_spec_file % spec_vars
 
     with open( specfile, 'w' ) as f:
@@ -58,13 +61,12 @@ Source0:        http://barrys-emacs.org/source_kits/%{name}-%{version}.tar.gz
 '''
 
 spec_file_requires_cli = '''
-BuildRequires:  python3-devel >= 3.4
-BuildRequires:  unicode-ucd >= 7.0
-
 Requires:       bemacs-cli
 '''
 
 spec_file_requires_qui = '''
+BuildRequires:  unicode-ucd >= 7.0
+BuildRequires:  python3-devel >= 3.4
 BuildRequires:  python3-qt5 >= 5.5.1
 
 Requires:       bemacs-gui
@@ -85,10 +87,10 @@ true
 echo Info: Install PWD $( pwd )
 
 export BUILDER_TOP_DIR=$( pwd )
-export PYTHON_VERSION=$( python3 -c 'import sys; print( "%d.%d" % (sys.version_info[0], sys.version_info[1]) )' )
+export PYTHON_VERSION=$( ./.(PYTHON)s -c 'import sys; print( "%d.%d" % (sys.version_info[0], sys.version_info[1]) )' )
 
 cd ${BUILDER_TOP_DIR}/Builder
-make -f linux.mak PYTHON=/usr/bin/python3 DESTDIR=%{buildroot} ./.(TARGETS)s
+make -f linux.mak PYTHON=./.(PYTHON)s DESTDIR=%{buildroot} ./.(TARGETS)s
 mkdir -p %{buildroot}/usr/share/bemacs/lib/xml_preferences
 cp ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/xml_preferences/*.py %{buildroot}/usr/share/bemacs/lib/xml_preferences
 

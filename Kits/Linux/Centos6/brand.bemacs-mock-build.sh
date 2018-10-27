@@ -3,8 +3,12 @@ V=%(major)s.%(minor)s.%(patch)s
 KITNAME=bemacs
 KIT_BASENAME=${KITNAME}-${V}
 
-rm -rf tmp
-mkdir -p tmp
+# assumes that tmp folder exists
+if [ ! -d tmp ]
+then
+    echo "Error: tmp is not setup"
+    exit 1
+fi
 
 MOCK_VERSION_NAME=${1? mock cfg name}
 MOCK_ROOT=$( sudo mock --root=${MOCK_VERSION_NAME} -p )
@@ -17,14 +21,14 @@ then
             --init
 fi
 
-../bemacs_make_spec_file.py cli ${V} tmp/bemacs.spec
+${PYTHON} ../bemacs_make_spec_file.py cli ${V} tmp/bemacs.spec
 
 sudo \
     mock \
         --root=${MOCK_VERSION_NAME} \
         --buildsrpm \
         --spec tmp/bemacs.spec \
-        --sources ${KIT_BASENAME}.tar.gz
+        --sources tmp/${KIT_BASENAME}.tar.gz
 
 DISTRO=el6
 
