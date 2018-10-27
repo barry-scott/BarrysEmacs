@@ -504,6 +504,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         self.__pending_geometryChanged = False
 
+        self.__use_fast_drawtext = False
+
         self.__initFromPreferences()
         self.__initFont()
 
@@ -596,15 +598,19 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
     def __initFont( self ):
         metrics = QtGui.QFontMetrics( self.font )
 
-        self.char_width = metrics.width( 'i' )
-        self.char_length = metrics.height() + metrics.leading()
-        self._debugPanel( 'paintEvent first_paint i %d x %d' % (self.char_width, self.char_length) )
+        # check that widths of chars make a regular grid
+        # __termUpdateLineFast assumes that all strings are a multple
+        # of char_width but with some OS and Qt versions this is not true
+        self.__use_fast_drawtext = (metrics.width( 'i' ) == metrics.width( 'm' )
+                              and metrics.width( 'i' )*2 == metrics.width( 'ii' )
+                              and metrics.width( 'm' )*2 == metrics.width( 'mm' ))
 
-        self.char_width = metrics.width( 'M' )
+        self.char_width = metrics.width( 'm' )
         self.char_length = metrics.height() + metrics.leading()
-        self._debugPanel( 'paintEvent first_paint M %d x %d' % (self.char_width, self.char_length) )
-
         self.char_ascent = metrics.ascent()
+        self._debugPanel( 'paintEvent first_paint draw %r width %d height %d ascent %d' %
+                            (self.__use_fast_drawtext and 'fast' or 'slow'
+                            ,self.char_width, self.char_length, self.char_ascent) )
 
     def paintEvent( self, event ):
         self._debugSpeed( 'paintEvent() begin' )
@@ -1074,15 +1080,15 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
     def termUpdateLine( self, old, new, row ):
         self._debugTermCalls2( 'termUpdateLine row=%d' % (row,) )
         if old != new:
-            if sys.platform == 'darwin':
-                self.__all_term_ops.append( (self.__termUpdateLineOSX, (old, new, row)) )
+            if self.__use_fast_drawtext:
+                self.__all_term_ops.append( (self.__termUpdateLineFast, (old, new, row)) )
             else:
-                self.__all_term_ops.append( (self.__termUpdateLine, (old, new, row)) )
+                self.__all_term_ops.append( (self.__termUpdateLineSlow, (old, new, row)) )
 
-    def __termUpdateLine( self, old, new, row ):
+    def __termUpdateLineFast( self, old, new, row ):
         if old is not None:
-            self._debugTermCalls2( '__termUpdateLine row=%d old %r' % (row, old[0].rstrip(),) )
-        self._debugTermCalls2( '__termUpdateLine row=%d new %r' % (row, new[0].rstrip(),) )
+            self._debugTermCalls2( '__termUpdateLineFast row=%d old %r' % (row, old[0].rstrip(),) )
+        self._debugTermCalls2( '__termUpdateLineFast row=%d new %r' % (row, new[0].rstrip(),) )
 
         if new is None:
             new_line_contents = ''
@@ -1175,12 +1181,12 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             x, y = self.__pixelPoint( new_line_length+1, row )
             self.qp.fillRect( x, y, remaining_width*self.char_width, self.char_length, self.bg_brushes[ SYNTAX_DULL ] )
 
-        self._debugTermCalls2( '__termUpdateLine %d done' % (row,) )
+        self._debugTermCalls2( '__termUpdateLineFast %d done' % (row,) )
 
-    def __termUpdateLineOSX( self, old, new, row ):
+    def __termUpdateLineSlow( self, old, new, row ):
         if old is not None:
-            self._debugTermCalls2( '__termUpdateLineOSX row=%d old %r' % (row, old[0].rstrip(),) )
-        self._debugTermCalls2( '__termUpdateLineOSX row=%d new %r' % (row, new[0].rstrip(),) )
+            self._debugTermCalls2( '__termUpdateLineSlow row=%d old %r' % (row, old[0].rstrip(),) )
+        self._debugTermCalls2( '__termUpdateLineSlow row=%d new %r' % (row, new[0].rstrip(),) )
 
         if new is None:
             new_line_contents = ''
@@ -1242,7 +1248,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             x, y = self.__pixelPoint( new_line_length+1, row )
             self.qp.fillRect( x, y, remaining_width*self.char_width, self.char_length, self.bg_brushes[ SYNTAX_DULL ] )
 
-        self._debugTermCalls2( '__termUpdateLineOSX %d done' % (row,) )
+        self._debugTermCalls2( '__termUpdateLineSlow %d done' % (row,) )
 
     def termMoveLine( self, from_line, to_line ):
         self._debugTermCalls1( 'termMoveLine( %r, %r )' % (from_line,to_line) )
