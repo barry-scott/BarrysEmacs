@@ -76,7 +76,7 @@ tar czf ${KIT_BASENAME}.tar.gz ${KIT_BASENAME}
 popd
 
 echo "Info: creating bemacs.spec"
-python3 bemacs_spec_set_version.py ${V}
+python3 bemacs_make_spec_file.py gui ${V} tmp/bemacs.spec
 
 echo "Info: Creating SRPM for ${KIT_BASENAME}"
 
@@ -84,7 +84,7 @@ sudo \
     mock \
         --root=${MOCK_VERSION_NAME} \
         --buildsrpm --dnf \
-        --spec bemacs.spec \
+        --spec tmp/bemacs.spec \
         --sources tmp/${KIT_BASENAME}.tar.gz
 
 MOCK_BUILD_DIR=${MOCK_ROOT}/builddir/build
