@@ -1,6 +1,6 @@
 //
 //    windows File services.cpp
-//    Copyright 1993-1999 Barry A. Scott
+//    Copyright 1993-2018 Barry A. Scott
 //
 #include    <emacsutl.h>
 #include    <emobject.h>
@@ -43,9 +43,7 @@ int file_is_regular( const EmacsString &file )
 
 int file_is_directory( const EmacsString &file )
 {
-    unsigned attr = 0;
-
-    attr = (unsigned)GetFileAttributes( file.sdata() );
+    DWORD attr = GetFileAttributes( file.utf16_data() );
     if( attr == (unsigned)-1 )
         return 0;
 
@@ -107,20 +105,25 @@ device_loop:
         EmacsString new_value = get_device_name_translation( disk );
 
         if( new_value.isNull() )
+        {
             disk.append( ":" );
+        }
         else
         {
             // we are replacing the disk so zap any left over disk
             disk = EmacsString::null;
 
             if( new_value[new_value.length()-1] != PATH_CH )
+            {
                 new_value.append( PATH_STR );
+            }
 
             // add the rest of the file spec to the buffer
             new_value.append( sp( disk_end, INT_MAX ) );
             // setup the pointer to the file spec to convert
             sp = new_value;
             // go do the analysis again
+
             device_loop_max_iterations--;
             if( device_loop_max_iterations > 0 )
                 goto device_loop;
@@ -166,16 +169,20 @@ device_loop:
 
 static EmacsString get_current_directory()
 {
-    char buffer[256];
-    DWORD length = GetCurrentDirectory( sizeof( buffer ), buffer );
+    // find out the size of the cwd
+    DWORD w_len = GetCurrentDirectory( 0, NULL );
+    wchar_t *w_buf = malloc_utf16( w_len+1 );
+    w_len = GetCurrentDirectory( w_len, w_buf );
 
-    if( length != 0 && buffer[length-1] != PATH_CH )
+    EmacsString cwd( w_buf, w_len );
+    emacs_free( w_buf );
+
+    if( cwd[-1] != PATH_CH )
     {
-        buffer[length] = PATH_CH;
-        length++;
+        cwd.append( PATH_CH );
     }
 
-    return EmacsString( EmacsString::copy, buffer, length );
+    return cwd;
 }
 
 bool FileParse::sys_parse( const EmacsString &name, const EmacsString &def )
@@ -189,6 +196,7 @@ bool FileParse::sys_parse( const EmacsString &name, const EmacsString &def )
         return 0;
 
     if( disk.isNull() )
+    {
         if( !d_fab.disk.isNull() )
             disk = d_fab.disk;
         else
@@ -203,6 +211,7 @@ bool FileParse::sys_parse( const EmacsString &name, const EmacsString &def )
             else
                 disk = cur_dir_fab.disk;
         }
+    }
 
     //
     //    Assume these features of the file system
@@ -274,25 +283,24 @@ bool FileParse::sys_parse( const EmacsString &name, const EmacsString &def )
             if( is_new_windows )
             {
                 //
-                //    On new windows we will trucst GetVolumeInformation to tell the truth
+                //    On new windows we will trust GetVolumeInformation to tell the truth
                 //    about file component lengths
                 //
-
                 DWORD serial_number;
                 DWORD max_comp_len;
-                char fs_name[32];
+                wchar_t fs_name[32];
                 DWORD fs_flags;
 
                 EmacsString root( FormatString("%s" PATH_STR) << disk );
 
                 if( GetVolumeInformation
                     (
-                    root,
+                    root.utf16_data(),
                     NULL, 0,
                     &serial_number,
                     &max_comp_len,
                     &fs_flags,
-                    fs_name, sizeof( fs_name )
+                    fs_name, sizeof( fs_name )/sizeof(wchar_t)
                     ) )
                 {
                     filename_maxlen = (int)max_comp_len;
@@ -310,28 +318,27 @@ bool FileParse::sys_parse( const EmacsString &name, const EmacsString &def )
                 //    On old windows we will trust GetVolumeInformation just so far
                 //    then we figure out the limits
                 //
-
                 DWORD serial_number;
                 DWORD max_comp_len;
-                char fs_name[32];
+                wchar_t fs_name[32];
                 DWORD fs_flags;
 
                 EmacsString root( FormatString("%s" PATH_STR) << disk );
 
                 if( GetVolumeInformation
                     (
-                    root,
+                    root.utf16_data(),
                     NULL, 0,
                     &serial_number,
                     &max_comp_len,
                     &fs_flags,
-                    fs_name, sizeof( fs_name )
+                    fs_name, sizeof( fs_name )/sizeof( wchar_t )
                     ) )
                 {
                     // seems that NT is always insensitive
                     // file_case_sensitive = (fs_flags&FS_CASE_SENSITIVE) != 0;
 
-                    if( strcmp( fs_name, "FAT" ) == 0 )
+                    if( wcscmp( fs_name, L"FAT" ) == 0 )
                     {
                         filename_maxlen = 8;
                         filetype_maxlen = 4;
@@ -438,7 +445,7 @@ static EmacsString convertShortPathToLongPath( const EmacsString &short_path )
     int start = 0;
     int end = short_path.first( PATH_CH );
 
-    EmacsString longPath( short_path( start, end ) );
+    EmacsString long_path( short_path( start, end ) );
 
     while( end < short_path.length() )
     {
@@ -454,35 +461,36 @@ static EmacsString convertShortPathToLongPath( const EmacsString &short_path )
         ||  part.first( '?' ) >= 0 )
         {
             // Do not expand wild cards - this is a name expander only
-            longPath.append( PATH_CH );
-            longPath.append( part);
+            long_path.append( PATH_CH );
+            long_path.append( part);
         }
         else
         {
-            EmacsString nameToLookup( longPath );
-            nameToLookup.append( PATH_CH );
-            nameToLookup.append( part );
+            EmacsString name_to_lookup( long_path );
+            name_to_lookup.append( PATH_CH );
+            name_to_lookup.append( part );
 
             WIN32_FIND_DATA find_data;
-            HANDLE hFind = FindFirstFile( nameToLookup, &find_data );
+            HANDLE hFind = FindFirstFile( name_to_lookup.utf16_data(), &find_data );
             if( hFind == INVALID_HANDLE_VALUE )
             {
                 // file was not found - use the part as is
-                longPath.append( PATH_CH );
-                longPath.append( part );
+                long_path.append( PATH_CH );
+                long_path.append( part );
             }
             else
             {
                 FindClose( hFind );
+                EmacsString file_name( find_data.cFileName, wcslen(find_data.cFileName) );
 
                 // use the long name as it appears on disk
-                longPath.append( PATH_CH );
-                longPath.append( find_data.cFileName );
+                long_path.append( PATH_CH );
+                long_path.append( file_name );
             }
         }
     }
 
-    return longPath;
+    return long_path;
 }
 
 
@@ -529,15 +537,15 @@ FileFindWindowsNT::FileFindWindowsNT( const EmacsString &_files, bool _return_al
 , root_path()
 , full_filename()
 {
-    char file_name_buffer[ MAX_PATH ];
-    int len = (int)GetFullPathName( _files.sdata(), MAX_PATH, file_name_buffer, NULL );
+    wchar_t file_name_buffer[ MAX_PATH ];
+    DWORD len = GetFullPathName( _files.utf16_data(), MAX_PATH, file_name_buffer, NULL );
     if( len == 0 )
         return;
 
     // now its possible to get the first file
     state = first_time;
 
-    root_path = file_name_buffer;
+    root_path = EmacsString( file_name_buffer, len );
     int last_path_ch = root_path.last( PATH_CH );
     if( last_path_ch >= 0 )
     {
@@ -568,7 +576,7 @@ EmacsString FileFindWindowsNT::next()
         {
             EmacsString files( root_path );
             files.append( "*" );
-            handle = FindFirstFile( files, &find );
+            handle = FindFirstFile( files.utf16_data(), &find );
             if( handle == INVALID_HANDLE_VALUE )
             {
                 state = all_done;
@@ -588,8 +596,8 @@ EmacsString FileFindWindowsNT::next()
             break;
         }
 
-        if( strcmp( find.cFileName, "." ) == 0
-        || strcmp( find.cFileName, ".." ) == 0 )
+        if( wcscmp( find.cFileName, L"." ) == 0
+        || wcscmp( find.cFileName, L".." ) == 0 )
             continue;
 
         // return all directories if requested to do so
@@ -597,7 +605,7 @@ EmacsString FileFindWindowsNT::next()
         &&  find.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY )
             break;
         // if the name does match the pattern
-        EmacsString file_name( find.cFileName );
+        EmacsString file_name( find.cFileName, wcslen( find.cFileName ) );
         if( !case_sensitive )
             file_name.toLower();
         if( match_wild( file_name, match_pattern ) )
@@ -606,7 +614,8 @@ EmacsString FileFindWindowsNT::next()
 
     // return success and the full path
     full_filename = root_path;
-    full_filename.append( find.cFileName );
+    EmacsString file_name( find.cFileName, wcslen( find.cFileName ) );
+    full_filename.append( file_name );
     if( find.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY
     && full_filename[-1] != PATH_CH )
         full_filename.append( PATH_STR );

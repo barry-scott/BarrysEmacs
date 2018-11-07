@@ -501,7 +501,7 @@ class Win64CompilerVC14(Compiler):
 
         rules.append( '' )
         rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo Link %s' % (pyd_filename,) )
+        rules.append( '\t@echo Link Program %s' % (pyd_filename,) )
         rules.append( '\t@if not exist %(EDIT_EXE)s mkdir %(EDIT_EXE)s' )
         rules.append( '\t@$(LDEXE)  %%(CCCFLAGS)s /Fe%s /Fd%s %s %%(LINK_LIBS)s' %
                             (pyd_filename, pdb_filename, ' '.join( all_objects )) )
@@ -518,7 +518,7 @@ class Win64CompilerVC14(Compiler):
 
         rules.append( '' )
         rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo Link %s' % (pyd_filename,) )
+        rules.append( '\t@echo Link Shared %s' % (pyd_filename,) )
         rules.append( '\t@if not exist %(EDIT_EXE)s mkdir %(EDIT_EXE)s' )
         rules.append( '\t@$(LDSHARED)  %%(CCCFLAGS)s /Fe%s /Fd%s %s %%(LINK_LIBS)s' %
                             (pyd_filename, pdb_filename, ' '.join( all_objects )) )
@@ -527,14 +527,16 @@ class Win64CompilerVC14(Compiler):
 
     def ruleCxx( self, target ):
         obj_filename = target.getTargetFilename()
+        pdb_filename = target.dependent.getTargetFilename( '.pdb' )
+        pdb_dir = os.path.dirname( pdb_filename )
 
         rules = []
 
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
         rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, target.getTargetFilename()) )
         rules.append( '\t@if not exist %(EDIT_OBJ)s mkdir %(EDIT_OBJ)s' )
-        rules.append( '\t@if not exist %(EDIT_EXE)s mkdir %(EDIT_EXE)s' )   # For .pdb file
-        rules.append( '\t@$(CCC) /c %%(CCCFLAGS)s /Fo%s /Fd%s %s' % (obj_filename, target.dependent.getTargetFilename( '.pdb' ), target.src_filename) )
+        rules.append( '\t@if not exist %s mkdir %s' % (pdb_dir, pdb_dir) )   # For .pdb file
+        rules.append( '\t@$(CCC) /c %%(CCCFLAGS)s /Fo%s /Fd%s %s' % (obj_filename, pdb_filename, target.src_filename) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
@@ -558,6 +560,7 @@ class Win64CompilerVC14(Compiler):
                                         r'"-DOS_NAME=\"Windows\"" "-DOS_VERSION=\"win64\"" '
                                         r'"-DCPU_TYPE=\"x86_64\"" "-DUI_TYPE=\"console\"" '
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
+                                        r'-D_UNICODE -DUNICODE '
                                         r'-U_DEBUG '
                                         r'-D%(DEBUG)s' )
 
@@ -571,6 +574,7 @@ class Win64CompilerVC14(Compiler):
                                         r'"-DOS_NAME=\"Windows\"" "-DOS_VERSION=\"win64\"" '
                                         r'"-DCPU_TYPE=\"x86_64\"" "-DUI_TYPE=\"console\"" '
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
+                                        r'-D_UNICODE -DUNICODE '
                                         r'-U_DEBUG '
                                         r'-D%(DEBUG)s' )
 
@@ -578,7 +582,8 @@ class Win64CompilerVC14(Compiler):
         self.addFeatureDefines( feature_defines )
         self._addVar( 'EDIT_OBJ',       r'obj-pybemacs' )
         self._addVar( 'EDIT_EXE',       r'exe-pybemacs' )
-        self._addVar( 'LINK_LIBS',      '%%(PYTHON_LIB)s\python%d%d.lib' %
+        self._addVar( 'LINK_LIBS',      'advapi32.lib '
+                                        '%%(PYTHON_LIB)s\python%d%d.lib' %
                                         (sys.version_info.major, sys.version_info.minor) )
         self._addVar( 'CCCFLAGS',
                                         r'/Zi /MT /EHsc '
@@ -588,6 +593,7 @@ class Win64CompilerVC14(Compiler):
                                         r'"-DOS_NAME=\"Windows\"" "-DOS_VERSION=\"win64\"" '
                                         r'"-DCPU_TYPE=\"x86_64\"" "-DUI_TYPE=\"python\"" '
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
+                                        r'-D_UNICODE -DUNICODE '
                                         r'-U_DEBUG '
                                         r'%(FEATURE_DEFINES)s '
                                         r'-D%(DEBUG)s' )
@@ -606,6 +612,7 @@ class Win64CompilerVC14(Compiler):
                                         r'-IInclude\Common -IInclude\Windows '
                                         r'-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
+                                        r'-D_UNICODE -DUNICODE '
                                         r'-U_DEBUG '
                                         r'-D%(DEBUG)s' )
 

@@ -81,20 +81,11 @@ void emacs_sleep( int milli_seconds )
     //Sleep( milli_seconds );
 }
 
-unsigned char *get_tmp_path(void)
+EmacsString get_tmp_path(void)
 {
-    static unsigned char tmp_path[MAXPATHLEN];
-
-#if defined(WIN32)
-    DWORD len;
-
-    len = GetTempPath( sizeof( tmp_path ), s_str(tmp_path));
-#elif defined( vms )
-    _str_cpy( tmp_buf, "sys$scratch:");
-#else
-#error "Need a temp path"
-#endif
-    return tmp_path;
+    wchar_t w_buf[MAXPATHLEN];
+    int w_len = GetTempPath( MAXPATHLEN, w_buf);
+    return EmacsString( w_buf, w_len );
 }
 
 EmacsString get_config_env( const EmacsString &name )
@@ -171,13 +162,17 @@ void debug_SER(void)
 
 EmacsString users_login_name()
 {
-    char user_name_buf[MAX_USERNAME_LENGTH];
-    DWORD buf_size = sizeof( user_name_buf );
+    wchar_t w_buf[MAX_USERNAME_LENGTH];
+    DWORD w_len = sizeof( w_buf )/sizeof( wchar_t );
 
-    if( !GetUserName( user_name_buf, &buf_size ) )
+    if( !GetUserName( w_buf, &w_len ) )
+    {
         return EmacsString::null;
+    }
     else
-        return EmacsString( user_name_buf );
+    {
+        return EmacsString( w_buf, w_len );
+    }
 }
 
 #elif defined(_MSDOS)
@@ -191,26 +186,23 @@ char *user_login_name( char * i )
 
 EmacsString get_user_full_name()
 {
-#if defined(WIN32)
-    char users_full_name[MAX_USERNAME_LENGTH];
-    DWORD size = sizeof( users_full_name );
-    users_full_name[0] = '\0';
-    GetUserName( users_full_name, &size );
-    return EmacsString( users_full_name );
-#endif
+    return users_login_name();
 }
 
 EmacsString get_system_name()
 {
-#if defined(WIN32)
-    char system_name[MAX_COMPUTERNAME_LENGTH+1];
-    DWORD size = MAX_COMPUTERNAME_LENGTH;
-    system_name[0] = '\0';
-    GetComputerName( system_name, &size );
-    return EmacsString( system_name );
-#endif
+    wchar_t w_buf[MAX_COMPUTERNAME_LENGTH+1];
+    DWORD w_len = MAX_COMPUTERNAME_LENGTH;
+    w_buf[0] = '\0';
+    if( !GetComputerName( w_buf, &w_len ) )
+    {
+        return EmacsString::null;
+    }
+    else
+    {
+        return EmacsString( w_buf, w_len );
+    }
 }
-
 
 int interlock_dec( volatile int *counter )
 {

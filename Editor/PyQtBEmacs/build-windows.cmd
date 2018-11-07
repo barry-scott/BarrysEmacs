@@ -1,5 +1,5 @@
 setlocal
-@echo off
+@echo on
 rem 
 if "%1" == "" set DIST_DIR=dist
 if not "%1" == "" set DIST_DIR=%1
@@ -13,7 +13,7 @@ set PYTHONPATH=..\exe-pybemacs
 %PYTHON% -m win_app_packager build be_client.py --gui %DIST_DIR% --icon ..\Source\Windows\Resources\win_emacs.ico --name bemacs --merge
     if errorlevel 1 goto :error
 
-pushd %DIST_DIR%\PyWinAppRes\Lib\site-packages\PyQt5
+pushd %DIST_DIR%\PyWinAppRes\PyQt5
     if errorlevel 1 goto :error
 
 echo Info: clean up Qt 1. move all pyd and dll into a tmp folder

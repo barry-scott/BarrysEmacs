@@ -102,7 +102,7 @@ void exec_bf
     if( CreateProcess
         (
         NULL,
-        (char *)buf.sdata(),
+        const_cast<wchar_t *>( buf.utf16_data() ),
         NULL,
         NULL,
         FALSE, // Inherit handles

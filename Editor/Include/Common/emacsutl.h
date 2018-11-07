@@ -82,6 +82,7 @@ extern EmacsString get_config_env( const EmacsString & );
 #define realloc_ustr(a,b) ((unsigned char *)EMACS_REALLOC(a,b,malloc_type_char))
 #define malloc_struct( s ) ((struct s *)EMACS_MALLOC( sizeof( struct s ), malloc_type_struct_##s ))
 #define malloc_ustr( i ) ((unsigned char *)EMACS_MALLOC( i, malloc_type_char ))
+#define malloc_utf16( i ) ((wchar_t *)EMACS_MALLOC( (i) * sizeof( wchar_t ), malloc_type_char ))
 
 //
 //    Use this class's constructor to

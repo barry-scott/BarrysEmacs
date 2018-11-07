@@ -57,7 +57,7 @@ extern int _fstat( int fileno, struct _stat *buffer );
 #define MEMORY_FILE_STR         get_config_env(u_str("Emacs Memory"))
 #define MEMORY_FILE_ARG         0
 #define EMACS_PATH              get_config_env(u_str("emacs_path"))
-extern unsigned char *get_tmp_path(void);
+extern EmacsString get_tmp_path(void);
 #define    EMACS_TMP_PATH       get_tmp_path()
 #define    EMACS_DB_DEFAULT     u_str(".mll")
 

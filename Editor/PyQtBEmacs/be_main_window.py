@@ -17,9 +17,6 @@ import os
 import time
 import logging
 
-# On OS X the packager missing this import
-import sip
-
 from PyQt5 import Qt
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui

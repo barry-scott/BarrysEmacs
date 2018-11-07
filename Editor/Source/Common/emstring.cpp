@@ -75,6 +75,11 @@ EmacsString::EmacsString( const unsigned char *string )
     check_for_bad_value( _rep );
 }
 
+EmacsString::EmacsString( const wchar_t *string, int length )
+: _rep( EMACS_NEW EmacsStringRepresentation( copy, 0, length, string ) )
+{
+    check_for_bad_value( _rep );
+}
 
 #if defined( PYBEMACS )
 EmacsString::EmacsString( const Py::String &str )
@@ -327,6 +332,17 @@ int EmacsString::utf8_data_length() const
     return _rep->length_utf8_data;
 }
 
+const wchar_t *EmacsString::utf16_data() const
+{
+    return _rep->get_utf16_data();
+}
+
+int EmacsString::utf16_data_length() const
+{
+    _rep->get_utf16_data();
+    return _rep->length_utf16_data;
+}
+
 int EmacsString::length() const
 {
     return _rep->length;
@@ -487,6 +503,12 @@ void EmacsString::copy_on_write(void)
             _rep->utf8_data = NULL;
         }
 
+        if( _rep->utf16_data != NULL )
+        {
+            EMACS_FREE( _rep->utf16_data );
+            _rep->utf16_data = NULL;
+        }
+
         return;
     }
     // make a copy of the data
@@ -560,11 +582,35 @@ EmacsStringRepresentation::EmacsStringRepresentation
 , length( length_utf8_to_unicode( _length, _data ) )
 , data( NULL )
 , utf8_data( NULL )
+, utf16_data( NULL )
 {
     emacs_assert( _type != EmacsString::free );
 
     data = reinterpret_cast<EmacsChar_t *>( EMACS_MALLOC( sizeof( EmacsChar_t )*(length+1), malloc_type_char ) );
     convert_utf8_to_unicode( _data, length, data );
+    data[ length ] = 0;
+    type = EmacsString::free;
+}
+
+EmacsStringRepresentation::EmacsStringRepresentation
+    (
+    enum EmacsString::string_type _type,
+    int _alloc_length,
+    int _length,
+    const wchar_t *_data
+    )
+: ref_count(1)
+, type( _type )
+, alloc_length( _alloc_length )
+, length( length_utf16_to_unicode( _length * sizeof( wchar_t ), reinterpret_cast<const unsigned char *>( _data ) ) )
+, data( NULL )
+, utf8_data( NULL )
+, utf16_data( NULL )
+{
+    emacs_assert( _type != EmacsString::free );
+
+    data = reinterpret_cast<EmacsChar_t *>( EMACS_MALLOC( sizeof( EmacsChar_t )*(length+1), malloc_type_char ) );
+    convert_utf16_to_unicode( reinterpret_cast<const unsigned char *>( _data ), length, data );
     data[ length ] = 0;
     type = EmacsString::free;
 }
@@ -582,6 +628,7 @@ EmacsStringRepresentation::EmacsStringRepresentation
 , length( _length )
 , data( NULL )
 , utf8_data( NULL )
+, utf16_data( NULL )
 {
     alloc_length = length+1;
     alloc_length |= 15;
@@ -608,11 +655,15 @@ EmacsStringRepresentation::~EmacsStringRepresentation()
         EMACS_FREE( utf8_data );
         utf8_data = NULL;
     }
+    if( utf16_data != NULL )
+    {
+        EMACS_FREE( utf16_data );
+        utf16_data = NULL;
+    }
 }
 
 const unsigned char *EmacsStringRepresentation::get_utf8_data()
 {
-
     if( utf8_data == NULL )
     {
         length_utf8_data = length_unicode_to_utf8( length, data );
@@ -622,6 +673,20 @@ const unsigned char *EmacsStringRepresentation::get_utf8_data()
     }
 
     return utf8_data;
+}
+
+const wchar_t *EmacsStringRepresentation::get_utf16_data()
+{
+    if( utf16_data == NULL )
+    {
+        length_utf16_data = length_unicode_to_utf16( length, data );
+        utf16_data = malloc_utf16( length_utf16_data + 1 );
+
+        convert_unicode_to_utf16( length, data, reinterpret_cast<unsigned short *>( utf16_data ) );
+        utf16_data[ length_utf16_data ] = 0;
+    }
+
+    return utf16_data;
 }
 
 //================================================================================

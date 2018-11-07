@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1995-2010 Barry A. Scott
+//    Copyright (c) 1995-2018 Barry A. Scott
 //
 
 //
@@ -35,6 +35,8 @@ public:
 
     EmacsString( const EmacsChar_t *string );
     EmacsString( const EmacsChar_t *string, int length );
+
+    EmacsString( const wchar_t *string, int length );
 
 #if defined( PYBEMACS )
     EmacsString( const Py::String &str );
@@ -121,6 +123,11 @@ public:
     const unsigned char *utf8_data() const;  // unsigned char data
     const char *sdata() const;          // signed char data
                                         // these two function give unsafe access to the inside of representation
+
+    int utf16_data_length() const;
+    // these two function give unsafe access to the inside of representation
+    const wchar_t *utf16_data() const;  // unsigned char data
+
 
 #if defined( PYBEMACS )
     Py::Object asPyString() const;
@@ -252,6 +259,13 @@ public:
         enum EmacsString::string_type _type,
         int _alloc_length,
         int _length,
+        const wchar_t *_data
+        );
+    EmacsStringRepresentation
+        (
+        enum EmacsString::string_type _type,
+        int _alloc_length,
+        int _length,
         const EmacsChar_t *_data
         );
     virtual ~EmacsStringRepresentation();
@@ -260,6 +274,7 @@ public:
 
 private:
     const unsigned char *get_utf8_data();
+    const wchar_t *get_utf16_data();
 
     int ref_count;
     enum EmacsString::string_type type;
@@ -268,6 +283,8 @@ private:
     EmacsChar_t *data;
     int length_utf8_data;
     unsigned char *utf8_data;
+    int length_utf16_data;
+    wchar_t *utf16_data;
 };
 
 inline void EmacsString::check_for_bad_value( EmacsStringRepresentation *rep )

@@ -74,7 +74,7 @@ const int ROOT_CHAR_POS( 2 );    // root is "x:\\"
 #define MEMORY_FILE_STR     get_config_env("emacs_memory")
 const int MEMORY_FILE_ARG( 0 );
 #define EMACS_PATH          get_config_env("emacs_path")
-extern unsigned char *get_tmp_path(void);
+extern EmacsString get_tmp_path(void);
 #define EMACS_TMP_PATH      get_tmp_path()
 #ifdef MLL_DB
 #define EMACS_DB_DEFAULT    ".mll"
