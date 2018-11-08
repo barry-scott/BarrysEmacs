@@ -32,6 +32,13 @@ import be_platform_specific
 
 import be_config
 
+try:
+    # needed on macOS for some versions of PyQt5
+    # but not used by bemacs itself
+    import sip
+except ImportError:
+    pass
+
 ellipsis = '…'
 
 class BemacsAction:
