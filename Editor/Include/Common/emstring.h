@@ -36,7 +36,9 @@ public:
     EmacsString( const EmacsChar_t *string );
     EmacsString( const EmacsChar_t *string, int length );
 
+#if defined( WIN32 )
     EmacsString( const wchar_t *string, int length );
+#endif
 
 #if defined( PYBEMACS )
     EmacsString( const Py::String &str );
@@ -120,14 +122,15 @@ public:
     const EmacsChar_t *unicode_data() const;
 
     int utf8_data_length() const;
-    const unsigned char *utf8_data() const;  // unsigned char data
-    const char *sdata() const;          // signed char data
-                                        // these two function give unsafe access to the inside of representation
+    // these two functions give unsafe access to the inside of representation
+    const unsigned char *utf8_data() const; // unsigned char data
+    const char *sdata() const;              // signed char data
 
     int utf16_data_length() const;
-    // these two function give unsafe access to the inside of representation
-    const wchar_t *utf16_data() const;  // unsigned char data
-
+#if defined( WIN32 )
+    // this function give unsafe access to the inside of representation
+    const wchar_t *utf16_data() const;      // unsigned char data
+#endif
 
 #if defined( PYBEMACS )
     Py::Object asPyString() const;
@@ -254,6 +257,7 @@ public:
         int _length,
         const unsigned char *_data
         );
+#if defined( WIN32 )
     EmacsStringRepresentation
         (
         enum EmacsString::string_type _type,
@@ -261,6 +265,7 @@ public:
         int _length,
         const wchar_t *_data
         );
+#endif
     EmacsStringRepresentation
         (
         enum EmacsString::string_type _type,
@@ -274,7 +279,6 @@ public:
 
 private:
     const unsigned char *get_utf8_data();
-    const wchar_t *get_utf16_data();
 
     int ref_count;
     enum EmacsString::string_type type;
@@ -283,8 +287,12 @@ private:
     EmacsChar_t *data;
     int length_utf8_data;
     unsigned char *utf8_data;
+
+#if defined( WIN32 )
+    const wchar_t *get_utf16_data();
     int length_utf16_data;
     wchar_t *utf16_data;
+#endif
 };
 
 inline void EmacsString::check_for_bad_value( EmacsStringRepresentation *rep )

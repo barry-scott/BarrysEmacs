@@ -75,11 +75,13 @@ EmacsString::EmacsString( const unsigned char *string )
     check_for_bad_value( _rep );
 }
 
+#if defined( WIN32 )
 EmacsString::EmacsString( const wchar_t *string, int length )
 : _rep( EMACS_NEW EmacsStringRepresentation( copy, 0, length, string ) )
 {
     check_for_bad_value( _rep );
 }
+#endif
 
 #if defined( PYBEMACS )
 EmacsString::EmacsString( const Py::String &str )
@@ -332,6 +334,7 @@ int EmacsString::utf8_data_length() const
     return _rep->length_utf8_data;
 }
 
+#if defined(WIN32)
 const wchar_t *EmacsString::utf16_data() const
 {
     return _rep->get_utf16_data();
@@ -342,6 +345,7 @@ int EmacsString::utf16_data_length() const
     _rep->get_utf16_data();
     return _rep->length_utf16_data;
 }
+#endif
 
 int EmacsString::length() const
 {
@@ -503,11 +507,13 @@ void EmacsString::copy_on_write(void)
             _rep->utf8_data = NULL;
         }
 
+#if defined(WIN32)
         if( _rep->utf16_data != NULL )
         {
             EMACS_FREE( _rep->utf16_data );
             _rep->utf16_data = NULL;
         }
+#endif
 
         return;
     }
@@ -582,7 +588,9 @@ EmacsStringRepresentation::EmacsStringRepresentation
 , length( length_utf8_to_unicode( _length, _data ) )
 , data( NULL )
 , utf8_data( NULL )
+#if defined(WIN32)
 , utf16_data( NULL )
+#endif
 {
     emacs_assert( _type != EmacsString::free );
 
@@ -592,6 +600,7 @@ EmacsStringRepresentation::EmacsStringRepresentation
     type = EmacsString::free;
 }
 
+#if defined(WIN32)
 EmacsStringRepresentation::EmacsStringRepresentation
     (
     enum EmacsString::string_type _type,
@@ -614,6 +623,7 @@ EmacsStringRepresentation::EmacsStringRepresentation
     data[ length ] = 0;
     type = EmacsString::free;
 }
+#endif
 
 EmacsStringRepresentation::EmacsStringRepresentation
     (
@@ -628,7 +638,9 @@ EmacsStringRepresentation::EmacsStringRepresentation
 , length( _length )
 , data( NULL )
 , utf8_data( NULL )
+#if defined(WIN32)
 , utf16_data( NULL )
+#endif
 {
     alloc_length = length+1;
     alloc_length |= 15;
@@ -655,11 +667,13 @@ EmacsStringRepresentation::~EmacsStringRepresentation()
         EMACS_FREE( utf8_data );
         utf8_data = NULL;
     }
+#if defined( WIN32 )
     if( utf16_data != NULL )
     {
         EMACS_FREE( utf16_data );
         utf16_data = NULL;
     }
+#endif
 }
 
 const unsigned char *EmacsStringRepresentation::get_utf8_data()
@@ -675,6 +689,7 @@ const unsigned char *EmacsStringRepresentation::get_utf8_data()
     return utf8_data;
 }
 
+#if defined(WIN32)
 const wchar_t *EmacsStringRepresentation::get_utf16_data()
 {
     if( utf16_data == NULL )
@@ -688,6 +703,7 @@ const wchar_t *EmacsStringRepresentation::get_utf16_data()
 
     return utf16_data;
 }
+#endif
 
 //================================================================================
 //
