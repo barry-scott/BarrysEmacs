@@ -10,6 +10,9 @@ export PYCXX_VER=trunk:7.1.0
 case ${BUILDER_CFG_PLATFORM} in
 
 Darwin)
+    # Use version 3.6 with PyQt5 5.10 unti the font selection
+    # QUI bug is fixed in 5.11
+    export PYTHON_VERSION=3.6
     export BUILDER_CFG_PLATFORM=MacOSX
     export PYTHON=python${PYTHON_VERSION}
     ;;
