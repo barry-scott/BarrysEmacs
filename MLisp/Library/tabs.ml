@@ -121,6 +121,7 @@
         (if visual-tab-updates (sit-for 0))
 
         (erase-region)
+        (unset-mark)
         (to-col ~new-column)
     )
 )
