@@ -8,7 +8,7 @@ echo Info: DIST_DIR=%DIST_DIR%
 set PYTHONPATH=..\exe-pybemacs
 %PYTHON% -u make_be_images.py
     if errorlevel 1 goto :error
-%PYTHON% -m win_app_packager build be_main.py   --gui %DIST_DIR% --icon ..\Source\Windows\Resources\win_emacs.ico --name bemacs_server --verbose
+%PYTHON% -m win_app_packager build be_main.py   --gui %DIST_DIR% --icon ..\Source\Windows\Resources\win_emacs.ico --name bemacs_server --modules-allowed-to-be-missing-file allowed-missing.txt --verbose
     if errorlevel 1 goto :error
 %PYTHON% -m win_app_packager build be_client.py --gui %DIST_DIR% --icon ..\Source\Windows\Resources\win_emacs.ico --name bemacs --merge
     if errorlevel 1 goto :error
