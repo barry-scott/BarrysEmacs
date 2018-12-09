@@ -68,6 +68,7 @@ spec_file_requires_qui = '''
 BuildRequires:  unicode-ucd >= 7.0
 BuildRequires:  python3-devel >= 3.4
 BuildRequires:  python3-qt5 >= 5.5.1
+BuildRequires:  gcc-c++
 
 Requires:       bemacs-gui
 '''
