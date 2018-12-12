@@ -149,17 +149,16 @@ void SystemExpressionRepresentationJournalFrequency::assign_value( ExpressionRep
 void SystemExpressionRepresentationJournalFrequency::fetch_value()
 { }
 
-void SystemExpressionRepresentationBufferJournalled::assign_value( ExpressionRepresentation *new_value )
+int jnlSetBUfferedJuornalled( int state )
 {
-    SystemExpressionRepresentationIntBoolean::assign_value( new_value );
-
-    if( exp_int )
+    int old_state = bf_cur->b_journalling;
+    if( state )
     {
         if( ! bf_cur->b_journalling
         && bf_cur->b_modified != 0 )
         {
             error( "Journalling cannot be enabled on a modified buffer - write out this buffer");
-            return;
+            return old_state;
         }
         bf_cur->b_journalling = 1u;
     }
@@ -171,6 +170,14 @@ void SystemExpressionRepresentationBufferJournalled::assign_value( ExpressionRep
     }
 
     cant_1line_opt = redo_modes = 1;
+    return old_state;
+}
+
+void SystemExpressionRepresentationBufferJournalled::assign_value( ExpressionRepresentation *new_value )
+{
+    SystemExpressionRepresentationIntBoolean::assign_value( new_value );
+
+    jnlSetBUfferedJuornalled( exp_int );
 }
 
 void SystemExpressionRepresentationBufferJournalled::fetch_value(void)

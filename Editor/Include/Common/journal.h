@@ -134,3 +134,5 @@ private:
     int m_jnl_record;         // last record written in the current journal buffer
     union journal_record m_jnl_buf[ JNL_BUF_NUM_RECORDS ];
 };
+
+extern int jnlSetBUfferedJuornalled( int state );

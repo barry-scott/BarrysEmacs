@@ -1512,8 +1512,10 @@ int EmacsBuffer::read_file( const EmacsString &fn, int erase, int createnew )
         // turn off read only and then erase
         b_mode.md_readonly = false;
 
-        // erase the contents
+        // erase the contents with journalling the delete
+        int old_journalling = jnlSetBUfferedJuornalled( 0 );
         erase_bf();
+        jnlSetBUfferedJuornalled( old_journalling );
     }
 
     //
