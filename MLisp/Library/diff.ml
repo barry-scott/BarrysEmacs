@@ -7,6 +7,7 @@
 (declare-buffer-specific
     diff-buffer)                ; holds the buffer that was last differ
 
+; diff current buffer against previous state
 (defun
     (diff
         ~prefix
@@ -69,10 +70,33 @@
         )
     )
 )
+
 (defun
     (diff-mode
-        (setq mode-string (concat "Diff of " diff-buffer))
+        (if (= diff-buffer 0)
+            (setq mode-string "Diff")
+            (setq mode-string (concat "Diff of " diff-buffer))
+        )
         (use-local-map "diff-mode-map")
+        (use-syntax-table "diff-mode")
+
+        (save-excursion
+            (end-of-file)
+            (set-mark)
+            (beginning-of-file)
+            (apply-colour-to-region (dot) (mark) 0)
+            (unset-mark)
+            (while (! (error-occurred (ere-search-forward "^\\+.*")))
+                (region-around-match 0)
+                (apply-colour-to-region (dot) (mark) 1)
+            )
+            (beginning-of-file)
+            (while (! (error-occurred (ere-search-forward "^\\-.*")))
+                (region-around-match 0)
+                (apply-colour-to-region (dot) (mark) 2)
+            )
+        )
+        (novalue)
     )
 )
 ;
@@ -138,9 +162,19 @@
         (setq diff-command "diff")
     )
 )
-(save-excursion
-    (temp-use-buffer "diff")
+
+;
+; diff syntax table
+;
+(save-window-excursion
+    (temp-use-buffer "~diff-mode-hack")
     (define-keymap "diff-mode-map")
+    (define-keymap "diff-mode-ESC-map")
+
     (use-local-map "diff-mode-map")
-    (local-bind-to-key "diff-goto-diff" "\r")
+    (local-bind-to-key "diff-mode-ESC-map" "\e")
+
+    (execute-mlisp-file "diff.key")
+    (kill-buffer "~diff-mode-hack")
 )
+(novalue)

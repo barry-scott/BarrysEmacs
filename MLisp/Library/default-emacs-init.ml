@@ -164,6 +164,9 @@
     (auto-execute "electric-c-mode" "*.hxx")
     ; Install Shield files
     (auto-execute "install-shield-mode" "*.rul")
+    ; diff and patch files
+    (auto-execute "diff-mode" "*.patch")
+    (auto-execute "diff-mode" "*.diff")
     ; puppet files
     (auto-execute "puppet-mode" "*.pp")
     ; Python files

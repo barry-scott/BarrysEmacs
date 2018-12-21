@@ -21,7 +21,7 @@
 (autoload "describe-command" "describex")
 (autoload "describe-variable" "describex")
 (autoload "describe-word-in-buffer" "desword")
-(autoload "diff-mode" "diff.ml")
+(autoload "diff-mode" "diff")
 (autoload "diff" "diff")
 (autoload "dired" "dired.ml")
 (autoload "edit-variable" "edit-variable")

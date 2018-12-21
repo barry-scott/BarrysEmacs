@@ -107,6 +107,7 @@ library_files =    [
     ('common',    'Library/describex.ml'),
     ('common',    'Library/desword.ml'),
     ('common',    'Library/diff.ml'),
+    ('common',    'Library/diff.key'),
     ('common',    'Library/dired.ml'),
     ('common',    'Library/edit-variable.ml'),
     ('common',    'Library/edtsim.ml'),
