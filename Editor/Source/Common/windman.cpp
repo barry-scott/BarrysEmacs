@@ -697,6 +697,8 @@ void apply_colour_to_region( int start, int end, int colour )
             break;
     }
 
+    cant_1win_opt = 1;
+
     // check for a valid colour
     if( colour <= 0 || colour > 8 )
         return;
@@ -708,8 +710,6 @@ void apply_colour_to_region( int start, int end, int colour )
     // link the new rr into the list
     new_rr->rr_next = *rr_prev;
     *rr_prev = new_rr;
-
-    cant_1win_opt = 1;
 }
 
 int apply_colour_to_region_cmd( void )
