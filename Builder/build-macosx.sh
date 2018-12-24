@@ -55,7 +55,7 @@ then
     # macOS knows about these extra copies of the emacs app
     # and will start all of them at the same time so delete
     rm -rf ../Kits/MacOSX/pkg
-    rm -rf ../Kits/MacOSX/tmp
+    rm -rf ../Kits/MacOSX/tmp/BarrysEmacs-V*[0-9]/
     open ${DMG}
 fi
 echo "Info: build-macosx.sh Builder - end"
