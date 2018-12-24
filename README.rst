@@ -10,6 +10,7 @@ It's user interface uses the familiar Windows style user interface, key bindings
 Barry's Emacs is integrated with the Windows explorer.
 
 Barry's Emacs main web site: http://barrys-emacs.org
+
 Email and forum discussion are on: https://groups.io/g/barrys-emacs
 
 Features
