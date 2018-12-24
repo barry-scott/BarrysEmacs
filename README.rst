@@ -14,14 +14,15 @@ Barry's Emacs main web site: http://barrys-emacs.org
 Features
 --------
 
-* full HTML documentation
+* Full HTML documentation
 * windows style user interface
-* edit multiple files
-* multiple buffers
-* syntax colouring
-* regular expression searching
-* fully programmable
-* integrated Python extension language
+* Edit multiple files
+* Multiple buffers
+* Syntax colouring
+* Regular expression searching
+* Fully programmable
+* Integrated Python extension language
+* Dark mode support
 
 Installation instructions
 -------------------------
