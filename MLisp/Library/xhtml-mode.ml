@@ -9,6 +9,8 @@
         (use-syntax-table "XHTML")
         (use-local-map "XHTML-keymap")
         (use-abbrev-table "XHTML")
+        ; defaults for grep
+        (error-occurred (setq grep-default-files "*.html"))
         (novalue)
     )
 )

@@ -66,10 +66,12 @@
 
 (defun
     (ntcmd-mode
-        (setq mode-string "NT-CMD")
+        (setq mode-string "CMD")
         (use-syntax-table "ntcmd")
         (use-local-map "ntcmd-map")
         (use-abbrev-table "ntcmd")
+        ; defaults for grep
+        (error-occurred (setq grep-default-files "*.cmd,*.bat"))
         (novalue)
     )
 )

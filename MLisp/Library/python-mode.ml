@@ -48,6 +48,8 @@
         (use-local-map "Python-map")
         (use-abbrev-table "Python2")
         (setq Python-command Python2-executable)
+        ; defaults for grep
+        (error-occurred (setq grep-default-files "*.py"))
         (novalue)
     )
 )
@@ -59,6 +61,8 @@
         (use-local-map "Python-map")
         (use-abbrev-table "Python3")
         (setq Python-command Python3-executable)
+        ; defaults for grep
+        (error-occurred (setq grep-default-files "*.py"))
         (novalue)
     )
 )

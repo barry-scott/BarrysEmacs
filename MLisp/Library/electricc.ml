@@ -258,6 +258,8 @@
         (use-syntax-table "C")
         (use-local-map "electric-c-map")
         (use-abbrev-table "electric-c")
+        ; defaults for grep
+        (error-occurred (setq grep-default-files "*.c,*.cxx,*.cpp,*.h,*.hpp,*.hxx"))
         (novalue)
     )
 )

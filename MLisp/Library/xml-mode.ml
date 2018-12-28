@@ -6,6 +6,8 @@
         (use-syntax-table "XML")
         (use-local-map "XML-map")
         (use-abbrev-table "XML")
+        ; defaults for grep
+        (error-occurred (setq grep-default-files "*.xml"))
         (novalue)
     )
 )

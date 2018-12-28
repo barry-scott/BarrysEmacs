@@ -7,6 +7,8 @@
         (use-syntax-table "inno")
         (use-local-map "inno-map")
         (use-abbrev-table "inno")
+        ; defaults for grep
+        (error-occurred (setq grep-default-files "*.iss")
         (novalue)
     )
 )

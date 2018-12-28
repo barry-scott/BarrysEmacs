@@ -189,6 +189,8 @@
         (setq logical-tab-size 4)
         (use-abbrev-table "Lisp-mode")
         (use-syntax-table "Lisp-mode")
+        ; defaults for grep
+        (error-occurred (setq grep-default-files "*.ml,*.mlp,*.key"))
         (novalue)
     )
 )

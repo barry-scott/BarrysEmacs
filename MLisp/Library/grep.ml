@@ -30,6 +30,7 @@
 )
 
 (declare-buffer-specific
+    grep-default-files
     ~grep-search-pattern
     ~grep-goto-method
 )
@@ -40,8 +41,14 @@
         (setq grep-search-pattern "")
         (setq grep-file-list "")
         (setq grep-results-buffer-name "grep-results")
-        (setq grep-exclude-file-list "*._* *~ *.exe *.obj *.pch *.pdb *.zip *.tar.gz *.tar.bz2 *.tgz *.tbz *.dll *.sbr *.pyd *.ico *.ncb *.lnk *.bsc *.ilk *.exp *.lib *.aps *.opt *.o *.a")
-        (setq grep-exclude-directory-list ".svn CVS")
+        (setq grep-exclude-file-list
+            (concat "*._* *~ .bash_history"
+                " *.mpg *.png *.jpg *.mp3 *.rpm *.pyc *.pyo"
+                " *.exe *.obj *.pch *.pdb"
+                " *.dll *.sbr *.pyd *.ico *.ncb *.lnk *.bsc *.ilk *.exp *.lib *.aps *.opt"
+                " *.zip *.tar.gz *.tar.bz2 *.tgz *.tbz"
+                " *.o *.a *.so"))
+        (setq grep-exclude-directory-list ".svn CVS .hg .git")
         (setq grep-matched-string-colour 1)     ; override in grep.key
         (setq grep-name-colour 2)               ; override in grep.key
         (setq grep-position-to-match-column 1)  ; override in grep.key
@@ -52,6 +59,8 @@
         (setq grep-current-buffer-options "")
         (setq grep-current-buffer-search-pattern "")
 
+        (setq-default grep-default-files "*")
+
         (setq-default ~grep-search-pattern "")
         (setq-default ~grep-goto-method "")
     )
@@ -60,6 +69,10 @@
 ;--------------------------------------------------------------------------------
 ;
 ; grep-in-files
+;   Use comma "," to sperate multiple files to search
+;   For example "*.h,*.c" will search for all .h files then all .c files
+;   The directory is defaulted to the directory from the earlier term.
+;   For example "/source/*.h,*.c will search in /source/*.h then /source/*.c
 ;
 ;--------------------------------------------------------------------------------
 
@@ -67,7 +80,7 @@
 (defun grep
     (~options (get-tty-string ": grep (options s - case-sensitive r - recursive b - binary x - exclude 1-9 - buffer) " grep-options)
         ~pattern (get-tty-string ": grep (pattern) " grep-search-pattern)
-        ~multi-files (get-tty-file ": grep (files,files) " grep-file-list))
+        ~multi-files (get-tty-file (concat ": grep (files,files) [" grep-default-files "] ") grep-file-list))
 
     (grep-in-files ~options ~pattern ~multi-files)
 )
@@ -75,7 +88,7 @@
 (defun grep-in-files
     (~options (get-tty-string ": grep-in-files (options s - case-sensitive r - recursive b - binary x - exclude 1-9 - buffer) " grep-options)
         ~pattern (get-tty-string ": grep-in-files (pattern) " grep-search-pattern)
-        ~multi-files (get-tty-file ": grep-in-files (files,files) " grep-file-list))
+        ~multi-files (get-tty-file (concat ": grep (files,files) [" grep-default-files "]") grep-file-list))
 
     ~index
     ~char
@@ -92,6 +105,7 @@
     ~option-text-file-only
     ~option-results-buffer
     ~option-use-exclude-list
+    ~default-files
 
     (setq ~option-recursive 0)
     (setq ~option-case-sensitive 0)
@@ -126,8 +140,19 @@
     (setq grep-options ~options)
     (setq grep-search-pattern ~pattern)
     (setq grep-file-list ~multi-files)
+    (setq ~default-files grep-default-files)
 
+    ; find out if only a folder was specified
+    (setq ~start-directory (file-name-expand-and-default ~multi-files ""))
+    (if (file-is-a-directory ~start-directory)
+        (setq ~multi-files (concat ~multi-files ~default-files))
+    )
+
+    ; move to the results buffer
     (pop-to-buffer ~option-results-buffer)
+    ; make a further grep with from the grep-results buffer use the same
+    ; grep-default-files value
+    (setq grep-default-files ~default-files)
     (setq ~grep-search-pattern ~pattern)
     (setq ~grep-goto-method "visit-file")
 
@@ -145,8 +170,6 @@
     (setq case-fold-search (! ~option-case-sensitive))
     (setq current-buffer-journalled 0)
 
-    (temp-use-buffer ~option-results-buffer)
-
     (setq ~multi-files (concat ~multi-files ","))
     (setq ~start-pos 0)
     (while
@@ -154,11 +177,17 @@
             (setq ~end-pos (string-index-of-string ~multi-files "," ~start-pos))
             (> ~end-pos 0)
         )
-        (setq ~files (string-extract ~multi-files ~start-pos ~end-pos))
+        (setq ~files
+            (file-name-expand-and-default
+                (string-extract ~multi-files ~start-pos ~end-pos)
+                ~start-directory))
         (setq ~start-pos (+ ~end-pos 1))
 
         (setq ~start-filename (file-format-string "%fa" ~files))
         (setq ~start-directory (file-format-string "%pd" ~files))
+        (if (! (file-exists ~start-directory))
+            (error-message "grep: directory " ~start-directory " does not exist")
+        )
 
         (while
             (progn
@@ -177,7 +206,7 @@
         )
     )
     (beginning-of-file)
-    (message "Grep-in-files done")
+    (message "grep-in-files done")
 )
 
 ;--------------------------------------------------------------------------------

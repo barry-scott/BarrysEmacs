@@ -7,6 +7,8 @@
         (use-syntax-table "sh")
         (use-local-map "sh-map")
         (use-abbrev-table "sh")
+        ; defaults for grep
+        (error-occurred (setq grep-default-files "*.sh,*.bash,*.inc,.bashrc,.bash_profile"))
         (novalue)
     )
 )

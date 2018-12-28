@@ -4,6 +4,8 @@
         (use-syntax-table "HTML")
         (use-local-map "HTML-map")
         (use-abbrev-table "HTML")
+        ; defaults for grep
+        (error-occurred (setq grep-default-files "*.html"))
         (novalue)
     )
 )
