@@ -25,7 +25,7 @@ Introduction
         Linux (tested on: Fedora 29)
 
 New in %(version)s
-    * Improve grep command
+    * Improved grep command
 
 New in 8.5.0
     * Add Dark-mode support. Controlled from the Preferences Colours tab.
@@ -33,7 +33,7 @@ New in 8.5.0
     * Turn on colouring for bemacs-cli console version.
     * Fix a problem reloading a read-only file that reported a problem with journalling.
 
-New in 8.4.1
+New in 8.4.2
     * Fix TAB missing from list of space characters
 
 New in 8.4.1
