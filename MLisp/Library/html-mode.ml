@@ -331,7 +331,7 @@
         )
     )
 )
-(defun 
+(defun
     (~HTML-setup-keymap
         (temp-use-buffer "~mode-hack")
 

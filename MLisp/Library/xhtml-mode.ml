@@ -1,6 +1,6 @@
-; 
+;
 ; xhtml-mode.ml
-; 
+;
 (autoload "~HTML-setup-syntax" "html-mode" )
 
 (defun

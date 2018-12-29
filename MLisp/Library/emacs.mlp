@@ -1,7 +1,7 @@
-; 
+;
 ; emacs.mlp
 ; Copyright 1998-2017 (c) Barry A. Scott
-; 
+;
 
 ; return true if this qualifier matches the candidate
 (defun
