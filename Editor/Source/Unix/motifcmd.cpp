@@ -199,7 +199,7 @@ static Boolean cvt_proc
         return FALSE;
 
     if( *target == XA_STRING )
-    {        
+    {
         *type_return = XA_STRING;
         *value_return = (void *)selection.sdata();
         *length_return = selection.length();

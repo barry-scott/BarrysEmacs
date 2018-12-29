@@ -8,7 +8,7 @@
 
  ====================================================================
 
-	be_version.py.template
+    be_version.py.template
 
 '''
 major = %(major)s

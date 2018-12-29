@@ -37,8 +37,8 @@ public:
     virtual EmacsChar_t translate( EmacsChar_t ch, bool is_first_letter ) = 0;
 };
 
-class case_op_to_upper : public case_op 
-{ 
+class case_op_to_upper : public case_op
+{
 public:
     virtual bool canTranslate( EmacsChar_t ch, bool is_first_letter )
     {
@@ -64,7 +64,7 @@ public:
 };
 
 class case_op_capitalise : public case_op
-{ 
+{
 public:
     virtual bool canTranslate( EmacsChar_t ch, bool is_first_letter )
     {

@@ -351,7 +351,7 @@ int dump_abbreviation_tables( void )
 
     bf_cur->ins_cstr( FormatString("  Table: %s\n\n") << table->abbrev_name );
 
-    bf_cur->ins_str( 
+    bf_cur->ins_str(
             "  Abbreviation    Phrase                          Hook\n"
             "  ------------    ------                          ----\n" );
 

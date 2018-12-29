@@ -1019,7 +1019,7 @@ int main( int argc, char **argv )
     if( fail_count > 0 )
         std::cout << "FAILURE: " << fail_count << " tests failed" << std::endl;
 
-    std::cout << "Passed: " << pass_count << " tests passed" << std::endl;    
+    std::cout << "Passed: " << pass_count << " tests passed" << std::endl;
     return 0;
 }
 #endif

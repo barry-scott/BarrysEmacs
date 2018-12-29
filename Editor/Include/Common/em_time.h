@@ -1,6 +1,6 @@
 //
 //    em_timer.h
-//    
+//
 //    Copyright (c) 1993-2010 Barry A. Scott
 //
 class EmacsDateTime
@@ -25,7 +25,7 @@ public:
     }
 
     EmacsDateTime &operator +=( double interval )
-    { 
+    {
         time_value += interval;
         return *this;
     }
@@ -52,7 +52,7 @@ public:
         return time_value  > time.time_value;
     }
     bool operator >=( const EmacsDateTime &time ) const
-    { 
+    {
         return time_value >= time.time_value;
     }
 

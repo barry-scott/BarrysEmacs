@@ -862,7 +862,7 @@ ProgramNode *ProgramNode::string_node( MLispInputStream &input )
         {
             bool parse_ok = false;
             c = parse_hexadecimal_number( input, 8, 8, parse_ok );
-            if( !parse_ok ) 
+            if( !parse_ok )
             {
                 return 0;
             }

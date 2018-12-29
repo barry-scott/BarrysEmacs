@@ -287,7 +287,7 @@ public:
         static std::string fn_name( "hookUserInterface" );
         try
         {
-            Py::Boolean result( callOnSelf( fn_name, 
+            Py::Boolean result( callOnSelf( fn_name,
                                     Py::String( "yes-no-dialog" ),
                                     Py::Boolean( yes != 0 ),
                                     Py::String( "Barry's Emacs" ),
