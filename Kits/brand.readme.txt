@@ -11,7 +11,7 @@ Introduction
 
     Barry's Emacs is discussed on
 
-        http://groups.yahoo.com/group/barrysemacs.
+        https://groups.io/g/barrys-emacs
 
     Barry's Emacs website is
 
@@ -22,9 +22,18 @@ Introduction
     There are kits available for:
         Windows 7 and later
         Mac OS X 10.11
-        Linux (tested on: Fedora 28)
+        Linux (tested on: Fedora 29)
 
 New in %(version)s
+    * Improve grep command
+
+New in 8.5.0
+    * Add Dark-mode support. Controlled from the Preferences Colours tab.
+    * diff-mode will colour unified diff file. Defaults to *.patch and *.diff files.
+    * Turn on colouring for bemacs-cli console version.
+    * Fix a problem reloading a read-only file that reported a problem with journalling.
+
+New in 8.4.1
     * Fix TAB missing from list of space characters
 
 New in 8.4.1
