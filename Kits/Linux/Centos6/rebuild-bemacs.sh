@@ -13,10 +13,10 @@ scl enable rh-python35 rh-git29 bash <<EOF
         ./bemacs-mock-build.sh centos6.3-x86_64
         ;;
     "el7")
-        ./build-linux.sh
+        ./build-linux.sh $2
         ./local-install-linux.sh
         ;;
     *)
-        echo "Usage: $0 [el6|el7]"
+        echo "Usage: $0 [el6|el7] [cli|gui]"
     esac
 EOF
