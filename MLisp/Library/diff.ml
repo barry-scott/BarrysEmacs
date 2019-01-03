@@ -42,7 +42,6 @@
                     (progn
                         (pop-to-buffer "diff")
                         (setq diff-buffer ~buffer)
-                        (diff-mode)
                         (erase-buffer)
                         (set-mark)
 
@@ -53,6 +52,7 @@
                                 (concat diff-command " \"" ~filename "\"  _diff_.tmp") )
                         )
 
+                        (diff-mode)
 
                         (beginning-of-file)
                         (unset-mark)
