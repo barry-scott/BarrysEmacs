@@ -492,15 +492,15 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         # the size of a char on the screen
         self.char_width = None
-        self.char_length = None
+        self.char_height = None
         self.char_ascent = None
 
         # the size of the window
         self.pixel_width = None
-        self.pixel_length = None
+        self.pixel_height = None
         # the size in chars of the window
         self.term_width = None
-        self.term_length = None
+        self.term_height = None
 
         self.__pending_geometryChanged = False
 
@@ -515,7 +515,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         self.__geometryChanged()
 
-        self.update( 0, 0, self.pixel_width, self.pixel_length )
+        self.update( 0, 0, self.pixel_width, self.pixel_height )
 
     def __initFromPreferences( self ):
         prefs = self.app.getPrefs()
@@ -551,28 +551,28 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         assert self.char_width is not None
 
         self.pixel_width = self.width()
-        self.pixel_length = self.height()
+        self.pixel_height = self.height()
 
         self.term_width  = max( 10, min( MSCREENWIDTH,  (self.pixel_width  - 2*self.client_padding) // self.char_width ) )
-        self.term_length = max( 4, min( MSCREENLENGTH, (self.pixel_length - 2*self.client_padding) // self.char_length ) )
+        self.term_height = max( 4, min( MSCREENLENGTH, (self.pixel_height - 2*self.client_padding) // self.char_height ) )
 
         self._debugPanel( '__calculateWindowSize char: %dpx x %dpx window: %dpx X %dpx -> text window: %d X %d' %
-                        (self.char_width, self.char_length
-                        ,self.pixel_width, self.pixel_length
-                        ,self.term_width, self.term_length) )
+                        (self.char_width, self.char_height
+                        ,self.pixel_width, self.pixel_height
+                        ,self.term_width, self.term_height) )
 
-        self._debugPanel( '__calculateWindowSize create editor_pixmap %d x %d' % (self.pixel_width, self.pixel_length) )
-        self.editor_pixmap = QtGui.QPixmap( self.pixel_width, self.pixel_length )
+        self._debugPanel( '__calculateWindowSize create editor_pixmap %d x %d' % (self.pixel_width, self.pixel_height) )
+        self.editor_pixmap = QtGui.QPixmap( self.pixel_width, self.pixel_height )
 
         qp = QtGui.QPainter( self.editor_pixmap )
         qp.setBackgroundMode( QtCore.Qt.OpaqueMode )
         qp.setBackground( self.bg_brushes[ SYNTAX_DULL ] )
-        qp.fillRect( 0, 0, self.pixel_width, self.pixel_length, self.bg_brushes[ SYNTAX_DULL ] )
+        qp.fillRect( 0, 0, self.pixel_width, self.pixel_height, self.bg_brushes[ SYNTAX_DULL ] )
         del qp
 
     def __pixelPoint( self, x, y ):
         return  (self.client_padding + self.char_width  * (x-1)
-                ,self.client_padding + self.char_length * (y-1))
+                ,self.client_padding + self.char_height * (y-1))
 
 
     def __geometryChanged( self ):
@@ -588,7 +588,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             self._debugPanel( '__geometryChanged self.char_width is None' )
             return
 
-        self.app.editor.guiGeometryChange( self.term_width, self.term_length )
+        self.app.editor.guiGeometryChange( self.term_width, self.term_height )
 
     #--------------------------------------------------------------------------------
     #
@@ -606,11 +606,14 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
                               and metrics.width( 'm' )*2 == metrics.width( 'mm' ))
 
         self.char_width = metrics.width( 'm' )
-        self.char_length = metrics.height() + metrics.leading()
+        # For some fonts leading() returns negative offsets
+        # which make the lines overlap.
+        self.char_height = metrics.height() + max(0, metrics.leading())
+        print( 'QQQ font char_height %r height %r leading %r lineSpacing %r' % (self.char_height, metrics.height(), metrics.leading(), metrics.lineSpacing()) )
         self.char_ascent = metrics.ascent()
         self._debugPanel( 'paintEvent first_paint draw %r width %d height %d ascent %d' %
                             (self.__use_fast_drawtext and 'fast' or 'slow'
-                            ,self.char_width, self.char_length, self.char_ascent) )
+                            ,self.char_width, self.char_height, self.char_ascent) )
 
     def paintEvent( self, event ):
         self._debugSpeed( 'paintEvent() begin' )
@@ -620,7 +623,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             self.first_paint = False
 
             qp = QtGui.QPainter( self )
-            qp.fillRect( QtCore.QRect( 0, 0, self.pixel_width, self.pixel_length ), self.bg_brushes[ SYNTAX_DULL ] )
+            qp.fillRect( QtCore.QRect( 0, 0, self.pixel_width, self.pixel_height ), self.bg_brushes[ SYNTAX_DULL ] )
             del qp
 
             self.__calculateWindowSize()
@@ -636,13 +639,13 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             qp.setBackgroundMode( QtCore.Qt.OpaqueMode )
 
             self._debugSpeed( 'drawPixmap() start' )
-            qp.drawPixmap( 0, 0, self.pixel_width, self.pixel_length, self.editor_pixmap )
-            self._debugSpeed( 'drawPixmap() end %d x %d' % (self.pixel_width, self.pixel_length) )
+            qp.drawPixmap( 0, 0, self.pixel_width, self.pixel_height, self.editor_pixmap )
+            self._debugSpeed( 'drawPixmap() end %d x %d' % (self.pixel_width, self.pixel_height) )
 
             c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
 
             # alpha blend the cursor
-            qp.fillRect( c_x, c_y, self.char_width, self.char_length, self.cursor_brush )
+            qp.fillRect( c_x, c_y, self.char_width, self.char_height, self.cursor_brush )
 
             # Draw scroll bar backgrounds
             # set the colour behind the scroll bars
@@ -656,7 +659,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
                 win_id, x, y, width, height, pos, total = bar_info
                 x, y = self.__pixelPoint( x+1, y+1 )
-                qp.fillRect( x, y, self.char_width * width, self.char_length * height, scroll_bar_bg )
+                qp.fillRect( x, y, self.char_width * width, self.char_height * height, scroll_bar_bg )
 
             #--- horz_scroll -----------------------------------------------------------
             for bar_info in self.all_horz_scroll_bar_info:
@@ -665,7 +668,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
                 win_id, x, y, width, height, pos = bar_info
                 x, y = self.__pixelPoint( x+1, y+1 )
-                qp.fillRect( x, y, self.char_width * width, self.char_length * height, scroll_bar_bg )
+                qp.fillRect( x, y, self.char_width * width, self.char_height * height, scroll_bar_bg )
 
             del qp
 
@@ -801,8 +804,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             return
 
         # Calculate character cell position
-        column = (event.x() - self.client_padding + (self.char_width/2)) // self.char_width + 1;
-        line =   (event.y() - self.client_padding ) // self.char_length + 1;
+        column = ((event.x() - self.client_padding + (self.char_width/2)) // self.char_width) + 1;
+        line =   ((event.y() - self.client_padding ) // self.char_height) + 1;
 
         if event.button() == QtCore.Qt.LeftButton:
             translation = keys_mapping["mouse-1-down"]
@@ -827,8 +830,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         if self.char_width is None:
             return
 
-        column = (event.x() - self.client_padding + (self.char_width/2)) // self.char_width + 1;
-        line =   (event.y() - self.client_padding ) // self.char_length + 1;
+        column = ((event.x() - self.client_padding + (self.char_width/2)) // self.char_width) + 1;
+        line =   ((event.y() - self.client_padding ) // self.char_height) + 1;
 
         if event.button() == QtCore.Qt.LeftButton:
             translation = keys_mapping["mouse-1-up"]
@@ -853,8 +856,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         if self.char_width is None:
             return
 
-        column = (event.x() - self.client_padding + (self.char_width/2)) // self.char_width + 1;
-        line =   (event.y() - self.client_padding ) // self.char_length + 1;
+        column = ((event.x() - self.client_padding + (self.char_width/2)) // self.char_width) + 1;
+        line =   ((event.y() - self.client_padding ) // self.char_height) + 1;
 
         translation = keys_mapping["mouse-motion"]
 
@@ -883,8 +886,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         self.__last_wheel_event_time = this_event_time
 
-        column = (event.x() - self.client_padding + (self.char_width/2)) // self.char_width + 1;
-        line =   (event.y() - self.client_padding ) // self.char_length + 1;
+        column = ((event.x() - self.client_padding + (self.char_width/2)) // self.char_width) + 1;
+        line =   ((event.y() - self.client_padding ) // self.char_height) + 1;
 
         modifiers = int(self.app.keyboardModifiers())
         shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
@@ -937,7 +940,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
     def termReset( self ):
         self._debugTermCalls1( 'termReset()' )
         #self.__all_term_ops = [(self.__termReset, ())]
-        #self.RefreshRect( (0,0,self.pixel_width,self.pixel_length), True )
+        #self.RefreshRect( (0,0,self.pixel_width,self.pixel_height), True )
 
     def __termReset( self ):
         self.qp.Clear()
@@ -1009,9 +1012,9 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
                     x, y = self.__pixelPoint( x+1, y+1 )
 
-                    self.qp.fillRect( x, y, self.char_width * width, self.char_length * height, QtGui.QColor( 192, 192, 192 ) )
+                    self.qp.fillRect( x, y, self.char_width * width, self.char_height * height, QtGui.QColor( 192, 192, 192 ) )
 
-                    bar.resize( self.char_width * width, self.char_length * height )
+                    bar.resize( self.char_width * width, self.char_height * height )
                     bar.move( x, y )
 
                     bar.show()
@@ -1042,9 +1045,9 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
                     x, y = self.__pixelPoint( x+1, y+1 )
 
-                    self.qp.fillRect( x, y, self.char_width * width, self.char_length * height, QtGui.QColor( 192, 192, 192 ) )
+                    self.qp.fillRect( x, y, self.char_width * width, self.char_height * height, QtGui.QColor( 192, 192, 192 ) )
 
-                    bar.resize( self.char_width * width, self.char_length * height )
+                    bar.resize( self.char_width * width, self.char_height * height )
                     bar.move( x, y )
 
                     bar.show()
@@ -1062,7 +1065,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         #qqq#self.editor_pixmap.save( '/home/barry/tmpdir/image-%03d.png' % (self.__debug_save_image_index,), 'PNG' )
 
 
-        self.update( 0, 0, self.pixel_width, self.pixel_length )
+        self.update( 0, 0, self.pixel_width, self.pixel_height )
 
         self._debugTermCalls1( 'termUpdateEnd() done ---------------------------------------------------------' )
         self._debugSpeed( 'termUpdateEnd() end' )
@@ -1161,7 +1164,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
                     x, y = self.__pixelPoint( draw_cols[ start ] + 1, row )
 
-                    self.qp.fillRect( x, y, (end-start)*self.char_width, self.char_length, self.bg_brushes[ cur_mode ] )
+                    self.qp.fillRect( x, y, (end-start)*self.char_width, self.char_height, self.bg_brushes[ cur_mode ] )
                     self.qp.drawText( x, y+self.char_ascent, ''.join( draw_chars[ start:end ] ) )
 
                     start = end
@@ -1179,7 +1182,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         remaining_width = self.term_width - new_line_length
         if remaining_width > 0:
             x, y = self.__pixelPoint( new_line_length+1, row )
-            self.qp.fillRect( x, y, remaining_width*self.char_width, self.char_length, self.bg_brushes[ SYNTAX_DULL ] )
+            self.qp.fillRect( x, y, remaining_width*self.char_width, self.char_height, self.bg_brushes[ SYNTAX_DULL ] )
 
         self._debugTermCalls2( '__termUpdateLineFast %d done' % (row,) )
 
@@ -1240,13 +1243,13 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             x, y = self.__pixelPoint( col+1, row )
 
             # draw text may not fill the rectange of the char leaving lines on the screen
-            #self.qp.fillRect( x, y, self.char_width, self.char_length, self.bg_brushes[ cur_mode ] ) #qqq
+            #self.qp.fillRect( x, y, self.char_width, self.char_height, self.bg_brushes[ cur_mode ] ) #qqq
             self.qp.drawText( x, y+self.char_ascent, new_ch )
 
         remaining_width = self.term_width - new_line_length
         if remaining_width > 0:
             x, y = self.__pixelPoint( new_line_length+1, row )
-            self.qp.fillRect( x, y, remaining_width*self.char_width, self.char_length, self.bg_brushes[ SYNTAX_DULL ] )
+            self.qp.fillRect( x, y, remaining_width*self.char_width, self.char_height, self.bg_brushes[ SYNTAX_DULL ] )
 
         self._debugTermCalls2( '__termUpdateLineSlow %d done' % (row,) )
 
@@ -1263,7 +1266,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         dst_x, dst_y = self.__pixelPoint( 1, to_line )
         src_x, src_y = self.__pixelPoint( 1, from_line )
         width = self.char_width * self.term_width
-        height = self.char_length
+        height = self.char_height
 
         self._debugTermCalls2( '__termMoveLine dst_x %r, dst_y %r, width %r height %r src_x %r src_y %r' %
                 (dst_x, dst_y

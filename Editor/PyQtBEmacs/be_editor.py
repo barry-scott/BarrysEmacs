@@ -72,8 +72,8 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
         self.initEditor()
         self.setKeysMapping( self.window.getKeysMapping() )
         self._debugEditor( 'BEmacs.initEmacsProfile() geometryChange %r %r' %
-                            (self.window.term_width, self.window.term_length) )
-        self.geometryChange( self.window.term_width, self.window.term_length )
+                            (self.window.term_width, self.window.term_height) )
+        self.geometryChange( self.window.term_width, self.window.term_height )
 
         self._debugEditor( 'TESTING' )
         #_bemacs.function.debug_emacs( 'flags=key,exec,tmp,ml_error' )
