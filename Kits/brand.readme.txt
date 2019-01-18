@@ -26,6 +26,7 @@ Introduction
 
 New in %(version)s
     * Improved grep command
+    * Fix problem with line spacing that left lines on the screen
 
 New in 8.5.0
     * Add Dark-mode support. Controlled from the Preferences Colours tab.
