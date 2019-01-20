@@ -25,6 +25,7 @@ Introduction
         Linux (tested on: Fedora 29)
 
 New in %(version)s
+    * When Shift is pressed 3 times highlight the cursor.
     * Improved grep command
     * Fix problem with line spacing that left lines on the screen
 
