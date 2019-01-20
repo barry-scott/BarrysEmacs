@@ -100,9 +100,9 @@ theme_light = Theme(
         ColourInfo('SYNTAX_TYPE_PROBLEM',     U_('Problem'),      SYNTAX_TYPE_PROBLEM,    (255,  0,  0),  (255,255,255)),
         ColourInfo('SYNTAX_DULL',             U_('Dull'),         SYNTAX_DULL,            (  0,  0,  0),  (255,255,255)),
         ColourInfo('SYNTAX_WORD',             U_('Word'),         SYNTAX_WORD,            (  0,  0,  0),  (255,255,255)),
-        ColourInfo('SYNTAX_TYPE_STRING1',     U_('String 1'),     SYNTAX_TYPE_STRING1,    (  0,128,  0),  (255,255,255)),
-        ColourInfo('SYNTAX_TYPE_STRING2',     U_('String 2'),     SYNTAX_TYPE_STRING2,    (  0,128,  0),  (255,255,255)),
-        ColourInfo('SYNTAX_TYPE_STRING3',     U_('String 3'),     SYNTAX_TYPE_STRING3,    (  0,128,  0),  (255,255,255)),
+        ColourInfo('SYNTAX_TYPE_STRING1',     U_('String 1'),     SYNTAX_TYPE_STRING1,    (128,128,  0),  (255,255,255)),
+        ColourInfo('SYNTAX_TYPE_STRING2',     U_('String 2'),     SYNTAX_TYPE_STRING2,    (128,128,  0),  (255,255,255)),
+        ColourInfo('SYNTAX_TYPE_STRING3',     U_('String 3'),     SYNTAX_TYPE_STRING3,    (128,128,  0),  (255,255,255)),
         ColourInfo('SYNTAX_TYPE_COMMENT1',    U_('Comment 1'),    SYNTAX_TYPE_COMMENT1,   (  0,128,  0),  (255,255,255)),
         ColourInfo('SYNTAX_TYPE_COMMENT2',    U_('Comment 2'),    SYNTAX_TYPE_COMMENT2,   (  0,128,  0),  (255,255,255)),
         ColourInfo('SYNTAX_TYPE_COMMENT3',    U_('Comment 3'),    SYNTAX_TYPE_COMMENT3,   (  0,128,  0),  (255,255,255)),
@@ -474,6 +474,12 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.__all_term_ops = []
         self.editor_pixmap = None
 
+        self.cursor_highlighter = EmacsCursorHighlighter( self.app, self )
+
+        # count the number of times the shift key is pressed and release without
+        # any char being sent into emacs
+        self.shift_pulses = 0
+
         self.cursor_x = 1
         self.cursor_y = 1
         self.window_size = 0
@@ -579,6 +585,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.__pending_geometryChanged = False
 
         self.__calculateWindowSize()
+        self.cursor_highlighter.setHeight( self.char_height * 3 )
 
         if self.app.editor is None:
             self._debugPanel( '__geometryChanged no self.app.editor' )
@@ -609,7 +616,6 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         # For some fonts leading() returns negative offsets
         # which make the lines overlap.
         self.char_height = metrics.height() + max(0, metrics.leading())
-        print( 'QQQ font char_height %r height %r leading %r lineSpacing %r' % (self.char_height, metrics.height(), metrics.leading(), metrics.lineSpacing()) )
         self.char_ascent = metrics.ascent()
         self._debugPanel( 'paintEvent first_paint draw %r width %d height %d ascent %d' %
                             (self.__use_fast_drawtext and 'fast' or 'slow'
@@ -734,7 +740,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             translation = keys_mapping[ translation ]
 
             for ch in translation:
-                self.app.editor.guiEventChar( ch, shift )
+                self.__guiEventChar( ch, shift )
 
         elif len(event.text()) > 0:
             self.handleNonSpecialKey( event )
@@ -762,6 +768,19 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         self._debugTermKey( 'keyReleaseEvent %r key %d(0x%x) name %r ctrl %s shift %s alt %s cmd %s meta %s' %
                             (event.text(), key, key, qt_key_names.get( key, 'unknown' ), T( ctrl ), T( shift ), T( alt ), T( cmd ), T( meta )) )
+
+        if key == QtCore.Qt.Key_Shift:
+            self.shift_pulses += 1
+
+        if self.shift_pulses >= 3:
+            # clear the pulse trigger
+            self.shift_pulses = 0
+
+            c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
+            # calc the center of the cursor char cell
+            c_x += self.char_width//2
+            c_y -= self.char_height
+            self.cursor_highlighter.pulseCursor( c_x, c_y )
 
     def handleNonSpecialKey( self, event ):
         key = event.key()
@@ -795,7 +814,15 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             char = 0
 
         self._debugSpeed( 'handleNonSpecialKey( %r )' % (char,), True )
-        self.app.editor.guiEventChar( char, False )
+        self.__guiEventChar( char, False )
+
+    def __guiEventChar( self, char, shift ):
+        self.shift_pulses = 0
+        self.app.editor.guiEventChar( char, shift )
+
+    def __guiEventMouse( self, keys, shift, all_params ):
+        self.shift_pulses = 0
+        self.app.editor.guiEventMouse( keys, shift, all_params )
 
     def mousePressEvent( self, event ):
         self._debugTermMouse( 'mousePressEvent   %r %r %r )' % (event.button(), int(event.buttons()), event.pos()) )
@@ -822,7 +849,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         if translation is not None:
             modifiers = int(self.app.keyboardModifiers())
             shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
-            self.app.editor.guiEventMouse( translation, shift, [line, column, shift] );
+            self.__guiEventMouse( translation, shift, [line, column, shift] );
 
     def mouseReleaseEvent( self, event ):
         self._debugTermMouse( 'mouseReleaseEvent %r %r %r )' % (event.button(), int(event.buttons()), event.pos()) )
@@ -848,7 +875,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         if translation is not None:
             modifiers = int(self.app.keyboardModifiers())
             shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
-            self.app.editor.guiEventMouse( translation, shift, [line, column, shift] );
+            self.__guiEventMouse( translation, shift, [line, column, shift] );
 
     def mouseMoveEvent( self, event ):
         self._debugTermMouse( 'mouseMoveEvent %r %r %r )' % (event.button(), int(event.buttons()), event.pos()) )
@@ -863,7 +890,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         modifiers = int(self.app.keyboardModifiers())
         shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
-        self.app.editor.guiEventMouse( translation, shift, [line, column] );
+        self.__guiEventMouse( translation, shift, [line, column] );
 
     def wheelEvent( self, event ):
         self._debugTermMouse( 'wheelEvent source %d, angle %r, pixel %r' %
@@ -917,7 +944,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             else:
                 translation = keys_mapping["mouse-wheel-pos"]
 
-        self.app.editor.guiEventMouse( translation, shift, [abs(rotation), line, column] );
+        self.__guiEventMouse( translation, shift, [abs(rotation), line, column] );
 
     #--------------------------------------------------------------------------------
     #
@@ -1277,6 +1304,78 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
     def termDisplayActivity( self, ch ):
         self._debugTermCalls1( 'termDisplayActivity( %r )' % (ch,) )
+
+class EmacsCursorHighlighter(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
+    ST_HIDDEN = 0
+    ST_DRAW_BIGGER = 1
+    ST_DRAW_SMALLER = 2
+
+    def __init__( self, app, parent ):
+        QtWidgets.QWidget.__init__( self, parent )
+        self.log = parent.log
+        self.panel = parent
+        self.height = 100
+        self.radius = None
+        self.state = self.ST_HIDDEN
+
+        self.timer = QtCore.QTimer( self )
+        self.timer.setSingleShot( True )
+        self.timer.timeout.connect( self.pulseTimeout )
+
+        be_debug.EmacsDebugMixin.__init__( self )
+
+        self.resize( self.height, self.height )
+
+        self.hide()
+
+    def setHeight( self, height ):
+        self.height = height
+        self.resize( self.height, self.height )
+
+    def pulseCursor( self, x, y ):
+        self.radius = 0
+        self.state = self.ST_DRAW_BIGGER
+
+        x -= self.height//2
+        self.move( x, y )
+        self.show()
+        self.pulseTimeout()
+
+    def pulseTimeout( self ):
+        if self.state == self.ST_DRAW_BIGGER:
+            self.radius += 2
+            if self.radius < (self.height // 2):
+                self.update( 0, 0, self.height, self.height )
+                self.timer.start( 17 )  # assume 60Hz, frame each 16.6ms
+
+            else:
+                self.state = self.ST_DRAW_SMALLER
+                self.timer.start( 200 )
+
+        elif self.state == self.ST_DRAW_SMALLER:
+            self.radius -= 2
+            if self.radius >= 2:
+                self.update( 0, 0, self.height, self.height )
+                self.timer.start( 33 )  # assume 60Hz, frame each 16.6ms
+
+            else:
+                self.state = self.ST_HIDDEN
+                self.hide()
+
+
+    def paintEvent(self, event):
+        colour = QtGui.QColor( 192, 0, 0, 128 )
+        pen = QtGui.QPen( colour )
+        pen.setWidth( 1 )
+        brush = QtGui.QBrush( colour )
+
+        qp = QtGui.QPainter( self )
+        qp.setBrush( brush )
+        qp.setPen( pen )
+        center = self.height // 2
+
+        qp.drawEllipse( QtCore.QRect( center-self.radius, center-self.radius, self.radius*2, self.radius*2 ) )
+        del qp
 
 class BemacsVerticalScrollBar(QtWidgets.QScrollBar, be_debug.EmacsDebugMixin):
     def __init__( self, panel ):
