@@ -1,6 +1,6 @@
 '''
  ====================================================================
- Copyright (c) 2003-2017 Barry A Scott.  All rights reserved.
+ Copyright (c) 2003-2019 Barry A Scott.  All rights reserved.
 
  This software is licensed as described in the file LICENSE.txt,
  which you should have received as part of this distribution.
@@ -18,17 +18,72 @@ from  xml_preferences import XmlPreferences, Scheme, SchemeNode, PreferencesNode
 
 import be_emacs_panel
 
-# ------------------------------------------------------------
-class Session(PreferencesNode):
-    def __init__( self ):
-        super().__init__()
-        self.geometry = None
+# cannot use a class for bool as PyQt wll not use __bool__ to get its truth
+def Bool( text ):
+    if text.lower() == 'true':
+        return True
 
-    def getFrameGeometry( self ):
-        return self.geometry
+    elif text.lower() == 'false':
+        return False
 
-    def setFrameGeometry( self, geometry ):
-        self.geometry = geometry.decode('utf-8')
+    else:
+        raise ValueError( 'Bool expects the string true or false' )
+
+class RGB:
+    def __init__( self, text=None ):
+        if text is None:
+            self.value = None
+            return
+
+        self.value = tuple( [int(v) for v in text.split(',')] )
+        if len(self.value) != 3:
+            raise ValueError( 'RGB need 4 values: %r' % (text,) )
+
+        for v in self.value:
+            if not (0 <= v <= 255):
+                raise ValueError( 'RGB values must be in the range 0..255: %r - %r' % (text, v) )
+
+    def getTuple( self ):
+        return self.value
+
+    def setTuple( self, value ):
+        assert type(value) == tuple, 'value %r' % (value,)
+        assert len(value) == 3, 'value %r' % (value,)
+        self.value = value
+
+    def __str__( self ):
+        return '%d,%d,%d' % self.value
+
+    def __repr__( self ):
+        return '<RGB R:%d G:%d B:%d>' % self.value
+
+class RGBA:
+    def __init__( self, text=None ):
+        if text is None:
+            self.value = None
+            return
+
+        self.value = tuple( [int(v) for v in text.split(',')] )
+        if len(self.value) != 4:
+            raise ValueError( 'RGBA need 4 values: %r' % (text,) )
+
+        for v in self.value:
+            if not (0 <= v <= 255):
+                raise ValueError( 'RGBA values must be in the range 0..255: %r - %r' % (text, v) )
+
+    def getTuple( self ):
+        return self.value
+
+    def setTuple( self, value ):
+        assert type(value) == tuple, 'value %r' % (value,)
+        assert len(value) == 4, 'value %r' % (value,)
+        self.value = value
+
+    def __str__( self ):
+        return '%d,%d,%d,%d' % self.value
+
+    def __repr__( self ):
+        return '<RGB R:%d G:%d B:%d A:%d>' % self.value
 
 # ------------------------------------------------------------
 class Preferences(PreferencesNode):
@@ -41,7 +96,24 @@ class Preferences(PreferencesNode):
             self.window = Window()
             self.window.finaliseNode()
 
+# ------------------------------------------------------------
+class Session(PreferencesNode):
+    xml_attribute_info = (('geometry', str),)
+
+    def __init__( self ):
+        super().__init__()
+        self.geometry = None
+
+    def getFrameGeometry( self ):
+        return self.geometry
+
+    def setFrameGeometry( self, geometry ):
+        self.geometry = geometry.decode('utf-8')
+
+# ------------------------------------------------------------
 class Window(PreferencesNode):
+    xml_attribute_info = (('theme', str), ('geometry', str))
+
     def __init__( self ):
         super().__init__()
         self.theme = None
@@ -49,6 +121,7 @@ class Window(PreferencesNode):
         self.font = None
         self.all_colours = {}
         self.cursor = None
+        self.cursor_style = None
 
     def getFrameGeometry( self ):
         return self.geometry
@@ -65,11 +138,14 @@ class Window(PreferencesNode):
             self.font.finaliseNode()
 
         if self.cursor is None:
-            self.cursor = Cursor( be_emacs_panel.cursor_fg_default )
+            self.cursor = CursorColour( be_emacs_panel.all_themes[self.theme.name].cursor_fg )
 
         for colour_info in be_emacs_panel.all_themes[self.theme.name].all_colours:
             if colour_info.name not in self.all_colours:
                 self.all_colours[ colour_info.name ] = Colour( colour_info.name, colour_info.fg, colour_info.bg )
+
+        if self.cursor_style is None:
+            self.cursor_style = CursorStyle()
 
     def setChildNodeMap( self, name, key, node ):
         if name == 'colour':
@@ -86,6 +162,8 @@ class Window(PreferencesNode):
             raise RuntimeError( 'unknown name %r' % (name,) )
 
 class Font(PreferencesNode):
+    xml_attribute_info = (('face', str), ('point_size', int))
+
     def __init__( self ):
         super().__init__()
         # point size and face need to chosen by platform
@@ -102,14 +180,22 @@ class Font(PreferencesNode):
             self.face = 'Liberation Mono'
             self.point_size = 11
 
-    def setAttr( self, name, value ):
-        if name == 'point_size':
-            self.point_size = int(value)
 
-        else:
-            super().setAttr( name, value )
+class CursorStyle(PreferencesNode):
+    xml_attribute_info = (('blink', Bool), ('interval', int), ('shape', str))
+
+    def __init__( self, blink=False, interval=600, shape='block' ):
+        super().__init__()
+        self.blink = blink
+        self.interval = interval
+        self.shape = shape
+
+    def setAttr( self, name, value ):
+        super().setAttr( name, value )
 
 class Colour(PreferencesNode):
+    xml_attribute_info = (('fg', RGB), ('bg', RGB))
+
     def __init__( self, name, fg=None, bg=None ):
         super().__init__()
         self.name = name
@@ -119,67 +205,35 @@ class Colour(PreferencesNode):
     def __lt__( self, other ):
         return self.name < other.name
 
-    def setAttr( self, name, value ):
-        if name == 'fg':
-            self.fg = tuple( [int(v) for v in value.split(',')] )
+class CursorColour(PreferencesNode):
+    xml_attribute_info = (('fg', RGBA),)
 
-        elif name == 'bg':
-            self.bg = tuple( [int(v) for v in value.split(',')] )
-
-        else:
-            super().setAttr( name, value )
-
-    def getAttr( self, name ):
-        if name == 'fg':
-            return '%d,%d,%d' % self.fg
-
-        elif name == 'bg':
-            return '%d,%d,%d' % self.bg
-
-        else:
-            return super().getAttr( name )
-
-class Cursor(PreferencesNode):
     def __init__( self, fg=None ):
         super().__init__()
-        self.fg = fg
-
-    def setAttr( self, name, value ):
-        if name == 'fg':
-            self.fg = tuple( [int(v) for v in value.split(',')] )
+        if fg is None:
+            self.fg = None
 
         else:
-            super().setAttr( name, value )
-
-    def getAttr( self, name ):
-        if name == 'fg':
-            return '%d,%d,%d,%d' % self.fg
-
-        else:
-            return super().getAttr( name )
+            self.fg = RGBA()
+            self.fg.setTuple( fg )
 
     def finaliseNode( self ):
         if self.fg is None:
-            self.fg = be_emacs_panel.cursor_fg_default
+            self.fg = RGBA()
+            self.fg.setTuple( be_emacs_panel.all_themes[be_emacs_panel.theme_name_default].cursor_fg )
 
 class Theme(PreferencesNode):
+    xml_attribute_info = (('name', str),)
+
     def __init__( self, name=None ):
         super().__init__()
         self.name = name
 
     def setAttr( self, name, value ):
-        if name == 'name':
-            self.name = value
-
-        else:
-            super().setAttr( name, value )
+        super().setAttr( name, value )
 
     def getAttr( self, name ):
-        if name == 'name':
-            return self.name
-
-        else:
-            return super().getAttr( name )
+        return super().getAttr( name )
 
     def finaliseNode( self ):
         if self.name is None:
@@ -187,11 +241,13 @@ class Theme(PreferencesNode):
 
 bemacs_preferences_scheme = (Scheme(
         (SchemeNode( Preferences, 'preferences',  )
+
         <<  (SchemeNode( Window, 'window', ('geometry',) )
-            << SchemeNode( Font, 'font', ('point_size', 'face') )
-            << SchemeNode( Theme, 'theme', ('name',) )
-            << SchemeNode( Colour, 'colour', ('fg', 'bg'), key_attribute='name' )
-            << SchemeNode( Cursor, 'cursor', ('fg',), default_attributes={'fg': '%d,%d,%d,%d' % be_emacs_panel.all_themes[be_emacs_panel.theme_name_default].cursor_fg} )
+            << SchemeNode( CursorStyle, 'cursor_style' )
+            << SchemeNode( Font, 'font' )
+            << SchemeNode( Theme, 'theme' )
+            << SchemeNode( Colour, 'colour', key_attribute='name' )
+            << SchemeNode( CursorColour, 'cursor' )
             )
         )
     ) )

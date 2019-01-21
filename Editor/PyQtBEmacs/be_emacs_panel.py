@@ -444,6 +444,10 @@ for name in dir(QtCore.Qt):
         qt_key_names[ getattr( QtCore.Qt, name ) ] = name
 
 class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
+    ST_CUR_STEADY = 0
+    ST_CUR_BLINK_SHOW = 1
+    ST_CUR_BLINK_HIDE = 2
+
     def __init__( self, app, parent ):
         QtWidgets.QWidget.__init__( self, parent )
         be_debug.EmacsDebugMixin.__init__( self )
@@ -460,6 +464,12 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.bg_brushes = {}
 
         self.cursor_brush = None
+        self.cursor_timer = QtCore.QTimer( self )
+        self.cursor_timer.setSingleShot( True )
+        self.cursor_timer.timeout.connect( self.cursorBlinkTimeout )
+        self.cursor_blink_interval = 600    # ms
+        self.cursor_state = self.ST_CUR_STEADY
+        self.cursor_width = 2
 
         self.__setupColours( app.getPrefs().window )
 
@@ -471,6 +481,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         self.qp = None
         self.first_paint = True
+
         self.__all_term_ops = []
         self.editor_pixmap = None
 
@@ -530,11 +541,6 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         font_pref = prefs.window.font
 
         self.font = QtGui.QFont( font_pref.face, font_pref.point_size )
-        #self.font.setFixedPitch( True )
-        #self.font.setKerning( False )
-        #self.font.setStyleStrategy( self.font.NoAntialias )
-        #if sys.platform == 'darwin':
-        #    self.font.setStyleStrategy( self.font.NoSubpixelAntialias )
 
         fi = QtGui.QFontInfo( self.font )
         self.log.info( 'Font family: %r %dpt' % (fi.family(), fi.pointSize()) )
@@ -545,13 +551,20 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             colour_pref = win_prefs.getColour( colour_info.name )
             mask = colour_info.mask
 
-            self.fg_colours[ mask ] = QtGui.QColor( *colour_pref.fg )
+            self.fg_colours[ mask ] = QtGui.QColor( *colour_pref.fg.getTuple() )
             self.fg_pens[ mask ] =    QtGui.QPen( self.fg_colours[ mask ] )
-            self.bg_colours[ mask ] = QtGui.QColor( *colour_pref.bg )
+            self.bg_colours[ mask ] = QtGui.QColor( *colour_pref.bg.getTuple() )
             self.bg_brushes[ mask ] = QtGui.QBrush( self.bg_colours[ mask ] )
 
-        self.cursor_colour = QtGui.QColor( *win_prefs.cursor.fg )
+        self.cursor_colour = QtGui.QColor( *win_prefs.cursor.fg.getTuple() )
         self.cursor_brush = QtGui.QBrush( self.cursor_colour )
+
+        if win_prefs.cursor_style.blink:
+            self.cursor_state = self.ST_CUR_BLINK_SHOW
+            self.cursor_blink_interval = win_prefs.cursor_style.interval
+
+        else:
+            self.cursor_state = self.ST_CUR_STEADY
 
     def __calculateWindowSize( self ):
         assert self.char_width is not None
@@ -560,7 +573,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.pixel_height = self.height()
 
         self.term_width  = max( 10, min( MSCREENWIDTH,  (self.pixel_width  - 2*self.client_padding) // self.char_width ) )
-        self.term_height = max( 4, min( MSCREENLENGTH, (self.pixel_height - 2*self.client_padding) // self.char_height ) )
+        self.term_height = max( 10, min( MSCREENLENGTH, (self.pixel_height - 2*self.client_padding) // self.char_height ) )
 
         self._debugPanel( '__calculateWindowSize char: %dpx x %dpx window: %dpx X %dpx -> text window: %d X %d' %
                         (self.char_width, self.char_height
@@ -585,6 +598,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.__pending_geometryChanged = False
 
         self.__calculateWindowSize()
+
         self.cursor_highlighter.setHeight( self.char_height * 3 )
 
         if self.app.editor is None:
@@ -621,6 +635,13 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
                             (self.__use_fast_drawtext and 'fast' or 'slow'
                             ,self.char_width, self.char_height, self.char_ascent) )
 
+        p = self.app.getPrefs().window.cursor_style
+        if p.shape == 'line':
+            self.cursor_width = max( 1, self.char_width // 4 )
+
+        else:
+            self.cursor_width = self.char_width
+
     def paintEvent( self, event ):
         self._debugSpeed( 'paintEvent() begin' )
 
@@ -641,6 +662,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             self._debugPanel( 'EmacsPanel.paintEvent() editor_pixmap %r' % (self.editor_pixmap,) )
 
             qp = QtGui.QPainter( self )
+            qp.setClipRegion( event.region() )
 
             qp.setBackgroundMode( QtCore.Qt.OpaqueMode )
 
@@ -649,9 +671,11 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             self._debugSpeed( 'drawPixmap() end %d x %d' % (self.pixel_width, self.pixel_height) )
 
             c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
-
-            # alpha blend the cursor
-            qp.fillRect( c_x, c_y, self.char_width, self.char_height, self.cursor_brush )
+            #self.cursor.drawCursor( c_x, c_y )
+            if( self.cursor_state == self.ST_CUR_STEADY
+            or  self.cursor_state == self.ST_CUR_BLINK_SHOW ):
+                # alpha blend the cursor
+                qp.fillRect( c_x, c_y, self.cursor_width, self.char_height, self.cursor_brush )
 
             # Draw scroll bar backgrounds
             # set the colour behind the scroll bars
@@ -1091,11 +1115,23 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.__debug_save_image_index += 1
         #qqq#self.editor_pixmap.save( '/home/barry/tmpdir/image-%03d.png' % (self.__debug_save_image_index,), 'PNG' )
 
+        if self.cursor_state != self.ST_CUR_STEADY:
+            self.cursor_state = self.ST_CUR_BLINK_SHOW
+            self.cursor_timer.start( self.cursor_blink_interval )
 
         self.update( 0, 0, self.pixel_width, self.pixel_height )
 
         self._debugTermCalls1( 'termUpdateEnd() done ---------------------------------------------------------' )
         self._debugSpeed( 'termUpdateEnd() end' )
+
+    def cursorBlinkTimeout( self ):
+        if self.cursor_state == self.ST_CUR_BLINK_SHOW:
+            self.cursor_state = self.ST_CUR_BLINK_HIDE
+        else:
+            self.cursor_state = self.ST_CUR_BLINK_SHOW
+
+        self.cursor_timer.start( self.cursor_blink_interval )
+        self.update( 0, 0, self.pixel_width, self.pixel_height )
 
     def isTermUpdatePending( self ):
         return len(self.__all_term_ops) > 0

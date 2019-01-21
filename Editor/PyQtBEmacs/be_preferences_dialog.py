@@ -1,6 +1,6 @@
 '''
  ====================================================================
- Copyright (c) 2003-2015 Barry A Scott.  All rights reserved.
+ Copyright (c) 2003-2019 Barry A Scott.  All rights reserved.
 
  This software is licensed as described in the file LICENSE.txt,
  which you should have received as part of this distribution.
@@ -40,6 +40,7 @@ class PreferencesDialog( QtWidgets.QDialog ):
         tabs = QtWidgets.QTabWidget()
         self.all_tabs.append( FontTab( self.app, T_('Font') ) )
         self.all_tabs.append( ColoursTab( self.app, T_('Colours') ) )
+        self.all_tabs.append( CursorTab( self.app, T_('Cursor') ) )
 
         for tab in self.all_tabs:
             tabs.addTab( tab, tab.title )
@@ -63,6 +64,81 @@ class PreferencesDialog( QtWidgets.QDialog ):
             tab.savePreferences()
 
         self.accept()
+
+class CursorTab(QtWidgets.QWidget):
+    def __init__( self, app, title ):
+        super().__init__()
+
+        self.title = title
+        self.app = app
+
+        self.initControls()
+
+    def initControls( self ):
+        p = self.app.getPrefs().window.cursor_style
+
+        self.shape_label = QtWidgets.QLabel( T_('Shape') )
+        self.shape_group = QtWidgets.QButtonGroup()
+        self.shape_line_radio = QtWidgets.QRadioButton( T_('Line cursor') )
+        self.shape_group.addButton( self.shape_line_radio )
+        self.shape_line_radio.setChecked( p.shape == 'line' )
+        self.shape_block_radio = QtWidgets.QRadioButton( T_('Block cursor') )
+        self.shape_group.addButton( self.shape_block_radio )
+        self.shape_block_radio.setChecked( p.shape == 'block' )
+
+        self.blink_label = QtWidgets.QLabel( T_('Style') )
+        self.blink_value = QtWidgets.QCheckBox( T_('Use a blinking cursor') )
+        self.blink_value.setChecked( p.blink )
+
+        self.interval_label = QtWidgets.QLabel( T_('Blink Interval (milli-seconds)') )
+        self.interval_value = QtWidgets.QLineEdit()
+        self.interval_value.setText( '%s' % (p.interval,) )
+
+        self.colour_lable = QtWidgets.QLabel( T_('Note: The cursor colour can be set on in the Colours tab') )
+
+        self.grid_sizer = QtWidgets.QGridLayout()
+        row = 0
+        self.grid_sizer.addWidget( self.shape_label, row, 0, 3, 1 )
+        row += 1
+        self.grid_sizer.addWidget( self.shape_block_radio, row, 1 )
+        row += 1
+        self.grid_sizer.addWidget( self.shape_line_radio, row, 1 )
+        row += 1
+        self.grid_sizer.addWidget( self.blink_label, row, 0 )
+        self.grid_sizer.addWidget( self.blink_value, row, 1 )
+        row += 1
+        self.grid_sizer.addWidget( self.interval_label, row, 0 )
+        self.grid_sizer.addWidget( self.interval_value, row, 1 )
+        row += 1
+        self.grid_sizer.addWidget( self.colour_lable, row, 0, 1, 2 )
+
+        self.grid_sizer.setRowStretch( row, 5 )
+        self.grid_sizer.setColumnStretch( 1, 5 )
+
+        self.setLayout( self.grid_sizer )
+
+    def savePreferences( self ):
+        p = self.app.getPrefs().window.cursor_style
+
+        p.blink = self.blink_value.isChecked()
+        p.interval = int(self.interval_value.text())
+
+        if self.shape_line_radio.isChecked():
+            p.shape = 'line'
+
+        elif self.shape_block_radio.isChecked():
+            p.shape = 'block'
+
+    def validate( self ):
+        try:
+            size = int(self.interval_value.text())
+            if size < 100 or size > 5000:
+                raise ValueError('bad size')
+            return True
+
+        except ValueError:
+            return False
+
 
 class FontTab(QtWidgets.QWidget):
     def __init__( self, app, title ):
@@ -248,10 +324,10 @@ class ColourTableModel(QtCore.QAbstractTableModel):
     def resetColours( self ):
         self.beginResetModel()
 
-        self.cursor.fg = self.theme.cursor_fg
+        self.cursor.fg.setTuple( self.theme.cursor_fg )
         for colour_info in self.theme.all_colours:
-            self.all_colours[ colour_info.name ].fg = colour_info.fg
-            self.all_colours[ colour_info.name ].bg = colour_info.bg
+            self.all_colours[ colour_info.name ].fg.setTuple( colour_info.fg )
+            self.all_colours[ colour_info.name ].bg.setTuple( colour_info.bg )
 
         self.endResetModel()
 
@@ -264,7 +340,7 @@ class ColourTableModel(QtCore.QAbstractTableModel):
 
         if row == 0:
             if col == self.col_fg:
-                self.cursor.fg = self.theme.cursor_fg
+                self.cursor.fg.setTuple( self.theme.cursor_fg )
 
             return
 
@@ -273,7 +349,7 @@ class ColourTableModel(QtCore.QAbstractTableModel):
         if col == self.col_fg:
             fg = self.theme.all_colours[ row-1 ].fg
             if fg is not None:
-                colour.fg = fg
+                colour.fg.setTuple( fg )
 
                 self.dataChanged.emit(
                     self.createIndex( row, self.col_example ),
@@ -282,7 +358,7 @@ class ColourTableModel(QtCore.QAbstractTableModel):
         if col == self.col_bg:
             bg = self.theme.all_colours[ row-1 ].bg
             if bg is not None:
-                colour.bg = bg
+                colour.bg.setTuple( bg )
 
                 self.dataChanged.emit(
                     self.createIndex( row, self.col_example ),
@@ -294,10 +370,7 @@ class ColourTableModel(QtCore.QAbstractTableModel):
 
         if row == 0:
             if col == self.col_fg:
-                fg = self.__pickColour( self.cursor.fg, T_('Cursor') )
-                if fg is not None:
-                    self.cursor.fg = fg
-
+                if self.__pickColour( self.cursor.fg, T_('Cursor') ):
                     self.dataChanged.emit(
                         self.createIndex( row, self.col_example ),
                         self.createIndex( row, self.col_fg ) )
@@ -307,36 +380,33 @@ class ColourTableModel(QtCore.QAbstractTableModel):
         colour = self.all_colours[ self.all_names[ row-1 ] ]
 
         if col == self.col_fg:
-            fg = self.__pickColour( colour.fg, T_('Foreground for %s') % (self.all_presentation_names[ row-1 ],) )
-            if fg is not None:
-                colour.fg = fg
-
+            if self.__pickColour( colour.fg, T_('Foreground for %s') % (self.all_presentation_names[ row-1 ],) ):
                 self.dataChanged.emit(
                     self.createIndex( row, self.col_example ),
                     self.createIndex( row, self.col_fg ) )
 
         if col == self.col_bg:
-            bg = self.__pickColour( colour.bg, T_('Background for %s') % (self.all_presentation_names[ row-1 ],) )
-            if bg is not None:
-                colour.bg = bg
-
+            if self.__pickColour( colour.bg, T_('Background for %s') % (self.all_presentation_names[ row-1 ],) ):
                 self.dataChanged.emit(
                     self.createIndex( row, self.col_example ),
                     self.createIndex( row, self.col_fg ) )
 
     def __pickColour( self, rgb, title ):
-        colour = QtGui.QColor( *rgb )
-        if len(rgb) == 3:
+        value = rgb.getTuple()
+        colour = QtGui.QColor( *value )
+        if len(value) == 3:
             colour = QtWidgets.QColorDialog.getColor( colour, None, title )
             if colour.isValid():
-                return (colour.red(), colour.green(), colour.blue())
+                rgb.setTuple( (colour.red(), colour.green(), colour.blue()) )
+                return True
 
         else:
             colour = QtWidgets.QColorDialog.getColor( colour, None, title, QtWidgets.QColorDialog.ShowAlphaChannel )
             if colour.isValid():
-                return (colour.red(), colour.green(), colour.blue(), colour.alpha())
+                rgb.setTuple( (colour.red(), colour.green(), colour.blue(), colour.alpha()) )
+                return True
 
-        return None
+        return False
 
     def __brush( self, rgb ):
         if rgb not in self.__all_brushes:
@@ -373,7 +443,7 @@ class ColourTableModel(QtCore.QAbstractTableModel):
                     return T_('Cursor')
 
                 elif col == self.col_fg:
-                    return '#%2.2x%2.2x%2.2x%2.2x' % self.cursor.fg
+                    return '#%2.2x%2.2x%2.2x%2.2x' % self.cursor.fg.getTuple()
 
                 elif col == self.col_bg:
                     return ''
@@ -385,12 +455,15 @@ class ColourTableModel(QtCore.QAbstractTableModel):
 
             elif role == QtCore.Qt.ForegroundRole:
                 if col == self.col_example:
-                    brush = self.__brush( self.cursor.fg )
+                    brush = self.__brush( self.cursor.fg.getTuple() )
                     return brush
 
             elif role == QtCore.Qt.BackgroundRole:
                 if col == self.col_example:
-                    brush = self.__brush( (255,255,255) )
+                    if self.theme.name == 'Dark':
+                        brush = self.__brush( (  0,  0,  0) )
+                    else:
+                        brush = self.__brush( (255,255,255) )
                     return brush
 
         else:
@@ -404,10 +477,10 @@ class ColourTableModel(QtCore.QAbstractTableModel):
                     return T_( self.all_presentation_names[ row ] )
 
                 elif col == self.col_fg:
-                    return '#%2.2x%2.2x%2.2x' % colour.fg
+                    return '#%2.2x%2.2x%2.2x' % colour.fg.getTuple()
 
                 elif col == self.col_bg:
-                    return '#%2.2x%2.2x%2.2x' % colour.bg
+                    return '#%2.2x%2.2x%2.2x' % colour.bg.getTuple()
 
                 elif col == self.col_example:
                     return 'Example Text'
@@ -416,12 +489,12 @@ class ColourTableModel(QtCore.QAbstractTableModel):
 
             elif role == QtCore.Qt.ForegroundRole:
                 if col == self.col_example:
-                    brush = self.__brush( colour.fg )
+                    brush = self.__brush( colour.fg.getTuple() )
                     return brush
 
             elif role == QtCore.Qt.BackgroundRole:
                 if col == self.col_example:
-                    brush = self.__brush( colour.bg )
+                    brush = self.__brush( colour.bg.getTuple() )
                     return brush
 
         return None

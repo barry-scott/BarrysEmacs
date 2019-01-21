@@ -25,9 +25,10 @@ Introduction
         Linux (tested on: Fedora 29)
 
 New in %(version)s
+    * New Preference Cursor allow choice of line vs. block and steady vs. blinking cursor.
     * When Shift is pressed 3 times highlight the cursor.
-    * Improved grep command
-    * Fix problem with line spacing that left lines on the screen
+    * Improved grep command by allow language modes to default the file types to grep for.
+    * Fix problem with line spacing that left horizontal lines on the screen.
 
 New in 8.5.0
     * Add Dark-mode support. Controlled from the Preferences Colours tab.
