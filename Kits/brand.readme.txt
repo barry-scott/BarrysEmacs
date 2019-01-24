@@ -27,6 +27,7 @@ Introduction
 New in %(version)s
     * New Preference Cursor allow choice of line vs. block and steady vs. blinking cursor.
     * When Shift is pressed 3 times highlight the cursor.
+    * Support Ctrl-- and Ctrl-+ to change the font size and Ctrl-0 to reset to the default.
     * Improved grep command by allow language modes to default the file types to grep for.
     * Fix problem with line spacing that left horizontal lines on the screen.
 

@@ -34,6 +34,8 @@ def T( boolean ):
 def B( n ):
     return 1 << n
 
+POINT_SIZE_ORDERING = (6, 7, 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72)
+
 MSCREENWIDTH            = 1024
 MSCREENLENGTH           = 512
 
@@ -504,6 +506,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.__last_wheel_event_time = time.time()
 
         self.font = None
+        self.font_prefs_point_size = None
+        self.font_temp_point_size = None
 
         self.client_padding = 3
 
@@ -526,7 +530,9 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.__initFromPreferences()
         self.__initFont()
 
-    def newPreferences( self ):
+    def newPreferences( self, temp_point_size=None ):
+        self.font_temp_point_size = temp_point_size
+
         self.__initFromPreferences()
         self.__initFont()
 
@@ -540,10 +546,39 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         font_pref = prefs.window.font
 
-        self.font = QtGui.QFont( font_pref.face, font_pref.point_size )
+        self.font_prefs_point_size = font_pref.point_size
+        if self.font_temp_point_size is None:
+            point_size = self.font_prefs_point_size
+        else:
+            point_size = self.font_temp_point_size
+
+        self.font = QtGui.QFont( font_pref.face, point_size )
 
         fi = QtGui.QFontInfo( self.font )
         self.log.info( 'Font family: %r %dpt' % (fi.family(), fi.pointSize()) )
+
+    def changeFontPointSize( self, direction ):
+        if direction == 0:
+           self.newPreferences( None )
+
+        else:
+            if self.font_temp_point_size is None:
+                point_size = self.font_prefs_point_size
+            else:
+                point_size = self.font_temp_point_size
+
+            if direction > 0:
+                for size in POINT_SIZE_ORDERING:
+                    if size > point_size:
+                        point_size = size
+                        break
+            else:
+                for size in reversed( POINT_SIZE_ORDERING ):
+                    if size < point_size:
+                        point_size = size
+                        break
+
+            self.newPreferences( point_size )
 
     def __setupColours( self, win_prefs ):
         theme = all_themes[ win_prefs.theme.name ]
@@ -742,6 +777,18 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         self._debugTermKey( 'keyPressEvent %r key %d(0x%x) name %r  ctrl %s shift %s alt %s cmd %s meta %s' %
                             (event.text(), key, key, qt_key_names.get( key, 'unknown' ), T( ctrl ), T( shift ), T( alt ), T( cmd ), T( meta )) )
+
+        if (ctrl or cmd) and key == QtCore.Qt.Key_0:
+            self.changeFontPointSize( 0 )
+            return
+
+        elif (ctrl or cmd) and key == QtCore.Qt.Key_Equal:
+            self.changeFontPointSize( +1 )
+            return
+
+        elif (ctrl or cmd) and key == QtCore.Qt.Key_Minus:
+            self.changeFontPointSize( -1 )
+            return
 
         if key in special_keys:
             self._debugTermKey( 'keyPressEvent special_keys %r' % (special_keys[ key ],) )
