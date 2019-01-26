@@ -60,7 +60,13 @@ this kit.
                     (bemacs_version.VERSION,) )
         f.write( r'dir /s /b bemacs-%s-setup.exe' '\n' %
                     (bemacs_version.VERSION,) )
-        f.write( r'if "%%1" == "--install" start bemacs-%s-setup.exe' '\n' %
+        f.write( r'if "%%1" == "--install" (' '\n'
+                 r'    echo Installing kit' '\n'
+                 r'    start /wait .\bemacs-%s-setup.exe' '\n'
+                 r') else (' '\n'
+                 r'    echo not Installing kit arg %%1' '\n'
+                 r')' '\n'
+                     %
                     (bemacs_version.VERSION,) )
         f.close()
 
