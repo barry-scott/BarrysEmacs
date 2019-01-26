@@ -5,5 +5,5 @@ make -f linux.mak brand
 
 cd ${BUILDER_TOP_DIR}/Kits/Linux
 
-chmod +x make-devel-src-rpm.sh
-./make-devel-src-rpm.sh "$@"
+chmod +x build-fedora-rpms.sh
+./build-fedora-rpms.sh "$@"

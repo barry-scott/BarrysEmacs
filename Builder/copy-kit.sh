@@ -22,7 +22,7 @@ MacOSX)
     ;;
 
 Linux-Fedora)
-    cp -fv ../Kits/Linux/tmp/${KITNAME}*.x86_64.rpm /shares/Downloads/BEmacs/beta
+    cp -fv ../Kits/Linux/tmp/${KITNAME}*.x86_64.rpm /shared/Downloads/BEmacs/beta
     ;;
 
 *)
