@@ -2,13 +2,19 @@
 
 VER=${1?version}
 
-if svn ls "http://liara/svn/barrys-sources/tags/Emacs/${VER}" >/dev/null 2>&1
-then
-    echo Error: tag already exists for ${VER}
+case "${VER}" in
+[0-9].[0-9].[0-9])
+    if [ "$(git tag --list ${VER})" != "" ]
+    then
+        echo "Tag ${VER} already exists"
+        exit 1
+    else
+        git tag -a ${VER} -m "Release ${VER}"
+        git push --tags
+    fi
+    ;;
+*)
+    echo "Tag should be \\d+.\\d+.\\d+"
     exit 1
-fi
-
-svn cp $2 \
-    "http://liara/svn/barrys-sources/trunk/Emacs" \
-    "http://liara/svn/barrys-sources/tags/Emacs/${VER}" \
-    -m "Release ${VER}"
+    ;;
+esac
