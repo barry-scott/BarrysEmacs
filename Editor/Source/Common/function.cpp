@@ -457,10 +457,6 @@ int python_import_module(void);
 int python_call_function(void);
 int python_eval_string(void);
 int python_exec_string(void);
-#if !EMACS_PYTHON_EXTENSION_THREADED
-int python_init(void);
-#endif
-
 #endif
 
 //
@@ -489,9 +485,6 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "Profile-Emacs-Histogram", dump_histogram );
 # endif
 #ifdef EMACS_PYTHON_EXTENSION
-#if !EMACS_PYTHON_EXTENSION_THREADED
-    EMACS_NEW BoundName( "Python-initialise", python_init );
-#endif
     EMACS_NEW BoundName( "Python-import", python_import_module );
     EMACS_NEW BoundName( "Python-call", python_call_function );
     EMACS_NEW BoundName( "Python-eval", python_eval_string );

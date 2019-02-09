@@ -60,9 +60,6 @@ void restore_var(void)
 
     VarRep("fetch-help-database-flags", &get_db_help_flags)
 
-#ifdef EMACS_PYTHON_EXTENSION
-    VarRep("Python-flags", &python_flags)
-#endif
     VarRep("UI-filter-file-list", &ui_filter_file_list)
     VarRep("UI-open-file-name", &ui_open_file_name)
     VarRep("UI-open-file-readonly", &ui_open_file_readonly)

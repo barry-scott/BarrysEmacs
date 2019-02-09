@@ -24,6 +24,8 @@ import be_debug
 
 import _bemacs
 
+import be_user
+
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 from PyQt5 import QtGui
@@ -78,6 +80,9 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
         self._debugEditor( 'TESTING' )
         #_bemacs.function.debug_emacs( 'flags=key,exec,tmp,ml_error' )
         #_bemacs.variable.error_messages_buffer = "error-messages"
+
+
+        be_user.be_init_user( self )
 
         self._debugEditor( 'BEmacs.initEmacsProfile() emacs_profile.ml' )
         _bemacs.function.execute_mlisp_file( 'emacs_library:emacs_profile.ml' )

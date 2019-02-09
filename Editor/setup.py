@@ -1,5 +1,5 @@
 #
-#   Copyright (c) 2010-2018 Barry A. Scott
+#   Copyright (c) 2010-2019 Barry A. Scott
 #
 import os
 import sys
@@ -213,6 +213,7 @@ class Setup:
                 ]
 
             self.pybemacs_specific_obj_files = [
+                Source( self.c_pybemacs, 'Source/pybemacs/python_commands.cpp' ),
                 Source( self.c_pybemacs, 'Source/pybemacs/pybemacs.cpp' ),
                 Source( self.c_pybemacs, 'Source/pybemacs/bemacs_python.cpp' ),
                 Source( self.c_pybemacs, 'Source/pybemacs/python_thread_control.cpp' ),
@@ -900,15 +901,13 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'PYTHON_FRAMEWORK', '/Library/Frameworks/Python.framework/Versions/%(PYTHON_VERSION)s/Python' )
 
         self._addVar( 'PYTHON',         '%(PYTHONDIR)s/Resources/Python.app/Contents/MacOS/Python' )
-        if self.expand( '%(PYTHON_VERSION)s' ).startswith( '3.' ):
-            self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)sm' )
-        else:
-            self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)s' )
+        self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)sm' )
 
         self._addVar( 'CCCFLAGS',
                                         '-g '
                                         '-Wall -fPIC -fexceptions -frtti '
                                         '-DPYBEMACS=1 '
+                                        '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
                                         '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
                                         '"-DOS_NAME=\\"MacOSX\\"" '
@@ -954,15 +953,13 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'PYTHON_FRAMEWORK', '/Library/Frameworks/Python.framework/Versions/%(PYTHON_VERSION)s/Python' )
 
         self._addVar( 'PYTHON',         '%(PYTHONDIR)s/Resources/Python.app/Contents/MacOS/Python' )
-        if self.expand( '%(PYTHON_VERSION)s' ).startswith( '3.' ):
-            self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)sm' )
-        else:
-            self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)s' )
+        self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)sm' )
 
         self._addVar( 'CCCFLAGS',
                                         '-g '
                                         '-Wall -fPIC -fexceptions -frtti '
                                         '-DPYBEMACS=1 '
+                                        '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
                                         '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
                                         '-D%(DEBUG)s' )
@@ -1013,15 +1010,13 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_EXE',       'exe-pybemacs' )
 
         self._addFromEnv( 'PYTHON_VERSION' )
-        if self.expand( '%(PYTHON_VERSION)s' ).startswith( '3.' ):
-            self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
-        else:
-            self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)s' % (sys.prefix,) )
+        self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
 
         self._addVar( 'CCCFLAGS',
                                         '-g '
                                         '-Wall -fPIC -fexceptions -frtti '
                                         '-DPYBEMACS=1 '
+                                        '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
                                         '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
                                         '"-DOS_NAME=\\"Linux\\"" '
@@ -1061,17 +1056,14 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_EXE',       'exe-python-tools' )
 
         self._addFromEnv( 'PYTHON_VERSION' )
-        if self.expand( '%(PYTHON_VERSION)s' ).startswith( '3.' ):
-            self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
-            self._addVar( 'LINK_LIBS', '-L%s/lib64 -lpython%d.%dm' % (sys.prefix, sys.version_info.major, sys.version_info.minor) )
-        else:
-            self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)s' % (sys.prefix,) )
-            self._addVar( 'LINK_LIBS', '-L%s/lib64 -lpython%d.%d' % (sys.prefix, sys.version_info.major, sys.version_info.minor) )
+        self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
+        self._addVar( 'LINK_LIBS', '-L%s/lib64 -lpython%d.%dm' % (sys.prefix, sys.version_info.major, sys.version_info.minor) )
 
         self._addVar( 'CCCFLAGS',
                                         '-g '
                                         '-Wall -fPIC -fexceptions -frtti '
                                         '-DPYBEMACS=1 '
+                                        '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
                                         '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
                                         '-D%(DEBUG)s' )

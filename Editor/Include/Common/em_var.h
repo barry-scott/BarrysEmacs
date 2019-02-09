@@ -264,7 +264,3 @@ extern SystemExpressionRepresentationCurrentWindows current_windows;
 extern int saved_buffer_count;
 extern EmacsBuffer *saved_buffers[SAVED_BUFFER_MAX];
 #endif
-
-#ifdef EMACS_PYTHON_EXTENSION
-extern SystemExpressionRepresentationString python_flags;
-#endif
