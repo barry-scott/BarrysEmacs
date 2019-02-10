@@ -81,8 +81,8 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
         #_bemacs.function.debug_emacs( 'flags=key,exec,tmp,ml_error' )
         #_bemacs.variable.error_messages_buffer = "error-messages"
 
-
-        be_user.be_init_user( self )
+        self.log.info( 'Calling be_init_user' )
+        be_user.be_init_user( UserEditorInterface( self ) )
 
         self._debugEditor( 'BEmacs.initEmacsProfile() emacs_profile.ml' )
         _bemacs.function.execute_mlisp_file( 'emacs_library:emacs_profile.ml' )
@@ -383,6 +383,15 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
 
     def termDisplayActivity( self, ch ):
         self.app.marshallToGuiThread( self.window.termDisplayActivity, (ch,) )
+
+
+class UserEditorInterface(object):
+    def __init__( self, bemacs ):
+        self.log = bemacs.log
+        self.function = _bemacs.function
+        self.variable = _bemacs.variable
+        self.buffers = _bemacs.buffers
+
 
 class Queue(be_debug.EmacsDebugMixin):
     def __init__( self, log ):

@@ -25,6 +25,32 @@ int python_import_module(void)
 
         module_name = get_string_mlisp();
     }
+
+    {
+    PythonDisallowThreads permission( editor_access_control );
+
+    try
+    {
+        Py::Module module( "be_user" );
+        Py::Dict dict( module.getDict() );
+
+        Py::Callable be_eval( dict[ "be_import" ] );
+        Py::TupleN args( convertEmacsExpressionToPyObject( module_name ) );
+
+        Py::Object result = be_eval.apply( args );
+        ml_value = convertPyObjectToEmacsExpression( result );
+        return 0;
+    }
+    catch( Py::Exception &e )
+    {
+        Py::Object err( e.errorValue() );
+        Py::String str( err.str() );
+        e.clear();
+
+        error( FormatString("Python-import: %s") << str.as_std_string() );
+        return 0;
+    }
+    }
 }
 
 int python_call_function(void)
@@ -35,10 +61,14 @@ int python_call_function(void)
     if( !string_arg( 1 ) )
         return 0;
 
-    Py::String function = ml_value.asString().asPyString();
+    {
+    PythonDisallowThreads permission( editor_access_control );
 
+    Py::String function_name = ml_value.asString().asPyString();
     const int first_arg = 2;
-    Py::Tuple args( cur_exec->p_nargs - first_arg );
+    Py::List all_args;
+    all_args.append( function_name );
+
     for( int arg=first_arg; !ml_err && arg<=cur_exec->p_nargs; arg++ )
     {
         if( !eval_arg( arg ) )
@@ -48,7 +78,7 @@ int python_call_function(void)
         {
         case ISINTEGER:
         case ISSTRING:
-            args[ arg - first_arg ] = convertEmacsExpressionToPyObject( ml_value );
+            all_args.append( convertEmacsExpressionToPyObject( ml_value ) );
             break;
 
         case ISVOID:
@@ -66,18 +96,22 @@ int python_call_function(void)
         Py::Dict dict( module.getDict() );
 
         Py::Callable be_call( dict[ "be_call" ] );
+        Py::Tuple args( all_args );
         Py::Object result = be_call.apply( args );
+
         ml_value = convertPyObjectToEmacsExpression( result );
+
         return 0;
     }
-    catch( Py::Exception &e )
+    catch( Py::BaseException &e )
     {
-        Py::Object err( PyErr_Occurred(), false );
-        e.clear();
+        Py::Object err( e.errorValue() );
         Py::String str( err.str() );
+        e.clear();
 
-        error( FormatString("Python-call error %s") << str.as_std_string() );
+        error( FormatString("Python-call: %s") << str.as_std_string() );
         return 0;
+    }
     }
 }
 
@@ -99,6 +133,9 @@ int python_exec_string(void)
         expression = get_string_mlisp();
     }
 
+    {
+    PythonDisallowThreads permission( editor_access_control );
+
     try
     {
         Py::Module module( "be_user" );
@@ -113,12 +150,13 @@ int python_exec_string(void)
     }
     catch( Py::Exception &e )
     {
-        Py::Object err( PyErr_Occurred(), false );
-        e.clear();
+        Py::Object err( e.errorValue() );
         Py::String str( err.str() );
+        e.clear();
 
-        error( FormatString("Python-exec error %s") << str.as_std_string() );
+        error( FormatString("Python-exec: %s") << str.as_std_string() );
         return 0;
+    }
     }
 }
 
@@ -140,6 +178,9 @@ int python_eval_string(void)
         expression = get_string_mlisp();
     }
 
+    {
+    PythonDisallowThreads permission( editor_access_control );
+
     try
     {
         Py::Module module( "be_user" );
@@ -154,11 +195,12 @@ int python_eval_string(void)
     }
     catch( Py::Exception &e )
     {
-        Py::Object err( PyErr_Occurred(), false );
+        Py::Object err( e.errorValue() );
         e.clear();
-        Py::String str( err.str() );
+        Py::String reason( err.str() );
 
-        error( FormatString("Python-eval error %s") << str.as_std_string() );
+        error( FormatString("Python-eval: %s") << reason.as_std_string() );
         return 0;
+    }
     }
 }

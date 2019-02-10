@@ -25,6 +25,7 @@ then
     then
         cat init.gdb >>.gdbinit
     fi
+    echo "b main" >>.gdbinit
     echo "run -u be_main.py " "$@" >>.gdbinit
     echo
     gdb python${PYTHON_VERSION}
