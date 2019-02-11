@@ -105,9 +105,12 @@
 (defun
     (diff-goto-diff
         ~line
+        ~file
+        ~is-old
 
         (if (= operating-system-name "Windows")
             (save-excursion
+                (setq ~file "")
                 (beginning-of-line)
                 (while (& (! (bobp)) (! (looking-at " *[0-9]")))
                     (previous-line)
@@ -116,6 +119,7 @@
                 (region-around-match 0)
                 (setq ~line (+ (region-to-string)))
             )
+            ; is it diff -u output?
             (save-excursion
                 (beginning-of-file)
                 (looking-at "--- ")
@@ -124,19 +128,34 @@
             (save-excursion
                 (setq ~line (current-line-number))
                 (beginning-of-line)
+                (setq ~is-old (looking-at "-"))
                 (while (& (! (bobp)) (! (looking-at "@@ ")))
                     (if (looking-at "-")
                         (setq ~line (- ~line 1))
                     )
                     (previous-line)
                 )
-                (ere-looking-at ".*\\+(\\d+),")
+                (if ~is-old
+                    (ere-looking-at ".*-(\\d+),")
+                    (ere-looking-at ".*\\+(\\d+),")
+                )
                 (region-around-match 1)
                 (setq ~line
                     (+ (region-to-string) (- ~line (current-line-number) 1)))
+                (if ~is-old
+                    (ere-search-reverse "^--- (.*)\t\\d{4}-\\d+-\\d+ ")
+                    (ere-search-reverse "^\\+\\+\\+ (.*)\t\\d{4}-\\d+-\\d+ ")
+                )
+                (setq ~file
+                    (progn
+                        (region-around-match 1)
+                        (region-to-string)
+                    )
+                )
             )
             ; default parsing - unix style
             (save-excursion
+                (setq ~file "")
                 (beginning-of-line)
                 (while (& (! (bobp)) (! (looking-at "[0-9]")))
                     (previous-line)
@@ -146,7 +165,13 @@
                 (setq ~line (+ (region-to-string)))
             )
         )
-        (pop-to-buffer diff-buffer)
+        (if (= ~file "_diff_.tmp")
+            ; diff modified buffer to file
+            (pop-to-buffer diff-buffer)
+            (!= ~file "")
+            ; diff files on disk
+            (visit-file ~file)
+        )
         (goto-line ~line)
     )
 )
