@@ -15,8 +15,6 @@ if "%PYTHON%" == "" (
 
 call :check_for_pip_dependency PyQt5 "from PyQt5 import QtWidgets, QtGui, QtCore"
 if errorlevel 1 goto :eof
-call :check_for_pip_dependency QScintilla "from PyQt5 import Qsci"
-if errorlevel 1 goto :eof
 call :check_for_pip_dependency xml-preferences "import xml_preferences"
 if errorlevel 1 goto :eof
 call :check_for_pip_dependency win-app-packager "import win_app_packager"
