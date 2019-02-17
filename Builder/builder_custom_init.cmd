@@ -5,8 +5,8 @@ rem builder_custom_init
 set VC_VER=14.0
 set BUILDER_CFG_PLATFORM=Win64
 set BUILDER_CFG_BUILD_TYPE=Release
-set PYTHON_VERSION=3.6
-set PYTHON_FILE_VERSION=36
+set PYTHON_VERSION=3.7
+set PYTHON_FILE_VERSION=37
 
 if %BUILDER_CFG_PLATFORM% == Win64 (
     rem if Win64 then setup path to include the 64bit CL.exe
@@ -19,7 +19,8 @@ if %BUILDER_CFG_PLATFORM% == Win64 (
     )
     @echo %__e%
 )
-
-set PYTHON=c:\python%PYTHON_FILE_VERSION%.%BUILDER_CFG_PLATFORM%\python
-PATH c:\tools\bin;c:\python%PYTHON_FILE_VERSION%.%BUILDER_CFG_PLATFORM%;%PATH%
+echo on
+for /f "usebackq" %%X in (`py -%PYTHON_VERSION%-64 -c "import sys;print(sys.executable)"`) do set PYTHON=%%X
+for /f "usebackq" %%X in ('%PYTHON%') do set PYTHON_DIR=%%~dpX
+echo Python %PYTHON_VERSION% found in %PYTHON%
 %PYTHON% -c "import sys;print( 'Python:', sys.version )"

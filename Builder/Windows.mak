@@ -52,7 +52,7 @@ $(KITROOT)\bemacs_server.exe:
 mlisp:
 	echo Info: Copying Mlisp files...
 	if not exist $(KITFILES)\emacs_library mkdir $(KITFILES)\emacs_library
-	cd $(BUILDER_TOP_DIR)\mlisp && python create_library.py common $(KITFILES)\emacs_library\emacslib $(KITFILES)
+	cd $(BUILDER_TOP_DIR)\mlisp && %PYTHON% create_library.py common $(KITFILES)\emacs_library\emacslib $(KITFILES)
 	cd $(BUILDER_TOP_DIR)\mlisp && copy emacs_profile.ml $(KITFILES)\emacs_library
 	cd $(BUILDER_TOP_DIR)\mlisp && copy emacsinit.ml $(KITFILES)\emacs_library
 

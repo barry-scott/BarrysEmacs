@@ -204,6 +204,9 @@ class Setup:
                 self.db_files.append( Source( self.c_utils, 'Source/Windows/win_file.cpp' ) )
 
         if self.opt_bemacs_gui:
+            if not os.path.exists( self.c_pybemacs.expand( '%(PYCXXSRC)s' ) ):
+                raise SetupError( 'PyCXX version %s expect to be in %s' % (pycxx_version, self.c_pybemacs.expand( '%(PYCXX)s' )) )
+
             self.pycxx_obj_file = [
                 Source( self.c_pybemacs, '%(PYCXXSRC)s/cxxsupport.cxx' ),
                 Source( self.c_pybemacs, '%(PYCXXSRC)s/cxx_extensions.cxx' ),
