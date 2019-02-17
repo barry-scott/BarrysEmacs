@@ -19,8 +19,7 @@ if %BUILDER_CFG_PLATFORM% == Win64 (
     )
     @echo %__e%
 )
-echo on
+
 for /f "usebackq" %%X in (`py -%PYTHON_VERSION%-64 -c "import sys;print(sys.executable)"`) do set PYTHON=%%X
-for /f "usebackq" %%X in ('%PYTHON%') do set PYTHON_DIR=%%~dpX
 echo Python %PYTHON_VERSION% found in %PYTHON%
 %PYTHON% -c "import sys;print( 'Python:', sys.version )"
