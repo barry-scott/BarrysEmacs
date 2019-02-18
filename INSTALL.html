@@ -46,41 +46,29 @@ available from:</p>
 
 <p>For all platforms you will need:</div></li>
 <ul>
-<li><div>Python 3.4 or newer, 3.5 recommended.</div></li>
+<li><div>Python 3.4 or newer, 3.7 recommended.</div></li>
 <li><div><tt>pip install xml-preferences</tt></div></li>
-<li><div>pycxx 7.0.0 SVN sources from <a href="https://svn.code.sf.net/p/cxx/code/trunk/CXX">https://svn.code.sf.net/p/cxx/code/trunk/CXX</a>.
-Then symlink the checkout folder into Imports/pycxx-7.0.0.</div></li>
+<li><div>pycxx 7.1.1 SVN sources from <a href="https://sourceforge.net/projects/cxx/">https://sourceforge.net/projects/cxx/</a>.
+Then expand the tarball into Imports/pycxx-7.1.1.</div></li>
 </ul>
 
 <h3>For Linux/xxxBSD:</h3>
 
 <ul>
-<li><div>C++ compiler.</div></li>
-<li><div>PyQt5 version 5.6.1 (5.7 should work as well). Install using your platforms package manager.</div></li>
+<li><div>C++ compiler. Microsoft Visual Studio 2017.</div></li>
+<li><div>PyQt5 version 5.10 or 5.12 (5.11 break choose font dialog). Install using your platforms package manager.</div></li>
 </ul>
 
 <h3>For Windows:</h3>
 
 <ul>
 <li><div>git - <a href="https://git-for-windows.github.io">https://git-for-windows.github.io</a></div></li>
-<li><div>Python 3.5 win64 strongly recommended.</div></li>
-<li><div>Visual C++ 2015 Community Edition (Version 14.0) for Python 3.5 development.</div></li>
-<li><div><tt>py -3.5 -m pip install win-app-packager</tt></div></li>
-<li><div><tt>py -3.5 -m pip install PyQt5</tt></div></li>
+<li><div>Python 3.7 win64 or newer strongly recommended.</div></li>
+<li><div>Visual C++ 2017 Community Edition (Version 14.1) for Python 3.7 development.</div></li>
+<li><div><tt>py -3.7 -m pip install --user --upgrade win-app-packager</tt></div></li>
+<li><div><tt>py -3.7 -m pip install --user --upgrade PyQt5</tt></div></li>
 <li><div>inno setup - from <a href="http://www.jrsoftware.org/isinfo.php">http://www.jrsoftware.org/isinfo.php</a></div></li>
 </ul>
-
-<p>Note: To create a symlink on windows run the mklink from an admin CMD.</p>
-<pre>
-C:\Users\barry\wc\git\BarrysEmacs\Imports> mklink /d pycxx-7.0.0 c:\Users\barry\wc\svn\PyCXX
-symbolic link created for pycxx-7.0.0 &lt;&lt;===&gt;&gt; c:\Users\barry\wc\svn\PyCXX
-
-C:\Users\barry\wc\git\BarrysEmacs\Imports> dir
- Directory of C:\Users\barry\wc\git\BarrysEmacs\Imports
-
-25/06/2016  17:37    &lt;SYMLINKD&gt;     pycxx-7.0.0 [c:\Users\barry\wc\svn\PyCXX]
-25/06/2016  17:13    &lt;DIR&gt;          ucd
-</pre>
 
 <h3>For macOS:</h3>
 <ul>
@@ -89,7 +77,7 @@ C:\Users\barry\wc\git\BarrysEmacs\Imports> dir
 <li><div>Install Qt 5.6.1</div></li>
 <li><div>Compile and Install PyQt5 from source. pypi version is too hard to package.</div></li>
 <li><div><tt>python2.7 -m pip install dmgbuild</tt></div></li>
-<li><div><tt>python3.5 -m pip install py2app</tt></div></li>
+<li><div><tt>python3.7 -m pip install py2app</tt></div></li>
 </ul>
 
 <h2>Build Barry's Emacs</h2>
@@ -97,12 +85,12 @@ C:\Users\barry\wc\git\BarrysEmacs\Imports> dir
 <h3>For Linux development:</h3>
 
 <p>Note: For the purposes of documentation it is assumed that the
-Barry's Emacs files are in <tt>~/wc/git/BarrysEmacs</tt>,
+Barry's Emacs files are in <tt>~/Projects/BarrysEmacs</tt>,
 however you can replace that path with any folder name you like.</p>
 
 <ol>
-<li><div><tt>mkdir -p ~/wc/git</tt></div></li>
-<li><div><tt>cd ~/wc/git</tt></div></li>
+<li><div><tt>mkdir -p ~/Projects</tt></div></li>
+<li><div><tt>cd ~/Projects</tt></div></li>
 <li><div><tt>git clone https://github.com/barry-scott/BarrysEmacs.git</tt></div></li>
 <li><div><tt>cd BarrysEmacs/Builder</tt></div></li>
 <li><div><tt>. builder_custom_init.sh</tt></div></li>
@@ -114,12 +102,12 @@ however you can replace that path with any folder name you like.</p>
 <h3>For macOS development:</h3>
 
 <p>Note: For the purposes of documentation it is assumed that the
-Barry's Emacs files are in <tt>~/wc/git/BarrysEmacs</tt>,
+Barry's Emacs files are in <tt>~/Projects/git/BarrysEmacs</tt>,
 however you can replace that path with any folder name you like.</p>
 
 <ol>
-<li><div><tt>mkdir -p ~/wc/git</tt></div></li>
-<li><div><tt>cd -p ~/wc/git</tt></div></li>
+<li><div><tt>mkdir -p ~/Projects/git</tt></div></li>
+<li><div><tt>cd -p ~/Projects/git</tt></div></li>
 <li><div><tt>git clone https://github.com/barry-scott/BarrysEmacs.git</tt></div></li>
 <li><div><tt>cd BarrysEmacs/Builder</tt></div></li>
 <li><div><tt>. builder_custom_init.sh</tt></div></li>
@@ -131,20 +119,19 @@ however you can replace that path with any folder name you like.</p>
 <h3>For Windows development:</h3>
 
 <p>Note: For the purposes of documentation it is assumed that the
-Barry's Emacs files are in <tt>%USERPROFILE%\wc\git\BarrysEmacs</tt>,
+Barry's Emacs files are in <tt>%USERPROFILE%\Projects\BarrysEmacs</tt>,
 however you can replace that path with any folder name you like.</p>
 
 <ol>
 <li><div><tt>cd %USERPROFILE%</tt></div></li>
-<li><div><tt>mkdir wc\git</tt></div></li>
-<li><div><tt>cd wc\git</tt></div></li>
+<li><div><tt>mkdir Projects</tt></div></li>
+<li><div><tt>cd Projects</tt></div></li>
 <li><div><tt>git clone https://github.com/barry-scott/BarrysEmacs.git</tt></div></li>
 <li><div><tt>cd BarrysEmacs\Builder</tt></div></li>
 <li><div><tt>builder_custom_init.cmd</tt></div></li>
-<li><div><tt>"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64\vcvars64.bat"</tt></div></li>
 <li><div><tt>build-windows.cmd</tt></div></li>
 <li><div><tt>cd ..\Editor\PyQtBEmacs</tt></div></li>
-<li><div><tt>bemacs-win64.sh --noredirect</tt></div></li>
+<li><div><tt>bemacs-windows.cmd --noredirect</tt></div></li>
 </ol>
 
 <hr/>
