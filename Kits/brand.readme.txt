@@ -25,6 +25,9 @@ Introduction
         Linux (tested on: Fedora 29)
 
 New in %(version)s
+    * fix crash when (ere-search-forward "^\\+.*") is use to match very long lines.
+
+New in 8.5.1
     * New Preference Cursor allow choice of line vs. block and steady vs. blinking cursor.
     * When Shift is pressed 3 times highlight the cursor.
     * Support Ctrl-- and Ctrl-+ to change the font size and Ctrl-0 to reset to the default.
