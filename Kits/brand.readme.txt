@@ -26,6 +26,7 @@ Introduction
 
 New in %(version)s
     * fix crash when (ere-search-forward "^\\+.*") is use to match very long lines.
+    * fix bemacs-cli not starting up correctly on macOS.
 
 New in 8.5.1
     * New Preference Cursor allow choice of line vs. block and steady vs. blinking cursor.
