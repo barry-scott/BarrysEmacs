@@ -375,7 +375,7 @@ EmacsString get_config_env( const EmacsString &name )
         if( env_emacs_library.isNull() )
         {
             // only expect this code to run for macOS
-            expand_and_default( FormatString( "%s/../Resources/emacs_library" ) << image_path, EmacsString::null, env_emacs_library );
+            expand_and_default( FormatString( "%s/../emacs_library" ) << image_path, EmacsString::null, env_emacs_library );
         }
         return env_emacs_library;
     }
