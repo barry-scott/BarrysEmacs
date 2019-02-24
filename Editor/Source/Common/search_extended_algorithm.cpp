@@ -650,43 +650,112 @@ bool RegularExpressionRepeatMost::matchExpression( int start_pos, int &end_pos )
     return matchExpressionMost( next_pos, end_pos, matches );
 }
 
+class PositionHistory
+{
+public:
+    PositionHistory( int first_pos )
+    : m_positions( reinterpret_cast<int *>( EMACS_MALLOC( sizeof( int ) * size_increment, malloc_type_char ) ) )
+    , m_last( -1 )
+    , m_size( size_increment )
+    {
+        addPosition( first_pos );
+    }
+    ~PositionHistory()
+    {
+        EMACS_FREE( m_positions );
+    }
+
+    void dumpHistory( const char *msg )
+    {
+        _dbg_msg( FormatString("History m_last %d m_size %d: %s") << m_last << m_size << msg );
+        for( int slot=0; slot <= m_last; ++slot )
+        {
+            _dbg_msg( FormatString("  m_positions[ %d ] = %d") << slot << m_positions[ slot ] );
+        }
+    }
+
+    void addPosition( int position )
+    {
+        ++m_last;
+
+        if( m_last == m_size )
+        {
+            m_size += size_increment;
+            m_positions = reinterpret_cast<int *>( EMACS_REALLOC( m_positions, sizeof( int ) * m_size, malloc_type_char ) );
+        }
+
+        m_positions[ m_last ] = position;
+        //dumpHistory( "addPosition" );
+    }
+
+
+    int lastPosition()
+    {
+        //dumpHistory( "lastPosition" );
+        return m_positions[ m_last ];
+    }
+
+    bool morePositions()
+    {
+        //dumpHistory( "morePositions" );
+
+        return m_last >= 0;
+    }
+
+    int previousPosition()
+    {
+        int prev = m_positions[m_last];
+        --m_last;
+        //dumpHistory( "previousPosition" );
+        return prev;
+    }
+
+private:
+    // set large enough to typically avoid need to realloc
+    enum { size_increment = 32768 };
+    int *m_positions;
+    int m_last;
+    int m_size;
+};
+
 bool RegularExpressionRepeatMost::matchExpressionMost( int start_pos, int &end_pos, int matches )
 {
-    if( matches < m_max_repeats && m_repeat_term->matchExpression( start_pos, end_pos ) )
+    // find the limit for the matches
+    PositionHistory history( start_pos );
+
+    int next_end_pos = 0;
+    for(; matches < m_max_repeats && m_repeat_term->matchExpression( history.lastPosition(), next_end_pos ); ++matches )
     {
         // protect against a repeat_term that does not move pos
-        if( end_pos > start_pos )
-        {
-            int final_end_pos = 0;
-            if( matchExpressionMost( end_pos, final_end_pos, matches+1 ) )
-            {
-                end_pos = final_end_pos;
-                return true;
-            }
-        }
+        if( history.lastPosition() == next_end_pos )
+            break;
 
-        if( m_next_term )
-        {
-            if( m_next_term->matchExpression( end_pos, end_pos ) )
-            {
-                return true;
-            }
-
-            return m_next_term->matchExpression( start_pos, end_pos );
-        }
-
-        return true;
+        history.addPosition( next_end_pos );
     }
-    else
+
+
+    // now walk backwards looking for the longest repeat that matchExpression
+    if( m_next_term == NULL )
     {
-        if( m_next_term )
-        {
-            return m_next_term->matchExpression( start_pos, end_pos );
-        }
-
-        end_pos = start_pos;
         return true;
     }
+
+    while( history.morePositions() )
+    {
+        int pos = history.previousPosition();
+        if( m_next_term->matchExpression( pos, end_pos ) )
+        {
+            return true;
+        }
+    }
+
+    if( m_next_term )
+    {
+        return m_next_term->matchExpression( start_pos, end_pos );
+    }
+
+    end_pos = start_pos;
+    return true;
 }
 
 //--------------------------------------------------------------------------------
