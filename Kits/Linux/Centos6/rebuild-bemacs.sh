@@ -1,12 +1,12 @@
 #!/bin/bash
 scl enable rh-python35 rh-git29 bash <<EOF
-    cd ~/Project/BarrysEmacs/Builder
+    cd ~/Projects/BarrysEmacs/Builder
     git pull --rebase
     . builder_init
     case "$1" in
     "el6")
         make -f linux.mak brand
-        cd ~/Project/BarrysEmacs/Kits/Linux/Centos6
+        cd ~/Projects/BarrysEmacs/Kits/Linux/Centos6
         chmod +x ./make-devel-src-tarball.sh
         ./make-devel-src-tarball.sh
         chmod +x ./bemacs-mock-build.sh
