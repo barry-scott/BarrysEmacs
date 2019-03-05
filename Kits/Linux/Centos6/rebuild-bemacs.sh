@@ -19,4 +19,7 @@ scl enable rh-python35 rh-git29 bash <<EOF
     *)
         echo "Usage: $0 [el6|el7] [cli|gui]"
     esac
+
+    echo "Info: recent changes"
+    git log -n 10 '--format=format:%ai %f'
 EOF
