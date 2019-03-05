@@ -46,4 +46,4 @@ then
     fi
 fi
 
-make -f linux.mak PYTHON=${PYTHON:?missing python def} clean build-${target}
+make -f linux.mak PYTHON=${PYTHON:?missing python def} clean-${target} build-${target}

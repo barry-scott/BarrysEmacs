@@ -6,7 +6,7 @@ import sys
 
 _debug = False
 
-pycxx_version = (7,1,1)
+pycxx_version = (7,1,2)
 pycxx_version_str = '%d.%d.%d' % pycxx_version
 
 def debug( msg ):

@@ -29,8 +29,9 @@ BUILD_BEMACS_BIN_DIR=$(BEMACS_ROOT_DIR)$(INSTALL_BEMACS_BIN_DIR)
 
 usage:
 	@ echo "Usage: make -f unix.mak build-gui"
+	@ echo "Usage: make -f unix.mak clean-gui"
 	@ echo "Usage: make -f unix.mak build-cli"
-	@ echo "Usage: make -f unix.mak clean"
+	@ echo "Usage: make -f unix.mak clean-cli"
 	exit 1
 
 build-gui: brand $(BUILD_BEMACS_DOC_DIR) $(BUILD_BEMACS_LIB_DIR) $(BUILD_BEMACS_BIN_DIR) bemacs-gui bemacs-cli utils mlisp describe language quick_info docs
@@ -39,8 +40,12 @@ build-gui: brand $(BUILD_BEMACS_DOC_DIR) $(BUILD_BEMACS_LIB_DIR) $(BUILD_BEMACS_
 build-cli: brand $(BUILD_BEMACS_DOC_DIR) $(BUILD_BEMACS_LIB_DIR) $(BUILD_BEMACS_BIN_DIR) bemacs-cli utils mlisp describe language quick_info docs
 	@ echo Info: Linux kitting
 
-clean:
-	cd ../Editor && ./build-linux.sh all clean
+clean-gui:
+	cd ../Editor && ./build-linux.sh gui clean
+	rm -rf $(BEMACS_ROOT_DIR)
+
+clean-cli:
+	cd ../Editor && ./build-linux.sh cli clean
 	rm -rf $(BEMACS_ROOT_DIR)
 
 brand:
