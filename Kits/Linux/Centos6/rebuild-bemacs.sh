@@ -1,5 +1,5 @@
 #!/bin/bash
-scl enable rh-python35 rh-git29 bash <<EOF
+scl enable rh-git29 bash <<EOF
     cd ~/Projects/BarrysEmacs/Builder
     git pull --rebase
     . builder_init
