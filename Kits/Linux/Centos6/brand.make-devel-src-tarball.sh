@@ -24,11 +24,6 @@ echo "Info: Exporting source code"
 
 git show-ref --head --hash head >${KIT_BASENAME}/Builder/commit_id.txt
 
-# xml-preferences is not packaged on Fedora
-XML_PREF_PATH=$( ${PYTHON} -c "import xml_preferences, os.path; print( os.path.dirname( xml_preferences.__file__ ) )" )
-mkdir ${KIT_BASENAME}/Editor/PyQtBEmacs/xml_preferences
-cp  ${XML_PREF_PATH}/*.py ${KIT_BASENAME}/Editor/PyQtBEmacs/xml_preferences
-
 tar czf ${KIT_BASENAME}.tar.gz ${KIT_BASENAME}
 
 # clean up the tree of files
