@@ -31,7 +31,7 @@ rm -rf ${KIT_BASENAME}
 popd
 
 echo "Info: creating bemacs.spec"
-python3 ../bemacs_make_spec_file.py cli ${V} tmp/bemacs.spec
+python ../bemacs_make_spec_file.py cli ${V} tmp/bemacs.spec
 cp bemacs-mock-build.sh tmp
 
 echo "Info: Creating asserts for ${KIT_BASENAME} in $PWD/tmp"
