@@ -13,6 +13,7 @@ def main( argv ):
             spec_file_head,
             spec_file_requires_cli,
             spec_file_build,
+            spec_file_description,
             spec_file_package_cli,
             spec_file_files_cli,
             spec_file_files_common,
@@ -25,6 +26,8 @@ def main( argv ):
             spec_file_requires_cli,
             spec_file_requires_qui,
             spec_file_build,
+            spec_file_build_gui_extra,
+            spec_file_description,
             spec_file_package_gui,
             spec_file_package_cli,
             spec_file_files_gui,
@@ -92,15 +95,20 @@ export PYTHON_VERSION=$( ./.(PYTHON)s -c 'import sys; print( "%d.%d" % (sys.vers
 
 cd ${BUILDER_TOP_DIR}/Builder
 make -f linux.mak PYTHON=./.(PYTHON)s DESTDIR=%{buildroot} ./.(TARGETS)s
-mkdir -p %{buildroot}/usr/share/bemacs/lib/xml_preferences
-cp ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/xml_preferences/*.py %{buildroot}/usr/share/bemacs/lib/xml_preferences
 
 mkdir -p %{buildroot}%{_mandir}/man1
 gzip -c ${BUILDER_TOP_DIR}/Kits/Linux/bemacs.1 > %{buildroot}%{_mandir}/man1/bemacs.1.gz
 
 mkdir -p %{buildroot}/usr/share/applications
 cp ${BUILDER_TOP_DIR}/Kits/Linux/bemacs.desktop %{buildroot}/usr/share/applications
+'''
 
+spec_file_build_gui_extra = '''
+mkdir -p %{buildroot}/usr/share/bemacs/lib/xml_preferences
+cp ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/xml_preferences/*.py %{buildroot}/usr/share/bemacs/lib/xml_preferences
+'''
+
+spec_file_description = '''
 %description
 Barry's Emacs
 * Easy to get started with Emacs
