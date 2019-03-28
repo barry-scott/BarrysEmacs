@@ -24,10 +24,26 @@
 
 (defun
     (p4-diff
+        ~buffer-name
+        (setq ~buffer-name (concat "P4 diff " current-buffer-name))
         (execute-monitor-command (concat "p4 diff -du \"" current-buffer-file-name "\""))
+        (pop-to-buffer ~buffer-name)
+        (erase-buffer)
+        (yank-buffer "command execution")
+        (diff-mode)
+    )
+)
+
+(defun
+    p4-clientspec-to-filename( ~clientspec)
+    (save-window-excursion
+        (execute-monitor-command (concat "p4 fstat -T clientFile \"" ~clientspec "\""))
         (pop-to-buffer "command execution")
         (beginning-of-file)
-        (diff-mode)
+        (ere-search-forward "... clientFile ")
+        (set-mark)
+        (end-of-line)
+        (region-to-string)
     )
 )
 

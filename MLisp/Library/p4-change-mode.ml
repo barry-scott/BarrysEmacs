@@ -105,6 +105,45 @@
     )
 )
 
+(defun
+    (p4-visit-file
+        (save-excursion
+            (beginning-of-line)
+            (if (looking-at "\t//")
+                (progn
+                    (ere-search-forward "\t(//.*?)[\t ]")
+                    (region-around-match 1)
+                    (sit-for 50)
+                    (visit-file
+                        (p4-clientspec-to-filename (region-to-string)))
+                )
+            )
+        )
+    )
+)
+
+(defun
+    (p4-change-diff
+        (save-excursion
+            (beginning-of-line)
+            (if (looking-at "\t//")
+                (progn
+                    (ere-search-forward "\t(//.*?)[\t ]")
+                    (region-around-match 1)
+                    (execute-monitor-command
+                        (concat "p4 diff -du \""
+                            (region-to-string) "\""))
+                    (pop-to-buffer "P4 change diff")
+                    (erase-buffer)
+                    (yank-buffer "command execution")
+                    (beginning-of-file)
+                    (diff-mode)
+                )
+            )
+        )
+    )
+)
+
 (save-window-excursion
     (temp-use-buffer "~p4-hack")
 
