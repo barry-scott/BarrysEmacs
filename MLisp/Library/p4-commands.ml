@@ -1,6 +1,8 @@
 (declare-global p4-reviewers)
 (setq p4-reviewers "")
 
+(autoload "diff-mode" "diff.ml")
+
 (defun
     (p4-tab-key
         (insert-string "\t")
@@ -25,6 +27,7 @@
         (execute-monitor-command (concat "p4 diff -du \"" current-buffer-file-name "\""))
         (pop-to-buffer "command execution")
         (beginning-of-file)
+        (diff-mode)
     )
 )
 
