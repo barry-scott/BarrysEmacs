@@ -113,7 +113,6 @@
                 (progn
                     (ere-search-forward "\t(//.*?)[\t ]")
                     (region-around-match 1)
-                    (sit-for 50)
                     (visit-file
                         (p4-clientspec-to-filename (region-to-string)))
                 )
