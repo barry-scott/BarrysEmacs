@@ -421,7 +421,11 @@ class EmacsBufferRef : public QueueEntry<EmacsBufferRef>
 {
     friend class EmacsBuffer;
 public:
+    EmacsBufferRef();
     EmacsBufferRef( EmacsBuffer *buf );
+    EmacsBufferRef( const EmacsBufferRef &buf_ref );
+    EmacsBufferRef &operator=( const EmacsBufferRef & );
+
     virtual ~EmacsBufferRef();
 
     EmacsBuffer *buffer( EmacsBuffer *buf ) { buffer_pointer = buf; return buf; }
@@ -443,4 +447,6 @@ private:
     EmacsBuffer *buffer_pointer;
 
     static QueueHeader<EmacsBufferRef> header;
+
+    // prevent use of the these methods
 };

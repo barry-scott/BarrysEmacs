@@ -1,5 +1,5 @@
 //
-//     Copyright (c) 1982-2016
+//     Copyright (c) 1982-2019
 //        Barry A. Scott
 //
 // File IO for Emacs
@@ -2136,14 +2136,25 @@ int synchronise_files(void)
 {
     int synched_buffers_deleted( 0 );
     int synched_buffers_reloaded( 0 );
-    EmacsBufferRef old( bf_cur );
 
     // force the global buffer data into the emacs_buffer structure
+    EmacsBufferRef old( bf_cur );
     old.set_bf();
 
-    EmacsBuffer *b = buffers;
-    while( !ml_err && b != NULL )
+    // use EmacsBufferRef so that call backs can delete buffers
+    std::list<EmacsBufferRef> all_buffers_to_process;
+    for( EmacsBuffer *b = buffers; b != NULL; b = b->b_next )
     {
+        all_buffers_to_process.push_back( EmacsBufferRef( b ) );
+    };
+
+    for( std::list<EmacsBufferRef>::iterator it_b = all_buffers_to_process.begin();
+            !ml_err && it_b != all_buffers_to_process.end();
+            ++it_b )
+    {
+        EmacsBufferRef &b = *it_b;
+        if( !b.bufferValid() ) continue;
+
         b->set_bf();
         if( b->b_kind == FILEBUFFER
         && b->b_fname.length() > 0 )
@@ -2175,6 +2186,8 @@ int synchronise_files(void)
                         FormatString("The file %s has been delete do you want to delete modified buffer %s?") <<
                             fname << b->b_buf_name
                         );
+                    if( !b.bufferValid() ) continue;
+
                 }
                 else
                 {
@@ -2185,6 +2198,7 @@ int synchronise_files(void)
                             FormatString("The file %s has been delete do you want to delete buffer %s?") <<
                                 fname << b->b_buf_name
                             );
+                        if( !b.bufferValid() ) continue;
                     }
                 }
 
@@ -2198,15 +2212,8 @@ int synchronise_files(void)
                         theActiveView->do_dsp();    // Make the screen correct
                     }
 
-                    // need to save the name as it will be free'ed in kill_bfn
-                    EmacsString name( b->b_buf_name );
-
-                    EmacsBuffer *to_kill = b;
-                    // find the next before we kill this buffer
-                    b = b->b_next;
-
                     // kill off the buffer
-                    delete to_kill;
+                    delete b.buffer();
 
                     // on to the next buffer
                     continue;
@@ -2230,6 +2237,7 @@ int synchronise_files(void)
                         FormatString("For modified buffer %s the file %s has changed do you want to reload it?") <<
                             b->b_buf_name << fname
                         );
+                    if( !b.bufferValid() ) continue;
                 }
                 else
                 {
@@ -2240,6 +2248,7 @@ int synchronise_files(void)
                             FormatString("The file %s has changed do you want to reload it?") <<
                                 fname
                             );
+                        if( !b.bufferValid() ) continue;
                     }
                 }
 
@@ -2261,6 +2270,8 @@ int synchronise_files(void)
                     // the do_dsp may change buffers under us
                     b->set_bf();
                     b->read_file( fname, 1, 0 );
+                    callProc( buffer_file_loaded_proc, bf_cur->b_buf_name );
+                    if( !b.bufferValid() ) continue;
 
                     set_dot( old_dot );
                 }
@@ -2278,8 +2289,6 @@ int synchronise_files(void)
                 b->b_mode.md_readonly = new_access < 0;
             }
         }
-
-    b = b->b_next;
     }
 
     // carefully return to the old buffer
@@ -2290,7 +2299,7 @@ int synchronise_files(void)
     }
     else
     {
-        // default to main to prevent the posibilty of ending up in the Minibuffer
+        // default to main to prevent the possibilty of ending up in the Minibuffer
         EmacsBuffer::set_bfn( "main" );
     }
 

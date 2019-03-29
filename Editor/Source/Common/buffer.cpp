@@ -1412,8 +1412,20 @@ int current_line_number( void )
 //    EmacsBufferRef implementation
 //
 //======================================================================
+EmacsBufferRef::EmacsBufferRef()
+: buffer_pointer( NULL )
+{
+    header.queueInsertAtTail( this );
+}
+
 EmacsBufferRef::EmacsBufferRef( EmacsBuffer *buf )
-    : buffer_pointer( buf )
+: buffer_pointer( buf )
+{
+    header.queueInsertAtTail( this );
+}
+
+EmacsBufferRef::EmacsBufferRef( const EmacsBufferRef &buf_ref )
+: buffer_pointer( buf_ref.buffer_pointer )
 {
     header.queueInsertAtTail( this );
 }
@@ -1424,6 +1436,11 @@ EmacsBufferRef::~EmacsBufferRef()
 }
 
 
+EmacsBufferRef &EmacsBufferRef::operator=( const EmacsBufferRef &buf_ref )
+{
+    buffer_pointer = buf_ref.buffer_pointer;
+    return *this;
+}
 
 //
 //    null out the refs to this buffer
@@ -1436,7 +1453,9 @@ void EmacsBufferRef::markDeletedBuffer( EmacsBuffer *buf )
     {
         EmacsBufferRef *ref = it.value();
         if( ref->buffer_pointer == buf )
+        {
             ref->buffer_pointer = NULL;
+        }
     }
 }
 
@@ -1446,13 +1465,17 @@ QueueHeader<EmacsBufferRef> EmacsBufferRef::header;
 void EmacsBufferRef::__set_bf( const char *__file, int __line)
 {
     if( buffer_pointer != NULL )
+    {
         buffer_pointer->__set_bf( __file, __line);
+    }
 }
 #else
 void EmacsBufferRef::set_bf()
 {
     if( buffer_pointer != NULL )
+    {
         buffer_pointer->set_bf();
+    }
 }
 #endif
 //======================================================================
