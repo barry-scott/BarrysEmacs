@@ -43,7 +43,7 @@ int BoundNameInside::canDelete() const
 
 int BoundNameProcedure::canDelete() const
 {
-    return 0;
+    return 1;
 }
 
 KeyMap *BoundNameInside::getKeyMap(void) const
@@ -178,6 +178,12 @@ BoundName::BoundName( const EmacsString &name, const EmacsString &module )
     , b_active( 0 )
     , b_break( 0 )
 {
+    // do not replace a MLisp functionm with an autoload
+    if( implementation != NULL && IsAProcedure() )
+    {
+        return;
+    }
+
     implementation = EMACS_NEW BoundNameAutoLoad( module );
     define();
 }
@@ -231,10 +237,7 @@ int BoundName::canDelete(void) const
 {
     if( implementation && !implementation->canDelete() )
     {
-        if( !IsAProcedure() )
-        {
-            error( FormatString("%s is already bound to a wired procedure!") << b_proc_name );
-        }
+        error( FormatString("%s is already bound to a wired procedure!") << b_proc_name );
         return 0;
     }
 
