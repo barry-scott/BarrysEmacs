@@ -41,6 +41,11 @@ int BoundNameInside::canDelete() const
     return 1;
 }
 
+int BoundNameProcedure::canDelete() const
+{
+    return 0;
+}
+
 KeyMap *BoundNameInside::getKeyMap(void) const
 {
     return NULL;
@@ -226,7 +231,10 @@ int BoundName::canDelete(void) const
 {
     if( implementation && !implementation->canDelete() )
     {
-        error( FormatString("%s is already bound to a wired procedure!") << b_proc_name );
+        if( !IsAProcedure() )
+        {
+            error( FormatString("%s is already bound to a wired procedure!") << b_proc_name );
+        }
         return 0;
     }
 
@@ -307,9 +315,17 @@ void BoundName::replaceInside( const EmacsMacroString &macro )
 }
 void BoundName::replaceInside( const EmacsString &module )
 {
+    // do not replace a function with a autoload filename
+    if( implementation != NULL && IsAProcedure() )
+    {
+        // silently ignore
+        return;
+    }
+
     if( replaceInsideHelper() )
         implementation = EMACS_NEW BoundNameAutoLoad( module );
 }
+
 void BoundName::replaceInside( ProgramNode *mlisp_body )
 {
     if( replaceInsideHelper() )

@@ -748,10 +748,23 @@ int auto_load( void )
     EmacsString filename( getnbstr( FormatString(": autoload procedure %s from file ") << comname ) );
 
     BoundName *cmd = BoundName::find( comname );
+
+#if DBG_EXEC
+    if( dbg_flags&DBG_EXEC )
+        _dbg_msg( FormatString("auto_load \"%s\" from \"%s\" current cmd %p")
+            << comname
+            << filename
+            << reinterpret_cast<void *>( cmd ) );
+#endif
+
     if( cmd != NULL )
+    {
         cmd->replaceInside( filename );
+    }
     else
+    {
         cmd = EMACS_NEW BoundName( comname, filename );
+    }
 
     return 0;
 }

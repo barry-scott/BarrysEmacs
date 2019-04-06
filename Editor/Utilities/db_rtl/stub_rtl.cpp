@@ -40,7 +40,7 @@ void *EmacsObject::operator new( size_t size, const char *, int )
 }
 #endif
 
-int EmacsObject::NextObjectNumber(0);
+int EmacsObject::next_object_number( 0 );
 
 # if DBG_ALLOC_CHECK
 void *emacs_malloc( int size, enum malloc_block_type, const char *, int )

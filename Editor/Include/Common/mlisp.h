@@ -222,8 +222,8 @@ public:
     EMACS_OBJECT_FUNCTIONS( BoundNameBuiltin )
     BoundNameBuiltin( int (*builtin_function)(void) );
     virtual ~BoundNameBuiltin();
-    virtual int execute(void);            // execute what is bound
-    virtual int canDelete(void) const;        // true if you can delete this item
+    virtual int execute(void);              // execute what is bound
+    virtual int canDelete(void) const;
     virtual const char *commandTypeName() const;
 private:
     int (*b_builtin)(void);
@@ -235,9 +235,10 @@ public:
     EMACS_OBJECT_FUNCTIONS( BoundNameProcedure )
     BoundNameProcedure( ProgramNode *mlisp_body );
     virtual ~BoundNameProcedure();
-    virtual int execute(void);            // execute what is bound
+    virtual int execute(void);              // execute what is bound
     virtual ProgramNode *getProcedure(void) const;
     virtual const char *commandTypeName() const;
+    virtual int canDelete(void) const;
 private:
     ProgramNode *b_prog;
 };
@@ -248,8 +249,8 @@ public:
     EMACS_OBJECT_FUNCTIONS( BoundNameKeymap )
     BoundNameKeymap( KeyMap *keymap );
     virtual ~BoundNameKeymap();
-    virtual int execute(void);            // execute what is bound
-    virtual KeyMap *getKeyMap(void) const;        // return the KeyMap
+    virtual int execute(void);              // execute what is bound
+    virtual KeyMap *getKeyMap(void) const;  // return the KeyMap
     virtual const char *commandTypeName() const;
 private:
     KeyMap *b_keymap;
@@ -367,7 +368,6 @@ public:
     bool IsAMacro(void) const;
     bool IsAProcedure(void) const;
 
-
     int isBound(void) const;
 
     int canDelete(void) const;
@@ -412,13 +412,13 @@ class MLispInputStream;
 class ProgramNode : public EmacsObject
 {
 protected:
-    EMACS_OBJECT_FUNCTIONS( ProgramNode )
     ProgramNode( BoundName *proc )
     : p_proc( proc )
     , p_active( 1 )
     , p_nargs( 0 )
     { }
 public:
+    EMACS_OBJECT_FUNCTIONS( ProgramNode )
     virtual ~ProgramNode() { }
 
     virtual ProgramNode *arg( int n ) const = 0;
@@ -565,9 +565,10 @@ public:
 class VariableName : public EmacsObject
 {
     // a name for a variable with a pointer
-    EMACS_OBJECT_FUNCTIONS( VariableName )
     // to it's chain of interpretations.
 public:
+    EMACS_OBJECT_FUNCTIONS( VariableName )
+
     VariableName( const EmacsString &name, Binding *binding );
     virtual ~VariableName();
 

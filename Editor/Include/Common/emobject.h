@@ -19,6 +19,20 @@ protected:
     EmacsObject();
 public:
     virtual ~EmacsObject();
+    int objectNumber() const
+    {
+        return o_object_number;
+    }
+#if DBG_OBJ_LOCK
+    void lockObject()
+    {
+        ++o_lock_count;
+    }
+    void unlockObject()
+    {
+        --o_lock_count;
+    }
+#endif
 
 #if DBG_ALLOC_CHECK
     void *operator new(size_t size, const char *fileName, int lineNumber);
@@ -49,10 +63,13 @@ public:
     void objectAllocatedBy( const char *&file, int &line, const EmacsObject *&object ) const;
 #endif
 private:
-    EmacsObject( const EmacsObject &src );        // no implementation
-    void operator=(const EmacsObject &src);        // no implementation
-    static int NextObjectNumber;
-    int ObjectNumber;
+    EmacsObject( const EmacsObject &src );      // no implementation
+    void operator=(const EmacsObject &src);     // no implementation
+    static int next_object_number;
+    int o_object_number;
+#if DBG_OBJ_LOCK
+    int o_lock_count;
+#endif
 };
 
 #if DBG_ALLOC_CHECK
@@ -63,9 +80,9 @@ private:
 
 #ifdef SAVE_ENVIRONMENT
 #define EMACS_OBJECT_FUNCTIONS( classname ) \
-     virtual const char *objectName() const { return #classname; } \
+    virtual const char *objectName() const { return #classname; } \
     virtual void SaveEnvironment();
 #else
 #define EMACS_OBJECT_FUNCTIONS( classname ) \
-     virtual const char *objectName() const { return #classname; }
+    virtual const char *objectName() const { return #classname; }
 #endif

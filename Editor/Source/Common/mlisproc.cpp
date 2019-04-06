@@ -169,7 +169,8 @@ int exec_prog( ProgramNode *p )
 
 #if DBG_EXEC
     if( dbg_flags&DBG_EXEC )
-        _dbg_msg( FormatString( "ExecProg: %s >>> %s\n") <<
+        _dbg_msg( FormatString( "ExecProg(%s): %s >>> %s\n") <<
+            current_function.asString() <<
             (old ? old->p_proc->b_proc_name.sdata() : "--Top Level--") <<
             p->p_proc->b_proc_name.sdata() );
 #endif
@@ -178,7 +179,8 @@ int exec_prog( ProgramNode *p )
 
 #if DBG_EXEC
     if( dbg_flags&DBG_EXEC )
-        _dbg_msg( FormatString( "ExecProg: %s <<< %s\n") <<
+        _dbg_msg( FormatString( "ExecProg(%s): %s <<< %s\n") <<
+            current_function.asString() <<
             (old ? old->p_proc->b_proc_name.sdata() : "--Top Level--") <<
             p->p_proc->b_proc_name.sdata() );
 #endif
@@ -264,6 +266,7 @@ int progn_command( void )
         VariableName *v = p->arg(var)->name();
         v->pushBinding();
     }
+
     int rv = 0;
     int i = first_prog;
     while( ! ml_err && rv == 0 && quitting_emacs == 0
@@ -767,7 +770,7 @@ int define_function( void )
     return define_function_inner( &progn_block );
 }
 
-static int define_function_inner(BoundName *proc)
+static int define_function_inner( BoundName *proc )
 {
 
     if( check_args( 1, 0 ) )
@@ -782,7 +785,6 @@ static int define_function_inner(BoundName *proc)
     int nargs = cur_exec->p_nargs;
 
     for( int i=1; i<=nargs; i++ )
-
     {
         ProgramNode *p = cur_exec->arg( i );
         if( p != NULL )

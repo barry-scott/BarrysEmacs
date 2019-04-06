@@ -71,10 +71,13 @@ static struct heap_entry *last_heap_entry;
 //    EmacsObject implementation
 //
 //
-int EmacsObject::NextObjectNumber(1);
+int EmacsObject::next_object_number(1);
 
 EmacsObject::EmacsObject()
-    : ObjectNumber( NextObjectNumber++ )
+: o_object_number( next_object_number++ )
+#if DBG_OBJ_LOCK
+, o_lock_count( 0 )
+#endif
 {
 #ifdef SAVE_ENVIRONMENT
     if( last_heap_entry != NULL
@@ -89,7 +92,22 @@ EmacsObject::EmacsObject()
 }
 
 EmacsObject::~EmacsObject()
-{ }
+{
+#if DBG_OBJ_LOCK
+    if( o_lock_count != 0 )
+    {
+        const char *file = "";
+        int line = 0;
+        const EmacsObject *not_used = NULL;
+        objectAllocatedBy( file, line, not_used );
+        _dbg_msg( FormatString("EmacsObject (%d) being destructed with o_lock_count %d allocated at %s:%d")
+            << o_object_number
+            << o_lock_count
+            << file << line );
+        debug_invoke();
+    }
+#endif
+}
 
 void *EmacsObject::operator new(size_t size)
 {
@@ -262,11 +280,11 @@ void emacs_check_malloc_block( void * )
 void emacs_heap_check_entry( struct heap_entry *h )
 {
     if( memcmp( guard_pattern, h->front_guard, GUARD_SIZE ) != 0 )
-        _dbg_msg( FormatString( "Corrupt front guard band in {%d}%X at %s(%d)") <<
-            h->sequence_number << int(h) << h->fileName << h->lineNumber );
+        _dbg_msg( FormatString( "Corrupt front guard band in {%d}%p at %s(%d)") <<
+            h->sequence_number << reinterpret_cast<void *>( h ) << h->fileName << h->lineNumber );
     if( memcmp( guard_pattern, &h->user_data[h->user_size], GUARD_SIZE ) != 0 )
-        _dbg_msg( FormatString( "Corrupt back guard band in {%d}%X at %s(%d)") <<
-            h->sequence_number << int(h) << h->fileName << h->lineNumber );
+        _dbg_msg( FormatString( "Corrupt back guard band in {%d}%p at %s(%d)") <<
+            h->sequence_number << reinterpret_cast<void *>( h ) << h->fileName << h->lineNumber );
 }
 
 void emacs_heap_check(void)
