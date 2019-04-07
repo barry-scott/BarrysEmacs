@@ -10,5 +10,5 @@ set BEMACS_STDOUT_LOG=bemacs-stdout.log
 set BEMACS_DEBUG_LOG=bemacs-debug.log
 set BEMACS_GUI_LOG=bemacs-gui.log
 
-%PYTHON% -u be_main.py %*
+%PYTHON% -u be_main.py %* 2>%BEMACS_DEBUG_LOG%
 endlocal
