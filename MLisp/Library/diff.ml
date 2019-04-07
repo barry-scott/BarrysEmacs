@@ -137,8 +137,8 @@
                 (setq ~line
                     (+ (region-to-string) (- ~line (current-line-number) 1)))
                 (if ~is-old
-                    (ere-search-reverse "^--- (.*)\t(\\d{4}-\\d+-\\d+|[A-Z][a-z][a-z] [A-Z][a-z][a-z] \\d\\d) ")
-                    (ere-search-reverse "^\\+\\+\\+ (.*)\t(\\d{4}-\\d+-\\d+|[A-Z][a-z][a-z] [A-Z][a-z][a-z] \\d\\d) ")
+                    (ere-search-reverse "^--- (.*)\t")
+                    (ere-search-reverse "^\\+\\+\\+ (.*)\t")
                 )
                 (setq ~file
                     (progn
