@@ -112,23 +112,13 @@
         ~file
         ~is-old
 
-        (if (= operating-system-name "Windows")
-            (save-excursion
-                (setq ~file "")
-                (beginning-of-line)
-                (while (& (! (bobp)) (! (looking-at " *[0-9]")))
-                    (previous-line)
-                )
-                (looking-at " *[0-9][0-9]*")
-                (region-around-match 0)
-                (setq ~line (+ (region-to-string)))
-            )
+        (if
             ; is it diff -u output?
             (save-excursion
                 (beginning-of-file)
-                (looking-at "--- ")
+                (! (error-occurred (ere-search-forward "^--- ")))
             )
-            ; diff -u output
+            ; assume diff -u output
             (save-excursion
                 (setq ~line (current-line-number))
                 (beginning-of-line)
@@ -147,8 +137,8 @@
                 (setq ~line
                     (+ (region-to-string) (- ~line (current-line-number) 1)))
                 (if ~is-old
-                    (ere-search-reverse "^--- (.*)\t\\d{4}-\\d+-\\d+ ")
-                    (ere-search-reverse "^\\+\\+\\+ (.*)\t\\d{4}-\\d+-\\d+ ")
+                    (ere-search-reverse "^--- (.*)\t(\\d{4}-\\d+-\\d+|[A-Z][a-z][a-z] [A-Z][a-z][a-z] \\d\\d) ")
+                    (ere-search-reverse "^\\+\\+\\+ (.*)\t(\\d{4}-\\d+-\\d+|[A-Z][a-z][a-z] [A-Z][a-z][a-z] \\d\\d) ")
                 )
                 (setq ~file
                     (progn
@@ -156,6 +146,18 @@
                         (region-to-string)
                     )
                 )
+            )
+            (= operating-system-name "Windows")
+            ; assume its windows FC output
+            (save-excursion
+                (setq ~file "")
+                (beginning-of-line)
+                (while (& (! (bobp)) (! (looking-at " *[0-9]")))
+                    (next-line)
+                )
+                (ere-looking-at " *([0-9]+)")
+                (region-around-match 1)
+                (setq ~line (+ (region-to-string)))
             )
             ; default parsing - unix style
             (save-excursion
@@ -175,6 +177,7 @@
             (!= ~file "")
             ; diff files on disk
             (visit-file ~file)
+            (pop-to-buffer diff-buffer)
         )
         (goto-line ~line)
     )
