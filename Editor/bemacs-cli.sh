@@ -1,6 +1,5 @@
 #!/bin/bash
 export EMACS_DEBUG=
-export EMACS_DEBUG_FILE="$TMPDIR/bemacs.log"
 export emacs_user="$HOME/bemacs"
 case "$( uname )" in
 Darwin)
@@ -13,7 +12,16 @@ esac
 
 case "$1" in
 --debug=*)
+    echo "Turn on debug"
     export EMACS_DEBUG="${1#--debug=}"
+    shift
+    ;;
+*)
+    ;;
+esac
+case "$1" in
+--file)
+    export EMACS_DEBUG_FILE="$TMPDIR/bemacs.log"
     rm -f ${EMACS_DEBUG_FILE}
     shift
     ;;

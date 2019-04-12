@@ -118,9 +118,15 @@ void message( const EmacsString &text )
 
     // make sure that the buffer is not overflowed by very long messages
     if( term_is_terminal != 0 )
+    {
         minibuf_body.setMessageBody( text );
+    }
     else
+    {
         message_file.fio_put( text );
+        message_file.fio_put( "\n" );
+        message_file.fio_flush();
+    }
 }
 
 

@@ -361,6 +361,11 @@ int EmacsFile::fio_put( const EmacsChar_t *buf, int len )
 
 //--------------------------------------------------------------------------------
 
+void EmacsFile::fio_flush()
+{
+    fflush( m_file );
+}
+
 bool EmacsFile::fio_close()
 {
     int status = fclose( m_file );

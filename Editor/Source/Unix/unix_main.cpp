@@ -3,6 +3,8 @@
 
 static void process_args( int argc, char **argv );
 
+static bool term_is_file( false );
+
 int main( int argc, char **argv )
 {
     if( !isFileDescriptorOpen( STDIN_FILENO ) )
@@ -32,7 +34,14 @@ int main( int argc, char **argv )
 
     process_args( argc, argv );
 
-    return emacsMain( EmacsString::null, u_str("char"), u_str("") );
+    if( term_is_file )
+    {
+        return emacsMain( EmacsString::null, u_str("file"), u_str("") );
+    }
+    else
+    {
+        return emacsMain( EmacsString::null, u_str("char"), u_str("") );
+    }
 }
 
 static void process_args( int argc, char **argv )
@@ -69,6 +78,10 @@ static void process_args( int argc, char **argv )
             {
                 package_arg = val_string;
                 command_line_arguments.setArgument( 0, package_arg, false );
+            }
+            else if( key_string == "noterm" )
+            {
+                term_is_file = true;
             }
             else
             {

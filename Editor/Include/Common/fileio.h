@@ -84,6 +84,7 @@ public:
     int fio_put( const EmacsString & );
 
     bool fio_close();
+    void fio_flush();
 
     long int fio_size();
     time_t fio_modify_date();
