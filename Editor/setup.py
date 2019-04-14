@@ -26,6 +26,7 @@ class Setup:
         self.opt_bemacs_cli = False
         self.opt_utils = False
         self.opt_unit_tests = False
+        self.opt_coverage = False
 
         args = argv[1:]
         if len(args) < 3:
@@ -74,6 +75,10 @@ class Setup:
 
             elif args[0].startswith( '--lib-dir=' ):
                 self.opt_lib_dir = args[0][len('--lib-dir='):]
+                del args[0]
+
+            elif args[0].startswith( '--coverage' ):
+                self.opt_coverage = True
                 del args[0]
 
             else:
@@ -981,13 +986,13 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_OBJ',       'obj-utils' )
         self._addVar( 'EDIT_EXE',       'exe-utils' )
         self._addVar( 'CCCFLAGS',
-                                        '-g -O0 '
+                                        '-g %(CCC_OPT)s '
                                         '-Wall -fPIC -fexceptions -frtti '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
                                         '-D%(DEBUG)s' )
-        self._addVar( 'LDEXE',          '%(CCC)s -g' )
+        self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s' )
 
     def setupUnittests( self ):
         self._addVar( 'PYTHON',         sys.executable )
@@ -1027,7 +1032,7 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '%(FEATURE_DEFINES)s '
                                         '-D%(DEBUG)s' )
 
-        self._addVar( 'LDEXE',          '%(CCC)s -g' )
+        self._addVar( 'LDEXE',          '%(CCC)s -g ' )
         self._addVar( 'LDSHARED',       '%(CCC)s -shared -g ' )
 
     def setupCliEmacs( self, feature_defines=None ):
@@ -1040,8 +1045,20 @@ class LinuxCompilerGCC(CompilerGCC):
 
         self._addVar( 'BEMACS_LIB_DIR', self.setup.opt_lib_dir )
 
+        if self.setup.opt_coverage:
+            self._addVar( 'CCC_OPT',    '-O0 '
+                                        '-ftest-coverage '
+                                        '-fprofile-arcs '
+                                        '-fprofile-abs-path '
+                                        '-fprofile-dir=%s ' % (os.getcwd(),) )
+        elif self.setup.opt_enable_debug:
+            self._addVar( 'CCC_OPT', '-Og' )
+
+        else:
+            self._addVar( 'CCC_OPT', '-O3' )
+
         self._addVar( 'CCCFLAGS',
-                                        '-g '
+                                        '-g %(CCC_OPT)s '
                                         '-Wall -fPIC -fexceptions -frtti '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
@@ -1050,7 +1067,7 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '%(FEATURE_DEFINES)s '
                                         '-DBEMACS_LIB_DIR=\\"%(BEMACS_LIB_DIR)s\\"' )
 
-        self._addVar( 'LDEXE',          '%(CCC)s -g' )
+        self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s ' )
 
     def setupPythonTools( self ):
         self._addVar( 'PYTHON',         sys.executable )
