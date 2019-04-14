@@ -351,6 +351,7 @@ public:
     FormatString &operator <<( unsigned int v ) { setNextIntArg( int64_t(v) ); return *this; }
     FormatString &operator <<( unsigned long v ) { setNextIntArg( int64_t(v) ); return *this; }
     FormatString &operator <<( unsigned long long v ) { setNextIntArg( int64_t(v) ); return *this; }
+    FormatString &operator <<( bool );
     FormatString &operator <<( const EmacsString & );
     FormatString &operator <<( const EmacsString * );
     FormatString &operator <<( const char * );

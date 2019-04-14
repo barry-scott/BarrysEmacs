@@ -1,7 +1,7 @@
 //
 //    search_advanced_algorithm.cpp
 //
-//    Copyright (c) 2002-2016
+//    Copyright (c) 2002-2019
 //        Barry A. Scott
 //
 
@@ -15,13 +15,17 @@ static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
 #if DBG_EXT_SEARCH != 0
-#define S_dbg_msg( msg )        _dbg_msg( msg )
-#define S_dbg_fn_trace( msg )   _dbg_fn_trace t____( msg )
+#define S_dbg_fn_trace( msg )   _dbg_fn_trace t____( msg, dbg_flags&DBG_EXT_SEARCH )
+#define S_dbg_msg( msg )        t____._msg( msg )
+#define S_dbg_result( msg )     t____._result( msg )
+
 extern EmacsString syntax_bits_as_string( int syntax );
 
 #else
-#define S_dbg_msg( msg )        do { (void)0; } while( 0 )
 #define S_dbg_fn_trace( msg )   do { (void)0; } while( 0 )
+#define S_dbg_msg( msg )        do { (void)0; } while( 0 )
+#define S_dbg_result( msg )     do { (void)0; } while( 0 )
+
 #define syntax_bits_as_string( arg ) arg
 #endif
 
@@ -50,8 +54,11 @@ bool SearchAdvancedAlgorithm::is_compatible( EmacsSearch::sea_type type )
 
 int SearchAdvancedAlgorithm::search( int n, int dot )
 {
+    S_dbg_fn_trace( FormatString("> SearchAdvancedAlgorithm::search( %d, %d ) \"%s\"") << n << dot << last_search_string.asString() );
+
     if( m_expression == NULL )
     {
+        S_dbg_result( "0 - false" );
         return 0;
     }
 
@@ -62,16 +69,27 @@ int SearchAdvancedAlgorithm::search( int n, int dot )
     if( n > 0 )
     {
         for( int pos=dot; pos <= bf_cur->num_characters(); pos++ )
+        {
             if( m_expression->matchExpression( pos, end_pos ) )
+            {
+                S_dbg_result( FormatString("end_pos %d - true") << end_pos );
                 return end_pos;
+            }
+        }
     }
     else
     {
         for( int pos=dot-1; pos >= bf_cur->first_character(); pos-- )
+        {
             if( m_expression->matchExpression( pos, end_pos ) )
+            {
+                S_dbg_result( FormatString("pos %d - true") << pos );
                 return pos;
+            }
+        }
     }
 
+    S_dbg_result( "0 - false" );
     // 0 means not found
     return 0;
 }
@@ -490,10 +508,12 @@ RegularExpressionString::~RegularExpressionString()
 
 bool RegularExpressionString::matchTerm( int pos, int &end_pos )
 {
-    S_dbg_msg( FormatString("RegularExpressionString::matchTerm() %r") << m_term_string );
+    S_dbg_fn_trace( FormatString("RegularExpressionString::matchTerm( %d(\"%C\"), %d ) \"%r\"")
+                    << pos << bf_cur->char_at( pos ) << end_pos << m_term_string );
     bool match = m_owner.matchLiteralString( m_term_string, pos, end_pos );
 
-    S_dbg_msg( FormatString("RegularExpressionString::matchTerm() -> %d") << match );
+    S_dbg_result( FormatString("end_pos=%d match %d")
+                << end_pos << match );
     return match;
 }
 
@@ -518,8 +538,12 @@ RegularExpressionCharSet::~RegularExpressionCharSet()
 
 bool RegularExpressionCharSet::matchTerm( int pos, int &end_pos )
 {
+    S_dbg_fn_trace( FormatString("RegularExpressionCharSet::matchTerm( %d(\"%C\"), %d ) words %s set \"%r\"")
+                    << pos << bf_cur->char_at( pos ) << end_pos << m_include_word_chars << m_char_set );
+
     if( pos > bf_cur->num_characters() )
     {
+        S_dbg_result( "false" );
         return false;
     }
 
@@ -529,6 +553,7 @@ bool RegularExpressionCharSet::matchTerm( int pos, int &end_pos )
     if( m_include_word_chars && bf_cur->char_at_is( pos, SYNTAX_WORD ) )
     {
         end_pos = pos+1;
+        S_dbg_result( "true" );
         return true;
     }
 
@@ -536,9 +561,11 @@ bool RegularExpressionCharSet::matchTerm( int pos, int &end_pos )
     if( m_char_set.index( ch ) >= 0 )
     {
         end_pos = pos+1;
+        S_dbg_result( "true" );
         return true;
     }
 
+    S_dbg_result( "false" );
     return false;
 }
 
@@ -562,10 +589,13 @@ RegularExpressionNotCharSet::~RegularExpressionNotCharSet()
 
 bool RegularExpressionNotCharSet::matchTerm( int pos, int &end_pos )
 {
+    S_dbg_fn_trace( FormatString("RegularExpressionNotCharSet::matchTerm( %d(\"%C\"), %d ) words %d set \"%r\"")
+                                << pos << bf_cur->char_at( pos ) << end_pos << m_include_word_chars << m_char_set );
     EmacsChar_t ch( bf_cur->char_at( pos ) );
 
     if( pos > bf_cur->num_characters() )
     {
+        S_dbg_result( "false" );
         return false;
     }
 
@@ -573,6 +603,7 @@ bool RegularExpressionNotCharSet::matchTerm( int pos, int &end_pos )
     if( m_include_word_chars && !bf_cur->char_at_is( pos, SYNTAX_WORD ) )
     {
         end_pos = pos+1;
+        S_dbg_result( FormatString("end_pos %d true") << end_pos );
         return true;
     }
 
@@ -580,9 +611,11 @@ bool RegularExpressionNotCharSet::matchTerm( int pos, int &end_pos )
     if( m_char_set.index( ch ) < 0 )
     {
         end_pos = pos+1;
+        S_dbg_result( FormatString("end_pos %d true") << end_pos );
         return true;
     }
 
+    S_dbg_result( "false" );
     return false;
 }
 
@@ -635,6 +668,8 @@ RegularExpressionRepeatMost::~RegularExpressionRepeatMost()
 
 bool RegularExpressionRepeatMost::matchExpression( int start_pos, int &end_pos )
 {
+    S_dbg_fn_trace( FormatString("RegularExpressionRepeatMost::matchExpression( %d, %d ) min %d max %d")
+                                << start_pos << end_pos << m_min_repeats << m_max_repeats );
     int matches = 0;
     int next_pos = start_pos;
 
@@ -643,11 +678,14 @@ bool RegularExpressionRepeatMost::matchExpression( int start_pos, int &end_pos )
     {
         if( !m_repeat_term->matchExpression( next_pos, next_pos ) )
         {
+            S_dbg_result( "false" );
             return false;
         }
     }
 
-    return matchExpressionMost( next_pos, end_pos, matches );
+    bool res = matchExpressionMost( next_pos, end_pos, matches );
+    S_dbg_result( FormatString("end_pos %d %s") << end_pos << res );
+    return res;
 }
 
 class PositionHistory
@@ -720,10 +758,13 @@ private:
 
 bool RegularExpressionRepeatMost::matchExpressionMost( int start_pos, int &end_pos, int matches )
 {
+    S_dbg_fn_trace( FormatString("RegularExpressionRepeatMost::matchExpressionMost( %d, %d, %d )")
+                                << start_pos << end_pos << matches );
+
     // find the limit for the matches
     PositionHistory history( start_pos );
 
-    int next_end_pos = 0;
+    int next_end_pos = start_pos;
     for(; matches < m_max_repeats && m_repeat_term->matchExpression( history.lastPosition(), next_end_pos ); ++matches )
     {
         // protect against a repeat_term that does not move pos
@@ -733,10 +774,12 @@ bool RegularExpressionRepeatMost::matchExpressionMost( int start_pos, int &end_p
         history.addPosition( next_end_pos );
     }
 
-
     // now walk backwards looking for the longest repeat that matchExpression
     if( m_next_term == NULL )
     {
+        end_pos = next_end_pos;
+
+        S_dbg_result( FormatString("(a) end_pos %d true") << end_pos );
         return true;
     }
 
@@ -745,16 +788,20 @@ bool RegularExpressionRepeatMost::matchExpressionMost( int start_pos, int &end_p
         int pos = history.previousPosition();
         if( m_next_term->matchExpression( pos, end_pos ) )
         {
+            S_dbg_result( FormatString("(b) end_pos %d true") << end_pos );
             return true;
         }
     }
 
     if( m_next_term )
     {
-        return m_next_term->matchExpression( start_pos, end_pos );
+        bool res = m_next_term->matchExpression( start_pos, end_pos );
+        S_dbg_result( FormatString("(c) end_pos %d %s") << end_pos << res );
+        return res;
     }
 
     end_pos = start_pos;
+    S_dbg_result( FormatString("(d) end_pos %d true") << end_pos );
     return true;
 }
 
@@ -851,16 +898,31 @@ void RegularExpressionAlternation::addAlternative( RegularExpressionTerm *term )
 
 bool RegularExpressionAlternation::matchTerm( int start_pos, int &end_pos )
 {
+    S_dbg_fn_trace( FormatString("RegularExpressionAlternation::matchTerm( %d(\"%C\"), %d )")
+                    << start_pos << bf_cur->char_at( start_pos ) << end_pos );
     std::list<RegularExpressionTerm *>::iterator alternative = m_alternative_expressions.begin();
 
+#if DBG_EXT_SEARCH != 0
+    int alt_index = 1;
+#endif
     while( alternative != m_alternative_expressions.end() )
     {
+        S_dbg_msg( FormatString("RegularExpressionAlternation::matchTerm: trying alternative %d") << alt_index++ );
+
+        int alt_end_pos = end_pos;
         RegularExpressionTerm *m_expression = *alternative;
-        if( m_expression->matchExpression( start_pos, end_pos ) )
+        if( m_expression->matchExpression( start_pos, alt_end_pos ) )
+        {
+            end_pos = alt_end_pos;
+            S_dbg_result( FormatString("end_pos=%d -> true") << end_pos );
             return true;
+        }
+
         ++alternative;
     }
 
+    S_dbg_result( FormatString("end_pos=%d -> false")
+                << end_pos );
     return false;
 }
 
@@ -1226,6 +1288,7 @@ RegularExpressionSyntaxMatch::RegularExpressionSyntaxMatch( SearchAdvancedAlgori
 , m_looking_at( false )
 
 {
+    S_dbg_fn_trace( "RegularExpressionSyntaxMatch::RegularExpressionSyntaxMatch()" );
     S_dbg_msg( FormatString("c'tor m_any_of size %d") << m_any_of.size() );
     S_dbg_msg( FormatString("c'tor m_none_of size %d") << m_none_of.size() );
 }
@@ -1235,12 +1298,14 @@ RegularExpressionSyntaxMatch::~RegularExpressionSyntaxMatch()
 
 bool RegularExpressionSyntaxMatch::matchTerm( int pos, int &end_pos )
 {
+    S_dbg_fn_trace( FormatString("RegularExpressionSyntaxMatch::matchTerm( %d(\"%C\"), %d )") << pos << bf_cur->char_at( pos ) << end_pos );
+
     if( pos > bf_cur->num_characters() )
     {
         return false;
     }
 
-#if DBG_EXT_SEARCH!=0
+#if DBG_EXT_SEARCH != 0
     EmacsChar_t ch( bf_cur->char_at( pos ) );
 #endif
     SyntaxKind_t syn( bf_cur->syntax_at( pos ) );
@@ -1261,7 +1326,7 @@ bool RegularExpressionSyntaxMatch::matchTerm( int pos, int &end_pos )
 
             if( (syn&mask) == value )
             {
-                S_dbg_msg( "matchTerm any_of matched" );
+                S_dbg_msg( "any_of matched - true" );
                 any_of = true;
                 break;
             }
@@ -1270,7 +1335,7 @@ bool RegularExpressionSyntaxMatch::matchTerm( int pos, int &end_pos )
         S_dbg_msg( FormatString("matchTerm any_of %d") << any_of );
         if( !any_of )
         {
-            S_dbg_msg( "matchTerm return false !any_of" );
+            S_dbg_result( "!any_of - false" );
             return false;
         }
     }
@@ -1293,42 +1358,42 @@ bool RegularExpressionSyntaxMatch::matchTerm( int pos, int &end_pos )
 
             if( (syn&mask) == value )
             {
-                S_dbg_msg( "matchTerm none_of matched" );
+                S_dbg_result( "none_of matched - false" );
                 none_of = false;
                 break;
             }
         }
-        S_dbg_msg( FormatString("matchTerm none_of %d") << none_of );
+        S_dbg_msg( FormatString("none_of %d") << none_of );
 
         if( !none_of )
         {
-            S_dbg_msg( "matchTerm return false !none_of" );
+            S_dbg_result( "!none_of - false" );
             return false;
         }
     }
 
-    // at least 1 any_of and not none_of matched
+    // at least 1 any_of and no none_of matched
     if( !m_looking_at )
     {
         end_pos = pos + 1;
     }
 
-    S_dbg_msg( FormatString("matchTerm return true end_pos %d") << end_pos );
+    S_dbg_msg( FormatString("end_pos %d - true") << end_pos );
     return true;
 }
 
 void RegularExpressionSyntaxMatch::addAnyOf( SyntaxKind_t mask, SyntaxKind_t value )
 {
-    S_dbg_msg( FormatString("addAnyOf( mask 0x%x, value 0x%x )") << mask << value );
+    S_dbg_fn_trace( FormatString("RegularExpressionSyntaxMatch::addAnyOf( mask 0x%x, value 0x%x )") << mask << value );
     m_any_of.push_back( std::make_pair( mask, value ) );
-    S_dbg_msg( FormatString("addAnyOf size %d") << m_any_of.size() );
+    S_dbg_result( FormatString("size %d") << m_any_of.size() );
 }
 
 void RegularExpressionSyntaxMatch::addNoneOf( SyntaxKind_t mask, SyntaxKind_t value )
 {
-    S_dbg_msg( FormatString("addNoneOf( mask 0x%x, value 0x%x )") << mask << value );
+    S_dbg_fn_trace( FormatString("RegularExpressionSyntaxMatch::addNoneOf( mask 0x%x, value 0x%x )") << mask << value );
     m_none_of.push_back( std::make_pair( mask, value ) );
-    S_dbg_msg( FormatString("addNoneOf size %d") << m_none_of.size() );
+    S_dbg_result( FormatString("size %d") << m_none_of.size() );
 }
 void RegularExpressionSyntaxMatch::setLookingAt()
 {

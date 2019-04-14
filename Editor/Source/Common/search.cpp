@@ -124,14 +124,15 @@ int ere_search_reverse( void )
 int re_search_forward_helper( EmacsSearch::sea_type RE )
 {
     EmacsString str;
-    int np;
     if( arg <= 0 )
         arg = 1;
+
     if( RE == EmacsSearch::sea_type__RE_extended )
         str = getstr("ERE search for: ");
     else
         str = getstr("RE search for: ");
-    np = sea_glob.search( str, arg, dot, RE );
+
+    int np = sea_glob.search( str, arg, dot, RE );
     if( np == 0 && ! ml_err )
         error(FormatString("Cannot find \"%s\"") << last_search_string.asString() );
     else

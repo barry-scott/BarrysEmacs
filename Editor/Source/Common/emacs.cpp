@@ -779,6 +779,9 @@ int parse_dbg_flags( const EmacsString &flags )
         else if( keyword == "timer" )
             flags_value |= DBG_TIMER;
 
+        else if( keyword == "ext_parser" )
+            flags_value |= DBG_EXT_PARSER;
+
         else if( keyword == "ext_search" )
             flags_value |= DBG_EXT_SEARCH;
 

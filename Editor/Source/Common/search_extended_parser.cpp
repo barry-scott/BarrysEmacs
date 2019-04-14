@@ -1,7 +1,7 @@
 //
 //    search_advanced_parser.cpp
 //
-//    Copyright (c) 2002-2016
+//    Copyright (c) 2002-2019
 //        Barry A. Scott
 //
 #include <emacs.h>
@@ -11,12 +11,14 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
-#if DBG_EXT_SEARCH != 0
-#define S_dbg_msg( msg )        _dbg_msg( msg )
-#define S_dbg_fn_trace( msg )   _dbg_fn_trace t____( msg )
+#if DBG_EXT_PARSER != 0
+#define S_dbg_fn_trace( msg )   _dbg_fn_trace t____( msg, dbg_flags&DBG_EXT_PARSER )
+#define S_dbg_msg( msg )        t____._msg( msg )
+#define S_dbg_result( msg )     t____._result( msg )
 #else
-#define S_dbg_msg( msg )        do { (void)0; } while( 0 )
 #define S_dbg_fn_trace( msg )   do { (void)0; } while( 0 )
+#define S_dbg_msg( msg )        do { (void)0; } while( 0 )
+#define S_dbg_result( msg )     do { (void)0; } while( 0 )
 #endif
 
 //
@@ -283,6 +285,8 @@ bool EmacsStringStreamExpressionEnd::atEnd( bool quoted )
 //--------------------------------------------------------------------------------
 void SearchAdvancedAlgorithm::compile_expression( const EmacsString &pattern )
 {
+    S_dbg_fn_trace( "SearchAdvancedAlgorithm::compile_expression" );
+
     delete m_expression;
     m_expression = NULL;
 
@@ -321,6 +325,8 @@ void SearchAdvancedAlgorithm::compile_expression( const EmacsString &pattern )
 
 void SearchAdvancedAlgorithm::compile_for_syntax( const EmacsString &pattern )
 {
+    S_dbg_fn_trace( "SearchAdvancedAlgorithm::compile_for_syntax" );
+
     delete m_expression;
     m_expression = NULL;
 
@@ -358,7 +364,7 @@ void SearchAdvancedAlgorithm::compile_for_syntax( const EmacsString &pattern )
 
 RegularExpressionTerm *SearchAdvancedAlgorithm::parse_re( EmacsStringStream &pattern )
 {
-    S_dbg_fn_trace( FormatString("parse_re( '%s' )") << pattern.remaining() );
+    S_dbg_fn_trace( FormatString("SearchAdvancedAlgorithm::parse_re( '%s' )") << pattern.remaining() );
 
     //
     //    parse the string into a list of terms
@@ -525,6 +531,8 @@ void SearchAdvancedAlgorithm::parse_min_max( EmacsStringStream &pattern, int &re
 
 static int hex_to_int(  EmacsChar_t ch )
 {
+    S_dbg_fn_trace( "hex_to_int" );
+
     if( ch >= '0' && ch <= '9' )
         return ch - '0';
     if( ch >= 'a' && ch <= 'f' )

@@ -42,8 +42,9 @@ const int DBG_NO_DBG_MSG    (0x00001000&DBG___ON);  // always defined
 #define DBG_PROCESS         (0x00020000&DBG___ON)   // process handling code
 #define DBG_TIMER           (0x00040000&DBG___ON)   // timer code
 #define DBG_ML_ERROR        (0x00080000&DBG___ON)   // MLisp errors
-#define DBG_EXT_SEARCH      (0x00100000&DBG__OFF)   // Extended search
-#define DBG_OBJ_LOCK        (0x00200000&DBG__OFF)   // add in lockObject() code for debugging object lifetime problems
+#define DBG_EXT_PARSER      (0x00100000&DBG__OFF)   // Extended search parser
+#define DBG_EXT_SEARCH      (0x00200000&DBG__OFF)   // Extended search algorithm
+#define DBG_OBJ_LOCK        (0x00400000&DBG__OFF)   // add in lockObject() code for debugging object lifetime problems
 #define DBG_VERBOSE         (0x20000000&DBG___ON)   // for more of one of the other types of debug info
 #define DBG_TMP             (0x40000000&DBG___ON)   // for temporary debug situations
 

@@ -121,6 +121,7 @@ FormatString &FormatString::operator <<( const void *v )
 FormatString &FormatString::operator <<( const EmacsString *v )
 {
     return operator << (*v);
+
 }
 
 FormatString &FormatString::operator <<( const EmacsString &v )
@@ -178,6 +179,24 @@ FormatString &FormatString::operator <<( const EmacsChar_t *v )
     return *this;
 }
 
+FormatString &FormatString::operator <<( bool is_true )
+{
+    if( next_arg_type == argInt )
+    {
+        intArg = is_true ? 1 : 0;
+
+        process_format();
+    }
+    else if( next_arg_type == argString )
+    {
+        stringArg = is_true ? "true" : "false";
+
+        process_format();
+    }
+
+    return *this;
+}
+
 EmacsChar_t FormatString::next_format_char()
 {
     if( next_format_char_index >= format.length() )
@@ -199,12 +218,11 @@ void FormatString::process_format()
             put( EmacsChar_t( intArg ) );
             break;
 
-        case 'C':    // show non-printable char as .
+        case 'C':    // show non-printable char as repr()
             {
-                EmacsChar_t ch = EmacsChar_t( intArg );
-                if( control_character( ch ) )
-                    ch = '.';
-                put( ch );
+                EmacsString ch_repr;
+                ch_repr.append( EmacsChar_t( intArg ) );
+                print_repr( ch_repr );
             }
             break;
 
