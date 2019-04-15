@@ -329,8 +329,6 @@ int match_wild_command(void)
     return 0;
 }
 
-
-
 // Function interface to delete a file
 int unlink_file( void )
 {
@@ -349,10 +347,7 @@ int unlink_file( void )
         return 0;
     }
 
-    EmacsString fullname;
-    expand_and_default (fn, EmacsString::null, fullname);
-
-    ml_value = Expression( EmacsFile::fio_delete( fullname ) ? 0 : -1 );
+    ml_value = Expression( EmacsFile::fio_delete( fn ) == 0 ? 0 : -1 );
     return 0;
 }
 
