@@ -20,7 +20,7 @@ class SetupError(Exception):
 #--------------------------------------------------------------------------------
 class Setup:
     def __init__( self, argv ):
-        self.enable_debug = False
+        self.opt_enable_debug = False
         self.opt_lib_dir = '/usr/local/lib/bemacs'
         self.opt_bemacs_gui = False
         self.opt_bemacs_cli = False
@@ -70,7 +70,7 @@ class Setup:
                 del args[0]
 
             elif args[0] == '--enable-debug':
-                self.enable_debug = True
+                self.opt_enable_debug = True
                 del args[0]
 
             elif args[0].startswith( '--lib-dir=' ):
@@ -406,7 +406,7 @@ class Compiler:
         self.__variables = {}
 
         self._addVar( 'PYCXX_VER',       pycxx_version_str )
-        if setup.enable_debug:
+        if setup.opt_enable_debug:
             self._addVar( 'DEBUG',           '_DEBUG')
         else:
             self._addVar( 'DEBUG',           'NDEBUG')
@@ -479,6 +479,8 @@ class Win64CompilerVC14(Compiler):
         self._addVar( 'PYTHON',         r'%(PYTHONDIR)s\python.exe' )
 
         self._addVar( 'LINK_LIBS',      '' )
+        self._addVar( 'OBJ_SUFFIX',     '.obj' )
+
 
     def platformFilename( self, filename ):
         return filename.replace( '/', '\\' )
@@ -563,8 +565,7 @@ class Win64CompilerVC14(Compiler):
     def setupUtilities( self ):
         self._addVar( 'EDIT_OBJ',       r'obj-utils' )
         self._addVar( 'EDIT_EXE',       r'exe-utils' )
-        self._addVar( 'CCCFLAGS',
-                                        r'/Zi /MT /EHsc /W4 '
+        self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc /W4 '
                                         r'-IInclude\Common -IInclude\Windows '
                                         r'"-DOS_NAME=\"Windows\"" "-DOS_VERSION=\"win64\"" '
                                         r'"-DCPU_TYPE=\"x86_64\"" "-DUI_TYPE=\"console\"" '
@@ -576,8 +577,7 @@ class Win64CompilerVC14(Compiler):
     def setupUnittests( self ):
         self._addVar( 'EDIT_OBJ',       r'obj-unit-tests' )
         self._addVar( 'EDIT_EXE',       r'exe-unit-tests' )
-        self._addVar( 'CCCFLAGS',
-                                        r'/Zi /MT /EHsc /W4 '
+        self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc /W4 '
                                         r'/DUNIT_TEST=1 '
                                         r'-IInclude\Common -IInclude\Windows '
                                         r'"-DOS_NAME=\"Windows\"" "-DOS_VERSION=\"win64\"" '
@@ -594,8 +594,7 @@ class Win64CompilerVC14(Compiler):
         self._addVar( 'LINK_LIBS',      'advapi32.lib '
                                         '%%(PYTHON_LIB)s\python%d%d.lib' %
                                         (sys.version_info.major, sys.version_info.minor) )
-        self._addVar( 'CCCFLAGS',
-                                        r'/Zi /MT /EHsc '
+        self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc '
                                         r'-DPYBEMACS=1 '
                                         r'-IInclude\Common -IInclude\Windows '
                                         r'-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
@@ -615,8 +614,7 @@ class Win64CompilerVC14(Compiler):
         self._addVar( 'EDIT_EXE',       r'exe-python-tools' )
         self._addVar( 'LINK_LIBS',      '%%(PYTHON_LIB)s\python%d%d.lib' %
                                         (sys.version_info.major, sys.version_info.minor) )
-        self._addVar( 'CCCFLAGS',
-                                        r'/Zi /MT /EHsc '
+        self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc '
                                         r'-DPYBEMACS=1 '
                                         r'-IInclude\Common -IInclude\Windows '
                                         r'-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
@@ -637,6 +635,7 @@ class Win32CompilerMSVC90(Compiler):
         self._addVar( 'PYTHON_INCLUDE', r'%(PYTHONDIR)s\include' )
         self._addVar( 'PYTHON_LIB',     r'%(PYTHONDIR)s\libs' )
         self._addVar( 'PYTHON',         r'%(PYTHONDIR)s\python.exe' )
+        self._addVar( 'OBJ_SUFFIX',     '.obj' )
 
     def platformFilename( self, filename ):
         return filename.replace( '/', '\\' )
@@ -717,8 +716,7 @@ class Win32CompilerMSVC90(Compiler):
     def setupUtilities( self ):
         self._addVar( 'EDIT_OBJ',       r'obj-utils' )
         self._addVar( 'EDIT_EXE',       r'exe-utils' )
-        self._addVar( 'CCCFLAGS',
-                                        r'/Zi /MT /EHsc '
+        self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc '
                                         r'-IInclude\Common -IInclude\Windows '
                                         r'"-DOS_NAME=\"Windows\"" "-DOS_VERSION=\"win32\"" '
                                         r'"-DCPU_TYPE=\"i386\"" "-DUI_TYPE=\"console\"" '
@@ -729,8 +727,7 @@ class Win32CompilerMSVC90(Compiler):
     def setupUnittests( self ):
         self._addVar( 'EDIT_OBJ',       r'obj-unit-tests' )
         self._addVar( 'EDIT_EXE',       r'exe-unit-tests' )
-        self._addVar( 'CCCFLAGS',
-                                        r'/Zi /MT /EHsc '
+        self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc '
                                         r'/DUNIT_TEST=1 '
                                         r'-IInclude\Common -IInclude\Windows '
                                         r'"-DOS_NAME=\"Windows\"" "-DOS_VERSION=\"win32\"" '
@@ -743,8 +740,7 @@ class Win32CompilerMSVC90(Compiler):
         self.addFeatureDefines( feature_defines )
         self._addVar( 'EDIT_OBJ',       r'obj-pybemacs' )
         self._addVar( 'EDIT_EXE',       r'exe-pybemacs' )
-        self._addVar( 'CCCFLAGS',
-                                        r'/Zi /MT /EHsc '
+        self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc '
                                         r'-DPYBEMACS=1 '
                                         r'-IInclude\Common -IInclude\Windows '
                                         r'-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
@@ -761,8 +757,7 @@ class Win32CompilerMSVC90(Compiler):
     def setupPythonTools( self ):
         self._addVar( 'EDIT_OBJ',       r'obj-python-tools' )
         self._addVar( 'EDIT_EXE',       r'exe-python-tools' )
-        self._addVar( 'CCCFLAGS',
-                                        r'/Zi /MT /EHsc '
+        self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc '
                                         r'-DPYBEMACS=1 '
                                         r'-IInclude\Common -IInclude\Windows '
                                         r'-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
@@ -778,16 +773,21 @@ class CompilerGCC(Compiler):
         self._addVar( 'PYCXXSRC',       '%(BUILDER_TOP_DIR)s/Imports/pycxx-%(PYCXX_VER)s/Src' )
         self._addVar( 'UCDDIR',         '%(BUILDER_TOP_DIR)s/Imports/ucd' )
 
-
         if self.setup.platform == 'macosx':
-            self._addVar( 'CCC',            'g++ -arch x86_64' )
-            self._addVar( 'CC',             'gcc -arch x86_64' )
+            self._addVar( 'CCC',        'g++ -arch x86_64' )
+            self._addVar( 'CC',         'gcc -arch x86_64' )
 
         else:
-            self._addVar( 'CCC',            'g++' )
-            self._addVar( 'CC',             'gcc' )
+            self._addVar( 'CCC',        'g++' )
+            self._addVar( 'CC',         'gcc' )
 
         self._addVar( 'LINK_LIBS',      '' )
+        self._addVar( 'OBJ_SUFFIX',     '.o' )
+        if self.setup.opt_enable_debug:
+            self._addVar( 'CCC_OPT', '-Og' )
+
+        else:
+            self._addVar( 'CCC_OPT', '-O3' )
 
     def getPythonExtensionFileExt( self ):
         return '.so'
@@ -847,7 +847,7 @@ class CompilerGCC(Compiler):
         rules = []
 
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
-        rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, target) )
+        rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, obj_filename) )
         rules.append( '\t@mkdir -p %(EDIT_OBJ)s' )
         rules.append( '\t@%%(CC)s -c %%(CCCFLAGS)s -o %s  %s' % (obj_filename, target.src_filename) )
 
@@ -870,8 +870,7 @@ class MacOsxCompilerGCC(CompilerGCC):
 
         self._addVar( 'EDIT_OBJ',       'obj-utils' )
         self._addVar( 'EDIT_EXE',       'exe-utils' )
-        self._addVar( 'CCCFLAGS',
-                                        '-g -O2 '
+        self._addVar( 'CCCFLAGS',       '-g %(CCC_OPT)s '
                                         '-Werror -Wall -fPIC -fexceptions -frtti '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"MacOSX\\"" '
@@ -879,14 +878,15 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-DDARWIN '
                                         '-D%(DEBUG)s' )
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
+        self._addVar( 'OBJ_SUFFIX',     '.o' )
+
 
     def setupUnittests( self ):
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-unit-tests' )
         self._addVar( 'EDIT_EXE',       'exe-unit-tests' )
-        self._addVar( 'CCCFLAGS',
-                                        '-g -O0 '
+        self._addVar( 'CCCFLAGS',       '-g -O0 '
                                         '-DUNIT_TEST=1 '
                                         '-Werror -Wall -fPIC -fexceptions -frtti '
                                         '-IInclude/Common -IInclude/Unix '
@@ -911,8 +911,7 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'PYTHON',         '%(PYTHONDIR)s/Resources/Python.app/Contents/MacOS/Python' )
         self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)sm' )
 
-        self._addVar( 'CCCFLAGS',
-                                        '-g '
+        self._addVar( 'CCCFLAGS',       '-g %(CCC_OPT)s '
                                         '-Werror -Wall -fPIC -fexceptions -frtti '
                                         '-DPYBEMACS=1 '
                                         '-DEMACS_PYTHON_EXTENSION=1 '
@@ -939,8 +938,7 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_OBJ',       'obj-cli-bemacs' )
         self._addVar( 'EDIT_EXE',       'exe-cli-bemacs' )
 
-        self._addVar( 'CCCFLAGS',
-                                        '-g '
+        self._addVar( 'CCCFLAGS',       '-g %(CCC_OPT)s '
                                         '-Werror -Wall -fPIC -fexceptions -frtti '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"MacOSX\\"" '
@@ -963,8 +961,7 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'PYTHON',         '%(PYTHONDIR)s/Resources/Python.app/Contents/MacOS/Python' )
         self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)sm' )
 
-        self._addVar( 'CCCFLAGS',
-                                        '-g '
+        self._addVar( 'CCCFLAGS',       '-g '
                                         '-Werror -Wall -fPIC -fexceptions -frtti '
                                         '-DPYBEMACS=1 '
                                         '-DEMACS_PYTHON_EXTENSION=1 '
@@ -985,22 +982,21 @@ class LinuxCompilerGCC(CompilerGCC):
 
         self._addVar( 'EDIT_OBJ',       'obj-utils' )
         self._addVar( 'EDIT_EXE',       'exe-utils' )
-        self._addVar( 'CCCFLAGS',
-                                        '-g %(CCC_OPT)s '
+        self._addVar( 'CCCFLAGS',       '-g %(CCC_OPT)s '
                                         '-Werror -Wall -fPIC -fexceptions -frtti '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
                                         '-D%(DEBUG)s' )
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s' )
+        self._addVar( 'OBJ_SUFFIX',     '.o' )
 
     def setupUnittests( self ):
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-unit-tests' )
         self._addVar( 'EDIT_EXE',       'exe-unit-tests' )
-        self._addVar( 'CCCFLAGS',
-                                        '-g -O0 '
+        self._addVar( 'CCCFLAGS',       '-g -O0 '
                                         '-DUNIT_TEST=1 '
                                         '-Werror -Wall -fPIC -fexceptions -frtti '
                                         '-IInclude/Common -IInclude/Unix '
@@ -1020,8 +1016,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addFromEnv( 'PYTHON_VERSION' )
         self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
 
-        self._addVar( 'CCCFLAGS',
-                                        '-g '
+        self._addVar( 'CCCFLAGS',       '-g '
                                         '-Werror -Wall -fPIC -fexceptions -frtti '
                                         '-DPYBEMACS=1 '
                                         '-DEMACS_PYTHON_EXTENSION=1 '
@@ -1051,14 +1046,8 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '-fprofile-arcs '
                                         '-fprofile-abs-path '
                                         '-fprofile-dir=%s ' % (os.getcwd(),) )
-        elif self.setup.opt_enable_debug:
-            self._addVar( 'CCC_OPT', '-Og' )
 
-        else:
-            self._addVar( 'CCC_OPT', '-O3' )
-
-        self._addVar( 'CCCFLAGS',
-                                        '-g %(CCC_OPT)s '
+        self._addVar( 'CCCFLAGS',       '-g %(CCC_OPT)s '
                                         '-Werror -Wall -fPIC -fexceptions -frtti '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
@@ -1079,8 +1068,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
         self._addVar( 'LINK_LIBS', '-L%s/lib64 -lpython%d.%dm' % (sys.prefix, sys.version_info.major, sys.version_info.minor) )
 
-        self._addVar( 'CCCFLAGS',
-                                        '-g '
+        self._addVar( 'CCCFLAGS',       '-g '
                                         '-Werror -Wall -fPIC -fexceptions -frtti '
                                         '-DPYBEMACS=1 '
                                         '-DEMACS_PYTHON_EXTENSION=1 '
@@ -1195,6 +1183,8 @@ class Source(Target):
         if self.all_dependencies is None:
             self.all_dependencies = []
 
+        self.rule = None
+
     def __repr__( self ):
         return '<Source:%s>' % (self.src_filename)
 
@@ -1204,20 +1194,23 @@ class Source(Target):
 
         basename = os.path.basename( self.src_filename )
         if basename.endswith( '.cpp' ):
-            return self.compiler.platformFilename( self.compiler.expand( r'%%(EDIT_OBJ)s/%s.obj' % (basename[:-len('.cpp')],) ) )
+            self.rule = self.compiler.ruleCxx
+            return self.compiler.platformFilename( self.compiler.expand( r'%%(EDIT_OBJ)s/%s%%(OBJ_SUFFIX)s' % (basename[:-len('.cpp')],) ) )
 
         if basename.endswith( '.cxx' ):
-            return self.compiler.platformFilename( self.compiler.expand( r'%%(EDIT_OBJ)s/%s.obj' % (basename[:-len('.cxx')],) ) )
+            self.rule = self.compiler.ruleCxx
+            return self.compiler.platformFilename( self.compiler.expand( r'%%(EDIT_OBJ)s/%s%%(OBJ_SUFFIX)s' % (basename[:-len('.cxx')],) ) )
 
         if basename.endswith( '.c' ):
-            return self.compiler.platformFilename( self.compiler.expand( r'%%(EDIT_OBJ)s/%s.obj' % (basename[:-len('.c')],) ) )
+            self.rule = self.compiler.ruleC
+            return self.compiler.platformFilename( self.compiler.expand( r'%%(EDIT_OBJ)s/%s%%(OBJ_SUFFIX)s' % (basename[:-len('.c')],) ) )
 
         raise SetupError( 'unknown source %r' % (self.src_filename,) )
 
     def _generateMakefile( self ):
         debug( '%r._generateMakefile()' % (self,) )
 
-        self.compiler.ruleCxx( self )
+        self.rule( self )
         self.compiler.ruleClean( self.getTargetFilename() )
 
 class UnicodeDataHeader(Target):
