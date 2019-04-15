@@ -848,7 +848,7 @@ int BoundName::execute(void)
         else
             rv = implementation->execute();
     }
-    catch( EmacsException e )
+    catch( EmacsException &e )
     {
         if( !ml_err )
             error("Unknown exception thrown");

@@ -107,7 +107,7 @@ EmacsWindowRing * window_arg( int n )
     {
         return ml_value.asWindows();
     }
-    catch( EmacsExceptionExpressionNotWindows )
+    catch( EmacsExceptionExpressionNotWindows & )
     {
         error( "windows argument expected.");
         return 0;
@@ -126,7 +126,7 @@ int numeric_arg( int n )
         ml_value = value;
         return value;
     }
-    catch( EmacsExceptionExpressionNotInteger )
+    catch( EmacsExceptionExpressionNotInteger & )
     {
         error( "Numeric argument expected." );
     }
@@ -148,7 +148,7 @@ int string_arg( int n )
         ml_value = ml_value.asString();
         return 1;
     }
-    catch( EmacsExceptionExpressionNotString )
+    catch( EmacsExceptionExpressionNotString & )
     {
         error( "String argument expected." );
     }

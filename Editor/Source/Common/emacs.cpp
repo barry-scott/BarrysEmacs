@@ -512,7 +512,7 @@ int read_in_files(void)
                     parent_path
                     );
                 }
-                catch( EmacsException )
+                catch( EmacsException & )
                 {
                     // no need to clean up
                 }

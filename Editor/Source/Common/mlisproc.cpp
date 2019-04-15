@@ -1134,21 +1134,21 @@ void perform_set
             return;
         }
     }
-    catch( EmacsExceptionVariableTabOutOfRange )
+    catch( EmacsExceptionVariableTabOutOfRange & )
     {
         error( FormatString("%s should have a value between 1 and 64") << v->v_name );
     }
-    catch( EmacsExceptionVariableGreaterThanRange e )
+    catch( EmacsExceptionVariableGreaterThanRange &e )
     {
         error( FormatString("%s should be positive and greater than %d") <<
                 v->v_name << e.range );
     }
-    catch( EmacsExceptionVariableLessThanRange e )
+    catch( EmacsExceptionVariableLessThanRange &e )
     {
         error( FormatString("%s should be positive and less than %d") <<
                 v->v_name << e.range );
     }
-    catch( EmacsExceptionVariable )
+    catch( EmacsExceptionVariable & )
     {
         error( FormatString("%s cannot be assigned to") << v->v_name );
     }

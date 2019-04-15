@@ -872,7 +872,7 @@ static void backup_buffer( EmacsString &fn )
             fab.sys_parse( ml_value.asString(), fn );
             use_builtin_rule = false;
         }
-        catch( EmacsExceptionExpressionNotString )
+        catch( EmacsExceptionExpressionNotString & )
         {
             use_builtin_rule = true;
         }
