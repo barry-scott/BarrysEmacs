@@ -11,6 +11,7 @@ def main( argv ):
         python = '/usr/bin/python2'
         all_parts = (
             spec_file_head,
+            spec_file_requires_common,
             spec_file_requires_cli,
             spec_file_build,
             spec_file_description,
@@ -24,8 +25,9 @@ def main( argv ):
         python = '/usr/bin/python3'
         all_parts = (
             spec_file_head,
+            spec_file_requires_common,
             spec_file_requires_cli,
-            spec_file_requires_qui,
+            spec_file_requires_gui,
             spec_file_build,
             spec_file_build_gui_extra,
             spec_file_description,
@@ -65,18 +67,22 @@ URL:            http://barrys-emacs.org/
 Source0:        http://barrys-emacs.org/source_kits/%{name}-%{version}.tar.gz
 '''
 
+spec_file_requires_common = '''
+BuildRequires:  unicode-ucd >= 7.0
+'''
+
 spec_file_requires_cli = '''
 Requires:       bemacs-cli
 '''
 
-spec_file_requires_qui = '''
+spec_file_requires_gui = '''
+Requires:       bemacs-gui
+
 BuildRequires:  unicode-ucd >= 7.0
 BuildRequires:  python3-devel >= 3.4
 BuildRequires:  python3-qt5 >= 5.5.1
 BuildRequires:  gcc-c++
 BuildRequires:  python3-pycxx-devel >= 7.1.2
-
-Requires:       bemacs-gui
 '''
 
 spec_file_build = '''
@@ -141,6 +147,8 @@ Summary: Barry's Emacs CLI version
 Group: Applications/Editors
 Requires: bemacs-common
 Requires: python3 >= 3.4
+
+BuildRequires:  unicode-ucd >= 7.0
 
 %description cli
 Barry's Emacs
