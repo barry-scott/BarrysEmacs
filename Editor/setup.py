@@ -849,7 +849,7 @@ class CompilerGCC(Compiler):
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
         rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, obj_filename) )
         rules.append( '\t@mkdir -p %(EDIT_OBJ)s' )
-        rules.append( '\t@%%(CC)s -c %%(CCCFLAGS)s -o %s  %s' % (obj_filename, target.src_filename) )
+        rules.append( '\t@%%(CC)s -c %%(CCFLAGS)s -o %s  %s' % (obj_filename, target.src_filename) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
@@ -870,13 +870,16 @@ class MacOsxCompilerGCC(CompilerGCC):
 
         self._addVar( 'EDIT_OBJ',       'obj-utils' )
         self._addVar( 'EDIT_EXE',       'exe-utils' )
-        self._addVar( 'CCCFLAGS',       '-g %(CCC_OPT)s '
-                                        '-Werror -Wall -fPIC -fexceptions -frtti '
+
+        self._addVar( 'CCFLAGS',        '-g %(CCC_OPT)s '
+                                        '-Werror -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"MacOSX\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
                                         '-DDARWIN '
                                         '-D%(DEBUG)s' )
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
+                                        '-fexceptions -frtti ' )
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
         self._addVar( 'OBJ_SUFFIX',     '.o' )
 
@@ -886,14 +889,17 @@ class MacOsxCompilerGCC(CompilerGCC):
 
         self._addVar( 'EDIT_OBJ',       'obj-unit-tests' )
         self._addVar( 'EDIT_EXE',       'exe-unit-tests' )
-        self._addVar( 'CCCFLAGS',       '-g -O0 '
+        self._addVar( 'CCFLAGS',        '-g -O0 '
                                         '-DUNIT_TEST=1 '
-                                        '-Werror -Wall -fPIC -fexceptions -frtti '
+                                        '-Werror -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"MacOSX\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
                                         '-DDARWIN '
                                         '-D%(DEBUG)s' )
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
+                                        '-fexceptions -frtti ' )
+
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
     def setupPythonEmacs( self, feature_defines=None ):
@@ -911,8 +917,8 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'PYTHON',         '%(PYTHONDIR)s/Resources/Python.app/Contents/MacOS/Python' )
         self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)sm' )
 
-        self._addVar( 'CCCFLAGS',       '-g %(CCC_OPT)s '
-                                        '-Werror -Wall -fPIC -fexceptions -frtti '
+        self._addVar( 'CCFLAGS',        '-g %(CCC_OPT)s '
+                                        '-Werror -Wall -fPIC '
                                         '-DPYBEMACS=1 '
                                         '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
@@ -922,6 +928,9 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-DDARWIN '
                                         '%(FEATURE_DEFINES)s '
                                         '-D%(DEBUG)s' )
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
+                                        '-fexceptions -frtti ' )
+
 
         self._addVar( 'LDSHARED',       '%(CCC)s -bundle -g '
                                         '-framework System '
@@ -982,12 +991,14 @@ class LinuxCompilerGCC(CompilerGCC):
 
         self._addVar( 'EDIT_OBJ',       'obj-utils' )
         self._addVar( 'EDIT_EXE',       'exe-utils' )
-        self._addVar( 'CCCFLAGS',       '-g %(CCC_OPT)s '
-                                        '-Werror -Wall -fPIC -fexceptions -frtti '
+        self._addVar( 'CCFLAGS',        '-g %(CCC_OPT)s '
+                                        '-Werror -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
                                         '-D%(DEBUG)s' )
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
+                                        '-fexceptions -frtti ' )
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s' )
         self._addVar( 'OBJ_SUFFIX',     '.o' )
 
@@ -996,13 +1007,15 @@ class LinuxCompilerGCC(CompilerGCC):
 
         self._addVar( 'EDIT_OBJ',       'obj-unit-tests' )
         self._addVar( 'EDIT_EXE',       'exe-unit-tests' )
-        self._addVar( 'CCCFLAGS',       '-g -O0 '
+        self._addVar( 'CCFLAGS',        '-g -O0 '
                                         '-DUNIT_TEST=1 '
-                                        '-Werror -Wall -fPIC -fexceptions -frtti '
+                                        '-Werror -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
                                         '-D%(DEBUG)s' )
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
+                                        '-fexceptions -frtti ' )
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
     def setupPythonEmacs( self, feature_defines=None ):
@@ -1016,8 +1029,8 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addFromEnv( 'PYTHON_VERSION' )
         self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
 
-        self._addVar( 'CCCFLAGS',       '-g '
-                                        '-Werror -Wall -fPIC -fexceptions -frtti '
+        self._addVar( 'CCFLAGS',        '-g '
+                                        '-Werror -Wall -fPIC '
                                         '-DPYBEMACS=1 '
                                         '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
@@ -1026,7 +1039,8 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"python\\"" '
                                         '%(FEATURE_DEFINES)s '
                                         '-D%(DEBUG)s' )
-
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
+                                        '-fexceptions -frtti ' )
         self._addVar( 'LDEXE',          '%(CCC)s -g ' )
         self._addVar( 'LDSHARED',       '%(CCC)s -shared -g ' )
 
@@ -1047,14 +1061,16 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '-fprofile-abs-path '
                                         '-fprofile-dir=%s ' % (os.getcwd(),) )
 
-        self._addVar( 'CCCFLAGS',       '-g %(CCC_OPT)s '
-                                        '-Werror -Wall -fPIC -fexceptions -frtti '
+        self._addVar( 'CCFLAGS',        '-g %(CCC_OPT)s '
+                                        '-Werror -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
                                         '-D%(DEBUG)s '
                                         '%(FEATURE_DEFINES)s '
                                         '-DBEMACS_LIB_DIR=\\"%(BEMACS_LIB_DIR)s\\"' )
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
+                                        '-fexceptions -frtti ' )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s ' )
 
@@ -1068,13 +1084,15 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
         self._addVar( 'LINK_LIBS', '-L%s/lib64 -lpython%d.%dm' % (sys.prefix, sys.version_info.major, sys.version_info.minor) )
 
-        self._addVar( 'CCCFLAGS',       '-g '
-                                        '-Werror -Wall -fPIC -fexceptions -frtti '
+        self._addVar( 'CCFLAGS',        '-g '
+                                        '-Werror -Wall -fPIC '
                                         '-DPYBEMACS=1 '
                                         '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
                                         '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
                                         '-D%(DEBUG)s' )
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
+                                        '-fexceptions -frtti ' )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
