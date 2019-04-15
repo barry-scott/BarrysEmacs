@@ -1222,11 +1222,13 @@ int sig_process( int signal )
     //
     if( signal == SIGCONT )
     {
-        long int sig_mask;
+        sigset_t sig_set;
+        sigemptyset( &sig_set );
+        sigaddset( &sig_set, SIGCHLD );
 
-        sig_mask = sigblock( 1<<SIGCHLD );
+        sigprocmask( SIG_BLOCK, &sig_set, NULL );
         process->p_flag = (process->p_flag & ~STOPPED ) | RUNNING;
-        sigsetmask( ~( 1<<SIGCHLD ) & sig_mask );
+        sigprocmask( SIG_UNBLOCK, &sig_set, NULL );
     }
 
     switch( signal )
