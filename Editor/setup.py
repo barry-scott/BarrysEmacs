@@ -872,7 +872,7 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_EXE',       'exe-utils' )
         self._addVar( 'CCCFLAGS',
                                         '-g -O2 '
-                                        '-Wall -fPIC -fexceptions -frtti '
+                                        '-Werror -Wall -fPIC -fexceptions -frtti '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"MacOSX\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
@@ -888,7 +888,7 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'CCCFLAGS',
                                         '-g -O0 '
                                         '-DUNIT_TEST=1 '
-                                        '-Wall -fPIC -fexceptions -frtti '
+                                        '-Werror -Wall -fPIC -fexceptions -frtti '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"MacOSX\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
@@ -913,7 +913,7 @@ class MacOsxCompilerGCC(CompilerGCC):
 
         self._addVar( 'CCCFLAGS',
                                         '-g '
-                                        '-Wall -fPIC -fexceptions -frtti '
+                                        '-Werror -Wall -fPIC -fexceptions -frtti '
                                         '-DPYBEMACS=1 '
                                         '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
@@ -941,7 +941,7 @@ class MacOsxCompilerGCC(CompilerGCC):
 
         self._addVar( 'CCCFLAGS',
                                         '-g '
-                                        '-Wall -fPIC -fexceptions -frtti '
+                                        '-Werror -Wall -fPIC -fexceptions -frtti '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"MacOSX\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
@@ -965,7 +965,7 @@ class MacOsxCompilerGCC(CompilerGCC):
 
         self._addVar( 'CCCFLAGS',
                                         '-g '
-                                        '-Wall -fPIC -fexceptions -frtti '
+                                        '-Werror -Wall -fPIC -fexceptions -frtti '
                                         '-DPYBEMACS=1 '
                                         '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
@@ -987,7 +987,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_EXE',       'exe-utils' )
         self._addVar( 'CCCFLAGS',
                                         '-g %(CCC_OPT)s '
-                                        '-Wall -fPIC -fexceptions -frtti '
+                                        '-Werror -Wall -fPIC -fexceptions -frtti '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
@@ -1002,7 +1002,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'CCCFLAGS',
                                         '-g -O0 '
                                         '-DUNIT_TEST=1 '
-                                        '-Wall -fPIC -fexceptions -frtti '
+                                        '-Werror -Wall -fPIC -fexceptions -frtti '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
@@ -1022,7 +1022,7 @@ class LinuxCompilerGCC(CompilerGCC):
 
         self._addVar( 'CCCFLAGS',
                                         '-g '
-                                        '-Wall -fPIC -fexceptions -frtti '
+                                        '-Werror -Wall -fPIC -fexceptions -frtti '
                                         '-DPYBEMACS=1 '
                                         '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
@@ -1059,7 +1059,7 @@ class LinuxCompilerGCC(CompilerGCC):
 
         self._addVar( 'CCCFLAGS',
                                         '-g %(CCC_OPT)s '
-                                        '-Wall -fPIC -fexceptions -frtti '
+                                        '-Werror -Wall -fPIC -fexceptions -frtti '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
@@ -1081,7 +1081,7 @@ class LinuxCompilerGCC(CompilerGCC):
 
         self._addVar( 'CCCFLAGS',
                                         '-g '
-                                        '-Wall -fPIC -fexceptions -frtti '
+                                        '-Werror -Wall -fPIC -fexceptions -frtti '
                                         '-DPYBEMACS=1 '
                                         '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
