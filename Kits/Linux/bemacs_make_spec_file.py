@@ -18,6 +18,7 @@ def main( argv ):
             spec_file_files_cli,
             spec_file_files_common,
             spec_file_tail)
+
     elif target == 'gui':
         spec_targets = 'build-gui build-cli'
         python = '/usr/bin/python3'
@@ -34,6 +35,7 @@ def main( argv ):
             spec_file_files_cli,
             spec_file_files_common,
             spec_file_tail)
+
     else:
         raise ValueError( 'need a target' )
 
@@ -85,16 +87,16 @@ echo Info: prep start
 echo Info: prep done
 
 %build
-echo Info: build PWD $( pwd )
 true
 
 %install
 echo Info: Install PWD $( pwd )
 
 export BUILDER_TOP_DIR=$( pwd )
-export PYTHON_VERSION=$( ./.(PYTHON)s -c 'import sys; print( "%d.%d" % (sys.version_info[0], sys.version_info[1]) )' )
 
 cd ${BUILDER_TOP_DIR}/Builder
+# tell Editor/build-linux.sh to use Unicode UCD and PyCXX from system
+export SETUP_OPTIONS="--system-ucd --system-pycxx"
 make -f linux.mak PYTHON=./.(PYTHON)s DESTDIR=%{buildroot} ./.(TARGETS)s
 
 mkdir -p %{buildroot}%{_mandir}/man1
@@ -187,7 +189,7 @@ spec_file_files_common = '''
 
 spec_file_tail = '''
 %changelog
-* Mon Apr 15 2019 Barry Scott <barry@barrys-emacs.org> - 8.5.2-1
+* Mon Apr 15 2019 Barry Scott <barry@barrys-emacs.org> - 8.5.3-1
 - prep for copr release
 * Sat Apr 30 2016 barry scott <barry@barrys-emacs.org> - 8.2.1-1
 - First version

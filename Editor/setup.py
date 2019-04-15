@@ -27,6 +27,8 @@ class Setup:
         self.opt_utils = False
         self.opt_unit_tests = False
         self.opt_coverage = False
+        self.opt_system_pycxx = False
+        self.opt_system_ucd = False
 
         args = argv[1:]
         if len(args) < 3:
@@ -75,6 +77,14 @@ class Setup:
 
             elif args[0].startswith( '--lib-dir=' ):
                 self.opt_lib_dir = args[0][len('--lib-dir='):]
+                del args[0]
+
+            elif args[0].startswith( '--system-pycxx' ):
+                self.opt_system_pycxx = True
+                del args[0]
+
+            elif args[0].startswith( '--system-ucd' ):
+                self.opt_system_ucd = True
                 del args[0]
 
             elif args[0].startswith( '--coverage' ):
@@ -412,6 +422,8 @@ class Compiler:
             self._addVar( 'DEBUG',           'NDEBUG')
 
         self._addFromEnv( 'BUILDER_TOP_DIR' )
+
+        self._addVar( 'PYTHON_VERSION', '%d.%d' % (sys.version_info[0], sys.version_info[1]) )
 
     def platformFilename( self, filename ):
         return filename
@@ -769,9 +781,19 @@ class CompilerGCC(Compiler):
     def __init__( self, setup ):
         Compiler.__init__( self, setup )
 
-        self._addVar( 'PYCXX',          '%(BUILDER_TOP_DIR)s/Imports/pycxx-%(PYCXX_VER)s' )
-        self._addVar( 'PYCXXSRC',       '%(BUILDER_TOP_DIR)s/Imports/pycxx-%(PYCXX_VER)s/Src' )
-        self._addVar( 'UCDDIR',         '%(BUILDER_TOP_DIR)s/Imports/ucd' )
+        if setup.opt_system_ucd:
+            self._addVar( 'UCDDIR',         '/usr/share/unicode/ucd' )
+
+        else:
+            self._addVar( 'UCDDIR',         '%(BUILDER_TOP_DIR)s/Imports/ucd' )
+
+        if setup.opt_system_pycxx:
+            self._addVar( 'PYCXX',          '/usr/include' )
+            self._addVar( 'PYCXXSRC',       '/usr/src/CXX' )
+
+        else:
+            self._addVar( 'PYCXX',          '%(BUILDER_TOP_DIR)s/Imports/pycxx-%(PYCXX_VER)s' )
+            self._addVar( 'PYCXXSRC',       '%(BUILDER_TOP_DIR)s/Imports/pycxx-%(PYCXX_VER)s/Src' )
 
         if self.setup.platform == 'macosx':
             self._addVar( 'CCC',        'g++ -arch x86_64' )
@@ -910,7 +932,6 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_OBJ',       'obj-pybemacs' )
         self._addVar( 'EDIT_EXE',       'exe-pybemacs' )
 
-        self._addFromEnv( 'PYTHON_VERSION' )
         self._addVar( 'PYTHONDIR',      '/Library/Frameworks/Python.framework/Versions/%(PYTHON_VERSION)s' )
         self._addVar( 'PYTHON_FRAMEWORK', '/Library/Frameworks/Python.framework/Versions/%(PYTHON_VERSION)s/Python' )
 
@@ -963,7 +984,6 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_OBJ',       'obj-python-tools' )
         self._addVar( 'EDIT_EXE',       'exe-python-tools' )
 
-        self._addFromEnv( 'PYTHON_VERSION' )
         self._addVar( 'PYTHONDIR',      '/Library/Frameworks/Python.framework/Versions/%(PYTHON_VERSION)s' )
         self._addVar( 'PYTHON_FRAMEWORK', '/Library/Frameworks/Python.framework/Versions/%(PYTHON_VERSION)s/Python' )
 
@@ -1026,7 +1046,6 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_OBJ',       'obj-pybemacs' )
         self._addVar( 'EDIT_EXE',       'exe-pybemacs' )
 
-        self._addFromEnv( 'PYTHON_VERSION' )
         self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
 
         self._addVar( 'CCFLAGS',        '-g '
@@ -1080,7 +1099,6 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_OBJ',       'obj-python-tools' )
         self._addVar( 'EDIT_EXE',       'exe-python-tools' )
 
-        self._addFromEnv( 'PYTHON_VERSION' )
         self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
         self._addVar( 'LINK_LIBS', '-L%s/lib64 -lpython%d.%dm' % (sys.prefix, sys.version_info.major, sys.version_info.minor) )
 
