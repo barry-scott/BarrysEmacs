@@ -72,6 +72,7 @@ BuildRequires:  unicode-ucd >= 7.0
 BuildRequires:  python3-devel >= 3.4
 BuildRequires:  python3-qt5 >= 5.5.1
 BuildRequires:  gcc-c++
+BuildRequires:  python3-pycxx-devel >= 7.1.2
 
 Requires:       bemacs-gui
 '''
@@ -104,8 +105,6 @@ cp ${BUILDER_TOP_DIR}/Kits/Linux/bemacs.desktop %{buildroot}/usr/share/applicati
 '''
 
 spec_file_build_gui_extra = '''
-mkdir -p %{buildroot}/usr/share/bemacs/lib/xml_preferences
-cp ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/xml_preferences/*.py %{buildroot}/usr/share/bemacs/lib/xml_preferences
 '''
 
 spec_file_description = '''
@@ -124,6 +123,7 @@ Group: Applications/Editors
 Requires: bemacs-common
 Requires: python3 >= 3.4
 Requires: python3-qt5 >= 5.5.1
+Requires: python3-xml-preferences
 
 %description gui
 Barry's Emacs
@@ -187,6 +187,8 @@ spec_file_files_common = '''
 
 spec_file_tail = '''
 %changelog
+* Mon Apr 15 2019 Barry Scott <barry@barrys-emacs.org> - 8.5.2-1
+- prep for copr release
 * Sat Apr 30 2016 barry scott <barry@barrys-emacs.org> - 8.2.1-1
 - First version
 '''
