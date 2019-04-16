@@ -77,9 +77,8 @@ Requires:       bemacs-cli
 
 spec_file_requires_gui = '''
 Requires:       bemacs-gui
-'''
+Requires:       python3 >= 3.4
 
-spec_file_requires_qui = '''
 BuildRequires:  python3-devel >= 3.4
 BuildRequires:  python3-qt5 >= 5.5.1
 BuildRequires:  gcc-c++
