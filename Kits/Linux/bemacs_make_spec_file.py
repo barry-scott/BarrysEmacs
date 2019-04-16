@@ -68,7 +68,7 @@ Source0:        http://barrys-emacs.org/source_kits/%{name}-%{version}.tar.gz
 '''
 
 spec_file_requires_common = '''
-BuildRequires:  unicode-ucd >= 7.0
+BuildRequires:  unicode-ucd
 '''
 
 spec_file_requires_cli = '''
@@ -77,8 +77,9 @@ Requires:       bemacs-cli
 
 spec_file_requires_gui = '''
 Requires:       bemacs-gui
+'''
 
-BuildRequires:  unicode-ucd >= 7.0
+spec_file_requires_qui = '''
 BuildRequires:  python3-devel >= 3.4
 BuildRequires:  python3-qt5 >= 5.5.1
 BuildRequires:  gcc-c++
@@ -102,7 +103,13 @@ export BUILDER_TOP_DIR=$( pwd )
 
 cd ${BUILDER_TOP_DIR}/Builder
 # tell Editor/build-linux.sh to use Unicode UCD and PyCXX from system
+%if 0%{?centos_ver} == 6
+# Centos 6 g++ raises false warnings that are not present in newer compilers
+# Centos 6 has old unicode-ucd and no pycxx
+export SETUP_OPTIONS="--no-warnings-as-errors"
+%else
 export SETUP_OPTIONS="--system-ucd --system-pycxx"
+%fi
 make -f linux.mak PYTHON=./.(PYTHON)s DESTDIR=%{buildroot} ./.(TARGETS)s
 
 mkdir -p %{buildroot}%{_mandir}/man1
@@ -147,8 +154,6 @@ Summary: Barry's Emacs CLI version
 Group: Applications/Editors
 Requires: bemacs-common
 Requires: python3 >= 3.4
-
-BuildRequires:  unicode-ucd >= 7.0
 
 %description cli
 Barry's Emacs

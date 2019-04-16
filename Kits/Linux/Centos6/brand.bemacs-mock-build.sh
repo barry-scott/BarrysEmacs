@@ -11,42 +11,39 @@ then
 fi
 
 MOCK_VERSION_NAME=${1? mock cfg name}
-MOCK_ROOT=$( sudo mock --root=${MOCK_VERSION_NAME} -p )
+MOCK_ROOT=$( mock --root=${MOCK_VERSION_NAME} -p )
 if [ ! -e "${MOCK_ROOT}" ]
 then
     echo "Info: Init mock for ${MOCK_VERSION_NAME}"
-    sudo \
-         mock \
-            --root=${MOCK_VERSION_NAME} \
-            --init
+     mock \
+        --root=${MOCK_VERSION_NAME} \
+        --init
 fi
 
 ${PYTHON} ../bemacs_make_spec_file.py cli ${V} tmp/bemacs.spec
 
-sudo \
-    mock \
-        --root=${MOCK_VERSION_NAME} \
-        --buildsrpm \
-        --spec tmp/bemacs.spec \
-        --sources tmp/${KIT_BASENAME}.tar.gz
+mock \
+    --root=${MOCK_VERSION_NAME} \
+    --buildsrpm \
+    --spec tmp/bemacs.spec \
+    --sources tmp/${KIT_BASENAME}.tar.gz
 
 DISTRO=el6
 
 MOCK_BUILD_DIR=${MOCK_ROOT}/builddir/build
-sudo ls -l ${MOCK_BUILD_DIR}/SRPMS
+ls -l ${MOCK_BUILD_DIR}/SRPMS
 
 SRPM_BASENAME="${KIT_BASENAME}-1.${DISTRO}"
 
-sudo cp -v "${MOCK_BUILD_DIR}/SRPMS/${SRPM_BASENAME}.src.rpm" tmp
+cp -v "${MOCK_BUILD_DIR}/SRPMS/${SRPM_BASENAME}.src.rpm" tmp
 
 echo "Info: Creating RPM"
-sudo \
-    mock \
-        --root=${MOCK_VERSION_NAME} \
-        --rebuild --dnf \
-            "tmp/${SRPM_BASENAME}.src.rpm"
+mock \
+    --root=${MOCK_VERSION_NAME} \
+    --rebuild --dnf \
+        "tmp/${SRPM_BASENAME}.src.rpm"
 
-sudo ls -l ${MOCK_BUILD_DIR}/RPMS
+ls -l ${MOCK_BUILD_DIR}/RPMS
 
 ALL_BIN_KITNAMES="
 ${KITNAME}
@@ -56,6 +53,5 @@ ${KITNAME}-debuginfo"
 
 for BIN_KITNAME in ${ALL_BIN_KITNAMES}
 do
-    sudo cp -v "${MOCK_BUILD_DIR}/RPMS/${BIN_KITNAME}-${V}-1.${DISTRO}.x86_64.rpm" tmp
+    cp -v "${MOCK_BUILD_DIR}/RPMS/${BIN_KITNAME}-${V}-1.${DISTRO}.x86_64.rpm" tmp
 done
-sudo chown ${USER}: tmp/*.rpm

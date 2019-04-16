@@ -29,6 +29,8 @@ class Setup:
         self.opt_coverage = False
         self.opt_system_pycxx = False
         self.opt_system_ucd = False
+        self.opt_warnings_as_errors = True
+
 
         args = argv[1:]
         if len(args) < 3:
@@ -85,6 +87,10 @@ class Setup:
 
             elif args[0].startswith( '--system-ucd' ):
                 self.opt_system_ucd = True
+                del args[0]
+
+            elif args[0].startswith( '--no-warnings-as-errors' ):
+                self.opt_warnings_as_errors = False
                 del args[0]
 
             elif args[0].startswith( '--coverage' ):
@@ -805,11 +811,18 @@ class CompilerGCC(Compiler):
 
         self._addVar( 'LINK_LIBS',      '' )
         self._addVar( 'OBJ_SUFFIX',     '.o' )
+
         if self.setup.opt_enable_debug:
             self._addVar( 'CCC_OPT', '-Og' )
 
         else:
             self._addVar( 'CCC_OPT', '-O3' )
+
+        if self.setup.opt_warnings_as_errors:
+            self._addVar( 'CCC_WARNINGS', '-Werror ' )
+
+        else:
+            self._addVar( 'CCC_WARNINGS', '' )
 
     def getPythonExtensionFileExt( self ):
         return '.so'
@@ -894,7 +907,7 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_EXE',       'exe-utils' )
 
         self._addVar( 'CCFLAGS',        '-g %(CCC_OPT)s '
-                                        '-Werror -Wall -fPIC '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"MacOSX\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
@@ -913,7 +926,7 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_EXE',       'exe-unit-tests' )
         self._addVar( 'CCFLAGS',        '-g -O0 '
                                         '-DUNIT_TEST=1 '
-                                        '-Werror -Wall -fPIC '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"MacOSX\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
@@ -939,7 +952,7 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)sm' )
 
         self._addVar( 'CCFLAGS',        '-g %(CCC_OPT)s '
-                                        '-Werror -Wall -fPIC '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-DPYBEMACS=1 '
                                         '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
@@ -969,7 +982,7 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_EXE',       'exe-cli-bemacs' )
 
         self._addVar( 'CCCFLAGS',       '-g %(CCC_OPT)s '
-                                        '-Werror -Wall -fPIC -fexceptions -frtti '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC -fexceptions -frtti '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"MacOSX\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
@@ -991,7 +1004,7 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)sm' )
 
         self._addVar( 'CCCFLAGS',       '-g '
-                                        '-Werror -Wall -fPIC -fexceptions -frtti '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC -fexceptions -frtti '
                                         '-DPYBEMACS=1 '
                                         '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
@@ -1012,7 +1025,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_OBJ',       'obj-utils' )
         self._addVar( 'EDIT_EXE',       'exe-utils' )
         self._addVar( 'CCFLAGS',        '-g %(CCC_OPT)s '
-                                        '-Werror -Wall -fPIC '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
@@ -1029,7 +1042,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_EXE',       'exe-unit-tests' )
         self._addVar( 'CCFLAGS',        '-g -O0 '
                                         '-DUNIT_TEST=1 '
-                                        '-Werror -Wall -fPIC '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
@@ -1049,7 +1062,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
 
         self._addVar( 'CCFLAGS',        '-g '
-                                        '-Werror -Wall -fPIC '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-DPYBEMACS=1 '
                                         '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
@@ -1081,7 +1094,7 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '-fprofile-dir=%s ' % (os.getcwd(),) )
 
         self._addVar( 'CCFLAGS',        '-g %(CCC_OPT)s '
-                                        '-Werror -Wall -fPIC '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
@@ -1103,7 +1116,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'LINK_LIBS', '-L%s/lib64 -lpython%d.%dm' % (sys.prefix, sys.version_info.major, sys.version_info.minor) )
 
         self._addVar( 'CCFLAGS',        '-g '
-                                        '-Werror -Wall -fPIC '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-DPYBEMACS=1 '
                                         '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
