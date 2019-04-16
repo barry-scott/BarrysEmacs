@@ -109,7 +109,7 @@ cd ${BUILDER_TOP_DIR}/Builder
 export SETUP_OPTIONS="--no-warnings-as-errors"
 %else
 export SETUP_OPTIONS="--system-ucd --system-pycxx"
-%fi
+%endif
 make -f linux.mak PYTHON=./.(PYTHON)s DESTDIR=%{buildroot} ./.(TARGETS)s
 
 mkdir -p %{buildroot}%{_mandir}/man1
@@ -153,7 +153,6 @@ spec_file_package_cli = '''
 Summary: Barry's Emacs CLI version
 Group: Applications/Editors
 Requires: bemacs-common
-Requires: python3 >= 3.4
 
 %description cli
 Barry's Emacs
