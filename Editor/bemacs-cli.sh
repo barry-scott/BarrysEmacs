@@ -32,7 +32,7 @@ esac
 case "$1" in
 --gdb)
     shift
-    gdb exe-cli-bemacs/bemacs-cli
+    gdb --args exe-cli-bemacs/bemacs-cli "$@"
     ;;
 --lldb)
     shift
