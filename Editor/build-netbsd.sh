@@ -24,4 +24,4 @@ else
     NUM_PROC=4
 fi
 set -x
-make -j ${NUM_PROC} -f Makefile-${TARGET} "$@" 2>&1 | tee build.log
+gmake -j ${NUM_PROC} -f Makefile-${TARGET} "$@" 2>&1 | tee build.log
