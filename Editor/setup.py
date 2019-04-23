@@ -34,7 +34,7 @@ class Setup:
 
         args = argv[1:]
         if len(args) < 3:
-            raise SetupError( 'Usage: setup.py win32|win64|macosx|linux> <gui|cli|utils|unit-tests> <makefile> [<options>]' )
+            raise SetupError( 'Usage: setup.py win32|win64|macosx|netbsd|linux> <gui|cli|utils|unit-tests> <makefile> [<options>]' )
 
         self.platform = args[0]
         del args[0]
@@ -43,7 +43,7 @@ class Setup:
         del args[0]
 
         if 'all' in target:
-            if self.platform in ('linux', 'macosx'):
+            if self.platform in ('linux', 'macosx', 'netbsd'):
                 target = ['gui', 'cli', 'utils', 'unit-tests']
             else:
                 target = ['gui', 'utils', 'unit-tests']
@@ -181,6 +181,23 @@ class Setup:
             pybemacs_feature_defines = [('EXEC_BF', '1')]
             cli_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
 
+        elif self.platform == 'netbsd':
+            if self.opt_utils:
+                self.c_utils = NetBSDCompilerGCC( self )
+
+            if self.opt_unit_tests:
+                self.c_unit_tests = NetBSDCompilerGCC( self )
+
+            if self.opt_bemacs_gui:
+                self.c_python_tools = NetBSDCompilerGCC( self )
+                self.c_pybemacs = NetBSDCompilerGCC( self )
+
+            if self.opt_bemacs_cli:
+                self.c_clibemacs = NetBSDCompilerGCC( self )
+
+            pybemacs_feature_defines = [('EXEC_BF', '1')]
+            cli_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
+
         else:
             raise SetupError( 'Unknown platform %r' % (self.platform,) )
 
@@ -218,7 +235,7 @@ class Setup:
             if self.unicode_header is None:
                 self.unicode_header = UnicodeDataHeader( self.c_utils )
 
-            if self.platform in ['linux', 'macosx']:
+            if self.platform in ['linux', 'macosx', 'netbsd']:
                 self.db_files.append( Source( self.c_utils, 'Source/Unix/unixfile.cpp' ) )
 
             elif self.platform in ('win32', 'win64'):
@@ -243,7 +260,7 @@ class Setup:
                 Source( self.c_pybemacs, 'Source/pybemacs/python_thread_control.cpp' ),
                 ] + self.pycxx_obj_file
 
-            if self.platform in ('linux', 'macosx'):
+            if self.platform in ('linux', 'macosx', 'netbsd'):
                 self.pybemacs_specific_obj_files.extend( [
                     Source( self.c_pybemacs, 'Source/Unix/unix_rtl_pybemacs.cpp' ),
                     ] )
@@ -335,11 +352,11 @@ class Setup:
                     Source( compiler, 'Source/Unix/unixfile.cpp' ),
                     Source( compiler, 'Source/Unix/emacs_signal.cpp' ),
                     Source( compiler, 'Source/Unix/unixcomm.cpp' ),
-                    # need to make this conditional for NetBSD etc.
                     Source( compiler, 'Source/Unix/ptyopen_linux.cpp' ),
                     ] )
-            if self.platform in ('macosx'):
+            if self.platform in ('macosx', 'netbsd'):
                 obj_files.extend( [
+                    # similar enough for the same set of source files
                     Source( compiler, 'Source/Unix/unixfile.cpp' ),
                     Source( compiler, 'Source/Unix/emacs_signal.cpp' ),
                     Source( compiler, 'Source/Unix/unixcomm.cpp' ),
@@ -1097,6 +1114,118 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
+                                        '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
+                                        '-D%(DEBUG)s '
+                                        '%(FEATURE_DEFINES)s '
+                                        '-DBEMACS_LIB_DIR=\\"%(BEMACS_LIB_DIR)s\\"' )
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
+                                        '-fexceptions -frtti ' )
+
+        self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s ' )
+
+    def setupPythonTools( self ):
+        self._addVar( 'PYTHON',         sys.executable )
+
+        self._addVar( 'EDIT_OBJ',       'obj-python-tools' )
+        self._addVar( 'EDIT_EXE',       'exe-python-tools' )
+
+        self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
+        self._addVar( 'LINK_LIBS', '-L%s/lib64 -lpython%d.%dm' % (sys.prefix, sys.version_info.major, sys.version_info.minor) )
+
+        self._addVar( 'CCFLAGS',        '-g '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
+                                        '-DPYBEMACS=1 '
+                                        '-DEMACS_PYTHON_EXTENSION=1 '
+                                        '-IInclude/Common -IInclude/Unix '
+                                        '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
+                                        '-D%(DEBUG)s' )
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
+                                        '-fexceptions -frtti ' )
+
+        self._addVar( 'LDEXE',          '%(CCC)s -g' )
+
+class NetBSDCompilerGCC(CompilerGCC):
+    def __init__( self, setup ):
+        CompilerGCC.__init__( self, setup )
+
+    def setupUtilities( self ):
+        self._addVar( 'PYTHON',         sys.executable )
+
+        self._addVar( 'EDIT_OBJ',       'obj-utils' )
+        self._addVar( 'EDIT_EXE',       'exe-utils' )
+        self._addVar( 'CCFLAGS',        '-g %(CCC_OPT)s '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
+                                        '-IInclude/Common -IInclude/Unix '
+                                        '"-DOS_NAME=\\"NetBSD\\"" '
+                                        '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
+                                        '-D%(DEBUG)s' )
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
+                                        '-fexceptions -frtti ' )
+        self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s' )
+        self._addVar( 'OBJ_SUFFIX',     '.o' )
+
+    def setupUnittests( self ):
+        self._addVar( 'PYTHON',         sys.executable )
+
+        self._addVar( 'EDIT_OBJ',       'obj-unit-tests' )
+        self._addVar( 'EDIT_EXE',       'exe-unit-tests' )
+        self._addVar( 'CCFLAGS',        '-g -O0 '
+                                        '-DUNIT_TEST=1 '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
+                                        '-IInclude/Common -IInclude/Unix '
+                                        '"-DOS_NAME=\\"NetBSD\\"" '
+                                        '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
+                                        '-D%(DEBUG)s' )
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
+                                        '-fexceptions -frtti ' )
+        self._addVar( 'LDEXE',          '%(CCC)s -g' )
+
+    def setupPythonEmacs( self, feature_defines=None ):
+        self.addFeatureDefines( feature_defines )
+
+        self._addVar( 'PYTHON',         sys.executable )
+
+        self._addVar( 'EDIT_OBJ',       'obj-pybemacs' )
+        self._addVar( 'EDIT_EXE',       'exe-pybemacs' )
+
+        self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
+
+        self._addVar( 'CCFLAGS',        '-g '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
+                                        '-DPYBEMACS=1 '
+                                        '-DEMACS_PYTHON_EXTENSION=1 '
+                                        '-IInclude/Common -IInclude/Unix '
+                                        '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
+                                        '"-DOS_NAME=\\"NetBSD\\"" '
+                                        '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"python\\"" '
+                                        '%(FEATURE_DEFINES)s '
+                                        '-D%(DEBUG)s' )
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
+                                        '-fexceptions -frtti ' )
+        self._addVar( 'LDEXE',          '%(CCC)s -g ' )
+        self._addVar( 'LDSHARED',       '%(CCC)s -shared -g ' )
+
+    def setupCliEmacs( self, feature_defines=None ):
+        self.addFeatureDefines( feature_defines )
+
+        self._addVar( 'PYTHON',         sys.executable )
+
+        self._addVar( 'EDIT_OBJ',       'obj-cli-bemacs' )
+        self._addVar( 'EDIT_EXE',       'exe-cli-bemacs' )
+
+        self._addVar( 'BEMACS_LIB_DIR', self.setup.opt_lib_dir )
+
+        if self.setup.opt_coverage:
+            self._addVar( 'CCC_OPT',    '-O0 '
+                                        '-ftest-coverage '
+                                        '-fprofile-arcs '
+                                        '-fprofile-abs-path '
+                                        '-fprofile-dir=%s ' % (os.getcwd(),) )
+
+        self._addVar( 'CCFLAGS',        '-g %(CCC_OPT)s '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
+                                        '-IInclude/Common -IInclude/Unix '
+                                        '"-DOS_NAME=\\"NetBSD\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
                                         '-D%(DEBUG)s '
                                         '%(FEATURE_DEFINES)s '
