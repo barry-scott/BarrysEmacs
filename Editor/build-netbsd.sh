@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
 if [ "$1" == "--enable-debug" ]
@@ -16,7 +16,7 @@ then
 else
     LIB_DIR_OPTION="--lib-dir=/usr/local/lib/bemacs"
 fi
-${PYTHON} setup.py linux ${TARGET} Makefile-${TARGET} ${SETUP_OPTIONS} ${LIB_DIR_OPTION}
+${PYTHON} setup.py netbsd ${TARGET} Makefile-${TARGET} ${SETUP_OPTIONS} ${LIB_DIR_OPTION}
 if [ -e /proc/cpuinfo ]
 then
     NUM_PROC=$( grep -i ^processor /proc/cpuinfo |wc -l )

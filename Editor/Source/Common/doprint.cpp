@@ -12,9 +12,10 @@
 #include <emexcept.h>
 #include <climits>
 #include <algorithm>
+#include <cstdint>
 
 #if !defined( INT64_MIN )
-#define INT64_MIN -9223372036854775808
+#define INT64_MIN -9223372036854775808ll
 #endif
 
 #undef THIS_FILE
