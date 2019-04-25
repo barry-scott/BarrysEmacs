@@ -30,6 +30,7 @@
         (pop-to-buffer ~buffer-name)
         (erase-buffer)
         (yank-buffer "command execution")
+        (beginning-of-file)
         (diff-mode)
     )
 )
