@@ -1,21 +1,33 @@
 #!/bin/bash
 #
-#   make-devel-src-rpm.sh
+#   brand.build-fedora-rpms.sh
 #
 set -e
-
 CMD="$1"
+shift
 
-if [ "$2" != "" ]
+case "$1" in
+--revision=*)
+    R="${1#*=}"
+    shift
+    ;;
+*)
+    R="1"
+    ;;
+esac
+
+if [ "$1" != "" ]
 then
-    VERSION_ID=$2
+    VERSION_ID="$1"
+    shift
 else
     . /etc/os-release
 fi
 
-if [ "$3" != "" ]
+if [ "$1" != "" ]
 then
-    ARCH=$3
+    ARCH="$3"
+    shift
 else
     ARCH=$( uname -m )
 fi
@@ -40,7 +52,7 @@ then
 
 else
     echo "Info: Init mock for ${MOCK_VERSION_NAME}"
-     mock \
+    mock \
         --root=${MOCK_VERSION_NAME} \
         --init
 fi
@@ -63,7 +75,7 @@ tar czf ${KIT_BASENAME}.tar.gz ${KIT_BASENAME}
 popd
 
 echo "Info: creating bemacs.spec"
-python3 bemacs_make_spec_file.py gui ${V} tmp/bemacs.spec
+python3 bemacs_make_spec_file.py gui ${V} ${R} tmp/bemacs.spec
 
 echo "Info: Creating SRPM for ${KIT_BASENAME}"
 
@@ -87,44 +99,57 @@ fedora)
     ;;
 esac
 
-SRPM_BASENAME="${KIT_BASENAME}-1.${DISTRO}"
+SRPM_BASENAME="${KIT_BASENAME}-${R}.${DISTRO}"
 
 cp -v "${MOCK_BUILD_DIR}/SRPMS/${SRPM_BASENAME}.src.rpm" tmp
 
-echo "Info: Creating RPM"
-mock \
-    --root=${MOCK_VERSION_NAME} \
-    --enablerepo=barryascott-tools \
-    --rebuild --dnf \
-        "tmp/${SRPM_BASENAME}.src.rpm"
+case "${CMD}" in
+"--srpm")
+    echo "Info: SRPM is tmp/${SRPM_BASENAME}.src.rpm"
+    ;;
 
-ls -l ${MOCK_BUILD_DIR}/RPMS
+"--copr")
+    copr-cli build -r fedora-${VERSION_ID}-x86_64 tools "tmp/${SRPM_BASENAME}.src.rpm"
+    ;;
 
-ALL_BIN_KITNAMES="
-${KITNAME}
-${KITNAME}-cli
-${KITNAME}-gui
-${KITNAME}-common
-${KITNAME}-debuginfo"
+*)
+    echo "Info: Creating RPM"
+    exit 1
+    mock \
+        --root=${MOCK_VERSION_NAME} \
+        --enablerepo=barryascott-tools \
+        --rebuild --dnf \
+            "tmp/${SRPM_BASENAME}.src.rpm"
 
-for BIN_KITNAME in ${ALL_BIN_KITNAMES}
-do
-    cp -v "${MOCK_BUILD_DIR}/RPMS/${BIN_KITNAME}-${V}-1.${DISTRO}.x86_64.rpm" tmp
-done
+    ls -l ${MOCK_BUILD_DIR}/RPMS
 
-echo "Info: Results in ${PWD}/tmp:"
-ls -l tmp
-
-if [ "$CMD" = "--install" ]
-then
-    echo "Info: Installing RPM"
+    ALL_BIN_KITNAMES="
+    ${KITNAME}
+    ${KITNAME}-cli
+    ${KITNAME}-gui
+    ${KITNAME}-common
+    ${KITNAME}-debuginfo"
 
     for BIN_KITNAME in ${ALL_BIN_KITNAMES}
     do
-        if rpm -q ${BIN_KITNAME}
-        then
-            sudo dnf -y remove ${BIN_KITNAME}
-        fi
+        cp -v "${MOCK_BUILD_DIR}/RPMS/${BIN_KITNAME}-${V}-${R}.${DISTRO}.x86_64.rpm" tmp
     done
-    sudo dnf -y install tmp/${KITNAME}*.x86_64.rpm
-fi
+
+    echo "Info: Results in ${PWD}/tmp:"
+    ls -l tmp
+
+    if [ "$CMD" = "--install" ]
+    then
+        echo "Info: Installing RPM"
+
+        for BIN_KITNAME in ${ALL_BIN_KITNAMES}
+        do
+            if rpm -q ${BIN_KITNAME}
+            then
+                sudo dnf -y remove ${BIN_KITNAME}
+            fi
+        done
+        sudo dnf -y install tmp/${KITNAME}*.x86_64.rpm
+    fi
+    ;;
+esac

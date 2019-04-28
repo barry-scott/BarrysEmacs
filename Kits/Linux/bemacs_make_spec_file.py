@@ -4,7 +4,8 @@ import sys
 def main( argv ):
     target = argv[1]
     version = argv[2]
-    specfile = argv[3]
+    revision = argv[3]
+    specfile = argv[4]
 
     if target == 'cli':
         spec_targets = 'build-cli'
@@ -46,6 +47,7 @@ def main( argv ):
     fmt_spec_file = fmt_spec_file.replace( './.', '%' )
     spec_vars = {'TARGETS': spec_targets
                 ,'VERSION': version
+                ,'REVISION': revision
                 ,'PYTHON':  python}
     spec_file = fmt_spec_file % spec_vars
 
@@ -59,7 +61,7 @@ def main( argv ):
 spec_file_head = '''
 Name:           bemacs
 Version:        ./.(VERSION)s
-Release:        1%{?dist}
+Release:        ./.(REVISION)s%{?dist}
 Summary:        Barry's Emacs
 
 License:        ASL 2.0
