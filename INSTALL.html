@@ -18,7 +18,7 @@ pre
     {color: #0000cc; background-color: #eeeeee; position: relative; left: 40px; margin-right: 80px;
 	border-style: solid; border-color: black; border-width: thin;}
 tt
-    {color: #000088; font-size: larger}
+    {color: #0000cc; background-color: lightgrey; font-size: larger}
 td.menu_active
     {background-color: #4444ff; color: white;}
 td a:link
@@ -50,20 +50,20 @@ available from:</p>
 <li><div><tt>pip install xml-preferences</tt></div></li>
 <li><div>pycxx 7.1.2 SVN sources from <a href="https://sourceforge.net/projects/cxx/">https://sourceforge.net/projects/cxx/</a>.
 Then expand the tarball into Imports/pycxx-7.1.2.</div></li>
+<li>git</li>
 </ul>
 
-<h3>For Fedora</h3>
+<h3>For NetBSD:</h3>
+
+<ul>
+<li><tt>pkg_add sudo python37 git gmake py37-qt5</tt></li>
+</ul>
+
+<h3>For Fedora</h4>
 <ul>
 <li>dnf copr enable barryscott/tools</li>
 <li>dnf install python3-xml-preferences</li>
 <li>dnf install python3-pycxx-devel</li>
-</ul>
-
-<h3>For Linux/xxxBSD:</h3>
-
-<ul>
-<li><div>C++ compiler. Microsoft Visual Studio 2017.</div></li>
-<li><div>PyQt5 version 5.10 or 5.12 (5.11 break choose font dialog). Install using your platforms package manager.</div></li>
 </ul>
 
 <h3>For Windows:</h3>
@@ -96,14 +96,21 @@ Barry's Emacs files are in <tt>~/Projects/BarrysEmacs</tt>,
 however you can replace that path with any folder name you like.</p>
 
 <ol>
+<li>Fetch source</li>
 <li><div><tt>mkdir -p ~/Projects</tt></div></li>
 <li><div><tt>cd ~/Projects</tt></div></li>
 <li><div><tt>git clone https://github.com/barry-scott/BarrysEmacs.git</tt></div></li>
+<li>Build GUI and CLI versions of bemacs</li>
 <li><div><tt>cd BarrysEmacs/Builder</tt></div></li>
 <li><div><tt>. builder_custom_init.sh</tt></div></li>
-<li><div><tt>./build-linux.sh</tt></div></li>
+<li>Test the CLI build.</li>
+<li><div><tt>cd ../Editor</tt></div></li>
+<li><div><tt>./bemacs-cli.sh</tt></div></li>
+<li>Test the GUI build.</li>
 <li><div><tt>cd ../Editor/PyQtBEmacs</tt></div></li>
 <li><div><tt>./bemacs-linux.sh --noredirect</tt></div></li>
+<li>Install into /usr/local (sudo will prompt for your password).</li>
+<li><div><tt>./local-install-linux.sh</tt></div></li>
 </ol>
 
 <h3>For macOS development:</h3>
@@ -113,12 +120,15 @@ Barry's Emacs files are in <tt>~/Projects/git/BarrysEmacs</tt>,
 however you can replace that path with any folder name you like.</p>
 
 <ol>
+<li>Fetch source</li>
 <li><div><tt>mkdir -p ~/Projects/git</tt></div></li>
 <li><div><tt>cd -p ~/Projects/git</tt></div></li>
 <li><div><tt>git clone https://github.com/barry-scott/BarrysEmacs.git</tt></div></li>
+<li>Build GUI and CLI versions of bemacs</li>
 <li><div><tt>cd BarrysEmacs/Builder</tt></div></li>
 <li><div><tt>. builder_custom_init.sh</tt></div></li>
 <li><div><tt>./build-macosx.sh</tt></div></li>
+<li>Test the GUI build.</li>
 <li><div><tt>cd ../Editor/PyQtBEmacs</tt></div></li>
 <li><div><tt>./bemacs-macosx.sh --noredirect</tt></div></li>
 </ol>
@@ -130,15 +140,46 @@ Barry's Emacs files are in <tt>%USERPROFILE%\Projects\BarrysEmacs</tt>,
 however you can replace that path with any folder name you like.</p>
 
 <ol>
+<li>Fetch sources</li>
 <li><div><tt>cd %USERPROFILE%</tt></div></li>
 <li><div><tt>mkdir Projects</tt></div></li>
 <li><div><tt>cd Projects</tt></div></li>
 <li><div><tt>git clone https://github.com/barry-scott/BarrysEmacs.git</tt></div></li>
+<li>Build GUI version of bemacs</li>
 <li><div><tt>cd BarrysEmacs\Builder</tt></div></li>
 <li><div><tt>builder_custom_init.cmd</tt></div></li>
 <li><div><tt>build-windows.cmd</tt></div></li>
+<li>Test the GUI build.</li>
 <li><div><tt>cd ..\Editor\PyQtBEmacs</tt></div></li>
 <li><div><tt>bemacs-windows.cmd --noredirect</tt></div></li>
+</ol>
+
+
+<h3>For NetBSD development:</h3>
+
+<p>Note: For the purposes of documentation it is assumed that the
+Barry's Emacs files are in <tt>~/Projects/BarrysEmacs</tt>,
+however you can replace that path with any folder name you like.</p>
+
+<p>Note: linux version of scripts are used where they are compatible with NetBSD.</p>
+
+<ol>
+<li>Fetch sources</li>
+<li><div><tt>mkdir -p ~/Projects</tt></div></li>
+<li><div><tt>cd ~/Projects</tt></div></li>
+<li><div><tt>git clone https://github.com/barry-scott/BarrysEmacs.git</tt></div></li>
+<li>Build GUI and CLI versions of bemacs</li>
+<li><div><tt>cd BarrysEmacs/Builder</tt></div></li>
+<li><div><tt>. builder_custom_init.sh</tt></div></li>
+<li><div><tt>./build-netbsd.sh</tt></div></li>
+<li>Test the CLI build.</li>
+<li><div><tt>cd ../Editor</tt></div></li>
+<li><div><tt>./bemacs-cli.sh</tt></div></li>
+<li>Test the GUI build.</li>
+<li><div><tt>cd ../Editor/PyQtBEmacs</tt></div></li>
+<li><div><tt>./bemacs-linux.sh --noredirect</tt></div></li>
+<li>Install into /usr/local (sudo will prompt for your password).</li>
+<li><div><tt>./local-install-linux.sh</tt></div></li>
 </ol>
 
 <hr/>
