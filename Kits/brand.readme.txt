@@ -25,15 +25,16 @@ Introduction
         Linux (tested on: Fedora 29)
 
 New in %(version)s
-    * fix for dired not finding the filename
+    * fix for dired not finding the filename.
+    * Can now build on NetBSD.
 
 New in 8.5.2
     * fix crash when (ere-search-forward "^\\+.*") is use to match very long lines.
     * fix bemacs-cli not starting up correctly on macOS.
     * fix crash when using autoload to redefine a function that is executing
-      autoload will silently be ignore for an already defined function
-    * improve diff; change the colours used and improve the diff-goto-diff function
-    * add Perforce code in the p4-change-mode p4-clientspec-mode p4-commands modules
+      autoload will silently be ignore for an already defined function.
+    * improve diff; change the colours used and improve the diff-goto-diff function.
+    * add Perforce code in the p4-change-mode p4-clientspec-mode p4-commands modules.
 
 New in 8.5.1
     * New Preference Cursor allow choice of line vs. block and steady vs. blinking cursor.
