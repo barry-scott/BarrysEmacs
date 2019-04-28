@@ -37,13 +37,6 @@ then
         echo "Error: PyQt5 is not installed for ${PYTHON}. Hint: dnf install PyQt5"
         exit 1
     fi
-
-    echo "Info: checking for python library QScintilla"
-    if ! ${PYTHON} -c 'from PyQt5 import Qsci' 3>/dev/null
-    then
-        echo "Error: QScintilla is not installed for ${PYTHON}. Hint: pip3 install QScintilla"
-        exit 1
-    fi
 fi
 
 gmake -f netbsd.mak PYTHON=${PYTHON:?missing python def} clean-${target} build-${target}

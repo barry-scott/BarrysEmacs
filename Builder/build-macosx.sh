@@ -23,13 +23,6 @@ then
     exit 1
 fi
 
-echo "Info: checking for python library QScintilla"
-if ! ${PYTHON} -c 'from PyQt5 import Qsci' 3>/dev/null
-then
-    echo "Error: QScintilla is not installed for ${PYTHON}. Hint: ${PYTHON} -m pip install QScintilla"
-    exit 1
-fi
-
 if [ -e "/Volumes/Barry's Emacs" ]
 then
     echo "Info: unmount old kit dmg"

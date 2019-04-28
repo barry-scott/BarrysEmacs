@@ -1154,12 +1154,12 @@ class NetBSDCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_OBJ',       'obj-utils' )
         self._addVar( 'EDIT_EXE',       'exe-utils' )
         self._addVar( 'CCFLAGS',        '-g %(CCC_OPT)s '
-                                        '%(CCC_WARNINGS)s -Wall -fPIC -std=c++11 '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"NetBSD\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
                                         '-D%(DEBUG)s' )
-        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
                                         '-fexceptions -frtti ' )
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s' )
         self._addVar( 'OBJ_SUFFIX',     '.o' )
@@ -1171,12 +1171,12 @@ class NetBSDCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_EXE',       'exe-unit-tests' )
         self._addVar( 'CCFLAGS',        '-g -O0 '
                                         '-DUNIT_TEST=1 '
-                                        '%(CCC_WARNINGS)s -Wall -fPIC -std=c++11 '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"NetBSD\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
                                         '-D%(DEBUG)s' )
-        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
                                         '-fexceptions -frtti ' )
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
@@ -1188,10 +1188,10 @@ class NetBSDCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_OBJ',       'obj-pybemacs' )
         self._addVar( 'EDIT_EXE',       'exe-pybemacs' )
 
-        self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
+        self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)s' % (sys.prefix,) )
 
         self._addVar( 'CCFLAGS',        '-g '
-                                        '%(CCC_WARNINGS)s -Wall -fPIC -std=c++11 '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-DPYBEMACS=1 '
                                         '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
@@ -1200,7 +1200,7 @@ class NetBSDCompilerGCC(CompilerGCC):
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"python\\"" '
                                         '%(FEATURE_DEFINES)s '
                                         '-D%(DEBUG)s' )
-        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
                                         '-fexceptions -frtti ' )
         self._addVar( 'LDEXE',          '%(CCC)s -g ' )
         self._addVar( 'LDSHARED',       '%(CCC)s -shared -g ' )
@@ -1223,14 +1223,14 @@ class NetBSDCompilerGCC(CompilerGCC):
                                         '-fprofile-dir=%s ' % (os.getcwd(),) )
 
         self._addVar( 'CCFLAGS',        '-g %(CCC_OPT)s '
-                                        '%(CCC_WARNINGS)s -Wall -fPIC -std=c++11 '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"NetBSD\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
                                         '-D%(DEBUG)s '
                                         '%(FEATURE_DEFINES)s '
                                         '-DBEMACS_LIB_DIR=\\"%(BEMACS_LIB_DIR)s\\"' )
-        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
                                         '-fexceptions -frtti ' )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s ' )
@@ -1241,17 +1241,17 @@ class NetBSDCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_OBJ',       'obj-python-tools' )
         self._addVar( 'EDIT_EXE',       'exe-python-tools' )
 
-        self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
-        self._addVar( 'LINK_LIBS', '-L%s/lib64 -lpython%d.%dm' % (sys.prefix, sys.version_info.major, sys.version_info.minor) )
+        self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)s' % (sys.prefix,) )
+        self._addVar( 'LINK_LIBS', '-L%s/lib -lpython%d.%d' % (sys.prefix, sys.version_info.major, sys.version_info.minor) )
 
         self._addVar( 'CCFLAGS',        '-g '
-                                        '%(CCC_WARNINGS)s -Wall -fPIC -std=c++11 '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-DPYBEMACS=1 '
                                         '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
                                         '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
                                         '-D%(DEBUG)s' )
-        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
                                         '-fexceptions -frtti ' )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
