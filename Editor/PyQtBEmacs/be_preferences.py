@@ -30,18 +30,23 @@ def Bool( text ):
         raise ValueError( 'Bool expects the string true or false' )
 
 class RGB:
-    def __init__( self, text=None ):
-        if text is None:
+    def __init__( self, value=None ):
+        if value is None:
             self.value = None
             return
 
-        self.value = tuple( [int(v) for v in text.split(',')] )
+        if type(value) is tuple:
+            self.value = value
+
+        else:
+            self.value = tuple( [int(v) for v in value.split(',')] )
+
         if len(self.value) != 3:
-            raise ValueError( 'RGB need 4 values: %r' % (text,) )
+            raise ValueError( 'RGB need 3 values: %r' % (value,) )
 
         for v in self.value:
             if not (0 <= v <= 255):
-                raise ValueError( 'RGB values must be in the range 0..255: %r - %r' % (text, v) )
+                raise ValueError( 'RGB values must be in the range 0..255: %r - %r' % (value, v) )
 
     def getTuple( self ):
         return self.value
@@ -58,18 +63,23 @@ class RGB:
         return '<RGB R:%d G:%d B:%d>' % self.value
 
 class RGBA:
-    def __init__( self, text=None ):
-        if text is None:
+    def __init__( self, value=None ):
+        if value is None:
             self.value = None
             return
 
-        self.value = tuple( [int(v) for v in text.split(',')] )
+        if type(value) is tuple:
+            self.value = value
+
+        else:
+            self.value = tuple( [int(v) for v in value.split(',')] )
+
         if len(self.value) != 4:
-            raise ValueError( 'RGBA need 4 values: %r' % (text,) )
+            raise ValueError( 'RGBA need 4 values: %r' % (value,) )
 
         for v in self.value:
             if not (0 <= v <= 255):
-                raise ValueError( 'RGBA values must be in the range 0..255: %r - %r' % (text, v) )
+                raise ValueError( 'RGBA values must be in the range 0..255: %r - %r' % (value, v) )
 
     def getTuple( self ):
         return self.value
@@ -142,7 +152,7 @@ class Window(PreferencesNode):
 
         for colour_info in be_emacs_panel.all_themes[self.theme.name].all_colours:
             if colour_info.name not in self.all_colours:
-                self.all_colours[ colour_info.name ] = Colour( colour_info.name, colour_info.fg, colour_info.bg )
+                self.all_colours[ colour_info.name ] = Colour( colour_info.name, RGB( colour_info.fg ), RGB( colour_info.bg ) )
 
         if self.cursor_style is None:
             self.cursor_style = CursorStyle()
@@ -184,7 +194,7 @@ class Font(PreferencesNode):
 class CursorStyle(PreferencesNode):
     xml_attribute_info = (('blink', Bool), ('interval', int), ('shape', str))
 
-    def __init__( self, blink=False, interval=600, shape='block' ):
+    def __init__( self, blink=True, interval=600, shape='line' ):
         super().__init__()
         self.blink = blink
         self.interval = interval
