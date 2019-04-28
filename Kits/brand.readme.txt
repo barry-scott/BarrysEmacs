@@ -25,6 +25,7 @@ Introduction
         Linux (tested on: Fedora 29)
 
 New in %(version)s
+    * fix for initialising the XML preferences on first use
     * fix for dired not finding the filename.
     * Can now build on NetBSD.
 
