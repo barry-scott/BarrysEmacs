@@ -7,6 +7,7 @@ DOC_DIR=${4:? Doc dir}
 ${PYTHON} make_be_images.py
 
 cp be_*.py ${ROOT_DIR}${LIB_DIR}
+rm ${ROOT_DIR}${LIB_DIR}/be_client.py
 
 cat <<EOF >${ROOT_DIR}${BIN_DIR}/bemacs_server
 #!${PYTHON}
@@ -22,5 +23,4 @@ library_dir = "${LIB_DIR}"
 doc_dir = "${DOC_DIR}"
 EOF
 
-mv ${ROOT_DIR}${LIB_DIR}/be_client.py ${ROOT_DIR}${BIN_DIR}/bemacs
-chmod +x ${ROOT_DIR}${BIN_DIR}/bemacs
+${PYTHON} create_bemacs_client.py . "${ROOT_DIR}${BIN_DIR}/bemacs"

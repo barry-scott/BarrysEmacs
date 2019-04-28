@@ -12,7 +12,7 @@ def main( argv ):
         __text = f.read()
 
     __text = __text.replace( 'org.barrys-emacs.bemacs-devel', 'org.barrys-emacs.bemacs' )
-    __text = __text.replace( '#!/usr/bin/env python3\n', '#!/usr/bin/python\n' )
+    __text = __text.replace( '#!/usr/bin/env python3\n', '#!%s\n' % (sys.executable,) )
 
     with open( cli_client_path, 'w', encoding='utf-8' )  as f:
         print( 'Info: Writing %s' % (cli_client_path,) )
