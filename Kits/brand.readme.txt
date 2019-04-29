@@ -25,9 +25,11 @@ Introduction
         Linux (tested on: Fedora 29)
 
 New in %(version)s
-    * fix for initialising the XML preferences on first use
-    * fix for dired not finding the filename.
-    * Can now build on NetBSD.
+
+New in 8.5.3
+    * Fix for initialising the XML preferences on first use
+    * Fix for dired not finding the filename.
+    * Can now be built on NetBSD.
 
 New in 8.5.2
     * fix crash when (ere-search-forward "^\\+.*") is use to match very long lines.
