@@ -1,4 +1,4 @@
-//    Copyright (c) 1984-2017
+//    Copyright (c) 1984-2019
 //      Barry A. Scott
 
 //
@@ -13,10 +13,6 @@
 #include <climits>
 #include <algorithm>
 #include <cstdint>
-
-#if !defined( INT64_MIN )
-#define INT64_MIN -9223372036854775808ll
-#endif
 
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -90,7 +86,6 @@ void FormatString::setNextIntArg( int64_t v )
     {
         next_precision_type = argNone;
         precision = int( v );
-        return;
     }
 
     else if( next_arg_type == argInt )
@@ -98,11 +93,12 @@ void FormatString::setNextIntArg( int64_t v )
         intArg = v;
 
         process_format();
-
-        return;
+    }
+    else
+    {
+        throw EmacsInternalError( "FormatString - int arg not expected" );
     }
 }
-
 
 FormatString &FormatString::operator <<( const void *v )
 {
@@ -122,22 +118,18 @@ FormatString &FormatString::operator <<( const void *v )
 FormatString &FormatString::operator <<( const EmacsString *v )
 {
     return operator << (*v);
-
 }
 
 FormatString &FormatString::operator <<( const EmacsString &v )
 {
     if( next_width_type == argInt
     && next_precision_type == argInt
-    && next_arg_type == argInt )
+    && next_arg_type != argString )
         throw EmacsInternalError( "FormatString - string arg not expected" );
 
-    if( next_arg_type == argString )
-    {
-        stringArg = v;
+    stringArg = v;
 
-        process_format();
-    }
+    process_format();
 
     return *this;
 }
@@ -146,36 +138,31 @@ FormatString &FormatString::operator <<( const char *v )
 {
     if( next_width_type == argInt
     && next_precision_type == argInt
-    && next_arg_type == argInt )
+    && next_arg_type != argString )
     {
         throw EmacsInternalError( "FormatString - string arg not expected" );
     }
 
-    if( next_arg_type == argString )
-    {
-        stringArg = v;
+    stringArg = v;
 
-        process_format();
-    }
+    process_format();
 
     return *this;
 }
+
 
 FormatString &FormatString::operator <<( const EmacsChar_t *v )
 {
     if( next_width_type == argInt
     && next_precision_type == argInt
-    && next_arg_type == argInt )
+    && next_arg_type != argString )
     {
         throw EmacsInternalError( "FormatString - string arg not expected" );
     }
 
-    if( next_arg_type == argString )
-    {
-        stringArg = EmacsString( EmacsString::copy, v );
+    stringArg = EmacsString( EmacsString::copy, v );
 
-        process_format();
-    }
+    process_format();
 
     return *this;
 }
@@ -194,6 +181,10 @@ FormatString &FormatString::operator <<( bool is_true )
 
         process_format();
     }
+    else
+    {
+        throw EmacsInternalError( "FormatString - bool arg not expected" );
+    }
 
     return *this;
 }
@@ -201,7 +192,9 @@ FormatString &FormatString::operator <<( bool is_true )
 EmacsChar_t FormatString::next_format_char()
 {
     if( next_format_char_index >= format.length() )
+    {
         return 0;
+    }
 
     return format[next_format_char_index++];
 }
@@ -253,29 +246,24 @@ void FormatString::process_format()
 
         case 'x':
             {
-                uint64_t val = static_cast<uint64_t>( intArg );
-
                 if( width == 0 )
                     width = 4;
-                print_hexadecimal( val );
+                print_hexadecimal( static_cast<uint64_t>( intArg ) );
             }
             break;
 
         case 'X':
             {
-                uint64_t val = static_cast<uint64_t>( intArg );
-
                 if( width == 0 )
                     width = 8;
-                print_hexadecimal( val );
+                print_hexadecimal( static_cast<uint64_t>( intArg ) );
             }
             break;
 
         case 'p':
             {
-                uint64_t  val = static_cast<uint64_t>( intArg );
                 width = sizeof( uint64_t )*2;
-                print_hexadecimal( val );
+                print_hexadecimal( static_cast<uint64_t>( intArg ) );
             }
             break;
 
@@ -377,13 +365,13 @@ void FormatString::process_format()
         case 'D':
         case 'o':
         case 'O':
-        case 'x':
-        case 'X':
-        case 'p':
         case 'c':
         case 'C':
         case 'e':
         case 'E':
+        case 'x':
+        case 'X':
+        case 'p':
             next_arg_type = argInt;
             return;
 
@@ -460,25 +448,21 @@ void FormatString::put( const EmacsChar_t *str, unsigned int len )
 
 void FormatString::print_decimal( int64_t n )
 {
-    EmacsChar_t digits[12];
-
-    if( n == INT64_MIN )
-    {
-        EmacsString value( "-9223372036854775808" );
-        put( value.unicode_data(), value.length() );
-        return;
-    }
+    EmacsChar_t digits[21];
 
     if( n < 0 )
     {
         put( '-' );
+    }
+    else
+    {
         n = -n;
     }
 
     int i = 0;
     do
     {
-        digits[i] = (char) ((n % 10) + '0');
+        digits[i] = (char) (-(n % 10) + '0');
         n = n / 10;
         i++;
     }
@@ -488,11 +472,15 @@ void FormatString::print_decimal( int64_t n )
     if( w && w > i )
     {
         for(; w > i; w-- )
+        {
             put( pad_char );
+        }
     }
 
     while( i-- )
+    {
         put( digits[i] );
+    }
 }
 
 void FormatString::print_hexadecimal( uint64_t n )
@@ -515,23 +503,19 @@ void FormatString::print_octal( int64_t n )
 {
     unsigned char digits[24];
 
-    if( n == INT64_MIN )
-    {
-        EmacsString value( "-1000000000000000000000" );
-        put( value.unicode_data(), value.length() );
-        return;
-    }
-
     if( n < 0 )
     {
         put( '-' );
+    }
+    else
+    {
         n = -n;
     }
 
     int i = 0;
     do
     {
-        digits[i] = (char) ((n % 8) + '0');
+        digits[i] = (char) (-(n % 8) + '0');
         n = n / 8;
         i++;
     }
@@ -540,9 +524,14 @@ void FormatString::print_octal( int64_t n )
     int w = width;
     if( w && w > i )
     {
-        for(; w > i; w-- ) put( pad_char );
+        for(; w > i; w-- )
+        {
+            put( pad_char );
+        }
     }
 
     while( i-- )
+    {
         put( digits[i] );
+    }
 }
