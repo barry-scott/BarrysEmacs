@@ -3,8 +3,14 @@
 #   brand.build-fedora-rpms.sh
 #
 set -e
-CMD="$1"
-shift
+
+if [ "$1" != "" ]
+then
+    CMD="$1"
+    shift 1
+else
+    CMD="--help"
+fi
 
 case "$1" in
 --revision=*)
@@ -108,13 +114,16 @@ case "${CMD}" in
     echo "Info: SRPM is tmp/${SRPM_BASENAME}.src.rpm"
     ;;
 
-"--copr")
+"--copr-release")
     copr-cli build -r fedora-${VERSION_ID}-x86_64 tools "tmp/${SRPM_BASENAME}.src.rpm"
     ;;
 
-*)
+"--copr-testing")
+    copr-cli build -r fedora-${VERSION_ID}-x86_64 tools "tmp/${SRPM_BASENAME}.src.rpm"
+    ;;
+
+"--mock")
     echo "Info: Creating RPM"
-    exit 1
     mock \
         --root=${MOCK_VERSION_NAME} \
         --enablerepo=barryascott-tools \
@@ -152,4 +161,7 @@ case "${CMD}" in
         sudo dnf -y install tmp/${KITNAME}*.x86_64.rpm
     fi
     ;;
+*)
+    echo "Usage: $0 [--srpm|--copr|--mock] [--revision=<n>]"
+    exit 1
 esac
