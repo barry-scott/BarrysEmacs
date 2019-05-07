@@ -1,5 +1,6 @@
 #!/bin/bash
 V=%(major)s.%(minor)s.%(patch)s
+R=1
 KITNAME=bemacs
 KIT_BASENAME=${KITNAME}-${V}
 
@@ -20,7 +21,7 @@ then
         --init
 fi
 
-${PYTHON} ../bemacs_make_spec_file.py cli ${V} tmp/bemacs.spec
+${PYTHON} ../bemacs_make_spec_file.py cli ${V} ${R} tmp/bemacs.spec
 
 mock \
     --root=${MOCK_VERSION_NAME} \

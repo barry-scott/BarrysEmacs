@@ -11,6 +11,7 @@ echo "Info: Creating source tarball from ${GIT_TREEISH}"
 KITNAME=bemacs
 
 V=%(major)s.%(minor)s.%(patch)s
+R=1
 rm -rf ${TMPDIR:-/tmp}/${NAME}-${V}
 
 KIT_BASENAME=${KITNAME}-${V}
@@ -31,7 +32,7 @@ rm -rf ${KIT_BASENAME}
 popd
 
 echo "Info: creating bemacs.spec"
-python ../bemacs_make_spec_file.py cli ${V} tmp/bemacs.spec
+python ../bemacs_make_spec_file.py cli ${V} ${R} tmp/bemacs.spec
 cp bemacs-mock-build.sh tmp
 
 echo "Info: Creating asserts for ${KIT_BASENAME} in $PWD/tmp"
