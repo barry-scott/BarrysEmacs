@@ -12,7 +12,7 @@
 #include <emexcept.h>
 #include <climits>
 #include <algorithm>
-#include <cstdint>
+#include <stdint.h>
 
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
