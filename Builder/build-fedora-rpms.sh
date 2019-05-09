@@ -1,9 +1,10 @@
 #!/bin/bash
 set -e
 
-make -f linux.mak brand
+echo "Info: Branding file..."
+
+make -f linux.mak brand 1>/dev/null
 
 cd ${BUILDER_TOP_DIR}/Kits/Linux
 
-chmod +x build-fedora-rpms.sh
-./build-fedora-rpms.sh "$@"
+./build_fedora_rpms.py "$@"

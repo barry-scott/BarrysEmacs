@@ -13,14 +13,17 @@ import os
 import shutil
 import subprocess
 import platform
+import glob
 
-valid_cmds = ('srpm', 'mock', 'copr-release', 'copr-testing')
+valid_cmds = ('srpm', 'mock', 'copr-release', 'copr-testing', 'list-release', 'list-testing')
 
 def info( msg ):
     print( '\033[32mInfo:\033[m %s' % (msg,) )
+    sys.stdout.flush()
 
 def error( msg ):
     print( '\033[31;1mError: %s\033[m' % (msg,) )
+    sys.stdout.flush()
 
 class BuildError(Exception):
     def __init__( self, msg ):
@@ -28,12 +31,12 @@ class BuildError(Exception):
 
 class BuildFedoraRpms:
     def __init__( self ):
+        self.BUILDER_TOP_DIR = os.environ['BUILDER_TOP_DIR']
         self.KITNAME = 'bemacs'
         self.cmd = None
-        self.release = 1
+        self.release = 'auto'
         self.target = self.fedoraVersion()
         self.arch = platform.machine()
-        self.version = None
         self.install = False
 
     def main( self, argv ):
@@ -53,7 +56,16 @@ class BuildFedoraRpms:
             elif self.cmd == 'copr-testing':
                 self.buildCoprTesting()
 
+            elif self.cmd == 'list-release':
+                self.listCoprRelease()
+
+            elif self.cmd == 'list-testing':
+                self.listCoprTesting()
+
             return 0
+
+        except KeyboardInterrupt:
+            return 2
 
         except BuildError as e:
             error( str(e) )
@@ -78,9 +90,6 @@ class BuildFedoraRpms:
                 elif arg.startswith('--arch='):
                     self.arch = arg[len('--arch='):]
 
-                elif arg.startswith('--version='):
-                    self.version = arg[len('--version='):]
-
                 elif arg.startswith('--install'):
                     self.install = True
 
@@ -93,13 +102,15 @@ class BuildFedoraRpms:
         if self.cmd is None:
             raise BuildError( 'Require a cmd arg' )
 
-        if self.version is None:
-            raise BuildError( '--version must be provided' )
-
     def setupVars( self ):
-        self.MOCK_ORIG_VERSION_NAME = 'fedora-%d-%s' % (self.target, self.arch)
-        self.MOCK_COPR_REPO_FILE = '/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:barryascott:tools.repo'
-        self.MOCK_VERSION_NAME= 'tmp/bemacs-%s.cfg' % (self.MOCK_ORIG_VERSION_NAME,)
+        sys.path.insert( 0, os.path.join( self.BUILDER_TOP_DIR, 'Editor/PyQtBEmacs' ) )
+        import be_version
+        self.version = '%d.%d.%d' % (be_version.major, be_version.minor, be_version.patch)
+
+        self.MOCK_ORIG_TARGET_NAME = 'fedora-%d-%s' % (self.target, self.arch)
+        self.MOCK_COPR_REPO_FILENAME = '/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:barryascott:tools.repo'
+        self.MOCK_TARGET_FILENAME = 'tmp/%s-%s.cfg' % (self.KITNAME, self.MOCK_ORIG_TARGET_NAME)
+        self.DISTRO = 'fc%d' % (self.target,)
 
     def fedoraVersion( self ):
         with open( '/etc/os-release', 'r' ) as f:
@@ -110,6 +121,12 @@ class BuildFedoraRpms:
         raise BuildError( 'Expected /etc/os-release to have a VERSION_ID= field' )
 
     def buildSrpm( self ):
+        if self.release == 'auto':
+            self.release = 1
+
+        self.run( ('rm', '-rf', 'tmp') )
+        self.run( ('mkdir', '-p', 'tmp') )
+
         self.makeTarBall()
         self.ensureMockSetup()
         self.makeSrpm()
@@ -120,7 +137,7 @@ class BuildFedoraRpms:
 
         info( 'Creating RPM' )
         self.run( ('mock',
-                    '--root=%s' % (self.MOCK_VERSION_NAME,),
+                    '--root=%s' % (self.MOCK_TARGET_FILENAME,),
                     '--enablerepo=barryascott-tools',
                     '--rebuild', '--dnf',
                     self.SRPM_FILENAME) )
@@ -161,29 +178,75 @@ class BuildFedoraRpms:
     def buildCoprTesting( self ):
         self.buildCopr( 'tools-testing' )
 
-    def buildCorp( self, copr_repo ):
+    def buildCopr( self, copr_repo ):
+        if self.release == 'auto':
+            p = self.listCopr( copr_repo )
+            for line in p.stdout.split('\n'):
+                if line.startswith( '%s.src' % (self.KITNAME,) ):
+                    parts = line.split()
+                    version, rel_distro = parts[1].split('-')
+                    release, distro = rel_distro.split('.')
+
+                    if version == self.version and distro == self.DISTRO:
+                        self.release = int(release) + 1
+
+                    else:
+                        self.release = 1
+
+                    break
+
         self.buildSrpm()
         self.run( ('copr-cli', 'build', '-r', 'fedora-%s-%s' % (self.target, self.arch), copr_repo, self.SRPM_FILENAME) )
 
+    def listCoprRelease( self ):
+        p = self.listCopr( 'tools' )
+        print( p.stdout )
+
+    def listCoprTesting( self ):
+        p = self.listCopr( 'tools-testing' )
+        print( p.stdout )
+
+    def listCopr( self, copr_repo ):
+        return self.run( ('dnf', 'list', 'available', '--refresh', '--disablerepo=*', '--enablerepo=barryascott-%s' % (copr_repo,)), output=True )
+
     def ensureMockSetup( self ):
         info( 'creating mock target file' )
-        import bemacs_make_mock_cfg
-        bemacs_make_mock_cfg.main( ['',
-            '/etc/mock/%s.cfg' % (self.MOCK_ORIG_VERSION_NAME,),
-            self.MOCK_COPR_REPO_FILE,
-            self.MOCK_VERSION_NAME] )
+        self.makeMockTargetFile()
 
-        p = self.run( ('mock', '--root=%s' % (self.MOCK_VERSION_NAME,), '--print-root-path') )
+        p = self.run( ('mock', '--root=%s' % (self.MOCK_TARGET_FILENAME,), '--print-root-path'), output=True )
 
         self.MOCK_ROOT = p.stdout.strip()
         self.MOCK_BUILD_DIR = '%s/builddir/build' % (self.MOCK_ROOT,)
 
         if os.path.exists( self.MOCK_ROOT ):
-            info( 'Using existing mock for %s' % (self.MOCK_ORIG_VERSION_NAME,) )
+            info( 'Using existing mock for %s' % (self.MOCK_ORIG_TARGET_NAME,) )
 
         else:
-            info( 'Init mock for %s' % (self.MOCK_ORIG_VERSION_NAME,) )
-            self.run( ('mock', '--root=%s' % (self.MOCK_ORIG_VERSION_NAME,), '--init') )
+            info( 'Init mock for %s' % (self.MOCK_TARGET_FILENAME,) )
+            self.run( ('mock', '--root=%s' % (self.MOCK_TARGET_FILENAME,), '--init') )
+
+    def makeMockTargetFile( self ):
+        with open( '/etc/mock/%s.cfg' % (self.MOCK_ORIG_TARGET_NAME,), 'r' ) as f:
+            mock_cfg = compile( f.read(), 'mock_cfg', 'exec' )
+            config_opts = {}
+            exec( mock_cfg )
+
+        with open( self.MOCK_COPR_REPO_FILENAME, 'r' ) as f:
+            repo = f.read()
+
+            config_opts['yum.conf'] += '\n'
+            config_opts['yum.conf'] += repo
+            config_opts['root'] = os.path.splitext( os.path.basename( self.MOCK_TARGET_FILENAME ) )[0]
+
+        with open( self.MOCK_TARGET_FILENAME, 'w' ) as f:
+            for k in config_opts:
+                if k == 'yum.conf':
+                    print( 'config_opts[\'yum.conf\'] = """', end='', file=f )
+                    print( config_opts['yum.conf'], file=f )
+                    print( '"""', file=f )
+
+                else:
+                    print( 'config_opts[%r] = %r' % (k, config_opts[k]), file=f )
 
     def makeTarBall( self ):
         self.KIT_BASENAME = '%s-%s' % (self.KITNAME, self.version)
@@ -201,19 +264,18 @@ class BuildFedoraRpms:
         self.run( ('tar', 'czf', '%s.tar.gz' % (self.KIT_BASENAME,), self.KIT_BASENAME), cwd='tmp' )
 
     def makeSrpm( self ):
-        info( 'creating bemacs.spec' )
+        info( 'creating %s.spec' % (self.KITNAME,) )
         import bemacs_make_spec_file
-        bemacs_make_spec_file.main( ['', 'gui', self.version, self.release, 'tmp/bemacs.spec'] )
+        bemacs_make_spec_file.main( ['', 'gui', self.version, self.release, 'tmp/%s.spec' % (self.KITNAME,)] )
 
         info( 'Creating SRPM for %s' % (self.KIT_BASENAME,) )
 
         self.run( ('mock',
-                '--root=%s' % (self.MOCK_VERSION_NAME,),
+                '--root=%s' % (self.MOCK_TARGET_FILENAME,),
                 '--buildsrpm', '--dnf',
-                '--spec', 'tmp/bemacs.spec',
+                '--spec', 'tmp/%s.spec' % (self.KITNAME,),
                 '--sources', 'tmp/%s.tar.gz' % (self.KIT_BASENAME,)) )
 
-        self.DISTRO = 'fc%d' % (self.target,)
         SRPM_BASENAME = '%s-%s.%s' % (self.KIT_BASENAME, self.release, self.DISTRO)
         self.SRPM_FILENAME = 'tmp/%s.src.rpm' % (SRPM_BASENAME,)
 
@@ -221,7 +283,7 @@ class BuildFedoraRpms:
         info( 'copy %s %s' % (src, self.SRPM_FILENAME) )
         shutil.copyfile( src, self.SRPM_FILENAME )
 
-    def run( self, cmd, check=True, output=True, cwd=None ):
+    def run( self, cmd, check=True, output=False, cwd=None ):
         kw = {}
         if type(cmd) is str:
             info( 'Running %s' % (cmd,) )
