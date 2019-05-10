@@ -4,11 +4,13 @@
 #
 #   Copyright (c) 2010-2017  Barry A. Scott
 #
+from __future__ import print_function
 import sys
 import os
 import time
 
 def main( argv ):
+    print( 'Info: Unicode data from %s' % (argv[1],) )
     # uncode data
     if sys.version_info[0] == 3:
         with open( argv[1], 'r', encoding='utf-8' ) as f:
@@ -66,16 +68,16 @@ def main( argv ):
         if len(title) > 0:
             to_title[ code ] = title
 
-    print( 'alphabetic', len(alphabetic) )
-    print( 'numeric', len(numeric) )
-    print( 'to_upper', len(to_upper) )
-    print( 'to_lower', len(to_lower) )
-    print( 'to_title', len(to_title) )
-    print( 'is_upper', len(is_upper) )
-    print( 'is_lower', len(is_lower) )
-    print( 'is_title', len(is_title) )
-    print( 'is_space', len(is_space) )
-    print( 'last code point', last_code_point )
+    print( 'Info: Found alphabetic', len(alphabetic) )
+    print( 'Info: Found numeric', len(numeric) )
+    print( 'Info: Found to_upper', len(to_upper) )
+    print( 'Info: Found to_lower', len(to_lower) )
+    print( 'Info: Found to_title', len(to_title) )
+    print( 'Info: Found is_upper', len(is_upper) )
+    print( 'Info: Found is_lower', len(is_lower) )
+    print( 'Info: Found is_title', len(is_title) )
+    print( 'Info: Found is_space', len(is_space) )
+    print( 'Info: last code point', last_code_point )
 
     # case folding
     if sys.version_info[0] == 3:
@@ -102,7 +104,7 @@ def main( argv ):
         if status in ('C','S'):
             casefold[ code ] = mapping
 
-    print( 'casefold', len(casefold) )
+    print( 'Info: Found casefold', len(casefold) )
 
     cxx = [
 u'''//

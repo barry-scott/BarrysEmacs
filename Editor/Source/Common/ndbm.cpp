@@ -209,15 +209,18 @@ int longInt::set( int value, int index )
     return (int)value;
 }
 
-bool database::open_db( const EmacsString &file, int access )
+bool database::open_db( const EmacsString &file, bool readonly, bool may_create )
 {
     EmacsFileStat statb;
 # if DBG_EXEC
     if( dbg_flags&DBG_EXEC )
-        _dbg_msg( FormatString("open_db( %s, %d )") << file << access );
+        _dbg_msg( FormatString("open_db( %s, %d, %d )") << file << readonly << may_create );
 # endif
 
     db_name = file;
+    db_access_readonly = readonly;
+    db_access_may_create = may_create;
+
     expand_and_default( file, ".dir", dirnm );
     expand_and_default( file, ".pag", pagnm );
     expand_and_default( file, ".dat", datnm );
@@ -231,10 +234,10 @@ bool database::open_db( const EmacsString &file, int access )
     }
 # endif
 
-    return reopen_db( access );
+    return reopen_db();
 }
 
-bool database::reopen_db( int access )
+bool database::reopen_db()
 {
 # if DBG_EXEC
     if( dbg_flags&DBG_EXEC )
@@ -243,7 +246,7 @@ bool database::reopen_db( int access )
 
     oldpagb = -1;
     olddirb = -1;
-    db_rdonly = access != 0;
+
     db_dirf = -1;
     db_pagf = -1;
     db_datf = -1;
@@ -265,14 +268,21 @@ void database::close_db()
         close( db_pagf );
     if( db_datf > 0 )
         close( db_datf );
-    db_reopen = 1;
+
     db_dirf = -1;
     db_pagf = -1;
     db_datf = -1;
+
+    db_is_open = false;
 }
 
 database::database()
 : db_name()
+, db_is_open( false )
+, db_is_readonly( false )
+, db_access_readonly( false )
+, db_access_keepopen( false )
+, db_access_may_create( false )
 , dirnm()
 , datnm()
 , pagnm()
@@ -304,28 +314,28 @@ int database::setup_db()
     if( lastdatabase != NULL )
         lastdatabase->close_db();
 
-    if( db_rdonly )
+    if( db_access_readonly )
         db_datf = open( datnm, O_BINARY|O_RDONLY );
     else
     {
         db_datf = open( datnm, O_BINARY|O_RDWR );
         if( db_datf < 0 )
         {
-            db_rdonly = 1;
+            db_is_readonly = true;
             db_datf = open( datnm, O_BINARY|O_RDONLY );
         }
     }
     if( db_datf < 0 )
         return -1;
 
-    db_pagf = open( pagnm, db_rdonly ? O_BINARY|O_RDONLY : O_BINARY|O_RDWR );
+    db_pagf = open( pagnm, db_is_readonly ? O_BINARY|O_RDONLY : O_BINARY|O_RDWR );
     if( db_pagf < 0 )
     {
         close( db_datf );
         return -1;
     }
 
-    db_dirf = open( dirnm, db_rdonly ? O_BINARY|O_RDONLY : O_BINARY|O_RDWR );
+    db_dirf = open( dirnm, db_is_readonly ? O_BINARY|O_RDONLY : O_BINARY|O_RDWR );
     if( db_dirf < 0 )
     {
         close( db_pagf );
@@ -347,7 +357,7 @@ int database::setup_db()
     ioctl( db_datf, FIOCLEX, 0 );
 # endif
     lastdatabase = this;
-    db_reopen = 0;
+    db_is_open = true;
     return 0;
 }
 
@@ -394,7 +404,7 @@ database::datum database::fetch( datum &key )
 
 int database::delete_key( datum &key )
 {
-    if( db_rdonly )
+    if( db_is_readonly )
     {
         return -1;
     }
@@ -433,8 +443,10 @@ int database::store( datum &key )
 
     if( setup_db() < 0 )
         return -1;
-    if( db_rdonly )
+
+    if( db_is_readonly )
         return - 1;
+
     for(;;)
     {
         int i;
@@ -607,7 +619,7 @@ int database::getbit()
 
 int database::ndbm_setbit()
 {
-    if( db_rdonly )
+    if( db_is_readonly )
         return -1;
 
     if( bitno > maxbno )
@@ -981,18 +993,44 @@ int database::get_db_help
     return 0;
 }
 
+int database::del_db( const EmacsString &key )
+{
+    database::datum cursor( *this );
+
+    for( cursor = firstkey(); cursor.dptr != 0; cursor = nextkey( cursor ) )
+    {
+        EmacsString cur_key( EmacsString::copy, cursor.dptr, cursor.dsize );
+        if( cur_key == key )
+        {
+            if( delete_key( cursor ) < 0 )
+            {
+                return 2;
+            }
+            else
+            {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
 int database::index_db
     (
-    const EmacsString &match_string,
-    int( *helper )( const EmacsString &, unsigned char ** )
+    const EmacsString &prefix,
+    void (*helper)( const EmacsString & )
     )
 {
+    EmacsString match_string( prefix );
+    match_string.append( "*" );
+
     for( datum key( *this, firstkey() ); key.dptr != 0; key = nextkey( key ) )
     {
         EmacsString key_name( EmacsString::keep, key.dptr, key.dsize );
         if( match_wild( key_name, match_string ) )
-            if( !helper( key_name, NULL ) )
-                return 0;
+        {
+            helper( key_name );
+        }
     }
     return 1;
 }

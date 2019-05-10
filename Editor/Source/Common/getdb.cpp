@@ -38,10 +38,6 @@ DatabaseEntryNameTable::~DatabaseEntryNameTable()
 
 void DatabaseEntryNameTable::makeTable( EmacsString &prefix )
 {
-    // copy prefix as we need to add a * that is not to be returned
-    EmacsString pattern( prefix );
-    pattern.append( "*" );
-
     emacs_assert( activeTable == NULL );
 
 #ifdef vms
@@ -52,12 +48,14 @@ void DatabaseEntryNameTable::makeTable( EmacsString &prefix )
 
     activeTable = this;
     for( int i = 0; i < dbs->dbs_size; i++ )
-        dbs->dbs_elements[i]->index_db( pattern, indexDatabaseEntryCallback );
+    {
+        dbs->dbs_elements[i]->index_db( prefix, indexDatabaseEntryCallback );
+    }
 
     activeTable = NULL;
 }
 
-int DatabaseEntryNameTable::indexDatabaseEntryCallback( const EmacsString &key, unsigned char * * )
+void DatabaseEntryNameTable::indexDatabaseEntryCallback( const EmacsString &key )
 {
     EmacsString str( key );
     str.toLower();
@@ -65,7 +63,7 @@ int DatabaseEntryNameTable::indexDatabaseEntryCallback( const EmacsString &key, 
     // prevent duplicate keys being inserted
     // duplicates are normal
     if( activeTable->find( str ) == NULL )
+    {
         activeTable->add( str, (void *)&table_value );
-
-    return 1;
+    }
 }

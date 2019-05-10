@@ -3,18 +3,18 @@
 ;
 ; This file sets up the default EMACS environment for user who work in an
 ; uncustomized environment.
-; 
+;
 ; The default key bindings are loaded from EMACS_DEFAULT_KEYBINDINGS and the
 ; default autoloads are loaded from EMACS_DEFAULT_AUTOLOADS. Both of these
 ; files are loaded after the MLisp-library database search list is set up so
 ; users can have their own key bindings
-; 
+;
 (setq error-messages-buffer "Startup Error Messages")
 (defun
     (~emacs-profile-clear-error-buffer
         (if (!= error-messages-buffer "")
             (save-window-excursion
-                
+
                 (switch-to-buffer error-messages-buffer)
                 (erase-buffer)
                 (setq highlight-region 1)
@@ -30,7 +30,7 @@
             (switch-to-buffer error-messages-buffer)
             (end-of-file)
             (insert-string
-                ~message "\n" 
+                ~message "\n"
                 (string-extract "-------------------------------------------" 0 (length ~message)) "\n"
             )
         )
@@ -51,17 +51,17 @@
 ; Fill in the MLisp-library database
 ;
 (error-occurred
-    (extend-database-search-list 
+    (extend-database-search-list
         "MLisp-library"
         "emacs_library:emacslib"
-        3
+        2                       ; read-write, keep-open, do not create
     )
 )
 (error-occurred
     (extend-database-search-list
         "describe"
         "emacs_library:emacsdesc"
-        3
+        2                       ; read-write, keep-open, do not create
     )
 )
 ;
@@ -78,10 +78,10 @@
 (execute-mlisp-file "emacs_default_autoloads")
 (execute-mlisp-file "emacs_default_keybindings")
 
-; 
+;
 ; setup to load the user interface
 ; this hook is executed after the
-; 
+;
 (defun
     (~load-emacs_default_user_interface
         (novalue)
@@ -108,10 +108,10 @@
                 3
             )
         )
-        ; 
+        ;
         ; any errors that occur during startup will be saved
         ; in the buffer "Startup Error Messages"
-        ; 
+        ;
         (setq error-messages-buffer "Startup Error Messages")
         (setq stack-trace-on-error 1)
         (~emacs-profile-clear-error-buffer)

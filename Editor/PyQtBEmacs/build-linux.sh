@@ -1,4 +1,6 @@
-#!/bin/bash -x
+#!/bin/bash
+echo "Info: PyQtBEmacs build-linux in $( pwd )"
+
 ROOT_DIR=${1:? Root dir}
 BIN_DIR=${2:? Bin dir}
 LIB_DIR=${3:? Lib dir}

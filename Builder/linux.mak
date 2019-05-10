@@ -34,18 +34,18 @@ usage:
 	@ echo "Usage: make -f unix.mak clean-cli"
 	exit 1
 
-build-gui: brand $(BUILD_BEMACS_DOC_DIR) $(BUILD_BEMACS_LIB_DIR) $(BUILD_BEMACS_BIN_DIR) bemacs-gui bemacs-cli utils mlisp describe language quick_info docs
+build-gui: brand $(BUILD_BEMACS_DOC_DIR) $(BUILD_BEMACS_LIB_DIR) $(BUILD_BEMACS_BIN_DIR) bemacs-gui bemacs-cli utils mlisp describe quick_info docs
 	@ echo Info: Linux kitting
 
-build-cli: brand $(BUILD_BEMACS_DOC_DIR) $(BUILD_BEMACS_LIB_DIR) $(BUILD_BEMACS_BIN_DIR) bemacs-cli utils mlisp describe language quick_info docs
+build-cli: brand $(BUILD_BEMACS_DOC_DIR) $(BUILD_BEMACS_LIB_DIR) $(BUILD_BEMACS_BIN_DIR) bemacs-cli utils mlisp describe quick_info docs
 	@ echo Info: Linux kitting
 
 clean-gui:
-	cd ../Editor && ./build-linux.sh gui clean
+	cd ../Editor && ./build-linux.sh $(SETUP_OPTIONS) gui clean
 	rm -rf $(BEMACS_ROOT_DIR)
 
 clean-cli:
-	cd ../Editor && ./build-linux.sh cli clean
+	cd ../Editor && ./build-linux.sh $(SETUP_OPTIONS) cli clean
 	rm -rf $(BEMACS_ROOT_DIR)
 
 brand:
@@ -66,17 +66,17 @@ bemacs-gui: bemacs-so
 
 bemacs-so:
 	@ echo Info: Building BEmacs GUI images...
-	cd ../Editor && INSTALL_BEMACS_LIB_DIR=$(INSTALL_BEMACS_LIB_DIR) ./build-linux.sh gui all
+	cd ../Editor && INSTALL_BEMACS_LIB_DIR=$(INSTALL_BEMACS_LIB_DIR) ./build-linux.sh $(SETUP_OPTIONS) gui all
 	cp ../Editor/exe-pybemacs/_bemacs.so $(BUILD_BEMACS_LIB_DIR)
 
 bemacs-cli: 
 	@ echo Info: Building BEmacs CLI images...
-	cd ../Editor && INSTALL_BEMACS_LIB_DIR=$(INSTALL_BEMACS_LIB_DIR) ./build-linux.sh cli all
+	cd ../Editor && INSTALL_BEMACS_LIB_DIR=$(INSTALL_BEMACS_LIB_DIR) ./build-linux.sh $(SETUP_OPTIONS) cli all
 	cp ../Editor/exe-cli-bemacs/bemacs-cli $(BUILD_BEMACS_BIN_DIR)
 
 utils:
 	@ echo Info: Copy db utils...
-	cd ../Editor && INSTALL_BEMACS_LIB_DIR=$(INSTALL_BEMACS_LIB_DIR) ./build-linux.sh utils all
+	cd ../Editor && INSTALL_BEMACS_LIB_DIR=$(INSTALL_BEMACS_LIB_DIR) ./build-linux.sh $(SETUP_OPTIONS) utils all
 	cp ../Editor/exe-utils/dbadd	$(BUILD_BEMACS_BIN_DIR)/bemacs-dbadd
 	cp ../Editor/exe-utils/dbcreate $(BUILD_BEMACS_BIN_DIR)/bemacs-dbcreate
 	cp ../Editor/exe-utils/dbdel	$(BUILD_BEMACS_BIN_DIR)/bemacs-dbdel
@@ -89,22 +89,32 @@ mlisp: utils
 	cp -f ../MLisp/emacsinit.ml	$(BUILD_BEMACS_LIB_DIR); chmod ugo=r $(BUILD_BEMACS_LIB_DIR)/emacsinit.ml
 	cp -f ../MLisp/emacs_profile.ml	$(BUILD_BEMACS_LIB_DIR); chmod ugo=r $(BUILD_BEMACS_LIB_DIR)/emacs_profile.ml
 	rm -f $(BUILD_BEMACS_LIB_DIR)/emacslib.*
-	cd ../MLisp; $(PYTHON) create_library.py common,unix $(BUILD_BEMACS_LIB_DIR)/emacslib $(BUILD_BEMACS_BIN_DIR); chmod ugo=r $(BUILD_BEMACS_LIB_DIR)/emacslib.*
+ifdef USE_SQLITE3
+	cd ../MLisp; $(PYTHON) create_library.py common,unix $(BUILD_BEMACS_LIB_DIR)/emacslib --sqlite3 $(BUILD_BEMACS_BIN_DIR)
+else
+	cd ../MLisp; $(PYTHON) create_library.py common,unix $(BUILD_BEMACS_LIB_DIR)/emacslib $(BUILD_BEMACS_BIN_DIR)
+endif
+	chmod ugo=r $(BUILD_BEMACS_LIB_DIR)/emacslib.*
 
 describe: utils
 	@ echo Info: Making describe...
+ifdef USE_SQLITE3
+	@ $(PYTHON) ../Describe/create_describe_database.py ../Describe/em_desc.mll $(BUILD_BEMACS_LIB_DIR)/emacsdesc.db
+else
 	@ $(BUILD_BEMACS_BIN_DIR)/bemacs-dbcreate $(BUILD_BEMACS_LIB_DIR)/emacsdesc -c
-	@ $(BUILD_BEMACS_BIN_DIR)/bemacs-mll2db ../Describe/em_desc.mll $(BUILD_BEMACS_LIB_DIR)/emacsdesc; chmod ugo=r $(BUILD_BEMACS_LIB_DIR)/emacsdesc.*
-
-language: utils
-	@ echo Info: Making language...
-	@ $(BUILD_BEMACS_BIN_DIR)/bemacs-dbcreate $(BUILD_BEMACS_LIB_DIR)/emacslang -c
-	@ $(BUILD_BEMACS_BIN_DIR)/bemacs-mll2db ../Language/language.mll $(BUILD_BEMACS_LIB_DIR)/emacslang; chmod ugo=r $(BUILD_BEMACS_LIB_DIR)/emacslang.*
+	@ $(BUILD_BEMACS_BIN_DIR)/bemacs-mll2db ../Describe/em_desc.mll $(BUILD_BEMACS_LIB_DIR)/emacsdesc
+endif
+	chmod ugo=r $(BUILD_BEMACS_LIB_DIR)/emacsdesc.*
 
 quick_info: utils
+ifdef USE_SQLITE3
+	@ $(PYTHON) ../Describe/create_describe_database.py ../Describe/qi_cc.mll $(BUILD_BEMACS_LIB_DIR)/emacs_qinfo_c.db
+else
 	@ echo Info: Making quick info...
 	@ $(BUILD_BEMACS_BIN_DIR)/bemacs-dbcreate $(BUILD_BEMACS_LIB_DIR)/emacs_qinfo_c -c
-	@ $(BUILD_BEMACS_BIN_DIR)/bemacs-mll2db ../Describe/qi_cc.mll $(BUILD_BEMACS_LIB_DIR)/emacs_qinfo_c; chmod ugo=r $(BUILD_BEMACS_LIB_DIR)/emacs_qinfo_c.*
+	@ $(BUILD_BEMACS_BIN_DIR)/bemacs-mll2db ../Describe/qi_cc.mll $(BUILD_BEMACS_LIB_DIR)/emacs_qinfo_c
+endif
+	chmod ugo=r $(BUILD_BEMACS_LIB_DIR)/emacs_qinfo_c.*
 
 docs:
 	@ echo Info: Copying documentation...

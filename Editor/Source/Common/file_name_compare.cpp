@@ -22,9 +22,9 @@ int match_wild( const EmacsString &candidate, const EmacsString &pattern )
 {
     static EmacsChar_t null_str[1] = {0};
 
-    const EmacsChar_t *cp, *pp;        // candidate and pattern pointers
-    const EmacsChar_t *scp, *spp;    // saved cp and pp
-    EmacsChar_t cch, pch;        // candidate and pattern char
+    const EmacsChar_t *cp, *pp;     // candidate and pattern pointers
+    const EmacsChar_t *scp, *spp;   // saved cp and pp
+    EmacsChar_t cch, pch;           // candidate and pattern char
 
     scp = spp = null_str;
 

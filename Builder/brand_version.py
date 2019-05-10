@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+from __future__ import print_function
 import sys
 import os
 import time
@@ -32,13 +33,18 @@ def main( argv ):
         print( 'Usage: %s <version-info-file> <wc-path>' % argv[0] )
         return 1
 
-    vi = VersionInfo( argv[2] )
+    def info( msg ):
+        print( 'Info: %s' % (msg,) )
+
+    return brandVersion( argv[1], argv[2], info )
+
+def brandVersion( version_info_file, wc_path, log_info ):
+    vi = VersionInfo( wc_path, log_info )
     try:
-        vi.parseVersionInfo( argv[1] )
+        vi.parseVersionInfo( version_info_file )
 
         finder = FileFinder( vi )
-
-        finder.findAndBrandFiles( argv[2] )
+        finder.findAndBrandFiles( wc_path )
 
     except Error as e:
         print( 'Error: %s' % str(e) )
@@ -69,7 +75,9 @@ class FileFinder:
                 self.findAndBrandFiles( full_path )
 
 class VersionInfo:
-    def __init__( self, wc_path ):
+    def __init__( self, wc_path, log_info ):
+        self.log_info = log_info
+
         self.__info = {}
         now = time.localtime( time.time() )
         self.__info['year'] = time.strftime( '%Y', now )
@@ -107,7 +115,7 @@ class VersionInfo:
         all_keys = self.__info.keys()
         all_keys.sort()
         for key in all_keys:
-            print( 'Info: %10s: %s' % (key, self.__info[ key ]) )
+            self.log_info( '%10s: %s' % (key, self.__info[ key ]) )
 
     def brandOneFile( self, filename ):
         template_contents = readFile( filename ).split('\n')
@@ -123,7 +131,7 @@ class VersionInfo:
         parent_dir = os.path.dirname( filename )
         base = os.path.basename( filename )
         new_filename = os.path.join( parent_dir, base[len(template_file_prefix):] )
-        print( 'Info: Creating', new_filename )
+        self.log_info( 'Creating %s' % (new_filename,) )
 
         writeFile( new_filename, '\n'.join( branded_contents ) )
 

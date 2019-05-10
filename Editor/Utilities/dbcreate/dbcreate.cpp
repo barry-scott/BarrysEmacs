@@ -45,7 +45,7 @@ int main(int argc,char **argv)
 
     database db;
     if( !c_flag
-    && db.open_db( argv[1], 0 ) )
+    && db.open_db( argv[1], false, false ) )
     {
         printf ("Data base found\n");
         exit (1);

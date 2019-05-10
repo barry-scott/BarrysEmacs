@@ -12,11 +12,7 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
-
-
 #define GROW 10             // Size by which to grow search list names
-#define READONLY 1          // Read only access
-#define OPEN 2              // remain open access
 
 int extend_database_search_list( void );
 int fetch_database_entry( void );
@@ -55,7 +51,7 @@ DatabaseSearchList::~DatabaseSearchList()
 
 int extend_database_search_list( void )
 {
-    int reopen = 0;
+    int access_flags = database::access_keepopen;
 
     EmacsString name;
     getescword( DatabaseSearchList::, ": extend-database-search-list (list) ", name );
@@ -66,11 +62,10 @@ int extend_database_search_list( void )
     if( p == NULL )
         p = EMACS_NEW DatabaseSearchList( name );
 
-    EmacsString buf( FormatString( ": extend-database-search-list (list) %s (database) " ) <<
-        p->dbs_name );
+    EmacsString buf( FormatString( ": extend-database-search-list (list) %s (database) " ) << p->dbs_name );
 
     EmacsFileTable file_table;
-        EmacsString content;
+    EmacsString content;
     getescword( file_table., buf, content );
     if( content.isNull() )
         return 0;
@@ -84,36 +79,41 @@ int extend_database_search_list( void )
         if( filename == dbx->db_name )
             return 0;
     }
+
     if( p->dbs_size == DatabaseSearchList::SEARCH_LEN )
     {
         error( "Too many components in search list" );
         return 0;
     }
+
     if( arg_state == have_arg )
-        reopen = arg;
-    else
-        if( ! interactive() && cur_exec->p_nargs > 2 )
-            reopen = getnum( u_str(": extend-database-search-list (flags) ") );
+        access_flags = arg;
+
+    else if( ! interactive() && cur_exec->p_nargs > 2 )
+        access_flags = getnum( u_str(": extend-database-search-list (flags) ") );
 
     database *db = EMACS_NEW database;
 
-    if( db == 0 || !db->open_db( filename, reopen & READONLY ) )
-        error( FormatString("Cannot find database \"%s\"") << filename );
-    else
+    if( db == NULL || !db->open_db( filename, access_flags & database::access_readonly, access_flags & database::access_may_create ) )
     {
-#ifndef __unix__
-        db->db_reopen = (reopen & OPEN) == 0;
-#endif
-        int i = p->dbs_size;
-        while( i > 0)
-        {
-            p->dbs_elements[i] = p->dbs_elements[i-1];
-            i--;
-        }
-        p->dbs_elements[0] = db;
-        p->dbs_size++;
-        if( (reopen & OPEN) == 0 )
-            db->close_db();
+        error( FormatString("Cannot find database \"%s\"") << filename );
+        return 0;
+    }
+
+    db->db_access_keepopen = access_flags & database::access_keepopen;
+
+    int i = p->dbs_size;
+    while( i > 0)
+    {
+        p->dbs_elements[i] = p->dbs_elements[i-1];
+        i--;
+    }
+    p->dbs_elements[0] = db;
+    p->dbs_size++;
+
+    if( !db->db_access_keepopen )
+    {
+        db->close_db();
     }
 
     return 0;
@@ -229,7 +229,7 @@ int put_database_entry( void )
     }
 
     database *dbx = dbs->dbs_elements[0];
-    if( dbx->db_rdonly )
+    if( dbx->db_is_readonly )
     {
         error( FormatString("\"%s\" is a read-only database.") << dbs->dbs_name );
         return 0;
@@ -274,19 +274,13 @@ int list_databases( void )
 
             bf_cur->ins_cstr( "    ", 4);
             bf_cur->ins_cstr( db->db_name );
-            if( db->db_rdonly || ! db->db_reopen )
-            {
-                bf_cur->ins_cstr( "    (", 5 );
-                if( db->db_rdonly )
-                {
-                    bf_cur->ins_cstr( "read only", 9 );
-                    if( ! db->db_reopen )
-                        bf_cur->ins_cstr( ", ", 2 );
-                }
-                if( ! db->db_reopen )
-                    bf_cur->ins_cstr( "open", 4 );
-                bf_cur->ins_cstr( ")", 1 );
-            }
+            if( db->db_is_readonly || db->db_access_keepopen )
+                bf_cur->ins_cstr( "    (read only, keep open)" );
+            else if( db->db_is_readonly )
+                bf_cur->ins_cstr( "    (read only)" );
+            else if( db->db_access_keepopen )
+                bf_cur->ins_cstr( "    (keep open)" );
+
             bf_cur->ins_cstr( "\n", 1 );
         }
         bf_cur->ins_cstr( "\n", 1 );

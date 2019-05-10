@@ -56,7 +56,7 @@ int main(int argc,char **argv)
     }
 
     database db;
-    if( !db.open_db( argv[2], 0) )
+    if( !db.open_db( argv[2], false, false ) )
     {
         printf ("Data base %s not found\n", argv[2]);
         exit (EXIT_FAILURE);

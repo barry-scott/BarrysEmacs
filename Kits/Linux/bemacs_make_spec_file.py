@@ -8,7 +8,6 @@ def main( argv ):
     specfile = argv[4]
 
     if target == 'cli':
-        spec_targets = 'build-cli'
         python = '/usr/bin/python2'
         all_parts = (
             spec_file_head,
@@ -22,7 +21,6 @@ def main( argv ):
             spec_file_tail)
 
     elif target == 'gui':
-        spec_targets = 'build-gui build-cli'
         python = '/usr/bin/python3'
         all_parts = (
             spec_file_head,
@@ -45,7 +43,7 @@ def main( argv ):
     fmt_spec_file = ''.join( all_parts )
     fmt_spec_file = fmt_spec_file.replace( '%', '%%' )
     fmt_spec_file = fmt_spec_file.replace( './.', '%' )
-    spec_vars = {'TARGETS': spec_targets
+    spec_vars = {'TARGET': target
                 ,'VERSION': version
                 ,'REVISION': revision
                 ,'PYTHON':  python}
@@ -101,17 +99,16 @@ true
 echo Info: Install PWD $( pwd )
 
 export BUILDER_TOP_DIR=$( pwd )
+export PYTHON=./.(PYTHON)s
 
 cd ${BUILDER_TOP_DIR}/Builder
 # tell Editor/build-linux.sh to use Unicode UCD and PyCXX from system
 %if 0%{?centos_ver} == 6
-# Centos 6 g++ raises false warnings that are not present in newer compilers
 # Centos 6 has old unicode-ucd and no pycxx
-export SETUP_OPTIONS="--no-warnings-as-errors"
+./.(PYTHON)s build_bemacs.py ./.(TARGET)s
 %else
-export SETUP_OPTIONS="--system-ucd --system-pycxx"
+./.(PYTHON)s build_bemacs.py ./.(TARGET)s --system-ucd --system-pycxx
 %endif
-make -f linux.mak PYTHON=./.(PYTHON)s DESTDIR=%{buildroot} ./.(TARGETS)s
 
 mkdir -p %{buildroot}%{_mandir}/man1
 gzip -c ${BUILDER_TOP_DIR}/Kits/Linux/bemacs.1 > %{buildroot}%{_mandir}/man1/bemacs.1.gz

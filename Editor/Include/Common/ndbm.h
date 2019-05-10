@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1982-2010
+//    Copyright (c) 1982-2019
 //
 //        Barry A. Scott
 //
@@ -15,13 +15,101 @@ class database : public EmacsObject
     int db_pagf;
     int db_datf;
 };
-#elif !defined( DB_MLL )
+#elif defined( DB_MLL )
+struct database_entry
+{
+    unsigned char *dbe_name;
+    int dbe_position;
+    int dbe_length;
+};
+
+database
+{
+    int db_rdonly;
+    int db_reopen;
+    EmacsString db_name;
+    int db_dirf;
+    FILE *db_file;
+    size_t db_data_length;
+    unsigned char *db_data_pointer;
+    int db_num_entries;
+    struct database_entry *db_entries;
+};
+#elif defined( DB_SQLITE3 )
+// sqlite3 version
+#include <sqlite3.h>
+
+class database : public EmacsObject
+{
+public:
+    typedef int datum;  // place holder
+
+    EMACS_OBJECT_FUNCTIONS( database )
+    database();
+    virtual ~database();
+
+    // access flags
+    enum {
+        access_readonly = 1,
+        access_keepopen = 2,    // used by dbman
+        access_may_create = 4
+    };
+
+    int put_db( const EmacsString &key, const unsigned char *value, int length );
+    int get_db( const EmacsString &key, EmacsString &value );
+    int del_db( const EmacsString &key );
+    int get_db_help( const EmacsString &key, EmacsString &value );
+    int index_db( const EmacsString &, void (*)( const EmacsString & ) );
+    bool open_db( const EmacsString &name, bool readonly, bool may_create );
+    void close_db();
+
+private:
+    // functions
+    bool reopen_db();
+
+public:
+    // data
+    EmacsString db_name;
+    // state
+    bool db_is_open;
+    bool db_is_readonly;
+    // desired access
+    bool db_access_readonly;
+    bool db_access_keepopen;    // used by dbman
+    bool db_access_may_create;
+
+private:
+    EmacsString db_filename;
+
+    // the database
+    sqlite3 *db_ptr;
+
+    // prepared statements
+    sqlite3_stmt *db_stmt_select_value;
+    sqlite3_stmt *db_stmt_select_all_keys;
+    sqlite3_stmt *db_stmt_insert_key_value;
+    sqlite3_stmt *db_stmt_delete_key;
+
+    // data
+    static database *lastdatabase;
+};
+
+#else
+// ndbm version
 class database : public EmacsObject
 {
 public:
     enum { PBLKSIZ = 4096 };    // Page block size
     enum { DBLKSIZ = 4096 };    // directory block size
     enum { BYTESIZ = 8 };       // bits per byte
+
+    // access flags
+    enum {
+        access_readonly = 1,
+        access_keepopen = 2,    // used by dbman
+        access_may_create = 4
+    };
+
     class datum
     {
     public:
@@ -51,18 +139,29 @@ public:
 
     int put_db( const EmacsString &key, const unsigned char *value, int length );
     int get_db( const EmacsString &key, EmacsString &value );
+    int del_db( const EmacsString &key );
     int get_db_help( const EmacsString &key,EmacsString &value );
-    int index_db( const EmacsString &, int (*)( const EmacsString &, unsigned char ** ) );
-    bool open_db( const EmacsString &, int );
+    int index_db( const EmacsString &, void (*)( const EmacsString & ) );
+    bool open_db( const EmacsString &name, bool readonly, bool may_create );
     void close_db();
 
     datum firstkey();
     datum nextkey( datum & );
     int delete_key( datum & );
 
+    // data
+    EmacsString db_name;
+    // state
+    bool db_is_open;
+    bool db_is_readonly;
+    // desired access
+    bool db_access_readonly;
+    bool db_access_keepopen;    // used by dbman
+    bool db_access_may_create;
+
 private:
     // functions
-    bool reopen_db( int access );
+    bool reopen_db();
     int forder( datum & );
     datum fetch( datum & );
     int store( datum & );
@@ -84,11 +183,6 @@ private:
     void dbg_check_fildes( const char *title );
 #endif
 
-public:
-    // data
-    EmacsString db_name;
-    int db_reopen;
-    int db_rdonly;
 private:
     // data
     static database *lastdatabase;
@@ -109,27 +203,6 @@ private:
     EmacsString pagnm;
 
     bool databaseUsesLSB_byteOrdering;
-};
-
-#else
-struct database_entry
-{
-    unsigned char *dbe_name;
-    int dbe_position;
-    int dbe_length;
-};
-
-database
-{
-    int db_rdonly;
-    int db_reopen;
-    EmacsString db_name;
-    int db_dirf;
-    FILE *db_file;
-    size_t db_data_length;
-    unsigned char *db_data_pointer;
-    int db_num_entries;
-    struct database_entry *db_entries;
 };
 #endif
 

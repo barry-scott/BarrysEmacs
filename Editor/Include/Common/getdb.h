@@ -13,7 +13,7 @@ public:
 private:
     virtual void makeTable( EmacsString &prefix );
 
-    static int indexDatabaseEntryCallback( const EmacsString &key, unsigned char * * );
+    static void indexDatabaseEntryCallback( const EmacsString &key );
 
     DatabaseSearchList *dbs;
     static DatabaseEntryNameTable *activeTable;

@@ -13,6 +13,7 @@
 
 int main(int argc,char **argv)
 {
+#if !defined( DB_SQLITE3 )
     database db;
     database::datum key( db );
     char *ndb = NULL;
@@ -25,7 +26,7 @@ int main(int argc,char **argv)
         printf ("Usage: %s database [ -l ] [ -p newdatabase ]\n", argv[0]);
         exit (1);
     }
-    if ( !db.open_db( argv[1], 1 ) )
+    if ( !db.open_db( argv[1], true, false ) )
     {
         printf ("Data base not found\n");
         exit (1);
@@ -74,5 +75,6 @@ int main(int argc,char **argv)
                 printf ("%.*s\n", key.dsize, key.dptr);
             }
         }
+#endif
     return 0;
 }

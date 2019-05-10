@@ -17,15 +17,12 @@ def main( argv ):
     print( 'Create MLisp Library %(lib_name)s with file set %(file_sets)s using tools from %(tool_path)s' % locals() )
 
     try:
-        dbtools = BemacsDatabaseTools( tool_path )
+        if tool_path == '--sqlite3':
+            dbtools = BemacsSqlite3Tools()
+        else:
+            dbtools = BemacsDatabaseTools( tool_path )
 
-        dbtools.create( lib_name )
-
-        modules_added = 0
-        for set_name, filename in library_files:
-            if set_name in file_sets:
-                dbtools.add( lib_name, filename )
-                modules_added = modules_added + 1
+        createLibrary( file_set, lib_name, dbtools )
 
     except ValueError as e:
         print( 'Error: %s' % (e,) )
@@ -33,6 +30,39 @@ def main( argv ):
 
     print( 'Added %d modules to %s' % (modules_added, lib_name) )
     return 0
+
+def createLibrary( file_sets, lib_name, dbtools ):
+    dbtools.create( lib_name )
+
+    lib_folder = os.path.dirname( __file__ )
+
+    modules_added = 0
+    for set_name, filename in library_files:
+        if set_name in file_sets:
+            dbtools.add( lib_name, os.path.join( lib_folder, filename ) )
+            modules_added += 1
+
+    dbtools.close()
+
+class BemacsSqlite3Tools:
+    def __init__( self ):
+        self.db = None
+
+    def create( self, lib_name ):
+        import sqlite3
+        self.db = sqlite3.connect( lib_name+'.db' )
+        c = self.db.cursor()
+        c.execute( '''CREATE TABLE key_value (key TEXT PRIMARY KEY, value TEXT)''' )
+
+    def add( self, lib_name, filename ):
+        basename = os.path.basename( filename )
+        c = self.db.cursor()
+        with open( filename, 'r', encoding='utf-8' ) as f:
+            c.execute( '''INSERT INTO key_value VALUES( ?, ? )''', (basename, f.read()) )
+
+    def close( self ):
+        self.db.commit()
+        self.db.close()
 
 class BemacsDatabaseTools:
     def __init__(self, tool_path):
@@ -78,6 +108,8 @@ class BemacsDatabaseTools:
         basename = os.path.basename( filename )
         self._run_command( [self.__dbadd, lib_name, basename], filename )
 
+    def close( self ):
+        pass
 
 library_files =    [
     ('common',    'Library/abbrev.key'),

@@ -30,7 +30,7 @@ class Setup:
         self.opt_system_pycxx = False
         self.opt_system_ucd = False
         self.opt_warnings_as_errors = True
-
+        self.opt_sqlite3 = False
 
         args = argv[1:]
         if len(args) < 3:
@@ -41,12 +41,6 @@ class Setup:
 
         target = args[0].split( ',' )
         del args[0]
-
-        if 'all' in target:
-            if self.platform in ('linux', 'macosx', 'netbsd'):
-                target = ['gui', 'cli', 'utils', 'unit-tests']
-            else:
-                target = ['gui', 'utils', 'unit-tests']
 
         if 'gui' in target:
             self.opt_bemacs_gui = True
@@ -95,6 +89,10 @@ class Setup:
 
             elif args[0].startswith( '--coverage' ):
                 self.opt_coverage = True
+                del args[0]
+
+            elif args[0].startswith( '--sqlite3' ):
+                self.opt_sqlite3 = True
                 del args[0]
 
             else:
@@ -163,6 +161,7 @@ class Setup:
 
             pybemacs_feature_defines = [('EXEC_BF', '1')]
             cli_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
+            utils_feature_defines = []
 
         elif self.platform == 'linux':
             if self.opt_utils:
@@ -180,6 +179,11 @@ class Setup:
 
             pybemacs_feature_defines = [('EXEC_BF', '1')]
             cli_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
+            utils_feature_defines = []
+            if self.opt_sqlite3:
+                pybemacs_feature_defines.append( ('DB_SQLITE3', '1') )
+                cli_feature_defines.append( ('DB_SQLITE3', '1') )
+                utils_feature_defines.append( ('DB_SQLITE3', '1') )
 
         elif self.platform == 'netbsd':
             if self.opt_utils:
@@ -197,6 +201,7 @@ class Setup:
 
             pybemacs_feature_defines = [('EXEC_BF', '1')]
             cli_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
+            utils_feature_defines = []
 
         else:
             raise SetupError( 'Unknown platform %r' % (self.platform,) )
@@ -205,7 +210,7 @@ class Setup:
             self.c_unit_tests.setupUnittests()
 
         if self.opt_utils:
-            self.c_utils.setupUtilities()
+            self.c_utils.setupUtilities( utils_feature_defines )
 
         if self.opt_bemacs_gui:
             self.c_pybemacs.setupPythonEmacs( pybemacs_feature_defines )
@@ -228,9 +233,13 @@ class Setup:
                 Source( self.c_utils, 'Source/Common/emunicode.cpp',
                                         ['Include/Common/em_unicode_data.h'] ),
                 Source( self.c_utils, 'Source/Common/file_name_compare.cpp' ),
-                Source( self.c_utils, 'Source/Common/ndbm.cpp' ),
                 Source( self.c_utils, 'Utilities/db_rtl/stub_rtl.cpp' ),
                 ]
+
+            if self.opt_sqlite3:
+                self.db_files.append( Source( self.c_utils, 'Source/Common/db_sqlite3.cpp' ) )
+            else:
+                self.db_files.append( Source( self.c_utils, 'Source/Common/ndbm.cpp' ) )
 
             if self.unicode_header is None:
                 self.unicode_header = UnicodeDataHeader( self.c_utils )
@@ -325,7 +334,6 @@ class Setup:
                 Source( compiler, 'Source/Common/mlispexp.cpp' ),
                 Source( compiler, 'Source/Common/mlisproc.cpp' ),
                 Source( compiler, 'Source/Common/mlprintf.cpp' ),
-                Source( compiler, 'Source/Common/ndbm.cpp' ),
                 Source( compiler, 'Source/Common/options.cpp' ),
                 Source( compiler, 'Source/Common/queue.cpp' ),
                 Source( compiler, 'Source/Common/save_env.cpp' ),
@@ -347,6 +355,11 @@ class Setup:
                 Source( compiler, 'Source/Common/windman.cpp' ),
                 Source( compiler, 'Source/Common/window.cpp' ),
                 ]
+            if self.opt_sqlite3:
+                obj_files.append( Source( compiler, 'Source/Common/db_sqlite3.cpp' ) )
+            else:
+                obj_files.append( Source( compiler, 'Source/Common/ndbm.cpp' ) )
+
             if self.platform in ('linux'):
                 obj_files.extend( [
                     Source( compiler, 'Source/Unix/unixfile.cpp' ),
@@ -485,7 +498,7 @@ class Compiler:
         if feature_defines is None:
             feature_defines = []
 
-        print( 'feature_defines', feature_defines )
+        print( 'Info: feature defines %r' % (feature_defines,) )
         self._addVar( 'FEATURE_DEFINES',' '.join( '-D%s=%s' % (name, value) for name, value in feature_defines ) )
 
     def expand( self, s ):
@@ -582,7 +595,7 @@ class Win64CompilerVC14(Compiler):
         rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, target.getTargetFilename()) )
         rules.append( '\t@if not exist %(EDIT_OBJ)s mkdir %(EDIT_OBJ)s' )
         rules.append( '\t@if not exist %s mkdir %s' % (pdb_dir, pdb_dir) )   # For .pdb file
-        rules.append( '\t@$(CCC) /c %%(CCCFLAGS)s /Fo%s /Fd%s %s' % (obj_filename, pdb_filename, target.src_filename) )
+        rules.append( '\t@@$(CCC) /c %%(CCCFLAGS)s /Fo%s /Fd%s %s' % (obj_filename, pdb_filename, target.src_filename) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
@@ -597,7 +610,8 @@ class Win64CompilerVC14(Compiler):
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
-    def setupUtilities( self ):
+    def setupUtilities( self, feature_defines ):
+        self.addFeatureDefines( feature_defines )
         self._addVar( 'EDIT_OBJ',       r'obj-utils' )
         self._addVar( 'EDIT_EXE',       r'exe-utils' )
         self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc /W4 '
@@ -607,6 +621,7 @@ class Win64CompilerVC14(Compiler):
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
                                         r'-D_UNICODE -DUNICODE '
                                         r'-U_DEBUG '
+                                        r'%(FEATURE_DEFINES)s '
                                         r'-D%(DEBUG)s' )
 
     def setupUnittests( self ):
@@ -718,7 +733,7 @@ class Win32CompilerMSVC90(Compiler):
 
         rules.append( '' )
         rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo Link %s' % (pyd_filename,) )
+        rules.append( '\t@echo Link Shared %s' % (pyd_filename,) )
         rules.append( '\t@mkdir %(EDIT_EXE)s' )
         rules.append( '\t@$(LDSHARED)  %%(CCCFLAGS)s /Fe%s /Fd%s %s %%(PYTHON_LIB)s\python%d%d.lib Advapi32.lib' %
                             (pyd_filename, pdb_filename, ' '.join( all_objects ), sys.version_info.major, sys.version_info.minor) )
@@ -748,7 +763,8 @@ class Win32CompilerMSVC90(Compiler):
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
-    def setupUtilities( self ):
+    def setupUtilities( self, feature_defines ):
+        self.addFeatureDefines( feature_defines )
         self._addVar( 'EDIT_OBJ',       r'obj-utils' )
         self._addVar( 'EDIT_EXE',       r'exe-utils' )
         self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc '
@@ -757,6 +773,7 @@ class Win32CompilerMSVC90(Compiler):
                                         r'"-DCPU_TYPE=\"i386\"" "-DUI_TYPE=\"console\"" '
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
                                         r'-U_DEBUG '
+                                        r'%(FEATURE_DEFINES)s '
                                         r'-D%(DEBUG)s' )
 
     def setupUnittests( self ):
@@ -875,9 +892,9 @@ class CompilerGCC(Compiler):
         rules = []
 
         rules.append( '%s : %s' % (target_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo Link %s' % (target_filename,) )
+        rules.append( '\t@echo Link Shared %s' % (target_filename,) )
         rules.append( '\t@mkdir -p %(EDIT_EXE)s' )
-        rules.append( '\t@%%(LDSHARED)s -o %s %%(CCCFLAGS)s %s' % (target_filename, ' '.join( all_objects )) )
+        rules.append( '\t@%%(LDSHARED)s -o %s %%(CCCFLAGS)s %%(LINK_LIBS)s %s' % (target_filename, ' '.join( all_objects )) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
@@ -889,7 +906,7 @@ class CompilerGCC(Compiler):
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
         rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, obj_filename) )
         rules.append( '\t@mkdir -p %(EDIT_OBJ)s' )
-        rules.append( '\t%%(CCC)s -c %%(CCCFLAGS)s -o %s  %s' % (obj_filename, target.src_filename) )
+        rules.append( '\t@%%(CCC)s -c %%(CCCFLAGS)s -o %s  %s' % (obj_filename, target.src_filename) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
@@ -908,7 +925,7 @@ class CompilerGCC(Compiler):
     def ruleClean( self, filename ):
         rules = []
         rules.append( 'clean::' )
-        rules.append( '\trm -f %s' % (filename,) )
+        rules.append( '\t@ rm -f %s' % (filename,) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
@@ -917,7 +934,8 @@ class MacOsxCompilerGCC(CompilerGCC):
     def __init__( self, setup ):
         CompilerGCC.__init__( self, setup )
 
-    def setupUtilities( self ):
+    def setupUtilities( self, feature_defines ):
+        self.addFeatureDefines( feature_defines )
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-utils' )
@@ -929,6 +947,7 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '"-DOS_NAME=\\"MacOSX\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
                                         '-DDARWIN '
+                                        '%(FEATURE_DEFINES)s '
                                         '-D%(DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
@@ -1036,7 +1055,8 @@ class LinuxCompilerGCC(CompilerGCC):
     def __init__( self, setup ):
         CompilerGCC.__init__( self, setup )
 
-    def setupUtilities( self ):
+    def setupUtilities( self, feature_defines ):
+        self.addFeatureDefines( feature_defines )
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-utils' )
@@ -1046,10 +1066,15 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
+                                        '%(FEATURE_DEFINES)s '
                                         '-D%(DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s' )
+
+        if self.setup.opt_sqlite3:
+            self._addVar( 'LINK_LIBS',  '-lsqlite3')
+
         self._addVar( 'OBJ_SUFFIX',     '.o' )
 
     def setupUnittests( self ):
@@ -1090,6 +1115,10 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '-D%(DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
+
+        if self.setup.opt_sqlite3:
+            self._addVar( 'LINK_LIBS',  '-lsqlite3')
+
         self._addVar( 'LDEXE',          '%(CCC)s -g ' )
         self._addVar( 'LDSHARED',       '%(CCC)s -shared -g ' )
 
@@ -1121,6 +1150,9 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
 
+        if self.setup.opt_sqlite3:
+            self._addVar( 'LINK_LIBS',  '-lsqlite3')
+
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s ' )
 
     def setupPythonTools( self ):
@@ -1148,7 +1180,8 @@ class NetBSDCompilerGCC(CompilerGCC):
     def __init__( self, setup ):
         CompilerGCC.__init__( self, setup )
 
-    def setupUtilities( self ):
+    def setupUtilities( self, feature_defines ):
+        self.addFeatureDefines( feature_defines )
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-utils' )
@@ -1158,6 +1191,7 @@ class NetBSDCompilerGCC(CompilerGCC):
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"NetBSD\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
+                                        '%(FEATURE_DEFINES)s '
                                         '-D%(DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
                                         '-fexceptions -frtti ' )
@@ -1412,7 +1446,7 @@ class UnicodeDataHeader(Target):
 
         rules.append( '%s : make_unicode_data.py' % (self.getTargetFilename(),) )
         rules.append( '\t@ echo Info: Make %s' % (self.getTargetFilename(),) )
-        rules.append( '\t%%(PYTHON)s make_unicode_data.py %%(UCDDIR)s/UnicodeData.txt %%(UCDDIR)s/CaseFolding.txt %s' %
+        rules.append( '\t@%%(PYTHON)s make_unicode_data.py %%(UCDDIR)s/UnicodeData.txt %%(UCDDIR)s/CaseFolding.txt %s' %
                             (self.getTargetFilename(),) )
 
         self.makePrint( self.compiler.expand( '\n'.join( rules ) ) )

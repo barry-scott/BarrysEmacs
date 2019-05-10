@@ -21,7 +21,7 @@ int main(int argc,char **argv)
         return 1;
     }
 
-    if( !db.open_db( argv[1], 1 ) )
+    if( !db.open_db( argv[1], true, false ) )
     {
         printf ("Data base not found\n");
         return 1;
