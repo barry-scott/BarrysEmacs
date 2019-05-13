@@ -88,7 +88,20 @@ class BuildBEmacs(object):
             raise BuildError( 'Unknown target %r pick on of %s' % (self.target, ', '.join( self.valid_targets )) )
 
     def setupVars( self ):
-        if platform.system() in ('Linux', 'NetBSD'):
+        self.platform = platform.system()
+        if self.platform == 'Darwin':
+            if platform.mac_ver()[0] != '':
+                self.platform = 'MacOSX'
+
+        elif self.platform == 'Windows':
+            if platform.architecture() == '64bit':
+                self.platform = 'win64'
+            else:
+                self.platform = 'win32'
+
+        self.BUILDER_TOP_DIR = os.environ[ 'BUILDER_TOP_DIR' ]
+
+        if self.platform in ('Linux', 'NetBSD'):
             if 'DESTDIR' in os.environ:
                 self.BEMACS_ROOT_DIR = os.environ[ 'DESTDIR' ]
 
@@ -97,8 +110,7 @@ class BuildBEmacs(object):
                 self.INSTALL_BEMACS_BIN_DIR = '/usr/bin'
 
             else:
-                self.BUILDER_TOP_DIR = os.environ[ 'BUILDER_TOP_DIR' ]
-                self.BEMACS_ROOT_DIR = '%s/Kits/%s/ROOT' % (self.BUILDER_TOP_DIR, platform.system())
+                self.BEMACS_ROOT_DIR = '%s/Kits/%s/ROOT' % (self.BUILDER_TOP_DIR, self.platform)
 
                 self.INSTALL_BEMACS_DOC_DIR = '/usr/local/share/bemacs/doc'
                 self.INSTALL_BEMACS_LIB_DIR = '/usr/local/lib/bemacs'
@@ -108,15 +120,25 @@ class BuildBEmacs(object):
             self.BUILD_BEMACS_LIB_DIR = '%s%s' % (self.BEMACS_ROOT_DIR, self.INSTALL_BEMACS_LIB_DIR)
             self.BUILD_BEMACS_BIN_DIR = '%s%s' % (self.BEMACS_ROOT_DIR, self.INSTALL_BEMACS_BIN_DIR)
 
-            if platform.system() == 'NetBSD':
+            if self.platform == 'NetBSD':
                 self.cmd_make = 'gmake'
                 self.cmd_make_args = ['-j', '%d' % (numCpus(),)]
             else:
                 self.cmd_make = 'make'
                 self.cmd_make_args = ['-j', '%d' % (numCpus(),)]
 
+        elif self.platform == 'MacOSX':
+            self.BUILD_BEMACS_BIN_DIR = "%s/Kits/MacOSX/pkg/Barry's Emacs-Devel.app/Contents/Resources/bin" % (self.BUILDER_TOP_DIR,)
+            self.BUILD_BEMACS_LIB_DIR = "%s/Kits/MacOSX/pkg/Barry's Emacs-Devel.app/Contents/Resources/emacs_library" % (self.BUILDER_TOP_DIR,)
+            self.BUILD_BEMACS_DOC_DIR = "%s/Kits/MacOSX/pkg/Barry's Emacs-Devel.app/Contents/Resources/documentation" % (self.BUILDER_TOP_DIR,)
+
+            self.INSTALL_BEMACS_LIB_DIR = self.BUILD_BEMACS_LIB_DIR
+
+            self.cmd_make = 'make'
+            self.cmd_make_args = ['-j', '%d' % (numCpus(),)]
+
         else:
-            raise BuildError( 'Unsupported platform: %s' % (platform.system(),) )
+            raise BuildError( 'Unsupported platform: %s' % (self.platform,) )
 
     def checkGuiDeps( self ):
         info( 'Checking GUI dependencies...' )
@@ -134,13 +156,18 @@ class BuildBEmacs(object):
 
         self.setupEditorMakefile()
         self.make( 'clean' )
-        run( ('rm', '-rf', self.BEMACS_ROOT_DIR) )
+
+        if self.platform in ('Linux', 'NetBSD'):
+            run( ('rm', '-rf', self.BEMACS_ROOT_DIR) )
+
+        elif self.platform == 'MacOSX':
+            run( ('rm', '-rf', '../Kits/MacOSX/tmp') )
+            run( ('rm', '-rf', '../Kits/MacOSX/pkg') )
 
     def ruleBuild( self ):
         self.ruleBrand()
         for folder in (self.BUILD_BEMACS_DOC_DIR, self.BUILD_BEMACS_LIB_DIR, self.BUILD_BEMACS_BIN_DIR):
-            if not os.path.exists( folder ):
-                os.makedirs( folder, 0o750 )
+            mkdirAndParents( folder )
 
         if self.target == 'gui':
             self.ruleBemacsGui()
@@ -152,6 +179,8 @@ class BuildBEmacs(object):
         self.ruleDescribe()
         self.ruleQuickInfo()
         self.ruleDocs()
+        if self.platform == 'MacOSX':
+            self.ruleMacosPackage()
 
     def ruleBrand( self ):
         info( 'Running ruleBrand' )
@@ -173,12 +202,21 @@ class BuildBEmacs(object):
         self.make( 'all' )
         copyFile( '../Editor/exe-pybemacs/_bemacs.so', self.BUILD_BEMACS_LIB_DIR, 0o555 )
 
-        run( ('./build-linux.sh'
-             ,self.BEMACS_ROOT_DIR
-             ,self.INSTALL_BEMACS_BIN_DIR
-             ,self.INSTALL_BEMACS_LIB_DIR
-             ,self.INSTALL_BEMACS_DOC_DIR),
-                cwd='../Editor/PyQtBEmacs' )
+        if self.platform == 'MacOSX':
+            run( ('./build-macosx.sh'
+                 ,'--package'),
+                    cwd='../Editor/PyQtBEmacs' )
+
+            mkdirAndParents( self.BUILD_BEMACS_BIN_DIR )
+            copyFile( '../Editor/exe-cli-bemacs/bemacs-cli',  self.BUILD_BEMACS_BIN_DIR, 0o555 )
+
+        else:
+            run( ('./build-linux.sh'
+                 ,self.BEMACS_ROOT_DIR
+                 ,self.INSTALL_BEMACS_BIN_DIR
+                 ,self.INSTALL_BEMACS_LIB_DIR
+                 ,self.INSTALL_BEMACS_DOC_DIR),
+                    cwd='../Editor/PyQtBEmacs' )
 
     def ruleBemacsCli( self ):
         info( 'Running ruleBemacsCli' )
@@ -216,6 +254,9 @@ class BuildBEmacs(object):
         info( 'Running ruleDescribe' )
         self.mllToDb( '../Describe/em_desc.mll', '%s/emacsdesc' % (self.BUILD_BEMACS_LIB_DIR,) )
 
+    def ruleMacosPackage( self ):
+        run( ('./make-macosx-kit.sh',), cwd='../Kits/MacOSX' )
+
     def mllToDb( self, mll_file, db_file ):
         if self.opt_sqlite3:
             db_file = '%s.db' % (db_file,)
@@ -249,8 +290,7 @@ class BuildBEmacs(object):
     def setupEditorMakefile( self ):
         import setup
 
-        system = platform.system().lower()
-        if system in ('linux', 'macosx', 'netbsd'):
+        if self.platform in ('Linux', 'MacOSX', 'NetBSD'):
             setup_targets = set( [self.target, 'cli', 'unit-tests'] )
 
         else:
@@ -265,7 +305,7 @@ class BuildBEmacs(object):
         try:
             os.chdir( '../Editor' )
             setup_argv = [sys.argv[0]
-                         ,platform.system().lower()
+                         ,self.platform
                          ,','.join( setup_targets )
                          ,'Makefile-all'
                          ,'--lib-dir=%s' % (self.INSTALL_BEMACS_LIB_DIR,)
@@ -287,16 +327,34 @@ class BuildError(Exception):
     def __init__( self, msg ):
         super(BuildError, self).__init__( msg )
 
-def info( msg ):
-    print( '\033[32mInfo:\033[m %s' % (msg,) )
-    sys.stdout.flush()
+if os.environ.get('BEMACS_COLOUR') is not None:
+    info_prefix = '\033[32m'
+    info_suffix = '`033[m'
+    def info( msg ):
+        print( '\033[32mInfo:\033[m %s' % (msg,) )
+        sys.stdout.flush()
 
-def error( msg ):
-    print( '\033[31;1mError: %s\033[m' % (msg,) )
-    sys.stdout.flush()
+    def error( msg ):
+        print( '\033[31;1mError: %s\033[m' % (msg,) )
+        sys.stdout.flush()
+
+else:
+    info_prefix = ''
+    info_suffix = ''
+    def info( msg ):
+        print( 'Info: %s' % (msg,) )
+        sys.stdout.flush()
+
+    def error( msg ):
+        print( 'Error: %s' % (msg,) )
+        sys.stdout.flush()
 
 def logNothing( msg ):
     pass
+
+def mkdirAndParents( folder ):
+    if not os.path.exists( folder ):
+        os.makedirs( folder, 0o750 )
 
 def copyFile( src, dst, mode ):
     if os.path.isdir( dst ):

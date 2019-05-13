@@ -9,9 +9,36 @@ _debug = False
 pycxx_version = (7,1,2)
 pycxx_version_str = '%d.%d.%d' % pycxx_version
 
-def debug( msg ):
-    if _debug:
-        sys.stderr.write( 'Debug: %s\n' % (msg,) )
+if os.environ.get('BEMACS_COLOUR') is not None:
+    info_prefix = '\033[32m'
+    info_suffix = '\033[m'
+
+    def info( msg ):
+        print( '\033[32mInfo:\033[m %s' % (msg,) )
+        sys.stdout.flush()
+
+    def error( msg ):
+        print( '\033[31;1mError: %s\033[m' % (msg,) )
+        sys.stdout.flush()
+
+    def debug( msg ):
+        if _debug:
+            sys.stderr.write( '\033[33;1mDebug: %s\033[m\n' % (msg,) )
+
+else:
+    info_prefix = ''
+    info_suffix = ''
+    def info( msg ):
+        print( 'info: %s' % (msg,) )
+        sys.stdout.flush()
+
+    def error( msg ):
+        print( 'Error: %s' % (msg,) )
+        sys.stdout.flush()
+
+    def debug( msg ):
+        if _debug:
+            sys.stderr.write( 'Debug: %s\n' % (msg,) )
 
 class SetupError(Exception):
     pass
@@ -36,7 +63,7 @@ class Setup:
         if len(args) < 3:
             raise SetupError( 'Usage: setup.py win32|win64|macosx|netbsd|linux> <gui|cli|utils|unit-tests> <makefile> [<options>]' )
 
-        self.platform = args[0]
+        self.platform = args[0].lower()
         del args[0]
 
         target = args[0].split( ',' )
@@ -57,8 +84,8 @@ class Setup:
         self.makefile_name = args[0]
         del args[0]
 
-        print( 'Info: Creating makefile for platform %s in %s' % (self.platform, self.makefile_name) )
-        print( 'Info: Working folder %s' % (os.getcwd(),) )
+        info( 'Creating makefile for platform %s in %s for targets %s' % (self.platform, self.makefile_name, target) )
+        info( 'Working folder %s' % (os.getcwd(),) )
         sys.stdout.flush()
 
         while len(args) > 0:
@@ -109,18 +136,18 @@ class Setup:
         self.__makefile.write( '\n' )
 
     def setupCompile( self ):
-        print( 'Info: Setup Compiler' )
+        info( 'Setup Compiler' )
         if self.opt_bemacs_gui:
-            print( 'Info: Build bemacs GUI' )
+            info( 'Build bemacs GUI' )
 
         if self.opt_bemacs_cli:
-            print( 'Info: Build bemacs CLI' )
+            info( 'Build bemacs CLI' )
 
         if self.opt_utils:
-            print( 'Info: Build bemacs Utils' )
+            info( 'Build bemacs Utils' )
 
         if self.opt_unit_tests:
-            print( 'Info: Build bemacs Unit tests' )
+            info( 'Build bemacs Unit tests' )
 
         self.c_python_tools = None
         self.c_pybemacs = None
@@ -145,6 +172,11 @@ class Setup:
 
             pybemacs_feature_defines = [('EXEC_BF', '1')]
 
+            if self.opt_sqlite3:
+                pybemacs_feature_defines.append( ('DB_SQLITE3', '1') )
+                cli_feature_defines.append( ('DB_SQLITE3', '1') )
+                utils_feature_defines.append( ('DB_SQLITE3', '1') )
+
         elif self.platform == 'macosx':
             if self.opt_utils:
                 self.c_utils = MacOsxCompilerGCC( self )
@@ -163,6 +195,11 @@ class Setup:
             cli_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
             utils_feature_defines = []
 
+            if self.opt_sqlite3:
+                pybemacs_feature_defines.append( ('DB_SQLITE3', '1') )
+                cli_feature_defines.append( ('DB_SQLITE3', '1') )
+                utils_feature_defines.append( ('DB_SQLITE3', '1') )
+
         elif self.platform == 'linux':
             if self.opt_utils:
                 self.c_utils = LinuxCompilerGCC( self )
@@ -180,6 +217,7 @@ class Setup:
             pybemacs_feature_defines = [('EXEC_BF', '1')]
             cli_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
             utils_feature_defines = []
+
             if self.opt_sqlite3:
                 pybemacs_feature_defines.append( ('DB_SQLITE3', '1') )
                 cli_feature_defines.append( ('DB_SQLITE3', '1') )
@@ -202,6 +240,11 @@ class Setup:
             pybemacs_feature_defines = [('EXEC_BF', '1')]
             cli_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
             utils_feature_defines = []
+
+            if self.opt_sqlite3:
+                pybemacs_feature_defines.append( ('DB_SQLITE3', '1') )
+                cli_feature_defines.append( ('DB_SQLITE3', '1') )
+                utils_feature_defines.append( ('DB_SQLITE3', '1') )
 
         else:
             raise SetupError( 'Unknown platform %r' % (self.platform,) )
@@ -357,6 +400,8 @@ class Setup:
                 ]
             if self.opt_sqlite3:
                 obj_files.append( Source( compiler, 'Source/Common/db_sqlite3.cpp' ) )
+                if self.platform in ('macosx',):
+                    obj_files.append( Source( compiler, '%(SQLITE3SRC)s/sqlite3.c' ) )
             else:
                 obj_files.append( Source( compiler, 'Source/Common/ndbm.cpp' ) )
 
@@ -440,7 +485,7 @@ class Setup:
             return 0
 
         except ValueError as e:
-            sys.stderr.write( 'Error: generateMakefile %s\n' % (e,) )
+            error( 'generateMakefile %s\n' % (e,) )
             return 1
 
 #--------------------------------------------------------------------------------
@@ -489,28 +534,29 @@ class Compiler:
             self.__variables[ name ] = value
 
         except TypeError:
-            raise SetupError( 'Cannot translate name %r value %r' % (name, value) )
+            raise SetupError( '%s: Cannot translate name %r value %r' % (self.__class__.__name__, name, value) )
 
         except KeyError as e:
-            raise SetupError( 'Cannot translate name %r value %r - %s' % (name, value, e) )
+            raise SetupError( '%s: Cannot translate name %r value %r - %s' % (self.__class__.__name__, name, value, e) )
 
     def addFeatureDefines( self, feature_defines=None ):
         if feature_defines is None:
             feature_defines = []
 
-        print( 'Info: feature defines %r' % (feature_defines,) )
-        self._addVar( 'FEATURE_DEFINES',' '.join( '-D%s=%s' % (name, value) for name, value in feature_defines ) )
+        defines = ' '.join( '-D%s=%s' % (name, value) for name, value in feature_defines )
+        info( 'Feature defines %r' % (defines,) )
+        self._addVar( 'FEATURE_DEFINES', defines )
 
     def expand( self, s ):
         try:
             return s % self.__variables
 
         except (ValueError, TypeError, KeyError) as e:
-            print( 'Error: %s' % (e,) )
-            print( 'String: %s' % (s,) )
-            print( 'Vairables: %r' % (self.__variables,) )
+            error( 'Exception: %r' % (e,) )
+            error( 'String: %s' % (s,) )
+            error( 'Vairables: %r' % (self.__variables,) )
 
-            raise SetupError( 'Cannot translate string (%s)' % (e,) )
+            raise SetupError( '%s: Cannot translate string (%s)' % (self.__class__.__name__, e) )
 
 
 class Win64CompilerVC14(Compiler):
@@ -519,6 +565,7 @@ class Win64CompilerVC14(Compiler):
 
         self._addVar( 'PYCXX',          r'%(BUILDER_TOP_DIR)s\Imports\pycxx-%(PYCXX_VER)s' )
         self._addVar( 'PYCXXSRC',       r'%(BUILDER_TOP_DIR)s\Imports\pycxx-%(PYCXX_VER)s\Src' )
+        self._addVar( 'SQLITE3SRC',     r'%(BUILDER_TOP_DIR)s\Imports\sqlite' )
         self._addVar( 'UCDDIR',         r'%(BUILDER_TOP_DIR)s\Imports\ucd' )
 
         self._addVar( 'PYTHONDIR',      sys.exec_prefix )
@@ -560,7 +607,7 @@ class Win64CompilerVC14(Compiler):
 
         rules.append( '' )
         rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo Link Program %s' % (pyd_filename,) )
+        rules.append( '\t@echo Link Program: %s' % (pyd_filename,) )
         rules.append( '\t@if not exist %(EDIT_EXE)s mkdir %(EDIT_EXE)s' )
         rules.append( '\t@$(LDEXE)  %%(CCCFLAGS)s /Fe%s /Fd%s %s %%(LINK_LIBS)s' %
                             (pyd_filename, pdb_filename, ' '.join( all_objects )) )
@@ -577,7 +624,7 @@ class Win64CompilerVC14(Compiler):
 
         rules.append( '' )
         rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo Link Shared %s' % (pyd_filename,) )
+        rules.append( '\t@echo Link Shared: %s' % (pyd_filename,) )
         rules.append( '\t@if not exist %(EDIT_EXE)s mkdir %(EDIT_EXE)s' )
         rules.append( '\t@$(LDSHARED)  %%(CCCFLAGS)s /Fe%s /Fd%s %s %%(LINK_LIBS)s' %
                             (pyd_filename, pdb_filename, ' '.join( all_objects )) )
@@ -611,6 +658,7 @@ class Win64CompilerVC14(Compiler):
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
     def setupUtilities( self, feature_defines ):
+        info( 'setupUtilities' )
         self.addFeatureDefines( feature_defines )
         self._addVar( 'EDIT_OBJ',       r'obj-utils' )
         self._addVar( 'EDIT_EXE',       r'exe-utils' )
@@ -625,6 +673,7 @@ class Win64CompilerVC14(Compiler):
                                         r'-D%(DEBUG)s' )
 
     def setupUnittests( self ):
+        info( 'setupUnittests' )
         self._addVar( 'EDIT_OBJ',       r'obj-unit-tests' )
         self._addVar( 'EDIT_EXE',       r'exe-unit-tests' )
         self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc /W4 '
@@ -638,6 +687,7 @@ class Win64CompilerVC14(Compiler):
                                         r'-D%(DEBUG)s' )
 
     def setupPythonEmacs( self, feature_defines=None ):
+        info( 'setupPythonEmacs' )
         self.addFeatureDefines( feature_defines )
         self._addVar( 'EDIT_OBJ',       r'obj-pybemacs' )
         self._addVar( 'EDIT_EXE',       r'exe-pybemacs' )
@@ -657,9 +707,11 @@ class Win64CompilerVC14(Compiler):
                                         r'-D%(DEBUG)s' )
 
     def setupCliEmacs( self, feature_defines=None ):
+        info( 'setupCliEmacs' )
         raise SetupError( 'no support for CLI on Windows' )
 
     def setupPythonTools( self ):
+        info( 'setupPythonTools' )
         self._addVar( 'EDIT_OBJ',       r'obj-python-tools' )
         self._addVar( 'EDIT_EXE',       r'exe-python-tools' )
         self._addVar( 'LINK_LIBS',      '%%(PYTHON_LIB)s\python%d%d.lib' %
@@ -679,6 +731,7 @@ class Win32CompilerMSVC90(Compiler):
 
         self._addVar( 'PYCXX',          r'%(BUILDER_TOP_DIR)s\Imports\pycxx-%(PYCXX_VER)s' )
         self._addVar( 'PYCXXSRC',       r'%(BUILDER_TOP_DIR)s\Imports\pycxx-%(PYCXX_VER)s\Src' )
+        self._addVar( 'SQLITE3SRC',     r'%(BUILDER_TOP_DIR)s\Imports\sqlite' )
         self._addVar( 'UCDDIR',         r'%(BUILDER_TOP_DIR)s\Imports\ucd' )
 
         self._addVar( 'PYTHONDIR',      sys.exec_prefix )
@@ -717,7 +770,7 @@ class Win32CompilerMSVC90(Compiler):
 
         rules.append( '' )
         rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo Link %s' % (pyd_filename,) )
+        rules.append( '\t@echo Link Program: %s' % (pyd_filename,) )
         rules.append( '\t@$(LDEXE)  %%(CCCFLAGS)s /Fe%s /Fd%s %s Advapi32.lib' %
                             (pyd_filename, pdb_filename, ' '.join( all_objects )) )
 
@@ -733,7 +786,7 @@ class Win32CompilerMSVC90(Compiler):
 
         rules.append( '' )
         rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo Link Shared %s' % (pyd_filename,) )
+        rules.append( '\t@echo Link Shared: %s' % (pyd_filename,) )
         rules.append( '\t@mkdir %(EDIT_EXE)s' )
         rules.append( '\t@$(LDSHARED)  %%(CCCFLAGS)s /Fe%s /Fd%s %s %%(PYTHON_LIB)s\python%d%d.lib Advapi32.lib' %
                             (pyd_filename, pdb_filename, ' '.join( all_objects ), sys.version_info.major, sys.version_info.minor) )
@@ -764,6 +817,7 @@ class Win32CompilerMSVC90(Compiler):
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
     def setupUtilities( self, feature_defines ):
+        info( 'setupUtilities' )
         self.addFeatureDefines( feature_defines )
         self._addVar( 'EDIT_OBJ',       r'obj-utils' )
         self._addVar( 'EDIT_EXE',       r'exe-utils' )
@@ -777,6 +831,7 @@ class Win32CompilerMSVC90(Compiler):
                                         r'-D%(DEBUG)s' )
 
     def setupUnittests( self ):
+        info( 'setupUnittests' )
         self._addVar( 'EDIT_OBJ',       r'obj-unit-tests' )
         self._addVar( 'EDIT_EXE',       r'exe-unit-tests' )
         self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc '
@@ -789,6 +844,7 @@ class Win32CompilerMSVC90(Compiler):
                                         r'-D%(DEBUG)s' )
 
     def setupPythonEmacs( self, feature_defines=None ):
+        info( 'setupPythonEmacs' )
         self.addFeatureDefines( feature_defines )
         self._addVar( 'EDIT_OBJ',       r'obj-pybemacs' )
         self._addVar( 'EDIT_EXE',       r'exe-pybemacs' )
@@ -804,9 +860,11 @@ class Win32CompilerMSVC90(Compiler):
                                         r'-D%(DEBUG)s' )
 
     def setupCliEmacs( self, feature_defines=None ):
+        info( 'setupCliEmacs' )
         raise SetupError( 'no support for CLI on Windows' )
 
     def setupPythonTools( self ):
+        info( 'setupPythonTools' )
         self._addVar( 'EDIT_OBJ',       r'obj-python-tools' )
         self._addVar( 'EDIT_EXE',       r'exe-python-tools' )
         self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc '
@@ -878,7 +936,7 @@ class CompilerGCC(Compiler):
         rules = []
 
         rules.append( '%s : %s' % (target_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo Link %s' % (target_filename,) )
+        rules.append( '\t@echo "%sLink Program:%s %s"' % (info_prefix, info_suffix, target_filename) )
         rules.append( '\t@mkdir -p %(EDIT_EXE)s' )
         rules.append( '\t@%%(LDEXE)s -o %s %%(CCCFLAGS)s %%(LINK_LIBS)s %s' % (target_filename, ' '.join( all_objects )) )
 
@@ -892,7 +950,7 @@ class CompilerGCC(Compiler):
         rules = []
 
         rules.append( '%s : %s' % (target_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo Link Shared %s' % (target_filename,) )
+        rules.append( '\t@echo "%sLink Shared:%s %s"' % (info_prefix, info_suffix, target_filename) )
         rules.append( '\t@mkdir -p %(EDIT_EXE)s' )
         rules.append( '\t@%%(LDSHARED)s -o %s %%(CCCFLAGS)s %%(LINK_LIBS)s %s' % (target_filename, ' '.join( all_objects )) )
 
@@ -904,7 +962,7 @@ class CompilerGCC(Compiler):
         rules = []
 
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
-        rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, obj_filename) )
+        rules.append( '\t@echo "%sCompile:%s %s %sinto%s %s"' % (info_prefix, info_suffix, target.src_filename, info_prefix, info_suffix, obj_filename) )
         rules.append( '\t@mkdir -p %(EDIT_OBJ)s' )
         rules.append( '\t@%%(CCC)s -c %%(CCCFLAGS)s -o %s  %s' % (obj_filename, target.src_filename) )
 
@@ -916,7 +974,7 @@ class CompilerGCC(Compiler):
         rules = []
 
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
-        rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, obj_filename) )
+        rules.append( '\t@echo "%sCompile:%s %s %sinto%s %s"' % (info_prefix, info_suffix, target.src_filename, info_prefix, info_suffix, obj_filename) )
         rules.append( '\t@mkdir -p %(EDIT_OBJ)s' )
         rules.append( '\t@%%(CC)s -c %%(CCFLAGS)s -o %s  %s' % (obj_filename, target.src_filename) )
 
@@ -933,8 +991,15 @@ class CompilerGCC(Compiler):
 class MacOsxCompilerGCC(CompilerGCC):
     def __init__( self, setup ):
         CompilerGCC.__init__( self, setup )
+        if setup.opt_sqlite3:
+            self._addVar( 'SQLITE3SRC',     '%(BUILDER_TOP_DIR)s/Imports/sqlite' )
+            self._addVar( 'SQLITE_FLAGS',   '-I%(BUILDER_TOP_DIR)s\Imports\sqlite' )
+
+        else:
+            self._addVar( 'SQLITE_FLAGS',   '' )
 
     def setupUtilities( self, feature_defines ):
+        info( 'setupUtilities' )
         self.addFeatureDefines( feature_defines )
         self._addVar( 'PYTHON',         sys.executable )
 
@@ -956,6 +1021,7 @@ class MacOsxCompilerGCC(CompilerGCC):
 
 
     def setupUnittests( self ):
+        info( 'setupUnittests' )
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-unit-tests' )
@@ -974,6 +1040,7 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
     def setupPythonEmacs( self, feature_defines=None ):
+        info( 'setupPythonEmacs' )
         self.addFeatureDefines( feature_defines )
 
         self._addVar( 'PYTHON',         sys.executable )
@@ -997,6 +1064,7 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"python\\"" '
                                         '-DDARWIN '
                                         '%(FEATURE_DEFINES)s '
+                                        '%(SQLITE_FLAGS)s '
                                         '-D%(DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
@@ -1010,6 +1078,7 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-framework Security' )
 
     def setupCliEmacs( self, feature_defines=None ):
+        info( 'setupCliEmacs' )
         self.addFeatureDefines( feature_defines )
 
         self._addVar( 'PYTHON',         sys.executable )
@@ -1017,17 +1086,21 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_OBJ',       'obj-cli-bemacs' )
         self._addVar( 'EDIT_EXE',       'exe-cli-bemacs' )
 
-        self._addVar( 'CCCFLAGS',       '-g %(CCC_OPT)s '
-                                        '%(CCC_WARNINGS)s -Wall -fPIC -fexceptions -frtti '
+        self._addVar( 'CCFLAGS',       '-g %(CCC_OPT)s '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"MacOSX\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
                                         '%(FEATURE_DEFINES)s '
+                                        '%(SQLITE_FLAGS)s '
                                         '-D%(DEBUG)s' )
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
+                                        '-fexceptions -frtti ' )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
     def setupPythonTools( self ):
+        info( 'setupPythonTools' )
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-python-tools' )
@@ -1056,6 +1129,7 @@ class LinuxCompilerGCC(CompilerGCC):
         CompilerGCC.__init__( self, setup )
 
     def setupUtilities( self, feature_defines ):
+        info( 'setupUtilities' )
         self.addFeatureDefines( feature_defines )
         self._addVar( 'PYTHON',         sys.executable )
 
@@ -1078,6 +1152,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'OBJ_SUFFIX',     '.o' )
 
     def setupUnittests( self ):
+        info( 'setupUnittests' )
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-unit-tests' )
@@ -1094,6 +1169,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
     def setupPythonEmacs( self, feature_defines=None ):
+        info( 'setupPythonEmacs' )
         self.addFeatureDefines( feature_defines )
 
         self._addVar( 'PYTHON',         sys.executable )
@@ -1123,6 +1199,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'LDSHARED',       '%(CCC)s -shared -g ' )
 
     def setupCliEmacs( self, feature_defines=None ):
+        info( 'setupCliEmacs' )
         self.addFeatureDefines( feature_defines )
 
         self._addVar( 'PYTHON',         sys.executable )
@@ -1156,6 +1233,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s ' )
 
     def setupPythonTools( self ):
+        info( 'setupPythonTools' )
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-python-tools' )
@@ -1181,6 +1259,7 @@ class NetBSDCompilerGCC(CompilerGCC):
         CompilerGCC.__init__( self, setup )
 
     def setupUtilities( self, feature_defines ):
+        info( 'setupUtilities' )
         self.addFeatureDefines( feature_defines )
         self._addVar( 'PYTHON',         sys.executable )
 
@@ -1199,6 +1278,7 @@ class NetBSDCompilerGCC(CompilerGCC):
         self._addVar( 'OBJ_SUFFIX',     '.o' )
 
     def setupUnittests( self ):
+        info( 'setupUnittests' )
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-unit-tests' )
@@ -1215,6 +1295,7 @@ class NetBSDCompilerGCC(CompilerGCC):
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
     def setupPythonEmacs( self, feature_defines=None ):
+        info( 'setupPythonEmacs' )
         self.addFeatureDefines( feature_defines )
 
         self._addVar( 'PYTHON',         sys.executable )
@@ -1240,6 +1321,7 @@ class NetBSDCompilerGCC(CompilerGCC):
         self._addVar( 'LDSHARED',       '%(CCC)s -shared -g ' )
 
     def setupCliEmacs( self, feature_defines=None ):
+        info( 'setupCliEmacs' )
         self.addFeatureDefines( feature_defines )
 
         self._addVar( 'PYTHON',         sys.executable )
@@ -1270,6 +1352,7 @@ class NetBSDCompilerGCC(CompilerGCC):
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s ' )
 
     def setupPythonTools( self ):
+        info( 'setupPythonTools' )
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-python-tools' )
@@ -1445,7 +1528,7 @@ class UnicodeDataHeader(Target):
         rules = ['']
 
         rules.append( '%s : make_unicode_data.py' % (self.getTargetFilename(),) )
-        rules.append( '\t@ echo Info: Make %s' % (self.getTargetFilename(),) )
+        rules.append( '\t@ echo info: Make %s' % (self.getTargetFilename(),) )
         rules.append( '\t@%%(PYTHON)s make_unicode_data.py %%(UCDDIR)s/UnicodeData.txt %%(UCDDIR)s/CaseFolding.txt %s' %
                             (self.getTargetFilename(),) )
 
@@ -1455,14 +1538,14 @@ class UnicodeDataHeader(Target):
 #--------------------------------------------------------------------------------
 def main( argv ):
     try:
-        print( "Info: setup.py for Barry's Emacs" )
+        info( "setup.py for Barry's Emacs" )
         s = Setup( argv )
         rc =  s.generateMakefile()
-        print( "Info: setup.py complete - %d" % (rc,) )
+        info( 'setup.py complete - %d' % (rc,) )
         return rc
 
     except SetupError as e:
-        sys.stderr.write( 'Error: setup.py %s\n' % (e,) )
+        error( 'setup.py %s\n' % (e,) )
         return 1
 
 if __name__ == '__main__':

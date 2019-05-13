@@ -29,8 +29,7 @@ then
     umount "/Volumes/Barry's Emacs"
 fi
 
-echo "Info: make macosx.mak"
-make -f macosx.mak PYTHON=$PYTHON clean build 2>&1 | tee build.log
+${PYTHON} ./build_bemacs.py gui --sqlite3
 
 if false
 then
