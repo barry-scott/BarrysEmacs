@@ -148,7 +148,7 @@ bool database::reopen_db()
 
         // try opening readonly
         rc = sqlite3_open_v2( db_filename, &db_ptr, SQLITE_OPEN_READONLY, NULL );
-        if( rc == SQLITE_CANTOPEN and !db_access_may_create )
+        if( rc == SQLITE_CANTOPEN && !db_access_may_create )
         {
             return false;
         }

@@ -94,7 +94,7 @@ class BuildBEmacs(object):
                 self.platform = 'MacOSX'
 
         elif self.platform == 'Windows':
-            if platform.architecture() == '64bit':
+            if platform.architecture()[0] == '64bit':
                 self.platform = 'win64'
             else:
                 self.platform = 'win32'
@@ -123,6 +123,7 @@ class BuildBEmacs(object):
             if self.platform == 'NetBSD':
                 self.cmd_make = 'gmake'
                 self.cmd_make_args = ['-j', '%d' % (numCpus(),)]
+
             else:
                 self.cmd_make = 'make'
                 self.cmd_make_args = ['-j', '%d' % (numCpus(),)]
@@ -137,6 +138,22 @@ class BuildBEmacs(object):
             self.cmd_make = 'make'
             self.cmd_make_args = ['-j', '%d' % (numCpus(),)]
 
+        elif self.platform == 'win64':
+            self.KITSRC = r'%s\Kits\Windows' % (self.BUILDER_TOP_DIR,)
+            self.KITROOT = r'%s\tmp' % (self.KITSRC,)
+            self.KITFILES = r'%s\tmp\kitfiles' % (self.KITSRC,)
+
+            self.BUILD_BEMACS_BIN_DIR = self.KITFILES
+            self.BUILD_BEMACS_LIB_DIR = r'%s\emacs_library' % (self.KITFILES,)
+            self.BUILD_BEMACS_DOC_DIR = r'%s\Documentation' % (self.KITFILES,)
+
+            self.INSTALL_BEMACS_BIN_DIR = self.BUILD_BEMACS_BIN_DIR
+            self.INSTALL_BEMACS_LIB_DIR = self.BUILD_BEMACS_LIB_DIR
+            self.INSTALL_BEMACS_DOC_DIR = self.BUILD_BEMACS_DOC_DIR
+
+            self.cmd_make = 'nmake'
+            self.cmd_make_args = ['/nologo']
+
         else:
             raise BuildError( 'Unsupported platform: %s' % (self.platform,) )
 
@@ -145,11 +162,31 @@ class BuildBEmacs(object):
         if sys.version_info.major != 3:
             raise BuildError( 'bemacs GUI needs python version 3' )
 
-        try:
-            from PyQt5 import QtWidgets, QtGui, QtCore
+        if self.platform == 'Linux':
+            try:
+                from PyQt5 import QtWidgets, QtGui, QtCore
+            except ImportError:
+                raise BuildError( 'PyQt5 is not installed for %s. Hint: dnf install PyQt5' % (sys.executable,) )
+            try:
+                import xml_preferences
+            except ImportError:
+                raise BuildError( 'xml-preferences is not installed for %s. Hint: dnf install python3-xml-preferences' % (sys.executable,) )
 
-        except ImportError:
-            raise BuildError( 'PyQt5 is not installed for %s. Hint: dnf install PyQt5' % (sys.executable,) )
+        if self.platform == ('MacOSX', 'win64'):
+            try:
+                from PyQt5 import QtWidgets, QtGui, QtCore
+            except ImportError:
+                raise BuildError( 'PyQt5 is not installed for %s. Hint: pip3 install --user PyQt5' % (sys.executable,) )
+            try:
+                import xml_preferences
+            except ImportError:
+                raise BuildError( 'xml-preferences is not installed for %s. Hint: pip3 install --user xml-preferences' % (sys.executable,) )
+
+        if self.platform == 'win64':
+            try:
+                import win_app_packager
+            except ImportError:
+                raise BuildError( 'win_app_packager is not installed for %s. Hint: pip3 install --user win_app_packager' % (sys.executable,) )
 
     def ruleClean( self ):
         info( 'Running ruleClean' )
@@ -158,11 +195,15 @@ class BuildBEmacs(object):
         self.make( 'clean' )
 
         if self.platform in ('Linux', 'NetBSD'):
-            run( ('rm', '-rf', self.BEMACS_ROOT_DIR) )
+            shutil.rmtree( self.BEMACS_ROOT_DIR )
+
+        elif self.platform == 'win64':
+            if os.path.exists( self.KITROOT ):
+                shutil.rmtree( self.KITROOT )
 
         elif self.platform == 'MacOSX':
-            run( ('rm', '-rf', '../Kits/MacOSX/tmp') )
-            run( ('rm', '-rf', '../Kits/MacOSX/pkg') )
+            shutil.rmtree( '../Kits/MacOSX/tmp' )
+            shutil.rmtree( '../Kits/MacOSX/pkg' )
 
     def ruleBuild( self ):
         self.ruleBrand()
@@ -181,6 +222,8 @@ class BuildBEmacs(object):
         self.ruleDocs()
         if self.platform == 'MacOSX':
             self.ruleMacosPackage()
+        if self.platform == 'win64':
+            self.ruleInnoInstaller()
 
     def ruleBrand( self ):
         info( 'Running ruleBrand' )
@@ -200,7 +243,9 @@ class BuildBEmacs(object):
         info( 'Running ruleBemacsGui' )
 
         self.make( 'all' )
-        copyFile( '../Editor/exe-pybemacs/_bemacs.so', self.BUILD_BEMACS_LIB_DIR, 0o555 )
+
+        if self.platform in ('Linux', 'NetBSD', 'MacOSX'):
+            copyFile( '../Editor/exe-pybemacs/_bemacs.so', self.BUILD_BEMACS_LIB_DIR, 0o555 )
 
         if self.platform == 'MacOSX':
             run( ('./build-macosx.sh'
@@ -209,6 +254,9 @@ class BuildBEmacs(object):
 
             mkdirAndParents( self.BUILD_BEMACS_BIN_DIR )
             copyFile( '../Editor/exe-cli-bemacs/bemacs-cli',  self.BUILD_BEMACS_BIN_DIR, 0o555 )
+
+        elif self.platform == 'win64':
+            run( ('build-windows.cmd', self.KITFILES, 'all'), cwd=r'..\Editor\PyQtBEmacs' )
 
         else:
             run( ('./build-linux.sh'
@@ -256,6 +304,9 @@ class BuildBEmacs(object):
 
     def ruleMacosPackage( self ):
         run( ('./make-macosx-kit.sh',), cwd='../Kits/MacOSX' )
+
+    def ruleInnoInstaller( self ):
+        run( ('build-windows.cmd',), cwd=self.KITSRC )
 
     def mllToDb( self, mll_file, db_file ):
         if self.opt_sqlite3:

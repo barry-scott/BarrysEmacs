@@ -13,26 +13,8 @@ if "%PYTHON%" == "" (
     goto :eof
 )
 
-call :check_for_pip_dependency PyQt5 "from PyQt5 import QtWidgets, QtGui, QtCore"
-if errorlevel 1 goto :eof
-call :check_for_pip_dependency xml-preferences "import xml_preferences"
-if errorlevel 1 goto :eof
-call :check_for_pip_dependency win-app-packager "import win_app_packager"
-if errorlevel 1 goto :eof
-
-nmake -f Windows.mak PYTHON=%python% clean
-if exist c:\unxutils\tee.exe (
-    nmake -f Windows.mak INSTALL=%1 PYTHON=%PYTHON% build 2>&1 | c:\unxutils\tee build.log
+if exist c:\unxutil\usr\local\wbin\tee.exe (
+    %PYTHON% build_bemacs.py --sqlite3 2>&1 | c:\unxutil\usr\local\wbin\tee.exe build.log
 ) else (
-    nmake -f Windows.mak INSTALL=%1 PYTHON=%PYTHON% build
+    %PYTHON% build_bemacs.py --sqlite3
 )
-
-goto :eof
-
-:check_for_pip_dependency
-    %PYTHON% -c %2 2>nul
-    if errorlevel 1 (
-        echo Error: %1 is not installed for %PYTHON%. Hint: %PYTHON% -m pip install %1
-        exit /b 1
-    )
-    exit /b 0

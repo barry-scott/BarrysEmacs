@@ -171,10 +171,10 @@ class Setup:
             self.c_pybemacs = Win64CompilerVC14( self )
 
             pybemacs_feature_defines = [('EXEC_BF', '1')]
+            utils_feature_defines = []
 
             if self.opt_sqlite3:
                 pybemacs_feature_defines.append( ('DB_SQLITE3', '1') )
-                cli_feature_defines.append( ('DB_SQLITE3', '1') )
                 utils_feature_defines.append( ('DB_SQLITE3', '1') )
 
         elif self.platform == 'macosx':
@@ -400,7 +400,7 @@ class Setup:
                 ]
             if self.opt_sqlite3:
                 obj_files.append( Source( compiler, 'Source/Common/db_sqlite3.cpp' ) )
-                if self.platform in ('macosx',):
+                if self.platform in ('macosx', 'win64'):
                     obj_files.append( Source( compiler, '%(SQLITE3SRC)s/sqlite3.c' ) )
             else:
                 obj_files.append( Source( compiler, 'Source/Common/ndbm.cpp' ) )
@@ -544,7 +544,7 @@ class Compiler:
             feature_defines = []
 
         defines = ' '.join( '-D%s=%s' % (name, value) for name, value in feature_defines )
-        info( 'Feature defines %r' % (defines,) )
+        info( 'Feature defines %s' % (defines,) )
         self._addVar( 'FEATURE_DEFINES', defines )
 
     def expand( self, s ):
@@ -568,6 +568,13 @@ class Win64CompilerVC14(Compiler):
         self._addVar( 'SQLITE3SRC',     r'%(BUILDER_TOP_DIR)s\Imports\sqlite' )
         self._addVar( 'UCDDIR',         r'%(BUILDER_TOP_DIR)s\Imports\ucd' )
 
+        if setup.opt_sqlite3:
+            self._addVar( 'SQLITE3SRC',     '%(BUILDER_TOP_DIR)s/Imports/sqlite' )
+            self._addVar( 'SQLITE_FLAGS',   '-I%(BUILDER_TOP_DIR)s\Imports\sqlite' )
+
+        else:
+            self._addVar( 'SQLITE_FLAGS',   '' )
+
         self._addVar( 'PYTHONDIR',      sys.exec_prefix )
         self._addVar( 'PYTHON_INCLUDE', r'%(PYTHONDIR)s\include' )
         self._addVar( 'PYTHON_LIB',     r'%(PYTHONDIR)s\libs' )
@@ -575,7 +582,6 @@ class Win64CompilerVC14(Compiler):
 
         self._addVar( 'LINK_LIBS',      '' )
         self._addVar( 'OBJ_SUFFIX',     '.obj' )
-
 
     def platformFilename( self, filename ):
         return filename.replace( '/', '\\' )
@@ -704,6 +710,7 @@ class Win64CompilerVC14(Compiler):
                                         r'-D_UNICODE -DUNICODE '
                                         r'-U_DEBUG '
                                         r'%(FEATURE_DEFINES)s '
+                                        r'%(SQLITE_FLAGS)s '
                                         r'-D%(DEBUG)s' )
 
     def setupCliEmacs( self, feature_defines=None ):
@@ -1068,7 +1075,6 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-D%(DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
-
 
         self._addVar( 'LDSHARED',       '%(CCC)s -bundle -g '
                                         '-framework System '
