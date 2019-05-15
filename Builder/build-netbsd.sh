@@ -1,20 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
-echo "Info: build-netbsd.sh Builder - start"
-case "$1" in
-cli)
-    target=cli
-    ;;
-
-gui)
-    target=gui
-    ;;
-
-*)
-    target=gui
-    ;;
-esac
+echo "Info: Builder build-netbsd.sh Builder in $( pwd )"
 
 echo "Info: Checking for Python"
 if [ "${PYTHON}" = "" ]
@@ -29,14 +16,4 @@ then
     exit 1
 fi
 
-if [ "$target" != "cli" ]
-then
-    echo "Info: checking for python library PyQt5"
-    if ! ${PYTHON} -c 'from PyQt5 import QtWidgets, QtGui, QtCore' 2>/dev/null
-    then
-        echo "Error: PyQt5 is not installed for ${PYTHON}. Hint: dnf install PyQt5"
-        exit 1
-    fi
-fi
-
-gmake -f netbsd.mak PYTHON=${PYTHON:?missing python def} clean-${target} build-${target}
+${PYTHON} build_bemacs.py "$@"

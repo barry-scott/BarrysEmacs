@@ -1152,9 +1152,6 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '-fexceptions -frtti ' )
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s' )
 
-        if self.setup.opt_sqlite3:
-            self._addVar( 'LINK_LIBS',  '-lsqlite3')
-
         self._addVar( 'OBJ_SUFFIX',     '.o' )
 
     def setupUnittests( self ):
@@ -1274,6 +1271,7 @@ class NetBSDCompilerGCC(CompilerGCC):
         self._addVar( 'CCFLAGS',        '-g %(CCC_OPT)s '
                                         '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
+                                        '-I/usr/pkg/include '
                                         '"-DOS_NAME=\\"NetBSD\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
                                         '%(FEATURE_DEFINES)s '
@@ -1293,6 +1291,7 @@ class NetBSDCompilerGCC(CompilerGCC):
                                         '-DUNIT_TEST=1 '
                                         '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
+                                        '-I/usr/pkg/include '
                                         '"-DOS_NAME=\\"NetBSD\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
                                         '-D%(DEBUG)s' )
@@ -1317,12 +1316,17 @@ class NetBSDCompilerGCC(CompilerGCC):
                                         '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
                                         '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
+                                        '-I/usr/pkg/include '
                                         '"-DOS_NAME=\\"NetBSD\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"python\\"" '
                                         '%(FEATURE_DEFINES)s '
                                         '-D%(DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
                                         '-fexceptions -frtti ' )
+
+        if self.setup.opt_sqlite3:
+            self._addVar( 'LINK_LIBS',  '-L/usr/pkg/lib -lsqlite3')
+
         self._addVar( 'LDEXE',          '%(CCC)s -g ' )
         self._addVar( 'LDSHARED',       '%(CCC)s -shared -g ' )
 
@@ -1347,6 +1351,7 @@ class NetBSDCompilerGCC(CompilerGCC):
         self._addVar( 'CCFLAGS',        '-g %(CCC_OPT)s '
                                         '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
+                                        '-I/usr/pkg/include '
                                         '"-DOS_NAME=\\"NetBSD\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
                                         '-D%(DEBUG)s '
@@ -1354,6 +1359,9 @@ class NetBSDCompilerGCC(CompilerGCC):
                                         '-DBEMACS_LIB_DIR=\\"%(BEMACS_LIB_DIR)s\\"' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
                                         '-fexceptions -frtti ' )
+
+        if self.setup.opt_sqlite3:
+            self._addVar( 'LINK_LIBS',  '-L/usr/pkg/lib -lsqlite3')
 
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s ' )
 
@@ -1372,6 +1380,7 @@ class NetBSDCompilerGCC(CompilerGCC):
                                         '-DPYBEMACS=1 '
                                         '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
+                                        '-I/usr/pkg/include '
                                         '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
                                         '-D%(DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '

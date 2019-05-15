@@ -162,7 +162,7 @@ class BuildBEmacs(object):
         if sys.version_info.major != 3:
             raise BuildError( 'bemacs GUI needs python version 3' )
 
-        if self.platform == 'Linux':
+        if self.platform in ('Linux',):
             try:
                 from PyQt5 import QtWidgets, QtGui, QtCore
             except ImportError:
@@ -172,7 +172,7 @@ class BuildBEmacs(object):
             except ImportError:
                 raise BuildError( 'xml-preferences is not installed for %s. Hint: dnf install python3-xml-preferences' % (sys.executable,) )
 
-        if self.platform == ('MacOSX', 'win64'):
+        if self.platform in ('MacOSX', 'win64', 'NetBSD'):
             try:
                 from PyQt5 import QtWidgets, QtGui, QtCore
             except ImportError:
@@ -182,7 +182,7 @@ class BuildBEmacs(object):
             except ImportError:
                 raise BuildError( 'xml-preferences is not installed for %s. Hint: pip3 install --user xml-preferences' % (sys.executable,) )
 
-        if self.platform == 'win64':
+        if self.platform in ('win64',):
             try:
                 import win_app_packager
             except ImportError:

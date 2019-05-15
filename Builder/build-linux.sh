@@ -16,4 +16,4 @@ then
     exit 1
 fi
 
-${PYTHON} build_beamcs.py "$@"
+${PYTHON} build_bemacs.py "$@"
