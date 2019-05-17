@@ -195,15 +195,14 @@ class BuildBEmacs(object):
         self.make( 'clean' )
 
         if self.platform in ('Linux', 'NetBSD'):
-            shutil.rmtree( self.BEMACS_ROOT_DIR )
+            rmdirAndContents( self.BEMACS_ROOT_DIR )
 
         elif self.platform == 'win64':
-            if os.path.exists( self.KITROOT ):
                 shutil.rmtree( self.KITROOT )
 
         elif self.platform == 'MacOSX':
-            shutil.rmtree( '../Kits/MacOSX/tmp' )
-            shutil.rmtree( '../Kits/MacOSX/pkg' )
+            rmdirAndContents( '../Kits/MacOSX/tmp' )
+            rmdirAndContents( '../Kits/MacOSX/pkg' )
 
     def ruleBuild( self ):
         self.ruleBrand()
@@ -402,6 +401,10 @@ else:
 
 def logNothing( msg ):
     pass
+
+def rmdirAndContents( folder ):
+    if os.path.exists( folder ):
+        shutil.rmtree( folder )
 
 def mkdirAndParents( folder ):
     if not os.path.exists( folder ):
