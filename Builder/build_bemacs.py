@@ -12,10 +12,13 @@ import shutil
 import subprocess
 import platform
 import glob
+import build_log
 
 sys.path.insert( 0, '../Editor' )
 sys.path.insert( 0, '../MLisp' )
 sys.path.insert( 0, '../Describe' )
+
+log = build_log.BuildLog()
 
 class BuildBEmacs(object):
     valid_targets = ('gui', 'cli')
@@ -23,6 +26,7 @@ class BuildBEmacs(object):
     def __init__( self ):
         self.target = 'gui'
 
+        self.opt_colour = False
         self.opt_verbose = False
         self.opt_sqlite3 = False
         self.opt_editor_setup_opt = []
@@ -31,7 +35,7 @@ class BuildBEmacs(object):
         try:
             self.parseArgs( argv )
 
-            info( 'Building target %s' % (self.target,) )
+            log.info( 'Building target %s' % (self.target,) )
             self.setupVars()
 
             if self.target == 'gui':
@@ -39,10 +43,10 @@ class BuildBEmacs(object):
 
             self.ruleClean()
             self.ruleBuild()
-            info( 'Build complete' )
+            log.info( 'Build complete' )
 
         except BuildError as e:
-            error( str(e) )
+            log.error( str(e) )
             return 1
 
         return 0
@@ -59,9 +63,11 @@ class BuildBEmacs(object):
                     if arg == '--verbose':
                         self.opt_verbose = True
 
-                    elif arg == '--sqlite3':
-                        self.opt_sqlite3 = True
-                        self.opt_editor_setup_opt.append( arg )
+                    elif arg == '--colour':
+                        self.opt_colour = True
+
+                    elif arg == '--no-sqlite3':
+                        self.opt_sqlite3 = False
 
                     elif arg in ('--enable-debug'
                                 ,'--system-pycxx'
@@ -86,6 +92,13 @@ class BuildBEmacs(object):
 
         if self.target not in self.valid_targets:
             raise BuildError( 'Unknown target %r pick on of %s' % (self.target, ', '.join( self.valid_targets )) )
+
+        if self.opt_sqlite3:
+            self.opt_editor_setup_opt.append( '--sqlite3' )
+
+        log.setColour( self.opt_colour )
+        if self.opt_colour:
+            self.opt_editor_setup_opt.append( '--colour' )
 
     def setupVars( self ):
         self.platform = platform.system()
@@ -158,7 +171,7 @@ class BuildBEmacs(object):
             raise BuildError( 'Unsupported platform: %s' % (self.platform,) )
 
     def checkGuiDeps( self ):
-        info( 'Checking GUI dependencies...' )
+        log.info( 'Checking GUI dependencies...' )
         if sys.version_info.major != 3:
             raise BuildError( 'bemacs GUI needs python version 3' )
 
@@ -189,7 +202,7 @@ class BuildBEmacs(object):
                 raise BuildError( 'win_app_packager is not installed for %s. Hint: pip3 install --user win_app_packager' % (sys.executable,) )
 
     def ruleClean( self ):
-        info( 'Running ruleClean' )
+        log.info( 'Running ruleClean' )
 
         self.setupEditorMakefile()
         self.make( 'clean' )
@@ -225,11 +238,11 @@ class BuildBEmacs(object):
             self.ruleInnoInstaller()
 
     def ruleBrand( self ):
-        info( 'Running ruleBrand' )
+        log.info( 'Running ruleBrand' )
         import brand_version
         try:
             if self.opt_verbose:
-                log_info = info
+                log_info = log.info
             else:
                 log_info = logNothing
 
@@ -239,7 +252,7 @@ class BuildBEmacs(object):
             raise BuildError( str(e) )
 
     def ruleBemacsGui( self ):
-        info( 'Running ruleBemacsGui' )
+        log.info( 'Running ruleBemacsGui' )
 
         self.make( 'all' )
 
@@ -266,14 +279,14 @@ class BuildBEmacs(object):
                     cwd='../Editor/PyQtBEmacs' )
 
     def ruleBemacsCli( self ):
-        info( 'Running ruleBemacsCli' )
+        log.info( 'Running ruleBemacsCli' )
         self.make( 'all' )
 
         mkdirAndParents( self.BUILD_BEMACS_BIN_DIR )
         copyFile( '../Editor/exe-cli-bemacs/bemacs-cli',  self.BUILD_BEMACS_BIN_DIR, 0o555 )
 
     def ruleUtils( self ):
-        info( 'Running ruleUtils' )
+        log.info( 'Running ruleUtils' )
         copyFile( '../Editor/exe-utils/dbadd',    '%s/bemacs-dbadd' % (self.BUILD_BEMACS_BIN_DIR,), 0o555 )
         copyFile( '../Editor/exe-utils/dbcreate', '%s/bemacs-dbcreate' % (self.BUILD_BEMACS_BIN_DIR,), 0o555 )
         copyFile( '../Editor/exe-utils/dbdel',    '%s/bemacs-dbdel' % (self.BUILD_BEMACS_BIN_DIR,), 0o555 )
@@ -282,7 +295,7 @@ class BuildBEmacs(object):
         copyFile( '../Editor/exe-utils/mll2db',   '%s/bemacs-mll2db' % (self.BUILD_BEMACS_BIN_DIR,), 0o555 )
 
     def ruleMlisp( self ):
-        info( 'Running ruleMlisp' )
+        log.info( 'Running ruleMlisp' )
         copyFile( '../MLisp/emacsinit.ml', self.BUILD_BEMACS_LIB_DIR, 0o444 )
         copyFile( '../MLisp/emacs_profile.ml', self.BUILD_BEMACS_LIB_DIR, 0o444 )
 
@@ -301,7 +314,7 @@ class BuildBEmacs(object):
             os.chmod( '%s/emacslib.dir' % (self.BUILD_BEMACS_LIB_DIR,), 0o444 )
 
     def ruleDescribe( self ):
-        info( 'Running ruleDescribe' )
+        log.info( 'Running ruleDescribe' )
         self.mllToDb( '../Describe/em_desc.mll', '%s/emacsdesc' % (self.BUILD_BEMACS_LIB_DIR,) )
 
     def ruleMacosPackage( self ):
@@ -326,11 +339,11 @@ class BuildBEmacs(object):
             os.chmod( '%s.dir' % (db_file,), 0o444 )
 
     def ruleQuickInfo( self ):
-        info( 'Running ruleQuickInfo' )
+        log.info( 'Running ruleQuickInfo' )
         self.mllToDb( '../Describe/qi_cc.mll', '%s/emacs_qinfo_c' % (self.BUILD_BEMACS_LIB_DIR,) )
 
     def ruleDocs( self ):
-        info( 'Running ruleDocs' )
+        log.info( 'Running ruleDocs' )
         copyFile( '../Kits/readme.txt', self.BUILD_BEMACS_DOC_DIR, 0o444 )
         copyFile( '../Editor/PyQtBEmacs/bemacs.png', self.BUILD_BEMACS_DOC_DIR, 0o444 )
         for pattern in ('../HTML/*.html',
@@ -352,7 +365,7 @@ class BuildBEmacs(object):
         if not self.opt_sqlite3:
             setup_targets.add( 'utils' )
 
-        info( 'Creating ../Editor/Makefile-all for %s' % ', '.join( sorted( setup_targets ) ) )
+        log.info( 'Creating ../Editor/Makefile-all for %s' % ', '.join( sorted( setup_targets ) ) )
 
         cwd = os.getcwd()
         try:
@@ -379,28 +392,6 @@ class BuildBEmacs(object):
 class BuildError(Exception):
     def __init__( self, msg ):
         super(BuildError, self).__init__( msg )
-
-if os.environ.get('BEMACS_COLOUR') is not None:
-    info_prefix = '\033[32m'
-    info_suffix = '`033[m'
-    def info( msg ):
-        print( '\033[32mInfo:\033[m %s' % (msg,) )
-        sys.stdout.flush()
-
-    def error( msg ):
-        print( '\033[31;1mError: %s\033[m' % (msg,) )
-        sys.stdout.flush()
-
-else:
-    info_prefix = ''
-    info_suffix = ''
-    def info( msg ):
-        print( 'Info: %s' % (msg,) )
-        sys.stdout.flush()
-
-    def error( msg ):
-        print( 'Error: %s' % (msg,) )
-        sys.stdout.flush()
 
 def logNothing( msg ):
     pass
@@ -458,10 +449,10 @@ class Popen(subprocess.Popen):
 def run( cmd, check=True, output=False, cwd=None ):
     kwargs = {}
     if type(cmd) is str:
-        info( 'Running %s' % (cmd,) )
+        log.info( 'Running %s' % (cmd,) )
         kwargs['shell'] = True
     else:
-        info( 'Running %s' % (' '.join( cmd ),) )
+        log.info( 'Running %s' % (' '.join( cmd ),) )
     if cwd:
         kwargs['cwd'] = cwd
     else:

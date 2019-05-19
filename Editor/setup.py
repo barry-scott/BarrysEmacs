@@ -5,50 +5,21 @@ import os
 import sys
 import subprocess
 
-_debug = False
-
 pycxx_version = (7,1,2)
 pycxx_version_str = '%d.%d.%d' % pycxx_version
 
-if os.environ.get('BEMACS_COLOUR') is not None:
-    info_prefix = '\033[32m'
-    info_suffix = '\033[m'
-
-    def info( msg ):
-        print( '\033[32mInfo:\033[m %s' % (msg,) )
-        sys.stdout.flush()
-
-    def error( msg ):
-        print( '\033[31;1mError: %s\033[m' % (msg,) )
-        sys.stdout.flush()
-
-    def debug( msg ):
-        if _debug:
-            sys.stderr.write( '\033[33;1mDebug: %s\033[m\n' % (msg,) )
-
-else:
-    info_prefix = ''
-    info_suffix = ''
-    def info( msg ):
-        print( 'info: %s' % (msg,) )
-        sys.stdout.flush()
-
-    def error( msg ):
-        print( 'Error: %s' % (msg,) )
-        sys.stdout.flush()
-
-    def debug( msg ):
-        if _debug:
-            sys.stderr.write( 'Debug: %s\n' % (msg,) )
+sys.path.insert( 0, '../Builder' )
+import build_log
+log = build_log.BuildLog()
 
 class SetupError(Exception):
     pass
-
 
 #--------------------------------------------------------------------------------
 class Setup:
     def __init__( self, argv ):
         self.opt_enable_debug = False
+        self.opt_colour = False
         self.opt_lib_dir = '/usr/local/lib/bemacs'
         self.opt_bemacs_gui = False
         self.opt_bemacs_cli = False
@@ -85,17 +56,16 @@ class Setup:
         self.makefile_name = args[0]
         del args[0]
 
-        info( 'Creating makefile for platform %s in %s for targets %s' % (self.platform, self.makefile_name, target) )
-        info( 'Working folder %s' % (os.getcwd(),) )
-        sys.stdout.flush()
-
         while len(args) > 0:
             if args[0] == '--debug':
-                global _debug
-                _debug = True
+                log.setDebug( True )
                 del args[0]
 
-            elif args[0] == '--enable-debug':
+            elif args[0] == '--colour':
+                self.opt_colour = True
+                del args[0]
+
+            elif args[0] == '--enable-log.debug':
                 self.opt_enable_debug = True
                 del args[0]
 
@@ -126,29 +96,34 @@ class Setup:
             else:
                 raise SetupError( 'Unknown arg %r' % (args[0],) )
 
+        log.setColour( self.opt_colour )
+
+        log.info( 'Creating makefile for platform %s in %s for targets %s' % (self.platform, self.makefile_name, target) )
+        log.info( 'Working folder %s' % (os.getcwd(),) )
+
         for name in sorted( os.environ ):
-            debug( 'Env %s:%r' % (name, os.environ[ name ]) )
+            log.debug( 'Env %s:%r' % (name, os.environ[ name ]) )
 
         self.setupCompile()
 
     def makePrint( self, line ):
-        debug( 'makePrint( %r )' % (line,) )
+        log.debug( 'makePrint( %r )' % (line,) )
         self.__makefile.write( line )
         self.__makefile.write( '\n' )
 
     def setupCompile( self ):
-        info( 'Setup Compiler' )
+        log.info( 'Setup Compiler' )
         if self.opt_bemacs_gui:
-            info( 'Build bemacs GUI' )
+            log.info( 'Build bemacs GUI' )
 
         if self.opt_bemacs_cli:
-            info( 'Build bemacs CLI' )
+            log.info( 'Build bemacs CLI' )
 
         if self.opt_utils:
-            info( 'Build bemacs Utils' )
+            log.info( 'Build bemacs Utils' )
 
         if self.opt_unit_tests:
-            info( 'Build bemacs Unit tests' )
+            log.info( 'Build bemacs Unit tests' )
 
         self.c_python_tools = None
         self.c_pybemacs = None
@@ -486,22 +461,22 @@ class Setup:
             return 0
 
         except ValueError as e:
-            error( 'generateMakefile %s\n' % (e,) )
+            log.error( 'generateMakefile %s\n' % (e,) )
             return 1
 
 #--------------------------------------------------------------------------------
 class Compiler:
     def __init__( self, setup ):
-        debug( 'Compiler.__init__()' )
+        log.debug( 'Compiler.__init__()' )
         self.setup = setup
 
         self.__variables = {}
 
         self._addVar( 'PYCXX_VER',       pycxx_version_str )
         if setup.opt_enable_debug:
-            self._addVar( 'DEBUG',           '_DEBUG')
+            self._addVar( 'LOG.DEBUG',           '_DEBUG')
         else:
-            self._addVar( 'DEBUG',           'NDEBUG')
+            self._addVar( 'LOG.DEBUG',           'NDEBUG')
 
         self._addFromEnv( 'BUILDER_TOP_DIR' )
 
@@ -517,7 +492,7 @@ class Compiler:
         raise NotImplementedError( 'generateMakefileHeader' )
 
     def _addFromEnv( self, name ):
-        debug( 'Compiler._addFromEnv( %r )' % (name,) )
+        log.debug( 'Compiler._addFromEnv( %r )' % (name,) )
 
         value = os.environ[ name ]
         if value[0] == '"' and value[-1] == '"':
@@ -526,7 +501,7 @@ class Compiler:
         self._addVar( name, value )
 
     def _addVar( self, name, value ):
-        debug( 'Compiler._addVar( %r, %r )' % (name,value) )
+        log.debug( 'Compiler._addVar( %r, %r )' % (name,value) )
 
         try:
             if '%' in value:
@@ -545,7 +520,7 @@ class Compiler:
             feature_defines = []
 
         defines = ' '.join( '-D%s=%s' % (name, value) for name, value in feature_defines )
-        info( 'Feature defines %s' % (defines,) )
+        log.info( 'Feature defines %s' % (defines,) )
         self._addVar( 'FEATURE_DEFINES', defines )
 
     def expand( self, s ):
@@ -553,9 +528,9 @@ class Compiler:
             return s % self.__variables
 
         except (ValueError, TypeError, KeyError) as e:
-            error( 'Exception: %r' % (e,) )
-            error( 'String: %s' % (s,) )
-            error( 'Vairables: %r' % (self.__variables,) )
+            log.error( 'Exception: %r' % (e,) )
+            log.error( 'String: %s' % (s,) )
+            log.error( 'Vairables: %r' % (self.__variables,) )
 
             raise SetupError( '%s: Cannot translate string (%s)' % (self.__class__.__name__, e) )
 
@@ -665,7 +640,7 @@ class Win64CompilerVC14(Compiler):
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
     def setupUtilities( self, feature_defines ):
-        info( 'setupUtilities' )
+        log.info( 'setupUtilities' )
         self.addFeatureDefines( feature_defines )
         self._addVar( 'EDIT_OBJ',       r'obj-utils' )
         self._addVar( 'EDIT_EXE',       r'exe-utils' )
@@ -677,10 +652,10 @@ class Win64CompilerVC14(Compiler):
                                         r'-D_UNICODE -DUNICODE '
                                         r'-U_DEBUG '
                                         r'%(FEATURE_DEFINES)s '
-                                        r'-D%(DEBUG)s' )
+                                        r'-D%(LOG.DEBUG)s' )
 
     def setupUnittests( self ):
-        info( 'setupUnittests' )
+        log.info( 'setupUnittests' )
         self._addVar( 'EDIT_OBJ',       r'obj-unit-tests' )
         self._addVar( 'EDIT_EXE',       r'exe-unit-tests' )
         self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc /W4 '
@@ -691,10 +666,10 @@ class Win64CompilerVC14(Compiler):
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
                                         r'-D_UNICODE -DUNICODE '
                                         r'-U_DEBUG '
-                                        r'-D%(DEBUG)s' )
+                                        r'-D%(LOG.DEBUG)s' )
 
     def setupPythonEmacs( self, feature_defines=None ):
-        info( 'setupPythonEmacs' )
+        log.info( 'setupPythonEmacs' )
         self.addFeatureDefines( feature_defines )
         self._addVar( 'EDIT_OBJ',       r'obj-pybemacs' )
         self._addVar( 'EDIT_EXE',       r'exe-pybemacs' )
@@ -712,14 +687,14 @@ class Win64CompilerVC14(Compiler):
                                         r'-U_DEBUG '
                                         r'%(FEATURE_DEFINES)s '
                                         r'%(SQLITE_FLAGS)s '
-                                        r'-D%(DEBUG)s' )
+                                        r'-D%(LOG.DEBUG)s' )
 
     def setupCliEmacs( self, feature_defines=None ):
-        info( 'setupCliEmacs' )
+        log.info( 'setupCliEmacs' )
         raise SetupError( 'no support for CLI on Windows' )
 
     def setupPythonTools( self ):
-        info( 'setupPythonTools' )
+        log.info( 'setupPythonTools' )
         self._addVar( 'EDIT_OBJ',       r'obj-python-tools' )
         self._addVar( 'EDIT_EXE',       r'exe-python-tools' )
         self._addVar( 'LINK_LIBS',      '%%(PYTHON_LIB)s\python%d%d.lib' %
@@ -731,7 +706,7 @@ class Win64CompilerVC14(Compiler):
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
                                         r'-D_UNICODE -DUNICODE '
                                         r'-U_DEBUG '
-                                        r'-D%(DEBUG)s' )
+                                        r'-D%(LOG.DEBUG)s' )
 
 class Win32CompilerMSVC90(Compiler):
     def __init__( self, setup ):
@@ -825,7 +800,7 @@ class Win32CompilerMSVC90(Compiler):
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
     def setupUtilities( self, feature_defines ):
-        info( 'setupUtilities' )
+        log.info( 'setupUtilities' )
         self.addFeatureDefines( feature_defines )
         self._addVar( 'EDIT_OBJ',       r'obj-utils' )
         self._addVar( 'EDIT_EXE',       r'exe-utils' )
@@ -836,10 +811,10 @@ class Win32CompilerMSVC90(Compiler):
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
                                         r'-U_DEBUG '
                                         r'%(FEATURE_DEFINES)s '
-                                        r'-D%(DEBUG)s' )
+                                        r'-D%(LOG.DEBUG)s' )
 
     def setupUnittests( self ):
-        info( 'setupUnittests' )
+        log.info( 'setupUnittests' )
         self._addVar( 'EDIT_OBJ',       r'obj-unit-tests' )
         self._addVar( 'EDIT_EXE',       r'exe-unit-tests' )
         self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc '
@@ -849,10 +824,10 @@ class Win32CompilerMSVC90(Compiler):
                                         r'"-DCPU_TYPE=\"i386\"" "-DUI_TYPE=\"console\"" '
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
                                         r'-U_DEBUG '
-                                        r'-D%(DEBUG)s' )
+                                        r'-D%(LOG.DEBUG)s' )
 
     def setupPythonEmacs( self, feature_defines=None ):
-        info( 'setupPythonEmacs' )
+        log.info( 'setupPythonEmacs' )
         self.addFeatureDefines( feature_defines )
         self._addVar( 'EDIT_OBJ',       r'obj-pybemacs' )
         self._addVar( 'EDIT_EXE',       r'exe-pybemacs' )
@@ -865,14 +840,14 @@ class Win32CompilerMSVC90(Compiler):
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
                                         r'%(FEATURE_DEFINES)s '
                                         r'-U_DEBUG '
-                                        r'-D%(DEBUG)s' )
+                                        r'-D%(LOG.DEBUG)s' )
 
     def setupCliEmacs( self, feature_defines=None ):
-        info( 'setupCliEmacs' )
+        log.info( 'setupCliEmacs' )
         raise SetupError( 'no support for CLI on Windows' )
 
     def setupPythonTools( self ):
-        info( 'setupPythonTools' )
+        log.info( 'setupPythonTools' )
         self._addVar( 'EDIT_OBJ',       r'obj-python-tools' )
         self._addVar( 'EDIT_EXE',       r'exe-python-tools' )
         self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc '
@@ -881,7 +856,7 @@ class Win32CompilerMSVC90(Compiler):
                                         r'-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
                                         r'-U_DEBUG '
-                                        r'-D%(DEBUG)s' )
+                                        r'-D%(LOG.DEBUG)s' )
 
 class CompilerGCC(Compiler):
     def __init__( self, setup ):
@@ -944,7 +919,7 @@ class CompilerGCC(Compiler):
         rules = []
 
         rules.append( '%s : %s' % (target_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo "%sLink Program:%s %s"' % (info_prefix, info_suffix, target_filename) )
+        rules.append( '\t@echo "%sLink Program:%s %s"' % (log.info_colour, log.no_colour, target_filename) )
         rules.append( '\t@mkdir -p %(EDIT_EXE)s' )
         rules.append( '\t@%%(LDEXE)s -o %s %%(CCCFLAGS)s %s %%(LINK_LIBS)s' % (target_filename, ' '.join( all_objects )) )
 
@@ -958,7 +933,7 @@ class CompilerGCC(Compiler):
         rules = []
 
         rules.append( '%s : %s' % (target_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo "%sLink Shared:%s %s"' % (info_prefix, info_suffix, target_filename) )
+        rules.append( '\t@echo "%sLink Shared:%s %s"' % (log.info_colour, log.no_colour, target_filename) )
         rules.append( '\t@mkdir -p %(EDIT_EXE)s' )
         rules.append( '\t@%%(LDSHARED)s -o %s %%(CCCFLAGS)s %s %%(LINK_LIBS)s' % (target_filename, ' '.join( all_objects )) )
 
@@ -970,7 +945,7 @@ class CompilerGCC(Compiler):
         rules = []
 
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
-        rules.append( '\t@echo "%sCompile:%s %s %sinto%s %s"' % (info_prefix, info_suffix, target.src_filename, info_prefix, info_suffix, obj_filename) )
+        rules.append( '\t@echo "%sCompile:%s %s %sinto%s %s"' % (log.info_colour, log.no_colour, target.src_filename, log.info_colour, log.no_colour, obj_filename) )
         rules.append( '\t@mkdir -p %(EDIT_OBJ)s' )
         rules.append( '\t@%%(CCC)s -c %%(CCCFLAGS)s -o %s  %s' % (obj_filename, target.src_filename) )
 
@@ -982,7 +957,7 @@ class CompilerGCC(Compiler):
         rules = []
 
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
-        rules.append( '\t@echo "%sCompile:%s %s %sinto%s %s"' % (info_prefix, info_suffix, target.src_filename, info_prefix, info_suffix, obj_filename) )
+        rules.append( '\t@echo "%sCompile:%s %s %sinto%s %s"' % (log.info_colour, log.no_colour, target.src_filename, log.info_colour, log.no_colour, obj_filename) )
         rules.append( '\t@mkdir -p %(EDIT_OBJ)s' )
         rules.append( '\t@%%(CC)s -c %%(CCFLAGS)s -o %s  %s' % (obj_filename, target.src_filename) )
 
@@ -1007,7 +982,7 @@ class MacOsxCompilerGCC(CompilerGCC):
             self._addVar( 'SQLITE_FLAGS',   '' )
 
     def setupUtilities( self, feature_defines ):
-        info( 'setupUtilities' )
+        log.info( 'setupUtilities' )
         self.addFeatureDefines( feature_defines )
         self._addVar( 'PYTHON',         sys.executable )
 
@@ -1021,7 +996,7 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
                                         '-DDARWIN '
                                         '%(FEATURE_DEFINES)s '
-                                        '-D%(DEBUG)s' )
+                                        '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
@@ -1029,7 +1004,7 @@ class MacOsxCompilerGCC(CompilerGCC):
 
 
     def setupUnittests( self ):
-        info( 'setupUnittests' )
+        log.info( 'setupUnittests' )
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-unit-tests' )
@@ -1041,14 +1016,14 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '"-DOS_NAME=\\"MacOSX\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
                                         '-DDARWIN '
-                                        '-D%(DEBUG)s' )
+                                        '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
     def setupPythonEmacs( self, feature_defines=None ):
-        info( 'setupPythonEmacs' )
+        log.info( 'setupPythonEmacs' )
         self.addFeatureDefines( feature_defines )
 
         self._addVar( 'PYTHON',         sys.executable )
@@ -1073,7 +1048,7 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-DDARWIN '
                                         '%(FEATURE_DEFINES)s '
                                         '%(SQLITE_FLAGS)s '
-                                        '-D%(DEBUG)s' )
+                                        '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
 
@@ -1085,7 +1060,7 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-framework Security' )
 
     def setupCliEmacs( self, feature_defines=None ):
-        info( 'setupCliEmacs' )
+        log.info( 'setupCliEmacs' )
         self.addFeatureDefines( feature_defines )
 
         self._addVar( 'PYTHON',         sys.executable )
@@ -1100,14 +1075,14 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
                                         '%(FEATURE_DEFINES)s '
                                         '%(SQLITE_FLAGS)s '
-                                        '-D%(DEBUG)s' )
+                                        '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
     def setupPythonTools( self ):
-        info( 'setupPythonTools' )
+        log.info( 'setupPythonTools' )
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-python-tools' )
@@ -1125,7 +1100,7 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
                                         '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
-                                        '-D%(DEBUG)s' )
+                                        '-D%(LOG.DEBUG)s' )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g '
                                         '-framework System '
@@ -1153,7 +1128,7 @@ class LinuxCompilerGCC(CompilerGCC):
             self.lib_dir = '/usr/lib64'
 
     def setupUtilities( self, feature_defines ):
-        info( 'setupUtilities' )
+        log.info( 'setupUtilities' )
         self.addFeatureDefines( feature_defines )
         self._addVar( 'PYTHON',         sys.executable )
 
@@ -1165,7 +1140,7 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
                                         '%(FEATURE_DEFINES)s '
-                                        '-D%(DEBUG)s' )
+                                        '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s' )
@@ -1173,7 +1148,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'OBJ_SUFFIX',     '.o' )
 
     def setupUnittests( self ):
-        info( 'setupUnittests' )
+        log.info( 'setupUnittests' )
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-unit-tests' )
@@ -1184,13 +1159,13 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
-                                        '-D%(DEBUG)s' )
+                                        '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
     def setupPythonEmacs( self, feature_defines=None ):
-        info( 'setupPythonEmacs' )
+        log.info( 'setupPythonEmacs' )
         self.addFeatureDefines( feature_defines )
 
         self._addVar( 'PYTHON',         sys.executable )
@@ -1209,7 +1184,7 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"python\\"" '
                                         '%(FEATURE_DEFINES)s '
-                                        '-D%(DEBUG)s' )
+                                        '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
 
@@ -1223,7 +1198,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'LDSHARED',       '%(CCC)s -shared -g ' )
 
     def setupCliEmacs( self, feature_defines=None ):
-        info( 'setupCliEmacs' )
+        log.info( 'setupCliEmacs' )
         self.addFeatureDefines( feature_defines )
 
         self._addVar( 'PYTHON',         sys.executable )
@@ -1245,7 +1220,7 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
-                                        '-D%(DEBUG)s '
+                                        '-D%(LOG.DEBUG)s '
                                         '%(FEATURE_DEFINES)s '
                                         '-DBEMACS_LIB_DIR=\\"%(BEMACS_LIB_DIR)s\\"' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
@@ -1257,7 +1232,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s ' )
 
     def setupPythonTools( self ):
-        info( 'setupPythonTools' )
+        log.info( 'setupPythonTools' )
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-python-tools' )
@@ -1271,7 +1246,7 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
                                         '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
-                                        '-D%(DEBUG)s' )
+                                        '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
 
@@ -1283,7 +1258,7 @@ class NetBSDCompilerGCC(CompilerGCC):
         CompilerGCC.__init__( self, setup )
 
     def setupUtilities( self, feature_defines ):
-        info( 'setupUtilities' )
+        log.info( 'setupUtilities' )
         self.addFeatureDefines( feature_defines )
         self._addVar( 'PYTHON',         sys.executable )
 
@@ -1296,14 +1271,14 @@ class NetBSDCompilerGCC(CompilerGCC):
                                         '"-DOS_NAME=\\"NetBSD\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
                                         '%(FEATURE_DEFINES)s '
-                                        '-D%(DEBUG)s' )
+                                        '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
                                         '-fexceptions -frtti ' )
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s' )
         self._addVar( 'OBJ_SUFFIX',     '.o' )
 
     def setupUnittests( self ):
-        info( 'setupUnittests' )
+        log.info( 'setupUnittests' )
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-unit-tests' )
@@ -1315,13 +1290,13 @@ class NetBSDCompilerGCC(CompilerGCC):
                                         '-I/usr/pkg/include '
                                         '"-DOS_NAME=\\"NetBSD\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
-                                        '-D%(DEBUG)s' )
+                                        '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
                                         '-fexceptions -frtti ' )
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
     def setupPythonEmacs( self, feature_defines=None ):
-        info( 'setupPythonEmacs' )
+        log.info( 'setupPythonEmacs' )
         self.addFeatureDefines( feature_defines )
 
         self._addVar( 'PYTHON',         sys.executable )
@@ -1341,7 +1316,7 @@ class NetBSDCompilerGCC(CompilerGCC):
                                         '"-DOS_NAME=\\"NetBSD\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"python\\"" '
                                         '%(FEATURE_DEFINES)s '
-                                        '-D%(DEBUG)s' )
+                                        '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
                                         '-fexceptions -frtti ' )
 
@@ -1352,7 +1327,7 @@ class NetBSDCompilerGCC(CompilerGCC):
         self._addVar( 'LDSHARED',       '%(CCC)s -shared -g ' )
 
     def setupCliEmacs( self, feature_defines=None ):
-        info( 'setupCliEmacs' )
+        log.info( 'setupCliEmacs' )
         self.addFeatureDefines( feature_defines )
 
         self._addVar( 'PYTHON',         sys.executable )
@@ -1375,7 +1350,7 @@ class NetBSDCompilerGCC(CompilerGCC):
                                         '-I/usr/pkg/include '
                                         '"-DOS_NAME=\\"NetBSD\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
-                                        '-D%(DEBUG)s '
+                                        '-D%(LOG.DEBUG)s '
                                         '%(FEATURE_DEFINES)s '
                                         '-DBEMACS_LIB_DIR=\\"%(BEMACS_LIB_DIR)s\\"' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
@@ -1387,7 +1362,7 @@ class NetBSDCompilerGCC(CompilerGCC):
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s ' )
 
     def setupPythonTools( self ):
-        info( 'setupPythonTools' )
+        log.info( 'setupPythonTools' )
         self._addVar( 'PYTHON',         sys.executable )
 
         self._addVar( 'EDIT_OBJ',       'obj-python-tools' )
@@ -1403,7 +1378,7 @@ class NetBSDCompilerGCC(CompilerGCC):
                                         '-IInclude/Common -IInclude/Unix '
                                         '-I/usr/pkg/include '
                                         '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
-                                        '-D%(DEBUG)s' )
+                                        '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
                                         '-fexceptions -frtti ' )
 
@@ -1439,7 +1414,7 @@ class Target:
         self.compiler.ruleClean( target_filename )
 
     def setDependent( self, dependent ):
-        debug( '%r.setDependent( %r )' % (self, dependent) )
+        log.debug( '%r.setDependent( %r )' % (self, dependent) )
         self.dependent = dependent
 
 
@@ -1448,7 +1423,7 @@ class Program(Target):
         self.output = output
 
         Target.__init__( self, compiler, all_sources )
-        debug( '%r.__init__( %r )' % (self, self.all_sources) )
+        log.debug( '%r.__init__( %r )' % (self, self.all_sources) )
 
     def __repr__( self ):
         return '<Program:%s>' % (self.output,)
@@ -1460,7 +1435,7 @@ class Program(Target):
         return self.compiler.platformFilename( self.compiler.expand( '%%(EDIT_EXE)s/%s%s' % (self.output, ext) ) )
 
     def _generateMakefile( self ):
-        debug( '%r._generateMakefile() dependent %r' % (self, self.dependent) )
+        log.debug( '%r._generateMakefile() dependent %r' % (self, self.dependent) )
 
         self.compiler.ruleLinkProgram( self )
 
@@ -1479,7 +1454,7 @@ class PythonExtension(Target):
         self.output = output
 
         Target.__init__( self, compiler, all_sources )
-        debug( '%r.__init__( %r )' % (self, self.all_sources) )
+        log.debug( '%r.__init__( %r )' % (self, self.all_sources) )
 
         for source in self.all_sources:
             source.setDependent( self )
@@ -1494,7 +1469,7 @@ class PythonExtension(Target):
         return self.compiler.platformFilename( self.compiler.expand( '%%(EDIT_EXE)s/%s%s' % (self.output, ext) ) )
 
     def _generateMakefile( self ):
-        debug( '%s.generateMakefile() for %r' % (self, self.output,) )
+        log.debug( '%s.generateMakefile() for %r' % (self, self.output,) )
 
         self.compiler.ruleLinkShared( self )
         self.compiler.ruleClean( self.getTargetFilename( '.*' ) )
@@ -1508,7 +1483,7 @@ class Source(Target):
 
         Target.__init__( self, compiler, [] )
 
-        debug( '%r.__init__( %r )' % (self, self.all_sources) )
+        log.debug( '%r.__init__( %r )' % (self, self.all_sources) )
 
         self.all_dependencies = all_dependencies
         if self.all_dependencies is None:
@@ -1539,7 +1514,7 @@ class Source(Target):
         raise SetupError( 'unknown source %r' % (self.src_filename,) )
 
     def _generateMakefile( self ):
-        debug( '%r._generateMakefile()' % (self,) )
+        log.debug( '%r._generateMakefile()' % (self,) )
 
         self.rule( self )
         self.compiler.ruleClean( self.getTargetFilename() )
@@ -1548,7 +1523,7 @@ class UnicodeDataHeader(Target):
     def __init__( self, compiler ):
         Target.__init__( self, compiler, [] )
 
-        debug( '%r.__init__( %r )' % (self, self.all_sources) )
+        log.debug( '%r.__init__( %r )' % (self, self.all_sources) )
 
     def __repr__( self ):
         return '<UnicodeDataHeader:%s>' % (self.getTargetFilename(),)
@@ -1560,13 +1535,14 @@ class UnicodeDataHeader(Target):
         return self.compiler.platformFilename( 'Include/Common/em_unicode_data.h' )
 
     def generateMakefile( self ):
-        debug( '%r.generateMakefile()' % (self,) )
+        log.debug( '%r.generateMakefile()' % (self,) )
         rules = ['']
 
         rules.append( '%s : make_unicode_data.py' % (self.getTargetFilename(),) )
-        rules.append( '\t@ echo info: Make %s' % (self.getTargetFilename(),) )
-        rules.append( '\t@%%(PYTHON)s make_unicode_data.py %%(UCDDIR)s/UnicodeData.txt %%(UCDDIR)s/CaseFolding.txt %s' %
-                            (self.getTargetFilename(),) )
+        rules.append( '\t@ echo "%sInfo:%s Make %s"' % (log.info_colour, log.no_colour, self.getTargetFilename(),) )
+
+        rules.append( '\t@%%(PYTHON)s make_unicode_data.py %s %%(UCDDIR)s/UnicodeData.txt %%(UCDDIR)s/CaseFolding.txt %s' %
+                            ('--colour' if self.compiler.setup.opt_colour else '', self.getTargetFilename()) )
 
         self.makePrint( self.compiler.expand( '\n'.join( rules ) ) )
         self.ruleClean()
@@ -1574,14 +1550,13 @@ class UnicodeDataHeader(Target):
 #--------------------------------------------------------------------------------
 def main( argv ):
     try:
-        info( "setup.py for Barry's Emacs" )
         s = Setup( argv )
-        rc =  s.generateMakefile()
-        info( 'setup.py complete - %d' % (rc,) )
+        rc = s.generateMakefile()
+        log.info( 'setup.py complete - %d' % (rc,) )
         return rc
 
     except SetupError as e:
-        error( 'setup.py %s\n' % (e,) )
+        log.error( 'setup.py %s\n' % (e,) )
         return 1
 
 if __name__ == '__main__':

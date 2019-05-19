@@ -2,15 +2,23 @@
 #
 #   make_unicode_data.py
 #
-#   Copyright (c) 2010-2017  Barry A. Scott
+#   Copyright (c) 2010-2019  Barry A. Scott
 #
 from __future__ import print_function
 import sys
 import os
 import time
 
+sys.path.insert( 0, '../Builder' )
+import build_log
+log = build_log.BuildLog()
+
 def main( argv ):
-    print( 'Info: Unicode data from %s' % (argv[1],) )
+    if argv[1] == '--colour':
+        log.setColour( True )
+        del argv[1]
+
+    log.info( 'Unicode data from %s' % (argv[1],) )
     # uncode data
     if sys.version_info[0] == 3:
         with open( argv[1], 'r', encoding='utf-8' ) as f:
@@ -68,16 +76,16 @@ def main( argv ):
         if len(title) > 0:
             to_title[ code ] = title
 
-    print( 'Info: Found alphabetic', len(alphabetic) )
-    print( 'Info: Found numeric', len(numeric) )
-    print( 'Info: Found to_upper', len(to_upper) )
-    print( 'Info: Found to_lower', len(to_lower) )
-    print( 'Info: Found to_title', len(to_title) )
-    print( 'Info: Found is_upper', len(is_upper) )
-    print( 'Info: Found is_lower', len(is_lower) )
-    print( 'Info: Found is_title', len(is_title) )
-    print( 'Info: Found is_space', len(is_space) )
-    print( 'Info: last code point', last_code_point )
+    log.info( 'Found %d alphabetic' % (len(alphabetic),) )
+    log.info( 'Found %d numeric' % (len(numeric),) )
+    log.info( 'Found %d to_upper' % (len(to_upper),) )
+    log.info( 'Found %d to_lower' % (len(to_lower),) )
+    log.info( 'Found %d to_title' % (len(to_title),) )
+    log.info( 'Found %d is_upper' % (len(is_upper),) )
+    log.info( 'Found %d is_lower' % (len(is_lower),) )
+    log.info( 'Found %d is_title' % (len(is_title),) )
+    log.info( 'Found %d is_space' % (len(is_space),) )
+    log.info( 'last code point %d' % (last_code_point,) )
 
     # case folding
     if sys.version_info[0] == 3:
@@ -104,7 +112,7 @@ def main( argv ):
         if status in ('C','S'):
             casefold[ code ] = mapping
 
-    print( 'Info: Found casefold', len(casefold) )
+    log.info( 'Found %d casefold' % (len(casefold),) )
 
     cxx = [
 u'''//

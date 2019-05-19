@@ -1,39 +1,40 @@
 #!/bin/bash
 set -e
 
-echo "Info: build-macosx.sh Builder - start"
+printf "\033[32mInfo:\033[m build-macosx.sh Builder - start\n"
 
-echo "Info: Checking for Python"
+printf "\033[32mInfo:\033[m Checking for Python\n"
+
 if [ "${PYTHON}" = "" ]
 then
-    echo "Error: environment variable PYTHON not set"
+    printf -e "\033[31;1mError: environment variable PYTHON not set\033[m\n"
     exit 1
 fi
 
 if ! which "${PYTHON}" >/dev/null
 then
-    echo "Error: PYTHON program ${PYTHON} does not exist"
+    printf "Error: PYTHON program ${PYTHON} does not exist\n"
     exit 1
 fi
 
-echo "Info: checking for python library PyQt5"
+printf "\033[32mInfo:\033[m checking for python library PyQt5\n"
 if ! ${PYTHON} -c 'from PyQt5 import QtWidgets, QtGui, QtCore' 2>/dev/null
 then
-    echo "Error: PyQt5 is not installed for ${PYTHON}. Hint: ${PYTHON} -m pip install PyQt5"
+    printf "Error: PyQt5 is not installed for ${PYTHON}. Hint: ${PYTHON} -m pip install PyQt5\n"
     exit 1
 fi
 
 if [ -e "/Volumes/Barry's Emacs" ]
 then
-    echo "Info: unmount old kit dmg"
+    printf "\033[32mInfo:\033[m unmount old kit dmg\n"
     umount "/Volumes/Barry's Emacs"
 fi
 
-${PYTHON} ./build_bemacs.py gui --sqlite3
+${PYTHON} ./build_bemacs.py gui --colour
 
 if false
 then
-    echo "Info: rebuild the OS X launch service database"
+    printf "\033[32mInfo:\033[m rebuild the OS X launch service database\n"
     CORE=/System/Library/Frameworks/CoreServices.framework/Versions/Current
     ${CORE}/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister \
      -kill \
@@ -41,7 +42,7 @@ then
 fi
 
 DMG=$( find .. -name '*.dmg' )
-echo "Info: DMG ${DMG}"
+printf "\033[32mInfo:\033[m DMG ${DMG}\n"
 if [ "$1" = "--install" ]
 then
     # macOS knows about these extra copies of the emacs app
@@ -50,4 +51,4 @@ then
     rm -rf ../Kits/MacOSX/tmp/BarrysEmacs-V*[0-9]/
     open ${DMG}
 fi
-echo "Info: build-macosx.sh Builder - end"
+printf "\033[32mInfo:\033[m build-macosx.sh Builder - end\n"

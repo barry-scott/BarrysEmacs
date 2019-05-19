@@ -4,9 +4,15 @@
 #   settings file imported into dmgbuild to create the bemacs DMG file.
 #
 import biplist
-import os.path
+import os
+import sys
 
-print( 'Info: change to org.barrys-emacs.bemacs' )
+sys.path.insert( 0, '%%s/Builder' %% (os.environ['BUILDER_TOP_DIR'],) )
+import build_log
+log = build_log.BuildLog()
+log.setColour( True )
+
+log.info( 'change to org.barrys-emacs.bemacs' )
 
 PKGNAME = 'BarrysEmacs-%(version)s'
 app_path = os.path.join( 'tmp', PKGNAME, "Barry's Emacs.app" )
@@ -14,7 +20,7 @@ app_name = os.path.basename( app_path )
 
 path = os.path.join( app_path, 'Contents', 'Info.plist' )
 with open( path, 'r' ) as f:
-    print( 'Info: Reading %%s' %% (path,) )
+    log.info( 'Reading %%s' %% (path,) )
     __text = f.read().decode( 'utf-8' )
 
 __text = __text.replace( '<string>org.barrys-emacs.bemacs-devel</string>',
@@ -23,7 +29,7 @@ __text = __text.replace( 'Emacs-Devel', 'Emacs' )
 
 path = os.path.join( app_path, 'Contents', 'Info.plist' )
 with open( path, 'w' ) as f:
-    print( 'Info: Writing %%s' %% (path,) )
+    log.info( 'Writing %%s' %% (path,) )
     f.write( __text.encode( 'utf-8' ) )
 
 client_name = 'bemacs_client'
@@ -40,10 +46,10 @@ for tool_name, tool_path in [(cli_name, cli_path), (client_name, client_path)]:
     tool_path = os.path.join( 'tmp', PKGNAME, tool_name )
 
     with open( tool_path, 'w' )  as f:
-        print( 'Info: Writing %%s' %% (tool_path,) )
+        log.info( 'Writing %%s' %% (tool_path,) )
         f.write( __text.encode( 'utf-8' ) )
 
-    print( 'Info: chmod 555 %%s' %% (tool_path,) )
+    log.info( 'chmod 555 %%s' %% (tool_path,) )
     os.chmod( tool_path, 0o555 )
 
 
