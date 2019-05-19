@@ -269,6 +269,9 @@ class BuildBEmacs(object):
         info( 'Running ruleBemacsCli' )
         self.make( 'all' )
 
+        mkdirAndParents( self.BUILD_BEMACS_BIN_DIR )
+        copyFile( '../Editor/exe-cli-bemacs/bemacs-cli',  self.BUILD_BEMACS_BIN_DIR, 0o555 )
+
     def ruleUtils( self ):
         info( 'Running ruleUtils' )
         copyFile( '../Editor/exe-utils/dbadd',    '%s/bemacs-dbadd' % (self.BUILD_BEMACS_BIN_DIR,), 0o555 )

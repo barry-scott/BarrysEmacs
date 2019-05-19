@@ -3,6 +3,7 @@
 #
 import os
 import sys
+import subprocess
 
 _debug = False
 
@@ -945,7 +946,7 @@ class CompilerGCC(Compiler):
         rules.append( '%s : %s' % (target_filename, ' '.join( all_objects )) )
         rules.append( '\t@echo "%sLink Program:%s %s"' % (info_prefix, info_suffix, target_filename) )
         rules.append( '\t@mkdir -p %(EDIT_EXE)s' )
-        rules.append( '\t@%%(LDEXE)s -o %s %%(CCCFLAGS)s %%(LINK_LIBS)s %s' % (target_filename, ' '.join( all_objects )) )
+        rules.append( '\t@%%(LDEXE)s -o %s %%(CCCFLAGS)s %s %%(LINK_LIBS)s' % (target_filename, ' '.join( all_objects )) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
@@ -959,7 +960,7 @@ class CompilerGCC(Compiler):
         rules.append( '%s : %s' % (target_filename, ' '.join( all_objects )) )
         rules.append( '\t@echo "%sLink Shared:%s %s"' % (info_prefix, info_suffix, target_filename) )
         rules.append( '\t@mkdir -p %(EDIT_EXE)s' )
-        rules.append( '\t@%%(LDSHARED)s -o %s %%(CCCFLAGS)s %%(LINK_LIBS)s %s' % (target_filename, ' '.join( all_objects )) )
+        rules.append( '\t@%%(LDSHARED)s -o %s %%(CCCFLAGS)s %s %%(LINK_LIBS)s' % (target_filename, ' '.join( all_objects )) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
@@ -1134,6 +1135,23 @@ class LinuxCompilerGCC(CompilerGCC):
     def __init__( self, setup ):
         CompilerGCC.__init__( self, setup )
 
+        # look for debian lib dir
+        if os.path.exists( '/usr/bin/dpkg-architecture' ):
+            p = subprocess.Popen(['/usr/bin/dpkg-architecture', '-qDEB_HOST_MULTIARCH'], stdout=subprocess.PIPE)
+            stdout, stderr = p.communicate()
+
+            if type( stdout ) == type( str() ):
+                arch = stdout.replace("\n", "")
+
+            elif type( stdout ) == type( bytes() ):
+                arch = stdout.decode("utf-8").replace("\n", "")
+
+            self.lib_dir = '/usr/lib/%s' % (arch,)
+
+        else:
+            # other systems use this
+            self.lib_dir = '/usr/lib64'
+
     def setupUtilities( self, feature_defines ):
         info( 'setupUtilities' )
         self.addFeatureDefines( feature_defines )
@@ -1195,8 +1213,11 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
 
+        #link_libs = '-L%s -lpython%d.%dm' % (self.lib_dir, sys.version_info.major, sys.version_info.minor)
+        link_libs = '-L%s' % (self.lib_dir,)
         if self.setup.opt_sqlite3:
-            self._addVar( 'LINK_LIBS',  '-lsqlite3')
+            link_libs += ' -lsqlite3'
+        self._addVar( 'LINK_LIBS', link_libs )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g ' )
         self._addVar( 'LDSHARED',       '%(CCC)s -shared -g ' )
@@ -1243,7 +1264,6 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_EXE',       'exe-python-tools' )
 
         self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
-        self._addVar( 'LINK_LIBS', '-L%s/lib64 -lpython%d.%dm' % (sys.prefix, sys.version_info.major, sys.version_info.minor) )
 
         self._addVar( 'CCFLAGS',        '-g '
                                         '%(CCC_WARNINGS)s -Wall -fPIC '
@@ -1255,6 +1275,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
 
+        self._addVar( 'LINK_LIBS',      '-L%s -lpython%d.%dm' % (self.lib_dir, sys.version_info.major, sys.version_info.minor) )
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
 class NetBSDCompilerGCC(CompilerGCC):
