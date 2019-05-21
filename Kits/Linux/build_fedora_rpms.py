@@ -15,15 +15,12 @@ import subprocess
 import platform
 import glob
 
+sys.path.insert( 0, '%s/Builder' % (os.environ['BUILDER_TOP_DIR'],) )
+import build_log
+log = build_log.BuildLog()
+log.setColour( True )
+
 valid_cmds = ('srpm', 'mock', 'copr-release', 'copr-testing', 'list-release', 'list-testing')
-
-def info( msg ):
-    print( '\033[32mInfo:\033[m %s' % (msg,) )
-    sys.stdout.flush()
-
-def error( msg ):
-    print( '\033[31;1mError: %s\033[m' % (msg,) )
-    sys.stdout.flush()
 
 class BuildError(Exception):
     def __init__( self, msg ):
@@ -68,7 +65,7 @@ class BuildFedoraRpms:
             return 2
 
         except BuildError as e:
-            error( str(e) )
+            log.error( str(e) )
             return 1
 
     def parseArgs( self, argv ):
@@ -77,7 +74,7 @@ class BuildFedoraRpms:
             next(args)
             self.cmd = next(args)
             if self.cmd not in valid_cmds:
-                raise BuildError( 'Invalid cmd %r - pick on of %s' % (cmd, ', '.join( valid_cmds )) )
+                raise BuildError( 'Invalid cmd %r - pick on of %s' % (self.cmd, ', '.join( valid_cmds )) )
 
             while True:
                 arg = next(args)
@@ -100,7 +97,7 @@ class BuildFedoraRpms:
             pass
 
         if self.cmd is None:
-            raise BuildError( 'Require a cmd arg' )
+            raise BuildError( 'Require a cmd arg - pick up of %s' % (', '.join( valid_cmds ),) )
 
     def setupVars( self ):
         sys.path.insert( 0, os.path.join( self.BUILDER_TOP_DIR, 'Editor/PyQtBEmacs' ) )
@@ -130,12 +127,12 @@ class BuildFedoraRpms:
         self.makeTarBall()
         self.ensureMockSetup()
         self.makeSrpm()
-        info( 'SRPM is %s' % (self.SRPM_FILENAME,) )
+        log.info( 'SRPM is %s' % (self.SRPM_FILENAME,) )
 
     def buildMock( self ):
         self.buildSrpm()
 
-        info( 'Creating RPM' )
+        log.info( 'Creating RPM' )
         self.run( ('mock',
                     '--root=%s' % (self.MOCK_TARGET_FILENAME,),
                     '--enablerepo=barryascott-tools',
@@ -152,15 +149,15 @@ class BuildFedoraRpms:
 
         for BIN_KITNAME in ALL_BIN_KITNAMES:
             basename = '%s-%s-%s.%s.%s.rpm' % (BIN_KITNAME, self.version, self.release, self.DISTRO, self.arch)
-            info( 'Copying %s' % (basename,) )
+            log.info( 'Copying %s' % (basename,) )
             shutil.copyfile( '%s/RPMS/%s' % (self.MOCK_BUILD_DIR, basename), 'tmp/%s' % (basename,) )
 
-        info( 'Results in %s/tmp:' % (os.getcwd(),) )
+        log.info( 'Results in %s/tmp:' % (os.getcwd(),) )
         for filename in os.listdir( 'tmp' ):
-            info( 'Kit %s' % (filename,) )
+            log.info( 'Kit %s' % (filename,) )
 
         if self.install:
-            info( 'Installing RPMs' )
+            log.info( 'Installing RPMs' )
 
             for BIN_KITNAME in ALL_BIN_KITNAMES:
                 cmd = ('rpm', '-q', BIN_KITNAME)
@@ -210,7 +207,7 @@ class BuildFedoraRpms:
         return self.run( ('dnf', 'list', 'available', '--refresh', '--disablerepo=*', '--enablerepo=barryascott-%s' % (copr_repo,)), output=True )
 
     def ensureMockSetup( self ):
-        info( 'creating mock target file' )
+        log.info( 'creating mock target file' )
         self.makeMockTargetFile()
 
         p = self.run( ('mock', '--root=%s' % (self.MOCK_TARGET_FILENAME,), '--print-root-path'), output=True )
@@ -219,10 +216,10 @@ class BuildFedoraRpms:
         self.MOCK_BUILD_DIR = '%s/builddir/build' % (self.MOCK_ROOT,)
 
         if os.path.exists( self.MOCK_ROOT ):
-            info( 'Using existing mock for %s' % (self.MOCK_ORIG_TARGET_NAME,) )
+            log.info( 'Using existing mock for %s' % (self.MOCK_ORIG_TARGET_NAME,) )
 
         else:
-            info( 'Init mock for %s' % (self.MOCK_TARGET_FILENAME,) )
+            log.info( 'Init mock for %s' % (self.MOCK_TARGET_FILENAME,) )
             self.run( ('mock', '--root=%s' % (self.MOCK_TARGET_FILENAME,), '--init') )
 
     def makeMockTargetFile( self ):
@@ -251,7 +248,7 @@ class BuildFedoraRpms:
     def makeTarBall( self ):
         self.KIT_BASENAME = '%s-%s' % (self.KITNAME, self.version)
 
-        info( 'Exporting source code' )
+        log.info( 'Exporting source code' )
 
         cmd = '(cd ${BUILDER_TOP_DIR}; git archive --format=tar --prefix=%s/ master) | tar xf - -C tmp ' % (self.KIT_BASENAME,)
         self.run( cmd )
@@ -264,11 +261,11 @@ class BuildFedoraRpms:
         self.run( ('tar', 'czf', '%s.tar.gz' % (self.KIT_BASENAME,), self.KIT_BASENAME), cwd='tmp' )
 
     def makeSrpm( self ):
-        info( 'creating %s.spec' % (self.KITNAME,) )
+        log.info( 'creating %s.spec' % (self.KITNAME,) )
         import bemacs_make_spec_file
         bemacs_make_spec_file.main( ['', 'gui', self.version, self.release, 'tmp/%s.spec' % (self.KITNAME,)] )
 
-        info( 'Creating SRPM for %s' % (self.KIT_BASENAME,) )
+        log.info( 'Creating SRPM for %s' % (self.KIT_BASENAME,) )
 
         self.run( ('mock',
                 '--root=%s' % (self.MOCK_TARGET_FILENAME,),
@@ -280,16 +277,16 @@ class BuildFedoraRpms:
         self.SRPM_FILENAME = 'tmp/%s.src.rpm' % (SRPM_BASENAME,)
 
         src = '%s/SRPMS/%s.src.rpm' % (self.MOCK_BUILD_DIR, SRPM_BASENAME)
-        info( 'copy %s %s' % (src, self.SRPM_FILENAME) )
+        log.info( 'copy %s %s' % (src, self.SRPM_FILENAME) )
         shutil.copyfile( src, self.SRPM_FILENAME )
 
     def run( self, cmd, check=True, output=False, cwd=None ):
         kw = {}
         if type(cmd) is str:
-            info( 'Running %s' % (cmd,) )
+            log.info( 'Running %s' % (cmd,) )
             kw['shell'] = True
         else:
-            info( 'Running %s' % (' '.join( cmd ),) )
+            log.info( 'Running %s' % (' '.join( cmd ),) )
 
         if output:
             kw['capture_output'] = True

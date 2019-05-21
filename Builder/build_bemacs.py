@@ -28,7 +28,7 @@ class BuildBEmacs(object):
 
         self.opt_colour = False
         self.opt_verbose = False
-        self.opt_sqlite3 = False
+        self.opt_sqlite = True
         self.opt_editor_setup_opt = []
 
     def main( self, argv ):
@@ -66,8 +66,8 @@ class BuildBEmacs(object):
                     elif arg == '--colour':
                         self.opt_colour = True
 
-                    elif arg == '--no-sqlite3':
-                        self.opt_sqlite3 = False
+                    elif arg == '--no-sqlite':
+                        self.opt_sqlite = False
 
                     elif arg in ('--enable-debug'
                                 ,'--system-pycxx'
@@ -93,8 +93,8 @@ class BuildBEmacs(object):
         if self.target not in self.valid_targets:
             raise BuildError( 'Unknown target %r pick on of %s' % (self.target, ', '.join( self.valid_targets )) )
 
-        if self.opt_sqlite3:
-            self.opt_editor_setup_opt.append( '--sqlite3' )
+        if self.opt_sqlite:
+            self.opt_editor_setup_opt.append( '--sqlite' )
 
         log.setColour( self.opt_colour )
         if self.opt_colour:
@@ -226,7 +226,7 @@ class BuildBEmacs(object):
             self.ruleBemacsGui()
         else:
             self.ruleBemacsCli()
-        if not self.opt_sqlite3:
+        if not self.opt_sqlite:
             self.ruleUtils()
         self.ruleMlisp()
         self.ruleDescribe()
@@ -258,6 +258,7 @@ class BuildBEmacs(object):
 
         if self.platform in ('Linux', 'NetBSD', 'MacOSX'):
             copyFile( '../Editor/exe-pybemacs/_bemacs.so', self.BUILD_BEMACS_LIB_DIR, 0o555 )
+            copyFile( '../Editor/exe-cli-bemacs/bemacs-cli',  self.BUILD_BEMACS_BIN_DIR, 0o555 )
 
         if self.platform == 'MacOSX':
             run( ('./build-macosx.sh'
@@ -301,8 +302,8 @@ class BuildBEmacs(object):
 
         import create_library
 
-        if self.opt_sqlite3:
-            dbtools = create_library.BemacsSqlite3Tools()
+        if self.opt_sqlite:
+            dbtools = create_library.BemacsSqliteTools()
             create_library.createLibrary( ('common', 'unix'), '%s/emacslib' % (self.BUILD_BEMACS_LIB_DIR,), dbtools )
             os.chmod( '%s/emacslib.db' % (self.BUILD_BEMACS_LIB_DIR,), 0o444 )
 
@@ -324,7 +325,7 @@ class BuildBEmacs(object):
         run( ('build-windows.cmd',), cwd=self.KITSRC )
 
     def mllToDb( self, mll_file, db_file ):
-        if self.opt_sqlite3:
+        if self.opt_sqlite:
             db_file = '%s.db' % (db_file,)
             import create_describe_database
             create_describe_database.createDatabaseFromMll(
@@ -362,7 +363,7 @@ class BuildBEmacs(object):
         else:
             setup_targets = set( ['gui', 'unit-tests'] )
 
-        if not self.opt_sqlite3:
+        if not self.opt_sqlite:
             setup_targets.add( 'utils' )
 
         log.info( 'Creating ../Editor/Makefile-all for %s' % ', '.join( sorted( setup_targets ) ) )

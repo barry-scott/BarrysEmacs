@@ -17,8 +17,8 @@ def main( argv ):
     print( 'Create MLisp Library %(lib_name)s with file set %(file_sets)s using tools from %(tool_path)s' % locals() )
 
     try:
-        if tool_path == '--sqlite3':
-            dbtools = BemacsSqlite3Tools()
+        if tool_path == '--sqlite':
+            dbtools = BemacsSqliteTools()
         else:
             dbtools = BemacsDatabaseTools( tool_path )
 
@@ -44,7 +44,7 @@ def createLibrary( file_sets, lib_name, dbtools ):
 
     dbtools.close()
 
-class BemacsSqlite3Tools:
+class BemacsSqliteTools:
     def __init__( self ):
         self.db = None
 

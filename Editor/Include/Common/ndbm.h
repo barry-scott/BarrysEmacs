@@ -35,8 +35,8 @@ database
     int db_num_entries;
     struct database_entry *db_entries;
 };
-#elif defined( DB_SQLITE3 )
-// sqlite3 version
+#elif defined( DB_SQLITE )
+// sqlite version
 #include <sqlite3.h>
 
 class database : public EmacsObject

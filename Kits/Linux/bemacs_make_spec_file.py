@@ -78,11 +78,13 @@ Requires:       bemacs-cli
 spec_file_requires_gui = '''
 Requires:       bemacs-gui
 Requires:       python3 >= 3.4
+Requires:       sqlite
 
 BuildRequires:  python3-devel >= 3.4
 BuildRequires:  python3-qt5 >= 5.5.1
 BuildRequires:  gcc-c++
 BuildRequires:  python3-pycxx-devel >= 7.1.2
+BuildRequires:  sqlite-devel
 '''
 
 spec_file_build = '''
@@ -102,12 +104,14 @@ export BUILDER_TOP_DIR=$( pwd )
 export PYTHON=./.(PYTHON)s
 
 cd ${BUILDER_TOP_DIR}/Builder
-# tell Editor/build-linux.sh to use Unicode UCD and PyCXX from system
+export DESTDIR=%{buildroot}
 %if 0%{?centos_ver} == 6
 # Centos 6 has old unicode-ucd and no pycxx
 ./.(PYTHON)s build_bemacs.py ./.(TARGET)s
 %else
+# tell Editor/build-linux.sh to use Unicode UCD and PyCXX from system
 ./.(PYTHON)s build_bemacs.py ./.(TARGET)s --system-ucd --system-pycxx
+find %{buildroot}/usr -ls
 %endif
 
 mkdir -p %{buildroot}%{_mandir}/man1
@@ -137,6 +141,8 @@ Requires: bemacs-common
 Requires: python3 >= 3.4
 Requires: python3-qt5 >= 5.5.1
 Requires: python3-xml-preferences
+
+BuildRequires: python3-xml-preferences
 
 %description gui
 Barry's Emacs
@@ -185,12 +191,6 @@ spec_file_files_cli = '''
 spec_file_files_common = '''
 %files common
 %defattr(-, root, root, -)
-/usr/bin/bemacs-dbadd
-/usr/bin/bemacs-dbcreate
-/usr/bin/bemacs-dbdel
-/usr/bin/bemacs-dblist
-/usr/bin/bemacs-dbprint
-/usr/bin/bemacs-mll2db
 /usr/share/bemacs/doc/*
 /usr/share/bemacs/lib/*
 /usr/share/applications/bemacs.desktop
@@ -201,8 +201,6 @@ spec_file_tail = '''
 %changelog
 * Mon Apr 15 2019 Barry Scott <barry@barrys-emacs.org> - 8.5.3-1
 - prep for copr release
-* Sat Apr 30 2016 barry scott <barry@barrys-emacs.org> - 8.2.1-1
-- First version
 '''
 
 if __name__ == '__main__':

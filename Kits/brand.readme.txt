@@ -25,8 +25,8 @@ Introduction
         Linux (tested on: Fedora 29)
 
 New in %(version)s
-    * Change the emacs database functions to use sqlite3 from ndbm.
-    * Refactor the build scripts to simply adding new features like sqlite3 
+    * Change the emacs database functions to use sqlite from ndbm.
+    * Refactor the build scripts to simply adding new features like sqlite 
 
 New in 8.5.3
     * Fix for initialising the XML preferences on first use

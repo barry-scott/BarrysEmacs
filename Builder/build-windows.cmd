@@ -14,7 +14,7 @@ if "%PYTHON%" == "" (
 )
 
 if exist c:\unxutil\usr\local\wbin\tee.exe (
-    %PYTHON% build_bemacs.py --sqlite3 2>&1 | c:\unxutil\usr\local\wbin\tee.exe build.log
+    %PYTHON% build_bemacs.py --sqlite 2>&1 | c:\unxutil\usr\local\wbin\tee.exe build.log
 ) else (
-    %PYTHON% build_bemacs.py --sqlite3
+    %PYTHON% build_bemacs.py --sqlite
 )

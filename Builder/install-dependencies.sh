@@ -26,17 +26,24 @@ macOS)
     ;;
 
 fedora)
-    if ! rpm -q sqlite3
-    then
-        sudo dnf install sqlite3
-    fi
+    for PKG in \
+        unicode-ucd \
+        sqlite \
+        sqlite-devel \
+        ;
+    do
+        if ! rpm -q $PKG
+        then
+            sudo dnf install $PKG
+        fi
+    done
     ;;
 
 ubuntu|debian)
     PKG_LIST=${TMPDIR:-/tmp}/installed.tmp
     apt list --installed >${PKG_LIST}
     for PKG in \
-        libsqlite3-dev \
+        libsqlite-dev \
         python3-pyqt5 \
         python3-pyqt5 \
         python3-pyqt5.qsci \
@@ -59,10 +66,10 @@ NetBSD)
     for PKG in \
         bash \
         gmake \
-        sqlite3 \
+        sqlite \
         python37 \
         py37-pip \
-        py37-sqlite3 \
+        py37-sqlite \
         py37-qt5 \
         ;
     do

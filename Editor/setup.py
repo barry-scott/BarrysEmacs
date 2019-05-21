@@ -29,7 +29,7 @@ class Setup:
         self.opt_system_pycxx = False
         self.opt_system_ucd = False
         self.opt_warnings_as_errors = True
-        self.opt_sqlite3 = False
+        self.opt_sqlite = False
 
         args = argv[1:]
         if len(args) < 3:
@@ -89,8 +89,8 @@ class Setup:
                 self.opt_coverage = True
                 del args[0]
 
-            elif args[0].startswith( '--sqlite3' ):
-                self.opt_sqlite3 = True
+            elif args[0].startswith( '--sqlite' ):
+                self.opt_sqlite = True
                 del args[0]
 
             else:
@@ -149,9 +149,9 @@ class Setup:
             pybemacs_feature_defines = [('EXEC_BF', '1')]
             utils_feature_defines = []
 
-            if self.opt_sqlite3:
-                pybemacs_feature_defines.append( ('DB_SQLITE3', '1') )
-                utils_feature_defines.append( ('DB_SQLITE3', '1') )
+            if self.opt_sqlite:
+                pybemacs_feature_defines.append( ('DB_SQLITE', '1') )
+                utils_feature_defines.append( ('DB_SQLITE', '1') )
 
         elif self.platform == 'macosx':
             if self.opt_utils:
@@ -171,10 +171,10 @@ class Setup:
             cli_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
             utils_feature_defines = []
 
-            if self.opt_sqlite3:
-                pybemacs_feature_defines.append( ('DB_SQLITE3', '1') )
-                cli_feature_defines.append( ('DB_SQLITE3', '1') )
-                utils_feature_defines.append( ('DB_SQLITE3', '1') )
+            if self.opt_sqlite:
+                pybemacs_feature_defines.append( ('DB_SQLITE', '1') )
+                cli_feature_defines.append( ('DB_SQLITE', '1') )
+                utils_feature_defines.append( ('DB_SQLITE', '1') )
 
         elif self.platform == 'linux':
             if self.opt_utils:
@@ -194,10 +194,10 @@ class Setup:
             cli_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
             utils_feature_defines = []
 
-            if self.opt_sqlite3:
-                pybemacs_feature_defines.append( ('DB_SQLITE3', '1') )
-                cli_feature_defines.append( ('DB_SQLITE3', '1') )
-                utils_feature_defines.append( ('DB_SQLITE3', '1') )
+            if self.opt_sqlite:
+                pybemacs_feature_defines.append( ('DB_SQLITE', '1') )
+                cli_feature_defines.append( ('DB_SQLITE', '1') )
+                utils_feature_defines.append( ('DB_SQLITE', '1') )
 
         elif self.platform == 'netbsd':
             if self.opt_utils:
@@ -217,10 +217,10 @@ class Setup:
             cli_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
             utils_feature_defines = []
 
-            if self.opt_sqlite3:
-                pybemacs_feature_defines.append( ('DB_SQLITE3', '1') )
-                cli_feature_defines.append( ('DB_SQLITE3', '1') )
-                utils_feature_defines.append( ('DB_SQLITE3', '1') )
+            if self.opt_sqlite:
+                pybemacs_feature_defines.append( ('DB_SQLITE', '1') )
+                cli_feature_defines.append( ('DB_SQLITE', '1') )
+                utils_feature_defines.append( ('DB_SQLITE', '1') )
 
         else:
             raise SetupError( 'Unknown platform %r' % (self.platform,) )
@@ -255,7 +255,7 @@ class Setup:
                 Source( self.c_utils, 'Utilities/db_rtl/stub_rtl.cpp' ),
                 ]
 
-            if self.opt_sqlite3:
+            if self.opt_sqlite:
                 self.db_files.append( Source( self.c_utils, 'Source/Common/db_sqlite3.cpp' ) )
             else:
                 self.db_files.append( Source( self.c_utils, 'Source/Common/ndbm.cpp' ) )
@@ -374,10 +374,10 @@ class Setup:
                 Source( compiler, 'Source/Common/windman.cpp' ),
                 Source( compiler, 'Source/Common/window.cpp' ),
                 ]
-            if self.opt_sqlite3:
+            if self.opt_sqlite:
                 obj_files.append( Source( compiler, 'Source/Common/db_sqlite3.cpp' ) )
                 if self.platform in ('macosx', 'win64'):
-                    obj_files.append( Source( compiler, '%(SQLITE3SRC)s/sqlite3.c' ) )
+                    obj_files.append( Source( compiler, '%(SQLITESRC)s/sqlite3.c' ) )
             else:
                 obj_files.append( Source( compiler, 'Source/Common/ndbm.cpp' ) )
 
@@ -541,11 +541,11 @@ class Win64CompilerVC14(Compiler):
 
         self._addVar( 'PYCXX',          r'%(BUILDER_TOP_DIR)s\Imports\pycxx-%(PYCXX_VER)s' )
         self._addVar( 'PYCXXSRC',       r'%(BUILDER_TOP_DIR)s\Imports\pycxx-%(PYCXX_VER)s\Src' )
-        self._addVar( 'SQLITE3SRC',     r'%(BUILDER_TOP_DIR)s\Imports\sqlite' )
+        self._addVar( 'SQLITESRC',     r'%(BUILDER_TOP_DIR)s\Imports\sqlite' )
         self._addVar( 'UCDDIR',         r'%(BUILDER_TOP_DIR)s\Imports\ucd' )
 
-        if setup.opt_sqlite3:
-            self._addVar( 'SQLITE3SRC',     '%(BUILDER_TOP_DIR)s/Imports/sqlite' )
+        if setup.opt_sqlite:
+            self._addVar( 'SQLITESRC',     '%(BUILDER_TOP_DIR)s/Imports/sqlite' )
             self._addVar( 'SQLITE_FLAGS',   '-I%(BUILDER_TOP_DIR)s\Imports\sqlite' )
 
         else:
@@ -714,7 +714,7 @@ class Win32CompilerMSVC90(Compiler):
 
         self._addVar( 'PYCXX',          r'%(BUILDER_TOP_DIR)s\Imports\pycxx-%(PYCXX_VER)s' )
         self._addVar( 'PYCXXSRC',       r'%(BUILDER_TOP_DIR)s\Imports\pycxx-%(PYCXX_VER)s\Src' )
-        self._addVar( 'SQLITE3SRC',     r'%(BUILDER_TOP_DIR)s\Imports\sqlite' )
+        self._addVar( 'SQLITESRC',     r'%(BUILDER_TOP_DIR)s\Imports\sqlite' )
         self._addVar( 'UCDDIR',         r'%(BUILDER_TOP_DIR)s\Imports\ucd' )
 
         self._addVar( 'PYTHONDIR',      sys.exec_prefix )
@@ -974,9 +974,9 @@ class CompilerGCC(Compiler):
 class MacOsxCompilerGCC(CompilerGCC):
     def __init__( self, setup ):
         CompilerGCC.__init__( self, setup )
-        if setup.opt_sqlite3:
-            self._addVar( 'SQLITE3SRC',     '%(BUILDER_TOP_DIR)s/Imports/sqlite' )
-            self._addVar( 'SQLITE_FLAGS',   '-I%(BUILDER_TOP_DIR)s\Imports\sqlite' )
+        if setup.opt_sqlite:
+            self._addVar( 'SQLITESRC',     '%(BUILDER_TOP_DIR)s/Imports/sqlite' )
+            self._addVar( 'SQLITE_FLAGS',   '-I%(BUILDER_TOP_DIR)s/Imports/sqlite' )
 
         else:
             self._addVar( 'SQLITE_FLAGS',   '' )
@@ -1190,7 +1190,7 @@ class LinuxCompilerGCC(CompilerGCC):
 
         #link_libs = '-L%s -lpython%d.%dm' % (self.lib_dir, sys.version_info.major, sys.version_info.minor)
         link_libs = '-L%s' % (self.lib_dir,)
-        if self.setup.opt_sqlite3:
+        if self.setup.opt_sqlite:
             link_libs += ' -lsqlite3'
         self._addVar( 'LINK_LIBS', link_libs )
 
@@ -1226,7 +1226,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
 
-        if self.setup.opt_sqlite3:
+        if self.setup.opt_sqlite:
             self._addVar( 'LINK_LIBS',  '-lsqlite3')
 
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s ' )
@@ -1320,7 +1320,7 @@ class NetBSDCompilerGCC(CompilerGCC):
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
                                         '-fexceptions -frtti ' )
 
-        if self.setup.opt_sqlite3:
+        if self.setup.opt_sqlite:
             self._addVar( 'LINK_LIBS',  '-L/usr/pkg/lib -lsqlite3')
 
         self._addVar( 'LDEXE',          '%(CCC)s -g ' )
@@ -1356,7 +1356,7 @@ class NetBSDCompilerGCC(CompilerGCC):
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
                                         '-fexceptions -frtti ' )
 
-        if self.setup.opt_sqlite3:
+        if self.setup.opt_sqlite:
             self._addVar( 'LINK_LIBS',  '-L/usr/pkg/lib -lsqlite3')
 
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s ' )

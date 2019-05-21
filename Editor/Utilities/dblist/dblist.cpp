@@ -13,7 +13,7 @@
 
 int main(int argc,char **argv)
 {
-#if !defined( DB_SQLITE3 )
+#if !defined( DB_SQLITE )
     database db;
     database::datum key( db );
     char *ndb = NULL;
