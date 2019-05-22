@@ -8,6 +8,12 @@ class BuildLog:
         self.debug_colour = ''
         self.no_colour = ''
 
+        if sys.platform == 'win32':
+            import ctypes
+            kernel32 = ctypes.windll.kernel32
+            # turn on the console ANSI colour handling
+            kernel32.SetConsoleMode( kernel32.GetStdHandle( -11 ), 7 )
+
     def setDebug( self, debug ):
         self._debug = debug
 
@@ -33,4 +39,4 @@ class BuildLog:
 
     def debug( self, msg ):
         if self._debug:
-            sys.stderr.write( '%sDebug: %s%s\sn' % (self.debug_colour, msg, self.no_colour) )
+            sys.stderr.write( '%sDebug: %s%s\n' % (self.debug_colour, msg, self.no_colour) )
