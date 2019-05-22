@@ -211,7 +211,8 @@ class BuildBEmacs(object):
             rmdirAndContents( self.BEMACS_ROOT_DIR )
 
         elif self.platform == 'win64':
-                shutil.rmtree( self.KITROOT )
+            if os.path.exists( self.KITROOT ):
+                run( 'cmd /c "rmdir /s /q %s"' % self.KITROOT )
 
         elif self.platform == 'MacOSX':
             rmdirAndContents( '../Kits/MacOSX/tmp' )
