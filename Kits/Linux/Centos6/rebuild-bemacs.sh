@@ -5,7 +5,7 @@ scl enable rh-git29 bash <<EOF
     . builder_init
     case "$1" in
     "el6")
-        make -f linux.mak brand
+        python ./brand_version.py version_info.txt ~/Projects/BarrysEmacs
         cd ~/Projects/BarrysEmacs/Kits/Linux/Centos6
         chmod +x ./make-devel-src-tarball.sh
         ./make-devel-src-tarball.sh
@@ -13,7 +13,7 @@ scl enable rh-git29 bash <<EOF
         ./bemacs-mock-build.sh ${3:-centos6.3-x86_64}
         ;;
     "el7")
-        ./build-linux.sh $2
+        ./build-linux.sh $2 --no-sqlite
         ./local-install-linux.sh
         ;;
     *)

@@ -16,7 +16,7 @@ MOCK_ROOT=$( mock --root=${MOCK_VERSION_NAME} -p )
 if [ ! -e "${MOCK_ROOT}" ]
 then
     echo "Info: Init mock for ${MOCK_VERSION_NAME}"
-     mock \
+    mock \
         --root=${MOCK_VERSION_NAME} \
         --init
 fi

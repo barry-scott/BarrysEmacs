@@ -31,70 +31,7 @@ class Setup:
         self.opt_warnings_as_errors = True
         self.opt_sqlite = False
 
-        args = argv[1:]
-        if len(args) < 3:
-            raise SetupError( 'Usage: setup.py win32|win64|macosx|netbsd|linux> <gui|cli|utils|unit-tests> <makefile> [<options>]' )
-
-        self.platform = args[0].lower()
-        del args[0]
-
-        target = args[0].split( ',' )
-        del args[0]
-
-        if 'gui' in target:
-            self.opt_bemacs_gui = True
-
-        if 'cli' in target:
-            self.opt_bemacs_cli = True
-
-        if 'utils' in target:
-            self.opt_utils = True
-
-        if 'unit-tests' in target:
-            self.opt_unit_tests = True
-
-        self.makefile_name = args[0]
-        del args[0]
-
-        while len(args) > 0:
-            if args[0] == '--debug':
-                log.setDebug( True )
-                del args[0]
-
-            elif args[0] == '--colour':
-                self.opt_colour = True
-                del args[0]
-
-            elif args[0] == '--enable-log.debug':
-                self.opt_enable_debug = True
-                del args[0]
-
-            elif args[0].startswith( '--lib-dir=' ):
-                self.opt_lib_dir = args[0][len('--lib-dir='):]
-                del args[0]
-
-            elif args[0].startswith( '--system-pycxx' ):
-                self.opt_system_pycxx = True
-                del args[0]
-
-            elif args[0].startswith( '--system-ucd' ):
-                self.opt_system_ucd = True
-                del args[0]
-
-            elif args[0].startswith( '--no-warnings-as-errors' ):
-                self.opt_warnings_as_errors = False
-                del args[0]
-
-            elif args[0].startswith( '--coverage' ):
-                self.opt_coverage = True
-                del args[0]
-
-            elif args[0].startswith( '--sqlite' ):
-                self.opt_sqlite = True
-                del args[0]
-
-            else:
-                raise SetupError( 'Unknown arg %r' % (args[0],) )
+        self parseArgs( argv )
 
         log.setColour( self.opt_colour )
 
@@ -105,6 +42,69 @@ class Setup:
             log.debug( 'Env %s:%r' % (name, os.environ[ name ]) )
 
         self.setupCompile()
+
+    def parseArgs( self, argv ):
+        try:
+            args = iter(argv)
+            next(args) # skip script name
+
+            self.platform = next(args).lower()
+
+            target = next(args).split( ',' )
+
+            if 'gui' in target:
+                self.opt_bemacs_gui = True
+
+            if 'cli' in target:
+                self.opt_bemacs_cli = True
+
+            if 'utils' in target:
+                self.opt_utils = True
+
+            if 'unit-tests' in target:
+                self.opt_unit_tests = True
+
+            self.makefile_name = next(args)
+
+        except StopIteration:
+            raise SetupError( 'Usage: setup.py win32|win64|macosx|netbsd|linux> <gui|cli|utils|unit-tests> <makefile> [<options>]' )
+
+
+        try:
+            while len(args) > 0:
+                arg = next(args)
+                if arg == '--debug':
+                    log.setDebug( True )
+
+                elif arg == '--colour':
+                    self.opt_colour = True
+
+                elif arg == '--enable-debug':
+                    self.opt_enable_debug = True
+
+                elif arg.startswith( '--lib-dir=' ):
+                    self.opt_lib_dir = arg[len('--lib-dir='):]
+
+                elif arg == '--system-pycxx':
+                    self.opt_system_pycxx = True
+
+                elif arg == '--system-ucd':
+                    self.opt_system_ucd = True
+
+                elif arg == '--no-warnings-as-errors':
+                    self.opt_warnings_as_errors = False
+
+                elif arg == '--coverage':
+                    self.opt_coverage = True
+
+                elif arg == '--sqlite':
+                    self.opt_sqlite = True
+
+                else:
+                    raise SetupError( 'Unknown arg %r' % (arg,) )
+
+        except StopIteration:
+            pass
 
     def makePrint( self, line ):
         log.debug( 'makePrint( %r )' % (line,) )

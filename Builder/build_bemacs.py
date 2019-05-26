@@ -2,7 +2,8 @@
 #
 #   build_bemacs.py
 #
-#   Needs to run under python2 or python3
+#   Needs to be able to be run under python2 or python3
+#   to allow older systems to use this script.
 #
 from __future__ import print_function
 
