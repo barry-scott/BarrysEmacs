@@ -95,6 +95,9 @@ class VersionInfo:
 
         self.__info['commit'] = result.strip()
 
+    def get( self, key ):
+        return self.__info[ key ]
+
     def parseVersionInfo( self, filename ):
         contents = readFile( filename )
         for line in contents.split('\n'):

@@ -16,10 +16,11 @@ def createDatabaseFromMll( mll_file, db_file ):
     c = db.cursor()
     c.execute( '''CREATE TABLE key_value (key TEXT PRIMARY KEY, value TEXT)''' )
 
-    with open( mll_file, 'r', encoding='utf-8' ) as f:
+    with open( mll_file, 'rb' ) as f:
         key = None
         all_body = None
         for line in f:
+            line = line.decode('utf-8')
             if line[0] == '[' and line[-2:] == ']\n':
                 if all_body is not None:
                     value = ''.join(all_body)

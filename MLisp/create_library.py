@@ -57,8 +57,8 @@ class BemacsSqliteTools:
     def add( self, lib_name, filename ):
         basename = os.path.basename( filename )
         c = self.db.cursor()
-        with open( filename, 'r', encoding='utf-8' ) as f:
-            c.execute( '''INSERT INTO key_value VALUES( ?, ? )''', (basename, f.read()) )
+        with open( filename, 'rb' ) as f:
+            c.execute( '''INSERT INTO key_value VALUES( ?, ? )''', (basename, f.read().decode('utf-8')) )
 
     def close( self ):
         self.db.commit()

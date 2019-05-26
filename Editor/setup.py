@@ -28,15 +28,20 @@ class Setup:
         self.opt_coverage = False
         self.opt_system_pycxx = False
         self.opt_system_ucd = False
+        self.opt_system_sqlite = False
         self.opt_warnings_as_errors = True
         self.opt_sqlite = False
 
-        self parseArgs( argv )
+        self.parseArgs( argv )
 
         log.setColour( self.opt_colour )
 
-        log.info( 'Creating makefile for platform %s in %s for targets %s' % (self.platform, self.makefile_name, target) )
+        log.info( 'Creating makefile for platform %s in %s' % (self.platform, self.makefile_name) )
         log.info( 'Working folder %s' % (os.getcwd(),) )
+        if self.opt_bemacs_cli:
+            log.info( 'Building bemacs-cli' )
+        if self.opt_bemacs_gui:
+            log.info( 'Building bemacs-gui' )
 
         for name in sorted( os.environ ):
             log.debug( 'Env %s:%r' % (name, os.environ[ name ]) )
@@ -69,9 +74,8 @@ class Setup:
         except StopIteration:
             raise SetupError( 'Usage: setup.py win32|win64|macosx|netbsd|linux> <gui|cli|utils|unit-tests> <makefile> [<options>]' )
 
-
         try:
-            while len(args) > 0:
+            while True:
                 arg = next(args)
                 if arg == '--debug':
                     log.setDebug( True )
@@ -84,6 +88,9 @@ class Setup:
 
                 elif arg.startswith( '--lib-dir=' ):
                     self.opt_lib_dir = arg[len('--lib-dir='):]
+
+                elif arg == '--system-sqlite':
+                    self.opt_system_sqlite = True
 
                 elif arg == '--system-pycxx':
                     self.opt_system_pycxx = True
@@ -376,7 +383,7 @@ class Setup:
                 ]
             if self.opt_sqlite:
                 obj_files.append( Source( compiler, 'Source/Common/db_sqlite3.cpp' ) )
-                if self.platform in ('macosx', 'win64'):
+                if not self.opt_system_sqlite:
                     obj_files.append( Source( compiler, '%(SQLITESRC)s/sqlite3.c' ) )
             else:
                 obj_files.append( Source( compiler, 'Source/Common/ndbm.cpp' ) )
@@ -427,7 +434,8 @@ class Setup:
         if self.opt_unit_tests:
             self.all_exe.extend( [
                 # unit tests
-                Program( self.c_unit_tests, 'emunicode',  [Source( self.c_unit_tests, 'Source/Common/emunicode.cpp' )] ),
+                Program( self.c_unit_tests, 'emunicode',  [Source( self.c_unit_tests, 'Source/Common/emunicode.cpp',
+                                                                                ['Include/Common/em_unicode_data.h'] )] ),
                 ] )
 
         if self.opt_bemacs_gui:
@@ -455,8 +463,7 @@ class Setup:
                 for exe in self.all_exe:
                     exe.generateMakefile()
 
-                if self.unicode_header is not None:
-                    self.unicode_header.generateMakefile()
+                self.unicode_header.generateMakefile()
 
             return 0
 
@@ -541,12 +548,12 @@ class Win64CompilerVC14(Compiler):
 
         self._addVar( 'PYCXX',          r'%(BUILDER_TOP_DIR)s\Imports\pycxx-%(PYCXX_VER)s' )
         self._addVar( 'PYCXXSRC',       r'%(BUILDER_TOP_DIR)s\Imports\pycxx-%(PYCXX_VER)s\Src' )
-        self._addVar( 'SQLITESRC',     r'%(BUILDER_TOP_DIR)s\Imports\sqlite' )
+        self._addVar( 'SQLITESRC',      r'%(BUILDER_TOP_DIR)s\Imports\sqlite' )
         self._addVar( 'UCDDIR',         r'%(BUILDER_TOP_DIR)s\Imports\ucd' )
 
         if setup.opt_sqlite:
-            self._addVar( 'SQLITESRC',     '%(BUILDER_TOP_DIR)s/Imports/sqlite' )
-            self._addVar( 'SQLITE_FLAGS',   '-I%(BUILDER_TOP_DIR)s\Imports\sqlite' )
+            self._addVar( 'SQLITESRC',     r'%(BUILDER_TOP_DIR)s\Imports\sqlite' )
+            self._addVar( 'SQLITE_FLAGS',  r'-I%(BUILDER_TOP_DIR)s\Imports\sqlite' )
 
         else:
             self._addVar( 'SQLITE_FLAGS',   '' )
@@ -714,7 +721,7 @@ class Win32CompilerMSVC90(Compiler):
 
         self._addVar( 'PYCXX',          r'%(BUILDER_TOP_DIR)s\Imports\pycxx-%(PYCXX_VER)s' )
         self._addVar( 'PYCXXSRC',       r'%(BUILDER_TOP_DIR)s\Imports\pycxx-%(PYCXX_VER)s\Src' )
-        self._addVar( 'SQLITESRC',     r'%(BUILDER_TOP_DIR)s\Imports\sqlite' )
+        self._addVar( 'SQLITESRC',      r'%(BUILDER_TOP_DIR)s\Imports\sqlite' )
         self._addVar( 'UCDDIR',         r'%(BUILDER_TOP_DIR)s\Imports\ucd' )
 
         self._addVar( 'PYTHONDIR',      sys.exec_prefix )
@@ -975,7 +982,7 @@ class MacOsxCompilerGCC(CompilerGCC):
     def __init__( self, setup ):
         CompilerGCC.__init__( self, setup )
         if setup.opt_sqlite:
-            self._addVar( 'SQLITESRC',     '%(BUILDER_TOP_DIR)s/Imports/sqlite' )
+            self._addVar( 'SQLITESRC',      '%(BUILDER_TOP_DIR)s/Imports/sqlite' )
             self._addVar( 'SQLITE_FLAGS',   '-I%(BUILDER_TOP_DIR)s/Imports/sqlite' )
 
         else:
@@ -1127,6 +1134,13 @@ class LinuxCompilerGCC(CompilerGCC):
             # other systems use this
             self.lib_dir = '/usr/lib64'
 
+        if setup.opt_sqlite and not setup.opt_system_sqlite:
+            self._addVar( 'SQLITESRC',      '%(BUILDER_TOP_DIR)s/Imports/sqlite' )
+            self._addVar( 'SQLITE_FLAGS',   '-I%(BUILDER_TOP_DIR)s/Imports/sqlite' )
+
+        else:
+            self._addVar( 'SQLITE_FLAGS',   '' )
+
     def setupUtilities( self, feature_defines ):
         log.info( 'setupUtilities' )
         self.addFeatureDefines( feature_defines )
@@ -1140,6 +1154,7 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
                                         '%(FEATURE_DEFINES)s '
+                                        '%(SQLITE_FLAGS)s '
                                         '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
@@ -1159,6 +1174,7 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
+                                        '%(SQLITE_FLAGS)s '
                                         '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
@@ -1184,13 +1200,14 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '"-DOS_NAME=\\"Linux\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"python\\"" '
                                         '%(FEATURE_DEFINES)s '
+                                        '%(SQLITE_FLAGS)s '
                                         '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
 
         #link_libs = '-L%s -lpython%d.%dm' % (self.lib_dir, sys.version_info.major, sys.version_info.minor)
         link_libs = '-L%s' % (self.lib_dir,)
-        if self.setup.opt_sqlite:
+        if self.setup.opt_system_sqlite:
             link_libs += ' -lsqlite3'
         self._addVar( 'LINK_LIBS', link_libs )
 
@@ -1222,12 +1239,16 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
                                         '-D%(LOG.DEBUG)s '
                                         '%(FEATURE_DEFINES)s '
+                                        '%(SQLITE_FLAGS)s '
                                         '-DBEMACS_LIB_DIR=\\"%(BEMACS_LIB_DIR)s\\"' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
 
-        if self.setup.opt_sqlite:
-            self._addVar( 'LINK_LIBS',  '-lsqlite3')
+        if self.setup.opt_system_sqlite:
+            self._addVar( 'LINK_LIBS',  '-lsqlite3' )
+
+        elif self.setup.opt_sqlite:
+            self._addVar( 'LINK_LIBS',  '-pthread -ldl' )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s ' )
 
@@ -1246,6 +1267,7 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
                                         '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
+                                        '%(SQLITE_FLAGS)s '
                                         '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
@@ -1320,7 +1342,7 @@ class NetBSDCompilerGCC(CompilerGCC):
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
                                         '-fexceptions -frtti ' )
 
-        if self.setup.opt_sqlite:
+        if self.setup.opt_system_sqlite:
             self._addVar( 'LINK_LIBS',  '-L/usr/pkg/lib -lsqlite3')
 
         self._addVar( 'LDEXE',          '%(CCC)s -g ' )
@@ -1356,7 +1378,7 @@ class NetBSDCompilerGCC(CompilerGCC):
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
                                         '-fexceptions -frtti ' )
 
-        if self.setup.opt_sqlite:
+        if self.setup.opt_system_sqlite:
             self._addVar( 'LINK_LIBS',  '-L/usr/pkg/lib -lsqlite3')
 
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s ' )
