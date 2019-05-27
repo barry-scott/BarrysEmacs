@@ -24,7 +24,7 @@ run = build_utils.run
 BuildError = build_utils.BuildError
 
 class PackageBEmacs(object):
-    valid_cmds = ('srpm', 'mock', 'copr-release', 'copr-testing', 'list-release', 'list-testing')
+    valid_cmds = ('srpm', 'mock', 'mock-release', 'mock-testing', 'copr-release', 'copr-testing', 'list-release', 'list-testing')
 
     def __init__( self ):
         self.KITNAME = 'bemacs'
@@ -37,9 +37,10 @@ class PackageBEmacs(object):
         self.opt_system_ucd = False
         self.opt_system_sqlite = False
         self.opt_warnings_as_errors = False
-
         self.opt_kit_sqlite = None
         self.opt_kit_pycxx = None
+
+        self.copr_repo = None
 
         self.cmd = None
         self.release = 'auto'
@@ -56,20 +57,14 @@ class PackageBEmacs(object):
             if self.cmd == 'srpm':
                 self.buildSrpm()
 
-            elif self.cmd == 'mock':
+            elif self.cmd in ('mock', 'mock-testing', 'mock-release'):
                 self.buildMock()
 
-            elif self.cmd == 'copr-release':
-                self.buildCoprRelease()
+            elif self.cmd in ('copr-release', 'copr-testing' ):
+                self.buildCopr()
 
-            elif self.cmd == 'copr-testing':
-                self.buildCoprTesting()
-
-            elif self.cmd == 'list-release':
-                self.listCoprRelease()
-
-            elif self.cmd == 'list-testing':
-                self.listCoprTesting()
+            elif self.cmd in ('list-release', 'list-testing'):
+                self.listCopr()
 
         except KeyboardInterrupt:
             return 2
@@ -90,7 +85,7 @@ class PackageBEmacs(object):
 
         self.version = '%s.%s.%s' % (vi.get( 'major' ), vi.get( 'minor' ), vi.get( 'patch' ))
 
-        self.MOCK_COPR_REPO_FILENAME = '/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:barryascott:tools.repo'
+        self.MOCK_COPR_REPO_FILENAME = '/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:barryascott:%s.repo' % (self.copr_repo,)
 
     def parseArgs( self, argv ):
         try:
@@ -101,6 +96,12 @@ class PackageBEmacs(object):
             if self.cmd not in self.valid_cmds:
                 raise BuildError( 'Unknown command %r - pick on of: %s' %
                                     (self.cmd, ', '.join( self.valid_cmds,)) )
+
+            if self.cmd in ('mock', 'list-release', 'copr-release'):
+                self.copr_repo = 'tools'
+
+            elif self.cmd in ('mock-testing', 'list-testing', 'copr-testing'):
+                self.copr_repo = 'tools-testing'
 
             while True:
                 arg = next(args)
@@ -189,11 +190,18 @@ class PackageBEmacs(object):
         self.buildSrpm()
 
         log.info( 'Creating RPM' )
-        run( ('mock',
-                    '--root=%s' % (self.MOCK_TARGET_FILENAME,),
-                    '--enablerepo=barryascott-tools',
-                    '--rebuild',
-                    self.SRPM_FILENAME) )
+        if self.copr_repo is not None:
+            run( ('mock',
+                        '--root=%s' % (self.MOCK_TARGET_FILENAME,),
+                        '--enablerepo=barryascott-%s' % (self.copr_repo,),
+                        '--rebuild',
+                        self.SRPM_FILENAME) )
+        else:
+            run( ('mock',
+                        '--root=%s' % (self.MOCK_TARGET_FILENAME,),
+                        '--rebuild',
+                        self.SRPM_FILENAME) )
+
 
         all_bin_kitnames = [
             self.KITNAME,
@@ -234,15 +242,12 @@ class PackageBEmacs(object):
             cmd.extend( glob.glob( 'tmp/%s*.%s.rpm' % (self.KITNAME, self.arch) ) )
             run( cmd )
 
-    def buildCoprRelease( self ):
-        self.buildCopr( 'tools' )
+    def buildCopr( self ):
+        # setup vars based on mock config
+        self.readMockConfig()
 
-    def buildCoprTesting( self ):
-        self.buildCopr( 'tools-testing' )
-
-    def buildCopr( self, copr_repo ):
         if self.release == 'auto':
-            p = self.listCopr( copr_repo )
+            p = self.getListCopr()
             for line in p.stdout.split('\n'):
                 if line.startswith( '%s.src' % (self.KITNAME,) ):
                     parts = line.split()
@@ -258,18 +263,17 @@ class PackageBEmacs(object):
                     break
 
         self.buildSrpm()
-        run( ('copr-cli', 'build', '-r', self.mock_target, copr_repo, self.SRPM_FILENAME) )
+        run( ('copr-cli', 'build', '-r', self.mock_target, self.copr_repo, self.SRPM_FILENAME) )
 
-    def listCoprRelease( self ):
-        p = self.listCopr( 'tools' )
+    def listCopr( self ):
+        p = self.getListCopr()
         print( p.stdout )
 
-    def listCoprTesting( self ):
-        p = self.listCopr( 'tools-testing' )
-        print( p.stdout )
-
-    def listCopr( self, copr_repo ):
-        return run( ('dnf', 'list', 'available', '--refresh', '--disablerepo=*', '--enablerepo=barryascott-%s' % (copr_repo,)), output=True )
+    def getListCopr( self ):
+        return run( ('dnf', 'list', 'available',
+                        '--refresh',
+                        '--disablerepo=*',
+                        '--enablerepo=barryascott-%s' % (self.copr_repo,)), output=True )
 
     def ensureMockSetup( self ):
         log.info( 'Creating mock target file' )
@@ -287,14 +291,8 @@ class PackageBEmacs(object):
             log.info( 'Init mock for %s' % (self.MOCK_TARGET_FILENAME,) )
             run( ('mock', '--root=%s' % (self.MOCK_TARGET_FILENAME,), '--init') )
 
-    def makeMockTargetFile( self ):
-        if self.mock_target is None:
-            self.mock_target = 'fedora-%d-%s' % (self.fedoraVersion(), platform.machine())
-            log.info( 'Defaulting --mock-target=%s' % (self.mock_target,) )
-
-        self.MOCK_TARGET_FILENAME = 'tmp/%s-%s.cfg' % (self.KITNAME, self.mock_target)
-
-        mock_cfg = '/etc/mock/%s.cfg' % (self. mock_target,)
+    def readMockConfig( self ):
+        mock_cfg = '/etc/mock/%s.cfg' % (self.mock_target,)
         if not os.path.exists( mock_cfg ):
             raise BuildError( 'Mock CFG files does not exist %s' % (mock_cfg,) )
 
@@ -306,6 +304,16 @@ class PackageBEmacs(object):
         # set to match the mock target
         self.arch = config_opts[ 'target_arch' ]
         self.dist_tag = config_opts[ 'dist' ]
+        return config_opts
+
+    def makeMockTargetFile( self ):
+        if self.mock_target is None:
+            self.mock_target = 'fedora-%d-%s' % (self.fedoraVersion(), platform.machine())
+            log.info( 'Defaulting --mock-target=%s' % (self.mock_target,) )
+
+        self.MOCK_TARGET_FILENAME = 'tmp/%s-%s.cfg' % (self.KITNAME, self.mock_target)
+
+        config_opts = self.readMockConfig()
 
         with open( self.MOCK_COPR_REPO_FILENAME, 'r' ) as f:
             repo = f.read()
@@ -328,6 +336,7 @@ class PackageBEmacs(object):
         # mock uses the timestamp on the CFG file and compares to the
         # cache timestamp. Use the timestamp of the input cfg to avoid
         # rebuilding the cache unless the original CFG file changes.
+        mock_cfg = '/etc/mock/%s.cfg' % (self.mock_target,)
         st = os.stat( mock_cfg )
         os.utime( self.MOCK_TARGET_FILENAME, (st.st_atime, st.st_mtime) )
 
