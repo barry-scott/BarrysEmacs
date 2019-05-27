@@ -199,18 +199,25 @@ class PackageBEmacs(object):
             self.KITNAME,
             '%s-cli' % (self.KITNAME,),
             '%s-common' % (self.KITNAME,),
+            '%s-cli-debuginfo' % (self.KITNAME,),
+            '%s-debugsource' % (self.KITNAME,),
             '%s-debuginfo' % (self.KITNAME,),
             ]
 
         if self.opt_gui:
-            all_bin_kitnames.append( '%s-gui' % (self.KITNAME,) )
+            all_bin_kitnames.extend( [
+                '%s-gui' % (self.KITNAME,),
+                '%s-gui-debuginfo' % (self.KITNAME,),
+                ] )
 
         run( ('mkdir','-p', 'built') )
 
         for bin_kitname in all_bin_kitnames:
             basename = '%s-%s-%s.%s.%s.rpm' % (bin_kitname, self.version, self.release, self.dist_tag, self.arch)
-            log.info( 'Copying %s' % (basename,) )
-            shutil.copyfile( '%s/RPMS/%s' % (self.MOCK_BUILD_DIR, basename), 'built/%s' % (basename,) )
+            src = '%s/RPMS/%s' % (self.MOCK_BUILD_DIR, basename)
+            if os.path.exists( src ):
+                log.info( 'Copying %s' % (basename,) )
+                shutil.copyfile( src, 'built/%s' % (basename,) )
 
         log.info( 'Results in %s/built:' % (os.getcwd(),) )
 

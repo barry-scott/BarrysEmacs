@@ -79,8 +79,8 @@ def createRpmSpecFile( opt, spec_filename ):
     fmt_spec_file = ''.join( (
                         spec_file_head,
                         spec_file_prep,
-                        if_opt( opt.opt_kit_sqlite is not None, spec_file_prep_sqlite, '' ),
-                        if_opt( opt.opt_kit_pycxx is not None, spec_file_prep_pycxx, '' ),
+                        if_opt( kit_sqlite_basename != '', spec_file_prep_sqlite, '' ),
+                        if_opt( kit_pycxx_basename != '', spec_file_prep_pycxx, '' ),
                         spec_file_build,
                         spec_file_install,
                         spec_file_description,
@@ -138,14 +138,12 @@ spec_file_prep = '''
 '''
 
 spec_file_prep_sqlite = '''
-echo prep sqlite
 mkdir -p Imports/sqlite
 unzip -j "%_sourcedir/./.(KIT_SQLITE)s" -d Imports/sqlite
 '''
 
 spec_file_prep_pycxx = '''
-echo prep pycxx
-gunzip  %_sourcedir/./.(KIT_PYCXX)s | tar xf - -C Imports
+gunzip -c "%_sourcedir/./.(KIT_PYCXX)s" | tar xf - -C Imports
 '''
 
 spec_file_build = '''
