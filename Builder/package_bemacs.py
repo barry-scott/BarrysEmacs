@@ -14,6 +14,7 @@ import platform
 import glob
 import build_log
 import build_utils
+import package_list_repo
 
 log = build_log.BuildLog()
 
@@ -39,13 +40,14 @@ class PackageBEmacs(object):
         self.opt_warnings_as_errors = False
         self.opt_kit_sqlite = None
         self.opt_kit_pycxx = None
+        self.opt_kit_xml_preferences = None
 
         self.copr_repo = None
 
         self.cmd = None
-        self.release = 'auto'
-        self.mock_target = None
-        self.arch = None
+        self.opt_release = 'auto'
+        self.opt_mock_target = None
+        self.opt_arch = None
         self.install = False
 
     def main( self, argv ):
@@ -86,6 +88,12 @@ class PackageBEmacs(object):
         self.version = '%s.%s.%s' % (vi.get( 'major' ), vi.get( 'minor' ), vi.get( 'patch' ))
 
         self.MOCK_COPR_REPO_FILENAME = '/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:barryascott:%s.repo' % (self.copr_repo,)
+
+        if self.opt_mock_target is None:
+            self.opt_mock_target = 'fedora-%d-%s' % (self.fedoraVersion(), platform.machine())
+            log.info( 'Defaulting --mock-target=%s' % (self.opt_mock_target,) )
+
+        self.COPR_REPO_URL = 'https://copr-be.cloud.fedoraproject.org/results/barryascott/%s/%s' % (self.copr_repo, self.opt_mock_target)
 
     def parseArgs( self, argv ):
         try:
@@ -129,8 +137,11 @@ class PackageBEmacs(object):
                 elif arg == '--system-pycxx':
                     self.opt_system_pycxx = True
 
-                elif arg.startswith( '--kit-pycxx=' ):
+                elif arg.startswith('--kit-pycxx='):
                     self.opt_kit_pycxx = arg[len('--kit-pycxx='):]
+
+                elif arg.startswith('--kit-xml-preferences='):
+                    self.opt_kit_xml_preferences = arg[len('--kit-xml-preferences='):]
 
                 elif arg == '--system-ucd':
                     self.opt_system_ucd = True
@@ -139,13 +150,13 @@ class PackageBEmacs(object):
                     self.opt_warnings_as_errors = False
 
                 elif arg.startswith('--release='):
-                    self.release = arg[len('--release='):]
+                    self.opt_release = arg[len('--release='):]
 
                 elif arg.startswith('--mock-target='):
-                    self.mock_target = arg[len('--mock-target='):]
+                    self.opt_mock_target = arg[len('--mock-target='):]
 
                 elif arg.startswith('--arch='):
-                    self.arch = arg[len('--arch='):]
+                    self.opt_arch = arg[len('--arch='):]
 
                 elif arg.startswith('--install'):
                     self.install = True
@@ -165,8 +176,8 @@ class PackageBEmacs(object):
         raise BuildError( 'Expected /etc/os-release to have a VERSION_ID= field' )
 
     def buildSrpm( self ):
-        if self.release == 'auto':
-            self.release = 1
+        if self.opt_release == 'auto':
+            self.opt_release = 1
 
         run( ('rm', '-rf', 'tmp') )
         run( ('mkdir', 'tmp') )
@@ -181,6 +192,10 @@ class PackageBEmacs(object):
         if self.opt_kit_sqlite is not None:
             log.info( 'Add sqlite kit to sources from %s' % (self.opt_kit_sqlite,) )
             shutil.copyfile( self.opt_kit_sqlite, os.path.join( 'tmp/sources', os.path.basename( self.opt_kit_sqlite ) ) )
+
+        if self.opt_kit_xml_preferences is not None:
+            log.info( 'Add xml-preferences to sources from %s' % (self.opt_kit_xml_preferences,) )
+            shutil.copyfile( self.opt_kit_xml_preferences, os.path.join( 'tmp/sources', os.path.basename( self.opt_kit_xml_preferences ) ) )
 
         self.ensureMockSetup()
         self.makeSrpm()
@@ -221,7 +236,7 @@ class PackageBEmacs(object):
         run( ('mkdir','-p', 'built') )
 
         for bin_kitname in all_bin_kitnames:
-            basename = '%s-%s-%s.%s.%s.rpm' % (bin_kitname, self.version, self.release, self.dist_tag, self.arch)
+            basename = '%s-%s-%s.%s.%s.rpm' % (bin_kitname, self.version, self.opt_release, self.dist_tag, self.opt_arch)
             src = '%s/RPMS/%s' % (self.MOCK_BUILD_DIR, basename)
             if os.path.exists( src ):
                 log.info( 'Copying %s' % (basename,) )
@@ -239,41 +254,36 @@ class PackageBEmacs(object):
                     run( ('sudo', 'dnf', '-y', 'remove', bin_kitname) )
 
             cmd = ['sudo', 'dnf', '-y', 'install']
-            cmd.extend( glob.glob( 'tmp/%s*.%s.rpm' % (self.KITNAME, self.arch) ) )
+            cmd.extend( glob.glob( 'tmp/%s*.%s.rpm' % (self.KITNAME, self.opt_arch) ) )
             run( cmd )
 
     def buildCopr( self ):
         # setup vars based on mock config
         self.readMockConfig()
 
-        if self.release == 'auto':
-            p = self.getListCopr()
-            for line in p.stdout.split('\n'):
-                if line.startswith( '%s.src' % (self.KITNAME,) ):
-                    parts = line.split()
-                    version, rel_distro = parts[1].split('-')
-                    release, distro = rel_distro.split('.')
+        if self.opt_release == 'auto':
+            all_packages = package_list_repo.listRepo( self.COPR_REPO_URL )
 
-                    if version == self.version and distro == self.dist_tag:
-                        self.release = int(release) + 1
+            if 'bemacs' in all_packages:
+                ver, rel = all_packages[ 'bemacs' ]
+                if ver == self.version:
+                    self.opt_release = 1 + int( rel.split('.')[0] )
 
-                    else:
-                        self.release = 1
+        if self.opt_release == 'auto':
+            self.opt_release = 1
 
-                    break
+        log.info( 'Release set to %d' % (self.opt_release,) )
 
         self.buildSrpm()
-        run( ('copr-cli', 'build', '-r', self.mock_target, self.copr_repo, self.SRPM_FILENAME) )
+        run( ('copr-cli', 'build', '-r', self.opt_mock_target, self.copr_repo, self.SRPM_FILENAME) )
 
     def listCopr( self ):
-        p = self.getListCopr()
-        print( p.stdout )
+        all_packages = package_list_repo.listRepo( self.COPR_REPO_URL )
+        print( 'Packages for %s %s' % (self.copr_repo, self.opt_mock_target) )
 
-    def getListCopr( self ):
-        return run( ('dnf', 'list', 'available',
-                        '--refresh',
-                        '--disablerepo=*',
-                        '--enablerepo=barryascott-%s' % (self.copr_repo,)), output=True )
+        for name in sorted( all_packages.keys() ):
+            ver, rel = all_packages[ name ]
+            print( '  %30s: %-10s %s' % (name, ver, rel) )
 
     def ensureMockSetup( self ):
         log.info( 'Creating mock target file' )
@@ -285,14 +295,14 @@ class PackageBEmacs(object):
         self.MOCK_BUILD_DIR = '%s/builddir/build' % (self.MOCK_ROOT,)
 
         if os.path.exists( self.MOCK_ROOT ):
-            log.info( 'Using existing mock for %s' % (self.mock_target,) )
+            log.info( 'Using existing mock for %s' % (self.opt_mock_target,) )
 
         else:
             log.info( 'Init mock for %s' % (self.MOCK_TARGET_FILENAME,) )
             run( ('mock', '--root=%s' % (self.MOCK_TARGET_FILENAME,), '--init') )
 
     def readMockConfig( self ):
-        mock_cfg = '/etc/mock/%s.cfg' % (self.mock_target,)
+        mock_cfg = '/etc/mock/%s.cfg' % (self.opt_mock_target,)
         if not os.path.exists( mock_cfg ):
             raise BuildError( 'Mock CFG files does not exist %s' % (mock_cfg,) )
 
@@ -302,21 +312,20 @@ class PackageBEmacs(object):
             exec( cfg_code )
 
         # set to match the mock target
-        self.arch = config_opts[ 'target_arch' ]
+        self.opt_arch = config_opts[ 'target_arch' ]
         self.dist_tag = config_opts[ 'dist' ]
         return config_opts
 
     def makeMockTargetFile( self ):
-        if self.mock_target is None:
-            self.mock_target = 'fedora-%d-%s' % (self.fedoraVersion(), platform.machine())
-            log.info( 'Defaulting --mock-target=%s' % (self.mock_target,) )
-
-        self.MOCK_TARGET_FILENAME = 'tmp/%s-%s.cfg' % (self.KITNAME, self.mock_target)
+        self.MOCK_TARGET_FILENAME = 'tmp/%s-%s-%s.cfg' % (self.KITNAME, self.copr_repo, self.opt_mock_target)
 
         config_opts = self.readMockConfig()
 
         with open( self.MOCK_COPR_REPO_FILENAME, 'r' ) as f:
             repo = f.read()
+
+            if self.opt_mock_target.startswith( 'epel-' ):
+                repo = repo.replace( '/fedora-$releasever-$basearch/', '/epel-$releasever-$basearch/' )
 
             config_opts['yum.conf'] += '\n'
             config_opts['yum.conf'] += repo
@@ -336,7 +345,7 @@ class PackageBEmacs(object):
         # mock uses the timestamp on the CFG file and compares to the
         # cache timestamp. Use the timestamp of the input cfg to avoid
         # rebuilding the cache unless the original CFG file changes.
-        mock_cfg = '/etc/mock/%s.cfg' % (self.mock_target,)
+        mock_cfg = '/etc/mock/%s.cfg' % (self.opt_mock_target,)
         st = os.stat( mock_cfg )
         os.utime( self.MOCK_TARGET_FILENAME, (st.st_atime, st.st_mtime) )
 
@@ -360,6 +369,8 @@ class PackageBEmacs(object):
         import package_rpm_specfile
         package_rpm_specfile.createRpmSpecFile( self, 'tmp/%s.spec' % (self.KITNAME,) )
 
+        qqq
+
         log.info( 'Creating SRPM for %s' % (self.KIT_BASENAME,) )
 
         run( ('mock',
@@ -368,7 +379,7 @@ class PackageBEmacs(object):
                 '--spec', 'tmp/%s.spec' % (self.KITNAME,),
                 '--sources', 'tmp/sources') )
 
-        SRPM_BASENAME = '%s-%s.%s' % (self.KIT_BASENAME, self.release, self.dist_tag)
+        SRPM_BASENAME = '%s-%s.%s' % (self.KIT_BASENAME, self.opt_release, self.dist_tag)
         self.SRPM_FILENAME = 'tmp/%s.src.rpm' % (SRPM_BASENAME,)
 
         src = '%s/SRPMS/%s.src.rpm' % (self.MOCK_BUILD_DIR, SRPM_BASENAME)

@@ -20,6 +20,7 @@ def createRpmSpecFile( opt, spec_filename ):
 
     kit_pycxx_basename = ''
     kit_sqlite_basename = ''
+    kit_xml_preferences_basename = ''
 
     # options for cli
     all_requires_base.add( 'bemacs-cli' )
@@ -50,22 +51,49 @@ def createRpmSpecFile( opt, spec_filename ):
 
     if opt.opt_gui:
         # options for gui
-        python = '/usr/bin/python3'
-        all_requires_gui.add( 'bemacs-common' )
-        all_requires_gui.add( 'python3 >= 3.4' )
-        all_requires_gui.add( 'python3-qt5 >= 5.5.1' )
-        all_requires_gui.add( 'python3-xml-preferences' )
+        all_requires_gui.add( 'mozilla-fira-mono-fonts' )
+        if opt.opt_mock_target.startswith( 'epel-7-' ):
+            # centos 7 uses python36 not python3
+            python = '/usr/bin/python3'
+            all_requires_gui.add( 'bemacs-common' )
+            all_requires_gui.add( 'python36' )
+            all_requires_gui.add( 'python36-qt5' )
 
-        all_requires_base.add( 'bemacs-gui' )
-        all_requires_base.add( 'python3' )
-        all_build_requires.add( 'python3 >= 3.4' )
-        all_build_requires.add( 'python3-devel >= 3.4' )
-        all_build_requires.add( 'python3-qt5 >= 5.5.1' )
-        all_build_requires.add( 'python3-xml-preferences' )
+            all_requires_base.add( 'bemacs-gui' )
+            all_requires_base.add( 'python36' )
+
+            all_build_requires.add( 'python36' )
+            all_build_requires.add( 'python36-devel' )
+            all_build_requires.add( 'python36-qt5' )
+
+        else:
+            python = '/usr/bin/python3'
+            all_requires_gui.add( 'bemacs-common' )
+            all_requires_gui.add( 'python3 >= 3.4' )
+            all_requires_gui.add( 'python3-qt5 >= 5.5.1' )
+
+            all_requires_base.add( 'bemacs-gui' )
+            all_requires_base.add( 'python3' )
+
+            all_build_requires.add( 'python3 >= 3.4' )
+            all_build_requires.add( 'python3-devel >= 3.4' )
+            all_build_requires.add( 'python3-qt5 >= 5.5.1' )
+
+        if opt.opt_kit_xml_preferences is None:
+            all_requires_gui.add( 'python3-xml-preferences' )
+            all_build_requires.add( 'python3-xml-preferences' )
+
+        else:
+            kit_xml_preferences_basename = os.path.basename( opt.opt_kit_xml_preferences )
+            all_sources.append( opt.opt_kit_xml_preferences )
 
         if opt.opt_kit_pycxx is None:
-            # use the systems pycxx
-            all_build_requires.add( 'python3-pycxx-devel >= 7.1.2' )
+            if opt.opt_mock_target.startswith( 'epel-7-' ):
+                # use the systems pycxx
+                all_build_requires.add( 'python-pycxx-devel >= 7.1.2' )
+            else:
+                # use the systems pycxx
+                all_build_requires.add( 'python3-pycxx-devel >= 7.1.2' )
             all_config_options.add( '--system-pycxx' )
 
         else:
@@ -81,6 +109,7 @@ def createRpmSpecFile( opt, spec_filename ):
                         spec_file_prep,
                         if_opt( kit_sqlite_basename != '', spec_file_prep_sqlite, '' ),
                         if_opt( kit_pycxx_basename != '', spec_file_prep_pycxx, '' ),
+                        if_opt( kit_xml_preferences_basename != '', spec_file_prep_xml_preferences, '' ),
                         spec_file_build,
                         spec_file_install,
                         spec_file_description,
@@ -94,19 +123,20 @@ def createRpmSpecFile( opt, spec_filename ):
 
     fmt_spec_file = fmt_spec_file.replace( '%', '%%' )
     fmt_spec_file = fmt_spec_file.replace( './.', '%' )
-    spec_vars = {'TARGET':          if_opt( opt.opt_gui, 'gui', 'cli' )
-                ,'VERSION':         opt.version
-                ,'RELEASE':         opt.release
-                ,'DATE':            time.strftime( '%a %b %d %Y' )
-                ,'PYTHON':          python
-                ,'SOURCES':         '\n'.join( 'Source%d: %s' % (index, src) for index, src in enumerate( all_sources, 1 ) )
-                ,'REQUIRES_BASE':   '\n'.join( 'Requires: %s' % (req,) for req in sorted( all_requires_base ) )
-                ,'REQUIRES_CLI':    '\n'.join( 'Requires: %s' % (req,) for req in sorted( all_requires_cli ) )
-                ,'REQUIRES_GUI':    '\n'.join( 'Requires: %s' % (req,) for req in sorted( all_requires_gui ) )
-                ,'BUILD_REQUIRES':  '\n'.join( 'BuildRequires: %s' % (req,) for req in sorted( all_build_requires ) )
-                ,'KIT_PYCXX':       kit_pycxx_basename
-                ,'KIT_SQLITE':      kit_sqlite_basename
-                ,'CONFIG_OPTIONS':  ' '.join( sorted( all_config_options ) )
+    spec_vars = {'TARGET':              if_opt( opt.opt_gui, 'gui', 'cli' )
+                ,'VERSION':             opt.version
+                ,'RELEASE':             opt.opt_release
+                ,'DATE':                time.strftime( '%a %b %d %Y' )
+                ,'PYTHON':              python
+                ,'SOURCES':             '\n'.join( 'Source%d: %s' % (index, src) for index, src in enumerate( all_sources, 1 ) )
+                ,'REQUIRES_BASE':       '\n'.join( 'Requires: %s' % (req,) for req in sorted( all_requires_base ) )
+                ,'REQUIRES_CLI':        '\n'.join( 'Requires: %s' % (req,) for req in sorted( all_requires_cli ) )
+                ,'REQUIRES_GUI':        '\n'.join( 'Requires: %s' % (req,) for req in sorted( all_requires_gui ) )
+                ,'BUILD_REQUIRES':      '\n'.join( 'BuildRequires: %s' % (req,) for req in sorted( all_build_requires ) )
+                ,'KIT_PYCXX':           kit_pycxx_basename
+                ,'KIT_SQLITE':          kit_sqlite_basename
+                ,'KIT_XML_PREFERENCES': kit_xml_preferences_basename
+                ,'CONFIG_OPTIONS':      ' '.join( sorted( all_config_options ) )
                 }
     spec_file = fmt_spec_file % spec_vars
 
@@ -128,6 +158,8 @@ URL:            http://barrys-emacs.org/
 Source0:        http://barrys-emacs.org/source_kits/%{name}-%{version}.tar.gz
 ./.(SOURCES)s
 
+./.(REQUIRES_BASE)s
+
 ./.(BUILD_REQUIRES)s
 '''
 
@@ -144,6 +176,14 @@ unzip -j "%_sourcedir/./.(KIT_SQLITE)s" -d Imports/sqlite
 
 spec_file_prep_pycxx = '''
 gunzip -c "%_sourcedir/./.(KIT_PYCXX)s" | tar xf - -C Imports
+'''
+
+spec_file_prep_xml_preferences = '''
+gunzip -c "%_sourcedir/./.(KIT_XML_PREFERENCES)s" | tar xf - -C Imports
+# make build_bemacs code happy
+ln -s $PWD/Imports/xml-preferences-*/Source/xml_preferences Builder
+# make PySQBEmacs code happy
+ln -s $PWD/Imports/xml-preferences-*/Source/xml_preferences Editor/PyQtBEmacs
 '''
 
 spec_file_build = '''
@@ -220,6 +260,10 @@ spec_file_files_gui = '''
 %defattr(-, root, root, -)
 /usr/bin/bemacs
 /usr/bin/bemacs_server
+/usr/share/bemacs/lib/*.py
+/usr/share/bemacs/lib/_bemacs.so
+/usr/share/bemacs/lib/__pycache__/*
+/usr/share/applications/bemacs.desktop
 '''
 
 spec_file_files_cli = '''
@@ -232,7 +276,8 @@ spec_file_files_common = '''
 %files common
 %defattr(-, root, root, -)
 /usr/share/bemacs/doc/*
-/usr/share/bemacs/lib/*
+/usr/share/bemacs/lib/*.db
+/usr/share/bemacs/lib/*.ml
 /usr/share/applications/bemacs.desktop
 %attr(0644,root,root) %{_mandir}/man1/bemacs.1.gz
 '''
