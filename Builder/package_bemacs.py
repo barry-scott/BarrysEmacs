@@ -95,6 +95,19 @@ class PackageBEmacs(object):
 
         self.COPR_REPO_URL = 'https://copr-be.cloud.fedoraproject.org/results/barryascott/%s/%s' % (self.copr_repo, self.opt_mock_target)
 
+        if self.opt_release == 'auto':
+            all_packages = package_list_repo.listRepo( self.COPR_REPO_URL )
+
+            if 'bemacs' in all_packages:
+                ver, rel = all_packages[ 'bemacs' ]
+                if ver == self.version:
+                    self.opt_release = 1 + int( rel.split('.')[0] )
+
+            if self.opt_release == 'auto':
+                self.opt_release = 1
+
+            log.info( 'Release set to %d' % (self.opt_release,) )
+
     def parseArgs( self, argv ):
         try:
             args = iter( argv )
@@ -261,19 +274,6 @@ class PackageBEmacs(object):
         # setup vars based on mock config
         self.readMockConfig()
 
-        if self.opt_release == 'auto':
-            all_packages = package_list_repo.listRepo( self.COPR_REPO_URL )
-
-            if 'bemacs' in all_packages:
-                ver, rel = all_packages[ 'bemacs' ]
-                if ver == self.version:
-                    self.opt_release = 1 + int( rel.split('.')[0] )
-
-        if self.opt_release == 'auto':
-            self.opt_release = 1
-
-        log.info( 'Release set to %d' % (self.opt_release,) )
-
         self.buildSrpm()
         run( ('copr-cli', 'build', '-r', self.opt_mock_target, self.copr_repo, self.SRPM_FILENAME) )
 
@@ -368,8 +368,6 @@ class PackageBEmacs(object):
         log.info( 'creating %s.spec' % (self.KITNAME,) )
         import package_rpm_specfile
         package_rpm_specfile.createRpmSpecFile( self, 'tmp/%s.spec' % (self.KITNAME,) )
-
-        qqq
 
         log.info( 'Creating SRPM for %s' % (self.KIT_BASENAME,) )
 

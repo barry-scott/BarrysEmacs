@@ -185,6 +185,10 @@ class Font(PreferencesNode):
             self.face = 'Monaco'
             self.point_size = 14
 
+        elif sys.platform == 'linux':
+            self.face = 'Fira Mono'
+            self.point_size = 12
+
         else:
             # Assuming linux/xxxBSD
             self.face = 'Liberation Mono'
