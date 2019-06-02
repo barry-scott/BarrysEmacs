@@ -94,6 +94,7 @@ def createRpmSpecFile( opt, spec_filename ):
             else:
                 # use the systems pycxx
                 all_build_requires.add( 'python3-pycxx-devel >= 7.1.2' )
+
             all_config_options.add( '--system-pycxx' )
 
         else:

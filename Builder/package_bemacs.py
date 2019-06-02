@@ -34,9 +34,7 @@ class PackageBEmacs(object):
         self.opt_verbose = False
         self.opt_sqlite = True
         self.opt_gui = True
-        self.opt_system_pycxx = False
         self.opt_system_ucd = False
-        self.opt_system_sqlite = False
         self.opt_warnings_as_errors = False
         self.opt_kit_sqlite = None
         self.opt_kit_pycxx = None
@@ -138,17 +136,11 @@ class PackageBEmacs(object):
                 elif arg == '--no-sqlite':
                     self.opt_sqlite = False
 
-                elif arg == '--system-sqlite':
-                    self.opt_system_sqlite = True
-
                 elif arg.startswith( '--kit-sqlite=' ):
                     self.opt_kit_sqlite = arg[len('--kit-sqlite='):]
 
                 elif arg == '--no-gui':
                     self.opt_gui = False
-
-                elif arg == '--system-pycxx':
-                    self.opt_system_pycxx = True
 
                 elif arg.startswith('--kit-pycxx='):
                     self.opt_kit_pycxx = arg[len('--kit-pycxx='):]

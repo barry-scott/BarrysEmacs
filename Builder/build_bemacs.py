@@ -80,6 +80,7 @@ class BuildBEmacs(object):
                     elif arg in ('--enable-debug'
                                 ,'--system-pycxx'
                                 ,'--system-ucd'
+                                ,'--system-sqlite'
                                 ,'--no-warnings-as-errors'):
                         self.opt_editor_setup_opt.append( arg )
 
