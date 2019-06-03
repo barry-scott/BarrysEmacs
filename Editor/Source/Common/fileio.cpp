@@ -96,6 +96,7 @@ BoundName *checkpoint_proc;
 BoundName *buffer_choose_name_proc;
 BoundName *buffer_backup_filename_proc;
 BoundName *buffer_file_loaded_proc;
+BoundName *buffer_file_reloaded_proc;
 BoundName *buffer_saved_as_proc;
 
 static EmacsString wrote_file;
@@ -2265,7 +2266,7 @@ int synchronise_files(void)
                     // the do_dsp may change buffers under us
                     b->set_bf();
                     b->read_file( fname, 1, 0 );
-                    callProc( buffer_file_loaded_proc, bf_cur->b_buf_name );
+                    callProc( buffer_file_reloaded_proc, bf_cur->b_buf_name );
                     if( !b.bufferValid() ) continue;
 
                     set_dot( old_dot );

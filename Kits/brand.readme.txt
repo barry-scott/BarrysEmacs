@@ -21,12 +21,14 @@ Introduction
 
     There are kits available for:
         Windows 7 and later (tested on: Windows 10)
-        Mac OS X 10.11 (tested on: macOS 10.14.4)
-        Linux (tested on: Fedora 29)
+        Mac OS X 10.11 (tested on: macOS 10.14.5)
+        Linux (tested on: Fedora 30)
 
 New in %(version)s
     * Change the emacs database functions to use sqlite from ndbm.
-    * Refactor the build scripts to simply adding new features like sqlite 
+    * Refactor the build scripts to simplify adding new features like sqlite
+    * New feature to allow modes to be executed after a file is reloaded via synchronise
+      use by diff-mode.
 
 New in 8.5.3
     * Fix for initialising the XML preferences on first use

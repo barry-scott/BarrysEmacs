@@ -149,7 +149,7 @@ library_files =    [
     ('common',    'Library/emacs_control_strings.ml'),
     ('common',    'Library/emacs_default_autoloads.ml'),
     ('common',    'Library/emacs_default_keybindings.ml'),
-    ('common',    'Library/emacs_default_user_interface.ml'),
+    ('common',    'Library/emacs_file_reload.ml'),
     ('common',    'Library/errmsgprs.ml'),
     ('common',    'Library/expand-word-in-buffer.ml'),
     ('common',    'Library/expandx.ml'),

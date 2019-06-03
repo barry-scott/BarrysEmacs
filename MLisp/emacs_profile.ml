@@ -78,6 +78,8 @@
 (execute-mlisp-file "emacs_default_autoloads")
 (execute-mlisp-file "emacs_default_keybindings")
 
+(execute-mlisp-file "emacs_file_reload")
+
 ;
 ; setup to load the user interface
 ; this hook is executed after the

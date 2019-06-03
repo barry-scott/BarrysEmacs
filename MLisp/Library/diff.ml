@@ -79,7 +79,7 @@
         )
         (use-local-map "diff-mode-map")
         (use-syntax-table "diff-mode")
-
+        (setq buffer-file-reload-mode-hook "diff-mode")
         (save-excursion
             (end-of-file)
             (set-mark)

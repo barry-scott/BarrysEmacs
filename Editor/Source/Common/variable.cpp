@@ -149,6 +149,7 @@ void restore_var(void)
     Var("buffer-choose-name-hook", BoundName, &buffer_choose_name_proc )
     Var("buffer-backup-filename-hook", BoundName, &buffer_backup_filename_proc )
     Var("buffer-file-loaded-hook", BoundName, &buffer_file_loaded_proc )
+    Var("buffer-file-reloaded-hook", BoundName, &buffer_file_reloaded_proc )
     Var("buffer-saved-as-hook", BoundName, &buffer_saved_as_proc )
 
     VarRep("force-redisplay", &force_redisplay )

@@ -253,6 +253,7 @@ extern unsigned int call_back_len;
 extern BoundName *buffer_choose_name_proc;
 extern BoundName *buffer_backup_filename_proc;
 extern BoundName *buffer_file_loaded_proc;
+extern BoundName *buffer_file_reloaded_proc;
 extern BoundName *buffer_saved_as_proc;
 
 extern BoundName *enter_emacs_proc;
