@@ -14,6 +14,19 @@
 )
 
 (defun
+    (~mode-modify-syntax-table
+        ~type
+        ~arg
+        (setq ~type (arg 1))
+        (setq ~arg 2)
+        (while (<= ~arg (nargs))
+            (modify-syntax-table ~type (arg ~arg))
+            (setq ~arg (+ ~arg 1))
+        )
+    )
+)
+
+(defun
     (~sh-mode-setup-syntax-table
         (modify-syntax-table "paren" "(" ")")
         (modify-syntax-table "paren" "{" "}")
@@ -24,62 +37,115 @@
         (modify-syntax-table "string-2,paired" "${" "}")
         (modify-syntax-table "string-2" "`")
         (modify-syntax-table "prefix" "\\")
-        (modify-syntax-table "word" "_")
+        (modify-syntax-table "word" "-~_.")
 
-        (modify-syntax-table "keyword-1" "alias")
-        (modify-syntax-table "keyword-1" "autoload")
-        (modify-syntax-table "keyword-1" "bg")
-        (modify-syntax-table "keyword-1" "break")
-        (modify-syntax-table "keyword-1" "case")
-        (modify-syntax-table "keyword-1" "cd")
-        (modify-syntax-table "keyword-1" "continue")
-        (modify-syntax-table "keyword-1" "do")
-        (modify-syntax-table "keyword-1" "done")
-        (modify-syntax-table "keyword-1" "echo")
-        (modify-syntax-table "keyword-1" "elif")
-        (modify-syntax-table "keyword-1" "else")
-        (modify-syntax-table "keyword-1" "esac")
-        (modify-syntax-table "keyword-1" "eval")
-        (modify-syntax-table "keyword-1" "exec")
-        (modify-syntax-table "keyword-1" "exit")
-        (modify-syntax-table "keyword-1" "export")
-        (modify-syntax-table "keyword-1" "false")
-        (modify-syntax-table "keyword-1" "fc")
-        (modify-syntax-table "keyword-1" "fg")
-        (modify-syntax-table "keyword-1" "fi")
-        (modify-syntax-table "keyword-1" "for")
-        (modify-syntax-table "keyword-1" "function")
-        (modify-syntax-table "keyword-1" "getopts")
-        (modify-syntax-table "keyword-1" "if")
-        (modify-syntax-table "keyword-1" "in")
-        (modify-syntax-table "keyword-1" "integer")
-        (modify-syntax-table "keyword-1" "jobs")
-        (modify-syntax-table "keyword-1" "kill")
-        (modify-syntax-table "keyword-1" "let")
-        (modify-syntax-table "keyword-1" "print")
-        (modify-syntax-table "keyword-1" "pwd")
-        (modify-syntax-table "keyword-1" "read")
-        (modify-syntax-table "keyword-1" "readonly")
-        (modify-syntax-table "keyword-1" "return")
-        (modify-syntax-table "keyword-1" "select")
-        (modify-syntax-table "keyword-1" "set")
-        (modify-syntax-table "keyword-1" "shift")
-        (modify-syntax-table "keyword-1" "test")
-        (modify-syntax-table "keyword-1" "then")
-        (modify-syntax-table "keyword-1" "time")
-        (modify-syntax-table "keyword-1" "times")
-        (modify-syntax-table "keyword-1" "trap")
-        (modify-syntax-table "keyword-1" "true")
-        (modify-syntax-table "keyword-1" "type")
-        (modify-syntax-table "keyword-1" "typeset")
-        (modify-syntax-table "keyword-1" "ulimit")
-        (modify-syntax-table "keyword-1" "umask")
-        (modify-syntax-table "keyword-1" "unalias")
-        (modify-syntax-table "keyword-1" "unset")
-        (modify-syntax-table "keyword-1" "until")
-        (modify-syntax-table "keyword-1" "wait")
-        (modify-syntax-table "keyword-1" "whence")
-        (modify-syntax-table "keyword-1" "while")
+        (~mode-modify-syntax-table "keyword-1"
+            "."
+            "alias"
+            "autoload"
+            "bg"
+            "break"
+            "case"
+            "cd"
+            "complete"
+            "continue"
+            "do"
+            "done"
+            "echo"
+            "elif"
+            "else"
+            "esac"
+            "eval"
+            "exec"
+            "exit"
+            "export"
+            "false"
+            "fc"
+            "fg"
+            "fi"
+            "for"
+            "function"
+            "getopts"
+            "if"
+            "in"
+            "integer"
+            "jobs"
+            "kill"
+            "let"
+            "print"
+            "pwd"
+            "read"
+            "readonly"
+            "return"
+            "select"
+            "set"
+            "shift"
+            "shopt"
+            "source"
+            "test"
+            "then"
+            "time"
+            "times"
+            "trap"
+            "true"
+            "type"
+            "typeset"
+            "ulimit"
+            "umask"
+            "unalias"
+            "unset"
+            "until"
+            "wait"
+            "whence"
+            "while"
+        )
+        ; unix commands
+        (~mode-modify-syntax-table "keyword-2"
+            "awk"
+            "bash"
+            "cat"
+            "chmod"
+            "chown"
+            "cp"
+            "curl"
+            "dd"
+            "dnf"
+            "expr"
+            "grep"
+            "gzip"
+            "head"
+            "hostname"
+            "ifconfig"
+            "ip"
+            "less"
+            "ln"
+            "ls"
+            "mkdir"
+            "more"
+            "mount"
+            "mv"
+            "netstat"
+            "ps"
+            "pwd"
+            "rm"
+            "scp"
+            "sed"
+            "sh"
+            "ss"
+            "ssh"
+            "ssh-add"
+            "stty"
+            "sudo"
+            "tail"
+            "tar"
+            "touch"
+            "tty"
+            "umount"
+            "uname"
+            "unzip"
+            "yum"
+            "zip"
+        )
     )
 )
 
