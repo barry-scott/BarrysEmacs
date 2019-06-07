@@ -109,8 +109,10 @@
             "cp"
             "curl"
             "dd"
+            "diff"
             "dnf"
             "expr"
+            "find"
             "grep"
             "gzip"
             "head"
@@ -134,6 +136,7 @@
             "ss"
             "ssh"
             "ssh-add"
+            "sleep"
             "stty"
             "sudo"
             "tail"
@@ -145,6 +148,10 @@
             "unzip"
             "yum"
             "zip"
+            "zcat"
+            "zdiff"
+            "zmore"
+            "zgrep"
         )
     )
 )
