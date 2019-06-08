@@ -39,7 +39,11 @@ def listRepo( repo_url ):
         version_element = getOnlyElement( package_element, 'version' )
         ver = version_element.getAttribute( 'ver' )
         rel = version_element.getAttribute( 'rel' )
-        packages[ name ] = (ver, rel)
+
+        version_element = getOnlyElement( package_element, 'time' )
+        build_time = version_element.getAttribute( 'build' )
+
+        packages[ name ] = (ver, rel, float(build_time))
 
     return packages
 

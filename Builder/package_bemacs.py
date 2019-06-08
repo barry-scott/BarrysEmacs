@@ -8,6 +8,7 @@ from __future__ import print_function
 
 import sys
 import os
+import time
 import shutil
 import subprocess
 import platform
@@ -97,7 +98,7 @@ class PackageBEmacs(object):
             all_packages = package_list_repo.listRepo( self.COPR_REPO_URL )
 
             if 'bemacs' in all_packages:
-                ver, rel = all_packages[ 'bemacs' ]
+                ver, rel, build_time = all_packages[ 'bemacs' ]
                 if ver == self.version:
                     self.opt_release = 1 + int( rel.split('.')[0] )
 
@@ -273,9 +274,22 @@ class PackageBEmacs(object):
         all_packages = package_list_repo.listRepo( self.COPR_REPO_URL )
         print( 'Packages for %s %s' % (self.copr_repo, self.opt_mock_target) )
 
+        now = time.time()
+
         for name in sorted( all_packages.keys() ):
-            ver, rel = all_packages[ name ]
-            print( '  %30s: %-10s %s' % (name, ver, rel) )
+            ver, rel, build_time = all_packages[ name ]
+
+            build_age = self.formatTimeDelta( now - build_time )
+
+            build_time_str = time.strftime( '%Y-%m-%d %H:%M:%S', time.localtime( build_time ) )
+            print( '  %30s: %-8s %-8s %s - %s' % (name, ver, rel, build_time_str, build_age ) )
+
+    def formatTimeDelta( self, age ):
+        r, s = divmod( age, 60 )
+        r, m = divmod( r, 60 )
+        d, h = divmod( r, 24 )
+
+        return '%3dd %2.2d:%2.2d' % (d, h, m)
 
     def ensureMockSetup( self ):
         log.info( 'Creating mock target file' )
