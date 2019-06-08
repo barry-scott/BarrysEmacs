@@ -4,7 +4,7 @@ import os
 import datetime
 import pathlib
 
-import bemacs_version
+import brand_version
 
 def main( argv ):
     print( 'Info: setup_kit_files.py' )
@@ -38,6 +38,12 @@ class InnoSetup:
     def setupInnoItems( self ):
         print( 'Info: Create info_before.txt' )
 
+        BUILDER_TOP_DIR = os.environ['BUILDER_TOP_DIR']
+        vi = brand_version.VersionInfo( BUILDER_TOP_DIR, print )
+        vi.parseVersionInfo( os.path.join( BUILDER_TOP_DIR, 'Builder/version_info.txt' ) )
+
+        version = vi.get('version')
+
         f = open( r'tmp\info_before.txt', 'w' )
         f.write(
 '''Barry's Emacs %(version)s for %(arch)s
@@ -49,7 +55,7 @@ this kit.
     Barry Scott
 
     %(date)s
-''' %   {'version': bemacs_version.VERSION
+''' %   {'version': version
         ,'arch': self.arch
         ,'date': self.build_time_str} )
         f.close()
@@ -57,9 +63,9 @@ this kit.
         print( 'Info: Create setup_copy.cmd' )
         f = open( r'tmp\setup_copy.cmd', 'w' )
         f.write( r'copy tmp\Output\mysetup.exe bemacs-%s-setup.exe' '\n' %
-                    (bemacs_version.VERSION,) )
+                    (version,) )
         f.write( r'dir /s /b bemacs-%s-setup.exe' '\n' %
-                    (bemacs_version.VERSION,) )
+                    (version,) )
         f.write( r'if "%%1" == "--install" (' '\n'
                  r'    echo Installing kit' '\n'
                  r'    start /wait .\bemacs-%s-setup.exe' '\n'
@@ -67,12 +73,12 @@ this kit.
                  r'    echo not Installing kit arg %%1' '\n'
                  r')' '\n'
                      %
-                    (bemacs_version.VERSION,) )
+                    (version,) )
         f.close()
 
         self.all_setup_items.extend( [
                 r'''AppName=%(app_name)s''' % self.__dict__,
-                r'''AppVerName=Barry's Emacs %s''' % (bemacs_version.VERSION,),
+                r'''AppVerName=Barry's Emacs %s''' % (version,),
                 r'''AppCopyright=Copyright (C) 1980-%s Barry A. Scott''' % (self.year,),
                 r'''DefaultDirName={pf}\Barry Scott\%(app_name)s''' % self.__dict__,
                 r'''DefaultGroupName=%(app_name)s''' % self.__dict__,
