@@ -1,12 +1,13 @@
 #
 #   list_repo.py
 #
-from urllib.request import urlopen
 import sys
 import xml.dom.minidom
 import gzip
 
 def listRepo( repo_url ):
+    from urllib.request import urlopen
+
     #
     #   Fetch repomd
     #

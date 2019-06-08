@@ -1,10 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
-#   build_bemacs.py
+#   package_bemacs.py
 #
-#   Needs to run under python2 or python3
-#
-from __future__ import print_function
+from __future__ import print_function   # need to allow python3 only message
 
 import sys
 import os
@@ -51,6 +49,9 @@ class PackageBEmacs(object):
 
     def main( self, argv ):
         try:
+            if sys.version_info[0] != 3:
+                raise BuildError( '%s requires python3' % (os.path.basename( argv[0] ),) )
+
             self.parseArgs( argv )
             log.setColour( self.opt_colour )
             self.setupVars()
