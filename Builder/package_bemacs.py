@@ -2,12 +2,11 @@
 #
 #   package_bemacs.py
 #
-from __future__ import print_function   # need to allow python3 only message
+from __future__ import print_function   # needed to allow python3 only error message
 
 import sys
 import os
 import time
-import shutil
 import subprocess
 import platform
 import glob
@@ -194,15 +193,15 @@ class PackageBEmacs(object):
 
         if self.opt_kit_pycxx is not None:
             log.info( 'Add PyCXX kit to sources from %s' % (self.opt_kit_pycxx,) )
-            shutil.copyfile( self.opt_kit_pycxx, os.path.join( 'tmp/sources', os.path.basename( self.opt_kit_pycxx ) ) )
+            build_utils.copyFile( self.opt_kit_pycxx, 'tmp/sources', 0o600 )
 
         if self.opt_kit_sqlite is not None:
             log.info( 'Add sqlite kit to sources from %s' % (self.opt_kit_sqlite,) )
-            shutil.copyfile( self.opt_kit_sqlite, os.path.join( 'tmp/sources', os.path.basename( self.opt_kit_sqlite ) ) )
+            build_utils.copyFile( self.opt_kit_sqlite, 'tmp/sources', 0o600 )
 
         if self.opt_kit_xml_preferences is not None:
             log.info( 'Add xml-preferences to sources from %s' % (self.opt_kit_xml_preferences,) )
-            shutil.copyfile( self.opt_kit_xml_preferences, os.path.join( 'tmp/sources', os.path.basename( self.opt_kit_xml_preferences ) ) )
+            build_utils.copyFile( self.opt_kit_xml_preferences, 'tmp/sources', 0o600 )
 
         self.ensureMockSetup()
         self.makeSrpm()
@@ -223,7 +222,6 @@ class PackageBEmacs(object):
                         '--root=%s' % (self.MOCK_TARGET_FILENAME,),
                         '--rebuild',
                         self.SRPM_FILENAME) )
-
 
         all_bin_kitnames = [
             self.KITNAME,
@@ -247,7 +245,7 @@ class PackageBEmacs(object):
             src = '%s/RPMS/%s' % (self.MOCK_BUILD_DIR, basename)
             if os.path.exists( src ):
                 log.info( 'Copying %s' % (basename,) )
-                shutil.copyfile( src, 'built/%s' % (basename,) )
+                build_utils.copyFile( src, 'built/%s' % (basename,) )
 
         log.info( 'Results in %s/built:' % (os.getcwd(),) )
 
@@ -389,7 +387,7 @@ class PackageBEmacs(object):
 
         src = '%s/SRPMS/%s.src.rpm' % (self.MOCK_BUILD_DIR, SRPM_BASENAME)
         log.info( 'copy %s %s' % (src, self.SRPM_FILENAME) )
-        shutil.copyfile( src, self.SRPM_FILENAME )
+        build_utils.copyFile( src, self.SRPM_FILENAME )
 
 if __name__ == '__main__':
     sys.exit( PackageBEmacs().main( sys.argv ) )

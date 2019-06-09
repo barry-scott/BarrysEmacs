@@ -6,6 +6,7 @@ from __future__ import print_function
 import sys
 import os
 import subprocess
+import shutil
 
 log = None
 
@@ -81,3 +82,25 @@ def run( cmd, check=True, output=False, cwd=None ):
             raise BuildError( 'Cmd failed %s - %r' % (retcode, cmd) )
 
     return r
+
+def rmdirAndContents( folder ):
+    if os.path.exists( folder ):
+        shutil.rmtree( folder )
+
+def mkdirAndParents( folder ):
+    if not os.path.exists( folder ):
+        os.makedirs( folder, 0o750 )
+
+def copyFile( src, dst, mode ):
+    if os.path.isdir( dst ):
+        dst = os.path.join( dst, os.path.basename( src ) )
+
+    if os.path.exists( dst ):
+        os.chmod( dst, 0o600 )
+        os.remove( dst )
+
+    shutil.copyfile( src, dst )
+    os.chmod( dst, mode )
+
+def numCpus():
+    return os.sysconf( os.sysconf_names['SC_NPROCESSORS_ONLN'] )

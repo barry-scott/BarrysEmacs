@@ -37,6 +37,7 @@ class BuildBEmacs(object):
         self.opt_colour = False
         self.opt_verbose = False
         self.opt_sqlite = True
+        self.opt_vcredist = None
         self.opt_editor_setup_opt = []
 
         self.bemacs_version_info = None
@@ -75,6 +76,9 @@ class BuildBEmacs(object):
 
                     elif arg == '--colour':
                         self.opt_colour = True
+
+                    elif arg.startswith( '--vcredist=' ):
+                        self.opt_vcredist = arg[len('--vcredist='):]
 
                     elif arg == '--no-sqlite':
                         self.opt_sqlite = False
@@ -147,11 +151,11 @@ class BuildBEmacs(object):
 
             if self.platform == 'NetBSD':
                 self.cmd_make = 'gmake'
-                self.cmd_make_args = ['-j', '%d' % (numCpus(),)]
+                self.cmd_make_args = ['-j', '%d' % (build_utils.numCpus(),)]
 
             else:
                 self.cmd_make = 'make'
-                self.cmd_make_args = ['-j', '%d' % (numCpus(),)]
+                self.cmd_make_args = ['-j', '%d' % (build_utils.numCpus(),)]
 
         elif self.platform == 'MacOSX':
             self.BUILD_BEMACS_BIN_DIR = "%s/Builder/tmp/pkg/Barry's Emacs-Devel.app/Contents/Resources/bin" % (self.BUILDER_TOP_DIR,)
@@ -161,7 +165,7 @@ class BuildBEmacs(object):
             self.INSTALL_BEMACS_LIB_DIR = self.BUILD_BEMACS_LIB_DIR
 
             self.cmd_make = 'make'
-            self.cmd_make_args = ['-j', '%d' % (numCpus(),)]
+            self.cmd_make_args = ['-j', '%d' % (build_utils.numCpus(),)]
 
         elif self.platform == 'win64':
             self.KITSRC = r'%s\Kits\Windows' % (self.BUILDER_TOP_DIR,)
@@ -220,19 +224,19 @@ class BuildBEmacs(object):
         self.make( 'clean' )
 
         if self.platform in ('Linux', 'NetBSD'):
-            rmdirAndContents( self.BEMACS_ROOT_DIR )
+            build_utils.rmdirAndContents( self.BEMACS_ROOT_DIR )
 
         elif self.platform == 'win64':
             if os.path.exists( self.KITROOT ):
                 run( 'cmd /c "rmdir /s /q %s"' % self.KITROOT )
 
         elif self.platform == 'MacOSX':
-            rmdirAndContents( 'tmp' )
+            build_utils.rmdirAndContents( 'tmp' )
 
     def ruleBuild( self ):
         self.ruleBrand()
         for folder in (self.BUILD_BEMACS_DOC_DIR, self.BUILD_BEMACS_LIB_DIR, self.BUILD_BEMACS_BIN_DIR):
-            mkdirAndParents( folder )
+            build_utils.mkdirAndParents( folder )
 
         if self.target == 'gui':
             self.ruleBemacsGui()
@@ -274,16 +278,16 @@ class BuildBEmacs(object):
         self.make( 'all' )
 
         if self.platform in ('Linux', 'NetBSD', 'MacOSX'):
-            copyFile( '../Editor/exe-pybemacs/_bemacs.so', self.BUILD_BEMACS_LIB_DIR, 0o555 )
-            copyFile( '../Editor/exe-cli-bemacs/bemacs-cli',  self.BUILD_BEMACS_BIN_DIR, 0o555 )
+            build_utils.copyFile( '../Editor/exe-pybemacs/_bemacs.so', self.BUILD_BEMACS_LIB_DIR, 0o555 )
+            build_utils.copyFile( '../Editor/exe-cli-bemacs/bemacs-cli',  self.BUILD_BEMACS_BIN_DIR, 0o555 )
 
         if self.platform == 'MacOSX':
             run( ('./build-macosx.sh'
                  ,'--package'),
                     cwd='../Editor/PyQtBEmacs' )
 
-            mkdirAndParents( self.BUILD_BEMACS_BIN_DIR )
-            copyFile( '../Editor/exe-cli-bemacs/bemacs-cli',  self.BUILD_BEMACS_BIN_DIR, 0o555 )
+            build_utils.mkdirAndParents( self.BUILD_BEMACS_BIN_DIR )
+            build_utils.copyFile( '../Editor/exe-cli-bemacs/bemacs-cli',  self.BUILD_BEMACS_BIN_DIR, 0o555 )
 
         elif self.platform == 'win64':
             run( ('build-windows.cmd', self.KITFILES, 'all'), cwd=r'..\Editor\PyQtBEmacs' )
@@ -300,22 +304,22 @@ class BuildBEmacs(object):
         log.info( 'Running ruleBemacsCli' )
         self.make( 'all' )
 
-        mkdirAndParents( self.BUILD_BEMACS_BIN_DIR )
-        copyFile( '../Editor/exe-cli-bemacs/bemacs-cli',  self.BUILD_BEMACS_BIN_DIR, 0o555 )
+        build_utils.mkdirAndParents( self.BUILD_BEMACS_BIN_DIR )
+        build_utils.copyFile( '../Editor/exe-cli-bemacs/bemacs-cli',  self.BUILD_BEMACS_BIN_DIR, 0o555 )
 
     def ruleUtils( self ):
         log.info( 'Running ruleUtils' )
-        copyFile( '../Editor/exe-utils/dbadd',    '%s/bemacs-dbadd' % (self.BUILD_BEMACS_BIN_DIR,), 0o555 )
-        copyFile( '../Editor/exe-utils/dbcreate', '%s/bemacs-dbcreate' % (self.BUILD_BEMACS_BIN_DIR,), 0o555 )
-        copyFile( '../Editor/exe-utils/dbdel',    '%s/bemacs-dbdel' % (self.BUILD_BEMACS_BIN_DIR,), 0o555 )
-        copyFile( '../Editor/exe-utils/dbprint',  '%s/bemacs-dbprint' % (self.BUILD_BEMACS_BIN_DIR,), 0o555 )
-        copyFile( '../Editor/exe-utils/dblist',   '%s/bemacs-dblist' % (self.BUILD_BEMACS_BIN_DIR,), 0o555 )
-        copyFile( '../Editor/exe-utils/mll2db',   '%s/bemacs-mll2db' % (self.BUILD_BEMACS_BIN_DIR,), 0o555 )
+        build_utils.copyFile( '../Editor/exe-utils/dbadd',    '%s/bemacs-dbadd' % (self.BUILD_BEMACS_BIN_DIR,), 0o555 )
+        build_utils.copyFile( '../Editor/exe-utils/dbcreate', '%s/bemacs-dbcreate' % (self.BUILD_BEMACS_BIN_DIR,), 0o555 )
+        build_utils.copyFile( '../Editor/exe-utils/dbdel',    '%s/bemacs-dbdel' % (self.BUILD_BEMACS_BIN_DIR,), 0o555 )
+        build_utils.copyFile( '../Editor/exe-utils/dbprint',  '%s/bemacs-dbprint' % (self.BUILD_BEMACS_BIN_DIR,), 0o555 )
+        build_utils.copyFile( '../Editor/exe-utils/dblist',   '%s/bemacs-dblist' % (self.BUILD_BEMACS_BIN_DIR,), 0o555 )
+        build_utils.copyFile( '../Editor/exe-utils/mll2db',   '%s/bemacs-mll2db' % (self.BUILD_BEMACS_BIN_DIR,), 0o555 )
 
     def ruleMlisp( self ):
         log.info( 'Running ruleMlisp' )
-        copyFile( '../MLisp/emacsinit.ml', self.BUILD_BEMACS_LIB_DIR, 0o444 )
-        copyFile( '../MLisp/emacs_profile.ml', self.BUILD_BEMACS_LIB_DIR, 0o444 )
+        build_utils.copyFile( '../MLisp/emacsinit.ml', self.BUILD_BEMACS_LIB_DIR, 0o444 )
+        build_utils.copyFile( '../MLisp/emacs_profile.ml', self.BUILD_BEMACS_LIB_DIR, 0o444 )
 
         import create_library
 
@@ -342,8 +346,8 @@ class BuildBEmacs(object):
         dmg_folder = '%s/Builder/tmp/dmg' % (self.BUILDER_TOP_DIR,)
         pkg_folder = '%s/Builder/tmp/pkg' % (self.BUILDER_TOP_DIR,)
 
-        mkdirAndParents( pkg_folder )
-        mkdirAndParents( dmg_folder )
+        build_utils.mkdirAndParents( pkg_folder )
+        build_utils.mkdirAndParents( dmg_folder )
 
         run( ('cp', '-r',
                 "%s/Barry's Emacs-Devel.app" % (pkg_folder,),
@@ -362,11 +366,11 @@ class BuildBEmacs(object):
 
     def ruleInnoInstaller( self ):
         import package_windows_inno_setup_files
-        inno_setup = package_windows_inno_setup_files.InnoSetup( self.platform, self.VC_VER )
+        inno_setup = package_windows_inno_setup_files.InnoSetup( self.platform, self.VC_VER, self.opt_vcredist )
         inno_setup.createInnoInstall()
 
         run( (r'c:\Program Files (x86)\Inno Setup 5\ISCC.exe', r'tmp\bemacs.iss') )
-        copyFile(
+        build_utils.copyFile(
             r'tmp\Output\mysetup.exe',
             r'tmp\bemacs-%s-setup.exe' % (self.bemacs_version_info.get('version'),),
             0o600 )
@@ -393,14 +397,14 @@ class BuildBEmacs(object):
 
     def ruleDocs( self ):
         log.info( 'Running ruleDocs' )
-        copyFile( '../Kits/readme.txt', self.BUILD_BEMACS_DOC_DIR, 0o444 )
-        copyFile( '../Editor/PyQtBEmacs/bemacs.png', self.BUILD_BEMACS_DOC_DIR, 0o444 )
+        build_utils.copyFile( '../Kits/readme.txt', self.BUILD_BEMACS_DOC_DIR, 0o444 )
+        build_utils.copyFile( '../Editor/PyQtBEmacs/bemacs.png', self.BUILD_BEMACS_DOC_DIR, 0o444 )
         for pattern in ('../HTML/*.html',
                         '../HTML/*.gif',
                         '../HTML/*.css',
                         '../HTML/*.js'):
             for src in glob.glob( pattern ):
-                copyFile( src, self.BUILD_BEMACS_DOC_DIR, 0o444 )
+                build_utils.copyFile( src, self.BUILD_BEMACS_DOC_DIR, 0o444 )
 
     def setupEditorMakefile( self ):
         import setup
@@ -441,27 +445,6 @@ class BuildBEmacs(object):
 def logNothing( msg ):
     pass
 
-def rmdirAndContents( folder ):
-    if os.path.exists( folder ):
-        shutil.rmtree( folder )
-
-def mkdirAndParents( folder ):
-    if not os.path.exists( folder ):
-        os.makedirs( folder, 0o750 )
-
-def copyFile( src, dst, mode ):
-    if os.path.isdir( dst ):
-        dst = os.path.join( dst, os.path.basename( src ) )
-
-    if os.path.exists( dst ):
-        os.chmod( dst, 0o600 )
-        os.remove( dst )
-
-    shutil.copyfile( src, dst )
-    os.chmod( dst, mode )
-
-def numCpus():
-    return os.sysconf( os.sysconf_names['SC_NPROCESSORS_ONLN'] )
 
 if __name__ == '__main__':
     sys.exit( BuildBEmacs().main( sys.argv ) )

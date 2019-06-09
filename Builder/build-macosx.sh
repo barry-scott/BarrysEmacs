@@ -23,7 +23,7 @@ then
     umount "/Volumes/Barry's Emacs"
 fi
 
-${PYTHON} ./build_bemacs.py gui --colour
+${PYTHON} ./build_bemacs.py gui --colour | ${PYTHON} -u build_tee.py build.log
 
 if false
 then

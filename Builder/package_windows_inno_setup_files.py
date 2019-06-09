@@ -5,22 +5,23 @@ import datetime
 import pathlib
 
 import brand_version
-
+import build_utils
 import build_log
 log = build_log.BuildLog()
 log.setColour( True )
 
 def main( argv ):
     log.info( argv[0] )
-    inno = InnoSetup( argv[1], argv[2] )
+    inno = InnoSetup( argv[1], argv[2], argv[3] )
     return inno.createInnoInstall()
 
 class InnoSetup:
-    def __init__( self, arch, vc_ver ):
+    def __init__( self, arch, vc_ver, vc_redict_folder ):
         self.app_name = "Barry's Emacs 8"
         self.app_id = "Barry''s Emacs 8"    # for use in Pascal code
         self.arch = arch
         self.vc_ver = vc_ver
+        self.vc_redict_folder = vc_redict_folder
 
         self.build_time  = time.time()
         self.build_time_str = time.strftime( '%d-%b-%Y %H:%M', time.localtime( self.build_time ) )
@@ -220,8 +221,7 @@ this kit.
 
         redist_file = 'vcredist_%s_%s.exe' % (redist_arch, redist_year)
 
-        log.info( r'QQQ assuming K:\subversion is a thing' )
-        os.system( r'copy k:\subversion\%s tmp' % (redist_file,) )
+        build_utils.copyFile( '%s\%s' % (self.vc_redict_folder, redist_file), 'tmp', 0o600 )
 
         self.all_file_items.append( 'Source: "%s"; DestDir: {tmp}; Flags: deleteafterinstall' %
                                     (redist_file,) )
