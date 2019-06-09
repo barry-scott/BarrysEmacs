@@ -2,7 +2,7 @@
 set -e
 
 printf "\033[32mInfo:\033[m build-macosx.sh Editor/PyQtBEmacs - start\n"
-PKG_DIST_DIR=${BUILDER_TOP_DIR}/Kits/MacOSX/pkg
+PKG_DIST_DIR=${BUILDER_TOP_DIR}/Builder/tmp/pkg
 
 SRC_DIR=${PWD}
 

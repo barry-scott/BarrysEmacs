@@ -39,6 +39,8 @@ class BuildBEmacs(object):
         self.opt_sqlite = True
         self.opt_editor_setup_opt = []
 
+        self.bemacs_version_info = None
+
     def main( self, argv ):
         try:
             self.parseArgs( argv )
@@ -151,9 +153,9 @@ class BuildBEmacs(object):
                 self.cmd_make_args = ['-j', '%d' % (numCpus(),)]
 
         elif self.platform == 'MacOSX':
-            self.BUILD_BEMACS_BIN_DIR = "%s/Kits/MacOSX/pkg/Barry's Emacs-Devel.app/Contents/Resources/bin" % (self.BUILDER_TOP_DIR,)
-            self.BUILD_BEMACS_LIB_DIR = "%s/Kits/MacOSX/pkg/Barry's Emacs-Devel.app/Contents/Resources/emacs_library" % (self.BUILDER_TOP_DIR,)
-            self.BUILD_BEMACS_DOC_DIR = "%s/Kits/MacOSX/pkg/Barry's Emacs-Devel.app/Contents/Resources/documentation" % (self.BUILDER_TOP_DIR,)
+            self.BUILD_BEMACS_BIN_DIR = "%s/Builder/tmp/pkg/Barry's Emacs-Devel.app/Contents/Resources/bin" % (self.BUILDER_TOP_DIR,)
+            self.BUILD_BEMACS_LIB_DIR = "%s/Builder/tmp/pkg/Barry's Emacs-Devel.app/Contents/Resources/emacs_library" % (self.BUILDER_TOP_DIR,)
+            self.BUILD_BEMACS_DOC_DIR = "%s/Builder/tmp/pkg/Barry's Emacs-Devel.app/Contents/Resources/documentation" % (self.BUILDER_TOP_DIR,)
 
             self.INSTALL_BEMACS_LIB_DIR = self.BUILD_BEMACS_LIB_DIR
 
@@ -224,8 +226,7 @@ class BuildBEmacs(object):
                 run( 'cmd /c "rmdir /s /q %s"' % self.KITROOT )
 
         elif self.platform == 'MacOSX':
-            rmdirAndContents( '../Kits/MacOSX/tmp' )
-            rmdirAndContents( '../Kits/MacOSX/pkg' )
+            rmdirAndContents( 'tmp' )
 
     def ruleBuild( self ):
         self.ruleBrand()
@@ -250,13 +251,18 @@ class BuildBEmacs(object):
     def ruleBrand( self ):
         log.info( 'Running ruleBrand' )
         import brand_version
+
+
         try:
             if self.opt_verbose:
                 log_info = log.info
             else:
                 log_info = logNothing
 
-            brand_version.brandVersion( 'version_info.txt', self.BUILDER_TOP_DIR, log_info )
+            self.bemacs_version_info = brand_version.VersionInfo( self.BUILDER_TOP_DIR, log_info )
+            self.bemacs_version_info.parseVersionInfo( 'version_info.txt' )
+            finder = brand_version.FileFinder( self.bemacs_version_info )
+            finder.findAndBrandFiles( self.BUILDER_TOP_DIR )
 
         except brand_version.Error as e:
             raise BuildError( str(e) )
@@ -329,7 +335,29 @@ class BuildBEmacs(object):
         self.mllToDb( '../Describe/em_desc.mll', '%s/emacsdesc' % (self.BUILD_BEMACS_LIB_DIR,) )
 
     def ruleMacosPackage( self ):
-        run( ('./make-macosx-kit.sh',), cwd='../Kits/MacOSX' )
+        log.info( 'Make macOS package' )
+
+        pkg_name = 'BarrysEmacs-%s' % (self.bemacs_version_info.get('version'),)
+        dmg_folder = '%s/Builder/tmp/dmg' % (self.BUILDER_TOP_DIR,)
+        pkg_folder = '%s/Builder/tmp/pkg' % (self.BUILDER_TOP_DIR,)
+
+        mkdirAndParents( pkg_folder )
+        mkdirAndParents( dmg_folder )
+
+        run( ('cp', '-r',
+                "%s/Barry's Emacs-Devel.app" % (pkg_folder,),
+                "%s/Barry's Emacs.app" % (dmg_folder,)) )
+
+        os.rename(
+            "%s/Barry's Emacs.app/Contents/MacOS/Barry's Emacs-Devel" % (dmg_folder,),
+            "%s/Barry's Emacs.app/Contents/MacOS/Barry's Emacs" % (dmg_folder,) )
+
+        log.info( 'Create DMG' )
+        # use 2.7 version as 3.5 version does not work yet (confuses bytes and str)
+        run( ('/Library/Frameworks/Python.framework/Versions/2.7/bin/dmgbuild',
+                '--settings', 'package_macos_dmg_settings.py',
+                "Barry's Emacs",
+                '%s/%s.dmg' % (dmg_folder, pkg_name)) )
 
     def ruleInnoInstaller( self ):
         run( ('build-windows.cmd',), cwd=self.KITSRC )

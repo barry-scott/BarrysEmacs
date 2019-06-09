@@ -1,5 +1,5 @@
 #
-#   brand.dmg_build_settings.py
+#   package_macos_dmg_settings.py
 #
 #   settings file imported into dmgbuild to create the bemacs DMG file.
 #
@@ -7,20 +7,22 @@ import biplist
 import os
 import sys
 
-sys.path.insert( 0, '%%s/Builder' %% (os.environ['BUILDER_TOP_DIR'],) )
+sys.path.insert( 0, os.getcwd() )
+
 import build_log
 log = build_log.BuildLog()
 log.setColour( True )
 
 log.info( 'change to org.barrys-emacs.bemacs' )
 
-PKGNAME = 'BarrysEmacs-%(version)s'
+PKGNAME = 'dmg'
+
 app_path = os.path.join( 'tmp', PKGNAME, "Barry's Emacs.app" )
 app_name = os.path.basename( app_path )
 
 path = os.path.join( app_path, 'Contents', 'Info.plist' )
 with open( path, 'r' ) as f:
-    log.info( 'Reading %%s' %% (path,) )
+    log.info( 'Reading %s' % (path,) )
     __text = f.read().decode( 'utf-8' )
 
 __text = __text.replace( '<string>org.barrys-emacs.bemacs-devel</string>',
@@ -29,7 +31,7 @@ __text = __text.replace( 'Emacs-Devel', 'Emacs' )
 
 path = os.path.join( app_path, 'Contents', 'Info.plist' )
 with open( path, 'w' ) as f:
-    log.info( 'Writing %%s' %% (path,) )
+    log.info( 'Writing %s' % (path,) )
     f.write( __text.encode( 'utf-8' ) )
 
 client_name = 'bemacs_client'
@@ -40,16 +42,16 @@ cli_path = os.path.join( 'tmp', PKGNAME, cli_name )
 
 for tool_name, tool_path in [(cli_name, cli_path), (client_name, client_path)]:
     __text = '''#!/bin/bash
-    exec "/Applications/Barry's Emacs.app/Contents/Resources/bin/%%s" "$@"
-    ''' %% (tool_name,)
+    exec "/Applications/Barry's Emacs.app/Contents/Resources/bin/%s" "$@"
+    ''' % (tool_name,)
 
     tool_path = os.path.join( 'tmp', PKGNAME, tool_name )
 
     with open( tool_path, 'w' )  as f:
-        log.info( 'Writing %%s' %% (tool_path,) )
+        log.info( 'Writing %s' % (tool_path,) )
         f.write( __text.encode( 'utf-8' ) )
 
-    log.info( 'chmod 555 %%s' %% (tool_path,) )
+    log.info( 'chmod 555 %s' % (tool_path,) )
     os.chmod( tool_path, 0o555 )
 
 
@@ -77,8 +79,8 @@ size = '400M'
 files = [app_path
         ,cli_path
         ,client_path
-        ,'../readme.txt'
-        ,'../readme-macos.txt']
+        ,'../Kits/readme.txt'
+        ,'../Kits/readme-macos.txt']
 
 # Symlinks to create
 symlinks = {
@@ -126,7 +128,7 @@ icon_locations = {
 # or 'gon').
 #
 # Other color components may be expressed either in the range 0 to 1, or
-# as percentages (e.g. 60%% is equivalent to 0.6).
+# as percentages (e.g. 60% is equivalent to 0.6).
 background = 'builtin-arrow'
 
 show_status_bar = False

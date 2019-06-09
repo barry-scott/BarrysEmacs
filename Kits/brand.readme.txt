@@ -27,7 +27,8 @@ Introduction
 New in %(version)s
     * Change the emacs database functions to use sqlite from ndbm.
     * Refactor the build scripts to simplify adding new features like sqlite
-    * New feature to allow modes to be executed after a file is reloaded via synchronise
+    * Add keyword-2 high-lighting to sh-mode for common shell command, cp, mv etc.
+    * New feature to allow modes to be executed after a file is reloaded via synchronise;
       use by diff-mode.
 
 New in 8.5.3

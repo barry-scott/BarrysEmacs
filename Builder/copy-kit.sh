@@ -1,7 +1,7 @@
 #!/bin/bash
 case "${BUILDER_CFG_PLATFORM}" in
 MacOSX)
-    DMG=$( find .. -name '*.dmg' )
+    DMG=$( echo tmp/dmg/*.dmg )
     if [ ! -e /Volumes/Downloads ]
     then
         echo "Mounting shares..."
@@ -19,10 +19,6 @@ MacOSX)
         fi
     done
     echo "Downloads is missing"
-    ;;
-
-Linux-Fedora)
-    cp -fv ../Kits/Linux/tmp/${KITNAME}*.x86_64.rpm /shared/Downloads/BEmacs/beta
     ;;
 
 *)

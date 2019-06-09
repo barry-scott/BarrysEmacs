@@ -37,21 +37,19 @@ def main( argv ):
         print( 'Info: %s' % (msg,) )
 
     try:
-        brandVersion( argv[1], argv[2], info )
+        version_info_file = argv[1]
+        wc_path = argv[2]
+
+        vi = VersionInfo( wc_path, info )
+        vi.parseVersionInfo( version_info_file )
+        finder = FileFinder( vi )
+        finder.findAndBrandFiles( wc_path )
 
     except Error as e:
         print( 'Error: %s' % str(e) )
         return 1
 
     return 0
-
-def brandVersion( version_info_file, wc_path, log_info ):
-    vi = VersionInfo( wc_path, log_info )
-    vi.parseVersionInfo( version_info_file )
-
-    finder = FileFinder( vi )
-    finder.findAndBrandFiles( wc_path )
-
 
 class FileFinder:
     def __init__( self, vi ):

@@ -17,13 +17,6 @@ then
     exit 1
 fi
 
-printf "\033[32mInfo:\033[m checking for python library PyQt5\n"
-if ! ${PYTHON} -c 'from PyQt5 import QtWidgets, QtGui, QtCore' 2>/dev/null
-then
-    printf "Error: PyQt5 is not installed for ${PYTHON}. Hint: ${PYTHON} -m pip install PyQt5\n"
-    exit 1
-fi
-
 if [ -e "/Volumes/Barry's Emacs" ]
 then
     printf "\033[32mInfo:\033[m unmount old kit dmg\n"
@@ -41,14 +34,14 @@ then
      -r -domain local -domain system -domain user
 fi
 
-DMG=$( find .. -name '*.dmg' )
+DMG="$( ls -1 tmp/dmg/*.dmg )"
 printf "\033[32mInfo:\033[m DMG ${DMG}\n"
 if [ "$1" = "--install" ]
 then
     # macOS knows about these extra copies of the emacs app
     # and will start all of them at the same time so delete
-    rm -rf ../Kits/MacOSX/pkg
-    rm -rf ../Kits/MacOSX/tmp/BarrysEmacs-V*[0-9]/
+    rm -rf tmp/pkg
+    rm -rf tmp/dmg/*.app
     open ${DMG}
 fi
 printf "\033[32mInfo:\033[m build-macosx.sh Builder - end\n"
