@@ -146,6 +146,7 @@
             "umount"
             "uname"
             "unzip"
+            "which"
             "yum"
             "zip"
             "zcat"
