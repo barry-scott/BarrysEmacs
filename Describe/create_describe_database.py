@@ -20,7 +20,7 @@ def createDatabaseFromMll( mll_file, db_file ):
         key = None
         all_body = None
         for line in f:
-            line = line.decode('utf-8')
+            line = line.decode('utf-8').replace( '\r\n', '\n' )
             if line[0] == '[' and line[-2:] == ']\n':
                 if all_body is not None:
                     value = ''.join(all_body)

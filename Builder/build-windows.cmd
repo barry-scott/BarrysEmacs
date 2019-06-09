@@ -13,8 +13,10 @@ if "%PYTHON%" == "" (
     goto :eof
 )
 
-if exist c:\unxutil\usr\local\wbin\tee.exe (
-    %PYTHON% build_bemacs.py --colour 2>&1 | c:\unxutil\usr\local\wbin\tee.exe build.log
+if exist c:\unxutils\usr\local\wbin\tee.exe (
+    %PYTHON% build_bemacs.py --colour 2>&1 | c:\unxutils\usr\local\wbin\tee.exe build.log
 ) else (
     %PYTHON% build_bemacs.py --colour
 )
+
+if "%1" == "--install" for %%f in (tmp\bemacs-*-setup.exe) do start /wait %%f

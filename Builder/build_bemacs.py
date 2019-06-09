@@ -120,8 +120,9 @@ class BuildBEmacs(object):
         elif self.platform == 'Windows':
             if platform.architecture()[0] == '64bit':
                 self.platform = 'win64'
+                self.VC_VER = '14.0'
             else:
-                self.platform = 'win32'
+                raise BuildError( 'Windows 32 bit is not supported' )
 
         self.BUILDER_TOP_DIR = os.environ[ 'BUILDER_TOP_DIR' ]
 
@@ -164,8 +165,8 @@ class BuildBEmacs(object):
 
         elif self.platform == 'win64':
             self.KITSRC = r'%s\Kits\Windows' % (self.BUILDER_TOP_DIR,)
-            self.KITROOT = r'%s\tmp' % (self.KITSRC,)
-            self.KITFILES = r'%s\tmp\kitfiles' % (self.KITSRC,)
+            self.KITROOT = r'%s\Builder\tmp' % (self.BUILDER_TOP_DIR,)
+            self.KITFILES = r'%s\kitfiles' % (self.KITROOT,)
 
             self.BUILD_BEMACS_BIN_DIR = self.KITFILES
             self.BUILD_BEMACS_LIB_DIR = r'%s\emacs_library' % (self.KITFILES,)
@@ -360,7 +361,16 @@ class BuildBEmacs(object):
                 '%s/%s.dmg' % (dmg_folder, pkg_name)) )
 
     def ruleInnoInstaller( self ):
-        run( ('build-windows.cmd',), cwd=self.KITSRC )
+        import package_windows_inno_setup_files
+        inno_setup = package_windows_inno_setup_files.InnoSetup( self.platform, self.VC_VER )
+        inno_setup.createInnoInstall()
+
+        run( (r'c:\Program Files (x86)\Inno Setup 5\ISCC.exe', r'tmp\bemacs.iss') )
+        copyFile(
+            r'tmp\Output\mysetup.exe',
+            r'tmp\bemacs-%s-setup.exe' % (self.bemacs_version_info.get('version'),),
+            0o600 )
+        log.info( r'Created kit tmp\bemacs-%s-setup.exe' % (self.bemacs_version_info.get('version'),) )
 
     def mllToDb( self, mll_file, db_file ):
         if self.opt_sqlite:

@@ -918,7 +918,7 @@ void test_fio_usage( const char *utf8_data, int unicode_limit, int expected_unic
         pass_count++;
 }
 
-int main( int argc, char **argv )
+int main( int, char ** )
 {
     test_code_point_length( "0x41", 0x41, 1 );
     test_code_point_length( "0xc0", 0xc0, 2 );

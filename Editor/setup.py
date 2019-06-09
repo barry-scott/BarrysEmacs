@@ -596,7 +596,7 @@ class Win64CompilerVC14(Compiler):
 
         rules.append( '' )
         rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo Link Program: %s' % (pyd_filename,) )
+        rules.append( '\t@echo %sLink Program:%s %s' % (log.info_colour, log.no_colour, pyd_filename,) )
         rules.append( '\t@if not exist %(EDIT_EXE)s mkdir %(EDIT_EXE)s' )
         rules.append( '\t@$(LDEXE)  %%(CCCFLAGS)s /Fe%s /Fd%s %s %%(LINK_LIBS)s' %
                             (pyd_filename, pdb_filename, ' '.join( all_objects )) )
@@ -613,7 +613,7 @@ class Win64CompilerVC14(Compiler):
 
         rules.append( '' )
         rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo Link Shared: %s' % (pyd_filename,) )
+        rules.append( '\t@echo %sLink Shared:%s %s' % (log.info_colour, log.no_colour, pyd_filename,) )
         rules.append( '\t@if not exist %(EDIT_EXE)s mkdir %(EDIT_EXE)s' )
         rules.append( '\t@$(LDSHARED)  %%(CCCFLAGS)s /Fe%s /Fd%s %s %%(LINK_LIBS)s' %
                             (pyd_filename, pdb_filename, ' '.join( all_objects )) )
@@ -628,7 +628,7 @@ class Win64CompilerVC14(Compiler):
         rules = []
 
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
-        rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, target.getTargetFilename()) )
+        rules.append( '\t@echo %sCompile:%s %s %sinto%s %s' % (log.info_colour, log.no_colour, target.src_filename, log.info_colour, log.no_colour, target.getTargetFilename()) )
         rules.append( '\t@if not exist %(EDIT_OBJ)s mkdir %(EDIT_OBJ)s' )
         rules.append( '\t@if not exist %s mkdir %s' % (pdb_dir, pdb_dir) )   # For .pdb file
         rules.append( '\t@@$(CCC) /c %%(CCCFLAGS)s /Fo%s /Fd%s %s' % (obj_filename, pdb_filename, target.src_filename) )

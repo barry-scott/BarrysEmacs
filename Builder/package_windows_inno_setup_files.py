@@ -6,17 +6,21 @@ import pathlib
 
 import brand_version
 
+import build_log
+log = build_log.BuildLog()
+log.setColour( True )
+
 def main( argv ):
-    print( 'Info: setup_kit_files.py' )
-    inno = InnoSetup( argv )
+    log.info( argv[0] )
+    inno = InnoSetup( argv[1], argv[2] )
     return inno.createInnoInstall()
 
 class InnoSetup:
-    def __init__( self, argv ):
+    def __init__( self, arch, vc_ver ):
         self.app_name = "Barry's Emacs 8"
         self.app_id = "Barry''s Emacs 8"    # for use in Pascal code
-        self.arch = sys.argv[1]
-        self.vc_ver = sys.argv[2]
+        self.arch = arch
+        self.vc_ver = vc_ver
 
         self.build_time  = time.time()
         self.build_time_str = time.strftime( '%d-%b-%Y %H:%M', time.localtime( self.build_time ) )
@@ -36,7 +40,7 @@ class InnoSetup:
         self.generateInnoFile()
 
     def setupInnoItems( self ):
-        print( 'Info: Create info_before.txt' )
+        log.info( 'Create info_before.txt' )
 
         BUILDER_TOP_DIR = os.environ['BUILDER_TOP_DIR']
         vi = brand_version.VersionInfo( BUILDER_TOP_DIR, print )
@@ -58,22 +62,6 @@ this kit.
 ''' %   {'version': version
         ,'arch': self.arch
         ,'date': self.build_time_str} )
-        f.close()
-
-        print( 'Info: Create setup_copy.cmd' )
-        f = open( r'tmp\setup_copy.cmd', 'w' )
-        f.write( r'copy tmp\Output\mysetup.exe bemacs-%s-setup.exe' '\n' %
-                    (version,) )
-        f.write( r'dir /s /b bemacs-%s-setup.exe' '\n' %
-                    (version,) )
-        f.write( r'if "%%1" == "--install" (' '\n'
-                 r'    echo Installing kit' '\n'
-                 r'    start /wait .\bemacs-%s-setup.exe' '\n'
-                 r') else (' '\n'
-                 r'    echo not Installing kit arg %%1' '\n'
-                 r')' '\n'
-                     %
-                    (version,) )
         f.close()
 
         self.all_setup_items.extend( [
@@ -195,13 +183,13 @@ this kit.
                 ] )
 
         self.all_file_items.extend( [
-                r'''Source: "..\..\Readme.txt"; DestDir: "{app}";''',
+                r'''Source: "%s\Kits\Readme.txt"; DestDir: "{app}";''' % (BUILDER_TOP_DIR,),
 
-                r'''Source: "..\..\..\Editor\PyQtBEmacs\bemacs.png";  DestDir: "{app}\Documentation";''',
-                r'''Source: "..\..\..\HTML\*.css";  DestDir: "{app}\Documentation";''',
-                r'''Source: "..\..\..\HTML\*.html"; DestDir: "{app}\Documentation";''',
-                r'''Source: "..\..\..\HTML\*.gif";  DestDir: "{app}\Documentation";''',
-                r'''Source: "..\..\..\HTML\*.js";   DestDir: "{app}\Documentation";''',
+                r'''Source: "%s\Editor\PyQtBEmacs\bemacs.png";  DestDir: "{app}\Documentation";''' % (BUILDER_TOP_DIR,),
+                r'''Source: "%s\HTML\*.css";  DestDir: "{app}\Documentation";''' % (BUILDER_TOP_DIR,),
+                r'''Source: "%s\HTML\*.html"; DestDir: "{app}\Documentation";''' % (BUILDER_TOP_DIR,),
+                r'''Source: "%s\HTML\*.gif";  DestDir: "{app}\Documentation";''' % (BUILDER_TOP_DIR,),
+                r'''Source: "%s\HTML\*.js";   DestDir: "{app}\Documentation";''' % (BUILDER_TOP_DIR,),
                 ] )
 
         self.addAllKitFiles()
@@ -216,9 +204,9 @@ this kit.
             print( 'Error: Unsupported VC_VER of %s' % (self.vc_ver,) )
             return 1
 
-        if self.arch == 'Win64':
+        if self.arch == 'win64':
             redist_arch = 'x64'
-            code_file = 'bemacs_win64_code.iss'
+            code_file = os.path.join( BUILDER_TOP_DIR, 'Kits/Windows/bemacs_win64_code.iss' )
             self.all_setup_items.append( 'ArchitecturesAllowed=x64' )
             self.all_setup_items.append( 'ArchitecturesInstallIn64BitMode=x64' )
 
@@ -232,6 +220,7 @@ this kit.
 
         redist_file = 'vcredist_%s_%s.exe' % (redist_arch, redist_year)
 
+        log.info( r'QQQ assuming K:\subversion is a thing' )
         os.system( r'copy k:\subversion\%s tmp' % (redist_file,) )
 
         self.all_file_items.append( 'Source: "%s"; DestDir: {tmp}; Flags: deleteafterinstall' %
@@ -265,7 +254,7 @@ this kit.
 
     def generateInnoFile( self ):
         inno_file = r'tmp\bemacs.iss'
-        print( 'Info: Generating %s' % (inno_file,) )
+        log.info( 'Generating %s' % (inno_file,) )
         f = open( inno_file, 'w' )
 
         f.write( ';\n; bemacs.iss generate by setup_kit_files.py\n;\n' )
