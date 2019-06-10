@@ -209,7 +209,9 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
 
         self.setPalette( self.dark_palette )
 
-        self.setStyleSheet( "QToolTip { color: white; background-color: black; border: 1px solid #1e1e1e; }" )
+        self.setStyleSheet( 'QToolTip { color: white; background-color: black; border: 1px solid #1e1e1e; }'
+                            'QToolButton { border: none; }'
+                            'QToolButton:checked { background: darkblue }' )
 
     # called at start up to find the setting for session management
     def saveStateHandler( self, mgr ):
