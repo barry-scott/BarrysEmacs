@@ -48,6 +48,8 @@ setup(
                     CFBundleVersion='%(mac_short_version)s',
                     CFBundleShortVersionString='%(mac_short_version)s',
                     CFBundleGetInfoString=u"Barry's Emacs-Devel %(version)s, © 1981-%(year)s Barry A. Scott. All Rights Reserved.",
+                    # claim we know about dark mode
+                    NSRequiresAquaSystemAppearance='false',
                     ),
             }},
     setup_requires =

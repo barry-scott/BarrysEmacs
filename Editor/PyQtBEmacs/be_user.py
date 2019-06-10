@@ -10,7 +10,7 @@ def be_init_user( bemacs_ ):
     import sys
     import be_platform_specific
     sys.path.insert( 0, str(be_platform_specific.getUserDir()) )
-    bemacs.log.info( repr(sys.path) )
+    bemacs.log.info( 'Adding user dir to sys.path %r' % (sys.path,) )
 
 def be_init_for_unittest():
     global bemacs

@@ -168,10 +168,17 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         QtWidgets.QApplication.__init__( self, [sys.argv[0]] )
 
         is_dark_mode = self.palette().text().color().lightnessF() > self.palette().window().color().lightnessF()
-
         prefs = self.getPrefs()
+
+        self.log.info( 'Is Dark mode %r, theme %r' % (is_dark_mode, prefs.window.theme.name) )
         if not is_dark_mode and prefs.window.theme.name == 'Dark':
+            self.log.info( 'Setting dark palette' )
             self.setDarkPalette()
+
+        elif is_dark_mode:
+            self.log.info( 'Setting dark mode styles' )
+            self.setStyleSheet( 'QToolButton { border: none; }'
+                                'QToolButton:checked { background: darkblue }' )
 
         self.main_window = be_main_window.BemacsMainWindow( self )
 
