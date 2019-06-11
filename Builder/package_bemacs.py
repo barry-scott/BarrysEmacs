@@ -97,8 +97,8 @@ class PackageBEmacs(object):
         if self.opt_release == 'auto':
             all_packages = package_list_repo.listRepo( self.COPR_REPO_URL )
 
-            if 'bemacs' in all_packages:
-                ver, rel, build_time = all_packages[ 'bemacs' ]
+            if self.KITNAME in all_packages:
+                ver, rel, build_time = all_packages[ self.KITNAME ]
                 if ver == self.version:
                     self.opt_release = 1 + int( rel.split('.')[0] )
 
