@@ -23,8 +23,8 @@ def createRpmSpecFile( opt, spec_filename ):
     kit_xml_preferences_basename = ''
 
     # options for cli
-    all_requires_base.add( 'bemacs-cli' )
-    all_requires_cli.add( 'bemacs-common' )
+    all_requires_base.add( 'bemacs-cli = %{version}-%{release}' )
+    all_requires_cli.add( 'bemacs-common = %{version}-%{release}' )
     all_build_requires.add( 'gcc-c++' )
 
     if opt.opt_system_ucd:
@@ -55,11 +55,11 @@ def createRpmSpecFile( opt, spec_filename ):
         if opt.opt_mock_target.startswith( 'epel-7-' ):
             # centos 7 uses python36 not python3
             python = '/usr/bin/python3'
-            all_requires_gui.add( 'bemacs-common' )
+            all_requires_gui.add( 'bemacs-common = %{version}-%{release}' )
             all_requires_gui.add( 'python36' )
             all_requires_gui.add( 'python36-qt5' )
 
-            all_requires_base.add( 'bemacs-gui' )
+            all_requires_base.add( 'bemacs-gui = %{version}-%{release}' )
             all_requires_base.add( 'python36' )
 
             all_build_requires.add( 'python36' )
@@ -68,11 +68,11 @@ def createRpmSpecFile( opt, spec_filename ):
 
         else:
             python = '/usr/bin/python3'
-            all_requires_gui.add( 'bemacs-common' )
+            all_requires_gui.add( 'bemacs-common = %{version}-%{release}' )
             all_requires_gui.add( 'python3 >= 3.4' )
             all_requires_gui.add( 'python3-qt5 >= 5.5.1' )
 
-            all_requires_base.add( 'bemacs-gui' )
+            all_requires_base.add( 'bemacs-gui = %{version}-%{release}' )
             all_requires_base.add( 'python3' )
 
             all_build_requires.add( 'python3 >= 3.4' )
