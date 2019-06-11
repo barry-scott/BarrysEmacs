@@ -129,7 +129,7 @@ def createRpmSpecFile( opt, spec_filename ):
                 ,'RELEASE':             opt.opt_release
                 ,'DATE':                time.strftime( '%a %b %d %Y' )
                 ,'PYTHON':              python
-                ,'SOURCES':             '\n'.join( 'Source%d: %s' % (index, src) for index, src in enumerate( all_sources, 1 ) )
+                ,'SOURCES':             '\n'.join( 'Source%d: %s' % (index, os.path.basename( src )) for index, src in enumerate( all_sources, 1 ) )
                 ,'REQUIRES_BASE':       '\n'.join( 'Requires: %s' % (req,) for req in sorted( all_requires_base ) )
                 ,'REQUIRES_CLI':        '\n'.join( 'Requires: %s' % (req,) for req in sorted( all_requires_cli ) )
                 ,'REQUIRES_GUI':        '\n'.join( 'Requires: %s' % (req,) for req in sorted( all_requires_gui ) )

@@ -23,7 +23,7 @@ run = build_utils.run
 BuildError = build_utils.BuildError
 
 class PackageBEmacs(object):
-    valid_cmds = ('srpm', 'mock', 'mock-release', 'mock-testing', 'copr-release', 'copr-testing', 'list-release', 'list-testing')
+    valid_cmds = ('srpm-release', 'srpm-testing', 'mock-release', 'mock-testing', 'copr-release', 'copr-testing', 'list-release', 'list-testing')
 
     def __init__( self ):
         self.KITNAME = 'bemacs'
@@ -55,10 +55,10 @@ class PackageBEmacs(object):
             log.setColour( self.opt_colour )
             self.setupVars()
 
-            if self.cmd == 'srpm':
+            if self.cmd in ('srpm-release', 'srpm-testing'):
                 self.buildSrpm()
 
-            elif self.cmd in ('mock', 'mock-testing', 'mock-release'):
+            elif self.cmd in ('mock-testing', 'mock-release'):
                 self.buildMock()
 
             elif self.cmd in ('copr-release', 'copr-testing' ):
@@ -117,10 +117,10 @@ class PackageBEmacs(object):
                 raise BuildError( 'Unknown command %r - pick on of: %s' %
                                     (self.cmd, ', '.join( self.valid_cmds,)) )
 
-            if self.cmd in ('mock', 'list-release', 'copr-release'):
+            if self.cmd in ('srpm-release', 'mock-release', 'list-release', 'copr-release'):
                 self.copr_repo = 'tools'
 
-            elif self.cmd in ('mock-testing', 'list-testing', 'copr-testing'):
+            elif self.cmd in ('srpm-testing', 'mock-testing', 'list-testing', 'copr-testing'):
                 self.copr_repo = 'tools-testing'
 
             while True:
@@ -182,9 +182,6 @@ class PackageBEmacs(object):
         raise BuildError( 'Expected /etc/os-release to have a VERSION_ID= field' )
 
     def buildSrpm( self ):
-        if self.opt_release == 'auto':
-            self.opt_release = 1
-
         run( ('rm', '-rf', 'tmp') )
         run( ('mkdir', 'tmp') )
         run( ('mkdir', 'tmp/sources') )
