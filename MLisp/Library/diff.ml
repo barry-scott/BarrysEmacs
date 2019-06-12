@@ -51,14 +51,14 @@
                             (filter-region
                                 (concat diff-command " \"" ~filename "\"  _diff_.tmp") )
                         )
+                        (if ~buffer-is-modified
+                            (unlink-file "_diff_.tmp")
+                        )
 
                         (diff-mode)
 
                         (beginning-of-file)
                         (unset-mark)
-                        (if ~buffer-is-modified
-                            (unlink-file "_diff_.tmp")
-                        )
                         (novalue)
                     )
                     ; else nothing to do
@@ -137,8 +137,8 @@
                 (setq ~line
                     (+ (region-to-string) (- ~line (current-line-number) 1)))
                 (if ~is-old
-                    (ere-search-reverse "^--- (.*)\t")
-                    (ere-search-reverse "^\\+\\+\\+ (.*)\t")
+                    (ere-search-reverse "^--- (.*)(\t|$)")
+                    (ere-search-reverse "^\\+\\+\\+ (.*)(\t|$)")
                 )
                 (setq ~file
                     (progn
@@ -171,11 +171,7 @@
                 (setq ~line (+ (region-to-string)))
             )
         )
-        (if (= ~file "_diff_.tmp")
-            ; diff modified buffer to file
-            (pop-to-buffer diff-buffer)
-            (!= ~file "")
-            ; diff files on disk
+        (if (!= (file-exists ~file) 0)
             (visit-file ~file)
             (pop-to-buffer diff-buffer)
         )
@@ -208,5 +204,6 @@
 
     (execute-mlisp-file "diff.key")
     (kill-buffer "~diff-mode-hack")
+
 )
 (novalue)

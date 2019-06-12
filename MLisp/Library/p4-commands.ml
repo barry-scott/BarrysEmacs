@@ -24,13 +24,20 @@
 
 (defun
     (p4-diff
-        ~buffer-name
-        (setq ~buffer-name (concat "P4 diff " current-buffer-name))
+        ~diff-buffer
+        (setq ~diff-buffer current-buffer-name)
         (execute-monitor-command (concat "p4 diff -du \"" current-buffer-file-name "\""))
-        (pop-to-buffer ~buffer-name)
+        (pop-to-buffer "P4 diff")
         (erase-buffer)
         (yank-buffer "command execution")
+        (setq diff-buffer ~diff-buffer)
         (beginning-of-file)
+        ; remove the duplicate diff headers
+        (next-line 2)
+        (set-mark)
+        (next-line 2)
+        (erase-region)
+        (unset-mark)
         (diff-mode)
     )
 )
