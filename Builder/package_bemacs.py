@@ -384,7 +384,7 @@ class PackageBEmacs(object):
 
         src = '%s/SRPMS/%s.src.rpm' % (self.MOCK_BUILD_DIR, SRPM_BASENAME)
         log.info( 'copy %s %s' % (src, self.SRPM_FILENAME) )
-        build_utils.copyFile( src, self.SRPM_FILENAME )
+        build_utils.copyFile( src, self.SRPM_FILENAME, 0o600 )
 
 if __name__ == '__main__':
     sys.exit( PackageBEmacs().main( sys.argv ) )
