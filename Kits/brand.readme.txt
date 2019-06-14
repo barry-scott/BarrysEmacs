@@ -22,9 +22,10 @@ Introduction
     There are kits available for:
         Windows 7 and later (tested on: Windows 10)
         Mac OS X 10.11 (tested on: macOS 10.14.5)
-        Linux (tested on: Fedora 30)
+        Linux (tested on: Fedora 30, Centos 7 and Centos 6)
 
 New in %(version)s
+    * Fix toolbar drawing issue on macOS where the background of the toolbar was transparent.
     * Change the emacs database functions to use sqlite from ndbm.
     * Refactor the build scripts to simplify adding new features like sqlite
     * Add keyword-2 high-lighting to sh-mode for common shell command, cp, mv etc.
