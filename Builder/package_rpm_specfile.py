@@ -127,6 +127,7 @@ def createRpmSpecFile( opt, spec_filename ):
     spec_vars = {'TARGET':              if_opt( opt.opt_gui, 'gui', 'cli' )
                 ,'VERSION':             opt.version
                 ,'RELEASE':             opt.opt_release
+                ,'COMMIT_ID':           opt.commit_id
                 ,'DATE':                time.strftime( '%a %b %d %Y' )
                 ,'PYTHON':              python
                 ,'SOURCES':             '\n'.join( 'Source%d: %s' % (index, os.path.basename( src )) for index, src in enumerate( all_sources, 1 ) )
@@ -217,6 +218,7 @@ Barry's Emacs
 * Uses original MockLisp extension language
 * UI implemented using Python3 and PyQt
 
+Built from ./.(COMMIT_ID)s
 '''
 
 spec_file_package_gui = '''
@@ -231,6 +233,7 @@ Barry's Emacs
 * Uses original MockLisp extension language
 * UI implemented using Python3 and PyQt
 
+Built from ./.(COMMIT_ID)s
 '''
 
 spec_file_package_cli = '''
@@ -244,6 +247,8 @@ Barry's Emacs
 * Easy to get start with Emacs
 * Uses original MockLisp extension language
 * Command line version for terminal
+
+Built from ./.(COMMIT_ID)s
 
 %package common
 Summary: Barry's Emacs common files
