@@ -156,6 +156,7 @@ library_files =    [
     ('common',    'Library/flasher.ml'),
     ('common',    'Library/form.ml'),
     ('common',    'Library/fundmode.ml'),
+    ('common',    'Library/git-commands.ml'),
     ('common',    'Library/globdel.ml'),
     ('common',    'Library/goto.ml'),
     ('common',    'Library/grep-in-buffers.key'),
