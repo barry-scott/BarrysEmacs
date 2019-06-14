@@ -411,7 +411,14 @@ int database::index_db
             int size = sqlite3_column_bytes( db_stmt_select_all_keys, 0 );
 
             EmacsString key_name( EmacsString::copy, text, size );
-            _dbg_msg( FormatString("db %s: index_db key_name %s") << db_filename << key_name );
+
+# if DBG_EXEC
+            if( dbg_flags&DBG_EXEC )
+            {
+                _dbg_msg( FormatString("db %s: index_db key_name %s") << db_filename << key_name );
+            }
+#endif
+
             helper( key_name );
         }
         else if( rc == SQLITE_DONE )
