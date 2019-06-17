@@ -26,13 +26,16 @@
     (p4-diff
         ~diff-buffer
         (setq ~diff-buffer current-buffer-name)
-        (execute-monitor-command (concat "p4 diff -du \"" current-buffer-file-name "\""))
+        ; use diff -u but ensure that we get both sets of file detail lines
+        ; by using -du
+        (execute-monitor-command (concat "P4DIFF='diff -u' p4 diff -du \"" current-buffer-file-name "\""))
         (pop-to-buffer "P4 diff")
         (erase-buffer)
         (yank-buffer "command execution")
         (setq diff-buffer ~diff-buffer)
         (beginning-of-file)
-        ; remove the duplicate diff headers
+        ; remove the extra diff headers from diff -u but keep
+        ; the p4 diff -du headers
         (next-line 2)
         (set-mark)
         (next-line 2)
