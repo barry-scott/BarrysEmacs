@@ -117,7 +117,7 @@
     (~dired-get-fname
         (save-excursion
             (beginning-of-line)
-                (ere-search-forward "[A-Za-z][a-z][a-z] ( \\d{4}|\\d{2}:\\d{2}) ")
+            (ere-search-forward "\\d [A-Za-z][a-z][a-z] [ 1-9][0-9] ( \\d{4}|\\d{2}:\\d{2}) ")
 ;           (goto-character (+ (dot) 43))
             (set-mark)
             (end-of-line)
