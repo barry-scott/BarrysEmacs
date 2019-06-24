@@ -6,47 +6,59 @@
 ; FAST (in big letters), or after you load dired, you must
 ; set this variable to a null string.
 ;
-(declare-global Dired-keymap-defined Dired-directory)
-(setq Dired-keymap-defined 0)
-(setq Dired-directory (current-directory))
+(declare-global Dired-directory)
+(setq Dired-directory "")
 
 (defun
-    (dired directory
-        (save-window-excursion
-            (setq directory (arg 1 (concat ": dired on directory? ["
-                                       Dired-directory "] ")))
-            (if (= directory "")
-                (setq directory Dired-directory))
-            (if (= "/" (substr directory -1 1))
-                (setq directory (substr directory 1 -1)))
-            (setq Dired-directory directory)
-            (pop-to-buffer "dired")
-            (setq mode-line-format
-                (concat "  Editing  directory:  " directory
-                    "      %M   %[%p%]"))
-            (erase-buffer)  (set-mark)
-            (message "Getting contents of " directory)
-            (sit-for 0)
-            (filter-region (concat "/bin/ls -l " (file-name-expand-and-default directory "")))
-            (beginning-of-file)
-            (if (looking-at "total")
-                (progn
-                    (kill-to-end-of-line) (kill-to-end-of-line)
-                    (beginning-of-file)
-                    (re-replace-string "^." " &")
-                    (beginning-of-file)
-                )
-                (progn
-                    (end-of-file)
-                    (error-message (region-to-string))
-                )
-            )
-            (unset-mark)
-            (message "Type ^C to exit, ? for help")
-            (save-excursion (recursive-edit))
-            (~dired-done)
-            (novalue)
+    dired( ~dired-directory (get-tty-directory
+        (concat
+            ": dired of directory? ["
+            (if (= Dired-directory "") (current-directory) Dired-directory)
+            "]")))
+    (save-window-excursion
+        (if (= ~dired-directory "")
+            (setq ~dired-directory (if (= Dired-directory "") (current-directory) Dired-directory))
+            ; save the users choice - leaving blank if using
+            ; current-directory
+            (setq Dired-directory ~dired-directory)
         )
+        ; normalise
+        (setq ~dired-directory (file-name-expand-and-default ~dired-directory ""))
+
+        ; setup dired buffer
+        (pop-to-buffer "dired")
+        (use-local-map "dired-keymap")
+        (setq mode-line-format
+            (concat "  Editing  directory:  " ~dired-directory
+                "      %M   %[%p%]"))
+
+        ; get the directory listing
+        (erase-buffer)
+        (set-mark)
+        (message "Getting contents of " ~dired-directory)
+        (sit-for 0)
+        (filter-region (concat "/bin/ls -l " ~dired-directory))
+
+        (beginning-of-file)
+        (if (looking-at "total")
+            (progn
+                (kill-to-end-of-line 2)
+                (beginning-of-file)
+                (re-replace-string "^." " &")
+                (beginning-of-file)
+            )
+            (progn
+                (end-of-file)
+                (error-message (region-to-string))
+            )
+        )
+        (unset-mark)
+
+        (message "Type q to exit, ? for help")
+        (save-excursion (recursive-edit))
+
+        (~dired-done)
+        (novalue)
     )
 )
 
@@ -65,12 +77,16 @@
             )
         )
     )
+)
 
+(defun
     (~dired-summary
         (message
             "d-elete, u-ndelete, q-uit, r-emove, e,v-isit, n-ext, p-revious, ?-help")
     )
+)
 
+(defun
     (~dired-UnMark-file-deleted
         (if (= 0 (buffer-size))
             (error-message "dired already done!")
@@ -83,7 +99,9 @@
             )
         )
     )
+)
 
+(defun
     (~dired-backup-unmark
         (if (= 0 (buffer-size))
             (error-message "dired already done!")
@@ -97,13 +115,19 @@
 )
 
 (defun
-    (~dired-examine ans
-        (save-excursion
-            (error-occurred
-                (visit-file (~dired-get-fname))
-                (message "Type ^C to return to DIRED")
-                (recursive-edit)
+    (~dired-examine
+        ~mode
+        (setq ~mode (~dired-get-mode))
+        (if (| (= ~mode '-') (= ~mode 'l'))
+            (save-excursion
+                (beginning-of-line)
+                (error-occurred
+                    (visit-file (~dired-get-fname))
+                    (message "Type ^X^C to return to DIRED")
+                    (recursive-edit)
+                )
             )
+            (message "Not a file")
         )
     )
 )
@@ -111,45 +135,82 @@
 (defun
     (~dired-remove
         (beginning-of-line)
-        (kill-to-end-of-line) (kill-to-end-of-line)
+        (kill-to-end-of-line 2)
     )
+)
 
-    (~dired-get-fname
+(defun
+    (~dired-get-mode
         (save-excursion
             (beginning-of-line)
-            (ere-search-forward "\\d [A-Za-z][a-z][a-z] [ 1-9][0-9] ( \\d{4}|\\d{2}:\\d{2}) ")
-;           (goto-character (+ (dot) 43))
-            (set-mark)
-            (end-of-line)
-            (concat Dired-directory "/" (region-to-string))
+            (forward-character)
+            (following-char)
         )
     )
+)
 
-    (~dired-done ans
+(defun
+    (~dired-get-fname
+        (save-excursion
+            ~is-link
+            ~is-quoted
+
+            (beginning-of-line)
+            ; need to know its s synlink to find the end of the name
+            (setq ~is-link (= (~dired-get-mode) 'l'))
+
+            ; start of file name if after the date and time
+            (ere-search-forward "\\d [A-Za-z][a-z][a-z] [ 1-9][0-9] ( \\d{4}|\\d{2}:\\d{2}) ")
+
+            ; some /bin/ls use single quotes around names with spaces
+            (setq ~is-quoted (looking-at "'"))
+            (if ~is-quoted
+                (forward-character))
+            (set-mark)
+            (if ~is-link
+                (progn
+                    ; symlinks are symlink -> filename
+                    (search-forward " -> ")
+                    (backward-character 4)
+                )
+                (end-of-line)
+            )
+            (if ~is-quoted
+                (backward-character))
+
+            (concat ~dired-directory "/" (region-to-string))
+        )
+    )
+)
+
+(defun
+    (~dired-done
+        ~answer
         (beginning-of-file)
         (re-replace-string "^ .*\n" "")
         (if (!= 0 (buffer-size))
             (progn
                 (message
                     "? [y-go through marked files; e-don't delete, exit; Anything else return]")
-                (setq ans (get-tty-character))
-                (if (| (= ans 'e') (= ans 'E'))
+                (setq ~answer (get-tty-character))
+                (if (| (= ~answer 'e') (= ~answer 'E'))
                     (progn
                         (message
                             "Really exit without deleting?[y-yes, anything else continue dired]")
-                        (setq ans (get-tty-character))
-                        (if (| (= ans 'y') (= ans 'Y'))
+                        (setq ~answer (get-tty-character))
+                        (if (| (= ~answer 'y') (= ~answer 'Y'))
                             (delete-buffer "dired")
-                            (error-message "Aborted.")))
-                    (| (= ans 'y') (= ans 'Y'))
+                            (error-message "Aborted."))
+                        )
+                    (| (= ~answer 'y') (= ~answer 'Y'))
                     (progn
                         (while (! (eobp))
                             (if (= (following-char) 'D')
-                                (progn thisfile ans
+                                (progn thisfile ~answer
                                     (setq thisfile (~dired-get-fname))
                                     (message (concat "Delete " thisfile "?"))
-                                    (setq ans (get-tty-character))
-                                    (if (| (= ans 'y') (= ans 'Y'))
+                                    (setq ~answer (get-tty-character))
+                                    (if (| (= ~answer 'y') (= ~answer 'Y'))
                                         (if (unlink-file thisfile)
                                             (progn
                                                 (message "Couldn't delete it!")
@@ -167,52 +228,36 @@
     )
 )
 
-(progn loop
+(progn
     (save-excursion
+        ~loop
         (temp-use-buffer "dired")
         (define-keymap "dired-keymap")
         (use-local-map "dired-keymap")
-        (setq loop 0)
-        (while (<= loop 127)
-            (local-bind-to-key "~dired-summary" loop)
-            (setq loop (+ loop 1))
+
+        (setq ~loop ' ')
+        (while (<= ~loop 127)
+            (local-bind-to-key "~dired-summary" ~loop)
+            (setq ~loop (+ ~loop 1))
         )
-        (setq loop '0')
-        (while (<= loop '9')
-            (local-bind-to-key "digit" loop)
-            (setq loop (+ loop 1))
+
+        (setq ~loop '0')
+        (while (<= ~loop '9')
+            (local-bind-to-key "digit" ~loop)
+            (setq ~loop (+ ~loop 1))
         )
         (local-bind-to-key "~dired-Mark-file-deleted" "d")
         (local-bind-to-key "~dired-Mark-file-deleted" "D")
         (local-bind-to-key "~dired-Mark-file-deleted" "")
         (local-bind-to-key "~dired-backup-unmark" "\0177")
-        (local-bind-to-key "previous-line" "\^H")
         (local-bind-to-key "previous-line" "p")
         (local-bind-to-key "previous-line" "P")
-        (local-bind-to-key "previous-line" "\^P")
         (local-bind-to-key "next-line" "n")
         (local-bind-to-key "next-line" "N")
-        (local-bind-to-key "next-line" "\^N")
-        (local-bind-to-key "next-line" 13)
-        (local-bind-to-key "next-line" 10)
         (local-bind-to-key "next-line" " ")
-        (local-bind-to-key "argument-prefix" "\^U")
-        (local-bind-to-key "previous-window" "\^Xp")
-        (local-bind-to-key "previous-window" "\^XP")
-        (local-bind-to-key "next-window" "\^Xn")
-        (local-bind-to-key "next-window" "\^XN")
-        (local-bind-to-key "delete-window" "\^Xd")
-        (local-bind-to-key "delete-window" "\^XD")
-        (local-bind-to-key "delete-other-windows" "\^X1")
         (local-bind-to-key "~dired-examine" "\^X\^V")
-        (local-bind-to-key "next-page" "\^V")
-        (local-bind-to-key "previous-page" "\ev")
-        (local-bind-to-key "previous-page" "\eV")
-        (local-bind-to-key "beginning-of-file" "\e<")
-        (local-bind-to-key "end-of-file" "\e>")
         (local-bind-to-key "~dired-UnMark-file-deleted" "u")
         (local-bind-to-key "~dired-UnMark-file-deleted" "U")
-        (local-bind-to-key "exit-emacs" "\^C")
         (local-bind-to-key "exit-emacs" "q")
         (local-bind-to-key "exit-emacs" "Q")
         (local-bind-to-key "~dired-examine" "e")
@@ -222,4 +267,5 @@
         (local-bind-to-key "~dired-remove" "r")
         (local-bind-to-key "~dired-remove" "R")
     )
+    (delete-buffer "dired")
 )
