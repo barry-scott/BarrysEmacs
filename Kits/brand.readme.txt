@@ -25,6 +25,9 @@ Introduction
         Linux (tested on: Fedora 30, Centos 7 and Centos 6)
 
 New in %(version)s
+    * Fix and improve dired - works for unix and macOS.
+
+New in 8.6.0
     * Fix toolbar drawing issue on macOS where the background of the toolbar was transparent.
     * Change the emacs database functions to use sqlite from ndbm.
     * Refactor the build scripts to simplify adding new features like sqlite
@@ -92,14 +95,5 @@ New in 8.3.3
       - new package white-space-mini-mode allows trailing
         white space and use of tabs to be pointed out
     * MLisp will now parse hex constants 0x1ec etc
-
-Mac OS X notes:
-
-    Use the included bemacs_client as a command line interface to Barry's Emacs.
-
-    copy bemacs_client to some what on your PATH. Then you can edit a file by
-    typing:
-
-        $ bemacs_client <filename>
 
 [end readme.txt]
