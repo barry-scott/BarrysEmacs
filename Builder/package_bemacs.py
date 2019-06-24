@@ -324,12 +324,13 @@ class PackageBEmacs(object):
 
         with open( mock_cfg, 'r' ) as f:
             cfg_code = compile( f.read(), 'mock_cfg', 'exec' )
-            config_opts = {}
+            config_opts = {'yum_install_command': ''}
             exec( cfg_code )
 
         # set to match the mock target
         self.opt_arch = config_opts[ 'target_arch' ]
         self.dist_tag = config_opts[ 'dist' ]
+
         return config_opts
 
     def makeMockTargetFile( self ):
