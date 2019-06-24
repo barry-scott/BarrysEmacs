@@ -81,14 +81,18 @@ static int tmp_name_count = 1;
 # if defined( __unix__ ) || defined( WIN32 )
 EmacsString emacs_tmpnam()
 {
-    char *tmp_dir = getenv("TMP");
+    char *tmp_dir = getenv("TMPDIR");
     if( tmp_dir == NULL )
         tmp_dir = getenv("TEMP");
-    EmacsString tmp;
     if( tmp_dir == NULL )
+        tmp_dir = getenv("TMP");
+
+    EmacsString tmp;
+    if( tmp_dir == NULL || !EmacsFile::fio_file_exists( tmp_dir ) )
         tmp = current_directory.asString();
     else
         tmp.append( tmp_dir );
+
     if( tmp[-1] != PATH_CH )
         tmp.append( PATH_CH );
 
