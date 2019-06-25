@@ -89,7 +89,7 @@ def rmdirAndContents( folder ):
 
 def mkdirAndParents( folder ):
     if not os.path.exists( folder ):
-        os.makedirs( folder, 0o750 )
+        os.makedirs( folder, 0o755 )
 
 def copyFile( src, dst, mode ):
     if os.path.isdir( dst ):

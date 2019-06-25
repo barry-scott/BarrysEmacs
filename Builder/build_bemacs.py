@@ -39,6 +39,7 @@ class BuildBEmacs(object):
         self.opt_sqlite = True
         self.opt_vcredist = None
         self.opt_editor_setup_opt = []
+        self.opt_prefix = '/usr'
 
         self.bemacs_version_info = None
 
@@ -82,6 +83,9 @@ class BuildBEmacs(object):
 
                     elif arg == '--no-sqlite':
                         self.opt_sqlite = False
+
+                    elif arg.startswith( '--prefix=' ):
+                        self.opt_prefix = arg[len('--prefix='):]
 
                     elif arg in ('--enable-debug'
                                 ,'--system-pycxx'
@@ -134,16 +138,12 @@ class BuildBEmacs(object):
             if 'DESTDIR' in os.environ:
                 self.BEMACS_ROOT_DIR = os.environ[ 'DESTDIR' ]
 
-                self.INSTALL_BEMACS_DOC_DIR = '/usr/share/bemacs/doc'
-                self.INSTALL_BEMACS_LIB_DIR = '/usr/share/bemacs/lib'
-                self.INSTALL_BEMACS_BIN_DIR = '/usr/bin'
-
             else:
-                self.BEMACS_ROOT_DIR = '%s/Kits/%s/ROOT' % (self.BUILDER_TOP_DIR, self.platform)
+                self.BEMACS_ROOT_DIR = '%s/Builder/tmp/ROOT' % (self.BUILDER_TOP_DIR,)
 
-                self.INSTALL_BEMACS_DOC_DIR = '/usr/local/share/bemacs/doc'
-                self.INSTALL_BEMACS_LIB_DIR = '/usr/local/lib/bemacs'
-                self.INSTALL_BEMACS_BIN_DIR = '/usr/local/bin'
+            self.INSTALL_BEMACS_DOC_DIR = '%s/share/bemacs/doc' % (self.opt_prefix,)
+            self.INSTALL_BEMACS_LIB_DIR = '%s/lib/bemacs' % (self.opt_prefix,)
+            self.INSTALL_BEMACS_BIN_DIR = '%s/bin' % (self.opt_prefix,)
 
             self.BUILD_BEMACS_DOC_DIR = '%s%s' % (self.BEMACS_ROOT_DIR, self.INSTALL_BEMACS_DOC_DIR)
             self.BUILD_BEMACS_LIB_DIR = '%s%s' % (self.BEMACS_ROOT_DIR, self.INSTALL_BEMACS_LIB_DIR)

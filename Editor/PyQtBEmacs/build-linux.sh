@@ -36,4 +36,8 @@ EOF
 ${PYTHON} create_bemacs_client.py . "${ROOT_DIR}${BIN_DIR}/bemacs"
 
 cd ${ROOT_DIR}${LIB_DIR}
-${PYTHON} -m compileall be_*.py xml_preferences.py
+${PYTHON} -m compileall be_*.py
+if [[ -e xml_preferences.py ]]
+then
+    ${PYTHON} -m compileall xml_preferences.py
+fi
