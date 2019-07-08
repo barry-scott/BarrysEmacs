@@ -205,10 +205,13 @@ export DESTDIR=%{buildroot}
 ./.(PYTHON)s build_bemacs.py ./.(TARGET)s ./.(CONFIG_OPTIONS)s
 
 # creating the debug info RPM uses objcopy that needs the files to be writeable.
-chmod +w %{buildroot}/usr/bin/bemacs
-chmod +w %{buildroot}/usr/bin/bemacs_server
+if [ -e %{buildroot}/usr/bin/bemacs_server ]
+then
+    chmod +w %{buildroot}/usr/bin/bemacs
+    chmod +w %{buildroot}/usr/bin/bemacs_server
+    chmod +w %{buildroot}/usr/lib/bemacs/_bemacs.so
+fi
 chmod +w %{buildroot}/usr/bin/bemacs-cli
-chmod +w %{buildroot}/usr/lib/bemacs/_bemacs.so
 
 mkdir -p %{buildroot}%{_mandir}/man1
 gzip -c ${BUILDER_TOP_DIR}/Kits/Linux/bemacs.1 > %{buildroot}%{_mandir}/man1/bemacs.1.gz
