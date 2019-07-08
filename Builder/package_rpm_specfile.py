@@ -204,11 +204,18 @@ cd ${BUILDER_TOP_DIR}/Builder
 export DESTDIR=%{buildroot}
 ./.(PYTHON)s build_bemacs.py ./.(TARGET)s ./.(CONFIG_OPTIONS)s
 
+# creating the debug info RPM uses objcopy that needs the files to be writeable.
+chmod +w %{buildroot}/usr/bin/bemacs
+chmod +w %{buildroot}/usr/bin/bemacs_server
+chmod +w %{buildroot}/usr/bin/bemacs-cli
+chmod +w %{buildroot}/usr/lib/bemacs/_bemacs.so
+
 mkdir -p %{buildroot}%{_mandir}/man1
 gzip -c ${BUILDER_TOP_DIR}/Kits/Linux/bemacs.1 > %{buildroot}%{_mandir}/man1/bemacs.1.gz
 
 mkdir -p %{buildroot}/usr/share/applications
 cp ${BUILDER_TOP_DIR}/Kits/Linux/bemacs.desktop %{buildroot}/usr/share/applications
+
 '''
 
 spec_file_description = '''
@@ -266,9 +273,9 @@ spec_file_files_gui = '''
 %defattr(-, root, root, -)
 /usr/bin/bemacs
 /usr/bin/bemacs_server
-/usr/share/bemacs/lib/*.py
-/usr/share/bemacs/lib/_bemacs.so
-/usr/share/bemacs/lib/__pycache__/*
+/usr/lib/bemacs/*.py
+/usr/lib/bemacs/_bemacs.so
+/usr/lib/bemacs/__pycache__/*
 /usr/share/applications/bemacs.desktop
 '''
 
@@ -282,8 +289,8 @@ spec_file_files_common = '''
 %files common
 %defattr(-, root, root, -)
 /usr/share/bemacs/doc/*
-/usr/share/bemacs/lib/*.db
-/usr/share/bemacs/lib/*.ml
+/usr/lib/bemacs/*.db
+/usr/lib/bemacs/*.ml
 /usr/share/applications/bemacs.desktop
 %attr(0644,root,root) %{_mandir}/man1/bemacs.1.gz
 '''

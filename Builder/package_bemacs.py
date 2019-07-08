@@ -256,7 +256,7 @@ class PackageBEmacs(object):
             src = '%s/RPMS/%s' % (self.MOCK_BUILD_DIR, basename)
             if os.path.exists( src ):
                 log.info( 'Copying %s' % (basename,) )
-                build_utils.copyFile( src, 'built/%s' % (basename,) )
+                build_utils.copyFile( src, 'built/%s' % (basename,), 0o600 )
 
         log.info( 'Results in %s/built:' % (os.getcwd(),) )
 
