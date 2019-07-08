@@ -8,7 +8,12 @@
         (use-local-map "P4-change-map")
         (use-abbrev-table "P4-change")
 
+        ; need to use hard tabs in this form
+        (setq logical-tab-size 8)
+        (setq indent-use-tab 1)
+
         (beginning-of-file)
+        (unset-mark)
         (re-search-forward "^Description:\n\t")
         (sit-for 0)
         (if (looking-at "<enter description here>")
@@ -16,12 +21,6 @@
             (p4-all-sections-exclude-all)
         )
         (novalue)
-    )
-)
-
-(defun
-    (p4-tab-key
-        (insert-string "\t")
     )
 )
 
