@@ -17,11 +17,11 @@
 <p>When a DCL buffer is created, this variable is used to control the maximum amount of text that will be stored in the DCL buffer. If the number of characters is exceeded, the first DCL-buffer-reduction characters in the buffer will be discarded.</p>
 </blockquote>
 
-<p><a name="maximum-file-read-size"></a><b>maximum-file-read-size</b> &#171; 10000</p>
+<p><a name="maximum-file-read-size"></a><b>maximum-file-read-size</b> &#171; 10485760</p>
 
 <blockquote>
 <p>Any file that is large then maximum-file-read-size will not be read into Emacs.</p>
-<p>This is to prevent accidentally reading very large files and Emacs will struggle to edit.</p>
+<p>This is to prevent accidentally reading very large files that Emacs may struggle to edit.</p>
 <p>Set to 0 to disable this limitation.</p>
 </blockquote>
 

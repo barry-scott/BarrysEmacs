@@ -12266,6 +12266,23 @@ DEFAULT VALUE
 
 SEE ALSO
     DCL-buffer-reduction
+[Vmaximum-file-read-size]
+VARIABLE NAME
+    maximum-file-read-size
+
+DESCRIPTION
+    Any file  that  is  large  then maximum-file-read-size will not be
+    read into Emacs.
+
+    This is  to  prevent  accidentally  reading  very large files that
+    Emacs may struggle to edit.
+
+    Set to 0 to disable this limitation.
+
+
+DEFAULT VALUE
+    10485760
+
 [Vmode-line-format]
 VARIABLE NAME
     mode-line-format
