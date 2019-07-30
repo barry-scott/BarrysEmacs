@@ -129,8 +129,7 @@
                     (ere-search-forward "\t(//.*?)[\t ]")
                     (region-around-match 1)
                     (execute-monitor-command
-                        (concat "p4 diff -du \""
-                            (region-to-string) "\""))
+                        (concat "P4DIFF='diff -u' p4 diff \"" (region-to-string) "\""))
                     (pop-to-buffer "P4 change diff")
                     (erase-buffer)
                     (yank-buffer "command execution")
