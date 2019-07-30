@@ -108,10 +108,10 @@
     (p4-visit-file
         (save-excursion
             (beginning-of-line)
-            (if (looking-at "\t//")
+            (if (ere-looking-at "\t(# )?//")
                 (progn
-                    (ere-search-forward "\t(//.*?)[\t ]")
-                    (region-around-match 1)
+                    (ere-search-forward "\t(# )?(//.*?)[\t ]")
+                    (region-around-match 2)
                     (visit-file
                         (p4-clientspec-to-filename (region-to-string)))
                 )
@@ -124,10 +124,10 @@
     (p4-change-diff
         (save-excursion
             (beginning-of-line)
-            (if (looking-at "\t//")
+            (if (ere-looking-at "\t(# )?//")
                 (progn
-                    (ere-search-forward "\t(//.*?)[\t ]")
-                    (region-around-match 1)
+                    (ere-search-forward "\t(# )?(//.*?)[\t ]")
+                    (region-around-match 2)
                     (execute-monitor-command
                         (concat "P4DIFF='diff -u' p4 diff \"" (region-to-string) "\""))
                     (pop-to-buffer "P4 change diff")
