@@ -90,6 +90,7 @@
         (modify-syntax-table "word" "-_")
 
         (modify-syntax-table "comment" ">" "<")
+        (modify-syntax-table "comment" "!--" "--")
         (modify-syntax-table "string" "\"")
         (~mode-modify-syntax-table (concat "keyword-1" ~keyword-modifier)
             "a"
