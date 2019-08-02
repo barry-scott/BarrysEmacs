@@ -26,6 +26,7 @@ Introduction
 
 New in %(version)s
     * Fix and improve dired - works for unix and macOS.
+    * Fix for memory leak in Python UI code.
 
 New in 8.6.0
     * Fix toolbar drawing issue on macOS where the background of the toolbar was transparent.

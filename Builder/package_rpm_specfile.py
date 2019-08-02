@@ -90,10 +90,10 @@ def createRpmSpecFile( opt, spec_filename ):
         if opt.opt_kit_pycxx is None:
             if opt.opt_mock_target.startswith( 'epel-7-' ):
                 # use the systems pycxx
-                all_build_requires.add( 'python-pycxx-devel >= 7.1.2' )
+                all_build_requires.add( 'python-pycxx-devel >= 7.1.3' )
             else:
                 # use the systems pycxx
-                all_build_requires.add( 'python3-pycxx-devel >= 7.1.2' )
+                all_build_requires.add( 'python3-pycxx-devel >= 7.1.3' )
 
             all_config_options.add( '--system-pycxx' )
 
