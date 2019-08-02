@@ -1,6 +1,7 @@
 #!/bin/ksh
 set -x
-osname=`os_name.ksh`
+
+osname=$( uname )
 
 edit_obj=obj/$osname/
 edit_exe=exe/$osname/
@@ -25,62 +26,62 @@ export pass=${2:-1}
 dbg=${3:-0}
 if (( pass == 1 ))
 then
-	echo Pass 1
-	rm -f ${edit_obj}emacs_pure.pcv
-	rm -f $envfile
-	rm -f *.ej*
-	rm -f *.tmp
-	cat >file.c <<z_z_z
+    echo Pass 1
+    rm -f ${edit_obj}emacs_pure.pcv
+    rm -f $envfile
+    rm -f *.ej*
+    rm -f *.tmp
+    cat >file.c <<z_z_z
 int main()
-	{
-	return 0;
-	}
+    {
+    return 0;
+    }
 z_z_z
-	export EMACS_DEBUG=0x10000000	# unused debug value
-	if (( $dbg == $pass ))
-	then
-		echo b purify_stop_here >coverage.playback.tmp
-		echo "D \"$rootdir\"" >>coverage.playback.tmp
-		echo b debug_invoke >>coverage.playback.tmp
-		echo r -nodisplay -package=coverage -norestore file.c >>coverage.playback.tmp
-		xdb -p coverage.playback.tmp $imagefile
-	else
-		$imagefile -nodisplay -package=coverage -norestore file.c
-		pass=2
-	fi
-	ll $envfile
+    export EMACS_DEBUG=0x10000000    # unused debug value
+    if (( $dbg == $pass ))
+    then
+        echo b purify_stop_here >coverage.playback.tmp
+        echo "D \"$rootdir\"" >>coverage.playback.tmp
+        echo b debug_invoke >>coverage.playback.tmp
+        echo r -nodisplay -package=coverage -norestore file.c >>coverage.playback.tmp
+        xdb -p coverage.playback.tmp $imagefile
+    else
+        $imagefile -nodisplay -package=coverage -norestore file.c
+        pass=2
+    fi
+    ll $envfile
 fi
 if (( pass == 2 ))
 then
-	echo Pass 2
-	dbcreate testdb1 -c
-	dbcreate testdb2 -c
-	if (( $dbg == $pass ))
-	then
-		echo b purify_stop_here >coverage.playback.tmp
-		echo "D \"$rootdir\"" >>coverage.playback.tmp
-		echo b debug_invoke >>coverage.playback.tmp
-		echo r -package=coverage -restore=$envfile >>coverage.playback.tmp
-		xdb -p coverage.playback.tmp $imagefile
-	else
-		$imagefile -package=coverage -restore=$envfile
-		pass=3
-	fi
+    echo Pass 2
+    dbcreate testdb1 -c
+    dbcreate testdb2 -c
+    if (( $dbg == $pass ))
+    then
+        echo b purify_stop_here >coverage.playback.tmp
+        echo "D \"$rootdir\"" >>coverage.playback.tmp
+        echo b debug_invoke >>coverage.playback.tmp
+        echo r -package=coverage -restore=$envfile >>coverage.playback.tmp
+        xdb -p coverage.playback.tmp $imagefile
+    else
+        $imagefile -package=coverage -restore=$envfile
+        pass=3
+    fi
 fi
 if (( pass == 3 ))
 then
-	echo Pass 3
-	if (( $dbg == $pass ))
-	then
-		echo b purify_stop_here >coverage.playback.tmp
-		echo "D \"$rootdir\"" >>coverage.playback.tmp
-		echo b debug_invoke >>coverage.playback.tmp
-		echo r -package=coverage -restore=$envfile >>coverage.playback.tmp
-		xdb -p coverage.playback.tmp $imagefile
-	else
-		$imagefile -package=coverage -restore=$envfile
-		pass=4
-	fi
+    echo Pass 3
+    if (( $dbg == $pass ))
+    then
+        echo b purify_stop_here >coverage.playback.tmp
+        echo "D \"$rootdir\"" >>coverage.playback.tmp
+        echo b debug_invoke >>coverage.playback.tmp
+        echo r -package=coverage -restore=$envfile >>coverage.playback.tmp
+        xdb -p coverage.playback.tmp $imagefile
+    else
+        $imagefile -package=coverage -restore=$envfile
+        pass=4
+    fi
 fi
 more purify-coverage.phase-2-results.tmp
 echo Done.
