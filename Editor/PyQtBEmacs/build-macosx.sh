@@ -1,7 +1,15 @@
 #!/bin/bash
 set -e
 
-printf "\033[32mInfo:\033[m build-macosx.sh Editor/PyQtBEmacs - start\n"
+if ! which colour-print >/dev/null
+then
+    function colour-print {
+        echo "$@"
+    }
+fi
+
+
+colour-print "<>info Info:<> build-macosx.sh Editor/PyQtBEmacs - start"
 PKG_DIST_DIR=${BUILDER_TOP_DIR}/Builder/tmp/pkg
 
 SRC_DIR=${PWD}
@@ -20,7 +28,7 @@ rm -rf build ${DIST_DIR}
 mkdir -p ${DIST_DIR}
 ${PYTHON} make_be_images.py
 
-printf "\033[32mInfo:\033[m Creating Application bundle - logging details to ${SRC_DIR}/build-macsosx.log\\n"
+colour-print "<>info Info:<> Creating Application bundle - logging details to ${SRC_DIR}/build-macsosx.log"
 export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/exe-pybemacs
 ${PYTHON} setup-macosx.py py2app --dist-dir ${DIST_DIR} --no-strip 1>${SRC_DIR}/build-macosx.log 2>&1
 pushd "${DIST_DIR}/Barry's Emacs-Devel.app/Contents" >/dev/null
@@ -55,7 +63,7 @@ for LIBNAME in \
     QtWidgets \
     ;
 do
-    printf "\033[32mInfo:\033[m Framework used ${LIBNAME}\n"
+    colour-print "<>info Info:<> Framework used ${LIBNAME}"
     mv \
             Resources/lib/python${PYTHON_VERSION}/PyQt5/tmp/${LIBNAME}.so \
             Resources/lib/python${PYTHON_VERSION}/PyQt5
@@ -84,4 +92,4 @@ then
 fi
 
 popd >/dev/null
-printf "\033[32mInfo:\033[m build-macosx.sh Editor/PyQtBEmacs - end\n"
+colour-print "<>info Info:<> build-macosx.sh Editor/PyQtBEmacs - end"

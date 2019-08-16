@@ -596,7 +596,7 @@ class Win64CompilerVC14(Compiler):
 
         rules.append( '' )
         rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo %sLink Program:%s %s' % (log.info_colour, log.no_colour, pyd_filename,) )
+        rules.append( '\t@echo %s' % (log.colourFormat('<>info Link Program:<> %s') % (pyd_filename,),) )
         rules.append( '\t@if not exist %(EDIT_EXE)s mkdir %(EDIT_EXE)s' )
         rules.append( '\t@$(LDEXE)  %%(CCCFLAGS)s /Fe%s /Fd%s %s %%(LINK_LIBS)s' %
                             (pyd_filename, pdb_filename, ' '.join( all_objects )) )
@@ -613,7 +613,7 @@ class Win64CompilerVC14(Compiler):
 
         rules.append( '' )
         rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo %sLink Shared:%s %s' % (log.info_colour, log.no_colour, pyd_filename,) )
+        rules.append( '\t@echo %s' % (log.colourFormat('<>info Link Shared:<> %s') % (pyd_filename,),) )
         rules.append( '\t@if not exist %(EDIT_EXE)s mkdir %(EDIT_EXE)s' )
         rules.append( '\t@$(LDSHARED)  %%(CCCFLAGS)s /Fe%s /Fd%s %s %%(LINK_LIBS)s' %
                             (pyd_filename, pdb_filename, ' '.join( all_objects )) )
@@ -628,7 +628,7 @@ class Win64CompilerVC14(Compiler):
         rules = []
 
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
-        rules.append( '\t@echo %sCompile:%s %s %sinto%s %s' % (log.info_colour, log.no_colour, target.src_filename, log.info_colour, log.no_colour, target.getTargetFilename()) )
+        rules.append( '\t@echo %s' % (log.colourFormat('<>info Compile:<> %s <> info into<> %s') % (target.src_filename, target.getTargetFilename()),) )
         rules.append( '\t@if not exist %(EDIT_OBJ)s mkdir %(EDIT_OBJ)s' )
         rules.append( '\t@if not exist %s mkdir %s' % (pdb_dir, pdb_dir) )   # For .pdb file
         rules.append( '\t@@$(CCC) /c %%(CCCFLAGS)s /Fo%s /Fd%s %s' % (obj_filename, pdb_filename, target.src_filename) )
@@ -926,7 +926,7 @@ class CompilerGCC(Compiler):
         rules = []
 
         rules.append( '%s : %s' % (target_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo "%sLink Program:%s %s"' % (log.info_colour, log.no_colour, target_filename) )
+        rules.append( '\t@echo %s' % (log.colourFormat('<>info Link Program:<> %s') % (target_filename,),) )
         rules.append( '\t@mkdir -p %(EDIT_EXE)s' )
         rules.append( '\t@%%(LDEXE)s -o %s %%(CCCFLAGS)s %s %%(LINK_LIBS)s' % (target_filename, ' '.join( all_objects )) )
 
@@ -940,7 +940,7 @@ class CompilerGCC(Compiler):
         rules = []
 
         rules.append( '%s : %s' % (target_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo "%sLink Shared:%s %s"' % (log.info_colour, log.no_colour, target_filename) )
+        rules.append( '\t@echo "%s"' % (log.colourFormat('<>info Link Shared:<> %s') % (target_filename,)) )
         rules.append( '\t@mkdir -p %(EDIT_EXE)s' )
         rules.append( '\t@%%(LDSHARED)s -o %s %%(CCCFLAGS)s %s %%(LINK_LIBS)s' % (target_filename, ' '.join( all_objects )) )
 
@@ -952,7 +952,7 @@ class CompilerGCC(Compiler):
         rules = []
 
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
-        rules.append( '\t@echo "%sCompile:%s %s %sinto%s %s"' % (log.info_colour, log.no_colour, target.src_filename, log.info_colour, log.no_colour, obj_filename) )
+        rules.append( '\t@echo %s' % (log.colourFormat('<>info Compile:<> %s <>info into<> %s') % (target.src_filename, obj_filename),) )
         rules.append( '\t@mkdir -p %(EDIT_OBJ)s' )
         rules.append( '\t@%%(CCC)s -c %%(CCCFLAGS)s -o %s  %s' % (obj_filename, target.src_filename) )
 
@@ -964,7 +964,7 @@ class CompilerGCC(Compiler):
         rules = []
 
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
-        rules.append( '\t@echo "%sCompile:%s %s %sinto%s %s"' % (log.info_colour, log.no_colour, target.src_filename, log.info_colour, log.no_colour, obj_filename) )
+        rules.append( '\t@echo %s' % (log.colourFormat('<>info Compile:<> %s <>info into<> %s') % (target.src_filename, obj_filename),) )
         rules.append( '\t@mkdir -p %(EDIT_OBJ)s' )
         rules.append( '\t@%%(CC)s -c %%(CCFLAGS)s -o %s  %s' % (obj_filename, target.src_filename) )
 
@@ -1561,7 +1561,7 @@ class UnicodeDataHeader(Target):
         rules = ['']
 
         rules.append( '%s : make_unicode_data.py' % (self.getTargetFilename(),) )
-        rules.append( '\t@ echo "%sInfo:%s Make %s"' % (log.info_colour, log.no_colour, self.getTargetFilename(),) )
+        rules.append( '\t@echo %s' % (log.colourFormat('<>info Make<> %s') % (self.getTargetFilename(),),) )
 
         rules.append( '\t@%%(PYTHON)s make_unicode_data.py %s %%(UCDDIR)s/UnicodeData.txt %%(UCDDIR)s/CaseFolding.txt %s' %
                             ('--colour' if self.compiler.setup.opt_colour else '', self.getTargetFilename()) )

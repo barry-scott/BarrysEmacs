@@ -13,7 +13,7 @@ import build_log
 log = build_log.BuildLog()
 log.setColour( True )
 
-log.info( 'change to org.barrys-emacs.bemacs' )
+log.info( 'Change to org.barrys-emacs.bemacs' )
 
 PKGNAME = 'dmg'
 

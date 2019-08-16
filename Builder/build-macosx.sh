@@ -1,25 +1,33 @@
 #!/bin/bash
 set -e
 
-printf "\033[32mInfo:\033[m build-macosx.sh Builder - start\n"
+if ! which colour-print >/dev/null
+then
+    function colour-print {
+        echo "$@"
+    }
+fi
 
-printf "\033[32mInfo:\033[m Checking for Python\n"
+
+colour-print "<>info Info:<> build-macosx.sh Builder - start"
+
+colour-print "<>info Info:<> Checking for Python"
 
 if [ "${PYTHON}" = "" ]
 then
-    printf -e "\033[31;1mError: environment variable PYTHON not set\033[m\n"
+    colour-print "<>error Error: environment variable PYTHON not set<>"
     exit 1
 fi
 
 if ! which "${PYTHON}" >/dev/null
 then
-    printf "Error: PYTHON program ${PYTHON} does not exist\n"
+    colour-print "<>Error & PYTHON program ${PYTHON} does not exist<>"
     exit 1
 fi
 
 if [ -e "/Volumes/Barry's Emacs" ]
 then
-    printf "\033[32mInfo:\033[m unmount old kit dmg\n"
+    colour-print "<>info Info:<> unmount old kit dmg"
     umount "/Volumes/Barry's Emacs"
 fi
 
@@ -27,7 +35,7 @@ ${PYTHON} ./build_bemacs.py gui --colour | ${PYTHON} -u build_tee.py build.log
 
 if false
 then
-    printf "\033[32mInfo:\033[m rebuild the OS X launch service database\n"
+    colour-print "<>info Info:<> rebuild the OS X launch service database"
     CORE=/System/Library/Frameworks/CoreServices.framework/Versions/Current
     ${CORE}/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister \
      -kill \
@@ -35,7 +43,7 @@ then
 fi
 
 DMG="$( ls -1 tmp/dmg/*.dmg )"
-printf "\033[32mInfo:\033[m DMG ${DMG}\n"
+colour-print "<>info Info:<> DMG ${DMG}"
 if [ "$1" = "--install" ]
 then
     # macOS knows about these extra copies of the emacs app
@@ -44,4 +52,4 @@ then
     rm -rf tmp/dmg/*.app
     open ${DMG}
 fi
-printf "\033[32mInfo:\033[m build-macosx.sh Builder - end\n"
+colour-print "<>info Info:<> build-macosx.sh Builder - end"
