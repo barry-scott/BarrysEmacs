@@ -628,7 +628,7 @@ class Win64CompilerVC14(Compiler):
         rules = []
 
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
-        rules.append( '\t@echo %s' % (log.colourFormat('<>info Compile:<> %s <> info into<> %s') % (target.src_filename, target.getTargetFilename()),) )
+        rules.append( '\t@echo %s' % (log.colourFormat('<>info Compile:<> %s <>info into<> %s') % (target.src_filename, target.getTargetFilename()),) )
         rules.append( '\t@if not exist %(EDIT_OBJ)s mkdir %(EDIT_OBJ)s' )
         rules.append( '\t@if not exist %s mkdir %s' % (pdb_dir, pdb_dir) )   # For .pdb file
         rules.append( '\t@@$(CCC) /c %%(CCCFLAGS)s /Fo%s /Fd%s %s' % (obj_filename, pdb_filename, target.src_filename) )

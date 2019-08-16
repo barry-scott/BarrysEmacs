@@ -20,7 +20,8 @@ class BuildLog:
                 self._debug_fmt = self._ct('<>em Debug:<> %s')
 
             except ImportError:
-                print( 'Colour output requires colour-text library: pip install --user colour-text' )
+                print( 'Colour output requires colour-text library: pip%d.%d install --user colour-text'
+                        % (sys.version_info.major, sys.version_info.minor) )
 
     def colourFormat( self, colour_fmt ):
         if self._ct is not None:

@@ -13,6 +13,6 @@ if "%PYTHON%" == "" (
     goto :eof
 )
 
-%PYTHON% build_bemacs.py --colour --vcredist=k:\subversion 2>&1 | py -3 -u build_tee.py build.log
+%PYTHON% build_bemacs.py --colour --vcredist=k:\subversion 2>&1 | %PYTHON% -u build_tee.py build.log
 
 if "%1" == "--install" for %%f in (tmp\bemacs-*-setup.exe) do start /wait %%f
