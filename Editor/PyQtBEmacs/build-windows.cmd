@@ -5,13 +5,17 @@ if "%1" == "" set DIST_DIR=dist
 if not "%1" == "" set DIST_DIR=%1
 echo Info: DIST_DIR=%DIST_DIR%
 
+if "%2" == "" set VERSION=0.0.0.0
+if not "%2" == "" set VERSION=%2
+
+
 set PYTHONPATH=..\exe-pybemacs
 %PYTHON% -u make_be_images.py
     if errorlevel 1 goto :error
 rem always merge as the build system puts Docs and emacs lib files in first
-%PYTHON% -m win_app_packager build be_main.py   --gui %DIST_DIR% --icon ..\Source\Windows\Resources\win_emacs.ico --name bemacs_server --merge --modules-allowed-to-be-missing-file allowed-missing.txt
+%PYTHON% -m win_app_packager build be_main.py   --gui %DIST_DIR% --version %VERSION% --icon ..\Source\Windows\Resources\win_emacs.ico --name bemacs_server --merge --modules-allowed-to-be-missing-file allowed-missing.txt
     if errorlevel 1 goto :error
-%PYTHON% -m win_app_packager build be_client.py --gui %DIST_DIR% --icon ..\Source\Windows\Resources\win_emacs.ico --name bemacs --merge
+%PYTHON% -m win_app_packager build be_client.py --gui %DIST_DIR% --version %VERSION% --icon ..\Source\Windows\Resources\win_emacs.ico --name bemacs --merge
     if errorlevel 1 goto :error
 
 pushd %DIST_DIR%\PyWinAppRes\PyQt5

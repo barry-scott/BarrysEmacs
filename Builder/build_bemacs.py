@@ -217,6 +217,14 @@ class BuildBEmacs(object):
             except ImportError:
                 raise BuildError( 'win_app_packager is not installed for %s. Hint: pip3 install --user win_app_packager' % (sys.executable,) )
 
+            try:
+                v = tuple( int(d) for d in win_app_packager.VERSION.split('.') )
+                if v < (1, 3, 0):
+                    raise ValueError()
+
+            except ValueError:
+                raise BuildError( 'win_app_packager version is to old for %s. Hint: pip3 install --user --upgrade win_app_packager' % (sys.executable,) )
+
     def ruleClean( self ):
         log.info( 'Running ruleClean' )
 
@@ -290,7 +298,7 @@ class BuildBEmacs(object):
             build_utils.copyFile( '../Editor/exe-cli-bemacs/bemacs-cli',  self.BUILD_BEMACS_BIN_DIR, 0o555 )
 
         elif self.platform == 'win64':
-            run( ('build-windows.cmd', self.KITFILES, 'all'), cwd=r'..\Editor\PyQtBEmacs' )
+            run( ('build-windows.cmd', self.KITFILES, self.bemacs_version_info.get('win_version')), cwd=r'..\Editor\PyQtBEmacs' )
 
         else:
             run( ('./build-linux.sh'
