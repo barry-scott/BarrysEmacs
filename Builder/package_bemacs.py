@@ -323,9 +323,19 @@ class PackageBEmacs(object):
             raise BuildError( 'Mock CFG files does not exist %s' % (mock_cfg,) )
 
         with open( mock_cfg, 'r' ) as f:
-            cfg_code = compile( f.read(), 'mock_cfg', 'exec' )
+            # starting with Fedora 31 mock uses the include('template') statement
             config_opts = {'yum_install_command': ''}
-            exec( cfg_code )
+            cfg_locals = {'config_opts': config_opts}
+
+            def include( tpl ):
+                with open( tpl, 'r' ) as t:
+                    tpl_code = compile( t.read(), 'mock_tpl', 'exec' )
+                    exec( tpl_code , globals(), cfg_locals)
+
+            cfg_locals['include'] = include
+
+            cfg_code = compile( f.read(), 'mock_cfg', 'exec' )
+            exec( cfg_code, globals(), cfg_locals )
 
         # set to match the mock target
         self.opt_arch = config_opts[ 'target_arch' ]
