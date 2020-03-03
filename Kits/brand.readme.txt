@@ -25,6 +25,8 @@ Introduction
         Linux (tested on: Fedora 30, Centos 7 and Centos 6)
 
 New in %(version)s
+    * Fix ere-quote to quote "?"
+    * 8.6.1 was never released
     * Fix and improve dired - works for unix and macOS.
     * Fix for memory leak in Python UI code.
 
