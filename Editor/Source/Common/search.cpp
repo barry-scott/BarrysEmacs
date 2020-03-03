@@ -325,6 +325,7 @@ int ere_quote_command( void )
         || ch == '{'
         || ch == '}'
         || ch == '*'
+        || ch == '?'
         || ch == '+'
         || ch == '.'
         || ch == '|'
