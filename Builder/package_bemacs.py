@@ -328,7 +328,8 @@ class PackageBEmacs(object):
             cfg_locals = {'config_opts': config_opts}
 
             def include( tpl ):
-                with open( tpl, 'r' ) as t:
+                abs_tpl = os.path.join( '/etc/mock', tpl )
+                with open( abs_tpl, 'r' ) as t:
                     tpl_code = compile( t.read(), 'mock_tpl', 'exec' )
                     exec( tpl_code , globals(), cfg_locals)
 
@@ -348,21 +349,30 @@ class PackageBEmacs(object):
 
         config_opts = self.readMockConfig()
 
+        if 'yum.conf' in config_opts:
+            conf_key = 'yum.conf'
+
+        elif 'dnf.conf' in config_opts:
+            conf_key = 'dnf.conf'
+
+        else:
+            assert False, 'config_opts missing yum.conf or dnf.conf section'
+
         with open( self.MOCK_COPR_REPO_FILENAME, 'r' ) as f:
             repo = f.read()
 
             if self.opt_mock_target.startswith( 'epel-' ):
                 repo = repo.replace( '/fedora-$releasever-$basearch/', '/epel-$releasever-$basearch/' )
 
-            config_opts['yum.conf'] += '\n'
-            config_opts['yum.conf'] += repo
+            config_opts[conf_key] += '\n'
+            config_opts[conf_key] += repo
             config_opts['root'] = os.path.splitext( os.path.basename( self.MOCK_TARGET_FILENAME ) )[0]
 
         with open( self.MOCK_TARGET_FILENAME, 'w' ) as f:
             for k in config_opts:
-                if k == 'yum.conf':
-                    print( 'config_opts[\'yum.conf\'] = """', end='', file=f )
-                    print( config_opts['yum.conf'], file=f )
+                if k == conf_key:
+                    print( '''config_opts['%s'] = """''' % (conf_key,), end='', file=f )
+                    print( config_opts[conf_key], file=f )
                     print( '"""', file=f )
 
                 else:
