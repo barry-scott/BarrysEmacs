@@ -22,6 +22,6 @@ MacOSX)
     ;;
 
 *)
-    echo "Unsupport platform for copy"
+    echo "Unsupported platform for copy"
     ;;
 esac
