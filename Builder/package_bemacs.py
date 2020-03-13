@@ -6,6 +6,7 @@ from __future__ import print_function   # needed to allow python3 only error mes
 
 import sys
 import os
+import re
 import time
 import subprocess
 import platform
@@ -324,7 +325,7 @@ class PackageBEmacs(object):
 
         with open( mock_cfg, 'r' ) as f:
             # starting with Fedora 31 mock uses the include('template') statement
-            config_opts = {'yum_install_command': ''}
+            config_opts = {'yum_install_command': 'install yum yum-utils'}
             cfg_locals = {'config_opts': config_opts}
 
             def include( tpl ):
@@ -338,11 +339,18 @@ class PackageBEmacs(object):
             cfg_code = compile( f.read(), 'mock_cfg', 'exec' )
             exec( cfg_code, globals(), cfg_locals )
 
+        def expandMockCfgVars( key ):
+            value = config_opts[ key ]
+            value = value.replace( '{{ releasever }}', config_opts[ 'releasever' ] )
+            assert '{{' not in value, 'Key %s: Found {{ in %r' % (key, value)
+            return value
+
         # set to match the mock target
         self.opt_arch = config_opts[ 'target_arch' ]
-        self.dist_tag = config_opts[ 'dist' ]
+        self.dist_tag = expandMockCfgVars( 'dist' )
 
         return config_opts
+
 
     def makeMockTargetFile( self ):
         self.MOCK_TARGET_FILENAME = 'tmp/%s-%s-%s.cfg' % (self.KITNAME, self.copr_repo, self.opt_mock_target)
