@@ -12,7 +12,7 @@ def main( argv ):
     for filename in argv[1:]:
         all_copies.append( open( filename, 'w' ) )
 
-    colour = re.compile( r'\033\[\d*m' )
+    colour = re.compile( r'\033\[[\d;]*m' )
 
     for line in sys.stdin:
         # allow colours to be shown seen
