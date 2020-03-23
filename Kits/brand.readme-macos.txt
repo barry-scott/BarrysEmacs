@@ -3,7 +3,7 @@ Mac OS notes
     install disk. 
 
     * bemacs-cli is the command line version of bemacs.
-      Useful when you canno use the GUI version. For example
+      Useful when you cannot use the GUI version. For example
       when connected to a Mac via ssh or when using sudo.
 
     * bemacs_client is the command line client that can be used to start

@@ -1,5 +1,5 @@
            Emacs Version %(version)s
-           ____________________________________________
+           ___________________
 
 Introduction
 
@@ -26,9 +26,15 @@ Introduction
 
 New in %(version)s
     * Fix ere-quote to quote "?"
-    * 8.6.1 was never released
     * Fix and improve dired - works for unix and macOS.
     * Fix for memory leak in Python UI code.
+    * Fix macOS bemacs-cli and bemacs_client needed fixes to use the Python
+      version from within the /Applications/Barry's Emacs app.
+    * Improve p4-diff and p4-change-mode
+    * Fix for dired on macOS needed to find files correctly
+    * html-mode now colurs <!- html comments -->
+    * document maximum-file-read-size
+    * Note: 8.6.1 was never released
 
 New in 8.6.0
     * Fix toolbar drawing issue on macOS where the background of the toolbar was transparent.
