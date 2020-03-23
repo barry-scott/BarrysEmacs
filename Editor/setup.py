@@ -1042,7 +1042,11 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'PYTHON_FRAMEWORK', '/Library/Frameworks/Python.framework/Versions/%(PYTHON_VERSION)s/Python' )
 
         self._addVar( 'PYTHON',         '%(PYTHONDIR)s/Resources/Python.app/Contents/MacOS/Python' )
-        self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)sm' )
+
+        if sys.version_info >= (3, 8):
+            self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)s' )
+        else:
+            self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)sm' )
 
         self._addVar( 'CCFLAGS',        '-g %(CCC_OPT)s '
                                         '%(CCC_WARNINGS)s -Wall -fPIC '
@@ -1099,7 +1103,10 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'PYTHON_FRAMEWORK', '/Library/Frameworks/Python.framework/Versions/%(PYTHON_VERSION)s/Python' )
 
         self._addVar( 'PYTHON',         '%(PYTHONDIR)s/Resources/Python.app/Contents/MacOS/Python' )
-        self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)sm' )
+        if sys.version_info >= (3, 8):
+            self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)s' )
+        else:
+            self._addVar( 'PYTHON_INCLUDE', '%(PYTHONDIR)s/include/python%(PYTHON_VERSION)sm' )
 
         self._addVar( 'CCCFLAGS',       '-g '
                                         '%(CCC_WARNINGS)s -Wall -fPIC -fexceptions -frtti '
@@ -1189,7 +1196,10 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_OBJ',       'obj-pybemacs' )
         self._addVar( 'EDIT_EXE',       'exe-pybemacs' )
 
-        self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
+        if sys.version_info >= (3, 8):
+            self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)s' % (sys.prefix,) )
+        else:
+            self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
 
         self._addVar( 'CCFLAGS',        '-g '
                                         '%(CCC_WARNINGS)s -Wall -fPIC '
@@ -1259,7 +1269,12 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_OBJ',       'obj-python-tools' )
         self._addVar( 'EDIT_EXE',       'exe-python-tools' )
 
-        self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
+        if sys.version_info >= (3, 8):
+            self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)s' % (sys.prefix,) )
+            self._addVar( 'LINK_LIBS',      '-L%s -lpython%d.%d' % (self.lib_dir, sys.version_info.major, sys.version_info.minor) )
+        else:
+            self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
+            self._addVar( 'LINK_LIBS',      '-L%s -lpython%d.%dm' % (self.lib_dir, sys.version_info.major, sys.version_info.minor) )
 
         self._addVar( 'CCFLAGS',        '-g '
                                         '%(CCC_WARNINGS)s -Wall -fPIC '
@@ -1272,7 +1287,6 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
 
-        self._addVar( 'LINK_LIBS',      '-L%s -lpython%d.%dm' % (self.lib_dir, sys.version_info.major, sys.version_info.minor) )
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
 class NetBSDCompilerGCC(CompilerGCC):
