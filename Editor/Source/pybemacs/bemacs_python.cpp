@@ -153,7 +153,7 @@ PyObject *BemacsFunctions::call_bemacs_function( PyObject *self, PyObject *_args
 
         ProgramNodeNode prog_node( fn_binding, args.size() );
 
-        for( unsigned int arg=0; arg<args.size(); arg++ )
+        for( Py::List::size_type arg=0; arg<args.size(); arg++ )
         {
             Py::Object x( args[arg] );
             Expression expr( convertPyObjectToEmacsExpression( x ) );

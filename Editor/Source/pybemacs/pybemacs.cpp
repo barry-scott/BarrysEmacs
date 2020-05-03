@@ -209,7 +209,7 @@ public:
 
         EmacsCommandLine new_command_line;
 
-        for( unsigned int argc=0; argc < py_argv.length(); ++argc )
+        for( Py::List::size_type argc=0; argc < py_argv.length(); ++argc )
         {
             Py::String py_arg( py_argv[ argc ] );
             std::string std_arg( py_arg.as_std_string( "utf-8" ) );
@@ -949,7 +949,7 @@ public:
 
         ProgramNodeNode prog_node( fn_binding, args.size() - 1 );
 
-        for( unsigned int arg=1; arg<args.size(); arg++ )
+        for( Py::List::size_type arg=1; arg<args.size(); arg++ )
         {
             Py::Object x( args[arg] );
             Expression expr( convertPyObjectToEmacsExpression( x ) );
