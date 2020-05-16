@@ -137,8 +137,8 @@
                 (setq ~line
                     (+ (region-to-string) (- ~line (current-line-number) 1)))
                 (if ~is-old
-                    (ere-search-reverse "^--- (.*)(\t|$)")
-                    (ere-search-reverse "^\\+\\+\\+ (.*)(\t|$)")
+                    (ere-search-reverse "^--- (.*?)(\t|$)")
+                    (ere-search-reverse "^\\+\\+\\+ (.*?)(\t|$)")
                 )
                 (setq ~file
                     (progn
