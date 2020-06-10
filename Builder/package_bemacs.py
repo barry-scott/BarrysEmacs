@@ -384,7 +384,7 @@ class PackageBEmacs(object):
                     print( '"""', file=f )
 
                 else:
-                    print( 'config_opts[%r] = %r' % (k, config_opts[k]), file=f )
+                    print( '''config_opts['%s'] = %r''' % (k, config_opts[k]), file=f )
 
         # prevent mock from rebuilding the mock cache on each build.
         # mock uses the timestamp on the CFG file and compares to the
