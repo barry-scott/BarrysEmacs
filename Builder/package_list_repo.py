@@ -65,7 +65,7 @@ def unittest( argv ):
     all_packages = listRepo( argv[1] )
 
     for name in sorted( all_packages.keys() ):
-        ver, rel = all_packages[ name ]
+        ver, rel, build_time = all_packages[ name ]
         print( '%s: %s-%s' % (name, ver, rel) )
 
     return 0
