@@ -1,7 +1,7 @@
 #!/bin/echo Usage: . $0
 
 export BUILDER_CFG_PLATFORM=$(uname -s)
-export PYTHON_VERSION=${1:-3.7}
+export PYTHON_VERSION=${1:-3.8}
 
 # ether set to tag:<ver> or trunk:<ver>
 export PYCXX_VER=tag7.1.2
