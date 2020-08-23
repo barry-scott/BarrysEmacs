@@ -88,6 +88,7 @@ class BuildBEmacs(object):
                         self.opt_prefix = arg[len('--prefix='):]
 
                     elif arg in ('--enable-debug'
+                                ,'--hunspell'
                                 ,'--system-pycxx'
                                 ,'--system-ucd'
                                 ,'--system-sqlite'

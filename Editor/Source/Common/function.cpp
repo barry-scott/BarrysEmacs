@@ -398,6 +398,13 @@ extern int setq_array_command(void);
 extern int setq_default_command(void);
 extern int shrink_window(void);
 extern int sit_for(void);
+#if defined( SPELL_CHECKER )
+extern int spell_check_init(void);
+extern int spell_check_word(void);
+extern int spell_check_suggestions(void);
+extern int spell_check_add_word(void);
+extern int get_tty_spelling(void);
+#endif
 extern int split_current_window(void);
 extern int split_current_window_vertically(void);
 extern int sprintf_cmd(void);
@@ -682,6 +689,9 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "get-tty-command", get_tty_command );
     EMACS_NEW BoundName( "get-tty-directory", get_tty_directory );
     EMACS_NEW BoundName( "get-tty-file", get_tty_file );
+#if defined(SPELL_CHECKER)
+    EMACS_NEW BoundName( "get-tty-spelling", get_tty_spelling );
+#endif
     EMACS_NEW BoundName( "get-tty-string", get_tty_string );
     EMACS_NEW BoundName( "get-tty-variable", get_tty_variable );
     EMACS_NEW BoundName( "getenv", getenv_command );
@@ -851,6 +861,12 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "setq-default", setq_default_command );
     EMACS_NEW BoundName( "shrink-window", shrink_window );
     EMACS_NEW BoundName( "sit-for", sit_for );
+#if defined( SPELL_CHECKER )
+    EMACS_NEW BoundName( "spell-check-init", spell_check_init );
+    EMACS_NEW BoundName( "spell-check-word", spell_check_word );
+    EMACS_NEW BoundName( "spell-check-suggestions", spell_check_suggestions );
+    EMACS_NEW BoundName( "spell-check-add-word", spell_check_add_word );
+#endif
     EMACS_NEW BoundName( "split-current-window", split_current_window );
     EMACS_NEW BoundName( "split-current-window-vertically", split_current_window_vertically );
     EMACS_NEW BoundName( "sprintf", sprintf_cmd );

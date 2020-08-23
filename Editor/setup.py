@@ -31,6 +31,7 @@ class Setup:
         self.opt_system_sqlite = False
         self.opt_warnings_as_errors = True
         self.opt_sqlite = False
+        self.opt_hunspell = False
 
         self.parseArgs( argv )
 
@@ -106,6 +107,9 @@ class Setup:
 
                 elif arg == '--sqlite':
                     self.opt_sqlite = True
+
+                elif arg == '--hunspell':
+                    self.opt_hunspell = True
 
                 else:
                     raise SetupError( 'Unknown arg %r' % (arg,) )
@@ -205,6 +209,10 @@ class Setup:
                 pybemacs_feature_defines.append( ('DB_SQLITE', '1') )
                 cli_feature_defines.append( ('DB_SQLITE', '1') )
                 utils_feature_defines.append( ('DB_SQLITE', '1') )
+
+            if self.opt_hunspell:
+                cli_feature_defines.append( ('SPELL_CHECKER', '1') )
+                pybemacs_feature_defines.append( ('SPELL_CHECKER', '1') )
 
         elif self.platform == 'netbsd':
             if self.opt_utils:
@@ -370,6 +378,7 @@ class Setup:
                 Source( compiler, 'Source/Common/search_simple_algorithm.cpp' ),
                 Source( compiler, 'Source/Common/search_simple_engine.cpp' ),
                 Source( compiler, 'Source/Common/simpcomm.cpp' ),
+                Source( compiler, 'Source/Common/spell_checker.cpp' ),
                 Source( compiler, 'Source/Common/string_map.cpp' ),
                 Source( compiler, 'Source/Common/subproc.cpp' ),
                 Source( compiler, 'Source/Common/syntax.cpp' ),
@@ -1201,6 +1210,12 @@ class LinuxCompilerGCC(CompilerGCC):
         else:
             self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
 
+        if self.setup.opt_hunspell:
+            p = subprocess.run( ['pkgconf', 'hunspell', '--cflags'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
+            self._addVar( 'HUNSPELL_FLAGS', p.stdout.strip() )
+        else:
+            self._addVar( 'HUNSPELL_FLAGS',   '' )
+
         self._addVar( 'CCFLAGS',        '-g '
                                         '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-DPYBEMACS=1 '
@@ -1211,6 +1226,7 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"python\\"" '
                                         '%(FEATURE_DEFINES)s '
                                         '%(SQLITE_FLAGS)s '
+                                        '%(HUNSPELL_FLAGS)s '
                                         '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
@@ -1219,6 +1235,11 @@ class LinuxCompilerGCC(CompilerGCC):
         link_libs = '-L%s' % (self.lib_dir,)
         if self.setup.opt_system_sqlite:
             link_libs += ' -lsqlite3'
+
+        if self.setup.opt_hunspell:
+            p = subprocess.run( ['pkgconf', 'hunspell', '--libs'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
+            link_libs += ' ' + p.stdout.strip()
+
         self._addVar( 'LINK_LIBS', link_libs )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g ' )
@@ -1235,6 +1256,13 @@ class LinuxCompilerGCC(CompilerGCC):
 
         self._addVar( 'BEMACS_LIB_DIR', self.setup.opt_lib_dir )
 
+        if self.setup.opt_hunspell:
+            p = subprocess.run( ['pkgconf', 'hunspell', '--cflags'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
+            self._addVar( 'HUNSPELL_FLAGS', p.stdout.strip() )
+
+        else:
+            self._addVar( 'HUNSPELL_FLAGS', '' )
+
         if self.setup.opt_coverage:
             self._addVar( 'CCC_OPT',    '-O0 '
                                         '-ftest-coverage '
@@ -1250,16 +1278,24 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '-D%(LOG.DEBUG)s '
                                         '%(FEATURE_DEFINES)s '
                                         '%(SQLITE_FLAGS)s '
+                                        '%(HUNSPELL_FLAGS)s '
                                         '-DBEMACS_LIB_DIR=\\"%(BEMACS_LIB_DIR)s\\"' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
 
+        link_libs = ''
+
         if self.setup.opt_system_sqlite:
-            self._addVar( 'LINK_LIBS',  '-lsqlite3' )
+            link_libs += ' -lsqlite3'
 
-        elif self.setup.opt_sqlite:
-            self._addVar( 'LINK_LIBS',  '-pthread -ldl' )
+        if self.setup.opt_hunspell:
+            p = subprocess.run( ['pkgconf', 'hunspell', '--libs'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
+            link_libs += ' ' + p.stdout.strip()
 
+        link_libs += ' -pthread -ldl'
+
+
+        self._addVar( 'LINK_LIBS',      link_libs )
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s ' )
 
     def setupPythonTools( self ):
