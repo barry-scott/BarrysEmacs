@@ -259,6 +259,8 @@ library_files =    [
     ('common',    'Library/shell.mlp'),
     ('common',    'Library/show-buffer.ml'),
     ('common',    'Library/smart-auto-execute.ml'),
+    ('unix',      'Library/spell.key'),
+    ('unix',      'Library/spell.ml'),
     ('common',    'Library/spawn.ml'),
     ('common',    'Library/sql-mode.key'),
     ('common',    'Library/sql-mode.ml'),
