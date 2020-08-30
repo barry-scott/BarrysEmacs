@@ -50,7 +50,7 @@
 )
 
 (defun
-    (setup-spell-checking ~key ~arg-num ~arg
+    (setup-spell-checker ~key ~arg-num ~arg
         (save-excursion
             (temp-use-buffer "~spell-key-hack")
             (define-keymap "~spell-map")
