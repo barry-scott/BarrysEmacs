@@ -519,7 +519,7 @@ int insert_character( void )
 static EmacsString get_tty_prompt_string( " (prompt) " );
 static EmacsString get_tty_default_string( " (default) " );
 
-bool get_tty_prompt_and_default_value( const EmacsString &command_name, EmacsString &prompt, EmacsString &default_value )
+static bool get_tty_prompt_and_default_value( const EmacsString &command_name, EmacsString &prompt, EmacsString &default_value )
 {
     if( cur_exec == NULL )
     {
