@@ -211,6 +211,7 @@
         (setq ~spell-checked 0)
         (setq ~spell-corrected 0)
         (setq ~spell-word-to-check "")
+        (setq ~spell-choosen-suggestion "")
         (setq ~spell-old-local-keymap current-local-keymap)
 
         (use-local-map "~spell-map")
