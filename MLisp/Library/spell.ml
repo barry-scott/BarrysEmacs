@@ -50,7 +50,7 @@
 )
 
 (defun
-    (setup-spell ~key ~arg-num ~arg
+    (setup-spell-checking ~key ~arg-num ~arg
         (save-excursion
             (temp-use-buffer "~spell-key-hack")
             (define-keymap "~spell-map")
@@ -120,44 +120,58 @@
 )
 
 (defun
-    (spell-buffer
+    (spell-check-buffer
         (setq ~spell-word-pattern "\\w+")
         (~spell-buffer)
     )
 )
 
 (defun
-    (spell-region
+    (spell-check-region
         (setq ~spell-word-pattern "\\w+")
         (~spell-region)
     )
 )
 
 (defun
-    (spell-comments-buffer
+    (spell-check-comments-in-buffer
         (setq ~spell-word-pattern "(?Sc*=)\\w+")
         (~spell-buffer)
     )
 )
 
 (defun
-    (spell-comments-region
+    (spell-check-comments-in-region
         (setq ~spell-word-pattern "(?Sc*=)\\w+")
         (~spell-region)
     )
 )
 
 (defun
-    (spell-strings-region
+    (spell-check-strings-in-buffer
+        (setq ~spell-word-pattern "(?Ss*=)\\w+")
+        (~spell-buffer)
+    )
+)
+
+(defun
+    (spell-check-strings-in-region
         (setq ~spell-word-pattern "(?Ss*=)\\w+")
         (~spell-region)
     )
 )
 
 (defun
-    (spell-strings-buffer
-        (setq ~spell-word-pattern "(?Ss*=)\\w+")
-        (~spell-buffer)
+    (spell-check-word-in-buffer
+        (setq ~spell-word-pattern "\\w+")
+        (save-window-excursion
+            (error-occurred (forward-character))
+            (backward-word)
+            (setq ~spell-range-start (dot))
+            (forward-word)
+            (setq ~spell-range-end (dot))
+        )
+        (~spell-range)
     )
 )
 
@@ -224,7 +238,7 @@
         (setq ~index 0)
         (while (< ~index (fetch-array ~spell-suggestions 0))
             (setq ~index (+ 1 ~index))
-            (setq  ~msg (concat ~msg " " ~index ": " (fetch-array ~spell-suggestions ~index)))
+            (setq  ~msg (concat ~msg " " ~index ":" (fetch-array ~spell-suggestions ~index)))
         )
         (message ~msg)
         (novalue)
@@ -323,6 +337,7 @@
 
 (defun
     (~spell-quit
+        (~spell-update-counts)
         (~spell-restore-local-keymap)
         (message (concat "spell checked " ~spell-checked " and corrected " ~spell-corrected))
         (unset-mark)
@@ -333,6 +348,7 @@
 
 (defun
     (~spell-next
+        (~spell-update-counts)
         (if
             ; while we can find words to check...
             (error-occurred
@@ -363,6 +379,15 @@
                 (~spell-show-suggestions)
             )
         )
+    )
+)
+
+(defun
+    (~spell-update-counts
+        (if (& (!= ~spell-word-to-check "") (!= ~spell-choosen-suggestion ~spell-word-to-check))
+            (setq ~spell-corrected (+ 1 ~spell-corrected))
+        )
+        (setq ~spell-word-to-check "")
     )
 )
 
