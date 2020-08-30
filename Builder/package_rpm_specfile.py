@@ -31,6 +31,10 @@ def createRpmSpecFile( opt, spec_filename ):
         all_build_requires.add( 'unicode-ucd' )
         all_config_options.add( '--system-ucd' )
 
+    if opt.opt_hunspell:
+        all_build_requires.add( 'hunspell-devel' )
+        all_config_options.add( '--hunspell' )
+
     if opt.opt_sqlite:
         if opt.opt_kit_sqlite is None:
             all_requires_cli.add( 'sqlite' )
