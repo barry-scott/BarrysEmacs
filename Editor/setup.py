@@ -237,6 +237,10 @@ class Setup:
                 cli_feature_defines.append( ('DB_SQLITE', '1') )
                 utils_feature_defines.append( ('DB_SQLITE', '1') )
 
+            if self.opt_hunspell:
+                cli_feature_defines.append( ('SPELL_CHECKER', '1') )
+                pybemacs_feature_defines.append( ('SPELL_CHECKER', '1') )
+
         else:
             raise SetupError( 'Unknown platform %r' % (self.platform,) )
 
@@ -1328,6 +1332,12 @@ class LinuxCompilerGCC(CompilerGCC):
 class NetBSDCompilerGCC(CompilerGCC):
     def __init__( self, setup ):
         CompilerGCC.__init__( self, setup )
+        if setup.opt_sqlite and not setup.opt_system_sqlite:
+            self._addVar( 'SQLITESRC',      '%(BUILDER_TOP_DIR)s/Imports/sqlite' )
+            self._addVar( 'SQLITE_FLAGS',   '-I%(BUILDER_TOP_DIR)s/Imports/sqlite' )
+
+        else:
+            self._addVar( 'SQLITE_FLAGS',   '' )
 
     def setupUtilities( self, feature_defines ):
         log.info( 'setupUtilities' )
@@ -1339,10 +1349,10 @@ class NetBSDCompilerGCC(CompilerGCC):
         self._addVar( 'CCFLAGS',        '-g %(CCC_OPT)s '
                                         '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
-                                        '-I/usr/pkg/include '
                                         '"-DOS_NAME=\\"NetBSD\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
                                         '%(FEATURE_DEFINES)s '
+                                        '%(SQLITE_FLAGS)s '
                                         '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
                                         '-fexceptions -frtti ' )
@@ -1409,6 +1419,13 @@ class NetBSDCompilerGCC(CompilerGCC):
 
         self._addVar( 'BEMACS_LIB_DIR', self.setup.opt_lib_dir )
 
+        if self.setup.opt_hunspell:
+            p = subprocess.run( ['pkgconf', 'hunspell', '--cflags'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
+            self._addVar( 'HUNSPELL_FLAGS', p.stdout.strip() )
+
+        else:
+            self._addVar( 'HUNSPELL_FLAGS', '' )
+
         if self.setup.opt_coverage:
             self._addVar( 'CCC_OPT',    '-O0 '
                                         '-ftest-coverage '
@@ -1419,18 +1436,29 @@ class NetBSDCompilerGCC(CompilerGCC):
         self._addVar( 'CCFLAGS',        '-g %(CCC_OPT)s '
                                         '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
-                                        '-I/usr/pkg/include '
                                         '"-DOS_NAME=\\"NetBSD\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
                                         '-D%(LOG.DEBUG)s '
                                         '%(FEATURE_DEFINES)s '
+                                        '%(SQLITE_FLAGS)s '
+                                        '%(HUNSPELL_FLAGS)s '
                                         '-DBEMACS_LIB_DIR=\\"%(BEMACS_LIB_DIR)s\\"' )
-        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
 
-        if self.setup.opt_system_sqlite:
-            self._addVar( 'LINK_LIBS',  '-L/usr/pkg/lib -lsqlite3')
+        link_libs = ''
 
+        if self.setup.opt_system_sqlite:
+            link_libs += ' -lsqlite3'
+
+        if self.setup.opt_hunspell:
+            p = subprocess.run( ['pkgconf', 'hunspell', '--libs'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
+            link_libs += ' ' + p.stdout.strip()
+
+        link_libs += ' -pthread'
+
+
+        self._addVar( 'LINK_LIBS',      link_libs )
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s ' )
 
     def setupPythonTools( self ):
@@ -1448,7 +1476,6 @@ class NetBSDCompilerGCC(CompilerGCC):
                                         '-DPYBEMACS=1 '
                                         '-DEMACS_PYTHON_EXTENSION=1 '
                                         '-IInclude/Common -IInclude/Unix '
-                                        '-I/usr/pkg/include '
                                         '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
                                         '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '

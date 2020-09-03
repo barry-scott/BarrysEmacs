@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
 echo "Info: Builder build-netbsd.sh Builder in $( pwd )"
