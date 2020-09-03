@@ -10,7 +10,7 @@ static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
 #if defined( SPELL_CHECKER )
-#include <hunspell/hunspell.hxx>
+#include <hunspell.hxx>
 
 static Hunspell *checker = NULL;
 
