@@ -1336,6 +1336,10 @@ class NetBSDCompilerGCC(CompilerGCC):
             self._addVar( 'SQLITESRC',      '%(BUILDER_TOP_DIR)s/Imports/sqlite' )
             self._addVar( 'SQLITE_FLAGS',   '-I%(BUILDER_TOP_DIR)s/Imports/sqlite' )
 
+        elif setup.opt_system_sqlite:
+            p = subprocess.run( ['pkgconf', 'sqlite3', '--cflags'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
+            self._addVar( 'SQLITE_FLAGS', p.stdout.strip() )
+
         else:
             self._addVar( 'SQLITE_FLAGS',   '' )
 
@@ -1449,14 +1453,14 @@ class NetBSDCompilerGCC(CompilerGCC):
         link_libs = ''
 
         if self.setup.opt_system_sqlite:
-            link_libs += ' -lsqlite3'
+            p = subprocess.run( ['pkgconf', 'sqlite3', '--libs'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
+            link_libs += ' ' + p.stdout.strip()
 
         if self.setup.opt_hunspell:
             p = subprocess.run( ['pkgconf', 'hunspell', '--libs'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
             link_libs += ' ' + p.stdout.strip()
 
         link_libs += ' -pthread'
-
 
         self._addVar( 'LINK_LIBS',      link_libs )
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s ' )
