@@ -8,7 +8,6 @@ then
     }
 fi
 
-
 colour-print "<>info Info:<> build-macosx.sh Builder - start"
 
 colour-print "<>info Info:<> Checking for Python"
@@ -31,7 +30,7 @@ then
     umount "/Volumes/Barry's Emacs"
 fi
 
-${PYTHON} ./build_bemacs.py gui --colour | ${PYTHON} -u build_tee.py build.log
+${PYTHON} ./build_bemacs.py gui --colour --hunspell | ${PYTHON} -u build_tee.py build.log
 
 if false
 then

@@ -8,7 +8,6 @@ then
     }
 fi
 
-
 colour-print "<>info Info:<> build-macosx.sh Editor/PyQtBEmacs - start"
 PKG_DIST_DIR=${BUILDER_TOP_DIR}/Builder/tmp/pkg
 
@@ -36,6 +35,15 @@ pushd "${DIST_DIR}/Barry's Emacs-Devel.app/Contents" >/dev/null
 mkdir -p "Resources/emacs_library"
 mkdir -p "Resources/documentation"
 mkdir -p "Resources/bin"
+
+pushd Resources/emacs_library
+for LANG_NAME in en_US en_CA en_GB en_AU
+do
+    unzip ${BUILDER_TOP_DIR}/Imports/hunspell-${LANG_NAME}-large-*.zip
+    mv ${LANG_NAME}-large.dic ${LANG_NAME}.dic
+    mv ${LANG_NAME}-large.aff ${LANG_NAME}.aff
+done
+popd >/dev/null
 
 ${PYTHON} "${SRC_DIR}/create_bemacs_client.py" "${SRC_DIR}" "Resources/bin/bemacs_client"
 
@@ -65,8 +73,8 @@ for LIBNAME in \
 do
     colour-print "<>info Info:<> Framework used ${LIBNAME}"
     mv \
-            Resources/lib/python${PYTHON_VERSION}/PyQt5/tmp/${LIBNAME}.so \
-            Resources/lib/python${PYTHON_VERSION}/PyQt5
+        Resources/lib/python${PYTHON_VERSION}/PyQt5/tmp/${LIBNAME}.so \
+        Resources/lib/python${PYTHON_VERSION}/PyQt5
     mv \
         Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/lib/tmp/${LIBNAME}.framework \
         Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/lib

@@ -92,6 +92,7 @@ class BuildBEmacs(object):
                                 ,'--system-pycxx'
                                 ,'--system-ucd'
                                 ,'--system-sqlite'
+                                ,'--system-hunspell'
                                 ,'--no-warnings-as-errors'):
                         self.opt_editor_setup_opt.append( arg )
 

@@ -19,7 +19,7 @@ int spell_check_init(void)
     EmacsString lang( getnbstr( ": spell-check-init (language) " ) );
     // look for the affix and dictionary files
     EmacsString dic_filename;
-    expand_and_default( lang, "/usr/share/myspell/en_US.dic", dic_filename );
+    expand_and_default( lang, SPELL_DICTIONARY_DIR "en_US.dic", dic_filename );
 
     if( EmacsFile::fio_access( dic_filename ) == 0 )
     {
@@ -27,7 +27,7 @@ int spell_check_init(void)
     }
 
     EmacsString aff_filename;
-    expand_and_default( lang, "/usr/share/myspell/en_US.aff", aff_filename );
+    expand_and_default( lang, SPELL_DICTIONARY_DIR "en_US.aff", aff_filename );
 
     if( EmacsFile::fio_access( aff_filename ) == 0 )
     {
