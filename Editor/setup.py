@@ -420,7 +420,7 @@ class Setup:
             else:
                 obj_files.append( Source( compiler, 'Source/Common/ndbm.cpp' ) )
 
-            if self.opt_hunspell and self.platform == 'win64':
+            if self.opt_hunspell and not self.opt_system_hunspell:
                 obj_files.append( Source( compiler, '%(HUNSPELL_SRC)s/affentry.cxx' ) )
                 obj_files.append( Source( compiler, '%(HUNSPELL_SRC)s/affixmgr.cxx' ) )
                 obj_files.append( Source( compiler, '%(HUNSPELL_SRC)s/csutil.cxx' ) )
@@ -895,15 +895,8 @@ class MacOsxCompilerGCC(CompilerGCC):
             self._addVar( 'HUNSPELL_CFLAGS', '' )
 
         else:
-            self._addVar( 'HUNSPELL_CFLAGS', '-I%(BUILDER_TOP_DIR)s/Imports/hunspell/src/hunspell' )
-
-            # hunspell is in Imports
-            hunspell_lib_glob = self.expand( '%(BUILDER_TOP_DIR)s/Imports/hunspell/src/hunspell/.libs/libhunspell*.a' )
-            all_hunspell_lib = glob.glob( hunspell_lib_glob )
-            if len(all_hunspell_lib) != 1:
-                raise SetupError( 'Expecting to find one libhunspell*.a library in %s' % (hunspell_lib_glob,) )
-
-            self._addVar( 'HUNSPELL_LFLAGS', all_hunspell_lib[0] )
+            self._addVar( 'HUNSPELL_SRC',   r'%(BUILDER_TOP_DIR)s/Imports/hunspell/src/hunspell' )
+            self._addVar( 'HUNSPELL_CFLAGS', '-I%(BUILDER_TOP_DIR)s/Imports/hunspell/src/hunspell -DHUNSPELL_STATIC=1' )
 
     def setupUtilities( self, feature_defines ):
         log.info( 'setupUtilities' )
@@ -982,7 +975,6 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-fexceptions -frtti ' )
 
         self._addVar( 'LDSHARED',       '%(CCC)s -bundle -g '
-                                        '%(HUNSPELL_LFLAGS)s '
                                         '-framework System '
                                         '%(PYTHON_FRAMEWORK)s '
                                         '-framework CoreFoundation '
@@ -1010,8 +1002,7 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
 
-        self._addVar( 'LDEXE',          '%(CCC)s -g '
-                                        '%(HUNSPELL_LFLAGS)s ' )
+        self._addVar( 'LDEXE',          '%(CCC)s -g' )
 
     def setupPythonTools( self ):
         log.info( 'setupPythonTools' )

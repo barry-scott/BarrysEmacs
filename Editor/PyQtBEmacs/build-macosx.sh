@@ -36,15 +36,6 @@ mkdir -p "Resources/emacs_library"
 mkdir -p "Resources/documentation"
 mkdir -p "Resources/bin"
 
-pushd Resources/emacs_library
-for LANG_NAME in en_US en_CA en_GB en_AU
-do
-    unzip ${BUILDER_TOP_DIR}/Imports/hunspell-${LANG_NAME}-large-*.zip
-    mv ${LANG_NAME}-large.dic ${LANG_NAME}.dic
-    mv ${LANG_NAME}-large.aff ${LANG_NAME}.aff
-done
-popd >/dev/null
-
 ${PYTHON} "${SRC_DIR}/create_bemacs_client.py" "${SRC_DIR}" "Resources/bin/bemacs_client"
 
 # fixup 3. only keep the frameworks that we need, saving space

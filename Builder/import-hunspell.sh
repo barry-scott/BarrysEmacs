@@ -14,16 +14,22 @@ tar -xf "${1? hunspell tar ball}" -C ../Imports
 cd ../Imports
 shift
 
-colour-print "<>info Info:<> installing dictionary kits"
-for DICT in "$@"
-do
-    cp -v "${DICT}" .
-done
-
 ln -sf hunspell-* hunspell
 cd hunspell
 
-colour-print "<>info Info:<> build hunspell"
-autoreconf -vfi
-./configure
-make -j
+colour-print "<>info Info:<> installing dictionary kits"
+for DICT in "$@"
+do
+    rm -rf tmp.dict
+    mkdir tmp.dict
+    unzip -q ${DICT} -d tmp.dict
+    for FILE in tmp.dict/*.dic tmp.dict/*.aff
+    do
+        if [ -e "$FILE" ]
+        then
+            colour-print "<>info Info:<> Dictionary $FILE"
+            NEWFILE=$(basename $FILE)
+            NEWFILE=${NEWFILE/-large/}
+        fi
+    done
+done

@@ -40,6 +40,7 @@ class BuildBEmacs(object):
         self.opt_verbose = False
         self.opt_sqlite = True
         self.opt_hunspell = True
+        self.opt_hunspell_package_dictionaries = False
         self.opt_vcredist = None
         self.opt_editor_setup_opt = []
         self.opt_prefix = '/usr'
@@ -174,6 +175,8 @@ class BuildBEmacs(object):
 
             self.INSTALL_BEMACS_LIB_DIR = self.BUILD_BEMACS_LIB_DIR
 
+            self.opt_hunspell_package_dictionaries - self.opt_hunspell
+
             self.cmd_make = 'make'
             self.cmd_make_args = ['-j', '%d' % (build_utils.numCpus(),)]
 
@@ -189,6 +192,8 @@ class BuildBEmacs(object):
             self.INSTALL_BEMACS_BIN_DIR = self.BUILD_BEMACS_BIN_DIR
             self.INSTALL_BEMACS_LIB_DIR = self.BUILD_BEMACS_LIB_DIR
             self.INSTALL_BEMACS_DOC_DIR = self.BUILD_BEMACS_DOC_DIR
+
+            self.opt_hunspell_package_dictionaries - self.opt_hunspell
 
             self.cmd_make = 'nmake'
             self.cmd_make_args = ['/nologo']
@@ -264,7 +269,7 @@ class BuildBEmacs(object):
         if not self.opt_sqlite:
             self.ruleUtils()
 
-        if self.opt_hunspell:
+        if self.opt_hunspell_package_dictionaries:
             self.ruleHunspellDictionaries()
         self.ruleMlisp()
         self.ruleDescribe()
