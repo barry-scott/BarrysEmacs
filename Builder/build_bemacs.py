@@ -13,6 +13,8 @@ import shutil
 import subprocess
 import platform
 import glob
+import zipfile
+
 import build_log
 import build_utils
 
@@ -37,6 +39,7 @@ class BuildBEmacs(object):
         self.opt_colour = False
         self.opt_verbose = False
         self.opt_sqlite = True
+        self.opt_hunspell = True
         self.opt_vcredist = None
         self.opt_editor_setup_opt = []
         self.opt_prefix = '/usr'
@@ -84,11 +87,13 @@ class BuildBEmacs(object):
                     elif arg == '--no-sqlite':
                         self.opt_sqlite = False
 
+                    elif arg == '--no-hunspell':
+                        self.opt_sqlite = False
+
                     elif arg.startswith( '--prefix=' ):
                         self.opt_prefix = arg[len('--prefix='):]
 
                     elif arg in ('--enable-debug'
-                                ,'--hunspell'
                                 ,'--system-pycxx'
                                 ,'--system-ucd'
                                 ,'--system-sqlite'
@@ -114,8 +119,11 @@ class BuildBEmacs(object):
         if self.target not in self.valid_targets:
             raise BuildError( 'Unknown target %r pick on of %s' % (self.target, ', '.join( self.valid_targets )) )
 
-        if self.opt_sqlite:
-            self.opt_editor_setup_opt.append( '--sqlite' )
+        if not self.opt_sqlite:
+            self.opt_editor_setup_opt.append( '--no-sqlite' )
+
+        if not self.opt_hunspell:
+            self.opt_editor_setup_opt.append( '--no-hunspell' )
 
         log.setColour( self.opt_colour )
         if self.opt_colour:
@@ -252,12 +260,17 @@ class BuildBEmacs(object):
             self.ruleBemacsGui()
         else:
             self.ruleBemacsCli()
+
         if not self.opt_sqlite:
             self.ruleUtils()
+
+        if self.opt_hunspell:
+            self.ruleHunspellDictionaries()
         self.ruleMlisp()
         self.ruleDescribe()
         self.ruleQuickInfo()
         self.ruleDocs()
+
         if self.platform == 'MacOSX':
             self.ruleMacosPackage()
         if self.platform == 'win64':
@@ -266,7 +279,6 @@ class BuildBEmacs(object):
     def ruleBrand( self ):
         log.info( 'Running ruleBrand' )
         import brand_version
-
 
         try:
             if self.opt_verbose:
@@ -300,7 +312,10 @@ class BuildBEmacs(object):
             build_utils.copyFile( '../Editor/exe-cli-bemacs/bemacs-cli',  self.BUILD_BEMACS_BIN_DIR, 0o555 )
 
         elif self.platform == 'win64':
-            run( ('build-windows.cmd', self.KITFILES, self.bemacs_version_info.get('win_version')), cwd=r'..\Editor\PyQtBEmacs' )
+            run( ('build-windows.cmd'
+                 ,self.KITFILES
+                 ,self.bemacs_version_info.get('win_version'))
+                 ,cwd=r'..\Editor\PyQtBEmacs' )
 
         else:
             run( ('./build-linux.sh'
@@ -416,14 +431,26 @@ class BuildBEmacs(object):
             for src in glob.glob( pattern ):
                 build_utils.copyFile( src, self.BUILD_BEMACS_DOC_DIR, 0o444 )
 
+    def ruleHunspellDictionaries( self ):
+        for dic in glob.glob( os.path.join( '..', 'Imports', 'hunspell', '*.dic' ) ):
+            log.info( 'Dictionary %s' % (dic,) )
+            aff = dic[:-len('.dic')] + '.aff'
+            dic_dst = os.path.join( 'tmp', 'kitfiles', 'emacs_library', os.path.basename( dic ) )
+            aff_dst = os.path.join( 'tmp', 'kitfiles', 'emacs_library', os.path.basename( aff ) )
+            shutil.copyfile( dic, dic_dst )
+            shutil.copyfile( aff, aff_dst )
+
     def setupEditorMakefile( self ):
         import setup
 
         if self.platform in ('Linux', 'MacOSX', 'NetBSD'):
             setup_targets = set( [self.target, 'cli', 'unit-tests'] )
 
-        else:
+        elif self.platform in ('win64',):
             setup_targets = set( ['gui', 'unit-tests'] )
+
+        else:
+            raise BuildError('Unsupported platform %r in setupEditorMakefile' % (self.platform,))
 
         if not self.opt_sqlite:
             setup_targets.add( 'utils' )

@@ -30,9 +30,9 @@ class Setup:
         self.opt_system_pycxx = False
         self.opt_system_ucd = False
         self.opt_warnings_as_errors = True
-        self.opt_sqlite = False
+        self.opt_sqlite = True
         self.opt_system_sqlite = False
-        self.opt_hunspell = False
+        self.opt_hunspell = True
         self.opt_system_hunspell = False
 
         self.parseArgs( argv )
@@ -110,11 +110,11 @@ class Setup:
                 elif arg == '--coverage':
                     self.opt_coverage = True
 
-                elif arg == '--sqlite':
-                    self.opt_sqlite = True
+                elif arg == '--no-sqlite':
+                    self.opt_sqlite = False
 
-                elif arg == '--hunspell':
-                    self.opt_hunspell = True
+                elif arg == '--no-hunspell':
+                    self.opt_hunspell = False
 
                 else:
                     raise SetupError( 'Unknown arg %r' % (arg,) )
@@ -168,6 +168,10 @@ class Setup:
             if self.opt_sqlite:
                 pybemacs_feature_defines.append( ('DB_SQLITE', '1') )
                 utils_feature_defines.append( ('DB_SQLITE', '1') )
+
+            if self.opt_hunspell:
+                pybemacs_feature_defines.append( ('SPELL_CHECKER', '1') )
+                pybemacs_feature_defines.append( ('SPELL_DICTIONARY_DIR', '\\"emacs_library:\\"') )
 
         elif self.platform == 'macosx':
             if self.opt_utils:
@@ -416,6 +420,18 @@ class Setup:
             else:
                 obj_files.append( Source( compiler, 'Source/Common/ndbm.cpp' ) )
 
+            if self.opt_hunspell and self.platform == 'win64':
+                obj_files.append( Source( compiler, '%(HUNSPELL_SRC)s/affentry.cxx' ) )
+                obj_files.append( Source( compiler, '%(HUNSPELL_SRC)s/affixmgr.cxx' ) )
+                obj_files.append( Source( compiler, '%(HUNSPELL_SRC)s/csutil.cxx' ) )
+                obj_files.append( Source( compiler, '%(HUNSPELL_SRC)s/filemgr.cxx' ) )
+                obj_files.append( Source( compiler, '%(HUNSPELL_SRC)s/hashmgr.cxx' ) )
+                obj_files.append( Source( compiler, '%(HUNSPELL_SRC)s/hunspell.cxx' ) )
+                obj_files.append( Source( compiler, '%(HUNSPELL_SRC)s/hunzip.cxx' ) )
+                obj_files.append( Source( compiler, '%(HUNSPELL_SRC)s/phonet.cxx' ) )
+                obj_files.append( Source( compiler, '%(HUNSPELL_SRC)s/replist.cxx' ) )
+                obj_files.append( Source( compiler, '%(HUNSPELL_SRC)s/suggestmgr.cxx' ) )
+
             if self.platform in ('linux'):
                 obj_files.extend( [
                     Source( compiler, 'Source/Unix/unixfile.cpp' ),
@@ -586,6 +602,13 @@ class Win64CompilerVC14(Compiler):
         else:
             self._addVar( 'SQLITE_FLAGS',   '' )
 
+        if not self.setup.opt_hunspell:
+            self._addVar( 'HUNSPELL_CFLAGS', '' )
+
+        else:
+            self._addVar( 'HUNSPELL_SRC',   r'%(BUILDER_TOP_DIR)s\Imports\hunspell\src\hunspell' )
+            self._addVar( 'HUNSPELL_CFLAGS', r'-I%(BUILDER_TOP_DIR)s\Imports\hunspell\src\hunspell -DHUNSPELL_STATIC=1' )
+
         self._addVar( 'PYTHONDIR',      sys.exec_prefix )
         self._addVar( 'PYTHON_INCLUDE', r'%(PYTHONDIR)s\include' )
         self._addVar( 'PYTHON_LIB',     r'%(PYTHONDIR)s\libs' )
@@ -722,6 +745,7 @@ class Win64CompilerVC14(Compiler):
                                         r'-U_DEBUG '
                                         r'%(FEATURE_DEFINES)s '
                                         r'%(SQLITE_FLAGS)s '
+                                        r'%(HUNSPELL_CFLAGS)s '
                                         r'-D%(LOG.DEBUG)s' )
 
     def setupCliEmacs( self, feature_defines=None ):
@@ -743,155 +767,6 @@ class Win64CompilerVC14(Compiler):
                                         r'-U_DEBUG '
                                         r'-D%(LOG.DEBUG)s' )
 
-class Win32CompilerMSVC90(Compiler):
-    def __init__( self, setup ):
-        Compiler.__init__( self, setup )
-
-        self._addVar( 'PYCXX',          r'%(BUILDER_TOP_DIR)s\Imports\pycxx-%(PYCXX_VER)s' )
-        self._addVar( 'PYCXXSRC',       r'%(BUILDER_TOP_DIR)s\Imports\pycxx-%(PYCXX_VER)s\Src' )
-        self._addVar( 'SQLITESRC',      r'%(BUILDER_TOP_DIR)s\Imports\sqlite' )
-        self._addVar( 'UCDDIR',         r'%(BUILDER_TOP_DIR)s\Imports\ucd' )
-
-        self._addVar( 'PYTHONDIR',      sys.exec_prefix )
-        self._addVar( 'PYTHON_INCLUDE', r'%(PYTHONDIR)s\include' )
-        self._addVar( 'PYTHON_LIB',     r'%(PYTHONDIR)s\libs' )
-        self._addVar( 'PYTHON',         r'%(PYTHONDIR)s\python.exe' )
-        self._addVar( 'OBJ_SUFFIX',     '.obj' )
-
-    def platformFilename( self, filename ):
-        return filename.replace( '/', '\\' )
-
-    def getPythonExtensionFileExt( self ):
-        return '.pyd'
-
-    def getProgramExt( self ):
-        return '.exe'
-
-    def generateMakefileHeader( self ):
-        self.makePrint( '#' )
-        self.makePrint( '# Bemacs Makefile generated by setup.py' )
-        self.makePrint( '#' )
-        self.makePrint( 'CCC=cl /nologo' )
-        self.makePrint( 'CC=cl /nologo' )
-        self.makePrint( '' )
-        self.makePrint( 'LDSHARED=$(CCC) /LD /Zi /MT /EHsc' )
-        self.makePrint( 'LDEXE=$(CCC) /Zi /MT /EHsc' )
-        self.makePrint( '' )
-
-    def ruleLinkProgram( self, target ):
-        pyd_filename = target.getTargetFilename()
-        pdb_filename = target.getTargetFilename( '.pdb' )
-
-        all_objects = [source.getTargetFilename() for source in target.all_sources]
-
-        rules = ['']
-
-        rules.append( '' )
-        rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo Link Program: %s' % (pyd_filename,) )
-        rules.append( '\t@$(LDEXE)  %%(CCCFLAGS)s /Fe%s /Fd%s %s Advapi32.lib' %
-                            (pyd_filename, pdb_filename, ' '.join( all_objects )) )
-
-        self.makePrint( self.expand( '\n'.join( rules ) ) )
-
-    def ruleLinkShared( self, target ):
-        pyd_filename = target.getTargetFilename()
-        pdb_filename = target.getTargetFilename( '.pdb' )
-
-        all_objects = [source.getTargetFilename() for source in target.all_sources]
-
-        rules = ['']
-
-        rules.append( '' )
-        rules.append( '%s : %s' % (pyd_filename, ' '.join( all_objects )) )
-        rules.append( '\t@echo Link Shared: %s' % (pyd_filename,) )
-        rules.append( '\t@mkdir %(EDIT_EXE)s' )
-        rules.append( '\t@$(LDSHARED)  %%(CCCFLAGS)s /Fe%s /Fd%s %s %%(PYTHON_LIB)s\python%d%d.lib Advapi32.lib' %
-                            (pyd_filename, pdb_filename, ' '.join( all_objects ), sys.version_info.major, sys.version_info.minor) )
-
-        self.makePrint( self.expand( '\n'.join( rules ) ) )
-
-    def ruleCxx( self, target ):
-        obj_filename = target.getTargetFilename()
-
-        rules = []
-
-        rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
-        rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, target.getTargetFilename()) )
-        rules.append( '\t@mkdir %(EDIT_OBJ)s' )
-        rules.append( '\t@$(CCC) /c %%(CCCFLAGS)s /Fo%s /Fd%s %s' % (obj_filename, target.dependent.getTargetFilename( '.pdb' ), target.src_filename) )
-
-        self.makePrint( self.expand( '\n'.join( rules ) ) )
-
-    def ruleC( self, target ):
-        # can reuse the C++ rule
-        self.ruleCxx( target )
-
-    def ruleClean( self, filename ):
-        rules = []
-        rules.append( 'clean::' )
-        rules.append( '\tif exist %s del %s' % (filename, filename) )
-
-        self.makePrint( self.expand( '\n'.join( rules ) ) )
-
-    def setupUtilities( self, feature_defines ):
-        log.info( 'setupUtilities' )
-        self.addFeatureDefines( feature_defines )
-        self._addVar( 'EDIT_OBJ',       r'obj-utils' )
-        self._addVar( 'EDIT_EXE',       r'exe-utils' )
-        self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc '
-                                        r'-IInclude\Common -IInclude\Windows '
-                                        r'"-DOS_NAME=\"Windows\"" "-DOS_VERSION=\"win32\"" '
-                                        r'"-DCPU_TYPE=\"i386\"" "-DUI_TYPE=\"console\"" '
-                                        r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
-                                        r'-U_DEBUG '
-                                        r'%(FEATURE_DEFINES)s '
-                                        r'-D%(LOG.DEBUG)s' )
-
-    def setupUnittests( self ):
-        log.info( 'setupUnittests' )
-        self._addVar( 'EDIT_OBJ',       r'obj-unit-tests' )
-        self._addVar( 'EDIT_EXE',       r'exe-unit-tests' )
-        self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc '
-                                        r'/DUNIT_TEST=1 '
-                                        r'-IInclude\Common -IInclude\Windows '
-                                        r'"-DOS_NAME=\"Windows\"" "-DOS_VERSION=\"win32\"" '
-                                        r'"-DCPU_TYPE=\"i386\"" "-DUI_TYPE=\"console\"" '
-                                        r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
-                                        r'-U_DEBUG '
-                                        r'-D%(LOG.DEBUG)s' )
-
-    def setupPythonEmacs( self, feature_defines=None ):
-        log.info( 'setupPythonEmacs' )
-        self.addFeatureDefines( feature_defines )
-        self._addVar( 'EDIT_OBJ',       r'obj-pybemacs' )
-        self._addVar( 'EDIT_EXE',       r'exe-pybemacs' )
-        self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc '
-                                        r'-DPYBEMACS=1 '
-                                        r'-IInclude\Common -IInclude\Windows '
-                                        r'-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
-                                        r'"-DOS_NAME=\"Windows\"" "-DOS_VERSION=\"win32\"" '
-                                        r'"-DCPU_TYPE=\"i386\"" "-DUI_TYPE=\"python\"" '
-                                        r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
-                                        r'%(FEATURE_DEFINES)s '
-                                        r'-U_DEBUG '
-                                        r'-D%(LOG.DEBUG)s' )
-
-    def setupCliEmacs( self, feature_defines=None ):
-        log.info( 'setupCliEmacs' )
-        raise SetupError( 'no support for CLI on Windows' )
-
-    def setupPythonTools( self ):
-        log.info( 'setupPythonTools' )
-        self._addVar( 'EDIT_OBJ',       r'obj-python-tools' )
-        self._addVar( 'EDIT_EXE',       r'exe-python-tools' )
-        self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc '
-                                        r'-DPYBEMACS=1 '
-                                        r'-IInclude\Common -IInclude\Windows '
-                                        r'-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
-                                        r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
-                                        r'-U_DEBUG '
-                                        r'-D%(LOG.DEBUG)s' )
 
 class CompilerGCC(Compiler):
     def __init__( self, setup ):
@@ -1016,7 +891,6 @@ class MacOsxCompilerGCC(CompilerGCC):
         else:
             self._addVar( 'SQLITE_FLAGS',   '' )
 
-        # returns options to add to link_libs
         if not self.setup.opt_hunspell:
             self._addVar( 'HUNSPELL_CFLAGS', '' )
 
