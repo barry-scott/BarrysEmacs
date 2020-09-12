@@ -22,9 +22,16 @@ Introduction
     There are kits available for:
         Windows 7 and later (tested on: Windows 10)
         Mac OS X 10.11 (tested on: macOS 10.14.5)
-        Linux (tested on: Fedora 30, Centos 7 and Centos 6)
+        Linux (tested on: Fedora 32, Centos 8, Centos 7 and Centos 6)
 
 New in %(version)s
+    * New spell module provides spell-check-buffer, spell-check-region,
+      spell-check-word-in-buffer and more.
+
+      For Windows and macOS include distionaries for en_GB, en_US, en_CA and en_AU
+      for other OS use the installed hunspell dictionaries.
+
+New in 8.6.2
     * Fix ere-quote to quote "?"
     * Fix and improve dired - works for unix and macOS.
     * Fix for memory leak in Python UI code.
