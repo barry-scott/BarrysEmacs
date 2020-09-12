@@ -68,11 +68,13 @@ int spell_check_suggestions(void)
         return 0;
     }
 
-    EmacsString word( get_string_mlisp() );
-    if( ml_err )
+    if( check_args( 1, 1 ) )
         return 0;
 
-    std::string std_word( word );
+    if( !string_arg( 1 ) )
+        return 0;
+
+    std::string std_word( ml_value.asString() );
 
     std::vector<std::string> suggestions = checker->suggest( std_word );
 
