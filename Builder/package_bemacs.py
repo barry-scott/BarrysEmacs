@@ -34,7 +34,8 @@ class PackageBEmacs(object):
         self.opt_sqlite = True
         self.opt_gui = True
         self.opt_system_ucd = False
-        self.opt_hunspell = False
+        self.opt_hunspell = True
+        self.opt_system_hunspell = False
         self.opt_warnings_as_errors = False
         self.opt_kit_sqlite = None
         self.opt_kit_pycxx = None
@@ -168,8 +169,11 @@ class PackageBEmacs(object):
                 elif arg == '--system-ucd':
                     self.opt_system_ucd = True
 
-                elif arg == '--hunspell':
-                    self.opt_hunspell = True
+                elif arg == '--system-hunspell':
+                    self.opt_system_hunspell = True
+
+                elif arg == '--no-hunspell':
+                    self.opt_hunspell = False
 
                 elif arg == '--no-warnings-as-errors':
                     self.opt_warnings_as_errors = False
@@ -187,7 +191,7 @@ class PackageBEmacs(object):
                     self.install = True
 
                 else:
-                    raise BuildError( 'Unknown option %r' % (arg,) )
+                    raise BuildError( 'Unknown option in package_bemacs %r' % (arg,) )
 
         except StopIteration:
             pass

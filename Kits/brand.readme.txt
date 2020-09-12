@@ -31,6 +31,8 @@ New in %(version)s
       For Windows and macOS include distionaries for en_GB, en_US, en_CA and en_AU
       for other OS use the installed hunspell dictionaries.
 
+      spell check is not built for Centos 6 and 7.
+
 New in 8.6.2
     * Fix ere-quote to quote "?"
     * Fix and improve dired - works for unix and macOS.

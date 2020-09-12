@@ -89,7 +89,7 @@ class BuildBEmacs(object):
                         self.opt_sqlite = False
 
                     elif arg == '--no-hunspell':
-                        self.opt_sqlite = False
+                        self.opt_hunspell = False
 
                     elif arg.startswith( '--prefix=' ):
                         self.opt_prefix = arg[len('--prefix='):]
@@ -103,7 +103,7 @@ class BuildBEmacs(object):
                         self.opt_editor_setup_opt.append( arg )
 
                     else:
-                        raise BuildError( 'Unknown option %r' % (arg,) )
+                        raise BuildError( 'Unknown option in build_bemacs %r' % (arg,) )
 
                 else:
                     positional.append( arg )
@@ -472,6 +472,7 @@ class BuildBEmacs(object):
                          ,'--lib-dir=%s' % (self.INSTALL_BEMACS_LIB_DIR,)
                          ]
             setup_argv += self.opt_editor_setup_opt
+            log.info( 'Editor/setup.py %s' % (' '.join( setup_argv[1:] ),) )
             if setup.main( setup_argv ) != 0:
                 raise BuildError( 'Editor/setup.py failed' )
 

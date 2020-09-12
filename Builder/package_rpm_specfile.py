@@ -31,9 +31,14 @@ def createRpmSpecFile( opt, spec_filename ):
         all_build_requires.add( 'unicode-ucd' )
         all_config_options.add( '--system-ucd' )
 
-    if opt.opt_hunspell:
+    if opt.opt_hunspell and opt.opt_system_hunspell:
+        all_requires_cli.add( 'hunspell' )
+        all_requires_gui.add( 'hunspell' )
+        all_build_requires.add( 'hunspell' )
         all_build_requires.add( 'hunspell-devel' )
-        all_config_options.add( '--hunspell' )
+        all_config_options.add( '--system-hunspell' )
+    else:
+        all_config_options.add( '--no-hunspell' )
 
     if opt.opt_sqlite:
         if opt.opt_kit_sqlite is None:
@@ -188,7 +193,7 @@ spec_file_prep_xml_preferences = '''
 gunzip -c "%_sourcedir/./.(KIT_XML_PREFERENCES)s" | tar xf - -C Imports
 # make build_bemacs code happy
 ln -s $PWD/Imports/xml-preferences-*/Source/xml_preferences Builder
-# make PySQBEmacs code happy
+# make PyQtBEmacs code happy
 ln -s $PWD/Imports/xml-preferences-*/Source/xml_preferences Editor/PyQtBEmacs
 '''
 
