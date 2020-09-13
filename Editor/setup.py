@@ -1211,6 +1211,9 @@ class LinuxCompilerGCC(CompilerGCC):
         if self.setup.opt_system_sqlite:
             link_libs.append( '-lsqlite3' )
 
+        if self.setup.opt_system_hunspell:
+            link_libs.append( self.expand( '%(HUNSPELL_LFLAGS)s' ) )
+
         self._addVar( 'LINK_LIBS', ' '.join( link_libs ) )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g ' )
