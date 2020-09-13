@@ -231,10 +231,10 @@ class Setup:
 
                 pybemacs_feature_defines.append( ('SPELL_CHECKER', '1') )
                 pybemacs_feature_defines.append( ('SPELL_DICTIONARY_DIR',
-                                                  '\\"%s\\"' % (spell_dictionary_dir,) ) )
+                                                  '\\"%s/\\"' % (spell_dictionary_dir,) ) )
                 cli_feature_defines.append( ('SPELL_CHECKER', '1') )
                 cli_feature_defines.append( ('SPELL_DICTIONARY_DIR',
-                                             '\\"%s\\"' % (spell_dictionary_dir,) ) )
+                                             '\\"%s/\\"' % (spell_dictionary_dir,) ) )
 
         elif self.platform == 'netbsd':
             if self.opt_utils:
@@ -265,10 +265,10 @@ class Setup:
 
                 pybemacs_feature_defines.append( ('SPELL_CHECKER', '1') )
                 pybemacs_feature_defines.append( ('SPELL_DICTIONARY_DIR',
-                                                  '\\"%s\\"' % (spell_dictionary_dir,) ) )
+                                                  '\\"%s/\\"' % (spell_dictionary_dir,) ) )
                 cli_feature_defines.append( ('SPELL_CHECKER', '1') )
                 cli_feature_defines.append( ('SPELL_DICTIONARY_DIR',
-                                             '\\"%s\\"' % (spell_dictionary_dir,) ) )
+                                             '\\"%s/\\"' % (spell_dictionary_dir,) ) )
         else:
             raise SetupError( 'Unknown platform %r' % (self.platform,) )
 
