@@ -1307,7 +1307,7 @@ class NetBSDCompilerGCC(CompilerGCC):
             self._addVar( 'SQLITE_FLAGS',   '' )
 
         if self.setup.opt_hunspell:
-            p = subprocess.run( ['pkgconf', 'hunspell', '--cflags'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
+            p = subprocess.run( ['pkg-config', 'hunspell', '--cflags'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
             self._addVar( 'HUNSPELL_CFLAGS', p.stdout.strip() )
 
         else:
