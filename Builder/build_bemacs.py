@@ -54,6 +54,11 @@ class BuildBEmacs(object):
             log.info( 'Building target %s' % (self.target,) )
             self.setupVars()
 
+            self.checkBuildDeps()
+
+            if self.target == 'cli':
+                self.checkCliDeps()
+
             if self.target == 'gui':
                 self.checkGuiDeps()
 
@@ -200,6 +205,16 @@ class BuildBEmacs(object):
 
         else:
             raise BuildError( 'Unsupported platform: %s' % (self.platform,) )
+
+    def checkBuildDeps( self ):
+        if self.opt_sqlite:
+            try:
+                import sqlite
+            except ImportError:
+                raise BuildError( 'sqlite is not installed for %s. NetBSD Hint: pkgin install pyton38-sqlite3' % (sys.executable,) )
+
+    def checkCliDeps( self ):
+        pass
 
     def checkGuiDeps( self ):
         log.info( 'Checking GUI dependencies...' )

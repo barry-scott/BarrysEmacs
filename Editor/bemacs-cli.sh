@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 export EMACS_DEBUG=
 export emacs_user="$HOME/bemacs"
 case "$( uname )" in

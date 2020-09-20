@@ -1306,6 +1306,13 @@ class NetBSDCompilerGCC(CompilerGCC):
         else:
             self._addVar( 'SQLITE_FLAGS',   '' )
 
+        if self.setup.opt_hunspell:
+            p = subprocess.run( ['pkgconf', 'hunspell', '--cflags'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
+            self._addVar( 'HUNSPELL_CFLAGS', p.stdout.strip() )
+
+        else:
+            self._addVar( 'HUNSPELL_CFLAGS', '' )
+
     def setupUtilities( self, feature_defines ):
         log.info( 'setupUtilities' )
         self.addFeatureDefines( feature_defines )
@@ -1449,6 +1456,7 @@ class NetBSDCompilerGCC(CompilerGCC):
                                         '-fexceptions -frtti ' )
 
         self._addVar( 'LDEXE',          '%(CCC)s -g' )
+
 
 #--------------------------------------------------------------------------------
 class Target:

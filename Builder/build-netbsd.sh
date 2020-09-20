@@ -16,4 +16,13 @@ then
     exit 1
 fi
 
+for cmd in pkg-config gmake
+do
+    if ! which $cmd >/dev/null
+    then
+        echo "Error: command $cmd must be installed"
+        exit 1
+    fi
+done
+
 ${PYTHON} build_bemacs.py "$@"
