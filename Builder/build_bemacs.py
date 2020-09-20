@@ -209,9 +209,10 @@ class BuildBEmacs(object):
     def checkBuildDeps( self ):
         if self.opt_sqlite:
             try:
-                import sqlite
+                import sqlite3
+
             except ImportError:
-                raise BuildError( 'sqlite is not installed for %s. NetBSD Hint: pkgin install pyton38-sqlite3' % (sys.executable,) )
+                raise BuildError( 'sqlite is not installed for %s. NetBSD Hint: pkgin install py38-sqlite3' % (sys.executable,) )
 
     def checkCliDeps( self ):
         pass
