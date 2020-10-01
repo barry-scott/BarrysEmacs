@@ -2,6 +2,7 @@
 import sys
 from pathlib import Path
 import xml.dom.minidom
+import re
 
 try:
     import colour_text
@@ -30,15 +31,18 @@ html_head = '''<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <body>
 <div id="content">
 <div id="index">
+<div id="index-grid">
 <h1>Barry's Emacs</h1>
 <p>
 '''
 # index doc index as %(title)s<br/>
-# insert index here
-html_body = '''
+html_head_end = '''
 </p>
-</div>
-
+'''
+# insert optional index grid here
+# insert index entries here
+html_body = '''
+</div> <!-- end id=index -->
 <div id="body">
 '''
 # insert body here
@@ -120,6 +124,7 @@ class BuildDocs:
         with section_file.open('w') as fo:
             fo.write( html_head % {'title': section.title} )
             self.buildDocIndex( fo, section )
+            self.buildSectionGridIndex( fo, section.grid_index )
             self.buildSectionIndex( fo, section.index )
             fo.write( html_body )
             self.buildBody( fo )
@@ -137,10 +142,45 @@ class BuildDocs:
             else:
                 fo.write( '<a href="%s">%s</a><br />\n' % (other.filename, other.title) )
 
+        fo.write( html_head_end )
+
+    def buildSectionGridIndex( self, fo, grid_index ):
+        if grid_index is None:
+            # end #index-grid
+            fo.write( '</div>\n' )
+            return
+
+        grid_file = Path( grid_index )
+
+        self.info( 'Grid index from <>em %s<>' % (grid_file,) )
+
+        self.mustExist( grid_file )
+        self.mustBeValidXml( grid_file )
+
+        # append to the index-grid div that
+        # has the docs index in it
+        in_index = False
+        with grid_file.open('r') as fi:
+            for line_no, line in enumerate( fi ):
+                if not in_index:
+                    if line == '<div class="index-grid">\n':
+                        in_index = True
+                    continue
+
+                if in_index and line == '</body>\n':
+                    break
+
+                fo.write( line )
+
+        if not in_index:
+            raise BuildError( '%s: missing <div class="index-grid">' % (grid_file,) )
+
     def buildSectionIndex( self, fo, index ):
         self.doc_body_filenames = []
 
         index_file = Path( index )
+
+        self.info( 'Index from <>em %s<>' % (index_file,) )
 
         self.mustExist( index_file )
         self.mustBeValidXml( index_file )
@@ -151,8 +191,11 @@ class BuildDocs:
         with index_file.open('r') as fi:
             for line_no, line in enumerate( fi ):
                 if not in_index:
-                    if line == '<body>\n':
+                    # copy the index div but without its opening <div> line
+                    # that has been already written out
+                    if line == '<div class="index">\n':
                         in_index = True
+                        fo.write( '<div id="index-entries">\n' )
                     continue
 
                 if in_index and line == '</body>\n':
@@ -168,18 +211,22 @@ class BuildDocs:
 
                     filename, anchor = href.split( '#' )
                     line = '%s"#%s"%s' % (parts[0], anchor, parts[2])
-                    if filename not in self.doc_body_filenames:
+                    if filename != '' and filename not in self.doc_body_filenames:
                         self.doc_body_filenames.append( filename )
 
-                if line == '<div class="index">\n':
-                    line = '<div>\n'
-
                 fo.write( line )
+
+        if not in_index:
+            raise BuildError( '%s: missing <div class="index">' % (index_file,) )
+
+        if len(self.doc_body_filenames) == 0:
+            raise BuildError( 'No body files found in index' )
+
 
     def buildBody( self, fo ):
         for body_filename in self.doc_body_filenames:
             body_file = Path( body_filename )
-            self.info( 'Inserting <>em %s<>' % (body_file,) )
+            self.info( 'Body from <>em %s<>' % (body_file,) )
 
             self.mustExist( body_file )
             self.mustBeValidXml( body_file )
@@ -200,7 +247,24 @@ class BuildDocs:
                     if line == '<div class="contents">\n':
                         line = '<div>\n'
 
+                    line = self.fixupAnchorHrefs( line )
+
                     fo.write( line )
+
+    def fixupAnchorHrefs( self, line ):
+        all_href_spans = [m.span( 1 ) for m in re.finditer( '<a href="([^"]+)"', line )]
+        all_href_spans.reverse()
+
+        for span in all_href_spans:
+            href = line[span[0]:span[1]]
+            if href.startswith( '#' ) or  '#' not in href:
+                continue
+
+            filename, anchor = href.split( '#' )
+            if filename in self.doc_body_filenames:
+                line = '%s#%s%s' % (line[:span[0]], anchor, line[span[1]:])
+
+        return line
 
     def mustExist( self, path ):
         if not path.exists():
@@ -212,15 +276,17 @@ class BuildDocs:
 
         try:
             dom = xml.dom.minidom.parseString( text )
+
         except xml.parsers.expat.ExpatError as e:
             raise BuildError( '%s: %s' % (path, e) )
 
 
 class DocSection:
-    def __init__( self, title, filename, index ):
+    def __init__( self, title, filename, index, grid_index=None ):
         self.title = title
         self.filename = filename
         self.index = index
+        self.grid_index = grid_index
 
 
 if __name__ == '__main__':
@@ -228,6 +294,6 @@ if __name__ == '__main__':
             DocSection( "User's Guide", 'users_guide.html', 'ug_index.html' ),
             DocSection( "Extensions Reference", 'extensions_reference.html', 'extn_index.html' ),
             DocSection( "MLisp Programmer's Guide", 'mlisp_programmers_guide.html', 'pg_index.html' ),
-            DocSection( "MLisp Reference", 'mlisp_reference.html', 'mlisp_ref_index.html' )] )
+            DocSection( "MLisp Reference", 'mlisp_reference.html', 'mlisp_ref_index.html', 'mlisp_ref_grid.html' )] )
 
     sys.exit( build.main( sys.argv ) )
