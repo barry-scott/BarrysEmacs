@@ -5,210 +5,208 @@
 <meta charset="utf-8" />
 
 <title>User Guide - Basic Editing</title>
-<link rel="stylesheet" href="styles.css" /> 
+<link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
 <div class="contents">
- 
+
 <h1><a name="top"></a>Basic Editing</h1>
 <p>This chapter describes basic Emacs functions that allow you to enter text, make corrections, and save the text in a file. </p>
- 
+
 <ul>
 <li><a href="#theorganisationofthescreen">The Organisation of the Screen</a> describes the organisation of the Emacs screen.</li>
 </ul>
- 
+
 <ul>
 <li><a href="#selfdocumentationcommands">Self-Documentation Commands</a> describes Emacs' self-documentation features.</li>
 </ul>
- 
+
 <ul>
 <li><a href="#basiceditingkeyboardcommands">Basic Editing Commands</a> describes the basic editing commands.</li>
 </ul>
- 
+
 <ul>
 <li><a href="#commandprefixarguments">Command Prefix Arguments</a> shows how to prefix Emacs commands with numerical arguments.</li>
 </ul>
- 
+
 <ul>
 <li><a href="#files">Files</a> describes Emacs basic file handling commands.</li>
 </ul>
 
- 
+
 <h2><a name="theorganisationofthescreen"></a>The Organisation of the Screen</h2>
- 
-<p align="center"><img src="ug_screen.gif" usemap="#screen" border="0" width="606" height="297" /></p>
+
+<table class="image">
+<caption>Figure 1. The Emacs screen</caption>
+<tr><td>
+<img src="ug_screen.png" usemap="#screen" border="0" width="606" height="297" />
 <map name="screen">
-<area shape="rect" coords="5,22,548,42" href="#theorganisationofthescreen" onmouseover="self.status='Menus'; return true" />
-<area shape="rect" coords="5,43,224,72" href="#theorganisationofthescreen" onmouseover="self.status='Toolbar'; return true" />
-<area shape="rect" coords="219,118,227,133" href="#theorganisationofthescreen" onmouseover="self.status='Text cursor'; return true" />
-<area shape="rect" coords="5,74,574,239" href="#theorganisationofthescreen" onmouseover="self.status='Text area'; return true" />
-<area shape="rect" coords="5,240,504,255" href="#theorganisationofthescreen" onmouseover="self.status='Mode line'; return true" />
-<area shape="rect" coords="5,256,574,273" href="#theorganisationofthescreen" onmouseover="self.status='Minibuffer'; return true" />
-<area shape="rect" coords="584,88,599,224" href="#theorganisationofthescreen" onmouseover="self.status='Vertical Scroll bar'; return true" />
-<area shape="rect" coords="505,238,582,254" href="#theorganisationofthescreen" onmouseover="self.status='Horizontal Scroll bar'; return true" />
-<area shape="rect" coords="5,274,418,292" href="#theorganisationofthescreen" onmouseover="self.status='Status bar'; return true" />
-<area shape="rect" coords="419,274,445,292" href="#theorganisationofthescreen" onmouseover="self.status='Caps lock indicator'; return true" />
-<area shape="rect" coords="446,274,476,292" href="#theorganisationofthescreen" onmouseover="self.status='Overstrike indicator'; return true" />
-<area shape="rect" coords="477,274,514,292" href="#theorganisationofthescreen" onmouseover="self.status='Readonly buffer indicator'; return true" />
-<area shape="rect" coords="515,274,557,292" href="#theorganisationofthescreen" onmouseover="self.status='Line number'; return true" />
-<area shape="rect" coords="558,274,585,292" href="#theorganisationofthescreen" onmouseover="self.status='Column'; return true" />
-<area shape="rect" coords="0,0,605,296" href="#theorganisationofthescreen" onmouseover="self.status=' '; return true;" />
+<area shape="rect" coords="5,22,548,42" title="Menus" />
+<area shape="rect" coords="5,43,224,72" title="Toolbar" />
+<area shape="rect" coords="219,118,227,133" title="Text cursor" />
+<area shape="rect" coords="5,74,574,239" title="Text area" />
+<area shape="rect" coords="5,240,504,255" title="Mode line" />
+<area shape="rect" coords="5,256,574,273" title="Minibuffer" />
+<area shape="rect" coords="584,88,599,224" title="Vertical Scroll bar" />
+<area shape="rect" coords="505,238,582,254" title="Horizontal Scroll bar" />
+<area shape="rect" coords="5,274,418,292" title="Status bar" />
+<area shape="rect" coords="419,274,445,292" title="Caps lock indicator" />
+<area shape="rect" coords="446,274,476,292" title="Overstrike indicator" />
+<area shape="rect" coords="477,274,514,292" title="Readonly buffer indicator" />
+<area shape="rect" coords="515,274,557,292" title="Line number" />
+<area shape="rect" coords="558,274,585,292" title="Column" />
 </map>
-<center>
-Figure 1. <i>The Emacs screen</i>
-</center>
- 
+</td></tr>
+</table>
+
 <p>The Emacs screen is shown in <i>Figure 1</i>. Moving the mouse pointer over the figure will display the name of the parts of the screen in the browser status line.</p>
- 
+
 <p>Emacs divides the screen into several areas, each of which contains its own kind of information. The biggest area is the one in which you usually see the text you are editing. The cursor usually appears in the middle of the text, showing the position of dot, the location at which editing takes place. The cursor is a vertical line by default. In <i>Figure 1</i> the cursor can be seen at end of the word &quot;me&quot; and before &quot;electronically&quot;.</p>
- 
+
 <p>The line between the modeline and the status bar on the screen is called the Mini-buffer. This area is used to display messages and error text when a command is incorrectly used. It is also used to collect arguments for commands that require them when they are executed interactively. Normal editing commands can be used in the Mini-buffer. <br />
 </p>
 
- 
+
 <h3><a name="windows"></a>Windows</h3>
 <p>The main area of the screen may be divided up into a number of windows, as shown in <i>Figure 2</i>. A window is associated with a buffer which will contain the contents of a file.</p>
 
-<center>
-<img src="ug_windows.gif" border="1" width="594" height="199" />
-</center>
-<center>
-Figure 2. <i>Emacs with three windows.</i>
-</center>
- 
+<table class="image">
+<caption>Figure 2. Emacs with three windows.</caption>
+<tr><td>
+<img src="ug_windows.png" border="1" width="594" height="199" />
+</td></tr>
+</table>
+
 <p>Commands exist to change the association of windows to buffers and to change the number of windows displayed on the screen.</p>
- 
+
 <p>A window must be at least two lines deep and at least two columns wide.
-You can therefore display a lot of windows on the screen at any one time. 
-The variable <span class="cmd">split-height-threshold</span> controls the size of windows that may be divided, 
+You can therefore display a lot of windows on the screen at any one time.
+The variable <span class="cmd">split-height-threshold</span> controls the size of windows that may be divided,
 and therefore controls the minimum number of windows on the screen.</p>
 
- 
+
 <h3><a name="modelines"></a>Mode Lines</h3>
 
 <p>The line at the bottom of each window is known as the window's Mode Line. It is the line that usually starts with <span class="cmd">Buffer</span> and is displayed with a blue background. Its purpose is to tell you information that may affect the meaning of your commands aside from the text itself. </p>
- 
+
 <p>Some Emacs commands read and process other commands. They are known as subsystems and may initiate recursive editing levels. If you are inside a subsystem or a recursive editing level, the mode line tells you its name. Square brackets around the mode line indicate the depth of recursive editing levels.</p>
- 
+
 <p>Subsystems and recursive editing levels are advanced features, and you will not initially be using them. When you are not inside a subsystem or recursive editing level, we say that you are at the top level; this implies that the characters you type are interpreted as ordinary Emacs commands. When you are at top level, the mode line tells you what file you are editing, where you are in it, and what editing modes are enabled which may affect the meaning of your commands.</p>
- 
+
 <p>The format of the default mode line is shown in <i>Figure 3</i>. The figure will display the names of the parts of mode line in the browser status line. Clicking on parts of the figure will take you to the description of that part of the mode line.</p>
- 
-<p align="center"><img usemap="#modeline" src="ug_modeline.gif" border="0" width="542" height="17" /></p>
-<center>
-Figure 3. <i>Default mode line format.</i>
-</center>
+
+<table class="image">
+<caption>Figure 3. Default mode line format.</caption>
+<tr><td>
+<img usemap="#modeline" src="ug_modeline.png" border="0" width="542" height="17" />
 <map name="modeline">
-<area shape="rect" coords="0,0,9,16" href="#modeline_recursion" onmouseover="self.status='Recursion depth'; return true" />
-<area shape="rect" coords="10,0,59,16" href="#modeline_hscroll" onmouseover="self.status='Horizontal scroll'; return true" />
-<area shape="rect" coords="134,0,164,16" href="#modeline_buffer" onmouseover="self.status='Buffer name'; return true" />
-<area shape="rect" coords="232,0,307,16" href="#modeline_filename" onmouseover="self.status='Filename'; return true" />
-<area shape="rect" coords="315,0,371,16" href="#modeline_subsys" onmouseover="self.status='Subsystem'; return true" />
-<area shape="rect" coords="387,0,434,16" href="#modeline_major" onmouseover="self.status='Major mode'; return true" />
-<area shape="rect" coords="439,0,487,16" href="#modeline_minor" onmouseover="self.status='Minor mode'; return true" />
-<area shape="rect" coords="502,0,530,16" href="#modeline_position" onmouseover="self.status='Position'; return true" />
-<area shape="rect" coords="531,0,540,16" href="#modeline_recursion" onmouseover="self.status='Recursion depth'; return true" />
+<area shape="rect" coords="0,0,9,16" href="#modeline_recursion" title="Recursion depth" />
+<area shape="rect" coords="10,0,59,16" href="#modeline_hscroll" title="Horizontal scroll" />
+<area shape="rect" coords="134,0,164,16" href="#modeline_buffer" title="Buffer name" />
+<area shape="rect" coords="232,0,307,16" href="#modeline_filename" title="Filename" />
+<area shape="rect" coords="315,0,371,16" href="#modeline_subsys" title="Subsystem" />
+<area shape="rect" coords="387,0,434,16" href="#modeline_major" title="Major mode" />
+<area shape="rect" coords="439,0,487,16" href="#modeline_minor" title="Minor mode" />
+<area shape="rect" coords="502,0,530,16" href="#modeline_position" title="Position" />
+<area shape="rect" coords="531,0,540,16" href="#modeline_recursion" title="Recursion depth" />
 </map>
- 
+</td></tr>
+</table>
+
 <p>The components of the mode line are:</p>
- 
+
 <p><a name="modeline_major"></a><i>major</i> <br />
 The name of the major mode you are in. At any time, Emacs is in one and only one of its possible major modes. The major modes available include Normal (in which buffers are created), Text, Lisp, Pascal, and others.</p>
- 
+
 <p><a name="modeline_minor"></a><i>minor</i> <br />
 A list of some of the minor modes that are enabled. Journal means that journalling is enabled for this buffer. Checkpoint means that check pointing is enabled for this buffer and generally for all buffers. Overstrike means that character replace mode is switched on so that characters that you type replace the characters that exist in the buffer already. Abbrev means that abbreviation mode is on and that abbreviations are automatically expanded. Readonly means that you cannot alter the contents of the buffer.</p>
- 
+
 <p><a name="modeline_buffer"></a><i>bfr</i> <br />
 The name of the buffer currently associated with the window. Each buffer has its own name and may hold a file being edited; this is how Emacs holds several files at once. At any time you can edit only one buffer, the current buffer, though you may have many files open within Emacs.</p>
- 
+
 <p><a name="modeline_filename"></a><i>File</i> <br />
 The name of the file that you are editing. It is the last file that was visited in the associated buffer. If the buffer does not contain the contents of a file, then <span class="cmd">[No File]</span> is displayed. Buffers of this type are called scratch buffers.</p>
- 
+
 <p><a name="modeline_modified"></a><i>*</i> <br />
 Indicates that there are unsaved changes in the buffer. If the buffer has not changed since it was read in or saved, no asterisk is displayed.</p>
- 
+
 <p><a name="modeline_position"></a><i>pos</i> <br />
 Tells you whether there is additional text above the top of the screen, or below the bottom. It is <span class="cmd">Top</span> if you are looking at the beginning of the file, <span class="cmd">Bottom</span> if you are looking at the end of the file, or <span class="cmd">nn%</span> where <span class="cmd">nn</span> is the percentage of the file above dot.</p>
- 
+
 <p><a name="modeline_subsys"></a><i>subsys</i> <br />
 The name of the currently running subsystem. By default, this is blank.</p>
- 
+
 <p><a name="modeline_recursion"></a><i>[</i> <br />
 Square brackets in the mode line indicate the current recursive edit depth. When the recursion depth is zero, square brackets are not displayed. When the recursion depth is less than five, recursion-depth number of square brackets are included in the mode line. When the recursion depth is greater than five, the depth is indicated by <span class="cmd">[n[</span> and <span class="cmd">]n]</span>, where <span class="cmd">n</span> is the recursion depth.</p>
- 
+
 <p><a name="modeline_hscroll"></a><i>&lt;</i> <br />
 A marker indicating that the buffer is horizontally scrolled left by the indicated number of characters. When no left-scrolling is being used, the indicator is not included in the mode line. Otherwise, <span class="cmd">&lt;n&lt;</span> is displayed, where <span class="cmd">n</span> is the number of characters by which the screen is scrolled to the left. <br />
 </p>
 
- 
+
 <h2><a name="selfdocumentationcommands"></a>Self-Documentation Commands</h2>
 
 <p>Emacs provides extensive self-documentation features which are invoked by a single character, called the <span class="cmd">Help</span> character. At any time while using Emacs, you can type the <span class="cmd">Help</span> character to ask for help. The <span class="cmd">Help</span> character is actually typed as <span class="key">^_</span> (control-shift-underscore). </p>
- 
+
 <p>If you type the <span class="cmd">Help</span> character while you are using a subsystem (such as INFO), Emacs may print a list of the commands available in that subsystem. However, it is up to the subsystem to provide this facility.</p>
- 
+
 <p>The Emacs Help facility offers several options for asking about the commands that exist and what the commands do. It prompts with <span class="cmd">Doc (? for help):</span> at the bottom of the screen, and you type a character to say what kind of help you want. You could type <span class="cmd">Help</span> or <span class="cmd">?</span> at this point to find out what options are available. The available options are listed in Table 1.</p>
- 
+
 <table>
 <caption><b>Help Options</b>
-</caption> 
- 
+</caption>
+
 <tr>
 <th align="left">Description</th>
 <th align="center">Option</th>
 </tr>
- 
+
 <tr>
 <td>Show command containing a string (apropos)</td>
 <td align="center">a</td>
 </tr>
- 
+
 <tr>
 <td>Describe all key bindings</td>
 <td align="center">b</td>
 </tr>
- 
-<tr>
-<td>LK201 compose key sequence chart</td>
-<td align="center">c</td>
-</tr>
- 
+
 <tr>
 <td>Describe a command</td>
 <td align="center">d</td>
 </tr>
- 
+
 <tr>
 <td>Describe a key binding</td>
 <td align="center">k</td>
 </tr>
- 
+
 <tr>
 <td>Describe a variable</td>
 <td align="center">v</td>
 </tr>
- 
+
 <tr>
 <td>Find a function on the keyboard</td>
 <td align="center">w</td>
 </tr>
 </table>
- 
+
 <p>The most basic Help options are <span class="cmd">Help v</span> and <span class="cmd">Help d</span>. You can use them to ask what a particular command or variable does. <span class="cmd">Help d</span> is for asking about functions (or extended commands); type the name of the function and a <span class="key">Return</span>. Thus, <span class="cmd">Help d lisp-mode</span> tells you about <span class="key">ESC-x lisp-mode</span>. <span class="cmd">Help v</span> tells you about variables in the same way. <i>d</i> stands for <i>describe</i>, since <span class="cmd">Help d</span> actually uses the function <span class="cmd">describe-command</span> to do the work.</p>
- 
+
 <p>A more complicated question to ask is, What are the commands or variables for manipulating something?. For this, you use the <span class="cmd">Help a</span> command. This command prints a list of all the functions and variables that have the word you specified anywhere in their name. The <span class="cmd">a</span> stands for &quot;apropos&quot;, since <span class="cmd">Help a</span> actually uses the functions <span class="cmd">apropos</span> and <span class="cmd">apropos-variable</span> to do the sub string matching.</p>
- 
+
 <p>Help a also tells you what keys are bound to the commands, if any. For example, it would say that you can invoke <span class="cmd">write-modified-files</span> by typing <span class="key">^X-^M</span>.</p>
- 
+
 <p>Since the apropos functions look only for functions and variables whose names contain the string you specify, you must use ingenuity in choosing strings. If you are looking for commands for deleting backwards, and <span class="cmd">Help a delete-backwards</span> does not reveal any, do not give up. Try <span class="key">delete</span>, or <span class="cmd">backwards</span>, or just <span class="cmd">back</span>. Be persistent.</p>
- 
+
 <p>Table 2 contains a set of apropos strings that cover many classes of Emacs commands, since there are strong conventions for naming the standard Emacs commands. By giving you a feel for the Emacs naming conventions, this set should help you to develop a technique</p>
- 
+
 <table>
 <caption><b>Apropos Strings</b>
-</caption> 
- 
+</caption>
+
 <tr>
 <td>character</td>
 <td>line</td>
@@ -216,7 +214,7 @@ A marker indicating that the buffer is horizontally scrolled left by the indicat
 <td>sentence</td>
 <td>paragraph</td>
 </tr>
- 
+
 <tr>
 <td>region</td>
 <td>buffer</td>
@@ -224,7 +222,7 @@ A marker indicating that the buffer is horizontally scrolled left by the indicat
 <td>window</td>
 <td>bound</td>
 </tr>
- 
+
 <tr>
 <td>binding</td>
 <td>file</td>
@@ -232,7 +230,7 @@ A marker indicating that the buffer is horizontally scrolled left by the indicat
 <td>end</td>
 <td>case</td>
 </tr>
- 
+
 <tr>
 <td>mode</td>
 <td>forward</td>
@@ -240,7 +238,7 @@ A marker indicating that the buffer is horizontally scrolled left by the indicat
 <td>next</td>
 <td>previous</td>
 </tr>
- 
+
 <tr>
 <td>up</td>
 <td>down</td>
@@ -248,7 +246,7 @@ A marker indicating that the buffer is horizontally scrolled left by the indicat
 <td>kill</td>
 <td>delete</td>
 </tr>
- 
+
 <tr>
 <td>mark</td>
 <td>fill</td>
@@ -258,177 +256,177 @@ A marker indicating that the buffer is horizontally scrolled left by the indicat
 </tr>
 </table>
 
- 
+
 <h2><a name="basiceditingkeyboardcommands"></a>Basic Editing Keyboard Commands</h2>
 <p>This section describes the basic text editing features of Emacs. It shows how to insert and erase text and how to move the cursor around the screen. </p>
- 
+
 <h3>inserting text</h3>
 <p>To insert printing characters into the text you are editing, just type them. </p>
- 
+
 <p>To delete text you have just inserted, you can use the <span class="key">Backspace</span> key. <span class="key">Backspace</span> deletes the character before the cursor. The cursor and all characters after it move backwards. Therefore, if you type a printing character and then type <span class="key">Backspace</span>, they cancel out.</p>
- 
+
 <p>To end a line and start typing a new line, press the <span class="key">Return</span> key. <span class="key">Return</span> operates by inserting a line separator, so if you type <span class="key">Return</span> in the middle of a line, you break the line in two.</p>
- 
+
 <p>If the <span class="cmd">wrap-long-lines</span> variable is set, and you add too many characters to one line without breaking it with a <span class="key">Return</span>, the line grows to occupy two or more lines on the screen, with a <span class="cmd">&gt;=</span> at the extreme right margin of all but the last line. The <span class="cmd">&gt;=</span> means that the following screen line is not really a distinct line in the file, but just the continuation of a line too long to fit on the screen.</p>
- 
+
 <p>If the <span class="cmd">wrap-long-lines</span> variable is not set, a diamond is displayed at the end of each line that is longer than the screen.</p>
- 
+
 <p>Direct insertion works for printing and layout characters, but other characters act as editing commands and do not insert themselves. If you need to insert a control character you must quote it by using the <span class="key">^q</span> (<span class="cmd">quote-character</span>) command first.</p>
- 
+
 <h3>moving the cursor</h3>
 <p>To do more than insert characters, you have to know how to move the cursor. Here are a few of the commands for doing this: </p>
- 
+
 <table>
- 
+
 <tr>
 <td>Move to the beginning of the current line.</td>
 <td><span class="key">^A or Home (beginning-of-line)</span></td>
 </tr>
- 
+
 <tr>
 <td>Move to the end of the current line.</td>
 <td><span class="key">^E or End (end-of-line)</span></td>
 </tr>
- 
+
 <tr>
 <td>Move forward one character.</td>
 <td><span class="key">^F or Right-arrow (forward-character)</span></td>
 </tr>
- 
+
 <tr>
 <td>Move backward one character.</td>
 <td><span class="key">^B or Left-arrow (backward-character)</span></td>
 </tr>
- 
+
 <tr>
 <td>Move down one line, vertically.&#160; <br />
 If you start in the middle of one line,&#160; <br />
 you end up in the middle of the next line.</td>
 <td valign="top"><span class="key">^N or Down-arrow (next-line)</span></td>
 </tr>
- 
+
 <tr>
 <td>Move up one line, vertically.</td>
 <td><span class="key">^P or Up-arrow (previous-line)</span></td>
 </tr>
- 
+
 <tr>
 <td>Clear and redraw the display.</td>
 <td><span class="key">^L (redraw-display)</span></td>
 </tr>
- 
+
 <tr>
 <td>Transpose the last two characters.</td>
 <td><span class="key">^T (transpose-characters)</span></td>
 </tr>
- 
+
 <tr>
 <td>Move to the top of the file.</td>
 <td><span class="key">ESC-&lt; (beginning-of-file)</span></td>
 </tr>
- 
+
 <tr>
 <td>Move to the end of the file.</td>
 <td><span class="key">ESC-&gt; (end-of-file)</span></td>
 </tr>
 </table>
- 
+
 <h3>erasing text</h3>
- 
+
 <table>
- 
+
 <tr>
 <td>Delete the character before the cursor.</td>
 <td><span class="key">Backspace (delete-previous-character)</span></td>
 </tr>
- 
+
 <tr>
 <td>Delete the character after the cursor.</td>
 <td><span class="key">^D or Delete (delete-next-character)</span></td>
 </tr>
- 
+
 <tr>
 <td>Delete to the end of the current line.</td>
 <td><span class="key">^K (kill-to-end-of-line)</span></td>
 </tr>
 </table>
- 
+
 <p>You already know about the <span class="key">Backspace</span> command, which deletes the character before the cursor. Another command, <span class="key">^D</span>, deletes the character after the cursor, causing the rest of the text on the line to shift left. If <span class="key">^D</span> is typed at the end of a line, that line and the next line are joined together. </p>
 
- 
+
 <h2><a name="basiceditingmousecommands"></a>Basic Editing Mouse Commands</h2>
 
 <p>The default actions of the mouse follow the normal windows conventions. The following sections give details of the actions. </p>
- 
+
 <h3>moving the cursor</h3>
- 
+
 <p>The cursor can be positioned by clicking once with the left mouse button. If you click in the mode line of a window that window is selected and the cursor is left where you where last editing. If you click inside the windows text area the cursor is positioned between the nearest two characters. </p>
- 
+
 <h3>selecting text</h3>
- 
+
 <p>To select a block of text with the mouse use the left mouse button. </p>
- 
+
 <p>Start selecting text by pressing the mouse button then dragging it over the text to be selected. Release the mouse button when the right text is selected.</p>
- 
+
 <p>A single click will cancel any selection and position the cursor.</p>
- 
+
 <p>A single click and drag will select text a character at a time.</p>
- 
+
 <p>A double click selects one word.</p>
- 
+
 <p>A double click and drag will select text a word at a time.</p>
- 
+
 <p>A triple click selects one line.</p>
- 
+
 <p>A triple click and drag will select text a line at a time.</p>
- 
+
 <h3>dragging the selection</h3>
- 
+
 <p>The mouse can be used to drag the selected text to a new location.</p>
- 
+
 <p>Press the mouse button inside the selection and drag the mouse to the new position for the text. If you release the mouse button inside the selection it will not be moved.</p>
- 
+
 <h3>arranging windows</h3>
- 
+
 <p>If there are more then one window on the screen the mouse can be used to resize the windows.</p>
- 
+
 <p>Press the left mouse button in the mode line of a window and drag the mode line to resize the window.</p>
- 
+
 <p>If you drag the mode line so that the window is less then one line high the window is deleted. <br />
 </p>
 
- 
+
 <h2><a name="commandprefixarguments"></a>Command Prefix Arguments</h2>
- 
+
 <p>Any Emacs command can be given a numeric argument. Some commands interpret the argument as a repetition count. For example, giving an argument of 10 to the <span class="key">^F</span> command (move forward one character) moves forward 10 characters. With these commands, specifying no argument is equivalent to providing an argument of 1.</p>
- 
+
 <p>Some commands care only about whether there is an argument, and not about its value; for example, the command <span class="key">^X-^D</span> (<span class="cmd">describe-word-in-buffer</span>) attempts to tell you about the word in which dot is located. If you provide a prefix argument, it allows you to alter the definition for the word using a recursive edit.</p>
- 
+
 <p>The fundamental way of specifying an argument is to use the <span class="key">^U</span> (<span class="cmd">argument-prefix</span>) command followed by the digits of the argument. Negative arguments are allowed -- they often tell a command to move or act backwards. A negative argument is entered with <span class="key">^U</span> followed by a minus sign and the digits of the argument value.</p>
- 
+
 <p><span class="key">^U</span> followed by a character that is neither a digit nor a minus sign has the special meaning of multiply by four. It multiplies the argument for the next command by four. Two such <span class="key">^U</span>s multiply it by sixteen. Thus, <span class="key">^U-^U-^F</span> moves forward sixteen characters. This is a good way to move forward quickly, since it moves about a quarter of a line on most terminals. Other useful combinations are <span class="key">^U-^N</span> and <span class="key">^U-^U-^N</span> which move down useful fractions of a screen.</p>
- 
+
 <p>There are other terminal-dependent ways of specifying arguments. They have the same effect as typing <span class="key">^U</span>, but may be easier to type. If your terminal has a numeric keypad which sends something recognisably different from the ordinary digits, it is possible to customise Emacs to allow use of the numeric keypad for specifying arguments.</p>
- 
+
 <h3>autoarg mode</h3>
- 
+
 <p>Autoarg-mode allows you to specify prefix arguments without using <span class="key">^U</span>. Instead, you type just the digits of the argument. Typing digits followed by an ordinary inserting character causes the digits themselves to be inserted, but digits followed by a command character serve as an argument to the command and are not inserted. A minus sign can also be part of an argument, but only at the beginning. If you type a minus sign following some digits, both the digits and the minus sign are inserted.</p>
- 
+
 <p>To use Autoarg Mode, type the command <span class="key">ESC-x auto-arg-mode</span>.</p>
- 
+
 <p>Auto-argument digits echo at the bottom of the screen; the first non-digit character causes the accumulated digits to be inserted or used as an argument. To insert some digits and nothing else, you must follow the digits with a <span class="key">Space</span>, then delete the space character. <span class="key">^G</span> cancels the digits. <br />
 </p>
 
- 
+
 <h2><a name="files"></a>Files</h2>
- 
+
 <p>To keep any text permanently you must store it in a file.
 To tell Emacs to edit text in a file, choose a filename and use the <span class="key">^X-^V</span> command.
 This visits the specified file so that its contents appear on the screen in a new buffer and window.
 You can make changes, and then save the file by typing <span class="key">^X-^s</span>. This makes the changes permanent and creates a new version of the file. Note that, until you save changes to the file, the changes are only inside your Emacs; the file itself is not really changed.</p>
- 
+
 <p>If the file does not exist and you want to create it, just visit it as if it did exist. When you save your text with <span class="key">^X-^S</span>, Emacs will create the file.</p>
- 
+
 <p>See Advanced File Handling for more information on handling files. <br />
 </p>
 
