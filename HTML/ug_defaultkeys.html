@@ -21,336 +21,278 @@ from your emacsinit.ml file. The default emacsinit.ml shipped with emacs calls d
 
 <p>This is the same information as displayed by the <span class="cmd">describe-bindings</span> function.</p>
 
-<table width="600" border="2" cellspacing="0" cellpadding="2">
+<table class="key-bindings">
 <caption><b>Special Editing key bindings</b></caption>
+<colgroup>
+    <col class="binding" />
+    <col class="function" />
+    <col class="binding" />
+    <col class="function" />
+</colgroup>
 
 <tr>
-<th width="20%" align="left">
-<p>Binding</p>
-</th>
-<th width="30%" align="left">
-<p>Function</p>
-</th>
-<th width="20%" align="left">
-<p>Binding</p>
-</th>
-<th width="30%" align="left">
-<p>Function</p>
-</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
 </tr>
 
 <tr>
-<td><span class="cmd">up</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#previous-line&#39;)">previous-line</a></td>
-<td><span class="cmd">ctrl-up</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#scroll-one-line-up&#39;)">scroll-one-line-up</a></td>
+<td><span class="key">up</span></td>
+<td><span class="cmd">previous-line</span></td>
+<td><span class="key">ctrl-up</span></td>
+<td><span class="cmd">scroll-one-line-up</span></td>
 </tr>
 
 <tr>
-<td><span class="cmd">down</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#next-line&#39;)">next-line</a></td>
-<td><span class="cmd">ctrl-down</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#scroll-one-line-down&#39;)">scroll-one-line-down</a></td>
+<td><span class="key">down</span></td>
+<td><span class="cmd">next-line</span></td>
+<td><span class="key">ctrl-down</span></td>
+<td><span class="cmd">scroll-one-line-down</span></td>
 </tr>
 
 <tr>
-<td><span class="cmd">right</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#forward-character&#39;)">forward-character</a></td>
-<td><span class="cmd">ctrl-right</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#forward-word&#39;)">forward-word</a></td>
+<td><span class="key">right</span></td>
+<td><span class="cmd">forward-character</span></td>
+<td><span class="key">ctrl-right</span></td>
+<td><span class="cmd">forward-word</span></td>
 </tr>
 
 <tr>
-<td><span class="cmd">left</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#backward-character&#39;)">backward-character</a></td>
-<td><span class="cmd">ctrl-left</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#backward-word&#39;)">backward-word</a></td>
+<td><span class="key">left</span></td>
+<td><span class="cmd">backward-character</span></td>
+<td><span class="key">ctrl-left</span></td>
+<td><span class="cmd">backward-word</span></td>
 </tr>
 
 <tr>
-<td><span class="cmd">home</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#PC-home-key&#39;)">PC-home-key</a></td>
-<td><span class="cmd">ctrl-home</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#beginning-of-file&#39;)">beginning-of-file</a></td>
+<td><span class="key">home</span></td>
+<td><span class="cmd">PC-home-key</span></td>
+<td><span class="key">ctrl-home</span></td>
+<td><span class="cmd">beginning-of-file</span></td>
 </tr>
 
 <tr>
-<td><span class="cmd">insert</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#Toggle replace-mode&#39;)">Toggle replace-mode</a></td>
-<td><span class="cmd">shift-insert</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#UI-edit-paste&#39;)">UI-edit-paste</a></td>
+<td><span class="key">insert</span></td>
+<td>Toggle <span class="cmd">replace-mode</span></td>
+<td><span class="key">shift-insert</span></td>
+<td><span class="cmd">UI-edit-paste</span></td>
 </tr>
 
 <tr>
 <td colspan="2">&#160;</td>
-<td><span class="cmd">ctrl-insert</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#UI-edit-copy&#39;)">UI-edit-copy</a></td>
+<td><span class="key">ctrl-insert</span></td>
+<td><span class="cmd">UI-edit-copy</span></td>
 </tr>
 
 <tr>
 <td><span class="key">delete</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-next-character&#39;)">delete-next-character</a></td>
-<td><span class="cmd">shift-delete</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#&#39;)">PC-edit-cut</a></td>
+<td><span class="cmd">delete-next-character</span></td>
+<td><span class="key">shift-delete</span></td>
+<td><span class="cmd">PC-edit-cut</span></td>
 </tr>
 
 <tr>
 <td colspan="2">&#160;</td>
-<td><span class="cmd">ctrl-delete</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-next-word&#39;)">delete-next-word</a></td>
+<td><span class="key">ctrl-delete</span></td>
+<td><span class="cmd">delete-next-word</span></td>
 </tr>
 
 <tr>
-<td><span class="cmd">end</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#end-of-line&#39;)">end-of-line</a></td>
-<td><span class="cmd">ctrl-end</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#end-of-file&#39;)">end-of-file</a></td>
+<td><span class="key">end</span></td>
+<td><span class="cmd">end-of-line</span></td>
+<td><span class="key">ctrl-end</span></td>
+<td><span class="cmd">end-of-file</span></td>
 </tr>
 
 <tr>
-<td><span class="cmd">page-up</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#previous-page&#39;)">previous-page</a></td>
-<td><span class="cmd">ctrl-page-up</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#beginning-of-window&#39;)">beginning-of-window</a></td>
+<td><span class="key">page-up</span></td>
+<td><span class="cmd">previous-page</span></td>
+<td><span class="key">ctrl-page-up</span></td>
+<td><span class="cmd">beginning-of-window</span></td>
 </tr>
 
 <tr>
-<td><span class="cmd">page-down</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#next-page&#39;)">next-page</a></td>
-<td><span class="cmd">ctrl-page-down</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#end-of-window&#39;)">end-of-window</a></td>
+<td><span class="key">page-down</span></td>
+<td><span class="cmd">next-page</span></td>
+<td><span class="key">ctrl-page-down</span></td>
+<td><span class="cmd">end-of-window</span></td>
 </tr>
 </table>
 
-<table width="600" border="2" cellspacing="0" cellpadding="2">
+<table class="key-bindings">
 <caption><b>Function Key bindings</b></caption>
+<colgroup>
+    <col class="binding" />
+    <col class="function" />
+    <col class="binding" />
+    <col class="function" />
+</colgroup>
 
 <tr>
-<th width="20%" align="left">
-<p>Binding</p>
-</th>
-<th width="30%" align="left">
-<p>Function</p>
-</th>
-<th width="20%" align="left">
-<p>Binding</p>
-</th>
-<th width="30%" align="left">
-<p>Function</p>
-</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
 </tr>
 
 <tr>
-<td><span class="cmd">f1</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#help&#39;)">help</a></td>
+<td><span class="key">f1</span></td>
+<td><span class="cmd">help</span></td>
 <td colspan="2">&#160;</td>
 </tr>
 </table>
 
-<table width="600" border="2" cellspacing="0" cellpadding="2">
+<table class="key-bindings">
 <caption><b>Mouse bindings</b></caption>
+<colgroup>
+    <col class="binding" />
+    <col class="function" />
+    <col class="binding" />
+    <col class="function" />
+</colgroup>
 
 <tr>
-<th width="20%" align="left">
-<p>Binding</p>
-</th>
-<th width="30%" align="left">
-<p>Function</p>
-</th>
-<th width="20%" align="left">
-<p>Binding</p>
-</th>
-<th width="30%" align="left">
-<p>Function</p>
-</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
 </tr>
 
 <tr>
-<td><span class="cmd">mouse-wheel-pos</span></td>
+<td><span class="key">mouse-wheel-pos</span></td>
 <td>Scroll the buffer down 3 lines at a time</td>
-<td><span class="cmd">ctrl-mouse-wheel-pos</span></td>
+<td><span class="key">ctrl-mouse-wheel-pos</span></td>
 <td>Scroll the buffer up 3 lines at a time</td>
 </tr>
 
 <tr>
-<td><span class="cmd">mouse-wheel-neg</span></td>
+<td><span class="key">mouse-wheel-neg</span></td>
 <td>Scroll the buffer up 3 lines at a time</td>
-<td><span class="cmd">ctrl-mouse-wheel-neg</span></td>
+<td><span class="key">ctrl-mouse-wheel-neg</span></td>
 <td>Scroll the buffer up 1 page at a time</td>
 </tr>
 </table>
 
-<table width="600" border="2" cellspacing="0" cellpadding="2">
+<table class="key-bindings">
 <caption><b>Ctrl Key bindings</b></caption>
+<colgroup>
+    <col class="binding" />
+    <col class="function" />
+    <col class="binding" />
+    <col class="function" />
+</colgroup>
 
 <tr>
-<th width="20%" align="left">
-<p>Binding</p>
-</th>
-<th width="30%" align="left">
-<p>Function</p>
-</th>
-<th width="20%" align="left">
-<p>Binding</p>
-</th>
-<th width="30%" align="left">
-<p>Function</p>
-</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
 </tr>
 
 <tr>
 <td><span class="key">^@</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#set-mark&#39;)">set-mark</a></td>
+<td><span class="cmd">set-mark</span></td>
 <td><span class="key">^A</span></td>
 <td>Select the whole buffer</td>
 </tr>
 
 <tr>
 <td><span class="key">^B</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#switch-to-buffer&#39;)">switch-to-buffer</a></td>
+<td><span class="cmd">switch-to-buffer</span></td>
 <td><span class="key">^C</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#UI-edit-copy&#39;)">UI-edit-copy</a></td>
+<td><span class="cmd">UI-edit-copy</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^D</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-next-character&#39;)">delete-next-character</a></td>
+<td><span class="cmd">delete-next-character</span></td>
 <td><span class="key">^E</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#end-of-line&#39;)">end-of-line</a></td>
+<td><span class="cmd">end-of-line</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^F</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#incremental-search&#39;)">incremental-search</a></td>
+<td><span class="cmd">incremental-search</span></td>
 <td><span class="key">^G</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#interrupt-key&#39;)">interrupt-key</a></td>
+<td><span class="cmd">interrupt-key</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^H</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-previous-character&#39;)">delete-previous-character</a></td>
+<td><span class="cmd">delete-previous-character</span></td>
 <td><span class="key">^I</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#tab-key&#39;)">tab-key</a></td>
+<td><span class="cmd">tab-key</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^J</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#newline-and-indent&#39;)">newline-and-indent</a></td>
+<td><span class="cmd">newline-and-indent</span></td>
 <td><span class="key">^K</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#kill-to-end-of-line&#39;)">kill-to-end-of-line</a></td>
+<td><span class="cmd">kill-to-end-of-line</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^L</span></td>
 <td><a href="#Ctrl-L-table">see ctrl-l table</a></td>
 <td><span class="key">^M</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#newline&#39;)">newline</a></td>
+<td><span class="cmd">newline</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^N</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#next-line&#39;)">next-line</a></td>
+<td><span class="cmd">next-line</span></td>
 <td><span class="key">^O</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#visit-file&#39;)">visit-file</a></td>
+<td><span class="cmd">visit-file</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^P</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#previous-line&#39;)">previous-line</a></td>
+<td><span class="cmd">previous-line</span></td>
 <td><span class="key">^Q</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#quote-character&#39;)">quote-character</a></td>
+<td><span class="cmd">quote-character</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^R</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#reverse-incremental-search&#39;)">reverse-incremental-search</a></td>
+<td><span class="cmd">reverse-incremental-search</span></td>
 <td><span class="key">^S</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#write-current-file&#39;)">write-current-file</a></td>
+<td><span class="cmd">write-current-file</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^T</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#transpose-characters&#39;)">transpose-characters</a></td>
+<td><span class="cmd">transpose-characters</span></td>
 <td><span class="key">^U</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#argument-prefix&#39;)">argument-prefix</a></td>
+<td><span class="cmd">argument-prefix</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^V</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#UI-edit-paste&#39;)">UI-edit-paste</a></td>
+<td><span class="cmd">UI-edit-paste</span></td>
 <td><span class="key">^W</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;extn&#39;,&#39;#dabbrev&#39;)">dabbrev</a></td>
+<td><span class="cmd">dabbrev</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^X</span></td>
 <td><a href="#Ctrl-X-table">see ctrl-x table</a></td>
 <td><span class="key">^Y</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#yank-from-killbuffer&#39;)">yank-from-killbuffer</a></td>
+<td><span class="cmd">yank-from-killbuffer</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^Z</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#new-undo&#39;)">new-undo</a></td>
+<td><span class="cmd">new-undo</span></td>
 <td><span class="key">ESC</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#See Esc table&#39;)">See Esc table</a></td>
+<td>See Esc table</td>
 </tr>
 
 <tr>
 <td><span class="key">^_</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#help-key&#39;)">help-key</a></td>
-<td><span class="cmd">BKSP</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-previous-character&#39;)">delete-previous-character</a></td>
+<td><span class="cmd">help-key</span></td>
+<td><span class="key">BKSP</span></td>
+<td><span class="cmd">delete-previous-character</span></td>
 </tr>
 </table>
 
@@ -358,383 +300,306 @@ onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-previous-chara
 cut the text into the paste buffer, using UI-edit-cut. Otherwise ^X acts as prefix for the commands
 in the following table.</p>
 
-<table width="600" border="2" cellspacing="0" cellpadding="2">
+<table class="key-bindings">
 <caption><b>Ctrl-X Key bindings</b></caption>
+<colgroup>
+    <col class="binding" />
+    <col class="function" />
+    <col class="binding" />
+    <col class="function" />
+</colgroup>
 
 <tr>
-<th width="20%" align="left">
-<p>Binding</p>
-</th>
-<th width="30%" align="left">
-<p>Function</p>
-</th>
-<th width="20%" align="left">
-<p>Binding</p>
-</th>
-<th width="30%" align="left">
-<p>Function</p>
-</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
 </tr>
 
 <tr>
 <td><span class="key">^X-^@</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#unset-mark&#39;)">unset-mark</a></td>
+<td><span class="cmd">unset-mark</span></td>
 <td><span class="key">^X-^B</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#list-buffers&#39;)">list-buffers</a></td>
+<td><span class="cmd">list-buffers</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^X-^C</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#exit-emacs&#39;)">exit-emacs</a></td>
+<td><span class="cmd">exit-emacs</span></td>
 <td><span class="key">^X-^D</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#describe-word-in-buffer&#39;)">describe-word-in-buffer</a></td>
+<td><span class="cmd">describe-word-in-buffer</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^X-^E</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#compile-it&#39;)">compile-it</a></td>
+<td><span class="cmd">compile-it</span></td>
 <td><span class="key">^X-^F</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#write-file-exit&#39;)">write-file-exit</a></td>
+<td><span class="cmd">write-file-exit</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^X-^I</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#insert-file&#39;)">insert-file</a></td>
+<td><span class="cmd">insert-file</span></td>
 <td><span class="key">^X-^M</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#write-modified-files&#39;)">write-modified-files</a></td>
+<td><span class="cmd">write-modified-files</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^X-^N</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#next-error&#39;)">next-error</a></td>
+<td><span class="cmd">next-error</span></td>
 <td><span class="key">^X-^O</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#use-old-buffer&#39;)">use-old-buffer</a></td>
+<td><span class="cmd">use-old-buffer</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^X-^R</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#read-file&#39;)">read-file</a></td>
+<td><span class="cmd">read-file</span></td>
 <td><span class="key">^X-^S</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#write-current-file&#39;)">write-current-file</a></td>
+<td><span class="cmd">write-current-file</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^X-^U</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#new-undo&#39;)">new-undo</a></td>
+<td><span class="cmd">new-undo</span></td>
 <td><span class="key">^X-^V</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#visit-file&#39;)">visit-file</a></td>
+<td><span class="cmd">visit-file</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^X-^W</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#write-named-file&#39;)">write-named-file</a></td>
+<td><span class="cmd">write-named-file</span></td>
 <td><span class="key">^X-^X</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#exchange-dot-and-mark&#39;)">exchange-dot-and-mark</a></td>
+<td><span class="cmd">exchange-dot-and-mark</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^X-^Z</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#shrink-window&#39;)">shrink-window</a></td>
+<td><span class="cmd">shrink-window</span></td>
 <td><span class="key">^X-!</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#execute-monitor-command&#39;)">execute-monitor-command</a></td>
+<td><span class="cmd">execute-monitor-command</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^X-(</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#start-remembering&#39;)">start-remembering</a></td>
+<td><span class="cmd">start-remembering</span></td>
 <td><span class="key">^X-)</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#stop-remembering&#39;)">stop-remembering</a></td>
+<td><span class="cmd">stop-remembering</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^X-1</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-other-windows&#39;)">delete-other-windows</a></td>
+<td><span class="cmd">delete-other-windows</span></td>
 <td><span class="key">^X-2</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#split-current-window&#39;)">split-current-window</a></td>
+<td><span class="cmd">split-current-window</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^X-3</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#split-current-window-vertically&#39;)">split-current-window-vertically</a></td>
+<td><span class="cmd">split-current-window-vertically</span></td>
 <td><span class="key">^X-=</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#what-cursor-position&#39;)">what-cursor-position</a></td>
+<td><span class="cmd">what-cursor-position</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^X-?</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#apropos-variable&#39;)">apropos-variable</a></td>
+<td><span class="cmd">apropos-variable</span></td>
 <td><span class="key">^X-b</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#switch-to-buffer&#39;)">switch-to-buffer</a></td>
+<td><span class="cmd">switch-to-buffer</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^X-d</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-window&#39;)">delete-window</a></td>
+<td><span class="cmd">delete-window</span></td>
 <td><span class="key">^X-e</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#execute-keyboard-macro&#39;)">execute-keyboard-macro</a></td>
+<td><span class="cmd">execute-keyboard-macro</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^X-n</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#next-window&#39;)">next-window</a></td>
+<td><span class="cmd">next-window</span></td>
 <td><span class="key">^X-p</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#previous-window&#39;)">previous-window</a></td>
+<td><span class="cmd">previous-window</span></td>
 </tr>
 
 <tr>
 <td><span class="key">^X-z</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#enlarge-window&#39;)">enlarge-window</a></td>
+<td><span class="cmd">enlarge-window</span></td>
 <td colspan="2">&#160;</td>
 </tr>
 </table>
 
-<table width="600" border="2" cellspacing="0" cellpadding="2">
+<table class="key-bindings">
 <caption><b><a name="Ctrl-L-table">Ctrl-L Key bindings</a></b></caption>
+<colgroup>
+    <col class="binding" />
+    <col class="function" />
+    <col class="binding" />
+    <col class="function" />
+</colgroup>
 
 <tr>
-<th width="20%" align="left">
-<p>Binding</p>
-</th>
-<th width="30%" align="left">
-<p>Function</p>
-</th>
-<th width="20%" align="left">
-<p>Binding</p>
-</th>
-<th width="30%" align="left">
-<p>Function</p>
-</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
 </tr>
+
 <tr>
 <td><span class="key">^L-^B</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#buffer-dired&#39;)">buffer-dired</a></td>
+<td><span class="cmd">buffer-dired</span></td>
 <td><span class="key">^L-^D</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#list-databases&#39;)">list-databases</a></td>
+<td><span class="cmd">list-databases</span></td>
 </tr>
 <tr>
 <td><span class="key">^L-^L</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#redraw-display&#39;)">redraw-display</a></td>
+<td><span class="cmd">redraw-display</span></td>
 <td><span class="key">^L-^P</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#list-processes&#39;)">list-processes</a></td>
+<td><span class="cmd">list-processes</span></td>
 </tr>
 </table>
 
-<table width="600" border="2" cellspacing="0" cellpadding="2">
+<table class="key-bindings">
 <caption><b><a name="Esc-table">Esc Key bindings</a></b></caption>
+<colgroup>
+    <col class="binding" />
+    <col class="function" />
+    <col class="binding" />
+    <col class="function" />
+</colgroup>
 
 <tr>
-<th width="20%" align="left">
-<p>Binding</p>
-</th>
-<th width="30%" align="left">
-<p>Function</p>
-</th>
-<th width="20%" align="left">
-<p>Binding</p>
-</th>
-<th width="30%" align="left">
-<p>Function</p>
-</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
 </tr>
 
 <tr>
 <td><span class="key">ESC-^C</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#exit-emacs&#39;)">exit-emacs</a></td>
+<td><span class="cmd">exit-emacs</span></td>
 <td><span class="key">ESC-^D</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#debug&#39;)">debug</a></td>
+<td><span class="cmd">debug</span></td>
 </tr>
 
 <tr>
 <td><span class="key">ESC-^I</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#tab-delete&#39;)">tab-delete</a></td>
+<td><span class="cmd">tab-delete</span></td>
 <td><span class="key">ESC-^V</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#page-next-window&#39;)">page-next-window</a></td>
+<td><span class="cmd">page-next-window</span></td>
 </tr>
 
 <tr>
 <td><span class="key">ESC-^W</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-region-to-buffer&#39;)">delete-region-to-buffer</a></td>
+<td><span class="cmd">delete-region-to-buffer</span></td>
 <td><span class="key">ESC-^Y</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#yank-buffer&#39;)">yank-buffer</a></td>
+<td><span class="cmd">yank-buffer</span></td>
 </tr>
 
 <tr>
 <td><span class="key">ESC-ESC</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#minibuf&#39;)">minibuf</a></td>
+<td><span class="cmd">minibuf</span></td>
 <td><span class="key">ESC-!</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#line-to-top-of-window&#39;)">line-to-top-of-window</a></td>
+<td><span class="cmd">line-to-top-of-window</span></td>
 </tr>
 
 <tr>
 <td><span class="key">ESC-(</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#backward-paragraph&#39;)">backward-paragraph</a></td>
+<td><span class="cmd">backward-paragraph</span></td>
 <td><span class="key">ESC-)</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#forward-paragraph&#39;)">forward-paragraph</a></td>
+<td><span class="cmd">forward-paragraph</span></td>
 </tr>
 
 <tr>
 <td><span class="key">ESC-,</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#beginning-of-window&#39;)">beginning-of-window</a></td>
+<td><span class="cmd">beginning-of-window</span></td>
 <td><span class="key">ESC--</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#meta-minus&#39;)">meta-minus</a></td>
+<td><span class="cmd">meta-minus</span></td>
 </tr>
 
 <tr>
 <td><span class="key">ESC-.</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#end-of-window&#39;)">end-of-window</a></td>
+<td><span class="cmd">end-of-window</span></td>
 <td><span class="key">ESC-0..ESC-9</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#meta-digit&#39;)">meta-digit</a></td>
+<td><span class="cmd">meta-digit</span></td>
 </tr>
 
 <tr>
 <td><span class="key">ESC-&lt;</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#beginning-of-file&#39;)">beginning-of-file</a></td>
+<td><span class="cmd">beginning-of-file</span></td>
 <td><span class="key">ESC-&gt;</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#end-of-file&#39;)">end-of-file</a></td>
+<td><span class="cmd">end-of-file</span></td>
 </tr>
 
 <tr>
 <td><span class="key">ESC-?</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#apropos&#39;)">apropos</a></td>
+<td><span class="cmd">apropos</span></td>
 <td><span class="key">ESC-@</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#column-to-left-of-window&#39;)">column-to-left-of-window</a></td>
+<td><span class="cmd">column-to-left-of-window</span></td>
 </tr>
 
 <tr>
 <td><span class="key">ESC-C</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#case-capitalize&#39;)">case-capitalize</a></td>
+<td><span class="cmd">case-capitalize</span></td>
 <td><span class="key">ESC-^</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#case-word-invert&#39;)">case-word-invert</a></td>
+<td><span class="cmd">case-word-invert</span></td>
 </tr>
 
 <tr>
 <td><span class="key">ESC-a</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#backward-sentence&#39;)">backward-sentence</a></td>
+<td><span class="cmd">backward-sentence</span></td>
 <td><span class="key">ESC-b</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#backward-word&#39;)">backward-word</a></td>
+<td><span class="cmd">backward-word</span></td>
 </tr>
 
 <tr>
 <td><span class="key">ESC-d</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-next-word&#39;)">delete-next-word</a></td>
+<td><span class="cmd">delete-next-word</span></td>
 <td><span class="key">ESC-e</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#forward-sentence&#39;)">forward-sentence</a></td>
+<td><span class="cmd">forward-sentence</span></td>
 </tr>
 
 <tr>
 <td><span class="key">ESC-f</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#forward-word&#39;)">forward-word</a></td>
+<td><span class="cmd">forward-word</span></td>
 <td><span class="key">ESC-g</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#goto-line&#39;)">goto-line</a></td>
+<td><span class="cmd">goto-line</span></td>
 </tr>
 
 <tr>
 <td><span class="key">ESC-h</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#delete-previous-word&#39;)">delete-previous-word</a></td>
+<td><span class="cmd">delete-previous-word</span></td>
 <td><span class="key">ESC-i</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#case-invert&#39;)">case-invert</a></td>
+<td><span class="cmd">case-invert</span></td>
 </tr>
 
 <tr>
 <td><span class="key">ESC-j</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#indent-C-procedure&#39;)">indent-C-procedure</a></td>
+<td><span class="cmd">indent-C-procedure</span></td>
 <td><span class="key">ESC-l</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#case-lower&#39;)">case-lower</a></td>
+<td><span class="cmd">case-lower</span></td>
 </tr>
 
 <tr>
 <td><span class="key">ESC-q</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#query-replace-string&#39;)">query-replace-string</a></td>
+<td><span class="cmd">query-replace-string</span></td>
 <td><span class="key">ESC-r</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#replace-string&#39;)">replace-string</a></td>
+<td><span class="cmd">replace-string</span></td>
 </tr>
 
 <tr>
 <td><span class="key">ESC-u</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#case-upper&#39;)">case-upper</a></td>
+<td><span class="cmd">case-upper</span></td>
 <td><span class="key">ESC-v</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#previous-page&#39;)">previous-page</a></td>
+<td><span class="cmd">previous-page</span></td>
 </tr>
 
 <tr>
 <td><span class="key">ESC-x</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#execute-extended-command&#39;)">execute-extended-command</a></td>
+<td><span class="cmd">execute-extended-command</span></td>
 <td><span class="key">ESC-z</span></td>
-<td><a href="Z" onmouseover="return top.bemacs.mouseOver()"
-onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#scroll-one-line-down&#39;)">scroll-one-line-down</a></td>
+<td><span class="cmd">scroll-one-line-down</span></td>
 </tr>
 </table>
 </div>
 </body>
 </html>
-

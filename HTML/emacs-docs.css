@@ -1,0 +1,35 @@
+/*
+ *  emacs_docs.css
+ */
+#content, html, body {
+    height: 100%;
+    overflow: hidden;
+    box-sizing:border-box;
+    margin: 0;
+    padding: 0;
+}
+
+h1 
+{
+    padding: 0;
+    margin: 0;
+}
+
+#index {
+    float: left;
+    background: lightblue;
+    padding: .2em;
+    width: 20em;
+    height: 100%;
+    overflow: auto;
+    box-sizing:border-box;
+}
+#body {
+    float: left;
+    background: lightgreen;
+    padding: .2em;
+    width: calc(100% - 20em);
+    height: 100%;
+    overflow: auto;
+    box-sizing:border-box;
+}

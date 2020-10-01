@@ -107,34 +107,44 @@ use <span class="cmd">(sit-for 0)</span> to force a screen update.
 <p>The following keys are bound in the keymap:</p>
 
 
-<table border="1">
-<tr><th bgcolor="#C0C0C0">Key</th><th bgcolor="#C0C0C0">Function</th></tr><tr>
-<td>^G</td>
-<td>error-and-exit</td>
+<table class="key-bindings">
+<colgroup>
+    <col class="binding" />
+    <col class="function" />
+</colgroup>
+
+<tr>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+</tr>
+
+<tr>
+<td><span class="key">^G</span></td>
+<td><span class="cmd">error-and-exit</span></td>
 </tr>
 <tr>
-<td>ESC</td>
-<td>expand-and-exit</td>
+<td><span class="key">ESC</span></td>
+<td><span class="cmd">expand-and-exit</span></td>
 </tr>
 <tr>
-<td>?</td>
-<td>help-and-exit</td>
+<td><span class="key">?</span></td>
+<td><span class="cmd">help-and-exit</span></td>
 </tr>
 <tr>
-<td>^C</td>
-<td>exit-emacs</td>
+<td><span class="key">^C</span></td>
+<td><span class="cmd">exit-emacs</span></td>
 </tr>
 <tr>
-<td>&lt;CR&gt;</td>
-<td>exit-emacs</td>
+<td><span class="key">&lt;CR&gt;</span></td>
+<td><span class="cmd">exit-emacs</span></td>
 </tr>
 <tr>
-<td>&lt;LF&gt;</td>
-<td>exit-emacs</td>
+<td><span class="key">&lt;LF&gt;</span></td>
+<td><span class="cmd">exit-emacs</span></td>
 </tr>
 <tr>
-<td>^\</td>
-<td>ESC-prefix</td>
+<td><span class="key">^\</span></td>
+<td><span class="cmd">ESC-prefix</span></td>
 </tr>
 </table>
 
@@ -158,42 +168,48 @@ use <span class="cmd">(sit-for 0)</span> to force a screen update.
 <p>The following keys are bound in the keymap:</p>
 
 
-<table border="1">
+<table class="key-bindings">
+<colgroup>
+    <col class="binding" />
+    <col class="function" />
+</colgroup>
+
 <tr>
-<th bgcolor="#C0C0C0">Key</th>
-<th bgcolor="#C0C0C0">Function</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+</tr>
+
+<tr>
+<td><span class="key">^G</span></td>
+<td><span class="cmd">error-and-exit</span></td>
 </tr>
 <tr>
-<td>^G</td>
-<td>error-and-exit</td>
+<td><span class="key">ESC</span></td>
+<td><span class="cmd">expand-and-exit</span></td>
 </tr>
 <tr>
-<td>ESC</td>
-<td>expand-and-exit</td>
+<td><span class="key">^C</span></td>
+<td><span class="cmd">exit-emacs</span></td>
 </tr>
 <tr>
-<td>^C</td>
-<td>exit-emacs</td>
+<td><span class="key">&lt;CR&gt;</span></td>
+<td><span class="cmd">exit-emacs</span></td>
 </tr>
 <tr>
-<td>&lt;CR&gt;</td>
-<td>exit-emacs</td>
+<td><span class="key">&lt;LF&gt;</span></td>
+<td><span class="cmd">exit-emacs</span></td>
 </tr>
 <tr>
-<td>&lt;LF&gt;</td>
-<td>exit-emacs</td>
+<td><span class="key">^\</span></td>
+<td><span class="cmd">ESC-prefix</span></td>
 </tr>
 <tr>
-<td>^\</td>
-<td>ESC-prefix</td>
+<td><span class="key">&lt;Space&gt;</span></td>
+<td><span class="cmd">expand-and-exit</span></td>
 </tr>
 <tr>
-<td>&lt;Space&gt;</td>
-<td>expand-and-exit</td>
-</tr>
-<tr>
-<td>&lt;Tab&gt;</td>
-<td>expand-and-exit</td>
+<td><span class="key">&lt;Tab&gt;</span></td>
+<td><span class="cmd">expand-and-exit</span></td>
 </tr>
 </table>
 
@@ -258,7 +274,12 @@ use <span class="cmd">(sit-for 0)</span> to force a screen update.
 <p><span class="cmd">modify-syntax-table</span> can be called in one of the following ways:</p>
 
 
-<table border="1">
+<table class="action_command">
+<colgroup>
+    <col class="col_action" />
+    <col class="col_command" />
+</colgroup>
+
 <tr><th>Action</th><th>Command</th></tr>
 <tr>
 <td>Define the characters in <b>charset</b> as word characters, as used by such commands as <span class="cmd">forward-word</span> and <span class="cmd">case-word-capitalize</span>.</td>
@@ -420,4 +441,3 @@ Ranges of characters can be conveniently entered by giving the first and last ch
 </div>
 </body>
 </html>
-

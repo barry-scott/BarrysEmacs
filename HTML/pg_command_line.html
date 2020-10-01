@@ -28,24 +28,26 @@
 <dd>This causes emacs to treat all the following command line arguments as not being qualifiers. This is useful for allowing Emacs to open a file whoes name starts with a "+" or "-" character.</dd>
 </dl>
 
-It is the job of the package to process the command line. The default package is named "emacs". How the emacs package handles the command line is documented in the <a href="Z" onmouseover="return top.bemacs.mouseOver()" onclick="return top.bemacs.loadDocument(&#39;ug&#39;,&#39;#emacscommand&#39;)">User Guide</a>. 
+It is the job of the package to process the command line. The default package is named "emacs". How the emacs package handles the command line is documented in the 
+<a href="ug_frame.html">User Guide</a>.
 
 <h2><a name="writingapackage">Writing a package</a></h2>
 
 <p>Emacs will automatically load a packages definition from an MLisp module named <i>package</i> from the file <tt><i>package</i>.mlp</tt>. That module must contain atleast one function definition for the MLisp function <i>package</i>-com.</p>
 
-<p>It is the job of the package to process the command line. Emacs has already parsed the command line into its component parts. Use the following functions to access the components of the command line:</p>
+<p>It is the job of the package to process the command line. Emacs has already parsed the command line into its component parts.
+Use the following functions to access the components of the command line:</p>
 
 <dl>
-<dt>(<a href="Z" onmouseover="return top.bemacs.mouseOver()" onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#argc&#39;)">argc</a>)</dt>
+<dt>(argc)</dt>
 
 <dd>Returns the number of command line arguments. There is always one arguments.</dd>
 
-<dt>(<a href="Z" onmouseover="return top.bemacs.mouseOver()" onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#argv&#39;)">argv</a> <i>position</i>)</dt>
+<dt>(argv <i>position</i>)</dt>
 
 <dd>Returns the text of the argument at position <i>position</i>. Position zero always returns the name of the package.</dd>
 
-<dt>(<a href="Z" onmouseover="return top.bemacs.mouseOver()" onclick="return top.bemacs.loadDocument(&#39;fn&#39;,&#39;#arg-is-qualifier&#39;)">arg-is-qualifier</a> <i>position</i>)</dt>
+<dt>(arg-is-qualifier <i>position</i>)</dt>
 
 <dd>Returns true if the argument at position <i>position</i> is a command line qualifier (also called a command line switch).</dd>
 </dl>
