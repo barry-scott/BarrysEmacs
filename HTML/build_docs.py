@@ -160,6 +160,7 @@ class BuildDocs:
         # append to the index-grid div that
         # has the docs index in it
         in_index = False
+        in_hide = False
         with grid_file.open('r') as fi:
             for line_no, line in enumerate( fi ):
                 if not in_index:
@@ -170,10 +171,24 @@ class BuildDocs:
                 if in_index and line == '</body>\n':
                     break
 
+                if line == '<!-- hide=on -->\n':
+                    in_hide = True
+
+                elif line == '<!-- hide=off -->\n':
+                    in_hide = False
+                    continue
+
+                if in_hide:
+                    continue
+
                 fo.write( line )
 
         if not in_index:
             raise BuildError( '%s: missing <div class="index-grid">' % (grid_file,) )
+
+        if in_hide:
+            raise BuildError( '%s: missing <!-- hide=off -->' % (grid_file,) )
+
 
     def buildSectionIndex( self, fo, index ):
         self.doc_body_filenames = []
@@ -188,6 +203,7 @@ class BuildDocs:
         fo.write( '<!-- Source: %s -->\n' % (index_file,) )
 
         in_index = False
+        in_hide = False
         with index_file.open('r') as fi:
             for line_no, line in enumerate( fi ):
                 if not in_index:
@@ -200,6 +216,16 @@ class BuildDocs:
 
                 if in_index and line == '</body>\n':
                     break
+
+                if line == '<!-- hide=on -->\n':
+                    in_hide = True
+
+                elif line == '<!-- hide=off -->\n':
+                    in_hide = False
+                    continue
+
+                if in_hide:
+                    continue
 
                 # copy the line after extacting filename of body file
                 # and fixing the href to remove the filename
@@ -219,6 +245,9 @@ class BuildDocs:
         if not in_index:
             raise BuildError( '%s: missing <div class="index">' % (index_file,) )
 
+        if in_hide:
+            raise BuildError( '%s: missing <!-- hide=off -->' % (grid_file,) )
+
         if len(self.doc_body_filenames) == 0:
             raise BuildError( 'No body files found in index' )
 
@@ -234,6 +263,7 @@ class BuildDocs:
             fo.write( '<!-- Source: %s -->\n' % (body_file,) )
 
             in_body = False
+            in_hide = False
             with body_file.open('r') as fi:
                 for line in fi:
                     if not in_body:
@@ -247,9 +277,23 @@ class BuildDocs:
                     if line == '<div class="contents">\n':
                         line = '<div>\n'
 
+                    if line == '<!-- hide=on -->\n':
+                        in_hide = True
+
+                    elif line == '<!-- hide=off -->\n':
+                        in_hide = False
+                        continue
+
+                    if in_hide:
+                        continue
+
                     line = self.fixupAnchorHrefs( line )
 
                     fo.write( line )
+
+            if in_hide:
+                raise BuildError( '%s: missing <!-- hide=off -->' % (grid_file,) )
+
 
     def fixupAnchorHrefs( self, line ):
         all_href_spans = [m.span( 1 ) for m in re.finditer( '<a href="([^"]+)"', line )]

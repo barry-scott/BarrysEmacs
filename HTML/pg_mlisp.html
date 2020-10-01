@@ -153,12 +153,12 @@ ANAMEWITHCAPITALLETTERS
 
 <p>String constants are enclosed in double quote characters and can be up to 800 characters in length. Any ASCII character can be included in the string. An escape mechanism is provided using a scheme similar to that for character constants. The codes are described in Table 2.</p>
 
-<p>Table 2 MLisp String Constants</p>
 
 <table>
+<caption>Table 2 MLisp String Constants</caption>
 <tr>
 <th>Sequence</th>
-<th>ASCII character</th>
+<th>Character</th>
 </tr>
 
 <tr>
@@ -217,11 +217,12 @@ ANAMEWITHCAPITALLETTERS
 </tr>
 
 <tr>
-<td>\<i>(key)</i></td>
-<td>Key sequence for <i>key</i></td>
+<td>\<i>[key]</i></td>
+<td>Characters for <i>key</i></td>
 </tr>
 </table>
 
+<!-- hide=on -->
 <p>Named key string constant escapes are particularly useful in MLisp expressions that bind keys. Figures ~~~Ref:numkeypadfig~~~,~~~Ref:editkeypadfig~~~ and ~~~Ref:funkeysfig~~~illustrate the escapes for the keys found on VT100-series terminals and terminals or workstations with LK201 keyboards.</p>
 
 <p><b>Figure: VT100/LK201 Numeric Keypad Key Escapes</b>FIGUREFILE: postscript:docs$src:emacspgnumkeypadfig.psFIGUREFILE: bookreader:docs$src:emacspgnumkeypadfig.fse</p>
@@ -229,6 +230,7 @@ ANAMEWITHCAPITALLETTERS
 <p><b>Figure: LK201 Editing Keypad Key Escapes</b>FIGUREFILE: postscript:docs$src:emacspgeditkeypadfig.psFIGUREFILE: bookreader:docs$src:emacspgeditkeypadfig.fse</p>
 
 <p><b>Figure: LK201 Top-Row Function Key Escapes</b>FIGUREFILE: postscript:docs$src:emacspgfunkeysfig.psFIGUREFILE: bookreader:docs$src:emacspgfunkeysfig.fse</p>
+<!-- hide=off -->
 
 <a name="P287_15621"></a> 
 

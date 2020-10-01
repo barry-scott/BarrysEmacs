@@ -87,7 +87,7 @@
 
 <p>Typing the <span class="cmd">Help</span> key in the middle of the command name prints a list of all the command names which begin with the text you have typed so far. You can then go on typing the name. If you type <span class="cmd">Help</span> before typing any other commands, Emacs fills the help window with the names of all the available functions. The help window will be removed from the screen when the command name has been completely entered.</p>
 
-<p>Note that if the EDTSIM or the LK201 packages have not been loaded, the default completion character is <span class="key">Escape</span> and the default help character is a question mark (<span class="cmd">?)</span></p>
+<p>The default completion character is <span class="key">Escape</span> and the default help character is a question mark (<span class="cmd">?)</span>.</p>
 
 <h3>numeric and string arguments</h3>
 
@@ -397,7 +397,16 @@
 
 <p>The changes you make with Emacs are made to a copy of the file inside Emacs, not to the file itself. The changed text is not made permanent until you save it in a file. The first time you change the text, an asterisk appears in the mode line. This indicates that the text contains fresh changes which will be lost unless you save them.</p>
 
-<p>To visit a file, use the command <span class="key">^X-^V</span>. Follow the command with the name of the file you wish to visit, terminated by a <span class="key">Return</span>. Emacs uses the standard VMS defaulting mechanism when accessing files. You can abort the command while it is asking for a file name by typing <span class="key">^G</span>; you can also edit the filename with the standard editing commands. File name completion is enabled. See Command Completion for more information on name completion.</p>
+<p>To visit a file, use the command <span class="key">^X-^V</span>.
+Follow the command with the name of the file you wish to visit,
+terminated by a <span class="key">Return</span>.
+<!-- hide=on -->
+Emacs uses the standard VMS defaulting mechanism when accessing files.
+<!-- hide=off -->
+You can abort the command while it is asking for a file name by typing
+<span class="key">^G</span>; you can also edit the filename with the
+standard editing commands. File name completion is enabled.
+See Command Completion for more information on name completion.</p>
 
 <p>When you wish to save the file and make your changes permanent, type <span class="key">^X-^s</span>. After the save is finished, <span class="key">^X-^s</span> prints <span class="cmd">Wrote: <i>filename</i></span> in the Mini-buffer, where <i><span class="cmd">filename</span></i> is the name of the file written.</p>
 

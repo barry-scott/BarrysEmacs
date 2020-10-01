@@ -31,7 +31,6 @@
 
 <h2><a name="bufdired"></a>BUFDIRED, A Buffer Editing Subsystem</h2>
 
-<!-- <p><strong><i>BUFDIRED, A Buffer Editing Subsystem </i></strong> BUFDIRED Buffer editing Editing buffers buffer-dired</p> -->
 <p>The BUFDIRED subsystem defines the function buffer-dired. This function performs the same sort of editing operations as the DIRED package does for files.</p>
 
 <p>When you execute the buffer-dired function, Emacs displays a buffer called Buffer list, which contains a list of all the buffers currently in Emacs. Each line in the list contains information about one buffer. The information includes:</p>
@@ -135,7 +134,6 @@
 
 <h2><a name="debug"></a>DEBUG, A Mock Lisp Debugger</h2>
 
-<!-- <p><i><strong>DEBUG, A Mock Lisp Debugger </strong></i> DEBUG Debugging Mock Lisp Mock Lisp debugger</p> -->
 <p>The DEBUG subsystem uses the Emacs tracing, breakpointing, error trapping and stack dumping facilities to provide a powerful source line Mock Lisp debugger.</p>
 
 <p>To start DEBUG, load in the DEBUG subsystem. Each time you want to enter DEBUG mode, use the <span class="key">ESC-^D</span> (or <span class="key">ESC-x debug</span>) command.</p>
@@ -247,18 +245,18 @@
 
 <h2><a name="dired"></a>DIRED, The Directory Editor</h2>
 
-<!-- <p><i><strong>DIRED, The Directory Editor </strong></i> DIRED Directory Editor Editing directories</p> -->
 <p>DIRED is a directory editing package. You can use it to perform housekeeping operations on a specified set of files.</p>
 
 <p>DIRED makes it easy to delete many of the files in a single directory at once. It presents a copy of the directory listing which you can move around in, marking files for deletion. When you have marked all the files you want to delete, you can tell DIRED to go ahead and delete the marked files.</p>
 
-<p>Invoke DIRED from DCL using the command:</p>
+<p>Invoke DIRED from the shell using the command:</p>
 
 <pre>
 $ EMACS/package=DIRED files
 </pre>
 
-<p>where <span class="cmd">files</span> is any valid VMS file specification (which may include wildcards). If you invoke DIRED from DCL, when you exit DIRED, Emacs will also exit.</p>
+<p>where <span class="cmd">files</span> is any valid file specification (which may include wildcards).
+If you invoke DIRED from the shell, when you exit DIRED, Emacs will also exit.</p>
 
 <p>You can also invoke DIRED from Emacs by typing the ESC-x dired files command.</p>
 
@@ -306,13 +304,12 @@ $ EMACS/package=DIRED files
 
 <h2><a name="info"></a>INFO, A Tree-structured Documentation Reader</h2>
 
-<!-- <p><i><strong>INFO, A Tree-structured Documentation Reader </strong></i> INFO Documentation reader</p> -->
 <p>INFO is a package that allows you to read (and possibly alter)documentation written in a tree-structured format.</p>
 
 <p>There are three ways to start the INFO package:</p>
 
 <ul>
-<li>By starting INFO from the DCL command line: 
+<li>By starting INFO from the shell command line: 
 
 <pre>
 $ EMACS/package=INFO
@@ -332,10 +329,13 @@ $ EMACS/package=INFO
 <td><strong>Description</strong></td>
 </tr>
 
+
+<!-- hide=on -->
 <tr>
 <td>DCL</td>
 <td>How to use DCL on VMS</td>
 </tr>
+<!-- hide=off -->
 
 <tr>
 <td>Emacs</td>
@@ -352,10 +352,12 @@ $ EMACS/package=INFO
 <td>Language processors</td>
 </tr>
 
+<!-- hide=on -->
 <tr>
 <td>Utilities</td>
 <td>VMS utility programs</td>
 </tr>
+<!-- hide=off -->
 </table>
 
 <p>INFO is a large package and has many commands for navigating the various INFO databases. Due to the complexity of the package, it contains its own tutorial which describes INFO concepts and the various INFO commands. To start the tutorial, start the INFO package, then press h (for Help).</p>
@@ -477,7 +479,9 @@ $ EMACS/package=INFO
 
 <h2><a name="shell"></a>SHELL, A Command Shell Interaction Package</h2>
 
-<!-- <p><i><strong>SHELL, A DCL Interaction Package </strong></i> SHELL DCL interaction</p> -->
+<!-- hide=on -->
+<p><i><strong>SHELL, A DCL Interaction Package </strong></i> SHELL DCL interaction</p>
+<!-- hide=off -->
 <p>The SHELL package provides access to the command shell from inside Emacs. Invoke SHELL using the command:</p>
 
 <pre>
@@ -490,7 +494,9 @@ $ EMACS/package=SHELL
 
 <p>If you enter a command that invokes an interactive program which prompts for input, you can send input to the running program by terminating lines of input with Linefeed rather than Return.</p>
 
+<!-- hide=on -->
 <p>You can start as many shell subprocesses as your VMS PRCLM process quota will allow. Each subprocess will have its own DCL Interaction window.</p>
+<!-- hide=off -->
 
 <p>The shell key bindings are summarised as follows:</p>
 
@@ -543,7 +549,6 @@ $ EMACS/package=SHELL
 
 <h2><a name="teach"></a>TEACH, A Computer-Based Instruction Package</h2>
 
-<!-- <p><i><strong>TEACH, A Computer-Based Instruction Package </strong></i> TEACH Computer-based instruction CBI</p> -->
 <p>The TEACH package is the Emacs computer-based instruction package. You can use this package to learn about the basic editing features of Emacs.</p>
 
 <p>Invoke the TEACH package using the command:</p>

@@ -176,6 +176,7 @@
 
 <p>Fetches the contents of the designated module and inserts the data into the current buffer at dot. Dot remains in the same place. Completion is enabled for both the database search-list name and the key. If the key does not exist, an error is generated.</p>
 
+<!-- hide=on -->
 <p><b>(fetch-help-database-entry <i>dbname keys</i>)</b></p>
 
 <p>Performs the special operation of fetching help from a VMS HELP library and formats it in the same way as the DCL HELP command. The location of the key must be a help library. The formatted help text is inserted into the buffer at dot. Dot remains in the same place. An error is reported if the keys are not found. The keys are defined as a space-separated list of up to 8 keys which access the required help text. <span class="cmd">fetch-help-database-flags</span> controls the amount of information fetched from the entry.</p>
@@ -193,6 +194,7 @@
 </ul>
 
 <p>The default value of the bit-mask is 7, meaning that all the information is returned.</p>
+<!-- hide=off -->
 
 
 <a name="P1049_58596"></a> 
@@ -233,7 +235,8 @@
 
 <p><b>(pause-process <i>process-name</i>)</b></p>
 
-<p>Allows a given process to be temporarily suspended by sending a VMS SUSPEND request to it. A paused process will remain paused until it is explicitly resumed or killed.</p>
+<p>Allows a given process to be temporarily suspended by sending a VMS SUSPEND request to it.
+A paused process will remain paused until it is explicitly resumed or killed.</p>
 
 <p><b>(resume-process <i>process-name</i>)</b></p>
 

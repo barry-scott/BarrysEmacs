@@ -30,7 +30,9 @@
 <blockquote>
 <p>The function is used by the Emacs developers for debugging.</p>
 
+<!-- hide=on -->
 <p>When you using the OpenVMS operating system debug-emacs resets the terminal characteristics are reset, and control is passed to VMS DEBUG so that you can examine Emacs' data structures.</p>
+<!-- hide=off -->
 </blockquote>
 
 
@@ -686,7 +688,12 @@ extended regular expression functions:</p>
 <p><a name="describe-word-in-buffer">(<b>describe-word-in-buffer</b>) ^X-^D</a></p>
 
 <blockquote>
-<p>Takes the word nearest dot and looks it up in a database and displays the information found. This database contains one-line descriptions of all of the C standard functions, VMS System Services, DCL lexical functions and Bliss string operations.</p>
+<p>Takes the word nearest dot and looks it up in a database and displays the information found.
+This database contains one-line descriptions of many of the C standard functions
+<!-- hide=on -->
+, VMS System Services, DCL lexical functions and Bliss string operations
+<!-- hide=off -->
+.</p>
 
 <p>If you supply a prefix-argument, describe-word-in-buffer allows you to edit the selected entry.</p>
 </blockquote>
