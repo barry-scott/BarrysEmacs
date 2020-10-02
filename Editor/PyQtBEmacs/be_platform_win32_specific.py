@@ -45,7 +45,7 @@ def getDocUserGuide():
     return pathlib.Path(
                 os.environ.get(
                     'BEMACS_EMACS_DOCUMENTATION',
-                    app_dir / 'documentation' / 'emacs-documentation.html' ) )
+                    app_dir / 'documentation' / 'users-guide.html' ) )
 
 def getLocalePath( app ):
     return app_dir / 'locale'

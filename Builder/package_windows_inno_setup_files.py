@@ -91,10 +91,10 @@ this kit.
         self.all_icon_items.extend( [
                 r'''Name: "{group}\Barry's Emacs"; Filename: "{app}\bemacs.exe"''',
                 r'''Name: "{group}\Barry's Emacs Server"; Filename: "{app}\BEmacs_Server.exe"''',
-                r'''Name: "{group}\Documentation"; Filename: "{app}\Documentation\emacs-documentation.html"''',
+                r'''Name: "{group}\Documentation"; Filename: "{app}\Documentation\users-guide.html"''',
                 r'''Name: "{group}\FAQ"; Filename: "{app}\documentation\bemacs-faq.html"''',
                 r'''Name: "{group}\Readme"; Filename: "{app}\bemacs.exe"; Parameters: """{app}\readme.txt"""''',
-                r'''Name: "{group}\Barry's Emacs Web Site"; Filename: "http://www.barrys-emacs.org";''',
+                r'''Name: "{group}\Barry's Emacs Web Site"; Filename: "https://barrys-emacs.org";''',
                 #
                 #    Add an Emacs icon to the Desktop
                 #

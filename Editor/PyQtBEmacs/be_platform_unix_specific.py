@@ -32,7 +32,7 @@ def getLocalePath( app ):
     return app_dir / 'locale'
 
 def getDocUserGuide():
-    return pathlib.Path( doc_dir ) / 'emacs-documentation.html'
+    return pathlib.Path( doc_dir ) / 'users-guide.html'
 
 def getNullDevice():
     return '/dev/null'
