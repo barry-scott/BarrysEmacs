@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 import sys
+import os
 from pathlib import Path
 import xml.dom.minidom
 import re
+import glob
 
 try:
     import colour_text
@@ -64,31 +66,46 @@ class BuildDocs:
         self.opt_debug = False
         self.output_folder = None
 
+        self.html_folder = Path( os.environ[ 'BUILDER_TOP_DIR' ] ) / 'HTML'
+
         self.doc_body_filenames = []
 
     def main( self, argv ):
         try:
             self.parseArgs( argv )
-
-            css_file_in = Path( 'emacs-docs.css' )
-            self.mustExist( css_file_in )
-
-            css_file_out = self.output_folder / css_file_in
-
-            with css_file_in.open( 'r' ) as f:
-                css = f.read()
-
-            with css_file_out.open( 'w' ) as f:
-                f.write( css )
-
-            for section in self.all_sections:
-                self.buildSection( section )
-
+            self.buildHtmlDocs()
             return 0
 
         except BuildError as e:
             print( ct( '<>error Error:<> %s' % (e,) ), file=sys.stderr )
             return 1
+
+    def buildHtmlDocs( self ):
+        css_file_in = self.html_folder / 'emacs-docs.css'
+        self.info( 'Asset %s' % (css_file_in.name,) )
+        self.mustExist( css_file_in )
+
+        css_file_out = self.output_folder / css_file_in
+
+        with css_file_in.open( 'r' ) as f:
+            css = f.read()
+
+        with css_file_out.open( 'w' ) as f:
+            f.write( css )
+
+        for image in glob.glob( '%s/*.png' % (self.html_folder,) ):
+            image_file_in = Path( image )
+            image_file_out = self.output_folder / image_file_in.name
+
+            self.info( 'Asset %s' % (image_file_in.name,) )
+            with image_file_in.open( 'rb' ) as f:
+                image = f.read()
+
+            with image_file_out.open( 'wb' ) as f:
+                f.write( image )
+
+        for section in self.all_sections:
+            self.buildSection( section )
 
     def info( self, msg ):
         print( ct( '<>info Info:<> %s' % (msg,) ) )
@@ -150,7 +167,7 @@ class BuildDocs:
             fo.write( '</div>\n' )
             return
 
-        grid_file = Path( grid_index )
+        grid_file = self.html_folder / grid_index
 
         self.info( 'Grid index from <>em %s<>' % (grid_file,) )
 
@@ -161,7 +178,7 @@ class BuildDocs:
         # has the docs index in it
         in_index = False
         in_hide = False
-        with grid_file.open('r') as fi:
+        with grid_file.open( 'r' ) as fi:
             for line_no, line in enumerate( fi ):
                 if not in_index:
                     if line == '<div class="index-grid">\n':
@@ -193,7 +210,7 @@ class BuildDocs:
     def buildSectionIndex( self, fo, index ):
         self.doc_body_filenames = []
 
-        index_file = Path( index )
+        index_file = self.html_folder / index
 
         self.info( 'Index from <>em %s<>' % (index_file,) )
 
@@ -204,7 +221,7 @@ class BuildDocs:
 
         in_index = False
         in_hide = False
-        with index_file.open('r') as fi:
+        with index_file.open( 'r' ) as fi:
             for line_no, line in enumerate( fi ):
                 if not in_index:
                     # copy the index div but without its opening <div> line
@@ -254,17 +271,17 @@ class BuildDocs:
 
     def buildBody( self, fo ):
         for body_filename in self.doc_body_filenames:
-            body_file = Path( body_filename )
-            self.info( 'Body from <>em %s<>' % (body_file,) )
+            body_file = self.html_folder / body_filename
+            self.info( 'Body from <>em %s<>' % (body_file.name,) )
 
             self.mustExist( body_file )
             self.mustBeValidXml( body_file )
 
-            fo.write( '<!-- Source: %s -->\n' % (body_file,) )
+            fo.write( '<!-- Source: %s -->\n' % (body_file.name,) )
 
             in_body = False
             in_hide = False
-            with body_file.open('r') as fi:
+            with body_file.open( 'r' ) as fi:
                 for line in fi:
                     if not in_body:
                         if line == '<body>\n':
@@ -332,12 +349,14 @@ class DocSection:
         self.index = index
         self.grid_index = grid_index
 
-
-if __name__ == '__main__':
+def main( argv ):
     build = BuildDocs( [
             DocSection( "User's Guide", 'users_guide.html', 'ug_index.html' ),
             DocSection( "Extensions Reference", 'extensions_reference.html', 'extn_index.html' ),
             DocSection( "MLisp Programmer's Guide", 'mlisp_programmers_guide.html', 'pg_index.html' ),
             DocSection( "MLisp Reference", 'mlisp_reference.html', 'mlisp_ref_index.html', 'mlisp_ref_grid.html' )] )
 
-    sys.exit( build.main( sys.argv ) )
+    return build.main( argv )
+
+if __name__ == '__main__':
+    sys.exit( main( sys.argv ) )

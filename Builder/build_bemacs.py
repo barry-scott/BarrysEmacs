@@ -21,6 +21,7 @@ import build_utils
 sys.path.insert( 0, '../Editor' )
 sys.path.insert( 0, '../MLisp' )
 sys.path.insert( 0, '../Describe' )
+sys.path.insert( 0, '../HTML' )
 
 log = build_log.BuildLog()
 
@@ -445,12 +446,10 @@ class BuildBEmacs(object):
         log.info( 'Running ruleDocs' )
         build_utils.copyFile( '../Kits/readme.txt', self.BUILD_BEMACS_DOC_DIR, 0o444 )
         build_utils.copyFile( '../Editor/PyQtBEmacs/bemacs.png', self.BUILD_BEMACS_DOC_DIR, 0o444 )
-        for pattern in ('../HTML/*.html',
-                        '../HTML/*.gif',
-                        '../HTML/*.css',
-                        '../HTML/*.js'):
-            for src in glob.glob( pattern ):
-                build_utils.copyFile( src, self.BUILD_BEMACS_DOC_DIR, 0o444 )
+
+        import build_docs
+        if build_docs.main( ['build', self.BUILD_BEMACS_DOC_DIR] ) != 0:
+            raise BuildError( 'HTML docs build failed' )
 
     def ruleHunspellDictionaries( self ):
         for dic in glob.glob( os.path.join( '..', 'Imports', 'hunspell', '*.dic' ) ):
