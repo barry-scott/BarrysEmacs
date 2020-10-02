@@ -83,31 +83,33 @@ class BuildDocs:
             return 1
 
     def buildHtmlDocs( self ):
-        css_file_in = self.html_folder / 'emacs-docs.css'
-        self.info( 'Asset %s' % (css_file_in.name,) )
-        self.mustExist( css_file_in )
-
-        css_file_out = self.output_folder / css_file_in
-
-        with css_file_in.open( 'r' ) as f:
-            css = f.read()
-
-        with css_file_out.open( 'w' ) as f:
-            f.write( css )
+        self.copyFile( self.html_folder / 'emacs.cbi' )
+        self.copyFile( self.html_folder / 'emacs-docs.css' )
 
         for image in glob.glob( '%s/*.png' % (self.html_folder,) ):
-            image_file_in = Path( image )
-            image_file_out = self.output_folder / image_file_in.name
-
-            self.info( 'Asset %s' % (image_file_in.name,) )
-            with image_file_in.open( 'rb' ) as f:
-                image = f.read()
-
-            with image_file_out.open( 'wb' ) as f:
-                f.write( image )
+            self.copyFile( Path( image ), binary=True )
 
         for section in self.all_sections:
             self.buildSection( section )
+
+    def copyFile( self, src, binary=False ):
+        self.info( 'Docs Asset %s' % (src.name,) )
+        self.mustExist( src )
+
+        if binary:
+            r = 'rb'
+            w = 'wb'
+        else:
+            r = 'r'
+            w = 'w'
+
+        dst = self.output_folder / src.name
+
+        with src.open( r ) as f:
+            data = f.read()
+
+        with dst.open( w ) as f:
+            f.write( data )
 
     def info( self, msg ):
         print( ct( '<>info Info:<> %s' % (msg,) ) )

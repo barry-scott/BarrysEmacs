@@ -22,13 +22,12 @@ def main( argv ):
         else:
             dbtools = BemacsDatabaseTools( tool_path )
 
-        createLibrary( file_set, lib_name, dbtools )
+        createLibrary( file_sets, lib_name, dbtools )
 
     except ValueError as e:
         print( 'Error: %s' % (e,) )
         return 1
 
-    print( 'Added %d modules to %s' % (modules_added, lib_name) )
     return 0
 
 def createLibrary( file_sets, lib_name, dbtools ):
@@ -36,11 +35,9 @@ def createLibrary( file_sets, lib_name, dbtools ):
 
     lib_folder = os.path.dirname( __file__ )
 
-    modules_added = 0
     for set_name, filename in library_files:
         if set_name in file_sets:
             dbtools.add( lib_name, os.path.join( lib_folder, filename ) )
-            modules_added += 1
 
     dbtools.close()
 
@@ -141,6 +138,7 @@ library_files =    [
     ('common',    'Library/diff.ml'),
     ('common',    'Library/diff.key'),
     ('common',    'Library/dired.ml'),
+    ('common',    'Library/dired.mlp'),
     ('common',    'Library/edit-variable.ml'),
     ('common',    'Library/edtsim.ml'),
     ('common',    'Library/electricc.key'),
