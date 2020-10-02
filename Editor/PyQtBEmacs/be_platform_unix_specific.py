@@ -35,7 +35,7 @@ def getLocalePath( app ):
     return app_dir / 'locale'
 
 def getDocUserGuide():
-    return getDocDir() / 'users-guide.html'
+    return getDocDir() / 'users_guide.html'
 
 def getNullDevice():
     return '/dev/null'
