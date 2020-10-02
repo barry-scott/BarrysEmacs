@@ -37,7 +37,7 @@ def getDocDir():
     return app_dir / 'documentation'
 
 def getDocUserGuide():
-    return getDocDir() / 'documentation/users-guide.html'
+    return getDocDir() / 'users-guide.html'
 
 def getNullDevice():
     return '/dev/null'

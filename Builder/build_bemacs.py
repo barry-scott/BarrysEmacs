@@ -180,6 +180,7 @@ class BuildBEmacs(object):
             self.BUILD_BEMACS_DOC_DIR = "%s/Builder/tmp/pkg/Barry's Emacs-Devel.app/Contents/Resources/documentation" % (self.BUILDER_TOP_DIR,)
 
             self.INSTALL_BEMACS_LIB_DIR = self.BUILD_BEMACS_LIB_DIR
+            self.INSTALL_BEMACS_DOC_DIR = self.BUILD_BEMACS_DOC_DIR
 
             self.opt_hunspell_package_dictionaries - self.opt_hunspell
 
