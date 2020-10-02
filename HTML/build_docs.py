@@ -19,6 +19,8 @@ except ImportError:
         def __call__( self, text ):
             return text
 
+    ct = ColourText()
+
 #
 # the docs use the following templete
 #
