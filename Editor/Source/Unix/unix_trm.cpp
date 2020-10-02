@@ -9,6 +9,9 @@
 
 #include <unistd.h>
 #include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 extern TerminalControl *tt;
 
@@ -193,10 +196,18 @@ void TerminalControl_CHAR::k_check_for_input()
     return;
 }
 
-void TerminalControl_CHAR::term_io_channels( const EmacsString & )
+void TerminalControl_CHAR::term_io_channels( const EmacsString &device )
 {
-    input_channel = STDIN_FILENO;
-    output_channel = STDOUT_FILENO;
+    if( device.isNull() )
+    {
+        input_channel = STDIN_FILENO;
+        output_channel = STDOUT_FILENO;
+    }
+    else
+    {
+        input_channel = open( device, O_RDWR );
+        output_channel = input_channel;
+    }
 
     term_length = t_length = 25;
     term_width = t_width = 80;

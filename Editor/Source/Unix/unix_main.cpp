@@ -40,7 +40,10 @@ int main( int argc, char **argv )
     }
     else
     {
-        return emacsMain( EmacsString::null, u_str("char"), u_str("") );
+        // EMACS_TERM_DEVICE is mostly useful when debugging
+        // so that Emacs and the debugged have separate terminals
+        EmacsString term_device = get_config_env( "EMACS_TERM_DEVICE" );
+        return emacsMain( EmacsString::null, u_str("char"), term_device );
     }
 }
 
