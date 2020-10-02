@@ -15,6 +15,7 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 extern EmacsString env_emacs_user;
 extern EmacsString env_emacs_library;
+extern EmacsString env_emacs_doc;
 
 int win_emacs_quit;
 int is_windows_nt;
@@ -104,6 +105,9 @@ EmacsString get_config_env( const EmacsString &name )
 
     if( name == "emacs_library" )
         return env_emacs_library;
+
+    if( name == "emacs_doc" )
+        return env_emacs_doc;
 
     static EmacsString env_emacs_journal( ".\\" );
     if( name == "emacs_journal" )

@@ -189,8 +189,8 @@ this kit.
                 r'''Source: "%s\Editor\PyQtBEmacs\bemacs.png";  DestDir: "{app}\Documentation";''' % (BUILDER_TOP_DIR,),
                 r'''Source: "%s\HTML\*.css";  DestDir: "{app}\Documentation";''' % (BUILDER_TOP_DIR,),
                 r'''Source: "%s\HTML\*.html"; DestDir: "{app}\Documentation";''' % (BUILDER_TOP_DIR,),
-                r'''Source: "%s\HTML\*.gif";  DestDir: "{app}\Documentation";''' % (BUILDER_TOP_DIR,),
-                r'''Source: "%s\HTML\*.js";   DestDir: "{app}\Documentation";''' % (BUILDER_TOP_DIR,),
+                r'''Source: "%s\HTML\*.png";  DestDir: "{app}\Documentation";''' % (BUILDER_TOP_DIR,),
+                r'''Source: "%s\HTML\*.cbi";  DestDir: "{app}\Documentation";''' % (BUILDER_TOP_DIR,),
                 ] )
 
         self.addAllKitFiles()
