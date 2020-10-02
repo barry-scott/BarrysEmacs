@@ -5,6 +5,7 @@ export emacs_user="$HOME/bemacs"
 
 export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/PyQtBEmacs:${BUILDER_TOP_DIR}/Editor/exe-pybemacs
 export BEMACS_EMACS_LIBRARY=${BUILDER_TOP_DIR}/Builder/tmp/ROOT/usr/lib/bemacs
+export BEMACS_EMACS_DOC=${BUILDER_TOP_DIR}/Builder/tmp/ROOT/usr/share/bemacs/doc/
 
 case "$1" in
 --debug=*)

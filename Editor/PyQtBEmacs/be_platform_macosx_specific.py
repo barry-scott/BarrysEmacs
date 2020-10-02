@@ -33,8 +33,11 @@ def getLibraryDir():
 def getLocalePath( app ):
     return app_dir / 'locale'
 
+def getDocDir():
+    return app_dir / 'documentation'
+
 def getDocUserGuide():
-    return app_dir / 'documentation/users-guide.html'
+    return getDocDir() / 'documentation/users-guide.html'
 
 def getNullDevice():
     return '/dev/null'

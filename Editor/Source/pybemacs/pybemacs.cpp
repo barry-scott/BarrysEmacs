@@ -62,6 +62,7 @@ SynchroniseFilesWorkItem synchronise_files_work_item;
 BemacsEditorAccessControl editor_access_control;
 
 EmacsString env_emacs_library;
+EmacsString env_emacs_doc;
 EmacsString env_emacs_user;
 
 class BemacsEditor: public Py::PythonClass< BemacsEditor >
@@ -80,6 +81,9 @@ public:
 
         Py::String py_emacs_library( args[1] );
         env_emacs_library = py_emacs_library.as_std_string( "utf-8" );
+
+        Py::String py_emacs_doc( args[2] );
+        env_emacs_doc = py_emacs_doc.as_std_string( "utf-8" );
     }
 
     virtual ~BemacsEditor()

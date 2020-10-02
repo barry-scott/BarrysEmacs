@@ -346,6 +346,12 @@ EmacsString env_emacs_library( BEMACS_LIB_DIR );
 EmacsString env_emacs_library;
 #endif
 
+#if defined( BEMACS_DOC_DIR )
+EmacsString env_emacs_doc( BEMACS_DOC_DIR );
+#else
+EmacsString env_emacs_doc;
+#endif
+
 EmacsString get_config_env( const EmacsString &name )
 {
     char *value = getenv( name );
@@ -378,6 +384,16 @@ EmacsString get_config_env( const EmacsString &name )
             expand_and_default( FormatString( "%s/../emacs_library" ) << image_path, EmacsString::null, env_emacs_library );
         }
         return env_emacs_library;
+    }
+
+    if( name == "emacs_doc" )
+    {
+        if( env_emacs_doc.isNull() )
+        {
+            // only expect this code to run for macOS
+            expand_and_default( FormatString( "%s/../documentation" ) << image_path, EmacsString::null, env_emacs_library );
+        }
+        return env_emacs_doc;
     }
 
     static EmacsString env_sys_login(  "HOME:/" );

@@ -22,6 +22,7 @@ class Setup:
         self.opt_enable_debug = False
         self.opt_colour = False
         self.opt_lib_dir = '/usr/local/lib/bemacs'
+        self.opt_doc_dir = '/usr/local/share/bemacs/doc'
         self.opt_bemacs_gui = False
         self.opt_bemacs_cli = False
         self.opt_utils = False
@@ -91,6 +92,9 @@ class Setup:
 
                 elif arg.startswith( '--lib-dir=' ):
                     self.opt_lib_dir = arg[len('--lib-dir='):]
+
+                elif arg.startswith( '--doc-dir=' ):
+                    self.opt_doc_dir = arg[len('--doc-dir='):]
 
                 elif arg == '--system-hunspell':
                     self.opt_system_hunspell = True
@@ -1099,10 +1103,12 @@ class LinuxCompilerGCC(CompilerGCC):
                 arch = stdout.decode("utf-8").replace("\n", "")
 
             self.lib_dir = '/usr/lib/%s' % (arch,)
+            self.doc_dir = '/usr/share/bemacs/doc'
 
         else:
             # other systems use this
             self.lib_dir = '/usr/lib64'
+            self.doc_dir = '/usr/share/bemacs/doc'
 
         #
         #   sqlite
@@ -1229,6 +1235,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_EXE',       'exe-cli-bemacs' )
 
         self._addVar( 'BEMACS_LIB_DIR', self.setup.opt_lib_dir )
+        self._addVar( 'BEMACS_DOC_DIR', self.setup.opt_doc_dir )
 
         link_libs = []
 
@@ -1248,6 +1255,7 @@ class LinuxCompilerGCC(CompilerGCC):
                                         '%(FEATURE_DEFINES)s '
                                         '%(SQLITE_FLAGS)s '
                                         '%(HUNSPELL_CFLAGS)s '
+                                        '-DBEMACS_DOC_DIR=\\"%(BEMACS_DOC_DIR)s\\" '
                                         '-DBEMACS_LIB_DIR=\\"%(BEMACS_LIB_DIR)s\\"' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
@@ -1392,6 +1400,7 @@ class NetBSDCompilerGCC(CompilerGCC):
         self._addVar( 'EDIT_EXE',       'exe-cli-bemacs' )
 
         self._addVar( 'BEMACS_LIB_DIR', self.setup.opt_lib_dir )
+        self._addVar( 'BEMACS_DOC_DIR', self.setup.opt_doc_dir )
 
         if self.setup.opt_hunspell:
             p = subprocess.run( ['pkg-config', 'hunspell', '--cflags'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
@@ -1416,6 +1425,7 @@ class NetBSDCompilerGCC(CompilerGCC):
                                         '%(FEATURE_DEFINES)s '
                                         '%(SQLITE_FLAGS)s '
                                         '%(HUNSPELL_CFLAGS)s '
+                                        '-DBEMACS_DOC_DIR=\\"%(BEMACS_DOC_DIR)s\\" '
                                         '-DBEMACS_LIB_DIR=\\"%(BEMACS_LIB_DIR)s\\"' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )

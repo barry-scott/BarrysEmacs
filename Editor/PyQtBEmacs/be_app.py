@@ -154,6 +154,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         self.log.info( 'Application dir %s' % (be_platform_specific.getAppDir(),) )
         self.log.info( 'emacs_user %s' % (be_platform_specific.getUserDir(),) )
         self.log.info( 'emacs_library %s' % (be_platform_specific.getLibraryDir(),) )
+        self.log.info( 'emacs_doc %s' % (be_platform_specific.getDocDir(),) )
 
         self.prefs_mgr = be_preferences.BemacsPreferenceManager(
                 self,

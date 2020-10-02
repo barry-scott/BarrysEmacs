@@ -28,11 +28,14 @@ def getUserDir():
 def getLibraryDir():
     return pathlib.Path( os.environ.get( 'BEMACS_EMACS_LIBRARY', library_dir ) )
 
+def getDocDir():
+    return pathlib.Path( os.environ.get( 'BEMACS_EMACS_DOC', doc_dir ) )
+
 def getLocalePath( app ):
     return app_dir / 'locale'
 
 def getDocUserGuide():
-    return pathlib.Path( doc_dir ) / 'users-guide.html'
+    return getDocDir() / 'users-guide.html'
 
 def getNullDevice():
     return '/dev/null'

@@ -41,11 +41,14 @@ def getLibraryDir():
                 'BEMACS_EMACS_LIBRARY',
                 app_dir / 'emacs_library' ) )
 
-def getDocUserGuide():
+def getDocDir():
     return pathlib.Path(
                 os.environ.get(
                     'BEMACS_EMACS_DOCUMENTATION',
-                    app_dir / 'documentation' / 'users-guide.html' ) )
+                    app_dir / 'documentation' ) )
+
+def getDocUserGuide():
+    return getDocDir() / 'users-guide.html'
 
 def getLocalePath( app ):
     return app_dir / 'locale'

@@ -485,6 +485,7 @@ class BuildBEmacs(object):
                          ,','.join( setup_targets )
                          ,'Makefile-all'
                          ,'--lib-dir=%s' % (self.INSTALL_BEMACS_LIB_DIR,)
+                         ,'--doc-dir=%s' % (self.INSTALL_BEMACS_DOC_DIR,)
                          ]
             setup_argv += self.opt_editor_setup_opt
             log.info( 'Editor/setup.py %s' % (' '.join( setup_argv[1:] ),) )
