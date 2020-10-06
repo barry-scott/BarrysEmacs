@@ -57,6 +57,7 @@
 (autoload "justify-paragraph" "justify")
 (autoload "latex-mode" "latexmode")
 (autoload "lisp-mode" "lispmode")
+(autoload "lua-mode" "lua-mode")
 (autoload "makefile-mode" "makefile-mode")
 (autoload "make-tag-table" "tags")
 (autoload "minibuf" "minibuf")

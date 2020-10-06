@@ -213,6 +213,8 @@ library_files =    [
     ('common',    'Library/latexmode.ml'),
     ('common',    'Library/lispmode.key'),
     ('common',    'Library/lispmode.ml'),
+    ('common',    'Library/lua-mode.key'),
+    ('common',    'Library/lua-mode.ml'),
     #('common',    'Library/lk201.ml'),
     #('common',    'Library/lk201_compose_chart'),
     #('common',    'Library/lk201_minibuf.ml'),
