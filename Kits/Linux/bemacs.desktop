@@ -1,8 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Comment=Barry's Emacs
-Type=Application
-Name=Barry's Emacs
-Exec=/usr/bin/bemacs %F
-Icon=/usr/share/bemacs/bemacs.png
-Categories=Development;

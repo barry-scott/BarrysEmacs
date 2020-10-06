@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<package-file>
-	<package name="bemacs/dbprint">
-		<executable-group path="_bin">
-			<executable name="dbprint"/>
-		</executable-group>
-	</package>
-</package-file>
