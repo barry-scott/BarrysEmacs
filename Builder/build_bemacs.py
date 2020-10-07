@@ -182,7 +182,7 @@ class BuildBEmacs(object):
             self.INSTALL_BEMACS_LIB_DIR = self.BUILD_BEMACS_LIB_DIR
             self.INSTALL_BEMACS_DOC_DIR = self.BUILD_BEMACS_DOC_DIR
 
-            self.opt_hunspell_package_dictionaries - self.opt_hunspell
+            self.opt_hunspell_package_dictionaries = self.opt_hunspell
 
             self.cmd_make = 'make'
             self.cmd_make_args = ['-j', '%d' % (build_utils.numCpus(),)]
@@ -453,11 +453,17 @@ class BuildBEmacs(object):
             raise BuildError( 'HTML docs build failed' )
 
     def ruleHunspellDictionaries( self ):
-        for dic in glob.glob( os.path.join( '..', 'Imports', 'hunspell', '*.dic' ) ):
+        log.info('ruleHunspellDictionaries')
+        dic_path = os.path.join( '..', 'Imports', 'hunspell', 'tmp.dict', '*.dic' )
+        all_dic = glob.glob( dic_path )
+        if len(all_dic) == 0:
+            raise BuildError( 'No hunspell dictionaries found in %s' % (dic_path,) )
+
+        for dic in all_dic:
             log.info( 'Dictionary %s' % (dic,) )
             aff = dic[:-len('.dic')] + '.aff'
-            dic_dst = os.path.join( 'tmp', 'kitfiles', 'emacs_library', os.path.basename( dic ) )
-            aff_dst = os.path.join( 'tmp', 'kitfiles', 'emacs_library', os.path.basename( aff ) )
+            dic_dst = os.path.join( self.BUILD_BEMACS_LIB_DIR, os.path.basename( dic ) )
+            aff_dst = os.path.join( self.BUILD_BEMACS_LIB_DIR, os.path.basename( aff ) )
             shutil.copyfile( dic, dic_dst )
             shutil.copyfile( aff, aff_dst )
 

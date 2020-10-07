@@ -28,8 +28,8 @@ New in %(version)s
     * New spell module provides spell-check-buffer, spell-check-region,
       spell-check-word-in-buffer and more.
 
-      For Windows and macOS include distionaries for en_GB, en_US, en_CA and en_AU
-      for other OS use the installed hunspell dictionaries.
+      For Windows and macOS include dictionaries for en_GB, en_US, en_CA and en_AU
+      for other OS use the installed Hunspell dictionaries.
 
       spell check is not built for Centos 6 and 7.
 
@@ -47,7 +47,7 @@ New in 8.6.2
       version from within the /Applications/Barry's Emacs app.
     * Improve p4-diff and p4-change-mode
     * Fix for dired on macOS needed to find files correctly
-    * html-mode now colurs <!- html comments -->
+    * html-mode now colours <!- html comments -->
     * document maximum-file-read-size
     * Note: 8.6.1 was never released
 
