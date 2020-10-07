@@ -1,0 +1,18 @@
+(progn
+    ~teach-mode-line-format
+    (switch-to-buffer "main")
+    (setq ~teach-mode-line-format mode-line-format)
+    (if (file-exists "emacs_doc:emacs.cbi")
+        (visit-file "emacs_doc:emacs.cbi")
+        (progn
+            (switch-to-buffer "Teach error")
+            (insert-string "No help available today")
+        )
+    )
+    (delete-other-windows)
+    (setq mode-line-format ~teach-mode-line-format)
+    (setq current-buffer-type "scratch")
+    (setq current-buffer-checkpointable 0)
+    (argc)
+    (beginning-of-file)
+)

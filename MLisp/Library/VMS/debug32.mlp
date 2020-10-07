@@ -1,0 +1,13 @@
+(defun
+    (debug32-com
+        (visit-file (argv 1))        ; the file to look at
+        (if (> (argc) 2)
+            (progn
+                (goto-line (argv 2))
+                (beginning-of-line)
+            )
+        )
+        (if (> (argc) 3) (goto-character (+ (dot) (argv 3) -1) )
+        )
+    )
+)

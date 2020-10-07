@@ -1,0 +1,10 @@
+(progn
+(error-occurred (extend-database-search-list "subr-names"
+	"emacs_library:emacs_qinfo_bliss" library-access))
+(error-occurred (extend-database-search-list "subr-names"
+	"emacs_library:emacs_qinfo_dcl" library-access))
+(error-occurred (extend-database-search-list "subr-names"
+	"emacs_library:emacs_qinfo_system_services" library-access))
+(error-occurred (extend-database-search-list "subr-names"
+	"emacs_library:emacs_qinfo_c" library-access))
+)

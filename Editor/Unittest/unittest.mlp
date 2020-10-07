@@ -1,0 +1,7 @@
+(defun
+    (unittest-com
+	(execute-mlisp-file "unittest")
+	(unittest)
+	(exit-emacs)
+    )
+)

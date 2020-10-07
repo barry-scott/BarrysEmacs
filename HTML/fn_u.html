@@ -1,0 +1,763 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<title>Functions U*</title>
+
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="contents">
+
+<p><a name="UI-add-menu">(<b>UI-add-menu</b> <span class="cmd">menu-ID position name [position name] ...</span>)</a></p>
+
+<blockquote>
+<p>UI-add-menu adds a single menu item to the existing menus. The <i>menu-id</i> is the two character string to bind the menu item to. When selected the menu will send the string "\(menu)&lt;menu-id&gt;".</p>
+
+<p>The values of &lt;menu-ID&gt; are restricted to a set of known menu-IDs and a range of user values. There can be 100 user defined values. Any ID that is not one of the built in ones can be used. To avoid picking a built-in value use an upper case letter as the first character of the ID. The known menu IDs correspond to menu actions that require some special support from Emacs. The following table lists the known IDs:</p>
+
+<table>
+<tr>
+<td><b>Name</b></td>
+<td><b>ID</b></td>
+<td><b>Special Action</b></td>
+</tr>
+
+<tr>
+<td>Edit Copy</td>
+<td>"ec"</td>
+<td>Enabled only if mark is set</td>
+</tr>
+
+<tr>
+<td>Edit Cut</td>
+<td>"ex"</td>
+<td>Enabled only if mark is set</td>
+</tr>
+
+<tr>
+<td>Edit Clear</td>
+<td>"er"</td>
+<td>Enabled only if mark is set</td>
+</tr>
+
+<tr>
+<td>Edit Paste</td>
+<td>"ev"</td>
+<td>Enabled when text in clipboard</td>
+</tr>
+
+<tr>
+<td>Search Find</td>
+<td>"sf"</td>
+<td>Enabled if the find dialog can be started</td>
+</tr>
+
+<tr>
+<td>Search Replace</td>
+<td>"sr"</td>
+<td>Enabled if the replace dialog can be started</td>
+</tr>
+
+<tr>
+<td>File Open</td>
+<td>"fo"</td>
+<td>none</td>
+</tr>
+
+<tr>
+<td>File Save</td>
+<td>"fs"</td>
+<td>Enabled only if buffer is modified</td>
+</tr>
+
+<tr>
+<td>File Save As</td>
+<td>"fa"</td>
+<td>none</td>
+</tr>
+</table>
+
+<p>There can be up to 9 pairs of the &lt;position&gt; and &lt;name&gt; parameters. Each pair describes one level of menu hierarchy. A menu item named &lt;name&gt; is inserted at position &lt;position&gt;. The first menu position is numbered 0. Use a large &lt;position&gt; value to insert at the end of a menu when you do not know how many items are in the menu.</p>
+
+<p>You cannot insert a first level menu after the "&amp;Help" menu.</p>
+
+<p>The &lt;name&gt; parameter has one special value, "-", which is will cause a menu separating line to be inserted. Otherwise the &lt;name&gt; parameter can be any string. Place an "&amp;" before the character in name string that you wish to be the menu accelerator character.</p>
+
+<p><b>Example:</b></p>
+
+<p>This example adds the Project menu with two items, Make and Debug with a separator line between them.</p>
+
+<pre>
+(UI-add-menu "Pm" 999 "&amp;Project" 999 "&amp;Make")
+(UI-add-menu "" 999 "&amp;Project" 999 "-")
+(UI-add-menu "Pd" 999 "&amp;Project" 999 "De&amp;bug")
+</pre>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-list-menus">UI-list-menus</a></li>
+
+<li><a href="#UI-remove-menu">UI-remove-menu</a></li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-add-to-recent-file-list">(<b>UI-add-to-recent-file-list</b> <span class="cmd">filename</span>)</a></p>
+
+<blockquote>
+<p>Add the given <span class="cmd">filename</span> to the recent file list that emacs maintains under the File menu. Recent files are remembered across runs of emacs.</p>
+</blockquote>
+
+
+<p><a name="UI-edit-copy">(<b>UI-edit-copy</b>)</a></p>
+
+<blockquote>
+<p>Copy the current buffers region to the clipboard.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-edit-paste">UI-edit-paste</a></li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-edit-paste">(<b>UI-edit-paste</b>)</a></p>
+
+<blockquote>
+<p>Insert the contents of the clipboard into the current buffer at dot.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-edit-copy">UI-edit-copy</a></li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-file-open">(<b>UI-file-open</b>)</a></p>
+
+<blockquote>
+<p>Pop up the standard file open dialog and allows the users to select a file. The UI-filter-file-list variable is read to setup the file filters. The UI-open-file-name variable is used to initialise the file name and path parts of the dialog box.</p>
+
+<p>On completion UI-file-open returns 1 if the user clicked "OK" and 0 if the user clicked "Cancel". The file selected by the user is returned in the UI-open-file-name variable. The UI-open-file-readonly variable is true if the readonly check box was set on.</p>
+
+<p><b>Example:</b></p>
+
+<pre>
+(setq UI-open-file-name "d:\\fred\\joe.txt")
+(if (UI-file-open)
+    (progn
+        (visit-file UI-open-file-name)
+        (setq read-only-buffer UI-open-file-readonly)
+    )
+)
+</pre>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-file-save-as">UI-file-save-as</a></li>
+
+<li>UI-filter-file-list variable</li>
+
+<li>UI-open-file-name variable</li>
+
+<li>UI-open-file-readonly variable</li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-file-save-as">(<b>UI-file-save-as</b>)</a></p>
+
+<blockquote>
+<p>Pop up the standard file save as dialog and allows the users to select where to save the file. The UI-filter-file-list variable is read to setup the file filters. The UI-save-as-file-name variable is used to initialise the file name and path parts of the dialog box.</p>
+
+<p>On completion UI-file-open returns 1 if the user clicked "OK" and 0 if the user clicked "Cancel". The file selected by the user is returned in the UI-save-as-file-name variable.</p>
+
+<p><b>Example:</b></p>
+
+<pre>
+(setq UI-save-as-file-name current-buffer-file-name)
+(if (UI-file-save-as)
+    (write-named-file UI-save-as-file-name)
+)
+</pre>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li>UI-open-file variable</li>
+
+<li>UI-save-as-file-name variable</li>
+
+<li>UI-filter-file-list variable</li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-find">(<b>UI-find</b>)</a></p>
+
+<blockquote>
+<p>Pop up the find string modeless dialog box. The UI-search-string variable is used to initialise the "Find what" field.</p>
+
+<p><b>Example:</b></p>
+
+<pre>
+(setq UI-search-string "find me")
+(UI-find)
+</pre>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-find-and-replace">UI-find-and-replace</a></li>
+
+<li>UI-search-string variable</li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-find-and-replace">(<b>UI-find-and-replace</b>)</a></p>
+
+<blockquote>
+<p>Pop up the find and replace modeless dialog box. The UI-search-string variable is used to initialise the "Find what" field. And the UI-replace-string variable is used to initialise the "Replace with" field.</p>
+
+<p><b>Example:</b></p>
+
+<pre>
+(setq UI-search-string "find me")
+(setq UI-replace-string "new string")
+(UI-find-and-replace)
+</pre>
+</blockquote>
+
+
+<p><a name="UI-frame-maximize">(<b>UI-frame-maximize</b>)</a></p>
+
+<blockquote>
+<p>Maximize the frame window.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-frame-minimize">UI-frame-minimize</a></li>
+
+<li><a href="#UI-frame-restore">UI-frame-restore</a></li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-frame-minimize">(<b>UI-frame-minimize</b>)</a></p>
+
+<blockquote>
+<p>Minimize the frame window.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-frame-maximize">UI-frame-maximize</a></li>
+
+<li><a href="#UI-frame-restore">UI-frame-restore</a></li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-frame-restore">(<b>UI-frame-restore</b>)</a></p>
+
+<blockquote>
+<p>Restore the frame window.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-frame-maximize">UI-frame-maximize</a></li>
+
+<li><a href="#UI-frame-minimize">UI-frame-minimize</a></li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-frame-to-foreground">(<b>UI-frame-to-foreground</b>)</a></p>
+
+<blockquote>
+<p>Bring Emacs to the foreground allowing mouse and keybaord input to go to Emacs.</p>
+</blockquote>
+
+
+<p><a name="UI-list-menus">(<b>UI-list-menus</b>)</a></p>
+
+<blockquote>
+<p>List the menu structure that is currently in effect.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-add-menu">UI-add-menu</a></li>
+
+<li><a href="#UI-remove-menu">UI-remove-menu</a></li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-remove-menu">(<b>UI-remove-menu</b>)</a></p>
+
+<blockquote>
+<p>UI-remove-menu removes a single menu item from the existing menus.</p>
+
+<p>There can be up to 9 &lt;name&gt; parameters, one for each level of menu hierarchy. A menu item named &lt;name&gt; will be removed.</p>
+
+<p>The &lt;name&gt; parameter can be any string. Place an "&amp;" before the character in the name string that is a menu accelerator character.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-add-menu">UI-add-menu</a></li>
+
+<li><a href="#UI-list-menus">UI-list-menus</a></li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-switch-buffer">(<b>UI-switch-buffer</b>)</a></p>
+
+<blockquote>
+<p>Displays a list of the current buffers. You can select, from the list, a buffer to switch to, or you can enter the name of a new buffer to switch to.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_s.html#switch-to-buffer">switch-to-buffer</a></li>
+
+<li><a href="fn_p.html#pop-to-buffer">pop-to-buffer</a></li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-view-scroll-bars">(<b>UI-view-scroll-bars</b>)</a></p>
+
+<blockquote>
+<p>Call this command to toggle the scroll bars on and off.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-view-tool-bar">UI-view-tool-bar</a></li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-view-status-bar">(<b>UI-view-status-bar</b>)</a></p>
+
+<blockquote>
+<p>Call this command to toggle the status bar on and off.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-view-tool-bar">UI-view-tool-bar</a></li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-view-tool-bar">(<b>UI-view-tool-bar</b>)</a></p>
+
+<blockquote>
+<p>Call this command to toggle the tool bar on and off.</p>
+</blockquote>
+
+
+<p><a name="UI-window-cascade"><b>(UI-window-cascade</b>)</a></p>
+
+<blockquote>
+<p>Cascade the document windows.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-window-tile-horizontal">UI-window-tile-horizontal</a></li>
+
+<li><a href="#UI-window-tile-vertical">UI-window-tile-vertical</a></li>
+
+<li><a href="#UI-window-minimize">UI-window-minimize</a></li>
+
+<li><a href="#UI-window-minimize">UI-window-minimize</a></li>
+
+<li><a href="#UI-window-restore">UI-window-restore</a></li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-window-new">(<b>UI-window-new</b>)</a></p>
+
+<blockquote>
+<p>Create a new document windows.</p>
+</blockquote>
+
+
+<p><a name="UI-window-next">(<b>UI-window-next</b>)</a></p>
+
+<blockquote>
+<p>Select the next document windows.</p>
+</blockquote>
+
+
+<p><a name="UI-window-maximize">(<b>UI-window-maximize</b>)</a></p>
+
+<blockquote>
+<p>Maximize the document window.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-window-cascade">UI-window-cascade</a></li>
+
+<li><a href="#UI-window-tile-horizontal">UI-window-tile-horizontal</a></li>
+
+<li><a href="#UI-window-tile-vertical">UI-window-tile-vertical</a></li>
+
+<li><a href="#UI-window-minimize">UI-window-minimize</a></li>
+
+<li><a href="#UI-window-restore">UI-window-restore</a></li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-window-minimize">(<b>UI-window-minimize</b>)</a></p>
+
+<blockquote>
+<p>Minimize the document window.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-window-cascade">UI-window-cascade</a></li>
+
+<li><a href="#UI-window-tile-horizontal">UI-window-tile-horizontal</a></li>
+
+<li><a href="#UI-window-tile-vertical">UI-window-tile-vertical</a></li>
+
+<li><a href="#UI-window-maximize">UI-window-maximize</a></li>
+
+<li><a href="#UI-window-restore">UI-window-restore</a></li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-window-restore">(<b>UI-window-restore</b>)</a></p>
+
+<blockquote>
+<p>Restore the document window.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-window-cascade">UI-window-cascade</a></li>
+
+<li><a href="#UI-window-tile-horizontal">UI-window-tile-horizontal</a></li>
+
+<li><a href="#UI-window-tile-vertical">UI-window-tile-vertical</a></li>
+
+<li><a href="#UI-window-minimize">UI-window-minimize</a></li>
+
+<li><a href="#UI-window-maximize">UI-window-maximize</a></li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-window-tile-horizontal">(<b>UI-window-tile-horizontal</b>)</a></p>
+
+<blockquote>
+<p>Horizontally tile the document windows.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-window-cascade">UI-window-cascade</a></li>
+
+<li><a href="#UI-window-tile-vertical">UI-window-tile-vertical</a></li>
+
+<li><a href="#UI-window-minimize">UI-window-minimize</a></li>
+
+<li><a href="#UI-window-maximize">UI-window-maximize</a></li>
+
+<li><a href="#UI-window-restore">UI-window-restore</a></li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-window-tile-vertical">(<b>UI-window-tile-vertical</b>)</a></p>
+
+<blockquote>
+<p>Vertically tile the document windows.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-window-cascade">UI-window-cascade</a></li>
+
+<li><a href="#UI-window-tile-horizontal">UI-window-tile-horizontal</a></li>
+
+<li><a href="#UI-window-minimize">UI-window-minimize</a></li>
+
+<li><a href="#UI-window-maximize">UI-window-maximize</a></li>
+
+<li><a href="#UI-window-restore">UI-window-restore</a></li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-windows-execute-program">(<b>UI-windows-execute-program</b> <span class="cmd">command show</span>)</a></p>
+
+<blockquote>
+<p>This command will start a windows program executing named in <span class="cmd">command</span>. The program will be stated in the show state named in <span class="cmd">show</span>. <span class="cmd">show</span> can be one of the strings "minimized", "maximized" or "normal".</p>
+
+<p><b>Example:</b></p>
+
+<p>Start the windows file manager in a maximized window.</p>
+
+<pre>
+(UI-windows-execute-program "winfile" "maximized")
+</pre>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-windows-help">UI-windows-help</a></li>
+
+<li><a href="#UI-windows-shell-execute">UI-windows-shell-execute</a></li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-windows-shell-execute">(<b>UI-windows-shell-execute</b> <span class="cmd">operation file parameters directory show</span>)</a></p>
+
+<blockquote>
+<p>This command will process file named in <span class="cmd">file</span> according to the <span class="cmd">operation</span>.</p>
+
+<p>The program to process the file will be started with the <span class="cmd">parameters</span>, in the named <span class="cmd">directory</span> using the show state named in <span class="cmd">show</span>.</p>
+
+<p>The <span class="cmd">operation</span> is one of "open", "print" or "explore".</p>
+
+<p><span class="cmd">show</span> can be one of the strings "minimized", "maximized" or "normal".</p>
+
+<p><b>Example:</b></p>
+
+<p>View an HTML file.</p>
+
+<pre>
+(UI-windows-shell-execute "open" "c:\\website\\index.html" "" "." "normal")
+</pre>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-windows-help">UI-windows-help</a></li>
+
+<li><a href="#UI-windows-execute-program">UI-windows-execute-program</a></li>
+</ul>
+</blockquote>
+
+
+<p><a name="UI-windows-help"><b>(UI-windows-help</b> <span class="cmd">help-file cmd data</span>)</a></p>
+
+<blockquote>
+<p>The UI-windows-help command is an interface to the Windows Help system. The <span class="cmd">help-file</span> parameter is the file name of the help file that will be used. What is done with the help file is determined by the <span class="cmd">cmd</span> and <span class="cmd">data</span> parameters. The following table details the <span class="cmd">cmd</span> values and any required <span class="cmd">data</span>.</p>
+
+<table>
+<tr>
+<td><b><span class="cmd">cmd</span> Value</b></td>
+<td><b>Description</b></td>
+</tr>
+
+<tr>
+<td>"context"</td>
+<td>Display help for context number <span class="cmd">data</span>.</td>
+</tr>
+
+<tr>
+<td>"contents"</td>
+<td>Display the help file contents.</td>
+</tr>
+
+<tr>
+<td>"setcontents"</td>
+<td>Select contents number <span class="cmd">data</span>.</td>
+</tr>
+
+<tr>
+<td>"contextpopup"</td>
+<td>Display in a pop-up window help for context number <span class="cmd">data</span>.</td>
+</tr>
+
+<tr>
+<td>"key"</td>
+<td>Display help for topic string <span class="cmd">data</span>.</td>
+</tr>
+
+<tr>
+<td>"partialkey"</td>
+<td>Display help for topic string <span class="cmd">data</span>.If <span class="cmd">data</span> is the string "" then display the search dialog.</td>
+</tr>
+
+<tr>
+<td>"command"</td>
+<td>Execute the help macro in string <span class="cmd">data</span>.</td>
+</tr>
+
+<tr>
+<td>"forcefile"</td>
+<td>Force Windows Help to display the correct help file.</td>
+</tr>
+
+<tr>
+<td>"helponhelp"</td>
+<td>Open Window Help Help file</td>
+</tr>
+
+<tr>
+<td>"quit"</td>
+<td>Quit Windows Help</td>
+</tr>
+</table>
+
+<p>For more information about these <span class="cmd">cmd</span> and <span class="cmd">data</span> values see the documentation for Windows function WinHelp and the Windows Help compiler.</p>
+
+<p><b>Example:</b> Display the help topic for commands from the Windows help file:</p>
+
+<pre>
+(UI-windows-help "windows.hlp" "key" "commands")
+</pre>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#UI-windows-execute-program">UI-windows-execute-program</a></li>
+
+<li><a href="#UI-windows-shell-execute">UI-windows-shell-execute</a></li>
+</ul>
+</blockquote>
+
+
+<p><a name="undo">(<b>undo</b>) ^X-^U</a></p>
+
+<blockquote>
+<p>Undoes editing changes made to modified buffers. The command starts off a sequence of undo operations which are continued with the use of the undo-more function. Each undo or undo-more undoes one more series of changes to the next undo-boundary. An undo-boundary is planted before each keyboard key stroke.</p>
+</blockquote>
+
+
+<p><a name="undo-boundary">(<b>undo-boundary</b>)</a></p>
+
+<blockquote>
+<p>All operations between a pair of calls to undo-boundary will be undone by undo and undo-more. undo-boundary is called automatically between key sequences.</p>
+</blockquote>
+
+
+<p><a name="undo-more">(<b>undo-more</b>)</a></p>
+
+<blockquote>
+<p>Each time undo-more is called, the state of the buffers is restored to the previous undo-boundary. If called from the keyboard processor, it will simply undo the first call to undo.</p>
+</blockquote>
+
+
+<p><a name="unlink-file">(<b>unlink-file</b> <span class="cmd">file-spec</span>)</a></p>
+
+<blockquote>
+<p>Deletes the specified file.</p>
+</blockquote>
+
+
+<p><a name="unset-mark">(<b>unset-mark</b>) ^X-^@</a></p>
+
+<blockquote>
+<p>Un-sets the mark.</p>
+</blockquote>
+
+
+<p><a name="up-window">(<b>up-window</b> <span class="cmd">repeat-count</span>)</a></p>
+
+<blockquote>
+<p>Moves the cursor into the window that is above the current window, unlike previous-window, which moves the cursor without regard to the physical position of the windows on the screen.</p>
+
+<p>If the <span class="cmd">repeat-count</span> is given then the command is repeated that number of times.</p>
+
+<p>up-window reports an error of there is not a window above the current window.</p>
+</blockquote>
+
+
+<p><a name="use-abbrev-table">(<b>use-abbrev-table</b> <span class="cmd">abbrev-table-name</span>)</a></p>
+
+<blockquote>
+<p>Sets the current local abbreviation table to the specified table.</p>
+</blockquote>
+
+
+<p><a name="use-global-map">(<b>use-global-map</b> <span class="cmd">keymap-name</span>)</a></p>
+
+<blockquote>
+<p>Specifies that the named keymap will be used for the global interpretation of all keystrokes. (use-local-map is used to change the local interpretation of keystrokes.)</p>
+</blockquote>
+
+
+<p><a name="use-local-map">(<b>use-local-map</b> <span class="cmd">keymap-name</span>)</a></p>
+
+<blockquote>
+<p>Specifies that the named keymap to be used for the local interpretation of all keystrokes. (use-global-map is used to change the global interpretation of key strokes.)</p>
+</blockquote>
+
+
+<p><a name="use-old-buffer">(<b>use-old-buffer</b> <span class="cmd">buffer-name</span>) ^X-^O</a></p>
+
+<blockquote>
+<p>Associates an existing buffer with the current window.</p>
+</blockquote>
+
+
+<p><a name="use-syntax-table">(<b>use-syntax-table</b> <span class="cmd">syntax-table-name</span>)</a></p>
+
+<blockquote>
+<p>Associates the named syntax table with the current buffer.</p>
+</blockquote>
+
+
+<p><a name="use-variables-of-buffer">(<b>use-variables-of-buffer</b> <span class="cmd">buffer-name expression</span>)</a></p>
+
+<blockquote>
+<p>Allows an MLisp procedure to access the buffer-specific variables of any buffer without switching to it.</p>
+
+<p>The function takes two parameters: the first is a buffer name, the second is an MLisp expression to execute.</p>
+
+<p>This function is useful when writing packages that need to maintain context in the buffer-specific variables of one buffer but use many buffers.</p>
+
+<p>The following example inserts the file name of buffer fred into the buffer joe:</p>
+
+<pre>
+(switch-to-buffer "joe")
+(use-variables-of-buffer "fred")
+(insert-string current-buffer-file-name)
+</pre>
+</blockquote>
+
+
+<p><a name="users-full-name">(<b>users-full-name</b>)</a></p>
+
+<blockquote>
+<p>Returns the user's full name as a string.</p>
+</blockquote>
+
+
+<p><a name="users-login-name">(<b>users-login-name</b>)</a></p>
+
+<blockquote>
+<p>Returns the users login name as a string.</p>
+</blockquote>
+
+
+</div>
+</body>
+</html>
+

@@ -1,0 +1,90 @@
+@name bemacs-%(major)s.%(minor)s
+@cwd /usr/local/bemacs
+@src %%SRCDIR%%
+@exec echo "BEmacs %(version)s Copyright (c) 1990-%(year)s Barry A. Scott (barry@barrys-emacs.org)"
+
+@owner root
+@group wheel
+@mode a=rx
+bemacs
+@exec echo ln -s %%D/bemacs %%D/../bin/bemacs
+@exec ln -sf %%D/bemacs %%D/../bin/bemacs
+@unexec rm -f %%D/../bin/bemacs
+bemacs_server
+dbadd
+dbcreate
+dbdel
+dblist
+dbprint
+mll-2-db
+
+@mode a=r
+emacs-excursions.xkeys
+emacs-hp-new.xkeys
+emacs-hp-old.xkeys
+emacs-lk201.xkeys
+emacs-xfree86.xkeys
+@exec ln -fs %%f %%D/emacs.xkeys
+@unexec rm -f %%D/emacs.xkeys
+emacs_profile.ml
+emacs_qinfo_c.dat
+emacs_qinfo_c.dir
+emacs_qinfo_c.pag
+emacsdesc.dat
+emacsdesc.dir
+emacsdesc.pag
+emacsinit.ml
+emacslang.dat
+emacslang.dir
+emacslang.pag
+emacslib.dat
+emacslib.dir
+emacslib.pag
+toolbar_build_compile.xpm
+toolbar_build_next_error.xpm
+toolbar_build_prev_error.xpm
+toolbar_case_capitalise.xpm
+toolbar_case_invert.xpm
+toolbar_case_lower.xpm
+toolbar_case_upper.xpm
+toolbar_edit_copy.xpm
+toolbar_edit_cut.xpm
+toolbar_edit_delete.xpm
+toolbar_edit_paste.xpm
+toolbar_file_open.xpm
+toolbar_file_print.xpm
+toolbar_file_save.xpm
+toolbar_file_save_all.xpm
+toolbar_macro_play.xpm
+toolbar_macro_record.xpm
+toolbar_macro_stop.xpm
+toolbar_region_indent.xpm
+toolbar_region_undent.xpm
+toolbar_search_find.xpm
+toolbar_search_fold_case.xpm
+toolbar_tools_grep.xpm
+toolbar_view_white_space.xpm
+toolbar_view_wrap_long.xpm
+toolbar_window_cascade.xpm
+toolbar_window_del_other.xpm
+toolbar_window_del_this.xpm
+toolbar_window_split_horiz.xpm
+toolbar_window_split_vert.xpm
+toolbar_window_tile_horiz.xpm
+toolbar_window_tile_vert.xpm
+stop.xpm
+synchronize.xpm
+open-curly-brace.xpm
+close-curly-brace.xpm
+justify.xpm
+
+@mode a=rx
+@cwd /usr/local/share/doc/bemacs
+@src %%KITDIR%%
+@mode a=r
+readme.txt
+
+@mode a=rx
+@cwd /usr/local/share/doc/bemacs/HTML
+@src %%HTMLDIR%%
+@mode a=r

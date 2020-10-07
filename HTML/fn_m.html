@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<title>Functions M*</title>
+
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="contents">
+
+<p><a name="mark">(<b>mark</b>)</a></p>
+
+<blockquote>
+<p>Returns the position of the marker in the current buffer. An error is displayed if the marker is not set.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_s.html#set-mark">set-mark</a></li>
+<li><a href="fn_r.html#region-around-match">region-around-match</a></li>
+<li><a href="fn_e.html#exchange-dot-and-mark">exchange-dot-and-mark</a></li>
+</ul>
+
+</blockquote>
+
+
+<p><a name="match-wild">(<b>match-wild</b> <span class="cmd">candidate</span> <span class="cmd">pattern</span>)</a></p>
+
+<blockquote>
+<p>match-wild performs MSDOS shell style wildcard matching.
+The <span class="cmd">pattern</span> support * and ? as wildcard chars.</p>
+
+<p>match-wild returns 1 if the <span class="cmd">candidate</span> string matches the <span class="cmd">pattern</span>.</p>
+<p>Example:</p>
+
+<pre>(match-wild ~file "*.txt") ; return true if ~file is a .txt file</pre>
+
+<p><b>See also:</b></p>
+
+</blockquote>
+
+
+<p><a name="message">(<b>message</b> <span class="cmd">string...</span>)</a></p>
+
+<blockquote>
+<p>Concatenates its string arguments and displays them in the Mini-buffer at the bottom of the screen the next time the screen is updated.</p>
+
+<p>The screen is only updated when an input request needs to pause to obtain characters, 
+or the sit-for function is executed. If you want to display a message then 
+use <span class="cmd">(sit-for 0)</span> to force a screen update.
+</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_s.html#sit-for">sit-for</a></li>
+</ul>
+
+
+</blockquote>
+
+
+<p><a name="meta-digit">(<b>meta-digit</b>) ESC-0...ESC-9</a></p>
+
+<blockquote>
+<p>Provides for quick single-digit prefix arguments. It is bound to all the numeric keys but prefixed with ESC. So to get a prefix of 5, type ESC-5 followed by the command.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_a.html#argument-prefix">argument-prefix</a></li>
+<li><a href="fn_d.html#digit">digit</a></li>
+<li><a href="#meta-minus">meta-minus</a></li>
+<li><a href="#minus">minus</a></li>
+</ul>
+
+</blockquote>
+
+
+<p><a name="meta-minus">(<b>meta-minus</b>) ESC- -</a></p>
+
+<blockquote>
+<p>Converts a meta-collected digit to a negative prefix argument.</p>
+
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_a.html#argument-prefix">argument-prefix</a></li>
+<li><a href="fn_d.html#digit">digit</a></li>
+<li><a href="#meta-digit">meta-digit</a></li>
+<li><a href="#minus">minus</a></li>
+</ul>
+
+
+</blockquote>
+
+
+<p><a name="Minibuf-local-map">(<b>Minibuf-local-map</b>)</a></p>
+
+<blockquote>
+<p>This keymap is used to read commands in the Mini-buffer when spaces are command terminators. For example: reading a command name with <span class="cmd">expand-mlisp-word</span>.</p>
+
+<p>The following keys are bound in the keymap:</p>
+
+
+<table class="key-bindings">
+<colgroup>
+    <col class="binding" />
+    <col class="function" />
+</colgroup>
+
+<tr>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+</tr>
+
+<tr>
+<td><span class="key">^G</span></td>
+<td><span class="cmd">error-and-exit</span></td>
+</tr>
+<tr>
+<td><span class="key">ESC</span></td>
+<td><span class="cmd">expand-and-exit</span></td>
+</tr>
+<tr>
+<td><span class="key">?</span></td>
+<td><span class="cmd">help-and-exit</span></td>
+</tr>
+<tr>
+<td><span class="key">^C</span></td>
+<td><span class="cmd">exit-emacs</span></td>
+</tr>
+<tr>
+<td><span class="key">&lt;CR&gt;</span></td>
+<td><span class="cmd">exit-emacs</span></td>
+</tr>
+<tr>
+<td><span class="key">&lt;LF&gt;</span></td>
+<td><span class="cmd">exit-emacs</span></td>
+</tr>
+<tr>
+<td><span class="key">^\</span></td>
+<td><span class="cmd">ESC-prefix</span></td>
+</tr>
+</table>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#Minibuf-local-NS-map">Minibuf-local-NS-map</a></li>
+<li><a href="fn_e.html#expand-and-exit">expand-and-exit</a></li>
+<li><a href="fn_h.html#help-and-exit">help-and-exit</a></li>
+</ul>
+
+
+</blockquote>
+
+
+<p><a name="Minibuf-local-NS-map">(<b>Minibuf-local-NS-map</b>)</a></p>
+
+<blockquote>
+<p>This keymap is used to read commands in the mini-buffer when spaces are not command terminators.</p>
+
+<p>The following keys are bound in the keymap:</p>
+
+
+<table class="key-bindings">
+<colgroup>
+    <col class="binding" />
+    <col class="function" />
+</colgroup>
+
+<tr>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+</tr>
+
+<tr>
+<td><span class="key">^G</span></td>
+<td><span class="cmd">error-and-exit</span></td>
+</tr>
+<tr>
+<td><span class="key">ESC</span></td>
+<td><span class="cmd">expand-and-exit</span></td>
+</tr>
+<tr>
+<td><span class="key">^C</span></td>
+<td><span class="cmd">exit-emacs</span></td>
+</tr>
+<tr>
+<td><span class="key">&lt;CR&gt;</span></td>
+<td><span class="cmd">exit-emacs</span></td>
+</tr>
+<tr>
+<td><span class="key">&lt;LF&gt;</span></td>
+<td><span class="cmd">exit-emacs</span></td>
+</tr>
+<tr>
+<td><span class="key">^\</span></td>
+<td><span class="cmd">ESC-prefix</span></td>
+</tr>
+<tr>
+<td><span class="key">&lt;Space&gt;</span></td>
+<td><span class="cmd">expand-and-exit</span></td>
+</tr>
+<tr>
+<td><span class="key">&lt;Tab&gt;</span></td>
+<td><span class="cmd">expand-and-exit</span></td>
+</tr>
+</table>
+
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#Minibuf-local-map">Minibuf-local-map</a></li>
+<li><a href="fn_e.html#error-and-exit">error-and-exit</a></li>
+<li><a href="fn_e.html#expand-and-exit">expand-and-exit</a></li>
+<li><a href="fn_h.html#help-and-exit">help-and-exit</a></li>
+</ul>
+
+
+</blockquote>
+
+
+<p><a name="minus">(<b>minus</b>) -</a></p>
+
+<blockquote>
+<p>This command is bound to the minus key after the <span class="cmd">argument-prefix</span> command has been executed. It is used to negate the prefix argument.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_a.html#argument-prefix">argument-prefix</a></li>
+<li><a href="fn_d.html#digit">digit</a></li>
+</ul>
+
+
+</blockquote>
+
+
+<p><a name="modify-syntax-entry">(<b>modify-syntax-entry</b> <span class="cmd">syntax-string</span>)</a></p>
+
+<blockquote>
+<p>This function is provided for compatibility with old MLisp code only. Use <span class="cmd">modify-syntax-table</span> for all new MLisp code.</p>
+
+<p>Modifies a set of entries in the syntax table associated with the current buffer. See the Barry's Emacs Programmer's Guide for more information on <a href="pg_extension_facilities.html#syntaxtables">how to alter syntax tables</a>.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_d.html#dump-syntax-table">dump-syntax-table</a></li>
+<li><a href="fn_u.html#use-syntax-table">use-syntax-table</a></li>
+<li><a href="#modify-syntax-table">modify-syntax-table</a></li>
+</ul>
+
+
+</blockquote>
+
+
+<p><a name="modify-syntax-table">(<b>modify-syntax-table</b> <span class="cmd">type</span> <span class="cmd">args...</span>)</a></p>
+
+<blockquote>
+<p>Modifies a set of entries in the syntax table associated with the current buffer. See the Barry's Emacs Programmer's Guide for more information on <a href="pg_extension_facilities.html#syntaxtables">how to alter syntax tables</a>.</p>
+
+<p>Syntax tables are associated with buffers by using the <span class="cmd">use-syntax-table</span> command. Syntax tables are used by commands like <span class="cmd">forward-paren</span> to do a limited form of parsing for language-dependent routines. They define such things as which characters are parts of words, which quote strings, and which delimit comments.</p>
+
+<p>Syntax colouring and regular expression searches depend on the information in the syntax table.</p>
+
+<p><span class="cmd">modify-syntax-table</span> can be called in one of the following ways:</p>
+
+
+<table class="action_command">
+<colgroup>
+    <col class="col_action" />
+    <col class="col_command" />
+</colgroup>
+
+<tr><th>Action</th><th>Command</th></tr>
+<tr>
+<td>Define the characters in <b>charset</b> as word characters, as used by such commands as <span class="cmd">forward-word</span> and <span class="cmd">case-word-capitalize</span>.</td>
+<td>
+<pre>
+(modify-syntax-table
+    &quot;word&quot;
+    charset)
+</pre></td>
+</tr>
+
+<tr>
+<td>Define the characters in <b>charset</b> as having no special meaning.</td>
+<td>
+<pre>
+(modify-syntax-table
+    &quot;dull&quot;
+    charset)
+</pre></td>
+</tr>
+
+<tr>
+<td>Define a comment that starts with <b>comment-start-string</b> and ends with <b>comment-end-string</b>.</td>
+<td><pre>
+(modify-syntax-table
+    &quot;comment&quot;
+    comment-start-string
+    comment-end-string)
+</pre>
+</td>
+</tr>
+
+<tr>
+<td>Define a matching pair of parentheses.</td>
+<td>
+<pre>
+(modify-syntax-table
+    &quot;paren&quot;
+    open-paren
+    close-paren)
+</pre>
+</td>
+</tr>
+
+<tr>
+<td>Define the characters in <b>charset</b> as being a prefix that prevents the following character being interpreted as a string introducer.</td>
+<td>
+<pre>
+(modify-syntax-table
+    &quot;prefix&quot;
+    charset)
+</pre></td>
+</tr>
+
+<tr>
+<td>Define the characters in <b>charset</b> as delimiting a string.</td>
+<td><pre>
+(modify-syntax-table
+    &quot;string&quot;
+    charset)
+</pre></td>
+</tr>
+
+<tr>
+<td>Define <b>string</b> as an exact case keyword type 1.</td>
+<td>
+<pre>
+(modify-syntax-table
+    &quot;keyword-1&quot;
+    string)
+</pre></td>
+</tr>
+
+
+<tr>
+<td>Define <b>string</b> as an exact case keyword type 2.</td>
+<td>
+<pre>
+(modify-syntax-table
+    &quot;keyword-2&quot;
+    string)
+</pre>
+</td>
+</tr>
+
+<tr>
+<td>Define <b>string</b> as an exact case keyword type 3.</td>
+<td>
+<pre>
+(modify-syntax-table
+    &quot;keyword-3&quot;
+    string)
+</pre></td>
+</tr>
+<tr>
+<td>Define <b>string</b> as a case blind keyword type 1.</td>
+<td>
+<pre>
+(modify-syntax-table
+    &quot;keyword-1,case-fold&quot;
+    string)
+</pre></td>
+</tr>
+
+
+<tr>
+<td>Define <b>string</b> as a case blind keyword type 2.</td>
+<td>
+<pre>
+(modify-syntax-table
+    &quot;keyword-2,case-fold&quot;
+    string)
+</pre>
+</td>
+</tr>
+
+<tr>
+<td>Define <b>string</b> as a case blind keyword type 3.</td>
+<td>
+<pre>
+(modify-syntax-table
+    &quot;keyword-3,case-fold&quot;
+    string)
+</pre></td>
+</tr>
+
+</table>
+
+<p><b>charset</b> is a string that contains a list of characters.
+Ranges of characters can be conveniently entered by giving the first and last characters of the range separated by a "-".</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_d.html#dump-syntax-table">dump-syntax-table</a></li>
+<li><a href="fn_u.html#use-syntax-table">use-syntax-table</a></li>
+</ul>
+
+</blockquote>
+
+
+<p><a name="move-to-comment-column">(<b>move-to-comment-column</b>)</a></p>
+
+<blockquote>
+<p>Inserts enough spaces and tabs to move the cursor to the comment column.</p>
+
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="var_c.html#comment-column">comment-column</a> variable</li>
+<li><a href="var_d.html#default-comment-column">default-comment-column</a> variable</li>
+</ul>
+
+
+</blockquote>
+
+
+</div>
+</body>
+</html>

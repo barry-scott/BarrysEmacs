@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<title>Functions F*</title>
+
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="contents">
+
+<p><a name="fetch-array">(<b>fetch-array</b> <span class="cmd">array indices...</span>)</a></p>
+
+<blockquote>
+<p>Retrieves a value from an array. The arguments to this function are the array and the indices of the array. <span class="cmd">fetch-array</span> checks that there are exactly the right number of indices and range-checks them.</p>
+
+
+
+<p><b>Example:</b> Retrieve element 3,5 from array 2d-array.</p>
+
+<pre>
+(setq value (fetch-array 2d-array 3 5))
+</pre>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_t.html#type-of-expression">type-of-expression</a></li>
+<li><a href="fn_b.html#bounds-of-array">bounds-of-array</a></li>
+<li><a href="fn_s.html#setq-array">setq-array</a></li>
+<li><a href="fn_a.html#array">array</a></li>
+</ul>
+
+
+</blockquote>
+
+
+<p><a name="fetch-database-entry">(<b>fetch-database-entry</b> <span class="cmd">dbname</span> <span class="cmd">key</span>)</a></p>
+
+<blockquote>
+<p>Reads the entry in the database corresponding to the given key and inserts it into the current buffer.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_e.html#extend-database-search-list">extend-database-search-list</a></li>
+<li><a href="#fetch-help-database-entry">fetch-help-database-entry</a></li>
+<li><a href="fn_l.html#list-databases">list-databases</a></li>
+<li><a href="fn_p.html#put-database-entry">put-database-entry</a></li>
+</ul>
+
+</blockquote>
+
+
+<!-- hide=on -->
+<p><a name="fetch-help-database-entry">(<b>fetch-help-database-entry</b> <span class="cmd">dbname</span> <span class="cmd">keys-string</span>)</a></p>
+
+<blockquote>
+<p><b>VMS only</b></p>
+
+<p>Takes the entry in the help database corresponding to the given key string and inserts it into the current buffer.</p>
+
+<p>The key string is a sequence of up to 9 keys separated by whitespace. For example, to insert the help for the entry:</p>
+
+<pre>
+copy /log
+</pre>
+
+<p>the string would be:</p>
+
+<pre>
+"copy /log"
+</pre>
+
+</blockquote>
+
+<p>The variable <span class="cmd">fetch-help-database-flags</span> is used to control the information retrieved from the help database file.</p>
+
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_e.html#extend-database-search-list">extend-database-search-list</a></li>
+<li><a href="#fetch-database-entry">fetch-database-entry</a></li>
+<li><a href="fn_l.html#list-databases">list-databases</a></li>
+<li><a href="fn_p.html#put-database-entry">put-database-entry</a></li>
+<li><a href="var_f.html#fetch-help-database-flags">fetch-help-database-flags</a> (Variable)</li>
+</ul>
+<!-- hide=off -->
+
+
+<p><a name="file-exists">(<b>file-exists</b> <span class="cmd">file-name</span>)</a></p>
+
+<blockquote>
+<p>Returns 1 if the specified file exists and is writeable, -1 if the file exists but is only readable, and 0 otherwise.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_e.html#expand-file-name">expand-file-name</a></li>
+<li><a href="#file-is-a-directory">file-is-a-directory</a></li>
+</ul>
+
+</blockquote>
+
+
+<p><a name="file-format-string">(<b>file-format-string</b> <span class="cmd">format</span> <span class="cmd">file-name</span>)</a></p>
+
+<blockquote>
+<p><span class="cmd">file-format-string</span> is used to create formatted string based on parts of filenames.</p>
+
+<p>The <span class="cmd">format</span> string is made of format specifications and literal characters. literal characters are copied to the output as is. Format specifications are replaced with appropriate text.</p>
+
+<p>The format specification syntax is:</p>
+
+<pre>
+% <em>arg</em> <em>fmt-type</em>
+</pre>
+
+<p>The optional <em>arg</em> is a positive or negative decimal number.</p>
+
+<p>The possible values for <em>fmt-type</em> are shown in the following table.
+The examples in the table are based on a file specification of:</p>
+
+<pre>
+c:\users\barry\bemacs\emacsinit.ml
+</pre>
+
+
+<table>
+<tr>
+<th align="left" valign="top">Type</th>
+<th align="left" valign="top">Description</th>
+<th align="left" valign="top">Example
+</th><th align="left" valign="top">Output
+</th>
+
+</tr><tr>
+<td valign="top" align="left">%</td>
+<td valign="top" align="left">literal % character</td>
+<td valign="top" align="left">%%</td>
+<td valign="top" align="left">%</td>
+</tr>
+
+<tr>
+<td valign="top" align="left">fn</td>
+<td valign="top" align="left">filename</td>
+<td valign="top" align="left">%fn</td>
+<td valign="top" align="left">emacsinit</td>
+</tr>
+
+<tr>
+<td valign="top" align="left">ft</td>
+<td valign="top" align="left">filetype</td>
+<td valign="top" align="left">%ft</td>
+<td valign="top" align="left">.ml</td>
+</tr>
+
+<tr>
+<td valign="top" align="left">fa</td>
+<td valign="top" align="left">filename and filetype</td>
+<td valign="top" align="left">%fa</td>
+<td valign="top" align="left">emacsinit.ml</td>
+</tr>
+
+<tr>
+<td valign="top" align="left">pc</td>
+<td valign="top" align="left">path character</td>
+<td valign="top" align="left">%pc</td>
+<td valign="top" align="left">\</td>
+</tr>
+
+<tr>
+<td valign="top" align="left">pa</td>
+<td valign="top" align="left">disk and directory</td>
+<td valign="top" align="left">%pa</td>
+<td valign="top" align="left">c:\users\barry\bemacs\</td>
+</tr>
+
+<tr>
+<td valign="top" align="left">ps</td>
+<td valign="top" align="left">set path split point</td>
+<td valign="top" align="left">%4ps%ph</td>
+<td valign="top" align="left">c:\users\barry\bemacs\</td>
+</tr>
+
+<tr>
+<td valign="top" align="left">ph
+
+</td>
+<td valign="top" align="left">path head</td>
+<td valign="top" align="left">%3ps%ph<br />%2ps%ph
+<br />%1ps%ph
+<br />%0ps%ph
+<br />%-1ps%ph
+<br />%-2ps%ph
+<br /></td>
+<td valign="top" align="left">c:\users\barry\bemacs\
+
+<br />c:\users\barry\
+<br />c:\users\<br />
+c:\users\barry\bemacs\<br />
+c:\users\barry\<br />
+c:\users\<br />
+
+</td>
+</tr>
+
+<tr>
+<td valign="top" align="left">pt</td>
+<td valign="top" align="left">path tail</td>
+<td valign="top" align="left">%-2ps%pt<br />%3ps%pt
+<br />%2ps%pt
+<br />%1ps%pt
+<br />%0ps%pt
+<br />%-1ps%pt
+
+<br />%-2ps%pt</td>
+<td valign="top" align="left">barry\bemacs\<br />&#160;<br />bemacs\<br />barry\bemacs\<br />&#160;<br />bemacs\<br />barry\bemacs\</td>
+</tr>
+
+<tr>
+<td valign="top" align="left">pv</td>
+<td valign="top" align="left">disk</td>
+<td valign="top" align="left">%pv</td>
+<td valign="top" align="left">c:</td>
+</tr>
+
+<tr>
+<td valign="top" align="left">pd</td>
+<td valign="top" align="left">directory</td>
+<td valign="top" align="left">%pd</td>
+<td valign="top" align="left">\users\barry\bemacs\</td>
+</tr>
+</table>
+
+
+</blockquote>
+
+
+<p><a name="file-is-a-directory">(<b>file-is-a-directory</b> <span class="cmd">file-name</span>)</a></p>
+
+<blockquote>
+<p>Returns 1 if the specified <span class="cmd">file-name</span> is a directory and 0 otherwise.</p>
+
+<p><b>Examples:</b></p>
+
+<pre>
+(file-is-a-directory "/tmp")
+
+(file-is-a-directory "c:\\temp")
+</pre>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_e.html#expand-file-name">expand-file-name</a></li>
+<li><a href="#file-exists">file-exists</a></li>
+</ul>
+
+</blockquote>
+
+
+<p><a name="file-name-expand-and-default">(<b>file-name-expand-and-default</b> <span class="cmd">file-name</span> <span class="cmd">default-file-name</span>)</a></p>
+
+<blockquote>
+<p>Returns a string containing a file name. The file name returned is the <span class="cmd">file-name</span> will any missing part of the file name defaulted from the <span class="cmd">default-file-name</span> parameter and the current working directory.</p>
+</blockquote>
+
+
+<p><a name="filter-region">(<b>filter-region</b> <span class="cmd">command</span>)</a></p>
+
+<blockquote>
+<p>Takes the region and passes it as input to the given operating system command. The output from the command replaces the region. The contets of the region are saved in <span class="cmd">Kill buffer</span>.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_e.html#execute-monitor-command">execute-monitor-command</a></li>
+</ul>
+
+
+</blockquote>
+
+
+<p><a name="following-char">(<b>following-char</b>)</a></p>
+
+<blockquote>
+<p>Returns the character immediately following dot as an integer. The null character (0) is returned if dot is at the end of the buffer.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_p.html#preceding-char">preceding-char</a></li>
+</ul>
+
+
+
+</blockquote>
+
+
+<p><a name="force-exit-process">(<b>force-exit-process</b> <span class="cmd">process-name exit-code</span>)</a></p>
+
+<blockquote>
+<p>Forces the image running is the specified subprocess to exit with the specified code. This can be used to stop an image that has run amok. All exit handlers for the image will be run.</p>
+
+<p>If no image is running in the process, the exit request will be queued up and executed next time the target process executes in user mode (the next time an image is run).</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_c.html#current-process-name">current-process-name</a></li>
+<li><a href="fn_k.html#kill-process">kill-process</a></li>
+<li><a href="fn_l.html#list-processes">list-processes</a></li>
+<li><a href="fn_p.html#pause-process">pause-process</a></li>
+<li><a href="fn_r.html#resume-process">resume-process</a></li>
+<li><a href="fn_s.html#set-current-process">set-current-process</a></li>
+<li><a href="fn_s.html#set-process-name">set-process-name</a></li>
+<li><a href="fn_s.html#start-DCL-process">start-DCL-process</a></li>
+<li><a href="fn_w.html#wait-for-process-input-request">wait-for-process-input-request</a></li>
+</ul>
+
+</blockquote>
+
+
+<p><a name="forward-balanced-paren-line">(<b>forward-balanced-paren-line</b> <span class="cmd">expression-1</span>)</a></p>
+
+<blockquote>
+<p>Moves dot forward until either the end of the buffer is reached, or an unmatched closing parenthesis is encountered, or the beginning of a line is encountered at parenthesis level zero, that is, without an unmatched parenthesis existing between the line and the starting position of dot.</p>
+
+<p>The parameter is the number of parentheses to ignore before applying the match.</p>
+
+<p>The definition of parenthesis is derived from the syntax table for the current buffer.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_b.html#backward-balanced-paren-line">backward-balanced-paren-line</a></li>
+<li><a href="fn_b.html#backward-paren">backward-paren</a></li>
+<li><a href="fn_f.html#forward-paren">forward-paren</a></li>
+</ul>
+
+</blockquote>
+
+
+<p><a name="forward-character">(<b>forward-character</b> <span class="cmd">repeat-count</span>) ^F or right-arrow</a></p>
+
+<blockquote>
+<p>Moves dot forward prefix-argument times <span class="cmd">repeat-count</span> characters. If <span class="cmd">repeat-count</span> is omitted, 1 is assumed. End-of-lines and tabs each count as one character. You cannot move past the end of the buffer.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_b.html#backward-character">backward-character</a></li>
+</ul>
+
+</blockquote>
+
+
+<p><a name="forward-paragraph">(<b>forward-paragraph</b>) ESC-)</a></p>
+
+<blockquote>
+<p>Moves dot to the end of the current or following paragraph. Blank lines that separate paragraphs and are not considered parts of paragraphs.</p>
+
+<p>Paragraphs are defined by the variable paragraph-delimiters.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_b.html#backward-paragraph">backward-paragraph</a></li>
+</ul>
+
+</blockquote>
+
+
+<p><a name="forward-paren">(<b>forward-paren</b>)</a></p>
+
+<blockquote>
+<p>Moves dot forward until an unmatched closing parenthesis, or the end of the buffer is found. This can be used to aid in skipping over Lisp S-expressions.</p>
+
+<p>The argument is the number of parentheses to ignore before applying the match.</p>
+
+
+<p>The definition of parenthesis is derived from the syntax table for the current buffer.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_b.html#backward-paren">backward-paren</a></li>
+</ul>
+
+
+
+</blockquote>
+
+
+<p><a name="forward-sentence">(<b>forward-sentence</b>) ESC-e</a></p>
+
+<blockquote>
+<p>Moves dot forward to the end of a sentence. A sentence is bounded by the string variable <span class="cmd">sentence-delimiters</span>.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_b.html#backward-sentence">backward-sentence</a></li>
+</ul>
+
+</blockquote>
+
+
+<p><a name="forward-word">(<b>forward-word</b> <span class="cmd">repeat-count</span>) ESC-f</a></p>
+
+<blockquote>
+<p>Moves dot forward to the end of the prefix-argument times <span class="cmd">repeat-count</span> word. If <span class="cmd">repeat-count</span> is omitted, 1 is assumed. If dot is not currently in the middle of a word, the command skips all intervening punctuation. It then skips over the words, leaving dot positioned after the last character of the word.</p>
+
+<p>A word is defined by the current syntax table.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_b.html#backward-word">backward-word</a></li>
+<li><a href="fn_m.html#modify-syntax-table">modify-syntax-table</a></li>
+<li><a href="fn_d.html#dump-syntax-table">dump-syntax-table</a></li>
+</ul>
+
+</blockquote>
+
+
+<p><a name="fundamental-mode">(<b>fundamental-mode</b>)</a></p>
+
+<blockquote>
+<p>Turns on a major mode similar to Normal Mode. It provides a natural environment for processing ordinary text, or program sources for which there is no specialised language mode. The main advantage of Fundamental Mode over Normal mode is that it displays parenthesis balancing.</p>
+</blockquote>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_n.html#normal-mode">normal-mode</a></li>
+<li><a href="fn_t.html#text-mode">text-mode</a></li>
+<li><a href="fn_c.html#c-mode">c-mode</a></li>
+<li><a href="fn_l.html#lisp-mode">lisp-mode</a></li>
+</ul>
+
+
+</div>
+</body>
+</html>
+

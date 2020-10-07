@@ -1,0 +1,661 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>User Guide - Editing Specific File Types</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+<div class="contents">
+<p><a name="top"></a></p>
+
+<ul>
+<li><a href="#majormodes">Major Modes</a></li>
+
+<li><a href="#editingtext">Editing Text</a></li>
+
+<li><a href="#editingprograms">Editing Programs</a></li>
+</ul>
+
+<h1><a name="editingspecificfiletypes"></a>Editing Specific File Types</h1>
+
+<p>This chapter describes the commands available in Emacs for editing specific types of file, such as text memos or program source code:</p>
+
+<ul>
+<li>Major Modes summarises the Emacs major modes used to edit specific file types.</li>
+
+<li>Editing Natural Language Text describes Emacs commands for editing natural language text.</li>
+
+<li>Editing Programs on describes special features for editing programs.</li>
+</ul>
+
+
+<h2><a name="majormodes"></a>Major Modes</h2>
+
+<p>Emacs has many different major modes, each of which customises Emacs for editing text of a particular file type. The major modes are mutually exclusive -- that is, only one major mode can be active at a time. When at top level, Emacs indicates in the mode line which major mode is active for each buffer displayed on the screen.</p>
+
+<p>When Emacs creates a buffer, it is in what is called Normal Mode , which means that the character commands are defined so as to be convenient for general use. More precisely, in Normal Mode every Emacs binding is set to its default state. For editing any specific type of text, such as Lisp code or English text, you should switch to the appropriate major mode. This tells Emacs to change the meanings of a few commands to become more specifically adapted to the language being edited. Most commands remain unchanged.</p>
+
+<p>Selecting a new major mode is done with an <span class="key">ESC-x</span> command. Each major mode is the name of the function that selects that mode. Thus, you can enter <b>Lisp Mode</b> by typing <span class="key">ESC-x lisp-mode</span>. Emacs can be made to enter the correct major mode for a file simply based on the file's type, so you do not have to worry about selecting a mode. This is achieved by using the <span class="cmd">auto-execute</span> function.</p>
+
+<p>The <span class="key">ESC-x auto-execute</span> command causes the nominated command to be executed every time a file is manipulated which matches the specified file pattern. The file pattern is specified as a wildcard pattern.</p>
+
+<p>The "*" and "?" characters are treated specially, all other characters stand for themselves. A "*" match zero or more characters and a "?" matches a single character.</p>
+
+<p>Here are some example patterns:</p>
+
+<table>
+<tr>
+<th align="left">Pattern</th>
+<th align="left">Explanation</th>
+<th align="left">Examples</th>
+</tr>
+
+<tr>
+<td><span class="cmd">*.cxx</span></td>
+<td>Matches all files whoes names end in <span class="cmd">.cxx</span>.</td>
+<td><font face="Courier New" size="2">emacs.cxx
+<br />
+search.cxx
+<br />
+.cxx</font></td>
+</tr>
+
+<tr>
+<td><span class="cmd">*?.cxx</span></td>
+<td>Matches all files whoes names has atleast one characters before ending with <span class="cmd">.cxx</span>.</td>
+<td><font face="Courier New" size="2">emacs.cxx
+<br />
+search.cxx
+<br />
+a.cxx</font></td>
+</tr>
+
+<tr>
+<td><span class="cmd">readme*</span></td>
+<td>Matches all files that start with <span class="cmd">readme</span>.</td>
+<td><font face="Courier New" size="2">readme.txt
+<br />
+readme.1st</font></td>
+</tr>
+</table>
+
+<p>The command is executed whenever the file name matches the pattern. If you wish to use Lisp Mode when visiting files with a type of <span class="cmd">.ML</span>, use the command <span class="key">ESC-x auto-execute lisp-mode *.ml</span>.</p>
+
+<p>Syntax tables define how Emacs commands (such as <span class="cmd">forward-word</span>) react to the characters in a buffer. Many major modes alter syntax tables so that characters are treated in the most suitable way for the particular mode. For example, most programming language major modes specify that only blank lines separate paragraphs. This is so that the paragraph commands remain useful when writing program source code rather than natural language text.</p>
+
+<p>To find out which keys a particular major mode redefines, use the command <span class="key">ESC-x describe-bindings</span> while the required mode is in effect. This command displays all the key bindings for the current buffer. The specific bindings for the current major mode will be displayed under the heading <span class="cmd">Local bindings</span>, along with any other local bindings you have defined yourself.</p>
+
+
+<h2><a name="editingtext"></a>Editing Text</h2>
+
+<p>Emacs enables you to easily manipulate words, sentences, or paragraphs of text. In addition, there are commands to fill text and convert character cases.</p>
+
+<h3>word commands</h3>
+
+<p>Emacs has commands for moving over or operating on words. By convention, they are all <span class="key">Escape</span> prefixed commands. All of these commands may be used in any major mode.</p>
+
+<table>
+<tr>
+<td>Move forward over a word.</td>
+<td><span class="key">ESC-f or Ctrl-Right</span></td>
+</tr>
+
+<tr>
+<td>Move backward over a word.</td>
+<td><span class="key">ESC-b or Ctrl-Left</span></td>
+</tr>
+
+<tr>
+<td>Delete up to the end of a word.</td>
+<td><span class="key">ESC-d or Ctrl-Delete</span></td>
+</tr>
+
+<tr>
+<td>Delete back to the beginning of a word.</td>
+<td><span class="key">ESC-h</span></td>
+</tr>
+</table>
+
+<p>Notice how these commands form a group that parallels the character-based commands <span class="key">^F</span>, <span class="key">^B</span>, <span class="key">^D</span> and <span class="key">Delete</span>.</p>
+
+<p>The commands <span class="key">ESC-f</span> and <span class="key">ESC-b</span> move forward and backward over words. They are analogous to <span class="key">^F</span> and <span class="key">^B</span>, which move over single characters. Like their <span class="cmd">Control-</span> analogues, <span class="key">ESC-f</span> and <span class="key">ESC-b</span> move over several words if they are given a prefix argument. <span class="key">ESC-f</span> with a negative argument moves backwards like <span class="key">ESC-b</span>, and <span class="key">ESC-b</span> with a negative argument moves forwards. Forward motion stops exactly after the last letter of the word, while backward motion stops exactly before the first letter.</p>
+
+<p>It is easy to delete a word at a time. <span class="key">ESC-d</span> deletes the word after dot. To be precise, it deletes everything from dot to the place that <span class="key">ESC-f</span> would move dot. Therefore, if dot is in the middle of a word, only the part of the word after dot is deleted. If some punctuation comes after dot and before the next word, it is deleted along with the word. If you wish to delete only the next word but not the punctuation, use <span class="key">ESC-f</span> to go to the end, then delete the word backwards with <span class="key">ESC-h</span>. <span class="key">ESC-d</span> takes arguments just like <span class="key">ESC-f</span>.</p>
+
+<p><span class="key">ESC-h</span> deletes the word before dot. It deletes everything from dot back to where <span class="key">ESC-b</span> would move dot. If dot is after the space in <span class="cmd">FOO, BAR</span>, then <span class="cmd">FOO,</span> is deleted. If you wish to delete just <span class="cmd">FOO</span>, use <span class="key">ESC-b</span> then <span class="key">ESC-d</span> instead of an <span class="key">ESC-h</span>.</p>
+
+<p>The definition of a word as used by the word commands is completely controlled by the current syntax table. Any character can, for example, be declared as a word-delimiter.</p>
+
+<h3>sentence and paragraph commands</h3>
+
+<p>The Emacs commands for manipulating sentences and paragraphs are mostly <span class="key">Escape</span> prefixed commands so as to resemble the word-handling commands.</p>
+
+<table>
+<tr>
+<td>Move back to the beginning of a sentence.</td>
+<td><span class="key">ESC-a</span></td>
+</tr>
+
+<tr>
+<td>Move forward to the end of a sentence.</td>
+<td><span class="key">ESC-e</span></td>
+</tr>
+
+<tr>
+<td>Move back to the beginning of the previous paragraph.</td>
+<td><span class="key">ESC-(</span></td>
+</tr>
+
+<tr>
+<td>Move forward to the end of the next paragraph.</td>
+<td><span class="key">ESC-)</span></td>
+</tr>
+</table>
+
+<p>The commands <span class="key">ESC-a</span> and <span class="key">ESC-e</span> move to the beginning and end of the current sentence respectively. They were choosen to resemble <span class="key">^A</span> and <span class="key">^E</span>, which move to the beginning and end of the current line. Emacs considers a sentence to end wherever there is a <span class="cmd">.</span>, <span class="cmd">?</span> or <span class="cmd">!</span> character followed by white-space or an end-of-line. Neither <span class="key">ESC-a</span> nor <span class="key">ESC-e</span> move past the white-space which delimits the sentence.</p>
+
+<p>The variable <span class="cmd">sentence-delimiters</span> is a regular expression search-string composed of the various strings that define a sentence boundary. The default value of this variable is:</p>
+
+<p><span class="cmd">[.!?][\040\t\n][\040\t\n]*</span></p>
+
+<p><span class="key">ESC-(</span> moves to the beginning of the current or previous paragraph, while <span class="key">ESC-)</span> moves to the end of the current or next paragraph. Blank lines and text formatter command lines are not considered part of any paragraph. Also, an indented line starts a new paragraph.</p>
+
+<p>The variable <span class="cmd">paragraph-delimiters</span> is a regular expression search string composed of the various strings that define a paragraph boundary. The default value of this variable is:</p>
+
+<p><span class="cmd">\f\n\|[\040\t]*\n</span></p>
+
+<h3>Indentation commands for code</h3>
+
+<table>
+<tr>
+<td><span class="key">Tab</span></td>
+<td>Indents appropriately in a mode-dependent fashion.</td>
+</tr>
+
+<tr>
+<td><span class="key">Linefeed</span></td>
+<td>Performs the same action as <span class="key">Return</span> followed by <span class="key">Tab</span>.</td>
+</tr>
+</table>
+
+<p>Use the <span class="key">Tab</span> command to request indentation. Its precise effect depends on the major mode. In Text and Normal Modes, it indents to the next tab-stop.</p>
+
+<p>When you type normal text, if you use the <span class="key">Linefeed</span> key to terminate a line, the indentation of the current line will be duplicated at the start of the next line. So to type in several lines of text all starting at a specified indent, use the <span class="key">Linefeed</span> key to terminate each line.</p>
+
+<h3>text filling and text mode</h3>
+
+<p>Emacs has a major mode called Text Mode which provides functions for setting margins, filling, justifying and centering text. Use the <span class="key">ESC-x text-mode</span> command to enter Text Mode.</p>
+
+<p>The Text Mode functions can be used without needing to switch to Text Mode -- they can be used from any major mode. This is usually more convenient than having to change the major mode to Text Mode when you need to format some text. Text Mode is included in Emacs for backwards compatibility only.</p>
+
+<p>If you enable the Text Mode functions explicitly using <span class="key">ESC-x text-mode</span>, the Text Mode functions are bound to keys. If you do not switch to Text Mode to use the functions, you must either provide your own bindings for the functions, or execute the functions as extended commands using <span class="key">ESC-x</span>.</p>
+
+<p>The Text Mode functions and key bindings are:</p>
+
+<table>
+<tr>
+<td>Set the left margin.</td>
+<td><span class="key">ESC-1</span></td>
+</tr>
+
+<tr>
+<td>Set the right margin.</td>
+<td><span class="key">ESC-^H</span></td>
+</tr>
+
+<tr>
+<td>Set the margins to the values indicated by text in the current paragraph. The right margin is defined as the right-most column in which text appears for paragraphs with a ragged-right margin.</td>
+<td><span class="cmd">(set-margins)</span></td>
+</tr>
+
+<tr>
+<td>Set the paragraph indent offset.</td>
+<td><span class="key">ESC-i</span></td>
+</tr>
+
+<tr>
+<td>Fill or justifies the current paragraph between the currently set margins.</td>
+<td><span class="key">ESC-j</span></td>
+</tr>
+
+<tr>
+<td>Fill or justifies the region between the currently set margins.</td>
+<td><span class="key">ESC-J</span></td>
+</tr>
+
+<tr>
+<td>Toggle the current justify mode to either a ragged or straight right margin.</td>
+<td><span class="key">ESC-m</span></td>
+</tr>
+
+<tr>
+<td>Centre the current line between the currently set margins.</td>
+<td><span class="key">ESC-c</span></td>
+</tr>
+</table>
+
+<p>The fill-and-justify functions will fill the current paragraph between the current margin settings. If you edit text in the middle of a paragraph, the paragraph may no longer be correctly filled -- just type <span class="key">ESC-j</span> to fill the paragraph. The effect of <span class="key">ESC-j</span> can be undone with <span class="key">^X-^U</span> (<span class="cmd">undo</span>). See Undoing Changes to the Buffer for more information on undoing changes.</p>
+
+<p>Paragraphs can be indented using <span class="key">ESC-i</span> to set an indent offset. A positive value for the indent offset causes the first line of the paragraph to be indented by the specified number of characters. For example, with an indent offset of 5, paragraphs will appear as:</p>
+
+<pre>
+      Here is the beginning of the
+
+paragraph. Here is some more text,
+
+and here is yet more.
+
+</pre>
+
+<p>A negative indent offset enables you to create hanging paragraphs; with an indent of -5 and a left margin of 5, text will be filled as follows:</p>
+
+<pre>
+1.  text....text    ....text 
+
+    more text..... text text 
+
+    more text..... text text 
+
+    more text..... text text 
+
+
+2.  text....text    ....text
+
+    more text..... text text
+
+    more text..... text text
+
+
+Here is the beginning  of the paragraph
+
+    Here is some more text, and here is
+
+    yet more.
+
+</pre>
+
+<p>The Text Mode functions access several buffer-specific variables. You can use either use the Text Mode bindings listed above to set the values of these variables, or you can set them directly using <span class="key">ESC-x set</span>. If you want to change their default values, use <span class="key">ESC-x set-default</span>.</p>
+
+<p>The Text Mode variables are:</p>
+
+<p><span class="cmd">left-margin</span></p>
+
+<p>Contains the left margin setting for the current buffer. The default setting for the left margin is 1.</p>
+
+<p><span class="cmd">right-margin</span></p>
+
+<p>Contains the right margin setting for the current buffer. The default setting for the right margin is 1000 -- if you use the Text Mode fill functions from any mode other than Text Mode, be sure to set <span class="cmd">right-margin</span> to a reasonable value.</p>
+
+<p><span class="cmd">index-offset</span></p>
+
+<p>Contains the index offset for the current buffer.</p>
+
+<p><span class="cmd">buffer-display-margins</span></p>
+
+<p>Controls whether the current margin settings are displayed in the buffer's mode line. This variable is set to 1 by default, so margins are displayed. If you do not want margins displayed, set the variable to 0.</p>
+
+<p><span class="cmd">autowrap-mode-flag</span></p>
+
+<p>Controls whether text is automatically wrapped as you type it. This is set to 1 by default, so that when you type text beyond the right margin, a line separator is automatically inserted, and you can continue typing without worrying about breaking the line yourself. This feature is known as auto-filling.</p>
+
+<p><span class="cmd">buffer-justify-flag</span></p>
+
+<p>Controls the appearance of text at the right margin. If set to 1 (the default), text will be be filled with a straight right margin; if <span class="cmd">buffer-display-margins</span> is set to 1, the right margin indicator in the mode line will be a <span class="cmd">J</span>. If <span class="cmd">buffer-justify-flag</span> is set to 0, text will be filled with a ragged right margin; if <span class="cmd">buffer-display-margins</span> is set to 1, the right margin indicator in the mode line will be an <span class="cmd">R</span>.</p>
+
+<h3>case conversion commands</h3>
+
+<p>Emacs has commands for converting either a single word or any arbitrary range of text to be capitalized, upper-case, lower-case or to invert the case.</p>
+
+<table>
+<tr>
+<td>Convert the current word or region to lower-case.</td>
+<td><span class="key">ESC-l</span> (case-lower)</td>
+</tr>
+
+<tr>
+<td>Convert the current word or region to upper-case.</td>
+<td><span class="key">ESC-u</span> (case-upper)</td>
+</tr>
+
+<tr>
+<td>Invert the case of the current word or region.</td>
+<td><span class="key">ESC-i</span> (case-invert)</td>
+</tr>
+
+<tr>
+<td>Capitalize the current word or region.</td>
+<td><span class="key">ESC-C</span> (case-capitalize)</td>
+</tr>
+</table>
+
+<p>If a case conversion command is given in the middle of a word, it applies to the whole word.</p>
+
+<p>To convert the case of part of a word set the region around the part to be converted.</p>
+
+
+<h2><a name="editingprograms"></a>Editing Programs</h2>
+
+<p>Special features for editing programs include automatic indentation, comment alignment, parenthesis matching, and the ability to move over balanced, parenthesised expressions. Many of these features are generalised so that they can work for any programming language.</p>
+
+<p>For some languages, there is a special major mode which customises Emacs to be better-suited to editing programs written in that language.</p>
+
+<p>The languages supported by major modes include:</p>
+
+<center>
+<table>
+<tr>
+<td>C</td>
+<td>C Mode or Electric C Mode</td>
+</tr>
+
+<tr>
+<td>C++</td>
+<td>C Mode or Electric C Mode</td>
+</tr>
+
+<tr>
+<td>MLisp</td>
+<td>Lisp Mode</td>
+</tr>
+
+<tr>
+<td>Lisp</td>
+<td>Lisp Mode</td>
+</tr>
+
+<tr>
+<td>PASCAL</td>
+<td>PASCAL Mode</td>
+</tr>
+
+<tr>
+<td>Bliss</td>
+<td>Bliss Mode</td>
+</tr>
+</table>
+</center>
+
+<p>The TAGS package can be used to remember all the labels or functions in a multi-file program, and to find any one of them quickly.</p>
+
+<h3>compiling your program</h3>
+
+<p>The command <span class="key">^X-^E</span> (<span class="cmd">compile-it</span>) is used to compile a program within Emacs. Normally, <span class="key">^X-^E</span> uses the <span class="cmd">make</span> command to compile a program. <span class="cmd">make</span> knows how to build your program based on a description file that you give it.</p>
+
+<p>The first thing <span class="key">^X-^E</span> does is to write out all modified files. This is because it is likely that other buffers contain parts of the same program that you are about to compile.</p>
+
+<p>Then <span class="key">^X-^E</span> invokes the <span class="cmd">make</span> command. All output from <span class="cmd">make</span> goes into the empty buffer <span class="cmd">Error log</span>, which will be displayed in a window on the screen. Messages that the compilation generates are displayed in the <span class="cmd">Error Log</span> buffer as they are generated.</p>
+
+<p>When the compilation is complete, the function <span class="cmd">parse-error-messages-in-region</span> is applied to the entire buffer. This command uses the function specified in the variable <span class="cmd">error-message-parser</span> to find all the compiler error messages. For each error message generated, the source file in which the error was detected is visited and the line on which the compilation detected an error is marked. This process generates a list of marks in various buffers for viewing with the <span class="key">^X-^N</span> (<span class="cmd">next-error</span>) command. When all errors have been visited, <span class="key">^X-^N</span> says so.</p>
+
+<p>In summary, a typical use of the compilation facility is as follows:</p>
+
+<ul>
+<li>Prepare some source files;</li>
+
+<li>Type <span class="key">^X-^E</span> to compile the program;</li>
+
+<li>Use <span class="key">^X-^N</span> until Emacs says there are no more errors, then go back to step 2;</li>
+
+<li>When no more errors are detected, the program is ready to run.</li>
+</ul>
+
+<p>You can also compile programs with the <span class="key">ESC-x shell</span> command. In <span class="cmd">shell</span>, you are put into <span class="cmd">shell</span> window in Emacs where every line that you type and end with a <span class="key">Return</span> is executed as a DCL command. The output from the commands is displayed in the <span class="cmd">shell</span> window. Several key sequences are re-bound in <span class="cmd">shell</span> to be more useful. <span class="key">^R</span> is bound to insert the last command sent to DCL into the buffer at dot. So, if you make a mistake, you can easily edit the command and try it again. The last 20 commands are remembered and can be recalled with successive <span class="key">^R</span> commands. The <span class="cmd">shell</span> command is described more fully in the Barry's Emacs
+Extensions Reference Manual.</p>
+
+<h3>Indentation commands for code</h3>
+
+<table>
+<tr>
+<td>Indent the current line.</td>
+<td><span class="key">Tab</span></td>
+</tr>
+
+<tr>
+<td>Equivalent to <span class="key">Return</span> followed by <span class="key">Tab</span>.</td>
+<td><span class="key">Linefeed</span></td>
+</tr>
+
+<tr>
+<td>Delete all spaces and tabs around dot.</td>
+<td><span class="key">ESC-x delete-white-space</span></td>
+</tr>
+</table>
+
+<p>Most programming languages have some indentation convention. For Lisp, lines are indented according to their nesting in parentheses. For assembler code, almost all lines start with a single tab, but some have one or more spaces as well.</p>
+
+<p>Whatever the language, to indent a line, use the <span class="key">Tab</span> command. Each major mode defines this command to perform the sort of indentation appropriate for the particular language. In Lisp Mode, <span class="key">Tab</span> aligns the line according to its depth in parentheses. This only happens if the tab is the first character on a line.</p>
+
+<p>The command <span class="key">Linefeed</span> does a <span class="key">Return</span>, then does a <span class="key">Tab</span> on the next line. Thus, <span class="key">Linefeed</span> at the end of the line makes a following blank line and supplies it with the appropriate amount of indentation. <span class="key">Linefeed</span> in the middle of a line breaks the line and supplies the indentation in front of the new line.</p>
+
+<p>To delete just the indentation of a line, go to the beginning of the line and use <span class="key">ESC-x delete-white-space</span>, which deletes all spaces and tabs around the cursor.</p>
+
+<p>To insert an indented line before the current line, use <span class="key">^A-^O-Tab</span>. To make an indented line after the current one, use <span class="key">^E-Linefeed</span>.</p>
+
+<h3>automatic display of matching parentheses</h3>
+
+<p>The Emacs parenthesis matching feature shows automatically how parentheses balance as you enter text. When this feature is enabled, after a closing parenthesis or other close-bracket character is inserted, the cursor automatically moves for an instant to the open parenthesis which balances the newly-inserted character. The cursor stays at the open parenthesis for a second before returning to the close parenthesis.</p>
+
+<p>The parenthesis-matching feature is enabled by using Fundamental Mode rather than the default Normal Mode, and may be enabled by language modes as required. It is also available on its own as the MLisp package FLASHER. You can load the FLASHER package yourself to have parenthesis-matching in a specific buffer. Several language major modes also load FLASHER to provide this feature when you edit program source code.</p>
+
+<p>It is worth emphasising that the location of dot (the place where your text will be inserted) is not affected by the parenthesis-matching feature. Dot stays after the close parenthesis, where it ought to be -- only the cursor on the screen moves away and back. You can type ahead freely as if the parenthesis display feature was not enabled. In fact, if you type fast enough, you will not see the cursor move -- you must pause after typing a close parenthesis to let the cursor move to the open parenthesis.</p>
+
+<p>If you type in an un-matched parenthesis, Emacs rings the bell and tells you there is an error.</p>
+
+<h3><a name="progmodes"></a>Major Modes for Programming Languages</h3>
+
+<p>Lisp's simple syntax makes it easy for an editor to understand. As a result, Emacs can do more for Lisp, and with less work, than for any other language.</p>
+
+<p>Paragraphs are defined to start only with blank lines so that the paragraph commands can be useful. Auto-fill Mode indents the new lines which it creates. Comments start with a semicolon ";". For example:</p>
+
+<p><span class="cmd">; This is a comment</span></p>
+
+<p>The command <span class="cmd">`</span> (<span class="cmd">expand-mlisp-word</span>) helps you to insert Emacs function names; it gives you name completion, which saves a lot of typing.</p>
+
+<p>Lisp Mode commands include:</p>
+
+<table>
+<tr>
+<td>Move back one s-expression.</td>
+<td><span class="key">ESC-(</span></td>
+</tr>
+
+<tr>
+<td>Move forward one s-expression.</td>
+<td><span class="key">ESC-)</span></td>
+</tr>
+
+<tr>
+<td>Compile and execute the first MLisp expression in the current buffer.</td>
+<td><span class="key">ESC-c</span></td>
+</tr>
+
+<tr>
+<td>Re-indent the current MLisp function.</td>
+<td><span class="key">ESC-j</span></td>
+</tr>
+
+<tr>
+<td>Re-indent the current MLisp line.</td>
+<td><span class="key">ESC-i</span></td>
+</tr>
+
+<tr>
+<td>Insert a Lisp comment.</td>
+<td><span class="cmd">;</span></td>
+</tr>
+</table>
+
+<p><span class="key">ESC-c</span> can be used to take the single MLisp expression in the current buffer and compile it in Emacs as MLisp. The compiled MLisp is then executed. Thus, if you write some MLisp, the easiest way to test and debug it is to run it using <span class="key">ESC-c</span>.</p>
+
+<p>To re-indent the current function (as defined by lines staring with <span class="cmd">(defun</span>) use the <span class="key">ESC-j</span> command. This command uses the same indenting algorithm as the <span class="key">Linefeed</span> and <span class="key">Tab</span> commands.</p>
+
+<p>Lisp Mode works in exactly the right way only for the MLisp dialect of Lisp. For other Lisps, the syntax tables may have to be modified.</p>
+
+<p>C Mode is a major programming mode for writing C programs. It provides optional automatic expansion of C keywords, formatting them according to Software Engineering standards.</p>
+
+<p>When you type a C keyword in C Mode and complete it with a non-word character, C Mode automatically recognises the word, and performs the expansion. If a word is not recognised, it is not expanded.</p>
+
+<p>If you do not require automatic expansion, set the variable <span class="cmd">c-auto-expansion</span> to zero. The function <span class="cmd">expand-c-keyword</span> can then be used directly after each keyword to force the expansion to take place.</p>
+
+<p>C Mode works by reading templates from the Emacs language template library accessed through the <span class="cmd">language</span> database search-list.</p>
+
+<p>This search-list contains the provided template library database, and also the database <span class="cmd">sys$login:language-template</span>. The database <span class="cmd">language-template</span> is searched first, so your customised templates are used before the system's templates.</p>
+
+<p>To cause the expansion for <span class="cmd">module</span> and <span class="cmd">function</span> headers, enter the appropriate word and use the <span class="cmd">expand-c-keyword</span> function.</p>
+
+<p>If you try to expand a C word that C Mode does not understand, an error message is issued. All C keywords, braces, comments and tertiary operators are recognised by C Mode.</p>
+
+<p>PASCAL Mode is a simple major mode for writing PASCAL programs. PASCAL Mode works by automatically upper-casing all PASCAL reserved words as they are entered. Table 3 shows which</p>
+
+<p>PASCAL Keywords Recognised by PASCAL Mode</p>
+
+<table>
+<tr>
+<td>AND</td>
+<td>ARRAY</td>
+<td>BEGIN</td>
+<td>BOOLEAN</td>
+<td>CAND</td>
+<td>CASE</td>
+</tr>
+
+<tr>
+<td>CHR</td>
+<td>CONST</td>
+<td>COR</td>
+<td>DIV</td>
+<td>DO</td>
+<td>DOWNTO</td>
+</tr>
+
+<tr>
+<td>ELSE</td>
+<td>END</td>
+<td>EXIT</td>
+<td>EXPORTS</td>
+<td>FALSE</td>
+<td>FILE</td>
+</tr>
+
+<tr>
+<td>FOR</td>
+<td>FORWARD</td>
+<td>FROM</td>
+<td>FUNCTION</td>
+<td>GET</td>
+<td>GOTO</td>
+</tr>
+
+<tr>
+<td>IF</td>
+<td>IMPORTS</td>
+<td>IN</td>
+<td>INPUT</td>
+<td>INTEGER</td>
+<td>LABEL</td>
+</tr>
+
+<tr>
+<td>LONG</td>
+<td>MOD</td>
+<td>MODULE</td>
+<td>NEW</td>
+<td>NIL</td>
+<td>NOT</td>
+</tr>
+
+<tr>
+<td>OF</td>
+<td>OR</td>
+<td>ORD</td>
+<td>OTHERWISE</td>
+<td>OUTPUT</td>
+<td>PACKED</td>
+</tr>
+
+<tr>
+<td>PRIVATE</td>
+<td>PROCEDURE</td>
+<td>PROGRAM</td>
+<td>PUT</td>
+<td>READ</td>
+<td>READLN</td>
+</tr>
+
+<tr>
+<td>REAL</td>
+<td>RECORD</td>
+<td>REPEAT</td>
+<td>RESET</td>
+<td>REWRITE</td>
+<td>SET</td>
+</tr>
+
+<tr>
+<td>SET</td>
+<td>STRING</td>
+<td>TEXT</td>
+<td>THEN</td>
+<td>TO</td>
+<td>TRUE</td>
+</tr>
+
+<tr>
+<td>TYPE</td>
+<td>UNTIL</td>
+<td>VAR</td>
+<td>WHILE</td>
+<td>WITH</td>
+<td>WRITE</td>
+</tr>
+
+<tr>
+<td>WRITELN</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+</table>
+
+<p>Two types of PASCAL comment are recognised: <span class="cmd">(*</span> with <span class="cmd">*)</span> and <span class="cmd">{</span> with <span class="cmd">}</span>.</p>
+
+<p>The function <span class="cmd">Pascal-Skeleton</span> can be used to create a function or procedure template and fills in the appropriate parameters and types.</p>
+
+<p>Bliss Mode</p>
+
+<p>Bliss Mode is a major programming mode for writing any dialect of Bliss code. It provides optional automatic expansion of Bliss keywords, formatting them according to Software Engineering standards.</p>
+
+<p>When you type a Bliss keyword in Bliss Mode and complete it with a non-word character, Bliss Mode automatically recognises the word, and performs the expansion. If a word is not recognised by Bliss Mode, it will not be expanded. Some words in Bliss may be grouped together to form strings of keywords (for example, EXTERNAL ROUTINE). To solve the problem of whether or not to expand a word, Bliss Mode looks at the word separator. If a word may form a string of words, Bliss Mode assumes that there are no more words to be input if the separator is a <span class="key">Return</span>. So, to define a <span class="cmd">GLOBAL BIND ROUTINE</span>, type <span class="cmd">GLOBAL BIND ROUTINE Return</span>.</p>
+
+<p>If you do not require automatic expansion, set the variable <span class="cmd">bliss-auto-expansion</span> to zero. The function <span class="cmd">expand-bliss-keyword</span> can then be used directly after each keyword to be expanded to force the expansion to take place.</p>
+
+<p>Bliss Mode works by reading templates from the Emacs language template library accessed through the <span class="cmd">language</span> database search-list.</p>
+
+<p>This search-list contains the provided template library database, and also the database <span class="cmd">sys$login:language-template</span>. The database <span class="cmd">language-template</span> is searched first, so your customised templates are used before the system's templates.</p>
+
+<p>For example, when you need to write a new Bliss module, do the following:</p>
+
+<ul>
+<li>Obtain a new buffer and switch to Bliss Mode.</li>
+
+<li>Type the word <span class="cmd">module</span> Bliss Mode fills in the module bracket at the end of the line, and expects you to type in the module name by prompting with <span class="cmd">[Module Name]</span> in the Mini-buffer.</li>
+
+<li>Type in the module name. Use <span class="key">^C</span> (<span class="cmd">exit-emacs</span>) to terminate the field.</li>
+
+<li>Bliss Mode proceeds to fill in the <span class="cmd">%TITLE</span> line above the module name, and asks you to fill in the rest of the title. It prompts <span class="cmd">[Module title]</span></li>
+</ul>
+
+<ul>
+<li>The next field is module options; Bliss Mode fills in the copyright notice, asking for your name and stepping through the possible module switches and header information.</li>
+</ul>
+
+<p>If you try to expand a Bliss word that Bliss Mode does not understand, an error message is issued. All Bliss reserved keywords and comment characters are recognised.</p>
+</div>
+</body>
+</html>
+

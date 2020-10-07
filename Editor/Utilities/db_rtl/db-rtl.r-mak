@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<build-instructions>
+	<condition name="windows">
+		<trait name="Win32"/>
+	</condition>
+	<condition name="unix">
+		<or>
+			<trait name="FreeBSD"/>
+			<trait name="Linux"/>
+			<trait name="OpenBSD"/>
+		</or>
+	</condition>
+
+	<package name="common">
+		<header-group condition="windows"	path="../Include/Windows"/>
+		<header-group condition="unix"		path="../Include/Unix"/>
+		<header-group				path="../Include/Common"/>
+		<CXX-define				name="__has_bool__"	value="1"/>
+		<CXX-define condition="windows"		name="_NT"		value="1"/>
+		<CXX-define condition="windows"		name="WIN32"		value="1"/>
+		<CXX-define condition="windows"		name="_CONSOLE"		value="1"/>
+	</package>
+
+	<static-library name="db-rtl">
+		<CXX name=".\db_rtl.cpp">
+			<uses-package name="common"/>
+		</CXX>
+		<CXX name="..\Source\Common\doprint.cpp">
+			<uses-package name="common"/>
+		</CXX>
+		<CXX name="..\Source\Common\em_stat.cpp">
+			<uses-package name="common"/>
+		</CXX>
+		<CXX name="..\Source\Common\emstring.cpp">
+			<uses-package name="common"/>
+		</CXX>
+		<CXX name="..\Source\Common\file_name_compare.cpp">
+			<uses-package name="common"/>
+		</CXX>
+		<CXX name="..\Source\Common\ndbm.cpp">
+			<uses-package name="common"/>
+		</CXX>
+		<CXX name=".\stub_rtl.cpp">
+			<uses-package name="common"/>
+		</CXX>
+		<CXX name="..\Source\Windows\win_file.cpp">
+			<uses-package name="common"/>
+		</CXX>
+	</static-library>
+</build-instructions>

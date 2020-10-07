@@ -1,0 +1,35 @@
+[barrys-emacs]
+name=Barrys Emacs for Fedora $releasever - $basearch
+failovermethod=priority
+baseurl=http://barrys-emacs.org/repos/fedora-$releasever/barrys-emacs/$basearch/release/
+enabled=1
+metadata_expire=7d
+repo_gpgcheck=0
+type=rpm
+gpgcheck=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-barrys-emacs-$releasever-$basearch
+skip_if_unavailable=False
+
+[barrys-emacs-debuginfo]
+name=Barrys Emacs for Fedora $releasever - $basearch - Debug
+failovermethod=priority
+baseurl=http://barrys-emacs.org/repos/fedora-$releasever/barrys-emacs/$basearch/debug/
+enabled=0
+metadata_expire=7d
+repo_gpgcheck=0
+type=rpm
+gpgcheck=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-barrys-emacs-$releasever-$basearch
+skip_if_unavailable=False
+
+[barrys-emacs-source]
+name=Barrys Emacs for Fedora $releasever - Source
+failovermethod=priority
+baseurl=http://barrys-emacs.org/repos/fedora-$releasever/barrys-emacs/$basearch/source/
+enabled=0
+metadata_expire=7d
+repo_gpgcheck=0
+type=rpm
+gpgcheck=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-barrys-emacs-$releasever-$basearch
+skip_if_unavailable=False

@@ -1,0 +1,82 @@
+* text=auto !eol
+Builder/Win32.mak -text
+Builder/Win64.mak -text
+Builder/build-windows.cmd -text
+Builder/builder_custom_init.cmd eol=crlf
+Builder/import-meinc.cmd -text
+Builder/local-install-linux.sh -text
+Editor/PyQtBEmacs/WindowsNamedPipes/Makefile -text
+Editor/PyQtBEmacs/WindowsNamedPipes/named-pipe-client.cpp -text
+Editor/PyQtBEmacs/WindowsNamedPipes/named-pipe-server.cpp -text
+Editor/PyQtBEmacs/be_command_line_handler_posix.py -text
+Editor/PyQtBEmacs/be_command_line_handler_windows.py -text
+Editor/PyQtBEmacs/bemacs.icns -text
+Editor/PyQtBEmacs/bemacs.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/build_compile.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/build_next_error.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/build_prev_error.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/case_capitalise.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/case_invert.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/case_lower.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/case_upper.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/close-curly-brace.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/edit.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/edit_copy.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/edit_cut.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/edit_delete.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/edit_paste.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/editcopy.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/editcut.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/editpaste.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/file_open.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/file_print.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/file_save.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/file_save_all.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/justify.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/macro_play.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/macro_record.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/macro_stop.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/open-curly-brace.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/region_indent.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/region_undent.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/search_find.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/search_fold_case.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/stop.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/synchronize.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/tools_grep.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/view_white_space.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/view_wrap_long.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/window_cascade.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/window_del_other.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/window_del_this.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/window_split_horiz.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/window_split_vert.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/window_tile_horiz.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/toolbar_images/window_tile_vert.png -text svneol=unset#image/png
+Editor/PythonBEmacs.sln -text
+Editor/Source/Windows/Resources/win_emacs.ico -text
+HTML/ug_bemacs_doc.gif -text
+HTML/ug_bemacs_folder.gif -text
+HTML/ug_bemacs_icon.gif -text
+HTML/ug_drop_file.gif -text
+HTML/ug_modeline.gif -text
+HTML/ug_screen.gif -text
+HTML/ug_start_menu.gif -text
+HTML/ug_windows.gif -text
+Kits/Linux/DPKG/brand.create-dpkg.sh -text
+Kits/Linux/bemacs.1 -text
+Kits/Linux/bemacs.desktop -text
+Kits/Linux/bemacs.spec.template -text
+Kits/Windows/bemacs_win64_code.iss -text
+Kits/Windows/brand.bemacs_version.py -text
+Kits/Windows/build-win64.cmd -text
+Kits/Windows/setup_kit_files.py -text
+Kits/Windows/windows_list_uninstall.py -text
+MLisp/Library/edit-variable.ml -text
+MLisp/Library/inno-mode.key -text
+MLisp/Library/inno-mode.ml -text
+MLisp/Library/makefile-mode.ml -text
+MLisp/Library/pybemacs-ui.ml -text
+MLisp/Library/smart-auto-execute.ml -text
+MLisp/Library/sql-mode.key -text
+MLisp/Library/sql-mode.ml -text

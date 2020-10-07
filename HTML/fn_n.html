@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<title>Functions N*</title>
+
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="contents">
+
+<p><a name="nargs">(<b>nargs</b>)</a></p>
+
+<blockquote>
+<p>Returns the number of arguments passed to the invoking MLisp function.</p>
+
+<p>For example, within the execution of foo invoked by (foo x y) the value returned by nargs would be 2.  </p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_a.html#arg">arg</a></li>
+</ul>
+
+
+</blockquote>
+
+
+<p><a name="narrow-region">(<b>narrow-region</b>)</a></p>
+
+<blockquote>
+<p>Restricts the amount of a buffer that can be manipulated to the region between dot and mark. <span class="cmd">widen-region</span> will remove the restriction.</p>
+
+<p>File operations ignore this restriction so, for example, you can save a file after performing <span class="cmd">narrow-region</span> and the whole file is saved, not just the visible portion.</p>
+
+<p>This function is useful for replacing strings over a small parts of a buffer or for running packages that usually affect the whole of a buffer but a required to operate on a portion of it.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_w.html#widen-region">widen-region</a></li>
+<li><a href="fn_s.html#save-restriction">save-restriction</a></li>
+</ul>
+
+</blockquote>
+
+
+<p><a name="narrow-window">(<b>narrow-window</b>)</a></p>
+
+<blockquote>
+<p>Reduces the width of a vertically-split window. A window has to be at least one column wide.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_w.html#widen-window">widen-window</a></li>
+<li><a href="var_w.html#window-width">window-width</a> variable</li>
+</ul>
+
+
+</blockquote>
+
+
+<p><a name="newline">(<b>newline</b>) ^M (Return)</a></p>
+
+<blockquote>
+<p>Inserts a newline character into the buffer.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#newline-and-backup">newline-and-backup</a></li>
+<li><a href="#newline-and-indent">newline-and-indent</a></li>
+</ul>
+
+
+</blockquote>
+
+
+<p><a name="newline-and-backup">(<b>newline-and-backup</b>) ^O</a></p>
+
+<blockquote>
+<p>Inserts an end-of-line immediately after dot, effectively opening up the line. If dot is positioned at the beginning of a line, then ^O will create a blank line preceding the current line and will position dot on that new line.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#newline">newline</a></li>
+<li><a href="#newline-and-indent">newline-and-indent</a></li>
+</ul>
+
+</blockquote>
+
+
+<p><a name="newline-and-indent">(<b>newline-and-indent</b>) ^J</a></p>
+
+<blockquote>
+<p>Inserts a newline just as Return does, but also inserts enough tabs and spaces so that the newly-created line has the same indentation as the old line.</p>
+
+<p>This is useful when you are typing in a block of program text all at the same indentation level. </p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="#newline">newline</a></li>
+<li><a href="#newline-and-backup">newline-and-backup</a></li>
+</ul>
+
+
+</blockquote>
+
+
+<p><a name="next-error">(<b>next-error</b>) ^X-^N</a></p>
+
+<blockquote>
+<p>Takes the next error message (as returned from the ESC-x <span class="cmd">compile-it</span> command), visits the file in which the error occurred and sets dot to the line in which that error occurred. The error message will be displayed at the top of the window associated with the Error log buffer.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_c.html#compile-it">compile-it</a></li>
+<li><a href="fn_p.html#previous-error">previous-error</a></li>
+</ul>
+
+</blockquote>
+
+
+<p><a name="next-line">(<b>next-line</b> <span class="cmd">repeat-count</span>) ^N</a></p>
+
+<blockquote>
+<p>Moves dot down <span class="cmd">prefix-argument</span> times <span class="cmd">repeat-count</span> lines. If <span class="cmd">repeat-count</span> is omitted, 1 is assumed. <span class="cmd">next-line</span> attempts to keep dot at the same horizontal character position as you move from line to line.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_p.html#previous-line">previous-line</a></li>
+<li><a href="var_t.html#track-eol-on-^N-^P">track-eol-on-^N-^P</a> variable</li>
+</ul>
+
+
+</blockquote>
+
+
+<p><a name="next-page">(<b>next-page</b>) page-down</a></p>
+
+<blockquote>
+<p>Repositions the current window on the current buffer so that the page prefix-argument pages forward is visible in the window (where a page is a group of lines 4/5th's the size of the window). If possible, dot is kept where it is, otherwise it is moved to the middle of the new page.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_p.html#previous-page">previous-page</a></li>
+<li><a href="fn_p.html#page-next-window">page-next-window</a></li>
+</ul>
+
+</blockquote>
+
+
+<p><a name="next-window">(<b>next-window</b>) ^X-n</a></p>
+
+<blockquote>
+<p>Switches to the window (and associated buffer) that is below the current window. If there is no lower window, moves to the window at the top of the screen.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_b.html#beginning-of-window">beginning-of-window</a></li>
+<li><a href="fn_e.html#end-of-window">end-of-window</a></li>
+<li><a href="fn_l.html#line-to-top-of-window">line-to-top-of-window</a></li>
+<li><a href="fn_p.html#previous-window">previous-window</a></li>
+</ul>
+
+</blockquote>
+
+
+<p><a name="normal-mode">(<b>normal-mode</b>)</a></p>
+
+<blockquote>
+<p>Turns on Normal Mode -- default major mode which Emacs gives to all new buffers that it creates. It provides a general text manipulating environment with no special features.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_f.html#fundamental-mode">fundamental-mode</a></li>
+<li><a href="fn_t.html#text-mode">text-mode</a></li>
+<li><a href="fn_c.html#c-mode">c-mode</a></li>
+<li><a href="fn_l.html#lisp-mode">lisp-mode</a></li>
+</ul>
+
+</blockquote>
+
+
+<p><a name="novalue">(<b>novalue</b>)</a></p>
+
+<blockquote>
+<p>Does nothing. <span class="cmd">novalue</span> is a complete no-op -- it performs no action and returns no value.</p>
+
+<p>Normally, the value of an MLisp function is the value of the last expression evaluated in the body of the function. If you do not want the function to return a value, use <span class="cmd">novalue</span>as the last expression in the function.</p>
+
+</blockquote>
+
+
+</div>
+</body>
+</html>
+

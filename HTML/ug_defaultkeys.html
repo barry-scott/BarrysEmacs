@@ -1,0 +1,605 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<title>User Guide - Default Key Bindings</title>
+
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="contents">
+<p><a name="top"></a></p>
+
+<h1><a name="defaultkeybindings"></a>Default Key Bindings</h1>
+
+<p>The tables below are a list of the Emacs default key bindings.</p>
+
+<p>The default binding are provided by calling the function default-emacs-init 
+from your emacsinit.ml file. The default emacsinit.ml shipped with emacs calls default-emacs-init.</p>
+
+<p>This is the same information as displayed by the <span class="cmd">describe-bindings</span> function.</p>
+
+<table class="key-bindings">
+<caption><b>Special Editing key bindings</b></caption>
+<colgroup>
+    <col class="binding" />
+    <col class="function" />
+    <col class="binding" />
+    <col class="function" />
+</colgroup>
+
+<tr>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+</tr>
+
+<tr>
+<td><span class="key">up</span></td>
+<td><span class="cmd">previous-line</span></td>
+<td><span class="key">ctrl-up</span></td>
+<td><span class="cmd">scroll-one-line-up</span></td>
+</tr>
+
+<tr>
+<td><span class="key">down</span></td>
+<td><span class="cmd">next-line</span></td>
+<td><span class="key">ctrl-down</span></td>
+<td><span class="cmd">scroll-one-line-down</span></td>
+</tr>
+
+<tr>
+<td><span class="key">right</span></td>
+<td><span class="cmd">forward-character</span></td>
+<td><span class="key">ctrl-right</span></td>
+<td><span class="cmd">forward-word</span></td>
+</tr>
+
+<tr>
+<td><span class="key">left</span></td>
+<td><span class="cmd">backward-character</span></td>
+<td><span class="key">ctrl-left</span></td>
+<td><span class="cmd">backward-word</span></td>
+</tr>
+
+<tr>
+<td><span class="key">home</span></td>
+<td><span class="cmd">PC-home-key</span></td>
+<td><span class="key">ctrl-home</span></td>
+<td><span class="cmd">beginning-of-file</span></td>
+</tr>
+
+<tr>
+<td><span class="key">insert</span></td>
+<td>Toggle <span class="cmd">replace-mode</span></td>
+<td><span class="key">shift-insert</span></td>
+<td><span class="cmd">UI-edit-paste</span></td>
+</tr>
+
+<tr>
+<td colspan="2">&#160;</td>
+<td><span class="key">ctrl-insert</span></td>
+<td><span class="cmd">UI-edit-copy</span></td>
+</tr>
+
+<tr>
+<td><span class="key">delete</span></td>
+<td><span class="cmd">delete-next-character</span></td>
+<td><span class="key">shift-delete</span></td>
+<td><span class="cmd">PC-edit-cut</span></td>
+</tr>
+
+<tr>
+<td colspan="2">&#160;</td>
+<td><span class="key">ctrl-delete</span></td>
+<td><span class="cmd">delete-next-word</span></td>
+</tr>
+
+<tr>
+<td><span class="key">end</span></td>
+<td><span class="cmd">end-of-line</span></td>
+<td><span class="key">ctrl-end</span></td>
+<td><span class="cmd">end-of-file</span></td>
+</tr>
+
+<tr>
+<td><span class="key">page-up</span></td>
+<td><span class="cmd">previous-page</span></td>
+<td><span class="key">ctrl-page-up</span></td>
+<td><span class="cmd">beginning-of-window</span></td>
+</tr>
+
+<tr>
+<td><span class="key">page-down</span></td>
+<td><span class="cmd">next-page</span></td>
+<td><span class="key">ctrl-page-down</span></td>
+<td><span class="cmd">end-of-window</span></td>
+</tr>
+</table>
+
+<table class="key-bindings">
+<caption><b>Function Key bindings</b></caption>
+<colgroup>
+    <col class="binding" />
+    <col class="function" />
+    <col class="binding" />
+    <col class="function" />
+</colgroup>
+
+<tr>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+</tr>
+
+<tr>
+<td><span class="key">f1</span></td>
+<td><span class="cmd">help</span></td>
+<td colspan="2">&#160;</td>
+</tr>
+</table>
+
+<table class="key-bindings">
+<caption><b>Mouse bindings</b></caption>
+<colgroup>
+    <col class="binding" />
+    <col class="function" />
+    <col class="binding" />
+    <col class="function" />
+</colgroup>
+
+<tr>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+</tr>
+
+<tr>
+<td><span class="key">mouse-wheel-pos</span></td>
+<td>Scroll the buffer down 3 lines at a time</td>
+<td><span class="key">ctrl-mouse-wheel-pos</span></td>
+<td>Scroll the buffer up 3 lines at a time</td>
+</tr>
+
+<tr>
+<td><span class="key">mouse-wheel-neg</span></td>
+<td>Scroll the buffer up 3 lines at a time</td>
+<td><span class="key">ctrl-mouse-wheel-neg</span></td>
+<td>Scroll the buffer up 1 page at a time</td>
+</tr>
+</table>
+
+<table class="key-bindings">
+<caption><b>Ctrl Key bindings</b></caption>
+<colgroup>
+    <col class="binding" />
+    <col class="function" />
+    <col class="binding" />
+    <col class="function" />
+</colgroup>
+
+<tr>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+</tr>
+
+<tr>
+<td><span class="key">^@</span></td>
+<td><span class="cmd">set-mark</span></td>
+<td><span class="key">^A</span></td>
+<td>Select the whole buffer</td>
+</tr>
+
+<tr>
+<td><span class="key">^B</span></td>
+<td><span class="cmd">switch-to-buffer</span></td>
+<td><span class="key">^C</span></td>
+<td><span class="cmd">UI-edit-copy</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^D</span></td>
+<td><span class="cmd">delete-next-character</span></td>
+<td><span class="key">^E</span></td>
+<td><span class="cmd">end-of-line</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^F</span></td>
+<td><span class="cmd">incremental-search</span></td>
+<td><span class="key">^G</span></td>
+<td><span class="cmd">interrupt-key</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^H</span></td>
+<td><span class="cmd">delete-previous-character</span></td>
+<td><span class="key">^I</span></td>
+<td><span class="cmd">tab-key</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^J</span></td>
+<td><span class="cmd">newline-and-indent</span></td>
+<td><span class="key">^K</span></td>
+<td><span class="cmd">kill-to-end-of-line</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^L</span></td>
+<td><a href="#Ctrl-L-table">see ctrl-l table</a></td>
+<td><span class="key">^M</span></td>
+<td><span class="cmd">newline</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^N</span></td>
+<td><span class="cmd">next-line</span></td>
+<td><span class="key">^O</span></td>
+<td><span class="cmd">visit-file</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^P</span></td>
+<td><span class="cmd">previous-line</span></td>
+<td><span class="key">^Q</span></td>
+<td><span class="cmd">quote-character</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^R</span></td>
+<td><span class="cmd">reverse-incremental-search</span></td>
+<td><span class="key">^S</span></td>
+<td><span class="cmd">write-current-file</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^T</span></td>
+<td><span class="cmd">transpose-characters</span></td>
+<td><span class="key">^U</span></td>
+<td><span class="cmd">argument-prefix</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^V</span></td>
+<td><span class="cmd">UI-edit-paste</span></td>
+<td><span class="key">^W</span></td>
+<td><span class="cmd">dabbrev</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^X</span></td>
+<td><a href="#Ctrl-X-table">see ctrl-x table</a></td>
+<td><span class="key">^Y</span></td>
+<td><span class="cmd">yank-from-killbuffer</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^Z</span></td>
+<td><span class="cmd">new-undo</span></td>
+<td><span class="key">ESC</span></td>
+<td>See Esc table</td>
+</tr>
+
+<tr>
+<td><span class="key">^_</span></td>
+<td><span class="cmd">help-key</span></td>
+<td><span class="key">BKSP</span></td>
+<td><span class="cmd">delete-previous-character</span></td>
+</tr>
+</table>
+
+<p><a name="Ctrl-X-table">What happens when ^X</a> is typed changes if text is highlighted. If text is highlighted ^X will 
+cut the text into the paste buffer, using UI-edit-cut. Otherwise ^X acts as prefix for the commands
+in the following table.</p>
+
+<table class="key-bindings">
+<caption><b>Ctrl-X Key bindings</b></caption>
+<colgroup>
+    <col class="binding" />
+    <col class="function" />
+    <col class="binding" />
+    <col class="function" />
+</colgroup>
+
+<tr>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+</tr>
+
+<tr>
+<td><span class="key">^X-^@</span></td>
+<td><span class="cmd">unset-mark</span></td>
+<td><span class="key">^X-^B</span></td>
+<td><span class="cmd">list-buffers</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^X-^C</span></td>
+<td><span class="cmd">exit-emacs</span></td>
+<td><span class="key">^X-^D</span></td>
+<td><span class="cmd">describe-word-in-buffer</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^X-^E</span></td>
+<td><span class="cmd">compile-it</span></td>
+<td><span class="key">^X-^F</span></td>
+<td><span class="cmd">write-file-exit</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^X-^I</span></td>
+<td><span class="cmd">insert-file</span></td>
+<td><span class="key">^X-^M</span></td>
+<td><span class="cmd">write-modified-files</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^X-^N</span></td>
+<td><span class="cmd">next-error</span></td>
+<td><span class="key">^X-^O</span></td>
+<td><span class="cmd">use-old-buffer</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^X-^R</span></td>
+<td><span class="cmd">read-file</span></td>
+<td><span class="key">^X-^S</span></td>
+<td><span class="cmd">write-current-file</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^X-^U</span></td>
+<td><span class="cmd">new-undo</span></td>
+<td><span class="key">^X-^V</span></td>
+<td><span class="cmd">visit-file</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^X-^W</span></td>
+<td><span class="cmd">write-named-file</span></td>
+<td><span class="key">^X-^X</span></td>
+<td><span class="cmd">exchange-dot-and-mark</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^X-^Z</span></td>
+<td><span class="cmd">shrink-window</span></td>
+<td><span class="key">^X-!</span></td>
+<td><span class="cmd">execute-monitor-command</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^X-(</span></td>
+<td><span class="cmd">start-remembering</span></td>
+<td><span class="key">^X-)</span></td>
+<td><span class="cmd">stop-remembering</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^X-1</span></td>
+<td><span class="cmd">delete-other-windows</span></td>
+<td><span class="key">^X-2</span></td>
+<td><span class="cmd">split-current-window</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^X-3</span></td>
+<td><span class="cmd">split-current-window-vertically</span></td>
+<td><span class="key">^X-=</span></td>
+<td><span class="cmd">what-cursor-position</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^X-?</span></td>
+<td><span class="cmd">apropos-variable</span></td>
+<td><span class="key">^X-b</span></td>
+<td><span class="cmd">switch-to-buffer</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^X-d</span></td>
+<td><span class="cmd">delete-window</span></td>
+<td><span class="key">^X-e</span></td>
+<td><span class="cmd">execute-keyboard-macro</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^X-n</span></td>
+<td><span class="cmd">next-window</span></td>
+<td><span class="key">^X-p</span></td>
+<td><span class="cmd">previous-window</span></td>
+</tr>
+
+<tr>
+<td><span class="key">^X-z</span></td>
+<td><span class="cmd">enlarge-window</span></td>
+<td colspan="2">&#160;</td>
+</tr>
+</table>
+
+<table class="key-bindings">
+<caption><b><a name="Ctrl-L-table">Ctrl-L Key bindings</a></b></caption>
+<colgroup>
+    <col class="binding" />
+    <col class="function" />
+    <col class="binding" />
+    <col class="function" />
+</colgroup>
+
+<tr>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+</tr>
+
+<tr>
+<td><span class="key">^L-^B</span></td>
+<td><span class="cmd">buffer-dired</span></td>
+<td><span class="key">^L-^D</span></td>
+<td><span class="cmd">list-databases</span></td>
+</tr>
+<tr>
+<td><span class="key">^L-^L</span></td>
+<td><span class="cmd">redraw-display</span></td>
+<td><span class="key">^L-^P</span></td>
+<td><span class="cmd">list-processes</span></td>
+</tr>
+</table>
+
+<table class="key-bindings">
+<caption><b><a name="Esc-table">Esc Key bindings</a></b></caption>
+<colgroup>
+    <col class="binding" />
+    <col class="function" />
+    <col class="binding" />
+    <col class="function" />
+</colgroup>
+
+<tr>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+    <th align="left">Binding</th>
+    <th align="left">Function</th>
+</tr>
+
+<tr>
+<td><span class="key">ESC-^C</span></td>
+<td><span class="cmd">exit-emacs</span></td>
+<td><span class="key">ESC-^D</span></td>
+<td><span class="cmd">debug</span></td>
+</tr>
+
+<tr>
+<td><span class="key">ESC-^I</span></td>
+<td><span class="cmd">tab-delete</span></td>
+<td><span class="key">ESC-^V</span></td>
+<td><span class="cmd">page-next-window</span></td>
+</tr>
+
+<tr>
+<td><span class="key">ESC-^W</span></td>
+<td><span class="cmd">delete-region-to-buffer</span></td>
+<td><span class="key">ESC-^Y</span></td>
+<td><span class="cmd">yank-buffer</span></td>
+</tr>
+
+<tr>
+<td><span class="key">ESC-ESC</span></td>
+<td><span class="cmd">minibuf</span></td>
+<td><span class="key">ESC-!</span></td>
+<td><span class="cmd">line-to-top-of-window</span></td>
+</tr>
+
+<tr>
+<td><span class="key">ESC-(</span></td>
+<td><span class="cmd">backward-paragraph</span></td>
+<td><span class="key">ESC-)</span></td>
+<td><span class="cmd">forward-paragraph</span></td>
+</tr>
+
+<tr>
+<td><span class="key">ESC-,</span></td>
+<td><span class="cmd">beginning-of-window</span></td>
+<td><span class="key">ESC--</span></td>
+<td><span class="cmd">meta-minus</span></td>
+</tr>
+
+<tr>
+<td><span class="key">ESC-.</span></td>
+<td><span class="cmd">end-of-window</span></td>
+<td><span class="key">ESC-0..ESC-9</span></td>
+<td><span class="cmd">meta-digit</span></td>
+</tr>
+
+<tr>
+<td><span class="key">ESC-&lt;</span></td>
+<td><span class="cmd">beginning-of-file</span></td>
+<td><span class="key">ESC-&gt;</span></td>
+<td><span class="cmd">end-of-file</span></td>
+</tr>
+
+<tr>
+<td><span class="key">ESC-?</span></td>
+<td><span class="cmd">apropos</span></td>
+<td><span class="key">ESC-@</span></td>
+<td><span class="cmd">column-to-left-of-window</span></td>
+</tr>
+
+<tr>
+<td><span class="key">ESC-C</span></td>
+<td><span class="cmd">case-capitalize</span></td>
+<td><span class="key">ESC-^</span></td>
+<td><span class="cmd">case-word-invert</span></td>
+</tr>
+
+<tr>
+<td><span class="key">ESC-a</span></td>
+<td><span class="cmd">backward-sentence</span></td>
+<td><span class="key">ESC-b</span></td>
+<td><span class="cmd">backward-word</span></td>
+</tr>
+
+<tr>
+<td><span class="key">ESC-d</span></td>
+<td><span class="cmd">delete-next-word</span></td>
+<td><span class="key">ESC-e</span></td>
+<td><span class="cmd">forward-sentence</span></td>
+</tr>
+
+<tr>
+<td><span class="key">ESC-f</span></td>
+<td><span class="cmd">forward-word</span></td>
+<td><span class="key">ESC-g</span></td>
+<td><span class="cmd">goto-line</span></td>
+</tr>
+
+<tr>
+<td><span class="key">ESC-h</span></td>
+<td><span class="cmd">delete-previous-word</span></td>
+<td><span class="key">ESC-i</span></td>
+<td><span class="cmd">case-invert</span></td>
+</tr>
+
+<tr>
+<td><span class="key">ESC-j</span></td>
+<td><span class="cmd">indent-C-procedure</span></td>
+<td><span class="key">ESC-l</span></td>
+<td><span class="cmd">case-lower</span></td>
+</tr>
+
+<tr>
+<td><span class="key">ESC-q</span></td>
+<td><span class="cmd">query-replace-string</span></td>
+<td><span class="key">ESC-r</span></td>
+<td><span class="cmd">replace-string</span></td>
+</tr>
+
+<tr>
+<td><span class="key">ESC-u</span></td>
+<td><span class="cmd">case-upper</span></td>
+<td><span class="key">ESC-v</span></td>
+<td><span class="cmd">previous-page</span></td>
+</tr>
+
+<tr>
+<td><span class="key">ESC-x</span></td>
+<td><span class="cmd">execute-extended-command</span></td>
+<td><span class="key">ESC-z</span></td>
+<td><span class="cmd">scroll-one-line-down</span></td>
+</tr>
+</table>
+</div>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<title>Variables - I</title>
+
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="contents">
+
+<p><a name="indent-use-tab"></a><b>indent-use-tab</b> &#171; 1</p>
+
+<blockquote>
+<p>Emacs will only use the TAB character while indenting when
+    indent-use-tab is 1.</p>
+</blockquote>
+
+
+<p><a name="input-mode"></a><b>input-mode</b> &#171;</p>
+
+<blockquote>
+<p>Emacs can operate in two different input modes, traditional and GUI.</p>
+
+<p>In GUI mode Emacs operates the highlight region in the style of Windows and Motif, a more intuitive mode.</p>
+
+<p>The region will be set if you move the cursor while holding the shift key.</p>
+
+<p>Typing or otherwise inserting text while the region is set will erase the region first. In effect replacing region with new text.</p>
+
+<p>Using a delete command will erase the region rather then doing the normal delete action. delete commands includes, but is not limited to: delete-next-character, delete-next-word, delete-previous-character, delete-previous-word, erase-region.</p>
+
+<p>Setting the mark manually, using the set-mark command, will temporarily disable the GUI input mode.</p>
+</blockquote>
+
+
+<p><a name="is-comment"></a><b>is-comment</b> &#171; 4</p>
+
+<blockquote>
+<p>This constant is returned by the current-syntax-entity function when dot is located in a comment.</p>
+</blockquote>
+
+
+<p><a name="is-dull"></a><b>is-dull</b> &#171; 0</p>
+
+<blockquote>
+<p>This constant is returned by the current-syntax-entity function when dot is located in punctuation or white-space.</p>
+</blockquote>
+
+
+<p><a name="is-problem"></a><b>is-problem</b> &#171; 5</p>
+
+<blockquote>
+<p>This constant is returned by the current-syntax-entity function when dot is located just after a problem character.</p>
+</blockquote>
+
+
+<p><a name="is-quote"></a><b>is-quote</b> &#171; 3</p>
+
+<blockquote>
+<p>This constant is returned by the current-syntax-entity function when dot is located just after a quote character.</p>
+</blockquote>
+
+
+<p><a name="is-string"></a><b>is-string</b> &#171; 2</p>
+
+<blockquote>
+<p>This constant is returned by the current-syntax-entity function when dot is located in a matched quoted string.</p>
+</blockquote>
+
+
+<p><a name="is-word"></a><b>is-word</b> &#171; 1</p>
+
+<blockquote>
+<p>This constant is returned by the current-syntax-entity function when dot is located in a word.</p>
+</blockquote>
+
+
+</div>
+</body>
+</html>
+

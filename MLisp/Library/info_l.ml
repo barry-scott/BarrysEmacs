@@ -1,0 +1,38 @@
+(defun
+        (~info-l
+            dot
+            (save-window-excursion
+                (switch-to-buffer "--INFO stack--")
+                (if (error-occurred
+                        (end-of-file)
+                        (backward-character)
+                        (set-mark)
+                        (beginning-of-line)
+                        (setq ~info-help-part (+ (region-to-string) 0))
+                        (backward-character)
+                        (set-mark)
+                        (beginning-of-line)
+                        (setq dot (+ (region-to-string) 0))
+                        (backward-character)
+                        (set-mark)
+                        (beginning-of-line)
+                        (setq ~info-node-part (region-to-string))
+                        (backward-character)
+                        (set-mark)
+                        (beginning-of-line)
+                        (setq ~info-file-part (region-to-string))
+                        (exchange-dot-and-mark)
+                    )
+                    (error-message "There is no Last node.")
+                )
+            )
+            (find-node ~info-file-part ~info-node-part ~info-help-part)
+            (save-excursion
+                (temp-use-buffer "--INFO stack--")
+                (end-of-file)
+                (erase-region)
+            )
+            (goto-character dot)
+            (beginning-of-line)
+        )
+)

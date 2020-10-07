@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<workflow-instructions>
+    <make name="dbprint.r-mak"/>
+    <pack name="dbprint.r-pkg" 
+        output-directory-suffix="dbprint"
+        root-directory="."/>
+</workflow-instructions>

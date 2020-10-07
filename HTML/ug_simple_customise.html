@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Customising Emacs</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+<div class="contents">
+ 
+<h1>customising emacs</h1>
+ 
+<p>There are many different ways you can customise Emacs. You can do the
+following:</p>
+ 
+<ul>
+<li>Change settings in the menus at the top of the screen. </li>
+<li>Give commands while Emacs is running to make it behave differently. For
+example, you could toggle between insert and overstrike. Changes such as this
+last just for the current Emacs session.</li>
+<li> Make changes to the Emacs startup files, so that the new behaviour is
+present when Emacs starts. For example, you could make Emacs behave differently
+depending on the type of file that you are editing. </li>
+<li>Use command line parameters when starting Emacs, so that you specify
+particular packages to load.</li>
+</ul>
+
+<h2><a name="changingsettingsinmenus"></a>Emacs menus</h2>
+ 
+<p>Many of the options on the Emacs menus are similar to those found in other
+text editors. This section does not describe such options; instead, it
+describes those options that are less common.</p>
+<h3><a name="thefilemenu"></a>The File menu</h3>
+
+<table>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+<tr><td>Open...</td>    <td>Open a file</td></tr>
+<tr><td>Save</td>       <td>Save the current buffer</td></tr>
+<tr><td>Save As...</td> <td>Save the current buffer with a new name</td></tr>
+<tr><td>Save All Modified files</td> <td>Save any file buffers contents.</td></tr>
+</table>
+
+<h3><a name="theeditmenu"></a>The Edit menu</h3>
+ 
+<p>Many of the options on the Edit menu are similar to those found in other
+text editors. The less common options are:</p>
+<table>
+<tr>
+<th>Option</th>
+<th>Description </th>
+</tr>
+<tr>
+<td valign="top">Mark</td>
+<td valign="top">Sets a hard mark so that you can select text. Unlike a normal
+Windows mark, this mark is not cleared when you move the cursor. </td>
+</tr>
+<tr>
+<td valign="top">Case Blind Search</td>
+<td valign="top">Makes Emacs ignore the case of letters when searching.</td>
+</tr>
+<tr>
+<td valign="top">Advanced, Delete White Space</td>
+<td valign="top">Removes all spaces and tabs that are next to the cursoron the
+current line. This removes white space to the left and to the right of the
+cursor. </td>
+</tr>
+<tr>
+<td valign="top">Advanced, Tabify Region</td>
+<td valign="top">Replaces spaces with tabs, where possible, throughout the
+selected region.</td>
+</tr>
+<tr>
+<td valign="top">Advanced, Untabify Region</td>
+<td valign="top">Replaces tabs with spaces throughout the selected region.</td>
+</tr>
+<tr>
+<td valign="top">Advanced, Indent Region</td>
+<td valign="top">Indents the selected text, moving it to the right by one tab
+stop.</td>
+</tr>
+<tr>
+<td valign="top">Advanced, Undent Region</td>
+<td valign="top">Moves the selected text to the left by one tab stop.</td>
+</tr>
+<tr>
+<td valign="top">Preferences, Font</td>
+<td valign="top">This option enables you to select a screen font for Emacs to
+use. The list shows just monospaced fonts.</td>
+</tr>
+<tr>
+<td valign="top">Preferences, Colours</td>
+<td valign="top">This option enables you to select the colours to use for </td>
+</tr>
+<tr>
+<td valign="top">Preferences, Directories </td>
+<td valign="top">This enables you to specify various locations that Emacs uses:
+<table>
+<tr>
+<td valign="top"><kbd><b>Sys$Login</b></kbd></td>
+<td valign="top">This is your personal directory. Under Windows NT this
+defaults to the <b>login in</b> directory as defined by the system
+administrator.</td>
+</tr>
+<tr>
+<td valign="top"><kbd><b>Sys$Scratch</b></kbd></td>
+<td valign="top">This is the directory that Emacs functions can use for
+temporary files. You can use it when writing your own functions. On a Windows
+system you would normally set this to point to your temporary directory, often
+<span class="cmd">c:\temp</span></td>
+</tr>
+<tr>
+<td valign="top"><kbd><b>Emacs_User</b></kbd></td>
+<td valign="top">This is your personal Emacs directory. Under Windows NT it
+defaults to <span class="cmd">sys$login:\bemacs</span></td>
+</tr>
+<tr>
+<td valign="top"><kbd><b>Emacs_Local_Library</b></kbd></td>
+<td valign="top"> This optional logical name may be used to point to a local
+library of Emacs programs and library files.</td>
+</tr>
+<tr>
+<td valign="top"><kbd><b>Emacs_Journal</b></kbd></td>
+<td valign="top">Emacs writes all journal files to the directory specified by
+this logical name.<br />
+<br />
+When journalling is enabled, Emacs saves all the insertions and deletions made
+to your buffers in a journal file. The changes are saved to the journal file at
+the same time as you make them to the proper file.<br />
+See Barry's Emacs User Guide for
+<a href="ug_advancededit.html#protectionagainstdisasters">more information about
+journalling.</a></td>
+</tr>
+<tr>
+<td valign="top"><kbd><b>Emacs_Checkpoint</b></kbd></td>
+<td valign="top">Emacs writes all checkpoint files to the directory specified
+by this logical name.<br />
+<br />
+When checkpointing is enabled, Emacs saves buffers from time-to-time when a
+certain number of keystrokes have been made. The buffers are written
+automatically, but you can also force Emacs to checkpoint at any time you wish.
+Checkpointing prevents you from losing more than a limited amount of work if a
+disaster occurs.<br />
+<br />
+See Barry's Emacs User Guide for
+<a href="ug_advancededit.html#protectionagainstdisasters">more information about
+checkpointing</a>.</td>
+</tr>
+<tr>
+<td valign="top"><kbd><b>Emacs_Memory</b></kbd></td>
+<td valign="top">Points to the location of the Emacs memory file. By default,
+this is the current directory. Define emacs_memory to be the null device to
+disable memory files. NUL is the name of the null device on Windows.</td>
+</tr>
+<tr>
+<td valign="top"><kbd><b>Emacs_Path</b></kbd></td>
+<td valign="top"> This name is used when Emacs attempts to load an MLisp
+library from a file. Emacs automatically sets the value of this logical name.
+Its value is typically <span class="cmd">.;emacs_user:;emacs_library:</span></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td valign="top">Preferences, User Logical Names</td>
+<td valign="top">A user logical name points to a directory. You can use the
+logical name as shorthand way of referring to that directory. For example, if
+you define a user logical name of <b>tmp</b> to point to
+<span class="cmd">c:\windows\temp</span> you could then refer to a file,
+<span class="cmd">myfile.tmp</span> within that directory as: <pre>tmp:myfile.tmp</pre>
+<br />
+<br />
+You can also use logical names when changing Emacs' default directory. You must
+use a colon (:) at the end of the name to force Emacs to translate the logical
+name. For example, to make Emacs change to the directory pointed to by the tmp
+logical name, you could use the following command:<br />
+<br />
+<span class="cmd">change-directory tmp:</span> 
+</td>
+</tr>
+<tr>
+<td valign="top">Preferences, Printing</td>
+<td valign="top">The strings you can enter to set up the print page are:<br />
+<table>
+<tr>
+<td><kbd><b>%p</b></kbd></td>
+<td> page number</td>
+</tr>
+<tr>
+<td><kbd><b>%P</b></kbd> </td>
+<td>total number of pages</td>
+</tr>
+<tr>
+<td> <kbd><b>%b</b></kbd></td>
+<td>buffer name</td>
+</tr>
+<tr>
+<td><kbd><b>%fn</b></kbd></td>
+<td> file name and type</td>
+</tr>
+<tr>
+<td> <kbd><b>%fp</b></kbd></td>
+<td>path to file</td>
+</tr>
+<tr>
+<td> <kbd><b>%ft</b></kbd></td>
+<td> time stamp of the file</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td valign="top">Preferences, File Parsing rules
+</td>
+<td valign="top">Use this option if you need to force Emacs to use long
+filenames or to use short filenames when accessing a particular disk. Normally,
+Emacs can determine the correct setting automatically, so you are unlikely to
+need to use this option.</td>
+</tr>
+</table>
+
+<h2><a name="theviewmenu"></a>The View menu</h2>
+<table>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+<tr>
+<td valign="top">View White Space</td>
+<td valign="top">Displays tabs and returns.</td>
+</tr>
+<tr>
+<td valign="top">Wrap Long Lines</td>
+<td valign="top">When this is set, Emacs wraps lines that are too long to fit
+in the window. The behaviour is not the same as you get with Windows programs
+such as Notepad: movement commands still regard the line as a single line.
+Thus, next-line moves the cursor to the next proper line, which may mean moving
+past several wrapped lines.</td>
+</tr>
+</table>
+
+ 
+<h1><a name="emacscommandline"></a>Using the Emacs command line</h1>
+ 
+<p>There are a number of different command line options that you can use when
+starting Emacs:</p>
+ 
+<p>To make Emacs open a file and go to a specific line number you can use any
+of the following:</p>
+ 
+<pre>
+$ bemacs +line-num file
+$ bemacs /line=line-num file
+$ bemacs /line:line-num file
+$ bemacs -line=line-num file
+$ bemacs -line:line-num file
+$ bemacs file:line-num:column-num
+</pre>
+ 
+<p>To make Emacs open a file and make the buffer read-only you can use either
+of the following:</p>
+ 
+<pre>
+$ bemacs /readonly file
+$ bemacs -readonly file
+</pre>
+ 
+<p>To make Emacs open a file and make the buffer writeable you can use either
+of the following:</p>
+ 
+<pre>
+$ bemacs /noreadonly file
+$ bemacs -noreadonly file
+</pre>
+ 
+<pre>
+$ bemacs /cd
+$ bemacs -cd
+</pre>
+
+
+ 
+<h1><a name="startupfiles"></a>Changing the Emacs startup files</h1>
+ 
+<p>When Emacs starts up, it does the following:</p>
+<ol>
+<li>Looks in the directory pointed to by the environemt variable <span class="cmd">emacs_user</span> for the file
+<span class="cmd">emacsinit.ml</span>. If the file is there, Emacs executes the commands in it.</li>
+<li>If Emacs cannot find <span class="cmd">emacsinit.ml</span> in <span class="cmd">emacs_user:</span>,
+it looks for the default <span class="cmd">emacsinit.m</span>, which is in <span class="cmd">emacs_Library</span>.</li>
+</ol>
+ 
+<p>If you do not already have a copy of <span class="cmd">emacs_user:emacsinit.ml</span>, the
+best way to start is to copy <span class="cmd">emacs_Library:emacsinit.ml</span> to
+<span class="cmd">Emacs_User:Emacsinit.ml</span>. You can then add your own customisations to
+the bottom of the file.</p>
+
+<h2><a name="settingavariable"></a>Setting a variable</h2>
+ 
+<p>The simplest thing you can do when editing Emacsinit.ml is to make changes
+to Emacs variables. For example, there is an Emacs global variable called
+<span class="cmd">replace-case</span>. If you set this variable to 1 then, when doing
+string replacements, Emacs alters the case of the new string to match that of
+the string that is being replaced. </p>
+ 
+<p>By default, Emacs starts with <span class="cmd">replace-case</span> set to 0, but you
+could easily add the following line to your Emacsinit.ml file so that Emacs
+starts up with <span class="cmd">replace-case</span> turned on:</p>
+
+<pre>
+(setq replace-case 1)
+</pre>
+
+ 
+<p>The standard variables are listed in the Mlisp Reference.</p>
+
+<h2><a name="differentfiletypes"></a>Customising Emacs for different filetypes 
+</h2>
+ 
+<p>You can make Emacs behave differently depending on the type of file that you
+are editing. For example, when editing a text file you may want to make Emacs
+automatically set up margins, or to change which characters are word
+characters, or set up some key definitions.</p>
+ 
+<p>Whatever it is you want Emacs to do, you must define a suitable function, or
+use an existing function. For example, to make Emacs execute a function called
+<span class="cmd">c-mode</span> for all *.c files that it opens, you can add the following
+line to <span class="cmd">emacsinit.ml</span>:</p>
+<pre>
+(auto-execute &quot;c-mode&quot; &quot;*.c&quot;)
+</pre>
+
+
+</div>
+</body>
+</html>

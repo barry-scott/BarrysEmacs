@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<title>User Guide - Introduction</title>
+
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="contents">
+<h1><a name="introduction"></a>Introduction</h1>
+
+<p>Emacs provides facilities that go beyond simple text insertion and deletion: automatic indentation of programs; viewing multiple files at once, as well as expressions and comments in several different programming languages.</p>
+
+<p>Emacs has extensive help, both in the form of help files and within Emacs itself. You can also use it to find out what any command does, or to find all the commands that pertain to a specific topic.</p>
+
+<p>You can change the definitions of Emacs commands in small ways. For example, if you use a programming language in which comments start with <span class="cmd">/*</span> and end with <span class="cmd">*/</span>, you can tell the Emacs comment manipulation commands to use those strings. Another sort of customisation is rearrangement of the command set.</p>
+
+<p>Most of the customisation of Emacs is done via the <span class="cmd">emacs_user:emacsinit.ml</span> initialisation file.</p>
+
+<p>The remaining customisations of Emacs are done via the Edit, Preferences... menu under Windows. And under Unix via the <span class="cmd">$HOME/.Xdefaults</span> file.</p>
+
+<h1><a name="howtostartemacs">How to start Barry's Emacs</a></h1>
+
+<p>Under Windows you can start Emacs using all the usual Windows methods for starting an application.</p>
+
+<ul>
+<li>Using the <tt>bemacs</tt> command from a shell, CMD, 4NT etc.</li>
+
+<li>From the desktop shortcut. <img src="ug_bemacs_icon.png" /></li>
+
+<li>From the Barry's Emacs folder found in the Programs menu of the Start menu. <img src="ug_bemacs_folder.png" /></li>
+
+<li>From the Start Menu <img src="ug_start_menu.png" /></li>
+
+<li>By dropping a file on to the desktop shortcut. <img src="ug_drop_file.png" /></li>
+
+<li>By opening a document that is associcated with Barry's Emacs. <img src="ug_bemacs_doc.png" /></li>
+</ul>
+
+<h1><a name="emacscommand">The bemacs command</a></h1>
+
+<p>The <tt>bemacs</tt> command sends your command line to the Barry's Emacs application. If Barry's Emacs is not running yet the <tt>bemacs</tt> command will start one running. If Barry's Emacs is already running the command line is sent to the the running Barry's Emacs.</p>
+
+<p>The normal <tt>bemacs</tt> command line allows you to specify a list of filenames of the files you wish to edit.</p>
+
+<pre>
+    bemacs <i>file</i>
+    bemacs <i>file1</i> <i>file2</i> <i>file3</i>
+</pre>
+
+<p>You can use either "/" or "-" to start a switch. For example <tt>/line</tt> and <tt>-line</tt> are treated as equivalent.</p>
+
+<p>By using the following command line switches you can change the default behaviour of the <tt>bemacs</tt> command.</p>
+
+<dl>
+<dt>/name=<i>name</i></dt>
+<dd>Send this command line to the Barry's Emacs named <i>name</i>. 
+If /name is ommitted the name of the Barry's Emacs used is "main".
+Using the /name switch you can address as many seperate BArry's Emacs's as you need.
+/name must be the first parameter on the command line.
+</dd>
+<dt>/line=<i>number</i> <i>file</i></dt>
+
+<dd>Start editing the file named <i>file</i> at line number <i>number</i>.</dd>
+
+<dt>+<i>number</i> <i>file</i></dt>
+
+<dd>Start editing the file named <i>file</i> at line number <i>number</i>. This switch is support to allow the bemacs command to be substituted in place of the <tt>vi</tt> unix editor.</dd>
+
+<dt>/readonly <i>file</i></dt>
+
+<dd>Start editing the file named <i>file</i> and set the buffer to be readonly - to prevent any modifications being made.</dd>
+
+<dt>/noreadonly <i>file</i></dt>
+
+<dd>Start editing the file named <i>file</i> and set the buffer to be read-write - to allow modifications being made.</dd>
+
+<dt>/cd</dt>
+
+<dd>Barry's Emacs will change its current directory to be the same as current directoy used by the <tt>bemacs</tt> command.</dd>
+
+<dt>/wait</dt>
+<dd>Emacs will enter a recursive edit and the bmacs command will not exit until the recursive edit exits.</dd>
+
+<dt>/nowindow-restore</dt>
+<dd>Prevent Emacs from restoring its window if it is minimised.</dd>
+</dl>
+
+<p>The MLisp Programmers Guide has furthur information about Command Lines. Including how to customise command line handling.</p>
+
+<h2>examples</h2>
+
+<p>Edit the file emacsinit.ml at line number 106:</p>
+
+<pre>
+bemacs /line=106 emacsinit.ml
+</pre>
+
+<p>Edit the files emacs.h, emacs.cpp, use a Barry's Emacs called "Dev" and make Barry's Emacs change directory:</p>
+
+<pre>
+cd \emacs\src
+bemacs /name=Dev /cd emacs.h emacs.cpp
+</pre>
+
+<p>Edit the files emacs.h at line 19, emacs.cpp at line 254, use a Barry's Emacs called "Fred" and make Barry's Emacs change directory:</p>
+
+<pre>
+cd \emacs\src
+bemacs -name=Fred -cd -line:19 emacs.h -line=254 emacs.cpp
+</pre>
+
+
+<p>Use emacs to update a file as part of a CMD script.
+Notice the need to use start /wait to make the CMD
+shell wait for the bemacs command to complete.</p>
+<pre>
+echo log message for work done >log.tmp
+start /wait bemacs /wait log.tmp
+echo Log message
+type log.tmp
+</pre>
+
+
+</div>
+</body>
+</html>
+

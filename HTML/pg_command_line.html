@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<title>MLisp Programers Guide - Command lines</title>
+
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="contents">
+<h1><a name="commandlines"></a>Command lines</h1>
+
+<h2><a name="bemacscommandline"></a>Bemacs Command line</h2>
+
+<p>bemacs passes the whole command line to the Barry's Emacs application for processing.</p>
+
+<p>Barry's Emacs then parses the command line into its component parts, called arguments. Having parsed the command line Barry's Emacs determines the package for the command line. The default package is called <i>emacs</i>. This can be overridden by using the /package switch.</p>
+
+<dl>
+<dt>/package=<i>package-name</i></dt>
+
+<dd>This causes emacs to execute the MLisp command <i>package-name</i>-com. If <i>package-name</i>-com is not yet defined then emacs loads the MLisp module named <i>package-name</i>.mlp.</dd>
+
+<dt>--</dt>
+
+<dd>This causes emacs to treat all the following command line arguments as not being qualifiers. This is useful for allowing Emacs to open a file whoes name starts with a "+" or "-" character.</dd>
+</dl>
+
+It is the job of the package to process the command line. The default package is named "emacs". How the emacs package handles the command line is documented in the 
+<a href="users_guide.html">User Guide</a>.
+
+<h2><a name="writingapackage">Writing a package</a></h2>
+
+<p>Emacs will automatically load a packages definition from an MLisp module named <i>package</i> from the file <tt><i>package</i>.mlp</tt>. That module must contain atleast one function definition for the MLisp function <i>package</i>-com.</p>
+
+<p>It is the job of the package to process the command line. Emacs has already parsed the command line into its component parts.
+Use the following functions to access the components of the command line:</p>
+
+<dl>
+<dt>(argc)</dt>
+
+<dd>Returns the number of command line arguments. There is always one arguments.</dd>
+
+<dt>(argv <i>position</i>)</dt>
+
+<dd>Returns the text of the argument at position <i>position</i>. Position zero always returns the name of the package.</dd>
+
+<dt>(arg-is-qualifier <i>position</i>)</dt>
+
+<dd>Returns true if the argument at position <i>position</i> is a command line qualifier (also called a command line switch).</dd>
+</dl>
+
+<p>If the package does not use one of these functions then Emacs will call visit-file for each argument that is not a qualifier.</p>
+
+<h2><a name="servercommandline"></a>BemacsServer Command line</h2>
+
+<p>BEmacsServer supports a full command line. BemacsServer can be used directly if required. BEmacsServer supports the following command line options:</p>
+
+<dl>
+<dt>/restore[=<i>file</i>]</dt>
+
+<dd>Restore the Emacs Environment from <i>file</i>.</dd>
+
+<dt>/norestore</dt>
+
+<dd>Do not restore any Emacs Environment file</dd>
+
+<dt>/package=<i>package-file</i></dt>
+
+<dd>See above for details</dd>
+
+<dt>/RegServer</dt>
+
+<dd>register the OLE interface</dd>
+
+<dt>/embedding</dt>
+
+<dd>used by OLE</dd>
+
+<dt>/automation</dt>
+
+<dd>used by OLE</dd>
+
+<dt>/UnRegServer</dt>
+
+<dd>unregister the OLE interface (not implemented in this version)</dd>
+</dl>
+</div>
+</body>
+</html>
+

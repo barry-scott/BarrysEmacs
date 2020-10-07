@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<title>Functions Q*</title>
+
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="contents">
+
+<p><a name="query-replace-string">(<b>query-replace-string</b> <span class="cmd">search replace</span>) ESC-q</a></p>
+
+<blockquote>
+<p>Replaces all occurrences of one string with another, starting at dot and ending at the end of the buffer. For each occurrence of the old string, Emacs requests that the user type a character indicating whether or not to replace the string. Dot will be positioned just after the found string.</p>
+</blockquote>
+
+
+<p><a name="quietly-read-abbrev-file">(<b>quietly-read-abbrev-file</b> <span class="cmd">file-name</span>)</a></p>
+
+<blockquote>
+<p>Reads in and defines abbreviations appearing in a named abbreviations file. Unlike read-abbrev-file, an error message is not printed if the file cannot be found.</p>
+
+</blockquote>
+
+
+<p><a name="quit-process">(<b>quit-process</b> <span class="cmd">process-name</span>)</a></p>
+
+<blockquote>
+<p>Unix only.</p>
+
+<p>Send signal SIGQUIT to the named process.</p>
+</blockquote>
+
+
+<p><a name="quote">(<b>quote</b> <span class="cmd">expression</span>)</a></p>
+
+<blockquote>
+<p>Returns its string argument so that any meta-characters used by regular expression string searching are quoted so that they have no effect. This is useful for MLisp packages that use regular expression search commands.</p>
+</blockquote>
+
+
+<p><a name="quote-character">(<b>quote-character</b>) ^Q</a></p>
+
+<blockquote>
+<p>Inserts into the buffer the next character typed without interpreting it as a command. This is how you insert non-printing characters.</p>
+</blockquote>
+
+
+</div>
+</body>
+</html>
+

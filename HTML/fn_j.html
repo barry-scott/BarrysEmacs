@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<title>Functions J*</title>
+
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="contents">
+
+<p><a name="journal-recover">(<b>journal-recover</b> <span class="cmd">journal-filename</span>)</a></p>
+
+<blockquote>
+<p>Recovers a file or buffer after a system crash or other disaster.</p>
+
+<p>All the journal files that Emacs write are kept in the directory EMACS_JOURNAL:</p>
+
+<p>There is a journal file for each buffer that has journaling enabled and has not been saved. For buffers with associated files the journal name is based on the name of file. For buffers without associated files the journal has a name that is based on the buffer name.</p>
+
+<p>If no journal filename parameter is supplied, <span class="cmd">journal-recover</span> prompts for the name of the journal file, which must be in EMACS_JOURNAL:</p>
+
+<p>Emacs checks that the journal file is valid before attempting to apply it.</p>
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="var_a.html#animated-journal-recovery">animated-journal-recovery</a> variable</li>
+</ul>
+
+
+
+</blockquote>
+
+
+<p><a name="justify-paragraph">(<b>justify-paragraph</b>)</a></p>
+
+<blockquote>
+<p>Justifies the text of the current paragraph between the left-margin and right-margin. The right margin will be ragged.</p>
+
+<p>See <a href="fn_t.html#text-mode">text-mode</a> for a better text indenter.</p>
+
+
+<p><b>See also:</b></p>
+
+<ul>
+<li><a href="fn_t.html#text-mode">text-mode</a></li>
+</ul>
+
+</blockquote>
+
+
+</div>
+</body>
+</html>
+

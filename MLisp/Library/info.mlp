@@ -1,0 +1,11 @@
+(progn
+    (declare-global ~INFO-com)
+    (setq ~INFO-com 1)
+    (defun
+        (info-com
+            (if (! (is-bound ~info-is-init)) (load "info"))
+            (if (> (argc) 1) (info (argv 1)) (info))
+
+        )
+    )
+)

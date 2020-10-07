@@ -1,0 +1,323 @@
+/*
+ *  emacs_docs.css
+ */
+
+/*
+ * layout the page with the index to the left and the body to the right
+ */
+#content, html, body
+{
+    height: 100%;
+    overflow: hidden;
+    box-sizing:border-box;
+    margin: 0;
+    padding: 0;
+}
+
+#index
+{
+    float: left;
+    padding: .2em;
+    width: 20em;
+    height: 100%;
+    overflow: auto;
+    box-sizing:border-box;
+}
+#body
+{
+    float: left;
+    padding: .2em;
+    width: calc(100% - 20em);
+    height: 100%;
+    overflow: auto;
+    box-sizing:border-box;
+}
+
+/*
+ * light mode colours
+ */
+:root
+    {
+    --colour-main-bg: white;
+    --colour-main-fg: black;
+    --colour-link: navy;
+    --colour-border: #ddd;
+    --colour-table-border: #aaa;
+    --colour-text-cmd: #800;
+    --colour-text-key: #080;
+    --colour-pre-fg: black;
+    --colour-pre-bg: #ddd;
+    --colour-header: navy;
+    --colour-table-bg: #afa;
+    }
+
+@media only screen and (prefers-color-scheme: dark)
+{
+/*
+ * dark mode colours
+ */
+:root
+    {
+    --colour-main-bg: #111;
+    --colour-main-fg: white;
+    --colour-link: #88f;
+    --colour-border: #111;
+    --colour-border: #444;
+    --colour-text-cmd: #4ee;
+    --colour-text-key: #0c0;
+    --colour-pre-fg: white;
+    --colour-pre-bg: #333;
+    --colour-header: #77f;
+    --colour-table-th: #88f;
+    --colour-table-bg: #222;
+    }
+}
+
+body
+{
+    color: var(--colour-main-fg);
+    background-color: var(--colour-main-bg);
+}
+
+a:link, a:visited
+{
+    color: var(--colour-link);
+}
+
+table
+{
+    border: 1px solid var(--color-table-border);
+    border-collapse: collapse;
+}
+
+/*
+ * index styles
+ */
+#index
+{
+    font-family: sans-serif;
+    color: var(--color-main-fg);
+}
+
+#index h1{
+    font-size: large;
+}
+
+#index a:link, #index a:visited
+{
+    text-decoration: none;
+}
+
+#index div.hr
+{
+    border-bottom: .1em solid var(--colour-border);
+    margin-bottom: .5em;
+    padding-bottom: 0;
+}
+
+#index ul, #index ol
+{
+    list-style-type: none;
+}
+
+#index ul ul, #index ol ol, #index ol ul
+{
+    padding-left: 1em;
+    list-style-type: none;
+}
+
+#index li
+{
+    margin-top: .2em;
+    margin-bottom: .2em;
+}
+
+/*
+ * index grid styles
+ */
+#index_grid table
+{
+    border: 0;
+}
+
+#index_grid table caption
+{
+    text-align: left;
+}
+
+#index_grid table td
+{
+    text-align: center;
+}
+
+/*
+ * contents styles
+ */
+#body table
+{
+    margin-left: 1em;
+    margin-right: 1em;
+    margin-bottom: 1em;
+    border-collapse: collapse;
+    border: 1px solid var(--colour-table-border);
+    color: var(--colour-main-fg);
+    background-color: var(--colour-table-bg);
+}
+
+#body table.image
+{
+    border: 0;
+}
+
+#body table.image td
+{
+    border: 0;
+    padding: .2em;
+    text-align: left;
+}
+
+
+#body table.image caption
+{
+    caption-side: bottom;
+}
+
+#body table caption
+{
+    text-align: left;
+    padding-left: 5em;
+    padding-bottom: .5em;
+}
+
+#body table.keynames col.col1
+{
+    width: 10em;
+}
+
+#body table.keynames col.col2
+{
+    width: 20em;
+}
+
+#body table.keynames caption
+{
+    font: bold normal sans-serif;
+    margin-top: 1em;
+}
+
+#body table.key-bindings
+{
+    table-layout: fixed;
+} 
+
+#body table.key-bindings col.binding
+{
+    min-width: 10em;
+}
+
+#body table.key-bindings col.function
+{
+    min-width: 25em;
+}
+
+#body table.action-command
+{
+    table-layout: fixed;
+} 
+
+#body table.action-contents col.action
+{
+    width: 50%;
+}
+
+#body table.key-bindings col.command
+{
+    width: 50%;
+}
+
+#body th, #body td
+{
+    border: 1px solid var(--colour-table-border);
+    padding: .2em;
+    text-align: left;
+}
+
+#body th
+{
+    font-family: sans-serif;
+}
+
+#body td
+{
+}
+
+span.cmd
+{
+    font-family: monospace, serif;
+    color: var(--colour-text-cmd);
+}
+
+span.key
+{
+    font-family: monospace, serif;
+    color: var(--colour-text-key);
+}
+
+span.cmd_description
+{
+    font-size: smaller;
+}
+
+#body p
+{
+    width: 50em;
+}
+
+#body pre
+{
+    width: 50em;
+    margin-left: 2em;
+    margin-right: 2em;
+    padding: .3em;
+    border: 1px solid var(--colour-border);
+    color: var(--colour-pre-fg);
+    background-color: var(--colour-pre-bg);
+}
+
+#body table pre
+{
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0; 
+}
+
+
+#body ul, #body ol
+{
+    padding-left: 1.2em;
+}
+
+#body ul ul, #body ol ol, #body ol ul
+{
+    padding-left: 1em;
+    list-style-type: square;
+}
+
+#body li
+{
+    margin-top: .2em;
+    margin-bottom: .2em;
+}
+
+#body h1, #body h2, #body h3
+{
+    font-family: sans-serif;
+    color: var(--colour-header);
+}
+
+#body h2, #body h3
+{
+    padding-top: .3em;
+    border-top: 2px solid var(--colour-border);
+}

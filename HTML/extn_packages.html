@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Emacs Package and Subsystem Reference</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+<div class="contents">
+<h1><a name="packageandsubsystem"></a>Emacs Package and Subsystem Reference</h1>
+
+
+<p><b>Contents:</b></p>
+
+<ul>
+<li><a href="#bufdired">BUFDIRED, A Buffer Editing Subsystem</a></li>
+
+<li><a href="#debug">DEBUG, A Mock Lisp Debugger</a></li>
+
+<li><a href="#dired">DIRED, The Directory Editor</a></li>
+
+<li><a href="#info">INFO, A Tree-structured Documentation Reader</a></li>
+
+<li><a href="#shell">SHELL, A shell Interaction Package</a></li>
+
+<li><a href="#teach">TEACH, A Computer-Based Instruction Package</a></li>
+</ul>
+
+
+<h2><a name="bufdired"></a>BUFDIRED, A Buffer Editing Subsystem</h2>
+
+<p>The BUFDIRED subsystem defines the function buffer-dired. This function performs the same sort of editing operations as the DIRED package does for files.</p>
+
+<p>When you execute the buffer-dired function, Emacs displays a buffer called Buffer list, which contains a list of all the buffers currently in Emacs. Each line in the list contains information about one buffer. The information includes:</p>
+
+<ul>
+<li>The buffer name</li>
+
+<li>The size of the buffer in characters</li>
+
+<li>The type of the buffer (File, Scratch or Macro).</li>
+
+<li>The Major Mode string</li>
+
+<li>The name of the file associated with the buffer.</li>
+</ul>
+
+<p>You can use the following commands to perform various operations on the buffers in the buffer list:</p>
+
+<table>
+<tr>
+<td><strong>?</strong></td>
+<td>Displays a help screen describing the available commands.</td>
+</tr>
+
+<tr>
+<td><strong>n</strong></td>
+<td>Moves the cursor to the next line containing the next buffer.</td>
+</tr>
+
+<tr>
+<td><strong>p</strong></td>
+<td>Moves the cursor to the previous line containing the previous buffer.</td>
+</tr>
+
+<tr>
+<td><strong>d</strong></td>
+<td>Deletes the indicated buffer.</td>
+</tr>
+
+<tr>
+<td><strong>c</strong></td>
+<td>Toggles the checkpointing setting for the indicated buffer.</td>
+</tr>
+
+<tr>
+<td><strong>j</strong></td>
+<td>Toggles the journalling setting for the indicated buffer.</td>
+</tr>
+
+<tr>
+<td><strong>m</strong></td>
+<td>Toggles the modified buffer flag for the indicated buffer.</td>
+</tr>
+
+<tr>
+<td><strong>e</strong></td>
+<td>Edits the indicated buffer in a recursive editing level.</td>
+</tr>
+
+<tr>
+<td><strong>g</strong></td>
+<td>Fetches the indicated buffer from the MLisp-library database search-list.</td>
+</tr>
+
+<tr>
+<td><strong>p</strong></td>
+<td>Puts the indicated buffer into the MLisp-library database.</td>
+</tr>
+
+<tr>
+<td><strong>w</strong></td>
+<td>Writes out the indicated buffer to disk.</td>
+</tr>
+
+<tr>
+<td><strong>r</strong></td>
+<td>Re-reads the associated file into the indicated buffer, overwriting the buffer's existing contents.</td>
+</tr>
+
+<tr>
+<td><strong>v</strong></td>
+<td>Visits a named file.</td>
+</tr>
+
+<tr>
+<td><strong>b</strong></td>
+<td>Visits a named buffer.</td>
+</tr>
+
+<tr>
+<td><strong>e</strong></td>
+<td>Examines the indicated buffer.</td>
+</tr>
+
+<tr>
+<td><strong>q</strong></td>
+<td>Exits from the buffer editor.</td>
+</tr>
+</table>
+
+
+<h2><a name="debug"></a>DEBUG, A Mock Lisp Debugger</h2>
+
+<p>The DEBUG subsystem uses the Emacs tracing, breakpointing, error trapping and stack dumping facilities to provide a powerful source line Mock Lisp debugger.</p>
+
+<p>To start DEBUG, load in the DEBUG subsystem. Each time you want to enter DEBUG mode, use the <span class="key">ESC-^D</span> (or <span class="key">ESC-x debug</span>) command.</p>
+
+<p>The <span class="key">ESC-x debug</span> command loads up the breakpoint, error and trace handlers, binds DEBUG functions to keys and pops up the Debug and show expression windows. Source code and other information displayed by DEBUG will appear in these windows.</p>
+
+<p>The show expression window is used to display the type and value that the last expression returned or variable requested.</p>
+
+<p>The Debug window is used to display source lines to be executed, and is where DEBUG commands are requested. The following commands are available in the Debug window:</p>
+
+<p><strong>b (set breakpoint)</strong></p>
+
+<blockquote>
+<p>Sets a breakpoint on the nominated function. When that function is executed after the breakpoint has been set, it will cause DEBUG to regain control, and DEBUG will display the decompiled source showing the call to the function.</p>
+</blockquote>
+
+<p><strong>B (remove breakpoint)</strong></p>
+
+<blockquote>
+<p>Clears the breakpoint flag for the specified function so that it will no longer cause a breakpoint.</p>
+</blockquote>
+
+<p><strong>c (show calls)</strong></p>
+
+<blockquote>
+<p>Displays the current call stack in the Debug window.</p>
+</blockquote>
+
+<p><strong>. or KP5 (display current source)</strong></p>
+
+<blockquote>
+<p>Displays the current source line, in context, in the Debug window.</p>
+</blockquote>
+
+<p><strong>e (interrupt on error)</strong></p>
+
+<blockquote>
+<p>Causes DEBUG to trap error reports, and displays the reports along with and the erring function. Errors are not trapped by default.</p>
+</blockquote>
+
+<p><strong>E (kill error trapping)</strong></p>
+
+<blockquote>
+<p>Disables error trapping.</p>
+</blockquote>
+
+<p><strong>g or KP, (go)</strong></p>
+
+<blockquote>
+<p>Continues the execution of a program without interference from DEBUG. The only way DEBUG will re-gain control is at a breakpoint. Use this function when you have finished examining execution at one point in your program, and you wish to continue the program.</p>
+</blockquote>
+
+<p><strong>h or ? or Help (help)</strong></p>
+
+<blockquote>
+<p>Displays help on DEBUG commands.</p>
+</blockquote>
+
+<p><strong>l (list breakpoints)</strong></p>
+
+<blockquote>
+<p>Displays a list in the Debug window of all of the functions which have their breakpoint flag set.</p>
+</blockquote>
+
+<p><strong>o or KP0 (step over)</strong></p>
+
+<blockquote>
+<p>Executes the next MLisp expression and stays in DEBUG mode. However, if the expression if a function call, DEBUG executes all of the expressions in the called function and any functions it calls.</p>
+</blockquote>
+
+<p><strong>p (print)</strong></p>
+
+<blockquote>
+<p>Prints the type and contents of a variable in the show expression window.</p>
+</blockquote>
+
+<p><strong>q (quit)</strong></p>
+
+<blockquote>
+<p>Exits DEBUG. The Debug window is removed and all variables controlled by DEBUG are reset. Breakpoints remain intact, but will not cause DEBUG to be run. To re-start debugging, use the <span class="key">ESC-^D</span> (<span class="key">ESC-x debug</span>) command.</p>
+</blockquote>
+
+<p><strong>s or PF1-KP0 (step)</strong></p>
+
+<blockquote>
+<p>Executes the next MLisp expression.</p>
+</blockquote>
+
+<p><strong>t (set trace mode)</strong></p>
+
+<blockquote>
+<p>Enables trace-mode. During trace-mode, every MLisp expression that is executed will be displayed in the Debug window for debug-sit-for tenths of a second. Execution will continue until all MLisp expression have been executed.</p>
+</blockquote>
+
+<p><strong>T (Unset trace mode)</strong></p>
+
+<blockquote>
+<p>Unsets trace-mode.</p>
+</blockquote>
+
+<p><strong>v (View last expression)</strong></p>
+
+<blockquote>
+<p>Prints the value of the last expression executed.</p>
+
+<p>DEBUG never displays information about any of the DEBUG functions, nor about MLisp functions that are called while in the Debug window. This stops DEBUG from confusing you.</p>
+</blockquote>
+
+
+<h2><a name="dired"></a>DIRED, The Directory Editor</h2>
+
+<p>DIRED is a directory editing package. You can use it to perform housekeeping operations on a specified set of files.</p>
+
+<p>DIRED makes it easy to delete many of the files in a single directory at once. It presents a copy of the directory listing which you can move around in, marking files for deletion. When you have marked all the files you want to delete, you can tell DIRED to go ahead and delete the marked files.</p>
+
+<p>Invoke DIRED from the shell using the command:</p>
+
+<pre>
+$ EMACS/package=DIRED files
+</pre>
+
+<p>where <span class="cmd">files</span> is any valid file specification (which may include wildcards).
+If you invoke DIRED from the shell, when you exit DIRED, Emacs will also exit.</p>
+
+<p>You can also invoke DIRED from Emacs by typing the ESC-x dired files command.</p>
+
+<p>If you do not specify which files DIRED should edit, it will edit all the files in the current directory.</p>
+
+<p>The DIRED commands are:</p>
+
+<table>
+<tr>
+<td><strong>d</strong></td>
+<td valign="top">Marks the file in the current line for deletion. The deletion mark is visible as a D at the beginning of the line. Dot is moved to the beginning of the next line, so that several Ds mark several files for deletion.</td>
+</tr>
+
+<tr>
+<td><strong>u</strong></td>
+<td>Removes the deletion mark for the file in the current line.</td>
+</tr>
+
+<tr>
+<td><strong>n</strong></td>
+<td>Moves down a line (similar to ^N).</td>
+</tr>
+
+<tr>
+<td><strong>p</strong></td>
+<td>Moves up a line (similar to ^P).</td>
+</tr>
+
+<tr>
+<td valign="top"><strong>e</strong></td>
+<td>If you are not sure whether you want to delete a file, you can examine it by typing <span class="cmd">E</span>. This enters a recursive edit and switches to a buffer containing the file. You can exit with <span class="key">ESC-x exit-Emacs</span> (<span class="key">^C</span>). Modifications to the file are not permitted. When you exit the recursive editing level, you return to DIRED.</td>
+</tr>
+
+<tr>
+<td><strong>q</strong></td>
+<td valign="top">When you have marked the files you wish to delete, you can exit DIRED with <span class="cmd">Q</span>. If any files were marked for deletion, DIRED lists them in a concise forma. Then DIRED asks whether you really want to delete the files. You can type <span class="cmd">Y</span> to go ahead and delete them, <span class="cmd">R</span> to return to editing the directory or any other character to quit DIRED and delete nothing. No Return character is needed.</td>
+</tr>
+
+<tr>
+<td><strong>? or Help</strong></td>
+<td>Displays a help screen listing the DIRED commands.</td>
+</tr>
+</table>
+
+
+<h2><a name="info"></a>INFO, A Tree-structured Documentation Reader</h2>
+
+<p>INFO is a package that allows you to read (and possibly alter)documentation written in a tree-structured format.</p>
+
+<p>There are three ways to start the INFO package:</p>
+
+<ul>
+<li>By starting INFO from the shell command line: 
+
+<pre>
+$ EMACS/package=INFO
+</pre>
+</li>
+
+<li>By pressing the Help key and typing i at the Mini-buffer prompt</li>
+
+<li>By executing the function info using ESC-x info.</li>
+</ul>
+
+<p>When INFO is started, it displays the available INFO databases. These are listed below</p>
+
+<table>
+<tr>
+<td><strong>Database</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+
+
+<!-- hide=on -->
+<tr>
+<td>DCL</td>
+<td>How to use DCL on VMS</td>
+</tr>
+<!-- hide=off -->
+
+<tr>
+<td>Emacs</td>
+<td>The Barry's Emacs editor</td>
+</tr>
+
+<tr>
+<td>Info</td>
+<td>A tutorial on INFO</td>
+</tr>
+
+<tr>
+<td>Languages</td>
+<td>Language processors</td>
+</tr>
+
+<!-- hide=on -->
+<tr>
+<td>Utilities</td>
+<td>VMS utility programs</td>
+</tr>
+<!-- hide=off -->
+</table>
+
+<p>INFO is a large package and has many commands for navigating the various INFO databases. Due to the complexity of the package, it contains its own tutorial which describes INFO concepts and the various INFO commands. To start the tutorial, start the INFO package, then press h (for Help).</p>
+
+<p>The following keys are bound by INFO and are used for navigating the INFO databases:</p>
+
+<table>
+<tr>
+<td><strong>Space, ^V</strong></td>
+<td>Display next screen</td>
+</tr>
+
+<tr>
+<td><strong>Backspace, ^H, ESC-v</strong></td>
+<td>Display previous screen</td>
+</tr>
+
+<tr>
+<td><strong>?</strong></td>
+<td>Visit this node (command-summary)</td>
+</tr>
+
+<tr>
+<td><strong>@</strong></td>
+<td>Menu path (enter menu items separated by spaces)</td>
+</tr>
+
+<tr>
+<td><strong>a</strong></td>
+<td>Scroll one line down</td>
+</tr>
+
+<tr>
+<td><strong>b</strong></td>
+<td>Beginning of node</td>
+</tr>
+
+<tr>
+<td><strong>d</strong></td>
+<td>Go to directory node (the top of the INFO tree)</td>
+</tr>
+
+<tr>
+<td><strong>e</strong></td>
+<td>Go to the end of the current node</td>
+</tr>
+
+<tr>
+<td><strong>^E</strong></td>
+<td>Edit current node (^] exits the recursive edit)</td>
+</tr>
+
+<tr>
+<td><strong>g</strong></td>
+<td>Go to a node</td>
+</tr>
+
+<tr>
+<td><strong>h</strong></td>
+<td>Help---visit the INFO tutorial</td>
+</tr>
+
+<tr>
+<td><strong>l</strong></td>
+<td>Return to last node (retrace your path through the tree)</td>
+</tr>
+
+<tr>
+<td><strong>m</strong></td>
+<td>Go to a menu item</td>
+</tr>
+
+<tr>
+<td><strong>n</strong></td>
+<td>Go to the next node in sequence</td>
+</tr>
+
+<tr>
+<td><strong>o</strong></td>
+<td>Output current node to a file</td>
+</tr>
+
+<tr>
+<td><strong>p</strong></td>
+<td>Go to the previous node in sequence</td>
+</tr>
+
+<tr>
+<td><strong>q</strong></td>
+<td>Quit INFO</td>
+</tr>
+
+<tr>
+<td><strong>r</strong></td>
+<td>Reverse search for a string</td>
+</tr>
+
+<tr>
+<td><strong>s</strong></td>
+<td>Forward search for a string</td>
+</tr>
+
+<tr>
+<td><strong>u</strong></td>
+<td>Go up to this node's father</td>
+</tr>
+
+<tr>
+<td><strong>x</strong></td>
+<td>Execute an extended command</td>
+</tr>
+
+<tr>
+<td><strong>z</strong></td>
+<td>Scroll one line up</td>
+</tr>
+</table>
+
+
+<h2><a name="shell"></a>SHELL, A Command Shell Interaction Package</h2>
+
+<!-- hide=on -->
+<p><i><strong>SHELL, A DCL Interaction Package </strong></i> SHELL DCL interaction</p>
+<!-- hide=off -->
+<p>The SHELL package provides access to the command shell from inside Emacs. Invoke SHELL using the command:</p>
+
+<pre>
+$ EMACS/package=SHELL
+</pre>
+
+<p>Emacs will spawn a shell subprocess and will pop up a window called DCL Interaction Window <span class="cmd">n</span>, where <span class="cmd">n</span> is a sequence number.</p>
+
+<p>When dot is in the DCL Interaction window, you can type any DCL command terminated by a Return, and this command will be executed in the shell subprocess with the command output appearing in the window.</p>
+
+<p>If you enter a command that invokes an interactive program which prompts for input, you can send input to the running program by terminating lines of input with Linefeed rather than Return.</p>
+
+<!-- hide=on -->
+<p>You can start as many shell subprocesses as your VMS PRCLM process quota will allow. Each subprocess will have its own DCL Interaction window.</p>
+<!-- hide=off -->
+
+<p>The shell key bindings are summarised as follows:</p>
+
+<table>
+<tr>
+<td><strong>^?</strong></td>
+<td>Prints a help screen describing the shell commands.</td>
+</tr>
+
+<tr>
+<td><strong>^R</strong></td>
+<td>Recalls the last command executed. The last 20 commands are remembered.</td>
+</tr>
+
+<tr>
+<td><strong>Return</strong></td>
+<td>Execute the command on the current line in the shellsubprocess.</td>
+</tr>
+
+<tr>
+<td><strong>Linefeed</strong></td>
+<td>Send the current line as input to a program running in the shell subprocess.</td>
+</tr>
+
+<tr>
+<td><strong>^]</strong></td>
+<td>Finish the current shell session. The subprocess is deleted, but the interaction window is kept.</td>
+</tr>
+
+<tr>
+<td><strong>^C</strong></td>
+<td>Aborts the program running in the shell subprocess.</td>
+</tr>
+</table>
+
+<p>Two variables are defined which allow you to customise the behaviour of the shell package:</p>
+
+<table>
+<tr>
+<td><strong>shell-ctrlc</strong></td>
+<td>Contains the termination code to be sent when ^C is pressed. The default value is 44.</td>
+</tr>
+
+<tr>
+<td><strong>shell-feeps</strong></td>
+<td>Contains the number of times the bell will ring when a process input request is made. By default, this variable is set to 0, so the bell does not ring when a program running in the shell subprocess asks for input.</td>
+</tr>
+</table>
+
+
+<h2><a name="teach"></a>TEACH, A Computer-Based Instruction Package</h2>
+
+<p>The TEACH package is the Emacs computer-based instruction package. You can use this package to learn about the basic editing features of Emacs.</p>
+
+<p>Invoke the TEACH package using the command:</p>
+
+<pre>
+$ EMACS/package=TEACH
+</pre>
+
+<p>When you start the TEACH package, Emacs visits a file called EMACS.CBI. This file contains the text of the tutorial, and contains examples and directions for you to try out various Emacs commands.</p>
+
+
+</div>
+</body>
+</html>
+

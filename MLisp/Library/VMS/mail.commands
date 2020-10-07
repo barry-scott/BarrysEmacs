@@ -1,0 +1,39 @@
+	Emacs mail command summary
+	--------------------------
+
+	Mail command			Menu	Emacs key
+	------------			----	---------
+	answer				Yes	a
+	back					b
+	compress			Yes	C
+	copy				Yes	c
+	current						not required
+	delete					D
+	directory			Yes*	d
+	dir/folder				lf
+	exit					q
+	extract				Yes	e
+	file				Yes	F
+	first					B	back to the top
+	forward				Yes	f
+	help					h ?
+	last					N	next to bottom
+	mail				Yes	m w
+	move	- as file		Yes	F
+	next					n
+	print				Yes	p
+	purge				Yes	P
+	quit					Q
+	read					r
+	read/new				R
+	reply				Yes	a	as answer
+	search				Yes	S
+	select				Yes	s
+	send				Yes	m w
+	set				Yes	M	Modify user profile
+	show				Yes*	lp	List user profile
+
+	* Menu only for prefix'ed command. "/" as prefix.
+
+	In addition digits 0-9 act as a read command. So to read
+	message 23 type "23<RET>"

@@ -21,7 +21,7 @@ Introduction
 
     There are kits available for:
         Windows 7 and later (tested on: Windows 10)
-        Mac OS X 10.13 (tested on: macOS 10.15.7)
+        Mac OS X 10.11 (tested on: macOS 10.14.5)
         Linux (tested on: Fedora 32, Centos 8, Centos 7 and Centos 6)
 
 New in %(version)s
@@ -32,12 +32,6 @@ New in %(version)s
       for other OS use the installed hunspell dictionaries.
 
       spell check is not built for Centos 6 and 7.
-
-    * New lua-mode for editing lua script files.
-    * Rework Emacs documentation (browsers now implement cross-site-script
-      security features that stopped the old docs from working).
-    * Implement dark-mode for the Emacs documentation.
-    * Add emacs_doc: logical name to access the files in the documentation folder.
 
 New in 8.6.2
     * Fix ere-quote to quote "?"

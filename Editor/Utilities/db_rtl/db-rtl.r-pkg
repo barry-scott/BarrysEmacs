@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<package-file>
+	<package name="bemacs/db-rtl">
+		<library-group path="_lib">
+			<static-library name="db-rtl"/>
+		</library-group>
+		<system-library-group>
+		</system-library-group> 
+	</package>
+</package-file>

@@ -1,0 +1,6 @@
+*.pyc
+*~
+.bash_history
+.directory
+*.obj
+Kits/Linux/RPM/ROOT/
