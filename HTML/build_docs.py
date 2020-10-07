@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
+from __future__ import print_function
 import sys
 import os
-from pathlib import Path
 import xml.dom.minidom
 import re
 import glob
@@ -20,6 +20,26 @@ except ImportError:
             return text
 
     ct = ColourText()
+
+try:
+    from pathlib import Path
+
+except ImportError:
+    import os.path
+
+    class Path:
+        def __init__( self, path ):
+            self._path = path
+            self.name = os.path.basename( path )
+
+        def __div__( self, other ):
+            return Path( os.path.join( self._path, other ) )
+
+        def exists( self ):
+            return os.path.exists( self._path )
+
+        def __str__( self ):
+            return self._path
 
 #
 # the docs use the following templete
@@ -105,10 +125,10 @@ class BuildDocs:
 
         dst = self.output_folder / src.name
 
-        with src.open( r ) as f:
+        with open( str(src), r ) as f:
             data = f.read()
 
-        with dst.open( w ) as f:
+        with open( str(dst), w ) as f:
             f.write( data )
 
     def info( self, msg ):
@@ -142,7 +162,7 @@ class BuildDocs:
     def buildSection( self, section ):
         section_file = self.output_folder / section.filename
         self.info( 'Creating <>info %s<> in <>em %s<>' % (section.title, section_file) )
-        with section_file.open('w') as fo:
+        with open( str(section_file), 'w' ) as fo:
             fo.write( html_head % {'title': section.title} )
             self.buildDocIndex( fo, section )
             self.buildSectionGridIndex( fo, section.grid_index )
@@ -182,7 +202,7 @@ class BuildDocs:
         # has the docs index in it
         in_index = False
         in_hide = False
-        with grid_file.open( 'r' ) as fi:
+        with open( str(grid_file), 'r' ) as fi:
             for line_no, line in enumerate( fi ):
                 if not in_index:
                     if line == '<div class="index-grid">\n':
@@ -225,7 +245,7 @@ class BuildDocs:
 
         in_index = False
         in_hide = False
-        with index_file.open( 'r' ) as fi:
+        with open( str(index_file), 'r' ) as fi:
             for line_no, line in enumerate( fi ):
                 if not in_index:
                     # copy the index div but without its opening <div> line
@@ -285,7 +305,7 @@ class BuildDocs:
 
             in_body = False
             in_hide = False
-            with body_file.open( 'r' ) as fi:
+            with open( str(body_file), 'r' ) as fi:
                 for line in fi:
                     if not in_body:
                         if line == '<body>\n':
@@ -336,7 +356,7 @@ class BuildDocs:
             raise BuildError( 'Input file does not exist - %s' % (path,) )
 
     def mustBeValidXml( self, path ):
-        with path.open( 'r' ) as fi:
+        with open( str(path), 'r' ) as fi:
             text = fi.read()
 
         try:
