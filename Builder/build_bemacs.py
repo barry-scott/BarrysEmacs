@@ -200,7 +200,7 @@ class BuildBEmacs(object):
             self.INSTALL_BEMACS_LIB_DIR = self.BUILD_BEMACS_LIB_DIR
             self.INSTALL_BEMACS_DOC_DIR = self.BUILD_BEMACS_DOC_DIR
 
-            self.opt_hunspell_package_dictionaries - self.opt_hunspell
+            self.opt_hunspell_package_dictionaries = self.opt_hunspell
 
             self.cmd_make = 'nmake'
             self.cmd_make_args = ['/nologo']
