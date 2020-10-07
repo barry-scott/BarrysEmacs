@@ -171,7 +171,8 @@
     (auto-execute "puppet-mode" "*.pp")
     ; Python files
     (auto-execute "Python-mode" "*.py")
-    (auto-execute "Python-mode" "*.pyw")
+    ; lua files
+    (auto-execute "lua-mode" "*.lua")
     ; Java files
     (auto-execute "Java-mode" "*.java")
     ; LaTex files
