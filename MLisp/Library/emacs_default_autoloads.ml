@@ -78,6 +78,7 @@
 (autoload "replace-tabs-with-spaces-in-buffer" "tabs")
 (autoload "resize-tabs-in-buffer" "tabs")
 (autoload "reverse-incremental-search" "incsearch")
+(autoload "RPM-specfile-mode" "rpm-specfile-mode.ml")
 (autoload "shell" "process")
 (autoload "show-buffer" "show-buffer")
 (autoload "show-terminal" "show-terminal")

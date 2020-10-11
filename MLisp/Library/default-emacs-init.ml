@@ -200,6 +200,9 @@
     (auto-execute "makefile-mode" "*.mak")
     (auto-execute "makefile-mode" "*.mk")
 
+    ; RPM spec files
+    (auto-execute "RPM-specfile-mode" "*.spec")
+
     ; Windows NT CMD mode
     (auto-execute "ntcmd-mode" "*.cmd")
     (auto-execute "ntcmd-mode" "*.bat")
