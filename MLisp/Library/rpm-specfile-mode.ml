@@ -31,8 +31,8 @@
 (defun
     (~RPM-specfile-mode-setup-syntax-table
         (modify-syntax-table "paren" "(" ")")
-        (modify-syntax-table "paren" "{" "}")
         (modify-syntax-table "comment" "#" "\n")
+        (modify-syntax-table "string,paired" "%{" "}")
 
         (~mode-modify-syntax-table "keyword-1,case-fold"
             "name:"
