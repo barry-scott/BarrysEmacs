@@ -35,6 +35,7 @@
         (modify-syntax-table "comment" "--[[" "--]]")
         (modify-syntax-table "string-1" "\"")
         (modify-syntax-table "string-1" "'")
+        (modify-syntax-table "prefix" "\\")
         (modify-syntax-table "word" "_")
 
         (~mode-modify-syntax-table "keyword-1"

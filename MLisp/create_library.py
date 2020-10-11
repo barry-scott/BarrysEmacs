@@ -204,6 +204,8 @@ library_files =    [
     ('common',    'Library/javamode.ml'),
     ('common',    'Library/javascriptmode.key'),
     ('common',    'Library/javascriptmode.ml'),
+    ('common',    'Library/json-mode.key'),
+    ('common',    'Library/json-mode.ml'),
     ('common',    'Library/justify.ml'),
     ('common',    'Library/justipara.ml'),
     ('common',    'Library/killer.key'),

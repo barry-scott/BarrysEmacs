@@ -182,6 +182,7 @@
 
     ; JavaScript files
     (auto-execute "JavaScript-mode" "*.js")
+    (auto-execute "json-mode" "*.json")
     ; VB Script
     (auto-execute "vbscript-mode" "*.vbs")
     ; Pascal files
