@@ -3,12 +3,18 @@ export EMACS_DEBUG=
 export emacs_user="$HOME/bemacs"
 case "$( uname )" in
 Darwin)
-    export emacs_library="${BUILDER_TOP_DIR}/Kits/MacOSX/pkg/Barry's Emacs-Devel.app/Contents/Resources/emacs_library"
+    export emacs_library="${BUILDER_TOP_DIR}/Builder/tmp/pkg/Barry's Emacs-Devel.app/Contents/Resources/emacs_library"
    ;;
 *)
     export emacs_library="${BUILDER_TOP_DIR:?builder_init}/Builder/tmp/ROOT/usr/lib/bemacs"
     ;;
 esac
+
+if [ ! -e "${emacs_library}/emacslib.db" ]
+then
+    echo "Error: cannot find emacslib.db in ${emacs_library}"
+    exit 1
+fi
 
 case "$1" in
 --debug=*)
