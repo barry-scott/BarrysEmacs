@@ -91,16 +91,8 @@ const int SYNTAX_PROP_REGEX_MATCH( 2 );         // entry is a regular expression
 const int SYNTAX_PROP_PAIRED( 4 );              // entry is a paired value (used for string)
 
 typedef int SyntaxData_t;
-typedef int SyntaxDepth_t;
-typedef int SyntaxTable_t;
 
-struct SyntaxCharData_t
-{
-    unsigned int data               : 14;
-    unsigned int outline_visible    :  2;
-    unsigned int table_number       :  8;
-    unsigned int outline_depth      :  8;
-};
+typedef short int SyntaxCharData_t;
 
 //
 //    syntax_string contains the following information for

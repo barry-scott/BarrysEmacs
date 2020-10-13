@@ -263,9 +263,9 @@ public:
     inline SyntaxData_t syntax_at( int n )
     {
         if( n > b_size1 )
-            return (SyntaxData_t)b_syntax.syntax_base[b_gap+n-1].data;
+            return (SyntaxData_t)b_syntax.syntax_base[b_gap+n-1];
         else
-            return (SyntaxData_t)b_syntax.syntax_base[n-1].data;
+            return (SyntaxData_t)b_syntax.syntax_base[n-1];
     }
 
     inline bool syntax_at_is( int n, int prop )
@@ -276,25 +276,9 @@ public:
     inline void set_syntax_at( int n, SyntaxData_t d )
     {
         if( n > b_size1 )
-            b_syntax.syntax_base[b_gap+n-1].data = d;
+            b_syntax.syntax_base[b_gap+n-1] = d;
         else
-            b_syntax.syntax_base[n-1].data = d;
-    }
-
-    inline void set_syntax_at( int n, SyntaxData_t d, SyntaxData_t o )
-    {
-        if( n > b_size1 )
-        {
-            b_syntax.syntax_base[b_gap+n-1].data = d;
-            b_syntax.syntax_base[b_gap+n-1].outline_depth = o;
-            b_syntax.syntax_base[b_gap+n-1].outline_visible = 1;
-        }
-        else
-        {
-            b_syntax.syntax_base[n-1].data = d;
-            b_syntax.syntax_base[n-1].outline_depth = o;
-            b_syntax.syntax_base[b_gap+n-1].outline_visible = 1;
-        }
+            b_syntax.syntax_base[n-1] = d;
     }
 
     bool syntax_fill_in_array( int required );

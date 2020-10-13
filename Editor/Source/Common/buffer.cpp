@@ -853,9 +853,7 @@ bool syntax_buffer_data::initBuffer()
             return false;
 
         // must have a 0 at the start of the array in all fields
-        syntax_base[0].data = 0;
-        syntax_base[0].outline_depth = 0;
-        syntax_base[0].table_number = 0;
+        syntax_base[0] = 0;
     }
 
     return true;
