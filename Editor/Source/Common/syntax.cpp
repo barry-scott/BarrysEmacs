@@ -538,7 +538,7 @@ void SyntaxTable::modify_table_paired_type( int type, int properties, const Emac
         {
             add_syntax_string_to_table( unicode_to_upper( ch ), SyntaxString( type, properties, str1, str2 ) );
         }
-        else if( unicode_has_upper_translation( ch ) )
+        else if( unicode_has_lower_translation( ch ) )
         {
             add_syntax_string_to_table( unicode_to_lower( ch ), SyntaxString( type, properties, str1, str2 ) );
         }
