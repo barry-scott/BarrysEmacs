@@ -54,6 +54,7 @@
         (~TM-mode)
         (novalue)
     )
+
     ;
     ; set-margins will automatically set the left and right margins as
     ; as the indent-offset.  The right margin is the  defined as the right
@@ -156,6 +157,7 @@
             (compact-white-space-in-line)
         )
     )
+
     (test-for-begin-paragraph   ; sets begin-paragraph =1 if at begin-para.
         (setq begin-paragraph 0)
         (save-excursion
@@ -214,6 +216,7 @@
             )
         )
     )
+
     (set-indent-offset
         io
         (if (! prefix-argument-provided)
@@ -228,6 +231,7 @@
         (setq indent-offset io)
         (~TM-mode)
     )
+
     (set-left-margin
         lm
         (if (! prefix-argument-provided)
@@ -244,6 +248,7 @@
         (setq left-margin lm)
         (~TM-mode)
     )
+
     (set-right-margin
         rm
         (if (! prefix-argument-provided)
@@ -300,6 +305,7 @@
         (~TM-mode)
         (novalue)
     )
+
     (compact-white-space-in-line
         (beginning-of-line)
         (delete-white-space)
@@ -319,6 +325,7 @@
         (end-of-line)
         (delete-white-space)
     )
+
     (fill-line
         (if buffer-justify-flag
             (while (save-excursion
@@ -346,6 +353,7 @@
             )
         )
     )
+
     (justify-line
         (beginning-of-line)
         (if begin-paragraph
@@ -418,6 +426,7 @@
             )
         )
     )
+
     (~TM-auto-fill
         split
 ;       (use-syntax-table "Text-mode")
@@ -608,13 +617,15 @@
         (erase-region)
         (yank-buffer "tm-work-buffer")
     )
-
 )
+
 ;
 ;   initialisation for the package
 ;
+(save-window-excursion
+    (temp-use-buffer "keymap-hack")
     (use-syntax-table "Text-mode")
-    (modify-syntax-table "word" "!-~")
+    (modify-syntax-table "word" "-~")
 ;    (declare-global extra-space-chars)
 ;    (setq extra-space-chars "[.!?]")
     (declare-buffer-specific buffer-justify-flag
@@ -627,18 +638,15 @@
     (setq-default buffer-display-margins 1)
     (setq auto-fill-hook "test-auto-fill")
     (execute-mlisp-file "paragraph")
-    (save-excursion
-        (temp-use-buffer "keymap-hack")
-        (define-keymap "Text-mode-map")
-        (define-keymap "Text-mode-ESC-map")
-        (use-local-map "Text-mode-map")
-        (execute-mlisp-file "textmode.key")
-        (kill-buffer "keymap-hack")
-    )
+    (define-keymap "Text-mode-map")
+    (define-keymap "Text-mode-ESC-map")
+    (use-local-map "Text-mode-map")
+    (execute-mlisp-file "textmode.key")
+    (kill-buffer "keymap-hack")
     (error-occurred
         (TM-user-global-initialization)
     )
-
+)
 
 (defun
     (tm-forward-paragraph
@@ -652,6 +660,7 @@
             )
         )
     )
+
     (tm-backward-paragraph
         (if (bolp) (previous-line))
         (beginning-of-line)
