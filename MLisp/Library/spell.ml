@@ -332,7 +332,9 @@
 
 (defun
     (~spell-apply-to-all
+        (get-tty-string "Not yet implemented.")
         (novalue)
+        (~spell-show-suggestions)
     )
 )
 
@@ -385,10 +387,19 @@
 
 (defun
     (~spell-update-counts
-        (if (& (!= ~spell-word-to-check "") (!= ~spell-choosen-suggestion ~spell-word-to-check))
+        (if
+            (&
+                ; not found a word to check yet
+                (!= ~spell-word-to-check "")
+                ; not choosen a replacement
+                (!= ~spell-choosen-suggestion "")
+                ; replacement is different
+                (!= ~spell-choosen-suggestion ~spell-word-to-check)
+            )
             (setq ~spell-corrected (+ 1 ~spell-corrected))
         )
         (setq ~spell-word-to-check "")
+        (setq ~spell-choosen-suggestion "")
     )
 )
 
@@ -417,55 +428,77 @@
             (re-search-forward "^Local Bindings.*")
             (erase-region)
             (insert-string
-                    "You are in spell and the special keys are:\n"
+                "You are in spell-check and the special keys are:\n"
             )
-;           (while (! (error-occurred (search-forward "~spell-exit")))
-;               (beginning-of-line)(set-mark)(next-line)(erase-region)
-;           )
+
             (beginning-of-file)
-                (~spell-help-replace-string
-                    "~spell-quit" "Exit spell"
-                )
-                (~spell-help-replace-string
-                    "~spell-next" "Find next spelling error"
-                )
-                (~spell-help-replace-string
-                    "~spell-choose-1" "choose correction 1"
-                )
-                (~spell-help-replace-string
-                    "~spell-choose-2" "choose correction 2"
-                )
-                (~spell-help-replace-string
-                    "~spell-choose-3" "choose correction 3"
-                )
-                (~spell-help-replace-string
-                    "~spell-choose-4" "choose correction 4"
-                )
-                (~spell-help-replace-string
-                    "~spell-choose-5" "choose correction 5"
-                )
-                (~spell-help-replace-string
-                    "~spell-choose-6" "choose correction 6"
-                )
-                (~spell-help-replace-string
-                    "~spell-choose-7" "choose correction 7"
-                )
-                (~spell-help-replace-string
-                    "~spell-choose-8" "choose correction 8"
-                )
-                (~spell-help-replace-string
-                    "~spell-choose-9" "choose correction 9"
-                )
-                (~spell-help-replace-string
-                    "~spell-help" "Print help in help buffer."
-                )
-                (~spell-help-replace-string
-                    "~spell-edit" "recursive-edit & continue upon exit"
-                )
+            (ere-search-forward "^Global Bindings.*:$")
+            (beginning-of-line)
+            (set-mark)
+            (end-of-file)
+            (erase-region)
+            (unset-mark)
+
             (beginning-of-file)
-            (message "Type any character to continue incremental search")
+            (error-occurred
+                (ere-replace-string "^.*~spell-help\n" "")
+            )
+
+            (beginning-of-file)
+            (error-occurred
+                (ere-replace-string "^.*<unbound>\n" "")
+            )
+
+            (beginning-of-file)
+            (error-occurred
+                (ere-replace-string "^.*~spell-map-.*\n" "")
+            )
+
+            (beginning-of-file)
+            (~spell-help-replace-string
+                "~spell-quit" "Quit spell-checker"
+            )
+            (~spell-help-replace-string
+                "~spell-undo" "Undo spelling change"
+            )
+            (~spell-help-replace-string
+                "~spell-next" "Find next spelling error"
+            )
+            (~spell-help-replace-string
+                "~spell-suggestion-1" "Choose suggestion 1"
+            )
+            (~spell-help-replace-string
+                "~spell-suggestion-2" "Choose suggestion 2"
+            )
+            (~spell-help-replace-string
+                "~spell-suggestion-3" "Choose suggestion 3"
+            )
+            (~spell-help-replace-string
+                "~spell-suggestion-4" "Choose suggestion 4"
+            )
+            (~spell-help-replace-string
+                "~spell-suggestion-5" "Choose suggestion 5"
+            )
+            (~spell-help-replace-string
+                "~spell-suggestion-6" "Choose suggestion 6"
+            )
+            (~spell-help-replace-string
+                "~spell-suggestion-7" "Choose suggestion 7"
+            )
+            (~spell-help-replace-string
+                "~spell-suggestion-8" "Choose suggestion 8"
+            )
+            (~spell-help-replace-string
+                "~spell-suggestion-9" "Choose suggestion 9"
+            )
+            (~spell-help-replace-string
+                "~spell-edit" "recursive-edit and continue upon exit"
+            )
+
+            (beginning-of-file)
+            (message "Type any character to continue spell check")
             (get-tty-character)
-            (~spell-message)
+            (~spell-show-suggestions)
         ); end save-window-excursion
     )
 )
