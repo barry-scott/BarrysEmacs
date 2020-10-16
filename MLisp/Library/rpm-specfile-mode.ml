@@ -47,6 +47,7 @@
             "Group:"
             "Packager:"
             "Provides:"
+            "Obsoletes:"
             "Requires:"
             "BuildRequires:"
             "Conflicts:"
