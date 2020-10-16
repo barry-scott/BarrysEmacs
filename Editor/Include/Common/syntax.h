@@ -1,4 +1,4 @@
-//    Copyright (c) 1982-2016
+//    Copyright (c) 1982-2020
 //        Barry A. Scott
 //
 // Declarations having to do with Emacs syntax tables
@@ -123,7 +123,6 @@ public:
 
     int looking_at_main( int pos ) const;
     int looking_at_match( int pos ) const;
-    int ere_looking_at_main( int pos ) const;
 
     bool first_is_word() const;
     bool last_is_word( const SyntaxTable &table ) const;
@@ -134,8 +133,10 @@ public:
 
     EmacsString s_main_str;
     EmacsString s_match_str;
+    EmacsSearch s_main_ere;
+
 private:
-    int looking_at_internal( int pos, const EmacsString &str ) const;
+    int looking_at_internal( int pos, const EmacsString &str, bool is_main ) const;
 };
 
 
@@ -262,9 +263,6 @@ private:
 
     void modify_table_set_simple_type( int type, int ch );
     void modify_table_set_paired_type( int type, int ch );
-
-    // syntax defined by an ere pattern
-    void modify_table_ere( int type, int properties, const EmacsString &str1, const EmacsString &str2  );
 
     // add any type of syntax string
     void add_syntax_string_to_table( int ch, const SyntaxString &str );

@@ -49,6 +49,7 @@ const int must_be_zero( 0 );
 #include <emstrtab.h>
 #include <queue.h>
 #include <mlispexp.h>
+#include <search.h>
 #include <syntax.h>
 #include <buffer.h>
 #include <mlisp.h>
@@ -59,7 +60,6 @@ const int must_be_zero( 0 );
 #include <key_names.h>
 #include <abbrev.h>
 #include <ndbm.h>
-#include <search.h>
 #include <tt.h>
 #include <window.h>
 #include <undo.h>

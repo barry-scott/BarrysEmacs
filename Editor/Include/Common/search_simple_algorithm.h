@@ -52,10 +52,11 @@ private:
     bool is_compatible( EmacsSearch::sea_type type );
 
     void compile( const EmacsString &strp, EmacsSearch::sea_type RE );
+    void setCaseFolding( bool ) { return; }
 
     int search( int n, int dot );
     int looking_at( int dot );
-    int syntax_looking_at( int dot );
+    int syntax_looking_at( int dot ) const;
     void place( int l1, int l2);
     int perform_replace( int query, EmacsSearch::sea_type RE);
     void search_replace_once( const EmacsString &new_string );

@@ -114,7 +114,7 @@ EmacsChar_t SearchAdvancedAlgorithm::caseFold( EmacsChar_t ch ) const
     return ch;
 }
 
-int SearchAdvancedAlgorithm::syntax_looking_at( int pos )
+int SearchAdvancedAlgorithm::syntax_looking_at( int pos ) const
 {
     int end_pos = 0;
     if( m_expression->matchExpression( pos, end_pos ) )

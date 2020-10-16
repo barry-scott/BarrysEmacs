@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1982-2016
+//    Copyright (c) 1982-2020
 //        Barry A. Scott
 //
 // Emacs routines to deal with syntax tables
@@ -35,6 +35,90 @@ void syntax_delete_update( int, int );
 SyntaxNameTable SyntaxTable::name_table( 8, 8 );
 
 SyntaxTable *global_syntax_table;
+
+#if DEBUG_SYNTAX || DBG_EXT_SEARCH != 0
+EmacsString syntax_bits_as_string( int syntax )
+{
+    EmacsString result;
+    if( syntax == 0 )
+        result = "D";
+
+    if( syntax & SYNTAX_WORD )
+        result.append( "W" );
+
+    if( syntax & SYNTAX_TYPE_PROBLEM )
+        result.append( "P" );
+
+    if( syntax & SYNTAX_STRING_MASK )
+        switch( syntax & SYNTAX_STRING_MASK )
+        {
+        case SYNTAX_TYPE_STRING1:
+            result.append( "S1" ); break;
+        case SYNTAX_TYPE_STRING2:
+            result.append( "S2" ); break;
+        case SYNTAX_TYPE_STRING3:
+            result.append( "S3" ); break;
+        }
+
+    if( syntax & SYNTAX_COMMENT_MASK )
+        switch( syntax & SYNTAX_COMMENT_MASK )
+        {
+        case SYNTAX_TYPE_COMMENT1:
+            result.append( "C1" ); break;
+        case SYNTAX_TYPE_COMMENT2:
+            result.append( "C2" ); break;
+        case SYNTAX_TYPE_COMMENT3:
+            result.append( "C3" ); break;
+        }
+
+    if( syntax & SYNTAX_KEYWORD_MASK )
+        switch( syntax & SYNTAX_KEYWORD_MASK )
+        {
+        case SYNTAX_TYPE_KEYWORD1:
+            result.append( "K1" ); break;
+        case SYNTAX_TYPE_KEYWORD2:
+            result.append( "K2" ); break;
+        case SYNTAX_TYPE_KEYWORD3:
+            result.append( "K3" ); break;
+        }
+
+    if( syntax & SYNTAX_PREFIX_QUOTE )
+        result.append( "Q" );
+
+    if( syntax & SYNTAX_BEGIN_PAREN )
+        result.append( "(" );
+
+    if( syntax & SYNTAX_END_PAREN )
+        result.append( ")" );
+
+    return result;
+}
+
+void debug_syntax_dump_buffer( int from, int to )
+{
+    if( from >= to
+    || !bf_cur->b_mode.md_syntax_array
+    || bf_cur->b_syntax.syntax_base == NULL )
+    {
+        return;
+    }
+
+    EmacsString header( "P:" );
+    EmacsString chars(  "C:" );
+    EmacsString syntax( "S:" );
+
+    for( int pos=from; pos<=to; ++pos )
+    {
+        header.append( FormatString("%-3d ") << pos );
+        chars .append( FormatString("%3C ") << bf_cur->char_at( pos ) );
+        syntax.append( FormatString(" %2s ") << syntax_bits_as_string( bf_cur->syntax_at( pos ) ) );
+    }
+
+    _dbg_msg( header );
+    _dbg_msg( chars );
+    _dbg_msg( syntax );
+}
+#endif
 
 void init_syntax()
 {
@@ -85,7 +169,7 @@ void SyntaxTable::q()
     EmacsCharToSyntaxKind_t::iterator i = s_kind.begin();
     while( i != s_kind.end() )
     {
-        std::cout << std::hex << "  key=0x" << i->first << " val=0x" << i->second << std::endl;
+        std::cout << std::hex << " key=0x" << i->first << " val=0x" << i->second << std::endl;
         ++i;
     }
 }
@@ -159,6 +243,7 @@ SyntaxString::SyntaxString()
 , s_alt_matching()
 , s_main_str()
 , s_match_str()
+, s_main_ere()
 { }
 
 SyntaxString::SyntaxString( int _kind, int _properties, const EmacsString &_main, const EmacsString &_match )
@@ -167,7 +252,16 @@ SyntaxString::SyntaxString( int _kind, int _properties, const EmacsString &_main
 , s_alt_matching()
 , s_main_str( _main )
 , s_match_str( _match )
+, s_main_ere()
 {
+    if( s_properties&SYNTAX_PROP_REGEX_MATCH )
+    {
+        s_main_ere.compile( s_main_str, EmacsSearch::sea_type__RE_syntax );
+        if( s_properties&SYNTAX_PROP_CASE_FOLD_MATCH )
+        {
+            s_main_ere.setCaseFolding( true );
+        }
+    }
 }
 
 SyntaxString::~SyntaxString()
@@ -187,6 +281,7 @@ SyntaxString &SyntaxString::operator=( const SyntaxString &old )
     s_alt_matching.clear();         // QQQ - why clear() and not a copy from old?
     s_main_str = old.s_main_str;
     s_match_str = old.s_match_str;
+    s_main_ere = old.s_main_ere;
 
     return *this;
 }
@@ -240,25 +335,75 @@ static ModifySyntaxData modify_syntax_table_init_data[] =
 {
 {"comment",                 SYNTAX_TYPE_COMMENT1,   0,
                             " (comment-begin) ",    " (comment-end) "},
+{"comment,case-fold",       SYNTAX_TYPE_COMMENT1,   SYNTAX_PROP_CASE_FOLD_MATCH,
+                            " (comment-begin) ",    " (comment-end) "},
+{"comment,ere",             SYNTAX_TYPE_COMMENT1,   SYNTAX_PROP_REGEX_MATCH,
+                            " (comment-begin) ",    " (comment-end) "},
+{"comment,case-fold,ere",   SYNTAX_TYPE_COMMENT1,   SYNTAX_PROP_CASE_FOLD_MATCH|SYNTAX_PROP_REGEX_MATCH,
+                            " (comment-begin) ",    " (comment-end) "},
+{"comment,ere,case-fold",   SYNTAX_TYPE_COMMENT1,   SYNTAX_PROP_CASE_FOLD_MATCH|SYNTAX_PROP_REGEX_MATCH,
+                            " (comment-begin) ",    " (comment-end) "},
 {"comment-1",               SYNTAX_TYPE_COMMENT1,   0,
+                            " (comment-begin) ",    " (comment-end) "},
+{"comment-1,case-fold",     SYNTAX_TYPE_COMMENT1,   SYNTAX_PROP_CASE_FOLD_MATCH,
+                            " (comment-begin) ",    " (comment-end) "},
+{"comment-1,ere",           SYNTAX_TYPE_COMMENT1,   SYNTAX_PROP_REGEX_MATCH,
+                            " (comment-begin) ",    " (comment-end) "},
+{"comment-1,case-fold,ere", SYNTAX_TYPE_COMMENT1,   SYNTAX_PROP_CASE_FOLD_MATCH|SYNTAX_PROP_REGEX_MATCH,
+                            " (comment-begin) ",    " (comment-end) "},
+{"comment-1,ere,case-fold", SYNTAX_TYPE_COMMENT1,   SYNTAX_PROP_CASE_FOLD_MATCH|SYNTAX_PROP_REGEX_MATCH,
                             " (comment-begin) ",    " (comment-end) "},
 {"comment-2",               SYNTAX_TYPE_COMMENT2,   0,
                             " (comment-begin) ",    " (comment-end) "},
+{"comment-2,case-fold",     SYNTAX_TYPE_COMMENT2,   SYNTAX_PROP_CASE_FOLD_MATCH,
+                            " (comment-begin) ",    " (comment-end) "},
+{"comment-2,ere",           SYNTAX_TYPE_COMMENT2,   SYNTAX_PROP_REGEX_MATCH,
+                            " (comment-begin) ",    " (comment-end) "},
+{"comment-2,case-fold,ere", SYNTAX_TYPE_COMMENT2,   SYNTAX_PROP_CASE_FOLD_MATCH|SYNTAX_PROP_REGEX_MATCH,
+                            " (comment-begin) ",    " (comment-end) "},
+{"comment-2,ere,case-fold", SYNTAX_TYPE_COMMENT2,   SYNTAX_PROP_CASE_FOLD_MATCH|SYNTAX_PROP_REGEX_MATCH,
+                            " (comment-begin) ",    " (comment-end) "},
 {"comment-3",               SYNTAX_TYPE_COMMENT3,   0,
+                            " (comment-begin) ",    " (comment-end) "},
+{"comment-3,case-fold",     SYNTAX_TYPE_COMMENT3,   SYNTAX_PROP_CASE_FOLD_MATCH,
+                            " (comment-begin) ",    " (comment-end) "},
+{"comment-3,ere",           SYNTAX_TYPE_COMMENT3,   SYNTAX_PROP_REGEX_MATCH,
+                            " (comment-begin) ",    " (comment-end) "},
+{"comment-3,case-fold,ere", SYNTAX_TYPE_COMMENT3,   SYNTAX_PROP_CASE_FOLD_MATCH|SYNTAX_PROP_REGEX_MATCH,
+                            " (comment-begin) ",    " (comment-end) "},
+{"comment-3,ere,case-fold", SYNTAX_TYPE_COMMENT3,   SYNTAX_PROP_CASE_FOLD_MATCH|SYNTAX_PROP_REGEX_MATCH,
                             " (comment-begin) ",    " (comment-end) "},
 {"dull",                    SYNTAX_DULL,            0,
                             " (character-set) ",    ""},
-{"keyword-1",               SYNTAX_TYPE_KEYWORD1,    0,
+{"keyword-1",               SYNTAX_TYPE_KEYWORD1,   0,
                             " (keyword) ",          ""},
-{"keyword-1,case-fold",     SYNTAX_TYPE_KEYWORD1,    SYNTAX_PROP_CASE_FOLD_MATCH,
+{"keyword-1,ere",           SYNTAX_TYPE_KEYWORD1,   SYNTAX_PROP_REGEX_MATCH,
                             " (keyword) ",          ""},
-{"keyword-2",               SYNTAX_TYPE_KEYWORD2,    0,
+{"keyword-1,case-fold",     SYNTAX_TYPE_KEYWORD1,   SYNTAX_PROP_CASE_FOLD_MATCH,
                             " (keyword) ",          ""},
-{"keyword-2,case-fold",     SYNTAX_TYPE_KEYWORD2,    SYNTAX_PROP_CASE_FOLD_MATCH,
+{"keyword-1,ere,case-fold", SYNTAX_TYPE_KEYWORD1,   SYNTAX_PROP_CASE_FOLD_MATCH|SYNTAX_PROP_REGEX_MATCH,
                             " (keyword) ",          ""},
-{"keyword-3",               SYNTAX_TYPE_KEYWORD3,    0,
+{"keyword-1,case-fold,ere", SYNTAX_TYPE_KEYWORD1,   SYNTAX_PROP_CASE_FOLD_MATCH|SYNTAX_PROP_REGEX_MATCH,
                             " (keyword) ",          ""},
-{"keyword-3,case-fold",     SYNTAX_TYPE_KEYWORD3,    SYNTAX_PROP_CASE_FOLD_MATCH,
+{"keyword-2",               SYNTAX_TYPE_KEYWORD2,   0,
+                            " (keyword) ",          ""},
+{"keyword-2,ere",           SYNTAX_TYPE_KEYWORD2,   SYNTAX_PROP_REGEX_MATCH,
+                            " (keyword) ",          ""},
+{"keyword-2,case-fold",     SYNTAX_TYPE_KEYWORD2,   SYNTAX_PROP_CASE_FOLD_MATCH,
+                            " (keyword) ",          ""},
+{"keyword-2,ere,case-fold", SYNTAX_TYPE_KEYWORD2,   SYNTAX_PROP_CASE_FOLD_MATCH|SYNTAX_PROP_REGEX_MATCH,
+                            " (keyword) ",          ""},
+{"keyword-2,case-fold,ere", SYNTAX_TYPE_KEYWORD2,   SYNTAX_PROP_CASE_FOLD_MATCH|SYNTAX_PROP_REGEX_MATCH,
+                            " (keyword) ",          ""},
+{"keyword-3",               SYNTAX_TYPE_KEYWORD3,   0,
+                            " (keyword) ",          ""},
+{"keyword-3,ere",           SYNTAX_TYPE_KEYWORD3,   SYNTAX_PROP_REGEX_MATCH,
+                            " (keyword) ",          ""},
+{"keyword-3,case-fold",     SYNTAX_TYPE_KEYWORD3,   SYNTAX_PROP_CASE_FOLD_MATCH,
+                            " (keyword) ",          ""},
+{"keyword-3,ere,case-fold", SYNTAX_TYPE_KEYWORD3,   SYNTAX_PROP_CASE_FOLD_MATCH|SYNTAX_PROP_REGEX_MATCH,
+                            " (keyword) ",          ""},
+{"keyword-3,case-fold,ere", SYNTAX_TYPE_KEYWORD3,   SYNTAX_PROP_CASE_FOLD_MATCH|SYNTAX_PROP_REGEX_MATCH,
                             " (keyword) ",          ""},
 {"paren",                   SYNTAX_BEGIN_PAREN,     0,
                             " (open-paren) ",       " (close-paren) "},
@@ -376,11 +521,7 @@ void SyntaxTable::modify_table( int type, int properties, const EmacsString &str
 
         case SYNTAX_BEGIN_PAREN:
             // Need a end paren entry to match up with the begin paren
-            modify_table
-            (
-            SYNTAX_END_PAREN, properties,
-            str2, str1
-            );
+            modify_table( SYNTAX_END_PAREN, properties, str2, str1 );
             modify_table_paired_type( type, properties, str1, str2 );
             break;
 
@@ -392,15 +533,12 @@ void SyntaxTable::modify_table( int type, int properties, const EmacsString &str
         case SYNTAX_TYPE_COMMENT1:
         case SYNTAX_TYPE_COMMENT2:
         case SYNTAX_TYPE_COMMENT3:
+        case SYNTAX_TYPE_PROBLEM:
             modify_table_paired_type( type, properties, str1, str2 );
             break;
 
-        case SYNTAX_TYPE_PROBLEM:
-            modify_table_ere( type, properties, str1, str2 );
-            break;
-
         default:
-            error( "modify-syntax-table - internal error");
+            error( FormatString("modify-syntax-table - internal error type 0x%X") << type );
             break;
         }
     }
@@ -412,18 +550,6 @@ void SyntaxTable::modify_table( int type, int properties, const EmacsString &str
     {
         error( "modify-syntax-table - out of memory!");
     }
-}
-
-// check its an ERE that we can use in the syntax code
-void SyntaxTable::modify_table_ere( int type, int properties, const EmacsString &str1, const EmacsString &str2 )
-{
-    EmacsSearch search;
-
-    search.compile( str1, EmacsSearch::sea_type__RE_syntax );
-    if( ml_err )
-        return;
-
-    modify_table_paired_type( type, properties, str1, str2 );
 }
 
 void SyntaxTable::modify_table_dull_type( const EmacsString &str1 )
@@ -524,7 +650,12 @@ void SyntaxTable::modify_table_paired_type( int type, int properties, const Emac
         throw SyntaxErrorException();
 
     EmacsChar_t ch = str1[0];
-    add_syntax_string_to_table( ch, SyntaxString( type, properties, str1, str2 ) );
+    SyntaxString syn_str( type, properties, str1, str2 );
+    // check for RE compile problem
+    if( ml_err )
+        return;
+
+    add_syntax_string_to_table( ch, syn_str );
 
     // if case fold and first char is a letter
     if( properties&SYNTAX_PROP_CASE_FOLD_MATCH
@@ -1327,31 +1458,14 @@ bool SyntaxString::last_is_word( const SyntaxTable &table ) const
     return (table.getSyntaxKind( last_char )&SYNTAX_WORD) != 0;
 }
 
-//
-//    return end
-//
-int SyntaxString::ere_looking_at_main( int pos ) const
-{
-    EmacsSearch ere;
-    ere.compile( s_main_str, EmacsSearch::sea_type__RE_syntax );
-    int end_pos = ere.syntax_looking_at( pos );
-    if( end_pos == 0 )
-    {
-        return 0;
-    }
-
-    // calc length
-    return end_pos - pos;
-}
-
 int SyntaxString::looking_at_main( int pos ) const
 {
-    return looking_at_internal( pos, s_main_str );
+    return looking_at_internal( pos, s_main_str, true );
 }
 
 int SyntaxString::looking_at_match( int pos ) const
 {
-    int len = looking_at_internal( pos, s_match_str );
+    int len = looking_at_internal( pos, s_match_str, false );
     if( len > 0 )
         return len;
 
@@ -1359,7 +1473,8 @@ int SyntaxString::looking_at_match( int pos ) const
             alt != s_alt_matching.end();
                 ++alt )
     {
-        int len = alt->looking_at_internal( pos, alt->s_match_str );
+        // is passing s_match_ere correct here?
+        int len = alt->looking_at_internal( pos, alt->s_match_str, false );
         if( len > 0 )
             return len;
     }
@@ -1367,11 +1482,11 @@ int SyntaxString::looking_at_match( int pos ) const
     return 0;
 }
 
-int SyntaxString::looking_at_internal( int pos, const EmacsString &str ) const
+int SyntaxString::looking_at_internal( int pos, const EmacsString &str, bool is_main ) const
 {
     int len = str.length();
 
-    switch( s_properties )
+    switch( is_main ? s_properties : 0 )
     {
     default:
     case 0:
@@ -1410,10 +1525,38 @@ int SyntaxString::looking_at_internal( int pos, const EmacsString &str ) const
         break;
 
     case SYNTAX_PROP_REGEX_MATCH:
-        return 0;
-
     case SYNTAX_PROP_CASE_FOLD_MATCH|SYNTAX_PROP_REGEX_MATCH:
-        return 0;
+    {
+        int end_pos = s_main_ere.syntax_looking_at( pos );
+#if DEBUG_SYNTAX
+        _dbg_msg( FormatString(" --  looking: pos %d regex %s end_pos %d")
+                << pos
+                << str
+                << end_pos );
+#endif
+        // did not match
+        if( end_pos == 0 )
+            return 0;
+
+#if DEBUG_SYNTAX
+        {
+        EmacsChar_t c = bf_cur->char_at( end_pos );
+        SyntaxData_t syn_pos = bf_cur->b_mode.md_syntax->getSyntaxKind( c );
+
+        _dbg_msg( FormatString(" --  looking: c(end_pos) %C syn(end_pos) %s")
+            << c << syntax_bits_as_string( syn_pos ) );
+        }
+#endif
+
+        // did match but more word chars follow so its not a valid match
+        if( bf_cur->char_at_is( end_pos, SYNTAX_WORD ) )
+        {
+            return 0;
+        }
+
+        // calc length
+        return end_pos - pos;
+    }
     }
 
     // matched
@@ -1437,6 +1580,11 @@ void syntax_insert_update( int dot, int len )
 {
     syntax_buffer_data *s = &bf_cur->b_syntax;
 
+#if DEBUG_SYNTAX
+    _dbg_msg( FormatString("\n+ syntax_insert_update( dot: %d, len: %d ) syntax_valid: %d")
+            << dot << len << s->syntax_valid );
+#endif
+
     if( dot < s->syntax_valid )
     {
         if( s->syntax_update_credit > 0 )
@@ -1456,13 +1604,23 @@ void syntax_insert_update( int dot, int len )
 
     if( dot < bf_cur->b_line_valid )
         bf_cur->b_line_valid = dot;
+
+#if DEBUG_SYNTAX
+    _dbg_msg( FormatString("\n- syntax_insert_update() syntax_valid: %d")
+            << s->syntax_valid );
+#endif
 }
 
 void syntax_delete_update( int dot, int len )
 {
     syntax_buffer_data *s = &bf_cur->b_syntax;
 
-    if( dot < s->syntax_valid )
+#if DEBUG_SYNTAX
+    _dbg_msg( FormatString("\n+ syntax_delete_update( dot: %d, len: %d ) syntax_valid: %d")
+            << dot << len << s->syntax_valid );
+#endif
+
+    if( (dot-len) < s->syntax_valid )
     {
         if( s->syntax_update_credit > 0 )
         {
@@ -1481,7 +1639,30 @@ void syntax_delete_update( int dot, int len )
 
     if( dot < bf_cur->b_line_valid )
         bf_cur->b_line_valid = dot;
+
+#if DEBUG_SYNTAX
+    _dbg_msg( FormatString("- syntax_delete_update() syntax_valid: %d")
+            << s->syntax_valid );
+#endif
 }
+
+// return false if there is a error with initBuffer
+bool EmacsBuffer::syntax_fill_in_array_for_window( int required, int sline )
+{
+#if DEBUG_SYNTAX
+    _dbg_msg( FormatString("\n+ syntax_fill_in_array_for_window( required: %d, sline: %d ) syntax_valid: %d")
+            << required << sline << b_syntax.syntax_valid );
+    debug_syntax_dump_buffer( 1, std::min( 40, b_syntax.syntax_valid ) );
+#endif
+
+    bool rc = syntax_fill_in_array( required );
+
+#if DEBUG_SYNTAX
+    debug_syntax_dump_buffer( 1, std::min( 40, b_syntax.syntax_valid ) );
+#endif
+    return rc;
+}
+
 
 //
 //    Fill in the syntax array as far as the 'required' offset
@@ -1497,10 +1678,10 @@ static const char *state_to_string( syn_states st )
     switch( st )
     {
     case st_simple:
-        return " Simple";
+        return "Simple_";
 
     case st_string:
-        return " String";
+        return "String_";
 
     case st_comment:
         return "Comment";
@@ -1511,69 +1692,16 @@ static const char *state_to_string( syn_states st )
 }
 #endif
 
-#if DEBUG_SYNTAX || DBG_EXT_SEARCH != 0
-EmacsString syntax_bits_as_string( int syntax )
-{
-    EmacsString result;
-    if( syntax == 0 )
-        result = "D ";
-
-    if( syntax & SYNTAX_WORD )
-        result.append( "W " );
-
-    if( syntax & SYNTAX_TYPE_PROBLEM )
-        result.append( "P " );
-
-    if( syntax & SYNTAX_STRING_MASK )
-        switch( syntax & SYNTAX_STRING_MASK )
-        {
-        case SYNTAX_TYPE_STRING1:
-            result.append( "S1 " ); break;
-        case SYNTAX_TYPE_STRING2:
-            result.append( "S2 " ); break;
-        case SYNTAX_TYPE_STRING3:
-            result.append( "S3 " ); break;
-        }
-
-    if( syntax & SYNTAX_COMMENT_MASK )
-        switch( syntax & SYNTAX_COMMENT_MASK )
-        {
-        case SYNTAX_TYPE_COMMENT1:
-            result.append( "C1 " ); break;
-        case SYNTAX_TYPE_COMMENT2:
-            result.append( "C2 " ); break;
-        case SYNTAX_TYPE_COMMENT3:
-            result.append( "C3 " ); break;
-        }
-
-    if( syntax & SYNTAX_KEYWORD_MASK )
-        switch( syntax & SYNTAX_KEYWORD_MASK )
-        {
-        case SYNTAX_TYPE_KEYWORD1:
-            result.append( "K1 " ); break;
-        case SYNTAX_TYPE_KEYWORD2:
-            result.append( "K2 " ); break;
-        case SYNTAX_TYPE_KEYWORD3:
-            result.append( "K3 " ); break;
-        }
-
-    if( syntax & SYNTAX_PREFIX_QUOTE )
-        result.append( "Q " );
-
-    if( syntax & SYNTAX_BEGIN_PAREN )
-        result.append( "( " );
-
-    if( syntax & SYNTAX_END_PAREN )
-        result.append( ") " );
-
-    return result;
-}
-#endif
 
 // return false if there is a error with initBuffer
 bool EmacsBuffer::syntax_fill_in_array( int required )
 {
     syntax_buffer_data *s = &b_syntax;
+
+#if DEBUG_SYNTAX
+    _dbg_msg( FormatString("+ syntax_fill_in_array( required: %d ) syntax_valid: %d")
+            << required << s->syntax_valid );
+#endif
 
     if( !b_mode.md_syntax_array )
         return true;
@@ -1593,212 +1721,20 @@ bool EmacsBuffer::syntax_fill_in_array( int required )
     if( required <= s->syntax_valid )
         return true;
 
-    //
-    // backup to a dull character
-    // as that ensures that we can
-    // figure out the rest of the syntax
-    // unambiguosly
-    //
-    int pos;
-    for( pos=s->syntax_valid-1-SYNTAX_STRING_SIZE; pos > 1; pos-- )
-    {
-        if( syntax_at(pos) == SYNTAX_DULL )
-            break;
-    }
+    if( syntax_update_range( s->syntax_valid, required, required ) )
+        return true;
 
-    if( pos < 1 )
-        pos = 1;
-
-    SyntaxStringList_t::iterator comment;
-    SyntaxStringList_t::iterator string;
-    SyntaxStringList_t::iterator end;
-
-    enum syn_states state = st_simple;
-    int limit = required;
-    for( ; pos<=limit; pos++ )
-    {
-        EmacsChar_t c = char_at(pos);
-        SyntaxKind_t kind = b_mode.md_syntax->getSyntaxKind( c );
-
-        if( c == '\n' )
-            cant_1line_opt = 1;
-
-        // emacs_check_malloc_block( b_syntax_base );
-
-#if DEBUG_SYNTAX
-        _dbg_msg( FormatString("fillin state: %s, pos: %d, s_kind: %s, c: %C, s_at: %s")
-                << state_to_string( state )
-                << pos
-                << syntax_bits_as_string( kind )
-                << c
-                << syntax_bits_as_string( syntax_at( pos ) ) );
-#endif
-        switch( state )
-        {
-        case st_simple:
-            if( pos > required
-            && (syntax_at( pos )&SYNTAX_MULTI_CHAR_TYPES) == 0 )
-                return true;
-
-            if( kind&SYNTAX_TYPE_PROBLEM )
-            {
-                SyntaxStringList_t::iterator problem;
-
-                for( problem = b_mode.md_syntax->getSyntaxStrings( c ).begin(),
-                         end = b_mode.md_syntax->getSyntaxStrings( c ).end();
-                        problem != end;
-                            ++problem )
-                {
-                    int len = problem->ere_looking_at_main( pos );
-                    if( len > 0 )
-                    {
-                        for( int i=0; i<len; i++, pos++ )
-                            set_syntax_at( pos, SYNTAX_TYPE_PROBLEM );
-
-                        pos--;    // incremented at the top of the loop
-                        goto for_loop_end;
-                    }
-                }
-            }
-
-            if( kind&SYNTAX_COMMENT_MASK )
-            {
-                for( comment = b_mode.md_syntax->getSyntaxStrings( c ).begin(),
-                         end = b_mode.md_syntax->getSyntaxStrings( c ).end();
-                        comment != end;
-                            ++comment )
-                {
-                    int len;
-                    if( (comment->s_kind&SYNTAX_COMMENT_MASK) != 0
-                    && (len = comment->looking_at_main( pos )) > 0 )
-                    {
-                        state = st_comment;
-
-                        for( int i=0; i<len; i++, pos++ )
-                            set_syntax_at( pos, comment->s_kind );
-
-                        pos--;    // incremented at the top of the loop
-                        goto for_loop_end;
-                    }
-                }
-            }
-
-            if( kind&SYNTAX_STRING_MASK )
-            {
-                for( string = b_mode.md_syntax->getSyntaxStrings( c ).begin(),
-                        end = b_mode.md_syntax->getSyntaxStrings( c ).end();
-                        string != end;
-                            ++string )
-                {
-                    int len;
-                    if( (string->s_kind&SYNTAX_STRING_MASK) != 0
-                    && (len = string->looking_at_main( pos )) > 0 )
-                    {
-                        state = st_string;
-
-                        for( int i=0; i<len; i++, pos++ )
-                            set_syntax_at( pos, string->s_kind );
-
-                        pos--;    // incremented at the top of the loop
-                        goto for_loop_end;
-                    }
-                }
-            }
-
-            //
-            // a keyword may start each time a word to nonword OR nonword to word boundary is crossed
-            //
-            if( kind&SYNTAX_KEYWORD_MASK
-            && !(((kind&SYNTAX_WORD) != 0) && ((syntax_at( pos-1 )&SYNTAX_WORD) != 0)) )
-            {
-                bool found = false;
-                for( SyntaxStringList_t::iterator keyword = b_mode.md_syntax->getSyntaxStrings( c ).begin(),
-                                                      end = b_mode.md_syntax->getSyntaxStrings( c ).end();
-                        keyword != end;
-                            ++keyword )
-                {
-                    if( keyword->s_kind&SYNTAX_KEYWORD_MASK )
-                    {
-                        bool last_is_word = keyword->last_is_word( *b_mode.md_syntax );
-
-                        if( pos + keyword->s_main_str.length() <= unrestrictedSize()
-                        && !(last_is_word && char_at_is( pos+keyword->s_main_str.length(), SYNTAX_WORD ))
-                        && keyword->looking_at_main( pos ) )
-                        {
-                            for( int i=0; i<keyword->s_main_str.length(); i++, pos++ )
-                                set_syntax_at( pos, (SyntaxData_t)keyword->s_kind );
-                            pos--;
-
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-                // if we found a keyword then continue to the next char
-                if( found )
-                    goto for_loop_end;
-            }
-
-            if( kind&SYNTAX_WORD )
-                set_syntax_at( pos, SYNTAX_WORD );
-            else
-                set_syntax_at( pos, SYNTAX_DULL );
-            break;
-
-        case st_string:
-        {
-            set_syntax_at( pos, string->s_kind );
-            // if the next char is not quoted
-            if( syntax_at_is( pos-1, SYNTAX_PREFIX_QUOTE ) )
-                set_syntax_at( pos, string->s_kind );
-            else
-                if( char_at_is( pos, SYNTAX_PREFIX_QUOTE ) )
-                    set_syntax_at( pos, string->s_kind|SYNTAX_PREFIX_QUOTE );
-                else
-                {
-                    int len = string->looking_at_match( pos );
-                    if( len > 0 )
-                    {
-                        state = st_simple;
-
-                        for( int i=0; i<len; i++, pos++ )
-                            set_syntax_at( pos, string->s_kind );
-                        pos--;
-                    }
-                }
-        }
-            break;
-
-        case st_comment:
-        {
-            set_syntax_at( pos, comment->s_kind );
-            int len = comment->looking_at_match( pos );
-            if( len > 0 )
-            {
-                state = st_simple;
-
-                for( int i=0; i<len; i++, pos++ )
-                    set_syntax_at( pos, comment->s_kind );
-                pos--;
-            }
-        }
-            break;
-        default:
-            debug_invoke();
-        }
-        for_loop_end: ;
-    }
-
-    // emacs_check_malloc_block( b_syntax_base );
-
-    s->syntax_valid = limit;
+    s->syntax_valid = required;
     return true;
 }
 
 void EmacsBuffer::syntax_update_buffer( int pos, int len )
 {
+#if DEBUG_SYNTAX
+    _dbg_msg( FormatString("+ syntax_update_buffer( pos: %d len: %d )") << pos << len );
+#endif
+
     syntax_buffer_data *s = &b_syntax;
-    int required = pos + len;
 
     if( !b_mode.md_syntax_array
     || s->syntax_base == NULL )
@@ -1807,13 +1743,31 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
     if( s->syntax_valid > unrestrictedSize() )
         s->syntax_valid = unrestrictedSize();
 
+#if DEBUG_SYNTAX
+    debug_syntax_dump_buffer( 1, std::min( 40, s->syntax_valid ) );
+#endif
+
+    syntax_update_range( pos, s->syntax_valid, pos + len );
+
+#if DEBUG_SYNTAX
+    debug_syntax_dump_buffer( 1, std::min( 40, s->syntax_valid ) );
+#endif
+}
+
+bool EmacsBuffer::syntax_update_range( int pos, int limit, int required )
+{
+#if DEBUG_SYNTAX
+        _dbg_msg( FormatString("+ syntax_update_range( pos: %d, limit: %d, required: %d )")
+            << pos << limit << required );
+#endif
+
     //
     // backup to a dull character
     // as that ensures that we can
     // figure out the rest of the syntax
     // unambiguosly
     //
-    for( pos=pos-1-SYNTAX_STRING_SIZE; pos > 1; pos-- )
+    for( pos -= 1+SYNTAX_STRING_SIZE; pos > 1; pos-- )
     {
         if( syntax_at(pos) == SYNTAX_DULL )
             break;
@@ -1827,11 +1781,10 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
     SyntaxStringList_t::iterator end;
 
     enum syn_states state = st_simple;
-    int limit = s->syntax_valid;
     for( ; pos<=limit; pos++ )
     {
         EmacsChar_t c = char_at( pos );
-        SyntaxKind_t kind = b_mode.md_syntax->getSyntaxKind( c );
+        SyntaxKind_t c_kind = b_mode.md_syntax->getSyntaxKind( c );
 
         if( c == '\n' )
             cant_1line_opt = 1;
@@ -1839,21 +1792,21 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
         // emacs_check_malloc_block( b_syntax_base );
 
 #if DEBUG_SYNTAX
-        _dbg_msg( FormatString("update state: %s, pos: %d, s_kind: %s, c: %C, s: %s")
+        _dbg_msg( FormatString(" --     loop: %s, pos: %d, c: '%C', c_kind: %s")
                 << state_to_string( state )
-                << pos
-                << syntax_bits_as_string( kind )
-                << c
-                << syntax_bits_as_string( syntax_at( pos ) ) );
+                << pos << c
+                << syntax_bits_as_string( c_kind ) );
 #endif
         switch( state )
         {
         case st_simple:
+            // if the update has reached a dull char then we can exit
             if( pos > required
+            // check that the syntax from a previous run is dull
             && (syntax_at( pos )&SYNTAX_MULTI_CHAR_TYPES) == 0 )
-                return;
+                return true;
 
-            if( kind&SYNTAX_TYPE_PROBLEM )
+            if( c_kind&SYNTAX_TYPE_PROBLEM )
             {
                 SyntaxStringList_t::iterator problem;
 
@@ -1862,7 +1815,7 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
                         problem != end;
                             ++problem )
                 {
-                    int len = problem->ere_looking_at_main( pos );
+                    int len = problem->looking_at_main( pos );
                     if( len > 0 )
                     {
                         for( int i=0; i<len; i++, pos++ )
@@ -1874,19 +1827,28 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
                 }
             }
 
-            if( kind&SYNTAX_COMMENT_MASK )
+            if( c_kind&SYNTAX_COMMENT_MASK )
             {
+#if DEBUG_SYNTAX
+                _dbg_msg( FormatString("comment: Is this the start of a comment?") );
+#endif
                 for( comment = b_mode.md_syntax->getSyntaxStrings( c ).begin(),
                          end = b_mode.md_syntax->getSyntaxStrings( c ).end();
                         comment != end;
                             ++comment )
                 {
                     int len;
+#if DEBUG_SYNTAX
+                    _dbg_msg( FormatString("comment: look at %s") << comment->s_main_str );
+#endif
                     if( (comment->s_kind&SYNTAX_COMMENT_MASK) != 0
                     && (len = comment->looking_at_main( pos )) > 0 )
                     {
                         state = st_comment;
 
+#if DEBUG_SYNTAX
+                        _dbg_msg( FormatString("comment: found %s") << comment->s_main_str );
+#endif
                         for( int i=0; i<len; i++, pos++ )
                             set_syntax_at( pos, comment->s_kind );
 
@@ -1896,7 +1858,7 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
                 }
             }
 
-            if( kind&SYNTAX_STRING_MASK )
+            if( c_kind&SYNTAX_STRING_MASK )
             {
                 for( string = b_mode.md_syntax->getSyntaxStrings( c ).begin(),
                         end = b_mode.md_syntax->getSyntaxStrings( c ).end();
@@ -1921,8 +1883,18 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
             //
             // a keyword may start each time a word to nonword OR nonword to word boundary is crossed
             //
-            if( (kind&SYNTAX_KEYWORD_MASK) != 0
-            && !(((kind&SYNTAX_WORD) != 0) && ((syntax_at(pos-1)&SYNTAX_WORD) != 0)) )
+            {
+            EmacsChar_t c_prev = char_at( pos-1 );
+            SyntaxKind_t c_prev_kind = b_mode.md_syntax->getSyntaxKind( c_prev );
+
+#if DEBUG_SYNTAX
+            _dbg_msg( FormatString(" --  keytest: pos %d syn(pos-1) %s t-(pos)-w %d t-(pos-1)-nw %d")
+                    << pos
+                    << syntax_bits_as_string( c_prev_kind )
+                    << int( (c_kind&SYNTAX_KEYWORD_MASK) != 0 )
+                    << int( (c_prev_kind&SYNTAX_WORD) == 0 ) );
+#endif
+            if( (c_kind&SYNTAX_KEYWORD_MASK) != 0 && (c_prev_kind&SYNTAX_WORD) == 0 )
             {
                 bool found = false;
                 for( SyntaxStringList_t::iterator keyword = b_mode.md_syntax->getSyntaxStrings( c ).begin(),
@@ -1932,16 +1904,33 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
                 {
                     if( keyword->s_kind&SYNTAX_KEYWORD_MASK )
                     {
-                        bool last_is_word = keyword->last_is_word( *b_mode.md_syntax );
 
-                        if( pos + keyword->s_main_str.length() <= unrestrictedSize()
-                        && !(last_is_word && char_at_is( pos+keyword->s_main_str.length(), SYNTAX_WORD ))
-                        && keyword->looking_at_main( pos ) )
+                        // match the keyword
+                        int len = keyword->looking_at_main( pos );
+                        EmacsChar_t end_char = char_at( pos+len );
+                        SyntaxKind_t end_kind = b_mode.md_syntax->getSyntaxKind( end_char );
+#if DEBUG_SYNTAX
+                        _dbg_msg( FormatString(" --  keyword: %s pos %d len %d ch( %d ): '%C' syn: %s")
+                                << keyword->s_main_str
+                                << pos
+                                << len
+                                << pos+len
+                                << end_char
+                                << syntax_bits_as_string( end_kind ) );
+#endif
+                        // make sure it ends with a non-word char
+                        if( len > 0 && (end_kind&SYNTAX_WORD) == 0 )
                         {
-                            for( int i=0; i<keyword->s_main_str.length(); i++, pos++ )
-                                set_syntax_at( pos, (EmacsChar_t)keyword->s_kind );
+                            for( int i=0; i<len; i++, pos++ )
+                            {
+                                set_syntax_at( pos, (SyntaxData_t)keyword->s_kind );
+                            }
                             pos--;
 
+#if DEBUG_SYNTAX
+                            _dbg_msg( FormatString(" --  keyword: %s - found")
+                                    << keyword->s_main_str );
+#endif
                             found = true;
                             break;
                         }
@@ -1952,24 +1941,46 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
                     goto for_loop_end;
             }
 
-            if( kind&SYNTAX_WORD )
+            if( c_kind&SYNTAX_WORD )
                 set_syntax_at( pos, SYNTAX_WORD );
             else
                 set_syntax_at( pos, SYNTAX_DULL );
+            }
             break;
 
         case st_string:
         {
+#if DEBUG_SYNTAX
+            _dbg_msg( FormatString("string: set pos %d to %s")
+                    << pos << syntax_bits_as_string( string->s_kind ) );
+#endif
             set_syntax_at( pos, string->s_kind );
-            // if the next char is not quoted
-            if( syntax_at_is( pos-1, SYNTAX_PREFIX_QUOTE ) )
+            // is the current char preceeded by the prefix quote?
+            if( (syntax_at( pos-1 )&SYNTAX_PREFIX_QUOTE) != 0 )
+            {
+#if DEBUG_SYNTAX
+                _dbg_msg( FormatString("string: prev-quote set pos %d to %s")
+                        << pos << syntax_bits_as_string( string->s_kind ) );
+#endif
                 set_syntax_at( pos, string->s_kind );
+            }
             else
+            {
                 if( char_at_is( pos, SYNTAX_PREFIX_QUOTE ) )
+                {
+#if DEBUG_SYNTAX
+                    _dbg_msg( FormatString("string: cur-quote set pos %d to %s + Q")
+                            << pos << syntax_bits_as_string( string->s_kind ) );
+#endif
                     set_syntax_at( pos, string->s_kind|SYNTAX_PREFIX_QUOTE );
+                }
                 else
                 {
                     int len = string->looking_at_match( pos );
+#if DEBUG_SYNTAX
+                    _dbg_msg( FormatString("string: match %s len %d")
+                            << string->s_match_str << len );
+#endif
                     if( len > 0 )
                     {
                         state = st_simple;
@@ -1979,13 +1990,18 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
                         pos--;
                     }
                 }
+            }
         }
             break;
 
         case st_comment:
         {
             set_syntax_at( pos, comment->s_kind );
+
             int len = comment->looking_at_match( pos );
+#if DEBUG_SYNTAX
+            _dbg_msg( FormatString("comment: match %s len %d") << comment->s_match_str << len );
+#endif
             if( len > 0 )
             {
                 state = st_simple;
@@ -1996,9 +2012,12 @@ void EmacsBuffer::syntax_update_buffer( int pos, int len )
             }
         }
             break;
+
         default:
             debug_invoke();
         }
         for_loop_end: ;
     }
+
+    return false;
 }

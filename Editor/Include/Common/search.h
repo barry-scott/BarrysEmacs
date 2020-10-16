@@ -21,12 +21,13 @@ public:
     EmacsSearch( EmacsSearch &other );
     ~EmacsSearch();
 
+    EmacsSearch &operator=( const EmacsSearch &other );
     EmacsSearch &operator=( EmacsSearch &other );
 
     int search( const EmacsString &s, int n, int dot, sea_type RE );
     int search( int n, int dot );
     int looking_at( const EmacsString &s, sea_type RE );
-    int syntax_looking_at( int pos );
+    int syntax_looking_at( int pos ) const;
     void compile( const EmacsString &strp, sea_type RE );
 
     void search_replace_once( const EmacsString &new_string );
@@ -37,6 +38,7 @@ public:
     int get_start_of_group( const EmacsString &group_name );
     int get_end_of_group( const EmacsString &group_name );
 
+    void setCaseFolding( bool enable );
 
 private:
     SearchImplementation *operator->();
@@ -52,9 +54,9 @@ public:
 
     virtual int search( int n, int dot ) = 0;
     virtual int looking_at( int dot ) = 0;
-    virtual int syntax_looking_at( int dot ) = 0;
+    virtual int syntax_looking_at( int dot ) const = 0;
     virtual void compile( const EmacsString &strp, EmacsSearch::sea_type RE ) = 0;
-
+    virtual void setCaseFolding( bool enable ) = 0;
     virtual void search_replace_once( const EmacsString &new_string ) = 0;
 
     virtual int get_number_of_groups() = 0;

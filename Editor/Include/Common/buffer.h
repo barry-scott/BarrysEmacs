@@ -282,6 +282,7 @@ public:
     }
 
     bool syntax_fill_in_array( int required );
+    bool syntax_fill_in_array_for_window( int required, int sline );
     void syntax_update_buffer( int pos, int len );
 
     void insert_at( int n, EmacsChar_t c );
@@ -342,6 +343,8 @@ public:
     // ^--b_base
 
 private:
+    bool syntax_update_range( int pos, int limit, int required );
+
     EmacsChar_t *b_base;                //  0 points to the beginning of the
                                         //    block of storage used to hold the
                                         //    text in the buffer

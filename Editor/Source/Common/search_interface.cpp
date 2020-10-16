@@ -49,6 +49,12 @@ SearchImplementation *EmacsSearch::operator->()
 
 EmacsSearch &EmacsSearch::operator=( EmacsSearch &other )
 {
+    const EmacsSearch &c_other( other );
+    return operator=( c_other );
+}
+
+EmacsSearch &EmacsSearch::operator=( const EmacsSearch &other )
+{
     if( other.m_search_implementation != NULL )
         other.m_search_implementation->ref_count++;
 
@@ -122,6 +128,14 @@ int EmacsSearch::search( const EmacsString &s, int n, int dot, EmacsSearch::sea_
         return 0;
 }
 
+void EmacsSearch::setCaseFolding( bool enable )
+{
+    if( m_search_implementation != NULL )
+    {
+        m_search_implementation->setCaseFolding( enable );
+    }
+}
+
 int EmacsSearch::search( int n, int dot )
 {
     if( m_search_implementation != NULL )
@@ -143,7 +157,7 @@ int EmacsSearch::looking_at( const EmacsString &s, EmacsSearch::sea_type RE )
         return 0;
 }
 
-int EmacsSearch::syntax_looking_at( int pos )
+int EmacsSearch::syntax_looking_at( int pos ) const
 {
     if( m_search_implementation != NULL )
     {

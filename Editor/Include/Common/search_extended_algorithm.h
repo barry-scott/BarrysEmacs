@@ -43,8 +43,6 @@ public:
     int get_start_of_group( const EmacsString &group_name );
     int get_end_of_group( const EmacsString &group_name );
 
-    int syntax_looking_at( int dot );
-
 private:
     bool is_compatible( EmacsSearch::sea_type type );
 
@@ -52,6 +50,7 @@ private:
 
     int search( int n, int dot );
     int looking_at( int dot );
+    int syntax_looking_at( int dot ) const;
     void search_replace_once( const EmacsString &new_string );
 private:
     int m_max_group_number;

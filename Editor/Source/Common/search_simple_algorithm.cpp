@@ -74,11 +74,6 @@ int SearchSimpleAlgorithm::search( int n, int dot )
         return pos;
 }
 
-int SearchSimpleAlgorithm::syntax_looking_at( int pos )
-{
-    return 0;
-}
-
 int SearchSimpleAlgorithm::looking_at( int pos )
 {
     EmacsChar_t **alt = sea_alternatives;
@@ -103,6 +98,11 @@ int SearchSimpleAlgorithm::looking_at( int pos )
         sea_loc1 = dot;
     }
 
+    return 0;
+}
+
+int SearchSimpleAlgorithm::syntax_looking_at( int pos ) const
+{
     return 0;
 }
 

@@ -1950,7 +1950,7 @@ int EmacsView::dump_line_from_buffer
 
         mode.md_syntax_array = 1;    // force syntax array
         // if there is a problem the md_syntax_array will be turned off
-        if( !bf_cur->syntax_fill_in_array( required ) )
+        if( !bf_cur->syntax_fill_in_array_for_window( required, sline ) )
             flags.syntax_colouring = 0;
     }
 
