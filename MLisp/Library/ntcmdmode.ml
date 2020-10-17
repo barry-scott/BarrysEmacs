@@ -95,8 +95,7 @@
 
     (modify-syntax-table "word" "-_")       ;  Nb -_ is order-sensitive
 
-    (modify-syntax-table "comment" "rem" "\n")
-    (modify-syntax-table "comment" "REM" "\n")
+    (modify-syntax-table "comment,case-fold,ere" "rem\b" "\n")
 
     ; Keyword-1 is used for command-shell builtins.
     ;
