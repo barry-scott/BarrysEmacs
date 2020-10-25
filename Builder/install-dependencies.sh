@@ -1,5 +1,13 @@
 #!/bin/bash
-echo "Info: Checking for missing dependencies"
+
+if ! which colour-print >/dev/null
+then
+    function colour-print() {
+        echo "${@}"
+    }
+fi
+
+colour-print "<>info Info:<> Checking for missing dependencies"
 
 function setup_system_info() {
     if [[ -e /etc/os-release ]]
@@ -8,9 +16,9 @@ function setup_system_info() {
     else
         SYSTEM=$( uname )
     fi
-    if [[ "$SYSTEM" = "Darwin" && -e /usr/bin/sw_ver ]]
+    if [[ "$SYSTEM" = "Darwin" && -e /usr/bin/sw_vers ]]
     then
-        if [[ "$( /usr/bin/sw_ver -productName )" = "Mac OS X" ]]
+        if [[ "$( /usr/bin/sw_vers -productName )" = "Mac OS X" ]]
         then
             SYSTEM="macOS"
         fi
@@ -19,10 +27,28 @@ function setup_system_info() {
 
 setup_system_info
 
+colour-print "<>info Info:<> Import build dependencies for ${SYSTEM}"
+
 case "$SYSTEM" in
 macOS)
+    colour-print "<>info Info:<> Import python packages from PyPI"
     ${PYTHON} -m pip install --user PyQt5
     ${PYTHON} -m pip install --user xml-preferences
+
+    if [ "$1" = "" -o ! -d "$1" ]
+    then
+        colour-print "<>error Error:<> Expect \$1 to be a folder of dependencies"
+        exit 1
+    fi
+
+    colour-print "<>info Info:<> Import pycxx"
+    ./import-pycxx.sh "$1"/pycxx-*.tar.gz
+
+    colour-print "<>info Info:<> Import sqlite"
+    ./import-sqlite3.sh "$1"/sqlite-amalgamation-*.zip
+
+    colour-print "<>info Info:<> Import hunspell"
+    ./import-hunspell.sh "$1"/hunspell-*.tar.gz "$1"/hunspell-*.zip
     ;;
 
 fedora)
@@ -30,6 +56,9 @@ fedora)
         unicode-ucd \
         sqlite \
         sqlite-devel \
+        hunspell \
+        hunspell-devel \
+        python3-pycxx-devel \
         ;
     do
         if ! rpm -q $PKG
@@ -52,10 +81,10 @@ ubuntu|debian)
     do
         if ! grep -q "^$PKG/" ${PKG_LIST}
         then
-            echo "Info: Install $PKG"
-            sudo apt install $PKG
+            colour-print "<>info Info:<> Import $PKG"
+            sudo apt import $PKG
         else
-            echo "Info: Found package $PKG"
+            colour-print "<>info Info:<> Found package $PKG"
         fi
     done
 
@@ -75,16 +104,16 @@ NetBSD)
     do
         if ! /usr/sbin/pkg_info -e $PKG >/dev/null
         then
-            echo "Info: Install $PKG"
+            colour-print "<>info Info:<> Import $PKG"
             sudo /usr/sbin/pkd_add $PKG
         else
-            echo "Info: Found $PKG"
+            colour-print "<>info Info:<> Found $PKG"
         fi
     done
     ;;
 
 *)
-    echo "Error: Unsupported system $SYSTEM"
+    colour-print "Error: Unsupported system $SYSTEM"
     ;;
 esac
-echo "Info: Done"
+colour-print "<>info Info:<> Done"

@@ -44,52 +44,28 @@ available from:</p>
 
 <h2>Dependencies</h2>
 
+<p>Linux and *BSD systems may package some of the dependencies. In which case these will be used.</p>
+<p>For Windows and macOS all dependencies will need to be installed.</p>
+
 <p>For most platforms you will need:</div></li>
 <ul>
-<li><div>Python 3.4 or newer, 3.7 recommended.</div></li>
-<li><div><tt>pip install xml-preferences</tt></div></li>
-<li><div>pycxx 7.1.2 SVN sources from <a href="https://sourceforge.net/projects/cxx/">https://sourceforge.net/projects/cxx/</a>.
-Then expand the tarball into Imports/pycxx-7.1.2.</div></li>
-<li>git</li>
+<li>git to clone the Barry's Emacs sources</li>
+<li>Python 3.4 or newer, 3.7 recommended from https://python.org</li>
+<li>python xml-preferences from PyPI - <tt>pip install --user xml-preferences</tt></li>
+<li>python PyQt5 from PyPI - <tt>pip install --user PyQt5</tt></li>
+<li>pycxx 7.1.4 from <a href="https://sourceforge.net/projects/cxx/">https://sourceforge.net/projects/cxx/</a></li>
+<li>sqlite-amalgamation-3280000.zip from <a href="https://sqlite.org/download.html">https://sqlite.org/download.html</a></li>
+<li>hunspell-1.7.0.tar.gz from <a href="https://sourceforge.net/projects/hunspell/">https://sourceforge.net/projects/hunspell/</a></li>
+<li>hunspell-en_AU-large-2019.10.06.zip from <a href="http://wordlist.aspell.net/dicts/">http://wordlist.aspell.net/dicts/</a></li>
+<li>hunspell-en_CA-large-2019.10.06.zip from <a href="http://wordlist.aspell.net/dicts/">http://wordlist.aspell.net/dicts/</a></li>
+<li>hunspell-en_GB-large-2019.10.06.zip from <a href="http://wordlist.aspell.net/dicts/">http://wordlist.aspell.net/dicts/</a></li>
+<li>hunspell-en_US-large-2019.10.06.zip from <a href="http://wordlist.aspell.net/dicts/">http://wordlist.aspell.net/dicts/</a></li>
 </ul>
 
-<h3>For NetBSD:</h3>
+<p>Use the Builder/install-dependencies.sh script to install the dependencies into the Imports folder</p>
+<p>install-dependencies.sh tailors the install based on the operating system its detects.</p>
 
-<ul>
-<li><tt>pkg_add sudo python37 git gmake py37-qt5</tt></li>
-</ul>
-
-<h3>For Fedora</h4>
-<ul>
-<li>dnf copr enable barryascott/tools</li>
-<li>dnf install python3-xml-preferences</li>
-<li>dnf install python3-pycxx-devel</li>
-</ul>
-
-<h3>For Windows:</h3>
-
-<ul>
-<li><div>git - <a href="https://git-for-windows.github.io">https://git-for-windows.github.io</a></div></li>
-<li><div>Python 3.7 win64 or newer strongly recommended.</div></li>
-<li><div>Visual C++ 2017 Community Edition (Version 14.1) for Python 3.7 development.</div></li>
-<li><div><tt>py -3.7 -m pip install --user --upgrade win-app-packager</tt></div></li>
-<li><div><tt>py -3.7 -m pip install --user --upgrade PyQt5</tt></div></li>
-<li><div>inno setup - from <a href="http://www.jrsoftware.org/isinfo.php">http://www.jrsoftware.org/isinfo.php</a></div></li>
-</ul>
-
-<h3>For macOS:</h3>
-<ul>
-<li><div>XCode for the Apple App store</div></li>
-<li><div>XCode command line tools</div></li>
-<li><div><tt>python3.7 -m pip install --user --upgrade PyQt5</tt></div></li>
-<li><div>Compile and Install PyQt5 from source. pypi version is too hard to package.</div></li>
-<li><div><tt>python2.7 -m pip install --user --upgrade dmgbuild</tt></div></li>
-<li><div><tt>python3.7 -m pip install --user --upgrade py2app</tt></div></li>
-</ul>
-
-<h2>Build Barry's Emacs</h2>
-
-<h3>For Linux development:</h3>
+<h2>Linux</h2>
 
 <p>Note: For the purposes of this documentation it is assumed that the
 Barry's Emacs files are in <tt>~/Projects/BarrysEmacs</tt>,
@@ -97,106 +73,134 @@ however you can replace that path with any folder name you like.</p>
 
 <ol>
 <li>Fetch source</li>
-<li><div><tt>mkdir -p ~/Projects</tt></div></li>
-<li><div><tt>cd ~/Projects</tt></div></li>
-<li><div><tt>git clone https://github.com/barry-scott/BarrysEmacs.git</tt></div></li>
+<li><tt>mkdir -p ~/Projects</tt></li>
+<li><tt>cd ~/Projects</tt></li>
+<li><tt>git clone https://github.com/barry-scott/BarrysEmacs.git</tt></li>
 
 <li>Build GUI and CLI versions of bemacs</li>
-<li><div><tt>cd BarrysEmacs/Builder</tt></div></li>
-<li><div><tt>. builder_custom_init.sh</tt></div></li>
-<li><div><tt>./build-linux.sh</tt></div></li>
+<li><tt>cd BarrysEmacs/Builder</tt></li>
+<li><tt>. builder_custom_init.sh</tt></li>
+<li><tt>./build-linux.sh</tt></li>
 
 <li>Test the CLI build.</li>
-<li><div><tt>cd ../Editor</tt></div></li>
-<li><div><tt>./bemacs-cli.sh</tt></div></li>
+<li><tt>cd ../Editor</tt></li>
+<li><tt>./bemacs-cli.sh</tt></li>
 
 <li>Test the GUI build.</li>
-<li><div><tt>cd ../Editor/PyQtBEmacs</tt></div></li>
-<li><div><tt>./bemacs-linux.sh --noredirect</tt></div></li>
+<li><tt>cd ../Editor/PyQtBEmacs</tt></li>
+<li><tt>./bemacs-linux.sh --noredirect</tt></li>
 
 <li>Install into /usr/local (sudo will prompt for your password).</li>
-<li><div><tt>./local-install-linux.sh</tt></div></li>
+<li><tt>./local-install-linux.sh</tt></li>
 </ol>
 
-<p>For Fedora use the package_bemacs.py command to create RPMs using mock</p>
+<p>To create RPMs using mock run <tt>./build-for-fedora.sh mock-testings</tt></p>
 
-<p><tt>python3 package_bemacs.py mock --system-ucd</tt></p>
-
-<h3>For macOS development:</h3>
-
-<p>Note: For the purposes of documentation it is assumed that the
-Barry's Emacs files are in <tt>~/Projects/git/BarrysEmacs</tt>,
-however you can replace that path with any folder name you like.</p>
-
-<ol>
-<li>Fetch source</li>
-<li><div><tt>mkdir -p ~/Projects/git</tt></div></li>
-<li><div><tt>cd -p ~/Projects/git</tt></div></li>
-<li><div><tt>git clone https://github.com/barry-scott/BarrysEmacs.git</tt></div></li>
-
-<li>Build GUI and CLI versions of bemacs</li>
-<li><div><tt>cd BarrysEmacs/Builder</tt></div></li>
-<li><div><tt>. builder_custom_init.sh</tt></div></li>
-<li><div><tt>./build-macosx.sh</tt></div></li>
-
-<li>Test the GUI build.</li>
-<li><div><tt>cd ../Editor/PyQtBEmacs</tt></div></li>
-<li><div><tt>./bemacs-macosx.sh --noredirect</tt></div></li>
-</ol>
-
-<h3>For Windows development:</h3>
-
-<p>Note: For the purposes of documentation it is assumed that the
-Barry's Emacs files are in <tt>%USERPROFILE%\Projects\BarrysEmacs</tt>,
-however you can replace that path with any folder name you like.</p>
-
-<ol>
-<li>Fetch sources</li>
-<li><div><tt>cd %USERPROFILE%</tt></div></li>
-<li><div><tt>mkdir Projects</tt></div></li>
-<li><div><tt>cd Projects</tt></div></li>
-<li><div><tt>git clone https://github.com/barry-scott/BarrysEmacs.git</tt></div></li>
-
-<li>Build GUI version of bemacs</li>
-<li><div><tt>cd BarrysEmacs\Builder</tt></div></li>
-<li><div><tt>builder_custom_init.cmd</tt></div></li>
-<li><div><tt>build-windows.cmd</tt></div></li>
-
-<li>Test the GUI build.</li>
-<li><div><tt>cd ..\Editor\PyQtBEmacs</tt></div></li>
-<li><div><tt>bemacs-windows.cmd --noredirect</tt></div></li>
-</ol>
-
-
-<h3>For NetBSD development:</h3>
+<h2>NetBSD</h2>
 
 <p>Note: For the purposes of documentation it is assumed that the
 Barry's Emacs files are in <tt>~/Projects/BarrysEmacs</tt>,
 however you can replace that path with any folder name you like.</p>
 
-<p>Note: linux version of scripts are used where they are compatible with NetBSD.</p>
+<p>Note: Linux versions of scripts are used where they are compatible with NetBSD.</p>
 
 <ol>
 <li>Fetch sources</li>
-<li><div><tt>mkdir -p ~/Projects</tt></div></li>
-<li><div><tt>cd ~/Projects</tt></div></li>
-<li><div><tt>git clone https://github.com/barry-scott/BarrysEmacs.git</tt></div></li>
+<li><tt>mkdir -p ~/Projects</tt></li>
+<li><tt>cd ~/Projects</tt></li>
+<li><tt>git clone https://github.com/barry-scott/BarrysEmacs.git</tt></li>
 
 <li>Build GUI and CLI versions of bemacs</li>
-<li><div><tt>cd BarrysEmacs/Builder</tt></div></li>
-<li><div><tt>. builder_custom_init.sh</tt></div></li>
-<li><div><tt>./build-netbsd.sh</tt></div></li>
+<li><tt>cd BarrysEmacs/Builder</tt></li>
+<li><tt>. builder_custom_init.sh</tt></li>
+<li>Download dependencies into a dependencies-folder</li>
+<li><tt>./install-dependencies.sh &lt;dependencies-folder&gt;</tt></li>
+<li><tt>./build-netbsd.sh</tt></li>
+</ol>
 
-<li>Test the CLI build.</li>
-<li><div><tt>cd ../Editor</tt></div></li>
-<li><div><tt>./bemacs-cli.sh</tt></div></li>
+<p>Test the CLI build.</p>
+<ol>
+<li><tt>cd ../Editor</tt></li>
+<li><tt>./bemacs-cli.sh</tt></li>
+</ol>
 
-<li>Test the GUI build.</li>
-<li><div><tt>cd ../Editor/PyQtBEmacs</tt></div></li>
-<li><div><tt>./bemacs-linux.sh --noredirect</tt></div></li>
+<p>Install into /usr/local (sudo will prompt for your password).</p>
+<ol>
+<li><tt>./local-install-linux.sh</tt></li>
+</ol>
 
-<li>Install into /usr/local (sudo will prompt for your password).</li>
-<li><div><tt>./local-install-linux.sh</tt></div></li>
+<h2>Windows</h2>
+
+<p>Note: For the purposes of documentation it is assumed that the
+Barry's Emacs files are in <tt>%USERPROFILE%\Projects\BarrysEmacs</tt>,
+however you can replace that path with any folder name you like.</p>
+
+<p>These are the Windows specific dependencies</p>
+<ul>
+<li><div>git - <a href="https://git-for-windows.github.io">https://git-for-windows.github.io</a></div></li>
+<li><div>Python 3.7 win64 or newer strongly recommended.</div></li>
+<li><div>Visual C++ 2017 Community Edition (Version 14.1).</div></li>
+<li><div><tt>py -3.7 -m pip install --user --upgrade win-app-packager</tt></div></li>
+<li><div><tt>py -3.7 -m pip install --user --upgrade PyQt5</tt></div></li>
+<li><div>inno setup - from <a href="http://www.jrsoftware.org/isinfo.php">http://www.jrsoftware.org/isinfo.php</a></div></li>
+</ul>
+
+<ol>
+<li>Fetch sources</li>
+<li><tt>cd %USERPROFILE%</tt></li>
+<li><tt>mkdir Projects</tt></li>
+<li><tt>cd Projects</tt></li>
+<li><tt>git clone https://github.com/barry-scott/BarrysEmacs.git</tt></li>
+<li>Build GUI version of bemacs</li>
+<li><tt>cd BarrysEmacs\Builder</tt></li>
+<li><tt>builder_custom_init.cmd</tt></li>
+<li><tt>build-windows.cmd</tt></li>
+</ol>
+
+<p>Test the GUI build.</p>
+<ol>
+<li><tt>cd ..\Editor\PyQtBEmacs</tt></li>
+<li><tt>bemacs-windows.cmd --noredirect</tt></li>
+</ol>
+
+<h2>macOS</h2>
+
+<p>Note: For the purposes of documentation it is assumed that the
+Barry's Emacs files are in <tt>~/Projects/BarrysEmacs</tt>,
+however you can replace that path with any folder name you like.</p>
+
+<p>The build will create a DMG that contains the Barry's Emacs App.</p>
+
+<ul>
+<li>Install XCode from the macOS App store</li>
+<li>Run Xcode and allow it to install additional components.</li>
+<li>Install the XCode command line tools - <tt>xcode-select --install</tt></li>
+<li>Download dependencies into a dependencies-folder</li>
+</ul>
+
+<ol>
+<li>Fetch source</li>
+<li><tt>mkdir -p ~/Projects/git</tt></li>
+<li><tt>cd ~/Projects/git</tt></li>
+<li><tt>git clone https://github.com/barry-scott/BarrysEmacs.git</tt></li>
+
+<li>Build GUI and CLI versions of bemacs</li>
+<li><tt>cd BarrysEmacs/Builder</tt></li>
+<li><tt>. builder_custom_init.sh</tt></li>
+<li><tt>./install-dependencies.sh &lt;dependencies-folder&gt;</tt></li>
+<li><tt>./build-macosx.sh</tt></li>
+</ol>
+
+<p>Test the GUI build.</p>
+<ol>
+<li><tt>cd ../Editor/PyQtBEmacs</tt></li>
+<li><tt>./bemacs-macosx.sh --noredirect</tt></li>
+</ol>
+
+<p>Test the CLI build.</p>
+<ol>
+<li><tt>cd ../Editor</tt></li>
+<li><tt>./bemacs-cli.sh --noredirect</tt></li>
 </ol>
 
 <hr/>

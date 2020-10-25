@@ -6,6 +6,13 @@
 # dictionaries for hunspell:
 #   https://sourceforge.net/projects/wordlist/files/speller/
 
+if ! which colour-print >/dev/null
+then
+    function colour-print() {
+        echo "${@}"
+    }
+fi
+
 if [ "${#}" -lt 2 ]
 then
     colour-print "<>error Error:<> too few args"
