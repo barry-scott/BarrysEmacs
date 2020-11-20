@@ -39,8 +39,25 @@ void SystemExpressionRepresentationBufferNames::fetch_value()
     // index 0 is the number of entries
     a(0) = n_buffers;
     // index 1 to n is the name of the buffer
-    for( int index = 0; index<EmacsBuffer::name_table.entries(); index++ )
-        a(index+1) = *EmacsBuffer::name_table.key( index );
+    int index = 1;
+    // first put the file buffers - same as list-buffers order
+    for( int name = 0; name<EmacsBuffer::name_table.entries(); name++ )
+    {
+        if( EmacsBuffer::name_table.value( name )->b_kind == FILEBUFFER )
+        {
+            a(index) = *EmacsBuffer::name_table.key( name );
+            ++index;
+        }
+    }
+    // then put the none file buffers
+    for( int name = 0; name<EmacsBuffer::name_table.entries(); name++ )
+    {
+        if( EmacsBuffer::name_table.value( name )->b_kind != FILEBUFFER )
+        {
+            a(index) = *EmacsBuffer::name_table.key( name );
+            ++index;
+        }
+    }
 
     // copy the array into the representation storage
     exp_array = a;
