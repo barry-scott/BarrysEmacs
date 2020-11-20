@@ -161,7 +161,7 @@ extern int define_keymap_command(void);
 extern int define_local_abbrev(void);
 extern int define_string_macro(void);
 extern int define_function(void);
-extern int kill_buffer_command(void);
+extern int delete_buffer_command(void);
 extern int delete_next_character(void);
 extern int delete_next_word(void);
 extern int delete_other_windows(void);
@@ -250,7 +250,6 @@ extern int is_bound_command(void);
 extern int is_function_command(void);
 //    interrupt-key
 extern int recover_journal(void);
-extern int kill_buffer_command(void);
 # if defined (SUBPROCESSES)
 extern int kill_process(void);
 # endif
@@ -616,7 +615,7 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "define-local-abbrev", define_local_abbrev );
     EMACS_NEW BoundName( "define-string-macro", define_string_macro );
     //    new BoundName( "defun", define_function );
-    EMACS_NEW BoundName( "delete-buffer", kill_buffer_command );
+    EMACS_NEW BoundName( "delete-buffer", delete_buffer_command );
     EMACS_NEW BoundName( "delete-next-character", delete_next_character );
     EMACS_NEW BoundName( "delete-next-word", delete_next_word );
     EMACS_NEW BoundName( "delete-other-windows", delete_other_windows );
@@ -710,7 +709,7 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "is-function", is_function_command );
     //    interrupt-key
     EMACS_NEW BoundName( "journal-recover", recover_journal );
-    EMACS_NEW BoundName( "kill-buffer", kill_buffer_command );
+    EMACS_NEW BoundName( "kill-buffer", delete_buffer_command );
 # if defined (SUBPROCESSES)
     EMACS_NEW BoundName( "kill-process", kill_process );
 # endif

@@ -160,7 +160,7 @@ int list_buffers( void )
     return 0;
 }
 
-int kill_buffer_command( void )
+int delete_buffer_command( void )
 {
     EmacsString buf_name;
 
