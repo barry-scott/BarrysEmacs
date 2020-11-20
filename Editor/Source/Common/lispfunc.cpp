@@ -872,15 +872,21 @@ int goto_character( void )
     int n = getnum(": goto-character ");
 
     if( ml_err )
+    {
         return 0;
+    }
 
     if( n < 1 )
+    {
         n = 1;
+    }
 
     if( n > bf_cur->num_characters() )
+    {
         n = bf_cur->num_characters() + 1;
+    }
 
-    set_dot (n);
+    set_dot( n );
 
     return 0;
 }

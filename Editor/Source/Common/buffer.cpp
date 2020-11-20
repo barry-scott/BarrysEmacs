@@ -930,18 +930,17 @@ void EmacsBuffer::set_bf()
 
 #ifdef DEBUG_SET_BF
     if( theActiveView != NULL )
-{
-    EmacsWindow *w = theActiveView->currentWindow();
-    while( w->w_prev != NULL )
-        w = w->w_prev;
-
-    while( w != NULL )
     {
-        _dbg_msg( FormatString( "set_bf (2) %s c=%d w_dot=%s" ) << w->getDescription() << int(w->isCurrentWindow()) << w->getWindowDot().asString() );
-        w = w->w_next;
-    }
-}
+        EmacsWindow *w = theActiveView->currentWindow();
+        while( w->w_prev != NULL )
+            w = w->w_prev;
 
+        while( w != NULL )
+        {
+            _dbg_msg( FormatString( "set_bf (2) %s c=%d w_dot=%s" ) << w->getDescription() << int(w->isCurrentWindow()) << w->getWindowDot().asString() );
+            w = w->w_next;
+        }
+    }
 #endif
 }
 
@@ -961,18 +960,17 @@ void EmacsBuffer::saveGlobalState()
 #ifdef DEBUG_SET_BF
     _dbg_msg( FormatString( "saveGlobalState: \"%s\", dot=%d" ) << b_buf_name << dot );
     if( theActiveView != NULL )
-{
-    EmacsWindow *w = theActiveView->currentWindow();
-    while( w->w_prev != NULL )
-        w = w->w_prev;
-
-    while( w != NULL )
     {
-        _dbg_msg( FormatString( "saveGlobalState: (1) %s c=%d w_dot=%s" ) << w->getDescription() << int(w->isCurrentWindow()) << w->getWindowDot().asString() );
-        w = w->w_next;
-    }
-}
+        EmacsWindow *w = theActiveView->currentWindow();
+        while( w->w_prev != NULL )
+            w = w->w_prev;
 
+        while( w != NULL )
+        {
+            _dbg_msg( FormatString( "saveGlobalState: (1) %s c=%d w_dot=%s" ) << w->getDescription() << int(w->isCurrentWindow()) << w->getWindowDot().asString() );
+            w = w->w_next;
+        }
+    }
 #endif
 
     if( dot < 1 )
@@ -1110,7 +1108,9 @@ EmacsBuffer::~EmacsBuffer(void)
     if( !b_checkpointfn.isNull() )
     {
         if( unlink_checkpoint_files )
+        {
             EmacsFile::fio_delete( b_checkpointfn );
+        }
     }
 
     EmacsBuffer *q = NULL;
@@ -1121,21 +1121,28 @@ EmacsBuffer::~EmacsBuffer(void)
         p = p->b_next;
     }
     if( q == 0 )
+    {
         buffers = b_next;
+    }
     else
+    {
         q->b_next = b_next;
+    }
 
     b_mark.unset_mark();
 
     QueueIterator<Marker> it( b_markset );
 
     while( it.next() )
+    {
         it.value()->unset_mark();
+    }
 
     if( bf_cur == this )
+    {
         theActiveView->currentWindow()->w_buf->set_bf();
+    }
 }
-
 
 // Erase the contents of a buffer
 void EmacsBuffer::erase_bf()
