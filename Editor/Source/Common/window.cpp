@@ -515,6 +515,7 @@ void EmacsWindowGroup::del_win( EmacsWindow *w )
     if( w->w_next->w_next == NULL && w->w_prev == NULL )
     {
         // default the buffer in this window
+        EmacsBufferRef old( bf_cur );
         EmacsBuffer::set_bfn( "main" );
 
         w->unsetWindowDot();
@@ -524,6 +525,8 @@ void EmacsWindowGroup::del_win( EmacsWindow *w )
         w->tie_win( bf_cur );
         w->w_horizontal_scroll = 1;
         w->set_win();
+
+        old.set_bf();
 
         return;
     }
@@ -1024,7 +1027,9 @@ void EmacsWindowGroup::de_ref_buf( EmacsBuffer *b )
 {
     QueueIterator<EmacsWindowGroup> it( header );
     while( it.next() )
+    {
         it.value()->derefBufferForOneWindowGroup( b );
+    }
 }
 
 void EmacsWindowGroup::derefBufferForOneWindowGroup( EmacsBuffer *b )
@@ -1038,14 +1043,10 @@ void EmacsWindowGroup::derefBufferForOneWindowGroup( EmacsBuffer *b )
             w = next;
         }
         else
+        {
             w = w->w_next;
+        }
 }
-
-void foo()
-{
-    return;
-}
-
 
 //
 // full screen update -- called when absolutely nothing is known or
@@ -1105,8 +1106,6 @@ int EmacsWindowGroup::full_upd( int &cant_ever_opt )
                     w->dump_win( is_users_current_window, sline, scol, dumpstate == 0 );
                 break;
             }
-            if( w->w_next != NULL )
-                foo();
             slow++;
             if( w->w_force )
             {
