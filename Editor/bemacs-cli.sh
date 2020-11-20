@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 export EMACS_DEBUG=
 export emacs_user="$HOME/bemacs"
+
+echo "Info: set EMACS_TERM_DEVICE to the tty to use"
 case "$( uname )" in
 Darwin)
     export emacs_library="${BUILDER_TOP_DIR}/Builder/tmp/pkg/Barry's Emacs-Devel.app/Contents/Resources/emacs_library"
