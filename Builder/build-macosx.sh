@@ -20,7 +20,7 @@ fi
 
 if ! which "${PYTHON}" >/dev/null
 then
-    colour-print "<>Error & PYTHON program ${PYTHON} does not exist<>"
+    colour-print "<>Error: PYTHON program ${PYTHON} does not exist<>"
     exit 1
 fi
 
@@ -30,6 +30,9 @@ then
     umount "/Volumes/Barry's Emacs"
 fi
 
+./build-venv.sh macos
+
+export PYTHON=${PWD}/venv.tmp/bin/python
 ${PYTHON} ./build_bemacs.py gui --colour | ${PYTHON} -u build_tee.py build.log
 
 if false

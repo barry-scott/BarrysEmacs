@@ -1,0 +1,6 @@
+# build tools
+py2app>=0.11
+PyQt5==5.12.2
+xml-preferences>=1.1.2
+# for colour messages
+colour-text
