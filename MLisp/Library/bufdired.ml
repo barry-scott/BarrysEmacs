@@ -80,6 +80,7 @@
     ; list-buffer will split the current window
     ; which leads to a unexpected two window view
     (save-window-excursion (list-buffers))
+    (switch-to-buffer "Buffer list")
     (beginning-of-file)
     (next-line)
     (next-line)
