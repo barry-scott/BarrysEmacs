@@ -18,11 +18,13 @@ const int LINE_M_ATTR_USER( LINE_ATTR_USER|(7) );           // the 8 user colour
 typedef EmacsChar_t DisplayBody_t;
 typedef unsigned short DisplayAttr_t;
 
-class EmacsLine : public EmacsObject
+class EmacsLine: public EmacsObject
 {
     friend class EmacsLinePtr;
 public:
     EMACS_OBJECT_FUNCTIONS( EmacsLine )
+
+    void clearLine();
 
     int lineHash()
     {
