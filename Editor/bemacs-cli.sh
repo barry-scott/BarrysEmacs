@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+TTY_SETTINGS=$(stty -g)
+
 export EMACS_DEBUG=
 export emacs_user="$HOME/bemacs"
 
@@ -50,4 +53,4 @@ case "$1" in
     exe-cli-bemacs/bemacs-cli "$@"
     ;;
 esac
-stty sane
+stty ${TTY_SETTINGS}
