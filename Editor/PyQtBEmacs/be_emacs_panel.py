@@ -1299,7 +1299,9 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
     def __termUpdateLineSlow( self, old, new, row ):
         if old is not None:
             self._debugTermCalls2( '__termUpdateLineSlow row=%d old %r' % (row, old[0].rstrip(),) )
+            self._debugTermCalls2( '__termUpdateLineSlow row=%d old %r' % (row, old[1],) )
         self._debugTermCalls2( '__termUpdateLineSlow row=%d new %r' % (row, new[0].rstrip(),) )
+        self._debugTermCalls2( '__termUpdateLineSlow row=%d new %r' % (row, new[1],) )
 
         if new is None:
             new_line_contents = ''
