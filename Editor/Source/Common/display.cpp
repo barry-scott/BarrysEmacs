@@ -239,7 +239,7 @@ void EmacsView::setpos(int row, int col)
 void EmacsView::clearline(int row)
 {
     setpos( row, 1 );
-    t_desired_screen[row]->line_length = 0;
+    t_desired_screen[row]->clearLine();
 }
 
 //--------------------------------------------------------------------------------

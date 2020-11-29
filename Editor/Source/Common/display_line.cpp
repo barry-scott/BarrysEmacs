@@ -10,7 +10,6 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
-
 //--------------------------------------------------------------------------------
 //
 //
@@ -121,11 +120,18 @@ EmacsLine::EmacsLine()
     , line_length( 0 )
     , _line_hash( 0 )
     , ref_count( 1 )
-{ }
+{
+    clearLine();
+}
 
 EmacsLine::~EmacsLine()
 {
     emacs_assert( ref_count == 0 );
+}
+
+void EmacsLine::clearLine()
+{
+    line_length = 0;
 }
 
 EmacsLine &EmacsLine::operator=( const EmacsLine &in )
