@@ -2073,20 +2073,25 @@ int EmacsView::dump_line_from_buffer
         //    highlighting
         //
         if( n == r_start )
+        {
             highlight |= LINE_M_ATTR_HIGHLIGHT;
+        }
 
         //
         //    if we are at the end of the region turn off
         //    highlighting
         //
         if( n == r_end )
+        {
             highlight &= ~LINE_M_ATTR_HIGHLIGHT;
+        }
 
         // see if at the end of the rendition region
         if( n == rr_end )
         {
             // turn off the rr colour
             highlight &= LINE_M_ATTR_USER;
+
             // turn syntax colouring back on
             flags.syntax_colouring = mode.md_syntax_colouring;
             // move to the next rr
@@ -2136,7 +2141,9 @@ int EmacsView::dump_line_from_buffer
 
         c = buf->char_at( n );
         if( flags.syntax_colouring  )
+        {
             highlight = (highlight&LINE_M_ATTR_HIGHLIGHT) | (buf->syntax_at( n ) & (SYNTAX_FIRST_FREE-1));
+        }
 
         n++;
 
@@ -2341,10 +2348,12 @@ dump_line_from_buffer_loop:
         }
 
         highlight = r_start <= n && r_end > n ? LINE_M_ATTR_HIGHLIGHT : 0;
+
         if( flags.dec_crt )
             text_cursor[-col_for_end_marker] = (DisplayBody_t)(wrap_lines ? CHAR_LINE_WRAPPED : CHAR_LINE_TRUNCATED);
         else
             text_cursor[-col_for_end_marker] = (DisplayBody_t)(wrap_lines ? '\\' : '$');
+
         attr_cursor[-col_for_end_marker] = (DisplayAttr_t)highlight;
 
         if( wrap_lines )
@@ -2540,8 +2549,7 @@ void EmacsView::dsputc( int c, int a )
 }
 
 
-    EmacsWindow *findWindowsById( int windows_id );
-
+EmacsWindow *findWindowsById( int windows_id );
 
 EmacsWindow *EmacsView::findWindowsById( int windows_id )
 {
@@ -2652,6 +2660,6 @@ void TerminalControl::k_input_scroll_change_vert( int window_id, int change )
 
     int old_scroll_step = scroll_step;
     scroll_step = 1;
-        theActiveView->windows.do_dsp();
+    theActiveView->windows.do_dsp();
     scroll_step = old_scroll_step;
 }
