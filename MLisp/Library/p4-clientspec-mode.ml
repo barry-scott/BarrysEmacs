@@ -8,6 +8,19 @@
         (use-local-map "P4-clientspec-map")
         (use-abbrev-table "P4-clientspec")
 
+        (if p4-remove-header-comments
+            (progn
+                (beginning-of-file)
+                ; leave the first line that identifies the file as a p4 change
+                (next-line)
+                (set-mark)
+                (re-search-forward "^Client:")
+                (beginning-of-line)
+                (erase-region)
+                (unset-mark)
+            )
+        )
+
         (beginning-of-file)
         (re-search-forward "^View:")
         (line-to-top-of-window)

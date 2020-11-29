@@ -12,15 +12,58 @@
         (setq logical-tab-size 8)
         (setq indent-use-tab 1)
 
+        (if p4-remove-header-comments
+            (progn
+                (beginning-of-file)
+                ; leave the first line that identifies the file as a p4 change
+                (next-line)
+                (set-mark)
+                (re-search-forward "^Description:")
+                (beginning-of-line)
+                (erase-region)
+            )
+        )
+
+        (if p4-change-remove-jobs-section
+            (progn
+                (beginning-of-file)
+                (re-search-forward "^Jobs:")
+                (next-line)
+                (beginning-of-line)
+                (set-mark)
+                (re-search-forward "^Files:")
+                (beginning-of-line)
+                (erase-region)
+            )
+        )
+
         (beginning-of-file)
         (unset-mark)
         (re-search-forward "^Description:\n\t")
         (sit-for 0)
         (if (looking-at "<enter description here>")
             ; first edit of the change comment everything out for safety
-            (p4-all-sections-exclude-all)
+            (progn
+                (kill-to-end-of-line)
+                (p4-all-sections-exclude-all)
+            )
         )
         (novalue)
+    )
+)
+
+(defun
+    (p4-change-spell-check
+        (save-window-excursion
+            (beginning-of-file)
+            (re-search-forward "^Description:\n")
+            (set-mark)
+            (re-search-forward "^Jobs:")
+            (beginning-of-line)
+            (narrow-region)
+            (spell-check-region)
+            (unset-mark)
+        )
     )
 )
 

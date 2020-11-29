@@ -1,4 +1,9 @@
-(declare-global p4-reviewers)
+(declare-global
+    p4-reviewers
+    p4-change-remove-jobs-section
+    p4-remove-header-comments)
+(setq p4-change-remove-jobs-section 0)
+(setq p4-remove-header-comments 0)
 (setq p4-reviewers "")
 
 (autoload "diff-mode" "diff.ml")
