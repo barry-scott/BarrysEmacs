@@ -854,12 +854,6 @@ bool syntax_buffer_data::initBuffer()
 
         // must have a 0 at the start of the array in all fields
         syntax_base[0] = 0;
-        // QQQ these extra 3 should be required but work around
-        // a bug updating system that needs fixing when I have
-        // more time
-        syntax_base[1] = 0;
-        syntax_base[2] = 0;
-        syntax_base[3] = 0;
     }
 
     return true;

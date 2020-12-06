@@ -1620,7 +1620,7 @@ void syntax_delete_update( int dot, int len )
             << dot << len << s->syntax_valid );
 #endif
 
-    if( (dot-len) < s->syntax_valid )
+    if( dot < s->syntax_valid )
     {
         if( s->syntax_update_credit > 0 )
         {
@@ -1635,7 +1635,9 @@ void syntax_delete_update( int dot, int len )
         }
     }
     else
+    {
         cant_1line_opt = 1;
+    }
 
     if( dot < bf_cur->b_line_valid )
         bf_cur->b_line_valid = dot;
