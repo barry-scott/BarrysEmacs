@@ -34,6 +34,7 @@ case "$1" in
 --file)
     export EMACS_DEBUG_FILE="$TMPDIR/bemacs.log"
     rm -f ${EMACS_DEBUG_FILE}
+    echo "Debug log file ${EMACS_DEBUG_FILE}"
     shift
     ;;
 *)
