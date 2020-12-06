@@ -53,16 +53,19 @@
 )
 
 (defun
-    (p4-change-spell-check
+    (p4-spell-check-description
         (save-window-excursion
-            (beginning-of-file)
-            (re-search-forward "^Description:\n")
-            (set-mark)
-            (re-search-forward "^Jobs:")
-            (beginning-of-line)
-            (narrow-region)
-            (spell-check-region)
-            (unset-mark)
+            (save-restriction
+                (beginning-of-file)
+                (re-search-forward "^Description:\n")
+                (set-mark)
+                (re-search-forward "^Jobs:")
+                (beginning-of-line)
+                (narrow-region)
+                (beginning-of-file)
+                (spell-check-buffer)
+                (unset-mark)
+            )
         )
     )
 )

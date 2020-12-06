@@ -12,7 +12,7 @@
     ~spell-range-start
     ~spell-range-end
     ~spell-suggestions
-    ~spell-choosen-suggestion
+    ~spell-chosen-suggestion
     ~spell-checked
     ~spell-corrected
     ~spell-start-position
@@ -203,7 +203,6 @@
     )
 )
 
-
 (defun
     (~spell-range
         (~spell-init)
@@ -211,13 +210,22 @@
         (setq ~spell-checked 0)
         (setq ~spell-corrected 0)
         (setq ~spell-word-to-check "")
-        (setq ~spell-choosen-suggestion "")
+        (setq ~spell-chosen-suggestion "")
         (setq ~spell-old-local-keymap current-local-keymap)
 
         (use-local-map "~spell-map")
         (setq ~spell-start-position (dot))
         (goto-character ~spell-range-start)
-        (~spell-next)
+        (if (~spell-find-word-to-correct)
+            (progn
+                (~spell-show-suggestions)
+                (recursive-edit)
+            )
+            (progn
+                (~spell-restore-state)
+                (novalue)
+            )
+        )
     )
 )
 
@@ -226,9 +234,9 @@
     (erase-region)
     ; set region around the replacement
     (set-mark)
-    (setq ~spell-choosen-suggestion
+    (setq ~spell-chosen-suggestion
         (fetch-array ~spell-suggestions ~suggestion-index))
-    (insert-string ~spell-choosen-suggestion)
+    (insert-string ~spell-chosen-suggestion)
     (~spell-show-suggestions)
 )
 
@@ -254,7 +262,7 @@
                 "no-local-map" ~spell-old-local-keymap
             )
         )
-        ; check for perverse errors that leave spll maps as the local map
+        ; check for perverse errors that leave spell maps as the local map
         (if
             (= current-local-keymap "~spell-map")
             (use-local-map "no-local-map")
@@ -324,8 +332,8 @@
         (erase-region)
         ; set region around the replacement
         (set-mark)
-        (setq ~spell-choosen-suggestion ~spell-word-to-check)
-        (insert-string ~spell-choosen-suggestion)
+        (setq ~spell-chosen-suggestion ~spell-word-to-check)
+        (insert-string ~spell-chosen-suggestion)
         (~spell-show-suggestions)
     )
 )
@@ -340,20 +348,37 @@
 
 (defun
     (~spell-quit
+        (~spell-restore-state)
+        (exit-emacs)
+    )
+)
+
+(defun
+    (~spell-restore-state
         (~spell-update-counts)
         (~spell-restore-local-keymap)
         (message (concat "spell checked " ~spell-checked " and corrected " ~spell-corrected))
         (unset-mark)
         (goto-character ~spell-start-position)
-        (novalue)
     )
 )
 
 (defun
     (~spell-next
+        (if (~spell-find-word-to-correct)
+            ; must show the suggestions
+            (~spell-show-suggestions)
+            (~spell-quit)
+        )
+    )
+)
+
+(defun
+    (~spell-find-word-to-correct
+        ; return 1 if there is spell correction required
         (~spell-update-counts)
+        ; while we can find words to check...
         (if
-            ; while we can find words to check...
             (error-occurred
                 (while
                     (progn
@@ -372,14 +397,12 @@
                     (novalue)
                 )
             )
-            ; all done quit
-            (~spell-quit)
-            ; must show the suggestions
+            0
             (progn
                 (setq ~spell-word-end-mark (dot))
                 (setq ~spell-word-start-mark (left-marker (mark)))
                 (setq ~spell-suggestions (spell-check-suggestions ~spell-word-to-check))
-                (~spell-show-suggestions)
+                1
             )
         )
     )
@@ -391,15 +414,15 @@
             (&
                 ; not found a word to check yet
                 (!= ~spell-word-to-check "")
-                ; not choosen a replacement
-                (!= ~spell-choosen-suggestion "")
+                ; not chosen a replacement
+                (!= ~spell-chosen-suggestion "")
                 ; replacement is different
-                (!= ~spell-choosen-suggestion ~spell-word-to-check)
+                (!= ~spell-chosen-suggestion ~spell-word-to-check)
             )
             (setq ~spell-corrected (+ 1 ~spell-corrected))
         )
         (setq ~spell-word-to-check "")
-        (setq ~spell-choosen-suggestion "")
+        (setq ~spell-chosen-suggestion "")
     )
 )
 
