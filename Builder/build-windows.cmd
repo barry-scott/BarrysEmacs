@@ -1,4 +1,5 @@
 @echo off
+setlocal
 %PYTHON% -m pip install --user --upgrade colour-text
 
 if "%BUILDER_TOP_DIR%" == "" (
@@ -15,6 +16,11 @@ if "%PYTHON%" == "" (
     goto :eof
 )
 
-%PYTHON% build_bemacs.py --colour --vcredist=k:\subversion 2>&1 | %PYTHON% -u build_tee.py build.log
+call build-venv.cmd windows
+
+set VPYTHON=%CD%\venv.tmp\Scripts\python.exe
+
+%VPYTHON% build_bemacs.py --colour --vcredist=k:\subversion 2>&1 | %PYTHON% -u build_tee.py build.log
 
 if "%1" == "--install" for %%f in (tmp\bemacs-*-setup.exe) do start /wait %%f
+endlocal

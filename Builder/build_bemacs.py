@@ -18,7 +18,6 @@ import zipfile
 import build_log
 import build_utils
 
-sys.path.insert( 0, '../Editor' )
 sys.path.insert( 0, '../MLisp' )
 sys.path.insert( 0, '../Describe' )
 sys.path.insert( 0, '../HTML' )
@@ -236,6 +235,12 @@ class BuildBEmacs(object):
 
         if self.platform in ('MacOSX', 'win64', 'NetBSD'):
             try:
+                if self.platform == 'win64':
+                    # in a venv on Windows need to tell the OS about the dll's that Qt uses
+                    import PyQt5
+                    qt_bin_dir = os.path.join( os.path.dirname( PyQt5.__file__ ), 'Qt', 'bin' )
+                    os.add_dll_directory( qt_bin_dir )
+
                 from PyQt5 import QtWidgets, QtGui, QtCore
             except ImportError:
                 raise BuildError( 'PyQt5 is not installed for %s. Hint: pip3 install --user PyQt5' % (sys.executable,) )
@@ -468,8 +473,6 @@ class BuildBEmacs(object):
             shutil.copyfile( aff, aff_dst )
 
     def setupEditorMakefile( self ):
-        import setup
-
         if self.platform in ('Linux', 'MacOSX', 'NetBSD'):
             setup_targets = set( [self.target, 'cli', 'unit-tests'] )
 
@@ -484,23 +487,21 @@ class BuildBEmacs(object):
 
         log.info( 'Creating ../Editor/Makefile-all for %s' % ', '.join( sorted( setup_targets ) ) )
 
-        cwd = os.getcwd()
-        try:
-            os.chdir( '../Editor' )
-            setup_argv = [sys.argv[0]
-                         ,self.platform
-                         ,','.join( setup_targets )
-                         ,'Makefile-all'
-                         ,'--lib-dir=%s' % (self.INSTALL_BEMACS_LIB_DIR,)
-                         ,'--doc-dir=%s' % (self.INSTALL_BEMACS_DOC_DIR,)
-                         ]
-            setup_argv += self.opt_editor_setup_opt
-            log.info( 'Editor/setup.py %s' % (' '.join( setup_argv[1:] ),) )
-            if setup.main( setup_argv ) != 0:
-                raise BuildError( 'Editor/setup.py failed' )
-
-        finally:
-            os.chdir( cwd )
+        # Cannot use the venv python to create the makefile
+        # as it cannot find the Python.h
+        setup_argv = [os.environ['PYTHON']
+                     ,'setup.py'
+                     ,self.platform
+                     ,','.join( setup_targets )
+                     ,'Makefile-all'
+                     ,'--lib-dir=%s' % (self.INSTALL_BEMACS_LIB_DIR,)
+                     ,'--doc-dir=%s' % (self.INSTALL_BEMACS_DOC_DIR,)
+                     ]
+        setup_argv += self.opt_editor_setup_opt
+        log.info( ' '.join( setup_argv[1:] ) )
+        p = subprocess.run( setup_argv, cwd='../Editor' )
+        if p.returncode != 0:
+            raise BuildError( 'Editor/setup.py failed' )
 
     def make( self, make_target ):
         make_cmd = [self.cmd_make, '-f', 'Makefile-all']
