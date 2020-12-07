@@ -11,10 +11,10 @@
 <body>
 <div class="contents">
 
-<p><a name="kill-buffer">(<b>kill-buffer</b> <span class="cmd">buffer-name</span>)</a></p>
+<p><a name="kill-buffer">(<span class="cmd">kill-buffer</span> <span class="arg">buffer-name</span>)</a></p>
 
 <blockquote>
-<p><span class="cmd">kill-buffer</span> has been replaced by <a href="fn_d.html#delete-buffer"><span class="cmd">delete-buffer</span></a>. Use <a href="fn_d.html#delete-buffer"><span class="cmd">delete-buffer</span></a> in preference to <span class="cmd">kill-buffer</span>;</p>
+<p><span class="arg">kill-buffer</span> has been replaced by <a href="fn_d.html#delete-buffer"><span class="arg">delete-buffer</span></a>. Use <a href="fn_d.html#delete-buffer"><span class="arg">delete-buffer</span></a> in preference to <span class="arg">kill-buffer</span>;</p>
 
 
 <p><span class="cmd">kill-buffer</span> removes a buffer from the list of buffers, and discards all the text it contains. It takes one argument which is the name of the buffer to delete.</p>
@@ -37,7 +37,7 @@
 </blockquote>
 
 
-<p><a name="kill-process">(<b>kill-process</b> <span class="cmd">process-name</span>)</a></p>
+<p><a name="kill-process">(<span class="cmd">kill-process</span> <span class="arg">process-name</span>)</a></p>
 
 <blockquote>
 <p>Kills the specified subprocess. The subprocess is killed by executing a delete process request, so exit handlers for the target process will not be executed.</p>
@@ -63,7 +63,7 @@
 </blockquote>
 
 
-<p><a name="kill-to-end-of-line">(<b>kill-to-end-of-line</b> <span class="cmd">repeat-count</span>) ^K</a></p>
+<p><a name="kill-to-end-of-line">(<span class="cmd">kill-to-end-of-line</span> <span class="arg">repeat-count</span>) ^K</a></p>
 
 <blockquote>
 <p>Deletes characters forward from dot to, and including, the next end-of-line (or end of buffer if there is not an end of line). If dot is positioned at the end of a line, just the end-of-line character is deleted.</p>

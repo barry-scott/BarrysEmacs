@@ -11,7 +11,7 @@
 <body>
 <div class="contents">
 
-<p><a name="elapse-time"></a><b>elapse-time</b> &#171;</p>
+<p><a name="elapse-time"></a><span class="cmd">elapse-time</span> &#171;</p>
 
 <blockquote>
 <p>This read-only variable contains the number of milliseconds that have elapsed since emacs started.</p>
@@ -22,21 +22,21 @@
 </blockquote>
 
 
-<p><a name="enter-emacs-hook"></a><b>enter-emacs-hook</b> &#171;</p>
+<p><a name="enter-emacs-hook"></a><span class="cmd">enter-emacs-hook</span> &#171;</p>
 
 <blockquote>
 <p>Contains the name of an Emacs function which will be called when Emacs initially starts up. You can assign the variable in your EmacsINIT.ML file to contain the name of any already existing function.</p>
 </blockquote>
 
 
-<p><a name="error-file-name"></a><b>error-file-name</b> &#171;</p>
+<p><a name="error-file-name"></a><span class="cmd">error-file-name</span> &#171;</p>
 
 <blockquote>
 <p>A string variable used by error message parsers (as specified in the variable error-message-parser) to indicate to the parse-error-messages-in-region function the file in which the current error is located. If an error message parser sets this variable to a null string, error message parsing is stopped.</p>
 </blockquote>
 
 
-<p><a name="error-hook"></a><b>error-hook</b> &#171;</p>
+<p><a name="error-hook"></a><span class="cmd">error-hook</span> &#171;</p>
 
 <blockquote>
 <p>Defines the current error function. When an error occurs that would cause an error message to be displayed, the function whose name is contained in this variable is called. The variable error-message will contain the text of the error.</p>
@@ -45,21 +45,21 @@
 </blockquote>
 
 
-<p><a name="error-line-number"></a><b>error-line-number</b> &#171; 0</p>
+<p><a name="error-line-number"></a><span class="cmd">error-line-number</span> &#171; 0</p>
 
 <blockquote>
 <p>A numeric variable used by error message parsers (as specified in the variable error-message-parser) to indicate to the parse-error-messages-in-region function the line in which the current error is located. If an error message parser sets this to zero, error message parsing is stopped.</p>
 </blockquote>
 
 
-<p><a name="error-message"></a><b>error-message</b> &#171;</p>
+<p><a name="error-message"></a><span class="cmd">error-message</span> &#171;</p>
 
 <blockquote>
 <p>This read-only string variable holds the text of the last error message. The variable will always hold the last error message, even if the error occurred inside an error-occurred block.</p>
 </blockquote>
 
 
-<p><a name="error-messages-buffer"></a><b>error-messages-buffer</b> &#171;</p>
+<p><a name="error-messages-buffer"></a><span class="cmd">error-messages-buffer</span> &#171;</p>
 
 <blockquote>
 <p>The string variable error-messages-buffer is checked each time Emacs generates an error message. If the value is not a null string then the value is used as the name of a buffer. Emacs will add details of each error message and its context to the buffer. Emacs creates the buffer if nessesary.</p>
@@ -68,7 +68,7 @@
 </blockquote>
 
 
-<p><a name="error-message-parser"></a><b>error-message-parser</b></p>
+<p><a name="error-message-parser"></a><span class="cmd">error-message-parser</span></p>
 
 <blockquote>
 <p>A string variable used to specify the name of a function that the parse-error-messages-in-region function should call to locate the next error.</p>
@@ -77,28 +77,28 @@
 </blockquote>
 
 
-<p><a name="error-start-position"></a><b>error-start-position</b> &#171; 0</p>
+<p><a name="error-start-position"></a><span class="cmd">error-start-position</span> &#171; 0</p>
 
 <blockquote>
 <p>A numeric variable used by error message parsers (as specified in the variable error-message-parser) to indicate to the parse-error-messages-in-region function the line in which the current error message starts. If an error message parser sets this to zero, then error message parsing is stopped.</p>
 </blockquote>
 
 
-<p><a name="execute-monitor-command"></a><b>execute-monitor-command</b></p>
+<p><a name="execute-monitor-command"></a><span class="cmd">execute-monitor-command</span></p>
 
 <blockquote>
 <p>Contains the last string sent to the DCL subprocess executing for execute-monitor-command. If you specify no argument to the command, execute-monitor-command's contents are re-used as the command string.</p>
 </blockquote>
 
 
-<p><a name="exit-emacs-hook"></a><b>exit-emacs-hook</b> &#171;</p>
+<p><a name="exit-emacs-hook"></a><span class="cmd">exit-emacs-hook</span> &#171;</p>
 
 <blockquote>
 <p>Contains the name of an Emacs function which will be called when Emacs exits to DCL. You can assign the name of any existing function to this variable.</p>
 </blockquote>
 
 
-<p><a name="expansion-only-completes-unique-choices"></a><b>expansion-only-completes-unique-choices</b> &#171;</p>
+<p><a name="expansion-only-completes-unique-choices"></a><span class="cmd">expansion-only-completes-unique-choices</span> &#171;</p>
 
 <blockquote>
 <p>This variable changes the way that Emacs input completion logic works. It is only applicable is the case where some of the choice are prefixes of some of the other choice.</p>

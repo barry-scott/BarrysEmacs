@@ -11,7 +11,7 @@
 <body>
 <div class="contents">
 
-<p><a name="re-query-replace-string">(<b>re-query-replace-string</b> <span class="cmd">pattern replacement</span>)</a></p>
+<p><a name="re-query-replace-string">(<span class="cmd">re-query-replace-string</span> <span class="arg">pattern replacement</span>)</a></p>
 
 <blockquote>
 <p>Deprecated: Use ere-query-replace-string for new code.</p>
@@ -19,7 +19,7 @@
 </blockquote>
 
 
-<p><a name="re-quote">(<b>re-quote</b> <span class="cmd">string</span>)</a></p>
+<p><a name="re-quote">(<span class="cmd">re-quote</span> <span class="arg">string</span>)</a></p>
 
 <blockquote>
 <p>Deprecated: Use ere-quote for new code.</p>
@@ -27,7 +27,7 @@
 </blockquote>
 
 
-<p><a name="re-replace-search-text">(<b>re-replace-search-text</b> <span class="cmd">replacement</span>)</a></p>
+<p><a name="re-replace-search-text">(<span class="cmd">re-replace-search-text</span> <span class="arg">replacement</span>)</a></p>
 
 <blockquote>
 <p>Deprecated: Use ere-replace-search-text for new code.</p>
@@ -35,7 +35,7 @@
 </blockquote>
 
 
-<p><a name="re-replace-string">(<b>re-replace-string</b> <span class="cmd">pattern replacement</span>)</a></p>
+<p><a name="re-replace-string">(<span class="cmd">re-replace-string</span> <span class="arg">pattern replacement</span>)</a></p>
 
 <blockquote>
 <p>Deprecated: Use ere-replace-string for new code.</p>
@@ -43,7 +43,7 @@
 </blockquote>
 
 
-<p><a name="re-search-forward">(<b>re-search-forward</b> <span class="cmd">pattern</span>)</a></p>
+<p><a name="re-search-forward">(<span class="cmd">re-search-forward</span> <span class="arg">pattern</span>)</a></p>
 
 <blockquote>
 <p>Deprecated: Use ere-search-forward for new code.</p>
@@ -51,7 +51,7 @@
 </blockquote>
 
 
-<p><a name="re-search-reverse">(<b>re-search-reverse</b> <span class="cmd">string</span>)</a></p>
+<p><a name="re-search-reverse">(<span class="cmd">re-search-reverse</span> <span class="arg">string</span>)</a></p>
 
 <blockquote>
 <p>Deprecated: Use ere-search-reverse for new code.</p>
@@ -59,28 +59,28 @@
 </blockquote>
 
 
-<p><a name="read-abbrev-file">(<b>read-abbrev-file</b> <span class="cmd">file-name</span>)</a></p>
+<p><a name="read-abbrev-file">(<span class="cmd">read-abbrev-file</span> <span class="arg">file-name</span>)</a></p>
 
 <blockquote>
 <p>Reads in and defines abbreviations appearing in a named abbreviations file. An error message is printed if the file cannot be found.</p>
 </blockquote>
 
 
-<p><a name="read-file">(<b>read-file</b> <span class="cmd">file-name</span>) ^X-^R</a></p>
+<p><a name="read-file">(<span class="cmd">read-file</span> <span class="arg">file-name</span>) ^X-^R</a></p>
 
 <blockquote>
 <p>Erases the contents of the current buffer, reads the specified file into the buffer and associates the name with the buffer. Dot is set to the beginning of the buffer.</p>
 </blockquote>
 
 
-<p><a name="recursion-depth">(<b>recursion-depth</b>)</a></p>
+<p><a name="recursion-depth">(<span class="cmd">recursion-depth</span>)</a></p>
 
 <blockquote>
 <p>Returns the current number of active calls to recursive-edit.</p>
 </blockquote>
 
 
-<p><a name="recursive-edit">(<b>recursive-edit</b>)</a></p>
+<p><a name="recursive-edit">(<span class="cmd">recursive-edit</span>)</a></p>
 
 <blockquote>
 <p>Invokes the keyboard processor to obtain input from the user until the exit-emacs function is executed. Then, recursive-edit returns to the MLisp code that invoked it.</p>
@@ -89,70 +89,70 @@
 </blockquote>
 
 
-<p><a name="redraw-display">(<b>redraw-display</b>) ^L</a></p>
+<p><a name="redraw-display">(<span class="cmd">redraw-display</span>) ^L</a></p>
 
 <blockquote>
 <p>Clears the screen and redraws it.</p>
 </blockquote>
 
 
-<p><a name="region-around-match">(<b>region-around-match</b>)</a></p>
+<p><a name="region-around-match">(<span class="cmd">region-around-match</span>)</a></p>
 
 <blockquote>
 <p>Sets dot and mark around the region matched by the last search. An argument of <span class="cmd">n</span> puts dot and mark around the <span class="cmd">n</span>th subpattern matched by \( and \). An argument of zero matches the entire string.</p>
 </blockquote>
 
 
-<p><a name="region-to-string">(<b>region-to-string</b>)</a></p>
+<p><a name="region-to-string">(<span class="cmd">region-to-string</span>)</a></p>
 
 <blockquote>
 <p>Returns the region between dot and mark as a string.</p>
 </blockquote>
 
 
-<p><a name="remove-all-local-bindings">(<b>remove-all-local-bindings</b>)</a></p>
+<p><a name="remove-all-local-bindings">(<span class="cmd">remove-all-local-bindings</span>)</a></p>
 
 <blockquote>
 <p>Performs a remove-local-binding command for all possible keys, This effectively undoes all local bindings.</p>
 </blockquote>
 
 
-<p><a name="remove-binding">(<b>remove-binding</b> <span class="cmd">key-sequence</span>)</a></p>
+<p><a name="remove-binding">(<span class="cmd">remove-binding</span> <span class="arg">key-sequence</span>)</a></p>
 
 <blockquote>
 <p>Removes the global binding of the given key sequence. Actually, it just rebinds the key sequence to illegal-operation.</p>
 </blockquote>
 
 
-<p><a name="remove-database">(<b>remove-database</b> <span class="cmd">dbsl database-file</span>)</a></p>
+<p><a name="remove-database">(<span class="cmd">remove-database</span> <span class="arg">dbsl database-file</span>)</a></p>
 
 <blockquote>
 <p>Removes a single database file from the specified database search-list. The database search-list will not be deleted when the last file has been removed.</p>
 </blockquote>
 
 
-<p><a name="remove-local-binding">(<b>remove-local-binding</b> <span class="cmd">key-sequence</span>)</a></p>
+<p><a name="remove-local-binding">(<span class="cmd">remove-local-binding</span> <span class="arg">key-sequence</span>)</a></p>
 
 <blockquote>
 <p>Removes the local binding of the given key sequence. The global binding will subsequently be used when interpreting the key sequence.</p>
 </blockquote>
 
 
-<p><a name="rename-macro">(<b>rename-macro</b> <span class="cmd">function new-function</span>)</a></p>
+<p><a name="rename-macro">(<span class="cmd">rename-macro</span> <span class="arg">function new-function</span>)</a></p>
 
 <blockquote>
 <p>Renames the specified function to a new name. You cannot rename a function to a name used by an already existing wired-in function. If the <span class="cmd">new-function</span> name exists, the existing code is replaced.</p>
 </blockquote>
 
 
-<p><a name="replace-search-text">(<b>replace-search-text</b> <span class="cmd">replacement</span>)</a></p>
+<p><a name="replace-search-text">(<span class="cmd">replace-search-text</span> <span class="arg">replacement</span>)</a></p>
 
 <blockquote>
 <p>This function performs a replacement of the text matched by the last search operations.</p>
 </blockquote>
 
 
-<p><a name="replace-string">(<b>replace-string</b> <span class="cmd">search replacement</span>) ESC-r</a></p>
+<p><a name="replace-string">(<span class="cmd">replace-string</span> <span class="arg">search replacement</span>) ESC-r</a></p>
 
 <blockquote>
 <p>Replaces all occurrences of one string for another, starting at dot and ending at the end of the buffer.</p>
@@ -160,7 +160,7 @@
 
 
 
-<p><a name="reset-buffer-name-from-filename">(<b>reset-buffer-name-from-filename</b>)</a></p>
+<p><a name="reset-buffer-name-from-filename">(<span class="cmd">reset-buffer-name-from-filename</span>)</a></p>
 
 <blockquote>
 <p>Resets the current buffers name using the algorithm used when a new file is first visited.</p>
@@ -169,28 +169,28 @@
 
 
 
-<p><a name="resume-process">(<b>resume-process</b> <span class="cmd">process-name</span>)</a></p>
+<p><a name="resume-process">(<span class="cmd">resume-process</span> <span class="arg">process-name</span>)</a></p>
 
 <blockquote>
 <p>Resumes a subprocess that has been paused. The image in the process starts working again. If the process is not paused, an error is generated.</p>
 </blockquote>
 
 
-<p><a name="return-prefix-argument">(<b>return-prefix-argument</b> <span class="cmd">expression</span>)</a></p>
+<p><a name="return-prefix-argument">(<span class="cmd">return-prefix-argument</span> <span class="arg">expression</span>)</a></p>
 
 <blockquote>
 <p>Causes <span class="cmd">expression</span> to be considered as the prefix argument to the next command executed (even if the command is initiated from the keyboard). This can be useful for writing alternate prefix argument packages.</p>
 </blockquote>
 
 
-<p><a name="return-to-monitor">(<b>return-to-monitor</b>)</a></p>
+<p><a name="return-to-monitor">(<span class="cmd">return-to-monitor</span>)</a></p>
 
 <blockquote>
 <p>Spawns a new DCL process, allowing the user to enter DCL commands. Return to Emacs by using the LOGOUT DCL command.</p>
 </blockquote>
 
 
-<p><a name="reverse-incremental-search">(<b>reverse-incremental-search</b>)</a></p>
+<p><a name="reverse-incremental-search">(<span class="cmd">reverse-incremental-search</span>)</a></p>
 
 <blockquote>
 <p>Start incremental search in reverse search mode.
@@ -199,14 +199,14 @@ See <a href="extensions_reference.html">extension</a> incsearch for details
 </blockquote>
 
 
-<p><a name="right-marker">(<b>right-marker</b>)</a></p>
+<p><a name="right-marker">(<span class="cmd">right-marker</span>)</a></p>
 
 <blockquote>
 <p>Takes a marker as a parameter and returns a new marker. The new marker will at the same position as the original but with right-hand affinity. This means that text inserted at the position of the marker will move the marker's position to the right. Left-hand affinity markers do not move to the right as text is inserted.</p>
 </blockquote>
 
 
-<p><a name="right-window">(<b>right-window</b> <span class="cmd">repeat-count</span>)</a></p>
+<p><a name="right-window">(<span class="cmd">right-window</span> <span class="arg">repeat-count</span>)</a></p>
 
 <blockquote>
 <p>Moves the cursor into the window that is to the right of the current window, unlike previous-window which moves the cursor without regard to the physical position of the windows on the screen.</p>

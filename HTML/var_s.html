@@ -11,35 +11,35 @@
 <body>
 <div class="contents">
 
-<p><a name="scroll-step"></a><b>scroll-step</b> &#171; 7</p>
+<p><a name="scroll-step"></a><span class="cmd">scroll-step</span> &#171; 7</p>
 
 <blockquote>
 <p>Controls the number of lines by which a window moves when dot moves out of the window.</p>
 </blockquote>
 
 
-<p><a name="search-string"></a><b>search-string</b></p>
+<p><a name="search-string"></a><span class="cmd">search-string</span></p>
 
 <blockquote>
 <p>This read-only variable holds the last search string used by any search command. The search-string variable is preserved by the save-... functions.</p>
 </blockquote>
 
 
-<p><a name="silently-kill-processes"></a><b>silently-kill-processes</b> &#171; 0</p>
+<p><a name="silently-kill-processes"></a><span class="cmd">silently-kill-processes</span> &#171; 0</p>
 
 <blockquote>
 <p>Controls process termination during Emacs rundown. If non-zero, Emacs will kill processes when it exits without asking any questions. Normally, if you have processes running when Emacs exits, Emacs asks the question You have processes on the prowl, should I chase them down for you?.</p>
 </blockquote>
 
 
-<p><a name="split-height-threshold"></a><b>split-height-threshold</b> &#171; 7</p>
+<p><a name="split-height-threshold"></a><span class="cmd">split-height-threshold</span> &#171; 7</p>
 
 <blockquote>
 <p>Controls which windows Emacs considers when it decides to create a new window. Any window with a height that is less than split-height-threshold is a candidate for being split to create space for the new window.</p>
 </blockquote>
 
 
-<p><a name="stack-maximum-depth"></a><b>stack-maximum-depth</b> &#171; 100</p>
+<p><a name="stack-maximum-depth"></a><span class="cmd">stack-maximum-depth</span> &#171; 100</p>
 
 <blockquote>
 <p>Emacs will   limit   the   number   of   nested   MLisp  calls  to
@@ -48,14 +48,14 @@
 </blockquote>
 
 
-<p><a name="stack-trace-on-error"></a><b>stack-trace-on-error</b> &#171; 0</p>
+<p><a name="stack-trace-on-error"></a><span class="cmd">stack-trace-on-error</span> &#171; 0</p>
 
 <blockquote>
 <p>Controls automatic stack tracing. If non-zero, Emacs will write an MLisp stack trace to the Stack trace buffer whenever an error is encountered from within an MLisp function (even inside an error-occurred).</p>
 </blockquote>
 
 
-<p><a name="swap-ctrl-x-char"></a><b>swap-ctrl-x-char</b> &#171; 24</p>
+<p><a name="swap-ctrl-x-char"></a><span class="cmd">swap-ctrl-x-char</span> &#171; 24</p>
 
 <blockquote>
 <p>This variable allows you to change the way that emacs interprets control keys you type.</p>
@@ -68,7 +68,7 @@
 </blockquote>
 
 
-<p><a name="syntax-array"></a><b>syntax-array</b> &#171;</p>
+<p><a name="syntax-array"></a><span class="cmd">syntax-array</span> &#171;</p>
 
 <blockquote>
 <p>When syntax-array is true Emacs will optimise the operation of commands that depend on syntax data. However maintaining the syntax array will slow down other operations in Emacs.</p>
@@ -87,13 +87,13 @@
 
 <p>When syntax-array is true these commands correctly take into account comments and strings when searching for a parenthesis. When syntax-array is false these commands uses a dead reckoning algorithm that in some situations will not find the correct parenthesis.</p>
 
-<p><b>current-syntax-entity</b></p>
+<p><span class="cmd">current-syntax-entity</span></p>
 
 <p>When syntax-array is true this command is fast. However when syntax-array is false current-syntax-entity has to calculate the syntax by examining each character from the start of the buffer up to dot.</p>
 </blockquote>
 
 
-<p><a name="syntax-colouring"></a><b>syntax-colouring</b> &#171;</p>
+<p><a name="syntax-colouring"></a><span class="cmd">syntax-colouring</span> &#171;</p>
 
 <blockquote>
 <p>When syntax-colouring is true Emacs will colour the characters of a buffer depending on the syntax of those characters.</p>
@@ -114,42 +114,42 @@
 </blockquote>
 
 
-<p><a name="syntax-word-rendition"></a><b>syntax-word-rendition</b> &#171;</p>
+<p><a name="syntax-word-rendition"></a><span class="cmd">syntax-word-rendition</span> &#171;</p>
 
 <blockquote>
 <p>Defines the colour that will be used to draw word characters when syntax-colouring is true.</p>
 </blockquote>
 
 
-<p><a name="syntax-string-rendition"></a><b>syntax-string-rendition</b> &#171;</p>
+<p><a name="syntax-string-rendition"></a><span class="cmd">syntax-string-rendition</span> &#171;</p>
 
 <blockquote>
 <p>Defines the colour that will be used to draw string characters when syntax-colouring is true.</p>
 </blockquote>
 
 
-<p><a name="syntax-comment-rendition"></a><b>syntax-comment-rendition</b> &#171;</p>
+<p><a name="syntax-comment-rendition"></a><span class="cmd">syntax-comment-rendition</span> &#171;</p>
 
 <blockquote>
 <p>Defines the colour that will be used to draw comment characters when syntax-colouring is true.</p>
 </blockquote>
 
 
-<p><a name="syntax-keyword1-rendition"></a><b>syntax-keyword1-rendition</b> &#171;</p>
+<p><a name="syntax-keyword1-rendition"></a><span class="cmd">syntax-keyword1-rendition</span> &#171;</p>
 
 <blockquote>
 <p>Defines the colour that will be used to draw keyword type 1 characters when syntax-colouring is true.</p>
 </blockquote>
 
 
-<p><a name="syntax-keyword2-rendition"></a><b>syntax-keyword2-rendition</b> &#171;</p>
+<p><a name="syntax-keyword2-rendition"></a><span class="cmd">syntax-keyword2-rendition</span> &#171;</p>
 
 <blockquote>
 <p>Defines the colour that will be used to draw keyword type 2 characters when syntax-colouring is true.</p>
 </blockquote>
 
 
-<p><a name="syntax-keyword3-rendition"></a><b>syntax-keyword3-rendition</b> &#171;</p>
+<p><a name="syntax-keyword3-rendition"></a><span class="cmd">syntax-keyword3-rendition</span> &#171;</p>
 
 <blockquote>
 <p>Defines the colour that will be used to draw keyword type 3 characters when syntax-colouring is true.</p>

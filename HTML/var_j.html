@@ -11,14 +11,14 @@
 <body>
 <div class="contents">
 
-<p><a name="journal-frequency"></a><b>journal-frequency</b> &#171; 0</p>
+<p><a name="journal-frequency"></a><span class="cmd">journal-frequency</span> &#171; 0</p>
 
 <blockquote>
 <p>Sets the time in seconds before any journal files are flushed to disk. A reasonable value for this variable is 30 seconds. To disable journalling, set this variable to 0 or false.</p>
 </blockquote>
 
 
-<p><a name="journal-scratch-buffers"></a><b>journal-scratch-buffers</b> &#171; 0</p>
+<p><a name="journal-scratch-buffers"></a><span class="cmd">journal-scratch-buffers</span> &#171; 0</p>
 
 <blockquote>
 <p>By default Emacs will not journal scratch buffers, even when current-buffer-journalled is 1. This is normally a good thing as its improves the performance of Emacs. Many packages use scratch buffers which would be journalled if this variable was set to 1.</p>

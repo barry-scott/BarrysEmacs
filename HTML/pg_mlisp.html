@@ -393,14 +393,48 @@ ANAMEWITHCAPITALLETTERS
 
 <p>Functions are defined using the MLisp <span class="cmd">defun</span> function using either of the following syntaxes:</p>
 
-<p><b>(defun (<i>name local</i>... <i>expression</i>...))</b></p>
+<pre>
+(<span class="cmd">defun</span>
+    (<span class="arg">name</span>
+        <span class="arg">local</span>...
+        <span class="arg">expression</span>...
+    )
+)
+</pre>
 
-<p>This defines a function called <i>name</i> with local variables <i>local</i>s. The function executes <i>expression</i>s each time it is called. The local variables are separated by white-space. Any arguments that need to be passed to the function must be accessed using the <span class="cmd">arg</span> MLisp function. All the components except <i>name</i> are optional. The result of the function is the result of the last expression executed.</p>
+<p>This defines a function called <span class="arg">name</span> with local variables <span class="arg">local</span>s.
+The function executes <span class="arg">expression</span>s each time it is called.
+The local variables are separated by white-space.
+Any arguments that need to be passed to the function must be accessed using
+the <span class="cmd">arg</span> MLisp function. All the components except <i>name</i> are optional.
+ The result of the function is the result of the last expression executed.</p>
 
-<p><b>(defun <i>name</i> (<i>arg...</i>) <i>local... expression</i>...)</b></p>
+<pre>
+(<span class="cmd">defun</span>
+    <span class="arg">name</span> (<span class="arg">arg...</span>)
+    <span class="arg">local...</span>
+    <span class="arg">expression</span>...
+)
+</pre>
 
-<p>This defines a function with arguments. The arguments are entered into the variable name-space, and may have optional default expressions. The initialising expressions are executed just before the function in invoked. The result of the function is the value of the last expression executed in the expression list.</p>
+<p>This defines a function with arguments. The arguments are entered into the
+variable name-space, and may have optional default expressions, which are evaluated
+if the corresponding argument is not passed in.
 
+The initialising expressions are executed just before the function in invoked.
+The result of the function is the value of the last expression executed in
+the expression list.</p>
+
+<p>Example of <span class="cmd">defun</span> with arg1 defaulted to 6, arg2 defaulted
+ to the string "hello" and arg3 defaulted to the value of (get-tty-string "arg3: "):</p>
+
+<pre>
+(<span class="cmd">defun</span>
+    <span class="arg">name</span> (<span class="arg">arg1</span> 6 <span class="arg">arg2</span> "hello" <span class="arg">arg3</span> (get-tty-string "arg3:"))
+    <span class="arg">local...</span>
+    <span class="arg">expression</span>...
+)
+</pre>
 
 <a name="P431_23601"></a> 
 

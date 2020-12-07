@@ -11,7 +11,7 @@
 <body>
 <div class="contents">
 
-<p><a name="mark">(<b>mark</b>)</a></p>
+<p><a name="mark">(<span class="cmd">mark</span>)</a></p>
 
 <blockquote>
 <p>Returns the position of the marker in the current buffer. An error is displayed if the marker is not set.</p>
@@ -27,7 +27,7 @@
 </blockquote>
 
 
-<p><a name="match-wild">(<b>match-wild</b> <span class="cmd">candidate</span> <span class="cmd">pattern</span>)</a></p>
+<p><a name="match-wild">(<span class="cmd">match-wild</span> <span class="arg">candidate</span> <span class="arg">pattern</span>)</a></p>
 
 <blockquote>
 <p>match-wild performs MSDOS shell style wildcard matching.
@@ -43,7 +43,7 @@ The <span class="cmd">pattern</span> support * and ? as wildcard chars.</p>
 </blockquote>
 
 
-<p><a name="message">(<b>message</b> <span class="cmd">string...</span>)</a></p>
+<p><a name="message">(<span class="cmd">message</span> <span class="arg">string...</span>)</a></p>
 
 <blockquote>
 <p>Concatenates its string arguments and displays them in the Mini-buffer at the bottom of the screen the next time the screen is updated.</p>
@@ -63,7 +63,7 @@ use <span class="cmd">(sit-for 0)</span> to force a screen update.
 </blockquote>
 
 
-<p><a name="meta-digit">(<b>meta-digit</b>) ESC-0...ESC-9</a></p>
+<p><a name="meta-digit">(<span class="cmd">meta-digit</span>) ESC-0...ESC-9</a></p>
 
 <blockquote>
 <p>Provides for quick single-digit prefix arguments. It is bound to all the numeric keys but prefixed with ESC. So to get a prefix of 5, type ESC-5 followed by the command.</p>
@@ -80,7 +80,7 @@ use <span class="cmd">(sit-for 0)</span> to force a screen update.
 </blockquote>
 
 
-<p><a name="meta-minus">(<b>meta-minus</b>) ESC- -</a></p>
+<p><a name="meta-minus">(<span class="cmd">meta-minus</span>) ESC- -</a></p>
 
 <blockquote>
 <p>Converts a meta-collected digit to a negative prefix argument.</p>
@@ -99,7 +99,7 @@ use <span class="cmd">(sit-for 0)</span> to force a screen update.
 </blockquote>
 
 
-<p><a name="Minibuf-local-map">(<b>Minibuf-local-map</b>)</a></p>
+<p><a name="Minibuf-local-map">(<span class="cmd">Minibuf-local-map</span>)</a></p>
 
 <blockquote>
 <p>This keymap is used to read commands in the Mini-buffer when spaces are command terminators. For example: reading a command name with <span class="cmd">expand-mlisp-word</span>.</p>
@@ -160,7 +160,7 @@ use <span class="cmd">(sit-for 0)</span> to force a screen update.
 </blockquote>
 
 
-<p><a name="Minibuf-local-NS-map">(<b>Minibuf-local-NS-map</b>)</a></p>
+<p><a name="Minibuf-local-NS-map">(<span class="cmd">Minibuf-local-NS-map</span>)</a></p>
 
 <blockquote>
 <p>This keymap is used to read commands in the mini-buffer when spaces are not command terminators.</p>
@@ -227,7 +227,7 @@ use <span class="cmd">(sit-for 0)</span> to force a screen update.
 </blockquote>
 
 
-<p><a name="minus">(<b>minus</b>) -</a></p>
+<p><a name="minus">(<span class="cmd">minus</span>) -</a></p>
 
 <blockquote>
 <p>This command is bound to the minus key after the <span class="cmd">argument-prefix</span> command has been executed. It is used to negate the prefix argument.</p>
@@ -243,7 +243,7 @@ use <span class="cmd">(sit-for 0)</span> to force a screen update.
 </blockquote>
 
 
-<p><a name="modify-syntax-entry">(<b>modify-syntax-entry</b> <span class="cmd">syntax-string</span>)</a></p>
+<p><a name="modify-syntax-entry">(<span class="cmd">modify-syntax-entry</span> <span class="arg">syntax-string</span>)</a></p>
 
 <blockquote>
 <p>This function is provided for compatibility with old MLisp code only. Use <span class="cmd">modify-syntax-table</span> for all new MLisp code.</p>
@@ -262,7 +262,7 @@ use <span class="cmd">(sit-for 0)</span> to force a screen update.
 </blockquote>
 
 
-<p><a name="modify-syntax-table">(<b>modify-syntax-table</b> <span class="cmd">type</span> <span class="cmd">args...</span>)</a></p>
+<p><a name="modify-syntax-table">(<span class="cmd">modify-syntax-table</span> <span class="arg">type</span> <span class="arg">args...</span>)</a></p>
 
 <blockquote>
 <p>Modifies a set of entries in the syntax table associated with the current buffer. See the Barry's Emacs Programmer's Guide for more information on <a href="pg_extension_facilities.html#syntaxtables">how to alter syntax tables</a>.</p>
@@ -421,7 +421,7 @@ Ranges of characters can be conveniently entered by giving the first and last ch
 </blockquote>
 
 
-<p><a name="move-to-comment-column">(<b>move-to-comment-column</b>)</a></p>
+<p><a name="move-to-comment-column">(<span class="cmd">move-to-comment-column</span>)</a></p>
 
 <blockquote>
 <p>Inserts enough spaces and tabs to move the cursor to the comment column.</p>

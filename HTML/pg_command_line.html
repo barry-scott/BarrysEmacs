@@ -16,20 +16,27 @@
 
 <p>bemacs passes the whole command line to the Barry's Emacs application for processing.</p>
 
-<p>Barry's Emacs then parses the command line into its component parts, called arguments. Having parsed the command line Barry's Emacs determines the package for the command line. The default package is called <i>emacs</i>. This can be overridden by using the /package switch.</p>
+<p>Barry's Emacs then parses the command line into its component parts, called arguments.
+Having parsed the command line Barry's Emacs determines the package for the command line.
+The default package is called <i>emacs</i>. This can be overridden by using the -package switch.</p>
 
-<dl>
-<dt>/package=<i>package-name</i></dt>
+<table>
+<tr>
+    <th>Windows</th>
+    <th>Unix</th>
+    <th>Description</th>
+</tr>
+<tr>
+    <td>/package=<span class="arg">package-name</span></td>
+    <td>-package=<span class="arg">package-name</span></td>
+    <td>This causes emacs to execute the MLisp command <span class="arg">package-name</span>-com.
+    If <span class="arg">package-name</span>-com is not yet defined then emacs loads the MLisp 
+    module named <span class="arg">package-name</span>.mlp.</td>
+</tr>
+</table>
 
-<dd>This causes emacs to execute the MLisp command <i>package-name</i>-com. If <i>package-name</i>-com is not yet defined then emacs loads the MLisp module named <i>package-name</i>.mlp.</dd>
-
-<dt>--</dt>
-
-<dd>This causes emacs to treat all the following command line arguments as not being qualifiers. This is useful for allowing Emacs to open a file whoes name starts with a "+" or "-" character.</dd>
-</dl>
-
-It is the job of the package to process the command line. The default package is named "emacs". How the emacs package handles the command line is documented in the 
-<a href="users_guide.html">User Guide</a>.
+It is the job of the package to process the command line. The default package is named "emacs".
+How the emacs package handles the command line is documented in the <a href="users_guide.html">User Guide</a>.
 
 <h2><a name="writingapackage">Writing a package</a></h2>
 

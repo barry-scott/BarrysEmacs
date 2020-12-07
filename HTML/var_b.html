@@ -11,7 +11,7 @@
 <body>
 <div class="contents">
 
-<p><a name="backup-file-mode"></a><b>backup-file-mode</b> &#171; "copy"
+<p><a name="backup-file-mode"></a><span class="cmd">backup-file-mode</span> &#171; "copy"
 <!-- hide=on -->
 , ("none" on OpenVMS)
 <!-- hide=off -->
@@ -50,7 +50,7 @@
 </blockquote>
 
 
-<p><a name="backup-filename-format"></a><b>backup-filename-format</b> &#171; "%pa%fn._%1ft"</p>
+<p><a name="backup-filename-format"></a><span class="cmd">backup-filename-format</span> &#171; "%pa%fn._%1ft"</p>
 
 <blockquote>
 <p>This variable controls how emacs names backup files. 
@@ -70,14 +70,14 @@ The equivilent MLisp would be:</p>
 </blockquote>
 
 
-<p><a name="black-on-white"></a><b>black-on-white</b> &#171; 0</p>
+<p><a name="black-on-white"></a><span class="cmd">black-on-white</span> &#171; 0</p>
 
 <blockquote>
 <p>Records the type of screen on which Emacs is running. If non-zero, text is displayed on the screen as black characters on a white background. If zero, text is displayed as white characters on a black background. This information is used by some terminal interfaces to decide how to display a visible bell.</p>
 </blockquote>
 
 
-<p><a name="breakpoint-hook"></a><b>breakpoint-hook</b> &#171;</p>
+<p><a name="breakpoint-hook"></a><span class="cmd">breakpoint-hook</span> &#171;</p>
 
 <blockquote>
 <p>Contains the name of the breakpoint function. When a breakpoint occurs, the function whose name is in breakpoint-hook is called.</p>
@@ -86,7 +86,7 @@ The equivilent MLisp would be:</p>
 </blockquote>
 
 
-<p><a name="buffer-backup-filename-hook"></a><b>buffer-backup-filename-hook</b> &#171; ""</p>
+<p><a name="buffer-backup-filename-hook"></a><span class="cmd">buffer-backup-filename-hook</span> &#171; ""</p>
 
 <blockquote>
 <p>Emacs calls the function in buffer-backup-filename-hook with the filename being backed up.
@@ -104,7 +104,7 @@ The function is expected to return a string containing the filename to backup th
 </blockquote>
 
 
-<p><a name="buffer-choose-name-hook"></a><b>buffer-choose-name-hook</b> &#171; ""</p>
+<p><a name="buffer-choose-name-hook"></a><span class="cmd">buffer-choose-name-hook</span> &#171; ""</p>
 
 <blockquote>
 <p>Emacs calls the function in buffer-choose-name-hook with the filename being loaded into a new buffer.
@@ -121,7 +121,7 @@ The function is expected to return a string containing the name to use for the n
 </blockquote>
 
 
-<p><a name="buffer-file-loaded-hook"></a><b>buffer-file-loaded-hook</b> &#171; ""</p>
+<p><a name="buffer-file-loaded-hook"></a><span class="cmd">buffer-file-loaded-hook</span> &#171; ""</p>
 
 <blockquote>
 <p>Emacs calls the function in buffer-file-loaded-hook with the filename being loaded into a new buffer.
@@ -138,21 +138,21 @@ The function is expected to return a string containing the name to use for the n
 </blockquote>
 
 
-<p><a name="buffer-is-modified"></a><b>buffer-is-modified</b> &#171; 0</p>
+<p><a name="buffer-is-modified"></a><span class="cmd">buffer-is-modified</span> &#171; 0</p>
 
 <blockquote>
 <p>Is positive if the current buffer has been modified since it was last written out to disk. You may set it to 0 if you want Emacs to ignore the modifications that have been made to a buffer. However, this does not restore the unmodified version of the buffer -- it merely tells Emacs not to write out the buffer with other modified files. Emacs sets buffer-is-modified positive any time the buffer is modified.</p>
 </blockquote>
 
 
-<p><a name="buffer-names"></a><b>buffer-names</b></p>
+<p><a name="buffer-names"></a><span class="cmd">buffer-names</span></p>
 
 <blockquote>
 <p>A 1-dimensional array which contains all the buffer names currently in use in Emacs. Element 0 of the array is a count of the total number of buffers contained in the array.</p>
 </blockquote>
 
 
-<p><a name="buffer-saved-as-hook"></a><b>buffer-saved-as-hook</b> &#171; 0</p>
+<p><a name="buffer-saved-as-hook"></a><span class="cmd">buffer-saved-as-hook</span> &#171; 0</p>
 
 <blockquote>
 <p>Emacs calls the function in buffer-saved-as-hook with the filename being loaded into a new buffer.

@@ -11,35 +11,35 @@
 <body>
 <div class="contents">
 
-<p><a name="wait-for-process-input-request">(<b>wait-for-process-input-request</b> <span class="cmd">process-name</span>)</a></p>
+<p><a name="wait-for-process-input-request">(<span class="cmd">wait-for-process-input-request</span> <span class="arg">process-name</span>)</a></p>
 
 <blockquote>
 <p>Suspends keyboard processing until an input request is made by the target process. The function returns 1 if the process wants input, or 0 if the user typed a key at the keyboard.</p>
 </blockquote>
 
 
-<p><a name="what-cursor-position">(<b>what-cursor-position</b>) ^X-=</a></p>
+<p><a name="what-cursor-position">(<span class="cmd">what-cursor-position</span>) ^X-=</a></p>
 
 <blockquote>
 <p>Writes out a brief summary of the position of dot in the current window. It reports the co-ordinates of dot with respect to the current window, what the character to the right of dot is, what character number dot is at, the percentage of the file above dot, and what portion of the file is displayed in the window.</p>
 </blockquote>
 
 
-<p><a name="while">(<b>while</b> <span class="cmd">test expression...</span>)</a></p>
+<p><a name="while">(<span class="cmd">while</span> <span class="arg">test expression...</span>)</a></p>
 
 <blockquote>
 <p>Executes the given expressions while the <span class="cmd">test</span> is true (not equal to zero).</p>
 </blockquote>
 
 
-<p><a name="widen-region">(<b>widen-region</b>)</a></p>
+<p><a name="widen-region">(<span class="cmd">widen-region</span>)</a></p>
 
 <blockquote>
 <p>Removes a restriction put on a buffer by narrow-region.</p>
 </blockquote>
 
 
-<p><a name="widen-window">(<b>widen-window</b>)</a></p>
+<p><a name="widen-window">(<span class="cmd">widen-window</span>)</a></p>
 
 <blockquote>
 <p>Increases the width of a vertically-split window. widen-window can only succeed if at least one of the other windows is greater than one column wide.</p>
@@ -48,7 +48,7 @@
 
 
 
-<p><a name="WIN-edit-copy"><b>WIN-edit-copy</b></a> ^C</p>
+<p><a name="WIN-edit-copy"><span class="cmd">WIN-edit-copy</span></a> ^C</p>
 <blockquote>
 
 <p>Copies the selected text to the Windows clipboard.</p>
@@ -66,7 +66,7 @@
 
 
 
-<p><a name="WIN-edit-cut"><b>WIN-edit-cut</b></a></p>
+<p><a name="WIN-edit-cut"><span class="cmd">WIN-edit-cut</span></a></p>
 <blockquote>
 
 <p>Cuts the selected text and puts it on the Windows clipboard.</p>
@@ -87,7 +87,7 @@
 
 
 
-<p><a name="WIN-edit-paste"><b>WIN-edit-paste</b></a> ^V</p>
+<p><a name="WIN-edit-paste"><span class="cmd">WIN-edit-paste</span></a> ^V</p>
 <blockquote>
 
 <p>Pastes text from the Windows clipboard.</p>
@@ -106,7 +106,7 @@
 
 
 
-<p><a name="window-dimensions">(<b>window-dimensions</b>)</a></p>
+<p><a name="window-dimensions">(<span class="cmd">window-dimensions</span>)</a></p>
 
 <blockquote>
 <p>This command returns a one dimensional array containing the top, left, bottom and right coordinates of the current window.</p>
@@ -142,35 +142,35 @@
 </blockquote>
 
 
-<p><a name="write-abbrev-file">(<b>write-abbrev-file</b> <span class="cmd">file-name</span>)</a></p>
+<p><a name="write-abbrev-file">(<span class="cmd">write-abbrev-file</span> <span class="arg">file-name</span>)</a></p>
 
 <blockquote>
 <p>Writes all defined abbreviations to the named file. This file can be read back into Emacs with read-abbrev-file.</p>
 </blockquote>
 
 
-<p><a name="write-current-file">(<b>write-current-file</b> <span class="cmd">file-name</span>) ^X-^S</a></p>
+<p><a name="write-current-file">(<span class="cmd">write-current-file</span> <span class="arg">file-name</span>) ^X-^S</a></p>
 
 <blockquote>
 <p>Writes the contents of the current buffer to the file whose name is associated with the buffer.</p>
 </blockquote>
 
 
-<p><a name="write-file-exit">(<b>write-file-exit</b>) ^X-^F</a></p>
+<p><a name="write-file-exit">(<span class="cmd">write-file-exit</span>) ^X-^F</a></p>
 
 <blockquote>
 <p>Writes all modified buffers to their associated files and if the command succeeds, Emacs exits.</p>
 </blockquote>
 
 
-<p><a name="write-modified-files">(<b>write-modified-files</b>) ^X-^M</a></p>
+<p><a name="write-modified-files">(<span class="cmd">write-modified-files</span>) ^X-^M</a></p>
 
 <blockquote>
 <p>Writes each modified buffer into the file whose name is associated with the buffer. Emacs generates an error message if a modified buffer does not have an associated file.</p>
 </blockquote>
 
 
-<p><a name="write-named-file">(<b>write-named-file</b> <span class="cmd">file-name</span>) ^X-^W</a></p>
+<p><a name="write-named-file">(<span class="cmd">write-named-file</span> <span class="arg">file-name</span>) ^X-^W</a></p>
 
 <blockquote>
 <p>Writes the contents of the current buffer to the named file and changes the association of the buffer to the specified file name.</p>

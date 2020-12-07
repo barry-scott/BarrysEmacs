@@ -11,18 +11,23 @@
 <body>
 <div class="contents">
 
-<p><a name="UI-add-menu">(<b>UI-add-menu</b> <span class="cmd">menu-ID position name [position name] ...</span>)</a></p>
+<p><a name="UI-add-menu">(<span class="cmd">UI-add-menu</span> <span class="arg">menu-id position name [position name] ...</span>)</a></p>
 
 <blockquote>
-<p>UI-add-menu adds a single menu item to the existing menus. The <i>menu-id</i> is the two character string to bind the menu item to. When selected the menu will send the string "\(menu)&lt;menu-id&gt;".</p>
+<p>UI-add-menu adds a single menu item to the existing menus. The <span class="arg">menu-id</span> is
+the two character string to bind the menu item to. When selected the menu will send the string "\(menu)&lt;menu-id&gt;".</p>
 
-<p>The values of &lt;menu-ID&gt; are restricted to a set of known menu-IDs and a range of user values. There can be 100 user defined values. Any ID that is not one of the built in ones can be used. To avoid picking a built-in value use an upper case letter as the first character of the ID. The known menu IDs correspond to menu actions that require some special support from Emacs. The following table lists the known IDs:</p>
+<p>The values of &lt;menu-ID&gt; are restricted to a set of known menu-IDs and a range of user values.
+There can be 100 user defined values. Any ID that is not one of the built in ones can be used.
+To avoid picking a built-in value use an upper case letter as the first character of the ID.
+The known menu IDs correspond to menu actions that require some special support from Emacs
+ The following table lists the known IDs:</p>
 
 <table>
 <tr>
-<td><b>Name</b></td>
-<td><b>ID</b></td>
-<td><b>Special Action</b></td>
+<th>Name</th>
+<th>ID</th>
+<th>Special Action</th>
 </tr>
 
 <tr>
@@ -80,11 +85,18 @@
 </tr>
 </table>
 
-<p>There can be up to 9 pairs of the &lt;position&gt; and &lt;name&gt; parameters. Each pair describes one level of menu hierarchy. A menu item named &lt;name&gt; is inserted at position &lt;position&gt;. The first menu position is numbered 0. Use a large &lt;position&gt; value to insert at the end of a menu when you do not know how many items are in the menu.</p>
+<p>There can be up to 9 pairs of the &lt;position&gt; and &lt;name&gt; parameters.
+Each pair describes one level of menu hierarchy. A menu item named &lt;name&gt; is
+inserted at position &lt;position&gt;. The first menu position is numbered 0.
+Use a large &lt;position&gt; value to insert at the end of a menu when you do
+not know how many items are in the menu.</p>
 
 <p>You cannot insert a first level menu after the "&amp;Help" menu.</p>
 
-<p>The &lt;name&gt; parameter has one special value, "-", which is will cause a menu separating line to be inserted. Otherwise the &lt;name&gt; parameter can be any string. Place an "&amp;" before the character in name string that you wish to be the menu accelerator character.</p>
+<p>The &lt;name&gt; parameter has one special value, "-", which is will
+cause a menu separating line to be inserted. Otherwise the &lt;name&gt;
+parameter can be any string. Place an "&amp;" before the character in name
+string that you wish to be the menu accelerator character.</p>
 
 <p><b>Example:</b></p>
 
@@ -106,14 +118,14 @@
 </blockquote>
 
 
-<p><a name="UI-add-to-recent-file-list">(<b>UI-add-to-recent-file-list</b> <span class="cmd">filename</span>)</a></p>
+<p><a name="UI-add-to-recent-file-list">(<span class="cmd">UI-add-to-recent-file-list</span> <span class="arg">filename</span>)</a></p>
 
 <blockquote>
 <p>Add the given <span class="cmd">filename</span> to the recent file list that emacs maintains under the File menu. Recent files are remembered across runs of emacs.</p>
 </blockquote>
 
 
-<p><a name="UI-edit-copy">(<b>UI-edit-copy</b>)</a></p>
+<p><a name="UI-edit-copy">(<span class="cmd">UI-edit-copy</span>)</a></p>
 
 <blockquote>
 <p>Copy the current buffers region to the clipboard.</p>
@@ -126,7 +138,7 @@
 </blockquote>
 
 
-<p><a name="UI-edit-paste">(<b>UI-edit-paste</b>)</a></p>
+<p><a name="UI-edit-paste">(<span class="cmd">UI-edit-paste</span>)</a></p>
 
 <blockquote>
 <p>Insert the contents of the clipboard into the current buffer at dot.</p>
@@ -139,7 +151,7 @@
 </blockquote>
 
 
-<p><a name="UI-file-open">(<b>UI-file-open</b>)</a></p>
+<p><a name="UI-file-open">(<span class="cmd">UI-file-open</span>)</a></p>
 
 <blockquote>
 <p>Pop up the standard file open dialog and allows the users to select a file. The UI-filter-file-list variable is read to setup the file filters. The UI-open-file-name variable is used to initialise the file name and path parts of the dialog box.</p>
@@ -172,7 +184,7 @@
 </blockquote>
 
 
-<p><a name="UI-file-save-as">(<b>UI-file-save-as</b>)</a></p>
+<p><a name="UI-file-save-as">(<span class="cmd">UI-file-save-as</span>)</a></p>
 
 <blockquote>
 <p>Pop up the standard file save as dialog and allows the users to select where to save the file. The UI-filter-file-list variable is read to setup the file filters. The UI-save-as-file-name variable is used to initialise the file name and path parts of the dialog box.</p>
@@ -200,7 +212,7 @@
 </blockquote>
 
 
-<p><a name="UI-find">(<b>UI-find</b>)</a></p>
+<p><a name="UI-find">(<span class="cmd">UI-find</span>)</a></p>
 
 <blockquote>
 <p>Pop up the find string modeless dialog box. The UI-search-string variable is used to initialise the "Find what" field.</p>
@@ -222,7 +234,7 @@
 </blockquote>
 
 
-<p><a name="UI-find-and-replace">(<b>UI-find-and-replace</b>)</a></p>
+<p><a name="UI-find-and-replace">(<span class="cmd">UI-find-and-replace</span>)</a></p>
 
 <blockquote>
 <p>Pop up the find and replace modeless dialog box. The UI-search-string variable is used to initialise the "Find what" field. And the UI-replace-string variable is used to initialise the "Replace with" field.</p>
@@ -237,7 +249,7 @@
 </blockquote>
 
 
-<p><a name="UI-frame-maximize">(<b>UI-frame-maximize</b>)</a></p>
+<p><a name="UI-frame-maximize">(<span class="cmd">UI-frame-maximize</span>)</a></p>
 
 <blockquote>
 <p>Maximize the frame window.</p>
@@ -252,7 +264,7 @@
 </blockquote>
 
 
-<p><a name="UI-frame-minimize">(<b>UI-frame-minimize</b>)</a></p>
+<p><a name="UI-frame-minimize">(<span class="cmd">UI-frame-minimize</span>)</a></p>
 
 <blockquote>
 <p>Minimize the frame window.</p>
@@ -267,7 +279,7 @@
 </blockquote>
 
 
-<p><a name="UI-frame-restore">(<b>UI-frame-restore</b>)</a></p>
+<p><a name="UI-frame-restore">(<span class="cmd">UI-frame-restore</span>)</a></p>
 
 <blockquote>
 <p>Restore the frame window.</p>
@@ -282,14 +294,14 @@
 </blockquote>
 
 
-<p><a name="UI-frame-to-foreground">(<b>UI-frame-to-foreground</b>)</a></p>
+<p><a name="UI-frame-to-foreground">(<span class="cmd">UI-frame-to-foreground</span>)</a></p>
 
 <blockquote>
 <p>Bring Emacs to the foreground allowing mouse and keybaord input to go to Emacs.</p>
 </blockquote>
 
 
-<p><a name="UI-list-menus">(<b>UI-list-menus</b>)</a></p>
+<p><a name="UI-list-menus">(<span class="cmd">UI-list-menus</span>)</a></p>
 
 <blockquote>
 <p>List the menu structure that is currently in effect.</p>
@@ -304,7 +316,7 @@
 </blockquote>
 
 
-<p><a name="UI-remove-menu">(<b>UI-remove-menu</b>)</a></p>
+<p><a name="UI-remove-menu">(<span class="cmd">UI-remove-menu</span>)</a></p>
 
 <blockquote>
 <p>UI-remove-menu removes a single menu item from the existing menus.</p>
@@ -323,7 +335,7 @@
 </blockquote>
 
 
-<p><a name="UI-switch-buffer">(<b>UI-switch-buffer</b>)</a></p>
+<p><a name="UI-switch-buffer">(<span class="cmd">UI-switch-buffer</span>)</a></p>
 
 <blockquote>
 <p>Displays a list of the current buffers. You can select, from the list, a buffer to switch to, or you can enter the name of a new buffer to switch to.</p>
@@ -338,7 +350,7 @@
 </blockquote>
 
 
-<p><a name="UI-view-scroll-bars">(<b>UI-view-scroll-bars</b>)</a></p>
+<p><a name="UI-view-scroll-bars">(<span class="cmd">UI-view-scroll-bars</span>)</a></p>
 
 <blockquote>
 <p>Call this command to toggle the scroll bars on and off.</p>
@@ -351,7 +363,7 @@
 </blockquote>
 
 
-<p><a name="UI-view-status-bar">(<b>UI-view-status-bar</b>)</a></p>
+<p><a name="UI-view-status-bar">(<span class="cmd">UI-view-status-bar</span>)</a></p>
 
 <blockquote>
 <p>Call this command to toggle the status bar on and off.</p>
@@ -364,7 +376,7 @@
 </blockquote>
 
 
-<p><a name="UI-view-tool-bar">(<b>UI-view-tool-bar</b>)</a></p>
+<p><a name="UI-view-tool-bar">(<span class="cmd">UI-view-tool-bar</span>)</a></p>
 
 <blockquote>
 <p>Call this command to toggle the tool bar on and off.</p>
@@ -392,21 +404,21 @@
 </blockquote>
 
 
-<p><a name="UI-window-new">(<b>UI-window-new</b>)</a></p>
+<p><a name="UI-window-new">(<span class="cmd">UI-window-new</span>)</a></p>
 
 <blockquote>
 <p>Create a new document windows.</p>
 </blockquote>
 
 
-<p><a name="UI-window-next">(<b>UI-window-next</b>)</a></p>
+<p><a name="UI-window-next">(<span class="cmd">UI-window-next</span>)</a></p>
 
 <blockquote>
 <p>Select the next document windows.</p>
 </blockquote>
 
 
-<p><a name="UI-window-maximize">(<b>UI-window-maximize</b>)</a></p>
+<p><a name="UI-window-maximize">(<span class="cmd">UI-window-maximize</span>)</a></p>
 
 <blockquote>
 <p>Maximize the document window.</p>
@@ -427,7 +439,7 @@
 </blockquote>
 
 
-<p><a name="UI-window-minimize">(<b>UI-window-minimize</b>)</a></p>
+<p><a name="UI-window-minimize">(<span class="cmd">UI-window-minimize</span>)</a></p>
 
 <blockquote>
 <p>Minimize the document window.</p>
@@ -448,7 +460,7 @@
 </blockquote>
 
 
-<p><a name="UI-window-restore">(<b>UI-window-restore</b>)</a></p>
+<p><a name="UI-window-restore">(<span class="cmd">UI-window-restore</span>)</a></p>
 
 <blockquote>
 <p>Restore the document window.</p>
@@ -469,7 +481,7 @@
 </blockquote>
 
 
-<p><a name="UI-window-tile-horizontal">(<b>UI-window-tile-horizontal</b>)</a></p>
+<p><a name="UI-window-tile-horizontal">(<span class="cmd">UI-window-tile-horizontal</span>)</a></p>
 
 <blockquote>
 <p>Horizontally tile the document windows.</p>
@@ -490,7 +502,7 @@
 </blockquote>
 
 
-<p><a name="UI-window-tile-vertical">(<b>UI-window-tile-vertical</b>)</a></p>
+<p><a name="UI-window-tile-vertical">(<span class="cmd">UI-window-tile-vertical</span>)</a></p>
 
 <blockquote>
 <p>Vertically tile the document windows.</p>
@@ -511,7 +523,7 @@
 </blockquote>
 
 
-<p><a name="UI-windows-execute-program">(<b>UI-windows-execute-program</b> <span class="cmd">command show</span>)</a></p>
+<p><a name="UI-windows-execute-program">(<span class="cmd">UI-windows-execute-program</span> <span class="arg">command show</span>)</a></p>
 
 <blockquote>
 <p>This command will start a windows program executing named in <span class="cmd">command</span>. The program will be stated in the show state named in <span class="cmd">show</span>. <span class="cmd">show</span> can be one of the strings "minimized", "maximized" or "normal".</p>
@@ -534,7 +546,7 @@
 </blockquote>
 
 
-<p><a name="UI-windows-shell-execute">(<b>UI-windows-shell-execute</b> <span class="cmd">operation file parameters directory show</span>)</a></p>
+<p><a name="UI-windows-shell-execute">(<span class="cmd">UI-windows-shell-execute</span> <span class="arg">operation file parameters directory show</span>)</a></p>
 
 <blockquote>
 <p>This command will process file named in <span class="cmd">file</span> according to the <span class="cmd">operation</span>.</p>
@@ -563,15 +575,15 @@
 </blockquote>
 
 
-<p><a name="UI-windows-help"><b>(UI-windows-help</b> <span class="cmd">help-file cmd data</span>)</a></p>
+<p><a name="UI-windows-help"><b>(UI-windows-help</b> <span class="arg">help-file cmd data</span>)</a></p>
 
 <blockquote>
 <p>The UI-windows-help command is an interface to the Windows Help system. The <span class="cmd">help-file</span> parameter is the file name of the help file that will be used. What is done with the help file is determined by the <span class="cmd">cmd</span> and <span class="cmd">data</span> parameters. The following table details the <span class="cmd">cmd</span> values and any required <span class="cmd">data</span>.</p>
 
 <table>
 <tr>
-<td><b><span class="cmd">cmd</span> Value</b></td>
-<td><b>Description</b></td>
+<th><span class="cmd">cmd</span> Value</th>
+<th>Description</th>
 </tr>
 
 <tr>
@@ -643,42 +655,42 @@
 </blockquote>
 
 
-<p><a name="undo">(<b>undo</b>) ^X-^U</a></p>
+<p><a name="undo">(<span class="cmd">undo</span>) ^X-^U</a></p>
 
 <blockquote>
 <p>Undoes editing changes made to modified buffers. The command starts off a sequence of undo operations which are continued with the use of the undo-more function. Each undo or undo-more undoes one more series of changes to the next undo-boundary. An undo-boundary is planted before each keyboard key stroke.</p>
 </blockquote>
 
 
-<p><a name="undo-boundary">(<b>undo-boundary</b>)</a></p>
+<p><a name="undo-boundary">(<span class="cmd">undo-boundary</span>)</a></p>
 
 <blockquote>
 <p>All operations between a pair of calls to undo-boundary will be undone by undo and undo-more. undo-boundary is called automatically between key sequences.</p>
 </blockquote>
 
 
-<p><a name="undo-more">(<b>undo-more</b>)</a></p>
+<p><a name="undo-more">(<span class="cmd">undo-more</span>)</a></p>
 
 <blockquote>
 <p>Each time undo-more is called, the state of the buffers is restored to the previous undo-boundary. If called from the keyboard processor, it will simply undo the first call to undo.</p>
 </blockquote>
 
 
-<p><a name="unlink-file">(<b>unlink-file</b> <span class="cmd">file-spec</span>)</a></p>
+<p><a name="unlink-file">(<span class="cmd">unlink-file</span> <span class="arg">file-spec</span>)</a></p>
 
 <blockquote>
 <p>Deletes the specified file.</p>
 </blockquote>
 
 
-<p><a name="unset-mark">(<b>unset-mark</b>) ^X-^@</a></p>
+<p><a name="unset-mark">(<span class="cmd">unset-mark</span>) ^X-^@</a></p>
 
 <blockquote>
 <p>Un-sets the mark.</p>
 </blockquote>
 
 
-<p><a name="up-window">(<b>up-window</b> <span class="cmd">repeat-count</span>)</a></p>
+<p><a name="up-window">(<span class="cmd">up-window</span> <span class="arg">repeat-count</span>)</a></p>
 
 <blockquote>
 <p>Moves the cursor into the window that is above the current window, unlike previous-window, which moves the cursor without regard to the physical position of the windows on the screen.</p>
@@ -689,42 +701,42 @@
 </blockquote>
 
 
-<p><a name="use-abbrev-table">(<b>use-abbrev-table</b> <span class="cmd">abbrev-table-name</span>)</a></p>
+<p><a name="use-abbrev-table">(<span class="cmd">use-abbrev-table</span> <span class="arg">abbrev-table-name</span>)</a></p>
 
 <blockquote>
 <p>Sets the current local abbreviation table to the specified table.</p>
 </blockquote>
 
 
-<p><a name="use-global-map">(<b>use-global-map</b> <span class="cmd">keymap-name</span>)</a></p>
+<p><a name="use-global-map">(<span class="cmd">use-global-map</span> <span class="arg">keymap-name</span>)</a></p>
 
 <blockquote>
 <p>Specifies that the named keymap will be used for the global interpretation of all keystrokes. (use-local-map is used to change the local interpretation of keystrokes.)</p>
 </blockquote>
 
 
-<p><a name="use-local-map">(<b>use-local-map</b> <span class="cmd">keymap-name</span>)</a></p>
+<p><a name="use-local-map">(<span class="cmd">use-local-map</span> <span class="arg">keymap-name</span>)</a></p>
 
 <blockquote>
 <p>Specifies that the named keymap to be used for the local interpretation of all keystrokes. (use-global-map is used to change the global interpretation of key strokes.)</p>
 </blockquote>
 
 
-<p><a name="use-old-buffer">(<b>use-old-buffer</b> <span class="cmd">buffer-name</span>) ^X-^O</a></p>
+<p><a name="use-old-buffer">(<span class="cmd">use-old-buffer</span> <span class="arg">buffer-name</span>) ^X-^O</a></p>
 
 <blockquote>
 <p>Associates an existing buffer with the current window.</p>
 </blockquote>
 
 
-<p><a name="use-syntax-table">(<b>use-syntax-table</b> <span class="cmd">syntax-table-name</span>)</a></p>
+<p><a name="use-syntax-table">(<span class="cmd">use-syntax-table</span> <span class="arg">syntax-table-name</span>)</a></p>
 
 <blockquote>
 <p>Associates the named syntax table with the current buffer.</p>
 </blockquote>
 
 
-<p><a name="use-variables-of-buffer">(<b>use-variables-of-buffer</b> <span class="cmd">buffer-name expression</span>)</a></p>
+<p><a name="use-variables-of-buffer">(<span class="cmd">use-variables-of-buffer</span> <span class="arg">buffer-name expression</span>)</a></p>
 
 <blockquote>
 <p>Allows an MLisp procedure to access the buffer-specific variables of any buffer without switching to it.</p>
@@ -743,14 +755,14 @@
 </blockquote>
 
 
-<p><a name="users-full-name">(<b>users-full-name</b>)</a></p>
+<p><a name="users-full-name">(<span class="cmd">users-full-name</span>)</a></p>
 
 <blockquote>
 <p>Returns the user's full name as a string.</p>
 </blockquote>
 
 
-<p><a name="users-login-name">(<b>users-login-name</b>)</a></p>
+<p><a name="users-login-name">(<span class="cmd">users-login-name</span>)</a></p>
 
 <blockquote>
 <p>Returns the users login name as a string.</p>

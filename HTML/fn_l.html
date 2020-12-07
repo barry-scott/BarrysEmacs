@@ -11,14 +11,14 @@
 <body>
 <div class="contents">
 
-<p><a name="lambda">(<b>lambda</b>)</a></p>
+<p><a name="lambda">(<span class="cmd">lambda</span>)</a></p>
 
 <blockquote>
 <p>Provides a progn block with lamdba binding.</p>
 </blockquote>
 
 
-<p><a name="last-key-struck">(<b>last-key-struck</b>)</a></p>
+<p><a name="last-key-struck">(<span class="cmd">last-key-struck</span>)</a></p>
 
 <blockquote>
 <p>Returns the last command character struck. If you have a function bound to many keys, the function may use <span class="cmd">last-key-struck</span> to determine which key was used to invoke it.</p>
@@ -35,7 +35,7 @@
 </blockquote>
 
 
-<p><a name="left-marker">(<b>left-marker</b> <span class="cmd">marker-expression</span>)</a></p>
+<p><a name="left-marker">(<span class="cmd">left-marker</span> <span class="arg">marker-expression</span>)</a></p>
 
 <blockquote>
 <p>Takes a marker as a parameter and returns a new marker. The new marker will be at the same position as the original but with left-hand affinity. This means that text inserted at the position of the marker will not move the marker's position. Right-hand affinity markers move to the right as text is inserted.</p>
@@ -57,7 +57,7 @@
 </blockquote>
 
 
-<p><a name="left-window">(<b>left-window</b> <span class="cmd">repeat-count</span>)</a></p>
+<p><a name="left-window">(<span class="cmd">left-window</span> <span class="arg">repeat-count</span>)</a></p>
 
 <blockquote>
 <p>Moves the cursor into the window that is to the left of the current window. (Unlike <span class="cmd">next-window</span>, which moves the cursor without regard to the physical position of the windows on the screen).</p>
@@ -85,7 +85,7 @@
 </blockquote>
 
 
-<p><a name="length">(<b>length</b> <span class="cmd">string-expression</span>)</a></p>
+<p><a name="length">(<span class="cmd">length</span> <span class="arg">string-expression</span>)</a></p>
 
 <blockquote>
 <p>Returns the length of its string parameter.</p>
@@ -99,14 +99,14 @@
 </blockquote>
 
 
-<p><a name="line-to-top-of-window">(<b>line-to-top-of-window</b>) ESC-!</a></p>
+<p><a name="line-to-top-of-window">(<span class="cmd">line-to-top-of-window</span>) ESC-!</a></p>
 
 <blockquote>
 <p>Moves the line in which dot resides to the top of the window associated with the current buffer.</p>
 </blockquote>
 
 
-<p><a name="lisp-mode">(<b>lisp-mode</b>)</a></p>
+<p><a name="lisp-mode">(<span class="cmd">lisp-mode</span>)</a></p>
 
 <blockquote>
 <p>Enables Lisp Mode, a major mode for editing programs written in the Lisp language and also MLisp programs for Emacs.</p>
@@ -117,7 +117,7 @@
 </blockquote>
 
 
-<p><a name="list-abbreviation-tables">(<b>list-abbreviation-tables</b>)</a></p>
+<p><a name="list-abbreviation-tables">(<span class="cmd">list-abbreviation-tables</span>)</a></p>
 
 <blockquote>
 <p>Creates a buffer called <span class="cmd">Abbreviation table list</span> and inserts a list of the abbreviation tables that have been defined in Emacs.</p>
@@ -133,7 +133,7 @@
 </blockquote>
 
 
-<p><a name="list-auto-executes">(<b>list-auto-executes</b>)</a></p>
+<p><a name="list-auto-executes">(<span class="cmd">list-auto-executes</span>)</a></p>
 
 <blockquote>
 <p>Creates a buffer called <span class="cmd">Auto Execute list</span> and inserts a list of all the auto-execute patterns and their functions.</p>
@@ -142,7 +142,7 @@
 </blockquote>
 
 
-<p><a name="list-breakpoints">(<b>list-breakpoints</b>)</a></p>
+<p><a name="list-breakpoints">(<span class="cmd">list-breakpoints</span>)</a></p>
 
 <blockquote>
 <p>Creates a buffer called <span class="cmd">Breakpoint list</span> and inserts a list of the functions that have breakpoints set.</p>
@@ -159,21 +159,21 @@
 </blockquote>
 
 
-<p><a name="list-buffers">(<b>list-buffers</b>) ^X-^B</a></p>
+<p><a name="list-buffers">(<span class="cmd">list-buffers</span>) ^X-^B</a></p>
 
 <blockquote>
 <p>Produces a listing of all existing buffers giving their names, the name of the associated file (if there is one), the number of characters in the buffer and an indication of whether or not the buffer has been modified since it was read from or written to the associated file.</p>
 </blockquote>
 
 
-<p><a name="list-databases">(<b>list-databases</b>)</a></p>
+<p><a name="list-databases">(<span class="cmd">list-databases</span>)</a></p>
 
 <blockquote>
 <p>Lists all database search lists and the names of the database files contained in them.</p>
 </blockquote>
 
 
-<p><a name="list-images">(<b>list-images</b>)</a></p>
+<p><a name="list-images">(<span class="cmd">list-images</span>)</a></p>
 
 <blockquote>
 <p>Lists the names of all images referenced by the <span class="cmd">external-function</span> command. The listing shows the image name, the value of the context and the name of the file that holds the image.</p>
@@ -189,7 +189,7 @@
 </blockquote>
 
 
-<p><a name="list-processes">(<b>list-processes</b>)</a></p>
+<p><a name="list-processes">(<span class="cmd">list-processes</span>)</a></p>
 
 <blockquote>
 <p>Lists the names of all existing subprocesses. The list includes the state in which each process is running, the time at which each process entered that state, and some information about the names of buffers and procedures associated with the process.</p>
@@ -211,14 +211,14 @@
 </blockquote>
 
 
-<p><a name="list-syntax-tables">(<b>list-syntax-tables</b>)</a></p>
+<p><a name="list-syntax-tables">(<span class="cmd">list-syntax-tables</span>)</a></p>
 
 <blockquote>
 <p>Lists all the syntax tables that have been defined.</p>
 </blockquote>
 
 
-<p><a name="load">(<b>load</b> <span class="cmd">file-name</span>)</a></p>
+<p><a name="load">(<span class="cmd">load</span> <span class="arg">file-name</span>)</a></p>
 
 <blockquote>
 <p>Loads the nominated file as a series of MLisp expressions executing each in turn. (This function is exactly the same as <span class="cmd">execute-mlisp-file</span>).</p>
@@ -233,12 +233,12 @@
 </blockquote>
 
 
-<p><a name="local-bind-to-key">(<b>local-bind-to-key</b> <span class="cmd">function key-sequence</span>)</a></p>
+<p><a name="local-bind-to-key">(<span class="cmd">local-bind-to-key</span> <span class="arg">function key-sequence</span>)</a></p>
 
 <blockquote>
 <p>Binds the specified function to the given key sequence. Unlike <span class="cmd">bind-to-key</span>, the binding has effect in only the current buffer. If called interactively, the function prompts for the name of the function to bind and also for the key.</p>
 
-<p>See <a href="fn_b.html#bind-to-key"><span class="cmd">bind-to-key</span></a> for details of key names.</p>
+<p>See <a href="fn_b.html#bind-to-key"><span class="arg">bind-to-key</span></a> for details of key names.</p>
 
 <p><b>Examples:</b></p>
 
@@ -277,7 +277,7 @@
 </blockquote>
 
 
-<p><a name="local-binding-of">(<b>local-binding-of</b> <span class="cmd">key-sequence</span>)</a></p>
+<p><a name="local-binding-of">(<span class="cmd">local-binding-of</span> <span class="arg">key-sequence</span>)</a></p>
 
 <blockquote>
 <p>Returns the name of the function that the key sequence provided will invoke using the current local keymap.</p>
@@ -296,7 +296,7 @@
 </blockquote>
 
 
-<p><a name="looking-at">(<b>looking-at</b> <span class="cmd">regular-expression</span>)</a></p>
+<p><a name="looking-at">(<span class="cmd">looking-at</span> <span class="arg">regular-expression</span>)</a></p>
 
 <blockquote>
 <p>Deprecated: Use ere-looking-at for new code.</p>
@@ -312,7 +312,7 @@
 
 <p>is true if the line starts with any number of spaces or tabs, followed by "else".  </p>
 
-<p>See <a href="fn_r.html#re-search-forward"><span class="cmd">re-search-forward</span></a> for more information about regular expression searches.</p>
+<p>See <a href="fn_r.html#re-search-forward"><span class="arg">re-search-forward</span></a> for more information about regular expression searches.</p>
 
 <p><b>See also:</b></p>
 

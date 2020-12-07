@@ -44,6 +44,7 @@
     --colour-border: #ddd;
     --colour-table-border: #aaa;
     --colour-text-cmd: #800;
+    --colour-text-arg: #880;
     --colour-text-key: #080;
     --colour-pre-fg: black;
     --colour-pre-bg: #ddd;
@@ -64,6 +65,7 @@
     --colour-border: #111;
     --colour-border: #444;
     --colour-text-cmd: #4ee;
+    --colour-text-arg: #e4e;
     --colour-text-key: #0c0;
     --colour-pre-fg: white;
     --colour-pre-bg: #333;
@@ -201,7 +203,8 @@ table
 
 #body table.keynames caption
 {
-    font: bold normal sans-serif;
+    font-weight: bold;
+    font-family: sans-serif;
     margin-top: 1em;
 }
 
@@ -249,6 +252,12 @@ table
 
 #body td
 {
+}
+
+span.arg
+{
+    font-family: monospace, serif;
+    color: var(--colour-text-arg);
 }
 
 span.cmd

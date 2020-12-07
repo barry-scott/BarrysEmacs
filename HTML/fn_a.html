@@ -11,7 +11,7 @@
 <body>
 <div class="contents">
 
-<p><a name="append-region-to-buffer">(<b>append-region-to-buffer</b> <span class="cmd">buffer-name</span>)</a></p>
+<p><a name="append-region-to-buffer">(<span class="cmd">append-region-to-buffer</span> <span class="arg">buffer-name</span>)</a></p>
 
 <blockquote>
 <p>Appends the region between dot and mark to the buffer <span class="cmd">buffer-name</span>. Neither the original text in the destination buffer nor the text in the region between dot and mark are disturbed.</p>
@@ -26,7 +26,7 @@
 </blockquote>
 
 
-<p><a name="append-to-file">(<b>append-to-file</b> <span class="cmd">file-name</span>)</a></p>
+<p><a name="append-to-file">(<span class="cmd">append-to-file</span> <span class="arg">file-name</span>)</a></p>
 
 <blockquote>
 <p>Appends the contents of the current buffer to the file named <span class="cmd">file-name</span>. If the file does not exist, it is created.</p>
@@ -35,7 +35,7 @@
 </blockquote>
 
 
-<p><a name="apply-auto-execute">(<b>apply-auto-execute</b> <span class="cmd">filename</span>)</a></p>
+<p><a name="apply-auto-execute">(<span class="cmd">apply-auto-execute</span> <span class="arg">filename</span>)</a></p>
 
 <blockquote>
 <p>Scans the list of file name patterns set up by auto-execute and executes an associated command if the supplied file name matches one of the patterns.</p>
@@ -50,7 +50,7 @@
 </blockquote>
 
 
-<p><a name="apply-colour-to-region">(<b>apply-colour-to-region</b> <span class="cmd">start end colour</span>)</a></p>
+<p><a name="apply-colour-to-region">(<span class="cmd">apply-colour-to-region</span> <span class="arg">start end colour</span>)</a></p>
 
 <blockquote>
 <p>Use the command <span class="cmd">apply-colour-to-region</span> to define the region in a buffer to which Emacs is to add colour.</p>
@@ -84,7 +84,7 @@
 </blockquote>
 
 
-<p><a name="apropos">(<b>apropos</b> <span class="cmd">keyword</span>) ESC-?</a></p>
+<p><a name="apropos">(<span class="cmd">apropos</span> <span class="arg">keyword</span>) ESC-?</a></p>
 
 <blockquote>
 <p>Prints a list of all the commands and variable whose names contains the word <span class="cmd">keyword</span>. For example, if you forget which commands and variables deal with windows, you can type <span class="key">ESC-? window ENTER</span>.</p>
@@ -95,7 +95,7 @@
 </blockquote>
 
 
-<p><a name="apropos-command">(<b>apropos-command</b> <span class="cmd">keyword</span>)</a></p>
+<p><a name="apropos-command">(<span class="cmd">apropos-command</span> <span class="arg">keyword</span>)</a></p>
 
 <blockquote>
 <p>Prints a list of all the commands whose extended command name contains the word <span class="cmd">keyword</span>. For example, if you forget which commands deal with windows, you can type <span class="key">ESC-? window ENTER</span>.</p>
@@ -106,7 +106,7 @@
 </blockquote>
 
 
-<p><a name="apropos-variable">(<b>apropos-variable</b> <span class="cmd">keyword</span>) ^X-?</a></p>
+<p><a name="apropos-variable">(<span class="cmd">apropos-variable</span> <span class="arg">keyword</span>) ^X-?</a></p>
 
 <blockquote>
 <p>Prints a list of all the variables whose extended command name contains the word <span class="cmd">keyword</span>. For example, if you forget which variables deal with windows, you can type <span class="key">^X-? window ESC</span>.</p>
@@ -121,20 +121,22 @@
 </blockquote>
 
 
-<p><a name="arg">(<b>arg</b> <span class="cmd">expression-1 prompt-string</span>)</a></p>
+<p><a name="arg">(<span class="cmd">arg</span> <span class="arg">expression-1 prompt-string</span>)</a></p>
 
 <blockquote>
 <p>Evaluates the <span class="cmd">expression-1</span>th argument of the invoking function or prompts for it if called interactively. The prompt is optional; if it is omitted, the function cannot be called interactively.</p>
 
 <p>Some examples:</p>
 
+<pre>
 (arg 1 "Enter a number: ") 
+</pre>
 
 <p>evaluates to the value of the first argument of the current function, if the current function was called from MLisp. If it was called interactively then the argument is prompted for.</p>
 
 <p>Given:</p>
 
-<span class="cmd">defun (foo (+ (arg 1 "Number to increment? ") 1)))</span> 
+<pre>(defun (foo (+ (arg 1 "Number to increment? ") 1)))</pre>
 
 <p>then <span class="cmd">(foo 10)</span> returns 11, but typing <span class="key">ESC-x foo</span> causes Emacs to ask <span class="cmd">Number to increment?</span></p>
 
@@ -144,7 +146,7 @@
 </blockquote>
 
 
-<p><a name="arg-is-qualifier">(<b>arg-is-qualifier</b> <span class="cmd">expression-1</span>)</a></p>
+<p><a name="arg-is-qualifier">(<span class="cmd">arg-is-qualifier</span> <span class="arg">expression-1</span>)</a></p>
 
 <blockquote>
 <p>When Emacs is invoked it parses the command line into qualifiers and values according to the host operating system conventions. Use arg-is-qualifier to find out if the <span class="cmd">expression-1</span>th argument if a qualifier.</p>
@@ -171,12 +173,12 @@
 </blockquote>
 
 
-<p><a name="argc">(<b>argc</b>)</a></p>
+<p><a name="argc">(<span class="cmd">argc</span>)</a></p>
 
 <blockquote>
 <p>Returns the number of arguments that were passed to Emacs when it was invoked from DCL. If argc is called early enough, Emacs' default startup action of visiting the files named on the command line is suppressed.</p>
 
-<p>The <a href="mlisp_programmers_guide.html">MLisp Programmers Guide</a> has furthur information about <i>Command Lines</i>.</p>
+<p>The <a href="mlisp_programmers_guide.html">MLisp Programmers Guide</a> has furthur information about <span class="arg">Command Lines</span>.</p>
 
 <p><strong>Default binding:</strong> none</p>
 
@@ -190,7 +192,7 @@
 </blockquote>
 
 
-<p><a name="argument-prefix">(<b>argument-prefix</b>)</a></p>
+<p><a name="argument-prefix">(<span class="cmd">argument-prefix</span>)</a></p>
 
 <blockquote>
 <p>When followed by a string of digits, cause that string of digits to be interpreted as a numeric prefix argument which is generally a repetition count for the following command.</p>
@@ -205,12 +207,12 @@
 </blockquote>
 
 
-<p><a name="argv">(<b>argv</b> <span class="cmd">expression-1</span>)</a></p>
+<p><a name="argv">(<span class="cmd">argv</span> <span class="arg">expression-1</span>)</a></p>
 
 <blockquote>
 <p>Returns the <span class="cmd">expression-1</span>th argument that was passed to Emacs when it was invoked from DCL. If Emacs was invoked as <tt>Emacs blatto</tt> then (argv 1) would return the string blatto. If argv is called early enough, Emacs' default startup action of visiting the files named on the command line is suppressed.</p>
 
-<p>The <a href="mlisp_programmers_guide.html">MLisp Programmers Guide</a> has furthur information about <i>Command Lines</i>.</p>
+<p>The <a href="mlisp_programmers_guide.html">MLisp Programmers Guide</a> has furthur information about <span class="arg">Command Lines</span>.</p>
 
 <p><strong>Default binding:</strong> none</p>
 
@@ -224,7 +226,7 @@
 </blockquote>
 
 
-<p><a name="array">(<b>array</b> <span class="cmd">low-bound high-bound ...</span>)</a></p>
+<p><a name="array">(<span class="cmd">array</span> <span class="arg">low-bound high-bound ...</span>)</a></p>
 
 <blockquote>
 <p>Creates an array of up to 10 dimensions. The arguments to the command are pairs of array bounds (first the lower bound, then the upper bound). All elements of the array are initialised to integer value 0.</p>
@@ -241,7 +243,7 @@
 </blockquote>
 
 
-<p><a name="auto-execute">(<b>auto-execute</b> <span class="cmd">command-name file-pattern</span>)</a></p>
+<p><a name="auto-execute">(<span class="cmd">auto-execute</span> <span class="arg">command-name file-pattern</span>)</a></p>
 
 <blockquote>
 <p>Sets up a filename-to-command association. When a file is read in, using visit-file or read-file, whose name matches the given pattern, the specified command will be executed. The command is generally one which sets the mode for the buffer.</p>
@@ -268,7 +270,7 @@
 </blockquote>
 
 
-<p><a name="autoload">(<b>autoload</b> <span class="cmd">command-string file-name</span>)</a></p>
+<p><a name="autoload">(<span class="cmd">autoload</span> <span class="arg">command-string file-name</span>)</a></p>
 
 <blockquote>
 <p>Specifies that the code that defines the specified command should be automatically loaded from the named file. When an attempt to execute the command is encountered, the file is loaded and then the specified function is executed. You can use autoload to load functions into Emacs only when they are necessary rather than saving them as part of an environment; this saves space in Emacs and speeds Emacs startup.</p>

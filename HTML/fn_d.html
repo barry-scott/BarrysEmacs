@@ -11,21 +11,21 @@
 <body>
 <div class="contents">
 
-<p><a name="dabbrev">(<b>dabbrev</b>) ^W</a></p>
+<p><a name="dabbrev">(<span class="cmd">dabbrev</span>) ^W</a></p>
 
 <blockquote>
-<p>Dynamic abbreviation facility. See <a href="extensions_reference.html">extension</a> <i>dabbrev</i></p>
+<p>Dynamic abbreviation facility. See <a href="extensions_reference.html">extension</a> <span class="arg">dabbrev</span></p>
 </blockquote>
 
 
-<p><a name="debug">(<b>debug</b>) ESC-^D</a></p>
+<p><a name="debug">(<span class="cmd">debug</span>) ESC-^D</a></p>
 
 <blockquote>
 <p>Enters the MLisp debugger. When in the debugger type h to get help on the debugger's key bindings.</p>
 </blockquote>
 
 
-<p><a name="debug-emacs">(<b>debug-emacs</b>)</a></p>
+<p><a name="debug-emacs">(<span class="cmd">debug-emacs</span>)</a></p>
 
 <blockquote>
 <p>The function is used by the Emacs developers for debugging.</p>
@@ -36,7 +36,7 @@
 </blockquote>
 
 
-<p><a name="declare-buffer-specific">(<b>declare-buffer-specific</b> <span class="cmd">variable-name...</span>)</a></p>
+<p><a name="declare-buffer-specific">(<span class="cmd">declare-buffer-specific</span> <span class="arg">variable-name...</span>)</a></p>
 
 <blockquote>
 <p>Declares and allocates storage for each named variable that is not already declared. Buffer-specific bindings outlive all extended command calls. Each buffer will have its own copy of a buffer-specific variable.</p>
@@ -49,7 +49,7 @@
 </blockquote>
 
 
-<p><a name="declare-global">(<b>declare-global</b> <span class="cmd">variable-name ...</span>)</a></p>
+<p><a name="declare-global">(<span class="cmd">declare-global</span> <span class="arg">variable-name ...</span>)</a></p>
 
 <blockquote>
 <p>Globally declares and allocates storage for each named variable that is not already declared. Global bindings outlive all extended command calls.</p>
@@ -62,7 +62,7 @@
 </blockquote>
 
 
-<p><a name="decompile-current-line">(<b>decompile-current-line</b>)</a></p>
+<p><a name="decompile-current-line">(<span class="cmd">decompile-current-line</span>)</a></p>
 
 <blockquote>
 <p>Returns the currently executing line decompiled into an MLisp expression. If called interactively, it returns a null string. If called non-interactively, it returns the decompiled MLisp for the line about to be traced.</p>
@@ -81,14 +81,14 @@
 </blockquote>
 
 
-<p><a name="decompile-mlisp-function">(<b>decompile-mlisp-function</b> <span class="cmd">function-name</span>)</a></p>
+<p><a name="decompile-mlisp-function">(<span class="cmd">decompile-mlisp-function</span> <span class="arg">function-name</span>)</a></p>
 
 <blockquote>
 <p>Decompiles the MLisp function whose name is supplied, and puts the output into the current buffer at dot.</p>
 </blockquote>
 
 
-<p><a name="default-emacs-init">(<b>default-emacs-init</b> <span class="cmd">user-interface-style-list</span>)</a></p>
+<p><a name="default-emacs-init">(<span class="cmd">default-emacs-init</span> <span class="arg">user-interface-style-list</span>)</a></p>
 
 <blockquote>
 <p>Add this function to your emacsinit.ml to setup the default emacs key bindings, mouse behaviour, variable settings and autoloads.</p>
@@ -233,7 +233,7 @@ extended regular expression functions:</p>
 </pre>
 
 
-<p><a name="default-global-keymap">(<b>default-global-keymap</b>)</a></p>
+<p><a name="default-global-keymap">(<span class="cmd">default-global-keymap</span>)</a></p>
 
 <blockquote>
 <p>Returns the global keymap in which Emacs starts. The bindings are those wired into Emacs, as well as any bindings created by the user with bind-to-key.</p>
@@ -248,7 +248,7 @@ extended regular expression functions:</p>
 </blockquote>
 
 
-<p><a name="define-buffer-macro">(<b>define-buffer-macro</b>)</a></p>
+<p><a name="define-buffer-macro">(<span class="cmd">define-buffer-macro</span>)</a></p>
 
 <blockquote>
 <p>Takes the contents of the current buffer and defines it as a macro whose name is associated with the buffer. This is how you redefine a macro that has been edited using edit-macro.</p>
@@ -267,7 +267,7 @@ extended regular expression functions:</p>
 </blockquote>
 
 
-<p><a name="define-global-abbrev">(<b>define-global-abbrev</b> <span class="cmd">"abbreviation" "expansion"</span>)</a></p>
+<p><a name="define-global-abbrev">(<span class="cmd">define-global-abbrev</span> <span class="arg">"abbreviation" "expansion"</span>)</a></p>
 
 <blockquote>
 <p>Defines or redefines an abbreviation with the given name for the given phrase in the global abbreviation table. When you type the abbreviation and then enter a word-completion character, Emacs changes the abbreviation into the expanded form. This is similar to the AutoCorrect feature in Microsoft Word.</p>
@@ -294,7 +294,7 @@ extended regular expression functions:</p>
 </blockquote>
 
 
-<p><a name="define-hooked-global-abbrev">(<b>define-hooked-global-abbrev</b> <span class="cmd">"abbrev" "phrase" "procedure"</span>)</a></p>
+<p><a name="define-hooked-global-abbrev">(<span class="cmd">define-hooked-global-abbrev</span> <span class="arg">"abbrev" "phrase" "procedure"</span>)</a></p>
 
 <blockquote>
 <p>Defines or redefines an abbreviation with the given name for the given phrase in the global abbreviation table and associates a function with the abbreviation.</p>
@@ -315,7 +315,7 @@ extended regular expression functions:</p>
 </blockquote>
 
 
-<p><a name="define-hooked-local-abbrev">(<b>define-hooked-local-abbrev</b> <span class="cmd">"abbrev" "phrase" "procedure"</span>)</a></p>
+<p><a name="define-hooked-local-abbrev">(<span class="cmd">define-hooked-local-abbrev</span> <span class="arg">"abbrev" "phrase" "procedure"</span>)</a></p>
 
 <blockquote>
 <p>Defines or redefines an abbreviation with the given name for the given phrase in the local abbreviation table and associates a procedure with the abbreviation.</p>
@@ -336,7 +336,7 @@ extended regular expression functions:</p>
 </blockquote>
 
 
-<p><a name="define-keyboard-macro">(<b>define-keyboard-macro</b> <span class="cmd">macro-name</span>)</a></p>
+<p><a name="define-keyboard-macro">(<span class="cmd">define-keyboard-macro</span> <span class="arg">macro-name</span>)</a></p>
 
 <blockquote>
 <p>Gives a name to the current keyboard macro. A keyboard macro is defined by using the <a href="fn_s.html#start-remembering">start-remembering</a> and <a href="fn_s.html#stop-remembering">stop-remembering</a> commands. define-keyboard-macro takes the current keyboard macro, makes a copy of it in a safe place, gives it a name, and erases the keyboard macro.</p>
@@ -353,14 +353,14 @@ extended regular expression functions:</p>
 </blockquote>
 
 
-<p><a name="define-keymap">(<b>define-keymap</b> <span class="cmd">keymap</span>)</a></p>
+<p><a name="define-keymap">(<span class="cmd">define-keymap</span> <span class="arg">keymap</span>)</a></p>
 
 <blockquote>
 <p>Defines a new, empty, keymap with the given name.</p>
 </blockquote>
 
 
-<p><a name="define-local-abbrev">(<b>define-local-abbrev</b> <span class="cmd">abbrevexpansion</span>)</a></p>
+<p><a name="define-local-abbrev">(<span class="cmd">define-local-abbrev</span> <span class="arg">abbrevexpansion</span>)</a></p>
 
 <blockquote>
 <p>Defines or redefines an abbreviation with the given name for the given phrase in the local abbreviation table. A local abbreviation table must have already been set up with use-abbrev-table.</p>
@@ -375,7 +375,7 @@ extended regular expression functions:</p>
 </blockquote>
 
 
-<p><a name="define-string-macro">(<b>define-string-macro</b> <span class="cmd">macro-name</span> <span class="cmd">body</span>)</a></p>
+<p><a name="define-string-macro">(<span class="cmd">define-string-macro</span> <span class="arg">macro-name</span> <span class="arg">body</span>)</a></p>
 
 <blockquote>
 <p>Defines a macro given a name and a body as a string entered in the mini-buffer.</p>
@@ -394,14 +394,14 @@ extended regular expression functions:</p>
 </blockquote>
 
 
-<p><a name="defun">(<b>defun</b> (function-name local... body))</a></p>
+<p><a name="defun">(<span class="cmd">defun</span> (function-name local... body))</a></p>
 
 <blockquote>
 <p>Defines a new MLisp function with the given name and a body composed of the given expressions. The value of the function is the value of the last expression executed.</p>
 </blockquote>
 
 
-<p><a name="defun">(<b>defun</b> <span class="cmd">function-name (arg...) local-variables... body</span>)</a>
+<p><a name="defun">(<span class="cmd">defun</span> <span class="arg">function-name (arg...) local-variables... body</span>)</a>
 <br />
 (<b>defun</b> <span class="cmd">function-name (parameter-list) local-variables body</span>)</p>
 
@@ -453,7 +453,7 @@ extended regular expression functions:</p>
 </blockquote>
 
 
-<p><a name="delete-buffer">(<b>delete-buffer</b> <span class="cmd">buffer-name</span>)</a></p>
+<p><a name="delete-buffer">(<span class="cmd">delete-buffer</span> <span class="arg">buffer-name</span>)</a></p>
 
 <blockquote>
 <p>Removes a buffer from the list of buffers, and discards any text the buffer contains. The function takes one argument, which is the name of the buffer to be deleted.</p>
@@ -476,7 +476,7 @@ extended regular expression functions:</p>
 </blockquote>
 
 
-<p><a name="delete-next-character">(<b>delete-next-character</b> <span class="cmd">repeat-count</span>) ^D</a></p>
+<p><a name="delete-next-character">(<span class="cmd">delete-next-character</span> <span class="arg">repeat-count</span>) ^D</a></p>
 
 <blockquote>
 <p>Deletes the next <span class="cmd">repeat-count</span> characters immediately following dot. If <span class="cmd">repeat-count</span> is omitted, 1 is assumed. A line break counts as one character.</p>
@@ -501,7 +501,7 @@ extended regular expression functions:</p>
 </blockquote>
 
 
-<p><a name="delete-next-word">(<b>delete-next-word</b> <span class="cmd">repeat-count</span>) ESC-d</a></p>
+<p><a name="delete-next-word">(<span class="cmd">delete-next-word</span> <span class="arg">repeat-count</span>) ESC-d</a></p>
 
 <blockquote>
 <p>Deletes the next <span class="cmd">repeat-count</span> words starting with the word that dot is currently in. It does not delete backwards to the start of the word. If <span class="cmd">repeat-count</span> is omitted, 1 is assumed. If dot is not in a word, all punctuation up to the beginning of the next word is deleted as well as the word itself.</p>
@@ -511,7 +511,7 @@ extended regular expression functions:</p>
 (delete-next-word) ;delete 1 word (delete-next-word 2) ;delete 2 words ;delete 4 words (provide-prefix-argument 4 (delete-next-word) )</blockquote>
 
 
-<p><a name="delete-other-windows">(<b>delete-other-windows</b>) ^X-1</a></p>
+<p><a name="delete-other-windows">(<span class="cmd">delete-other-windows</span>) ^X-1</a></p>
 
 <blockquote>
 <p>Deletes all windows on the screen except for the window containing dot.</p>
@@ -539,7 +539,7 @@ extended regular expression functions:</p>
 </blockquote>
 
 
-<p><a name="delete-previous-character">(<b>delete-previous-character</b>) Backspace</a></p>
+<p><a name="delete-previous-character">(<span class="cmd">delete-previous-character</span>) Backspace</a></p>
 
 <blockquote>
 <p>Deletes prefix-argument characters backwards starting immediately preceding dot; that is, starting with the character to the left of the cursor.</p>
@@ -556,7 +556,7 @@ extended regular expression functions:</p>
 </blockquote>
 
 
-<p><a name="delete-previous-word">(<b>delete-previous-word</b> <span class="cmd">repeat-count</span>) ESC-h</a></p>
+<p><a name="delete-previous-word">(<span class="cmd">delete-previous-word</span> <span class="arg">repeat-count</span>) ESC-h</a></p>
 
 <blockquote>
 <p>Deletes prefix-argument times <span class="cmd">repeat-count</span> words backwards starting with the word that dot is in. If <span class="cmd">repeat-count</span> is omitted, 1 is assumed.</p>
@@ -577,7 +577,7 @@ extended regular expression functions:</p>
 </blockquote>
 
 
-<p><a name="delete-region-to-buffer">(<b>delete-region-to-buffer</b> <span class="cmd">buffer-name</span>)</a></p>
+<p><a name="delete-region-to-buffer">(<span class="cmd">delete-region-to-buffer</span> <span class="arg">buffer-name</span>)</a></p>
 
 <blockquote>
 <p>Deletes all characters between dot and the mark. The deleted text is saved in the specified buffer. The buffer is emptied before the characters are inserted.</p>
@@ -600,7 +600,7 @@ extended regular expression functions:</p>
 </blockquote>
 
 
-<p><a name="delete-to-killbuffer">(<b>delete-to-killbuffer</b>) ^W</a></p>
+<p><a name="delete-to-killbuffer">(<span class="cmd">delete-to-killbuffer</span>) ^W</a></p>
 
 <blockquote>
 <p>Deletes all characters between dot and the mark. The deleted text is moved to the buffer Kill buffer, which is emptied first.</p>
@@ -615,7 +615,7 @@ extended regular expression functions:</p>
 </blockquote>
 
 
-<p><a name="delete-white-space">(<b>delete-white-space</b>)</a></p>
+<p><a name="delete-white-space">(<span class="cmd">delete-white-space</span>)</a></p>
 
 <blockquote>
 <p>Deletes all white space characters on the current line on both sides dot. The definition of white-space is derived from the current syntax table.</p>
@@ -628,7 +628,7 @@ extended regular expression functions:</p>
 </blockquote>
 
 
-<p><a name="delete-window">(<b>delete-window</b>) ^X-d</a></p>
+<p><a name="delete-window">(<span class="cmd">delete-window</span>) ^X-d</a></p>
 
 <blockquote>
 <p>Removes the current window from the screen and gives its space to the window below (or above if the current window is the bottom window). The new current window and buffer are those that just gained the extra space.</p>
@@ -651,21 +651,21 @@ extended regular expression functions:</p>
 </blockquote>
 
 
-<p><a name="describe-bindings">(<b>describe-bindings</b>)</a></p>
+<p><a name="describe-bindings">(<span class="cmd">describe-bindings</span>)</a></p>
 
 <blockquote>
 <p>Places in the Help window a list of all the keys and the names of the extended commands that they are bound to. This listing is a good start if you want to create a quick-reference card for your own, customised version of Emacs.</p>
 </blockquote>
 
 
-<p><a name="describe-command">(<b>describe-command</b> <span class="cmd">command-name</span>)</a></p>
+<p><a name="describe-command">(<span class="cmd">describe-command</span> <span class="arg">command-name</span>)</a></p>
 
 <blockquote>
 <p>Describes the specified extended command.</p>
 </blockquote>
 
 
-<p><a name="describe-key">(<b>describe-key</b> <span class="cmd">keys</span>)</a></p>
+<p><a name="describe-key">(<span class="cmd">describe-key</span> <span class="arg">keys</span>)</a></p>
 
 <blockquote>
 <p>Prints out a line of information describing the function that the sequence <span class="cmd">keys</span> is bound to.</p>
@@ -678,14 +678,14 @@ extended regular expression functions:</p>
 </blockquote>
 
 
-<p><a name="describe-variable">(<b>describe-variable</b> <span class="cmd">variable-name</span>)</a></p>
+<p><a name="describe-variable">(<span class="cmd">describe-variable</span> <span class="arg">variable-name</span>)</a></p>
 
 <blockquote>
 <p>Describes the named variable.</p>
 </blockquote>
 
 
-<p><a name="describe-word-in-buffer">(<b>describe-word-in-buffer</b>) ^X-^D</a></p>
+<p><a name="describe-word-in-buffer">(<span class="cmd">describe-word-in-buffer</span>) ^X-^D</a></p>
 
 <blockquote>
 <p>Takes the word nearest dot and looks it up in a database and displays the information found.
@@ -699,28 +699,28 @@ This database contains one-line descriptions of many of the C standard functions
 </blockquote>
 
 
-<p><a name="digit">(<b>digit</b>)</a></p>
+<p><a name="digit">(<span class="cmd">digit</span>)</a></p>
 
 <blockquote>
 <p>This function is bound to the digit keys after a call to the argument-prefix command and until a non-digit function is executed. This means that the bindings for the digits changes during prefix argument collection, so that the prefix argument is correctly evaluated.</p>
 </blockquote>
 
 
-<p><a name="dot">(<b>dot</b>)</a></p>
+<p><a name="dot">(<span class="cmd">dot</span>)</a></p>
 
 <blockquote>
 <p>Returns the number of characters to the left of dot plus 1.</p>
 </blockquote>
 
 
-<p><a name="dot-is-visible">(<b>dot-is-visible</b>)</a></p>
+<p><a name="dot-is-visible">(<span class="cmd">dot-is-visible</span>)</a></p>
 
 <blockquote>
 <p>Returns 1 if dot is in a window. Note that this is not the same as asking whether dot is visible to the user.</p>
 </blockquote>
 
 
-<p><a name="down-window">(<b>down-window</b> <span class="cmd">repeat-count</span>)</a></p>
+<p><a name="down-window">(<span class="cmd">down-window</span> <span class="arg">repeat-count</span>)</a></p>
 
 <blockquote>
 <p>Moves the cursor into the window that is below the current window. This is different to the next-window function, which moves the cursor without regard to the physical position of the windows on the screen.</p>
@@ -741,7 +741,7 @@ This database contains one-line descriptions of many of the C standard functions
 </blockquote>
 
 
-<p><a name="dump-abbreviation-tables">(<b>dump-abbreviation-tables</b>)</a></p>
+<p><a name="dump-abbreviation-tables">(<span class="cmd">dump-abbreviation-tables</span>)</a></p>
 
 <blockquote>
 <p>Dumps a readable listing of an abbreviation table into the buffer <b>Abbreviation table</b> and makes the buffer visible.</p>
@@ -758,14 +758,14 @@ This database contains one-line descriptions of many of the C standard functions
 </blockquote>
 
 
-<p><a name="dump-memory-statistics">(<b>dump-memory-statistics</b>)</a></p>
+<p><a name="dump-memory-statistics">(<span class="cmd">dump-memory-statistics</span>)</a></p>
 
 <blockquote>
 <p>This function is used by the Emacs developers to determine the memory usage of Emacs.</p>
 </blockquote>
 
 
-<p><a name="dump-stack-trace">(<b>dump-stack-trace</b>)</a></p>
+<p><a name="dump-stack-trace">(<span class="cmd">dump-stack-trace</span>)</a></p>
 
 <blockquote>
 <p>Dumps an MLisp stack trace to the buffer Stack trace. This can be used to debug MLisp functions. The stack trace consists of an indication of what was executing when the trace occurred, and a line for each function that was active.</p>
@@ -778,7 +778,7 @@ This database contains one-line descriptions of many of the C standard functions
 </blockquote>
 
 
-<p><a name="dump-syntax-table">(<b>dump-syntax-table</b>)</a></p>
+<p><a name="dump-syntax-table">(<span class="cmd">dump-syntax-table</span>)</a></p>
 
 <blockquote>
 <p>Dumps a readable listing of a syntax table into a buffer and makes that buffer visible:</p>
