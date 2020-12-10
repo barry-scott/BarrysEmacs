@@ -18,8 +18,9 @@
                 ; leave the first line that identifies the file as a p4 change
                 (next-line)
                 (set-mark)
-                (re-search-forward "^Description:")
-                (beginning-of-line)
+                (while (looking-at '#')
+                    (next-line)
+                )
                 (erase-region)
             )
         )
