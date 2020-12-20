@@ -21,10 +21,34 @@ Introduction
 
     There are kits available for:
         Windows 7 and later (tested on: Windows 10)
-        Mac OS X 10.13 (tested on: macOS 10.15.7)
-        Linux (tested on: Fedora 32, Centos 8, Centos 7 and Centos 6)
+        Mac OS X 10.13 (tested on: macOS 11.0.1)
+        Linux (tested on: Fedora 33, Centos 8, Centos 7 and Centos 6)
 
 New in %(version)s
+    * new json-mode for editing JSON files
+    * RPM-specfile-mode for editing RPM spec files
+    * fix problem with the setup of the text-mode syntax table
+    * improve spell-mode to show a more accurate corrections count.
+      spell checker functions now work in a recursive edit which
+      allows other packages to use the spell checked
+    * syntax tables support limited ere for keywords and comments
+    * ntcmdmode uses case-fold,ere to fix finding the "rem" comment
+      in Windows batch/command files.
+    * import the p4-change-mode package to support deleteing the
+      header comments and Jobs sections from a changespec.
+      Add p4-spell-check-description.
+    * The order of buffers in the buffer-names array matches
+      the order used by list-buffers.
+    * fix buffer-dired problem when deleting the current buffer and
+      popping up a second window.
+    * fix problem with syntax colouring not being updated correctly
+      in one rare situation
+    * fix issue with delete-buffer that could change the current
+      buffer to "main".
+    * Updated INSTALL.html to match current practice
+    * macOS build now uses a pythob venv
+
+New in 8.7.0
     * New spell module provides spell-check-buffer, spell-check-region,
       spell-check-word-in-buffer and more.
 
