@@ -18,7 +18,7 @@
                 ; leave the first line that identifies the file as a p4 change
                 (next-line)
                 (set-mark)
-                (while (looking-at '#')
+                (while (looking-at "#")
                     (next-line)
                 )
                 (erase-region)
