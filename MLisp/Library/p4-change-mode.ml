@@ -28,13 +28,16 @@
         (if p4-change-remove-jobs-section
             (progn
                 (beginning-of-file)
-                (re-search-forward "^Jobs:")
-                (next-line)
-                (beginning-of-line)
-                (set-mark)
-                (re-search-forward "^Files:")
-                (beginning-of-line)
-                (erase-region)
+                (if (! (error-occurred (re-search-forward "^Jobs:")))
+                    (progn
+                        (next-line)
+                        (beginning-of-line)
+                        (set-mark)
+                        (re-search-forward "^Files:")
+                        (beginning-of-line)
+                        (erase-region)
+                    )
+                )
             )
         )
 
