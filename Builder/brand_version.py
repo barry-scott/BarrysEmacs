@@ -120,7 +120,11 @@ class VersionInfo:
             self.log_info( '%10s: %s' % (key, self.__info[ key ]) )
 
     def brandOneFile( self, filename ):
-        template_contents = readFile( filename ).split('\n')
+        try:
+            template_contents = readFile( filename ).split('\n')
+
+        except UnicodeDecodeError as e:
+            raise Error( 'Cannot read %s - %s' % (filename, e) )
 
         try:
             branded_contents = []
