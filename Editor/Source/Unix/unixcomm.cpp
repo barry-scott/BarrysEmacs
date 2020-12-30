@@ -1,7 +1,7 @@
 //
 //    unixcomm.cpp
 //
-//    Copyright 1997 (c) Barry A. Scott
+//    Copyright 1997-2010 (c) Barry A. Scott
 //
 #include <emacs.h>
 #include <em_stat.h>
@@ -10,9 +10,6 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
-
-extern int ptym_open( char *pts_name );
-extern int ptys_open( int fdm, char *pts_name );
 
 SystemExpressionRepresentationIntPositive maximum_shell_buffer_size( 10000 );
 SystemExpressionRepresentationIntPositive shell_buffer_reduction( 500 );
@@ -32,6 +29,7 @@ SystemExpressionRepresentationIntPositive shell_buffer_reduction( 500 );
 #include <sys/param.h>
 #include <sys/ioctl.h>
 #include <syslog.h>
+#include <fcntl.h>
 
 //# ifndef _BSD
 //#  define _BSD    // define this to get the wait() family of calls defined
@@ -45,6 +43,14 @@ SystemExpressionRepresentationIntPositive shell_buffer_reduction( 500 );
 #if defined( __hpux )
 # include <sys/pty.h>
 # include <sys/stat.h>
+#endif
+
+#if defined( __APPLE_CC__ )
+// for forkpty
+#include <util.h>
+#else
+// for forkpty
+#include <pty.h>
 #endif
 
 #include <unixcomm.h>
@@ -95,10 +101,10 @@ static EmacsProcess *get_process_arg()
     return proc;
 }
 
-fd_set process_fds;                             // The set of subprocess fds
-EmacsProcess *EmacsProcess::current_process;    // the one that we're current dealing with
-int child_changed;                              // Flag when a child process has ceased to be
-ProcessChannelInput *MPX_chan;
+fd_set process_fds;                                 // The set of subprocess fds
+EmacsProcess *EmacsProcess::current_process = NULL; // the one that we're current dealing with
+int child_changed = 0;                              // Count of child processes that have ceased to be
+ProcessChannelInput *MPX_chan = NULL;
 
 const char *SIG_names[] = {
     "",
@@ -129,7 +135,7 @@ EmacsString str_process( "Process: " );
 EmacsString str_err_proc( "Cannot find the specified process" );
 EmacsString str_is_blocked( "There is data already waiting to be send to the blocked process" );
 
-EmacsProcess::EmacsProcess( const EmacsString &name, const EmacsString &_command)
+EmacsProcess::EmacsProcess( const EmacsString &name, const EmacsString &_command )
 : EmacsProcessCommon( name )
 , chan_in()
 , command( _command )
@@ -160,7 +166,7 @@ EmacsProcess::~EmacsProcess()
 }
 
 ProcessChannelInput::ProcessChannelInput()
-: ch_fd(-1)
+: ch_fd( -1 )
 , ch_ptr( NULL )
 , ch_count( 0 )
 , ch_buffer( NULL )
@@ -226,7 +232,10 @@ void readProcessOutputHandler( EmacsPollFdParam p_, int fdp )
     int cc;
     do
     {
-        cc = read( chan.ch_fd, &chan.ch_utf8_buffer[chan.ch_utf8_buffer_used], ProcessChannelInput::ch_buffer_size-chan.ch_utf8_buffer_used );
+        cc = read(
+                chan.ch_fd,
+                &chan.ch_utf8_buffer[chan.ch_utf8_buffer_used],
+                ProcessChannelInput::ch_buffer_size-chan.ch_utf8_buffer_used );
         Trace( FormatString( "readProcessOutputHandler read( %d, ... ) =>  %d errno %e" )
                             << chan.ch_fd << cc << errno );
         if( cc > 0 )
@@ -254,8 +263,11 @@ void readProcessOutputHandler( EmacsPollFdParam p_, int fdp )
 
             chan.ch_ptr = chan.ch_unicode_buffer;
             chan.ch_count = unicode_length;
+            Trace( "readProcessOutputHandler call stuff_buffer()" );
             stuff_buffer( chan );
+            Trace( "readProcessOutputHandler stuff_buffer() returned" );
         }
+
         else if( (cc == 0 && p->p_flag&(EXITED|SIGNALED) )  // end-of-file and process has exited
               || (cc < 0 && errno != EAGAIN) )              // and error and not told to do it again
         {
@@ -280,6 +292,7 @@ void readProcessOutputHandler( EmacsPollFdParam p_, int fdp )
         }
     }
     while( cc > 0 && read_count-- > 0);
+    Trace( "readProcessOutputHandler done" );
 }
 
 // Callback to handle an output request
@@ -480,7 +493,10 @@ void change_msgs( void )
         }
     }
     else
+    {
         child_changed -= change_processed;
+    }
+
 # if DBG_PROCESS
     if( dbg_flags&DBG_PROCESS )
     {
@@ -709,39 +725,20 @@ extern char **environ;
 
 bool EmacsProcess::startProcess( EmacsPosixSignal &sig_child )
 {
-    int channel;
-    // Open the pty master side
-    char pts_name[1024];
-    channel = ptym_open( pts_name );
-    const EmacsString ptyname( pts_name );
-
-    Trace( FormatString("startProcess: ptyname %s channel %d") << ptyname << channel );
-    if( channel < 0 )
-    {
-        error( "Cannot get a pseudo-terminal for the process\n" );
-        return false;
-    }
-    if( channel > MAXFDS )
-    {
-        close( channel );
-        error( "Too many processes already running" );
-        return false;
-    }
-
-    unsetenv( "TERM" );
-    setenv( "BEMACS_SHELL", "1", 1 );
-
     // Fork the child
-    pid_t pid = fork();
+    int channel = 0;
+    pid_t pid = forkpty( &channel, NULL, NULL, NULL );
     if( pid < 0 )
     {
         error( "Fork failed for process" );
-        close( channel );
         return false;
     }
 
     if( pid == 0 )
     {
+        setenv( "TERM", "dumb", 1 );
+        setenv( "BEMACS_SHELL", "1", 1 );
+
         // Handle child side of fork
         struct termios sg;
 
@@ -753,28 +750,24 @@ bool EmacsProcess::startProcess( EmacsPosixSignal &sig_child )
 
         setsid();
 
-        int newfd = ptys_open( channel, pts_name );
+        int newfd = open( "/dev/tty", O_RDWR );
         if( newfd < 0 )
         {
-            fprintf( stdout, "Cannot open pseudo-terminal %s reason %d\n", ptyname.sdata(), newfd );
+            fprintf( stdout, "Cannot open pseudo-terminal errno %d\n", errno );
             _exit( 1 );
         }
-
-        // close the master side now we have the slave tty side open
-//        close( channel );
-
-//    why is this in here at all?
-//        status = setpgrp();
 
         // close std in, out, ml_err
         close( STDIN_FILENO );
         close( STDOUT_FILENO );
         close( STDERR_FILENO );
+
         // dup the pty channel to std in, out, ml_err
         dup2( newfd, STDIN_FILENO );
         dup2( newfd, STDOUT_FILENO );
         dup2( newfd, STDERR_FILENO );
-        // close off pty channel
+
+        // close off tty
         close( newfd );
 
         // become the controlling terminal
@@ -850,6 +843,11 @@ bool EmacsProcess::startProcess( EmacsPosixSignal &sig_child )
         write( STDOUT_FILENO, "Could not start the shell\n", 24 );
         _exit( 1 );
     }
+
+    // set channel non-blocking
+    int fd_flags = fcntl( channel, F_GETFL, 0 );
+    fd_flags |= O_NONBLOCK;
+    fcntl( channel, F_SETFL, fd_flags );
 
     // Handle parent side of fork
     p_id = pid;

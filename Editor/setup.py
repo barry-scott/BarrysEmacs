@@ -191,7 +191,7 @@ class Setup:
             if self.opt_bemacs_cli:
                 self.c_clibemacs = MacOsxCompilerGCC( self )
 
-            pybemacs_feature_defines = [('EXEC_BF', '1')]
+            pybemacs_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
             cli_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
             utils_feature_defines = []
 

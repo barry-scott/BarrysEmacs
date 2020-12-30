@@ -1,5 +1,5 @@
 //
-//    unix_rtl.cpp for Emacs V8.0
+//    unix_rtl_pybemacs.cpp for Emacs V8.0
 //    Copyright (c) 1993-2010 Barry A. Scott
 //
 
@@ -9,6 +9,17 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
+
+#if DBG_PROCESS && DBG_TMP
+extern int elapse_time(void);
+# define Trace( s )  do { \
+                        if( dbg_flags&DBG_PROCESS && dbg_flags&DBG_TMP ) { \
+                            int t=elapse_time(); \
+                            _dbg_msg( FormatString("%d.%03.3d " "%s") << t/1000 << t%1000 << (s) ); } \
+                    } while( false )
+#else
+# define Trace( s ) // do nothing
+#endif
 
 #include <syslog.h>
 
@@ -212,3 +223,143 @@ void emacs_sleep( int milli_seconds )
         return;
     emacs_assert( errno == EINTR );
 }
+
+#if defined( SUBPROCESSES )
+#include "unixcomm.h"
+
+static fd_set readfds;
+static fd_set writefds;
+static fd_set excepfds;
+static fd_set readfds_resp;
+static fd_set writefds_resp;
+
+struct fd_info
+{
+    EmacsPollFdParam param;
+    EmacsPollFdCallBack cb;
+};
+
+static struct fd_info read_info[FD_SETSIZE];
+static struct fd_info write_info[FD_SETSIZE];
+static int fd_max = -1;
+
+EmacsPollFdId add_select_fd( int fd, long int mask, EmacsPollFdCallBack cb, EmacsPollFdParam p )
+{
+    Trace( FormatString("add_select_fd( %d, 0x%x, ...)") << fd << mask );
+    EmacsPollFdId resp = 0;
+
+    if( fd < FD_SETSIZE )
+    {
+        if( fd > fd_max )
+        {
+            fd_max = fd;
+        }
+        if( mask & EmacsPollInputReadMask )
+        {
+            read_info[fd].param = p;
+            read_info[fd].cb = cb;
+            FD_SET( fd, &readfds );
+            resp = fd << 8;
+        }
+        if( mask & EmacsPollInputWriteMask )
+        {
+            write_info[fd].param = p;
+            write_info[fd].cb = cb;
+            FD_SET( fd, &writefds );
+            resp |= fd << 16;
+        }
+    }
+    else
+    {
+        fatal_error( 314 );
+    }
+    return resp;
+}
+
+void remove_select_fd( EmacsPollFdId id )
+{
+    int fd = 0;
+
+    if( id & 0xff00 )
+    {
+        fd = (int)((id >> 8) & 0xff);
+        read_info[fd].param = NULL;
+        read_info[fd].cb = NULL;
+        FD_CLR( fd, &readfds );
+        Trace( FormatString("remove_select_fd: clear read fd %d") << fd );
+    }
+
+    if( id & 0xff0000 )
+    {
+        fd = (int)((id >> 16) & 0xff);
+        write_info[fd].param = NULL;
+        write_info[fd].cb = NULL;
+        FD_CLR( fd, &writefds );
+        Trace( FormatString("remove_select_fd: clear write fd %d") << fd );
+    }
+
+    if( fd == fd_max )
+    {
+        Trace( FormatString("remove_select_fd: find new fd_max %d") << fd_max );
+        int i = fd_max;
+        fd_max = -1;
+        while( i >= 0 )
+        {
+            Trace( FormatString("remove_select_fd: is max %d?") << i );
+
+            if( read_info[fd].cb != NULL || write_info[fd].cb != NULL )
+            {
+                fd_max = i;
+                break;
+            }
+            --i;
+        }
+    }
+    Trace( FormatString("remove_select_fd: done fd_max %d") << fd_max );
+}
+
+double poll_process_delay()
+{
+    // delay 60.0s if there are no processes to monitor
+    return fd_max < 0 ? 60.0 : 1.0;
+}
+
+void poll_process_fds()
+{
+    // see if there are any fds to poll
+    if( fd_max < 0 )
+        return;
+
+    int status;
+    timeval timeout = { 0, 0 };
+    do
+    {
+        memcpy( &readfds_resp, &readfds, sizeof( fd_set ) );
+        memcpy( &writefds_resp, &writefds, sizeof( fd_set ) );
+        status = select( FD_SETSIZE, &readfds_resp, &writefds_resp, &excepfds, &timeout );
+    }
+    while (status < 0 && errno == EINTR);
+
+    for( int fd_scan = 1; fd_scan <= fd_max; fd_scan++ )
+    {
+        Trace( FormatString("poll_process_fds: fd_scan %d read %d write %d")
+              << fd_scan << FD_ISSET( fd_scan, &readfds_resp ) << FD_ISSET( fd_scan, &writefds_resp ) );
+
+        if( read_info[fd_scan].cb != NULL
+        && FD_ISSET( fd_scan, &readfds_resp ) )
+        {
+            Trace("poll_process_fds: calling read cb");
+            read_info[fd_scan].cb( read_info[fd_scan].param, fd_scan );
+            Trace("poll_process_fds: read cb returned");
+        }
+
+        if( write_info[fd_scan].cb != NULL
+        && FD_ISSET( fd_scan, &writefds_resp ) )
+        {
+            Trace("poll_process_fds: calling write cb");
+            write_info[fd_scan].cb( write_info[fd_scan].param, fd_scan );
+            Trace("poll_process_fds: write cb returned");
+        }
+    }
+}
+#endif

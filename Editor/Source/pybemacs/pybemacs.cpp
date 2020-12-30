@@ -14,6 +14,18 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 #include <iostream>
 
+#if DBG_PROCESS && DBG_TMP
+extern int elapse_time(void);
+# define Trace( s )  do { \
+                        if( dbg_flags&DBG_PROCESS && dbg_flags&DBG_TMP ) { \
+                            int t=elapse_time(); \
+                            _dbg_msg( FormatString("%d.%03.3d " "%s") << t/1000 << t%1000 << (s) ); } \
+                    } while( false )
+#else
+# define Trace( s ) // do nothing
+#endif
+
+
 extern int execute_package( const EmacsString &package );
 
 extern SystemExpressionRepresentationIntBoolean synchronise_buffers_on_focus;
@@ -1215,15 +1227,39 @@ int ui_frame_to_foreground(void)
 }
 
 extern double time_getTimeoutTime();
+extern void poll_process_fds();
+extern double poll_process_delay();
 
 int wait_for_activity(void)
 {
-    double timeout = time_getTimeoutTime();
-    if( timeout == 0.0 )
+    Trace( "wait_for_activity" );
+#if defined( SUBPROCESSES )
+    Trace( "wait_for_activity: call poll_process_fds" );
+    poll_process_fds();
+    if( child_changed > 0 )
     {
-        timeout = EmacsDateTime( 60.0 ).asDouble();
+        Trace( "wait_for_activity: call change_msgs" );
+        change_msgs();
     }
-    return thePythonActiveView()->m_editor.termWaitForActivity( timeout );
+#endif
+
+    EmacsDateTime proc_timeout = EmacsDateTime::now();
+    proc_timeout += poll_process_delay();
+
+    double timeout = time_getTimeoutTime();
+    if( timeout == 0 )
+    {
+        timeout = proc_timeout.asDouble();
+    }
+    else if( proc_timeout < timeout )
+    {
+        timeout = proc_timeout.asDouble();
+    }
+
+    Trace( "wait_for_activity: call termWaitForActivity" );
+    int rc = thePythonActiveView()->m_editor.termWaitForActivity( timeout );
+    Trace( "wait_for_activity: back from termWaitForActivity" );
+    return rc;
 }
 
 void wait_abit(void)

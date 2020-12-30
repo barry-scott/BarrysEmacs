@@ -57,6 +57,7 @@ void time_call_timeout_handler()
 
 void time_cancel_timeout(void)
 {
+    timeout_time = 0;
     timeout_handler = NULL;
 }
 
