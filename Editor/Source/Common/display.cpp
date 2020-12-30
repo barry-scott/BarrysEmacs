@@ -19,7 +19,7 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 void generic_updateline( EmacsLine *old_line, EmacsLine *new_line, int ln );
 void ding( void );
 int sit_for( void );
-int sit_for_inner(int num_chars);
+int sit_for_inner( int num_tenths );
 void init_display( void );
 
 
@@ -164,7 +164,7 @@ int sit_for( void )
     return sit_for_inner( getnum( ": sit-for " ) );
 }
 
-int sit_for_inner(int num_chars)
+int sit_for_inner( int num_tenths )
 {
     if( input_pending != 0 )
         return 0;
@@ -175,11 +175,11 @@ int sit_for_inner(int num_chars)
         theActiveView->t_insert_mode( 0 );
     }
 
-    while( num_chars != 0 && input_pending == 0 )
+    while( num_tenths > 0 && input_pending == 0 )
     {
         wait_abit();
 
-        num_chars--;
+        num_tenths--;
     }
 
     return 0;
