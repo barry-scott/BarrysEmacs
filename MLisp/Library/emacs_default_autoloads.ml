@@ -81,7 +81,6 @@
 (autoload "RPM-specfile-mode" "rpm-specfile-mode.ml")
 (autoload "shell" "process")
 (autoload "show-buffer" "show-buffer")
-(autoload "show-terminal" "show-terminal")
 (autoload "sh-mode" "sh-mode")
 (autoload "smart-auto-execute" "smart-auto-execute")
 (autoload "spawn" "spawn")
@@ -102,13 +101,13 @@
 (autoload "XHTML-mode" "xhtml-mode")
 (autoload "XML-mode" "xml-mode")
 
-(if (= operating-system-name "unix")
+(if (| (= operating-system-name "unix") (= operating-system-name "MacOSX"))
     (progn
-        (autoload "buffer-chmod" "unix-buffer")
-        (autoload "buffer-chown" "unix-buffer")
+        (autoload "chmod-current-buffer" "unix-buffer")
+        (autoload "chown-current-buffer" "unix-buffer")
         (autoload "new-shell" "process")
-        (autoload "unix-man-word-in-buffer" "unix-man")
-        (autoload "unix-man" "unix-man")
+        (autoload "man-word-in-buffer" "unix-man")
+        (autoload "man" "unix-man")
     )
 )
 

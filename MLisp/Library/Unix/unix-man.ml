@@ -1,5 +1,5 @@
 (defun
-    (unix-man-word-in-buffer
+    (man-word-in-buffer
         ~word
         ~prefix
 
@@ -10,28 +10,34 @@
             (set-mark)
             (forward-word)
             (setq ~word (region-to-string))
+            (if (ere-looking-at "\\(([1-9][a-z]?)\\)")
+                (progn
+                    (region-around-match 1)
+                    (setq ~word (concat (region-to-string) " " ~word))
+                )
+            )
         )
         (if ~prefix
-             (setq ~word (concat (get-tty-string (concat ": Unix man " ~word " section: ")) " " ~word))
+             (setq ~word (concat (get-tty-string (concat ": man " ~word " section ")) " " ~word))
         )
-        (unix-man ~word)
+        (man ~word)
     )
 )
 (defun
-    unix-man (~word (get-tty-string ": Unix man: "))
-    overstrike-length
-    (pop-to-buffer "Unix man")
+    man (~word (get-tty-string ": man "))
+    ~overstrike-length
+    (pop-to-buffer "man")
     (erase-buffer)
     (set-mark)
-    (message "Unix-man " ~word " fetching text...")(sit-for 0)
+    (message "man " ~word " fetching text...")(sit-for 0)
     (filter-region (concat "man " ~word))
     (unset-mark)
-    (message "Unix-man " ~word " cleaning up text...")(sit-for 0)
+    (message "man " ~word " cleaning up text...")(sit-for 0)
     (beginning-of-file)
     ;
     ; calibrate the overstrike amount
     ;
-    (setq overstrike-length 2)
+    (setq ~overstrike-length 2)
     (error-occurred
         pattern
         (re-search-forward "[^_]\^h")
@@ -42,10 +48,10 @@
                 (char-to-string (following-char))
             )
         )
-        (setq overstrike-length 2)
+        (setq ~overstrike-length 2)
         (forward-character)
         (while (looking-at pattern)
-            (setq overstrike-length (+ overstrike-length 3))
+            (setq ~overstrike-length (+ ~overstrike-length 3))
             (forward-character 3)
         )
     )
@@ -67,4 +73,15 @@
             ; its a bullet mark
             (progn
                 (delete-next-character 3)
-                (insert-string "
+                (insert-string "o")
+                (apply-colour-to-region (dot) (- (dot) 1) 2)
+            )
+            ; its assumed to be bold text
+            (progn
+                (delete-next-character ~overstrike-length)
+                (apply-colour-to-region (dot) (+ (dot) 1) 2)
+            )
+        )
+    )
+    (beginning-of-file)
+)

@@ -1,7 +1,7 @@
 (defun
-    buffer-chmod
+    chmod-current-buffer
     (~mode
-        (get-tty-string "buffer-chmod (mode) ")
+        (get-tty-string ": chmod-current-buffer (mode) ")
     )
 
     ~buffer
@@ -26,7 +26,7 @@
     (save-window-excursion
         (pop-to-buffer "Unix Buffer Commands")
         (end-of-file)
-        (insert-string "chmod " ~mode " buffer:" ~buffer "\n")
+        (insert-string "chmod " ~mode " buffer " ~buffer "\n")
         (set-mark) (filter-region (concat "chmod " ~mode " " ~file))
         (if (= (- (dot) (mark)) 0)
             (progn
@@ -39,10 +39,11 @@
         (novalue)
     )
 )
+
 (defun
-    buffer-chown
+    chown-current-buffer
     (~owner
-        (get-tty-string "buffer-chown (owner) ")
+        (get-tty-string ": chown-current-buffer (owner) ")
     )
 
     ~buffer
@@ -67,7 +68,7 @@
     (save-window-excursion
         (pop-to-buffer "Unix Buffer Commands")
         (end-of-file)
-        (insert-string "chown " ~owner " buffer:" ~buffer "\n")
+        (insert-string "chown " ~owner " buffer " ~buffer "\n")
         (set-mark) (filter-region (concat "chown " ~owner " " ~file))
         (if (= (- (dot) (mark)) 0)
             (progn
