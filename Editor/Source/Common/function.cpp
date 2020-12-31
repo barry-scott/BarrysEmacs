@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1982-2010
+//    Copyright (c) 1982-2020
 //        Barry A. Scott
 //
 #include <emacs.h>
@@ -318,6 +318,7 @@ extern int process_key(void);
 # if defined (SUBPROCESSES)
 extern int process_output(void);
 extern int process_status(void);
+extern int process_end_of_output(void);
 # endif
 extern int provide_prefix_argument(void);
 extern int push_back_character(void);
@@ -779,6 +780,7 @@ static void init_fncs_a( void )
 # if defined (SUBPROCESSES)
     EMACS_NEW BoundName( "process-output", process_output );
     EMACS_NEW BoundName( "process-status", process_status );
+    EMACS_NEW BoundName( "process-end-of-output", process_end_of_output );
 # endif
     //    new BoundNameset( "progn", progn_block );
     EMACS_NEW BoundName( "provide-prefix-argument", provide_prefix_argument );

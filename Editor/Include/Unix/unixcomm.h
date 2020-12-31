@@ -38,10 +38,11 @@ public:
     ~ProcessChannelInput();
 
     int ch_fd;
-    EmacsChar_t *ch_ptr;    // Pointer to next input character
-    int ch_count;           // Count of characters remaining in buffer
-    EmacsBuffer *ch_buffer; // Process is bound to this buffer
-    BoundName *ch_proc;     // Procedure which gets called on output
+    EmacsChar_t *ch_ptr;        // Pointer to next input character
+    int ch_count;               // Count of characters remaining in buffer
+    EmacsBufferRef ch_buffer;   // Process is bound to this buffer
+    Marker ch_end_of_data_mark;    // set to the end of the inserted data
+    BoundName *ch_proc;         // Procedure which gets called on output
 
     enum { ch_buffer_size = 16 * 1024 };
     // reading into here
@@ -49,6 +50,8 @@ public:
     unsigned char ch_utf8_buffer[ch_buffer_size];
     // convert into here
     EmacsChar_t ch_unicode_buffer[ch_buffer_size];
+
+    void handleReceivedInput();
 };
 
 // Structure for information needed for each sub process started

@@ -129,8 +129,6 @@ const char *SIG_names[] = {
     "", "", "", "", "", "", ""
 };
 
-void stuff_buffer( ProcessChannelInput & );
-
 EmacsString str_process( "Process: " );
 EmacsString str_err_proc( "Cannot find the specified process" );
 EmacsString str_is_blocked( "There is data already waiting to be send to the blocked process" );
@@ -169,7 +167,8 @@ ProcessChannelInput::ProcessChannelInput()
 : ch_fd( -1 )
 , ch_ptr( NULL )
 , ch_count( 0 )
-, ch_buffer( NULL )
+, ch_buffer()
+, ch_end_of_data_mark()
 , ch_proc( NULL )
 , ch_utf8_buffer_used( 0 )
 { }
@@ -263,9 +262,9 @@ void readProcessOutputHandler( EmacsPollFdParam p_, int fdp )
 
             chan.ch_ptr = chan.ch_unicode_buffer;
             chan.ch_count = unicode_length;
-            Trace( "readProcessOutputHandler call stuff_buffer()" );
-            stuff_buffer( chan );
-            Trace( "readProcessOutputHandler stuff_buffer() returned" );
+            Trace( "readProcessOutputHandler call handleReceivedInput()" );
+            chan.handleReceivedInput();
+            Trace( "readProcessOutputHandler handleReceivedInput() returned" );
         }
 
         else if( (cc == 0 && p->p_flag&(EXITED|SIGNALED) )  // end-of-file and process has exited
@@ -450,7 +449,7 @@ void change_msgs( void )
                 dodsp++;
                 EmacsProcess::flushProcess( p );
             }
-            else if( p->chan_in.ch_buffer != NULL )
+            else if( p->chan_in.ch_buffer.bufferValid() )
             {
                 p->chan_in.ch_buffer->set_bf();
                 set_dot( bf_cur->unrestrictedSize() + 1 );
@@ -460,10 +459,7 @@ void change_msgs( void )
                     bf_cur->del_frwd( 1, shell_buffer_reduction );
                     set_dot( bf_cur->unrestrictedSize() + 1 );
                 }
-                if( bf_cur->b_mark.isSet() )
-                {
-                    bf_cur->set_mark( dot, 0, false );
-                }
+                p->chan_in.ch_end_of_data_mark.set_mark( p->chan_in.ch_buffer.buffer(), dot, 0 );
                 dodsp++;
                 restore++;
             }
@@ -554,7 +550,7 @@ void send_chan( EmacsProcess *process )
 // Output has been recieved from a process on "chan" and should be stuffed in
 // the correct buffer
 //
-void stuff_buffer( ProcessChannelInput &chan )
+void ProcessChannelInput::handleReceivedInput()
 {
     EmacsBufferRef old_buffer( bf_cur );
     static bool lockout = false;
@@ -571,19 +567,19 @@ void stuff_buffer( ProcessChannelInput &chan )
         lockout = true;
     }
 
-    if( chan.ch_proc == NULL )
+    if( ch_proc == NULL )
     {
-        if( chan.ch_buffer == NULL )
+        if( !ch_buffer.bufferValid() )
         {
             error( "Process output available with no destination buffer" );
         }
         else
         {
-            chan.ch_buffer->set_bf();
+            ch_buffer->set_bf();
             set_dot( bf_cur->unrestrictedSize() + 1 );
 
             EmacsChar_t *p, *q;
-            for( p = q = chan.ch_ptr; p < &chan.ch_ptr[chan.ch_count]; p++ )
+            for( p = q = ch_ptr; p < &ch_ptr[ch_count]; p++ )
             {
                 if( *p == '\r' )
                 {
@@ -605,10 +601,7 @@ void stuff_buffer( ProcessChannelInput &chan )
                 set_dot( bf_cur->unrestrictedSize() + 1 );
             }
 
-            if( bf_cur->b_mark.isSet() )
-            {
-                bf_cur->set_mark( bf_cur->unrestrictedSize() + 1, 0, false );
-            }
+            ch_end_of_data_mark.set_mark( ch_buffer.buffer(), bf_cur->unrestrictedSize() + 1, 0 );
 
             theActiveView->do_dsp();
             old_buffer.set_bf();
@@ -624,14 +617,14 @@ void stuff_buffer( ProcessChannelInput &chan )
         int larg = arg;
 
         arg_state = no_arg;
-        MPX_chan = &chan;
-        chan.ch_proc->execute();
+        MPX_chan = this;
+        ch_proc->execute();
         arg_state = LArgState;
         arg = larg;
         MPX_chan = NULL;    // a very short time only
     }
 
-    chan.ch_count = 0;
+    ch_count = 0;
     lockout = false;
 }
 
@@ -1344,7 +1337,7 @@ int set_current_process( void )
 //
 int process_status(void)
 {
-    EmacsString proc_name = getstr( "Process: " );
+    EmacsString proc_name = getstr( ": process-status for process: " );
     EmacsProcess *process = EmacsProcess::findProcess( proc_name );
     if( process == NULL )
     {
@@ -1365,10 +1358,30 @@ int process_status(void)
     return 0;
 }
 
+int process_end_of_output( void )
+{
+    EmacsString proc_name = getstr( ": process-end-of-output for process: " );
+    EmacsProcess *process = EmacsProcess::findProcess( proc_name );
+    if( process == NULL )
+    {
+        error("process not found");
+        return 0;
+    }
+    if( !process->chan_in.ch_end_of_data_mark.isSet() )
+    {
+        error("process-end-of-output marker is not set");
+        return 0;
+    }
+
+    Marker *m = EMACS_NEW Marker( process->chan_in.ch_end_of_data_mark );
+    ml_value = m;
+    return 0;
+}
+
 // Get the process id
 int process_id( void )
 {
-    EmacsString proc_name = getstr( "Process: " );
+    EmacsString proc_name = getstr( ": process-id for process: " );
     EmacsProcess *process = EmacsProcess::findProcess( proc_name );
 
     if( process == NULL )
