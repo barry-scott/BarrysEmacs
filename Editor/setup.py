@@ -220,7 +220,7 @@ class Setup:
             if self.opt_bemacs_cli:
                 self.c_clibemacs = LinuxCompilerGCC( self )
 
-            pybemacs_feature_defines = [('EXEC_BF', '1')]
+            pybemacs_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
             cli_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
             utils_feature_defines = []
 
@@ -445,14 +445,20 @@ class Setup:
                 obj_files.append( Source( compiler, '%(HUNSPELL_SRC)s/replist.cxx' ) )
                 obj_files.append( Source( compiler, '%(HUNSPELL_SRC)s/suggestmgr.cxx' ) )
 
-            if self.platform in ('linux'):
+            if self.platform in ('linux',):
                 obj_files.extend( [
                     Source( compiler, 'Source/Unix/unixfile.cpp' ),
                     Source( compiler, 'Source/Unix/emacs_signal.cpp' ),
                     Source( compiler, 'Source/Unix/unixcomm.cpp' ),
-                    Source( compiler, 'Source/Unix/ptyopen_linux.cpp' ),
                     ] )
-            if self.platform in ('macosx', 'netbsd'):
+            if self.platform in ('macosx',):
+                obj_files.extend( [
+                    # similar enough for the same set of source files
+                    Source( compiler, 'Source/Unix/unixfile.cpp' ),
+                    Source( compiler, 'Source/Unix/emacs_signal.cpp' ),
+                    Source( compiler, 'Source/Unix/unixcomm.cpp' ),
+                    ] )
+            if self.platform in ('netbsd',):
                 obj_files.extend( [
                     # similar enough for the same set of source files
                     Source( compiler, 'Source/Unix/unixfile.cpp' ),
@@ -1195,7 +1201,7 @@ class LinuxCompilerGCC(CompilerGCC):
         else:
             self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
 
-        link_libs = []
+        link_libs = ['-lutil']
 
         self._addVar( 'CCFLAGS',        '-g '
                                         '%(CCC_WARNINGS)s -Wall -fPIC '
@@ -1237,7 +1243,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'BEMACS_LIB_DIR', self.setup.opt_lib_dir )
         self._addVar( 'BEMACS_DOC_DIR', self.setup.opt_doc_dir )
 
-        link_libs = []
+        link_libs = ['-lutil']
 
         if self.setup.opt_coverage:
             self._addVar( 'CCC_OPT',    '-O0 '
