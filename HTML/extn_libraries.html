@@ -849,32 +849,30 @@ You can override these default values by setting the following variables:</p>
 (setq ~togglemouse 0)
 (defun
     (togglemouse
-  (setq ~togglemouse
-      (if ~togglemouse
-    (progn
-        ;
-        ; Mouse was off, turn it on
-        ;
-        (mouse-on 0)
-        (message "Emacs mouse enabled")
-      (! ~togglemouse)
+        (setq ~togglemouse
+            (if ~togglemouse
+                (progn
+                    ;
+                    ; Mouse was off, turn it on
+                    ;
+                    (mouse-on 0)
+                    (message "Emacs mouse enabled")
+                    (! ~togglemouse)
+                )
+                ; else
+                (progn
+                    ;
+                    ; Mouse was on, turn it off
+                    ;
+                    (mouse-off)
+                    (message "Emacs mouse disabled")
+                    (! ~togglemouse)
+                )
+            )
         )
-        ; else
-        (progn
-      ;
-      ; Mouse was on, turn it off
-      ;
-      (mouse-off)
-      (message "Emacs mouse disabled")
-          (! ~togglemouse)
-      )
-        )
-    )
-      )     ; if
-  )
-    )
+    )   ; if
 )       ; defun - togglemouse
-(bind-to-key "togglemouse" "f14)")
+(bind-to-key "togglemouse" "\[f2]")
 </pre>
 
 

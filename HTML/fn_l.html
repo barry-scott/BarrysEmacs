@@ -250,17 +250,16 @@
         (insert-string (current-time) "\t")
         )
         
-)                               ; defun - delete-current-buffer
-(local-bind-to-key "time-and-tab" "\[num-lock]t")
+)
+(local-bind-to-key "time-and-tab" "\[f1]t")
 </pre>
 
 <p>A single binding to do the same thing:</p>
 
 
 <pre>
-(local-bind-to-key "(insert-string (current-time) \"\\t\")" "\[num-lock]t")
+(local-bind-to-key "(insert-string (current-time) \"\\t\")" "\[f1]t")
 </pre>
-
 
 <p><b>See also:</b></p>
 
