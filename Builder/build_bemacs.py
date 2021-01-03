@@ -204,6 +204,9 @@ class BuildBEmacs(object):
             self.cmd_make = 'nmake'
             self.cmd_make_args = ['/nologo']
 
+            # fix up the PATH that may have a Qt/bin added to it that will break the build
+            os.environ['PATH'] = ';'.join( [path for path in os.environ['PATH'].split(';') if not path.endswith(r'PyQt5\Qt\bin')] )
+
         else:
             raise BuildError( 'Unsupported platform: %s' % (self.platform,) )
 
@@ -378,7 +381,10 @@ class BuildBEmacs(object):
 
         if self.opt_sqlite:
             dbtools = create_library.BemacsSqliteTools()
-            create_library.createLibrary( ('common', 'unix'), '%s/emacslib' % (self.BUILD_BEMACS_LIB_DIR,), dbtools )
+            if self.platform == 'win64':
+                create_library.createLibrary( ('common', 'windows'), '%s/emacslib' % (self.BUILD_BEMACS_LIB_DIR,), dbtools )
+            else:
+                create_library.createLibrary( ('common', 'unix'), '%s/emacslib' % (self.BUILD_BEMACS_LIB_DIR,), dbtools )
             os.chmod( '%s/emacslib.db' % (self.BUILD_BEMACS_LIB_DIR,), 0o444 )
 
         else:

@@ -296,3 +296,8 @@ EmacsString os_error_code( unsigned int code )
 
     return EmacsString( FormatString( "%s (0x%x)" ) << EmacsString(msg) << code );
 }
+
+double poll_process_delay()
+{
+    return 0.0;
+}

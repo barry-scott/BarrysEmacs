@@ -1,6 +1,10 @@
 setlocal
 @echo on
-rem 
+if "%VPYTHON%" == "" (
+    colour-print "<>error Error: VPYTHON is not defined"
+    goto :error
+)
+
 if "%1" == "" set DIST_DIR=dist
 if not "%1" == "" set DIST_DIR=%1
 echo Info: DIST_DIR=%DIST_DIR%
@@ -13,12 +17,16 @@ set PYTHONPATH=..\exe-pybemacs
 %PYTHON% -u make_be_images.py
     if errorlevel 1 goto :error
 rem always merge as the build system puts Docs and emacs lib files in first
-%PYTHON% -m win_app_packager build be_main.py   --gui %DIST_DIR% --version %VERSION% --icon ..\Source\Windows\Resources\win_emacs.ico --name bemacs_server --merge --modules-allowed-to-be-missing-file allowed-missing.txt
+%VPYTHON% -m win_app_packager build be_main.py   --gui %DIST_DIR% --version %VERSION% --icon ..\Source\Windows\Resources\win_emacs.ico --name bemacs_server --merge --modules-allowed-to-be-missing-file allowed-missing.txt
     if errorlevel 1 goto :error
-%PYTHON% -m win_app_packager build be_client.py --gui %DIST_DIR% --version %VERSION% --icon ..\Source\Windows\Resources\win_emacs.ico --name bemacs --merge
+%VPYTHON% -m win_app_packager build be_client.py --gui %DIST_DIR% --version %VERSION% --icon ..\Source\Windows\Resources\win_emacs.ico --name bemacs --merge
     if errorlevel 1 goto :error
 
-pushd %DIST_DIR%\PyWinAppRes\PyQt5
+rem do not need the test folders
+rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\ctypes\test
+rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\unittest\test
+
+pushd %DIST_DIR%\PyWinAppRes\Lib\site-packages\PyQt5
     if errorlevel 1 goto :error
 
 echo Info: clean up Qt 1. move all pyd and dll into a tmp folder

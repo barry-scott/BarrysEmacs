@@ -15,8 +15,6 @@ import sys
 import os
 import locale
 
-import be_app
-
 def prerequesitChecks():
     return 1
 
@@ -43,7 +41,19 @@ def main( argv ):
         if envvar in os.environ:
             del os.environ[ envvar ]
 
+    if sys.platform.startswith( 'win' ):
+        # in windows when building from a venv its necessary to 
+        # use add_dll_directory so that packaging will work
+
+        # also at run time it is also necessary to add
+        # these folders
+        import PyQt5
+        PyQt5_dir = os.path.dirname( PyQt5.__file__ )
+        for folder in (PyQt5_dir, os.path.join( PyQt5_dir, 'Qt', 'bin' )):
+            os.add_dll_directory( folder )
+
     # Create the win application and start its message loop
+    import be_app
     app = be_app.BemacsApp( argv )
 
     if not prerequesitChecks():

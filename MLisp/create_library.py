@@ -262,8 +262,8 @@ library_files =    [
     ('common',    'Library/shell.mlp'),
     ('common',    'Library/show-buffer.ml'),
     ('common',    'Library/smart-auto-execute.ml'),
-    ('unix',      'Library/spell.key'),
-    ('unix',      'Library/spell.ml'),
+    ('common',    'Library/spell.key'),
+    ('common',    'Library/spell.ml'),
     ('common',    'Library/spawn.ml'),
     ('common',    'Library/sql-mode.key'),
     ('common',    'Library/sql-mode.ml'),
@@ -302,11 +302,11 @@ library_files =    [
     #
     #    windows files
     #
-    ('windows',    'Library/Windows/emacs_windows.key'),
-    ('windows',    'Library/Windows/emacs_windows.ml'),
+    #('windows',    'Library/Windows/emacs_windows.key'),
+    #('windows',    'Library/Windows/emacs_windows.ml'),
     ('windows',    'Library/Windows/windows-process.ml'),
-    ('windows',    'Library/Windows/shell-chdir-here.mlp'),
-    ('windows',    'Library/windows/vss-view.mlp'),
+    #('windows',    'Library/Windows/shell-chdir-here.mlp'),
+    #('windows',    'Library/windows/vss-view.mlp'),
 
     #
     #    vms files
