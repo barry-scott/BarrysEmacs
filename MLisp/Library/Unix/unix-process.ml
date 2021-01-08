@@ -1,5 +1,5 @@
 ;
-;   unix-process.ml     - Barry A. Scott 15-Dec-1995
+;   unix-process.ml - Barry A. Scott 15-Dec-1995
 ;
 ;   This module supports Unix processes
 ;
@@ -27,8 +27,8 @@
 ; it.  If we're at the end of the buffer, we send the current region.
 (defun
     (pr-newline
-        ~end-of-output-marker
         ~command
+
         (end-of-line)
         (if (eobp)
             (progn
@@ -67,6 +67,11 @@
         (end-of-line)
         (if (eobp)
             (progn
+                ; assume the text from end of output to end of line is the
+                ; command to send
+                (goto-character (process-end-of-output current-buffer-name))
+                (set-mark)
+                (end-of-file)
                 (setq last-line (region-to-string))
             )
             (progn
@@ -76,20 +81,20 @@
                 (set-mark)
                 (end-of-line)
                 (setq last-line (region-to-string))
-                (set-mark)
-                (end-of-file)
-                (erase-region)
             )
         )
-        (newline)
-        (send-string-to-process current-buffer-name
-            (concat last-line "\n"))
+        (beginning-of-file)
         (set-mark)
+        (end-of-file)
+        (erase-region)
+        (unset-mark)
+        (send-string-to-process current-buffer-name (concat last-line "\n"))
     )
 )
+
 ; Expand a file name inline
 (defun
-    (expand-inline-filename
+    (pr-expand-inline-filename
         (save-excursion
             (set-mark)
             (push-back-character ' ')
@@ -104,62 +109,67 @@
         (insert-string (get-tty-file ": file ") " ")
     )
 )
+
 ; Send and end-of-file signal to the process if we're at the end of the
 ; buffer, else just do what this key normally does.
 (defun
-    (send-eot
+    (pr-send-eot
         (if (eobp)
             (send-eof-to-process current-buffer-name)
         )
     )
 )
+
 ; Simulate keyboard interrupts.
 (defun
-    (send-int-signal
-        (force-exit-process current-buffer-name)
+    (pr-send-int-signal
+        (send-string-to-process current-buffer-name "\^C")
     )
 )
+
 (defun
-    (send-quit-signal
-        (quit-process current-buffer-name)
+    (pr-send-quit-signal
+        (send-string-to-process current-buffer-name "\034")
     )
 )
+
 ; Insert the last line the user sent to the process in this buffer.
 (defun
-    (grab-last-line
+    (pr-grab-last-line
         (end-of-file)
         (set-mark)
         (insert-string last-line)
     )
 )
+
 ; Insert this line at end of buffer for user.
 (defun
-    (grab-current-line prompt line
+    (pr-grab-current-line
+        ~prompt ~line
         ; Find current prompt.
         (save-excursion
             (end-of-file)
             (set-mark)
             (beginning-of-line)
-            (setq prompt (region-to-string))
+            (setq ~prompt (region-to-string))
         )
         ; If this line has same prompt, skip it.
         (beginning-of-line)
-        (if (looking-at (quote prompt))
-            (provide-prefix-argument
-                (length prompt)
-                (forward-character)
-            )
+        (if (ere-looking-at (ere-quote prompt))
+            (forward-character (length ~prompt))
         )
         ; Now grab text and insert it at end.
-        (set-mark)
-        (end-of-line)
-        (setq line (region-to-string))
+        (save-excursion
+            (set-mark)
+            (end-of-line)
+            (setq line (region-to-string))
+        )
         (end-of-file)
-        (set-mark)
         (insert-string line)
         (novalue)
     )
 )
+
 ; Clever hook to cd emacs with shell cds.
 (defun
     (shell-cd
@@ -182,24 +192,32 @@
         )
     )
 )
+
 (defun
-    (generic-kill-output prompt
+    (pr-kill-last-command-output
+        ~prompt
         (end-of-file)
         (save-excursion
             (set-mark)
             (beginning-of-line)
-            (setq prompt (region-to-string)))
+            (setq ~prompt (region-to-string))
+        )
         (beginning-of-line)
         (set-mark)
-        (re-search-reverse (concat "^" (quote prompt)))
-        (if (! (dot-is-visible)) (line-to-top-of-window))
-        (next-line)
+        (if (error-occurred
+            (ere-search-reverse (concat "^" (ere-quote ~prompt))))
+            (beginning-of-file)
+            (next-line)
+        )
+        (if (! (dot-is-visible))
+            (line-to-top-of-window))
         (erase-region)
         (insert-string "[output flushed]\n")
         (end-of-file)
-        (set-mark)
+        (unset-mark)
     )
 )
+
 ; Go to a shell buffer and run a shell there.
 (defun
     (new-shell
@@ -211,9 +229,8 @@
                 ~cmd
                 (setq ~cmd (if (= (substr ~shell-command -3 3) "csh") "exec " ""))
                 (start-process ~name (concat ~cmd ~shell-command))
-                (use-abbrev-table "shell")
                 (use-syntax-table "shell")
-                (setq abbrev-mode 1)
+                (use-local-map "shell-map")
                 (setq current-buffer-checkpointable 0)
                 (setq current-buffer-journalled 0)
                 (setq wrap-long-lines 0)
@@ -224,18 +241,16 @@
         (novalue)
     )
 )
+
 (defun
     (shell
         (new-shell "shell")
     )
 )
+
 ; Set up global stuff.
 (save-excursion
-    (temp-use-buffer "shell")
-    (use-abbrev-table "shell")
-    (setq abbrev-mode 1)
-    (define-local-abbrev "~" (getenv "HOME"))
-    (define-hooked-local-abbrev "cd" "cd" "shell-cd")
+    (temp-use-buffer "~shell")
     (use-syntax-table "shell")
     (modify-syntax-entry "w    ~")
 
@@ -247,5 +262,6 @@
     (local-bind-to-key "shell-^X-map" "\^x")
 
     (execute-mlisp-file "unix-process.key")
-    (novalue)
 )
+(delete-buffer "~shell")
+(novalue)

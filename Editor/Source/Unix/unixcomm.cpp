@@ -741,6 +741,7 @@ bool EmacsProcess::startProcess( EmacsPosixSignal &sig_child )
         sig_child.defaultSignalAction();
         sig_child.permitSignal();
 
+        // create a new session
         setsid();
 
         int newfd = open( "/dev/tty", O_RDWR );
@@ -749,6 +750,9 @@ bool EmacsProcess::startProcess( EmacsPosixSignal &sig_child )
             fprintf( stdout, "Cannot open pseudo-terminal errno %d\n", errno );
             _exit( 1 );
         }
+
+        // set the controlling terminal for the session
+        tcsetpgrp( newfd, getpid() );
 
         // close std in, out, ml_err
         close( STDIN_FILENO );
@@ -774,33 +778,23 @@ bool EmacsProcess::startProcess( EmacsPosixSignal &sig_child )
         tcgetattr( STDIN_FILENO, &sg );
 
         // setup the attributes the way we want them
-        sg.c_cc[VERASE] = 0xff;
-        sg.c_cc[VKILL] = 0xff;
+#define Ctrl(ch) (ch & 0x1f)
+        sg.c_cc[VERASE] = 0x7f;
+        sg.c_cc[VKILL] = Ctrl('U');
 
-        sg.c_cc[VINTR] = 0177;
-        sg.c_cc[VQUIT] = '\\' & 037;
-        sg.c_cc[VSTART] = 'Q' & 037;
-        sg.c_cc[VSTOP] = 'S' & 037;
-        sg.c_cc[VEOF] = 'D' & 037;
-# ifdef VBRK
-        sg.c_cc[VBRK] = 0xff;
-# endif
-        sg.c_cc[VSUSP] = 0xff; //'Z' & 037;
-# ifdef VDSUSP
-        sg.c_cc[VDSUSP] = 0xff; //'Y' & 037;
-# endif
-# ifdef VREPRINT
-        sg.c_cc[VREPRINT] = 'R' & 037;
-# endif
-# ifdef VDISCARD
-        sg.c_cc[VDISCARD] = 'O' & 037;
-# endif
+        sg.c_cc[VINTR] = Ctrl('C');
+        sg.c_cc[VQUIT] = Ctrl('\\');
+        sg.c_cc[VSTART] = Ctrl('Q');
+        sg.c_cc[VSTOP] = Ctrl('S');
+        sg.c_cc[VEOF] = Ctrl('D');
+        sg.c_cc[VSUSP] = Ctrl('Z');
 # ifdef VWERASE
-        sg.c_cc[VWERASE] = 'W' & 037;
+        sg.c_cc[VWERASE] = Ctrl('W');
 # endif
 # ifdef VLNEXT
-        sg.c_cc[VLNEXT] = 'V' & 037;
+        sg.c_cc[VLNEXT] = Ctrl('V');
 # endif
+#undef Ctrl
 
         // turn off echo
         sg.c_lflag &= ~ECHO;
