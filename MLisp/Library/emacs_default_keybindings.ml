@@ -154,3 +154,7 @@
     (local-bind-to-key "help-and-exit" "?")
 )
 (error-occurred (delete-buffer "setup-default-keybindings"))
+
+(if (| (= operating-system-name "Linux") (= operating-system-name "MacOSX"))
+    (bind-to-key "man-word-in-buffer" "\^xm")
+)
