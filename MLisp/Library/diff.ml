@@ -180,7 +180,7 @@
 )
 
 (if (= diff-command 0)
-    (if (= operating-system-name "unix")
+    (if (is-unix-operating-system)
         (setq diff-command "diff -u")
         (= operating-system-name "vms")
         (setq diff-command "diff")
