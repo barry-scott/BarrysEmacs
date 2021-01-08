@@ -40,6 +40,16 @@
 
 (message "Emacs is initialising...") (sit-for 0)
 
+(defun
+    (is-unix-operating-system
+        (|
+            (= operating-system-name "Linux")
+            (= operating-system-name "MacOSX")
+            (= operating-system-name "NetBSD")
+        )
+    )
+)
+
 (setq swap-ctrl-x-char '^x')                ; disable swapping
 
 (declare-global library-access vms-mail-hook)

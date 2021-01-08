@@ -101,7 +101,7 @@
 (autoload "XHTML-mode" "xhtml-mode")
 (autoload "XML-mode" "xml-mode")
 
-(if (| (= operating-system-name "unix") (= operating-system-name "MacOSX"))
+(if (is-unix-operating-system)
     (progn
         (autoload "chmod-current-buffer" "unix-buffer")
         (autoload "chown-current-buffer" "unix-buffer")
