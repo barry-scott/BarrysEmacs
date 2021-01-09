@@ -103,12 +103,6 @@ void wait_abit(void)
     {
         wait_for_activity();
     }
-#if defined( SUBPROCESSES )
-    if( child_changed )
-    {
-        change_msgs();
-    }
-#endif
     return;
 }
 
@@ -146,6 +140,13 @@ int wait_for_activity(void)
 
     for(;;)
     {
+#if defined( SUBPROCESSES )
+        if( child_changed )
+        {
+            change_msgs();
+        }
+#endif
+
         int size = theActiveView->k_input_event( utf8_buf, sizeof( utf8_buf )-used );
         if( size < 0 )
         {
@@ -158,6 +159,7 @@ int wait_for_activity(void)
             break;
         }
     }
+
     EmacsChar_t uni_buf[128];
     int uni_len = length_utf8_to_unicode( used, utf8_buf );
     convert_utf8_to_unicode( utf8_buf, uni_len, uni_buf );

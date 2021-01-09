@@ -34,15 +34,16 @@ public:
 class ProcessChannelInput
 {
 public:
-    ProcessChannelInput();
+    ProcessChannelInput( EmacsProcess * );
     ~ProcessChannelInput();
 
     int ch_fd;
     EmacsChar_t *ch_ptr;        // Pointer to next input character
     int ch_count;               // Count of characters remaining in buffer
     EmacsBufferRef ch_buffer;   // Process is bound to this buffer
-    Marker ch_end_of_data_mark;    // set to the end of the inserted data
+    Marker ch_end_of_data_mark; // set to the end of the inserted data
     BoundName *ch_proc;         // Procedure which gets called on output
+    EmacsProcess *ch_process;   // The process that owns this input channels
 
     enum { ch_buffer_size = 16 * 1024 };
     // reading into here

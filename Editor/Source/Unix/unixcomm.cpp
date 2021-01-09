@@ -131,11 +131,11 @@ const char *SIG_names[] = {
 
 EmacsString str_process( "Process: " );
 EmacsString str_err_proc( "Cannot find the specified process" );
-EmacsString str_is_blocked( "There is data already waiting to be send to the blocked process" );
+EmacsString str_is_blocked( "There is data already waiting to be sent to the blocked process" );
 
 EmacsProcess::EmacsProcess( const EmacsString &name, const EmacsString &_command )
 : EmacsProcessCommon( name )
-, chan_in()
+, chan_in( this )
 , command( _command )
 , term_proc( NULL )
 , in_id(0)
@@ -163,13 +163,14 @@ EmacsProcess::~EmacsProcess()
     Trace( FormatString("EmacsProcess object deleted %s %s") << proc_name << command );
 }
 
-ProcessChannelInput::ProcessChannelInput()
+ProcessChannelInput::ProcessChannelInput( EmacsProcess *owner )
 : ch_fd( -1 )
 , ch_ptr( NULL )
 , ch_count( 0 )
 , ch_buffer()
 , ch_end_of_data_mark()
 , ch_proc( NULL )
+, ch_process( owner )
 , ch_utf8_buffer_used( 0 )
 { }
 
@@ -376,8 +377,8 @@ EmacsProcess *EmacsProcess::getNextProcess()
 
 //
 // Give a message that a process has changed and indicate why.  Dead processes
-// are not removed until after a Display Processes command has been issued so
-// that the user doesn't wonder where his process went in times of intense
+// are not removed until after a list-processes command has been issued so
+// that the user doesn't wonder where their process went in times of intense
 // hacking
 //
 void change_msgs( void )
@@ -410,15 +411,16 @@ void change_msgs( void )
             EmacsString status;
 
             p->p_flag &= ~CHANGED;
-            change_processed ++;
+            change_processed++;
 
-            switch( p->p_flag & ( SIGNALED | EXITED ) )
+            switch( p->p_flag & (SIGNALED | EXITED) )
             {
             case SIGNALED:
-                status = FormatString("%s\n") << SIG_names[int(p->p_reason)];
+                status = SIG_names[int(p->p_reason)];
                 break;
+
             case EXITED:
-                status = FormatString("Exited %d\n") << p->p_reason;
+                status = FormatString("Process exited %d") << p->p_reason;
                 break;
             }
 
@@ -439,7 +441,14 @@ void change_msgs( void )
                 }
 # endif
 
+                // set as the current process while the proc is running
+                EmacsProcess *old_cur_proc = EmacsProcess::current_process;
+                EmacsProcess::current_process = p;
+
                 p->term_proc->execute();
+
+                EmacsProcess::current_process = old_cur_proc;
+
                 arg_state = LArgState;
                 arg = larg;
                 // remove refs to status's address.
@@ -454,6 +463,8 @@ void change_msgs( void )
                 p->chan_in.ch_buffer->set_bf();
                 set_dot( bf_cur->unrestrictedSize() + 1 );
                 bf_cur->ins_cstr( status );
+                bf_cur->ins_cstr( "\n" );
+
                 if( ( bf_cur->unrestrictedSize() ) > maximum_shell_buffer_size )
                 {
                     bf_cur->del_frwd( 1, shell_buffer_reduction );
@@ -618,7 +629,15 @@ void ProcessChannelInput::handleReceivedInput()
 
         arg_state = no_arg;
         MPX_chan = this;
+
+        // set as the current process while the proc is running
+        EmacsProcess *old_cur_proc = EmacsProcess::current_process;
+        EmacsProcess::current_process = ch_process;
+
         ch_proc->execute();
+
+        EmacsProcess::current_process = old_cur_proc;
+
         arg_state = LArgState;
         arg = larg;
         MPX_chan = NULL;    // a very short time only
@@ -781,7 +800,6 @@ bool EmacsProcess::startProcess( EmacsPosixSignal &sig_child )
 #define Ctrl(ch) (ch & 0x1f)
         sg.c_cc[VERASE] = 0x7f;
         sg.c_cc[VKILL] = Ctrl('U');
-
         sg.c_cc[VINTR] = Ctrl('C');
         sg.c_cc[VQUIT] = Ctrl('\\');
         sg.c_cc[VSTART] = Ctrl('Q');
@@ -979,7 +997,7 @@ int set_process_termination_proc( void )
     process->term_proc = get_procedure_arg( "On-termination procedure: ");
 
     // if the process has already terminated force this proc to get called
-    if( process->p_flag & ( SIGNALED | EXITED ) )
+    if( process->p_flag & (SIGNALED | EXITED) )
     {
         process->p_flag |= CHANGED;
         child_changed++;
@@ -1074,7 +1092,7 @@ int list_processes(void)
 
         bf_cur->ins_cstr( FormatString("%-24s") << p->proc_name );
         bf_cur->ins_cstr( FormatString("%-24s") << p->chan_in.ch_buffer->b_buf_name );
-        switch( p->p_flag & ( STOPPED | RUNNING | EXITED | SIGNALED ) )
+        switch( p->p_flag & (STOPPED | RUNNING | EXITED | SIGNALED) )
         {
         case STOPPED:
             bf_cur->ins_cstr( FormatString("%-17s") << "Stopped" );
@@ -1143,6 +1161,12 @@ int send_string_to_process( void )
     EmacsProcess *process = get_process_arg();
     if( process == NULL )
     {
+        return 0;
+    }
+
+    if( process->p_flag & EXITED )
+    {
+        error( "Process has exited" );
         return 0;
     }
 

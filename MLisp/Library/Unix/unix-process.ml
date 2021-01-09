@@ -14,9 +14,18 @@
 )
 (if (! (is-bound shell-prompt-template))
     (progn
+        ~shell-basename
+        (setq ~shell-basename (file-format-string "%fa" ~shell-command))
         (declare-buffer-specific shell-prompt-template)
         (setq-default shell-prompt-template
-            (if (= ~shell-command "/bin/csh") "^[^%]% " "^[^$]*$ ")
+            (if (|
+                    (= ~shell-basename "zsh")
+                    (= ~shell-basename "csh")
+                )
+                "^[^%]*% "
+                ; default for bash sh etc
+                "^[^$]*$ "
+            )
         )
     )
 )
@@ -137,7 +146,6 @@
 (defun
     (pr-grab-last-line
         (end-of-file)
-        (set-mark)
         (insert-string last-line)
     )
 )
@@ -227,18 +235,39 @@
         (if (< (process-status ~name) 0)
             (progn
                 ~cmd
-                (setq ~cmd (if (= (substr ~shell-command -3 3) "csh") "exec " ""))
-                (start-process ~name (concat ~cmd ~shell-command))
+                ; create a login shell so that the shell's profile is run
+                (start-process ~name (concat ~shell-command " -l"))
                 (use-syntax-table "shell")
                 (use-local-map "shell-map")
+                (setq mode-string "Shell")
                 (setq current-buffer-checkpointable 0)
                 (setq current-buffer-journalled 0)
                 (setq wrap-long-lines 0)
+                (set-process-termination-procedure ~name "~pr-terminated")
                 (error-occurred (shell-hook))
             )
         )
         (end-of-file)
         (novalue)
+    )
+)
+
+(defun
+    (~pr-terminated
+        ~name
+        ~reason
+        (setq ~name (current-process-name))
+        (setq ~reason (process-output ~name))
+        (save-window-excursion
+            (switch-to-buffer ~name)
+            (setq mode-string (concat "Shell " ~reason))
+            (end-of-file)
+            (newline)
+            (insert-string ~reason)
+            (newline)
+            (end-of-file)
+        )
+        (message "Shell \"" ~name "\" " ~reason)
     )
 )
 
@@ -252,7 +281,8 @@
 (save-excursion
     (temp-use-buffer "~shell")
     (use-syntax-table "shell")
-    (modify-syntax-entry "w    ~")
+    (modify-syntax-table "word" "~")
+    (modify-syntax-table "word" "-")
 
     (define-keymap "shell-map")
     (define-keymap "shell-ESC-map")
