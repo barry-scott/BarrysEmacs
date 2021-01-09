@@ -11,7 +11,7 @@
             (set-mark)
             (forward-word)
             (setq ~word (region-to-string))
-            (if (ere-looking-at "\\(([1-9][a-z]?)\\)")
+            (if (ere-looking-at "\\(([1-9][a-z]*)\\)")
                 (progn
                     (region-around-match 1)
                     (setq ~word (concat (region-to-string) " " ~word))
@@ -30,15 +30,21 @@
     ~text
 
     (pop-to-buffer "man")
+    (setq mode-string (concat "man " ~word))
+    (use-syntax-table "man")
+    (use-local-map "man-map")
+
     (erase-buffer)
     (set-mark)
     (message "man " ~word " fetching text...")(sit-for 0)
     (filter-region (concat "MAN_KEEP_FORMATTING=1 man " ~word))
     (unset-mark)
+    (end-of-file)
+    (line-to-top-of-window)
     (message "man " ~word " cleaning up text...")(sit-for 0)
     (beginning-of-file)
 
-    ; Either there are ANSI escapes of back-space overstrikes
+    ; Either there are ANSI escapes or back-space overstrikes
 
 
     ;
@@ -93,7 +99,7 @@
         (setq ~overstrike-length 2)
         (forward-character)
         (while (looking-at pattern)
-            (setq ~overstrike-length (+ ~overstrike-length 3))
+            (setq ~overstrike-length (+ ~overstrike-length 6))
             (forward-character 3)
         )
     )
@@ -109,21 +115,42 @@
             ; its underlined text
             (progn
                 (delete-next-character 2)
-                (apply-colour-to-region (dot) (+ (dot) 1) 1)
+                (apply-colour-to-region (dot) (+ (dot) 1) 3)
             )
             (looking-at "O\^h+")
             ; its a bullet mark
             (progn
                 (delete-next-character 3)
                 (insert-string "o")
-                (apply-colour-to-region (dot) (- (dot) 1) 2)
+                (apply-colour-to-region (dot) (- (dot) 1) 6)
             )
             ; its assumed to be bold text
             (progn
                 (delete-next-character ~overstrike-length)
-                (apply-colour-to-region (dot) (+ (dot) 1) 2)
+                (apply-colour-to-region (dot) (+ (dot) 1) 6)
             )
         )
     )
     (beginning-of-file)
+    (message "")
 )
+
+; Set up global stuff.
+(save-excursion
+    (temp-use-buffer "~man")
+    (use-syntax-table "man")
+    (modify-syntax-table "word" ".")
+    (modify-syntax-table "word" ":")
+
+    (define-keymap "man-map")
+    (define-keymap "man-ESC-map")
+    (define-keymap "man-^X-map")
+    (use-local-map "man-map")
+    (local-bind-to-key "man-ESC-map" "\e")
+    (local-bind-to-key "man-^X-map" "\^x")
+
+    (error-occurred
+        (execute-mlisp-file "unix-man.key"))
+)
+(delete-buffer "~man")
+(novalue)
