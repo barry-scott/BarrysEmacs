@@ -822,13 +822,13 @@ void test_utf8_unicode( const char *title, int str_length, const char *str, int 
         pass_count++;
 }
 
-void test_unicode_utf8( const char *title, int unicode_length, const EmacsChar_t *unicode_buffer, int expected_length, const char *expected_str )
+void test_unicode_utf8( const char *title, int unicode_length, const EmacsChar_t *unicode_data, int expected_length, const char *expected_str )
 {
     bool failed = false;
 
     std::cout << "test_unicode_utf8: " << title << " ------------------------------------------------------------" << std::endl;
 
-    int utf8_length = length_unicode_to_utf8( unicode_length, unicode_buffer );
+    int utf8_length = length_unicode_to_utf8( unicode_length, unicode_data );
     std::cout << "    length_unicode_to_utf8 expected << " << expected_length << " -> actual " << utf8_length << std::endl;
     if( utf8_length != expected_length )
     {
@@ -843,7 +843,7 @@ void test_unicode_utf8( const char *title, int unicode_length, const EmacsChar_t
         guard_utf8_buffer[i] = utf8_poison;
     }
 
-    convert_unicode_to_utf8( unicode_length, unicode_buffer, utf8_buffer );
+    convert_unicode_to_utf8( unicode_length, unicode_data, utf8_buffer );
 
     for( int i=0; i<utf8_length; i++ )
     {
