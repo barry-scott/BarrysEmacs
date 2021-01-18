@@ -22,23 +22,23 @@ public:
     ProcessChannel( EmacsProcess * );
     virtual ~ProcessChannel();
 
-    EmacsProcess *chan_process;    // Process Block
-    EmacsBufferRef chan_buffer;    // Buf Pointer
-    BoundName *chan_procedure;    // Proc Pointer
-    int chan_chars_left;            // # Chars left
-    int chan_num_reads_before_redisplay;    // do_dsp inhibit
-    int chan_reads_to_go_before_redisplay;    //    " Counter
-    int chan_maximum_buffer_size;        // Delete Thresh.
-    int chan_buffer_reduction_size;        // Amount to delete
-    unsigned chan_interrupt : 1;        // interrupt occured
-    unsigned chan_read_channel : 1;        // 1=read, 0=write
-    unsigned chan_channel_open : 1;        // Channel is open
-    unsigned chan_local_buffer_has_data : 1;// Data in local buf
-    unsigned chan_data_request : 1;        // R/W request
+    EmacsProcess *chan_process;                 // Process Block
+    EmacsBufferRef chan_buffer;                 // Buf Pointer
+    BoundName *chan_procedure;                  // Proc Pointer
+    Marker chan_end_of_data_mark;               // set to the end of the inserted data
+    int chan_chars_left;                        // # Chars left
+    int chan_num_reads_before_redisplay;        // do_dsp inhibit
+    int chan_reads_to_go_before_redisplay;      //    " Counter
+    int chan_maximum_buffer_size;               // Delete Thresh.
+    int chan_buffer_reduction_size;             // Amount to delete
+    unsigned chan_interrupt : 1;                // interrupt occured
+    unsigned chan_read_channel : 1;             // 1=read, 0=write
+    unsigned chan_channel_open : 1;             // Channel is open
+    unsigned chan_local_buffer_has_data : 1;    // Data in local buf
+    unsigned chan_data_request : 1;             // R/W request
     HANDLE chan_nt_event;
     unsigned char *chan_data_buffer;
 };
-
 
 class EmacsProcessSessionData
 {
@@ -52,38 +52,38 @@ public:
     SESSION_DISCONNECT_CODE disconnectSession();
     void deleteSession();
 
-    bool initialised;    // true if createXXXSession worked
-    bool process_session;    // true if a process session
+    bool initialised;                       // true if createXXXSession worked
+    bool process_session;                   // true if a process session
 
-    EmacsThread *thread_object;    // valid if process_session == false
+    EmacsThread *thread_object;             // valid if process_session == false
 
     //
     // These fields are filled in at session creation time
     //
-    HANDLE  ShellReadPipeHandle;        // Handle to shell stdout pipe
-    HANDLE  ShellWritePipeHandle;        // Handle to shell stdin pipe
-    HANDLE  ShellProcessHandle;        // Handle to shell process
-    HANDLE  ShellThreadHandle;        // Handle to shell process
+    HANDLE  ShellReadPipeHandle;            // Handle to shell stdout pipe
+    HANDLE  ShellWritePipeHandle;           // Handle to shell stdin pipe
+    HANDLE  ShellProcessHandle;             // Handle to shell process
+    HANDLE  ShellThreadHandle;              // Handle to shell process
 
     //
     // These fields maintain the state of asynchronouse reads/writes
     // to the shell process across client disconnections. They
     // are initialized at session creation.
     //
-    BYTE    ShellReadBuffer[SHELL_BUFFER_SIZE];    // Data for shell reads goes here
-    HANDLE  ShellReadAsyncHandle;            // Object used for async reads from shell
+    BYTE    ShellReadBuffer[SHELL_BUFFER_SIZE]; // Data for shell reads goes here
+    HANDLE  ShellReadAsyncHandle;               // Object used for async reads from shell
     BOOL    ShellReadPending;
 
-    BYTE    ShellWriteBuffer[SHELL_BUFFER_SIZE];    // Data for shell writes goes here
-    HANDLE  ShellWriteAsyncHandle;            // Object used for async writes to shell
+    BYTE    ShellWriteBuffer[SHELL_BUFFER_SIZE];// Data for shell writes goes here
+    HANDLE  ShellWriteAsyncHandle;              // Object used for async writes to shell
     BOOL    ShellWritePending;
 
     //
     // These fields are filled in at session connect time and are only
     // valid when the session is connected
     //
-    HANDLE  SessionThreadHandle;            // Handle to session thread
-    HANDLE  SessionThreadSignalEventHandle;        // Handle to event used to signal thread
+    HANDLE  SessionThreadHandle;                // Handle to session thread
+    HANDLE  SessionThreadSignalEventHandle;     // Handle to event used to signal thread
 };
 
 class EmacsProcess : public EmacsProcessCommon
@@ -93,28 +93,28 @@ public:
     EmacsProcess( const EmacsString &name );
     virtual ~EmacsProcess();
 
-    ProcessChannel proc_output_channel;        // Output Channel
-    ProcessChannel proc_input_channel;        // Input Channel
+    ProcessChannel proc_output_channel;         // Output Channel
+    ProcessChannel proc_input_channel;          // Input Channel
     EmacsProcessSessionData proc_nt_session;    //
 
-    BoundName *proc_procedure;            // Termination Proc
-    long proc_time_state_was_entered;        // When it changed
-    int proc_state;                    // Process State
+    BoundName *proc_procedure;                  // Termination Proc
+    time_t proc_time_state_was_entered;         // When it changed
+    int proc_state;                             // Process State
 
-    int startProcess(EmacsString &error_detail);            // start up the process
-    void stopProcess(void);            // stop the process
+    int startProcess(EmacsString &error_detail);// start up the process
+    void stopProcess(void);                     // stop the process
 
     // Process States
     // These are carefully ordered so that the following macros work!! */
     enum processStates
     {
-        RUNNING = 0,        // Process Running
-        PAUSED = 1,        // We Suspended it
-        BLOCKED_FOR_INPUT = 2,    // Input Wait
-        PAUSED_INPUTBLOCK = 3,    // " " (PAUSED)
-        BLOCKED_FOR_OUTPUT = 4,    // Output Wait
-        PAUSED_OUTPUTBLOCK = 5,    // " " (PAUSED)
-        DEAD = 6        // It Exited
+        RUNNING = 0,                // Process Running
+        PAUSED = 1,                 // We Suspended it
+        BLOCKED_FOR_INPUT = 2,      // Input Wait
+        PAUSED_INPUTBLOCK = 3,      // " " (PAUSED)
+        BLOCKED_FOR_OUTPUT = 4,     // Output Wait
+        PAUSED_OUTPUTBLOCK = 5,     // " " (PAUSED)
+        DEAD = 6                    // It Exited
     };
 
     void PAUSED_TO_RUNNING() { proc_state &= ~PAUSED; }

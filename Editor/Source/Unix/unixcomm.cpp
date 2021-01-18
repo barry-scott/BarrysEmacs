@@ -1435,6 +1435,11 @@ int vms_load_averages( void )
 
 int process_channel_interrupts( void )
 {
+    process_channel_fds();
+    if( child_changed > 0 )
+    {
+        change_msgs();
+    }
     return 0;
 }
 

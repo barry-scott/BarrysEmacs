@@ -1234,13 +1234,8 @@ int wait_for_activity(void)
 {
     Trace( "wait_for_activity" );
 #if defined( SUBPROCESSES )
-    Trace( "wait_for_activity: call poll_process_fds" );
-    poll_process_fds();
-    if( child_changed > 0 )
-    {
-        Trace( "wait_for_activity: call change_msgs" );
-        change_msgs();
-    }
+    Trace( "wait_for_activity: call process_channel_interrupts" );
+    process_channel_interrupts();
 #endif
 
     EmacsDateTime proc_timeout = EmacsDateTime::now();

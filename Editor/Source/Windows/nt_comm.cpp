@@ -1,5 +1,5 @@
 //
-//     Copyright(c) 1994 Barry A. Scott
+//     Copyright(c) 1994-2021 Barry A. Scott
 //
 
 #include <emacs.h>
@@ -8,9 +8,8 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
-SystemExpressionRepresentationIntBoolean force_redisplay;
-SystemExpressionRepresentationIntPositive maximum_dcl_buffer_size( 10000 );
-SystemExpressionRepresentationIntPositive dcl_buffer_reduction( 500 );
+SystemExpressionRepresentationIntPositive maximum_shell_buffer_size( 10000 );
+SystemExpressionRepresentationIntPositive shell_buffer_reduction( 500 );
 
 #include <nt_comm.h>
 
@@ -69,35 +68,36 @@ EmacsProcess::EmacsProcess( const EmacsString &name )
     proc_input_channel.chan_num_reads_before_redisplay = 1;
     proc_input_channel.chan_reads_to_go_before_redisplay = 1;
 
-    if( maximum_dcl_buffer_size < 1000 )
-        maximum_dcl_buffer_size = 10000;
-    if( dcl_buffer_reduction > maximum_dcl_buffer_size - 500
-    || dcl_buffer_reduction < 500 )
-        dcl_buffer_reduction = 500;
+    if( maximum_shell_buffer_size < 1000 )
+        maximum_shell_buffer_size = 10000;
+    if( shell_buffer_reduction > maximum_shell_buffer_size - 500
+    || shell_buffer_reduction < 500 )
+        shell_buffer_reduction = 500;
 
-    proc_input_channel.chan_maximum_buffer_size = maximum_dcl_buffer_size;
-    proc_input_channel.chan_buffer_reduction_size = dcl_buffer_reduction;
+    proc_input_channel.chan_maximum_buffer_size = maximum_shell_buffer_size;
+    proc_input_channel.chan_buffer_reduction_size = shell_buffer_reduction;
 }
 
 EmacsProcess::~EmacsProcess()
 { }
 
 ProcessChannel::ProcessChannel( EmacsProcess *owner )
-    : chan_process( owner )
-    , chan_buffer( NULL )
-    , chan_procedure( NULL )
-    , chan_chars_left( 0 )
-    , chan_num_reads_before_redisplay( 0 )
-    , chan_reads_to_go_before_redisplay( 0 )
-    , chan_maximum_buffer_size( 0 )
-    , chan_buffer_reduction_size( 0 )
-    , chan_interrupt( 0 )
-    , chan_read_channel( 0 )
-    , chan_channel_open( 0 )
-    , chan_local_buffer_has_data( 0 )
-    , chan_data_request( 0 )
-    , chan_nt_event( 0 )
-    , chan_data_buffer( NULL )
+: chan_process( owner )
+, chan_buffer( NULL )
+, chan_procedure( NULL )
+, chan_end_of_data_mark()
+, chan_chars_left( 0 )
+, chan_num_reads_before_redisplay( 0 )
+, chan_reads_to_go_before_redisplay( 0 )
+, chan_maximum_buffer_size( 0 )
+, chan_buffer_reduction_size( 0 )
+, chan_interrupt( 0 )
+, chan_read_channel( 0 )
+, chan_channel_open( 0 )
+, chan_local_buffer_has_data( 0 )
+, chan_data_request( 0 )
+, chan_nt_event( 0 )
+, chan_data_buffer( NULL )
 { }
 
 ProcessChannel::~ProcessChannel()
@@ -479,11 +479,11 @@ int EmacsProcess::startProcess( EmacsString &error_detail )
 
             // set the title is a unique string
             sprintf( con_name, "Emacs Console (0x%x) about to be hidden...", GetCurrentProcessId() );
-            status = SetConsoleTitle( con_name );
+            status = SetConsoleTitleA( con_name );
 
             for( i=0; i<100; i++ )
             {
-                con_w = FindWindow( "ConsoleWindowClass", con_name );
+                con_w = FindWindowA( "ConsoleWindowClass", con_name );
                 if( con_w != NULL )
                     break;
 #if DBG_TMP
@@ -505,7 +505,7 @@ int EmacsProcess::startProcess( EmacsString &error_detail )
                 // change the title to reflect that its hidden
                 sprintf( con_name, "Emacs Console (0x%x) Hidden.",
                     GetCurrentProcessId() );
-                status = SetConsoleTitle( con_name );
+                status = SetConsoleTitleA( con_name );
 
                 // if we had an active window then  restore it
                 if( act_w != 0 )
@@ -517,7 +517,7 @@ int EmacsProcess::startProcess( EmacsString &error_detail )
             // as alloc console does not setup the std handles we do it here
             con_in_handle = CreateFile
                 (
-                "CONIN$",
+                L"CONIN$",
                 GENERIC_READ|GENERIC_WRITE,
                 FILE_SHARE_READ|FILE_SHARE_WRITE,
                 NULL,
@@ -528,7 +528,7 @@ int EmacsProcess::startProcess( EmacsString &error_detail )
             status = SetStdHandle( STD_INPUT_HANDLE, con_in_handle );
             con_out_handle = CreateFile
                 (
-                "CONOUT$",
+                L"CONOUT$",
                 GENERIC_READ|GENERIC_WRITE,
                 FILE_SHARE_READ|FILE_SHARE_WRITE,
                 NULL,
@@ -631,6 +631,26 @@ int process_status(void)
     return 0;
 }
 
+int process_end_of_output( void )
+{
+    EmacsString proc_name = getstr( ": process-end-of-output for process: " );
+    EmacsProcess *process = EmacsProcess::name_table.find( proc_name );
+    if( process == NULL )
+    {
+        error("process not found");
+        return 0;
+    }
+    if( !process->proc_input_channel.chan_end_of_data_mark.isSet() )
+    {
+        error("process-end-of-output marker is not set");
+        return 0;
+    }
+
+    Marker *m = EMACS_NEW Marker( process->proc_input_channel.chan_end_of_data_mark );
+    ml_value = m;
+    return 0;
+}
+
 //
 //
 //    Internal routine to get a Process argument
@@ -713,13 +733,13 @@ int send_string_to_process( void )
     //    Send the string and re-enable the Read Attention AST
     //
     EmacsString cp = getstr( "String: " );
-    int len = cp.length();
+    int len = cp.utf8_data_length();
     if( len > SHELL_BUFFER_SIZE )
     {
         error( "String too long");
         return 0;
     }
-    memcpy( output_channel->chan_data_buffer, cp.data(), len );
+    memcpy( output_channel->chan_data_buffer, cp.utf8_data(), len );
     output_channel->chan_chars_left = len;
 
     // let the write thread run
@@ -856,7 +876,6 @@ int kill_process( void )
         proc->proc_state = EmacsProcess::DEAD;
         interlock_inc( &terminating_process );
         interlock_inc( &pending_channel_io );
-        wake_main_thread();
     }
     else
     {
@@ -971,7 +990,7 @@ int force_exit_process( void )
     //
     //    Get the Exit Code
     //
-    code = getnum( u_str("exit code: ") );
+    code = getnum( "exit code: " );
     //
     //    Do a Force Exit on the named process
     //    Note: In EUNICE, a -ve Force Exit code is
@@ -1095,15 +1114,15 @@ int process_output( void )
 //        the buffer 'Process List'
 //
 //
-static unsigned char *proc_states[] =
+static char *proc_states[] =
 {
-    u_str( "RUNNING" ),
-    u_str( "PAUSED" ),
-    u_str( "IN-WAIT" ),
-    u_str( "PAUSED" ),
-    u_str( "OUT-WAIT" ),
-    u_str( "PAUSED" ),
-    u_str( "DEAD" )
+    "RUNNING",
+    "PAUSED",
+    "IN-WAIT",
+    "PAUSED",
+    "OUT-WAIT",
+    "PAUSED",
+    "DEAD"
 };
 
 int list_processes( void )
@@ -1112,35 +1131,56 @@ int list_processes( void )
 
     EmacsBuffer::scratch_bfn( "Process list", interactive() );
     bf_cur->ins_str("Process               State   Time      Buffer          In Proc         Out Proc\n"
-        "-------               -----   ----      ------          -------         --------\n");
-//              "..................... ....... ... ..... ............... ............... ...............
+                    "-------               -----   ----      ------          -------         --------\n");
+
     for( int i=0; i<EmacsProcess::name_table.entries(); i++ )
     {
         EmacsProcess *proc = EmacsProcess::name_table.value(i);
 
         char *cp = ctime( &proc->proc_time_state_was_entered );
-        cp[3] = 0;
         cp[16] = 0;
 
+#if 0
         bf_cur->ins_cstr(
-        FormatString("%-21s %-7s %3s %5s %-15s %-15s %-15s\n") <<
-        proc->proc_name <<
-        proc_states[ proc->proc_state ] <<
-        cp <<
-        &cp[11] <<
-        (proc->proc_input_channel.chan_buffer.bufferValid() ?
-            proc->proc_input_channel.chan_buffer.buffer()->b_buf_name
-        :
-            "[none]") <<
-        (proc->proc_output_channel.chan_buffer.bufferValid() ?
-            proc->proc_output_channel.chan_buffer.buffer()->b_buf_name
-        :
-            "[none]") <<
-        (proc->proc_input_channel.chan_procedure != NULL ?
-            proc->proc_input_channel.chan_procedure->b_proc_name
-        :
-            "[none]")
-        );
+            FormatString("%-21s %-7s %3s %5s %-15s %-15s %-15s\n") <<
+            proc->proc_name <<
+            proc_states[ proc->proc_state ] <<
+            cp <<
+            &cp[11] <<
+            (proc->proc_input_channel.chan_buffer.bufferValid() ?
+                proc->proc_input_channel.chan_buffer.buffer()->b_buf_name
+            :
+                "[none]") <<
+            (proc->proc_output_channel.chan_buffer.bufferValid() ?
+                proc->proc_output_channel.chan_buffer.buffer()->b_buf_name
+            :
+                "[none]") <<
+            (proc->proc_input_channel.chan_procedure != NULL ?
+                proc->proc_input_channel.chan_procedure->b_proc_name
+            :
+                "[none]")
+            );
+#else
+        bf_cur->ins_cstr( FormatString("%-21s") << proc->proc_name );
+        bf_cur->ins_cstr( FormatString(" %-7s") << proc_states[ proc->proc_state ] );
+        bf_cur->ins_cstr( FormatString(" %3s") << cp );
+        bf_cur->ins_cstr( FormatString(" %5s") << &cp[11] );
+        bf_cur->ins_cstr( FormatString(" %-15s") <<
+            (proc->proc_input_channel.chan_buffer.bufferValid() ?
+                proc->proc_input_channel.chan_buffer.buffer()->b_buf_name
+            :
+                "[none]") );
+        bf_cur->ins_cstr( FormatString(" %-15s") <<
+            (proc->proc_output_channel.chan_buffer.bufferValid() ?
+                proc->proc_output_channel.chan_buffer.buffer()->b_buf_name
+            :
+                "[none]") );
+        bf_cur->ins_cstr( FormatString("%-15s\n") <<
+            (proc->proc_input_channel.chan_procedure != NULL ?
+                proc->proc_input_channel.chan_procedure->b_proc_name
+            :
+                "[none]") );
+#endif
     }
 
     bf_cur->b_modified = 0;

@@ -22,7 +22,6 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 //
 // Define standard handles
 //
-
 #define STDIN    0
 #define STDOUT   1
 #define STDERROR 2
@@ -41,13 +40,9 @@ DWORD SessionThreadFn( LPVOID Parameter );
 // Define the structure used to describe each session
 //
 
-
-
 //
 // Useful macros
 //
-
-
 EmacsProcessSessionData::EmacsProcessSessionData()
     : initialised(false)
     , ShellReadPipeHandle(NULL)
@@ -67,7 +62,6 @@ EmacsProcessSessionData::~EmacsProcessSessionData()
     //
     // Cleanup shell pipe handles
     //
-
     if (ShellReadPipeHandle != NULL)
         MyCloseHandle( ShellReadPipeHandle, "shell read pipe (session side)" );
 
@@ -78,7 +72,6 @@ EmacsProcessSessionData::~EmacsProcessSessionData()
     //
     // Cleanup async data
     //
-
     if (ShellReadAsyncHandle != NULL)
         DeleteAsync( ShellReadAsyncHandle );
 
@@ -128,7 +121,7 @@ bool EmacsProcessSessionData::createProcessSession(EmacsString &error_detail)
             );
         if (!Result)
         {
-            error_detail = FormatString("Failed to create shell stdout pipe, error = %E") << GetLastError();
+            error_detail = FormatString("Failed to create shell stdout pipe, error=%e") << GetLastError();
             DebugPrintf( error_detail );
             throw( int(1) );
         }
@@ -145,7 +138,7 @@ bool EmacsProcessSessionData::createProcessSession(EmacsString &error_detail)
             );
         if (!Result)
         {
-            error_detail = FormatString("Failed to create shell stdin pipe, error = %E") << GetLastError();
+            error_detail = FormatString("Failed to create shell stdin pipe, error=%e") << GetLastError();
             DebugPrintf( error_detail );
             throw( int(2) );
         }
@@ -154,11 +147,10 @@ bool EmacsProcessSessionData::createProcessSession(EmacsString &error_detail)
         //
         // Initialize async objects
         //
-
         ShellReadAsyncHandle = CreateAsync(FALSE);
         if (ShellReadAsyncHandle == NULL)
         {
-            error_detail = FormatString("Failed to create shell read async object, error = %E") << GetLastError();
+            error_detail = FormatString("Failed to create shell read async object, error=%e") << GetLastError();
             DebugPrintf( error_detail );
             throw( int(3) );
         }
@@ -166,7 +158,7 @@ bool EmacsProcessSessionData::createProcessSession(EmacsString &error_detail)
         ShellWriteAsyncHandle = CreateAsync(FALSE);
         if (ShellWriteAsyncHandle == NULL)
         {
-            error_detail = FormatString("Failed to create shell write async object, error = %E") << GetLastError();
+            error_detail = FormatString("Failed to create shell write async object, error=%e") << GetLastError();
             DebugPrintf( error_detail );
             throw( int(4) );
         }
@@ -177,8 +169,7 @@ bool EmacsProcessSessionData::createProcessSession(EmacsString &error_detail)
         //
         // Start the shell
         //
-
-    {
+        {
         PROCESS_INFORMATION ProcessInformation;
         STARTUPINFO si;
         HANDLE ProcessHandle = NULL;
@@ -197,7 +188,7 @@ bool EmacsProcessSessionData::createProcessSession(EmacsString &error_detail)
         memset( &si, 0, sizeof( si ) );
         si.cb = sizeof(STARTUPINFO);
 
-        // HIde the windows
+        // Hide the windows
         si.wShowWindow = SW_HIDE;
 
         // give the process our pipes are input and output
@@ -210,10 +201,10 @@ bool EmacsProcessSessionData::createProcessSession(EmacsString &error_detail)
         int status = CreateProcess
             (
             NULL,
-            (char *)cli_name.sdata(),    // typically cmd.exe /q
+            const_cast<wchar_t *>( cli_name.utf16_data() ),  // typically cmd.exe /q
             NULL,
             NULL,
-            TRUE, // Inherit handles
+            TRUE,                   // Inherit handles
             0,
             NULL,
             NULL,
@@ -227,7 +218,7 @@ bool EmacsProcessSessionData::createProcessSession(EmacsString &error_detail)
         }
         else
         {
-            error_detail = FormatString("Failed to execute shell, error = %E") << GetLastError();
+            error_detail = FormatString("Failed to execute shell, error=%e") << GetLastError();
             DebugPrintf( error_detail );
         }
 
@@ -239,12 +230,11 @@ bool EmacsProcessSessionData::createProcessSession(EmacsString &error_detail)
         ShellStdoutPipe = NULL;
 
         ShellProcessHandle = ProcessHandle;
-    }
+        }
 
         //
         // Check  result of shell start
         //
-
         if (ShellProcessHandle == NULL)
         {
             throw( int(10) );
@@ -253,7 +243,6 @@ bool EmacsProcessSessionData::createProcessSession(EmacsString &error_detail)
         //
         // Success
         //
-
         return true;
     }
     catch( int )
@@ -264,7 +253,6 @@ bool EmacsProcessSessionData::createProcessSession(EmacsString &error_detail)
         if (ShellStdoutPipe != NULL)
             MyCloseHandle(ShellStdoutPipe, "shell stdout pipe (shell side)");
     }
-
 
     return false;
 }
@@ -313,7 +301,7 @@ bool EmacsProcessSessionData::createThreadSession( EmacsThread *_thread_object, 
             );
         if (!Result)
         {
-            error_detail = FormatString("Failed to create thread stdout pipe, error = %E") << GetLastError();
+            error_detail = FormatString("Failed to create thread stdout pipe, error=%e") << GetLastError();
             DebugPrintf( error_detail );
             throw( int(1) );
         }
@@ -330,7 +318,7 @@ bool EmacsProcessSessionData::createThreadSession( EmacsThread *_thread_object, 
             );
         if (!Result)
         {
-            error_detail = FormatString("Failed to create thread stdin pipe, error = %E") << GetLastError();
+            error_detail = FormatString("Failed to create thread stdin pipe, error=%e") << GetLastError();
             DebugPrintf( error_detail );
             throw( int(2) );
         }
@@ -339,11 +327,10 @@ bool EmacsProcessSessionData::createThreadSession( EmacsThread *_thread_object, 
         //
         // Initialize async objects
         //
-
         ShellReadAsyncHandle = CreateAsync(FALSE);
         if (ShellReadAsyncHandle == NULL)
         {
-            error_detail = FormatString("Failed to create thread read async object, error = %E") << GetLastError();
+            error_detail = FormatString("Failed to create thread read async object, error=%e") << GetLastError();
             DebugPrintf( error_detail );
             throw( int(3) );
         }
@@ -351,7 +338,7 @@ bool EmacsProcessSessionData::createThreadSession( EmacsThread *_thread_object, 
         ShellWriteAsyncHandle = CreateAsync(FALSE);
         if (ShellWriteAsyncHandle == NULL)
         {
-            error_detail = FormatString("Failed to create thread write async object, error = %E") << GetLastError();
+            error_detail = FormatString("Failed to create thread write async object, error=%e") << GetLastError();
             DebugPrintf( error_detail );
             throw( int(4) );
         }
@@ -388,7 +375,6 @@ bool EmacsProcessSessionData::createThreadSession( EmacsThread *_thread_object, 
         //
         // Success
         //
-
         return true;
     }
     catch( int )
@@ -399,7 +385,6 @@ bool EmacsProcessSessionData::createThreadSession( EmacsThread *_thread_object, 
         if (ShellStdoutPipe != NULL)
             MyCloseHandle(ShellStdoutPipe, "shell stdout pipe (shell side)");
     }
-
 
     return false;
 }
@@ -437,7 +422,7 @@ void EmacsProcessSessionData::deleteSession(void)
         Result = TerminateProcess( ShellProcessHandle, 1 );
         if (!Result)
         {
-            DebugPrintf(FormatString("Failed to terminate shell, error = %E\n") << GetLastError());
+            DebugPrintf(FormatString("Failed to terminate shell, error=%e\n") << GetLastError());
         }
 
         MyCloseHandle( ShellProcessHandle, "shell process" );
@@ -500,19 +485,19 @@ bool EmacsProcessSessionData::connectSession( EmacsProcess *proc, EmacsString &e
     //
     SecurityAttributes.nLength = sizeof(SecurityAttributes);
     SecurityAttributes.lpSecurityDescriptor = NULL; // Use default ACL
-    SecurityAttributes.bInheritHandle = FALSE; // No inheritance
+    SecurityAttributes.bInheritHandle = FALSE;      // No inheritance
 
     SessionThreadSignalEventHandle =
         CreateEvent
         (
         &SecurityAttributes,
-        TRUE,        // Manual reset
-        FALSE,        // Initially clear
+        TRUE,       // Manual reset
+        FALSE,      // Initially clear
         NULL        // No name
         );
     if( SessionThreadSignalEventHandle == NULL )
     {
-        error_detail = FormatString("Failed to create thread signal event, error = %E") << GetLastError();
+        error_detail = FormatString("Failed to create thread signal event, error=%e") << GetLastError();
         DebugPrintf( error_detail );
         return false;
     }
@@ -521,13 +506,13 @@ bool EmacsProcessSessionData::connectSession( EmacsProcess *proc, EmacsString &e
         CreateEvent
         (
         &SecurityAttributes,
-        FALSE,    // Manual reset
-        FALSE,    // Initially clear
-        NULL
-        );    // No name
+        FALSE,  // Manual reset
+        FALSE,  // Initially clear
+        NULL    // No name
+        );
     if( proc->proc_input_channel.chan_nt_event == NULL )
     {
-        error_detail = FormatString("Failed to create thread signal event, error = %E") << GetLastError();
+        error_detail = FormatString("Failed to create thread signal event, error=%e") << GetLastError();
         DebugPrintf( error_detail );
         return false;
     }
@@ -536,13 +521,13 @@ bool EmacsProcessSessionData::connectSession( EmacsProcess *proc, EmacsString &e
         CreateEvent
         (
         &SecurityAttributes,
-        FALSE, // Manual reset
-        FALSE, // Initially clear
-        NULL
-        ); // No name
+        FALSE,  // Manual reset
+        FALSE,  // Initially clear
+        NULL    // No name
+        );
     if( proc->proc_output_channel.chan_nt_event == NULL )
     {
-        error_detail = FormatString("Failed to create thread signal event, error = %E") << GetLastError();
+        error_detail = FormatString("Failed to create thread signal event, error=%e") << GetLastError();
         DebugPrintf( error_detail );
         return false;
     }
@@ -557,15 +542,15 @@ bool EmacsProcessSessionData::connectSession( EmacsProcess *proc, EmacsString &e
         CreateThread
         (
         &SecurityAttributes,
-        0,            // Default stack size
+        0,                                          // Default stack size
         (LPTHREAD_START_ROUTINE)SessionThreadFn,    // Start address
-        (LPVOID)proc,        // Parameter
-        0,            // Creation flags
-        &ThreadId        // Thread id
+        (LPVOID)proc,                               // Parameter
+        0,                                          // Creation flags
+        &ThreadId                                   // Thread id
         );
     if( SessionThreadHandle == NULL )
     {
-        error_detail = FormatString("Failed to create session thread, error = %E") << GetLastError();
+        error_detail = FormatString("Failed to create session thread, error=%e") << GetLastError();
         DebugPrintf( error_detail );
 
         //
@@ -576,9 +561,7 @@ bool EmacsProcessSessionData::connectSession( EmacsProcess *proc, EmacsString &e
         MyCloseHandle( proc->proc_output_channel.chan_nt_event,"out chan event" );
     }
 
-
     initialised = true;
-
     return true;
 }
 
@@ -606,17 +589,15 @@ SESSION_DISCONNECT_CODE EmacsProcessSessionData::disconnectSession()
     //
     // Signal the thread to terminate (if it hasn't already)
     //
-
     Result = SetEvent( SessionThreadSignalEventHandle );
     if (!Result)
     {
-        DebugPrintf( FormatString("Failed to set thread signal event, error = %E\n") << GetLastError() );
+        DebugPrintf( FormatString("Failed to set thread signal event, error=%e\n") << GetLastError() );
     }
 
     //
     // Wait for the thread to terminate
     //
-
     DebugPrintf("Waiting for session thread to terminate...");
 
     WaitResult = WaitForSingleObject( SessionThreadHandle, INFINITE );
@@ -627,14 +608,13 @@ SESSION_DISCONNECT_CODE EmacsProcessSessionData::disconnectSession()
 
     DebugPrintf("done\n");
 
-
     //
     // Get the thread termination code
     //
     Result = GetExitCodeThread( SessionThreadHandle, &TerminationCode );
     if (!Result)
     {
-        DebugPrintf(FormatString("Failed to get termination code for thread, error = %E\n") << GetLastError());
+        DebugPrintf(FormatString("Failed to get termination code for thread, error=%e\n") << GetLastError());
         TerminationCode = (DWORD)DisconnectError;
     }
     else
@@ -663,7 +643,6 @@ SESSION_DISCONNECT_CODE EmacsProcessSessionData::disconnectSession()
     //
     // We're done
     //
-
     return DisconnectCode;
 }
 
@@ -707,14 +686,14 @@ DWORD SessionThreadFn( LPVOID Parameter )
         process_exit,
         wait_error = 0xffffffff
     }
-            WaitResult;
+        WaitResult;
 
     static struct _wait_num_names
     {
         wait_num num;
         const char *name;
     }
-            wait_num_names[] =
+        wait_num_names[] =
     {
         thread_exit, "thread_exit",
         shell_read_complete, "shell_read_complete",
@@ -729,6 +708,7 @@ DWORD SessionThreadFn( LPVOID Parameter )
     {
         DebugPrintf("SessionThread started - SHELL-WRITE-PENDING\n");
     }
+
     if (Session->ShellReadPending)
     {
         DebugPrintf("SessionThread started - SHELL-READ-PENDING\n");
@@ -766,7 +746,7 @@ DWORD SessionThreadFn( LPVOID Parameter )
 
         if (WaitResult == wait_error)
         {
-            DebugPrintf(FormatString("Session thread wait failed, error = %E\n") << GetLastError());
+            DebugPrintf(FormatString("Session thread wait failed, error=%e\n") << GetLastError());
             ExitCode = (DWORD)ConnectError;
             break; // out of while
         }
@@ -795,7 +775,6 @@ DWORD SessionThreadFn( LPVOID Parameter )
                 proc->proc_state = EmacsProcess::DEAD;
                 interlock_inc( &pending_channel_io );
                 interlock_inc( &terminating_process );
-                wake_main_thread();
             }
             break; // out of switch
         }
@@ -807,7 +786,6 @@ DWORD SessionThreadFn( LPVOID Parameter )
                 proc->proc_state = EmacsProcess::DEAD;
                 interlock_inc( &pending_channel_io );
                 interlock_inc( &terminating_process );
-                wake_main_thread();
             }
             Done = TRUE;
             ExitCode = (DWORD)ShellEnded;
@@ -836,7 +814,6 @@ DWORD SessionThreadFn( LPVOID Parameter )
             proc->proc_input_channel.chan_chars_left = (int)BytesTransferred;
             proc->proc_input_channel.chan_interrupt = 1;
             interlock_inc( &pending_channel_io );
-            wake_main_thread();
             break; // out of switch
         }
 
@@ -845,7 +822,6 @@ DWORD SessionThreadFn( LPVOID Parameter )
             //
             // Shell write completed
             //
-
             Session->ShellWritePending = FALSE;
 
             CompletionCode = GetAsyncResult( Session->ShellWriteAsyncHandle, &BytesTransferred );
@@ -863,8 +839,6 @@ DWORD SessionThreadFn( LPVOID Parameter )
             //
             proc->proc_output_channel.chan_interrupt = 1;
             interlock_inc( &pending_channel_io );
-            wake_main_thread();
-
             break; // out of switch
         }
 
@@ -886,13 +860,11 @@ DWORD SessionThreadFn( LPVOID Parameter )
                     //
                     // Generate a Ctrl-C if we have the technology
                     //
-
                     GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
 
                     //
                     // Remove the Ctrl-C from the buffer
                     //
-
                     BytesTransferred --;
 
                     for (; i < BytesTransferred; i++)
@@ -912,7 +884,7 @@ DWORD SessionThreadFn( LPVOID Parameter )
                 );
             if (!Result)
             {
-                DebugPrintf(FormatString("Async write to shell failed, error = %E\n") << GetLastError());
+                DebugPrintf(FormatString("Async write to shell failed, error=%e\n") << GetLastError());
                 ExitCode = (DWORD)ShellEnded;
                 Done = TRUE;
             }
@@ -939,7 +911,7 @@ DWORD SessionThreadFn( LPVOID Parameter )
             if (!Result)
             {
                 // Its expected that this failure happends just before the process exits.
-                DebugPrintf(FormatString("Async read from shell failed, error = %E\n") << GetLastError());
+                DebugPrintf(FormatString("Async read from shell failed, error=%e\n") << GetLastError());
             }
             else
             {
@@ -968,7 +940,6 @@ DWORD SessionThreadFn( LPVOID Parameter )
     //
     // Return the appropriate exit code
     //
-
     return ExitCode;
 }
 

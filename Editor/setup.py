@@ -166,7 +166,7 @@ class Setup:
             self.c_python_tools = Win64CompilerVC14( self )
             self.c_pybemacs = Win64CompilerVC14( self )
 
-            pybemacs_feature_defines = [('EXEC_BF', '1')]
+            pybemacs_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
             utils_feature_defines = []
 
             if self.opt_sqlite:
@@ -346,7 +346,11 @@ class Setup:
             elif self.platform in ('win32', 'win64'):
                 self.pybemacs_specific_obj_files.extend( [
                     Source( self.c_pybemacs, 'Source/Windows/win_rtl_pybemacs.cpp' ),
-                    ] )
+                    Source( self.c_pybemacs, 'Source/Windows/nt_async.cpp' ),
+                    Source( self.c_pybemacs, 'Source/Windows/nt_comm.cpp' ),
+                    Source( self.c_pybemacs, 'Source/Windows/nt_pipe.cpp' ),
+                    Source( self.c_pybemacs, 'Source/Windows/nt_proc.cpp' ),
+                     ] )
 
         if self.opt_bemacs_cli:
             self.cli_specific_obj_files = [
@@ -793,6 +797,7 @@ class Win64CompilerVC14(Compiler):
         self._addVar( 'EDIT_OBJ',       r'obj-pybemacs' )
         self._addVar( 'EDIT_EXE',       r'exe-pybemacs' )
         self._addVar( 'LINK_LIBS',      'advapi32.lib '
+                                        'user32.lib '
                                         '%%(PYTHON_LIB)s\python%d%d.lib' %
                                         (sys.version_info.major, sys.version_info.minor) )
         self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc '

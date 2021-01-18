@@ -6,7 +6,7 @@
 //This module implements asynchronous I/O on file handles in a more
 //useful way than provided for by Win32 apis.
 //
-//This module provides 2 main apis : ReadFileAsync, WriteFileAsync.
+//This module provides 2 main apis: ReadFileAsync, WriteFileAsync.
 //These apis take a handle to an async object and always return
 //immediately without waiting for the I/O to complete. An event
 //can be queried from the async object and used to wait for completion.
@@ -77,12 +77,10 @@ CreateAsync(
     //
     // Allocate space for the async structure
     //
-
-
     MyOverlapped = (PMYOVERLAPPED)EMACS_MALLOC(sizeof(MYOVERLAPPED), malloc_type_char);
     if (MyOverlapped == NULL) {
-        DebugPrintf("CreateAsync : Failed to allocate space for async object\n");
-        return(NULL);
+        DebugPrintf("CreateAsync: Failed to allocate space for async object\n");
+        return NULL;
     }
 
     // must have zero's in the internal and offset members of the overlap struct
@@ -91,7 +89,6 @@ CreateAsync(
     //
     // Create the synchronisation event
     //
-
     MyOverlapped->Overlapped.hEvent = CreateEvent( &SecurityAttributes,
                                                    TRUE,        // Manual-reset
                                                    InitialState,
@@ -99,21 +96,20 @@ CreateAsync(
     if (MyOverlapped->Overlapped.hEvent == NULL) {
         DebugPrintf(FormatString("CreateAsync failed to create event, error = %E\n") << GetLastError());
         EMACS_FREE(MyOverlapped);
-        return(NULL);
+        return NULL;
     }
 
     //
     // Initialize other fields.
     // (Set FileHandle non-NULL to keep GetAsyncResult happy)
     //
-
-    MyOverlapped->FileHandle = InitialState ? (HANDLE)1 : NULL;
+    MyOverlapped->FileHandle = InitialState ? (HANDLE)1: NULL;
     MyOverlapped->BytesTransferred = 0;
     MyOverlapped->CompletionCode = ERROR_SUCCESS;
     MyOverlapped->CompletedSynchronously = TRUE;
 
 
-    return((HANDLE)MyOverlapped);
+    return (HANDLE)MyOverlapped;
 }
 
 
@@ -173,21 +169,19 @@ ReadFileAsync(
     //
     // Check an IO operation is not in progress
     //
-
     if (MyOverlapped->FileHandle != NULL) {
-        DebugPrintf("ReadFileAsync : Operation already in progress!\n");
+        DebugPrintf("ReadFileAsync: Operation already in progress!\n");
         SetLastError(ERROR_IO_PENDING);
-        return(FALSE);
+        return FALSE;
     }
 
     //
     // Reset the event
     //
-
     Result = ResetEvent(MyOverlapped->Overlapped.hEvent);
     if (!Result) {
-        DebugPrintf(FormatString("ReadFileAsync : Failed to reset async event, error = %E\n") << GetLastError());
-        return(FALSE);
+        DebugPrintf(FormatString("ReadFileAsync: Failed to reset async event, error = %E\n") << GetLastError());
+        return FALSE;
     }
 
 
@@ -195,7 +189,6 @@ ReadFileAsync(
     // Store the file handle in our structure.
     // This also functions as a signal that an operation is in progress.
     //
-
     MyOverlapped->FileHandle = hFile;
     MyOverlapped->CompletedSynchronously = FALSE;
 
@@ -206,25 +199,20 @@ ReadFileAsync(
                       &MyOverlapped->Overlapped);
 
     if (!Result) {
-
         Error = GetLastError();
-
         if (Error == ERROR_IO_PENDING) {
-
             //
             // The I/O has been started synchronously, we're done
             //
-
-            return(TRUE);
+            return TRUE;
         }
 
         //
         // The read really did fail, reset our flag and get out
         //
-
-        DebugPrintf(FormatString("ReadFileAsync : ReadFile failed, error = %E\n") << Error);
+        DebugPrintf(FormatString("ReadFileAsync: ReadFile failed, error=%e\n") << Error);
         MyOverlapped->FileHandle = NULL;
-        return(FALSE);
+        return FALSE;
     }
 
 
@@ -232,20 +220,18 @@ ReadFileAsync(
     // The operation completed synchronously. Store the paramaters in our
     // structure ready for GetAsyncResult and signal the event
     //
-
     MyOverlapped->CompletionCode = ERROR_SUCCESS;
     MyOverlapped->CompletedSynchronously = TRUE;
 
     //
     // Set the event
     //
-
     Result = SetEvent(MyOverlapped->Overlapped.hEvent);
     if (!Result) {
-        DebugPrintf(FormatString("ReadFileAsync : Failed to set async event, error = %dE\n") << GetLastError());
+        DebugPrintf(FormatString("ReadFileAsync: Failed to set async event, error = %e\n") << GetLastError());
     }
 
-    return(TRUE);
+    return TRUE;
 }
 
 
@@ -278,22 +264,20 @@ WriteFileAsync(
     //
     // Check an IO operation is not in progress
     //
-
     if (MyOverlapped->FileHandle != NULL) {
-        DebugPrintf("ReadFileAsync : Operation already in progress!\n");
+        DebugPrintf("ReadFileAsync: Operation already in progress!\n");
         SetLastError(ERROR_IO_PENDING);
-        return(FALSE);
+        return FALSE;
     }
 
 
     //
     // Reset the event
     //
-
     Result = ResetEvent(MyOverlapped->Overlapped.hEvent);
     if (!Result) {
-        DebugPrintf(FormatString("WriteFileAsync : Failed to reset async event, error = %E\n") << GetLastError());
-        return(FALSE);
+        DebugPrintf(FormatString("WriteFileAsync: Failed to reset async event, error = %E\n") << GetLastError());
+        return FALSE;
     }
 
     //
@@ -309,27 +293,21 @@ WriteFileAsync(
                       nBytesToWrite,
                       &MyOverlapped->BytesTransferred,
                       &MyOverlapped->Overlapped);
-
     if (!Result) {
-
         Error = GetLastError();
-
         if (Error == ERROR_IO_PENDING) {
-
             //
             // The I/O has been started synchronously, we're done
             //
-
-            return(TRUE);
+            return TRUE;
         }
 
         //
         // The read really did fail, reset our flag and get out
         //
-
-        DebugPrintf(FormatString("WriteFileAsync : WriteFile failed, error = %E\n") << Error);
+        DebugPrintf(FormatString("WriteFileAsync: WriteFile failed, error = %E\n") << Error);
         MyOverlapped->FileHandle = NULL;
-        return(FALSE);
+        return FALSE;
     }
 
 
@@ -337,20 +315,18 @@ WriteFileAsync(
     // The operation completed synchronously. Store the paramaters in our
     // structure ready for GetAsyncResult and signal the event
     //
-
     MyOverlapped->CompletionCode = ERROR_SUCCESS;
     MyOverlapped->CompletedSynchronously = TRUE;
 
     //
     // Set the event
     //
-
     Result = SetEvent(MyOverlapped->Overlapped.hEvent);
     if (!Result) {
-        DebugPrintf(FormatString("WriteFileAsync : Failed to set async event, error = %E\n") << GetLastError());
+        DebugPrintf(FormatString("WriteFileAsync: Failed to set async event, error = %E\n") << GetLastError());
     }
 
-    return(TRUE);
+    return TRUE;
 }
 
 
@@ -374,7 +350,7 @@ GetAsyncCompletionHandle(
 {
     PMYOVERLAPPED MyOverlapped = (PMYOVERLAPPED)AsyncHandle;
 
-    return(MyOverlapped->Overlapped.hEvent);
+    return MyOverlapped->Overlapped.hEvent;
 }
 
 
@@ -407,21 +383,19 @@ GetAsyncResult(
     //
     // Check an IO operation is (was) in progress
     //
-
     if (MyOverlapped->FileHandle == NULL) {
-        DebugPrintf("GetAsyncResult : No operation in progress !\n");
-        return(ERROR_NO_DATA);
+        DebugPrintf("GetAsyncResult: No operation in progress !\n");
+        return ERROR_NO_DATA;
     }
 
 
     //
     // Check the event is set - i.e that an IO operation has completed
     //
-
     WaitResult = WaitForSingleObject(MyOverlapped->Overlapped.hEvent, 0);
     if (WaitResult != 0) {
-        DebugPrintf(FormatString("GetAsyncResult : Event was not set, wait result = %d\n") << WaitResult);
-        return(ERROR_IO_INCOMPLETE);
+        DebugPrintf(FormatString("GetAsyncResult: Event was not set, wait result = %d\n") << WaitResult);
+        return ERROR_IO_INCOMPLETE;
     }
 
 
@@ -429,18 +403,15 @@ GetAsyncResult(
     // If the call completed synchronously, copy the data out of
     // our structure
     //
-
     if (MyOverlapped->CompletedSynchronously) {
 
         AsyncResult = MyOverlapped->CompletionCode;
         *BytesTransferred = MyOverlapped->BytesTransferred;
 
     } else {
-
         //
         // Go get the asynchronous result info from the system
         //
-
         AsyncResult = ERROR_SUCCESS;
 
         Result = GetOverlappedResult(MyOverlapped->FileHandle,
@@ -449,7 +420,7 @@ GetAsyncResult(
                                      FALSE);
         if (!Result) {
             AsyncResult = GetLastError();
-            DebugPrintf(FormatString("GetAsyncResult : GetOverlappedResult failed, error = %E\n") << AsyncResult);
+            DebugPrintf(FormatString("GetAsyncResult: GetOverlappedResult failed, error=%e\n") << AsyncResult);
         }
     }
 
@@ -460,18 +431,16 @@ GetAsyncResult(
 
     Result = ResetEvent(MyOverlapped->Overlapped.hEvent);
     if (!Result) {
-        DebugPrintf("GetAsyncResult : Failed to reset async event\n");
+        DebugPrintf("GetAsyncResult: Failed to reset async event\n");
     }
 
 
     //
     // Result the file handle so we know there is no pending operation
     //
-
     MyOverlapped->FileHandle = NULL;
 
-
-    return(AsyncResult);
+    return AsyncResult;
 }
 
 

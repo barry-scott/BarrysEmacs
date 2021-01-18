@@ -176,7 +176,6 @@ unsigned EmacsPythonThread::run()
         proc->proc_state = EmacsProcess::DEAD;
         interlock_inc( &pending_channel_io );
         interlock_inc( &terminating_process );
-        wake_main_thread();
 
         return 0;
     }

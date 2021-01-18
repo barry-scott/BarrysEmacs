@@ -37,21 +37,12 @@
 
 (if (! shell-max-lines) (setq shell-max-lines 20))
 (defun
-    (shell i j
-        (setq i (concat "shell-" ~shell))
-        (setq j cli-name)
+    (shell
+        ~shell-name
+        (setq ~shell-name (concat "shell-" ~shell))
         (setq cli-name shell-cli)
-        (if
-            (error-occurred
-                (start-DCL-process i)
-            )
-            (progn
-                (error-message "Cannot create any more DCL processes")
-                (setq cli-name j)
-            )
-        )
-        (setq cli-name j)
-        (switch-to-buffer i)
+        (start-DCL-process ~shell-name)
+        (switch-to-buffer ~shell-name)
         (setq ~shell-input-lines (array 1 2 0 (- shell-max-lines 1)))
         (setq ~shell-current-line -1)
         (setq ~shell-first-line -1)
@@ -59,15 +50,15 @@
         (setq ~shell-recall-line -1)
         (setq ~shell-ready 1)
         (erase-buffer)
-        (set-process-output-buffer i i)
-        (~shell-wait i)
+        (set-process-output-buffer ~shell-name ~shell-name)
+        (~shell-wait ~shell-name)
         (setq mode-line-format
             (concat "DCL Interaction Window " ~shell " (%m)")
         )
         (setq mode-string "Ready")
         (setq highlight-region 0)
-        (set-process-input-procedure i "~shell-prompt")
-        (set-process-termination-procedure i "~shell-term")
+        (set-process-input-procedure ~shell-name "~shell-prompt")
+        (set-process-termination-procedure ~shell-name "~shell-term")
         (execute-mlisp-file "process.key")
         (setq ~shell (+ ~shell 1))
         (novalue)

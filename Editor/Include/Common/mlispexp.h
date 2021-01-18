@@ -360,6 +360,11 @@ public:
     const char *sdata() { return exp_string.sdata(); }
     int length() const { return exp_string.length(); }
     int isNull() const { return exp_string.isNull(); }
+#if defined( WIN32 )
+    int utf16_data_length() const { return exp_string.utf16_data_length(); }
+    // this function give unsafe access to the inside of representation
+    const wchar_t *utf16_data() const { return exp_string.utf16_data(); }
+#endif
 
     SYS_EXPR_STRING_OPERATOR_ASSIGN( String )
 protected:

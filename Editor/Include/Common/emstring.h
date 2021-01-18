@@ -126,10 +126,10 @@ public:
     const unsigned char *utf8_data() const; // unsigned char data
     const char *sdata() const;              // signed char data
 
-    int utf16_data_length() const;
 #if defined( WIN32 )
+    int utf16_data_length() const;
     // this function give unsafe access to the inside of representation
-    const wchar_t *utf16_data() const;      // unsigned char data
+    const wchar_t *utf16_data() const;
 #endif
 
 #if defined( PYBEMACS )
