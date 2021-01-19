@@ -15,14 +15,14 @@
 )
 
 (defun
-    (p4-open
-        (execute-monitor-command (concat "p4 open \"" current-buffer-file-name "\""))
+    (p4-edit
+        (execute-monitor-command (concat "p4 edit \"" current-buffer-file-name "\""))
         ; pick up the change
         (synchronise-files)
         ; show the result of the open
         (save-window-excursion
             (pop-to-buffer "command execution")
-            (get-tty-string "P4 open result: ")
+            (get-tty-string "P4 edit result: ")
         )
     )
 )
