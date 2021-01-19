@@ -19,7 +19,7 @@ set PYTHONPATH=..\exe-pybemacs
 rem always merge as the build system puts Docs and emacs lib files in first
 %VPYTHON% -m win_app_packager build be_main.py   --gui %DIST_DIR% --version %VERSION% --icon ..\Source\Windows\Resources\win_emacs.ico --name bemacs_server --merge --modules-allowed-to-be-missing-file allowed-missing.txt
     if errorlevel 1 goto :error
-%VPYTHON% -m win_app_packager build be_client.py --gui %DIST_DIR% --version %VERSION% --icon ..\Source\Windows\Resources\win_emacs.ico --name bemacs --merge
+%VPYTHON% -m win_app_packager build be_client.py --gui %DIST_DIR% --version %VERSION% --icon ..\Source\Windows\Resources\win_emacs.ico --name bemacs --merge --modules-allowed-to-be-missing-file allowed-missing.txt
     if errorlevel 1 goto :error
 
 rem do not need the test folders
