@@ -1138,9 +1138,9 @@ int list_processes( void )
         EmacsProcess *proc = EmacsProcess::name_table.value(i);
 
         char *cp = ctime( &proc->proc_time_state_was_entered );
-        cp[16] = 0;
+        cp[3] = 0;      // isolate the day
+        cp[16] = 0;     // isolate the time
 
-#if 0
         bf_cur->ins_cstr(
             FormatString("%-21s %-7s %3s %5s %-15s %-15s %-15s\n") <<
             proc->proc_name <<
@@ -1160,27 +1160,6 @@ int list_processes( void )
             :
                 "[none]")
             );
-#else
-        bf_cur->ins_cstr( FormatString("%-21s") << proc->proc_name );
-        bf_cur->ins_cstr( FormatString(" %-7s") << proc_states[ proc->proc_state ] );
-        bf_cur->ins_cstr( FormatString(" %3s") << cp );
-        bf_cur->ins_cstr( FormatString(" %5s") << &cp[11] );
-        bf_cur->ins_cstr( FormatString(" %-15s") <<
-            (proc->proc_input_channel.chan_buffer.bufferValid() ?
-                proc->proc_input_channel.chan_buffer.buffer()->b_buf_name
-            :
-                "[none]") );
-        bf_cur->ins_cstr( FormatString(" %-15s") <<
-            (proc->proc_output_channel.chan_buffer.bufferValid() ?
-                proc->proc_output_channel.chan_buffer.buffer()->b_buf_name
-            :
-                "[none]") );
-        bf_cur->ins_cstr( FormatString("%-15s\n") <<
-            (proc->proc_input_channel.chan_procedure != NULL ?
-                proc->proc_input_channel.chan_procedure->b_proc_name
-            :
-                "[none]") );
-#endif
     }
 
     bf_cur->b_modified = 0;
