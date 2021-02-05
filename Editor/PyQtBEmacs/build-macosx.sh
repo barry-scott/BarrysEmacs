@@ -64,7 +64,7 @@ for LIBNAME in \
 do
     colour-print "<>info Info:<> Framework used ${LIBNAME}"
     mv \
-        Resources/lib/python${PYTHON_VERSION}/PyQt5/tmp/${LIBNAME}.so \
+        Resources/lib/python${PYTHON_VERSION}/PyQt5/tmp/${LIBNAME}.abi3.so \
         Resources/lib/python${PYTHON_VERSION}/PyQt5
     mv \
         Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/lib/tmp/${LIBNAME}.framework \

@@ -10,7 +10,7 @@ export PYCXX_VER=trunk:7.1.2
 case ${BUILDER_CFG_PLATFORM} in
 
 Darwin)
-    export PYTHON_VERSION=3.7
+    export PYTHON_VERSION=3.9
     export BUILDER_CFG_PLATFORM=MacOSX
     export PYTHON=python${PYTHON_VERSION}
     ;;

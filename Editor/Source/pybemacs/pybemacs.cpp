@@ -1227,7 +1227,6 @@ int ui_frame_to_foreground(void)
 }
 
 extern double time_getTimeoutTime();
-extern void poll_process_fds();
 extern double poll_process_delay();
 
 int wait_for_activity(void)

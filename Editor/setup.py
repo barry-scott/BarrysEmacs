@@ -6,7 +6,7 @@ import sys
 import subprocess
 import glob
 
-pycxx_version = (7,1,4)
+pycxx_version = (7,1,5)
 pycxx_version_str = '%d.%d.%d' % pycxx_version
 
 sys.path.insert( 0, '../Builder' )

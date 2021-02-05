@@ -83,6 +83,11 @@ void time_schedule_timeout( void (*time_handle_timeout)( void ), int delta  )
     timeout_handler = time_handle_timeout;
 }
 
+// stub for API used in unixcomm for pybemacs
+void poll_process_fds()
+{
+}
+
 void wait_abit(void)
 {
     static struct timeval tmo = {0, 100000};

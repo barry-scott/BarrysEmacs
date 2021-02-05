@@ -29,9 +29,9 @@ then
         cat init.lldb >.lldbinit
     fi
     echo
-    lldb -- python${PYTHON_VERSION} -u be_main.py "$@"
+    lldb -- ${BUILDER_TOP_DIR}/Builder/venv.tmp/bin/python -u be_main.py "$@"
 
 else
-    which python${PYTHON_VERSION}
-    python${PYTHON_VERSION} -u be_main.py "$@"
+    which ${BUILDER_TOP_DIR}/Builder/venv.tmp/bin/python
+    ${BUILDER_TOP_DIR}/Builder/venv.tmp/bin/python -u be_main.py "$@"
 fi

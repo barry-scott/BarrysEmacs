@@ -1433,9 +1433,11 @@ int vms_load_averages( void )
     return no_value_command();
 }
 
+extern void poll_process_fds();
+
 int process_channel_interrupts( void )
 {
-    process_channel_fds();
+    poll_process_fds();
     if( child_changed > 0 )
     {
         change_msgs();
