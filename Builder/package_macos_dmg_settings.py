@@ -3,9 +3,9 @@
 #
 #   settings file imported into dmgbuild to create the bemacs DMG file.
 #
-import biplist
 import os
 import sys
+import plistlib
 
 sys.path.insert( 0, os.getcwd() )
 
@@ -23,7 +23,7 @@ app_name = os.path.basename( app_path )
 path = os.path.join( app_path, 'Contents', 'Info.plist' )
 with open( path, 'r' ) as f:
     log.info( 'Reading %s' % (path,) )
-    __text = f.read().decode( 'utf-8' )
+    __text = f.read()
 
 __text = __text.replace( '<string>org.barrys-emacs.bemacs-devel</string>',
                          '<string>org.barrys-emacs.bemacs</string>' )
@@ -32,7 +32,7 @@ __text = __text.replace( 'Emacs-Devel', 'Emacs' )
 path = os.path.join( app_path, 'Contents', 'Info.plist' )
 with open( path, 'w' ) as f:
     log.info( 'Writing %s' % (path,) )
-    f.write( __text.encode( 'utf-8' ) )
+    f.write( __text )
 
 client_name = 'bemacs_client'
 client_path = os.path.join( 'tmp', PKGNAME, client_name )
@@ -49,7 +49,7 @@ for tool_name, tool_path in [(cli_name, cli_path), (client_name, client_path)]:
 
     with open( tool_path, 'w' )  as f:
         log.info( 'Writing %s' % (tool_path,) )
-        f.write( __text.encode( 'utf-8' ) )
+        f.write( __text )
 
     log.info( 'chmod 555 %s' % (tool_path,) )
     os.chmod( tool_path, 0o555 )
@@ -59,7 +59,8 @@ for tool_name, tool_path in [(cli_name, cli_path), (client_name, client_path)]:
 
 def __iconFromApp( app_path ):
     plist_path = os.path.join( app_path, 'Contents', 'Info.plist' )
-    plist = biplist.readPlist( plist_path )
+    with open( plist_path, 'rb' ) as f:
+        plist = plistlib.load( f )
     icon_name = plist[ 'CFBundleIconFile' ]
     icon_root, icon_ext = os.path.splitext( icon_name )
     if not icon_ext:

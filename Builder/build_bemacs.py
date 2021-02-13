@@ -404,6 +404,7 @@ class BuildBEmacs(object):
         pkg_name = 'BarrysEmacs-%s' % (self.bemacs_version_info.get('version'),)
         dmg_folder = '%s/Builder/tmp/dmg' % (self.BUILDER_TOP_DIR,)
         pkg_folder = '%s/Builder/tmp/pkg' % (self.BUILDER_TOP_DIR,)
+        venv_bin = '%s/Builder/venv.tmp/bin' % (self.BUILDER_TOP_DIR,)
 
         build_utils.mkdirAndParents( pkg_folder )
         build_utils.mkdirAndParents( dmg_folder )
@@ -417,8 +418,7 @@ class BuildBEmacs(object):
             "%s/Barry's Emacs.app/Contents/MacOS/Barry's Emacs" % (dmg_folder,) )
 
         log.info( 'Create DMG' )
-        # use 2.7 version as 3.5 version does not work yet (confuses bytes and str)
-        run( ('/Library/Frameworks/Python.framework/Versions/2.7/bin/dmgbuild',
+        run( ('%s/dmgbuild' % (venv_bin,),
                 '--settings', 'package_macos_dmg_settings.py',
                 "Barry's Emacs",
                 '%s/%s.dmg' % (dmg_folder, pkg_name)) )
