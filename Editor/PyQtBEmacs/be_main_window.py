@@ -369,7 +369,8 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         all_about_info = []
         all_about_info.append( T_("Barry's Emacs %d.%d.%d") %
                                 (be_version.major, be_version.minor, be_version.patch) )
-        all_about_info.append( 'Commit\xa0%s' % (be_version.commit,) )
+        # \u00a0 is NBSP
+        all_about_info.append( 'Commit\u00a0%s' % (be_version.commit,) )
         all_about_info.append( 'Python %d.%d.%d %s %d' %
                                 (sys.version_info.major
                                 ,sys.version_info.minor

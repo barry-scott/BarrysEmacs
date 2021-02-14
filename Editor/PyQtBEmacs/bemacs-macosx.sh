@@ -1,6 +1,7 @@
 #!/bin/bash
 export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/PyQtBEmacs:${BUILDER_TOP_DIR}/Editor/exe-pybemacs
-export BEMACS_EMACS_LIBRARY="${BUILDER_TOP_DIR}/Builder/tmp/pkg/Barry's Emacs-Devel.app/Contents/Resources/emacs_library"
+# use the library that was create in the last build
+export BEMACS_EMACS_LIBRARY="${BUILDER_TOP_DIR}/Builder/tmp/dmg/Barry's Emacs.app/Contents/Resources/emacs_library"
 export BEMACS_FIFO=.bemacs8devel/.emacs_command
 
 if [ ! -e "${BEMACS_EMACS_LIBRARY}/emacslib.db" ]

@@ -43,14 +43,14 @@ ${PYTHON} "${SRC_DIR}/create_bemacs_client.py" "${SRC_DIR}" "Resources/bin/bemac
 mkdir \
     Resources/lib/python${PYTHON_VERSION}/PyQt5/tmp
 mv \
-    Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt?*.so \
+    Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt[A-Z]*.so \
     Resources/lib/python${PYTHON_VERSION}/PyQt5/tmp
 
 # Resources/lib/python3.5/PyQt5/Qt/lib - QtXxx.framework
 mkdir \
     Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/lib/tmp
 mv \
-    Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/lib/Qt*.framework \
+    Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/lib/Qt[A-Z]*.framework \
     Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/lib/tmp
 
 for LIBNAME in \
