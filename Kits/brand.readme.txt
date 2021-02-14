@@ -25,6 +25,25 @@ Introduction
         Linux (tested on: Fedora 33, Centos 8, Centos 7 and Centos 6)
 
 New in %(version)s
+    * Add subprocess support to Windows, macOS and unix GUI versions.
+      - shell command starts a shell in a emacs window
+      - compile-it command by default uses make to compile code.
+        Use next-error (^X-^N) to go to errors from the compilation.
+    * Add the "man" command for macOS and unix versions.
+      The man-word-in-buffer will run man the current word.
+    * Add the chmod-current-buffer to have the mode of the current buffer's file.
+      macOS and unix only.
+    * Add the chown-current-buffer to have the owndership of the current buffer's file.
+      macOS and unix only.
+    * Add (is-unix-operating-system) to be true for any of the OS that the unix
+      part of the library is included for. e.g. linux, netbsd, macOS at the moment
+    * Update some examples in the documentation
+    * fix syntax hilight for "rem" in Windows batch/command files
+    * Windows and macOS builds now use a Python venv
+    * Updated to use python 3.9 with latest PyQt for Windows and macOS
+    * rename p4-open to p4-edit (p4 open is not documented)
+
+New in 8.7.1
     * new json-mode for editing JSON files
     * RPM-specfile-mode for editing RPM spec files
     * fix problem with the setup of the text-mode syntax table
