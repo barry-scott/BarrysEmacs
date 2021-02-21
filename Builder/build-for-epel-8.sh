@@ -6,4 +6,4 @@ python3 ./package_bemacs.py ${1:-copr-testing} \
     --system-hunspell \
     --kit-sqlite=/shared/Downloads/Subversion/sqlite-amalgamation-3280000.zip \
     --kit-xml-preferences=/home/barry/Downloads/xml-preferences-1.1.4.tar.gz \
-    --kit-pycxx=/shared/Downloads/Subversion/pycxx-7.1.3.tar.gz
+    --kit-pycxx=/shared/Downloads/Subversion/pycxx-7.1.5.tar.gz
