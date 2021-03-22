@@ -505,7 +505,7 @@ class BuildBEmacs(object):
                      ]
         setup_argv += self.opt_editor_setup_opt
         log.info( ' '.join( setup_argv[1:] ) )
-        p = subprocess.run( setup_argv, cwd='../Editor' )
+        p = build_utils.run( setup_argv, cwd='../Editor' )
         if p.returncode != 0:
             raise BuildError( 'Editor/setup.py failed' )
 

@@ -24,7 +24,7 @@ run = build_utils.run
 BuildError = build_utils.BuildError
 
 class PackageBEmacs(object):
-    valid_cmds = ('srpm-release', 'srpm-testing', 'mock-release', 'mock-testing', 'copr-release', 'copr-testing', 'list-release', 'list-testing')
+    valid_cmds = ('srpm-release', 'srpm-testing', 'mock-release', 'mock-testing', 'mock-standalone', 'copr-release', 'copr-testing', 'list-release', 'list-testing')
 
     def __init__( self ):
         self.KITNAME = 'bemacs'
@@ -42,6 +42,10 @@ class PackageBEmacs(object):
         self.opt_kit_xml_preferences = None
 
         self.copr_repo = None
+        self.copr_repo_other = None
+        self.COPR_REPO_URL = None
+        self.COPR_REPO_OTHER_URL = None
+        self.MOCK_COPR_REPO_FILENAME = None
 
         self.cmd = None
         self.opt_release = 'auto'
@@ -62,7 +66,7 @@ class PackageBEmacs(object):
             if self.cmd in ('srpm-release', 'srpm-testing'):
                 self.buildSrpm()
 
-            elif self.cmd in ('mock-testing', 'mock-release'):
+            elif self.cmd in ('mock-testing', 'mock-release', 'mock-standalone'):
                 self.buildMock()
 
             elif self.cmd in ('copr-release', 'copr-testing' ):
@@ -90,14 +94,17 @@ class PackageBEmacs(object):
 
         self.version = '%s.%s.%s' % (vi.get( 'major' ), vi.get( 'minor' ), vi.get( 'patch' ))
 
-        self.MOCK_COPR_REPO_FILENAME = '/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:barryascott:%s.repo' % (self.copr_repo,)
+        if self.copr_repo:
+            self.MOCK_COPR_REPO_FILENAME = '/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:barryascott:%s.repo' % (self.copr_repo,)
 
         if self.opt_mock_target is None:
             self.opt_mock_target = 'fedora-%d-%s' % (self.fedoraVersion(), platform.machine())
             log.info( 'Defaulting --mock-target=%s' % (self.opt_mock_target,) )
 
-        self.COPR_REPO_URL = 'https://copr-be.cloud.fedoraproject.org/results/barryascott/%s/%s' % (self.copr_repo, self.opt_mock_target)
-        self.COPR_REPO_OTHER_URL = 'https://copr-be.cloud.fedoraproject.org/results/barryascott/%s/%s' % (self.copr_repo_other, self.opt_mock_target)
+        if self.copr_repo:
+            self.COPR_REPO_URL = 'https://copr-be.cloud.fedoraproject.org/results/barryascott/%s/%s' % (self.copr_repo, self.opt_mock_target)
+        if self.copr_repo_other:
+            self.COPR_REPO_OTHER_URL = 'https://copr-be.cloud.fedoraproject.org/results/barryascott/%s/%s' % (self.copr_repo_other, self.opt_mock_target)
 
         if self.opt_release == 'auto':
             all_packages = package_list_repo.listRepo( self.COPR_REPO_URL )
@@ -327,13 +334,19 @@ class PackageBEmacs(object):
             run( ('mock', '--root=%s' % (self.MOCK_TARGET_FILENAME,), '--init') )
 
     def readMockConfig( self ):
-        mock_cfg = '/etc/mock/%s.cfg' % (self.opt_mock_target,)
+        if self.opt_mock_target.startswith( '/' ):
+            mock_cfg = self.opt_mock_target + '.cfg'
+        else:
+            mock_cfg = '/etc/mock/%s.cfg' % (self.opt_mock_target,)
         if not os.path.exists( mock_cfg ):
             raise BuildError( 'Mock CFG files does not exist %s' % (mock_cfg,) )
 
         with open( mock_cfg, 'r' ) as f:
             # starting with Fedora 31 mock uses the include('template') statement
-            config_opts = {'yum_install_command': 'install yum yum-utils'}
+            config_opts = {'yum_install_command': 'install yum yum-utils'
+                          ,'plugin_conf':
+                            {'root_cache_opts': {}
+                            ,'selinux_enable': False}}
             cfg_locals = {'config_opts': config_opts}
 
             def include( tpl ):
@@ -356,12 +369,15 @@ class PackageBEmacs(object):
         # set to match the mock target
         self.opt_arch = config_opts[ 'target_arch' ]
         self.dist_tag = expandMockCfgVars( 'dist' )
+        if self.dist_tag == 'centos6':
+            self.dist_tag = 'el6'
 
         return config_opts
 
 
     def makeMockTargetFile( self ):
-        self.MOCK_TARGET_FILENAME = 'tmp/%s-%s-%s.cfg' % (self.KITNAME, self.copr_repo, self.opt_mock_target)
+        self.MOCK_TARGET_FILENAME = 'tmp/%s-%s-%s.cfg' % (
+                self.KITNAME, self.copr_repo, os.path.basename( self.opt_mock_target ))
 
         config_opts = self.readMockConfig()
 
@@ -374,15 +390,16 @@ class PackageBEmacs(object):
         else:
             assert False, 'config_opts missing yum.conf or dnf.conf section'
 
-        with open( self.MOCK_COPR_REPO_FILENAME, 'r' ) as f:
-            repo = f.read()
+        if self.MOCK_COPR_REPO_FILENAME:
+            with open( self.MOCK_COPR_REPO_FILENAME, 'r' ) as f:
+                repo = f.read()
 
-            if self.opt_mock_target.startswith( 'epel-' ):
-                repo = repo.replace( '/fedora-$releasever-$basearch/', '/epel-$releasever-$basearch/' )
+                if self.opt_mock_target.startswith( 'epel-' ):
+                    repo = repo.replace( '/fedora-$releasever-$basearch/', '/epel-$releasever-$basearch/' )
 
-            config_opts[conf_key] += '\n'
-            config_opts[conf_key] += repo
-            config_opts['root'] = os.path.splitext( os.path.basename( self.MOCK_TARGET_FILENAME ) )[0]
+                config_opts[conf_key] += '\n'
+                config_opts[conf_key] += repo
+                config_opts['root'] = os.path.splitext( os.path.basename( self.MOCK_TARGET_FILENAME ) )[0]
 
         with open( self.MOCK_TARGET_FILENAME, 'w' ) as f:
             for k in config_opts:
@@ -398,7 +415,10 @@ class PackageBEmacs(object):
         # mock uses the timestamp on the CFG file and compares to the
         # cache timestamp. Use the timestamp of the input cfg to avoid
         # rebuilding the cache unless the original CFG file changes.
-        mock_cfg = '/etc/mock/%s.cfg' % (self.opt_mock_target,)
+        if self.opt_mock_target.startswith( '/' ):
+            mock_cfg = self.opt_mock_target + '.cfg'
+        else:
+            mock_cfg = '/etc/mock/%s.cfg' % (self.opt_mock_target,)
         st = os.stat( mock_cfg )
         os.utime( self.MOCK_TARGET_FILENAME, (st.st_atime, st.st_mtime) )
 
