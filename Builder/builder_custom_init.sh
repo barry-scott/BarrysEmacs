@@ -58,9 +58,17 @@ Linux)
     ;;
 
 NetBSD)
-    export PYTHON_VERSION=3.8
+    for version in ${PYTHON_VERSION} 3.9 3.8 3.7
+    do
+        python_candidate=/usr/pkg/bin/python${version}
+        if [ -e $python_candiddate ]
+        then
+            export PYTHON_VERSION=${version}
+            export PYTHON=$python_candidate
+            break
+        fi
+    done
     export BUILDER_CFG_PLATFORM=NetBSD
-    export PYTHON=/usr/pkg/bin/python${PYTHON_VERSION}
     ;;
 
 *)
