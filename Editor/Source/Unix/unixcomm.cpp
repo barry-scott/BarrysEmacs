@@ -45,7 +45,7 @@ SystemExpressionRepresentationIntPositive shell_buffer_reduction( 500 );
 # include <sys/stat.h>
 #endif
 
-#if defined( __APPLE_CC__ )
+#if defined( __APPLE_CC__ ) || defined( USE_UTIL_H )
 // for forkpty
 #include <util.h>
 #else

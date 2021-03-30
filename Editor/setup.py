@@ -1431,6 +1431,7 @@ class NetBSDCompilerGCC(CompilerGCC):
                                         '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"NetBSD\\"" '
+                                        '-DUSE_UTIL_H '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
                                         '-D%(LOG.DEBUG)s '
                                         '%(FEATURE_DEFINES)s '
@@ -1451,7 +1452,7 @@ class NetBSDCompilerGCC(CompilerGCC):
             p = subprocess.run( ['pkg-config', 'hunspell', '--libs'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
             link_libs.append( p.stdout.strip() )
 
-        link_libs.append( '-pthread' )
+        link_libs += ['-lutil', '-pthread']
 
         self._addVar( 'LINK_LIBS',      ' '.join( link_libs ) )
         self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s ' )
