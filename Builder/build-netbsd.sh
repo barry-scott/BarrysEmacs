@@ -16,7 +16,7 @@ then
     exit 1
 fi
 
-for cmd in pkg-config gmake
+for cmd in pkg-config gmake hunspell
 do
     if ! which $cmd >/dev/null
     then
@@ -25,4 +25,4 @@ do
     fi
 done
 
-${PYTHON} build_bemacs.py "$@"
+${PYTHON} build_bemacs.py --system-hunspell --system-sqlite "$@"
