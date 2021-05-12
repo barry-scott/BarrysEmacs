@@ -168,6 +168,9 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         # init QApplication now that we have the plugin dir setup
         QtWidgets.QApplication.__init__( self, [sys.argv[0]] )
 
+        self.setDesktopFileName( '/usr/share/applications/org.barrys-emacs.editor.desktop' )
+        self.log.info( 'desktopFileName %r' % (self.desktopFileName(),) )
+
         is_dark_mode = self.palette().text().color().lightnessF() > self.palette().window().color().lightnessF()
         prefs = self.getPrefs()
 
