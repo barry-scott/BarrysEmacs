@@ -225,8 +225,10 @@ chmod +w %{buildroot}/usr/bin/bemacs-cli
 mkdir -p %{buildroot}%{_mandir}/man1
 gzip -c ${BUILDER_TOP_DIR}/Kits/Linux/bemacs.1 > %{buildroot}%{_mandir}/man1/bemacs.1.gz
 
+mkdir -p %{buildroot}/usr/share/bemacs
+cp ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/org.barrys-emacs.editor.png %{buildroot}/usr/share/bemacs/org.barrys-emacs.editor.png
 mkdir -p %{buildroot}/usr/share/applications
-cp ${BUILDER_TOP_DIR}/Kits/Linux/bemacs.desktop %{buildroot}/usr/share/applications/org.barrys-emacs.editor.desktop
+cp ${BUILDER_TOP_DIR}/Kits/Linux/org.barrys-emacs.editor.desktop %{buildroot}/usr/share/applications/org.barrys-emacs.editor.desktop
 
 '''
 
@@ -288,7 +290,8 @@ spec_file_files_gui = '''
 /usr/lib/bemacs/*.py
 /usr/lib/bemacs/_bemacs.so
 /usr/lib/bemacs/__pycache__/*
-/usr/share/applications/bemacs.desktop
+/usr/share/bemacs/org.barrys-emacs.editor.png
+/usr/share/applications/org.barrys-emacs.editor.desktop
 '''
 
 spec_file_files_cli = '''
@@ -303,7 +306,6 @@ spec_file_files_common = '''
 /usr/share/bemacs/doc/*
 /usr/lib/bemacs/*.db
 /usr/lib/bemacs/*.ml
-/usr/share/applications/bemacs.desktop
 %attr(0644,root,root) %{_mandir}/man1/bemacs.1.gz
 '''
 

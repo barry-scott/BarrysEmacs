@@ -186,7 +186,7 @@ this kit.
         self.all_file_items.extend( [
                 r'''Source: "%s\Kits\Readme.txt"; DestDir: "{app}";''' % (BUILDER_TOP_DIR,),
 
-                r'''Source: "%s\Editor\PyQtBEmacs\bemacs.png";  DestDir: "{app}\Documentation";''' % (BUILDER_TOP_DIR,),
+                r'''Source: "%s\Editor\PyQtBEmacs\org.barrys-emacs.editor.png";  DestDir: "{app}\Documentation";''' % (BUILDER_TOP_DIR,),
                 r'''Source: "%s\HTML\*.css";  DestDir: "{app}\Documentation";''' % (BUILDER_TOP_DIR,),
                 r'''Source: "%s\HTML\*.html"; DestDir: "{app}\Documentation";''' % (BUILDER_TOP_DIR,),
                 r'''Source: "%s\HTML\*.png";  DestDir: "{app}\Documentation";''' % (BUILDER_TOP_DIR,),

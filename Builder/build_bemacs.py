@@ -457,7 +457,7 @@ class BuildBEmacs(object):
     def ruleDocs( self ):
         log.info( 'Running ruleDocs' )
         build_utils.copyFile( '../Kits/readme.txt', self.BUILD_BEMACS_DOC_DIR, 0o444 )
-        build_utils.copyFile( '../Editor/PyQtBEmacs/bemacs.png', self.BUILD_BEMACS_DOC_DIR, 0o444 )
+        build_utils.copyFile( '../Editor/PyQtBEmacs/org.barrys-emacs.editor.png', self.BUILD_BEMACS_DOC_DIR, 0o444 )
 
         import build_docs
         if build_docs.main( ['build', self.BUILD_BEMACS_DOC_DIR] ) != 0:

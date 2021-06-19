@@ -4,5 +4,5 @@ Comment=Barry's Emacs
 Type=Application
 Name=Barry's Emacs
 Exec=/usr/bin/bemacs %F
-Icon=/usr/share/bemacs/bemacs.png
+Icon=/usr/share/bemacs/org.barrys-emacs.editor.png
 Categories=Development;

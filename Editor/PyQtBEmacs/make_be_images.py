@@ -61,7 +61,7 @@ argv = [
     'toolbar_images/window_split_vert.png',
     'toolbar_images/window_tile_horiz.png',
     'toolbar_images/window_tile_vert.png',
-    'bemacs.png',
+    'org.barrys-emacs.editor.png',
     ]
 
 def main( argv ):

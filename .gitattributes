@@ -11,7 +11,7 @@ Editor/PyQtBEmacs/WindowsNamedPipes/named-pipe-server.cpp -text
 Editor/PyQtBEmacs/be_command_line_handler_posix.py -text
 Editor/PyQtBEmacs/be_command_line_handler_windows.py -text
 Editor/PyQtBEmacs/bemacs.icns -text
-Editor/PyQtBEmacs/bemacs.png -text svneol=unset#image/png
+Editor/PyQtBEmacs/org.barrys-emacs.editor.png -text svneol=unset#image/png
 Editor/PyQtBEmacs/toolbar_images/build_compile.png -text svneol=unset#image/png
 Editor/PyQtBEmacs/toolbar_images/build_next_error.png -text svneol=unset#image/png
 Editor/PyQtBEmacs/toolbar_images/build_prev_error.png -text svneol=unset#image/png
@@ -65,7 +65,7 @@ HTML/ug_start_menu.gif -text
 HTML/ug_windows.gif -text
 Kits/Linux/DPKG/brand.create-dpkg.sh -text
 Kits/Linux/bemacs.1 -text
-Kits/Linux/bemacs.desktop -text
+Kits/Linux/org.barrys-emacs.editor.desktop -text
 Kits/Linux/bemacs.spec.template -text
 Kits/Windows/bemacs_win64_code.iss -text
 Kits/Windows/brand.bemacs_version.py -text

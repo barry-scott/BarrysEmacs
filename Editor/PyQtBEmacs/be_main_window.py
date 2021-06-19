@@ -84,7 +84,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
 
         super().__init__()
         self.setWindowTitle( title )
-        self.setWindowIcon( be_images.getIcon( 'bemacs.png' ) )
+        self.setWindowIcon( be_images.getIcon( 'org.barrys-emacs.editor.png' ) )
 
         # want to catch exceptions here
         self.setStatus = be_exceptions.TryWrapper( self.app.log, self._setStatus )
