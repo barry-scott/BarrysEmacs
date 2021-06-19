@@ -1,5 +1,5 @@
 #!/bin/bash
-cmd=${1:-copr-testing}
+cmd=${1:-mock-testing}
 rel=${2}
 if [ "${rel}" = "" ]
 then
