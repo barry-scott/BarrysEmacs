@@ -7,6 +7,12 @@ export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/PyQtBEmacs:${BUILDER_TOP_DIR}/Editor
 export BEMACS_EMACS_LIBRARY=${BUILDER_TOP_DIR}/Builder/tmp/ROOT/usr/lib/bemacs
 export BEMACS_EMACS_DOC=${BUILDER_TOP_DIR}/Builder/tmp/ROOT/usr/share/bemacs/doc/
 
+if [ ! -e "${BEMACS_EMACS_LIBRARY}/emacslib.db" ]
+then
+    echo "Error: emacslib not found: ${BEMACS_EMACS_LIBRARY}/emacslib.db"
+    exit 1
+fi
+
 case "$1" in
 --debug=*)
     export EMACS_DEBUG="${1#--debug=}"
