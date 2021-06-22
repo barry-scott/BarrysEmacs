@@ -449,6 +449,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
     ST_CUR_STEADY = 0
     ST_CUR_BLINK_SHOW = 1
     ST_CUR_BLINK_HIDE = 2
+    ST_CUR_BLINK_NO_FOCUS = 3
 
     def __init__( self, app, parent ):
         QtWidgets.QWidget.__init__( self, parent )
@@ -707,8 +708,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
             c_x, c_y = self.__pixelPoint( self.cursor_x, self.cursor_y )
             #self.cursor.drawCursor( c_x, c_y )
-            if( self.cursor_state == self.ST_CUR_STEADY
-            or  self.cursor_state == self.ST_CUR_BLINK_SHOW ):
+            if self.cursor_state in (self.ST_CUR_STEADY, self.ST_CUR_BLINK_SHOW, self.ST_CUR_BLINK_NO_FOCUS):
                 # alpha blend the cursor
                 qp.fillRect( c_x, c_y, self.cursor_width, self.char_height, self.cursor_brush )
 
@@ -755,6 +755,13 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
     def focusInEvent( self, event ):
         super().focusInEvent( event )
         self.app.guiHasFocus()
+        if self.cursor_state == self.ST_CUR_BLINK_NO_FOCUS:
+            self.cursor_state = self.ST_CUR_BLINK_HIDE
+
+    def focusOutEvent( self, event ):
+        super().focusInEvent( event )
+        if self.cursor_state in (self.ST_CUR_BLINK_SHOW, self.ST_CUR_BLINK_HIDE):
+            self.cursor_state = self.ST_CUR_BLINK_NO_FOCUS
 
     def keyPressEvent( self, event ):
         key = event.key()
@@ -1174,7 +1181,8 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
     def cursorBlinkTimeout( self ):
         if self.cursor_state == self.ST_CUR_BLINK_SHOW:
             self.cursor_state = self.ST_CUR_BLINK_HIDE
-        else:
+
+        elif self.cursor_state == self.ST_CUR_BLINK_HIDE:
             self.cursor_state = self.ST_CUR_BLINK_SHOW
 
         self.cursor_timer.start( self.cursor_blink_interval )
