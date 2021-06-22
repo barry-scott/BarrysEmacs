@@ -48,10 +48,10 @@ mv \
 
 # Resources/lib/python3.5/PyQt5/Qt/lib - QtXxx.framework
 mkdir \
-    Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/lib/tmp
+    Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/lib/tmp
 mv \
-    Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/lib/Qt[A-Z]*.framework \
-    Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/lib/tmp
+    Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/lib/Qt[A-Z]*.framework \
+    Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/lib/tmp
 
 for LIBNAME in \
     QtCore \
@@ -67,18 +67,18 @@ do
         Resources/lib/python${PYTHON_VERSION}/PyQt5/tmp/${LIBNAME}.abi3.so \
         Resources/lib/python${PYTHON_VERSION}/PyQt5
     mv \
-        Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/lib/tmp/${LIBNAME}.framework \
-        Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/lib
+        Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/lib/tmp/${LIBNAME}.framework \
+        Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/lib
 done
 
 # fixup 4. remove the unused frameworks
 rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/tmp
-rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/lib/tmp
+rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/lib/tmp
 
 # remove qml stuff
-rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/qml
-rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/translations
-rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt/qsci
+rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/qml
+rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/translations
+rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/qsci
 
 if [ "$1" != "--package" ]
 then
