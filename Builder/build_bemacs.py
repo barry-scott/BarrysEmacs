@@ -241,7 +241,7 @@ class BuildBEmacs(object):
                 if self.platform == 'win64':
                     # in a venv on Windows need to tell the OS about the dll's that Qt uses
                     import PyQt5
-                    qt_bin_dir = os.path.join( os.path.dirname( PyQt5.__file__ ), 'Qt', 'bin' )
+                    qt_bin_dir = os.path.join( os.path.dirname( PyQt5.__file__ ), 'Qt5', 'bin' )
                     os.add_dll_directory( qt_bin_dir )
 
                 from PyQt5 import QtWidgets, QtGui, QtCore

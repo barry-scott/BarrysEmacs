@@ -37,9 +37,9 @@ move Qt*.pyd tmp >NUL
 move tmp\Qt.pyd . >NUL
     if errorlevel 1 goto :error
 
-mkdir Qt\bin\tmp
+mkdir Qt5\bin\tmp
     if errorlevel 1 goto :error
-move Qt\bin\Qt5*.dll Qt\bin\tmp >NUL
+move Qt5\bin\Qt5*.dll Qt5\bin\tmp >NUL
     if errorlevel 1 goto :error
 
 echo Info: clean up Qt 2. bring back only the ones we use
@@ -48,7 +48,7 @@ for %%x in (Core DBus Gui PrintSupport Svg Widgets) do call :qt_keep %%x
 echo Info: clean up Qt 3. delete the Qt files we do not need
 rmdir /s /q tmp
     if errorlevel 1 goto :error
-rmdir /s /q Qt\bin\tmp
+rmdir /s /q Qt5\bin\tmp
     if errorlevel 1 goto :error
 
 echo Info: clean up Qt 4. delete qml file
@@ -56,19 +56,19 @@ rmdir /s /q Qt\qml
     if errorlevel 1 goto :error
 
 echo Info: clean up Qt 5. delete translations file
-rmdir /s /q Qt\translations
+rmdir /s /q Qt5\translations
     if errorlevel 1 goto :error
 
 echo Info: clean up Qt 6. delete webengine files
-if exist Qt\bin\QtWebEngineProcess.exe (
-    del Qt\bin\QtWebEngineProcess.exe >NUL
+if exist Qt5\bin\QtWebEngineProcess.exe (
+    del Qt5\bin\QtWebEngineProcess.exe >NUL
         if errorlevel 1 goto :error
-    del Qt\resources\qtwebengine*.pak >NUL
+    del Qt5\resources\qtwebengine*.pak >NUL
         if errorlevel 1 goto :error
 )
 
 echo Info: clean up Qt 6. delete qsci resources 
-rmdir /s /q Qt\qsci
+rmdir /s /q Qt5\qsci
     if errorlevel 1 goto :error
 
 echo on
@@ -88,7 +88,7 @@ endlocal
     echo Info: Keeping Qt%1
     move tmp\Qt%1.pyd . >NUL
         if errorlevel 1 goto :error
-    move Qt\bin\tmp\Qt5%1.dll Qt\bin >NUL
+    move Qt5\bin\tmp\Qt5%1.dll Qt5\bin >NUL
         if errorlevel 1 goto :error
     goto :eof
 

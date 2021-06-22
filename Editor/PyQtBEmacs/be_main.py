@@ -49,7 +49,7 @@ def main( argv ):
         # these folders
         import PyQt5
         PyQt5_dir = os.path.dirname( PyQt5.__file__ )
-        for folder in (PyQt5_dir, os.path.join( PyQt5_dir, 'Qt', 'bin' )):
+        for folder in (PyQt5_dir, os.path.join( PyQt5_dir, 'Qt5', 'bin' )):
             os.add_dll_directory( folder )
 
     # Create the win application and start its message loop
