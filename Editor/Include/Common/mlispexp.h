@@ -58,8 +58,10 @@ public:
 #ifdef __has_array_new__
 #if DBG_ALLOC_CHECK
     void *operator new [](size_t size, const char *fileName, int lineNumber);
+    void operator delete [](void *p);
 #else
     void *operator new [](size_t size);
+    void operator delete [](void *p);
 #endif
     // use array delete from EmacsObject
 #endif

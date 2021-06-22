@@ -36,8 +36,10 @@ public:
 
 #if DBG_ALLOC_CHECK
     void *operator new(size_t size, const char *fileName, int lineNumber);
+    void operator delete(void *p);
 #ifdef __has_array_new__
     void *operator new [](size_t size, const char *fileName, int lineNumber);
+    void operator delete [](void *p);
 #endif
 #endif
 

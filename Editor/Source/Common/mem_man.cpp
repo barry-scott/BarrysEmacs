@@ -141,6 +141,7 @@ void *Expression::operator new [](size_t size, const char *fileName, int lineNum
         , fileName, lineNumber
         );
 }
+
 #else
 // allocate an vector of expressions
 void *Expression::operator new [](size_t size)
@@ -152,6 +153,11 @@ void *Expression::operator new [](size_t size)
         );
 }
 #endif
+
+void Expression::operator delete [](void *p)
+{
+    emacs_free( p );
+}
 
 void EmacsObject::operator delete [](void *p)
 {
