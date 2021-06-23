@@ -90,5 +90,8 @@ then
         "Resources/documentation"
 fi
 
+# 5. remove .sip files
+find Resources -name '*.sip' -delete
+
 popd >/dev/null
 colour-print "<>info Info:<> build-macosx.sh Editor/PyQtBEmacs - end"
