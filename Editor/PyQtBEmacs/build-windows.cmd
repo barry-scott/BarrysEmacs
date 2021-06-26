@@ -23,8 +23,15 @@ rem always merge as the build system puts Docs and emacs lib files in first
     if errorlevel 1 goto :error
 
 rem do not need the test folders
-rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\ctypes\test
-rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\unittest\test
+rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\lib2to3
+rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\test
+rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\unittest
+
+rem do not need tkinter
+rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\tkinter
+
+rem do not need pydoc
+rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\pydoc_data
 
 pushd %DIST_DIR%\PyWinAppRes\Lib\site-packages\PyQt5
     if errorlevel 1 goto :error
@@ -52,7 +59,7 @@ rmdir /s /q Qt5\bin\tmp
     if errorlevel 1 goto :error
 
 echo Info: clean up Qt 4. delete qml file
-rmdir /s /q Qt\qml
+rmdir /s /q Qt5\qml
     if errorlevel 1 goto :error
 
 echo Info: clean up Qt 5. delete translations file
@@ -67,15 +74,12 @@ if exist Qt5\bin\QtWebEngineProcess.exe (
         if errorlevel 1 goto :error
 )
 
-echo Info: clean up Qt 6. delete qsci resources 
-rmdir /s /q Qt5\qsci
-    if errorlevel 1 goto :error
+echo Info: clean up Qt 7. remove .sip files
+del /s *.sip
 
 echo on
 echo Info: clean up python lib 1. delete test code
 rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\ctypes\test
-    if errorlevel 1 goto :error
-rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\unittest\test
     if errorlevel 1 goto :error
 
 popd
