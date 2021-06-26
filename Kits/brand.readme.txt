@@ -25,6 +25,10 @@ Introduction
         Linux (tested on: Fedora 33, Centos 8, Centos 7 and Centos 6)
 
 New in %(version)s
+    * Stop cursor blinking when Emacs is not the focused app.
+    * Wayland on Linux required changes to the way icons and desktop files are named and used.
+
+New in 8.8.0
     * Add subprocess support to Windows, macOS and unix GUI versions.
       - shell command starts a shell in a emacs window
       - compile-it command by default uses make to compile code.
