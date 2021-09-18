@@ -7,12 +7,17 @@ import gzip
 
 def listRepo( repo_url ):
     from urllib.request import urlopen
+    from urllib.error import HTTPError
 
     #
     #   Fetch repomd
     #
-    with urlopen( '%s/repodata/repomd.xml' % (repo_url,) ) as req:
-        repomd = req.read()
+    try:
+        with urlopen( '%s/repodata/repomd.xml' % (repo_url,) ) as req:
+            repomd = req.read()
+    except HTTPError as e:
+        print('Error: %s - %s' % (repo_url, e))
+        return {}
 
     dom = xml.dom.minidom.parseString( repomd )
     for data_element in dom.getElementsByTagName( 'data' ):
