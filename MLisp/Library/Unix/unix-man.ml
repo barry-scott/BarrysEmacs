@@ -25,7 +25,7 @@
     )
 )
 (defun
-    man (~word (get-tty-string ": man "))
+    man (~word (get-tty-string ": man ([section] topic) "))
     ~overstrike-length
     ~text
 
@@ -37,7 +37,7 @@
     (erase-buffer)
     (set-mark)
     (message "man " ~word " fetching text...")(sit-for 0)
-    (filter-region (concat "MAN_KEEP_FORMATTING=1 man " ~word))
+    (filter-region (concat "MANWIDTH=80 MAN_KEEP_FORMATTING=1 man " ~word))
     (unset-mark)
     (end-of-file)
     (line-to-top-of-window)
@@ -141,6 +141,8 @@
     (use-syntax-table "man")
     (modify-syntax-table "word" ".")
     (modify-syntax-table "word" ":")
+    (modify-syntax-table "word" "-")
+    (modify-syntax-table "word" "_")
 
     (define-keymap "man-map")
     (define-keymap "man-ESC-map")
