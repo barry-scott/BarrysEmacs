@@ -18,5 +18,6 @@ $PYTHON -m venv venv.tmp
 colour-print "<>info Info:<> Install requirements"
 
 venv.tmp/bin/python -m pip install --upgrade pip setuptools
+venv.tmp/bin/python -m pip install wheel
 venv.tmp/bin/python -m pip install -r ${requirements_file}
 venv.tmp/bin/python -m pip list
