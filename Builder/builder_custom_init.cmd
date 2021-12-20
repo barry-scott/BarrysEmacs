@@ -5,7 +5,7 @@ rem builder_custom_init
 set VC_VER=14.0
 set BUILDER_CFG_PLATFORM=Win64
 set BUILDER_CFG_BUILD_TYPE=Release
-set PYTHON_VERSION=3.9
+set PYTHON_VERSION=3.10
 
 if %BUILDER_CFG_PLATFORM% == Win64 (
     rem if Win64 then setup path to include the 64bit CL.exe
