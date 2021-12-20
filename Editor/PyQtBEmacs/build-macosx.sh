@@ -43,7 +43,7 @@ then
         ${BUILDER_TOP_DIR}/Builder/venv.tmp/bin/pyinstaller \
             --log-level INFO \
             --distpath ${DIST_DIR} \
-            --name "Barry\\'s Emacs-Devel" \
+            --name "Barry\\'s Emacs" \
             --paths ${PYTHONPATH} \
             --windowed \
             --icon bemacs.icns \
@@ -51,7 +51,7 @@ then
                 be_main.py
     fi
 
-    pushd "${DIST_DIR}/Barry's Emacs-Devel.app/Contents" >/dev/null
+    pushd "${DIST_DIR}/Barry's Emacs.app/Contents" >/dev/null
 
     mkdir -p "Resources/emacs_library"
     mkdir -p "Resources/documentation"
@@ -60,14 +60,16 @@ then
     ${PYTHON} "${SRC_DIR}/create_bemacs_client.py" "${SRC_DIR}" "Resources/bin/bemacs_client"
 
     # remove qml stuff
-    rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/qml
-    rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/translations
-    rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/qsci
+    rm -r MacOS/PyQt5/Qt5/qml
+    rm -r MacOS/PyQt5/Qt5/translations
 
     # 5. remove .sip files
     find Resources -name '*.sip' -delete
 
     popd >/dev/null
+
+    codesign -s - --force --all-architectures --timestamp --deep \
+        "/Users/barry/Projects/BarrysEmacs/Builder/tmp/pkg/Barry's Emacs.app"
 
 else
     ${PYTHON} py2app-setup-macosx.py py2app --dist-dir ${DIST_DIR} --no-strip 1>${SRC_DIR}/build-macosx.log 2>&1
@@ -113,13 +115,12 @@ else
     done
 
     # fixup 4. remove the unused frameworks
-    rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/tmp
-    rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/lib/tmp
+    rm -r Resources/lib/python${PYTHON_VERSION}/PyQt5/tmp
+    rm -r Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/lib/tmp
 
     # remove qml stuff
-    rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/qml
-    rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/translations
-    rm -rf Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/qsci
+    rm -r Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/qml
+    rm -r Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/translations
 
     # 5. remove .sip files
     find Resources -name '*.sip' -delete

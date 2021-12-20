@@ -174,9 +174,9 @@ class BuildBEmacs(object):
                 self.cmd_make_args = ['-j', '%d' % (build_utils.numCpus(),)]
 
         elif self.platform == 'MacOSX':
-            self.BUILD_BEMACS_BIN_DIR = "%s/Builder/tmp/pkg/Barry's Emacs-Devel.app/Contents/Resources/bin" % (self.BUILDER_TOP_DIR,)
-            self.BUILD_BEMACS_LIB_DIR = "%s/Builder/tmp/pkg/Barry's Emacs-Devel.app/Contents/Resources/emacs_library" % (self.BUILDER_TOP_DIR,)
-            self.BUILD_BEMACS_DOC_DIR = "%s/Builder/tmp/pkg/Barry's Emacs-Devel.app/Contents/Resources/documentation" % (self.BUILDER_TOP_DIR,)
+            self.BUILD_BEMACS_BIN_DIR = "%s/Builder/tmp/pkg/Barry's Emacs.app/Contents/Resources/bin" % (self.BUILDER_TOP_DIR,)
+            self.BUILD_BEMACS_LIB_DIR = "%s/Builder/tmp/pkg/Barry's Emacs.app/Contents/Resources/emacs_library" % (self.BUILDER_TOP_DIR,)
+            self.BUILD_BEMACS_DOC_DIR = "%s/Builder/tmp/pkg/Barry's Emacs.app/Contents/Resources/documentation" % (self.BUILDER_TOP_DIR,)
 
             self.INSTALL_BEMACS_LIB_DIR = self.BUILD_BEMACS_LIB_DIR
             self.INSTALL_BEMACS_DOC_DIR = self.BUILD_BEMACS_DOC_DIR
@@ -410,12 +410,8 @@ class BuildBEmacs(object):
         build_utils.mkdirAndParents( dmg_folder )
 
         run( ('cp', '-r',
-                "%s/Barry's Emacs-Devel.app" % (pkg_folder,),
+                "%s/Barry's Emacs.app" % (pkg_folder,),
                 "%s/Barry's Emacs.app" % (dmg_folder,)) )
-
-        os.rename(
-            "%s/Barry's Emacs.app/Contents/MacOS/Barry's Emacs-Devel" % (dmg_folder,),
-            "%s/Barry's Emacs.app/Contents/MacOS/Barry's Emacs" % (dmg_folder,) )
 
         log.info( 'Create DMG' )
         run( ('%s/dmgbuild' % (venv_bin,),

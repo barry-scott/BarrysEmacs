@@ -8,7 +8,7 @@ def sign_binary(filename, identity=None, entitlements_file=None, deep=False):
 
 osxutils.sign_binary = sign_binary
 
-app_name = "Barry's Emacs-Devel"
+app_name = "Barry's Emacs"
 
 block_cipher = None
 
@@ -89,7 +89,7 @@ app = BUNDLE(
                 ,dict(  CFBundleTypeExtensions=editor_doc_types,
                         CFBundleTypeName="Document",
                         CFBundleTypeRole="Editor"),],
-            CFBundleIdentifier='org.barrys-emacs.bemacs-devel',
+            CFBundleIdentifier='org.barrys-emacs.bemacs',
             CFBundleName=app_name,
             CFBundleVersion='%(mac_short_version)s',
             CFBundleShortVersionString='%(mac_short_version)s',

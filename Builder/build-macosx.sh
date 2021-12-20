@@ -30,7 +30,7 @@ then
     umount "/Volumes/Barry's Emacs"
 fi
 
-./build-venv.sh macos
+./build-venv.sh
 
 export PYTHON=${PWD}/venv.tmp/bin/python
 ${PYTHON} ./build_bemacs.py gui --colour | ${PYTHON} -u build_tee.py build.log
@@ -50,8 +50,8 @@ if [ "$1" = "--install" ]
 then
     # macOS knows about these extra copies of the emacs app
     # and will start all of them at the same time so delete
-    rm -rf tmp/pkg
-    rm -rf tmp/dmg/*.app
+    rm -r tmp/pkg
+    rm -r tmp/dmg/*.app
     open ${DMG}
 fi
 colour-print "<>info Info:<> build-macosx.sh Builder - end"
