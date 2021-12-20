@@ -46,7 +46,7 @@ def setupPlatformSpecific_( argv0 ):
     global app_dir
 
     if argv0.startswith( '/' ):
-        app_dir = pathlib.Path( argv0 ).parent
+        app_dir = pathlib.Path( argv0 ).parent.parent / 'Resources'
 
     elif '/' in argv0:
         app_dir = pathlib.Path( argv0 ).resolve().parent

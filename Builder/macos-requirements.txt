@@ -1,9 +1,12 @@
 # build tools
 py2app>=0.11
+pyinstaller
 dmgbuild
 pyobjc-framework-Quartz
+
 # for colour messages
 colour-text
 
+# emacs dependencies
 PyQt5>5.12.2
 xml-preferences>=1.1.2
