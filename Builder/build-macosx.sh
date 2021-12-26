@@ -50,8 +50,8 @@ if [ "$1" = "--install" ]
 then
     # macOS knows about these extra copies of the emacs app
     # and will start all of them at the same time so delete
-    rm -r tmp/pkg
-    rm -r tmp/dmg/*.app
+    rm -rf tmp/pkg
+    rm -rf tmp/dmg/*.app
     open ${DMG}
 fi
 colour-print "<>info Info:<> build-macosx.sh Builder - end"
