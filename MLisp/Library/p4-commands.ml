@@ -63,17 +63,6 @@
     )
 )
 
-(defun
-    (p4-add-review-line
-        (beginning-of-file)
-        (ere-search-forward "^Description:")
-        (ere-search-forward "^[A-Z]")
-        (beginning-of-line)
-        (insert-string "\t" "#review " p4-reviewers "\n")
-        (novalue)
-    )
-)
-
 (autoload "smart-auto-register-handler" "smart-auto-execute.ml")
 (autoload "p4-change-mode" "p4-change-mode.ml")
 (autoload "p4-clientspec-mode" "p4-clientspec-mode.ml")

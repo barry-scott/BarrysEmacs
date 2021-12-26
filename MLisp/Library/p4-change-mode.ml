@@ -57,6 +57,22 @@
 )
 
 (defun
+    (p4-add-review-line
+        (if (= mode-string "P4 Change")
+            (progn
+                (beginning-of-file)
+                (ere-search-forward "^Description:")
+                (ere-search-forward "^[A-Z]")
+                (beginning-of-line)
+                (insert-string "\t" "#review " p4-reviewers "\n")
+                (novalue)
+            )
+            (error-occurred "p4-add-review-line is only valid in P4 Change mode")
+        )
+    )
+)
+
+(defun
     (p4-spell-check-description
         (save-window-excursion
             (save-restriction
