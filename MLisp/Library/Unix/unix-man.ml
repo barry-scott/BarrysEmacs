@@ -51,6 +51,9 @@
     ; replace ansi escape
     ; 
     (beginning-of-file)
+    ; this is a ref to a foot note - remove
+    (error-occurred
+        (replace-string "\e[24m\e[1m" ""))
     (error-occurred
         (replace-string "\e[4m\e[22m" "\e[22m\e[4m"))
     (error-occurred
@@ -79,6 +82,10 @@
             (insert-string ~text)
             (apply-colour-to-region (dot) (- (dot) (length ~text)) 3)
         )
+    )
+    (error-occurred
+        (beginning-of-file)
+        (ere-replace-string "\e\\[\\d+m" "")
     )
     (unset-mark)
 
