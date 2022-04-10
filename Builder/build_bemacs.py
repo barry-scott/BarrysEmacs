@@ -424,7 +424,7 @@ class BuildBEmacs(object):
         inno_setup = package_windows_inno_setup_files.InnoSetup( self.platform, self.VC_VER, self.opt_vcredist )
         inno_setup.createInnoInstall()
 
-        run( (r'c:\Program Files (x86)\Inno Setup 5\ISCC.exe', r'tmp\bemacs.iss') )
+        run( (r'c:\Program Files (x86)\Inno Setup 6\ISCC.exe', r'tmp\bemacs.iss') )
         build_utils.copyFile(
             r'tmp\Output\mysetup.exe',
             r'tmp\bemacs-%s-setup.exe' % (self.bemacs_version_info.get('version'),),

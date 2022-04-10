@@ -4,7 +4,7 @@
 maturity:   V
 major:      8
 minor:      8
-patch:      2
+patch:      3
 
 version:            %(maturity)s%(major)s.%(minor)s.%(patch)s
 mac_short_version:  %(maturity)s%(major)s.%(minor)s

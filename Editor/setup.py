@@ -798,12 +798,12 @@ class Win64CompilerVC14(Compiler):
         self._addVar( 'EDIT_EXE',       r'exe-pybemacs' )
         self._addVar( 'LINK_LIBS',      'advapi32.lib '
                                         'user32.lib '
-                                        '%%(PYTHON_LIB)s\python%d%d.lib' %
+                                        '"%%(PYTHON_LIB)s\python%d%d.lib"' %
                                         (sys.version_info.major, sys.version_info.minor) )
         self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc '
                                         r'-DPYBEMACS=1 '
                                         r'-IInclude\Common -IInclude\Windows '
-                                        r'-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
+                                        r'-I%(PYCXX)s -I%(PYCXXSRC)s "-I%(PYTHON_INCLUDE)s" '
                                         r'"-DOS_NAME=\"Windows\"" "-DOS_VERSION=\"win64\"" '
                                         r'"-DCPU_TYPE=\"x86_64\"" "-DUI_TYPE=\"python\"" '
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
@@ -822,12 +822,12 @@ class Win64CompilerVC14(Compiler):
         log.info( 'setupPythonTools' )
         self._addVar( 'EDIT_OBJ',       r'obj-python-tools' )
         self._addVar( 'EDIT_EXE',       r'exe-python-tools' )
-        self._addVar( 'LINK_LIBS',      '%%(PYTHON_LIB)s\python%d%d.lib' %
+        self._addVar( 'LINK_LIBS',      '"%%(PYTHON_LIB)s\python%d%d.lib"' %
                                         (sys.version_info.major, sys.version_info.minor) )
         self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc '
                                         r'-DPYBEMACS=1 '
                                         r'-IInclude\Common -IInclude\Windows '
-                                        r'-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
+                                        r'-I%(PYCXX)s -I%(PYCXXSRC)s "-I%(PYTHON_INCLUDE)s" '
                                         r'-DWIN32=1 -D_CRT_NONSTDC_NO_DEPRECATE '
                                         r'-D_UNICODE -DUNICODE '
                                         r'-U_DEBUG '
@@ -1637,7 +1637,7 @@ class UnicodeDataHeader(Target):
         rules.append( '%s : make_unicode_data.py' % (self.getTargetFilename(),) )
         rules.append( '\t@echo %s' % (log.colourFormat('<>info Make<> %s') % (self.getTargetFilename(),),) )
 
-        rules.append( '\t@%%(PYTHON)s make_unicode_data.py %s %%(UCDDIR)s/UnicodeData.txt %%(UCDDIR)s/CaseFolding.txt %s' %
+        rules.append( '\t@"%%(PYTHON)s" make_unicode_data.py %s %%(UCDDIR)s/UnicodeData.txt %%(UCDDIR)s/CaseFolding.txt %s' %
                             ('--colour' if self.compiler.setup.opt_colour else '', self.getTargetFilename()) )
 
         self.makePrint( self.compiler.expand( '\n'.join( rules ) ) )

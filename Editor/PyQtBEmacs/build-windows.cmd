@@ -14,7 +14,7 @@ if not "%2" == "" set VERSION=%2
 
 
 set PYTHONPATH=..\exe-pybemacs
-%PYTHON% -u make_be_images.py
+"%PYTHON%" -u make_be_images.py
     if errorlevel 1 goto :error
 rem always merge as the build system puts Docs and emacs lib files in first
 %VPYTHON% -m win_app_packager build be_main.py   --gui %DIST_DIR% --version %VERSION% --icon ..\Source\Windows\Resources\win_emacs.ico --name bemacs_server --merge --modules-allowed-to-be-missing-file allowed-missing.txt
