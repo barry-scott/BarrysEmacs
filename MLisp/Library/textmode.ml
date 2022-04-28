@@ -47,6 +47,8 @@
         (setq indent-offset 0)
         (setq left-margin 1)
         (setq right-margin 76)
+        (declare-buffer-specific buffer-justify-double-space-sentences)
+        (setq-default buffer-justify-double-space-sentences 1)
         (setq mode-string "Text")
         (error-occurred
             (TM-user-buffer-initialization)
@@ -314,7 +316,9 @@
                 (tm-forward-word)
                 (delete-white-space)
                 (if (= (preceding-char) '.')
-                    (insert-string " ")
+                    (if buffer-justify-double-space-sentences
+                        (insert-string " ")
+                    )
                 )
 ;               (if (provide-prefix-argument -1 (looking-at extra-space-chars))
 ;                   (insert-string " ")
@@ -546,11 +550,12 @@
 
     (~TM-justify-region
         ~TM-right-column ~TM-end-of-paragraph ~TM-last-line-length
-        old-rm old-lm old-io old-justify
+        old-rm old-lm old-io old-justify old-double-space
         (setq old-rm right-margin)
         (setq old-lm left-margin)
         (setq old-io indent-offset)
         (setq old-justify buffer-justify-flag)
+        (setq old-double-space buffer-justify-double-space-sentences)
         (copy-region-to-buffer "tm-work-buffer")
         (save-excursion
             (temp-use-buffer "tm-work-buffer")
@@ -560,6 +565,7 @@
             (setq left-margin  old-lm)
             (setq indent-offset old-io)
             (setq buffer-justify-flag old-justify)
+            (setq buffer-justify-double-space-sentences old-double-space)
             (setq ~TM-end-blank 1)
             (setq ~TM-right-column (- right-margin left-margin))
 
