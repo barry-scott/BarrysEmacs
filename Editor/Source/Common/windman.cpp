@@ -422,19 +422,15 @@ int column_to_left_of_window( void )
     return 0;
 }
 
-void window_move
-    (
-    EmacsWindow *w,
-    bool down,
-    bool lots,
-    bool dottop
-    )
+void window_move( EmacsWindow *w, bool down, bool lots, bool dottop )
 {
     int n = arg;
     int pos;
 
     if( cur_exec != 0 && cur_exec->p_nargs > 0 )
+    {
         n *= numeric_arg( 1 );
+    }
 
     if( n < 0 )
     {
@@ -442,19 +438,27 @@ void window_move
         n = -n;
     }
     if( lots )
-        n = n * (w->w_height * 4 / 5);
+    {
+        n *= (w->w_height * 4 / 5);
+    }
     if( down )
+    {
         n = -n - 1;
+    }
     if( dottop )
     {
         n = -1;
         pos = dot;
     }
     else
+    {
         pos = w->getWindowStart();
+    }
     if( n != 0 )
+    {
         w->setWindowStart( scan_bf_for_lf( pos, n ) );
-    w->w_force = w->w_force + 1;
+    }
+    w->w_force++;
     cant_1line_opt = 1;
 }
 
@@ -494,10 +498,14 @@ int page_next_window( void )
     bool down = arg_state == have_arg;
 
     if( w == NULL || w->w_next == NULL )
+    {
         w = theActiveView->windows.windows;
+    }
 
     if( w->isCurrentWindow() )
+    {
         error( "there is no other window" );
+    }
     else
     {
         w->w_buf ->set_bf();
