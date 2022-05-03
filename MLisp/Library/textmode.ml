@@ -47,8 +47,6 @@
         (setq indent-offset 0)
         (setq left-margin 1)
         (setq right-margin 76)
-        (declare-buffer-specific buffer-justify-double-space-sentences)
-        (setq-default buffer-justify-double-space-sentences 1)
         (setq mode-string "Text")
         (error-occurred
             (TM-user-buffer-initialization)
@@ -639,9 +637,11 @@
                              ~TM-end-blank
                              begin-paragraph
                              autowrap-mode-flag
-                             indent-offset)
+                             indent-offset
+                             buffer-justify-double-space-sentences)
     (setq-default buffer-justify-flag 1)
     (setq-default buffer-display-margins 1)
+    (setq-default buffer-justify-double-space-sentences 1)
     (setq auto-fill-hook "test-auto-fill")
     (execute-mlisp-file "paragraph")
     (define-keymap "Text-mode-map")
