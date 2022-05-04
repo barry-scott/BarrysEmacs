@@ -60,10 +60,10 @@ def run( cmd, check=True, output=False, cwd=None ):
     kwargs['cwd'] = cwd
 
     if type(cmd) is unicode_type:
-        log.info( 'Running %s in <>em %s<>' % (cmd, cwd) )
+        log.info( log.colourFormat( 'Running %s in <>em %s<>' ) % (cmd, cwd) )
         kwargs['shell'] = True
     else:
-        log.info( 'Running %s in <>em %s<>' % (' '.join( cmd ), cwd) )
+        log.info( log.colourFormat( 'Running %s in <>em %s<>' ) % (' '.join( cmd ), cwd) )
 
     if output:
         kwargs['stdout'] = subprocess.PIPE
