@@ -45,7 +45,7 @@ class PreferencesDialog( QtWidgets.QDialog ):
         for tab in self.all_tabs:
             tabs.addTab( tab, tab.title )
 
-        buttons = QtWidgets.QDialogButtonBox( QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel )
+        buttons = QtWidgets.QDialogButtonBox( QtWidgets.QDialogButtonBox.StandardButton.Ok | QtWidgets.QDialogButtonBox.StandardButton.Cancel )
 
         buttons.accepted.connect( self.validateAndSave )
         buttons.rejected.connect( self.reject )
@@ -157,8 +157,8 @@ class FontTab(QtWidgets.QWidget):
 
         self.static_text1 = QtWidgets.QLabel( T_('Font:') )
         self.static_text2 = QtWidgets.QLabel( '%s %dpt ' % (self.face, self.point_size) )
-        self.static_text2.sizePolicy().setHorizontalPolicy( QtWidgets.QSizePolicy.Fixed )
-        self.static_text2.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
+        self.static_text2.sizePolicy().setHorizontalPolicy( QtWidgets.QSizePolicy.Policy.Fixed )
+        self.static_text2.setFrameStyle( QtWidgets.QFrame.Shape.Panel|QtWidgets.QFrame.Shadow.Sunken )
 
         self.btn_select_font = QtWidgets.QPushButton( T_(' Select Font... ') )
 
@@ -184,7 +184,7 @@ class FontTab(QtWidgets.QWidget):
 
     def onSelectFont( self, *args ):
         font = QtGui.QFont( self.face, self.point_size )
-        font, ok = QtWidgets.QFontDialog.getFont( font, self, T_('Choose font'), QtWidgets.QFontDialog.MonospacedFonts )
+        font, ok = QtWidgets.QFontDialog.getFont( font, self, T_('Choose font'), QtWidgets.QFontDialog.FontDialogOption.MonospacedFonts )
 
         if ok:
             self.face = font.family()
@@ -251,10 +251,10 @@ class ColourTableView(QtWidgets.QTableView):
         super().__init__()
 
         self.customContextMenuRequested.connect( self.tableContextMenu )
-        self.setContextMenuPolicy( QtCore.Qt.CustomContextMenu )
+        self.setContextMenuPolicy( QtCore.Qt.ContextMenuPolicy.CustomContextMenu )
 
-        self.setSelectionBehavior( self.SelectItems )
-        self.setSelectionMode( self.SingleSelection )
+        self.setSelectionBehavior( self.SelectionBehavior.SelectItems )
+        self.setSelectionMode( self.SelectionMode.SingleSelection )
 
         self.current_selection = []
 
@@ -421,15 +421,15 @@ class ColourTableModel(QtCore.QAbstractTableModel):
         return len( self.column_titles )
 
     def headerData( self, section, orientation, role ):
-        if role == QtCore.Qt.DisplayRole:
-            if orientation == QtCore.Qt.Horizontal:
+        if role == QtCore.Qt.ItemDataRole.DisplayRole:
+            if orientation == QtCore.Qt.Orientation.Horizontal:
                 return T_( self.column_titles[section] )
 
-            if orientation == QtCore.Qt.Vertical:
+            if orientation == QtCore.Qt.Orientation.Vertical:
                 return ''
 
-        elif role == QtCore.Qt.TextAlignmentRole and orientation == QtCore.Qt.Horizontal:
-            return QtCore.Qt.AlignLeft
+        elif role == QtCore.Qt.ItemDataRole.TextAlignmentRole and orientation == QtCore.Qt.Orientation.Horizontal:
+            return QtCore.Qt.AlignmentFlag.AlignLeft
 
         return None
 
@@ -438,7 +438,7 @@ class ColourTableModel(QtCore.QAbstractTableModel):
         row = index.row()
         if row == 0:
             # its the cursor
-            if role == QtCore.Qt.DisplayRole:
+            if role == QtCore.Qt.ItemDataRole.DisplayRole:
                 if col == self.col_name:
                     return T_('Cursor')
 
@@ -453,12 +453,12 @@ class ColourTableModel(QtCore.QAbstractTableModel):
 
                 assert False
 
-            elif role == QtCore.Qt.ForegroundRole:
+            elif role == QtCore.Qt.ItemDataRole.ForegroundRole:
                 if col == self.col_example:
                     brush = self.__brush( self.cursor.fg.getTuple() )
                     return brush
 
-            elif role == QtCore.Qt.BackgroundRole:
+            elif role == QtCore.Qt.ItemDataRole.BackgroundRole:
                 if col == self.col_example:
                     if self.theme.name == 'Dark':
                         brush = self.__brush( (  0,  0,  0) )
@@ -472,7 +472,7 @@ class ColourTableModel(QtCore.QAbstractTableModel):
             name = self.all_names[ row ]
             colour = self.all_colours[ name ]
 
-            if role == QtCore.Qt.DisplayRole:
+            if role == QtCore.Qt.ItemDataRole.DisplayRole:
                 if col == self.col_name:
                     return T_( self.all_presentation_names[ row ] )
 
@@ -487,12 +487,12 @@ class ColourTableModel(QtCore.QAbstractTableModel):
 
                 assert False
 
-            elif role == QtCore.Qt.ForegroundRole:
+            elif role == QtCore.Qt.ItemDataRole.ForegroundRole:
                 if col == self.col_example:
                     brush = self.__brush( colour.fg.getTuple() )
                     return brush
 
-            elif role == QtCore.Qt.BackgroundRole:
+            elif role == QtCore.Qt.ItemDataRole.BackgroundRole:
                 if col == self.col_example:
                     brush = self.__brush( colour.bg.getTuple() )
                     return brush

@@ -345,7 +345,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
     def onActPreferences( self ):
         pref_dialog = be_preferences_dialog.PreferencesDialog( self, self.app )
         rc = pref_dialog.exec()
-        if rc == QtWidgets.QDialog.Accepted:
+        if rc == QtWidgets.QDialog.DialogCode.Accepted:
             self.app.writePreferences()
             self.emacs_panel.newPreferences()
             self.newPreferences()
