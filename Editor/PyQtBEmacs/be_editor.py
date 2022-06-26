@@ -26,9 +26,9 @@ import _bemacs
 
 import be_user
 
-from PyQt5 import QtWidgets
-from PyQt5 import QtCore
-from PyQt5 import QtGui
+from PyQt6 import QtWidgets
+from PyQt6 import QtCore
+from PyQt6 import QtGui
 
 class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
     def __init__( self, app ):

@@ -47,9 +47,9 @@ def main( argv ):
 
         # also at run time it is also necessary to add
         # these folders
-        import PyQt5
-        PyQt5_dir = os.path.dirname( PyQt5.__file__ )
-        for folder in (PyQt5_dir, os.path.join( PyQt5_dir, 'Qt5', 'bin' )):
+        import PyQt6
+        PyQt6_dir = os.path.dirname( PyQt6.__file__ )
+        for folder in (PyQt6_dir, os.path.join( PyQt6_dir, 'Qt5', 'bin' )):
             os.add_dll_directory( folder )
 
     # Create the win application and start its message loop
@@ -60,7 +60,7 @@ def main( argv ):
         return 1
 
     app.main_window.show()
-    return app.exec_()
+    return app.exec()
 
 if __name__ == '__main__':
     sys.exit( main( sys.argv ) )

@@ -80,7 +80,7 @@ def main( argv ):
     f.close()
 
 header = '''
-from PyQt5 import QtGui
+from PyQt6 import QtGui
 import io
 
 def getPixmap( name, size=None ):

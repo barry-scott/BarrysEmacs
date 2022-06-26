@@ -12,9 +12,9 @@
 '''
 import os
 
-from PyQt5 import QtWidgets
-from PyQt5 import QtGui
-from PyQt5 import QtCore
+from PyQt6 import QtWidgets
+from PyQt6 import QtGui
+from PyQt6 import QtCore
 
 import be_exceptions
 import be_emacs_panel
@@ -287,7 +287,7 @@ class ColourTableView(QtWidgets.QTableView):
         action = menu.addAction( T_('Set to default colour') )
         action.triggered.connect( self.tableSetToDefault )
 
-        menu.exec_( global_pos )
+        menu.exec( global_pos )
 
     def tableEditColour( self ):
         self.model().editColour( self.current_selection[0] )

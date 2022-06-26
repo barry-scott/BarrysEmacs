@@ -17,10 +17,9 @@ import os
 import time
 import logging
 
-from PyQt5 import Qt
-from PyQt5 import QtWidgets
-from PyQt5 import QtGui
-from PyQt5 import QtCore
+from PyQt6 import QtWidgets
+from PyQt6 import QtGui
+from PyQt6 import QtCore
 
 #import be_ids
 import be_exceptions
@@ -33,7 +32,7 @@ import be_platform_specific
 import be_config
 
 try:
-    # needed on macOS for some versions of PyQt5
+    # needed on macOS for some versions of PyQt6
     # but not used by bemacs itself
     import sip
 except ImportError:
@@ -298,16 +297,16 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         self.status_line_num = QtWidgets.QLabel()
         self.status_col_num = QtWidgets.QLabel()
 
-        self.status_read_only.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
-        self.status_insert_mode.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
-        self.status_eol.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
-        self.status_line_num.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
-        self.status_col_num.setFrameStyle( QtWidgets.QFrame.Panel|QtWidgets.QFrame.Sunken )
+        self.status_read_only.setFrameStyle( QtWidgets.QFrame.Shape.Panel|QtWidgets.QFrame.Shadow.Sunken )
+        self.status_insert_mode.setFrameStyle( QtWidgets.QFrame.Shape.Panel|QtWidgets.QFrame.Shadow.Sunken )
+        self.status_eol.setFrameStyle( QtWidgets.QFrame.Shape.Panel|QtWidgets.QFrame.Shadow.Sunken )
+        self.status_line_num.setFrameStyle( QtWidgets.QFrame.Shape.Panel|QtWidgets.QFrame.Shadow.Sunken )
+        self.status_col_num.setFrameStyle( QtWidgets.QFrame.Shape.Panel|QtWidgets.QFrame.Shadow.Sunken )
 
         self.__setupStatusBarFont( font )
 
-        self.status_line_num.setAlignment( QtCore.Qt.AlignRight )
-        self.status_col_num.setAlignment( QtCore.Qt.AlignRight )
+        self.status_line_num.setAlignment( QtCore.Qt.AlignmentFlag.AlignRight )
+        self.status_col_num.setAlignment( QtCore.Qt.AlignmentFlag.AlignRight )
 
         self.status_read_only.setText( '' )
         self.status_insert_mode.setText( '' )
@@ -333,19 +332,19 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
         metrics = self.status_col_num.fontMetrics()
         # QLabel min width is not used for the text. Its the text + somthing-magic
         # try width of a char + 25%
-        fudge = metrics.width( 'M' ) * 125 // 100
-        self.status_read_only.setMinimumWidth( fudge + max( [metrics.width( s ) for s in ('RO',)] ) )
-        self.status_insert_mode.setMinimumWidth( fudge + max( [metrics.width( s ) for s in ('Ins', 'Over')] ) )
-        self.status_eol.setMinimumWidth( fudge + max( [metrics.width( s ) for s in ('LF', 'CR', 'CRLF')] ) )
-        self.status_line_num.setMinimumWidth( fudge + metrics.width( '9999999' ) )
-        self.status_col_num.setMinimumWidth( fudge + metrics.width( '9999' ) )
+        fudge = metrics.horizontalAdvance( 'M' ) * 125 // 100
+        self.status_read_only.setMinimumWidth( fudge + max( [metrics.horizontalAdvance( s ) for s in ('RO',)] ) )
+        self.status_insert_mode.setMinimumWidth( fudge + max( [metrics.horizontalAdvance( s ) for s in ('Ins', 'Over')] ) )
+        self.status_eol.setMinimumWidth( fudge + max( [metrics.horizontalAdvance( s ) for s in ('LF', 'CR', 'CRLF')] ) )
+        self.status_line_num.setMinimumWidth( fudge + metrics.horizontalAdvance( '9999999' ) )
+        self.status_col_num.setMinimumWidth( fudge + metrics.horizontalAdvance( '9999' ) )
 
     def newPreferences( self ):
         self.__setupStatusBarFont( self.emacs_panel.font )
 
     def onActPreferences( self ):
         pref_dialog = be_preferences_dialog.PreferencesDialog( self, self.app )
-        rc = pref_dialog.exec_()
+        rc = pref_dialog.exec()
         if rc == QtWidgets.QDialog.Accepted:
             self.app.writePreferences()
             self.emacs_panel.newPreferences()

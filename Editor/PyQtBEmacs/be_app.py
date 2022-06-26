@@ -23,9 +23,9 @@ import inspect
 import gettext
 import queue
 
-from PyQt5 import QtWidgets
-from PyQt5 import QtGui
-from PyQt5 import QtCore
+from PyQt6 import QtWidgets
+from PyQt6 import QtGui
+from PyQt6 import QtCore
 
 import be_main_window
 import be_platform_specific
@@ -34,8 +34,8 @@ import be_exceptions
 import be_debug
 
 qt_event_type_names = {}
-for name in dir(QtCore.QEvent):
-    value = getattr( QtCore.QEvent, name )
+for name in dir(QtCore.QEvent.Type):
+    value = getattr( QtCore.QEvent.Type, name )
     if isinstance( value, int ):
         qt_event_type_names[ int(value) ] = name
 
@@ -188,7 +188,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
 
         self.MarshallToGuiThreadSignal.connect( self.handleMarshallToGuiThread )
 
-        self.setFallbackSessionManagementEnabled( False )
+        #QQQ self.setFallbackSessionManagementEnabled( False )
 
         self.saveStateRequest.connect( self.saveStateHandler )
         self.commitDataRequest.connect( self.commitDataHandler )
@@ -246,7 +246,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         self._debugApp( 'BemacsApp.event() type() %r  %s' %
             (event.type(), qt_event_type_names.get( event.type(), '-unknown-' )) )
 
-        if event.type() == QtCore.QEvent.FileOpen:
+        if event.type() == QtCore.QEvent.Type.FileOpen:
             self.guiClientCommandHandler( [os.getcwd(), 'emacs'] + [event.file()] )
             return True
 
@@ -297,7 +297,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
             self.log.error( message )
 
         message = '\n'.join( self.__last_client_error )
-        QtWidgets.QMessageBox.critical( self, title, message ).exec_()
+        QtWidgets.QMessageBox.critical( self, title, message ).exec()
 
     def log_error( self, e, title='Error' ):
         # must run on the main thread
@@ -308,7 +308,7 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         message = str( e )
         self.log.error( message )
 
-        QtWidgets.QMessageBox.critical( self, title, message ).exec_()
+        QtWidgets.QMessageBox.critical( self, title, message ).exec()
 
     def setStatus( self, all_values ):
         if self.main_window is not None:
@@ -469,33 +469,33 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
     def guiYesNoDialog( self, default_to_yes, title, message ):
         #qqq# What is default for?
         if default_to_yes:
-            default_button = QtWidgets.QMessageBox.Yes
+            default_button = QtWidgets.QMessageBox.StandardButton.Yes
         else:
-            default_button = QtWidgets.QMessageBox.No
+            default_button = QtWidgets.QMessageBox.StandardButton.No
 
         rc = QtWidgets.QMessageBox.question( self.main_window, title, message, defaultButton=default_button )
-        return rc == QtWidgets.QMessageBox.Yes
+        return rc == QtWidgets.QMessageBox.StandardButton.Yes
 
     def guiOpenFileDialog( self, title, existing_file, file_filter, detailed, folder, filename ):
         self._debugUiHook( 'guiOpenFileDialog( title=%r, existing_file=%r, file_filter=%r, detailed=%r, folder=%r, filename=%r )' % (title, existing_file, file_filter, detailed, folder, filename) )
-        open_file = QtWidgets.QFileDialog( self.main_window, QtCore.Qt.Dialog )
+        open_file = QtWidgets.QFileDialog( self.main_window, QtCore.Qt.WindowType.Dialog )
         open_file.setWindowTitle( title )
 
         open_file.setDefaultSuffix( '' )
 
         if existing_file:
-            open_file.setFileMode( open_file.ExistingFile )
-            open_file.setAcceptMode( open_file.AcceptOpen )
+            open_file.setFileMode( open_file.FileMode.ExistingFile )
+            open_file.setAcceptMode( open_file.AcceptMode.AcceptOpen )
 
         else:
-            open_file.setFileMode( open_file.AnyFile )
-            open_file.setAcceptMode( open_file.AcceptSave )
+            open_file.setFileMode( open_file.FileMode.AnyFile )
+            open_file.setAcceptMode( open_file.AcceptMode.AcceptSave )
 
         if detailed:
-            open_file.setViewMode( open_file.Detail )
+            open_file.setViewMode( open_file.ViewMode.Detail )
 
         else:
-            open_file.setViewMode( open_file.List )
+            open_file.setViewMode( open_file.ViewMode.List )
 
         if file_filter == '':
             open_file.setNameFilters( ['All (*)'] )
@@ -509,8 +509,8 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         if filename != '':
             open_file.selectFile( filename )
 
-        if open_file.exec_():
-            self._debugUiHook( 'open_file.exec_()' )
+        if open_file.exec():
+            self._debugUiHook( 'open_file.exec()' )
             return open_file.selectedFiles()[0]
 
         return None

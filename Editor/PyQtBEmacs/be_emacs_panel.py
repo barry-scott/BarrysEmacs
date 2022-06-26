@@ -14,9 +14,9 @@ import sys
 import logging
 import time
 
-from PyQt5 import QtWidgets
-from PyQt5 import QtGui
-from PyQt5 import QtCore
+from PyQt6 import QtWidgets
+from PyQt6 import QtGui
+from PyQt6 import QtCore
 
 #import be_ids
 import be_exceptions
@@ -406,38 +406,38 @@ cmd_to_ctrl_map = {
     }
 
 special_keys = {
-#   Key code                    trans          shift_trans      ctrl_trans         ctrl_shift_trans
-    QtCore.Qt.Key_Backspace:    ('backspace',  None,            'ctrl-backspace',  None),
-    QtCore.Qt.Key_Tab:          ('tab',        None,            None,              None),
-    QtCore.Qt.Key_Backtab:      ('shift-tab',  'shift-tab',     'shift-tab',       'shift-tab'),
+#   Key code                        trans          shift_trans      ctrl_trans         ctrl_shift_trans
+    QtCore.Qt.Key.Key_Backspace:    ('backspace',  None,            'ctrl-backspace',  None),
+    QtCore.Qt.Key.Key_Tab:          ('tab',        None,            None,              None),
+    QtCore.Qt.Key.Key_Backtab:      ('shift-tab',  'shift-tab',     'shift-tab',       'shift-tab'),
 
     # function keys
-    QtCore.Qt.Key_F1:           ('f1',         'shift-f1',      'ctrl-f1',         'ctrl-shift-f1'),
-    QtCore.Qt.Key_F2:           ('f2',         'shift-f2',      'ctrl-f2',         'ctrl-shift-f2'),
-    QtCore.Qt.Key_F3:           ('f3',         'shift-f3',      'ctrl-f3',         'ctrl-shift-f3'),
-    QtCore.Qt.Key_F4:           ('f4',         'shift-f4',      'ctrl-f4',         'ctrl-shift-f4'),
-    QtCore.Qt.Key_F5:           ('f5',         'shift-f5',      'ctrl-f5',         'ctrl-shift-f5'),
-    QtCore.Qt.Key_F6:           ('f6',         'shift-f6',      'ctrl-f6',         'ctrl-shift-f6'),
-    QtCore.Qt.Key_F7:           ('f7',         'shift-f7',      'ctrl-f7',         'ctrl-shift-f7'),
-    QtCore.Qt.Key_F8:           ('f8',         'shift-f8',      'ctrl-f8',         'ctrl-shift-f8'),
-    QtCore.Qt.Key_F9:           ('f9',         'shift-f9',      'ctrl-f9',         'ctrl-shift-f9'),
-    QtCore.Qt.Key_F10:          ('f10',        'shift-f10',     'ctrl-f10',        'ctrl-shift-f10'),
-    QtCore.Qt.Key_F11:          ('f11',        'shift-f11',     'ctrl-f11',        'ctrl-shift-f11'),
-    QtCore.Qt.Key_F12:          ('f12',        'shift-f12',     'ctrl-f12',        'ctrl-shift-f12'),
+    QtCore.Qt.Key.Key_F1:           ('f1',         'shift-f1',      'ctrl-f1',         'ctrl-shift-f1'),
+    QtCore.Qt.Key.Key_F2:           ('f2',         'shift-f2',      'ctrl-f2',         'ctrl-shift-f2'),
+    QtCore.Qt.Key.Key_F3:           ('f3',         'shift-f3',      'ctrl-f3',         'ctrl-shift-f3'),
+    QtCore.Qt.Key.Key_F4:           ('f4',         'shift-f4',      'ctrl-f4',         'ctrl-shift-f4'),
+    QtCore.Qt.Key.Key_F5:           ('f5',         'shift-f5',      'ctrl-f5',         'ctrl-shift-f5'),
+    QtCore.Qt.Key.Key_F6:           ('f6',         'shift-f6',      'ctrl-f6',         'ctrl-shift-f6'),
+    QtCore.Qt.Key.Key_F7:           ('f7',         'shift-f7',      'ctrl-f7',         'ctrl-shift-f7'),
+    QtCore.Qt.Key.Key_F8:           ('f8',         'shift-f8',      'ctrl-f8',         'ctrl-shift-f8'),
+    QtCore.Qt.Key.Key_F9:           ('f9',         'shift-f9',      'ctrl-f9',         'ctrl-shift-f9'),
+    QtCore.Qt.Key.Key_F10:          ('f10',        'shift-f10',     'ctrl-f10',        'ctrl-shift-f10'),
+    QtCore.Qt.Key.Key_F11:          ('f11',        'shift-f11',     'ctrl-f11',        'ctrl-shift-f11'),
+    QtCore.Qt.Key.Key_F12:          ('f12',        'shift-f12',     'ctrl-f12',        'ctrl-shift-f12'),
 
     # enhanced keys
-    QtCore.Qt.Key_PageUp:       ('page-up',    None,            'ctrl-page-up',    None),
-    QtCore.Qt.Key_PageDown:     ('page-down',  None,            'ctrl-page-down',  None),
-    QtCore.Qt.Key_End:          ('end',        None,            'ctrl-end',        None),
-    QtCore.Qt.Key_Home:         ('home',       None,            'ctrl-home',       None),
+    QtCore.Qt.Key.Key_PageUp:       ('page-up',    None,            'ctrl-page-up',    None),
+    QtCore.Qt.Key.Key_PageDown:     ('page-down',  None,            'ctrl-page-down',  None),
+    QtCore.Qt.Key.Key_End:          ('end',        None,            'ctrl-end',        None),
+    QtCore.Qt.Key.Key_Home:         ('home',       None,            'ctrl-home',       None),
 
-    QtCore.Qt.Key_Left:         ('left',       None,            'ctrl-left',       None),
-    QtCore.Qt.Key_Up:           ('up',         None,            'ctrl-up',         None),
-    QtCore.Qt.Key_Right:        ('right',      None,            'ctrl-right',      None),
-    QtCore.Qt.Key_Down:         ('down',       None,            'ctrl-down',       None),
+    QtCore.Qt.Key.Key_Left:         ('left',       None,            'ctrl-left',       None),
+    QtCore.Qt.Key.Key_Up:           ('up',         None,            'ctrl-up',         None),
+    QtCore.Qt.Key.Key_Right:        ('right',      None,            'ctrl-right',      None),
+    QtCore.Qt.Key.Key_Down:         ('down',       None,            'ctrl-down',       None),
 
-    QtCore.Qt.Key_Insert:       ('insert',     'shift-insert',  'ctrl-insert',     'ctrl-shift-insert'),
-    QtCore.Qt.Key_Delete:       ('delete',     'shift-delete',  'ctrl-delete',     'ctrl-shift-delete'),
+    QtCore.Qt.Key.Key_Insert:       ('insert',     'shift-insert',  'ctrl-insert',     'ctrl-shift-insert'),
+    QtCore.Qt.Key.Key_Delete:       ('delete',     'shift-delete',  'ctrl-delete',     'ctrl-shift-delete'),
     }
 
 qt_key_names = {}
@@ -478,7 +478,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         self._debugPanel( '__init__()' )
 
-        self.setFocusPolicy( QtCore.Qt.StrongFocus )
+        self.setFocusPolicy( QtCore.Qt.FocusPolicy.StrongFocus )
 
         self.tw = be_exceptions.TryWrapperFactory( self.log )
 
@@ -620,7 +620,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.editor_pixmap = QtGui.QPixmap( self.pixel_width, self.pixel_height )
 
         qp = QtGui.QPainter( self.editor_pixmap )
-        qp.setBackgroundMode( QtCore.Qt.OpaqueMode )
+        qp.setBackgroundMode( QtCore.Qt.BGMode.OpaqueMode )
         qp.setBackground( self.bg_brushes[ SYNTAX_DULL ] )
         qp.fillRect( 0, 0, self.pixel_width, self.pixel_height, self.bg_brushes[ SYNTAX_DULL ] )
         del qp
@@ -658,11 +658,11 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         # check that widths of chars make a regular grid
         # __termUpdateLineFast assumes that all strings are a multple
         # of char_width but with some OS and Qt versions this is not true
-        self.__use_fast_drawtext = (metrics.width( 'i' ) == metrics.width( 'm' )
-                              and metrics.width( 'i' )*2 == metrics.width( 'ii' )
-                              and metrics.width( 'm' )*2 == metrics.width( 'mm' ))
+        self.__use_fast_drawtext = (metrics.horizontalAdvance( 'i' ) == metrics.horizontalAdvance( 'm' )
+                              and metrics.horizontalAdvance( 'i' )*2 == metrics.horizontalAdvance( 'ii' )
+                              and metrics.horizontalAdvance( 'm' )*2 == metrics.horizontalAdvance( 'mm' ))
 
-        self.char_width = metrics.width( 'm' )
+        self.char_width = metrics.horizontalAdvance( 'm' )
         # For some fonts leading() returns negative offsets
         # which make the lines overlap.
         self.char_height = metrics.height() + max(0, metrics.leading())
@@ -700,7 +700,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             qp = QtGui.QPainter( self )
             qp.setClipRegion( event.region() )
 
-            qp.setBackgroundMode( QtCore.Qt.OpaqueMode )
+            qp.setBackgroundMode( QtCore.Qt.BGMode.OpaqueMode )
 
             self._debugSpeed( 'drawPixmap() start' )
             qp.drawPixmap( 0, 0, self.pixel_width, self.pixel_height, self.editor_pixmap )
@@ -765,35 +765,35 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
     def keyPressEvent( self, event ):
         key = event.key()
-        modifiers = int( event.modifiers() )
+        modifiers = event.modifiers()
 
         # see http://doc.qt.io/qt-5/qt.html#KeyboardModifier-enum for details of mappings
         if sys.platform == 'darwin':
-            shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
-            ctrl = (modifiers & QtCore.Qt.MetaModifier) != 0
-            alt = (modifiers & QtCore.Qt.AltModifier) != 0
-            meta = (modifiers & QtCore.Qt.MetaModifier) != 0
-            cmd = (modifiers & QtCore.Qt.ControlModifier) != 0
+            shift = QtCore.Qt.KeyboardModifier.ShiftModifier in modifiers
+            ctrl = QtCore.Qt.KeyboardModifier.MetaModifier in modifiers
+            alt = QtCore.Qt.KeyboardModifier.AltModifier in modifiers
+            meta = QtCore.Qt.KeyboardModifier.MetaModifier in modifiers
+            cmd = QtCore.Qt.KeyboardModifier.ControlModifier in modifiers
 
         else:
-            shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
-            ctrl = (modifiers & QtCore.Qt.ControlModifier) != 0
-            alt = (modifiers & QtCore.Qt.AltModifier) != 0
-            meta = (modifiers & QtCore.Qt.MetaModifier) != 0
+            shift = QtCore.Qt.KeyboardModifier.ShiftModifier in modifiers
+            ctrl = QtCore.Qt.KeyboardModifier.ControlModifier in modifiers
+            alt = QtCore.Qt.KeyboardModifier.AltModifier in modifiers
+            meta = QtCore.Qt.KeyboardModifier.MetaModifier in modifiers
             cmd = False
 
-        self._debugTermKey( 'keyPressEvent %r key %d(0x%x) name %r  ctrl %s shift %s alt %s cmd %s meta %s' %
-                            (event.text(), key, key, qt_key_names.get( key, 'unknown' ), T( ctrl ), T( shift ), T( alt ), T( cmd ), T( meta )) )
+        self._debugTermKey( 'keyPressEvent %r key %d(0x%x) name %r modifiers %r ctrl %s shift %s alt %s cmd %s meta %s' %
+                            (event.text(), key, key, qt_key_names.get( key, 'unknown' ), modifiers, T( ctrl ), T( shift ), T( alt ), T( cmd ), T( meta )) )
 
-        if (ctrl or cmd) and key == QtCore.Qt.Key_0:
+        if (ctrl or cmd) and key == QtCore.Qt.Key.Key_0:
             self.changeFontPointSize( 0 )
             return
 
-        elif (ctrl or cmd) and key == QtCore.Qt.Key_Equal:
+        elif (ctrl or cmd) and key == QtCore.Qt.Key.Key_Equal:
             self.changeFontPointSize( +1 )
             return
 
-        elif (ctrl or cmd) and key == QtCore.Qt.Key_Minus:
+        elif (ctrl or cmd) and key == QtCore.Qt.Key.Key_Minus:
             self.changeFontPointSize( -1 )
             return
 
@@ -828,26 +828,26 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
     def keyReleaseEvent( self, event ):
         key = event.key()
-        modifiers = int( event.modifiers() )
+        modifiers = event.modifiers()
         # see http://doc.qt.io/qt-5/qt.html#KeyboardModifier-enum for details of mappings
         if sys.platform == 'darwin':
-            shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
-            ctrl = (modifiers & QtCore.Qt.MetaModifier) != 0
-            alt = (modifiers & QtCore.Qt.AltModifier) != 0
-            meta = (modifiers & QtCore.Qt.MetaModifier) != 0
-            cmd = (modifiers & QtCore.Qt.ControlModifier) != 0
+            shift = QtCore.Qt.KeyboardModifier.ShiftModifier in modifiers
+            ctrl = QtCore.Qt.KeyboardModifier.MetaModifier in modifiers
+            alt = QtCore.Qt.KeyboardModifier.AltModifier in modifiers
+            meta = QtCore.Qt.KeyboardModifier.MetaModifier in modifiers
+            cmd = QtCore.Qt.KeyboardModifier.ControlModifier in modifiers
 
         else:
-            shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
-            ctrl = (modifiers & QtCore.Qt.ControlModifier) != 0
-            alt = (modifiers & QtCore.Qt.AltModifier) != 0
-            meta = (modifiers & QtCore.Qt.MetaModifier) != 0
+            shift = QtCore.Qt.KeyboardModifier.ShiftModifier in modifiers
+            ctrl = QtCore.Qt.KeyboardModifier.ControlModifier in modifiers
+            alt = QtCore.Qt.KeyboardModifier.AltModifier in modifiers
+            meta = QtCore.Qt.KeyboardModifier.MetaModifier in modifiers
             cmd = False
 
         self._debugTermKey( 'keyReleaseEvent %r key %d(0x%x) name %r ctrl %s shift %s alt %s cmd %s meta %s' %
                             (event.text(), key, key, qt_key_names.get( key, 'unknown' ), T( ctrl ), T( shift ), T( alt ), T( cmd ), T( meta )) )
 
-        if key == QtCore.Qt.Key_Shift:
+        if key == QtCore.Qt.Key.Key_Shift:
             self.shift_pulses += 1
 
         if self.shift_pulses >= 3:
@@ -863,20 +863,20 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
     def handleNonSpecialKey( self, event ):
         key = event.key()
         char = event.text()
-        modifiers = int( event.modifiers() )
+        modifiers = event.modifiers()
         # see http://doc.qt.io/qt-5/qt.html#KeyboardModifier-enum for details of mappings
         if sys.platform == 'darwin':
-            shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
-            ctrl = (modifiers & QtCore.Qt.MetaModifier) != 0
-            alt = (modifiers & QtCore.Qt.AltModifier) != 0
-            meta = (modifiers & QtCore.Qt.MetaModifier) != 0
-            cmd = (modifiers & QtCore.Qt.ControlModifier) != 0
+            shift = QtCore.Qt.KeyboardModifier.ShiftModifier in modifiers
+            ctrl = QtCore.Qt.KeyboardModifier.MetaModifier in modifiers
+            alt = QtCore.Qt.KeyboardModifier.AltModifier in modifiers
+            meta = QtCore.Qt.KeyboardModifier.MetaModifier in modifiers
+            cmd = QtCore.Qt.KeyboardModifier.ControlModifier in modifiers
 
         else:
-            shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
-            ctrl = (modifiers & QtCore.Qt.ControlModifier) != 0
-            alt = (modifiers & QtCore.Qt.AltModifier) != 0
-            meta = (modifiers & QtCore.Qt.MetaModifier) != 0
+            shift = QtCore.Qt.KeyboardModifier.ShiftModifier in modifiers
+            ctrl = QtCore.Qt.KeyboardModifier.ControlModifier in modifiers
+            alt = QtCore.Qt.KeyboardModifier.AltModifier in modifiers
+            meta = QtCore.Qt.KeyboardModifier.MetaModifier in modifiers
             cmd = False
 
         self._debugTermKey( ('handleNonSpecialKey "%r" key %r name %r ctrl %s shift %s alt %s cmd %s meta %s' %
@@ -903,76 +903,76 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         self.app.editor.guiEventMouse( keys, shift, all_params )
 
     def mousePressEvent( self, event ):
-        self._debugTermMouse( 'mousePressEvent   %r %r %r )' % (event.button(), int(event.buttons()), event.pos()) )
+        self._debugTermMouse( 'mousePressEvent   %r %r %r )' % (event.button(), event.buttons(), event.position()) )
 
         if self.char_width is None:
             return
 
         # Calculate character cell position
-        column = ((event.x() - self.client_padding + (self.char_width/2)) // self.char_width) + 1;
-        line =   ((event.y() - self.client_padding ) // self.char_height) + 1;
+        column = ((event.position().x() - self.client_padding + (self.char_width/2)) // self.char_width) + 1;
+        line =   ((event.position().y() - self.client_padding ) // self.char_height) + 1;
 
-        if event.button() == QtCore.Qt.LeftButton:
+        if event.button() == QtCore.Qt.MouseButton.LeftButton:
             translation = keys_mapping["mouse-1-down"]
             self.__mouse_button_state.add( 1 )
 
-        elif event.button() == QtCore.Qt.MidButton:
+        elif event.button() == QtCore.Qt.MouseButton.MidButton:
             translation = keys_mapping["mouse-2-down"]
             self.__mouse_button_state.add( 2 )
 
-        elif event.button() == QtCore.Qt.RightButton:
+        elif event.button() == QtCore.Qt.MouseButton.RightButton:
             translation = keys_mapping["mouse-3-down"]
             self.__mouse_button_state.add( 3 )
 
         if translation is not None:
-            modifiers = int(self.app.keyboardModifiers())
-            shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
+            modifiers = self.app.keyboardModifiers()
+            shift = QtCore.Qt.KeyboardModifier.ShiftModifier in modifiers
             self.__guiEventMouse( translation, shift, [line, column, shift] );
 
     def mouseReleaseEvent( self, event ):
-        self._debugTermMouse( 'mouseReleaseEvent %r %r %r )' % (event.button(), int(event.buttons()), event.pos()) )
+        self._debugTermMouse( 'mouseReleaseEvent %r %r %r )' % (event.button(), event.buttons(), event.position()) )
 
         if self.char_width is None:
             return
 
-        column = ((event.x() - self.client_padding + (self.char_width/2)) // self.char_width) + 1;
-        line =   ((event.y() - self.client_padding ) // self.char_height) + 1;
+        column = ((event.position().x() - self.client_padding + (self.char_width/2)) // self.char_width) + 1;
+        line =   ((event.position().y() - self.client_padding ) // self.char_height) + 1;
 
-        if event.button() == QtCore.Qt.LeftButton:
+        if event.button() == QtCore.Qt.MouseButton.LeftButton:
             translation = keys_mapping["mouse-1-up"]
             self.__mouse_button_state.remove( 1 )
 
-        elif event.button() == QtCore.Qt.MidButton:
+        elif event.button() == QtCore.Qt.MouseButton.MidButton:
             translation = keys_mapping["mouse-2-up"]
             self.__mouse_button_state.remove( 2 )
 
-        elif event.button() == QtCore.Qt.RightButton:
+        elif event.button() == QtCore.Qt.MouseButton.RightButton:
             translation = keys_mapping["mouse-3-up"]
             self.__mouse_button_state.remove( 3 )
 
         if translation is not None:
-            modifiers = int(self.app.keyboardModifiers())
-            shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
+            modifiers = self.app.keyboardModifiers()
+            shift = QtCore.Qt.KeyboardModifier.ShiftModifier in modifiers
             self.__guiEventMouse( translation, shift, [line, column, shift] );
 
     def mouseMoveEvent( self, event ):
-        self._debugTermMouse( 'mouseMoveEvent %r %r %r )' % (event.button(), int(event.buttons()), event.pos()) )
+        self._debugTermMouse( 'mouseMoveEvent %r %r %r )' % (event.button(), event.buttons(), event.position()) )
 
         if self.char_width is None:
             return
 
-        column = ((event.x() - self.client_padding + (self.char_width/2)) // self.char_width) + 1;
-        line =   ((event.y() - self.client_padding ) // self.char_height) + 1;
+        column = ((event.position().x() - self.client_padding + (self.char_width/2)) // self.char_width) + 1;
+        line =   ((event.position().y() - self.client_padding ) // self.char_height) + 1;
 
         translation = keys_mapping["mouse-motion"]
 
-        modifiers = int(self.app.keyboardModifiers())
-        shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
+        modifiers = self.app.keyboardModifiers()
+        shift = QtCore.Qt.KeyboardModifier.ShiftModifier in modifiers
         self.__guiEventMouse( translation, shift, [line, column] );
 
     def wheelEvent( self, event ):
-        self._debugTermMouse( 'wheelEvent source %d, angle %r, pixel %r' %
-                (event.source(), event.angleDelta().y(), event.pixelDelta().y()) )
+        self._debugTermMouse( 'wheelEvent angle %r, pixel %r' %
+                (event.angleDelta().y(), event.pixelDelta().y()) )
 
         if event.angleDelta().y() == 0:
             return
@@ -991,12 +991,12 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
         self.__last_wheel_event_time = this_event_time
 
-        column = ((event.x() - self.client_padding + (self.char_width/2)) // self.char_width) + 1;
-        line =   ((event.y() - self.client_padding ) // self.char_height) + 1;
+        column = ((event.position().x() - self.client_padding + (self.char_width/2)) // self.char_width) + 1;
+        line =   ((event.position().y() - self.client_padding ) // self.char_height) + 1;
 
-        modifiers = int(self.app.keyboardModifiers())
-        shift = (modifiers & QtCore.Qt.ShiftModifier) != 0
-        control = (modifiers & QtCore.Qt.ControlModifier) != 0
+        modifiers = self.app.keyboardModifiers()
+        shift = QtCore.Qt.KeyboardModifier.ShiftModifier in modifiers
+        control = QtCore.Qt.KeyboardModifier.ControlModifier in modifiers
 
         if shift and control:
             if rotation < 0:
@@ -1083,7 +1083,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         #self.qp.setRenderHint( self.qp.TextAntialiasing, False )
 
         self.qp.setBackground( self.bg_brushes[ SYNTAX_DULL ] )
-        self.qp.setBackgroundMode( QtCore.Qt.OpaqueMode )
+        self.qp.setBackgroundMode( QtCore.Qt.BGMode.OpaqueMode )
         self.qp.setFont( self.font )
         self.qp.setPen( self.fg_colours[ SYNTAX_DULL ] )
 
@@ -1472,7 +1472,7 @@ class EmacsCursorHighlighter(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
 
 class BemacsVerticalScrollBar(QtWidgets.QScrollBar, be_debug.EmacsDebugMixin):
     def __init__( self, panel ):
-        super().__init__( QtCore.Qt.Vertical, panel )
+        super().__init__( QtCore.Qt.Orientation.Vertical, panel )
         self.log = panel.log
         be_debug.EmacsDebugMixin.__init__( self )
 
@@ -1513,7 +1513,7 @@ class BemacsVerticalScrollBar(QtWidgets.QScrollBar, be_debug.EmacsDebugMixin):
 
 class BemacsHorizontalScrollBar(QtWidgets.QScrollBar, be_debug.EmacsDebugMixin):
     def __init__( self, panel ):
-        super().__init__( QtCore.Qt.Horizontal, panel )
+        super().__init__( QtCore.Qt.Orientation.Horizontal, panel )
         self.log = panel.log
         be_debug.EmacsDebugMixin.__init__( self )
 
