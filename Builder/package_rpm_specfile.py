@@ -79,7 +79,7 @@ def createRpmSpecFile( opt, spec_filename ):
             python = '/usr/bin/python3'
             all_requires_gui.add( 'bemacs-common = %{version}-%{release}' )
             all_requires_gui.add( 'python3 >= 3.4' )
-            all_requires_gui.add( 'python3-qt5 >= 5.5.1' )
+            all_requires_gui.add( 'python3-qt6' )
 
             all_requires_base.add( 'bemacs-gui = %{version}-%{release}' )
             all_requires_base.add( 'python3' )

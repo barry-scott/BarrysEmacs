@@ -47,6 +47,9 @@ class PackageBEmacs(object):
         self.COPR_REPO_OTHER_URL = None
         self.MOCK_COPR_REPO_FILENAME = None
 
+        self.copr_repo_pyqt6 = 'copr:copr.fedorainfracloud.org:group_kdesig:python-qt6'
+        self.MOCK_COPR_REPO_PYQT6_FILENAME = '/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:group_kdesig:python-qt6.repo'
+
         self.cmd = None
         self.opt_release = 'auto'
         self.commit_id = 'unknown'
@@ -242,6 +245,7 @@ class PackageBEmacs(object):
             run( ('mock',
                         '--root=%s' % (self.MOCK_TARGET_FILENAME,),
                         '--enablerepo=barryascott-%s' % (self.copr_repo,),
+                        '--enablerepo=copr:copr.fedorainfracloud.org:group_kdesig:python-qt6',
                         '--rebuild',
                         self.SRPM_FILENAME) )
         else:
@@ -390,6 +394,8 @@ class PackageBEmacs(object):
         else:
             assert False, 'config_opts missing yum.conf or dnf.conf section'
 
+        config_opts['root'] = os.path.splitext( os.path.basename( self.MOCK_TARGET_FILENAME ) )[0]
+
         if self.MOCK_COPR_REPO_FILENAME:
             with open( self.MOCK_COPR_REPO_FILENAME, 'r' ) as f:
                 repo = f.read()
@@ -399,7 +405,16 @@ class PackageBEmacs(object):
 
                 config_opts[conf_key] += '\n'
                 config_opts[conf_key] += repo
-                config_opts['root'] = os.path.splitext( os.path.basename( self.MOCK_TARGET_FILENAME ) )[0]
+
+        if self.MOCK_COPR_REPO_PYQT6_FILENAME:
+            with open( self.MOCK_COPR_REPO_PYQT6_FILENAME, 'r' ) as f:
+                repo = f.read()
+
+                if self.opt_mock_target.startswith( 'epel-' ):
+                    repo = repo.replace( '/fedora-$releasever-$basearch/', '/epel-$releasever-$basearch/' )
+
+                config_opts[conf_key] += '\n'
+                config_opts[conf_key] += repo
 
         with open( self.MOCK_TARGET_FILENAME, 'w' ) as f:
             for k in config_opts:

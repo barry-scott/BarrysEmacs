@@ -228,9 +228,9 @@ class BuildBEmacs(object):
 
         if self.platform in ('Linux',):
             try:
-                from PyQt5 import QtWidgets, QtGui, QtCore
+                from PyQt6 import QtWidgets, QtGui, QtCore
             except ImportError:
-                raise BuildError( 'PyQt5 is not installed for %s. Hint: dnf install PyQt5' % (sys.executable,) )
+                raise BuildError( 'PyQt6 is not installed for %s. Hint: dnf install PyQt5' % (sys.executable,) )
             try:
                 import xml_preferences
             except ImportError:
@@ -240,13 +240,13 @@ class BuildBEmacs(object):
             try:
                 if self.platform == 'win64':
                     # in a venv on Windows need to tell the OS about the dll's that Qt uses
-                    import PyQt5
-                    qt_bin_dir = os.path.join( os.path.dirname( PyQt5.__file__ ), 'Qt5', 'bin' )
+                    import PyQt6
+                    qt_bin_dir = os.path.join( os.path.dirname( PyQt6.__file__ ), 'Qt6', 'bin' )
                     os.add_dll_directory( qt_bin_dir )
 
-                from PyQt5 import QtWidgets, QtGui, QtCore
+                from PyQt6 import QtWidgets, QtGui, QtCore
             except ImportError:
-                raise BuildError( 'PyQt5 is not installed for %s. Hint: pip3 install --user PyQt5' % (sys.executable,) )
+                raise BuildError( 'PyQt6 is not installed for %s. Hint: pip3 install --user PyQt6' % (sys.executable,) )
             try:
                 import xml_preferences
             except ImportError:
