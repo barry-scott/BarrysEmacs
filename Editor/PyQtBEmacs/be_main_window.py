@@ -376,7 +376,7 @@ class BemacsMainWindow(QtWidgets.QMainWindow):
                                 ,sys.version_info.micro
                                 ,sys.version_info.releaselevel
                                 ,sys.version_info.serial) )
-        all_about_info.append( 'PyQt %s, Qt %s' % (Qt.PYQT_VERSION_STR, QtCore.QT_VERSION_STR) )
+        all_about_info.append( 'PyQt %s, Qt %s' % (QtCore.PYQT_VERSION_STR, QtCore.QT_VERSION_STR) )
         all_about_info.append( T_('Copyright Barry Scott (c) 1980-%s. All rights reserved') % (be_version.year,) )
 
         QtWidgets.QMessageBox.information( self, T_("About Barry's Emacs"), '\n'.join( all_about_info ) )
