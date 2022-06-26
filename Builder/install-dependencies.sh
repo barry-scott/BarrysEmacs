@@ -32,7 +32,7 @@ colour-print "<>info Info:<> Import build dependencies for ${SYSTEM}"
 case "$SYSTEM" in
 macOS)
     colour-print "<>info Info:<> Import python packages from PyPI"
-    ${PYTHON} -m pip install --user PyQt5
+    ${PYTHON} -m pip install --user PyQt6
     ${PYTHON} -m pip install --user xml-preferences
 
     if [ "$1" = "" -o ! -d "$1" ]
@@ -73,9 +73,9 @@ ubuntu|debian)
     apt list --installed >${PKG_LIST}
     for PKG in \
         libsqlite-dev \
-        python3-pyqt5 \
-        python3-pyqt5 \
-        python3-pyqt5.qsci \
+        python3-pyqt6 \
+        python3-pyqt6 \
+        python3-pyqt6.qsci \
         python3-pip \
         ;
     do

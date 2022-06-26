@@ -205,7 +205,7 @@ class BuildBEmacs(object):
             self.cmd_make_args = ['/nologo']
 
             # fix up the PATH that may have a Qt/bin added to it that will break the build
-            os.environ['PATH'] = ';'.join( [path for path in os.environ['PATH'].split(';') if not path.endswith(r'PyQt5\Qt\bin')] )
+            os.environ['PATH'] = ';'.join( [path for path in os.environ['PATH'].split(';') if not path.endswith(r'PyQt6\Qt\bin')] )
 
         else:
             raise BuildError( 'Unsupported platform: %s' % (self.platform,) )
@@ -230,7 +230,7 @@ class BuildBEmacs(object):
             try:
                 from PyQt6 import QtWidgets, QtGui, QtCore
             except ImportError:
-                raise BuildError( 'PyQt6 is not installed for %s. Hint: dnf install PyQt5' % (sys.executable,) )
+                raise BuildError( 'PyQt6 is not installed for %s. Hint: dnf install PyQt6' % (sys.executable,) )
             try:
                 import xml_preferences
             except ImportError:
