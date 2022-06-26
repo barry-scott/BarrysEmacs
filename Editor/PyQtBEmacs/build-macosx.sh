@@ -59,9 +59,9 @@ then
 
     ${PYTHON} "${SRC_DIR}/create_bemacs_client.py" "${SRC_DIR}" "Resources/bin/bemacs_client"
 
-    # remove qml stuff
-    rm -r MacOS/PyQt5/Qt5/qml
-    rm -r MacOS/PyQt5/Qt5/translations
+    # remove translations stuff
+    rm MacOS/PyQt6/Qt6/translations
+    rm -r Resources/PyQt6/Qt6/translations
 
     # 5. remove .sip files
     find Resources -name '*.sip' -delete
@@ -82,19 +82,19 @@ else
     ${PYTHON} "${SRC_DIR}/create_bemacs_client.py" "${SRC_DIR}" "Resources/bin/bemacs_client"
 
     # fixup 3. only keep the frameworks that we need, saving space
-    # Resources/lib/python3.5/lib-dynload/PyQt5 - QtXxx.so
+    # Resources/lib/python3.5/lib-dynload/PyQt6 - QtXxx.so
     mkdir \
-        Resources/lib/python${PYTHON_VERSION}/PyQt5/tmp
+        Resources/lib/python${PYTHON_VERSION}/PyQt6/tmp
     mv \
-        Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt[A-Z]*.so \
-        Resources/lib/python${PYTHON_VERSION}/PyQt5/tmp
+        Resources/lib/python${PYTHON_VERSION}/PyQt6/Qt[A-Z]*.so \
+        Resources/lib/python${PYTHON_VERSION}/PyQt6/tmp
 
-    # Resources/lib/python3.5/PyQt5/Qt/lib - QtXxx.framework
+    # Resources/lib/python3.5/PyQt6/Qt/lib - QtXxx.framework
     mkdir \
-        Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/lib/tmp
+        Resources/lib/python${PYTHON_VERSION}/PyQt6/Qt6/lib/tmp
     mv \
-        Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/lib/Qt[A-Z]*.framework \
-        Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/lib/tmp
+        Resources/lib/python${PYTHON_VERSION}/PyQt6/Qt6/lib/Qt[A-Z]*.framework \
+        Resources/lib/python${PYTHON_VERSION}/PyQt6/Qt6/lib/tmp
 
     for LIBNAME in \
         QtCore \
@@ -107,20 +107,20 @@ else
     do
         colour-print "<>info Info:<> Framework used ${LIBNAME}"
         mv \
-            Resources/lib/python${PYTHON_VERSION}/PyQt5/tmp/${LIBNAME}.abi3.so \
-            Resources/lib/python${PYTHON_VERSION}/PyQt5
+            Resources/lib/python${PYTHON_VERSION}/PyQt6/tmp/${LIBNAME}.abi3.so \
+            Resources/lib/python${PYTHON_VERSION}/PyQt6
         mv \
-            Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/lib/tmp/${LIBNAME}.framework \
-            Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/lib
+            Resources/lib/python${PYTHON_VERSION}/PyQt6/Qt6/lib/tmp/${LIBNAME}.framework \
+            Resources/lib/python${PYTHON_VERSION}/PyQt6/Qt6/lib
     done
 
     # fixup 4. remove the unused frameworks
-    rm -r Resources/lib/python${PYTHON_VERSION}/PyQt5/tmp
-    rm -r Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/lib/tmp
+    rm -r Resources/lib/python${PYTHON_VERSION}/PyQt6/tmp
+    rm -r Resources/lib/python${PYTHON_VERSION}/PyQt6/Qt6/lib/tmp
 
     # remove qml stuff
-    rm -r Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/qml
-    rm -r Resources/lib/python${PYTHON_VERSION}/PyQt5/Qt5/translations
+    rm -r Resources/lib/python${PYTHON_VERSION}/PyQt6/Qt6/qml
+    rm -r Resources/lib/python${PYTHON_VERSION}/PyQt6/Qt6/translations
 
     # 5. remove .sip files
     find Resources -name '*.sip' -delete
