@@ -86,7 +86,7 @@ def createRpmSpecFile( opt, spec_filename ):
 
             all_build_requires.add( 'python3 >= 3.4' )
             all_build_requires.add( 'python3-devel >= 3.4' )
-            all_build_requires.add( 'python3-qt5 >= 5.5.1' )
+            all_build_requires.add( 'python3-qt6' )
 
         if opt.opt_kit_xml_preferences is None:
             all_requires_gui.add( 'python3-xml-preferences' )
