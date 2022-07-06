@@ -1491,19 +1491,21 @@ class BemacsVerticalScrollBar(QtWidgets.QScrollBar, be_debug.EmacsDebugMixin):
         self.window_id = window_id
 
     def handleActionTriggered( self, action ):
-        if action == self.SliderSingleStepAdd:
+        action = self.SliderAction( action )
+
+        if action == self.SliderAction.SliderSingleStepAdd:
             self._debugTermScroll( 'guiScrollChangeVert id %r %r' % (self.window_id, 1) )
             self.editor.guiScrollChangeVert( self.window_id, +1 )
 
-        elif action == self.SliderSingleStepSub:
+        elif action == self.SliderAction.SliderSingleStepSub:
             self._debugTermScroll( 'guiScrollChangeVert id %r %r' % (self.window_id, -1) )
             self.editor.guiScrollChangeVert( self.window_id, -1 )
 
-        if action == self.SliderPageStepAdd:
+        if action == self.SliderAction.SliderPageStepAdd:
             self._debugTermScroll( 'guiScrollChangeVert id %r %r' % (self.window_id, 2) )
             self.editor.guiScrollChangeVert( self.window_id, +2 )
 
-        elif action == self.SliderPageStepSub:
+        elif action == self.SliderAction.SliderPageStepSub:
             self._debugTermScroll( 'guiScrollChangeVert id %r %r' % (self.window_id, -2) )
             self.editor.guiScrollChangeVert( self.window_id, -2 )
 
@@ -1532,19 +1534,21 @@ class BemacsHorizontalScrollBar(QtWidgets.QScrollBar, be_debug.EmacsDebugMixin):
         self.window_id = window_id
 
     def handleActionTriggered( self, action ):
-        if action == self.SliderSingleStepAdd:
+        action = self.SliderAction( action )
+
+        if action == self.SliderAction.SliderSingleStepAdd:
             self._debugTermScroll( 'guiScrollChangeHorz id %r %r' % (self.window_id, 1) )
             self.editor.guiScrollChangeHorz( self.window_id, +1 )
 
-        elif action == self.SliderSingleStepSub:
+        elif action == self.SliderAction.SliderSingleStepSub:
             self._debugTermScroll( 'guiScrollChangeHorz id %r %r' % (self.window_id, -1) )
             self.editor.guiScrollChangeHorz( self.window_id, -1 )
 
-        if action == self.SliderPageStepAdd:
+        if action == self.SliderAction.SliderPageStepAdd:
             self._debugTermScroll( 'guiScrollChangeHorz id %r %r' % (self.window_id, 4) )
             self.editor.guiScrollChangeHorz( self.window_id, +4 )
 
-        elif action == self.SliderPageStepSub:
+        elif action == self.SliderAction.SliderPageStepSub:
             self._debugTermScroll( 'guiScrollChangeHorz id %r %r' % (self.window_id, -4) )
             self.editor.guiScrollChangeHorz( self.window_id, -4 )
 
