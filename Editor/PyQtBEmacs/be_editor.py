@@ -197,10 +197,10 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
         self._debugEditor( 'uiHookEditPaste use_primary=%r' % (use_primary,) )
 
         if use_primary:
-            text = self.app.clipboard().text( mode=QtGui.QClipboard.Selection )
+            text = self.app.clipboard().text( mode=QtGui.QClipboard.Mode.Selection )
 
         else:
-            text = self.app.clipboard().text( mode=QtGui.QClipboard.Clipboard )
+            text = self.app.clipboard().text( mode=QtGui.QClipboard.Mode.Clipboard )
 
         text = text.replace( '\r\n', '\n' ).replace( '\r', '\n' )
         self._debugEditor( 'uiHookEditPaste text=%r' % (text,) )

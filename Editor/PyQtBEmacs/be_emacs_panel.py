@@ -916,7 +916,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             translation = keys_mapping["mouse-1-down"]
             self.__mouse_button_state.add( 1 )
 
-        elif event.button() == QtCore.Qt.MouseButton.MidButton:
+        elif event.button() == QtCore.Qt.MouseButton.MiddleButton:
             translation = keys_mapping["mouse-2-down"]
             self.__mouse_button_state.add( 2 )
 
@@ -942,7 +942,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
             translation = keys_mapping["mouse-1-up"]
             self.__mouse_button_state.remove( 1 )
 
-        elif event.button() == QtCore.Qt.MouseButton.MidButton:
+        elif event.button() == QtCore.Qt.MouseButton.MiddleButton:
             translation = keys_mapping["mouse-2-up"]
             self.__mouse_button_state.remove( 2 )
 

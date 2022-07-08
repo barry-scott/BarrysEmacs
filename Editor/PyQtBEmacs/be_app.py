@@ -650,7 +650,17 @@ class MockEditor(be_debug.EmacsDebugMixin):
         p.termUpdateBegin()
         p.termUpdateLine( None, new, line )
         p.termTopos( line, 10 )
-        p.termUpdateEnd( {'readonly': True, 'overstrike': False, 'eol': 'LF', 'line': 4199, 'column': 9}, self.vert_scroll, self.horz_scroll )
+        all_state = {'readonly': True
+                    ,'overstrike': False
+                    ,'eol': 'LF'
+                    ,'line': 4199
+                    ,'column': 9
+                    ,'case-fold-search': True
+                    ,'replace-case': True
+                    ,'display-non-printing-characters': False
+                    ,'wrap-long-lines': False
+                    }
+        p.termUpdateEnd( all_state, self.vert_scroll, self.horz_scroll )
 
     def guiCloseWindow( self, *args, **kwds ):
         self.app.marshallToGuiThread( self.app.quit, () )
@@ -680,17 +690,17 @@ class MockEditor(be_debug.EmacsDebugMixin):
 
     # Only used in __mock_editor mode
     def uiHookEditCopy( self, cmd, text ):
-        self.clipboard().setText( text )
+        self.app.clipboard().setText( text )
 
     # Only used in __mock_editor mode
     def uiHookEditPaste( self, cmd, use_primary=False ):
         self._debugEditor( 'uiHookEditPaste use_primary=%r' % (use_primary,) )
 
         if use_primary:
-            text = self.clipboard().text( mode=QtGui.QClipBoard.Selection )
+            text = self.app.clipboard().text( mode=QtGui.QClipboard.Mode.Selection )
 
         else:
-            text = self.clipboard().text( mode=QtGui.QClipBoard.Clipboard )
+            text = self.app.clipboard().text( mode=QtGui.QClipboard.Mode.Clipboard )
 
         text = text.replace( '\r\n', '\n' ).replace( '\r', '\n' )
 
