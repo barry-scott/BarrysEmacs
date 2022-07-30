@@ -8,7 +8,7 @@ then
     }
 fi
 
-colour-print "<>info Info:<> build-macosx.sh Editor/PyQtBEmacs - start"
+colour-print "<>info Info:<> build-macosx.sh in Editor/PyQtBEmacs - start $*"
 PKG_DIST_DIR=${BUILDER_TOP_DIR}/Builder/tmp/pkg
 
 SRC_DIR=${PWD}
@@ -47,6 +47,7 @@ then
             --paths ${PYTHONPATH} \
             --windowed \
             --icon bemacs.icns \
+            --target-arch universal2
             --osx-bundle-identifier org.barrys-emacs.bemacs \
                 be_main.py
     fi

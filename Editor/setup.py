@@ -853,8 +853,8 @@ class CompilerGCC(Compiler):
             self._addVar( 'PYCXXSRC',       '%(BUILDER_TOP_DIR)s/Imports/pycxx-%(PYCXX_VER)s/Src' )
 
         if self.setup.platform == 'macosx':
-            self._addVar( 'CCC',        'g++ -arch x86_64' )
-            self._addVar( 'CC',         'gcc -arch x86_64' )
+            self._addVar( 'CCC',        'g++ -arch x86_64 -arch arm64' )
+            self._addVar( 'CC',         'gcc -arch x86_64 -arch arm64' )
 
         else:
             self._addVar( 'CCC',        'g++' )

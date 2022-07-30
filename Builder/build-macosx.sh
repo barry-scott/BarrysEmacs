@@ -30,10 +30,10 @@ then
     umount "/Volumes/Barry's Emacs"
 fi
 
-./build-venv.sh
+./build-venv.sh 2>&1 | ${PYTHON} -u build_tee.py build.log
 
 export PYTHON=${PWD}/venv.tmp/bin/python
-${PYTHON} ./build_bemacs.py gui --colour | ${PYTHON} -u build_tee.py build.log
+${PYTHON} ./build_bemacs.py gui --colour | ${PYTHON} -u build_tee.py -a build.log
 
 if false
 then
