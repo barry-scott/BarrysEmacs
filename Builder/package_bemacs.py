@@ -244,7 +244,7 @@ class PackageBEmacs(object):
         if self.copr_repo is not None:
             run( ('mock',
                         '--root=%s' % (self.MOCK_TARGET_FILENAME,),
-                        '--enablerepo=barryascott-%s' % (self.copr_repo,),
+                        '--enablerepo=copr:copr.fedorainfracloud.org:barryascott:%s' % (self.copr_repo,),
                         '--enablerepo=copr:copr.fedorainfracloud.org:group_kdesig:python-qt6',
                         '--rebuild',
                         self.SRPM_FILENAME) )
