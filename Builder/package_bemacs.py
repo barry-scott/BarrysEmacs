@@ -47,8 +47,8 @@ class PackageBEmacs(object):
         self.COPR_REPO_OTHER_URL = None
         self.MOCK_COPR_REPO_FILENAME = None
 
-        self.copr_repo_pyqt6 = 'copr:copr.fedorainfracloud.org:group_kdesig:python-qt6'
-        self.MOCK_COPR_REPO_PYQT6_FILENAME = '/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:group_kdesig:python-qt6.repo'
+        self.copr_repo_pyqt6 = 'copr:copr.fedorainfracloud.org:barryascott:python-qt6'
+        self.MOCK_COPR_REPO_PYQT6_FILENAME = '/etc/yum.repos.d/_%s.repo' % (self.copr_repo_pyqt6,)
 
         self.cmd = None
         self.opt_release = 'auto'
@@ -245,7 +245,7 @@ class PackageBEmacs(object):
             run( ('mock',
                         '--root=%s' % (self.MOCK_TARGET_FILENAME,),
                         '--enablerepo=copr:copr.fedorainfracloud.org:barryascott:%s' % (self.copr_repo,),
-                        '--enablerepo=copr:copr.fedorainfracloud.org:group_kdesig:python-qt6',
+                        '--enablerepo=%s' % (self.copr_repo_pyqt6,),
                         '--rebuild',
                         self.SRPM_FILENAME) )
         else:
