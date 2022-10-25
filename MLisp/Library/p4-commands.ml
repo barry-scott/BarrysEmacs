@@ -28,6 +28,16 @@
 )
 
 (defun
+    (p4-annotate
+        (execute-monitor-command (concat "p4 annotate -u -I -T -q \"" current-buffer-file-name "\""))
+        (pop-to-buffer "P4 annotate")
+        (erase-buffer)
+        (yank-buffer "command execution")
+        (beginning-of-file)
+    )
+)
+
+(defun
     (p4-diff
         ~diff-buffer
         (setq ~diff-buffer current-buffer-name)
