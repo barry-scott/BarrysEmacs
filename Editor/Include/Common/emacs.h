@@ -45,6 +45,7 @@ const int must_be_zero( 0 );
 #include <emobject.h>
 #include <emexcept.h>
 #include <emstring.h>
+#include <fileserv.h>
 #include <fileio.h>
 #include <emstrtab.h>
 #include <queue.h>
@@ -66,7 +67,6 @@ const int must_be_zero( 0 );
 #include <journal.h>
 #include <minibuf.h>
 
-#include <fileserv.h>
 #include <getfile.h>
 #include <getdirectory.h>
 #include <getdb.h>

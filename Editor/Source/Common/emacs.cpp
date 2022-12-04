@@ -372,7 +372,7 @@ static void read_emacs_memory_file()
     ml_err = saved_err;
     }
 
-    EmacsFile::fio_delete( memory );
+    EmacsFile( memory ).fio_delete();
 }
 
 static void write_emacs_memory_file()
@@ -392,7 +392,7 @@ static void write_emacs_memory_file()
         {
             if( !args.fio_is_open() )
             {
-                args.fio_create( memory, 1, FIO_STD, EmacsString(), (FIO_EOL_Attribute)(int)default_end_of_line_style );
+                args.fio_create( memory, FIO_STD, EmacsString(), (FIO_EOL_Attribute)(int)default_end_of_line_style );
                 if( !args.fio_is_open() )
                     break;
             }

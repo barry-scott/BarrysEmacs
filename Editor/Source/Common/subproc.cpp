@@ -88,7 +88,7 @@ EmacsString emacs_tmpnam()
         tmp_dir = getenv("TMP");
 
     EmacsString tmp;
-    if( tmp_dir == NULL || !EmacsFile::fio_file_exists( tmp_dir ) )
+    if( tmp_dir == NULL || !EmacsFile( tmp_dir ).fio_file_exists() )
         tmp = current_directory.asString();
     else
         tmp.append( tmp_dir );
@@ -105,7 +105,7 @@ EmacsString emacs_tmpnam()
     {
         EmacsString result = FormatString("%semacs_%x_%d.tmp")
             << tmp << pid << tmp_name_count++;
-        if( !EmacsFile::fio_file_exists( result ) )
+        if( !EmacsFile( result ).fio_file_exists() )
             return result;
     }
 
@@ -237,7 +237,7 @@ void filter_through( int n, const EmacsString &command )
         redo_modes = cant_1line_opt = 1;
     }
     bf_cur->b_modified++;
-    EmacsFile::fio_delete( tempfile );
+    EmacsFile( tempfile ).fio_delete();
 }
 
 # if defined( __unix__ )

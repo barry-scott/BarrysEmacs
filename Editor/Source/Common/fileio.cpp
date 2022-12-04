@@ -1,5 +1,4 @@
-//
-//     Copyright (c) 1982-2019
+////     Copyright (c) 1982-2019
 //        Barry A. Scott
 //
 // File IO for Emacs
@@ -348,7 +347,7 @@ int unlink_file( void )
         return 0;
     }
 
-    ml_value = Expression( EmacsFile::fio_delete( fn ) == 0 ? 0 : -1 );
+    ml_value = Expression( EmacsFile( fn ).fio_delete() == 0 ? 0 : -1 );
     return 0;
 }
 
@@ -374,7 +373,7 @@ int file_exists( void )
         }
         else
         {
-            ml_value = Expression( EmacsFile::fio_access( fullname ) );
+            ml_value = Expression( EmacsFile( fullname ).fio_access() );
         }
     }
 
@@ -926,7 +925,7 @@ static void backup_buffer( EmacsString &fn )
         }
 
         // Create the output file
-        if( !out.fio_create( fab.result_spec, 0, FIO_STD, EmacsString::null, FIO_EOL__Binary ) )
+        if( !out.fio_create( fab.result_spec, FIO_STD, EmacsString::null, FIO_EOL__Binary ) )
         {
             error( FormatString("Failed to create file for backup %s") <<fab.result_spec );
             return;
@@ -1002,7 +1001,7 @@ int write_this( const EmacsString &fname )
         if( !ml_err
         && bf_cur->b_checkpointfn.length() > 0 )
         {
-            EmacsFile::fio_delete( bf_cur->b_checkpointfn );
+            EmacsFile( bf_cur->b_checkpointfn ).fio_delete();
         }
 
         if( bf_cur->b_checkpointed > 0 )
@@ -1533,7 +1532,7 @@ int EmacsBuffer::read_file( const EmacsString &fn, int erase, int createnew )
     if( erase )
     {
         b_synch_file_time = b_file_time = fd.fio_modify_date();
-        b_synch_file_access = b_file_access = EmacsFile::fio_access( fnam );
+        b_synch_file_access = b_file_access = EmacsFile( fnam ).fio_access();
         b_mode.md_readonly = b_file_access < 0;
     }
     //
@@ -1626,8 +1625,8 @@ static EmacsString concoct_name( const EmacsString &fn, const EmacsString &exten
 
     EmacsFile fd;
     // Create the file to check that it is valid, and get its real name
-    if( !fd.fio_create( result, 0, FIO_STD, EmacsString::null, (FIO_EOL_Attribute)(int)default_end_of_line_style )
-    && !fd.fio_create( defname, 0, FIO_STD, EmacsString::null, (FIO_EOL_Attribute)(int)default_end_of_line_style ) )
+    if( !fd.fio_create( result, FIO_STD, EmacsString::null, (FIO_EOL_Attribute)(int)default_end_of_line_style )
+    && !fd.fio_create( defname, FIO_STD, EmacsString::null, (FIO_EOL_Attribute)(int)default_end_of_line_style ) )
     {
         return defname;
     }
@@ -1646,8 +1645,6 @@ static EmacsString concoct_name( const EmacsString &fn, const EmacsString &exten
 //
 int EmacsBuffer::write_file( const EmacsString &fn, EmacsBuffer::WriteFileOperation_t appendit )
 {
-    int nc = unrestrictedSize();
-
     wrote_file = EmacsString::null;
 
     if( fn.isNull() )
@@ -1675,16 +1672,16 @@ int EmacsBuffer::write_file( const EmacsString &fn, EmacsBuffer::WriteFileOperat
         //
         if( !fd.fio_open( fn, 1, EmacsString::null, write_eol_attribute ) )
         {
-            fd.fio_create( fn, nc, FIO_STD, EmacsString::null, write_eol_attribute );
+            fd.fio_create( fn, FIO_STD, EmacsString::null, write_eol_attribute );
         }
         break;
 
     case CHECKPOINT_WRITE:
-        fd.fio_create( fn, nc, FIO_CKP, EmacsString::null, write_eol_attribute );
+        fd.fio_create( fn, FIO_CKP, EmacsString::null, write_eol_attribute );
         break;
 
     case ORDINARY_WRITE:
-        fd.fio_create( fn, nc, FIO_STD, EmacsString::null, write_eol_attribute );
+        fd.fio_create( fn, FIO_STD, EmacsString::null, write_eol_attribute );
         b_eol_attribute = write_eol_attribute;
         break;
     }
@@ -1825,7 +1822,7 @@ int EmacsBuffer::write_file( const EmacsString &fn, EmacsBuffer::WriteFileOperat
         if( appendit == ORDINARY_WRITE )
         {
             b_modified = 0;
-            b_synch_file_time = b_file_time = EmacsFile::fio_file_modify_date( wrote_file );
+            b_synch_file_time = b_file_time = EmacsFile( wrote_file ).fio_file_modify_date();
             b_synch_file_access = 1; // writable
         }
 
@@ -1846,7 +1843,7 @@ int EmacsBuffer::write_file( const EmacsString &fn, EmacsBuffer::WriteFileOperat
 // fio_open_using_path opens the file fn with the given IO mode using the given
 // search path. The actual file name is returned in fnb. It is used to
 // to read in MLisp files via the executed-mlisp-file function.
-bool EmacsFile::fio_open_using_path
+bool EmacsFileLocal::fio_open_using_path
     (
     const EmacsString &path,
     const EmacsString &fn,
@@ -1978,7 +1975,7 @@ void kill_checkpoint_files( void )
         {
             if( b->b_checkpointfn.length() > 0 )
             {
-                EmacsFile::fio_delete( b->b_checkpointfn );
+                EmacsFile( b->b_checkpointfn ).fio_delete();
                 b->b_checkpointfn = EmacsString::null;
             }
 
@@ -2167,8 +2164,8 @@ int synchronise_files(void)
             }
 #endif
 
-            time_t new_time = EmacsFile::fio_file_modify_date( fname );
-            int new_access = EmacsFile::fio_access( fname );
+            time_t new_time = EmacsFile( fname ).fio_file_modify_date();
+            int new_access = EmacsFile( fname ).fio_access();
 
             // if has been deleted and used to exist
             if( new_access == 0 && new_access != b->b_synch_file_access )

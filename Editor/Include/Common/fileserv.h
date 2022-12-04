@@ -53,21 +53,24 @@ public:
     FileParse();
     virtual ~FileParse();
 
-    bool sys_parse( const EmacsString &, const EmacsString & );
-    bool sys_search( const EmacsString &, const EmacsString & );
+    bool sys_parse( const EmacsString &filename, const EmacsString &def );
+    bool is_valid();
 
-    EmacsString disk;        // disk:
-    EmacsString path;        // /path/
-    EmacsString filename;        // name
-    EmacsString filetype;        // .type
+    EmacsString disk;           // disk:
+    EmacsString path;           // /path/
+    EmacsString filename;       // name
+    EmacsString filetype;       // .type
     EmacsString result_spec;    // full file spec with all fields filled in
-    int    wild;            // true if any field is wild
-    int    filename_maxlen;    // how long filename can be
-    int    filetype_maxlen;    // how long filetype can be
-    int    file_case_sensitive;    // true if case is important
+    bool wild;                  // true if any field is wild
+    int filename_maxlen;        // how long filename can be
+    int filetype_maxlen;        // how long filetype can be
+    int file_case_sensitive;    // true if case is important
+
 protected:
     void init();
     int analyse_filespec( const EmacsString &filespec );
+
+    bool valid;
 };
 
 int match_wild( const EmacsString &, const EmacsString & );

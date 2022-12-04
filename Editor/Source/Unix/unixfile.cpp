@@ -74,11 +74,17 @@ FileParse::FileParse()
 , filename()                // name
 , filetype()                // .type
 , result_spec()             // full file spec with all fields filled in
-, wild( 0 )                 // true if any field is wild
+, wild( false )                 // true if any field is wild
 , filename_maxlen( 0 )      // how long filename can be
 , filetype_maxlen( 0 )      // how long filetype can be
 , file_case_sensitive( 0 )  // true if case is important
+, valid( false )
 { }
+
+bool FileParse::is_valid()
+{
+    return valid;
+}
 
 void FileParse::init()
 {
@@ -87,6 +93,7 @@ void FileParse::init()
     filename = EmacsString::null;
     filetype = EmacsString::null;
     result_spec = EmacsString::null;
+    valid = false;
 }
 
 FileParse::~FileParse()

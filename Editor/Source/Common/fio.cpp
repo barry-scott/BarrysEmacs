@@ -35,17 +35,49 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 # define SHARE_NONE
 #endif
 
+EmacsFileImplementation::EmacsFileImplementation( FileParse &fab )
+: m_fab( fab )
+{ }
+
+EmacsFileImplementation::~EmacsFileImplementation()
+{ }
+
+
+EmacsFile::EmacsFile( const EmacsString &filename, const EmacsString &def, FIO_EOL_Attribute attr )
+: fab()
+, impl( EMACS_NEW EmacsFileLocal( fab, attr ) )
+{
+    fab.sys_parse( filename, def );
+}
+
+EmacsFile::EmacsFile( const EmacsString &filename, FIO_EOL_Attribute attr )
+: fab()
+, impl( EMACS_NEW EmacsFileLocal( fab, attr ) )
+{
+    fab.sys_parse( filename, EmacsString::null );
+}
 
 EmacsFile::EmacsFile( FIO_EOL_Attribute attr )
-: m_full_file_name()
+: fab()
+, impl( EMACS_NEW EmacsFileLocal( fab, attr ) )
+{ }
+
+EmacsFile::~EmacsFile()
+{
+    delete impl;
+}
+
+EmacsFileLocal::EmacsFileLocal( FileParse &fab, FIO_EOL_Attribute attr )
+: EmacsFileImplementation( fab )
 , m_file( NULL )
 , m_eol_attr( attr )
 , m_encoding_attr( FIO_Encoding_None )
 , m_convert_size( 0 )
 , m_convert_buffer( new unsigned char[ CONVERT_BUFFER_SIZE ] )
-{ }
+{
+}
 
-EmacsFile::~EmacsFile()
+EmacsFileLocal::~EmacsFileLocal()
 {
     if( m_file != NULL && m_file != stdin )
     {
@@ -59,80 +91,88 @@ EmacsFile::~EmacsFile()
 //    check that the file exists and has read or read and write
 //    access allowed
 //
-int EmacsFile::fio_access( const EmacsString &filename )
+int EmacsFileLocal::fio_access()
 {
-    //  6 means read and write, 4 means read
-    int r = access( filename.sdata(), 6 );
-    if( r == 0 )
-        return 1;
+    if( m_fab.is_valid() )
+    {
+        //  6 means read and write, 4 means read
+        int r = access( m_fab.result_spec, 6 );
+        if( r == 0 )
+            return 1;
 
-    r = access( filename.sdata(), 4 );
-    if( r == 0 )
-        return -1;
+        r = access( m_fab.result_spec, 4 );
+        if( r == 0 )
+            return -1;
+    }
 
     return 0;
 }
 
-bool EmacsFile::fio_file_exists( const EmacsString &filename )
+bool EmacsFileLocal::fio_file_exists()
 {
-    int r = access( filename.sdata(), 0 );
-    return r != -1;    // true if the file exists
+    int r = -1;         // assume not valid
+    if( m_fab.is_valid() )
+    {
+        r = access( m_fab.result_spec, 0 );
+    }
+
+    return r != -1;     // true if the file exists
 }
 
-int EmacsFile::fio_delete( const EmacsString &filename )
+int EmacsFileLocal::fio_delete()
 {
-    EmacsString full_file_name;
-    expand_and_default( filename, EmacsString::null, full_file_name );
-
-    int r = unlink( full_file_name );
+    int r = 1;          // assume not valid
+    if( m_fab.is_valid() )
+    {
+        r = unlink( m_fab.result_spec );
+    }
 
     return r;
 }
 
-bool EmacsFile::fio_create
+bool EmacsFileLocal::fio_create
     (
     const EmacsString &name,
-    int size,
     FIO_CreateMode mode,
     const EmacsString &defnam,
     FIO_EOL_Attribute attr
     )
 {
-    expand_and_default( name, defnam, m_full_file_name );
-    m_file = fopen( m_full_file_name, "w" BINARY_MODE SHARE_NONE );
+    m_fab.sys_parse( name, defnam );
+    m_file = fopen( m_fab.result_spec, "w" BINARY_MODE SHARE_NONE );
 
     m_eol_attr = attr;
 
     return m_file != NULL;
 }
 
-bool EmacsFile::fio_open
+bool EmacsFileLocal::fio_open
     (
     const EmacsString &name,
-    int eof,
+    bool eof,
     const EmacsString &defnam,
     FIO_EOL_Attribute attr
     )
 {
-    expand_and_default( name, defnam, m_full_file_name );
+    m_fab.sys_parse( name, defnam );
 
-    if( !file_is_regular( m_full_file_name ) )
+    if( !file_is_regular( m_fab.result_spec ) )
         return false;
 
     if( eof )
     {
         // open for append
-        m_file = fopen( m_full_file_name, "a" BINARY_MODE SHARE_NONE );
+        m_file = fopen( m_fab.result_spec, "a" BINARY_MODE SHARE_NONE );
         m_eol_attr = attr;
     }
     else
         // open for read
-        m_file = fopen( m_full_file_name, "r" BINARY_MODE SHARE_READ );
+        m_file = fopen( m_fab.result_spec, "r" BINARY_MODE SHARE_READ );
 
     return m_file != NULL;
 }
 
-int EmacsFile::fio_get( unsigned char *buf, int len )
+int EmacsFileLocal::fio_get( unsigned char *buf, int len )
 {
     int status = fread( buf, 1, len, m_file );
     if( ferror( m_file ) )
@@ -148,7 +188,7 @@ int EmacsFile::fio_get( unsigned char *buf, int len )
     return get_fixup_buffer( buf, status );
 }
 
-int EmacsFile::fio_get_line( unsigned char *buf, int len )
+int EmacsFileLocal::fio_get_line( unsigned char *buf, int len )
 {
     fgets( s_str(buf), len, m_file );
     if( ferror( m_file ) )
@@ -159,7 +199,7 @@ int EmacsFile::fio_get_line( unsigned char *buf, int len )
     return get_fixup_buffer( buf, strlen( (const char *)buf ) );
 }
 
-int EmacsFile::fio_get_with_prompt( unsigned char *buf, int len, const unsigned char * /*prompt*/ )
+int EmacsFileLocal::fio_get_with_prompt( unsigned char *buf, int len, const unsigned char * /*prompt*/ )
 {
     int status = fread( buf, 1, len, m_file );
     if( ferror( m_file ) )
@@ -169,12 +209,12 @@ int EmacsFile::fio_get_with_prompt( unsigned char *buf, int len, const unsigned 
     return status;
 }
 
-int EmacsFile::fio_put( const EmacsString &str )
+int EmacsFileLocal::fio_put( const EmacsString &str )
 {
     return fio_put( str.utf8_data(), str.utf8_data_length() );
 }
 
-int EmacsFile::fio_put( const unsigned char *buf , int len )
+int EmacsFileLocal::fio_put( const unsigned char *buf , int len )
 {
     int written_length = 0;
     switch( m_eol_attr )
@@ -268,7 +308,7 @@ int EmacsFile::fio_put( const unsigned char *buf , int len )
 }
 
 #ifdef vms
-int EmacsFile::fio_split_put
+int EmacsFileLocal::fio_split_put
     (
     const unsigned char *buf1, int len1,
     const unsigned char *buf2, int len2
@@ -291,7 +331,7 @@ int EmacsFile::fio_split_put
 //  Unicode file io API
 //
 //--------------------------------------------------------------------------------
-int EmacsFile::fio_get( EmacsChar_t *buf, int len )
+int EmacsFileLocal::fio_get( EmacsChar_t *buf, int len )
 {
     if( m_convert_size < CONVERT_BUFFER_SIZE )
     {
@@ -338,7 +378,7 @@ int EmacsFile::fio_get( EmacsChar_t *buf, int len )
     }
 }
 
-int EmacsFile::fio_put( const EmacsChar_t *buf, int len )
+int EmacsFileLocal::fio_put( const EmacsChar_t *buf, int len )
 {
     int written_length = 0;
     while( len > 0 )
@@ -361,12 +401,12 @@ int EmacsFile::fio_put( const EmacsChar_t *buf, int len )
 
 //--------------------------------------------------------------------------------
 
-void EmacsFile::fio_flush()
+void EmacsFileLocal::fio_flush()
 {
     fflush( m_file );
 }
 
-bool EmacsFile::fio_close()
+bool EmacsFileLocal::fio_close()
 {
     int status = fclose( m_file );
     m_file = NULL;
@@ -374,7 +414,7 @@ bool EmacsFile::fio_close()
     return status == 0;
 }
 
-long int EmacsFile::fio_size()
+long int EmacsFileLocal::fio_size()
 {
     long int cur_pos, end_of_file_pos;
 
@@ -399,12 +439,12 @@ long int EmacsFile::fio_size()
     return end_of_file_pos;
 }
 
-const EmacsString &EmacsFile::fio_getname()
+const EmacsString &EmacsFileLocal::fio_getname()
 {
-    return m_full_file_name;
+    return m_fab.result_spec;
 }
 
-time_t EmacsFile::fio_modify_date()
+time_t EmacsFileLocal::fio_modify_date()
 {
     EmacsFileStat s;
 
@@ -414,18 +454,18 @@ time_t EmacsFile::fio_modify_date()
     return s.data().st_mtime;
 }
 
-time_t EmacsFile::fio_file_modify_date( const EmacsString &filename )
+time_t EmacsFileLocal::fio_file_modify_date()
 {
     EmacsFileStat s;
 
-    if( !s.stat( filename.sdata() ) )
+    if( !s.stat( m_fab.result_spec ) )
         return 0;
 
     return s.data().st_mtime;
 }
 
 // return true if the file mode is read only for this use
-int EmacsFile::fio_access_mode()
+int EmacsFileLocal::fio_access_mode()
 {
     EmacsFileStat s;
 
@@ -519,7 +559,7 @@ template <typename T> static void replaceCrWithNl( unsigned char *ch_buf, int ch
     }
 }
 
-int EmacsFile::get_fixup_buffer( unsigned char *buf, int len )
+int EmacsFileLocal::get_fixup_buffer( unsigned char *buf, int len )
 {
     if( m_encoding_attr == FIO_Encoding_None && len >= 2 )
     {

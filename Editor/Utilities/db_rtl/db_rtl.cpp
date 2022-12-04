@@ -55,7 +55,7 @@ void *EmacsStringTable::remove( const EmacsString & )
 }
 
 
-int expand_and_default( const EmacsString &nm, const EmacsString &def, EmacsString & buf)
+int expand_and_default( const EmacsString &nm, const EmacsString &def, EmacsString &buf)
 {
     FileParse fab;
 

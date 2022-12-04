@@ -15,7 +15,7 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
-extern int expand_and_default( const EmacsString &nm, const EmacsString &def, EmacsString & buf );
+extern int expand_and_default( const EmacsString &nm, const EmacsString &def, EmacsString &buf );
 extern int match_wild( const EmacsString &, const EmacsString & );
 extern int dbg_flags;
 

@@ -51,7 +51,7 @@ Py::Object BemacsVariables::getattr( const char *c_name )
 
             // map all "-" in name to "_". This works well as Python uses "_" and MLisp uses "-".
             // thus mode-line-format becomes mode_line_format
-            std::replace_if( str_name.begin(), str_name.end(), std::bind2nd(std::equal_to<char>(), '-'), '_' );
+            std::replace_if( str_name.begin(), str_name.end(), std::bind(std::equal_to<char>(), std::placeholders::_1, '-'), '_' );
 
             members.append( Py::String( str_name ) );
         }
@@ -68,7 +68,7 @@ Py::Object BemacsVariables::getattr( const char *c_name )
 
     // map all "_" in name to "-". This works well as Python uses "_" and MLisp uses "-".
     // thus mode_line_format becomes mode-line-format
-    std::replace_if( str_name.begin(), str_name.end(), std::bind2nd(std::equal_to<char>(), '_'), '-' );
+    std::replace_if( str_name.begin(), str_name.end(), std::bind(std::equal_to<char>(), std::placeholders::_1, '_'), '-' );
 
     EmacsString name( str_name.c_str() );
 
@@ -98,7 +98,7 @@ int BemacsVariables::setattr( const char *c_name, const Py::Object &value )
 
     // map all "_" in name to "-". This works well as Python uses "_" and MLisp uses "-".
     // thus mode_line_format becomes mode-line-format
-    std::replace_if( str_name.begin(), str_name.end(), std::bind2nd(std::equal_to<char>(), '_'), '-' );
+    std::replace_if( str_name.begin(), str_name.end(), std::bind(std::equal_to<char>(), std::placeholders::_1, '_'), '-' );
 
     EmacsString name( str_name.c_str() );
 
@@ -202,7 +202,7 @@ Py::Object BemacsFunctions::getattr( const char *c_name )
 
             // map all "-" in name to "_". This works well as Python uses "_" and MLisp uses "-".
             // thus mode-line-format becomes mode_line_format
-            std::replace_if( str_name.begin(), str_name.end(), std::bind2nd(std::equal_to<char>(), '-'), '_' );
+            std::replace_if( str_name.begin(), str_name.end(), std::bind(std::equal_to<char>(), std::placeholders::_1, '-'), '_' );
 
             methods.append( Py::String( str_name ) );
         }
@@ -216,7 +216,7 @@ Py::Object BemacsFunctions::getattr( const char *c_name )
 
     // map all "_" in name to "-". This works well as Python uses "_" and MLisp uses "-".
     // thus mode_line_format becomes mode-line-format
-    std::replace_if( std_fn_name.begin(), std_fn_name.end(), std::bind2nd( std::equal_to<char>(), '_' ), '-' );
+    std::replace_if( std_fn_name.begin(), std_fn_name.end(), std::bind( std::equal_to<char>(), std::placeholders::_1, '_' ), '-' );
 
     EmacsString name( std_fn_name );
 

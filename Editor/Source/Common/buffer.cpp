@@ -1109,7 +1109,8 @@ EmacsBuffer::~EmacsBuffer(void)
     {
         if( unlink_checkpoint_files )
         {
-            EmacsFile::fio_delete( b_checkpointfn );
+            EmacsFile fn( b_checkpointfn );
+            fn.fio_delete();
         }
     }
 

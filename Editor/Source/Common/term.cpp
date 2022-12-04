@@ -238,7 +238,7 @@ TerminalControl_FILE::TerminalControl_FILE( const EmacsString &file )
     //    open the (message "...") stream
     //
 #ifdef vms
-    message_file.fio_create( u_str("SYS$OUTPUT"), 0, 0, u_str("emacs.lis"), default_end_of_line_style );
+    message_file.fio_create( u_str("SYS$OUTPUT"), 0, u_str("emacs.lis"), default_end_of_line_style );
 #else
     message_file.fio_open( stdout, default_end_of_line_style );
 #endif
