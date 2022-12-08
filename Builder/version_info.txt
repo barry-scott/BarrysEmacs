@@ -1,4 +1,4 @@
-r#
+#
 #   Barry's Emacs version info
 #
 maturity:   V
