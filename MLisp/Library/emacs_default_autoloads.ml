@@ -55,6 +55,7 @@
 (autoload "Java-mode" "javamode")
 (autoload "JavaScript-mode" "javascriptmode")
 (autoload "justify-paragraph" "justify")
+(autoload "kill-compilation" "newcompil")
 (autoload "latex-mode" "latexmode")
 (autoload "lisp-mode" "lispmode")
 (autoload "lua-mode" "lua-mode")
