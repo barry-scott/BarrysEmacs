@@ -99,9 +99,6 @@ int chdir_and_set_global_record( const EmacsString &dirname )
     EmacsFile full_dirname( dirname );
     EmacsString path( full_dirname.result_spec );
 
-    _dbg_msg( FormatString("chdir_and_set_global_record dirname '%s' -> path '%s'")
-        << dirname << path );
-
 #ifdef WIN32
     int len = path.length();
     // leave a single PATH_CH
