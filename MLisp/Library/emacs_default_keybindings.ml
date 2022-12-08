@@ -71,7 +71,7 @@
 (bind-to-key "illegal-operation" "\^g")
 (bind-to-key "indent-C-procedure" "\ej")
 (bind-to-key "insert-file" "\^x\^i")
-(bind-to-key "kill-compilation" "\^x\^K"))
+(bind-to-key "kill-compilation" "\^x\^K")
 (bind-to-key "kill-to-end-of-line" "\^k")
 (bind-to-key "line-to-top-of-window" "\e!")
 (bind-to-key "list-buffers" "\^x\^b")
