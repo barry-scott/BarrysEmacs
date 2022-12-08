@@ -289,8 +289,7 @@ static void calcImagePath( EmacsString argv0 )
 
     {
         EmacsFile image;
-        image.fio_open_using_path( unix_path, argv0, 0, "" );
-        if( !image.fio_is_open() )
+        if( !image.fio_find_using_path( unix_path, argv0, EmacsString::null ) )
         {
             _dbg_msg( "Emacs is unable to find itself!\n" );
             return;
@@ -302,7 +301,7 @@ static void calcImagePath( EmacsString argv0 )
     struct stat stat_buf;
     if( lstat( (const char *)image_path, &stat_buf ) == 0
     // its a symbolic link
-    && (stat_buf.st_mode&S_IFMT) == 0120000 )
+    && S_ISLNK( stat_buf.st_mode ) )
     {
         char link_path[MAXPATHLEN+1];
         // get the value of the link

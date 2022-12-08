@@ -252,7 +252,9 @@ TerminalControl_FILE::TerminalControl_FILE( const EmacsString &file )
     //
     if( !file.isNull() )
     {
-        command_file.fio_open( file, 0, EmacsString::null );
+        EmacsFile fd( file );
+        command_file.fio_set_filespec_from( fd );
+        command_file.fio_open( false, FIO_EOL__None );
     }
     else
     {

@@ -9,8 +9,10 @@ public:
     EMACS_OBJECT_FUNCTIONS( EmacsFileTable )
     EmacsFileTable();
     virtual ~EmacsFileTable();
+
 private:
     virtual void makeTable( EmacsString &prefix );
+
     // return true is the entry allows the get to finish
     // for example if entry is a directory don't finish
     // but if its a file do finish

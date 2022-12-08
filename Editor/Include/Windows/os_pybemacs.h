@@ -81,11 +81,15 @@ extern EmacsString get_tmp_path(void);
 
 #define    ALL_FILES "*"
 
-#include <io.h>
-
 #define EXPORT_SYMBOL __declspec( dllexport )
 
 //
 //    typedefs for fundemental types
 //
 typedef Py_UCS4 EmacsChar_t;    // Py_UNICODE is 2 bytes on windows so use Py_UCS4
+
+# include <io.h>
+# include <share.h>
+# define SHARE_READ , _SH_DENYWR
+# define SHARE_NONE , _SH_DENYRW
+# define fopen _fsopen

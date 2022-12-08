@@ -365,16 +365,8 @@ int file_exists( void )
     }
     else
     {
-        expand_and_default (fn, EmacsString::null, fullname);
-
-        if( fullname.isNull() )
-        {
-            ml_value = Expression( is_not_accessible );
-        }
-        else
-        {
-            ml_value = Expression( EmacsFile( fullname ).fio_access() );
-        }
+        EmacsFile file( fn );
+        ml_value = Expression( file.fio_access() );
     }
 
     return 0;
@@ -459,10 +451,9 @@ int file_name_expand_and_default(void)
     getescword( file_table., ": file-name-expand-and-default (filename) ", fn );
     getescword( file_table., ": file-name-expand-and-default (default-filename) ", def );
 
-    EmacsString fullname;
-    expand_and_default (fn, def, fullname);
+    EmacsFile file( fn, def );
 
-    ml_value = fullname;
+    ml_value = file.result_spec;
     return 0;
 }
 
@@ -734,18 +725,7 @@ int file_is_a_directory_cmd(void)
 
     getescword( file_table., ": file-is-a-directory ", fn );
 
-    EmacsString fullname;
-    expand_and_default( fn, EmacsString::null, fullname );
-
-    if( !fullname.isNull()
-    && file_is_directory( fullname ) )
-    {
-        ml_value = int(true);
-    }
-    else
-    {
-        ml_value = int(false);
-    }
+    ml_value = int( EmacsFile( fn ).fio_is_directory() );
 
     return 0;
 }
@@ -912,12 +892,13 @@ static void backup_buffer( EmacsString &fn )
         //
         // copy the old file to the backup file name
         //
-        EmacsFile in( FIO_EOL__Binary );
-        EmacsFile out( FIO_EOL__Binary );
-        unsigned char buf[16384];
+        EmacsFile in( fn, FIO_EOL__Binary );
+        EmacsFile out( fab.result_spec, FIO_EOL__Binary );
+
+        unsigned char buf[1*1024*1024];
 
         // Open the input file
-        if( !in.fio_open( fn, 0, EmacsString::null ) )
+        if( !in.fio_open() )
         {
             if( errno != ENOENT )
                 error( FormatString("Failed to open file for backup %s") << fn );
@@ -925,7 +906,7 @@ static void backup_buffer( EmacsString &fn )
         }
 
         // Create the output file
-        if( !out.fio_create( fab.result_spec, FIO_STD, EmacsString::null, FIO_EOL__Binary ) )
+        if( !out.fio_create( FIO_STD, FIO_EOL__Binary ) )
         {
             error( FormatString("Failed to create file for backup %s") <<fab.result_spec );
             return;
@@ -1329,16 +1310,15 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
         return 0;
     }
 
-    expand_and_default( fn, dn, fullname );
-
-    if( file_is_directory( fullname ) )
+    EmacsFile file( fn, dn );
+    if( file.fio_is_directory() )
     {
         error( FormatString("visit-file cannot open directory %s") << fullname );
         return 0;
     }
 
     EmacsBuffer *b = buffers;
-    while( b != NULL && file_name_compare->compare( b->b_fname, fullname ) != 0 )
+    while( b != NULL && file_name_compare->compare( b->b_fname, file.result_spec ) != 0 )
     {
         b = b->b_next;
     }
@@ -1358,12 +1338,12 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
     //
     //    Check the limits
     //
-    if( file_read_veto( fullname ) )
+    if( file_read_veto( file.result_spec ) )
     {
         return 1;
     }
 
-    EmacsString bufname = makeBufferName( fullname, NULL );
+    EmacsString bufname = makeBufferName( file.result_spec, NULL );
 
     if( bufname.isNull() )
     {
@@ -1376,7 +1356,7 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
     bf_cur->b_fname = EmacsString::null;
 
     // Read in the file
-    int r_stat = bf_cur->read_file( fullname, 1, createnew );
+    int r_stat = bf_cur->read_file( file.result_spec, 1, createnew );
 
     //
     // When the read is interrupted, leave what has already been
@@ -1420,11 +1400,11 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
 
     if( !callProc( buffer_file_loaded_proc, bf_cur->b_buf_name ) )
     {
-        do_auto( fullname );
+        do_auto( file.result_spec );
     }
 
     return 1;
-}                // Of visit_file
+}
 
 
 // Read a file into a buffer
@@ -1436,20 +1416,15 @@ int EmacsBuffer::read_file( const EmacsString &fn, int erase, int createnew )
         return 0;
     }
 
-    if( file_is_directory( fn ) )
+    EmacsFile fd( fn );
+    if( fd.fio_is_directory() )
     {
         error( FormatString("read-file cannot open directory %s") << fn );
         return 0;
     }
 
-    // allow * and % to be expanded
-    EmacsString fullname;
-    expand_and_default( fn, EmacsString::null, fullname );
-
-    EmacsFile fd;
-
     // Open the file if possible
-    if( !fd.fio_open( fullname, 0, EmacsString::null ) )
+    if( !fd.fio_open() )
     {
         int saved_errno = errno;
 
@@ -1479,7 +1454,7 @@ int EmacsBuffer::read_file( const EmacsString &fn, int erase, int createnew )
 
             error( FormatString("New file: %s") << fn );
 
-            b_fname = fullname;
+            b_fname = fd.result_spec;
             b_kind = FILEBUFFER;
         }
         else
@@ -1619,23 +1594,24 @@ int EmacsBuffer::read_file( const EmacsString &fn, int erase, int createnew )
 // Concoct a checkpoint filename
 static EmacsString concoct_name( const EmacsString &fn, const EmacsString &extension )
 {
-    EmacsString result;
-
-    expand_and_default( extension, fn, result );
-
-    EmacsFile fd;
     // Create the file to check that it is valid, and get its real name
-    if( !fd.fio_create( result, FIO_STD, EmacsString::null, (FIO_EOL_Attribute)(int)default_end_of_line_style )
-    && !fd.fio_create( defname, FIO_STD, EmacsString::null, (FIO_EOL_Attribute)(int)default_end_of_line_style ) )
+    EmacsFile fd( extension, fn );
+    if( fd.fio_create( FIO_STD, (FIO_EOL_Attribute)(int)default_end_of_line_style ) )
     {
-        return defname;
+        fd.fio_close();
+        return fd.fio_getname();
     }
 
-    result = fd.fio_getname();
-    fd.fio_close();
+    EmacsFile fd2( defname );
+    // Create the file to check that it is valid, and get its real name
+    if( fd2.fio_create( FIO_STD, (FIO_EOL_Attribute)(int)default_end_of_line_style ) )
+    {
+        fd2.fio_close();
+        return fd2.fio_getname();
+    }
 
-    return result;
-}   // Of concoct_name
+    return defname;
+}
 
 
 //
@@ -1661,7 +1637,7 @@ int EmacsBuffer::write_file( const EmacsString &fn, EmacsBuffer::WriteFileOperat
         write_eol_attribute = end_of_line_style_override;
     }
 
-    EmacsFile fd;
+    EmacsFile fd( fn );
     // Open the file, and position to the correct place
     switch( appendit )
     {
@@ -1670,18 +1646,18 @@ int EmacsBuffer::write_file( const EmacsString &fn, EmacsBuffer::WriteFileOperat
         // Open an existing file for appending, or if there is none,
         // create a new file
         //
-        if( !fd.fio_open( fn, 1, EmacsString::null, write_eol_attribute ) )
+        if( !fd.fio_open( true, write_eol_attribute ) )
         {
-            fd.fio_create( fn, FIO_STD, EmacsString::null, write_eol_attribute );
+            fd.fio_create( FIO_STD, write_eol_attribute );
         }
         break;
 
     case CHECKPOINT_WRITE:
-        fd.fio_create( fn, FIO_CKP, EmacsString::null, write_eol_attribute );
+        fd.fio_create( FIO_CKP, write_eol_attribute );
         break;
 
     case ORDINARY_WRITE:
-        fd.fio_create( fn, FIO_STD, EmacsString::null, write_eol_attribute );
+        fd.fio_create( FIO_STD, write_eol_attribute );
         b_eol_attribute = write_eol_attribute;
         break;
     }
@@ -1837,19 +1813,17 @@ int EmacsBuffer::write_file( const EmacsString &fn, EmacsBuffer::WriteFileOperat
     }
 
     return 1;
-}                // write_file
+}
 
 
-// fio_open_using_path opens the file fn with the given IO mode using the given
-// search path. The actual file name is returned in fnb. It is used to
-// to read in MLisp files via the executed-mlisp-file function.
-bool EmacsFileLocal::fio_open_using_path
+// fio_find_using_path opens the file fn with the given IO mode using the given
+// search path. It is used to to read in MLisp files via the
+// executed-mlisp-file function.
+bool EmacsFileLocal::fio_find_using_path
     (
     const EmacsString &path,
     const EmacsString &fn,
-    int append,
-    const EmacsString &ex,
-    FIO_EOL_Attribute _attr
+    const EmacsString &ex
     )
 {
     //
@@ -1860,7 +1834,15 @@ bool EmacsFileLocal::fio_open_using_path
     if( fn.first( PATH_CH ) >= 0
     || fn.first( ':' ) >= 0 )
     {
-        return fio_open( fn, append, ex, _attr );
+        // open the file
+        EmacsFile fd( fn, ex );
+        if( fd.fio_is_regular() )
+        {
+            m_parent.fio_set_filespec_from( fd );
+            return true;
+        }
+
+        return false;
     }
 
     //
@@ -1878,16 +1860,18 @@ bool EmacsFileLocal::fio_open_using_path
         }
 
         EmacsString fnb( path( start, end ) );
-        if(fnb[-1] != PATH_CH
-        && fnb[-1] != ':' )
+        if( fnb[-1] != PATH_CH
+        &&  fnb[-1] != ':' )
         {
             fnb.append( PATH_STR );
         }
         fnb.append( fn );
 
-        fio_open( fnb, append, ex );
-        if( fio_is_open() )
+        EmacsFile fd( fnb, ex );
+        if( fd.fio_is_regular() )
         {
+            // move the FILE to *this
+            m_parent.fio_set_filespec_from( fd );
             return true;
         }
 
@@ -1896,7 +1880,7 @@ bool EmacsFileLocal::fio_open_using_path
     }
 
     return false;
-}   // Of fio_open_using_path
+}
 
 
 // Returns true if modified buffers exist
@@ -2348,10 +2332,10 @@ bool file_read_veto( const EmacsString &filename )
         return false;
     }
 
-    EmacsFile fd;
+    EmacsFile fd( filename );
 
     // Open the file if possible
-    if( !fd.fio_open( filename, 0, EmacsString::null ) )
+    if( !fd.fio_open() )
     {
         return false;
     }

@@ -98,6 +98,3 @@ public:
 private:
     FileFindInternal *implementation;
 };
-
-extern int file_is_directory( const EmacsString &file );
-extern int file_is_regular( const EmacsString &file );

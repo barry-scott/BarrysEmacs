@@ -13,7 +13,7 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 SystemExpressionRepresentationIntBoolean ignore_version_numbers;
 
 EmacsFileTable::EmacsFileTable()
-    : EmacsStringTable( 1024, 1024 )
+: EmacsStringTable( 1024, 1024 )
 { }
 
 EmacsFileTable::~EmacsFileTable()
@@ -21,33 +21,31 @@ EmacsFileTable::~EmacsFileTable()
 
 void EmacsFileTable::makeTable( EmacsString &prefix )
 {
-    FileParse fab;
-
     emptyTable();
+
+    {
+    EmacsFile fab( prefix );
 
     //
     // if we can parse what we have then make that the prompt
     //
-    if( fab.sys_parse( prefix, "" ) )
+    if( fab.parse_is_valid() )
     {
         prefix = fab.result_spec;
+    }
+    else
+    {
+        prefix = EmacsString::null;
+    }
     }
 
     // need the 'file' with a wild * on the end
     EmacsString wild_file = prefix;
     wild_file.append( "*" );
 
-    // Expand to a full path
-    int resp = fab.sys_parse( ALL_FILES, wild_file );
-    if( !resp )
-    {
-        //
-        // opss thats a bad path...
-        // just return the current directory contents
-        //
-        resp = fab.sys_parse( ALL_FILES, EmacsString::null );
-    }
-    if( resp )
+    EmacsFile fab( ALL_FILES, wild_file );
+
+    if( fab.parse_is_valid() )
     {
         //
         // For each file that matches the filespec, save the name
@@ -69,7 +67,9 @@ void EmacsFileTable::makeTable( EmacsString &prefix )
             //    samba mounted Unix disks on Windows systems
             //
             if( find( file ) == NULL )    // its not already in the table
+            {
                 add( file, (void *)&file_value );
+            }
         }
     }
 }
@@ -81,7 +81,7 @@ void EmacsFileTable::makeTable( EmacsString &prefix )
 //
 bool EmacsFileTable::terminalEntry( const EmacsString &entry )
 {
-    return !file_is_directory( entry );
+    return !EmacsFile( entry ).fio_is_directory();
 }
 
 int EmacsFileTable::compareKeys( const EmacsString &string1, const EmacsString &string2 )

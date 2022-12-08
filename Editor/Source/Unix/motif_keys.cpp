@@ -401,7 +401,7 @@ bool EmacsMotifKeySymMap::init()
 {
     EmacsFile key_file;
 
-    if( !key_file.fio_open_using_path( EMACS_PATH, "emacs.xkeys", 0, "" ) )
+    if( !key_file.fio_find_using_path( EMACS_PATH, "emacs.xkeys", 0, "" ) )
     {
         _dbg_msg( FormatString("Emacs X11 keysym file cannot be found in the emacs path: %s") << "emacs.xkeys" );
         return false;

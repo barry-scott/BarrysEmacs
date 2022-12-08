@@ -44,16 +44,21 @@ enum FIO_Encoding_Attribute
     FIO_Encoding_UTF_16_LE              // UTF-16 little endian
 };
 
-class EmacsFileImplementation
+class EmacsFile;
+
+class EmacsFileImplementation : public EmacsObject
 {
 public:
-    EmacsFileImplementation( FileParse &fab );
+    friend class EmacsFile;
+
+    EMACS_OBJECT_FUNCTIONS( EmacsFile )
+    EmacsFileImplementation( EmacsFile &parent );
     virtual ~EmacsFileImplementation();
 
-    virtual bool fio_create( const EmacsString &filename, FIO_CreateMode, const EmacsString &def, FIO_EOL_Attribute ) = 0;
-    virtual bool fio_open( const EmacsString &filename, bool eof, const EmacsString &def, FIO_EOL_Attribute attr=FIO_EOL__None ) = 0;
-    virtual bool fio_open_using_path( const EmacsString &path, const EmacsString &fn, int append, const EmacsString &ex, FIO_EOL_Attribute attr=FIO_EOL__None ) = 0;
+    virtual bool fio_create( FIO_CreateMode mode, FIO_EOL_Attribute attr ) = 0;
+    virtual bool fio_open( bool eof=false, FIO_EOL_Attribute attr=FIO_EOL__None ) = 0;
     virtual bool fio_open( FILE *existing_file, FIO_EOL_Attribute attr ) = 0;
+    virtual bool fio_find_using_path( const EmacsString &path, const EmacsString &fn, const EmacsString &ex ) = 0;
     virtual bool fio_is_open() = 0;
 
     // Old 8bit chars
@@ -78,8 +83,6 @@ public:
         fio_size() = 0;
     virtual time_t
         fio_modify_date() = 0;
-    virtual int
-        fio_access_mode() = 0;
     virtual const EmacsString &
         fio_getname() = 0;
     virtual FIO_EOL_Attribute
@@ -95,26 +98,33 @@ public:
         fio_delete() = 0;
     virtual time_t
         fio_file_modify_date() = 0;
+    virtual bool
+        fio_is_directory() = 0;
+    virtual bool
+        fio_is_regular() = 0;
 
 protected:
-    FileParse &m_fab;
+    virtual bool
+        fio_is_directory( const EmacsString &filename ) = 0;
+
+    EmacsFile &m_parent;
 };
 
-class EmacsFileLocal: public EmacsFileImplementation
+class EmacsFileLocal : public EmacsFileImplementation
 {
 public:
-    EmacsFileLocal( FileParse &fab, FIO_EOL_Attribute _attr=FIO_EOL__None );
+    EmacsFileLocal( EmacsFile &parent, FIO_EOL_Attribute attr );
     virtual ~EmacsFileLocal();
 
-    virtual bool fio_create( const EmacsString &filename, FIO_CreateMode, const EmacsString &def, FIO_EOL_Attribute );
-    virtual bool fio_open( const EmacsString &filename, bool eof, const EmacsString &def, FIO_EOL_Attribute attr=FIO_EOL__None );
-    virtual bool fio_open_using_path( const EmacsString &path, const EmacsString &fn, int append, const EmacsString &ex, FIO_EOL_Attribute attr=FIO_EOL__None );
+    virtual bool fio_create( FIO_CreateMode mode, FIO_EOL_Attribute attr );
+    virtual bool fio_open( bool eof=false, FIO_EOL_Attribute attr=FIO_EOL__None );
     virtual bool fio_open( FILE *existing_file, FIO_EOL_Attribute attr )
     {
         m_file = existing_file;
         m_eol_attr = attr;
         return true;
     }
+    virtual bool fio_find_using_path( const EmacsString &path, const EmacsString &fn, const EmacsString &ex );
     virtual bool fio_is_open()
     {
         return m_file != NULL;
@@ -143,8 +153,6 @@ public:
         fio_size();
     virtual time_t
         fio_modify_date();
-    virtual int
-        fio_access_mode();
     virtual const EmacsString &
         fio_getname();
     virtual FIO_EOL_Attribute
@@ -160,8 +168,14 @@ public:
         fio_delete();
     virtual time_t
         fio_file_modify_date();
+    virtual bool
+        fio_is_directory();
+    virtual bool
+        fio_is_regular();
 
 private:
+    virtual bool
+        fio_is_directory( const EmacsString &filename );
     int get_fixup_buffer( unsigned char *buf, int len );
 
     FILE *m_file;
@@ -173,14 +187,14 @@ private:
     unsigned char *m_convert_buffer;
 };
 
-class EmacsFileRemote: public EmacsFileImplementation
+class EmacsFileRemote : public EmacsFileImplementation
 {
-    EmacsFileRemote( FileParse &fab, FIO_EOL_Attribute _attr=FIO_EOL__None );
+    EmacsFileRemote( EmacsFile &parent, FIO_EOL_Attribute attr );
     virtual ~EmacsFileRemote();
 
-    virtual bool fio_create( const EmacsString &filename, FIO_CreateMode, const EmacsString &def, FIO_EOL_Attribute );
-    virtual bool fio_open( const EmacsString &filename, bool eof, const EmacsString &def, FIO_EOL_Attribute attr=FIO_EOL__None );
-    virtual bool fio_open_using_path( const EmacsString &path, const EmacsString &fn, int append, const EmacsString &ex, FIO_EOL_Attribute attr=FIO_EOL__None );
+    virtual bool fio_create( FIO_CreateMode mode, FIO_EOL_Attribute attr );
+    virtual bool fio_open( bool eof=false, FIO_EOL_Attribute attr=FIO_EOL__None );
+    virtual bool fio_find_using_path( const EmacsString &path, const EmacsString &fn, const EmacsString &ex );
     virtual bool fio_open( FILE *existing_file, FIO_EOL_Attribute attr );
     virtual bool fio_is_open();
 
@@ -205,7 +219,6 @@ class EmacsFileRemote: public EmacsFileImplementation
 
     virtual long int fio_size();
     virtual time_t fio_modify_date();
-    virtual int fio_access_mode();
     virtual const EmacsString &fio_getname();
     virtual FIO_EOL_Attribute fio_get_eol_attribute();
     virtual FIO_Encoding_Attribute fio_get_encoding_attribute();
@@ -216,32 +229,39 @@ class EmacsFileRemote: public EmacsFileImplementation
     virtual time_t fio_file_modify_date();
 
 private:
+    virtual bool
+        fio_is_directory( const EmacsString &filename );
 };
 
-class EmacsFile
+class EmacsFile : public EmacsObject
 {
 public:
+    EMACS_OBJECT_FUNCTIONS( EmacsFile )
     EmacsFile( const EmacsString &filename, const EmacsString &def, FIO_EOL_Attribute _attr=FIO_EOL__None );
     EmacsFile( const EmacsString &filename, FIO_EOL_Attribute _attr=FIO_EOL__None );
     EmacsFile( FIO_EOL_Attribute _attr=FIO_EOL__None );
     virtual ~EmacsFile();
 
-    bool fio_create( const EmacsString &name, FIO_CreateMode mode, const EmacsString &defname, FIO_EOL_Attribute attr )
+    bool parse_is_valid();
+
+    bool fio_create( FIO_CreateMode mode, FIO_EOL_Attribute attr )
     {
-        return impl->fio_create( name, mode, defname, attr );
+        return impl->fio_create( mode, attr );
     }
-    bool fio_open( const EmacsString &name, bool eof, const EmacsString &defname, FIO_EOL_Attribute attr=FIO_EOL__None )
+    bool fio_open( bool eof=false, FIO_EOL_Attribute attr=FIO_EOL__None )
     {
-        return impl->fio_open( name, eof, defname, attr );
+        return impl->fio_open( eof, attr );
     }
-    bool fio_open_using_path( const EmacsString &path, const EmacsString &fn, bool append, const EmacsString &ex, FIO_EOL_Attribute attr=FIO_EOL__None )
+    bool fio_find_using_path( const EmacsString &path, const EmacsString &fn, const EmacsString &ex )
     {
-        return impl->fio_open_using_path( path, fn, append, ex, attr );
+        return impl->fio_find_using_path( path, fn, ex );
     }
     bool fio_open( FILE *existing_file, FIO_EOL_Attribute attr )
     {
         return impl->fio_open( existing_file, attr );
     }
+
+    void fio_set_filespec_from( EmacsFile &other );
     bool fio_is_open()
     {
         return impl->fio_is_open();
@@ -301,10 +321,6 @@ public:
     {
         return impl->fio_modify_date();
     }
-    int fio_access_mode()
-    {
-        return impl->fio_access_mode();
-    }
     const EmacsString &fio_getname()
     {
         return impl->fio_getname();
@@ -337,9 +353,36 @@ public:
     {
         return impl->fio_file_modify_date();
     }
+    bool fio_is_directory()
+    {
+        return impl->fio_is_directory();
+    }
+    bool fio_is_regular()
+    {
+        return impl->fio_is_regular();
+    }
 
 public:
-    FileParse fab;
+    EmacsString remote_host;    // host:
+    EmacsString disk;           // disk:
+    EmacsString path;           // /path/
+    EmacsString filename;       // name
+    EmacsString filetype;       // .type
+    EmacsString result_spec;    // full file spec with all fields filled in
+
+    bool wild;                  // true if any field is wild
+    int filename_maxlen;        // how long filename can be
+    int filetype_maxlen;        // how long filetype can be
+    int file_case_sensitive;    // true if case is important
+
+private:
+    bool parse_filename( const EmacsString &filename, const EmacsString &def );
+    void parse_init();
+    bool fio_is_directory( const EmacsString &filename );
+    bool fio_is_regular( const EmacsString &filename );
+    bool parse_analyse_filespec( const EmacsString &filespec );
+
+    bool parse_valid;
 
 private:
     EmacsFileImplementation *impl;

@@ -241,7 +241,11 @@ MLispFileInputStream::MLispFileInputStream( const EmacsString &fn )
 , file_size( 0 )
 , file_pointer( NULL )
 {
-    fio_open_using_path( EMACS_PATH, fn, FIO_READ, ".ml" );
+    if( fio_find_using_path( EMACS_PATH, fn, ".ml" ) )
+    {
+        fio_open();
+    }
+
 #if DBG_EXECFILE
     if( dbg_flags&DBG_EXECFILE )
     {

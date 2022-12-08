@@ -45,7 +45,6 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 extern void UI_update_window_title( void );
 
-int chdir_and_set_global_record( const EmacsString &buf );
 EmacsString save_abs( const EmacsString &fn );
 int expand_and_default( const EmacsString &fn, const EmacsString &dn, EmacsString &ou );
 int cur_dir( void );
@@ -97,37 +96,49 @@ int _chdrive( int drive )
 // A chdir() that fiddles the global record
 int chdir_and_set_global_record( const EmacsString &dirname )
 {
-    EmacsString path2;
-    int ret;
+    EmacsFile full_dirname( dirname );
+    EmacsString path( full_dirname.result_spec );
 
-    ret = expand_and_default( null_path, dirname, path2);
-    if( ret < 0 )
-        return ret;
+    _dbg_msg( FormatString("chdir_and_set_global_record dirname '%s' -> path '%s'")
+        << dirname << path );
 
 #ifdef WIN32
-    int len = path2.length();
+    int len = path.length();
     // leave a single PATH_CH
     if( len > (ROOT_CHAR_POS+1) )
-        path2.remove( len );
+    {
+        path.remove( len );
+    }
 #endif
-    ret = chdir( path2 );
-    if( ret < 0 )
-        return ret;
 
-    current_directory = path2;
+    int ret = chdir( path );
+    if( ret < 0 )
+    {
+        return ret;
+    }
+
+    current_directory = path;
+
 #if defined( __unix__ )
-    if( path2 == HOME_absolute_path )
+    if( path == HOME_absolute_path )
+    {
         current_directory = HOME_path;
-    else if( path2.length() > HOME_absolute_path.length()    // long enough for HOME + "/"
-    && path2.commonPrefix( HOME_absolute_path ) == HOME_absolute_path.length() // HOME is a prefix
-    && path2[HOME_absolute_path.length()] == PATH_CH )    // ... an exact prefix
+    }
+
+    // long enough for HOME + "/"
+    else if( path.length() > HOME_absolute_path.length()
+    // HOME is a prefix
+    && path.commonPrefix( HOME_absolute_path ) == HOME_absolute_path.length()
+    // ... an exact prefix
+    && path[HOME_absolute_path.length()] == PATH_CH )
     {
         EmacsString friendly_path( HOME_path );
-        friendly_path.append( path2( HOME_absolute_path.length(), path2.length() ) );
+        friendly_path.append( path( HOME_absolute_path.length(), path.length() ) );
 
         current_directory = friendly_path;
     }
 #endif
+
     UI_update_window_title();
 
     return 0;
@@ -152,9 +163,9 @@ EmacsString save_abs( const EmacsString &fn )
 void init_abs( void )
 {
 #if defined( __unix__ )
-    char *home = getenv("HOME");
-    int cd_fd = open(".",O_RDONLY);
-    if( home != NULL && cd_fd >= 0)
+    char *home = getenv( "HOME" );
+    int cd_fd = open( ".", O_RDONLY );
+    if( home != NULL && cd_fd >= 0 )
     {
         char home_dir[PATH_MAX+1];
 

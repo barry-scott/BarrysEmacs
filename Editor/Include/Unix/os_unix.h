@@ -61,3 +61,6 @@ const int DBG_NO_DBG_MSG    (0x00001000&DBG___ON);  // always defined
 extern void OutputDebugString( const char *message );
 
 typedef unsigned int EmacsChar_t;
+
+#define SHARE_READ
+#define SHARE_NONE

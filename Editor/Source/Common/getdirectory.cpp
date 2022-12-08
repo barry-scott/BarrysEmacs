@@ -66,7 +66,7 @@ void EmacsDirectoryTable::makeTable( EmacsString &prefix )
             //    duplicate file names can be returned from
             //    samba mounted Unix disks on Windows systems
             //
-            if( file_is_directory( file )    // only if its a directory
+            if( EmacsFile( file ).fio_is_directory()    // only if its a directory
             && find( file ) == NULL )    // and its not already in the table
                 add( file, (void *)&file_value );
         }

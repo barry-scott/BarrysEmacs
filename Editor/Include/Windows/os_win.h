@@ -89,6 +89,10 @@ extern EmacsString get_tmp_path(void);
 
 #define    ALL_FILES "*"
 
-#include <io.h>
-
 typedef unsigned int EmacsChar_t;
+
+# include <io.h>
+# include <share.h>
+# define SHARE_READ , _SH_DENYWR
+# define SHARE_NONE , _SH_DENYRW
+# define fopen _fsopen
