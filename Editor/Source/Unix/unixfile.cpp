@@ -18,7 +18,6 @@ FileNameCompare *file_name_compare = &file_name_compare_case_sensitive;
 #include <sys/stat.h>
 #include <dirent.h>
 #include <pwd.h>
-const int IS_SUBDIR( 1 );
 
 bool isValidFilenameChar( EmacsChar_t ch )
 {
@@ -90,17 +89,8 @@ int EmacsFileLocal::fio_delete()
     return r;
 }
 
-bool EmacsFileLocal::fio_create
-    (
-    FIO_CreateMode mode,
-    FIO_EOL_Attribute attr
-    )
+bool EmacsFileLocal::fio_create( FIO_CreateMode mode, FIO_EOL_Attribute attr )
 {
-    if( !fio_is_regular() )
-    {
-        return false;
-    }
-
     m_file = fopen( m_parent.result_spec, "w" BINARY_MODE SHARE_NONE );
     m_eol_attr = attr;
 
@@ -263,25 +253,6 @@ int EmacsFileLocal::fio_put( const unsigned char *buf , int len )
 
     return written_length;
 }
-
-#ifdef vms
-int EmacsFileLocal::fio_split_put
-    (
-    const unsigned char *buf1, int len1,
-    const unsigned char *buf2, int len2
-    )
-{
-    int status1 = fio_put( buf1, len1 );
-    if( status1 < 0 )
-        return -1;
-
-    int status2 = fio_put( buf2, len2 );
-    if( status2 < 0 )
-        return -1;
-
-    return status1 + status2;
-}
-#endif
 
 //--------------------------------------------------------------------------------
 //

@@ -68,14 +68,17 @@ int chdir( char *path )
 // pathname cannot be successfully converted (only happens if the
 // current directory cannot be found)
 //
-int expand_and_default( const EmacsString &nm, const EmacsString &def, EmacsString & buf)
+int expand_and_default( const EmacsString &nm, const EmacsString &def, EmacsString &buf)
 {
-    FileParse fab;
-
-    if( fab.sys_parse( nm, def ) )
+    EmacsFile fab( nm, def );
+    if( fab.parse_is_valid() )
+    {
         buf = fab.result_spec;
+    }
     else
+    {
         buf = EmacsString::null;
+    }
 
     return 0;
 }

@@ -19,33 +19,37 @@ EmacsDirectoryTable::~EmacsDirectoryTable()
 
 void EmacsDirectoryTable::makeTable( EmacsString &prefix )
 {
-    FileParse fab;
-
     emptyTable();
 
     //
     // if we can parse what we have then make that the prompt
     //
-    if( fab.sys_parse( prefix, "" ) )
     {
-        prefix = fab.result_spec;
+        EmacsFile fab( prefix );
+
+        if( fab.parse_is_valid() )
+        {
+            prefix = fab.result_spec;
+        }
     }
 
     // need the 'file' with a wild * on the end
     EmacsString wild_file = prefix;
     wild_file.append( "*" );
 
+    EmacsFile fab( ALL_FILES, wild_file );
     // Expand to a full path
-    int resp = fab.sys_parse( ALL_FILES, wild_file );
-    if( !resp )
+    if( !fab.parse_is_valid() )
     {
         //
         // opss thats a bad path...
         // just return the current directory contents
         //
-        resp = fab.sys_parse( ALL_FILES, EmacsString::null );
+        EmacsFile all_files( ALL_FILES );
+        fab.fio_set_filespec_from( all_files );
     }
-    if( resp )
+
+    if( fab.parse_is_valid() )
     {
         //
         // For each file that matches the filespec, save the name
@@ -58,7 +62,9 @@ void EmacsDirectoryTable::makeTable( EmacsString &prefix )
         {
             EmacsString file( finder.next() );
             if( file.isNull() )
+            {
                 break;
+            }
 
             static int file_value(1);
 
@@ -66,9 +72,14 @@ void EmacsDirectoryTable::makeTable( EmacsString &prefix )
             //    duplicate file names can be returned from
             //    samba mounted Unix disks on Windows systems
             //
-            if( EmacsFile( file ).fio_is_directory()    // only if its a directory
-            && find( file ) == NULL )    // and its not already in the table
+
+            // only if its a directory
+            if( EmacsFile( file ).fio_is_directory()
+            // and its not already in the table
+            && find( file ) == NULL )
+            {
                 add( file, (void *)&file_value );
+            }
         }
     }
 }

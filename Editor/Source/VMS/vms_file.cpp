@@ -8,6 +8,23 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
+int EmacsFileLocal::fio_split_put
+    (
+    const unsigned char *buf1, int len1,
+    const unsigned char *buf2, int len2
+    )
+{
+    int status1 = fio_put( buf1, len1 );
+    if( status1 < 0 )
+        return -1;
+
+    int status2 = fio_put( buf2, len2 );
+    if( status2 < 0 )
+        return -1;
+
+    return status1 + status2;
+}
+
 int emacs_stricmp( const unsigned char *str1, const unsigned char *str2 )
 {
     while( *str1 != '\0' && (unicode_to_upper(*str1) == unicode_to_upper(*str2)) )

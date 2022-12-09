@@ -44,7 +44,7 @@ int checkpoint_buffers(void);
 EmacsString fetch_os_error( int error_code );
 int synchronise_files(void);
 EmacsString file_format_string( const EmacsString &format, const EmacsString &filename );
-EmacsString file_format_string( const EmacsString &format, const FileParse &fab );
+EmacsString file_format_string( const EmacsString &format, const EmacsFile &fab );
 bool file_read_veto( const EmacsString &filename );
 
 // Static strings including error messages
@@ -492,7 +492,7 @@ int file_name_expand_and_default(void)
 //
 static void file_format_string_path_split
     (
-    const FileParse &fab, int split_point,
+    const EmacsFile &fab, int split_point,
     EmacsString &head, EmacsString &tail
     )
 {
@@ -545,13 +545,12 @@ static void file_format_string_path_split
 
 EmacsString file_format_string( const EmacsString &format, const EmacsString &filename )
 {
-    FileParse fab;
-    fab.sys_parse( filename, EmacsString::null );
+    EmacsFile fab( filename );
 
     return file_format_string( format, fab );
 }
 
-EmacsString file_format_string( const EmacsString &format, const FileParse &fab )
+EmacsString file_format_string( const EmacsString &format, const EmacsFile &fab )
 {
     EmacsString result;
 
@@ -833,8 +832,7 @@ static void backup_buffer( EmacsString &fn )
     //
     //    A backup file name has an "_" added to the front of the type
     //
-    FileParse fab;
-    fab.sys_parse( fn, EmacsString::null );
+    EmacsFile fab( fn );
 
     //BoundName *proc = BoundName::find( "create-backup-filename" );
 
@@ -844,7 +842,9 @@ static void backup_buffer( EmacsString &fn )
     {
         try
         {
-            fab.sys_parse( ml_value.asString(), fn );
+            EmacsFile new_filename( ml_value.asString(), fn );
+            fab.fio_set_filespec_from( new_filename );
+
             use_builtin_rule = false;
         }
         catch( EmacsExceptionExpressionNotString & )
@@ -859,7 +859,8 @@ static void backup_buffer( EmacsString &fn )
         EmacsString backup_filename = file_format_string( backup_filename_format.asString(), fab );
         EmacsString original_filename = fab.result_spec;
 
-        fab.sys_parse( backup_filename, fn );
+        EmacsFile new_filename( backup_filename, fn );
+        fab.fio_set_filespec_from( new_filename );
 
         if( original_filename == fab.result_spec )
         {
@@ -895,13 +896,13 @@ static void backup_buffer( EmacsString &fn )
         EmacsFile in( fn, FIO_EOL__Binary );
         EmacsFile out( fab.result_spec, FIO_EOL__Binary );
 
-        unsigned char buf[1*1024*1024];
-
         // Open the input file
         if( !in.fio_open() )
         {
             if( errno != ENOENT )
+            {
                 error( FormatString("Failed to open file for backup %s") << fn );
+            }
             return;
         }
 
@@ -911,14 +912,19 @@ static void backup_buffer( EmacsString &fn )
             error( FormatString("Failed to create file for backup %s") <<fab.result_spec );
             return;
         }
+
         // copy all the input file to the output file
         int len;
+        unsigned char buf[1*1024*1024];
+
         while( (len = in.fio_get( buf, sizeof(buf) )) > 0 )
+        {
             if( out.fio_put( buf, len ) < 0 )
             {
                 error( FormatString("Error writing while backing up to %s") << fab.result_spec );
                 return;
             }
+        }
 
         if( len < 0 )
         {
