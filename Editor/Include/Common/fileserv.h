@@ -39,40 +39,6 @@ extern FileNameCompare *file_name_compare;
 extern FileNameCompareCaseSensitive file_name_compare_case_sensitive;
 extern FileNameCompareCaseBlind file_name_compare_case_blind;
 
-
-//
-//    On DOS a file is made up of 4 parts,
-//    diskname, path, filename and filetype
-//    Viz:-
-//        DISK:\PATH\FILE.TYPE
-//
-class FileParse : public EmacsObject
-{
-public:
-    EMACS_OBJECT_FUNCTIONS( FileParse )
-    FileParse();
-    virtual ~FileParse();
-
-    bool sys_parse( const EmacsString &filename, const EmacsString &def );
-    bool is_valid();
-
-    EmacsString disk;           // disk:
-    EmacsString path;           // /path/
-    EmacsString filename;       // name
-    EmacsString filetype;       // .type
-    EmacsString result_spec;    // full file spec with all fields filled in
-    bool wild;                  // true if any field is wild
-    int filename_maxlen;        // how long filename can be
-    int filetype_maxlen;        // how long filetype can be
-    int file_case_sensitive;    // true if case is important
-
-protected:
-    void init();
-    int analyse_filespec( const EmacsString &filespec );
-
-    bool valid;
-};
-
 int match_wild( const EmacsString &, const EmacsString & );
 
 // virtual base class for doing wild card file finding

@@ -11,7 +11,7 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 
 EmacsDirectoryTable::EmacsDirectoryTable()
-    : EmacsStringTable( 1024, 1024 )
+: EmacsStringTable( 1024, 1024 )
 { }
 
 EmacsDirectoryTable::~EmacsDirectoryTable()

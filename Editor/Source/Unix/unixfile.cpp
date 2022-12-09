@@ -614,127 +614,6 @@ bool EmacsFileLocal::fio_is_regular()
     return false;
 }
 
-FileParse::FileParse()
-: disk()                    // disk:
-, path()                    // /path/
-, filename()                // name
-, filetype()                // .type
-, result_spec()             // full file spec with all fields filled in
-, wild( false )             // true if any field is wild
-, filename_maxlen( 0 )      // how long filename can be
-, filetype_maxlen( 0 )      // how long filetype can be
-, file_case_sensitive( 0 )  // true if case is important
-, valid( false )
-{ }
-
-bool FileParse::is_valid()
-{
-    return valid;
-}
-
-void FileParse::init()
-{
-    disk = EmacsString::null;
-    path = EmacsString::null;
-    filename = EmacsString::null;
-    filetype = EmacsString::null;
-    result_spec = EmacsString::null;
-    valid = false;
-}
-
-FileParse::~FileParse()
-{ }
-
-int FileParse::analyse_filespec( const EmacsString &filespec )
-{
-    EmacsString sp;
-    int device_loop_max_iterations = 10;
-
-    init();
-
-    sp = filespec;
-
-    int disk_end;
-    for(;;)
-    {
-        disk_end = sp.first(':');
-        if( disk_end > 0 )
-        {
-            disk = sp( 0, disk_end );
-            disk_end++;
-
-            //
-            // if there is a replacement string use it otherwise
-            // leave the device name as it is
-            //
-            EmacsString new_value = get_config_env( disk );
-            if( new_value.isNull() )
-            {
-                disk = EmacsString::null;
-                disk_end = 0;
-                break;
-            }
-            else
-            {
-                // we are replacing the disk so zap any
-                // left over disk
-                disk = EmacsString::null;
-
-                if( new_value[-1] != PATH_CH )
-                    new_value.append( PATH_STR );
-
-                // add the rest of the file spec to the buffer
-                new_value.append( sp( disk_end, INT_MAX ) );
-                // setup the pointer to the file spec to convert
-                sp = new_value;
-                // go do the analysis again
-                device_loop_max_iterations--;
-                if( device_loop_max_iterations > 0 )
-                    continue;
-            }
-        }
-        else
-        {
-            disk_end = 0;
-        }
-        break;
-    }
-
-    // any "disk" here is a remote host
-    // localhost:file.ext
-    // switch to using remote parsing
-
-
-    EmacsFile test_dir( sp );
-    if( test_dir.fio_is_directory() )
-    {
-        // all of sp is a path
-        path = sp;
-        if( path[-1] != PATH_CH )
-            path.append( PATH_STR );
-    }
-    else
-    {
-        int path_end = sp.last( PATH_CH );
-        if( path_end < 0 )
-            path_end = disk_end;
-        else
-            path_end++;
-
-        path = sp( disk_end, path_end );
-
-        int filename_end = sp.last( '.', path_end );
-        if( filename_end < 0 )
-            filename_end = sp.length();
-
-        filename = sp( path_end, filename_end );
-        filetype = sp( filename_end, INT_MAX );
-    }
-
-    return 1;
-}
-
-
 // input name in nm, absolute pathname output to buf.  returns -1 if the
 // pathname cannot be successfully converted (only happens if the
 // current directory cannot be found)
@@ -897,92 +776,6 @@ static void expand_tilda_path( const EmacsString &in_path, EmacsString &out_path
     Trace( FormatString( "expand_tilda_path: out_path after => %s" ) << out_path );
 }
 
-bool FileParse::sys_parse( const EmacsString &name, const EmacsString &def )
-{
-    FileParse d_fab;
-
-    valid = false;
-
-    if( !analyse_filespec( name ) )
-    {
-        return false;
-    }
-
-    if( !d_fab.analyse_filespec( def ) )
-    {
-        return false;
-    }
-
-    //
-    //    Assume these features of the file system
-    //
-    file_case_sensitive = 1;
-    filename_maxlen = 128;
-    filetype_maxlen = 128;
-
-    if( path.isNull() )
-    {
-        if( !d_fab.path.isNull() )
-            path = d_fab.path;
-        else
-        {
-            char def_path[1+MAXPATHLEN+1];
-
-            if( getcwd( def_path, sizeof(def_path) ) )
-                path = def_path;
-
-            if( path[-1] != '/' )
-                path.append( "/" );
-        }
-    }
-
-    //
-    //    See if the filename is infact a directory.
-    //    If it is a directory move the filename on to
-    //    the end of the path and null filename.
-    //
-    if( !filename.isNull()
-    ||  !filetype.isNull() )
-    {
-        EmacsString fullspec( FormatString("%s%.*s%.*s") <<
-            path <<
-            filename_maxlen << filename <<
-            filetype_maxlen << filetype );
-
-        // get attributes
-        if( EmacsFile( fullspec ).fio_is_directory() )
-        {
-            // need to merge the filename on to the path
-            path = FormatString("%s%.*s%.*s") <<
-                path <<
-                filename_maxlen << filename <<
-                filetype_maxlen << filetype;
-
-            filename = EmacsString::null;
-            filetype = EmacsString::null;
-
-            if( path[-1] != '/' )
-                path.append( "/" );
-        }
-    }
-
-    if( filename.isNull() )
-        filename = d_fab.filename;
-
-    if( filetype.isNull() )
-        filetype = d_fab.filetype;
-
-    EmacsString fn_buf = FormatString("%s%.*s%.*s") <<
-        path <<
-        filename_maxlen << filename <<
-        filetype_maxlen << filetype;
-
-    expand_tilda_path( fn_buf, result_spec );
-
-    valid = true;
-    return true;
-}
-
 
 #if defined( _POSIX_VERSION )
 # define struct_direct struct dirent
@@ -1026,20 +819,21 @@ EmacsString FileFind::next()
 
 
 FileFindUnix::FileFindUnix( const EmacsString &_files, bool return_all_directories )
-    : FileFindInternal( return_all_directories )
-    , files( _files )
-    , state( all_done )    // assume all done
-    , root_path()
-    , match_pattern()
-    , full_filename()
-    , find(NULL)
+: FileFindInternal( return_all_directories )
+, files( _files )
+, state( all_done )    // assume all done
+, root_path()
+, match_pattern()
+, full_filename()
+, find( NULL )
 {
-    FileParse fab;
-
-    if( fab.sys_parse( files, EmacsString::null ) )
-        root_path = fab.result_spec;
-    else
+    EmacsFile fab( files );
+    if( !fab.parse_is_valid() )
+    {
         return;
+    }
+
+    root_path = fab.result_spec;
 
     // now its possible to get the first file
     state = first_time;
@@ -1055,7 +849,9 @@ FileFindUnix::FileFindUnix( const EmacsString &_files, bool return_all_directori
 FileFindUnix::~FileFindUnix()
 {
     if( find )
+    {
         closedir( find );
+    }
 }
 
 EmacsString FileFindUnix::next()

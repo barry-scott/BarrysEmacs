@@ -45,11 +45,6 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 extern void UI_update_window_title( void );
 
-EmacsString save_abs( const EmacsString &fn );
-int expand_and_default( const EmacsString &fn, const EmacsString &dn, EmacsString &ou );
-int cur_dir( void );
-void init_abs( void );
-
 EmacsString null_path("");
 #if defined( __unix__ )
 EmacsString HOME_path;
