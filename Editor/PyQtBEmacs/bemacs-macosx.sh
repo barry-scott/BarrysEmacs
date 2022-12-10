@@ -30,9 +30,9 @@ then
         cat init.lldb >.lldbinit
     fi
     echo
-    lldb -- ${BUILDER_TOP_DIR}/Builder/venv.tmp/bin/python -u be_main.py "$@"
+    lldb -- ${BUILDER_TOP_DIR}/Builder/venv.tmp/bin/python -u ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/be_main.py "$@"
 
 else
     which ${BUILDER_TOP_DIR}/Builder/venv.tmp/bin/python
-    ${BUILDER_TOP_DIR}/Builder/venv.tmp/bin/python -u be_main.py "$@"
+    ${BUILDER_TOP_DIR}/Builder/venv.tmp/bin/python -u ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/be_main.py "$@"
 fi

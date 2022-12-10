@@ -33,7 +33,7 @@ then
         cat init.gdb >>.gdbinit
     fi
     echo "b main" >>.gdbinit
-    echo "run -u be_main.py " "$@" >>.gdbinit
+    echo "run -u ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/be_main.py " "$@" >>.gdbinit
     echo
     gdb python${PYTHON_VERSION}
 
@@ -49,14 +49,14 @@ then
         shift 1
         valgrind \
             --db-attach=yes \
-            ${TMPDIR:-/tmp}/python -u be_main.py "$@"
+            ${TMPDIR:-/tmp}/python -u ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/be_main.py "$@"
 
     else
         valgrind \
             --log-file=bemacs-memcheck.log \
-            ${TMPDIR:-/tmp}p/python -u be_main.py "$@"
+            ${TMPDIR:-/tmp}p/python -u ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/be_main.py "$@"
     fi
 
 else
-    python${PYTHON_VERSION} -u be_main.py "$@"
+    python${PYTHON_VERSION} -u ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/be_main.py "$@"
 fi
