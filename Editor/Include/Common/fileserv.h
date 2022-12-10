@@ -46,7 +46,7 @@ class FileFindInternal
 {
 protected:
     FileFindInternal( bool _return_all_directories )
-        : return_all_directories( _return_all_directories )
+    : return_all_directories( _return_all_directories )
     { }
     bool return_all_directories;
 public:
@@ -54,13 +54,16 @@ public:
     virtual EmacsString next() = 0;
 };
 
+class EmacsFile;
+
 class FileFind
 {
 public:
-    FileFind( const EmacsString &files, bool return_all_directories=false );
+    FileFind( const EmacsFile &files, bool return_all_directories=false );
     virtual ~FileFind();
 
     virtual EmacsString next();
+
 private:
-    FileFindInternal *implementation;
+    FileFindInternal *impl;
 };

@@ -376,6 +376,7 @@ void FormatString::process_format()
             return;
 
         default:
+            _dbg_msg( FormatString("FormatString - unknown format char 0x%x") << ch );
             throw EmacsInternalError( "FormatString - unknown format char" );
         }
     }

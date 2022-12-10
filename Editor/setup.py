@@ -315,7 +315,8 @@ class Setup:
                 self.unicode_header = UnicodeDataHeader( self.c_utils )
 
             if self.platform in ['linux', 'macosx', 'netbsd']:
-                self.db_files.append( Source( self.c_utils, 'Source/Unix/unixfile.cpp' ) )
+                self.db_files.append( Source( self.c_utils, 'Source/Unix/unix_file_local.cpp' ) )
+                self.db_files.append( Source( self.c_utils, 'Source/Unix/unix_file_remote.cpp' ) )
 
             elif self.platform in ('win32', 'win64'):
                 self.db_files.append( Source( self.c_utils, 'Source/Windows/win_file.cpp' ) )
@@ -451,21 +452,24 @@ class Setup:
 
             if self.platform in ('linux',):
                 obj_files.extend( [
-                    Source( compiler, 'Source/Unix/unixfile.cpp' ),
+                    Source( compiler, 'Source/Unix/unix_file_local.cpp' ),
+                    Source( compiler, 'Source/Unix/unix_file_remote.cpp' ),
                     Source( compiler, 'Source/Unix/emacs_signal.cpp' ),
                     Source( compiler, 'Source/Unix/unixcomm.cpp' ),
                     ] )
             if self.platform in ('macosx',):
                 obj_files.extend( [
                     # similar enough for the same set of source files
-                    Source( compiler, 'Source/Unix/unixfile.cpp' ),
+                    Source( compiler, 'Source/Unix/unix_file_local.cpp' ),
+                    Source( compiler, 'Source/Unix/unix_file_remote.cpp' ),
                     Source( compiler, 'Source/Unix/emacs_signal.cpp' ),
                     Source( compiler, 'Source/Unix/unixcomm.cpp' ),
                     ] )
             if self.platform in ('netbsd',):
                 obj_files.extend( [
                     # similar enough for the same set of source files
-                    Source( compiler, 'Source/Unix/unixfile.cpp' ),
+                    Source( compiler, 'Source/Unix/unix_file_local.cpp' ),
+                    Source( compiler, 'Source/Unix/unix_file_remote.cpp' ),
                     Source( compiler, 'Source/Unix/emacs_signal.cpp' ),
                     Source( compiler, 'Source/Unix/unixcomm.cpp' ),
                     Source( compiler, 'Source/Unix/ptyopen_bsd.cpp' ),
@@ -1206,7 +1210,7 @@ class LinuxCompilerGCC(CompilerGCC):
         else:
             self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
 
-        link_libs = ['-lutil']
+        link_libs = ['-lutil', '-lssh']
 
         self._addVar( 'CCFLAGS',        '-g '
                                         '%(CCC_WARNINGS)s -Wall -fPIC '
@@ -1248,7 +1252,7 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'BEMACS_LIB_DIR', self.setup.opt_lib_dir )
         self._addVar( 'BEMACS_DOC_DIR', self.setup.opt_doc_dir )
 
-        link_libs = ['-lutil']
+        link_libs = ['-lutil', '-lssh']
 
         if self.setup.opt_coverage:
             self._addVar( 'CCC_OPT',    '-O0 '

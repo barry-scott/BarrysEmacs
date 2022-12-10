@@ -512,20 +512,24 @@ private:
     EmacsString full_filename;
 };
 
-FileFind::FileFind( const EmacsString &files, bool return_all_directories )
+FileFind::FileFind( const EmacsFile &files, bool return_all_directories )
+: impl( NULL )
 {
-    implementation = new FileFindWindowsNT( files, return_all_directories );
+    impl = new FileFindWindowsNT( files.result_spec, return_all_directories );
 }
 
 FileFind::~FileFind()
 {
-    delete implementation;
+    delete impl;
 }
 
 EmacsString FileFind::next()
 {
-    if( implementation )
-        return implementation->next();
+    if( impl )
+    {
+        return impl->next();
+    }
+
     return EmacsString::null;
 }
 

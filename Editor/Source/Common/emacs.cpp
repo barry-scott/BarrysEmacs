@@ -218,6 +218,13 @@ int emacsMain
         init_fncs2();                           // Finish off init of functions
     }
 
+    if( 0 )
+    {
+        extern void test_libssh_cpp_sftp();
+        test_libssh_cpp_sftp();
+        return 0;
+    }
+
     //
     //    Emacs internals are now initialised
     //    Before running the user MLisp code

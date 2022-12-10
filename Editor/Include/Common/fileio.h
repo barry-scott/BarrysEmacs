@@ -103,134 +103,15 @@ public:
     virtual bool
         fio_is_regular() = 0;
 
+    // return a specific implementation of EmacsFileImplementation
+    static EmacsFileImplementation *factoryEmacsFileLocal( EmacsFile &file, FIO_EOL_Attribute attr );
+    static EmacsFileImplementation *factoryEmacsFileRemote( EmacsFile &file, FIO_EOL_Attribute attr );
+
 protected:
     virtual bool
         fio_is_directory( const EmacsString &filename ) = 0;
 
     EmacsFile &m_parent;
-};
-
-class EmacsFileLocal : public EmacsFileImplementation
-{
-public:
-    EmacsFileLocal( EmacsFile &parent, FIO_EOL_Attribute attr );
-    virtual ~EmacsFileLocal();
-
-    virtual bool fio_create( FIO_CreateMode mode, FIO_EOL_Attribute attr );
-    virtual bool fio_open( bool eof=false, FIO_EOL_Attribute attr=FIO_EOL__None );
-    virtual bool fio_open( FILE *existing_file, FIO_EOL_Attribute attr )
-    {
-        m_file = existing_file;
-        m_eol_attr = attr;
-        return true;
-    }
-    virtual bool fio_find_using_path( const EmacsString &path, const EmacsString &fn, const EmacsString &ex );
-    virtual bool fio_is_open()
-    {
-        return m_file != NULL;
-    }
-
-    // Old 8bit chars
-    virtual int fio_get( unsigned char *, int );
-    virtual int fio_get_line( unsigned char *buf, int len );
-    virtual int fio_get_with_prompt( unsigned char *buffer, int size, const unsigned char *prompt );
-
-    virtual int fio_put( const unsigned char *, int );
-
-    // Unicode chars
-    virtual int fio_get( EmacsChar_t *, int );
-    //int fio_get_line( EmacsChar_t *buf, int len );
-    //int fio_get_with_prompt( EmacsChar_t *buffer, int size, const EmacsChar_t *prompt );
-
-    virtual int fio_put( const EmacsChar_t *, int );
-
-    virtual int fio_put( const EmacsString & );
-
-    virtual bool fio_close();
-    virtual void fio_flush();
-
-    virtual long int
-        fio_size();
-    virtual time_t
-        fio_modify_date();
-    virtual const EmacsString &
-        fio_getname();
-    virtual FIO_EOL_Attribute
-        fio_get_eol_attribute() { return m_eol_attr; }
-    virtual FIO_Encoding_Attribute
-        fio_get_encoding_attribute() { return m_encoding_attr; }
-
-    virtual int
-        fio_access();
-    virtual bool
-        fio_file_exists();
-    virtual int
-        fio_delete();
-    virtual time_t
-        fio_file_modify_date();
-    virtual bool
-        fio_is_directory();
-    virtual bool
-        fio_is_regular();
-
-private:
-    virtual bool
-        fio_is_directory( const EmacsString &filename );
-    int get_fixup_buffer( unsigned char *buf, int len );
-
-    FILE *m_file;
-    FIO_EOL_Attribute m_eol_attr;
-    FIO_Encoding_Attribute m_encoding_attr;
-
-    int m_convert_size;
-    enum { CONVERT_BUFFER_SIZE = 1024 * 1024 };
-    unsigned char *m_convert_buffer;
-};
-
-class EmacsFileRemote : public EmacsFileImplementation
-{
-    EmacsFileRemote( EmacsFile &parent, FIO_EOL_Attribute attr );
-    virtual ~EmacsFileRemote();
-
-    virtual bool fio_create( FIO_CreateMode mode, FIO_EOL_Attribute attr );
-    virtual bool fio_open( bool eof=false, FIO_EOL_Attribute attr=FIO_EOL__None );
-    virtual bool fio_find_using_path( const EmacsString &path, const EmacsString &fn, const EmacsString &ex );
-    virtual bool fio_open( FILE *existing_file, FIO_EOL_Attribute attr );
-    virtual bool fio_is_open();
-
-    // Old 8bit chars
-    virtual int fio_get( unsigned char *, int );
-    virtual int fio_get_line( unsigned char *buf, int len );
-    virtual int fio_get_with_prompt( unsigned char *buffer, int size, const unsigned char *prompt );
-
-    virtual int fio_put( const unsigned char *, int );
-
-    // Unicode chars
-    virtual int fio_get( EmacsChar_t *, int );
-    //int fio_get_line( EmacsChar_t *buf, int len );
-    //int fio_get_with_prompt( EmacsChar_t *buffer, int size, const EmacsChar_t *prompt );
-
-    virtual int fio_put( const EmacsChar_t *, int );
-
-    virtual int fio_put( const EmacsString & );
-
-    virtual bool fio_close();
-    virtual void fio_flush();
-
-    virtual long int fio_size();
-    virtual time_t fio_modify_date();
-    virtual const EmacsString &fio_getname();
-    virtual FIO_EOL_Attribute fio_get_eol_attribute();
-    virtual FIO_Encoding_Attribute fio_get_encoding_attribute();
-
-    virtual int fio_access();
-    virtual bool fio_file_exists();
-    virtual int fio_delete();
-    virtual time_t fio_file_modify_date();
-
-private:
-    virtual bool
-        fio_is_directory( const EmacsString &filename );
 };
 
 class EmacsFile : public EmacsObject

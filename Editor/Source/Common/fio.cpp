@@ -34,7 +34,7 @@ EmacsFile::EmacsFile( const EmacsString &filename, const EmacsString &def, FIO_E
 , parse_valid( false )
 , impl( 0 )
 {
-    impl = EMACS_NEW EmacsFileLocal( *this, attr );
+    impl = EmacsFileImplementation::factoryEmacsFileLocal( *this, attr );
     parse_filename( filename, def );
 }
 
@@ -52,7 +52,7 @@ EmacsFile::EmacsFile( const EmacsString &filename, FIO_EOL_Attribute attr )
 , parse_valid( false )
 , impl( 0 )
 {
-    impl = EMACS_NEW EmacsFileLocal( *this, attr );
+    impl = EmacsFileImplementation::factoryEmacsFileLocal( *this, attr );
     parse_filename( filename, EmacsString::null );
 }
 
@@ -70,7 +70,7 @@ EmacsFile::EmacsFile( FIO_EOL_Attribute attr )
 , parse_valid( false )
 , impl( 0 )
 {
-    impl = EMACS_NEW EmacsFileLocal( *this, attr );
+    impl = EmacsFileImplementation::factoryEmacsFileLocal( *this, attr );
 }
 
 EmacsFile::~EmacsFile()

@@ -52,7 +52,7 @@ void EmacsFileTable::makeTable( EmacsString &prefix )
         // away in the table. Make sure old entries in the table are
         // deallocated first
         //
-        FileFind finder( fab.result_spec );
+        FileFind finder( fab );
 
         for(;;)
         {

@@ -1,11 +1,11 @@
 //
-//    unixfile.c
+//    unix_file_local.c
 //    Copyright 1993-2004 Barry A. Scott
 //
 #include <emacs.h>
 #include <em_stat.h>
 
-# undef THIS_FILE
+#undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
@@ -25,6 +25,172 @@ bool isValidFilenameChar( EmacsChar_t ch )
     return invalid.index( ch ) < 0;
 }
 
+template <typename T> static FIO_EOL_Attribute detectEolType( unsigned char *ch_buf, int ch_buf_len )
+{
+    T *buf = reinterpret_cast<T *>( ch_buf );
+    int len = ch_buf_len/sizeof( T );
+
+    //
+    //    this makes a snap judgement of the buffers record type
+    //
+    int nl_index = -1;
+    int cr_index = -1;
+    for( int i=0; i<len; ++i )
+    {
+        if( nl_index < 0 && buf[i] == '\n' )
+        {
+            nl_index = i;
+        }
+
+        if( cr_index < 0 && buf[i] == '\r' )
+        {
+            cr_index = i;
+        }
+
+        if( nl_index >= 0 && cr_index >= 0 )
+        {
+            break;
+        }
+    }
+
+    if( nl_index > 0 && (cr_index == nl_index-1) )
+    {
+        return FIO_EOL__StreamCRLF;
+    }
+
+    if( nl_index >= 0 )
+    {
+        return FIO_EOL__StreamLF;
+    }
+
+    if( cr_index >= 0 )
+    {
+        return FIO_EOL__StreamCR;
+    }
+
+    return FIO_EOL__None;
+}
+
+template <typename T> static int stripCr( unsigned char *ch_buf, int ch_buf_len )
+{
+    T *buf = reinterpret_cast<T *>( ch_buf );
+    int len = ch_buf_len/sizeof( T );
+
+    // strip CR's from the buf
+    T *end = &buf[ len ];
+    T *put = buf;
+    T *get = put;
+
+    while( get < end )
+    {
+        T c = *get++;
+        if( c != '\r' )
+        {
+            *put++ = c;
+        }
+    }
+
+    // return the length in bytes
+    return (put - buf)*sizeof( T );
+}
+
+template <typename T> static void replaceCrWithNl( unsigned char *ch_buf, int ch_buf_len )
+{
+    // strip CR's from the buf
+
+    T *buf = reinterpret_cast<T *>( ch_buf );
+    int len = ch_buf_len/sizeof( T );
+
+    for( int i=0; i<len; ++i )
+    {
+        if( buf[i] == '\r' )
+        {
+            buf[i] = '\n';
+        }
+    }
+}
+
+class EmacsFileLocal : public EmacsFileImplementation
+{
+public:
+    EmacsFileLocal( EmacsFile &parent, FIO_EOL_Attribute attr );
+    virtual ~EmacsFileLocal();
+
+    virtual bool fio_create( FIO_CreateMode mode, FIO_EOL_Attribute attr );
+    virtual bool fio_open( bool eof=false, FIO_EOL_Attribute attr=FIO_EOL__None );
+    virtual bool fio_open( FILE *existing_file, FIO_EOL_Attribute attr )
+    {
+        m_file = existing_file;
+        m_eol_attr = attr;
+        return true;
+    }
+    virtual bool fio_find_using_path( const EmacsString &path, const EmacsString &fn, const EmacsString &ex );
+    virtual bool fio_is_open()
+    {
+        return m_file != NULL;
+    }
+
+    // Old 8bit chars
+    virtual int fio_get( unsigned char *, int );
+    virtual int fio_get_line( unsigned char *buf, int len );
+    virtual int fio_get_with_prompt( unsigned char *buffer, int size, const unsigned char *prompt );
+
+    virtual int fio_put( const unsigned char *, int );
+
+    // Unicode chars
+    virtual int fio_get( EmacsChar_t *, int );
+    //int fio_get_line( EmacsChar_t *buf, int len );
+    //int fio_get_with_prompt( EmacsChar_t *buffer, int size, const EmacsChar_t *prompt );
+
+    virtual int fio_put( const EmacsChar_t *, int );
+
+    virtual int fio_put( const EmacsString & );
+
+    virtual bool fio_close();
+    virtual void fio_flush();
+
+    virtual long int
+        fio_size();
+    virtual time_t
+        fio_modify_date();
+    virtual const EmacsString &
+        fio_getname();
+    virtual FIO_EOL_Attribute
+        fio_get_eol_attribute() { return m_eol_attr; }
+    virtual FIO_Encoding_Attribute
+        fio_get_encoding_attribute() { return m_encoding_attr; }
+
+    virtual int
+        fio_access();
+    virtual bool
+        fio_file_exists();
+    virtual int
+        fio_delete();
+    virtual time_t
+        fio_file_modify_date();
+    virtual bool
+        fio_is_directory();
+    virtual bool
+        fio_is_regular();
+
+private:
+    virtual bool
+        fio_is_directory( const EmacsString &filename );
+    int get_fixup_buffer( unsigned char *buf, int len );
+
+    FILE *m_file;
+    FIO_EOL_Attribute m_eol_attr;
+    FIO_Encoding_Attribute m_encoding_attr;
+
+    int m_convert_size;
+    enum { CONVERT_BUFFER_SIZE = 1024 * 1024 };
+    unsigned char *m_convert_buffer;
+};
+
+EmacsFileImplementation *EmacsFileImplementation::factoryEmacsFileLocal( EmacsFile &file, FIO_EOL_Attribute attr )
+{
+    return EMACS_NEW EmacsFileLocal( file, attr );
+}
 
 EmacsFileLocal::EmacsFileLocal( EmacsFile &parent, FIO_EOL_Attribute attr )
 : EmacsFileImplementation( parent )
@@ -392,91 +558,6 @@ time_t EmacsFileLocal::fio_file_modify_date()
     return s.data().st_mtime;
 }
 
-template <typename T> static FIO_EOL_Attribute detectEolType( unsigned char *ch_buf, int ch_buf_len )
-{
-    T *buf = reinterpret_cast<T *>( ch_buf );
-    int len = ch_buf_len/sizeof( T );
-
-    //
-    //    this makes a snap judgement of the buffers record type
-    //
-    int nl_index = -1;
-    int cr_index = -1;
-    for( int i=0; i<len; ++i )
-    {
-        if( nl_index < 0 && buf[i] == '\n' )
-        {
-            nl_index = i;
-        }
-
-        if( cr_index < 0 && buf[i] == '\r' )
-        {
-            cr_index = i;
-        }
-
-        if( nl_index >= 0 && cr_index >= 0 )
-        {
-            break;
-        }
-    }
-
-    if( nl_index > 0 && (cr_index == nl_index-1) )
-    {
-        return FIO_EOL__StreamCRLF;
-    }
-
-    if( nl_index >= 0 )
-    {
-        return FIO_EOL__StreamLF;
-    }
-
-    if( cr_index >= 0 )
-    {
-        return FIO_EOL__StreamCR;
-    }
-
-    return FIO_EOL__None;
-}
-
-template <typename T> static int stripCr( unsigned char *ch_buf, int ch_buf_len )
-{
-    T *buf = reinterpret_cast<T *>( ch_buf );
-    int len = ch_buf_len/sizeof( T );
-
-    // strip CR's from the buf
-    T *end = &buf[ len ];
-    T *put = buf;
-    T *get = put;
-
-    while( get < end )
-    {
-        T c = *get++;
-        if( c != '\r' )
-        {
-            *put++ = c;
-        }
-    }
-
-    // return the length in bytes
-    return (put - buf)*sizeof( T );
-}
-
-template <typename T> static void replaceCrWithNl( unsigned char *ch_buf, int ch_buf_len )
-{
-    // strip CR's from the buf
-
-    T *buf = reinterpret_cast<T *>( ch_buf );
-    int len = ch_buf_len/sizeof( T );
-
-    for( int i=0; i<len; ++i )
-    {
-        if( buf[i] == '\r' )
-        {
-            buf[i] = '\n';
-        }
-    }
-}
-
 int EmacsFileLocal::get_fixup_buffer( unsigned char *buf, int len )
 {
     if( m_encoding_attr == FIO_Encoding_None && len >= 2 )
@@ -783,11 +864,11 @@ static void expand_tilda_path( const EmacsString &in_path, EmacsString &out_path
 # define struct_direct struct direct
 #endif
 
-class FileFindUnix : public FileFindInternal
+class FileFindLocal : public FileFindInternal
 {
 public:
-    FileFindUnix( const EmacsString &files, bool return_all_directories );
-    virtual ~FileFindUnix();
+    FileFindLocal( const EmacsString &files, bool return_all_directories );
+    virtual ~FileFindLocal();
 
     EmacsString next();
 private:
@@ -800,25 +881,29 @@ private:
     DIR *find;
 };
 
-FileFind::FileFind( const EmacsString &files, bool return_all_directories )
+FileFind::FileFind( const EmacsFile &files, bool return_all_directories )
 {
-    implementation = new FileFindUnix( files, return_all_directories );
+    // QQQ check the type of EmacsFile and allocate a local or remote FileFindLocal
+    impl = new FileFindLocal( files.result_spec, return_all_directories );
 }
 
 FileFind::~FileFind()
 {
-    delete implementation;
+    delete impl;
 }
 
 EmacsString FileFind::next()
 {
-    if( implementation )
-        return implementation->next();
+    if( impl )
+    {
+        return impl->next();
+    }
+
     return EmacsString::null;
 }
 
 
-FileFindUnix::FileFindUnix( const EmacsString &_files, bool return_all_directories )
+FileFindLocal::FileFindLocal( const EmacsString &_files, bool return_all_directories )
 : FileFindInternal( return_all_directories )
 , files( _files )
 , state( all_done )    // assume all done
@@ -846,7 +931,7 @@ FileFindUnix::FileFindUnix( const EmacsString &_files, bool return_all_directori
     }
 }
 
-FileFindUnix::~FileFindUnix()
+FileFindLocal::~FileFindLocal()
 {
     if( find )
     {
@@ -854,7 +939,7 @@ FileFindUnix::~FileFindUnix()
     }
 }
 
-EmacsString FileFindUnix::next()
+EmacsString FileFindLocal::next()
 {
     switch( state )
     {
@@ -1054,7 +1139,6 @@ bool EmacsFile::parse_filename( const EmacsString &name, const EmacsString &def 
     return true;
 }
 
-// QQQ: copy of analyse_filespec for the new EmacsFile
 bool EmacsFile::parse_analyse_filespec( const EmacsString &filespec )
 {
     int device_loop_max_iterations = 10;
@@ -1165,4 +1249,70 @@ bool EmacsFile::parse_analyse_filespec( const EmacsString &filespec )
         filetype = sp( filename_end, INT_MAX );
     }
     return true;
+}
+
+// fio_find_using_path opens the file fn with the given IO mode using the given
+// search path. It is used to to read in MLisp files via the
+// executed-mlisp-file function.
+bool EmacsFileLocal::fio_find_using_path
+    (
+    const EmacsString &path,
+    const EmacsString &fn,
+    const EmacsString &ex
+    )
+{
+    //
+    // check for Node, device or directory specs.
+    // also allows any logical name through
+    // If present then just open the file stright.
+    //
+    if( fn.first( PATH_CH ) >= 0
+    || fn.first( ':' ) >= 0 )
+    {
+        // open the file
+        EmacsFile fd( fn, ex );
+        if( fd.fio_is_regular() )
+        {
+            m_parent.fio_set_filespec_from( fd );
+            return true;
+        }
+
+        return false;
+    }
+
+    //
+    // Otherwise, add the path onto the front of the filespec
+    //
+    int start = 0;
+    int end = 0;
+
+    while( start < path.length() )
+    {
+        end = path.index( PATH_SEP, start );
+        if( end < 0 )
+        {
+            end = path.length();
+        }
+
+        EmacsString fnb( path( start, end ) );
+        if( fnb[-1] != PATH_CH
+        &&  fnb[-1] != ':' )
+        {
+            fnb.append( PATH_STR );
+        }
+        fnb.append( fn );
+
+        EmacsFile fd( fnb, ex );
+        if( fd.fio_is_regular() )
+        {
+            // move the FILE to *this
+            m_parent.fio_set_filespec_from( fd );
+            return true;
+        }
+
+        start = end;
+        start++;
+    }
+
+    return false;
 }

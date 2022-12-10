@@ -704,13 +704,15 @@ int file_format_string_cmd(void)
     else
     {
         if( check_args( 2, 2 ) )
+        {
             return 0;
+        }
+
         format = get_string_mlisp();
         filename = get_string_mlisp();
     }
 
     EmacsString result = file_format_string( format, filename );
-
     ml_value = result;
 
     return 0;
@@ -721,7 +723,6 @@ int file_is_a_directory_cmd(void)
 {
     EmacsFileTable file_table;
     EmacsString fn;
-
     getescword( file_table., ": file-is-a-directory ", fn );
 
     ml_value = int( EmacsFile( fn ).fio_is_directory() );
@@ -1819,73 +1820,6 @@ int EmacsBuffer::write_file( const EmacsString &fn, EmacsBuffer::WriteFileOperat
     }
 
     return 1;
-}
-
-
-// fio_find_using_path opens the file fn with the given IO mode using the given
-// search path. It is used to to read in MLisp files via the
-// executed-mlisp-file function.
-bool EmacsFileLocal::fio_find_using_path
-    (
-    const EmacsString &path,
-    const EmacsString &fn,
-    const EmacsString &ex
-    )
-{
-    //
-    // check for Node, device or directory specs.
-    // also allows any logical name through
-    // If present then just open the file stright.
-    //
-    if( fn.first( PATH_CH ) >= 0
-    || fn.first( ':' ) >= 0 )
-    {
-        // open the file
-        EmacsFile fd( fn, ex );
-        if( fd.fio_is_regular() )
-        {
-            m_parent.fio_set_filespec_from( fd );
-            return true;
-        }
-
-        return false;
-    }
-
-    //
-    // Otherwise, add the path onto the front of the filespec
-    //
-    int start = 0;
-    int end = 0;
-
-    while( start < path.length() )
-    {
-        end = path.index( PATH_SEP, start );
-        if( end < 0 )
-        {
-            end = path.length();
-        }
-
-        EmacsString fnb( path( start, end ) );
-        if( fnb[-1] != PATH_CH
-        &&  fnb[-1] != ':' )
-        {
-            fnb.append( PATH_STR );
-        }
-        fnb.append( fn );
-
-        EmacsFile fd( fnb, ex );
-        if( fd.fio_is_regular() )
-        {
-            // move the FILE to *this
-            m_parent.fio_set_filespec_from( fd );
-            return true;
-        }
-
-        start = end;
-        start++;
-    }
-
-    return false;
 }
 
 
