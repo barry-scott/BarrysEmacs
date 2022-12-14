@@ -19,6 +19,12 @@ FileNameCompare *file_name_compare = &file_name_compare_case_sensitive;
 #include <dirent.h>
 #include <pwd.h>
 
+#if defined( _POSIX_VERSION )
+# define struct_direct struct dirent
+#else
+# define struct_direct struct direct
+#endif
+
 bool isValidFilenameChar( EmacsChar_t ch )
 {
     EmacsString invalid( "/\000" );
@@ -110,6 +116,22 @@ template <typename T> static void replaceCrWithNl( unsigned char *ch_buf, int ch
     }
 }
 
+class EmacsFileLocal;
+
+class FileFindLocal : public FileFindImplementation
+{
+public:
+    FileFindLocal( EmacsFile &files, bool return_all_directories );
+    virtual ~FileFindLocal();
+
+    EmacsString next();
+
+    EmacsString repr();
+
+private:
+    DIR *m_find;
+};
+
 class EmacsFileLocal : public EmacsFileImplementation
 {
 public:
@@ -173,6 +195,9 @@ public:
     virtual bool
         fio_is_regular();
 
+    virtual FileFindImplementation *
+        factoryFileFindImplementation( bool return_all_directories );
+
 private:
     virtual bool
         fio_is_directory( const EmacsString &filename );
@@ -186,6 +211,11 @@ private:
     enum { CONVERT_BUFFER_SIZE = 1024 * 1024 };
     unsigned char *m_convert_buffer;
 };
+
+FileFindImplementation *EmacsFileLocal::factoryFileFindImplementation( bool return_all_directories )
+{
+    return EMACS_NEW FileFindLocal( m_parent, return_all_directories );
+}
 
 EmacsFileImplementation *EmacsFileImplementation::factoryEmacsFileLocal( EmacsFile &file, FIO_EOL_Attribute attr )
 {
@@ -695,10 +725,6 @@ bool EmacsFileLocal::fio_is_regular()
     return false;
 }
 
-// input name in nm, absolute pathname output to buf.  returns -1 if the
-// pathname cannot be successfully converted (only happens if the
-// current directory cannot be found)
-//
 #if DBG_TMP && 0
 # define Trace( s ) do { if( dbg_flags&DBG_TMP ) { _dbg_msg( s ); } } while(0)
 #else
@@ -858,117 +884,114 @@ static void expand_tilda_path( const EmacsString &in_path, EmacsString &out_path
 }
 
 
-#if defined( _POSIX_VERSION )
-# define struct_direct struct dirent
-#else
-# define struct_direct struct direct
-#endif
-
-class FileFindLocal : public FileFindInternal
+FileFind::FileFind( EmacsFile &files, bool return_all_directories )
+: m_impl( NULL )
 {
-public:
-    FileFindLocal( const EmacsString &files, bool return_all_directories );
-    virtual ~FileFindLocal();
-
-    EmacsString next();
-private:
-    const EmacsString files;
-    enum { first_time, next_time, all_done } state;
-    EmacsString root_path;
-    EmacsString match_pattern;
-    EmacsString full_filename;
-
-    DIR *find;
-};
-
-FileFind::FileFind( const EmacsFile &files, bool return_all_directories )
-{
-    // QQQ check the type of EmacsFile and allocate a local or remote FileFindLocal
-    impl = new FileFindLocal( files.result_spec, return_all_directories );
+    m_impl = files.factoryFileFindImplementation( return_all_directories );
 }
 
 FileFind::~FileFind()
 {
-    delete impl;
+    delete m_impl;
 }
+
+const EmacsString &FileFind::matchPattern() const
+{
+    return m_impl->matchPattern();
+}
+
 
 EmacsString FileFind::next()
 {
-    if( impl )
+    if( m_impl )
     {
-        return impl->next();
+        return m_impl->next();
     }
 
     return EmacsString::null;
 }
 
-
-FileFindLocal::FileFindLocal( const EmacsString &_files, bool return_all_directories )
-: FileFindInternal( return_all_directories )
-, files( _files )
-, state( all_done )    // assume all done
-, root_path()
-, match_pattern()
-, full_filename()
-, find( NULL )
+EmacsString FileFind::repr()
 {
-    EmacsFile fab( files );
-    if( !fab.parse_is_valid() )
+    if( m_impl )
+    {
+        return FormatString("FileFind %p impl %s") << this << m_impl->repr();
+    }
+
+    return FormatString("FileFind %p impl NULL") << this;
+}
+
+
+FileFindLocal::FileFindLocal( EmacsFile &files, bool return_all_directories )
+: FileFindImplementation( files, return_all_directories )
+, m_find( NULL )
+{
+    if( !m_files.parse_is_valid() )
     {
         return;
     }
 
-    root_path = fab.result_spec;
+    m_root_path = m_files.result_spec;
 
     // now its possible to get the first file
-    state = first_time;
+    m_state = first_time;
 
-    int last_path_ch = root_path.last( PATH_CH );
+    int last_path_ch = m_root_path.last( PATH_CH );
     if( last_path_ch >= 0 )
     {
-        match_pattern = root_path( last_path_ch+1, INT_MAX );
-        root_path.remove( last_path_ch+1 );
+        m_match_pattern = m_root_path( last_path_ch+1, INT_MAX );
+        m_root_path.remove( last_path_ch+1 );
     }
 }
 
 FileFindLocal::~FileFindLocal()
 {
-    if( find )
+    if( m_find )
     {
-        closedir( find );
+        closedir( m_find );
     }
+}
+
+EmacsString FileFindLocal::repr()
+{
+    return FormatString("FileFindLocal (%p) state %d root %s pattern %s full_filename %s")
+            << this
+            << m_state
+            << m_root_path
+            << m_match_pattern
+            << m_full_filename;
 }
 
 EmacsString FileFindLocal::next()
 {
-    switch( state )
+    switch( m_state )
     {
     default:
     case all_done:
         return EmacsString::null;
 
     case first_time:
-        if( match_pattern.isNull() )
+        if( m_match_pattern.isNull() )
         {
-            state = all_done;
-            return root_path;
+            m_state = all_done;
+            return m_root_path;
         }
 
-        find = opendir( root_path );
-        if( find == NULL )
+        m_find = opendir( m_root_path );
+        if( m_find == NULL )
         {
-            state = all_done;
+            m_state = all_done;
             return EmacsString::null;
         }
 
-        state = next_time;
+        m_state = next_time;
         // fall into next_time
 
     case next_time:
     {
         // read entries looking for a match
         struct_direct *d;
-        while( (d = readdir(find)) != NULL )
+        while( (d = readdir( m_find )) != NULL )
         {
             if( d->d_ino == 0 )
             {
@@ -982,32 +1005,32 @@ EmacsString FileFindLocal::next()
                 continue;
             }
 
-            full_filename = root_path;
-            full_filename.append( d->d_name );
+            m_full_filename = m_root_path;
+            m_full_filename.append( d->d_name );
 
-            EmacsFile fd( full_filename );
+            EmacsFile fd( m_full_filename );
             bool is_dir = fd.fio_is_directory();
 
             // always return directories
-            if( return_all_directories && is_dir )
+            if( m_return_all_directories && is_dir )
             {
-                full_filename.append( PATH_STR );
-                return full_filename;
+                m_full_filename.append( PATH_STR );
+                return m_full_filename;
             }
 
             // the name matches the pattern
-            if( match_wild( d->d_name, match_pattern ) )
+            if( match_wild( d->d_name, m_match_pattern ) )
             {
-                if( !return_all_directories && is_dir )
+                if( !m_return_all_directories && is_dir )
                 {
-                    full_filename.append( PATH_STR );
+                    m_full_filename.append( PATH_STR );
                 }
 
                 // return success and the full path
-                return full_filename;
+                return m_full_filename;
             }
         }
-        state = all_done;
+        m_state = all_done;
     }
         break;
     }

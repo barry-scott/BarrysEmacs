@@ -10,6 +10,7 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
+#include <deque>
 
 #ifdef vms
 #include <descrip.h>
@@ -372,76 +373,89 @@ int file_exists( void )
     return 0;
 }
 
-class FileFindRecursiveInternal : public FileFind
-{
-public:
-    FileFindRecursiveInternal( const EmacsString &_name )
-    : FileFind( _name, true )
-    , inner( NULL )
-    { }
-    virtual ~FileFindRecursiveInternal()
-    { }
+FileFindImplementation::FileFindImplementation( EmacsFile &files, bool return_all_directories )
+: m_return_all_directories( return_all_directories )
+, m_files( files )
+, m_state( all_done )    // assume all done
+, m_root_path()
+, m_match_pattern()
+, m_full_filename()
+{ }
 
-    FileFindRecursiveInternal *inner;
-};
+const EmacsString &FileFindImplementation::matchPattern() const
+{
+    return m_match_pattern;
+}
+
 
 class FileFindRecursive
 {
 public:
-    FileFindRecursive( const EmacsString &name )
-    : original_name( name )
-    , finder( new FileFindRecursiveInternal( name ) )
-    { }
+    FileFindRecursive( EmacsFile &files )
+    : m_original_files( files )
+    , m_stack()
+    {
+        // start with a finder that returns directories
+        FileFind *finder = EMACS_NEW FileFind( files, true );
+        m_stack.push_front( finder );
+    }
 
     virtual ~FileFindRecursive()
     {
-        delete finder;
+        // empty the stack
+        while( !m_stack.empty() )
+        {
+            FileFind *finder = m_stack.front();
+            m_stack.pop_front();
+            delete finder;
+        }
     }
     virtual EmacsString next();
+
 private:
-    EmacsString original_name;
-    FileFindRecursiveInternal *finder;
+    EmacsFile &m_original_files;
+    std::deque<FileFind *> m_stack;
 };
 
 EmacsString FileFindRecursive::next()
 {
-    for(;;)
+    while( !m_stack.empty() )
     {
+        FileFind *finder = m_stack.front();
         EmacsString file( finder->next() );
+
         if( file.isNull() )
         {
-            FileFindRecursiveInternal *inner = finder->inner;
-            if( inner == NULL )
-            {
-                return file;
-            }
-
+            // finder has returned all files
+            m_stack.pop_front();
             delete finder;
-            finder = inner;
+
+            if( m_stack.empty() )
+            {
+                return EmacsString::null;
+            }
 
             // spin around and get another file
+            continue;
         }
-        else
-        {
-            // is it a dir?
-            if( file[-1] == PATH_CH )
-            {
-                // yes find on the inner
-                EmacsString fullname;
-                expand_and_default( file, original_name, fullname );
-                FileFindRecursiveInternal *new_finder = new FileFindRecursiveInternal( fullname );
-                new_finder->inner = finder;
-                finder = new_finder;
 
-                // spin around and get another file
-            }
-            else
-            {
-                // no so return the file
-                return file;
-            }
+        EmacsFile next_file( file );
+        if( next_file.fio_is_directory() )
+        {
+            file.append( finder->matchPattern() );
+            EmacsFile subdir( file );
+
+            FileFind *subdir_finder = EMACS_NEW FileFind( subdir, true );
+            m_stack.push_front( subdir_finder );
+            // spin around and get another file
+            continue;
         }
+
+        // no so return the file
+        return file;
     }
+
+    return EmacsString::null;
 }
 
 int file_name_expand_and_default(void)
@@ -739,12 +753,10 @@ int expand_file_name( void )
 
     if( fn.length() > 0 )
     {
-        EmacsString fullname;
-
-        expand_and_default (fn, EmacsString::null, fullname);
+        EmacsFile fullname(fn);
 
         delete search_file_handle;
-        search_file_handle = new FileFind( fullname );
+        search_file_handle = EMACS_NEW FileFind( fullname );
         if( search_file_handle == NULL )
         {
             error( "No Mem" );
@@ -779,17 +791,15 @@ int expand_file_name_recursive( void )
 
     if( fn.length() > 0 )
     {
-        EmacsString fullname;
-
-        expand_and_default (fn, EmacsString::null, fullname);
-        if( fullname[-1] == PATH_CH )
+        EmacsFile fullname( fn );
+        if( fullname.fio_is_directory() )
         {
             error( "No filename only a directory given" );
             return 0;
         }
 
         delete search_file_handle;
-        search_file_handle = new FileFindRecursive( fullname );
+        search_file_handle = EMACS_NEW FileFindRecursive( fullname );
         if( search_file_handle == NULL )
         {
             error( "No Mem" );

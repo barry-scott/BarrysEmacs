@@ -495,7 +495,7 @@ static EmacsString convertShortPathToLongPath( const EmacsString &short_path )
 }
 
 
-class FileFindWindowsNT : public FileFindInternal
+class FileFindWindowsNT : public FileFindImplementation
 {
 public:
     FileFindWindowsNT( const EmacsString &files, bool return_all_directories );
@@ -515,7 +515,7 @@ private:
 FileFind::FileFind( const EmacsFile &files, bool return_all_directories )
 : impl( NULL )
 {
-    impl = new FileFindWindowsNT( files.result_spec, return_all_directories );
+    impl = files.factoryFileFindImplementation( return_all_directories );
 }
 
 FileFind::~FileFind()
@@ -535,7 +535,7 @@ EmacsString FileFind::next()
 
 
 FileFindWindowsNT::FileFindWindowsNT( const EmacsString &_files, bool _return_all_directories )
-: FileFindInternal( _return_all_directories )
+: FileFindImplementation( _return_all_directories )
 , state( all_done )    // assume all done
 , handle( INVALID_HANDLE_VALUE )
 , case_sensitive(0)

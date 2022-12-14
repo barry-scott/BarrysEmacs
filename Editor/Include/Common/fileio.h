@@ -45,6 +45,7 @@ enum FIO_Encoding_Attribute
 };
 
 class EmacsFile;
+class FileFindImplementation;
 
 class EmacsFileImplementation : public EmacsObject
 {
@@ -106,6 +107,8 @@ public:
     // return a specific implementation of EmacsFileImplementation
     static EmacsFileImplementation *factoryEmacsFileLocal( EmacsFile &file, FIO_EOL_Attribute attr );
     static EmacsFileImplementation *factoryEmacsFileRemote( EmacsFile &file, FIO_EOL_Attribute attr );
+    virtual FileFindImplementation *
+        factoryFileFindImplementation( bool return_all_directories ) = 0;
 
 protected:
     virtual bool
@@ -241,6 +244,11 @@ public:
     bool fio_is_regular()
     {
         return impl->fio_is_regular();
+    }
+
+    FileFindImplementation *factoryFileFindImplementation( bool return_all_directories )
+    {
+        return impl->factoryFileFindImplementation( return_all_directories );
     }
 
 public:

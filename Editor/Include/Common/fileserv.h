@@ -42,16 +42,26 @@ extern FileNameCompareCaseBlind file_name_compare_case_blind;
 int match_wild( const EmacsString &, const EmacsString & );
 
 // virtual base class for doing wild card file finding
-class FileFindInternal
+class EmacsFile;
+
+class FileFindImplementation
 {
 protected:
-    FileFindInternal( bool _return_all_directories )
-    : return_all_directories( _return_all_directories )
-    { }
-    bool return_all_directories;
+    FileFindImplementation( EmacsFile &files, bool return_all_directories );
+
+    bool m_return_all_directories;
+
+    EmacsFile &m_files;
+    enum { first_time, next_time, all_done } m_state;
+    EmacsString m_root_path;
+    EmacsString m_match_pattern;
+    EmacsString m_full_filename;
+
 public:
-    virtual ~FileFindInternal() { }
+    virtual ~FileFindImplementation() { }
     virtual EmacsString next() = 0;
+    virtual EmacsString repr() = 0;
+    virtual const EmacsString &matchPattern() const;
 };
 
 class EmacsFile;
@@ -59,11 +69,13 @@ class EmacsFile;
 class FileFind
 {
 public:
-    FileFind( const EmacsFile &files, bool return_all_directories=false );
+    FileFind( EmacsFile &files, bool return_all_directories=false );
     virtual ~FileFind();
 
     virtual EmacsString next();
+    virtual EmacsString repr();
+    virtual const EmacsString &matchPattern() const;
 
 private:
-    FileFindInternal *impl;
+    FileFindImplementation *m_impl;
 };
