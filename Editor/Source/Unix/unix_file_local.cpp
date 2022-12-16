@@ -110,10 +110,14 @@ public:
     virtual bool
         fio_is_regular();
 
-    virtual bool
-        fio_is_directory( const EmacsString &filename );
     virtual FileFindImplementation *
         factoryFileFindImplementation( bool return_all_directories );
+
+    // helpers
+   virtual bool
+        fio_is_directory( const EmacsString &filename );
+     virtual EmacsString
+        fio_cwd();
 
 private:
     FILE *m_file;
@@ -450,27 +454,41 @@ bool EmacsFileLocal::fio_close()
 
 long int EmacsFileLocal::fio_size()
 {
-    long int cur_pos, end_of_file_pos;
-
-    // find the current position
-    cur_pos = ftell( m_file );
-
-    // seek to the end of the file
-    if( fseek( m_file, 0l, SEEK_END ) == 0 )
+    if( fio_is_open() )
     {
-        // the current position is the size of the file
-        end_of_file_pos = ftell( m_file );
+
+        long int cur_pos, end_of_file_pos;
+
+        // find the current position
+        cur_pos = ftell( m_file );
+
+        // seek to the end of the file
+        if( fseek( m_file, 0l, SEEK_END ) == 0 )
+        {
+            // the current position is the size of the file
+            end_of_file_pos = ftell( m_file );
+        }
+        else
+        {
+            _dbg_msg( "fseek failed!" );
+            end_of_file_pos = 0l;
+        }
+
+        // seek back to the orginal position
+        fseek( m_file, cur_pos, SEEK_SET );
+
+        return end_of_file_pos;
     }
     else
     {
-        _dbg_msg( "fseek failed!" );
-        end_of_file_pos = 0l;
+        EmacsFileStat s;
+        if( !s.stat( m_parent.result_spec ) )
+        {
+            return 0;
+        }
+
+        return s.data().st_size;
     }
-
-    // seek back to the orginal position
-    fseek( m_file, cur_pos, SEEK_SET );
-
-    return end_of_file_pos;
 }
 
 const EmacsString &EmacsFileLocal::fio_getname()
@@ -498,6 +516,17 @@ time_t EmacsFileLocal::fio_file_modify_date()
     return s.data().st_mtime;
 }
 
+EmacsString EmacsFileLocal::fio_cwd()
+{
+    char buf[65536];
+    char *cwd = ::getcwd( buf, sizeof(buf) );
+    if( cwd == NULL )
+    {
+        return EmacsString( "." );
+    }
+
+    return EmacsString( EmacsString::copy, cwd );
+}
 
 bool EmacsFileLocal::fio_is_directory( const EmacsString &filename )
 {
@@ -559,6 +588,7 @@ static void expand_tilda_path( const EmacsString &in_path, EmacsString &out_path
 
     Trace( FormatString("expand_tilda_path( %s )") << in_path );
 
+    // QQQ this is not EmacsFileRemote friendly
     char c_def_path[1+MAXPATHLEN+1];
 
     c_def_path[0] = '\0';
@@ -923,14 +953,7 @@ bool EmacsFile::parse_filename( const EmacsString &name, const EmacsString &def 
         }
         else
         {
-            char def_path[1+MAXPATHLEN+1];
-            char *r = getcwd( def_path, sizeof(def_path) );
-
-            if( r )
-            {
-                path = def_path;
-            }
-
+            path = m_impl->fio_cwd();
             if( path[-1] != '/' )
             {
                 path.append( "/" );
@@ -952,7 +975,7 @@ bool EmacsFile::parse_filename( const EmacsString &name, const EmacsString &def 
             filetype_maxlen << filetype );
 
         // get attributes
-        if( impl->fio_is_directory( fullspec ) )
+        if( m_impl->fio_is_directory( fullspec ) )
         {
             // need to merge the filename on to the path
             path = FormatString("%s%.*s%.*s") <<
@@ -1062,16 +1085,14 @@ bool EmacsFile::parse_analyse_filespec( const EmacsString &filespec )
         _dbg_msg( FormatString("EmacsFile::parse_filename switch to remote impl host '%s' filespec '%s'")
                     << remote_host << filespec );
 
-        FIO_EOL_Attribute eol_attr = impl->fio_get_eol_attribute();
-        delete impl;
-        impl = EmacsFileImplementation::factoryEmacsFileRemote( *this, eol_attr );
-    }
-    else
-    {
-        disk_end = 0;
+        FIO_EOL_Attribute eol_attr = m_impl->fio_get_eol_attribute();
+        delete m_impl;
+        m_impl = EmacsFileImplementation::factoryEmacsFileRemote( *this, eol_attr );
     }
 
-    if( impl->fio_is_directory( sp ) )
+    disk_end = 0;
+
+    if( m_impl->fio_is_directory( sp ) )
     {
         // all of sp is a path
         path = sp;
@@ -1085,14 +1106,14 @@ bool EmacsFile::parse_analyse_filespec( const EmacsString &filespec )
         int path_end = sp.last( PATH_CH );
         if( path_end < 0 )
         {
-            path_end = disk_end;
+            path_end = 0;
         }
         else
         {
             path_end++;
         }
 
-        path = sp( disk_end, path_end );
+        path = sp( 0, path_end );
 
         int filename_end = sp.last( '.', path_end );
         if( filename_end < 0 )

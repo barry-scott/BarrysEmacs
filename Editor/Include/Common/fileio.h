@@ -111,10 +111,13 @@ public:
     virtual FileFindImplementation *
         factoryFileFindImplementation( bool return_all_directories ) = 0;
 
-protected:
+    // helpers
     virtual bool
         fio_is_directory( const EmacsString &filename ) = 0;
+    virtual EmacsString
+        fio_cwd() = 0;
 
+protected:
     EmacsFile &m_parent;
     FIO_EOL_Attribute m_eol_attr;
     FIO_Encoding_Attribute m_encoding_attr;
@@ -131,6 +134,7 @@ class EmacsFile : public EmacsObject
 {
 public:
     EMACS_OBJECT_FUNCTIONS( EmacsFile )
+
     EmacsFile( const EmacsString &filename, const EmacsString &def, FIO_EOL_Attribute _attr=FIO_EOL__None );
     EmacsFile( const EmacsString &filename, FIO_EOL_Attribute _attr=FIO_EOL__None );
     EmacsFile( FIO_EOL_Attribute _attr=FIO_EOL__None );
@@ -142,92 +146,92 @@ public:
 
     bool fio_create( FIO_CreateMode mode, FIO_EOL_Attribute attr )
     {
-        return impl->fio_create( mode, attr );
+        return m_impl->fio_create( mode, attr );
     }
     bool fio_open( bool eof=false, FIO_EOL_Attribute attr=FIO_EOL__None )
     {
-        return impl->fio_open( eof, attr );
+        return m_impl->fio_open( eof, attr );
     }
     bool fio_find_using_path( const EmacsString &path, const EmacsString &fn, const EmacsString &ex )
     {
-        return impl->fio_find_using_path( path, fn, ex );
+        return m_impl->fio_find_using_path( path, fn, ex );
     }
     bool fio_open( FILE *existing_file, FIO_EOL_Attribute attr )
     {
-        return impl->fio_open( existing_file, attr );
+        return m_impl->fio_open( existing_file, attr );
     }
 
     void fio_set_filespec_from( EmacsFile &other );
     bool fio_is_open()
     {
-        return impl->fio_is_open();
+        return m_impl->fio_is_open();
     }
 
     // Old 8bit chars
     int fio_get( unsigned char *buffer, int size )
     {
-        return impl->fio_get( buffer, size );
+        return m_impl->fio_get( buffer, size );
     }
     int fio_get_line( unsigned char *buffer, int len )
     {
-        return impl->fio_get_line( buffer, len );
+        return m_impl->fio_get_line( buffer, len );
     }
     int fio_get_with_prompt( unsigned char *buffer, int size, const unsigned char *prompt )
     {
-        return impl->fio_get_with_prompt( buffer, size, prompt );
+        return m_impl->fio_get_with_prompt( buffer, size, prompt );
     }
 
     int fio_put( const unsigned char *buffer, int size )
     {
-        return impl->fio_put( buffer, size );
+        return m_impl->fio_put( buffer, size );
     }
 
     // Unicode chars
     int fio_get( EmacsChar_t *buffer, int len )
     {
-        return impl->fio_get( buffer, len );
+        return m_impl->fio_get( buffer, len );
     }
     //int fio_get_line( EmacsChar_t *buf, int len );
     //int fio_get_with_prompt( EmacsChar_t *buffer, int size, const EmacsChar_t *prompt );
 
     int fio_put( const EmacsChar_t *buffer, int len )
     {
-        return impl->fio_put( buffer, len );
+        return m_impl->fio_put( buffer, len );
     }
 
     int fio_put( const EmacsString &str )
     {
-        return impl->fio_put( str );
+        return m_impl->fio_put( str );
     }
 
     bool fio_close()
     {
-        return impl->fio_close();
+        return m_impl->fio_close();
     }
     void fio_flush()
     {
-        impl->fio_flush();
+        m_impl->fio_flush();
     }
 
     long int fio_size()
     {
-        return impl->fio_size();
+        return m_impl->fio_size();
     }
     time_t fio_modify_date()
     {
-        return impl->fio_modify_date();
+        return m_impl->fio_modify_date();
     }
     const EmacsString &fio_getname()
     {
-        return impl->fio_getname();
+        return m_impl->fio_getname();
     }
     FIO_EOL_Attribute fio_get_eol_attribute()
     {
-        return impl->fio_get_eol_attribute();
+        return m_impl->fio_get_eol_attribute();
     }
     FIO_Encoding_Attribute fio_get_encoding_attribute()
     {
-        return impl->fio_get_encoding_attribute();
+        return m_impl->fio_get_encoding_attribute();
     }
 
     //
@@ -235,36 +239,36 @@ public:
     //
     int fio_access()
     {
-        return impl->fio_access();
+        return m_impl->fio_access();
     }
     bool fio_file_exists()
     {
-        return impl->fio_file_exists();
+        return m_impl->fio_file_exists();
     }
     int fio_delete()
     {
-        return impl->fio_delete();
+        return m_impl->fio_delete();
     }
     time_t fio_file_modify_date()
     {
-        return impl->fio_file_modify_date();
+        return m_impl->fio_file_modify_date();
     }
     bool fio_is_directory()
     {
-        return impl->fio_is_directory();
+        return m_impl->fio_is_directory();
     }
     bool fio_is_directory( const EmacsString &filename )
     {
-        return impl->fio_is_directory( filename );
+        return m_impl->fio_is_directory( filename );
     }
     bool fio_is_regular()
     {
-        return impl->fio_is_regular();
+        return m_impl->fio_is_regular();
     }
 
     FileFindImplementation *factoryFileFindImplementation( bool return_all_directories )
     {
-        return impl->factoryFileFindImplementation( return_all_directories );
+        return m_impl->factoryFileFindImplementation( return_all_directories );
     }
 
 public:
@@ -289,5 +293,5 @@ private:
     bool parse_valid;
 
 private:
-    EmacsFileImplementation *impl;
+    EmacsFileImplementation *m_impl;
 };

@@ -46,7 +46,7 @@ EmacsString fetch_os_error( int error_code );
 int synchronise_files(void);
 EmacsString file_format_string( const EmacsString &format, const EmacsString &filename );
 EmacsString file_format_string( const EmacsString &format, const EmacsFile &fab );
-bool file_read_veto( const EmacsString &filename );
+bool file_read_veto( EmacsFile &file );
 
 // Static strings including error messages
 static EmacsString ckp_ext( "EMACS_CHECKPOINT:.CKP" );
@@ -984,7 +984,8 @@ int write_this( const EmacsString &fname )
         }
     }
 
-    if( bf_cur->write_file( fn, EmacsBuffer::ORDINARY_WRITE ) != 0 )
+    EmacsFile file( fn );
+    if( bf_cur->write_file( file, EmacsBuffer::ORDINARY_WRITE ) != 0 )
     {
         bf_cur->b_fname = wrote_file;
         delete bf_cur->b_journal;
@@ -1035,15 +1036,13 @@ int insert_file( void )
         file_table.get_word_mlisp( fn );
     }
 
-    EmacsString fullname;
-    expand_and_default( fn, EmacsString::null, fullname );
-
-    if( file_read_veto( fullname ) )
+    EmacsFile file( fn );
+    if( file_read_veto( file ) )
     {
         return 0;
     }
 
-    if( bf_cur->read_file( fn, 0, 0 ) != 0
+    if( bf_cur->read_file( file, 0, 0 ) != 0
     || interrupt_key_struck != 0 )
     {
         if( bf_cur->b_modified == 0 )
@@ -1056,11 +1055,11 @@ int insert_file( void )
 
     if( bf_cur->b_mode.md_syntax_colouring )
     {
-        syntax_insert_update( dot, (bf_cur->unrestrictedSize()) - old_size );
+        syntax_insert_update( dot, bf_cur->unrestrictedSize() - old_size );
     }
 
     return 0;
-}                // Of InsertFile
+}
 
 
 // Function interface to write all modified files
@@ -1082,9 +1081,7 @@ int read_file_command( void )
         return 0;
     }
 
-    EmacsString fullname;
-    expand_and_default( fn, EmacsString::null, fullname );
-
+    EmacsFile fullname( fn );
     if( file_read_veto( fullname ) )
     {
         return 0;
@@ -1201,7 +1198,8 @@ int append_to_file( void )
     }
     else
     {
-        bf_cur->write_file( fn, EmacsBuffer::APPEND_WRITE );
+        EmacsFile file( fn );
+        bf_cur->write_file( file, EmacsBuffer::APPEND_WRITE );
     }
 
     return 0;
@@ -1353,13 +1351,12 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
     //
     //    Check the limits
     //
-    if( file_read_veto( file.result_spec ) )
+    if( file_read_veto( file ) )
     {
         return 1;
     }
 
     EmacsString bufname = makeBufferName( file.result_spec, NULL );
-
     if( bufname.isNull() )
     {
         return 0;
@@ -1371,7 +1368,7 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
     bf_cur->b_fname = EmacsString::null;
 
     // Read in the file
-    int r_stat = bf_cur->read_file( file.result_spec, 1, createnew );
+    int r_stat = bf_cur->read_file( file, 1, createnew );
 
     //
     // When the read is interrupted, leave what has already been
@@ -1423,23 +1420,16 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
 
 
 // Read a file into a buffer
-int EmacsBuffer::read_file( const EmacsString &fn, int erase, int createnew )
+int EmacsBuffer::read_file( EmacsFile &file, int erase, int createnew )
 {
-    if( fn.isNull() )
+    if( file.fio_is_directory() )
     {
-        error( null_file_spec );
-        return 0;
-    }
-
-    EmacsFile fd( fn );
-    if( fd.fio_is_directory() )
-    {
-        error( FormatString("read-file cannot open directory %s") << fn );
+        error( FormatString("read-file cannot open directory %s") << file.result_spec );
         return 0;
     }
 
     // Open the file if possible
-    if( !fd.fio_open() )
+    if( !file.fio_open() )
     {
         int saved_errno = errno;
 
@@ -1467,14 +1457,14 @@ int EmacsBuffer::read_file( const EmacsString &fn, int erase, int createnew )
                 erase_bf();
             }
 
-            error( FormatString("New file: %s") << fn );
+            error( FormatString("New file: %s") << file.result_spec );
 
-            b_fname = fd.result_spec;
+            b_fname = file.result_spec;
             b_kind = FILEBUFFER;
         }
         else
         {
-            error( FormatString(perror_str) << fetch_os_error(errno) << fn );
+            error( FormatString(perror_str) << fetch_os_error(errno) << file.result_spec );
         }
 
         errno = saved_errno;
@@ -1509,20 +1499,20 @@ int EmacsBuffer::read_file( const EmacsString &fn, int erase, int createnew )
     //
     gap_to( dot );
 
-    int fsize = int( fd.fio_size() ) + 2000;
+    long int fsize = file.fio_size() + 2000;
     if( gap_room( fsize ) != 0 )
     {
-        fd.fio_close();
-        error( FormatString("No room for file %s") << fn);
+        file.fio_close();
+        error( FormatString("No room for file %s") << file.result_spec);
         return 0;
     }
 
     // Get the real filename
-    EmacsString fnam( fd.fio_getname() );
+    EmacsString fnam( file.fio_getname() );
     if( erase )
     {
-        b_synch_file_time = b_file_time = fd.fio_modify_date();
-        b_synch_file_access = b_file_access = EmacsFile( fnam ).fio_access();
+        b_synch_file_time = b_file_time = file.fio_modify_date();
+        b_synch_file_access = b_file_access = file.fio_access();
         b_mode.md_readonly = b_file_access < 0;
     }
     //
@@ -1534,7 +1524,7 @@ int EmacsBuffer::read_file( const EmacsString &fn, int erase, int createnew )
     if( fsize > 0 )
     {
         while( ! ml_err
-        && (i = fd.fio_get( b_base + dot - 1 + n, fsize - n)) > 0 )
+        && (i = file.fio_get( b_base + dot - 1 + n, fsize - n)) > 0 )
         {
             n += i;
             if( n > fsize - 1000 )
@@ -1547,11 +1537,11 @@ int EmacsBuffer::read_file( const EmacsString &fn, int erase, int createnew )
 
     if( erase )
     {
-        b_eol_attribute = fd.fio_get_eol_attribute();
+        b_eol_attribute = file.fio_get_eol_attribute();
     }
 
     // Close  the file, and adjust the pointers
-    fd.fio_close();
+    file.fio_close();
     if( n > 0 )
     {
         // first record an insert before changing the buffer size
@@ -1634,12 +1624,9 @@ static EmacsString concoct_name( const EmacsString &fn, const EmacsString &exten
 // successful. Appends to the file if AppendIt is append_write, does a checkpoint
 // style write if AppendIt is checkpoint_write.
 //
-int EmacsBuffer::write_file( const EmacsString &fn, EmacsBuffer::WriteFileOperation_t appendit )
+int EmacsBuffer::write_file( EmacsFile &file, EmacsBuffer::WriteFileOperation_t appendit )
 {
     wrote_file = EmacsString::null;
-
-    if( fn.isNull() )
-        return 0;
 
     if( b_eol_attribute == FIO_EOL__None )
     {
@@ -1652,7 +1639,6 @@ int EmacsBuffer::write_file( const EmacsString &fn, EmacsBuffer::WriteFileOperat
         write_eol_attribute = end_of_line_style_override;
     }
 
-    EmacsFile fd( fn );
     // Open the file, and position to the correct place
     switch( appendit )
     {
@@ -1661,31 +1647,31 @@ int EmacsBuffer::write_file( const EmacsString &fn, EmacsBuffer::WriteFileOperat
         // Open an existing file for appending, or if there is none,
         // create a new file
         //
-        if( !fd.fio_open( true, write_eol_attribute ) )
+        if( !file.fio_open( true, write_eol_attribute ) )
         {
-            fd.fio_create( FIO_STD, write_eol_attribute );
+            file.fio_create( FIO_STD, write_eol_attribute );
         }
         break;
 
     case CHECKPOINT_WRITE:
-        fd.fio_create( FIO_CKP, write_eol_attribute );
+        file.fio_create( FIO_CKP, write_eol_attribute );
         break;
 
     case ORDINARY_WRITE:
-        fd.fio_create( FIO_STD, write_eol_attribute );
+        file.fio_create( FIO_STD, write_eol_attribute );
         b_eol_attribute = write_eol_attribute;
         break;
     }
 
     // Write out the contents of the buffer if the file was created
-    if( !fd.fio_is_open() )
+    if( !file.fio_is_open() )
     {
-        error( FormatString(perror_str) << fetch_os_error(errno) << fn);
+        error( FormatString(perror_str) << fetch_os_error(errno) << file.result_spec );
         return 0;
     }
 
     //  Save the filespec
-    wrote_file = fd.fio_getname();
+    wrote_file = file.fio_getname();
 
 #ifdef vms
 {
@@ -1786,23 +1772,23 @@ int EmacsBuffer::write_file( const EmacsString &fn, EmacsBuffer::WriteFileOperat
 }
 #else
     if( b_size1 > 0
-    && fd.fio_put( b_base, b_size1 ) < 0 )
+    && file.fio_put( b_base, b_size1 ) < 0 )
     {
-        error( FormatString(perror_str) << fetch_os_error(errno) << fn);
-        fd.fio_close();
+        error( FormatString(perror_str) << fetch_os_error(errno) << file.result_spec );
+        file.fio_close();
         return 0;
     }
 
     if( b_size2 > 0
-    && fd.fio_put( b_base + b_size1 + b_gap, b_size2 ) < 0 )
+    && file.fio_put( b_base + b_size1 + b_gap, b_size2 ) < 0 )
     {
-        error( FormatString(perror_str) << fetch_os_error(errno) << fn);
-        fd.fio_close();
+        error( FormatString(perror_str) << fetch_os_error(errno) << file.result_spec );
+        file.fio_close();
         return 0;
     }
 #endif
 
-    fd.fio_close();
+    file.fio_close();
 
     // Update the modified flag and checkpointing information
     if( ! ml_err )
@@ -1997,7 +1983,8 @@ int checkpoint_buffers(void)
                         b->b_fname.length() > 0 ? b->b_fname : b->b_buf_name,
                         ckp_ext);
 
-            write_errors |= b->write_file( b->b_checkpointfn, EmacsBuffer::CHECKPOINT_WRITE ) == 0;
+            EmacsFile file( b->b_checkpointfn );
+            write_errors |= b->write_file( file, EmacsBuffer::CHECKPOINT_WRITE ) == 0;
 
             ml_err = 0;
             b->b_modified = modcnt;
@@ -2083,10 +2070,11 @@ int synchronise_files(void)
         b->set_bf();
         if( b->b_kind == FILEBUFFER
         && b->b_fname.length() > 0 )
-            {
-            EmacsString fname( b->b_fname );
+        {
+            EmacsFile file( b->b_fname );
 
 #if defined( vms )
+            // QQQ not EmacsFIle friendly
             // for VMS use the  latest version of the file
             int index = fname.last( ';' );
             // strip the version
@@ -2096,8 +2084,8 @@ int synchronise_files(void)
             }
 #endif
 
-            time_t new_time = EmacsFile( fname ).fio_file_modify_date();
-            int new_access = EmacsFile( fname ).fio_access();
+            time_t new_time = file.fio_file_modify_date();
+            int new_access = file.fio_access();
 
             // if has been deleted and used to exist
             if( new_access == 0 && new_access != b->b_synch_file_access )
@@ -2106,13 +2094,13 @@ int synchronise_files(void)
 
                 if( b->b_modified != 0 )
                 {
-                    delete_it = get_yes_or_no
-                        ( 0,
-                        FormatString("The file %s has been delete do you want to delete modified buffer %s?") <<
-                            fname << b->b_buf_name
-                        );
-                    if( !b.bufferValid() ) continue;
-
+                    delete_it = get_yes_or_no( 0,
+                            FormatString("The file %s has been delete do you want to delete modified buffer %s?") <<
+                                file.result_spec << b->b_buf_name );
+                    if( !b.bufferValid() )
+                    {
+                        continue;
+                    }
                 }
                 else
                 {
@@ -2121,9 +2109,11 @@ int synchronise_files(void)
                         delete_it = get_yes_or_no
                             ( 1,
                             FormatString("The file %s has been delete do you want to delete buffer %s?") <<
-                                fname << b->b_buf_name
-                            );
-                        if( !b.bufferValid() ) continue;
+                                file.result_spec << b->b_buf_name );
+                        if( !b.bufferValid() )
+                        {
+                            continue;
+                        }
                     }
                 }
 
@@ -2160,9 +2150,11 @@ int synchronise_files(void)
                     read_it = get_yes_or_no
                         ( 0,
                         FormatString("For modified buffer %s the file %s has changed do you want to reload it?") <<
-                            b->b_buf_name << fname
-                        );
-                    if( !b.bufferValid() ) continue;
+                            b->b_buf_name << file.result_spec );
+                    if( !b.bufferValid() )
+                    {
+                        continue;
+                    }
                 }
                 else
                 {
@@ -2171,9 +2163,11 @@ int synchronise_files(void)
                         read_it = get_yes_or_no
                             ( 1,
                             FormatString("The file %s has changed do you want to reload it?") <<
-                                fname
-                            );
-                        if( !b.bufferValid() ) continue;
+                                file.result_spec );
+                        if( !b.bufferValid() )
+                        {
+                            continue;
+                        }
                     }
                 }
 
@@ -2186,7 +2180,7 @@ int synchronise_files(void)
                     // allow the buffer to be over written
                     b->b_mode.md_readonly = 0;
 
-                    message(FormatString("Reading buffer to synchronise %s...") << b->b_buf_name );
+                    message( FormatString("Reading buffer to synchronise %s...") << b->b_buf_name );
                     if( theActiveView != NULL && theActiveView->currentWindow() != NULL )
                     {
                         theActiveView->do_dsp();    // Make the screen correct
@@ -2194,9 +2188,12 @@ int synchronise_files(void)
 
                     // the do_dsp may change buffers under us
                     b->set_bf();
-                    b->read_file( fname, 1, 0 );
+                    b->read_file( file, 1, 0 );
                     callProc( buffer_file_reloaded_proc, bf_cur->b_buf_name );
-                    if( !b.bufferValid() ) continue;
+                    if( !b.bufferValid() )
+                    {
+                        continue;
+                    }
 
                     set_dot( old_dot );
                 }
@@ -2272,7 +2269,7 @@ int synchronise_files(void)
     return 0;
 }
 
-bool file_read_veto( const EmacsString &filename )
+bool file_read_veto( EmacsFile &file )
 {
     // only bother if there is a size limit
     if( maximum_file_read_size.asInt() == 0 )
@@ -2280,22 +2277,14 @@ bool file_read_veto( const EmacsString &filename )
         return false;
     }
 
-    EmacsFile fd( filename );
-
-    // Open the file if possible
-    if( !fd.fio_open() )
-    {
-        return false;
-    }
-
     //
     //    Check the size is within the read limit
     //
-    int file_size = int( fd.fio_size() );
+    long int file_size = file.fio_size();
     if( file_size > maximum_file_read_size.asInt() )
     {
         error( FormatString( "maximum file size %d exceeded. %d bytes in %s" )
-            << maximum_file_read_size << file_size << filename );
+            << maximum_file_read_size << file_size << file.result_spec );
         return true;
     }
 

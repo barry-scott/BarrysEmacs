@@ -210,9 +210,9 @@ EmacsFile::EmacsFile( const EmacsString &filename, const EmacsString &def, FIO_E
 , filetype_maxlen( 0 )
 , file_case_sensitive( false )
 , parse_valid( false )
-, impl( 0 )
+, m_impl( 0 )
 {
-    impl = EmacsFileImplementation::factoryEmacsFileLocal( *this, attr );
+    m_impl = EmacsFileImplementation::factoryEmacsFileLocal( *this, attr );
     parse_filename( filename, def );
 }
 
@@ -228,9 +228,9 @@ EmacsFile::EmacsFile( const EmacsString &filename, FIO_EOL_Attribute attr )
 , filetype_maxlen( 0 )
 , file_case_sensitive( false )
 , parse_valid( false )
-, impl( 0 )
+, m_impl( 0 )
 {
-    impl = EmacsFileImplementation::factoryEmacsFileLocal( *this, attr );
+    m_impl = EmacsFileImplementation::factoryEmacsFileLocal( *this, attr );
     parse_filename( filename, EmacsString::null );
 }
 
@@ -246,20 +246,20 @@ EmacsFile::EmacsFile( FIO_EOL_Attribute attr )
 , filetype_maxlen( 0 )
 , file_case_sensitive( false )
 , parse_valid( false )
-, impl( 0 )
+, m_impl( 0 )
 {
-    impl = EmacsFileImplementation::factoryEmacsFileLocal( *this, attr );
+    m_impl = EmacsFileImplementation::factoryEmacsFileLocal( *this, attr );
 }
 
 EmacsFile::~EmacsFile()
 {
-    delete impl;
+    delete m_impl;
 }
 
 EmacsString EmacsFile::repr()
 {
-    return FormatString("EmacsFile %p: parse_valid %d remote_host '%s' result_spec '%s'")
-                    << this << parse_valid << remote_host << result_spec;
+    return FormatString("EmacsFile %p: parse_valid %d remote_host '%s' path '%s' name '%s' type '%s' result_spec '%s'")
+                    << this << parse_valid << remote_host << path << filename << filetype << result_spec;
 }
 
 bool EmacsFile::parse_is_valid()

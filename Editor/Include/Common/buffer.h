@@ -230,8 +230,8 @@ public:
     };
 
 
-    int read_file( const EmacsString &fn, int erase, int createnew );
-    int write_file( const EmacsString &fn, WriteFileOperation_t appendit );
+    int read_file( EmacsFile &file, int erase, int createnew );
+    int write_file( EmacsFile &file, WriteFileOperation_t appendit );
 
 
     inline EmacsChar_t char_at( int n )
