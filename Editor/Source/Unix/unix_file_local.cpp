@@ -114,13 +114,19 @@ public:
         factoryFileFindImplementation( bool return_all_directories );
 
     // helpers
-   virtual bool
+    virtual bool
         fio_is_directory( const EmacsString &filename );
-     virtual EmacsString
+    virtual EmacsString
         fio_cwd();
+    virtual EmacsString
+        fio_home_dir()
+    {
+        return m_home_dir;
+    }
 
 private:
     FILE *m_file;
+    EmacsString m_home_dir;
 };
 
 FileFindImplementation *EmacsFileLocal::factoryFileFindImplementation( bool return_all_directories )
@@ -136,7 +142,12 @@ EmacsFileImplementation *EmacsFileImplementation::factoryEmacsFileLocal( EmacsFi
 EmacsFileLocal::EmacsFileLocal( EmacsFile &parent, FIO_EOL_Attribute attr )
 : EmacsFileImplementation( parent, attr )
 , m_file( NULL )
+, m_home_dir( get_config_env( "HOME" ) )
 {
+    if( m_home_dir.isNull() )
+    {
+        m_home_dir = fio_cwd();
+    }
 }
 
 EmacsFileLocal::~EmacsFileLocal()
@@ -582,19 +593,11 @@ bool EmacsFileLocal::fio_is_regular()
 # define Trace( s ) // do nothing
 #endif
 
-static void expand_tilda_path( const EmacsString &in_path, EmacsString &out_path)
+void EmacsFile::expand_tilda_path( const EmacsString &in_path, EmacsString &out_path )
 {
     EmacsString expanded_in_path( in_path )
 
     Trace( FormatString("expand_tilda_path( %s )") << in_path );
-
-    // QQQ this is not EmacsFileRemote friendly
-    char c_def_path[1+MAXPATHLEN+1];
-
-    c_def_path[0] = '\0';
-    getcwd( c_def_path, sizeof(c_def_path) );
-
-    EmacsString def_path( c_def_path );
 
     int in_pos = 0;
     if( expanded_in_path.length() >= 2
@@ -602,23 +605,16 @@ static void expand_tilda_path( const EmacsString &in_path, EmacsString &out_path
     {
         if( expanded_in_path[1] == PATH_CH )        // ~/filename
         {
-            char *value = getenv( "HOME" );
-            if( value != NULL )
-            {
-                in_pos = 2;
-                out_path.append( EmacsString( value ) );
-            }
-            else
-            {
-                out_path.append( def_path );
-            }
+            in_pos = 2;
+            out_path.append( m_impl->fio_home_dir() );
         }
         else
         {   // ~user/filename
+            // QQQ does not work for EmacsFileRemote
             int path_char_pos = expanded_in_path.first( PATH_CH );
             if( path_char_pos < 0 )
             {
-                out_path.append( def_path );
+                out_path.append( m_impl->fio_cwd() );
             }
             else
             {
@@ -626,7 +622,7 @@ static void expand_tilda_path( const EmacsString &in_path, EmacsString &out_path
                 struct passwd *pw = getpwnam( user );
                 if( pw == NULL )
                 {
-                    out_path.append( def_path );
+                    out_path.append( m_impl->fio_cwd() );
                 }
                 else
                 {
@@ -641,7 +637,7 @@ static void expand_tilda_path( const EmacsString &in_path, EmacsString &out_path
         if( expanded_in_path.length() >= 1
         && expanded_in_path[0] != '/' )
         {
-            out_path.append( def_path );
+            out_path.append( m_impl->fio_cwd() );
         }
     }
 

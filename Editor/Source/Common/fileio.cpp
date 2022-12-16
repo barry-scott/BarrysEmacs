@@ -753,7 +753,7 @@ int expand_file_name( void )
     EmacsString fn;
     getescword( file_table., ": expand-file-name ", fn );
 
-    if( fn.length() > 0 )
+    if( !fn.isNull() )
     {
         EmacsFile *fullname = EMACS_NEW EmacsFile( fn );
 
@@ -996,7 +996,7 @@ int write_this( const EmacsString &fname )
     if( unlink_checkpoint_files != 0 )
     {
         if( !ml_err
-        && bf_cur->b_checkpointfn.length() > 0 )
+        && !bf_cur->b_checkpointfn.isNull() )
         {
             EmacsFile( bf_cur->b_checkpointfn ).fio_delete();
         }
@@ -1891,7 +1891,7 @@ void kill_checkpoint_files( void )
         EmacsBuffer *b = buffers;
         while( b != NULL )
         {
-            if( b->b_checkpointfn.length() > 0 )
+            if( !b->b_checkpointfn.isNull() )
             {
                 EmacsFile( b->b_checkpointfn ).fio_delete();
                 b->b_checkpointfn = EmacsString::null;
@@ -1980,7 +1980,7 @@ int checkpoint_buffers(void)
             if( b->b_checkpointfn.isNull() )
                 b->b_checkpointfn =
                     concoct_name(
-                        b->b_fname.length() > 0 ? b->b_fname : b->b_buf_name,
+                        !b->b_fname.isNull() ? b->b_fname : b->b_buf_name,
                         ckp_ext);
 
             EmacsFile file( b->b_checkpointfn );
@@ -2069,12 +2069,12 @@ int synchronise_files(void)
 
         b->set_bf();
         if( b->b_kind == FILEBUFFER
-        && b->b_fname.length() > 0 )
+        && !b->b_fname.isNull() )
         {
             EmacsFile file( b->b_fname );
 
 #if defined( vms )
-            // QQQ not EmacsFIle friendly
+            // QQQ not EmacsFile friendly
             // for VMS use the  latest version of the file
             int index = fname.last( ';' );
             // strip the version

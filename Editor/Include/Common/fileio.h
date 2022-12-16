@@ -116,6 +116,8 @@ public:
         fio_is_directory( const EmacsString &filename ) = 0;
     virtual EmacsString
         fio_cwd() = 0;
+    virtual EmacsString
+        fio_home_dir() = 0;
 
 protected:
     EmacsFile &m_parent;
@@ -288,6 +290,7 @@ private:
     void parse_init();
     bool fio_is_regular( const EmacsString &filename );
     bool parse_analyse_filespec( const EmacsString &filespec );
+    void expand_tilda_path( const EmacsString &in_path, EmacsString &out_path );
 
     bool parse_valid;
 
