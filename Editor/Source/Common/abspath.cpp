@@ -68,7 +68,7 @@ int expand_and_default( const EmacsString &nm, const EmacsString &def, EmacsStri
     EmacsFile fab( nm, def );
     if( fab.parse_is_valid() )
     {
-        buf = fab.result_spec;
+        buf = fab.fio_getname();
     }
     else
     {
@@ -95,7 +95,7 @@ int _chdrive( int drive )
 int chdir_and_set_global_record( const EmacsString &dirname )
 {
     EmacsFile full_dirname( dirname );
-    EmacsString path( full_dirname.result_spec );
+    EmacsString path( full_dirname.fio_getname() );
 
 #ifdef WIN32
     int len = path.length();

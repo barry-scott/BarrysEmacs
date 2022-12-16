@@ -33,7 +33,7 @@ int visit_file_command( void );
 int write_named_file_command( void );
 int write_named_file( const EmacsString &fn );
 int append_to_file( void );
-EmacsString makeBufferName( EmacsString &fullname, EmacsBuffer *existing_buffer );
+EmacsString makeBufferName( const EmacsString &fullname, EmacsBuffer *existing_buffer );
 int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const EmacsString &dn );
 static EmacsString concoct_name( const EmacsString &fn, const EmacsString &extension );
 bool mod_exist( void );
@@ -468,8 +468,8 @@ int file_name_expand_and_default(void)
     getescword( file_table., ": file-name-expand-and-default (default-filename) ", def );
 
     EmacsFile file( fn, def );
+    ml_value = file.fio_getname();
 
-    ml_value = file.result_spec;
     return 0;
 }
 
@@ -846,7 +846,7 @@ static void backup_buffer( EmacsString &fn )
     //BoundName *proc = BoundName::find( "create-backup-filename" );
 
     bool use_builtin_rule = true;
-    EmacsString string( fab.result_spec );
+    EmacsString string( fab.fio_getname() );
     if( callProc( buffer_backup_filename_proc, string ) )
     {
         try
@@ -866,12 +866,12 @@ static void backup_buffer( EmacsString &fn )
     {
         // use backup format to generate the backup filename
         EmacsString backup_filename = file_format_string( backup_filename_format.asString(), fab );
-        EmacsString original_filename = fab.result_spec;
+        EmacsString original_filename = fab.fio_getname();
 
         EmacsFile new_filename( backup_filename, fn );
         fab.fio_set_filespec_from( new_filename );
 
-        if( original_filename == fab.result_spec )
+        if( original_filename == fab.fio_getname() )
         {
             error( "Backup filename is the same as the original filename" );
             return;
@@ -879,9 +879,9 @@ static void backup_buffer( EmacsString &fn )
     }
 
     // delete the old backup file
-    if( remove( fab.result_spec ) != 0 && errno == EACCES )
+    if( remove( fab.fio_getname() ) != 0 && errno == EACCES )
     {
-        error( FormatString("Failed to delete %s") << fab.result_spec );
+        error( FormatString("Failed to delete %s") << fab.fio_getname() );
         return;
     }
 
@@ -891,9 +891,9 @@ static void backup_buffer( EmacsString &fn )
         // rename the old file to the backup file name
         // but expect fn not to exist
         //
-        if( rename( fn, fab.result_spec ) != 0 && errno != ENOENT )
+        if( rename( fn, fab.fio_getname() ) != 0 && errno != ENOENT )
         {
-            error( FormatString("Failed to rename %s to %s") << fn << fab.result_spec );
+            error( FormatString("Failed to rename %s to %s") << fn << fab.fio_getname() );
             return;
         }
     }
@@ -903,7 +903,7 @@ static void backup_buffer( EmacsString &fn )
         // copy the old file to the backup file name
         //
         EmacsFile in( fn, FIO_EOL__Binary );
-        EmacsFile out( fab.result_spec, FIO_EOL__Binary );
+        EmacsFile out( fab.fio_getname(), FIO_EOL__Binary );
 
         // Open the input file
         if( !in.fio_open() )
@@ -918,7 +918,7 @@ static void backup_buffer( EmacsString &fn )
         // Create the output file
         if( !out.fio_create( FIO_STD, FIO_EOL__Binary ) )
         {
-            error( FormatString("Failed to create file for backup %s") <<fab.result_spec );
+            error( FormatString("Failed to create file for backup %s") <<fab.fio_getname() );
             return;
         }
 
@@ -930,14 +930,14 @@ static void backup_buffer( EmacsString &fn )
         {
             if( out.fio_put( buf, len ) < 0 )
             {
-                error( FormatString("Error writing while backing up to %s") << fab.result_spec );
+                error( FormatString("Error writing while backing up to %s") << fab.fio_getname() );
                 return;
             }
         }
 
         if( len < 0 )
         {
-            error( FormatString("Error reading while backing up from %s") << fab.result_spec );
+            error( FormatString("Error reading while backing up from %s") << fab.fio_getname() );
             return;
         }
     }
@@ -1205,7 +1205,7 @@ int append_to_file( void )
     return 0;
 }
 
-EmacsString makeBufferName( EmacsString &fullname, EmacsBuffer *existing_buffer )
+EmacsString makeBufferName( const EmacsString &fullname, EmacsBuffer *existing_buffer )
 {
     EmacsString bufname;
 
@@ -1331,7 +1331,7 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
     }
 
     EmacsBuffer *b = buffers;
-    while( b != NULL && file_name_compare->compare( b->b_fname, file.result_spec ) != 0 )
+    while( b != NULL && file_name_compare->compare( b->b_fname, file.fio_getname() ) != 0 )
     {
         b = b->b_next;
     }
@@ -1356,7 +1356,7 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
         return 1;
     }
 
-    EmacsString bufname = makeBufferName( file.result_spec, NULL );
+    EmacsString bufname = makeBufferName( file.fio_getname(), NULL );
     if( bufname.isNull() )
     {
         return 0;
@@ -1412,7 +1412,7 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
 
     if( !callProc( buffer_file_loaded_proc, bf_cur->b_buf_name ) )
     {
-        do_auto( file.result_spec );
+        do_auto( file.fio_getname() );
     }
 
     return 1;
@@ -1424,7 +1424,7 @@ int EmacsBuffer::read_file( EmacsFile &file, int erase, int createnew )
 {
     if( file.fio_is_directory() )
     {
-        error( FormatString("read-file cannot open directory %s") << file.result_spec );
+        error( FormatString("read-file cannot open directory %s") << file.fio_getname() );
         return 0;
     }
 
@@ -1457,14 +1457,14 @@ int EmacsBuffer::read_file( EmacsFile &file, int erase, int createnew )
                 erase_bf();
             }
 
-            error( FormatString("New file: %s") << file.result_spec );
+            error( FormatString("New file: %s") << file.fio_getname() );
 
-            b_fname = file.result_spec;
+            b_fname = file.fio_getname();
             b_kind = FILEBUFFER;
         }
         else
         {
-            error( FormatString(perror_str) << fetch_os_error(errno) << file.result_spec );
+            error( FormatString(perror_str) << fetch_os_error(errno) << file.fio_getname() );
         }
 
         errno = saved_errno;
@@ -1503,7 +1503,7 @@ int EmacsBuffer::read_file( EmacsFile &file, int erase, int createnew )
     if( gap_room( fsize ) != 0 )
     {
         file.fio_close();
-        error( FormatString("No room for file %s") << file.result_spec);
+        error( FormatString("No room for file %s") << file.fio_getname());
         return 0;
     }
 
@@ -1666,7 +1666,7 @@ int EmacsBuffer::write_file( EmacsFile &file, EmacsBuffer::WriteFileOperation_t 
     // Write out the contents of the buffer if the file was created
     if( !file.fio_is_open() )
     {
-        error( FormatString(perror_str) << fetch_os_error(errno) << file.result_spec );
+        error( FormatString(perror_str) << fetch_os_error(errno) << file.fio_getname() );
         return 0;
     }
 
@@ -1774,7 +1774,7 @@ int EmacsBuffer::write_file( EmacsFile &file, EmacsBuffer::WriteFileOperation_t 
     if( b_size1 > 0
     && file.fio_put( b_base, b_size1 ) < 0 )
     {
-        error( FormatString(perror_str) << fetch_os_error(errno) << file.result_spec );
+        error( FormatString(perror_str) << fetch_os_error(errno) << file.fio_getname() );
         file.fio_close();
         return 0;
     }
@@ -1782,7 +1782,7 @@ int EmacsBuffer::write_file( EmacsFile &file, EmacsBuffer::WriteFileOperation_t 
     if( b_size2 > 0
     && file.fio_put( b_base + b_size1 + b_gap, b_size2 ) < 0 )
     {
-        error( FormatString(perror_str) << fetch_os_error(errno) << file.result_spec );
+        error( FormatString(perror_str) << fetch_os_error(errno) << file.fio_getname() );
         file.fio_close();
         return 0;
     }
@@ -2096,7 +2096,7 @@ int synchronise_files(void)
                 {
                     delete_it = get_yes_or_no( 0,
                             FormatString("The file %s has been delete do you want to delete modified buffer %s?") <<
-                                file.result_spec << b->b_buf_name );
+                                file.fio_getname() << b->b_buf_name );
                     if( !b.bufferValid() )
                     {
                         continue;
@@ -2109,7 +2109,7 @@ int synchronise_files(void)
                         delete_it = get_yes_or_no
                             ( 1,
                             FormatString("The file %s has been delete do you want to delete buffer %s?") <<
-                                file.result_spec << b->b_buf_name );
+                                file.fio_getname() << b->b_buf_name );
                         if( !b.bufferValid() )
                         {
                             continue;
@@ -2150,7 +2150,7 @@ int synchronise_files(void)
                     read_it = get_yes_or_no
                         ( 0,
                         FormatString("For modified buffer %s the file %s has changed do you want to reload it?") <<
-                            b->b_buf_name << file.result_spec );
+                            b->b_buf_name << file.fio_getname() );
                     if( !b.bufferValid() )
                     {
                         continue;
@@ -2163,7 +2163,7 @@ int synchronise_files(void)
                         read_it = get_yes_or_no
                             ( 1,
                             FormatString("The file %s has changed do you want to reload it?") <<
-                                file.result_spec );
+                                file.fio_getname() );
                         if( !b.bufferValid() )
                         {
                             continue;
@@ -2284,7 +2284,7 @@ bool file_read_veto( EmacsFile &file )
     if( file_size > maximum_file_read_size.asInt() )
     {
         error( FormatString( "maximum file size %d exceeded. %d bytes in %s" )
-            << maximum_file_read_size << file_size << file.result_spec );
+            << maximum_file_read_size << file_size << file.fio_getname() );
         return true;
     }
 

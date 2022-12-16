@@ -241,6 +241,7 @@ int emacsMain
             _dbg_msg( FormatString("test_file       filename '%s'") << file.filename );
             _dbg_msg( FormatString("test_file       filetype '%s'") << file.filetype );
             _dbg_msg( FormatString("test_file    result_spec '%s'") << file.result_spec );
+            _dbg_msg( FormatString("test_file  fio_getname() '%s'") << file.fio_getname() );
 
             return 0;
         }

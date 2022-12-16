@@ -490,7 +490,7 @@ static EmacsString calcNewPythonPath(void)
         EmacsFile new_part( part );
         if( new_part.fab.is_valid() )
         {
-            new_python_path.append( new_part.fab.result_spec );
+            new_python_path.append( new_part.fab.fio_getname() );
             new_python_path.append( ';' );
         }
     }

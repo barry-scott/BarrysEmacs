@@ -86,7 +86,7 @@ public:
         fio_size() = 0;
     virtual time_t
         fio_modify_date() = 0;
-    virtual const EmacsString &
+    virtual EmacsString
         fio_getname() = 0;
     virtual FIO_EOL_Attribute
         fio_get_eol_attribute() { return m_eol_attr; }
@@ -160,12 +160,12 @@ public:
     {
         return m_impl->fio_open( existing_file, attr );
     }
-
-    void fio_set_filespec_from( EmacsFile &other );
     bool fio_is_open()
     {
         return m_impl->fio_is_open();
     }
+
+    void fio_set_filespec_from( EmacsFile &other );
 
     // Old 8bit chars
     int fio_get( unsigned char *buffer, int size )
@@ -198,7 +198,6 @@ public:
     {
         return m_impl->fio_put( buffer, len );
     }
-
     int fio_put( const EmacsString &str )
     {
         return m_impl->fio_put( str );
@@ -221,7 +220,7 @@ public:
     {
         return m_impl->fio_modify_date();
     }
-    const EmacsString &fio_getname()
+    EmacsString fio_getname()
     {
         return m_impl->fio_getname();
     }

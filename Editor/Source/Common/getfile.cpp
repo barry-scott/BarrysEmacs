@@ -31,7 +31,7 @@ void EmacsFileTable::makeTable( EmacsString &prefix )
     //
     if( fab.parse_is_valid() )
     {
-        prefix = fab.result_spec;
+        prefix = fab.fio_getname();
     }
     else
     {

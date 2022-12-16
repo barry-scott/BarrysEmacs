@@ -218,13 +218,13 @@ void filter_through( int n, const EmacsString &command )
     old.set_bf();
 
 # if defined( vms )
-    exec_bf( bf_cur->b_buf_name, 0, tempfile.result_spec, 0, "notused", command.data(), NULL );
+    exec_bf( bf_cur->b_buf_name, 0, tempfile.fio_getname(), 0, "notused", command.data(), NULL );
 # endif
 # if defined( __unix__ )
-    exec_bf( bf_cur->b_buf_name, 0, tempfile.result_spec, 0, shell(), "-c", command.utf8_data(), NULL );
+    exec_bf( bf_cur->b_buf_name, 0, tempfile.fio_getname(), 0, shell(), "-c", command.utf8_data(), NULL );
 # endif
 # if defined( WIN32 )
-    exec_bf( bf_cur->b_buf_name, 0, tempfile.result_spec, 0, "notused", command.utf8_data(), NULL );
+    exec_bf( bf_cur->b_buf_name, 0, tempfile.fio_getname(), 0, "notused", command.utf8_data(), NULL );
 # endif
 
     if( bf_cur->b_modified == 0 )

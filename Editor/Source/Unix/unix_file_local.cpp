@@ -94,7 +94,7 @@ public:
         fio_size();
     virtual time_t
         fio_modify_date();
-    virtual const EmacsString &
+    virtual EmacsString
         fio_getname();
 
     virtual int
@@ -491,7 +491,7 @@ long int EmacsFileLocal::fio_size()
     }
 }
 
-const EmacsString &EmacsFileLocal::fio_getname()
+EmacsString EmacsFileLocal::fio_getname()
 {
     return m_parent.result_spec;
 }
