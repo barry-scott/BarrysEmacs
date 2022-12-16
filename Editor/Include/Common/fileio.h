@@ -53,8 +53,10 @@ public:
     friend class EmacsFile;
 
     EMACS_OBJECT_FUNCTIONS( EmacsFile )
-    EmacsFileImplementation( EmacsFile &parent );
+    EmacsFileImplementation( EmacsFile &parent, FIO_EOL_Attribute attr );
     virtual ~EmacsFileImplementation();
+
+    virtual EmacsString repr() = 0;
 
     virtual bool fio_create( FIO_CreateMode mode, FIO_EOL_Attribute attr ) = 0;
     virtual bool fio_open( bool eof=false, FIO_EOL_Attribute attr=FIO_EOL__None ) = 0;
@@ -87,10 +89,9 @@ public:
     virtual const EmacsString &
         fio_getname() = 0;
     virtual FIO_EOL_Attribute
-        fio_get_eol_attribute() = 0;
+        fio_get_eol_attribute() { return m_eol_attr; }
     virtual FIO_Encoding_Attribute
-        fio_get_encoding_attribute() = 0;
-
+        fio_get_encoding_attribute() { return m_encoding_attr; }
     virtual int
         fio_access() = 0;
     virtual bool
@@ -115,6 +116,15 @@ protected:
         fio_is_directory( const EmacsString &filename ) = 0;
 
     EmacsFile &m_parent;
+    FIO_EOL_Attribute m_eol_attr;
+    FIO_Encoding_Attribute m_encoding_attr;
+
+protected:
+    int get_fixup_buffer( unsigned char *buf, int len );
+
+    int m_convert_size;
+    enum { CONVERT_BUFFER_SIZE = 1024 * 1024 };
+    unsigned char *m_convert_buffer;
 };
 
 class EmacsFile : public EmacsObject
@@ -125,6 +135,8 @@ public:
     EmacsFile( const EmacsString &filename, FIO_EOL_Attribute _attr=FIO_EOL__None );
     EmacsFile( FIO_EOL_Attribute _attr=FIO_EOL__None );
     virtual ~EmacsFile();
+
+    EmacsString repr();
 
     bool parse_is_valid();
 
@@ -241,6 +253,10 @@ public:
     {
         return impl->fio_is_directory();
     }
+    bool fio_is_directory( const EmacsString &filename )
+    {
+        return impl->fio_is_directory( filename );
+    }
     bool fio_is_regular()
     {
         return impl->fio_is_regular();
@@ -267,7 +283,6 @@ public:
 private:
     bool parse_filename( const EmacsString &filename, const EmacsString &def );
     void parse_init();
-    bool fio_is_directory( const EmacsString &filename );
     bool fio_is_regular( const EmacsString &filename );
     bool parse_analyse_filespec( const EmacsString &filespec );
 

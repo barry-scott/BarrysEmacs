@@ -37,19 +37,19 @@ void EmacsDirectoryTable::makeTable( EmacsString &prefix )
     EmacsString wild_file = prefix;
     wild_file.append( "*" );
 
-    EmacsFile fab( ALL_FILES, wild_file );
+    EmacsFile *fab = EMACS_NEW EmacsFile( ALL_FILES, wild_file );
     // Expand to a full path
-    if( !fab.parse_is_valid() )
+    if( !fab->parse_is_valid() )
     {
         //
         // opss thats a bad path...
         // just return the current directory contents
         //
         EmacsFile all_files( ALL_FILES );
-        fab.fio_set_filespec_from( all_files );
+        fab->fio_set_filespec_from( all_files );
     }
 
-    if( fab.parse_is_valid() )
+    if( fab->parse_is_valid() )
     {
         //
         // For each file that matches the filespec, save the name
@@ -74,13 +74,17 @@ void EmacsDirectoryTable::makeTable( EmacsString &prefix )
             //
 
             // only if its a directory
-            if( EmacsFile( file ).fio_is_directory()
+            if( fab->fio_is_directory( file )
             // and its not already in the table
             && find( file ) == NULL )
             {
                 add( file, (void *)&file_value );
             }
         }
+    }
+    else
+    {
+        delete fab;
     }
 }
 

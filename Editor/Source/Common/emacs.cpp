@@ -218,11 +218,32 @@ int emacsMain
         init_fncs2();                           // Finish off init of functions
     }
 
-    if( 0 )
     {
-        extern void test_libssh_cpp_sftp();
-        test_libssh_cpp_sftp();
-        return 0;
+        EmacsString test_var;
+        test_var = get_config_env("EMACS_SSH_TEST");
+        if( !test_var.isNull() )
+        {
+            extern void test_libssh_cpp_sftp();
+            test_libssh_cpp_sftp();
+            return 0;
+        }
+
+        test_var = get_config_env("EMACS_FILE_TEST");
+        if( !test_var.isNull() )
+        {
+            EmacsFile file( test_var );
+            _dbg_msg( FormatString("test_file EmacsFile( '%s' )") << test_var );
+            _dbg_msg( FormatString("test_file parse_is_valid %d") << file.parse_is_valid() );
+            _dbg_msg( FormatString("test_file           wild %d") << file.wild );
+            _dbg_msg( FormatString("test_file    remote_host '%s'") << file.remote_host );
+            _dbg_msg( FormatString("test_file           disk '%s'") << file.disk );
+            _dbg_msg( FormatString("test_file           path '%s'") << file.path );
+            _dbg_msg( FormatString("test_file       filename '%s'") << file.filename );
+            _dbg_msg( FormatString("test_file       filetype '%s'") << file.filetype );
+            _dbg_msg( FormatString("test_file    result_spec '%s'") << file.result_spec );
+
+            return 0;
+        }
     }
 
     //

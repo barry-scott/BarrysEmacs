@@ -70,7 +70,7 @@ SortedListOfEmacsStrings::~SortedListOfEmacsStrings()
 
 void SortedListOfEmacsStrings::insert( const EmacsString &key, const EmacsString &value )
 {
-    ListEntryForEmacsStrings *entry = new ListEntryForEmacsStrings( key, value );
+    ListEntryForEmacsStrings *entry = EMACS_NEW ListEntryForEmacsStrings( key, value );
 
     QueueIterator<ListEntryForEmacsStrings> it( header );
     while( it.next() )

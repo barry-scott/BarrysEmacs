@@ -44,9 +44,11 @@ int match_wild( const EmacsString &, const EmacsString & );
 // virtual base class for doing wild card file finding
 class EmacsFile;
 
-class FileFindImplementation
+class FileFindImplementation : public EmacsObject
 {
 protected:
+    EMACS_OBJECT_FUNCTIONS( FileFindImplementation )
+
     FileFindImplementation( EmacsFile &files, bool return_all_directories );
 
     bool m_return_all_directories;
@@ -64,12 +66,12 @@ public:
     virtual const EmacsString &matchPattern() const;
 };
 
-class EmacsFile;
-
-class FileFind
+class FileFind : public EmacsObject
 {
 public:
-    FileFind( EmacsFile &files, bool return_all_directories=false );
+    EMACS_OBJECT_FUNCTIONS( FileFind )
+
+    FileFind( EmacsFile *files, bool return_all_directories=false );
     virtual ~FileFind();
 
     virtual EmacsString next();
@@ -77,5 +79,6 @@ public:
     virtual const EmacsString &matchPattern() const;
 
 private:
+    EmacsFile *m_files;
     FileFindImplementation *m_impl;
 };

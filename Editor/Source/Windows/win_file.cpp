@@ -513,7 +513,8 @@ private:
 };
 
 FileFind::FileFind( const EmacsFile &files, bool return_all_directories )
-: impl( NULL )
+: EmacsObejct()
+, impl( NULL )
 {
     impl = files.factoryFileFindImplementation( return_all_directories );
 }

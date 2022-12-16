@@ -131,7 +131,7 @@ void _dbg_msg( const EmacsString &msg )
     fprintf( stderr, "%s", msg.sdata() );
     if( msg[-1] != '\n' )
     {
-        fprintf( stderr, "\n" );
+        fprintf( stderr, "\r\n" );
     }
     fflush( stderr );
 }

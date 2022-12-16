@@ -31,104 +31,21 @@ bool isValidFilenameChar( EmacsChar_t ch )
     return invalid.index( ch ) < 0;
 }
 
-template <typename T> static FIO_EOL_Attribute detectEolType( unsigned char *ch_buf, int ch_buf_len )
-{
-    T *buf = reinterpret_cast<T *>( ch_buf );
-    int len = ch_buf_len/sizeof( T );
-
-    //
-    //    this makes a snap judgement of the buffers record type
-    //
-    int nl_index = -1;
-    int cr_index = -1;
-    for( int i=0; i<len; ++i )
-    {
-        if( nl_index < 0 && buf[i] == '\n' )
-        {
-            nl_index = i;
-        }
-
-        if( cr_index < 0 && buf[i] == '\r' )
-        {
-            cr_index = i;
-        }
-
-        if( nl_index >= 0 && cr_index >= 0 )
-        {
-            break;
-        }
-    }
-
-    if( nl_index > 0 && (cr_index == nl_index-1) )
-    {
-        return FIO_EOL__StreamCRLF;
-    }
-
-    if( nl_index >= 0 )
-    {
-        return FIO_EOL__StreamLF;
-    }
-
-    if( cr_index >= 0 )
-    {
-        return FIO_EOL__StreamCR;
-    }
-
-    return FIO_EOL__None;
-}
-
-template <typename T> static int stripCr( unsigned char *ch_buf, int ch_buf_len )
-{
-    T *buf = reinterpret_cast<T *>( ch_buf );
-    int len = ch_buf_len/sizeof( T );
-
-    // strip CR's from the buf
-    T *end = &buf[ len ];
-    T *put = buf;
-    T *get = put;
-
-    while( get < end )
-    {
-        T c = *get++;
-        if( c != '\r' )
-        {
-            *put++ = c;
-        }
-    }
-
-    // return the length in bytes
-    return (put - buf)*sizeof( T );
-}
-
-template <typename T> static void replaceCrWithNl( unsigned char *ch_buf, int ch_buf_len )
-{
-    // strip CR's from the buf
-
-    T *buf = reinterpret_cast<T *>( ch_buf );
-    int len = ch_buf_len/sizeof( T );
-
-    for( int i=0; i<len; ++i )
-    {
-        if( buf[i] == '\r' )
-        {
-            buf[i] = '\n';
-        }
-    }
-}
-
 class EmacsFileLocal;
 
 class FileFindLocal : public FileFindImplementation
 {
 public:
-    FileFindLocal( EmacsFile &files, bool return_all_directories );
+    EMACS_OBJECT_FUNCTIONS( FileFindlocal )
+
+    FileFindLocal( EmacsFile &files, EmacsFileLocal &local, bool return_all_directories );
     virtual ~FileFindLocal();
 
     EmacsString next();
-
     EmacsString repr();
 
 private:
+    EmacsFileLocal &m_local;
     DIR *m_find;
 };
 
@@ -137,6 +54,8 @@ class EmacsFileLocal : public EmacsFileImplementation
 public:
     EmacsFileLocal( EmacsFile &parent, FIO_EOL_Attribute attr );
     virtual ~EmacsFileLocal();
+
+    virtual EmacsString repr();
 
     virtual bool fio_create( FIO_CreateMode mode, FIO_EOL_Attribute attr );
     virtual bool fio_open( bool eof=false, FIO_EOL_Attribute attr=FIO_EOL__None );
@@ -177,10 +96,6 @@ public:
         fio_modify_date();
     virtual const EmacsString &
         fio_getname();
-    virtual FIO_EOL_Attribute
-        fio_get_eol_attribute() { return m_eol_attr; }
-    virtual FIO_Encoding_Attribute
-        fio_get_encoding_attribute() { return m_encoding_attr; }
 
     virtual int
         fio_access();
@@ -195,26 +110,18 @@ public:
     virtual bool
         fio_is_regular();
 
+    virtual bool
+        fio_is_directory( const EmacsString &filename );
     virtual FileFindImplementation *
         factoryFileFindImplementation( bool return_all_directories );
 
 private:
-    virtual bool
-        fio_is_directory( const EmacsString &filename );
-    int get_fixup_buffer( unsigned char *buf, int len );
-
     FILE *m_file;
-    FIO_EOL_Attribute m_eol_attr;
-    FIO_Encoding_Attribute m_encoding_attr;
-
-    int m_convert_size;
-    enum { CONVERT_BUFFER_SIZE = 1024 * 1024 };
-    unsigned char *m_convert_buffer;
 };
 
 FileFindImplementation *EmacsFileLocal::factoryFileFindImplementation( bool return_all_directories )
 {
-    return EMACS_NEW FileFindLocal( m_parent, return_all_directories );
+    return EMACS_NEW FileFindLocal( m_parent, *this, return_all_directories );
 }
 
 EmacsFileImplementation *EmacsFileImplementation::factoryEmacsFileLocal( EmacsFile &file, FIO_EOL_Attribute attr )
@@ -223,12 +130,8 @@ EmacsFileImplementation *EmacsFileImplementation::factoryEmacsFileLocal( EmacsFi
 }
 
 EmacsFileLocal::EmacsFileLocal( EmacsFile &parent, FIO_EOL_Attribute attr )
-: EmacsFileImplementation( parent )
+: EmacsFileImplementation( parent, attr )
 , m_file( NULL )
-, m_eol_attr( attr )
-, m_encoding_attr( FIO_Encoding_None )
-, m_convert_size( 0 )
-, m_convert_buffer( new unsigned char[ CONVERT_BUFFER_SIZE ] )
 {
 }
 
@@ -241,6 +144,13 @@ EmacsFileLocal::~EmacsFileLocal()
 
     delete [] m_convert_buffer;
 }
+
+EmacsString EmacsFileLocal::repr()
+{
+    return FormatString("EmacsFileLocal %p: m_file %p")
+                << this << m_file;
+}
+
 
 //
 //    check that the file exists and has read or read and write
@@ -588,94 +498,6 @@ time_t EmacsFileLocal::fio_file_modify_date()
     return s.data().st_mtime;
 }
 
-int EmacsFileLocal::get_fixup_buffer( unsigned char *buf, int len )
-{
-    if( m_encoding_attr == FIO_Encoding_None && len >= 2 )
-    {
-        // look for the utf-16 BOM
-        if( buf[0] == 0xff && buf[1] == 0xfe )
-        {
-            m_encoding_attr = FIO_Encoding_UTF_16_LE;
-            len -= 2;
-            memmove( buf, buf+2, len );
-        }
-        else if( buf[0] == 0xfe && buf[1] == 0xff )
-        {
-            m_encoding_attr = FIO_Encoding_UTF_16_BE;
-            len -= 2;
-            memmove( buf, buf+2, len );
-        }
-        else
-        {
-            m_encoding_attr = FIO_Encoding_UTF_8;
-        }
-    }
-
-    // convert to native - assuming little endian
-    if( m_encoding_attr == FIO_Encoding_UTF_16_BE )
-    {
-        for( int i=0; i<len; i += 2 )
-        {
-            std::swap( buf[i], buf[i+1] );
-        }
-    }
-
-    if( m_eol_attr == FIO_EOL__None )
-    {
-        if( m_encoding_attr == FIO_Encoding_UTF_8 )
-        {
-            m_eol_attr = detectEolType<unsigned char>( buf, len );
-        }
-        else
-        {
-            m_eol_attr = detectEolType<unsigned short>( buf, len );
-        }
-    }
-
-    switch( m_eol_attr )
-    {
-    default:
-        // default never gets hit...
-        emacs_assert( false );
-
-    case FIO_EOL__None:
-        // no CR or LF in the buf so return the orginal len
-        return len;
-
-    case FIO_EOL__Binary:
-        // no change required
-        return len;
-
-    case FIO_EOL__StreamLF:
-        // no change required
-        return len;
-
-    case FIO_EOL__StreamCR:
-    {
-        if( m_encoding_attr == FIO_Encoding_UTF_8 )
-        {
-            replaceCrWithNl<unsigned char>( buf, len );
-        }
-        else
-        {
-            replaceCrWithNl<unsigned short>( buf, len );
-        }
-        return len;
-    }
-
-    case FIO_EOL__StreamCRLF:
-    {
-        if( m_encoding_attr == FIO_Encoding_UTF_8 )
-        {
-            return stripCr<unsigned char>( buf, len );
-        }
-        else
-        {
-            return stripCr<unsigned short>( buf, len );
-        }
-    }
-    }
-}
 
 bool EmacsFileLocal::fio_is_directory( const EmacsString &filename )
 {
@@ -884,15 +706,18 @@ static void expand_tilda_path( const EmacsString &in_path, EmacsString &out_path
 }
 
 
-FileFind::FileFind( EmacsFile &files, bool return_all_directories )
-: m_impl( NULL )
+FileFind::FileFind( EmacsFile *files, bool return_all_directories )
+: EmacsObject()
+, m_files( files )
+, m_impl( NULL )
 {
-    m_impl = files.factoryFileFindImplementation( return_all_directories );
+    m_impl = files->factoryFileFindImplementation( return_all_directories );
 }
 
 FileFind::~FileFind()
 {
     delete m_impl;
+    delete m_files;
 }
 
 const EmacsString &FileFind::matchPattern() const
@@ -922,10 +747,15 @@ EmacsString FileFind::repr()
 }
 
 
-FileFindLocal::FileFindLocal( EmacsFile &files, bool return_all_directories )
+FileFindLocal::FileFindLocal( EmacsFile &files, EmacsFileLocal &local, bool return_all_directories )
 : FileFindImplementation( files, return_all_directories )
+, m_local( local )
 , m_find( NULL )
 {
+    _dbg_msg( FormatString("FileFindLocal this %s") << repr() );
+    _dbg_msg( FormatString("FileFindLocal m_files %s") << m_files.repr() );
+    _dbg_msg( FormatString("FileFindLocal m_local %s") << m_local.repr() );
+
     if( !m_files.parse_is_valid() )
     {
         return;
@@ -1008,8 +838,7 @@ EmacsString FileFindLocal::next()
             m_full_filename = m_root_path;
             m_full_filename.append( d->d_name );
 
-            EmacsFile fd( m_full_filename );
-            bool is_dir = fd.fio_is_directory();
+            bool is_dir = m_local.fio_is_directory( m_full_filename );
 
             // always return directories
             if( m_return_all_directories && is_dir )
@@ -1038,7 +867,6 @@ EmacsString FileFindLocal::next()
     return EmacsString::null;
 }
 
-//  QQQ: copy of sys_parse for the new EmacsFile
 void EmacsFile::parse_init()
 {
     remote_host = EmacsString::null;
@@ -1230,9 +1058,13 @@ bool EmacsFile::parse_analyse_filespec( const EmacsString &filespec )
         disk_end++;
         sp = sp( disk_end, INT_MAX );
 
-        // QQQ Once we implement remote
-        // delete impl
-        // impl = EmacsFileRemote(*this)
+        // switch to remote parsing
+        _dbg_msg( FormatString("EmacsFile::parse_filename switch to remote impl host '%s' filespec '%s'")
+                    << remote_host << filespec );
+
+        FIO_EOL_Attribute eol_attr = impl->fio_get_eol_attribute();
+        delete impl;
+        impl = EmacsFileImplementation::factoryEmacsFileRemote( *this, eol_attr );
     }
     else
     {

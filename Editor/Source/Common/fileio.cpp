@@ -154,7 +154,7 @@ bool callProc( BoundName *proc, const EmacsString &str )
     {
         ProgramNodeNode prog_node( proc, 1 );
         // must new the ProgramNodeString as its deleted via the NodeNode d'tor
-        prog_node.pa_node[0] = new ProgramNodeString( str );
+        prog_node.pa_node[0] = EMACS_NEW ProgramNodeString( str );
 
         exec_prog( &prog_node );
 
@@ -388,11 +388,13 @@ const EmacsString &FileFindImplementation::matchPattern() const
 }
 
 
-class FileFindRecursive
+class FileFindRecursive : public EmacsObject
 {
 public:
-    FileFindRecursive( EmacsFile &files )
-    : m_original_files( files )
+    EMACS_OBJECT_FUNCTIONS( FileFindRecursive )
+
+    FileFindRecursive( EmacsFile *files )
+    : EmacsObject()
     , m_stack()
     {
         // start with a finder that returns directories
@@ -413,7 +415,6 @@ public:
     virtual EmacsString next();
 
 private:
-    EmacsFile &m_original_files;
     std::deque<FileFind *> m_stack;
 };
 
@@ -443,15 +444,16 @@ EmacsString FileFindRecursive::next()
         if( next_file.fio_is_directory() )
         {
             file.append( finder->matchPattern() );
-            EmacsFile subdir( file );
+            EmacsFile *subdir = EMACS_NEW EmacsFile( file );
 
             FileFind *subdir_finder = EMACS_NEW FileFind( subdir, true );
             m_stack.push_front( subdir_finder );
+
             // spin around and get another file
             continue;
         }
 
-        // no so return the file
+        // not a directory, return the file
         return file;
     }
 
@@ -753,7 +755,7 @@ int expand_file_name( void )
 
     if( fn.length() > 0 )
     {
-        EmacsFile fullname(fn);
+        EmacsFile *fullname = EMACS_NEW EmacsFile( fn );
 
         delete search_file_handle;
         search_file_handle = EMACS_NEW FileFind( fullname );
@@ -789,22 +791,18 @@ int expand_file_name_recursive( void )
     EmacsString fn;
     getescword( file_table., ": expand-file-name-recursive ", fn );
 
-    if( fn.length() > 0 )
+    if( !fn.isNull() )
     {
-        EmacsFile fullname( fn );
-        if( fullname.fio_is_directory() )
+        EmacsFile *fullname = EMACS_NEW EmacsFile( fn );
+        if( fullname->fio_is_directory() )
         {
             error( "No filename only a directory given" );
+            delete fullname;
             return 0;
         }
 
         delete search_file_handle;
         search_file_handle = EMACS_NEW FileFindRecursive( fullname );
-        if( search_file_handle == NULL )
-        {
-            error( "No Mem" );
-            return 0;
-        }
     }
 
     if( search_file_handle == NULL )
@@ -828,7 +826,7 @@ int expand_file_name_recursive( void )
 // Function interface to write all files, and exit Emacs
 int write_file_exit( void )
 {
-    if( mod_write () != 0 )
+    if( mod_write() != 0 )
     {
         return -1;
     }

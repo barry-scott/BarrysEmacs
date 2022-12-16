@@ -43,9 +43,9 @@ void EmacsFileTable::makeTable( EmacsString &prefix )
     EmacsString wild_file = prefix;
     wild_file.append( "*" );
 
-    EmacsFile fab( ALL_FILES, wild_file );
+    EmacsFile *fab = EMACS_NEW EmacsFile( ALL_FILES, wild_file );
 
-    if( fab.parse_is_valid() )
+    if( fab->parse_is_valid() )
     {
         //
         // For each file that matches the filespec, save the name
@@ -71,6 +71,10 @@ void EmacsFileTable::makeTable( EmacsString &prefix )
                 add( file, (void *)&file_value );
             }
         }
+    }
+    else
+    {
+        delete fab;
     }
 }
 
