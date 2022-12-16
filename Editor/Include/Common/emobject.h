@@ -35,23 +35,21 @@ public:
 #endif
 
 #if DBG_ALLOC_CHECK
-    void *operator new(size_t size, const char *fileName, int lineNumber);
-    void operator delete(void *p);
+    static void *operator new( std::size_t size, const char *fileName, int lineNumber );
 #ifdef __has_array_new__
-    void *operator new [](size_t size, const char *fileName, int lineNumber);
-    void operator delete [](void *p);
+    static void *operator new []( std::size_t size, const char *fileName, int lineNumber );
 #endif
 #endif
 
-    static void *operator new(size_t size);
+    static void *operator new( std::size_t size );
     static void operator delete(void *p);
 
 #ifdef __has_array_new__
-    static void *operator new [](size_t size);
+    static void *operator new []( std::size_t size );
     static void operator delete [](void *p);
 #endif
 
-    static void *operator new( size_t, void *p ) { return p; }
+    static void *operator new( std::size_t, void *p ) { return p; }
 #ifdef _MSVC
     static void operator delete( void *, void * ) { }
 #endif
