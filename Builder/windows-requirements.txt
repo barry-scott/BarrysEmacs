@@ -1,7 +1,6 @@
 # build tools
-win-app-packager
+win-app-packager >= 1.4.3
+colour-text
 
 PyQt6
 xml-preferences>=1.1.2
-# for colour messages
-colour-text
