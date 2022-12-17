@@ -33,7 +33,7 @@ fi
 ./build-venv.sh 2>&1 | ${PYTHON} -u build_tee.py build.log
 
 export PYTHON=${PWD}/venv.tmp/bin/python
-${PYTHON} ./build_bemacs.py gui --colour | ${PYTHON} -u build_tee.py -a build.log
+${PYTHON} ./build_bemacs.py gui --colour --no-sftp | ${PYTHON} -u build_tee.py -a build.log
 
 if false
 then

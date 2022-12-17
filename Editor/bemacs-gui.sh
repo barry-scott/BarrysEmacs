@@ -5,6 +5,6 @@ Linux)
     ;;
 
 *)
-    exec PyQtBEmacs/bemacs-macosx.sh
+    exec PyQtBEmacs/bemacs-macosx.sh "$@"
     ;;
 esac
