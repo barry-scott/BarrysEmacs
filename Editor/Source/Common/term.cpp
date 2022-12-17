@@ -164,7 +164,7 @@ void TerminalControl::t_io_printf( const char *fmt, ... )
 
     va_start( argp, fmt );
 
-    vsprintf( buf, fmt, argp );
+    vsnprintf( buf, sizeof(buf), fmt, argp );
 
     t_io_print( u_str(buf) );
 }
@@ -281,9 +281,9 @@ void TerminalControl_FILE::t_io_printf(const char *fmt, ...)
     va_start( argp, fmt );
 
     char buf[256];
-    int size = vsprintf( buf, fmt, argp );
+    int size = vsnprintf( buf, sizeof(buf), fmt, argp );
 
-    message_file.fio_put( (const unsigned char *)buf, size );
+    message_file.fio_put( u_str(buf), size );
 }
 
 static int async_io;
