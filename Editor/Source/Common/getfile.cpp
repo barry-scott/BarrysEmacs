@@ -43,8 +43,7 @@ void EmacsFileTable::makeTable( EmacsString &prefix )
     EmacsString wild_file = prefix;
     wild_file.append( "*" );
 
-    EmacsFile *fab = EMACS_NEW EmacsFile( ALL_FILES, wild_file );
-
+    EmacsFile *fab = EMACS_NEW EmacsFile( wild_file );
     if( fab->parse_is_valid() )
     {
         //

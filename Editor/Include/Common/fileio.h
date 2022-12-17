@@ -4,6 +4,20 @@
 //    Structures used by fileio.c
 //
 
+#if DBG_FILE
+# define TraceFile( msg ) do { if( dbg_flags&DBG_FILE ) { _dbg_msg( msg ); } } while(0);
+#else
+# define TraceFile( msg ) // no nothing
+#endif
+
+// TraceFileTmp for expand_tilda_path
+#if DBG_TMP && 0
+# define TraceFileTmp( msg ) do { if( dbg_flags&DBG_TMP ) { TraceFile( msg ); } } while(0)
+#else
+# define TraceFileTmp( msg ) // do nothing
+#endif
+
+
 class FileAutoMode : public EmacsObject
 {                       // information for automatic mode recognition
 public:
@@ -107,7 +121,9 @@ public:
 
     // return a specific implementation of EmacsFileImplementation
     static EmacsFileImplementation *factoryEmacsFileLocal( EmacsFile &file, FIO_EOL_Attribute attr );
+#if defined( SFTP )
     static EmacsFileImplementation *factoryEmacsFileRemote( EmacsFile &file, FIO_EOL_Attribute attr );
+#endif
     virtual FileFindImplementation *
         factoryFileFindImplementation( bool return_all_directories ) = 0;
 

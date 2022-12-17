@@ -481,7 +481,7 @@ long int EmacsFileLocal::fio_size()
         }
         else
         {
-            _dbg_msg( "fseek failed!" );
+            TraceFile( "fseek failed!" );
             end_of_file_pos = 0l;
         }
 
@@ -587,17 +587,11 @@ bool EmacsFileLocal::fio_is_regular()
     return false;
 }
 
-#if DBG_TMP && 0
-# define Trace( s ) do { if( dbg_flags&DBG_TMP ) { _dbg_msg( s ); } } while(0)
-#else
-# define Trace( s ) // do nothing
-#endif
-
 void EmacsFile::expand_tilda_path( const EmacsString &in_path, EmacsString &out_path )
 {
     EmacsString expanded_in_path( in_path )
 
-    Trace( FormatString("expand_tilda_path( %s )") << in_path );
+    TraceFileTmp( FormatString("expand_tilda_path( %s )") << in_path );
 
     int in_pos = 0;
     if( expanded_in_path.length() >= 2
@@ -649,13 +643,13 @@ void EmacsFile::expand_tilda_path( const EmacsString &in_path, EmacsString &out_
 
     out_path.append( expanded_in_path( in_pos, expanded_in_path.length() ) );
 
-    Trace( FormatString( "expand_tilda_path: out_path before => %s" ) << out_path );
+    TraceFileTmp( FormatString( "expand_tilda_path: out_path before => %s" ) << out_path );
 
     for( int pos=0; pos<out_path.length(); )
     {
         if( out_path[pos] == PATH_CH )
         {
-            Trace( FormatString( "expand_tilda_path: pos: %d, len: %d out_path => %s|%s" )
+            TraceFileTmp( FormatString( "expand_tilda_path: pos: %d, len: %d out_path => %s|%s" )
                 << pos << out_path.length()
                 << out_path( 0, pos )
                 << out_path( pos, out_path.length() ) );
@@ -668,7 +662,7 @@ void EmacsFile::expand_tilda_path( const EmacsString &in_path, EmacsString &out_
             switch( out_path[pos+1] )
             {
             case PATH_CH:        // found // in the name
-                Trace( FormatString("expand_tilda_path: remove( %d, 1 )") << pos );
+                TraceFileTmp( FormatString("expand_tilda_path: remove( %d, 1 )") << pos );
                 out_path.remove( pos, 1 );
                 break;
 
@@ -677,7 +671,7 @@ void EmacsFile::expand_tilda_path( const EmacsString &in_path, EmacsString &out_
                     switch( out_path[pos+2] )
                     {
                     case PATH_CH:    // found /./ in the name
-                        Trace( FormatString("expand_tilda_path: remove( %d, 2 )") << pos );
+                        TraceFileTmp( FormatString("expand_tilda_path: remove( %d, 2 )") << pos );
                         out_path.remove( pos, 2 );
                         break;
 
@@ -687,7 +681,7 @@ void EmacsFile::expand_tilda_path( const EmacsString &in_path, EmacsString &out_
                             && out_path[pos+3] == PATH_CH) )
                         {
                             int remove = 3;
-                            Trace( "expand_tilda_path: found /../" );
+                            TraceFileTmp( "expand_tilda_path: found /../" );
                             // found /../
                             while( pos > 0 && out_path[pos-1] != PATH_CH )
                             {
@@ -696,10 +690,10 @@ void EmacsFile::expand_tilda_path( const EmacsString &in_path, EmacsString &out_
                             }
                             if( pos > 0 )
                             { pos--; remove++; }
-                            Trace( FormatString("expand_tilda_path: remove( %d, %d ) => %s" )
+                            TraceFileTmp( FormatString("expand_tilda_path: remove( %d, %d ) => %s" )
                                 << pos << remove << out_path( pos, pos + remove ) );
                             out_path.remove( pos, remove );
-                            Trace( FormatString("expand_tilda_path: found /../ %s")
+                            TraceFileTmp( FormatString("expand_tilda_path: found /../ %s")
                                 << out_path );
                         }
                         else
@@ -728,7 +722,7 @@ void EmacsFile::expand_tilda_path( const EmacsString &in_path, EmacsString &out_
         }
     }
 
-    Trace( FormatString( "expand_tilda_path: out_path after => %s" ) << out_path );
+    TraceFileTmp( FormatString( "expand_tilda_path: out_path after => %s" ) << out_path );
 }
 
 
@@ -778,9 +772,9 @@ FileFindLocal::FileFindLocal( EmacsFile &files, EmacsFileLocal &local, bool retu
 , m_local( local )
 , m_find( NULL )
 {
-    _dbg_msg( FormatString("FileFindLocal this %s") << repr() );
-    _dbg_msg( FormatString("FileFindLocal m_files %s") << m_files.repr() );
-    _dbg_msg( FormatString("FileFindLocal m_local %s") << m_local.repr() );
+    TraceFile( FormatString("FileFindLocal this %s") << repr() );
+    TraceFile( FormatString("FileFindLocal m_files %s") << m_files.repr() );
+    TraceFile( FormatString("FileFindLocal m_local %s") << m_local.repr() );
 
     if( !m_files.parse_is_valid() )
     {
@@ -1011,6 +1005,9 @@ bool EmacsFile::parse_filename( const EmacsString &name, const EmacsString &def 
 
 bool EmacsFile::parse_analyse_filespec( const EmacsString &filespec )
 {
+    TraceFile( FormatString("EmacsFile::parse_analyse_filespec[%d]( '%s' )")
+                << objectNumber() << filespec );
+
     int device_loop_max_iterations = 10;
 
     parse_init();
@@ -1067,6 +1064,7 @@ bool EmacsFile::parse_analyse_filespec( const EmacsString &filespec )
         break;
     }
 
+#if defined( SFTP )
     // any "disk" here is a remote host
     // localhost:file.ext
     // switch to using remote parsing
@@ -1078,13 +1076,14 @@ bool EmacsFile::parse_analyse_filespec( const EmacsString &filespec )
         sp = sp( disk_end, INT_MAX );
 
         // switch to remote parsing
-        _dbg_msg( FormatString("EmacsFile::parse_filename switch to remote impl host '%s' filespec '%s'")
-                    << remote_host << filespec );
+        TraceFile( FormatString("EmacsFile::parse_analyse_filespec[%d] switch to remote impl host '%s' filespec '%s'")
+                    << objectNumber() << remote_host << filespec );
 
         FIO_EOL_Attribute eol_attr = m_impl->fio_get_eol_attribute();
         delete m_impl;
         m_impl = EmacsFileImplementation::factoryEmacsFileRemote( *this, eol_attr );
     }
+#endif
 
     disk_end = 0;
 

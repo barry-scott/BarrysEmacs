@@ -571,6 +571,10 @@ EmacsString file_format_string( const EmacsString &format, const EmacsFile &fab 
     EmacsString result;
 
     EmacsString path_head( fab.disk );      // the full path
+    if( path_head.isNull() )
+    {
+        path_head = fab.remote_host;
+    }
     path_head.append( fab.path );
 
     EmacsString path_tail;                  // null
@@ -639,6 +643,11 @@ EmacsString file_format_string( const EmacsString &format, const EmacsFile &fab 
                     result.append( PATH_CH );
                     break;
                 case 'a':
+                    if( !fab.remote_host.isNull() )
+                    {
+                        result.append( fab.remote_host );
+                        result.append( ":" );
+                    }
                     result.append( fab.disk );
                     result.append( fab.path);
                     break;

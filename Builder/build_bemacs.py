@@ -104,6 +104,7 @@ class BuildBEmacs(object):
                                 ,'--system-ucd'
                                 ,'--system-sqlite'
                                 ,'--system-hunspell'
+                                ,'--no-sftp'
                                 ,'--no-warnings-as-errors'):
                         self.opt_editor_setup_opt.append( arg )
 
