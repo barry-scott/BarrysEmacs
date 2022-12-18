@@ -270,8 +270,72 @@ EmacsString EmacsFile::repr()
                     << this << parse_valid << remote_host << path << filename << filetype << result_spec;
 }
 
+void EmacsFile::parse_init()
+{
+    remote_host = EmacsString::null;
+    disk = EmacsString::null;
+    path = EmacsString::null;
+    filename = EmacsString::null;
+    filetype = EmacsString::null;
+    result_spec = EmacsString::null;
+
+    parse_valid = false;
+}
+
 bool EmacsFile::parse_is_valid()
 {
     return parse_valid;
 }
 
+// transfer the m_file from other to this
+void EmacsFile::fio_set_filespec_from( EmacsFile &other )
+{
+    remote_host = other.remote_host;
+    disk = other.disk;
+    path = other.path;
+    filename = other.filename;
+    filetype = other.filetype;
+    result_spec = other.result_spec;
+
+    parse_valid = other.parse_valid;
+}
+
+FileFind::FileFind( EmacsFile *files, bool return_all_directories )
+: EmacsObject()
+, m_files( files )
+, m_impl( NULL )
+{
+    m_impl = files->factoryFileFindImplementation( return_all_directories );
+}
+
+FileFind::~FileFind()
+{
+    delete m_impl;
+    delete m_files;
+}
+
+const EmacsString &FileFind::matchPattern() const
+{
+    return m_impl->matchPattern();
+}
+
+
+EmacsString FileFind::next()
+{
+    if( m_impl )
+    {
+        return m_impl->next();
+    }
+
+    return EmacsString::null;
+}
+
+EmacsString FileFind::repr()
+{
+    if( m_impl )
+    {
+        return FormatString("FileFind %p impl %s") << this << m_impl->repr();
+    }
+
+    return FormatString("FileFind %p impl NULL") << this;
+}

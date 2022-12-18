@@ -93,4 +93,4 @@ typedef Py_UCS4 EmacsChar_t;    // Py_UNICODE is 2 bytes on windows so use Py_UC
 # include <share.h>
 # define SHARE_READ , _SH_DENYWR
 # define SHARE_NONE , _SH_DENYRW
-# define fopen _fsopen
+// # define fopen _fsopen

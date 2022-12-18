@@ -19,12 +19,12 @@
 
 
 class FileAutoMode : public EmacsObject
-{                       // information for automatic mode recognition
+{                               // information for automatic mode recognition
 public:
     EMACS_OBJECT_FUNCTIONS( FileAutoMode )
-    EmacsString a_pattern;        // the pattern that the name must match
-    BoundName *a_what;        // what to do if we find it
-    FileAutoMode *a_next;        // the next thing to try
+    EmacsString a_pattern;      // the pattern that the name must match
+    BoundName *a_what;          // what to do if we find it
+    FileAutoMode *a_next;       // the next thing to try
 };
 
 // create modes

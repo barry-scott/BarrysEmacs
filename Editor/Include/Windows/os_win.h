@@ -96,4 +96,4 @@ typedef unsigned int EmacsChar_t;
 # include <share.h>
 # define SHARE_READ , _SH_DENYWR
 # define SHARE_NONE , _SH_DENYRW
-# define fopen _fsopen
+// # define fopen _fsopen

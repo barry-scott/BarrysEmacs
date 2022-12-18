@@ -26,6 +26,7 @@ rem do not need the test folders
 rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\lib2to3
 rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\test
 rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\unittest
+rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\ctypes\test
 
 rem do not need tkinter
 rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\tkinter
@@ -33,8 +34,11 @@ rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\tkinter
 rem do not need pydoc
 rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\pydoc_data
 
-pushd %DIST_DIR%\PyWinAppRes\Lib\site-packages\PyQt5
+pushd %DIST_DIR%\PyWinAppRes\Lib\site-packages\PyQt6
     if errorlevel 1 goto :error
+
+REM QQQ Q Q Q Q Q Q Q Q
+goto :skip_clean_up
 
 echo Info: clean up Qt 1. move all pyd and dll into a tmp folder
 mkdir tmp
@@ -44,9 +48,9 @@ move Qt*.pyd tmp >NUL
 move tmp\Qt.pyd . >NUL
     if errorlevel 1 goto :error
 
-mkdir Qt5\bin\tmp
+mkdir Qt6\bin\tmp
     if errorlevel 1 goto :error
-move Qt5\bin\Qt5*.dll Qt5\bin\tmp >NUL
+move Qt6\bin\Qt6*.dll Qt6\bin\tmp >NUL
     if errorlevel 1 goto :error
 
 echo Info: clean up Qt 2. bring back only the ones we use
@@ -55,35 +59,31 @@ for %%x in (Core DBus Gui PrintSupport Svg Widgets) do call :qt_keep %%x
 echo Info: clean up Qt 3. delete the Qt files we do not need
 rmdir /s /q tmp
     if errorlevel 1 goto :error
-rmdir /s /q Qt5\bin\tmp
+rmdir /s /q Qt6\bin\tmp
     if errorlevel 1 goto :error
 
 echo Info: clean up Qt 4. delete qml file
-rmdir /s /q Qt5\qml
+rmdir /s /q Qt6\qml
     if errorlevel 1 goto :error
 
 echo Info: clean up Qt 5. delete translations file
-rmdir /s /q Qt5\translations
+rmdir /s /q Qt6\translations
     if errorlevel 1 goto :error
 
 echo Info: clean up Qt 6. delete webengine files
-if exist Qt5\bin\QtWebEngineProcess.exe (
-    del Qt5\bin\QtWebEngineProcess.exe >NUL
+if exist Qt6\bin\QtWebEngineProcess.exe (
+    del Qt6\bin\QtWebEngineProcess.exe >NUL
         if errorlevel 1 goto :error
-    del Qt5\resources\qtwebengine*.pak >NUL
+    del Qt6\resources\qtwebengine*.pak >NUL
         if errorlevel 1 goto :error
 )
 
 echo Info: clean up Qt 7. remove .sip files
 del /s *.sip
 
-echo on
-echo Info: clean up python lib 1. delete test code
-rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\ctypes\test
-    if errorlevel 1 goto :error
-
 popd
 
+:skip_clean_up
 echo Info: build-windows completed successfully
 exit /b 0
 endlocal
@@ -92,7 +92,7 @@ endlocal
     echo Info: Keeping Qt%1
     move tmp\Qt%1.pyd . >NUL
         if errorlevel 1 goto :error
-    move Qt5\bin\tmp\Qt5%1.dll Qt5\bin >NUL
+    move Qt6\bin\tmp\Qt6%1.dll Qt6\bin >NUL
         if errorlevel 1 goto :error
     goto :eof
 

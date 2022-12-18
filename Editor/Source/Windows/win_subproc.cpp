@@ -40,8 +40,8 @@ void exec_bf
     EmacsBufferRef old( bf_cur );
     va_list argp;
 
-    EmacsString output = emacs_tmpnam();
-    if( output.isNull() )
+    EmacsFile output( emacs_tmpnam() );
+    if( !output.parse_is_valid() )
     {
         error( "Unable to create temporary file" );
         return;
@@ -82,9 +82,8 @@ void exec_bf
     }
 
     buf.append( " <" ); buf.append( input );
-    buf.append( " >" ); buf.append( output );
+    buf.append( " >" ); buf.append( output.fio_getname() );
     buf.append( " 2>&1" );
-
 
     PROCESS_INFORMATION ProcessInformation;
     STARTUPINFO si;
@@ -124,8 +123,7 @@ void exec_bf
 
     // insert the output file
     bf_cur->read_file( output, 0, 0 );
-
-    EmacsFile::fio_delete( output );
+    output.fio_delete();
 
     bf_cur->b_modified = 0;
 
