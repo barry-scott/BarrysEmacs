@@ -44,6 +44,7 @@ class BuildBEmacs(object):
         self.opt_vcredist = None
         self.opt_editor_setup_opt = []
         self.opt_prefix = '/usr'
+        self.opt_appmode = '--gui'
 
         self.bemacs_version_info = None
 
@@ -83,6 +84,12 @@ class BuildBEmacs(object):
                 if arg.startswith( '--' ):
                     if arg == '--verbose':
                         self.opt_verbose = True
+
+                    elif arg == '--cli':
+                        self.opt_appmode = '--cli'
+
+                    elif arg == '--gui':
+                        self.opt_appmode = '--gui'
 
                     elif arg == '--colour':
                         self.opt_colour = True
@@ -345,6 +352,7 @@ class BuildBEmacs(object):
 
         elif self.platform == 'win64':
             run( ('build-windows.cmd'
+                 ,self.opt_appmode
                  ,self.KITFILES
                  ,self.bemacs_version_info.get('win_version'))
                  ,cwd=r'..\Editor\PyQtBEmacs' )

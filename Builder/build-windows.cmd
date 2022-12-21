@@ -17,11 +17,30 @@ if "%BUILDER_CFG_PLATFORM%" == "" (
 
 "%PYTHON%" -m pip install --user --upgrade colour-text
 
-call build-venv.cmd windows
+if "%1" == "--no-venv" (
+    shift
+) else (
+    call build-venv.cmd windows
+)
 
 set VPYTHON=%CD%\venv.tmp\Scripts\python.exe
-if "%1" == "--enable-debug" set BUILD_OPT=--enable-debug
-%VPYTHON% build_bemacs.py --colour --vcredist=k:\subversion %BUILD_OPT% 2>&1 | "%PYTHON%" -u build_tee.py build.log
+
+set APPMODE=--gui
+if "%1" == "--cli" (
+    set APPMODE=--cli
+    shift
+)
+if "%1" == "--gui" (
+    set APPMODE=--gui
+    shift
+)
+
+if "%1" == "--enable-debug" (
+    set BUILD_OPT=--enable-debug
+    shift
+)
+
+%VPYTHON% build_bemacs.py gui --colour --vcredist=k:\subversion %APPMODE% %BUILD_OPT% 2>&1 | "%PYTHON%" -u build_tee.py build.log
 
 if "%1" == "--install" for %%f in (tmp\bemacs-*-setup.exe) do start /wait %%f
 endlocal
