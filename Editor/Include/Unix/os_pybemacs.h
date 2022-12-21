@@ -73,7 +73,7 @@ const int DBG_NO_DBG_MSG    (0x00001000&DBG___ON);  // always defined
 #define MEMORY_FILE_ARG     0
 #define EMACS_PATH          get_config_env("emacs_path")
 #define EMACS_TMP_PATH      u_str("/tmp")
-#define EMACS_DB_DEFAULT    u_str("")
+#define EMACS_DB_DEFAULT    u_str(".db")
 
 #define EXPORT_SYMBOL
 
