@@ -86,7 +86,7 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
         be_user.be_init_user( UserEditorInterface( self ) )
 
         self._debugEditor( 'BEmacs.initEmacsProfile() emacs_profile.ml' )
-        _bemacs.function.execute_mlisp_file( 'emacs_library:emacs_profile.ml' )
+        _bemacs.function.execute_mlisp_file( 'emacs_profile.ml' )
 
         self.executeEnterHooks()
 
