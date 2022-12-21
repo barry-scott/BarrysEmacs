@@ -10,5 +10,5 @@ set BEMACS_STDOUT_LOG=bemacs-stdout.log
 set BEMACS_DEBUG_LOG=bemacs-debug.log
 set BEMACS_GUI_LOG=bemacs-gui.log
 
-%BUILDER_TOP_DIR%\Builder\venv.tmp\Scripts\pythonw.exe -u be_main.py %* 2>%BEMACS_DEBUG_LOG%
+%BUILDER_TOP_DIR%\Builder\venv.tmp\Scripts\python.exe -u be_main.py %*
 endlocal
