@@ -9,7 +9,6 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
-extern EmacsString get_device_name_translation( const EmacsString &name );
 extern int get_file_parsing_override( const char *disk, int def_override );
 
 static EmacsString convertShortPathToLongPath( const EmacsString &short_path );
@@ -26,23 +25,6 @@ bool isValidFilenameChar( EmacsChar_t ch )
 {
     EmacsString invalid( "\\:/\000?<>*|\"" );
     return invalid.index( ch ) < 0;
-}
-
-int file_is_regular( const EmacsString &file )
-{
-    if( file.isNull() )
-        return 0;
-
-    return 1;
-}
-
-int file_is_directory( const EmacsString &file )
-{
-    DWORD attr = GetFileAttributes( file.utf16_data() );
-    if( attr == (unsigned)-1 )
-        return 0;
-
-    return (attr & FILE_ATTRIBUTE_DIRECTORY) != 0;
 }
 
 class EmacsFileLocal;
@@ -576,7 +558,10 @@ bool EmacsFileLocal::fio_is_directory()
 
 bool EmacsFileLocal::fio_is_regular()
 {
-    if( !m_parent.parse_is_valid() )
+    TraceFile( FormatString("EmacsFileLocal[%d]::fio_is_regular parse_valid %d result_spec %s")
+        << objectNumber() << m_parent.parse_is_valid() << m_parent.result_spec );
+
+    if( m_parent.result_spec.isNull() )
     {
         return false;
     }
@@ -587,7 +572,11 @@ bool EmacsFileLocal::fio_is_regular()
         return false;
     }
 
-    return (attr & FILE_ATTRIBUTE_NORMAL) != 0;
+    TraceFile( FormatString("EmacsFileLocal[%d]::fio_is_regular attr 0x%x FILE_ATTRIBUTE_DEVICE=0x%x << FILE_ATTRIBUTE_DIRECTORY=0x%x")
+        << objectNumber() << attr << FILE_ATTRIBUTE_DEVICE << FILE_ATTRIBUTE_DIRECTORY );
+
+    // regular if not device or directory
+    return (attr & (FILE_ATTRIBUTE_DEVICE|FILE_ATTRIBUTE_DIRECTORY)) == 0;
 }
 
 // fio_find_using_path opens the file fn with the given IO mode using the given
@@ -600,6 +589,9 @@ bool EmacsFileLocal::fio_find_using_path
     const EmacsString &ex
     )
 {
+    TraceFile( FormatString("EmacsFileLocal[%d]::fio_find_using_path( '%s', '%s', '%s' ) m_parent EmacsFile[%d]")
+        << objectNumber() <<  path << fn << ex << m_parent.objectNumber() );
+
     //
     // check for Node, device or directory specs.
     // also allows any logical name through
@@ -608,14 +600,21 @@ bool EmacsFileLocal::fio_find_using_path
     if( fn.first( PATH_CH ) >= 0
     || fn.first( ':' ) >= 0 )
     {
-        // open the file
+        TraceFile( FormatString("EmacsFileLocal[%d]::fio_find_using_path can use fn as is %s")
+            << objectNumber() << fn );
+
         EmacsFile fd( fn, ex );
         if( fd.fio_is_regular() )
         {
+            TraceFile( FormatString("EmacsFileLocal[%d]::fio_find_using_path 1 using '%s'")
+                << objectNumber() << fd.result_spec );
+
             m_parent.fio_set_filespec_from( fd );
             return true;
         }
 
+        TraceFile( FormatString("EmacsFileLocal[%d]::fio_find_using_path not a regular file %s")
+            << objectNumber() << fd.result_spec );
         return false;
     }
 
@@ -644,7 +643,9 @@ bool EmacsFileLocal::fio_find_using_path
         EmacsFile fd( fnb, ex );
         if( fd.fio_is_regular() )
         {
-            // move the FILE to *this
+            TraceFile( FormatString("EmacsFileLocal[%d]::fio_find_using_path 2 using '%s'")
+                << objectNumber() << fd.result_spec );
+
             m_parent.fio_set_filespec_from( fd );
             return true;
         }
@@ -653,6 +654,8 @@ bool EmacsFileLocal::fio_find_using_path
         start++;
     }
 
+    TraceFile( FormatString("EmacsFileLocal[%d]::fio_find_using_path not found")
+        << objectNumber() );
     return false;
 }
 
@@ -679,28 +682,25 @@ bool EmacsFile::parse_analyse_filespec( const EmacsString &filespec )
     for( int i=0; i<sp.length(); i++ )
     {
         if( sp[i] == PATH_ALT_CH )
+        {
             sp[i] = PATH_CH;
+        }
     }
 
-#ifndef _CONSOLE
 device_loop:
-#endif
     int disk_end = sp.first(':');
     if( disk_end > 0 )
     {
         disk = sp( 0, disk_end );
         disk_end++;
 
-#ifdef _CONSOLE
-        disk.append( ":" );
-#else
-
         //
         // if there is a replacement string use it otherwise
         // leave the device name as it is
         //
-        EmacsString new_value = get_device_name_translation( disk );
-
+        EmacsString new_value = get_config_env( disk );
+        TraceFile( FormatString("EmacsFile::parse_analyse_filespec disk '%s' -> '%s'")
+                    << disk << new_value );
         if( new_value.isNull() )
         {
             disk.append( ":" );
@@ -725,7 +725,6 @@ device_loop:
             if( device_loop_max_iterations > 0 )
                 goto device_loop;
         }
-#endif
     }
     else
     {
@@ -745,18 +744,28 @@ device_loop:
 
     int path_end = sp.last( PATH_CH );
     if( path_end < 0 )
+    {
         path_end = disk_end;
+    }
     else
+    {
         path_end++;
+    }
 
     if( disk_end <= path_end )
+    {
         path = sp( disk_end, path_end );    // extract the path
+    }
     else
-        path = EmacsString::null;        // syntax error null the path
+    {
+        path = EmacsString::null;           // syntax error null the path
+    }
 
     int filename_end = sp.last( '.', path_end );
     if( filename_end < 0 )
+    {
         filename_end = sp.length();
+    }
 
     filename = sp( path_end, filename_end );
     filetype = sp( filename_end, INT_MAX );
@@ -784,6 +793,9 @@ static EmacsString get_current_directory()
 
 bool EmacsFile::parse_filename( const EmacsString &name, const EmacsString &def )
 {
+    TraceFile( FormatString("EmacsFile::parse_filename( '%s', '%s' )")
+        << name << def );
+
     EmacsFile def_file;
 
     parse_valid = false;
@@ -925,7 +937,7 @@ bool EmacsFile::parse_filename( const EmacsString &name, const EmacsString &def 
             filetype_maxlen << filetype );
 
         // get attributes
-        if( file_is_directory( fullspec ) )
+        if( fio_is_directory( fullspec ) )
         {
             // need to merge the filename on to the path
             path = FormatString("%s%.*s%.*s") <<
@@ -955,7 +967,7 @@ bool EmacsFile::parse_filename( const EmacsString &name, const EmacsString &def 
     {
         EmacsString full_path( full_path_str );
         if( full_path[-1] != PATH_CH
-        && file_is_directory( full_path ) )
+        && fio_is_directory( full_path ) )
             full_path.append( PATH_STR );
         else
             if( fn_buf[-1] == '.' && full_path[-1] != '.' )
@@ -964,9 +976,14 @@ bool EmacsFile::parse_filename( const EmacsString &name, const EmacsString &def 
         result_spec = convertShortPathToLongPath( full_path );
     }
     else
-        return 0;
+    {
+        return false;
+    }
 
-    return 1;
+    TraceFile( FormatString("EmacsFile::parse_filename true result_spec '%s'")
+        << result_spec );
+
+    return true;
 }
 
 //
