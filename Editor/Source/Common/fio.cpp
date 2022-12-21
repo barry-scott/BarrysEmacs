@@ -212,7 +212,7 @@ EmacsFile::EmacsFile( const EmacsString &filename, const EmacsString &def, FIO_E
 , parse_valid( false )
 , m_impl( 0 )
 {
-    TraceFile( FormatString("EmacsFile::EmacsFile[%d]( '%s', '%s', %d )")
+    TraceFile( FormatString("EmacsFile[%d]::EmacsFile( '%s', '%s', %d )")
                     << objectNumber() << filename << def << attr );
     m_impl = EmacsFileImplementation::factoryEmacsFileLocal( *this, attr );
     parse_filename( filename, def );
@@ -232,7 +232,7 @@ EmacsFile::EmacsFile( const EmacsString &filename, FIO_EOL_Attribute attr )
 , parse_valid( false )
 , m_impl( 0 )
 {
-    TraceFile( FormatString("EmacsFile::EmacsFile[%d]( '%s', %d )")
+    TraceFile( FormatString("EmacsFile[%d]::EmacsFile( '%s', %d )")
                     << objectNumber() << filename << attr );
     m_impl = EmacsFileImplementation::factoryEmacsFileLocal( *this, attr );
     parse_filename( filename, EmacsString::null );
@@ -252,22 +252,22 @@ EmacsFile::EmacsFile( FIO_EOL_Attribute attr )
 , parse_valid( false )
 , m_impl( 0 )
 {
-    TraceFile( FormatString("EmacsFile::EmacsFile[%d]( %d )")
+    TraceFile( FormatString("EmacsFile[%d]::EmacsFile( %d )")
                     << objectNumber() << attr );
     m_impl = EmacsFileImplementation::factoryEmacsFileLocal( *this, attr );
 }
 
 EmacsFile::~EmacsFile()
 {
-    TraceFile( FormatString("EmacsFile::~EmacsFile[%d]()")
+    TraceFile( FormatString("EmacsFile[%d]::~EmacsFile()")
                     << objectNumber() );
     delete m_impl;
 }
 
 EmacsString EmacsFile::repr()
 {
-    return FormatString("EmacsFile %p: parse_valid %d remote_host '%s' path '%s' name '%s' type '%s' result_spec '%s'")
-                    << this << parse_valid << remote_host << path << filename << filetype << result_spec;
+    return FormatString("EmacsFile[%d]: parse_valid %d remote_host '%s' path '%s' name '%s' type '%s' result_spec '%s'")
+                    << objectNumber() << parse_valid << remote_host << path << filename << filetype << result_spec;
 }
 
 void EmacsFile::parse_init()

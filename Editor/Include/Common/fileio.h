@@ -172,6 +172,8 @@ public:
     }
     bool fio_find_using_path( const EmacsString &path, const EmacsString &fn, const EmacsString &ex )
     {
+        TraceFile( FormatString("EmacsFile[%d]::fio_find_using_path( '%s', '%s', '%s' )")
+            << objectNumber() << path << fn << ex );
         return m_impl->fio_find_using_path( path, fn, ex );
     }
     bool fio_open( FILE *existing_file, FIO_EOL_Attribute attr )
