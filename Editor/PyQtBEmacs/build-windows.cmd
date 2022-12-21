@@ -43,32 +43,16 @@ rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\tkinter
 rem do not need pydoc
 rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\pydoc_data
 
+rem do not need colour-text
+rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\site-packages\colour_text
+rem do not need the packager
+rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\site-packages\win_app_packager
+
 pushd %DIST_DIR%\PyWinAppRes\Lib\site-packages\PyQt6
     if errorlevel 1 goto :error
 
-REM QQQ Q Q Q Q Q Q Q Q
-goto :skip_clean_up
-
-echo Info: clean up Qt 1. move all pyd and dll into a tmp folder
-mkdir tmp
-    if errorlevel 1 goto :error
-move Qt*.pyd tmp >NUL
-    if errorlevel 1 goto :error
-move tmp\Qt.pyd . >NUL
-    if errorlevel 1 goto :error
-
-mkdir Qt6\bin\tmp
-    if errorlevel 1 goto :error
-move Qt6\bin\Qt6*.dll Qt6\bin\tmp >NUL
-    if errorlevel 1 goto :error
-
-echo Info: clean up Qt 2. bring back only the ones we use
-for %%x in (Core DBus Gui PrintSupport Svg Widgets) do call :qt_keep %%x
-
-echo Info: clean up Qt 3. delete the Qt files we do not need
-rmdir /s /q tmp
-    if errorlevel 1 goto :error
-rmdir /s /q Qt6\bin\tmp
+echo Info: clean up Qt 3. delete QtQuick file
+del Qt6\bin\\Qt6Quick*
     if errorlevel 1 goto :error
 
 echo Info: clean up Qt 4. delete qml file
@@ -92,7 +76,6 @@ del /s *.sip
 
 popd
 
-:skip_clean_up
 echo Info: build-windows completed successfully
 exit /b 0
 endlocal
