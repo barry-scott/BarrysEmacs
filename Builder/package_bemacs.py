@@ -32,6 +32,7 @@ class PackageBEmacs(object):
         self.opt_colour = False
         self.opt_verbose = False
         self.opt_sqlite = True
+        self.opt_sftp = True
         self.opt_gui = True
         self.opt_system_ucd = False
         self.opt_hunspell = True
@@ -163,6 +164,9 @@ class PackageBEmacs(object):
 
                 elif arg == '--no-sqlite':
                     self.opt_sqlite = False
+
+                elif arg == '--no-sftp':
+                    self.opt_sftp = False
 
                 elif arg.startswith( '--kit-sqlite=' ):
                     self.opt_kit_sqlite = arg[len('--kit-sqlite='):]

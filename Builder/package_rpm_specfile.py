@@ -55,6 +55,14 @@ def createRpmSpecFile( opt, spec_filename ):
     else:
         all_config_options.add( '--no-sqlite' )
 
+    if opt.opt_sftp:
+        all_requires_cli.add( 'libssh' )
+        all_requires_gui.add( 'libssh' )
+        all_build_requires.add( 'libssh-devel' )
+
+    else:
+        all_build_requires.add( '--no-sftp' )
+
     if not opt.opt_warnings_as_errors:
         all_config_options.add( '--no-warnings-as-errors' )
 
