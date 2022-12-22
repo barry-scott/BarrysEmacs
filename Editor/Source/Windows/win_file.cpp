@@ -793,10 +793,8 @@ static EmacsString get_current_directory()
 
 bool EmacsFile::parse_filename( const EmacsString &name, const EmacsString &def )
 {
-    TraceFile( FormatString("EmacsFile::parse_filename( '%s', '%s' )")
-        << name << def );
-
-    EmacsFile def_file;
+    TraceFile( FormatString("EmacsFile[%d]::parse_filename( '%s', '%s' )")
+        << objectNumber() << name << def );
 
     parse_valid = false;
 
@@ -804,6 +802,8 @@ bool EmacsFile::parse_filename( const EmacsString &name, const EmacsString &def 
     {
         return false;
     }
+
+    EmacsFile def_file;
     if( !def_file.parse_analyse_filespec( def ) )
     {
         return false;
@@ -951,10 +951,14 @@ bool EmacsFile::parse_filename( const EmacsString &name, const EmacsString &def 
     }
 
     if( filename.isNull() )
+    {
         filename = def_file.filename;
+    }
 
     if( filetype.isNull() )
+    {
         filetype = def_file.filetype;
+    }
 
     EmacsString fn_buf( FormatString("%s%s%.*s%.*s") <<
         disk <<
@@ -968,20 +972,29 @@ bool EmacsFile::parse_filename( const EmacsString &name, const EmacsString &def 
         EmacsString full_path( full_path_str );
         if( full_path[-1] != PATH_CH
         && fio_is_directory( full_path ) )
+        {
             full_path.append( PATH_STR );
+        }
         else
+        {
             if( fn_buf[-1] == '.' && full_path[-1] != '.' )
+            {
                 full_path.append( '.' );
+            }
+        }
 
         result_spec = convertShortPathToLongPath( full_path );
     }
     else
     {
+        TraceFile( FormatString("EmacsFile[%d]::parse_filename false fn_buf '%s'")
+            << objectNumber() << fn_buf );
+
         return false;
     }
 
-    TraceFile( FormatString("EmacsFile::parse_filename true result_spec '%s'")
-        << result_spec );
+    TraceFile( FormatString("EmacsFile[%d]::parse_filename true result_spec '%s'")
+        << objectNumber() << result_spec );
 
     return true;
 }

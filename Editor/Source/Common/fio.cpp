@@ -214,8 +214,12 @@ EmacsFile::EmacsFile( const EmacsString &filename, const EmacsString &def, FIO_E
 {
     TraceFile( FormatString("EmacsFile[%d]::EmacsFile( '%s', '%s', %d )")
                     << objectNumber() << filename << def << attr );
+
     m_impl = EmacsFileImplementation::factoryEmacsFileLocal( *this, attr );
     parse_filename( filename, def );
+
+    TraceFile( FormatString("EmacsFile[%d]::%s")
+                    << objectNumber() << repr() );
 }
 
 EmacsFile::EmacsFile( const EmacsString &filename, FIO_EOL_Attribute attr )
@@ -234,8 +238,12 @@ EmacsFile::EmacsFile( const EmacsString &filename, FIO_EOL_Attribute attr )
 {
     TraceFile( FormatString("EmacsFile[%d]::EmacsFile( '%s', %d )")
                     << objectNumber() << filename << attr );
+
     m_impl = EmacsFileImplementation::factoryEmacsFileLocal( *this, attr );
     parse_filename( filename, EmacsString::null );
+
+    TraceFile( FormatString("EmacsFile[%d]::%s")
+                    << objectNumber() << repr() );
 }
 
 EmacsFile::EmacsFile( FIO_EOL_Attribute attr )
@@ -254,6 +262,7 @@ EmacsFile::EmacsFile( FIO_EOL_Attribute attr )
 {
     TraceFile( FormatString("EmacsFile[%d]::EmacsFile( %d )")
                     << objectNumber() << attr );
+
     m_impl = EmacsFileImplementation::factoryEmacsFileLocal( *this, attr );
 }
 

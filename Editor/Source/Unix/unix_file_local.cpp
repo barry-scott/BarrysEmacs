@@ -481,7 +481,8 @@ long int EmacsFileLocal::fio_size()
         }
         else
         {
-            TraceFile( "fseek failed!" );
+            TraceFile( FormatString("EmacsFileLocal[%d]::fio_size() fseek failed!")
+                << objectNumber() );
             end_of_file_pos = 0l;
         }
 
@@ -591,7 +592,8 @@ void EmacsFile::expand_tilda_path( const EmacsString &in_path, EmacsString &out_
 {
     EmacsString expanded_in_path( in_path )
 
-    TraceFileTmp( FormatString("expand_tilda_path( %s )") << in_path );
+    TraceFileTmp( FormatString("EmacsFile[%d]::expand_tilda_path( %s )")
+        << objectNumber() << in_path );
 
     int in_pos = 0;
     if( expanded_in_path.length() >= 2
@@ -643,13 +645,15 @@ void EmacsFile::expand_tilda_path( const EmacsString &in_path, EmacsString &out_
 
     out_path.append( expanded_in_path( in_pos, expanded_in_path.length() ) );
 
-    TraceFileTmp( FormatString( "expand_tilda_path: out_path before => %s" ) << out_path );
+    TraceFileTmp( FormatString("EmacsFile[%d]::expand_tilda_path: out_path before => %s")
+       << objectNumber() << out_path );
 
     for( int pos=0; pos<out_path.length(); )
     {
         if( out_path[pos] == PATH_CH )
         {
-            TraceFileTmp( FormatString( "expand_tilda_path: pos: %d, len: %d out_path => %s|%s" )
+            TraceFileTmp( FormatString("EmacsFile[%d]::expand_tilda_path: pos: %d, len: %d out_path => %s|%s")
+                << objectNumber()
                 << pos << out_path.length()
                 << out_path( 0, pos )
                 << out_path( pos, out_path.length() ) );
@@ -662,7 +666,8 @@ void EmacsFile::expand_tilda_path( const EmacsString &in_path, EmacsString &out_
             switch( out_path[pos+1] )
             {
             case PATH_CH:        // found // in the name
-                TraceFileTmp( FormatString("expand_tilda_path: remove( %d, 1 )") << pos );
+                TraceFileTmp( FormatString("EmacsFile[%d]::expand_tilda_path: remove( %d, 1 )")
+                    << objectNumber() << pos );
                 out_path.remove( pos, 1 );
                 break;
 
@@ -671,7 +676,8 @@ void EmacsFile::expand_tilda_path( const EmacsString &in_path, EmacsString &out_
                     switch( out_path[pos+2] )
                     {
                     case PATH_CH:    // found /./ in the name
-                        TraceFileTmp( FormatString("expand_tilda_path: remove( %d, 2 )") << pos );
+                        TraceFileTmp( FormatString("EmacsFile[%d]::expand_tilda_path: remove( %d, 2 )")
+                            << objectNumber() << pos );
                         out_path.remove( pos, 2 );
                         break;
 
@@ -681,7 +687,9 @@ void EmacsFile::expand_tilda_path( const EmacsString &in_path, EmacsString &out_
                             && out_path[pos+3] == PATH_CH) )
                         {
                             int remove = 3;
-                            TraceFileTmp( "expand_tilda_path: found /../" );
+                            TraceFileTmp( FormatString("EmacsFile[%d]::expand_tilda_path: found /../")
+                                << objectNumber() );
+
                             // found /../
                             while( pos > 0 && out_path[pos-1] != PATH_CH )
                             {
@@ -690,11 +698,11 @@ void EmacsFile::expand_tilda_path( const EmacsString &in_path, EmacsString &out_
                             }
                             if( pos > 0 )
                             { pos--; remove++; }
-                            TraceFileTmp( FormatString("expand_tilda_path: remove( %d, %d ) => %s" )
-                                << pos << remove << out_path( pos, pos + remove ) );
+                            TraceFileTmp( FormatString("EmacsFile[%d]::expand_tilda_path: remove( %d, %d ) => %s" )
+                                << objectNumber() << pos << remove << out_path( pos, pos + remove ) );
                             out_path.remove( pos, remove );
-                            TraceFileTmp( FormatString("expand_tilda_path: found /../ %s")
-                                << out_path );
+                            TraceFileTmp( FormatString("EmacsFile[%d]::expand_tilda_path: found /../ %s")
+                                << objectNumber() << out_path );
                         }
                         else
                         {
@@ -722,7 +730,7 @@ void EmacsFile::expand_tilda_path( const EmacsString &in_path, EmacsString &out_
         }
     }
 
-    TraceFileTmp( FormatString( "expand_tilda_path: out_path after => %s" ) << out_path );
+    TraceFileTmp( FormatString( "EmacsFile[%d]::expand_tilda_path: out_path after => %s" ) << out_path );
 }
 
 FileFindLocal::FileFindLocal( EmacsFile &files, EmacsFileLocal &local, bool return_all_directories )
@@ -730,9 +738,9 @@ FileFindLocal::FileFindLocal( EmacsFile &files, EmacsFileLocal &local, bool retu
 , m_local( local )
 , m_find( NULL )
 {
-    TraceFile( FormatString("FileFindLocal this %s") << repr() );
-    TraceFile( FormatString("FileFindLocal m_files %s") << m_files.repr() );
-    TraceFile( FormatString("FileFindLocal m_local %s") << m_local.repr() );
+    TraceFile( repr() );
+    TraceFile( FormatString("FileFindLocal[%d] m_files %s") << objectNumber() << m_files.repr() );
+    TraceFile( FormatString("FileFindLocal[%d] m_local %s") << objectNumber() << m_local.repr() );
 
     if( !m_files.parse_is_valid() )
     {
@@ -762,8 +770,8 @@ FileFindLocal::~FileFindLocal()
 
 EmacsString FileFindLocal::repr()
 {
-    return FormatString("FileFindLocal (%p) state %d root %s pattern %s full_filename %s")
-            << this
+    return FormatString("FileFindLocal[%d] state %d root %s pattern %s full_filename %s")
+            << objectNumber() 
             << m_state
             << m_root_path
             << m_match_pattern
@@ -847,17 +855,23 @@ EmacsString FileFindLocal::next()
 
 bool EmacsFile::parse_filename( const EmacsString &name, const EmacsString &def )
 {
-    EmacsFile def_file;
+    TraceFile( FormatString("EmacsFile[%d]::parse_filename( '%s', '%s' )")
+        << objectNumber() << name << def );
 
     parse_valid = false;
 
     if( !parse_analyse_filespec( name ) )
     {
+        TraceFile( FormatString("EmacsFile[%d]::parse_filename FALSE cannot analyse name '%s'")
+            << objectNumber() << name );
         return false;
     }
 
+    EmacsFile def_file;
     if( !def_file.parse_analyse_filespec( def ) )
     {
+        TraceFile( FormatString("EmacsFile[%d]::parse_filename FALSE cannot analyse def '%s'")
+            << objectNumber() << def );
         return false;
     }
 
@@ -933,12 +947,15 @@ bool EmacsFile::parse_filename( const EmacsString &name, const EmacsString &def 
 
     expand_tilda_path( fn_buf, result_spec );
     parse_valid = true;
+
+    TraceFile( FormatString("EmacsFile[%d]::parse_filename TRUE result_spec '%s'")
+        << objectNumber() << result_spec );
     return true;
 }
 
 bool EmacsFile::parse_analyse_filespec( const EmacsString &filespec )
 {
-    TraceFile( FormatString("EmacsFile::parse_analyse_filespec[%d]( '%s' )")
+    TraceFile( FormatString("EmacsFile[%d]::parse_analyse_filespec( '%s' )")
                 << objectNumber() << filespec );
 
     int device_loop_max_iterations = 10;
@@ -1009,7 +1026,7 @@ bool EmacsFile::parse_analyse_filespec( const EmacsString &filespec )
         sp = sp( disk_end, INT_MAX );
 
         // switch to remote parsing
-        TraceFile( FormatString("EmacsFile::parse_analyse_filespec[%d] switch to remote impl host '%s' filespec '%s'")
+        TraceFile( FormatString("EmacsFile[%d]::parse_analyse_filespec switch to remote impl host '%s' filespec '%s'")
                     << objectNumber() << remote_host << filespec );
 
         FIO_EOL_Attribute eol_attr = m_impl->fio_get_eol_attribute();
