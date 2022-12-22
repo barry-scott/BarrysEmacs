@@ -8,7 +8,7 @@ export emacs_user="$HOME/bemacs"
 echo "Info: set EMACS_TERM_DEVICE to the tty to use"
 case "$( uname )" in
 Darwin)
-    export emacs_library="${BUILDER_TOP_DIR}/Builder/tmp/pkg/Barry's Emacs-Devel.app/Contents/Resources/emacs_library"
+    export emacs_library="${BUILDER_TOP_DIR}/Builder/tmp/pkg/Barry's Emacs.app/Contents/Resources/emacs_library"
    ;;
 *)
     export emacs_library="${BUILDER_TOP_DIR:?builder_init}/Builder/tmp/ROOT/usr/lib/bemacs"
