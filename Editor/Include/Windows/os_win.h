@@ -81,7 +81,7 @@ extern EmacsString get_tmp_path(void);
 #ifdef MLL_DB
 #define EMACS_DB_DEFAULT    ".mll"
 #else
-#define EMACS_DB_DEFAULT    ""
+#define EMACS_DB_DEFAULT    ".db"
 #endif
 
 #define TEXT_MODE "t"
