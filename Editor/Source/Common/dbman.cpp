@@ -70,7 +70,7 @@ int extend_database_search_list( void )
         return 0;
 
     EmacsFile db_file( db_filename, EMACS_DB_DEFAULT );
-    if( db_file.parse_is_valid() )
+    if( !db_file.parse_is_valid() )
     {
         error( FormatString("Cannot find DB file \"%s\"") << db_filename );
         return 0;
