@@ -418,7 +418,7 @@ class BuildBEmacs(object):
     def ruleMacosPackage( self ):
         log.info( 'Make macOS package' )
 
-        pkg_name = 'BarrysEmacs-%s' % (self.bemacs_version_info.get('version'),)
+        pkg_name = 'BarrysEmacs-%s-%s' % (self.bemacs_version_info.get('version'), platform.machine())
         dmg_folder = '%s/Builder/tmp/dmg' % (self.BUILDER_TOP_DIR,)
         pkg_folder = '%s/Builder/tmp/pkg' % (self.BUILDER_TOP_DIR,)
         venv_bin = '%s/Builder/venv.tmp/bin' % (self.BUILDER_TOP_DIR,)
