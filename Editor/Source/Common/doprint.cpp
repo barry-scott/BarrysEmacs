@@ -59,6 +59,7 @@ FormatString::FormatString( EmacsString _format )
 , left_justify( 0 )
 , next_format_char_index( 0 )
 , intArg( 0 )
+, doubleArg( 0.0 )
 , stringArg()
 {
     process_format();
@@ -100,18 +101,30 @@ void FormatString::setNextIntArg( int64_t v )
     }
 }
 
-FormatString &FormatString::operator <<( const void *v )
+FormatString &FormatString::operator <<( double v )
 {
-    if( next_arg_type == argInt )
+    if( next_arg_type != argDouble )
     {
-        intArg = reinterpret_cast<int64_t>( v );
-
-        process_format();
-
-        return *this;
+        throw EmacsInternalError( "FormatString - double arg not expected" );
     }
 
-//    throw EmacsInternalError( "FormatString - int arg not expected" );
+    doubleArg = v;
+    process_format();
+
+    return *this;
+}
+
+FormatString &FormatString::operator <<( const void *v )
+{
+    if( next_arg_type != argInt )
+    {
+        throw EmacsInternalError( "FormatString - int arg not expected" );
+    }
+
+    intArg = reinterpret_cast<int64_t>( v );
+
+    process_format();
+
     return *this;
 }
 
@@ -125,7 +138,9 @@ FormatString &FormatString::operator <<( const EmacsString &v )
     if( next_width_type == argInt
     && next_precision_type == argInt
     && next_arg_type != argString )
+    {
         throw EmacsInternalError( "FormatString - string arg not expected" );
+    }
 
     stringArg = v;
 
@@ -247,7 +262,9 @@ void FormatString::process_format()
         case 'x':
             {
                 if( width == 0 )
+                {
                     width = 4;
+                }
                 print_hexadecimal( static_cast<uint64_t>( intArg ) );
             }
             break;
@@ -272,6 +289,12 @@ void FormatString::process_format()
                 // errno value
                 EmacsString str( os_error_code( static_cast<int>( intArg ) ) );
                 print_string( str );
+            }
+            break;
+
+        case 'f':
+            {
+                print_double( doubleArg );
             }
             break;
 
@@ -375,8 +398,13 @@ void FormatString::process_format()
             next_arg_type = argInt;
             return;
 
+
+        case 'f':
+            next_arg_type = argDouble;
+            return;
+
         default:
-            _dbg_msg( FormatString("FormatString - unknown format char 0x%x") << ch );
+            _dbg_msg( FormatString("FormatString - unknown format char '%C' 0x%x") << ch << ch );
             throw EmacsInternalError( "FormatString - unknown format char" );
         }
     }
@@ -535,4 +563,10 @@ void FormatString::print_octal( int64_t n )
     {
         put( digits[i] );
     }
+}
+
+void FormatString::print_double( double n )
+{
+    std::string str( std::to_string( n ) );
+    print_string( str );
 }

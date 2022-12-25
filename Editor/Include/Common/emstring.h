@@ -345,6 +345,7 @@ public:
 
     operator const EmacsString() const;
 
+    FormatString &operator <<( double v );
     FormatString &operator <<( int v ) { setNextIntArg( int64_t(v) ); return *this; }
     FormatString &operator <<( long v ) { setNextIntArg( int64_t(v) ); return *this; }
     FormatString &operator <<( long long v ) { setNextIntArg( int64_t(v) ); return *this; }
@@ -361,7 +362,7 @@ public:
 private:
     void setNextIntArg( int64_t );
 
-    enum arg_type { argNone, argString, argInt };
+    enum arg_type { argNone, argString, argInt, argDouble };
 
     void process_format();
     EmacsChar_t next_format_char();
@@ -374,6 +375,7 @@ private:
     void print_octal( int64_t );
     void print_string( const EmacsString &str );
     void print_repr( const EmacsString &str );
+    void print_double( double );
 
     EmacsString format;
     EmacsString result;
@@ -391,6 +393,7 @@ private:
     int next_format_char_index;
 
     int64_t intArg;
+    double doubleArg;
     EmacsString stringArg;
     // keep some compilers for complaining (C Set++)
     FormatString( const FormatString &other );
