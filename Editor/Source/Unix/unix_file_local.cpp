@@ -453,6 +453,11 @@ int EmacsFileLocal::fio_put( const EmacsChar_t *buf, int len )
 void EmacsFileLocal::fio_flush()
 {
     fflush( m_file );
+    // flush the buffers
+    fflush( m_file );
+
+    // update the file info on disk
+    close( dup( fileno( m_file ) ) );
 }
 
 bool EmacsFileLocal::fio_close()
