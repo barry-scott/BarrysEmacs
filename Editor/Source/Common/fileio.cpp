@@ -43,7 +43,6 @@ void kill_checkpoint_files( void );
 int checkpoint_everything(void);
 int checkpoint_buffers(void);
 EmacsString fetch_os_error( int error_code );
-int synchronise_files(void);
 EmacsString file_format_string( const EmacsString &format, const EmacsString &filename );
 EmacsString file_format_string( const EmacsString &format, const EmacsFile &fab );
 bool file_read_veto( EmacsFile &file );
@@ -2074,7 +2073,10 @@ int synchronise_files(void)
             ++it_b )
     {
         EmacsBufferRef &b = *it_b;
-        if( !b.bufferValid() ) continue;
+        if( !b.bufferValid() )
+        {
+            continue;
+        }
 
         b->set_bf();
         if( b->b_kind == FILEBUFFER

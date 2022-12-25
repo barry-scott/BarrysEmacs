@@ -505,7 +505,8 @@ EmacsString EmacsFileRemote::repr()
 //
 int EmacsFileRemote::fio_access()
 {
-    return 0;
+    // assume read and write are allowed
+    return 1;
 }
 
 bool EmacsFileRemote::fio_file_exists()
@@ -821,7 +822,14 @@ time_t EmacsFileRemote::fio_modify_date()
         return 0;
     }
 
-    return attr.m_file_attr->mtime64;
+    if( attr.m_file_attr->mtime64 != 0 )
+    {
+        return attr.m_file_attr->mtime64;
+    }
+    else
+    {
+        return attr.m_file_attr->mtime;
+    }
 }
 
 time_t EmacsFileRemote::fio_file_modify_date()
@@ -832,7 +840,14 @@ time_t EmacsFileRemote::fio_file_modify_date()
         return 0;
     }
 
-    return attr.m_file_attr->mtime64;
+    if( attr.m_file_attr->mtime64 != 0 )
+    {
+        return attr.m_file_attr->mtime64;
+    }
+    else
+    {
+        return attr.m_file_attr->mtime;
+    }
 }
 
 EmacsString EmacsFileRemote::fio_cwd()
