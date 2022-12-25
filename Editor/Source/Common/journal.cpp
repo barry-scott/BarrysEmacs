@@ -190,8 +190,7 @@ EmacsBufferJournal::EmacsBufferJournal()
 : m_jnl_active( 0 )
 , m_jnl_open( 0 )
 , m_jnl_flush( 0 )
-, m_jnl_file( NULL )
-, m_jnl_jname()
+, m_jnl_file()
 , m_jnl_used( 0 )             // records used in the current journal buf
 , m_jnl_record( 0 )           // last record written in the current journal buffer
 {
@@ -200,16 +199,9 @@ EmacsBufferJournal::EmacsBufferJournal()
 
 EmacsBufferJournal::~EmacsBufferJournal()
 {
-    if( m_jnl_file != NULL )
-    {
-        fclose( m_jnl_file );
-    }
-
     // and delete the file as its not needed
-    if( m_jnl_jname.length() > 0 )
-    {
-        remove( m_jnl_jname );
-    }
+    m_jnl_file.fio_close();
+    m_jnl_file.fio_delete();
 }
 
 EmacsBufferJournal *EmacsBufferJournal::_journalStart( void )
@@ -231,14 +223,16 @@ EmacsBufferJournal *EmacsBufferJournal::_journalStart( void )
         return NULL;
     }
 
-    if( bf_cur->b_journal != NULL )     // already started
+    // already started?
+    if( bf_cur->b_journal != NULL )
     {
         return bf_cur->b_journal;
     }
 
     if( bf_cur->b_modified != 0 )
     {
-        error( FormatString("Cannot start a journal on modified buffer %s") << bf_cur->b_buf_name );
+        error( FormatString("Cannot start a journal on modified buffer %s")
+                    << bf_cur->b_buf_name );
         return NULL;
     }
 
@@ -248,8 +242,8 @@ EmacsBufferJournal *EmacsBufferJournal::_journalStart( void )
     EmacsBufferJournal *jnl = EMACS_NEW EmacsBufferJournal();
     if( jnl == NULL )
     {
-        error( FormatString("Unable to start journalling for buffer %s no mem") <<
-            bf_cur->b_buf_name );
+        error( FormatString("Unable to start journalling for buffer %s no mem")
+                    << bf_cur->b_buf_name );
         return NULL;
     }
 
@@ -276,11 +270,11 @@ EmacsBufferJournal *EmacsBufferJournal::_journalStart( void )
             open_record->jnl_open.jnl_type = JNL_FILENAME;
             if( p.length() > JNL_MAX_NAME_LENGTH )
             {
-                error( FormatString("Unable to create journal because file name is longer then %d") << JNL_MAX_NAME_LENGTH );
+                error( FormatString("Unable to create journal because file name is longer then %d")
+                            << JNL_MAX_NAME_LENGTH );
                 delete jnl;
                 return NULL;
             }
-
         }
         else
         {
@@ -288,48 +282,47 @@ EmacsBufferJournal *EmacsBufferJournal::_journalStart( void )
             open_record->jnl_open.jnl_type = JNL_BUFFERNAME;
             if( p.length() > JNL_MAX_NAME_LENGTH )
             {
-                error( FormatString("Unable to create journal because buffer name is longer then %d") << JNL_MAX_NAME_LENGTH );
+                error( FormatString("Unable to create journal because buffer name is longer then %d")
+                            << JNL_MAX_NAME_LENGTH );
                 delete jnl;
                 return NULL;
             }
         }
 
-        EmacsString jfilename;
-        expand_and_default( p, "emacs_user:", jfilename );
+        EmacsString jname;
         if( i == 0 )
         {
-            jnl->m_jnl_jname = FormatString( "%s.bj~") << jfilename;
+            jname = FormatString( "%s.bj~") << p;
         }
         else
         {
-            jnl->m_jnl_jname = FormatString( "%s.%d.bj~") << jfilename << i;
+            jname = FormatString( "%s.%d.bj~") << p << i;
         }
 
-        // see if this file exist
-        FILE *file = fopen( jnl->m_jnl_jname, "r" );
+        EmacsFile jfilename( jname, "emacs_user:" );
 
-        // no then we have the file name we need
-        if( file == NULL )
+        // see if this file exists
+        // if not then we have the file name we need
+        if( !jfilename.fio_file_exists() )
+        {
+            jnl->m_jnl_file.fio_set_filespec_from( jfilename );
             break;
-
-        // close and loop around
-        fclose( file );
+        }
 
         if( i >= 200 )
         {
-            error( FormatString("Unable to create a unique journal filename tried %s last") <<
-                                    jnl->m_jnl_jname );
+            error( FormatString("Unable to create a unique journal filename tried %s last")
+                        << jfilename.fio_getname() );
             delete jnl;
             return NULL;
         }
     }
 
-    // w - write, b - binary, c - commit
-    jnl->m_jnl_file = fopen( jnl->m_jnl_jname, "w" BINARY_MODE COMMIT_MODE );
-    if( jnl->m_jnl_file == NULL )
+    jnl->m_jnl_file.fio_create( FIO_STD, FIO_EOL__Binary );
+    if( !jnl->m_jnl_file.fio_is_open() )
     {
-        error( FormatString("Unable to create journal filename %s") <<
-                                    jnl->m_jnl_jname );
+        error( FormatString("Unable to create journal filename %s")
+                    << jnl->m_jnl_file.fio_getname());
         delete jnl;
         return NULL;
     }
@@ -761,7 +754,7 @@ void EmacsBufferJournal::jnlWriteBuffer()
     union journal_record *buf;
     int status;
 
-    if( m_jnl_file == NULL )
+    if( !m_jnl_file.fio_is_open() )
     {
         return;
     }
@@ -770,11 +763,7 @@ void EmacsBufferJournal::jnlWriteBuffer()
 
     if( m_jnl_used == 0 && m_jnl_flush )
     {
-        // flush the buffers
-        fflush( m_jnl_file );
-
-        // update the file info on disk
-        close( dup( fileno( m_jnl_file ) ) );
+        m_jnl_file.fio_flush();
         return;
     }
 
@@ -796,29 +785,24 @@ void EmacsBufferJournal::jnlWriteBuffer()
     //    Write the journal records. The write_ast routine will
     //    check_ the flush flag.
     //
-    status = fwrite( buf, JNL_BYTE_SIZE, JNL_BUF_NUM_RECORDS, m_jnl_file );
-    if( status != JNL_BUF_NUM_RECORDS )
+    status = m_jnl_file.fio_put( u_str(buf), JNL_BUF_NUM_RECORDS*JNL_BYTE_SIZE );
+    if( status != (JNL_BUF_NUM_RECORDS*JNL_BYTE_SIZE) )
     {
-        error( FormatString("error writing journal for %s status code %x") <<
-            bf_cur->b_buf_name << errno );
+        error( FormatString("error writing journal for %s status code %x")
+                    << bf_cur->b_buf_name << errno );
         return;
     }
 
     //
     //    flush the buffers to the disk
     //
-    // flush the buffers
-    fflush( m_jnl_file );
-    // update the file info on disk
-    close( dup( fileno( m_jnl_file ) ) );
+    m_jnl_file.fio_flush();
 
 #if DBG_JOURNAL
     if( !_validateJournalBuffer() )
     {
         // close the file
-        fclose( m_jnl_file );
-        m_jnl_file = NULL;
-        m_jnl_jname = "";
+        m_jnl_file.fio_close() );
     }
 #endif
 
