@@ -13,19 +13,57 @@ then
     exit 1
 fi
 
-case "$1" in
---debug=*)
-    export EMACS_DEBUG="${1#--debug=}"
-    rm -f ${EMACS_DEBUG_FILE}
-    shift
-    ;;
-*)
-    ;;
-esac
+RUN_GDB=0
+RUN_VALGRIND=0
 
-if [ "$1" = "--gdb" ]
+while :
+do
+    case "$1" in
+    --debug=*)
+        export EMACS_DEBUG="${1#--debug=}"
+        rm -f ${EMACS_DEBUG_FILE}
+        shift
+        ;;
+
+    --debug-file=*)
+        export EMACS_DEBUG_FILE="${1#--debug-file=}"
+        shift
+        ;;
+
+    --gdb)
+        RUN_GDB=1
+        shift
+        ;;
+
+    --valgrind)
+        RUN_VALGRIND=1
+        shift
+        ;;
+
+    *)
+        break
+        ;;
+    esac
+done
+
+if [[ "${RUN_VALGRIND}" = "1" ]]
 then
-    shift 1
+    rm -f .gdbinit
+
+    if [[ "${RUN_GDB}" = "1" ]]
+    then
+        valgrind \
+            --db-attach=yes \
+            ${TMPDIR:-/tmp}/python -u ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/be_main.py "$@"
+
+    else
+        valgrind \
+            --log-file=bemacs-memcheck.log \
+            ${TMPDIR:-/tmp}p/python -u ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/be_main.py "$@"
+    fi
+
+elif [[ "${RUN_GDB}" = "1" ]]
+then
     echo
     echo >.gdbinit
     if [ -e init.gdb ]
@@ -36,26 +74,6 @@ then
     echo "run -u ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/be_main.py " "$@" >>.gdbinit
     echo
     gdb python${PYTHON_VERSION}
-
-elif [ "$1" = "--valgrind" ]
-then
-    shift 1
-
-    rm -f .gdbinit
-
-
-    if [ "$1" = "--gdb" ]
-    then
-        shift 1
-        valgrind \
-            --db-attach=yes \
-            ${TMPDIR:-/tmp}/python -u ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/be_main.py "$@"
-
-    else
-        valgrind \
-            --log-file=bemacs-memcheck.log \
-            ${TMPDIR:-/tmp}p/python -u ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/be_main.py "$@"
-    fi
 
 else
     python${PYTHON_VERSION} -u ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/be_main.py "$@"
