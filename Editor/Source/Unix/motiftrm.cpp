@@ -865,7 +865,7 @@ struct timeval timeout_time;
 
 void time_schedule_timeout( void( *time_handle_timeout )(void ), const EmacsDateTime &when  )
 {
-//    TimerTrace( FormatString("time_schedule_timeout delta = %d") << delta );
+//    TraceTimer( FormatString("time_schedule_timeout delta = %d") << delta );
 
     double int_part, frac_part;
 
@@ -880,7 +880,7 @@ void time_schedule_timeout( void( *time_handle_timeout )(void ), const EmacsDate
 
 void time_cancel_timeout(void)
 {
-    TimerTrace( "time_cancel_timeout" );
+    TraceTimer( "time_cancel_timeout" );
 
     timeout_time.tv_sec = 0;
     timeout_time.tv_usec = 0;

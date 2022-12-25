@@ -136,11 +136,7 @@ extern void time_cancel_timeout(void);
 extern void time_call_timeout_handler();
 
 #if DBG_TIMER
-#define TimerTrace( s ) do \
-{ \
-    if( dbg_flags&DBG_TIMER ) \
-        _dbg_msg( FormatString("%s: %s") << EmacsDateTime::now().asString() << (s) ); \
-} while( must_be_zero )
+#define TraceTimer( s ) do { if( dbg_flags&DBG_TIMER ) { _dbg_msg( FormatString("%s: %s") << EmacsDateTime::now().asString() << (s) ); } } while( 0 )
 #else
-#define TimerTrace( s ) // do nothing
+#define TraceTimer( s ) // do nothing
 #endif

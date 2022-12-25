@@ -30,7 +30,7 @@ int elapse_time()
     return elapse_time;
 }
 
-void time_schedule_timeout( void( *time_handle_timeout )(void ), const EmacsDateTime &time  )
+void time_schedule_timeout( void( *time_handle_timeout )( void ), const EmacsDateTime &time )
 {
     timeout_time = time;
     timeout_handler = time_handle_timeout;
@@ -46,11 +46,15 @@ double time_getTimeoutTime()
 
 void time_call_timeout_handler()
 {
+    TraceTimer( "time_call_timeout_handler()" );
     if( timeout_handler == NULL )
+    {
         return;
+    }
 
     if( timeout_time <= EmacsDateTime::now() )
     {
+        TraceTimer( "time_call_timeout_handler: calling timeout_handler()" );
         timeout_handler();
     }
 }
@@ -63,7 +67,7 @@ void time_cancel_timeout(void)
 
 void restore_timer(void)
 {
-    TimerTrace("restore_timer");
+    TraceTimer("restore_timer");
     if( !timer_queue.queueEmpty() )
         time_schedule_timeout( EmacsTimer::handle_timeout, timer_queue.queueFirst()->timer->dueTime() );
 }
@@ -71,17 +75,17 @@ void restore_timer(void)
 #if DBG_TIMER
 void dump_timer_queue( const char *title )
 {
-    TimerTrace( FormatString("Dump timer queue - %s") << title );
+    TraceTimer( FormatString("Dump timer queue - %s") << title );
     QueueIterator<TimerEntry> it( timer_queue );
     while( it.next() )
     {
         TimerEntry *cur = it.value();
         EmacsTimer *timer = cur->timer;
 
-        TimerTrace( FormatString("    At %s run %s") << timer->dueTime().asString() << timer->description() );
+        TraceTimer( FormatString("    At %s run %s") << timer->dueTime().asString() << timer->description() );
     }
 
-    TimerTrace( "       -------------------" );
+    TraceTimer( "       -------------------" );
 }
 #endif
 
@@ -109,10 +113,12 @@ void EmacsTimer::handle_timeout( void )
 
         // see if it time for this entry
         if( timer->dueTime() > current_time )
+        {
             // no, exit loop
             break;
+        }
 
-        TimerTrace( FormatString("    handle_timeout calling handler %s") << timer->description() );
+        TraceTimer( FormatString("    handle_timeout calling handler %s") << timer->description() );
 
         // free the block
         delete cur;
@@ -121,12 +127,13 @@ void EmacsTimer::handle_timeout( void )
 
         // call the timeout routine
         timer->timeOut();
-
     }
 
     // only ask for timeout if something is in the queue
     if( !timer_queue.queueEmpty() )
+    {
         time_schedule_timeout( handle_timeout, timer_queue.queueFirst()->timer->dueTime() );
+    }
 }
 
 void EmacsTimer::scheduleTimeOut( double interval )
@@ -141,16 +148,20 @@ void EmacsTimer::scheduleTimeOut( const EmacsDateTime &time )
 {
     // always cancel first
     if( timerIsScheduled() )
+    {
         cancelTimeOut();
+    }
 
     TimerEntry *req = EMACS_NEW TimerEntry( this );
 
     if( req == NULL )
+    {
         return;
+    }
 
     due_time = time;
 
-    TimerTrace( FormatString("At %s run scheduleTimeOut id %s") << due_time.asString() << description() );
+    TraceTimer( FormatString("At %s run scheduleTimeOut id %s") << due_time.asString() << description() );
 
 #if DBG_TIMER
     dump_timer_queue( "start of scheduleTimeOut" );
@@ -171,8 +182,11 @@ void EmacsTimer::scheduleTimeOut( const EmacsDateTime &time )
         {
             // does it go before this entry?
             if( time < cur->timer->dueTime() )
+            {
                 // yep break
                 break;
+            }
+
             // the next item
             cur = cur->queueNext();
         }
@@ -199,7 +213,7 @@ void EmacsTimer::cancelTimeOut()
 {
     QueueImplementation::queue_lock();
 
-    TimerTrace( FormatString("time_remove_requests id %s") << description() );
+    TraceTimer( FormatString("time_remove_requests id %s") << description() );
 
     TimerEntry *cur = timer_queue.queueFirst();
 
@@ -208,7 +222,7 @@ void EmacsTimer::cancelTimeOut()
         // is it this entry?
         if( cur->timer == this )
         {
-            TimerTrace( FormatString("time_remove_requests found %s") << cur->timer->description() );
+            TraceTimer( FormatString("time_remove_requests found %s") << cur->timer->description() );
             delete cur;
             break;
         }

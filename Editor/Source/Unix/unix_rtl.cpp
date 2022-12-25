@@ -35,6 +35,8 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 //#include <exception>
 #include <math.h>
 
+extern double time_getTimeoutTime();
+
 static struct timeval emacs_start_time;
 
 static fd_set readfds, writefds, excepfds;
@@ -156,6 +158,12 @@ int wait_for_activity(void)
         if( size < 0 )
         {
             return -1;
+        }
+
+        // is it a timeout?
+        if( size == 0 )
+        {
+            return 0;
         }
 
         used += size;
@@ -484,15 +492,46 @@ int read_inputs( int fd, unsigned char *buf, unsigned int count )
 
     do
     {
+        // interval until next timeout
+        double timeout_sec = time_getTimeoutTime();
+
+        // default to polling the FDs
+        struct timeval tv = { 0, 0 };
+        struct timeval *p_tv = NULL;
+
+        // check that a time out is set
+        if( timeout_sec > 0.0 )
+        {
+            timeout_sec -= EmacsDateTime::now().asDouble();
+            TraceTimer( FormatString("read_inputs: timeout_sec %f") << timeout_sec );
+
+            // check that the timeout is in the future
+            if( timeout_sec > 0 )
+            {
+                double timeout_usec = modf( timeout_sec, &timeout_sec );
+
+                tv.tv_sec = static_cast<time_t>( timeout_sec );
+                tv.tv_usec = static_cast<suseconds_t>( timeout_usec * 1000000.0 );
+            }
+
+            p_tv = &tv;
+        }
+
         memcpy( &readfds_resp, &readfds, sizeof( fd_set ) );
         memcpy( &writefds_resp, &writefds, sizeof( fd_set ) );
         FD_SET( fd, &readfds_resp );
-        status = select( FD_SETSIZE, &readfds_resp, &writefds_resp, &excepfds, 0 );
+        status = select( FD_SETSIZE, &readfds_resp, &writefds_resp, &excepfds, p_tv );
     }
-    while (status < 0 && errno == EINTR);
+    while( status < 0 && errno == EINTR );
+
+    if( status == 0 )
+    {
+        // time out with no FDs set
+        TraceTimer( "read_inputs: timeout" );
+        return 0;
+    }
 
     //_dbg_msg( FormatString("read_inputs( %d, buf, %d ) => status = %d") << fd << count << status );
-
     for( int fd_scan = 1; fd_scan <= fd_max; fd_scan++ )
     {
         //_dbg_msg( FormatString("fd %d read %d write %d")
