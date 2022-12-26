@@ -156,7 +156,15 @@ class BuildBEmacs(object):
             else:
                 raise BuildError( 'Windows 32 bit is not supported' )
 
+        if 'BUILDER_TOP_DIR' not in os.environ:
+            # assume that the current directory is BUILDER_TOP_DIR
+            os.environ[ 'BUILDER_TOP_DIR' ] = os.getcwd()
+
         self.BUILDER_TOP_DIR = os.environ[ 'BUILDER_TOP_DIR' ]
+
+        if 'PYTHON' not in os.environ:
+            # assume its this python that we need to use
+            os.environ[ 'PYTHON' ] = sys.executable
 
         if self.platform in ('Linux', 'NetBSD'):
             if 'DESTDIR' in os.environ:
@@ -165,7 +173,7 @@ class BuildBEmacs(object):
             else:
                 self.BEMACS_ROOT_DIR = '%s/Builder/tmp/ROOT' % (self.BUILDER_TOP_DIR,)
 
-            self.INSTALL_BEMACS_DOC_DIR = '%s/share/bemacs/doc' % (self.opt_prefix,)
+            self.INSTALL_BEMACS_DOC_DIR = '%s/share/doc/bemacs' % (self.opt_prefix,)
             self.INSTALL_BEMACS_LIB_DIR = '%s/lib/bemacs' % (self.opt_prefix,)
             self.INSTALL_BEMACS_BIN_DIR = '%s/bin' % (self.opt_prefix,)
 
