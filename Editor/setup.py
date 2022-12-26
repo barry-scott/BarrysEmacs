@@ -860,7 +860,13 @@ class CompilerGCC(Compiler):
         Compiler.__init__( self, setup )
 
         if setup.opt_system_ucd:
-            self._addVar( 'UCDDIR',         '/usr/share/unicode/ucd' )
+            for ucd_dir in ('/usr/share/unicode/ucd', '/usr/share/unicode'):
+                if os.path.exists( os.path.join( ucd_dir, 'UnicodeData.txt' ) ):
+                    self._addVar( 'UCDDIR',         ucd_dir )
+                    break
+
+            else:
+                raise SetupError( 'Cannot find UnicodeData.txt' )
 
         else:
             self._addVar( 'UCDDIR',         '%(BUILDER_TOP_DIR)s/Imports/ucd' )
