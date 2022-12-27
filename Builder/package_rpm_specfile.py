@@ -311,7 +311,7 @@ spec_file_files_cli = '''
 spec_file_files_common = '''
 %files common
 %defattr(-, root, root, -)
-/usr/share/bemacs/doc/*
+/usr/share/doc/bemacs/*
 /usr/lib/bemacs/*.db
 /usr/lib/bemacs/*.ml
 %attr(0644,root,root) %{_mandir}/man1/bemacs.1.gz
