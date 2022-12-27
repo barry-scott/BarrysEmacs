@@ -273,9 +273,26 @@ class PackageBEmacs(object):
         run( ('mkdir', 'tmp/%s/debian' % (self.KIT_BASENAME,)) )
         run( ('mkdir', 'tmp/%s/debian/source' % (self.KIT_BASENAME,)) )
 
-        os.environ['DEBEMAIL'] = 'barry@barrys-emacs.org'
-        run( ('debchange', '--create', '-v', self.version, '--package', 'bemacs'),
-            cwd='tmp/%s' % (self.KIT_BASENAME,) )
+
+        with open( 'tmp/%s/debian/changelog' % (self.KIT_BASENAME,), 'w' ) as f:
+            changelog_args = {
+                'date':
+                    time.strftime('%a, %d %b %Y %H:%M:%S +0000'),
+                'email':
+                    'Barry Scott <barry@barrys-emacs.org>',
+                'version':
+                    self.version,
+                'release':
+                    self.opt_release,
+                }
+            f.write(
+'''bemacs (%(version)s-%(release)s) UNRELEASED; urgency=medium
+
+  * Initial release.
+
+ -- %(email)s  %(date)s
+
+''' % changelog_args )
 
         with open( 'tmp/%s/debian/changelog' % (self.KIT_BASENAME,), 'r' ) as f:
             changelog = f.read()
@@ -353,6 +370,23 @@ override_dh_auto_install:
         Builder/debian-package-dh-build.sh $$(pwd)/debian/bemacs
 '''.replace('\n        ', '\n\t') )
         os.chmod( 'tmp/%s/debian/rules' % (self.KIT_BASENAME,), 0o775)
+
+        with open( 'tmp/%s/debian/source/lintian-overrides' % (self.KIT_BASENAME,), 'w' ) as f:
+            f.write(
+'''# overrides for bemacs
+bemacs source: source-is-missing [HTML/extn_intro.html]
+bemacs source: source-is-missing [HTML/extn_libraries.html]
+bemacs source: source-is-missing [HTML/pg_extension_facilities.html]
+bemacs source: source-is-missing [HTML/pg_external_programing.html]
+bemacs source: source-is-missing [HTML/pg_macros.html]
+bemacs source: source-is-missing [HTML/pg_mlisp.html]
+bemacs source: source-is-missing [HTML/ug_advancededit.html]
+bemacs source: source-is-missing [HTML/ug_basicedit.html]
+bemacs source: source-is-missing [HTML/ug_correct.html]
+bemacs source: source-is-missing [HTML/ug_customise.html]
+bemacs source: source-is-missing [HTML/ug_specificedit.html]
+bemacs source: source-is-missing [HTML/ug_top.html]
+''' )
 
         run( ('debuild', '-us', '-uc'),
             cwd='tmp/%s' % (self.KIT_BASENAME,) )
