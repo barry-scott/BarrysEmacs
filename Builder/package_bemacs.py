@@ -273,7 +273,7 @@ class PackageBEmacs(object):
         run( ('mkdir', 'tmp/%s/debian' % (self.KIT_BASENAME,)) )
         run( ('mkdir', 'tmp/%s/debian/source' % (self.KIT_BASENAME,)) )
 
-
+        # debian/changelog
         with open( 'tmp/%s/debian/changelog' % (self.KIT_BASENAME,), 'w' ) as f:
             changelog_args = {
                 'date':
@@ -301,9 +301,11 @@ class PackageBEmacs(object):
             changelog = changelog.replace( ' (Closes: #XXXXXX)', ' (Closes:)' )
             f.write( changelog )
 
+        # debian/compat
         with open( 'tmp/%s/debian/compat' % (self.KIT_BASENAME,), 'w' ) as f:
             f.write( '10\n' )
 
+        # debian/control
         build_depends = [
             'debhelper (>= 13)',
             'libhunspell-dev',
@@ -349,6 +351,7 @@ Description: Barry's Emacs text editor
  Easy to use text editor
 ''' % control_args )
 
+        # debian/copyright
         with open( 'tmp/%s/debian/copyright' % (self.KIT_BASENAME,), 'w' ) as f:
             f.write(
 '''Files:
@@ -357,9 +360,11 @@ Copyright: 1980-2022 Barry A. Scott
 License: Apache-2.0
 ''' )
 
+        # debian/format
         with open( 'tmp/%s/debian/source/format' % (self.KIT_BASENAME,), 'w' ) as f:
             f.write( '3.0 (quilt)\n' )
 
+        # debian/rules
         with open( 'tmp/%s/debian/rules' % (self.KIT_BASENAME,), 'w' ) as f:
             f.write(
 '''#!/usr/bin/make -f
@@ -371,6 +376,7 @@ override_dh_auto_install:
 '''.replace('\n        ', '\n\t') )
         os.chmod( 'tmp/%s/debian/rules' % (self.KIT_BASENAME,), 0o775)
 
+        # debian/source/lintian-overrides
         with open( 'tmp/%s/debian/source/lintian-overrides' % (self.KIT_BASENAME,), 'w' ) as f:
             f.write(
 '''# overrides for bemacs
@@ -388,6 +394,7 @@ bemacs source: source-is-missing [HTML/ug_specificedit.html]
 bemacs source: source-is-missing [HTML/ug_top.html]
 ''' )
 
+        # build
         run( ('debuild', '-us', '-uc'),
             cwd='tmp/%s' % (self.KIT_BASENAME,) )
 
