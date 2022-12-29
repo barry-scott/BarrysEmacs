@@ -46,7 +46,7 @@ public:
     , m_host( host )
     , m_last_error()
     {
-        if( isOk() )
+        if( m_session )
         {
             int log_level = verbose ? SSH_LOG_WARNING : SSH_LOG_NONE;
             ssh_options_set( m_session, SSH_OPTIONS_LOG_VERBOSITY, &log_level );
@@ -75,7 +75,7 @@ public:
 
     bool connect()
     {
-        if( !isOk() )
+        if( !m_session )
         {
             return false;
         }
@@ -111,7 +111,7 @@ public:
 
     bool isOk()
     {
-        return m_session != NULL;
+        return m_session && m_is_connected;
     }
 
     const EmacsString &lastError() const
@@ -123,13 +123,16 @@ private:
     void setLastError( const EmacsString &msg )
     {
         m_last_error = msg;
+
+        TraceFile( FormatString("EmacsSshSession.setLastError(msg) '%s'")
+                    << m_last_error );
     }
 
     void setLastError( int code )
     {
-        m_last_error = FormatString("SSH error code %d: %s")
+        setLastError( FormatString("SSH error code %d: %s")
                             << code
-                            << ssh_get_error( m_session );
+                            << ssh_get_error( m_session ) );
     }
 
     // member vars
@@ -240,14 +243,17 @@ public:
 private:
     void setLastError( const EmacsString &msg )
     {
+        TraceFile( FormatString("EmacsSftpSession.setLastError() '%s'")
+                    << m_last_error );
+
         m_last_error = msg;
     }
 
     void setLastError( int code )
     {
-        m_last_error = FormatString("SSH error code %d: %s")
+        setLastError( FormatString("SSH error code %d: %s")
                             << code
-                            << ssh_get_error( m_sftp_session );
+                            << ssh_get_error( m_sftp_session ) );
     }
 
     // member vars
@@ -340,13 +346,16 @@ public:
 private:
     void setLastError( const EmacsString &msg )
     {
+        TraceFile( FormatString("EmacsSftpFile.setLastError() '%s'")
+                    << m_last_error );
+
         m_last_error = msg;
     }
 
     void setLastError( int code )
     {
-        m_last_error = FormatString("SFTP error code %d")
-                            << code;
+        setLastError( FormatString("SFTP error code %d")
+                    << code );
     }
 
 private:
@@ -381,6 +390,12 @@ public:
     virtual ~EmacsFileRemote();
 
     virtual EmacsString repr();
+    virtual bool isOk()
+    {
+        // not usable if has not connected
+        return m_ssh_session.isOk();
+    }
+    virtual EmacsString lastError();
 
     virtual bool fio_create( FIO_CreateMode mode, FIO_EOL_Attribute attr );
     virtual bool fio_open( bool eof=false, FIO_EOL_Attribute attr=FIO_EOL__None );
@@ -478,12 +493,17 @@ EmacsFileRemote::EmacsFileRemote( EmacsFile &parent, FIO_EOL_Attribute attr )
 , m_sftp_file( m_sftp_session )
 , m_home_dir()
 {
+    TraceFile( FormatString("EmacsFileRemote::EmacsFileRemote( '%s' )")
+                << parent.repr() );
+
     if( m_ssh_session.connect() )
     {
         m_sftp_session.init();
         if( m_sftp_session.isOk() )
         {
             m_home_dir = m_sftp_session.cwd();
+            TraceFile( FormatString("EmacsFileRemote::EmacsFileRemote m_home_dir '%s'")
+                        << m_home_dir );
         }
     }
 }
@@ -498,6 +518,25 @@ EmacsString EmacsFileRemote::repr()
     return FormatString("EmacsFileRemote %p:")
                 << this;
 }
+EmacsString EmacsFileRemote::lastError()
+{
+    // if the session is not ok that is the error to return
+    if( !m_ssh_session.isOk() )
+    {
+        return m_ssh_session.lastError();
+    }
+
+    // if there is a file error return that
+    EmacsString last_error( m_sftp_file.lastError() );
+    if( !last_error.isNull() )
+    {
+        return last_error;
+    }
+
+    // otherwise return the error from the sftp session
+    return m_sftp_session.lastError();
+}
+
 
 //
 //    check that the file exists and has read or read and write
@@ -511,30 +550,44 @@ int EmacsFileRemote::fio_access()
 
 bool EmacsFileRemote::fio_file_exists()
 {
-    int r = -1;         // assume not valid
+    // assume not valid
+
     if( m_parent.parse_is_valid() )
     {
-        r = access( m_parent.result_spec, 0 );
+        EmacsSftpAttribues attr( m_sftp_session.stat( m_parent.result_spec ) );
+        return attr.isOk();
     }
-
-    return r != -1;     // true if the file exists
+    else
+    {
+        return false;
+    }
 }
 
 int EmacsFileRemote::fio_delete()
 {
-    int r = 1;          // assume not valid
-
-    return r;
+    int r = sftp_unlink( m_sftp_session, m_parent.result_spec );
+    return r == SSH_OK;
 }
 
 bool EmacsFileRemote::fio_create( FIO_CreateMode mode, FIO_EOL_Attribute attr )
 {
     m_eol_attr = attr;
+
+    if( !m_ssh_session.isOk() )
+    {
+        return false;
+    }
+
     return m_sftp_file.create( m_parent.result_spec );
 }
 
 bool EmacsFileRemote::fio_open( bool eof, FIO_EOL_Attribute attr )
 {
+    if( !m_ssh_session.isOk() )
+    {
+        return false;
+    }
+
     if( !fio_is_regular() )
     {
         return false;

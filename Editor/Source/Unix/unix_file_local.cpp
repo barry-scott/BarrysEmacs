@@ -56,6 +56,14 @@ public:
     virtual ~EmacsFileLocal();
 
     virtual EmacsString repr();
+    virtual bool isOk()
+    {
+        return true;
+    }
+    virtual EmacsString lastError()
+    {
+        return EmacsString::null;
+    }
 
     virtual bool fio_create( FIO_CreateMode mode, FIO_EOL_Attribute attr );
     virtual bool fio_open( bool eof=false, FIO_EOL_Attribute attr=FIO_EOL__None );
@@ -462,6 +470,11 @@ void EmacsFileLocal::fio_flush()
 
 bool EmacsFileLocal::fio_close()
 {
+    if( m_file == NULL )
+    {
+        // its already close - return success
+        return true;
+    }
     int status = fclose( m_file );
     m_file = NULL;
 
@@ -1037,6 +1050,12 @@ bool EmacsFile::parse_analyse_filespec( const EmacsString &filespec )
         FIO_EOL_Attribute eol_attr = m_impl->fio_get_eol_attribute();
         delete m_impl;
         m_impl = EmacsFileImplementation::factoryEmacsFileRemote( *this, eol_attr );
+        if( !m_impl->isOk() )
+        {
+            TraceFile( FormatString("EmacsFile[%d]::parse_analyse_filespec remote not OK: '%s'")
+                << objectNumber() << m_impl->lastError() );
+            return false;
+        }
     }
 #endif
 

@@ -321,8 +321,9 @@ EmacsBufferJournal *EmacsBufferJournal::_journalStart( void )
     jnl->m_jnl_file.fio_create( FIO_STD, FIO_EOL__Binary );
     if( !jnl->m_jnl_file.fio_is_open() )
     {
-        error( FormatString("Unable to create journal filename %s")
-                    << jnl->m_jnl_file.fio_getname());
+        error( FormatString("Unable to create journal filename %s - %s")
+                    << jnl->m_jnl_file.fio_getname()
+                    << jnl->m_jnl_file.lastError() );
         delete jnl;
         return NULL;
     }

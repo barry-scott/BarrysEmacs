@@ -1332,9 +1332,17 @@ int visit_file( const EmacsString &fn, int createnew, int windowfiddle, const Em
     }
 
     EmacsFile file( fn, dn );
+    if( !file.isOk() )
+    {
+        error( FormatString("visit-file cannot open %s - %s")
+                    << fullname << file.lastError());
+        return 0;
+    }
+
     if( file.fio_is_directory() )
     {
-        error( FormatString("visit-file cannot open directory %s") << fullname );
+        error( FormatString("visit-file cannot open directory %s")
+                    << fullname );
         return 0;
     }
 

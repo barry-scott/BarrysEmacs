@@ -71,6 +71,10 @@ public:
     virtual ~EmacsFileImplementation();
 
     virtual EmacsString repr() = 0;
+    // isOk will be false if implementation cannot be used anymore
+    virtual bool isOk() = 0;
+    // returns the error that means isOk is false
+    virtual EmacsString lastError() = 0;
 
     virtual bool fio_create( FIO_CreateMode mode, FIO_EOL_Attribute attr ) = 0;
     virtual bool fio_open( bool eof=false, FIO_EOL_Attribute attr=FIO_EOL__None ) = 0;
@@ -159,6 +163,14 @@ public:
     virtual ~EmacsFile();
 
     EmacsString repr();
+    bool isOk()
+    {
+        return m_impl->isOk();
+    }
+    EmacsString lastError()
+    {
+        return m_impl->lastError();
+    }
 
     bool parse_is_valid();
 
