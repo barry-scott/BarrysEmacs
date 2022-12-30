@@ -28,7 +28,7 @@ class PackageBEmacs(object):
                  ,'mock-release', 'mock-testing', 'mock-standalone'
                  ,'copr-release', 'copr-testing'
                  ,'list-release', 'list-testing'
-                 ,'debian-source')
+                 ,'debian-test-build', 'debian-sbuild')
 
     def __init__( self ):
         self.KITNAME = 'bemacs'
@@ -85,8 +85,11 @@ class PackageBEmacs(object):
             elif self.cmd in ('list-release', 'list-testing'):
                 self.listCopr()
 
-            elif self.cmd in ('debian-source',):
-                self.buildDebianSourcePackage()
+            elif self.cmd in ('debian-test-build',):
+                self.buildDebianSourcePackage( sbuild=False )
+
+            elif self.cmd in ('debian-sbuild',):
+                self.buildDebianSourcePackage( sbuild=True )
 
         except KeyboardInterrupt:
             return 2
@@ -263,7 +266,7 @@ class PackageBEmacs(object):
         self.makeSrpm()
         log.info( 'SRPM is %s' % (self.SRPM_FILENAME,) )
 
-    def buildDebianSourcePackage( self ):
+    def buildDebianSourcePackage( self, sbuild ):
         run( ('rm', '-rf', 'tmp') )
         run( ('mkdir', 'tmp') )
         run( ('mkdir', 'tmp/sources') )
@@ -315,8 +318,8 @@ class PackageBEmacs(object):
             'unicode-data',
             ]
         depends = [
-            'shlibs',
-            'misc',
+            '${shlibs:Depends}',
+            '${misc:Depends}',
             'python3',
             'libhunspell',
             'libsqlite3',
@@ -330,7 +333,7 @@ class PackageBEmacs(object):
             'Version':
                 '%s-%s' % (self.version, self.opt_release),
             'Depends':
-                ', '.join( ['${%s:Depends}' % (dep,) for dep in depends] ),
+                ', '.join( depends ),
             'Build-Depends':
                 ', '.join( build_depends ),
             }
@@ -394,9 +397,19 @@ bemacs source: source-is-missing [HTML/ug_specificedit.html]
 bemacs source: source-is-missing [HTML/ug_top.html]
 ''' )
 
-        # build
-        run( ('debuild', '-us', '-uc'),
-            cwd='tmp/%s' % (self.KIT_BASENAME,) )
+        if not sbuild:
+            # build using system installed dependencies
+            run( ('debuild', '--unsigned-source', '--unsigned-changes'),
+                cwd='tmp/%s' % (self.KIT_BASENAME,) )
+
+        else:
+            # build using chroot
+            run( ('debuild',
+                    '--build=source',
+                    '--unsigned-source',
+                    '--unsigned-changes',
+                    '--no-check-builddeps' ),
+                cwd='tmp/%s' % (self.KIT_BASENAME,) )
 
     def buildMock( self ):
         self.buildSrpm()
