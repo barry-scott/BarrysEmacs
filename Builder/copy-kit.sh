@@ -25,13 +25,15 @@ Linux-Ubuntu|Linux-Debian)
     . /etc/os-release
     TARGET=/shared/Downloads/BEmacs/beta/${ID}/${VERSION_CODENAME}
     mkdir -p ${TARGET}
-    DEB=$( echo tmp/*.deb )
-    if [[ -e "$DEB" ]]
-    then
-        cp -v "$DEB" ${TARGET}
-    else
-        colour-print "<>error Error: No .deb file found<>"
-    fi
+    for DEB in tmp/*.deb
+    do
+        if [[ -e "$DEB" ]]
+        then
+            cp -v "$DEB" ${TARGET}
+        else
+            colour-print "<>error Error: No .deb file found<>"
+        fi
+    done
     ;;
 
 *)
