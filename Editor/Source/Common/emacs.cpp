@@ -62,6 +62,9 @@ extern void init_var(void);
 extern void restore_var(void);
 extern void init_subprocesses(void);
 extern void restore_timer(void);
+#if defined( SFTP )
+extern void shutdown_sftp(void);
+#endif
 extern void init_win(void);
 
 int dbg_flags;
@@ -347,6 +350,11 @@ int emacsMain
 #endif
     kill_checkpoint_files();
     EmacsBufferJournal::journal_exit();
+
+#if defined( SFTP )
+    // shutdown any remaining SFTP sessions
+    shutdown_sftp();
+#endif
 
     rst_dsp();
     emacs_is_exiting = 1;

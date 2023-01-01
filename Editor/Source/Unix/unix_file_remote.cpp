@@ -1,6 +1,6 @@
 //
 //  unix_file_remote.cpp
-//  Copyright 2022 Barry A. Scott
+//  Copyright 2022-2023 Barry A. Scott
 //
 //  Implementation of EmacsFileRemote using libssh
 //
@@ -26,6 +26,35 @@ void log_ssh_message( int priority, const char *function, const char *buffer, vo
                 << buffer );
 }
 
+static EmacsString sftpError( sftp_session sftp )
+{
+    int code = sftp_get_error( sftp );
+
+    switch( code )
+    {
+    case SSH_OK: return "No error";
+    case SSH_ERROR: return "Error of some kind";
+    case SSH_AGAIN: return "The nonblocking call must be repeated";
+    case SSH_EOF: return "We have already a eof";
+    case SSH_FX_EOF: return "end-of-file encountered";
+    case SSH_FX_NO_SUCH_FILE: return "file does not exist";
+    case SSH_FX_PERMISSION_DENIED: return "permission denied";
+    case SSH_FX_FAILURE: return "generic failure";
+    case SSH_FX_BAD_MESSAGE: return "garbage received from server";
+    case SSH_FX_NO_CONNECTION: return "no connection has been set up";
+    case SSH_FX_CONNECTION_LOST: return "there was a connection, but we lost it";
+    case SSH_FX_OP_UNSUPPORTED: return "operation not supported by libssh yet";
+    case SSH_FX_INVALID_HANDLE: return "invalid file handle";
+    case SSH_FX_NO_SUCH_PATH: return "no such file or directory path exists";
+    case SSH_FX_FILE_ALREADY_EXISTS: return "an attempt to create an already existing file or directory has been made";
+    case SSH_FX_WRITE_PROTECT: return "write-protected filesystem";
+    case SSH_FX_NO_MEDIA: return "no media was in remote drive";
+    default:
+        return FormatString("SFTP error code %d") << code;
+    }
+}
+
+
 extern "C" {
     static void log_callback_trampoline( int priority, const char *function, const char *buffer, void *userdata )
     {
@@ -37,11 +66,17 @@ extern "C" {
     }
 };
 
-class EmacsSshSession
+
+class EmacsSshSession;
+
+class EmacsSshSessionImpl
 {
 public:
-    EmacsSshSession( const EmacsString &host, bool verbose=false )
-    : m_session( ssh_new() )
+    friend class EmacsSshSession;
+
+    EmacsSshSessionImpl( const EmacsString &host, bool verbose=false )
+    : ref_count( 1 )
+    , m_session( ssh_new() )
     , m_is_connected( false )
     , m_host( host )
     , m_last_error()
@@ -55,8 +90,10 @@ public:
         }
     }
 
-    virtual ~EmacsSshSession()
+    virtual ~EmacsSshSessionImpl()
     {
+        emacs_assert( ref_count == 0 );
+
         if( m_is_connected )
         {
             ssh_disconnect( m_session );
@@ -66,11 +103,6 @@ public:
         {
             ssh_free( m_session );
         }
-    }
-
-    operator ssh_session()
-    {
-        return m_session;
     }
 
     bool connect()
@@ -136,11 +168,125 @@ private:
     }
 
     // member vars
+    int ref_count;
     ssh_session m_session;
     bool m_is_connected;
     EmacsString m_host;
     EmacsString m_last_error;
 };
+
+typedef std::map<EmacsString, EmacsSshSession> ssh_session_map_t;
+ssh_session_map_t g_ssh_sessions;
+
+class EmacsSshSession : public EmacsObject
+{
+public:
+    EMACS_OBJECT_FUNCTIONS( EmacsSshSession )
+
+    EmacsSshSession()
+    : EmacsObject()
+    , m_impl( NULL )
+    { }
+
+    EmacsSshSession( EmacsSshSession &other )
+    : EmacsObject()
+    , m_impl( other.m_impl )
+    {
+        m_impl->ref_count++;
+    }
+
+    EmacsSshSession( const EmacsString &host, bool verbose=false )
+    : EmacsObject()
+    , m_impl( NULL )
+    {
+        // see if there is an existing session to that host
+        ssh_session_map_t::iterator pos = g_ssh_sessions.find( host );
+        if( pos == g_ssh_sessions.end() )
+        {
+            m_impl = EMACS_NEW EmacsSshSessionImpl( host, verbose );
+            g_ssh_sessions[ host ] = *this;
+        }
+        else
+        {
+            m_impl = pos->second.m_impl;
+            m_impl->ref_count++;
+        }
+    }
+
+    ~EmacsSshSession()
+    {
+        if( m_impl )
+        {
+            m_impl->ref_count--;
+            if( m_impl->ref_count == 0 )
+            {
+                delete m_impl;
+            }
+        }
+    }
+
+    EmacsSshSession &operator=( EmacsSshSession &other )
+    {
+        if( m_impl )
+        {
+            if( m_impl == other.m_impl )
+            {
+                return *this;
+            }
+            m_impl->ref_count--;
+            if( m_impl->ref_count == 0 )
+            {
+                delete m_impl;
+            }
+        }
+
+        m_impl = other.m_impl;
+        m_impl->ref_count++;
+
+        return *this;
+    }
+
+    EmacsSshSessionImpl *operator->()
+    {
+        return m_impl;
+    }
+
+    operator ssh_session()
+    {
+        return m_impl->m_session;
+    }
+
+private:
+    EmacsSshSessionImpl *m_impl;
+};
+
+//
+//  function used from the debugger to list all the saved ssh sessions
+//
+void list_ssh_sessions(void)
+{
+    for( ssh_session_map_t::iterator it = g_ssh_sessions.begin(); it != g_ssh_sessions.end(); ++it )
+    {
+        TraceFile( FormatString("ssh_session '%s'") << it->first );
+    }
+}
+
+//
+//  shutdown all ssh sessions
+//
+void shutdown_sftp(void)
+{
+    TraceFile( "shutdown_sftp" );
+    while( !g_ssh_sessions.empty() )
+    {
+        ssh_session_map_t::iterator it = g_ssh_sessions.begin();
+        EmacsString remote_host( it->first );
+        TraceFile( FormatString("shutdown_sftp shutdown '%s'") << remote_host );
+        g_ssh_sessions.erase( it );
+    }
+
+    TraceFile( "shutdown_sftp done" );
+}
 
 // resource manager for sftp_attributes object
 class EmacsSftpAttribues
@@ -173,11 +319,14 @@ public:
 //
 //  an sftp session allows SFTP commands to be run
 //
-class EmacsSftpSession
+class EmacsSftpSession : public EmacsObject
 {
 public:
+    EMACS_OBJECT_FUNCTIONS( EmacsSftpSession )
+
     EmacsSftpSession( EmacsSshSession &session )
-    : m_ssh_session( session )
+    : EmacsObject()
+    , m_ssh_session( session )
     , m_sftp_session( NULL )
     { }
 
@@ -226,6 +375,8 @@ public:
         char *path = sftp_canonicalize_path( m_sftp_session, ".");
         if( path == NULL )
         {
+            TraceFile( FormatString("EmacsSftpSession[%d]::cwd() sftp_canonicalize_path('.') error %s")
+                        << objectNumber() << sftpError( m_sftp_session ) );
             return EmacsString( "." );
         }
         else
@@ -243,8 +394,8 @@ public:
 private:
     void setLastError( const EmacsString &msg )
     {
-        TraceFile( FormatString("EmacsSftpSession.setLastError() '%s'")
-                    << m_last_error );
+        TraceFile( FormatString("EmacsSftpSession[%d]::setLastError() '%s'")
+                    << objectNumber() << m_last_error );
 
         m_last_error = msg;
     }
@@ -257,16 +408,19 @@ private:
     }
 
     // member vars
-    EmacsSshSession &   m_ssh_session;
+    EmacsSshSession     m_ssh_session;
     sftp_session        m_sftp_session;
     EmacsString         m_last_error;
 };
 
-class EmacsSftpFile
+class EmacsSftpFile : public EmacsObject
 {
 public:
+    EMACS_OBJECT_FUNCTIONS( EmacsSftpFile )
+
     EmacsSftpFile( EmacsSftpSession &session )
-    : m_sftp_session( session )
+    : EmacsObject()
+    , m_sftp_session( session )
     , m_file( NULL )
     , m_last_error()
     { }
@@ -393,7 +547,7 @@ public:
     virtual bool isOk()
     {
         // not usable if has not connected
-        return m_ssh_session.isOk();
+        return m_ssh_session->isOk();
     }
     virtual EmacsString lastError();
 
@@ -496,7 +650,14 @@ EmacsFileRemote::EmacsFileRemote( EmacsFile &parent, FIO_EOL_Attribute attr )
     TraceFile( FormatString("EmacsFileRemote::EmacsFileRemote( '%s' )")
                 << parent.repr() );
 
-    if( m_ssh_session.connect() )
+    // if not connected
+    if( !m_ssh_session->isOk() )
+    {
+        m_ssh_session->connect();
+    }
+
+    // if connected setup sftp session
+    if( m_ssh_session->isOk() )
     {
         m_sftp_session.init();
         if( m_sftp_session.isOk() )
@@ -521,9 +682,9 @@ EmacsString EmacsFileRemote::repr()
 EmacsString EmacsFileRemote::lastError()
 {
     // if the session is not ok that is the error to return
-    if( !m_ssh_session.isOk() )
+    if( !m_ssh_session->isOk() )
     {
-        return m_ssh_session.lastError();
+        return m_ssh_session->lastError();
     }
 
     // if there is a file error return that
@@ -573,7 +734,7 @@ bool EmacsFileRemote::fio_create( FIO_CreateMode mode, FIO_EOL_Attribute attr )
 {
     m_eol_attr = attr;
 
-    if( !m_ssh_session.isOk() )
+    if( !m_ssh_session->isOk() )
     {
         return false;
     }
@@ -583,7 +744,7 @@ bool EmacsFileRemote::fio_create( FIO_CreateMode mode, FIO_EOL_Attribute attr )
 
 bool EmacsFileRemote::fio_open( bool eof, FIO_EOL_Attribute attr )
 {
-    if( !m_ssh_session.isOk() )
+    if( !m_ssh_session->isOk() )
     {
         return false;
     }
@@ -962,6 +1123,8 @@ FileFindRemote::FileFindRemote( EmacsFile &files, EmacsFileRemote &remote, bool 
 , m_remote( remote )
 , m_sftp_dir( NULL )
 {
+    TraceFile( FormatString("FileFindRemote[%d]::FileFindRemote( EmacsFile[%d], EmacsFileRemote[%d], %d")
+                << objectNumber() << files.objectNumber() << remote.objectNumber() << return_all_directories );
     if( !m_files.parse_is_valid() )
     {
         return;
@@ -982,8 +1145,10 @@ FileFindRemote::FileFindRemote( EmacsFile &files, EmacsFileRemote &remote, bool 
 
 FileFindRemote::~FileFindRemote()
 {
+    TraceFile( FormatString("FileFindRemote[%d]::~FileFindRemote()")
+                << objectNumber() );
     if( m_sftp_dir != NULL )
-   {
+    {
         sftp_closedir( m_sftp_dir );
     }
 }
@@ -1000,16 +1165,25 @@ EmacsString FileFindRemote::repr()
 
 EmacsString FileFindRemote::next()
 {
+    TraceFile( FormatString("FileFindRemote[%d]::next()")
+                << objectNumber() );
+
     switch( m_state )
     {
     default:
     case all_done:
+        TraceFile( FormatString("FileFindRemote[%d]::next() state all_done")
+                    << objectNumber() );
         return EmacsString::null;
 
     case first_time:
+        TraceFile( FormatString("FileFindRemote[%d]::next() state first_time")
+                    << objectNumber() );
         if( m_match_pattern.isNull() )
         {
             m_state = all_done;
+            TraceFile( FormatString("FileFindRemote[%d]::next() => '%s'")
+                        << objectNumber() << m_root_path );
             return m_root_path;
         }
 
@@ -1021,6 +1195,8 @@ EmacsString FileFindRemote::next()
         }
         if( m_sftp_dir == NULL )
         {
+            TraceFile( FormatString("FileFindRemote[%d]::next() sftp_opendir() error '%s'")
+                        << objectNumber() << sftpError( m_remote.m_sftp_session ) );
             m_state = all_done;
             return EmacsString::null;
         }
@@ -1030,14 +1206,20 @@ EmacsString FileFindRemote::next()
 
     case next_time:
     {
+        TraceFile( FormatString("FileFindRemote[%d]::next() state next_time")
+                    << objectNumber() );
         // read entries looking for a match
         while( !sftp_dir_eof( m_sftp_dir ) )
         {
             EmacsSftpAttribues dir( sftp_readdir( m_remote.m_sftp_session, m_sftp_dir ) );
             if( !dir.isOk() )
             {
+                TraceFile( FormatString("FileFindRemote[%d]::next() sftp_readdir() done (error '%s')")
+                            << objectNumber() << sftpError( m_remote.m_sftp_session ) );
                 break;
             }
+            TraceFile( FormatString("FileFindRemote[%d]::next() sftp_readdir() '%s'")
+                        << objectNumber() << dir.m_file_attr->name );
 
             // do not return . and .. entries
             if( strcmp( dir.m_file_attr->name, "." ) == 0
@@ -1059,6 +1241,9 @@ EmacsString FileFindRemote::next()
                 EmacsString result( m_files.remote_host );
                 result.append( ":" );
                 result.append( m_full_filename );
+
+                TraceFile( FormatString("FileFindRemote[%d]::next() => '%s'")
+                            << objectNumber() << result );
                 return result;
             }
 
@@ -1074,6 +1259,9 @@ EmacsString FileFindRemote::next()
                 EmacsString result( m_files.remote_host );
                 result.append( ":" );
                 result.append( m_full_filename );
+
+                TraceFile( FormatString("FileFindRemote[%d]::next() => '%s'")
+                            << objectNumber() << result );
                 return result;
             }
         }
@@ -1082,5 +1270,7 @@ EmacsString FileFindRemote::next()
         break;
     }
 
+    TraceFile( FormatString("FileFindRemote[%d]::next() done => ''")
+                << objectNumber() );
     return EmacsString::null;
 }
