@@ -47,6 +47,7 @@ do
 
     --gdb)
         shift
+        rm -f .gdbinit
         RUN_DEBUGGER=gdb
         ;;
 
@@ -63,7 +64,6 @@ done
 
 case "${RUN_DEBUGGER}" in
 gdb)
-
     gdb --args exe-cli-bemacs/bemacs-cli "$@"
     ;;
 
