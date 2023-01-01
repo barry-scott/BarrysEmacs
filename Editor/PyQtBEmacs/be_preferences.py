@@ -186,8 +186,15 @@ class Font(PreferencesNode):
             self.point_size = 14
 
         elif sys.platform == 'linux':
-            self.face = 'Fira Mono'
-            self.point_size = 12
+            if os.path.exists( '/etc/os-release' ):
+                # assume this is debian/ubuntu
+                self.face = 'Nota Mono'
+                self.point_size = 12
+
+            else:
+                # assume fedora
+                self.face = 'Fira Mono'
+                self.point_size = 12
 
         else:
             # Assuming linux/xxxBSD
