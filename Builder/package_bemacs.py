@@ -321,10 +321,8 @@ class PackageBEmacs(object):
             '${shlibs:Depends}',
             '${misc:Depends}',
             'python3',
-            'libhunspell-1.7-0',
-            'libsqlite3-0',
-            'libssh-4',
             'python3-pyqt6',
+            'fonts-firacode',
             ]
 
         control_args = {

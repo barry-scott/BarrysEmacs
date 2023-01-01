@@ -34,6 +34,14 @@ Linux-Ubuntu|Linux-Debian)
             colour-print "<>error Error: No .deb file found<>"
         fi
     done
+    if [[ "$1" = "--install" ]]
+    then
+        pushd /shared/Downloads/Debian
+        ./make-repos.sh
+
+        sudo apt update
+        sudo apt install bemacs
+    fi
     ;;
 
 *)
