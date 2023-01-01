@@ -289,17 +289,14 @@ void shutdown_sftp(void)
 }
 
 // resource manager for sftp_attributes object
-class EmacsSftpAttribues
+class EmacsSftpAttributes
 {
 public:
-    EmacsSftpAttribues( sftp_attributes attr )
+    explicit EmacsSftpAttributes( sftp_attributes attr )
     : m_file_attr( attr )
     { }
-    EmacsSftpAttribues( EmacsSftpAttribues &attr )
-    : m_file_attr( attr.m_file_attr )
-    { }
 
-    ~EmacsSftpAttribues()
+    ~EmacsSftpAttributes()
     {
         if( m_file_attr != NULL )
         {
@@ -385,9 +382,9 @@ public:
         }
     }
 
-    EmacsSftpAttribues stat( const EmacsString &path )
+    EmacsSftpAttributes stat( const EmacsString &path )
     {
-        EmacsSftpAttribues attr( sftp_stat( m_sftp_session, path ) );
+        EmacsSftpAttributes attr( sftp_stat( m_sftp_session, path ) );
         return attr;
     }
 
@@ -460,14 +457,15 @@ public:
         return true;
     }
 
-    EmacsSftpAttribues stat( const EmacsString &path )
+    EmacsSftpAttributes stat( const EmacsString &path )
     {
-        return EmacsSftpAttribues( sftp_stat( m_sftp_session, path ) );
+        sftp_attributes q = sftp_stat( m_sftp_session, path );
+        return EmacsSftpAttributes( q );
     }
 
-    EmacsSftpAttribues fstat()
+    EmacsSftpAttributes fstat()
     {
-        return EmacsSftpAttribues( sftp_fstat( m_file ) );
+        return EmacsSftpAttributes( sftp_fstat( m_file ) );
     }
 
     bool seek( uint64_t offset )
@@ -715,7 +713,7 @@ bool EmacsFileRemote::fio_file_exists()
 
     if( m_parent.parse_is_valid() )
     {
-        EmacsSftpAttribues attr( m_sftp_session.stat( m_parent.result_spec ) );
+        EmacsSftpAttributes attr( m_sftp_session.stat( m_parent.result_spec ) );
         return attr.isOk();
     }
     else
@@ -763,7 +761,7 @@ bool EmacsFileRemote::fio_open( bool eof, FIO_EOL_Attribute attr )
 
     if( eof )
     {
-        EmacsSftpAttribues attr( m_sftp_file.fstat() );
+        EmacsSftpAttributes attr( m_sftp_file.fstat() );
         if( !attr.isOk() )
         {
             return false;
@@ -1001,7 +999,7 @@ long int EmacsFileRemote::fio_size()
 {
     if( m_sftp_file.is_open() )
     {
-        EmacsSftpAttribues attr( m_sftp_file.fstat() );
+        EmacsSftpAttributes attr( m_sftp_file.fstat() );
         if( !attr.isOk() )
         {
             return 0;
@@ -1010,7 +1008,7 @@ long int EmacsFileRemote::fio_size()
     }
     else
     {
-        EmacsSftpAttribues attr( m_sftp_file.stat( m_parent.result_spec ) );
+        EmacsSftpAttributes attr( m_sftp_file.stat( m_parent.result_spec ) );
         if( !attr.isOk() )
         {
             return 0;
@@ -1030,7 +1028,7 @@ EmacsString EmacsFileRemote::fio_getname()
 
 time_t EmacsFileRemote::fio_modify_date()
 {
-    EmacsSftpAttribues attr( m_sftp_file.fstat() );
+    EmacsSftpAttributes attr( m_sftp_file.fstat() );
     if( !attr.isOk() )
     {
         return 0;
@@ -1048,7 +1046,7 @@ time_t EmacsFileRemote::fio_modify_date()
 
 time_t EmacsFileRemote::fio_file_modify_date()
 {
-    EmacsSftpAttribues attr( m_sftp_session.stat( m_parent.result_spec ) );
+    EmacsSftpAttributes attr( m_sftp_session.stat( m_parent.result_spec ) );
     if( !attr.isOk() )
     {
         return 0;
@@ -1078,7 +1076,7 @@ EmacsString EmacsFileRemote::fio_cwd()
 
 bool EmacsFileRemote::fio_is_directory( const EmacsString &filename )
 {
-    EmacsSftpAttribues attr( m_sftp_session.stat( filename ) );
+    EmacsSftpAttributes attr( m_sftp_session.stat( filename ) );
     if( !attr.isOk() )
     {
         return false;
@@ -1109,7 +1107,7 @@ bool EmacsFileRemote::fio_is_regular()
         return false;
     }
 
-    EmacsSftpAttribues attr( m_sftp_session.stat( m_parent.result_spec ) );
+    EmacsSftpAttributes attr( m_sftp_session.stat( m_parent.result_spec ) );
     if( !attr.isOk() )
     {
         return false;
@@ -1211,7 +1209,7 @@ EmacsString FileFindRemote::next()
         // read entries looking for a match
         while( !sftp_dir_eof( m_sftp_dir ) )
         {
-            EmacsSftpAttribues dir( sftp_readdir( m_remote.m_sftp_session, m_sftp_dir ) );
+            EmacsSftpAttributes dir( sftp_readdir( m_remote.m_sftp_session, m_sftp_dir ) );
             if( !dir.isOk() )
             {
                 TraceFile( FormatString("FileFindRemote[%d]::next() sftp_readdir() done (error '%s')")
