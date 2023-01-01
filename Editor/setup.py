@@ -203,6 +203,10 @@ class Setup:
             cli_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
             utils_feature_defines = []
 
+            if self.opt_sftp:
+                pybemacs_feature_defines.append( ('SFTP', '1') )
+                cli_feature_defines.append( ('SFTP', '1') )
+
             if self.opt_sqlite:
                 pybemacs_feature_defines.append( ('DB_SQLITE', '1') )
                 cli_feature_defines.append( ('DB_SQLITE', '1') )
@@ -880,8 +884,13 @@ class CompilerGCC(Compiler):
             self._addVar( 'PYCXXSRC',       '%(BUILDER_TOP_DIR)s/Imports/pycxx-%(PYCXX_VER)s/Src' )
 
         if self.setup.platform == 'macosx':
-            self._addVar( 'CCC',        'g++ -arch x86_64 -arch arm64' )
-            self._addVar( 'CC',         'gcc -arch x86_64 -arch arm64' )
+            if True:
+                self._addVar( 'CCC',        'g++ ' )
+                self._addVar( 'CC',         'gcc ' )
+
+            else:
+                self._addVar( 'CCC',        'g++ -arch x86_64 -arch arm64' )
+                self._addVar( 'CC',         'gcc -arch x86_64 -arch arm64' )
 
         else:
             self._addVar( 'CCC',        'g++' )
@@ -977,6 +986,14 @@ class CompilerGCC(Compiler):
 class MacOsxCompilerGCC(CompilerGCC):
     def __init__( self, setup ):
         CompilerGCC.__init__( self, setup )
+        if setup.opt_sftp:
+            self._addVar( 'LIBSSH_FLAGS',   '-I%s/include' % (os.environ['HOMEBREW_PREFIX'],) )
+            self._addVar( 'LIBSSH_LFLAGS',  '-L%s/lib -lssh' % (os.environ['HOMEBREW_PREFIX'],) )
+
+        else:
+            self._addVar( 'LIBSSH_FLAGS',   '' )
+            self._addVar( 'LIBSSH_LFLAGS',   '' )
+
         if setup.opt_sqlite:
             self._addVar( 'SQLITESRC',      '%(BUILDER_TOP_DIR)s/Imports/sqlite' )
             self._addVar( 'SQLITE_FLAGS',   '-I%(BUILDER_TOP_DIR)s/Imports/sqlite' )
@@ -1061,6 +1078,7 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"python\\"" '
                                         '-DDARWIN '
                                         '%(FEATURE_DEFINES)s '
+                                        '%(LIBSSH_FLAGS)s '
                                         '%(SQLITE_FLAGS)s '
                                         '%(HUNSPELL_CFLAGS)s '
                                         '-D%(LOG.DEBUG)s' )
@@ -1068,6 +1086,7 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-fexceptions -frtti ' )
 
         self._addVar( 'LDSHARED',       '%(CCC)s -bundle -g '
+                                        '%(LIBSSH_LFLAGS)s '
                                         '-framework System '
                                         '%(PYTHON_FRAMEWORK)s '
                                         '-framework CoreFoundation '
@@ -1089,13 +1108,15 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '"-DOS_NAME=\\"MacOSX\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
                                         '%(FEATURE_DEFINES)s '
+                                        '%(LIBSSH_FLAGS)s '
                                         '%(SQLITE_FLAGS)s '
                                         '%(HUNSPELL_CFLAGS)s '
                                         '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
 
-        self._addVar( 'LDEXE',          '%(CCC)s -g' )
+        self._addVar( 'LDEXE',          '%(CCC)s -g '
+                                        '%(LIBSSH_LFLAGS)s ' )
 
     def setupPythonTools( self ):
         log.info( 'setupPythonTools' )

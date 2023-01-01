@@ -20,7 +20,7 @@ fi
 
 if ! which "${PYTHON}" >/dev/null
 then
-    colour-print "<>Error: PYTHON program ${PYTHON} does not exist<>"
+    colour-print "<>error Error: PYTHON program ${PYTHON} does not exist<>"
     exit 1
 fi
 
@@ -30,10 +30,19 @@ then
     umount "/Volumes/Barry's Emacs"
 fi
 
+if [ "${HOMEBREW_PREFIX}" = "" ]
+then
+    colour-print "<>error Error: HOMEBREW_PREFIX is not defined<> Hint run brew shellenv"
+    exit 1
+fi
+
+# make sure that libssh is installed
+brew install libssh
+
 ./build-venv.sh 2>&1 | ${PYTHON} -u build_tee.py build.log
 
 export PYTHON=${PWD}/venv.tmp/bin/python
-${PYTHON} ./build_bemacs.py gui --colour --no-sftp | ${PYTHON} -u build_tee.py -a build.log
+${PYTHON} ./build_bemacs.py gui --colour | ${PYTHON} -u build_tee.py -a build.log
 
 if false
 then
