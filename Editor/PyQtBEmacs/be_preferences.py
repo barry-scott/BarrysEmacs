@@ -11,7 +11,7 @@
     be_preferences.py
 
 '''
-import pathlib
+from pathlib import Path
 import sys
 
 from  xml_preferences import XmlPreferences, Scheme, SchemeNode, PreferencesNode
@@ -186,7 +186,7 @@ class Font(PreferencesNode):
             self.point_size = 14
 
         elif sys.platform == 'linux':
-            if os.path.exists( '/etc/os-release' ):
+            if Path( '/etc/os-release' ).exists():
                 # assume this is debian/ubuntu
                 self.face = 'Nota Mono'
                 self.point_size = 12
@@ -287,8 +287,8 @@ class BemacsPreferenceManager:
         self.prefs_filename = prefs_filename
         self.session_filename = session_filename
 
-        assert isinstance( prefs_filename, pathlib.Path )
-        assert isinstance( session_filename, pathlib.Path )
+        assert isinstance( prefs_filename, Path )
+        assert isinstance( session_filename, Path )
 
         try:
             self.session = self.xml_session.load( self.session_filename )
