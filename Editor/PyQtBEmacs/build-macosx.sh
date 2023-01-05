@@ -58,7 +58,7 @@ then
     mkdir -p "Resources/documentation"
     mkdir -p "Resources/bin"
 
-    ${PYTHON} "${SRC_DIR}/create_bemacs_client.py" "${SRC_DIR}" "Resources/bin/bemacs_client"
+    ${PYTHON} "${SRC_DIR}/create_bemacs_client.py" "${SRC_DIR}" "Resources/bin/bemacs"
 
     # remove translations stuff
     rm MacOS/PyQt6/Qt6/translations

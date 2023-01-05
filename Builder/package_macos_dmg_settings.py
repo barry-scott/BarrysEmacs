@@ -34,7 +34,7 @@ with open( path, 'w' ) as f:
     log.info( 'Writing %s' % (path,) )
     f.write( __text )
 
-client_name = 'bemacs_client'
+client_name = 'bemacs'
 client_path = os.path.join( 'tmp', PKGNAME, client_name )
 
 cli_name = 'bemacs-cli'
