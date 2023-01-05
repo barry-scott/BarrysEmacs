@@ -985,7 +985,15 @@ bool EmacsFile::parse_analyse_filespec( const EmacsString &filespec )
     int disk_end;
     for(;;)
     {
+        int path_first = sp.first('/');
         disk_end = sp.first(':');
+
+        // is the : after a / path char?
+        if( path_first >= 0 and path_first < disk_end )
+        {
+            // its not a env var or remote host
+            disk_end = -1;
+        }
         if( disk_end > 0 )
         {
             disk = sp( 0, disk_end );
@@ -1036,7 +1044,16 @@ bool EmacsFile::parse_analyse_filespec( const EmacsString &filespec )
     // any "disk" here is a remote host
     // localhost:file.ext
     // switch to using remote parsing
+    int path_first = sp.first('/');
     disk_end = sp.first(':');
+
+    // is the : after a / path char?
+    if( path_first >= 0 and path_first < disk_end )
+    {
+        // its not a env var or remote host
+        disk_end = -1;
+    }
+
     if( disk_end > 0 )
     {
         remote_host = sp( 0, disk_end );
