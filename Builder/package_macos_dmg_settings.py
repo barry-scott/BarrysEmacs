@@ -37,12 +37,11 @@ with open( path, 'w' ) as f:
 client_name = 'bemacs'
 client_path = os.path.join( 'tmp', PKGNAME, client_name )
 
-cli_name = 'bemacs-cli'
-cli_path = os.path.join( 'tmp', PKGNAME, cli_name )
 
-for tool_name, tool_path in [(cli_name, cli_path), (client_name, client_path)]:
+for tool_name, tool_path in [(client_name, client_path)]:
     __text = '''#!/bin/bash
-    exec "/Applications/Barry's Emacs.app/Contents/Resources/bin/%s" "$@"
+__APP_FOLDER=$(osascript -e  'tell application "Finder" to POSIX path of (get application file id "org.barrys-emacs.bemacs" as alias)')
+exec "$(__APP_FOLDER)/Contents/Resources/bin/%s" "$@"
     ''' % (tool_name,)
 
     tool_path = os.path.join( 'tmp', PKGNAME, tool_name )
@@ -78,7 +77,6 @@ size = '400M'
 
 # Files to include
 files = [app_path
-        ,cli_path
         ,client_path
         ,'../Kits/readme.txt'
         ,'../Kits/readme-macos.txt']
@@ -105,7 +103,6 @@ icon_locations = {
     'readme.txt':       (100, 320),
     'readme-macos.txt': (230, 350),
     client_name:        (380, 320),
-    cli_name:           (520, 350),
     }
 
 # .. Window configuration ......................................................
