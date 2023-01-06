@@ -23,6 +23,7 @@ import be_platform_specific
 import be_debug
 
 import _bemacs
+# input('QQQ loaded _bemacs pid %d: ' % (os.getpid(),))
 
 import be_user
 
