@@ -6,7 +6,7 @@ import sys
 import subprocess
 import glob
 
-pycxx_version = (7,1,5)
+pycxx_version = (7,1,7)
 pycxx_version_str = '%d.%d.%d' % pycxx_version
 
 sys.path.insert( 0, '../Builder' )
@@ -340,7 +340,7 @@ class Setup:
 
         if self.opt_bemacs_gui:
             if not os.path.exists( self.c_pybemacs.expand( '%(PYCXXSRC)s' ) ):
-                raise SetupError( 'PyCXX version %s expect to be in %s' % (pycxx_version, self.c_pybemacs.expand( '%(PYCXX)s' )) )
+                raise SetupError( 'PyCXX version %s expect to be in %s' % (pycxx_version, self.c_pybemacs.expand( '%(PYCXXSRC)s' )) )
 
             self.pycxx_obj_file = [
                 Source( self.c_pybemacs, '%(PYCXXSRC)s/cxxsupport.cxx' ),
