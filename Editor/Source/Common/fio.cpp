@@ -308,12 +308,14 @@ void EmacsFile::fio_set_filespec_from( EmacsFile &other )
 
     parse_valid = other.parse_valid;
 
+#if defined(SFTP)
     if( !remote_host.isNull() )
     {
         FIO_EOL_Attribute eol_attr = other.fio_get_eol_attribute();
         delete m_impl;
         m_impl = EmacsFileImplementation::factoryEmacsFileRemote( *this, eol_attr );
     }
+#endif
 }
 
 FileFind::FileFind( EmacsFile *files, bool return_all_directories )

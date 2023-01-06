@@ -54,6 +54,14 @@ public:
     virtual ~EmacsFileLocal();
 
     virtual EmacsString repr();
+    virtual bool isOk()
+    {
+        return true;
+    }
+    virtual EmacsString lastError()
+    {
+        return EmacsString::null;
+    }
 
     virtual bool fio_create( FIO_CreateMode mode, FIO_EOL_Attribute attr );
     virtual bool fio_open( bool eof=false, FIO_EOL_Attribute attr=FIO_EOL__None );
@@ -996,6 +1004,7 @@ bool EmacsFile::parse_filename( const EmacsString &name, const EmacsString &def 
     TraceFile( FormatString("EmacsFile[%d]::parse_filename true result_spec '%s'")
         << objectNumber() << result_spec );
 
+    parse_valid = true;
     return true;
 }
 
