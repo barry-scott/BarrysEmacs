@@ -23,21 +23,24 @@ MacOSX)
 
 Linux-Ubuntu|Linux-Debian)
     . /etc/os-release
-    TARGET=/shared/Downloads/BEmacs/beta/${ID}/${VERSION_CODENAME}
+    # assume that debian and ubuntu never use the same codename
+    TARGET=/shared/Downloads/BEmacs/beta/${VERSION_CODENAME}
     mkdir -p ${TARGET}
-    for DEB in tmp/*.deb
+    for DSC in tmp/*.dsc
     do
-        if [[ -e "$DEB" ]]
+        if [[ -e "$DSC" ]]
         then
-            cp -v "$DEB" ${TARGET}
+            cp -v "$DSC" ${TARGET}
+            DEB="${DSC%%.dsc}_*.deb"
+            cp -v ${DEB} ${TARGET}
         else
-            colour-print "<>error Error: No .deb file found<>"
+            colour-print "<>error Error: No .dsc file found<>"
         fi
     done
     if [[ "$1" = "--install" ]]
     then
         pushd /shared/Downloads/Debian
-        ./make-repos.sh
+        ./make-apt-repos.sh update
 
         sudo apt update
         sudo apt install bemacs
