@@ -7,14 +7,9 @@ export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/PyQtBEmacs:${BUILDER_TOP_DIR}/Editor
 export BEMACS_EMACS_LIBRARY=${BUILDER_TOP_DIR}/Builder/tmp/ROOT/usr/lib/bemacs
 export BEMACS_EMACS_DOC=${BUILDER_TOP_DIR}/Builder/tmp/ROOT/usr/share/bemacs/doc/
 
-if [ ! -e "${BEMACS_EMACS_LIBRARY}/emacslib.db" ]
-then
-    echo "Error: emacslib not found: ${BEMACS_EMACS_LIBRARY}/emacslib.db"
-    exit 1
-fi
-
 RUN_GDB=0
 RUN_VALGRIND=0
+MOCK_EDITOR=0
 
 while :
 do
@@ -40,11 +35,22 @@ do
         shift
         ;;
 
+    --mock-editor)
+        MOCK_EDITOR=1
+        break
+        ;;
+
     *)
         break
         ;;
     esac
 done
+
+if [[ "$MOCK_EDITOR" = "0" && ! -e "${BEMACS_EMACS_LIBRARY}/emacslib.db" ]]
+then
+    echo "Error: emacslib not found: ${BEMACS_EMACS_LIBRARY}/emacslib.db"
+    exit 1
+fi
 
 if [[ "${RUN_VALGRIND}" = "1" ]]
 then
