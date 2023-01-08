@@ -16,4 +16,5 @@ fi
 python3 ./package_bemacs.py ${cmd} \
     --mock-target=fedora-${fedora_rel}-${arch} \
     --system-hunspell \
-    --colour
+    --colour \
+        |& tee build-for-fedora-${fedora_rel}-${arch}.log
