@@ -619,7 +619,7 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
         ratio = self.app.primaryScreen().devicePixelRatio()
 
         self.editor_pixmap = QtGui.QPixmap( int(self.pixel_width * ratio), int(self.pixel_height * ratio) )
-        self.editor_pixmap.setDevicePixelRatio( 1.5 )
+        self.editor_pixmap.setDevicePixelRatio( ratio )
 
         self._debugPanel( '__calculateWindowSize editor_pixmap.devicePixelRatio %r' %
                         (self.editor_pixmap.devicePixelRatio(),) )
