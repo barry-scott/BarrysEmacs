@@ -616,8 +616,15 @@ class EmacsPanel(QtWidgets.QWidget, be_debug.EmacsDebugMixin):
                         ,self.pixel_width, self.pixel_height
                         ,self.term_width, self.term_height) )
 
-        self._debugPanel( '__calculateWindowSize create editor_pixmap %d x %d' % (self.pixel_width, self.pixel_height) )
-        self.editor_pixmap = QtGui.QPixmap( self.pixel_width, self.pixel_height )
+        ratio = self.app.primaryScreen().devicePixelRatio()
+
+        self.editor_pixmap = QtGui.QPixmap( int(self.pixel_width * ratio), int(self.pixel_height * ratio) )
+        self.editor_pixmap.setDevicePixelRatio( 1.5 )
+
+        self._debugPanel( '__calculateWindowSize editor_pixmap.devicePixelRatio %r' %
+                        (self.editor_pixmap.devicePixelRatio(),) )
+        self._debugPanel( '__calculateWindowSize editor_pixmap.deviceIndependentSize %r' %
+                        (self.editor_pixmap.deviceIndependentSize(),) )
 
         qp = QtGui.QPainter( self.editor_pixmap )
         qp.setBackgroundMode( QtCore.Qt.BGMode.OpaqueMode )
