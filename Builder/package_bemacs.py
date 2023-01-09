@@ -122,9 +122,14 @@ class PackageBEmacs(object):
                 log.info( 'Defaulting --mock-target=%s' % (self.opt_mock_target,) )
 
             if self.copr_repo:
-                self.COPR_REPO_URL = 'https://copr-be.cloud.fedoraproject.org/results/barryascott/%s/%s' % (self.copr_repo, self.opt_mock_target)
+                with open( self.MOCK_COPR_REPO_FILENAME, 'r' ) as f:
+                    for line in f:
+                        if line.startswith('baseurl='):
+                            baseurl = line.strip().split('=', 1)[1]
+                            self.COPR_REPO_URL = baseurl.replace('fedora-$releasever-$basearch', self.opt_mock_target)
+
             if self.copr_repo_other:
-                self.COPR_REPO_OTHER_URL = 'https://copr-be.cloud.fedoraproject.org/results/barryascott/%s/%s' % (self.copr_repo_other, self.opt_mock_target)
+                self.COPR_REPO_OTHER_URL = 'https://download.copr.fedorainfracloud.org/results/barryascott/%s/%s' % (self.copr_repo_other, self.opt_mock_target)
 
             if self.opt_release == 'auto':
                 all_packages = package_list_repo.listRepo( self.COPR_REPO_URL )
@@ -134,13 +139,13 @@ class PackageBEmacs(object):
                 other_package_ver = 0
 
                 if self.KITNAME in all_packages:
-                    ver, rel, build_time = all_packages[ self.KITNAME ]
+                    key, ver, rel, build_time = all_packages[ self.KITNAME ]
                     if ver == self.version:
                         package_ver = int( rel.split('.')[0] )
                         log.info( 'Release %d found in %s' % (package_ver, self.copr_repo) )
 
                 if self.KITNAME in all_other_packages:
-                    ver, rel, build_time = all_other_packages[ self.KITNAME ]
+                    key, ver, rel, build_time = all_other_packages[ self.KITNAME ]
                     if ver == self.version:
                         other_package_ver = int( rel.split('.')[0] )
                         log.info( 'Release %d found in %s' % (package_ver, self.copr_repo_other) )
@@ -148,6 +153,10 @@ class PackageBEmacs(object):
                 self.opt_release = 1 + max( package_ver, other_package_ver )
 
                 log.info( 'Release set to %d' % (self.opt_release,) )
+
+            else:
+                log.info( 'Building for release %s' % (self.opt_release,) )
+
             return
 
         if self.os_release_info['ID'] in ('ubuntu', 'debian'):
@@ -502,7 +511,7 @@ bemacs source: source-is-missing [HTML/ug_top.html]
         now = time.time()
 
         for name in sorted( all_packages.keys() ):
-            ver, rel, build_time = all_packages[ name ]
+            key, ver, rel, build_time = all_packages[ name ]
 
             build_age = self.formatTimeDelta( now - build_time )
 
