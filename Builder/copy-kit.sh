@@ -42,7 +42,9 @@ Linux-Ubuntu|Linux-Debian)
         pushd /shared/Downloads/Debian
         ./make-apt-repos.sh update
 
+        colour-print "<>info Info: apt update<>"
         sudo apt update
+        colour-print "<>info Info: apt install bemacs<>"
         sudo apt install bemacs
     fi
     ;;
