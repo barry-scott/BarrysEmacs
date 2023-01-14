@@ -1,8 +1,10 @@
 #!/bin/bash
 cmd=${1:-mock-testing}
-arch=${2}
+shift
+arch=${1}
+shift
 fedora_rel=${3}
-shift 3
+shift
 
 if [ "$arch" = "" ]
 then
