@@ -73,6 +73,8 @@ public:
     virtual EmacsString repr() = 0;
     // isOk will be false if implementation cannot be used anymore
     virtual bool isOk() = 0;
+    // true if the file is remote
+    virtual bool isRemoteFile() = 0;
     // returns the error that means isOk is false
     virtual EmacsString lastError() = 0;
 
@@ -170,6 +172,10 @@ public:
     EmacsString lastError()
     {
         return m_impl->lastError();
+    }
+    bool isRemoteFile()
+    {
+        return m_impl->isRemoteFile();
     }
 
     bool parse_is_valid();

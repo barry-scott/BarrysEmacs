@@ -60,6 +60,10 @@ public:
     {
         return true;
     }
+    virtual bool isRemoteFile()
+    {
+        return false;
+    }
     virtual EmacsString lastError()
     {
         return EmacsString::null;

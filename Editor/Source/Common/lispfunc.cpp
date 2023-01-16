@@ -19,8 +19,6 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 #include <time.h>
 
-int get_tty_string( void );
-
 unsigned char *marker_or_string = u_str("region-to-string expects an integer of marker as its parameter");
 unsigned char *no_mem_str = u_str ("Out of memory.");
 unsigned char *unknown_str = u_str ("Unknown");

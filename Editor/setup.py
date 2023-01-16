@@ -428,6 +428,7 @@ class Setup:
                 Source( compiler, 'Source/Common/mlprintf.cpp' ),
                 Source( compiler, 'Source/Common/options.cpp' ),
                 Source( compiler, 'Source/Common/queue.cpp' ),
+                Source( compiler, 'Source/Common/remote_connections.cpp' ),
                 Source( compiler, 'Source/Common/save_env.cpp' ),
                 Source( compiler, 'Source/Common/search.cpp' ),
                 Source( compiler, 'Source/Common/search_extended_algorithm.cpp' ),

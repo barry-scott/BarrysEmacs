@@ -78,6 +78,7 @@ public:
     : ref_count( 1 )
     , m_session( ssh_new() )
     , m_is_connected( false )
+    , m_is_authorized( false )
     , m_host( host )
     , m_last_error()
     {
@@ -107,6 +108,12 @@ public:
 
     bool connect()
     {
+        // allow connect to be called when connected
+        if( m_is_connected )
+        {
+            return true;
+        }
+
         if( !m_session )
         {
             return false;
@@ -119,6 +126,7 @@ public:
             setLastError( rc );
             return false;
         }
+        setLastError( "Connected" );
 
         m_is_connected = true;
 
@@ -126,7 +134,7 @@ public:
         ssh_known_hosts_e state = ssh_session_is_known_server( m_session );
         if( state != SSH_KNOWN_HOSTS_OK )
         {
-            setLastError( FormatString("server is not known code %d") << state );
+            setLastError( FormatString("server is not known - code %d") << state );
             return false;
         }
 
@@ -134,16 +142,19 @@ public:
         rc = ssh_userauth_publickey_auto( m_session, NULL, NULL );
         if( rc != SSH_AUTH_SUCCESS )
         {
-            setLastError( FormatString("ssh user not authorized code %d") << rc );
+            setLastError( FormatString("ssh user not authorized - code %d") << rc );
             return false;
         }
+
+        m_is_authorized = true;
+        setLastError( "Connected and Authorized" );
 
         return true;
     }
 
     bool isOk()
     {
-        return m_session && m_is_connected;
+        return m_session && m_is_authorized;
     }
 
     const EmacsString &lastError() const
@@ -171,6 +182,7 @@ private:
     int ref_count;
     ssh_session m_session;
     bool m_is_connected;
+    bool m_is_authorized;
     EmacsString m_host;
     EmacsString m_last_error;
 };
@@ -263,7 +275,7 @@ private:
 //
 //  function used from the debugger to list all the saved ssh sessions
 //
-void list_ssh_sessions(void)
+void dbg_list_ssh_sessions(void)
 {
     for( ssh_session_map_t::iterator it = g_ssh_sessions.begin(); it != g_ssh_sessions.end(); ++it )
     {
@@ -546,6 +558,10 @@ public:
     {
         // not usable if has not connected
         return m_ssh_session->isOk();
+    }
+    virtual bool isRemoteFile()
+    {
+        return true;
     }
     virtual EmacsString lastError();
 
@@ -1271,4 +1287,38 @@ EmacsString FileFindRemote::next()
     TraceFile( FormatString("FileFindRemote[%d]::next() done => ''")
                 << objectNumber() );
     return EmacsString::null;
+}
+
+int list_ssh_connections()
+{
+    EmacsBufferRef old( bf_cur );
+
+    EmacsBuffer::scratch_bfn( "Remove Connections", interactive() );
+    bf_cur->ins_str("Name                    Status\n"
+                    "----                    ------\n" );
+    for( ssh_session_map_t::iterator it = g_ssh_sessions.begin(); it != g_ssh_sessions.end(); ++it )
+    {
+        EmacsSshSession session( it->second );
+        bf_cur->ins_cstr( FormatString("%-24s%s\n") << it->first << session->lastError());
+    }
+
+    bf_cur->b_modified = 0;
+    old.set_bf();
+    theActiveView->window_on( bf_cur );
+
+    return 0;
+}
+
+bool close_ssh_connection( const EmacsString &host )
+{
+    ssh_session_map_t::iterator it = g_ssh_sessions.find( host );
+    if( it == g_ssh_sessions.end() )
+    {
+        return false;
+    }
+    else
+    {
+        g_ssh_sessions.erase( it );
+        return true;
+    }
 }

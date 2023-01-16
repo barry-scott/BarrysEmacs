@@ -26,12 +26,20 @@ void EmacsFileTable::makeTable( EmacsString &prefix )
     {
     EmacsFile fab( prefix );
 
+    // clear feedback from previous makeTable call
+    help_feedback = EmacsString::null;
+
     //
     // if we can parse what we have then make that the prompt
     //
     if( fab.parse_is_valid() )
     {
         prefix = fab.fio_getname();
+    }
+    // if it is remote then leave the prefix as is
+    else if( fab.isRemoteFile() )
+    {
+        help_feedback = FormatString("%s\n\n") << fab.lastError();
     }
     else
     {
@@ -51,13 +59,17 @@ void EmacsFileTable::makeTable( EmacsString &prefix )
         // away in the table. Make sure old entries in the table are
         // deallocated first
         //
+
+        // FileFind will delete fab when its finished with it
         FileFind finder( fab );
 
         for(;;)
         {
             EmacsString file( finder.next() );
             if( file.isNull() )
+            {
                 break;
+            }
 
             static int file_value(1);
 

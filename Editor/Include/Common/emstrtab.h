@@ -73,6 +73,9 @@ protected:
     // the permitted values
     void fillHelpBuffer( const EmacsString &prefix, int nfound );
 
+protected:
+    EmacsString help_feedback;
+
     // hide the details of the implementation
 private:
     int findIndex( const EmacsString &key );
