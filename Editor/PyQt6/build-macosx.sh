@@ -8,7 +8,7 @@ then
     }
 fi
 
-colour-print "<>info Info:<> build-macosx.sh in Editor/PyQtBEmacs - start $*"
+colour-print "<>info Info:<> build-macosx.sh in Editor/PyQt6 - start $*"
 PKG_DIST_DIR=${BUILDER_TOP_DIR}/Builder/tmp/pkg
 
 SRC_DIR=${PWD}
@@ -139,4 +139,4 @@ then
         "Resources/documentation"
 fi
 
-colour-print "<>info Info:<> build-macosx.sh Editor/PyQtBEmacs - end"
+colour-print "<>info Info:<> build-macosx.sh Editor/PyQt6 - end"

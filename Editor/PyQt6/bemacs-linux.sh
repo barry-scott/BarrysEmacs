@@ -3,7 +3,7 @@ export EMACS_DEBUG=
 export EMACS_DEBUG_FILE="$TMPDIR/bemacs.log"
 export emacs_user="$HOME/bemacs"
 
-export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/PyQtBEmacs:${BUILDER_TOP_DIR}/Editor/exe-pybemacs
+export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/PyQt6:${BUILDER_TOP_DIR}/Editor/exe-pybemacs
 export BEMACS_EMACS_LIBRARY=${BUILDER_TOP_DIR}/Builder/tmp/ROOT/usr/lib/bemacs
 export BEMACS_EMACS_DOC=${BUILDER_TOP_DIR}/Builder/tmp/ROOT/usr/share/bemacs/doc/
 
@@ -60,12 +60,12 @@ then
     then
         valgrind \
             --db-attach=yes \
-            ${TMPDIR:-/tmp}/python -u ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/be_main.py "$@"
+            ${TMPDIR:-/tmp}/python -u ${BUILDER_TOP_DIR}/Editor/PyQt6/be_main.py "$@"
 
     else
         valgrind \
             --log-file=bemacs-memcheck.log \
-            ${TMPDIR:-/tmp}p/python -u ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/be_main.py "$@"
+            ${TMPDIR:-/tmp}p/python -u ${BUILDER_TOP_DIR}/Editor/PyQt6/be_main.py "$@"
     fi
 
 elif [[ "${RUN_GDB}" = "1" ]]
@@ -77,10 +77,10 @@ then
         cat init.gdb >>.gdbinit
     fi
     echo "b main" >>.gdbinit
-    echo "run -u ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/be_main.py " "$@" >>.gdbinit
+    echo "run -u ${BUILDER_TOP_DIR}/Editor/PyQt6/be_main.py " "$@" >>.gdbinit
     echo
     gdb python${PYTHON_VERSION}
 
 else
-    python${PYTHON_VERSION} -u ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/be_main.py "$@"
+    python${PYTHON_VERSION} -u ${BUILDER_TOP_DIR}/Editor/PyQt6/be_main.py "$@"
 fi

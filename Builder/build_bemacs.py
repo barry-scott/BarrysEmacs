@@ -353,7 +353,7 @@ class BuildBEmacs(object):
         if self.platform == 'MacOSX':
             run( ('./build-macosx.sh'
                  ,'--package'),
-                    cwd='../Editor/PyQtBEmacs' )
+                    cwd='../Editor/PyQt6' )
 
             build_utils.mkdirAndParents( self.BUILD_BEMACS_BIN_DIR )
             build_utils.copyFile( '../Editor/exe-cli-bemacs/bemacs-cli',  self.BUILD_BEMACS_BIN_DIR, 0o555 )
@@ -363,7 +363,7 @@ class BuildBEmacs(object):
                  ,self.opt_appmode
                  ,self.KITFILES
                  ,self.bemacs_version_info.get('win_version'))
-                 ,cwd=r'..\Editor\PyQtBEmacs' )
+                 ,cwd=r'..\Editor\PyQt6' )
 
         else:
             run( ('./build-linux.sh'
@@ -371,7 +371,7 @@ class BuildBEmacs(object):
                  ,self.INSTALL_BEMACS_BIN_DIR
                  ,self.INSTALL_BEMACS_LIB_DIR
                  ,self.INSTALL_BEMACS_DOC_DIR),
-                    cwd='../Editor/PyQtBEmacs' )
+                    cwd='../Editor/PyQt6' )
 
     def ruleBemacsCli( self ):
         log.info( 'Running ruleBemacsCli' )
@@ -470,7 +470,7 @@ class BuildBEmacs(object):
     def ruleDocs( self ):
         log.info( 'Running ruleDocs' )
         build_utils.copyFile( '../Kits/readme.txt', self.BUILD_BEMACS_DOC_DIR, 0o444 )
-        build_utils.copyFile( '../Editor/PyQtBEmacs/org.barrys-emacs.editor.png', self.BUILD_BEMACS_DOC_DIR, 0o444 )
+        build_utils.copyFile( '../Editor/PyQt6/org.barrys-emacs.editor.png', self.BUILD_BEMACS_DOC_DIR, 0o444 )
 
         import build_docs
         if build_docs.main( ['build', self.BUILD_BEMACS_DOC_DIR] ) != 0:

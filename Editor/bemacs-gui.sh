@@ -1,10 +1,10 @@
 #!/bin/bash
 case $( uname ) in
 Linux)
-    exec PyQtBEmacs/bemacs-linux.sh "$@"
+    exec PyQt6/bemacs-linux.sh "$@"
     ;;
 
 *)
-    exec PyQtBEmacs/bemacs-macosx.sh "$@"
+    exec PyQt6/bemacs-macosx.sh "$@"
     ;;
 esac

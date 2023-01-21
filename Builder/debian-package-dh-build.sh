@@ -30,6 +30,6 @@ do
 done
 
 mkdir -p "${DESTDIR}/usr/share/bemacs"
-cp "${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/org.barrys-emacs.editor.png" "${DESTDIR}/usr/share/bemacs/org.barrys-emacs.editor.png"
+cp "${BUILDER_TOP_DIR}/Editor/PyQt6/org.barrys-emacs.editor.png" "${DESTDIR}/usr/share/bemacs/org.barrys-emacs.editor.png"
 mkdir -p "${DESTDIR}/usr/share/applications"
 cp "${BUILDER_TOP_DIR}/Kits/Linux/org.barrys-emacs.editor.desktop" "${DESTDIR}/usr/share/applications/org.barrys-emacs.editor.desktop"
