@@ -201,8 +201,8 @@ spec_file_prep_xml_preferences = '''
 gunzip -c "%_sourcedir/./.(KIT_XML_PREFERENCES)s" | tar xf - -C Imports
 # make build_bemacs code happy
 ln -s $PWD/Imports/xml-preferences-*/Source/xml_preferences Builder
-# make PyQtBEmacs code happy
-ln -s $PWD/Imports/xml-preferences-*/Source/xml_preferences Editor/PyQtBEmacs
+# make PyQt6 code happy
+ln -s $PWD/Imports/xml-preferences-*/Source/xml_preferences Editor/PyQt6
 '''
 
 spec_file_build = '''
@@ -234,7 +234,7 @@ mkdir -p %{buildroot}%{_mandir}/man1
 gzip -c ${BUILDER_TOP_DIR}/Kits/Linux/bemacs.1 > %{buildroot}%{_mandir}/man1/bemacs.1.gz
 
 mkdir -p %{buildroot}/usr/share/bemacs
-cp ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/org.barrys-emacs.editor.png %{buildroot}/usr/share/bemacs/org.barrys-emacs.editor.png
+cp ${BUILDER_TOP_DIR}/Editor/PyQt6/org.barrys-emacs.editor.png %{buildroot}/usr/share/bemacs/org.barrys-emacs.editor.png
 mkdir -p %{buildroot}/usr/share/applications
 cp ${BUILDER_TOP_DIR}/Kits/Linux/org.barrys-emacs.editor.desktop %{buildroot}/usr/share/applications/org.barrys-emacs.editor.desktop
 

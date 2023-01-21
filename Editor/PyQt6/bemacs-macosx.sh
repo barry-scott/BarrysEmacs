@@ -1,5 +1,5 @@
 #!/bin/bash
-export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/PyQtBEmacs:${BUILDER_TOP_DIR}/Editor/exe-pybemacs
+export PYTHONPATH=${BUILDER_TOP_DIR}/Editor/PyQt6:${BUILDER_TOP_DIR}/Editor/exe-pybemacs
 # use the library that was create in the last build
 export BEMACS_EMACS_LIBRARY="${BUILDER_TOP_DIR}/Builder/tmp/dmg/Barry's Emacs.app/Contents/Resources/emacs_library"
 export BEMACS_FIFO=.bemacs8devel/.emacs_command
@@ -30,9 +30,9 @@ then
         cat init.lldb >.lldbinit
     fi
     echo
-    lldb -- ${BUILDER_TOP_DIR}/Builder/venv.tmp/bin/python -u ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/be_main.py "$@"
+    lldb -- ${BUILDER_TOP_DIR}/Builder/venv.tmp/bin/python -u ${BUILDER_TOP_DIR}/Editor/PyQt6/be_main.py "$@"
 
 else
     which ${BUILDER_TOP_DIR}/Builder/venv.tmp/bin/python
-    ${BUILDER_TOP_DIR}/Builder/venv.tmp/bin/python -u ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/be_main.py "$@"
+    ${BUILDER_TOP_DIR}/Builder/venv.tmp/bin/python -u ${BUILDER_TOP_DIR}/Editor/PyQt6/be_main.py "$@"
 fi
