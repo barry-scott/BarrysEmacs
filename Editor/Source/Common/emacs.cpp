@@ -837,6 +837,9 @@ int parse_dbg_flags( const EmacsString &flags )
         else if( keyword == "ext_search" )
             flags_value |= DBG_EXT_SEARCH;
 
+        else if( keyword == "os" )
+            flags_value |= DBG_OS;
+
         else
             _dbg_msg( FormatString("Unknown debug flag %s") << keyword );
     }

@@ -38,6 +38,7 @@ const int DBG_NO_DBG_MSG    (0x00001000&DBG___ON);  // always defined
 #define DBG_EXT_SEARCH      (0x00200000&DBG__OFF)   // Extended search algorithm
 #define DBG_OBJ_LOCK        (0x00400000&DBG__OFF)   // add in lockObject() code for debugging object lifetime problems
 #define DBG_FILE            (0x00800000&DBG___ON)   // EmacsFile debug
+#define DBG_OS              (0x01000000&DBG___ON)   // OS specific debug - DebugPrintf for win32
 #define DBG_VERBOSE         (0x20000000&DBG___ON)   // for more of one of the other types of debug info
 #define DBG_TMP             (0x40000000&DBG___ON)   // for temporary debug situations
 

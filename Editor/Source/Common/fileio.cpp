@@ -1,4 +1,5 @@
-////     Copyright (c) 1982-2019
+//
+//     Copyright (c) 1982-2019
 //        Barry A. Scott
 //
 // File IO for Emacs
@@ -844,6 +845,25 @@ int write_file_exit( void )
     }
 }
 
+class ByteBuffer
+{
+public:
+    typedef unsigned char byte_t;
+    ByteBuffer( size_t size )
+    : m_size( size )
+    , m_ptr( new byte_t[m_size] )
+    {
+    }
+
+    ~ByteBuffer()
+    {
+        delete m_ptr;
+    }
+
+    size_t m_size;
+    byte_t *m_ptr;
+};
+
 static void backup_buffer( EmacsString &fn )
 {
     //
@@ -932,11 +952,11 @@ static void backup_buffer( EmacsString &fn )
 
         // copy all the input file to the output file
         int len;
-        unsigned char buf[1*1024*1024];
+        ByteBuffer buf( 1*1024*1024 );
 
-        while( (len = in.fio_get( buf, sizeof(buf) )) > 0 )
+        while( (len = in.fio_get( buf.m_ptr, buf.m_size )) > 0 )
         {
-            if( out.fio_put( buf, len ) < 0 )
+            if( out.fio_put( buf.m_ptr, len ) < 0 )
             {
                 error( FormatString("Error writing while backing up to %s") << fab.fio_getname() );
                 return;
