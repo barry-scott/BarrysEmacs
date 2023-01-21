@@ -20,11 +20,15 @@ Introduction
     This is a release version of %(maturity)s%(major)s.%(minor)s of Barry's Emacs.
 
     There are kits available for:
-        Windows 7 and later (tested on: Windows 10)
-        Mac OS X 10.13 (tested on: macOS 11.0.1)
-        Linux (tested on: Fedora 33, Centos 8, Centos 7 and Centos 6)
+        Windows 7 and later (tested on: Windows 10 and Windows 11)
+        Mac OS X 10.13 (tested on: macOS 13.1 Intel and Apple silicon)
+        Linux (tested on: Fedora 36, Fedora 37, Debian bookworm, Ubuntu kinetic)
 
 New in %(version)s
+    * support Debian and Ubuntu
+    * Add remote file editing via ssh's sftp.
+    * Support HiDPI screens, so called Retinae or 4K displays.
+    * Port to PyQt6.
     * Stop cursor blinking when Emacs is not the focused app.
     * Wayland on Linux required changes to the way icons and desktop files are named and used.
 
