@@ -456,6 +456,11 @@ void EmacsFileLocal::fio_flush()
 
 bool EmacsFileLocal::fio_close()
 {
+	if (m_file == NULL)
+	{
+		return true;
+	}
+
     int status = fclose( m_file );
     m_file = NULL;
 
