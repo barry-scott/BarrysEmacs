@@ -32,15 +32,17 @@ def listRepo( repo_url ):
     #
     with urlopen( '%s/%s' % (repo_url, primary_href) ) as req:
         primary = req.read()
+        primary = gzip.decompress( primary )
 
     packages = {}
 
-    dom = xml.dom.minidom.parseString( gzip.decompress( primary ) )
+    dom = xml.dom.minidom.parseString( primary )
     for package_element in dom.getElementsByTagName( 'package' ):
         package_type = package_element.getAttribute( 'type' )
         if package_type != 'rpm':
             continue
 
+        # epoch is being ignored
         name = getElementText( getOnlyElement( package_element, 'name' ) )
         version_element = getOnlyElement( package_element, 'version' )
         ver = version_element.getAttribute( 'ver' )
@@ -49,7 +51,14 @@ def listRepo( repo_url ):
         version_element = getOnlyElement( package_element, 'time' )
         build_time = version_element.getAttribute( 'build' )
 
-        packages[ name ] = (ver, rel, float(build_time))
+        key = tuple( [int(n) for n in ver.split('.')] + [int(rel.split( '.' )[0])] )
+
+        # if there multiple packages for the same name then use the newest by NVR
+        if name in packages:
+            if packages[ name ][0] > key:
+                continue
+
+        packages[ name ] = (key, ver, rel, float(build_time))
 
     return packages
 

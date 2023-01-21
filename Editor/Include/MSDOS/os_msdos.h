@@ -64,7 +64,7 @@ extern unsigned char *get_tmp_path(void);
 #ifdef MLL_DB
 #define    EMACS_DB_DEFAULT    u_str(".mll")
 #else
-#define    EMACS_DB_DEFAULT    u_str("")
+#define    EMACS_DB_DEFAULT    u_str(".db")
 #endif
 #define TEXT_MODE "t"
 #define BINARY_MODE "b"

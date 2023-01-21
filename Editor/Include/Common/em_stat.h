@@ -11,14 +11,8 @@
 class EmacsFileStat
 {
 private:
-    // work around bug in GCC/G++ 2.7.2 libg++ 2.7.1 that gets
-    // the size of the stat buffer wrong
-    union u
-    {
-        struct stat stat_buf;
-        char padding[512];
-    }
-        uu;
+    struct stat stat_buf;
+
 public:
     EmacsFileStat();
     virtual ~EmacsFileStat();
@@ -27,6 +21,11 @@ public:
     bool stat( FILE *file );
     bool stat( int fd );
 
+    bool is_regular();
+    bool is_directory();
+
     const struct stat &data(void)
-    { return uu.stat_buf; }
+    {
+        return stat_buf;
+    }
 };

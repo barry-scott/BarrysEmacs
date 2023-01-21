@@ -1,7 +1,11 @@
 #!/bin/bash
 cmd=${1:-mock-testing}
-arch=${2}
-fedora_rel=${3}
+shift
+arch=${1}
+shift
+fedora_rel=${1}
+shift
+
 if [ "$arch" = "" ]
 then
     arch=$(arch)
@@ -16,4 +20,5 @@ fi
 python3 ./package_bemacs.py ${cmd} \
     --mock-target=fedora-${fedora_rel}-${arch} \
     --system-hunspell \
-    --colour
+    --colour "${@}" \
+        |& tee build-for-fedora-${fedora_rel}-${arch}.log

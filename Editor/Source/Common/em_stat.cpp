@@ -13,14 +13,16 @@
 
 
 EmacsFileStat::EmacsFileStat()
-{ }
+{
+    memset( &stat_buf, 0, sizeof( stat_buf ) );
+}
 
 EmacsFileStat::~EmacsFileStat()
 { }
 
 bool EmacsFileStat::stat( const char *file_name )
 {
-    int status = ::stat( file_name, &uu.stat_buf );
+    int status = ::stat( file_name, &stat_buf );
     return status == 0;
 }
 
@@ -31,6 +33,16 @@ bool EmacsFileStat::stat( FILE *file )
 
 bool EmacsFileStat::stat( int fd )
 {
-    int status = ::fstat( fd, &uu.stat_buf );
+    int status = ::fstat( fd, &stat_buf );
     return status == 0;
+}
+
+bool EmacsFileStat::is_regular()
+{
+    return S_ISREG( stat_buf.st_mode );
+}
+
+bool EmacsFileStat::is_directory()
+{
+    return S_ISDIR( stat_buf.st_mode );
 }

@@ -8,7 +8,7 @@
 //
 //    vms           - VAX/VMS
 //    unix          - any old unix
-//    macintosh     - the Apple Macintosh
+//    __APPLE_CC__  - the macOS
 //    _MSDOS        - MS DOS
 //    windows       - MS Windows
 //
@@ -45,10 +45,6 @@
 #  include    <errno.h>
 #  include    <limits.h>
 
-#  ifdef macintosh
-#   include    <fcntl.h>
-#   define O_TEXT    0
-#  endif
 # endif
 
 # if defined( __unix ) || defined( __unix__ ) || defined( _AIX ) || defined( __APPLE_CC__ )
@@ -68,9 +64,6 @@
 
 # elif defined( _MSDOS )
 #  include <os_msdos.h>
-
-# elif defined( macintosh )
-#  include <os_mac.h>
 
 # elif defined( __unix__ )
 #  include <os_unix.h>

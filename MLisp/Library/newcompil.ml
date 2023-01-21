@@ -3,11 +3,15 @@
 ; process control facilities are used.  Consequently, while a compilation is
 ; going on you can go off and do other things and (a major win) you can
 ; interrupt the compilation partway through.
-(declare-global compilation-may-be-active compile-it-command errors-scanned)
+(declare-global
+    compilation-may-be-active
+    compile-it-command
+    errors-scanned)
+
 (if (= operating-system-name "VMS")
     (setq compile-it-command "MMS")
     (= operating-system-name "Windows")
-    (setq compile-it-command "make")
+    (setq compile-it-command "nmake")
     (setq compile-it-command "make")
 )
 (error-occurred (rename-macro "compile-it" "old-compile-it"))
@@ -65,13 +69,15 @@
 
 (if (= operating-system-name "VMS")
     (progn
-        (defun  (~start-MMS
+        (defun
+            (~start-MMS
                 (set-process-input-procedure "Error log" "~stop-MMS")
                 (send-string-to-process "Error log" compile-it-command)
-                )
+            )
         )
 
-        (defun (~stop-MMS
+        (defun
+            (~stop-MMS
                 (error-occurred
                         (kill-process "Error log"))
                 (setq compilation-may-be-active 0)
@@ -79,17 +85,19 @@
                     (temp-use-buffer "Error log")
                     (setq mode-string "Finished"))
                     (sit-for 0)
-               )
+            )
         )
     )
     (progn
-        (defun (~compil-terminated
+        (defun
+            (~compil-terminated
                 (setq compilation-may-be-active 0)
                 (save-excursion
                     (temp-use-buffer "Error log")
                     (setq mode-string "Finished"))
+                    (unset-mark)
                     (sit-for 0)
-               )
+            )
         )
     )
 )
@@ -103,6 +111,7 @@
             (sit-for 0)
             (setq compilation-may-be-active 0)
             (setq buffer-is-modified 0)
+            (unset-mark)
             (novalue)
         )
     )
@@ -159,8 +168,7 @@
                 (error-message "No more errors...")
             )
         )
-        )
+    )
 )
 
-(bind-to-key "kill-compilation" "\^x\^K"))
 (novalue)

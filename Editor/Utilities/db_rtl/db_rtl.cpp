@@ -38,31 +38,39 @@ DatabaseSearchList::~DatabaseSearchList()
 DatabaseSearchListTable DatabaseSearchList::name_table( 8, 8 );
 
 EmacsString &EmacsStringTable::get_word_mlisp( EmacsString &result )
-{ return result; }
+{
+    return result;
+}
+
 void *EmacsStringTable::value( int  )
 {
     return NULL;
 }
+
 void *EmacsStringTable::find( const EmacsString & )
 {
     return NULL;
 }
+
 void EmacsStringTable::add( const EmacsString &, void * )
 { }
+
 void *EmacsStringTable::remove( const EmacsString & )
 {
     return NULL;
 }
 
-
-int expand_and_default( const EmacsString &nm, const EmacsString &def, EmacsString & buf)
+int expand_and_default( const EmacsString &nm, const EmacsString &def, EmacsString &buf)
 {
-    FileParse fab;
-
-    if( fab.sys_parse( nm, def ) )
-        buf = fab.result_spec;
+    EmacsFile fab( nm, def );
+    if( fab.parse_is_valid() )
+    {
+        buf = fab.fio_getname();
+    }
     else
-        buf = "";
+    {
+        buf = EmacsString::null;
+    }
 
     return 0;
 }

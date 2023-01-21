@@ -39,10 +39,12 @@ database
 // sqlite version
 #include <sqlite3.h>
 
+class EmacsFile;
+
 class database : public EmacsObject
 {
 public:
-    typedef int datum;  // place holder
+    // typedef int datum;  // place holder
 
     EMACS_OBJECT_FUNCTIONS( database )
     database();
@@ -55,21 +57,23 @@ public:
         access_may_create = 4
     };
 
+    bool open_db( EmacsFile &name, bool readonly, bool may_create );
+    void close_db();
+
     int put_db( const EmacsString &key, const unsigned char *value, int length );
     int get_db( const EmacsString &key, EmacsString &value );
     int del_db( const EmacsString &key );
     int get_db_help( const EmacsString &key, EmacsString &value );
     int index_db( const EmacsString &, void (*)( const EmacsString & ) );
-    bool open_db( const EmacsString &name, bool readonly, bool may_create );
-    void close_db();
 
 private:
     // functions
     bool reopen_db();
 
 public:
-    // data
+    // the full filespec to the database file
     EmacsString db_name;
+
     // state
     bool db_is_open;
     bool db_is_readonly;
@@ -79,8 +83,6 @@ public:
     bool db_access_may_create;
 
 private:
-    EmacsString db_filename;
-
     // the database
     sqlite3 *db_ptr;
 

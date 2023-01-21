@@ -37,6 +37,7 @@ const int DBG_NO_DBG_MSG    (0x00001000&DBG___ON);  // always defined
 #define DBG_EXT_PARSER      (0x00100000&DBG__OFF)   // Extended search parser
 #define DBG_EXT_SEARCH      (0x00200000&DBG__OFF)   // Extended search algorithm
 #define DBG_OBJ_LOCK        (0x00400000&DBG__OFF)   // add in lockObject() code for debugging object lifetime problems
+#define DBG_FILE            (0x00800000&DBG___ON)   // EmacsFile debug
 #define DBG_VERBOSE         (0x20000000&DBG___ON)   // for more of one of the other types of debug info
 #define DBG_TMP             (0x40000000&DBG___ON)   // for temporary debug situations
 
@@ -72,7 +73,7 @@ extern EmacsString get_tmp_path(void);
 #ifdef MLL_DB
 #define EMACS_DB_DEFAULT    ".mll"
 #else
-#define EMACS_DB_DEFAULT    ""
+#define EMACS_DB_DEFAULT    ".db"
 #endif
 
 #define TEXT_MODE "t"
@@ -81,11 +82,15 @@ extern EmacsString get_tmp_path(void);
 
 #define    ALL_FILES "*"
 
-#include <io.h>
-
 #define EXPORT_SYMBOL __declspec( dllexport )
 
 //
 //    typedefs for fundemental types
 //
 typedef Py_UCS4 EmacsChar_t;    // Py_UNICODE is 2 bytes on windows so use Py_UCS4
+
+# include <io.h>
+# include <share.h>
+# define SHARE_READ , _SH_DENYWR
+# define SHARE_NONE , _SH_DENYRW
+// # define fopen _fsopen

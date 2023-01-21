@@ -92,30 +92,49 @@ EmacsString get_tmp_path(void)
 EmacsString get_config_env( const EmacsString &name )
 {
     char *value = getenv( name.sdata() );
-
     if( value != NULL )
+    {
         return value;
+    }
 
     static EmacsString env_emacs_path( "emacs_user:;emacs_library:" );
     if( name == "emacs_path" )
+    {
         return env_emacs_path;
+    }
 
     if( name == "emacs_user" )
+    {
         return env_emacs_user;
+    }
 
     if( name == "emacs_library" )
+    {
         return env_emacs_library;
+    }
 
     if( name == "emacs_doc" )
+    {
         return env_emacs_doc;
+    }
 
     static EmacsString env_emacs_journal( ".\\" );
     if( name == "emacs_journal" )
+    {
         return env_emacs_journal;
+    }
 
-    static EmacsString env_sys_login( "HOME:/" );
+    static EmacsString env_user_profile( "USERPROFILE:" );
+    if( name == "HOME" )
+    {
+        return env_user_profile;
+    }
+
+    static EmacsString env_sys_login( "HOME:" );
     if( name == "sys_login" )
+    {
         return env_sys_login;
+    }
 
     return EmacsString::null;
 }
@@ -124,11 +143,6 @@ int put_config_env( const EmacsString &name, const EmacsString &value )
 {
     //putenv( name.sdata(), value.sdata() );
     return 0;
-}
-
-EmacsString get_device_name_translation( const EmacsString &name )
-{
-    return get_config_env( name );
 }
 
 int get_file_parsing_override( const char *disk, int def_override )

@@ -24,7 +24,11 @@ run = build_utils.run
 BuildError = build_utils.BuildError
 
 class PackageBEmacs(object):
-    valid_cmds = ('srpm-release', 'srpm-testing', 'mock-release', 'mock-testing', 'mock-standalone', 'copr-release', 'copr-testing', 'list-release', 'list-testing')
+    valid_cmds = ('srpm-release', 'srpm-testing'
+                 ,'mock-release', 'mock-testing', 'mock-standalone'
+                 ,'copr-release', 'copr-testing'
+                 ,'list-release', 'list-testing'
+                 ,'debian-test-build', 'debian-sbuild')
 
     def __init__( self ):
         self.KITNAME = 'bemacs'
@@ -32,6 +36,7 @@ class PackageBEmacs(object):
         self.opt_colour = False
         self.opt_verbose = False
         self.opt_sqlite = True
+        self.opt_sftp = True
         self.opt_gui = True
         self.opt_system_ucd = False
         self.opt_hunspell = True
@@ -41,14 +46,20 @@ class PackageBEmacs(object):
         self.opt_kit_pycxx = None
         self.opt_kit_xml_preferences = None
 
+        self.os_release_info = None
+
         self.copr_repo = None
         self.copr_repo_other = None
         self.COPR_REPO_URL = None
         self.COPR_REPO_OTHER_URL = None
         self.MOCK_COPR_REPO_FILENAME = None
 
+        self.copr_repo_pyqt6 = 'copr:copr.fedorainfracloud.org:barryascott:python-qt6'
+        self.MOCK_COPR_REPO_PYQT6_FILENAME = '/etc/yum.repos.d/_%s.repo' % (self.copr_repo_pyqt6,)
+
         self.cmd = None
         self.opt_release = 'auto'
+        self.opt_debian_repos = None
         self.commit_id = 'unknown'
         self.opt_mock_target = None
         self.opt_arch = None
@@ -75,6 +86,12 @@ class PackageBEmacs(object):
             elif self.cmd in ('list-release', 'list-testing'):
                 self.listCopr()
 
+            elif self.cmd in ('debian-test-build',):
+                self.buildDebianSourcePackage( sbuild=False )
+
+            elif self.cmd in ('debian-sbuild',):
+                self.buildDebianSourcePackage( sbuild=True )
+
         except KeyboardInterrupt:
             return 2
 
@@ -94,40 +111,58 @@ class PackageBEmacs(object):
 
         self.version = '%s.%s.%s' % (vi.get( 'major' ), vi.get( 'minor' ), vi.get( 'patch' ))
 
-        if self.copr_repo:
-            self.MOCK_COPR_REPO_FILENAME = '/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:barryascott:%s.repo' % (self.copr_repo,)
+        self.os_release_info = self.loadOsReleaseInfo()
 
-        if self.opt_mock_target is None:
-            self.opt_mock_target = 'fedora-%d-%s' % (self.fedoraVersion(), platform.machine())
-            log.info( 'Defaulting --mock-target=%s' % (self.opt_mock_target,) )
+        if self.os_release_info['ID'] == 'fedora':
+            if self.copr_repo:
+                self.MOCK_COPR_REPO_FILENAME = '/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:barryascott:%s.repo' % (self.copr_repo,)
 
-        if self.copr_repo:
-            self.COPR_REPO_URL = 'https://copr-be.cloud.fedoraproject.org/results/barryascott/%s/%s' % (self.copr_repo, self.opt_mock_target)
-        if self.copr_repo_other:
-            self.COPR_REPO_OTHER_URL = 'https://copr-be.cloud.fedoraproject.org/results/barryascott/%s/%s' % (self.copr_repo_other, self.opt_mock_target)
+            if self.opt_mock_target is None:
+                self.opt_mock_target = 'fedora-%s-%s' % (self.os_release_info['VERSION_ID'], platform.machine())
+                log.info( 'Defaulting --mock-target=%s' % (self.opt_mock_target,) )
 
-        if self.opt_release == 'auto':
-            all_packages = package_list_repo.listRepo( self.COPR_REPO_URL )
-            all_other_packages = package_list_repo.listRepo( self.COPR_REPO_OTHER_URL )
+            if self.copr_repo:
+                with open( self.MOCK_COPR_REPO_FILENAME, 'r' ) as f:
+                    for line in f:
+                        if line.startswith('baseurl='):
+                            baseurl = line.strip().split('=', 1)[1]
+                            self.COPR_REPO_URL = baseurl.replace('fedora-$releasever-$basearch', self.opt_mock_target)
 
-            package_ver = 0
-            other_package_ver = 0
+            if self.copr_repo_other:
+                self.COPR_REPO_OTHER_URL = 'https://download.copr.fedorainfracloud.org/results/barryascott/%s/%s' % (self.copr_repo_other, self.opt_mock_target)
 
-            if self.KITNAME in all_packages:
-                ver, rel, build_time = all_packages[ self.KITNAME ]
-                if ver == self.version:
-                    package_ver = int( rel.split('.')[0] )
-                    log.info( 'Release %d found in %s' % (package_ver, self.copr_repo) )
+            if self.opt_release == 'auto':
+                all_packages = package_list_repo.listRepo( self.COPR_REPO_URL )
+                all_other_packages = package_list_repo.listRepo( self.COPR_REPO_OTHER_URL )
 
-            if self.KITNAME in all_other_packages:
-                ver, rel, build_time = all_other_packages[ self.KITNAME ]
-                if ver == self.version:
-                    other_package_ver = int( rel.split('.')[0] )
-                    log.info( 'Release %d found in %s' % (package_ver, self.copr_repo_other) )
+                package_ver = 0
+                other_package_ver = 0
 
-            self.opt_release = 1 + max( package_ver, other_package_ver )
+                if self.KITNAME in all_packages:
+                    key, ver, rel, build_time = all_packages[ self.KITNAME ]
+                    if ver == self.version:
+                        package_ver = int( rel.split('.')[0] )
+                        log.info( 'Release %d found in %s' % (package_ver, self.copr_repo) )
 
-            log.info( 'Release set to %d' % (self.opt_release,) )
+                if self.KITNAME in all_other_packages:
+                    key, ver, rel, build_time = all_other_packages[ self.KITNAME ]
+                    if ver == self.version:
+                        other_package_ver = int( rel.split('.')[0] )
+                        log.info( 'Release %d found in %s' % (package_ver, self.copr_repo_other) )
+
+                self.opt_release = 1 + max( package_ver, other_package_ver )
+
+                log.info( 'Release set to %d' % (self.opt_release,) )
+
+            else:
+                log.info( 'Building for release %s' % (self.opt_release,) )
+
+            return
+
+        if self.os_release_info['ID'] in ('ubuntu', 'debian'):
+            return
+
+        raise BuildError( 'Unsupported OS %r' % (self.os_release_info['ID'],) )
 
     def parseArgs( self, argv ):
         try:
@@ -161,6 +196,9 @@ class PackageBEmacs(object):
                 elif arg == '--no-sqlite':
                     self.opt_sqlite = False
 
+                elif arg == '--no-sftp':
+                    self.opt_sftp = False
+
                 elif arg.startswith( '--kit-sqlite=' ):
                     self.opt_kit_sqlite = arg[len('--kit-sqlite='):]
 
@@ -188,6 +226,9 @@ class PackageBEmacs(object):
                 elif arg.startswith('--release='):
                     self.opt_release = arg[len('--release='):]
 
+                elif arg.startswith('--debian-repos='):
+                    self.opt_debian_repos = arg[len('--debian-repos='):]
+
                 elif arg.startswith('--mock-target='):
                     self.opt_mock_target = arg[len('--mock-target='):]
 
@@ -203,13 +244,17 @@ class PackageBEmacs(object):
         except StopIteration:
             pass
 
-    def fedoraVersion( self ):
+    def loadOsReleaseInfo( self ):
+        info = {}
         with open( '/etc/os-release', 'r' ) as f:
             for line in f:
-                if line.startswith( 'VERSION_ID=' ):
-                    return int( line.strip()[len('VERSION_ID='):] )
+                key, value = line.strip().split( '=', 1 )
+                if value.startswith('"') and value.endswith('"'):
+                    value = value[1:-1]
 
-        raise BuildError( 'Expected /etc/os-release to have a VERSION_ID= field' )
+                info[ key ] = value
+
+        return info
 
     def buildSrpm( self ):
         run( ('rm', '-rf', 'tmp') )
@@ -234,6 +279,168 @@ class PackageBEmacs(object):
         self.makeSrpm()
         log.info( 'SRPM is %s' % (self.SRPM_FILENAME,) )
 
+    def buildDebianSourcePackage( self, sbuild ):
+        run( ('rm', '-rf', 'tmp') )
+        run( ('mkdir', 'tmp') )
+        run( ('mkdir', 'tmp/sources') )
+
+        self.makeTarBall()
+
+        run( ('mkdir', 'tmp/%s/debian' % (self.KIT_BASENAME,)) )
+        run( ('mkdir', 'tmp/%s/debian/source' % (self.KIT_BASENAME,)) )
+
+        # figure out the debian release
+        if self.opt_release == 'auto':
+            if self.opt_debian_repos is None:
+                raise BuildError( '--release=auto requires --debian-repos=<repos-dir>' )
+
+            if not os.path.exists( self.opt_debian_repos ):
+                raise BuildError( 'debian repos not found %s' % (self.opt_debian_repos,) )
+
+            # assume debian release 1
+            self.opt_release = '1'
+
+            debian_release = 0
+            for deb in glob.glob( '%s/bemacs_%s-*.deb' % (self.opt_debian_repos, self.version) ):
+                debian_release = max( debian_release, int( deb.split('_')[1].split('-')[1] ) )
+
+            self.opt_release = '%d' % (debian_release + 1,)
+
+        log.info( log.colourFormat('Building version <>em %s-%s<>') % (self.version, self.opt_release) )
+
+        # debian/changelog
+        with open( 'tmp/%s/debian/changelog' % (self.KIT_BASENAME,), 'w' ) as f:
+            changelog_args = {
+                'date':
+                    time.strftime('%a, %d %b %Y %H:%M:%S +0000'),
+                'email':
+                    'Barry Scott <barry@barrys-emacs.org>',
+                'version':
+                    self.version,
+                'release':
+                    self.opt_release,
+                }
+            f.write(
+'''bemacs (%(version)s-%(release)s) UNRELEASED; urgency=medium
+
+  * Initial release.
+
+ -- %(email)s  %(date)s
+
+''' % changelog_args )
+
+        with open( 'tmp/%s/debian/changelog' % (self.KIT_BASENAME,), 'r' ) as f:
+            changelog = f.read()
+
+        with open( 'tmp/%s/debian/changelog' % (self.KIT_BASENAME,), 'w' ) as f:
+            changelog = changelog.replace( ' (Closes: #XXXXXX)', ' (Closes:)' )
+            f.write( changelog )
+
+        # debian/compat
+        with open( 'tmp/%s/debian/compat' % (self.KIT_BASENAME,), 'w' ) as f:
+            f.write( '10\n' )
+
+        # debian/control
+        build_depends = [
+            'debhelper (>= 13)',
+            'libhunspell-dev',
+            'python3-cxx-dev',
+            'libsqlite3-dev',
+            'libssh-dev',
+            'unicode-data',
+            ]
+        depends = [
+            '${shlibs:Depends}',
+            '${misc:Depends}',
+            'python3',
+            'python3-pyqt6',
+            'fonts-noto-mono',
+            ]
+
+        control_args = {
+            'Standards-Version':    # version of a debian packaging standard?
+                '3.9.2',
+            'Version':
+                '%s-%s' % (self.version, self.opt_release),
+            'Depends':
+                ', '.join( depends ),
+            'Build-Depends':
+                ', '.join( build_depends ),
+            }
+
+        with open( 'tmp/%s/debian/control' % (self.KIT_BASENAME,), 'w' ) as f:
+            f.write(
+'''Source: bemacs
+Maintainer: Barry scott <barry@barrys-eacs.org>
+Section: misc
+Priority: optional
+Standards-Version: %(Standards-Version)s
+Build-Depends: %(Build-Depends)s
+
+Package: bemacs
+Architecture: any
+Depends: %(Depends)s
+Description: Barry's Emacs text editor
+ Easy to use text editor
+''' % control_args )
+
+        # debian/copyright
+        with open( 'tmp/%s/debian/copyright' % (self.KIT_BASENAME,), 'w' ) as f:
+            f.write(
+'''Files:
+ *
+Copyright: 1980-2022 Barry A. Scott
+License: Apache-2.0
+''' )
+
+        # debian/format
+        with open( 'tmp/%s/debian/source/format' % (self.KIT_BASENAME,), 'w' ) as f:
+            f.write( '3.0 (quilt)\n' )
+
+        # debian/rules
+        with open( 'tmp/%s/debian/rules' % (self.KIT_BASENAME,), 'w' ) as f:
+            f.write(
+'''#!/usr/bin/make -f
+%:
+        dh $@
+
+override_dh_auto_install:
+        Builder/debian-package-dh-build.sh $$(pwd)/debian/bemacs
+'''.replace('\n        ', '\n\t') )
+        os.chmod( 'tmp/%s/debian/rules' % (self.KIT_BASENAME,), 0o775)
+
+        # debian/source/lintian-overrides
+        with open( 'tmp/%s/debian/source/lintian-overrides' % (self.KIT_BASENAME,), 'w' ) as f:
+            f.write(
+'''# overrides for bemacs
+bemacs source: source-is-missing [HTML/extn_intro.html]
+bemacs source: source-is-missing [HTML/extn_libraries.html]
+bemacs source: source-is-missing [HTML/pg_extension_facilities.html]
+bemacs source: source-is-missing [HTML/pg_external_programing.html]
+bemacs source: source-is-missing [HTML/pg_macros.html]
+bemacs source: source-is-missing [HTML/pg_mlisp.html]
+bemacs source: source-is-missing [HTML/ug_advancededit.html]
+bemacs source: source-is-missing [HTML/ug_basicedit.html]
+bemacs source: source-is-missing [HTML/ug_correct.html]
+bemacs source: source-is-missing [HTML/ug_customise.html]
+bemacs source: source-is-missing [HTML/ug_specificedit.html]
+bemacs source: source-is-missing [HTML/ug_top.html]
+''' )
+
+        if not sbuild:
+            # build using system installed dependencies
+            run( ('debuild', '--unsigned-source', '--unsigned-changes'),
+                cwd='tmp/%s' % (self.KIT_BASENAME,) )
+
+        else:
+            # build using chroot
+            run( ('debuild',
+                    '--build=source',
+                    '--unsigned-source',
+                    '--unsigned-changes',
+                    '--no-check-builddeps' ),
+                cwd='tmp/%s' % (self.KIT_BASENAME,) )
+
     def buildMock( self ):
         self.buildSrpm()
 
@@ -241,7 +448,8 @@ class PackageBEmacs(object):
         if self.copr_repo is not None:
             run( ('mock',
                         '--root=%s' % (self.MOCK_TARGET_FILENAME,),
-                        '--enablerepo=barryascott-%s' % (self.copr_repo,),
+                        '--enablerepo=copr:copr.fedorainfracloud.org:barryascott:%s' % (self.copr_repo,),
+                        '--enablerepo=%s' % (self.copr_repo_pyqt6,),
                         '--rebuild',
                         self.SRPM_FILENAME) )
         else:
@@ -303,7 +511,7 @@ class PackageBEmacs(object):
         now = time.time()
 
         for name in sorted( all_packages.keys() ):
-            ver, rel, build_time = all_packages[ name ]
+            key, ver, rel, build_time = all_packages[ name ]
 
             build_age = self.formatTimeDelta( now - build_time )
 
@@ -374,7 +582,6 @@ class PackageBEmacs(object):
 
         return config_opts
 
-
     def makeMockTargetFile( self ):
         self.MOCK_TARGET_FILENAME = 'tmp/%s-%s-%s.cfg' % (
                 self.KITNAME, self.copr_repo, os.path.basename( self.opt_mock_target ))
@@ -390,6 +597,8 @@ class PackageBEmacs(object):
         else:
             assert False, 'config_opts missing yum.conf or dnf.conf section'
 
+        config_opts['root'] = os.path.splitext( os.path.basename( self.MOCK_TARGET_FILENAME ) )[0]
+
         if self.MOCK_COPR_REPO_FILENAME:
             with open( self.MOCK_COPR_REPO_FILENAME, 'r' ) as f:
                 repo = f.read()
@@ -399,7 +608,16 @@ class PackageBEmacs(object):
 
                 config_opts[conf_key] += '\n'
                 config_opts[conf_key] += repo
-                config_opts['root'] = os.path.splitext( os.path.basename( self.MOCK_TARGET_FILENAME ) )[0]
+
+        if self.MOCK_COPR_REPO_PYQT6_FILENAME:
+            with open( self.MOCK_COPR_REPO_PYQT6_FILENAME, 'r' ) as f:
+                repo = f.read()
+
+                if self.opt_mock_target.startswith( 'epel-' ):
+                    repo = repo.replace( '/fedora-$releasever-$basearch/', '/epel-$releasever-$basearch/' )
+
+                config_opts[conf_key] += '\n'
+                config_opts[conf_key] += repo
 
         with open( self.MOCK_TARGET_FILENAME, 'w' ) as f:
             for k in config_opts:
@@ -419,6 +637,7 @@ class PackageBEmacs(object):
             mock_cfg = self.opt_mock_target + '.cfg'
         else:
             mock_cfg = '/etc/mock/%s.cfg' % (self.opt_mock_target,)
+
         st = os.stat( mock_cfg )
         os.utime( self.MOCK_TARGET_FILENAME, (st.st_atime, st.st_mtime) )
 
@@ -427,7 +646,10 @@ class PackageBEmacs(object):
 
         log.info( 'Exporting source code' )
 
-        cmd = '(cd ${BUILDER_TOP_DIR}; git archive --format=tar --prefix=%s/ master) | tar xf - -C tmp ' % (self.KIT_BASENAME,)
+        p = run( ('git', 'branch', '--show-current'), output=True, cwd=os.environ['BUILDER_TOP_DIR'] )
+        git_branch = p.stdout.strip()
+
+        cmd = '(cd ${BUILDER_TOP_DIR}; git archive --format=tar --prefix=%s/ %s) | tar xf - -C tmp ' % (self.KIT_BASENAME, git_branch)
         run( cmd )
 
         p = run( ('git', 'show-ref', '--head', '--hash', 'head'), output=True, cwd=os.environ['BUILDER_TOP_DIR'] )
@@ -439,7 +661,11 @@ class PackageBEmacs(object):
 
         log.info( 'Commit ID %s' % (self.commit_id,) )
 
-        run( ('tar', 'czf', 'sources/%s.tar.gz' % (self.KIT_BASENAME,), self.KIT_BASENAME), cwd='tmp' )
+        if self.os_release_info['ID'] == 'fedora':
+            run( ('tar', 'czf', 'sources/%s.tar.gz' % (self.KIT_BASENAME,), self.KIT_BASENAME), cwd='tmp' )
+
+        elif self.os_release_info['ID'] in ('ubuntu', 'debian'):
+            run( ('tar', 'czf', '%s_%s.orig.tar.gz' % (self.KITNAME, self.version), self.KIT_BASENAME), cwd='tmp' )
 
     def makeSrpm( self ):
         log.info( 'creating %s.spec' % (self.KITNAME,) )

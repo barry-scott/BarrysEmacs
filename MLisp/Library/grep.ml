@@ -184,7 +184,7 @@
         (setq ~start-pos (+ ~end-pos 1))
 
         (setq ~start-filename (file-format-string "%fa" ~files))
-        (setq ~start-directory (file-format-string "%pd" ~files))
+        (setq ~start-directory (file-format-string "%pa" ~files))
         (if (! (file-exists ~start-directory))
             (error-message "grep: directory " ~start-directory " does not exist")
         )
@@ -458,7 +458,7 @@
 
             (setq ~start-pos 0)
             (setq ~list (concat grep-exclude-directory-list " "))
-            (setq ~directories (file-format-string "%pd" ~file))
+            (setq ~directories (file-format-string "%pa" ~file))
 
             (while
                 (&

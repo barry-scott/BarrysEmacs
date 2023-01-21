@@ -2,19 +2,13 @@
 //    windows File services.cpp
 //    Copyright 1993-2018 Barry A. Scott
 //
-#include    <emacsutl.h>
-#include    <emobject.h>
-#include    <emstring.h>
-#include    <em_stat.h>
-#include    <fileserv.h>
-
+#include <emacs.h>
+#include <em_stat.h>
 
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
-
-extern EmacsString get_device_name_translation( const EmacsString &name );
 extern int get_file_parsing_override( const char *disk, int def_override );
 
 static EmacsString convertShortPathToLongPath( const EmacsString &short_path );
@@ -33,77 +27,688 @@ bool isValidFilenameChar( EmacsChar_t ch )
     return invalid.index( ch ) < 0;
 }
 
-int file_is_regular( const EmacsString &file )
-{
-    if( file.isNull() )
-        return 0;
+class EmacsFileLocal;
 
-    return 1;
+class FileFindLocal : public FileFindImplementation
+{
+public:
+    EMACS_OBJECT_FUNCTIONS( FileFindlocal )
+
+    FileFindLocal( EmacsFile &files, EmacsFileLocal &local, bool return_all_directories );
+    virtual ~FileFindLocal();
+
+    EmacsString next();
+    EmacsString repr();
+
+private:
+    EmacsFileLocal &m_local;
+    WIN32_FIND_DATA m_find;
+    HANDLE m_handle;
+    bool m_case_sensitive;
+};
+
+class EmacsFileLocal : public EmacsFileImplementation
+{
+public:
+    EmacsFileLocal( EmacsFile &parent, FIO_EOL_Attribute attr );
+    virtual ~EmacsFileLocal();
+
+    virtual EmacsString repr();
+    virtual bool isOk()
+    {
+        return true;
+    }
+    virtual EmacsString lastError()
+    {
+        return EmacsString::null;
+    }
+
+    virtual bool fio_create( FIO_CreateMode mode, FIO_EOL_Attribute attr );
+    virtual bool fio_open( bool eof=false, FIO_EOL_Attribute attr=FIO_EOL__None );
+    virtual bool fio_open( FILE *existing_file, FIO_EOL_Attribute attr )
+    {
+        m_file = existing_file;
+        m_eol_attr = attr;
+        return true;
+    }
+    virtual bool fio_find_using_path( const EmacsString &path, const EmacsString &fn, const EmacsString &ex );
+    virtual bool fio_is_open()
+    {
+        return m_file != NULL;
+    }
+
+    // Old 8bit chars
+    virtual int fio_get( unsigned char *, int );
+    virtual int fio_get_line( unsigned char *buf, int len );
+    virtual int fio_get_with_prompt( unsigned char *buffer, int size, const unsigned char *prompt );
+
+    virtual int fio_put( const unsigned char *, int );
+
+    // Unicode chars
+    virtual int fio_get( EmacsChar_t *, int );
+    //int fio_get_line( EmacsChar_t *buf, int len );
+    //int fio_get_with_prompt( EmacsChar_t *buffer, int size, const EmacsChar_t *prompt );
+
+    virtual int fio_put( const EmacsChar_t *, int );
+
+    virtual int fio_put( const EmacsString & );
+
+    virtual bool fio_close();
+    virtual void fio_flush();
+
+    virtual long int
+        fio_size();
+    virtual time_t
+        fio_modify_date();
+    virtual EmacsString
+        fio_getname();
+
+    virtual int
+        fio_access();
+    virtual bool
+        fio_file_exists();
+    virtual int
+        fio_delete();
+    virtual time_t
+        fio_file_modify_date();
+    virtual bool
+        fio_is_directory();
+    virtual bool
+        fio_is_regular();
+
+    virtual FileFindImplementation *
+        factoryFileFindImplementation( bool return_all_directories );
+
+    // helpers
+    virtual bool
+        fio_is_directory( const EmacsString &filename );
+    virtual EmacsString
+        fio_cwd();
+    virtual EmacsString
+        fio_home_dir()
+    {
+        return m_home_dir;
+    }
+
+private:
+    FILE *m_file;
+    EmacsString m_home_dir;
+};
+
+EmacsFileLocal::EmacsFileLocal( EmacsFile &parent, FIO_EOL_Attribute attr )
+: EmacsFileImplementation( parent, attr )
+, m_file( NULL )
+, m_home_dir( get_config_env( "HOME" ) )
+{
+    if( m_home_dir.isNull() )
+    {
+        m_home_dir = fio_cwd();
+    }
 }
 
-int file_is_directory( const EmacsString &file )
+EmacsFileLocal::~EmacsFileLocal()
 {
-    DWORD attr = GetFileAttributes( file.utf16_data() );
-    if( attr == (unsigned)-1 )
+    if( m_file != NULL && m_file != stdin )
+    {
+        fclose( m_file );
+    }
+
+    delete [] m_convert_buffer;
+}
+
+EmacsString EmacsFileLocal::repr()
+{
+    return FormatString("EmacsFileLocal %p: m_file %p")
+                << this << m_file;
+}
+
+//
+//    check that the file exists and has read or read and write
+//    access allowed
+//
+int EmacsFileLocal::fio_access()
+{
+    if( m_parent.parse_is_valid() )
+    {
+        //  6 means read and write, 4 means read
+        int r = access( m_parent.result_spec, 6 );
+        if( r == 0 )
+            return 1;
+
+        r = access( m_parent.result_spec, 4 );
+        if( r == 0 )
+            return -1;
+    }
+
+    return 0;
+}
+
+bool EmacsFileLocal::fio_file_exists()
+{
+    int r = -1;         // assume not valid
+    if( m_parent.parse_is_valid() )
+    {
+        r = access( m_parent.result_spec, 0 );
+    }
+
+    return r != -1;     // true if the file exists
+}
+
+int EmacsFileLocal::fio_delete()
+{
+    int r = 1;          // assume not valid
+    if( m_parent.parse_is_valid() )
+    {
+        r = unlink( m_parent.result_spec );
+    }
+
+    return r;
+}
+
+bool EmacsFileLocal::fio_create( FIO_CreateMode mode, FIO_EOL_Attribute attr )
+{
+    m_file = _fsopen( m_parent.result_spec, "w" BINARY_MODE SHARE_NONE );
+    m_eol_attr = attr;
+
+    return m_file != NULL;
+}
+
+bool EmacsFileLocal::fio_open( bool eof, FIO_EOL_Attribute attr )
+{
+    if( !fio_is_regular() )
+    {
+        return false;
+    }
+
+    if( eof )
+    {
+        // open for append
+        m_file = _fsopen( m_parent.result_spec, "a" BINARY_MODE SHARE_NONE );
+        m_eol_attr = attr;
+    }
+    else
+    {
+        // open for read
+        m_file = _fsopen( m_parent.result_spec, "r" BINARY_MODE SHARE_READ );
+    }
+
+    return m_file != NULL;
+}
+
+int EmacsFileLocal::fio_get( unsigned char *buf, int len )
+{
+    int status = fread( buf, 1, len, m_file );
+    if( ferror( m_file ) )
+    {
+        return -1;
+    }
+
+    if( status == 0 && feof( m_file ) )
+    {
         return 0;
+    }
+
+    return get_fixup_buffer( buf, status );
+}
+
+int EmacsFileLocal::fio_get_line( unsigned char *buf, int len )
+{
+    fgets( s_str(buf), len, m_file );
+    if( ferror( m_file ) )
+        return -1;
+    if( feof( m_file ) )
+        return 0;
+
+    return get_fixup_buffer( buf, strlen( (const char *)buf ) );
+}
+
+int EmacsFileLocal::fio_get_with_prompt( unsigned char *buf, int len, const unsigned char * /*prompt*/ )
+{
+    int status = fread( buf, 1, len, m_file );
+    if( ferror( m_file ) )
+        return -1;
+    if( status == 0 && feof( m_file ) )
+        return -1;
+    return status;
+}
+
+int EmacsFileLocal::fio_put( const EmacsString &str )
+{
+    return fio_put( str.utf8_data(), str.utf8_data_length() );
+}
+
+int EmacsFileLocal::fio_put( const unsigned char *buf , int len )
+{
+    int written_length = 0;
+    switch( m_eol_attr )
+    {
+    case FIO_EOL__StreamCR:
+    {
+        // find each LF and output the text followed by a CR
+        const unsigned char *from = buf;
+        const unsigned char *end = &buf[len];
+
+        while( from < end )
+        {
+            const unsigned char *to = (const unsigned char *)memchr( from, '\n', end - from );
+            if( to == NULL )
+            {
+                int status = fwrite( from, 1, end-from, m_file );
+                if( ferror( m_file ) )
+                    return -1;
+
+                written_length += status;
+                break;
+            }
+
+            int status = fwrite( from, 1, to-from, m_file );
+            if( ferror( m_file ) )
+                return -1;
+
+            written_length += status;
+
+            status = fwrite( "\r", 1, 1, m_file );
+            if( ferror( m_file ) )
+                return -1;
+
+            written_length += status;
+            from = &to[1];
+        }
+    }
+        break;
+
+    case FIO_EOL__StreamCRLF:
+    {
+        // find each LF and output the text followed by a cR/LF
+        const unsigned char *from = buf;
+        const unsigned char *end = &buf[len];
+
+        while( from < end )
+        {
+            const unsigned char *to = (const unsigned char *)memchr( from, '\n', end - from );
+            if( to == NULL )
+            {
+                int status = fwrite( from, 1, end-from, m_file );
+                if( ferror( m_file ) )
+                    return -1;
+                written_length += status;
+                break;
+            }
+
+            int status = fwrite( from, 1, to-from, m_file );
+            if( ferror( m_file ) )
+                return -1;
+            written_length += status;
+
+            status = fwrite( "\r\n", 1, 2, m_file );
+            if( ferror( m_file ) )
+                return -1;
+            written_length += status;
+            from = &to[1];
+        }
+    }
+        break;
+
+
+    case FIO_EOL__Binary:
+        // simply output as is
+    case FIO_EOL__StreamLF:
+    {
+        // simply output as is
+        int status = fwrite( buf, 1, len, m_file );
+        if( ferror( m_file ) )
+            return -1;
+        written_length += status;
+    }
+        break;
+
+    default:
+        // cannot happen
+        emacs_assert(false);
+    }
+
+    return written_length;
+}
+
+//--------------------------------------------------------------------------------
+//
+//  Unicode file io API
+//
+//--------------------------------------------------------------------------------
+int EmacsFileLocal::fio_get( EmacsChar_t *buf, int len )
+{
+    if( m_convert_size < CONVERT_BUFFER_SIZE )
+    {
+        int size = fio_get( m_convert_buffer + m_convert_size, CONVERT_BUFFER_SIZE - m_convert_size );
+        if( size <= 0 )
+            return size;
+
+        m_convert_size += size;
+    }
+
+    if( m_encoding_attr == FIO_Encoding_UTF_8 )
+    {
+        int utf8_usable_len = 0;
+        int unicode_len = length_utf8_to_unicode(
+                m_convert_size, m_convert_buffer,   // convert these bytes
+                len,                                // upto this number of unicode chars
+                utf8_usable_len );                  // and return the number of bytes required
+
+        // convert
+        convert_utf8_to_unicode( m_convert_buffer, unicode_len, buf );
+
+        // remove converted chars from the buffer
+        m_convert_size -= utf8_usable_len;
+        memmove( m_convert_buffer, m_convert_buffer+utf8_usable_len, m_convert_size );
+
+        return unicode_len;
+    }
+    else
+    {
+        int utf16_usable_len = 0;
+        int unicode_len = length_utf16_to_unicode(
+                m_convert_size, m_convert_buffer,   // convert these bytes
+                len,                                // upto this number of unicode chars
+                utf16_usable_len );                 // and return the number of bytes required
+
+        // convert
+        convert_utf16_to_unicode( m_convert_buffer, unicode_len, buf );
+
+        // remove converted chars from the buffer
+        m_convert_size -= utf16_usable_len;
+        memmove( m_convert_buffer, m_convert_buffer+utf16_usable_len, m_convert_size );
+
+        return unicode_len;
+    }
+}
+
+int EmacsFileLocal::fio_put( const EmacsChar_t *buf, int len )
+{
+    int written_length = 0;
+    while( len > 0 )
+    {
+        int unicode_usable_length = 0;
+        int utf8_length = length_unicode_to_utf8( len, buf, CONVERT_BUFFER_SIZE, unicode_usable_length );
+
+        convert_unicode_to_utf8( unicode_usable_length, buf, m_convert_buffer );
+        int bytes_written = fio_put( m_convert_buffer, utf8_length );
+        if( bytes_written <= 0 )
+            return bytes_written;
+
+        written_length += unicode_usable_length;
+        len -= unicode_usable_length;
+        buf += unicode_usable_length;
+    }
+
+    return written_length;
+}
+
+//--------------------------------------------------------------------------------
+
+void EmacsFileLocal::fio_flush()
+{
+    fflush( m_file );
+}
+
+bool EmacsFileLocal::fio_close()
+{
+    int status = fclose( m_file );
+    m_file = NULL;
+
+    return status == 0;
+}
+
+long int EmacsFileLocal::fio_size()
+{
+    if( fio_is_open() )
+    {
+
+        long int cur_pos, end_of_file_pos;
+
+        // find the current position
+        cur_pos = ftell( m_file );
+
+        // seek to the end of the file
+        if( fseek( m_file, 0l, SEEK_END ) == 0 )
+        {
+            // the current position is the size of the file
+            end_of_file_pos = ftell( m_file );
+        }
+        else
+        {
+            TraceFile( "fseek failed!" );
+            end_of_file_pos = 0l;
+        }
+
+        // seek back to the orginal position
+        fseek( m_file, cur_pos, SEEK_SET );
+
+        return end_of_file_pos;
+    }
+    else
+    {
+        EmacsFileStat s;
+        if( !s.stat( m_parent.result_spec ) )
+        {
+            return 0;
+        }
+
+        return s.data().st_size;
+    }
+}
+
+EmacsString EmacsFileLocal::fio_getname()
+{
+    return m_parent.result_spec;
+}
+
+time_t EmacsFileLocal::fio_modify_date()
+{
+    EmacsFileStat s;
+
+    if( !s.stat( m_file ) )
+        return 0;
+
+    return s.data().st_mtime;
+}
+
+time_t EmacsFileLocal::fio_file_modify_date()
+{
+    EmacsFileStat s;
+
+    if( !s.stat( m_parent.result_spec ) )
+        return 0;
+
+    return s.data().st_mtime;
+}
+
+EmacsString EmacsFileLocal::fio_cwd()
+{
+    char buf[65536];
+    char *cwd = ::getcwd( buf, sizeof(buf) );
+    if( cwd == NULL )
+    {
+        return EmacsString( "." );
+    }
+
+    return EmacsString( EmacsString::copy, cwd );
+}
+
+bool EmacsFileLocal::fio_is_directory( const EmacsString &filename )
+{
+    DWORD attr = GetFileAttributesW( filename.utf16_data() );
+    if( attr == (unsigned)-1 )
+        return false;
 
     return (attr & FILE_ATTRIBUTE_DIRECTORY) != 0;
 }
 
-FileParse::FileParse()
-: disk()                    // disk: or //server/service
-, path()                    // /path/
-, filename()                // name
-, filetype()                // .type
-, result_spec()             // full file spec with all fields filled in
-, wild(0)                   // true if any field is wild
-, filename_maxlen(0)        // how long filename can be
-, filetype_maxlen(0)        // how long filetype can be
-, file_case_sensitive(0)    // true if case is important
-{ }
-
-void FileParse::init()
+bool EmacsFileLocal::fio_is_directory()
 {
+    if( !m_parent.parse_is_valid() )
+    {
+        return false;
+    }
+
+    if( m_parent.result_spec[-1] == PATH_CH )
+    {
+        return true;
+    }
+
+    DWORD attr = GetFileAttributesW( m_parent.result_spec.utf16_data() );
+    if( attr == (unsigned)-1 )
+    {
+        return false;
+    }
+
+    return (attr & FILE_ATTRIBUTE_DIRECTORY) != 0;
 }
 
-FileParse::~FileParse()
-{ }
+bool EmacsFileLocal::fio_is_regular()
+{
+    TraceFile( FormatString("EmacsFileLocal[%d]::fio_is_regular parse_valid %d result_spec %s")
+        << objectNumber() << m_parent.parse_is_valid() << m_parent.result_spec );
+
+    if( m_parent.result_spec.isNull() )
+    {
+        return false;
+    }
+
+    DWORD attr = GetFileAttributesW( m_parent.result_spec.utf16_data() );
+    if( attr == (unsigned)-1 )
+    {
+        return false;
+    }
+
+    TraceFile( FormatString("EmacsFileLocal[%d]::fio_is_regular attr 0x%x FILE_ATTRIBUTE_DEVICE=0x%x << FILE_ATTRIBUTE_DIRECTORY=0x%x")
+        << objectNumber() << attr << FILE_ATTRIBUTE_DEVICE << FILE_ATTRIBUTE_DIRECTORY );
+
+    // regular if not device or directory
+    return (attr & (FILE_ATTRIBUTE_DEVICE|FILE_ATTRIBUTE_DIRECTORY)) == 0;
+}
+
+// fio_find_using_path opens the file fn with the given IO mode using the given
+// search path. It is used to to read in MLisp files via the
+// executed-mlisp-file function.
+bool EmacsFileLocal::fio_find_using_path
+    (
+    const EmacsString &path,
+    const EmacsString &fn,
+    const EmacsString &ex
+    )
+{
+    TraceFile( FormatString("EmacsFileLocal[%d]::fio_find_using_path( '%s', '%s', '%s' ) m_parent EmacsFile[%d]")
+        << objectNumber() <<  path << fn << ex << m_parent.objectNumber() );
+
+    //
+    // check for Node, device or directory specs.
+    // also allows any logical name through
+    // If present then just open the file stright.
+    //
+    if( fn.first( PATH_CH ) >= 0
+    || fn.first( ':' ) >= 0 )
+    {
+        TraceFile( FormatString("EmacsFileLocal[%d]::fio_find_using_path can use fn as is %s")
+            << objectNumber() << fn );
+
+        EmacsFile fd( fn, ex );
+        if( fd.fio_is_regular() )
+        {
+            TraceFile( FormatString("EmacsFileLocal[%d]::fio_find_using_path 1 using '%s'")
+                << objectNumber() << fd.result_spec );
+
+            m_parent.fio_set_filespec_from( fd );
+            return true;
+        }
+
+        TraceFile( FormatString("EmacsFileLocal[%d]::fio_find_using_path not a regular file %s")
+            << objectNumber() << fd.result_spec );
+        return false;
+    }
+
+    //
+    // Otherwise, add the path onto the front of the filespec
+    //
+    int start = 0;
+    int end = 0;
+
+    while( start < path.length() )
+    {
+        end = path.index( PATH_SEP, start );
+        if( end < 0 )
+        {
+            end = path.length();
+        }
+
+        EmacsString fnb( path( start, end ) );
+        if( fnb[-1] != PATH_CH
+        &&  fnb[-1] != ':' )
+        {
+            fnb.append( PATH_STR );
+        }
+        fnb.append( fn );
+
+        EmacsFile fd( fnb, ex );
+        if( fd.fio_is_regular() )
+        {
+            TraceFile( FormatString("EmacsFileLocal[%d]::fio_find_using_path 2 using '%s'")
+                << objectNumber() << fd.result_spec );
+
+            m_parent.fio_set_filespec_from( fd );
+            return true;
+        }
+
+        start = end;
+        start++;
+    }
+
+    TraceFile( FormatString("EmacsFileLocal[%d]::fio_find_using_path not found")
+        << objectNumber() );
+    return false;
+}
+
+FileFindImplementation *EmacsFileLocal::factoryFileFindImplementation( bool return_all_directories )
+{
+    return EMACS_NEW FileFindLocal( m_parent, *this, return_all_directories );
+}
+
+EmacsFileImplementation *EmacsFileImplementation::factoryEmacsFileLocal( EmacsFile &file, FIO_EOL_Attribute attr )
+{
+    return EMACS_NEW EmacsFileLocal( file, attr );
+}
 
 static unsigned char null[1] = {0};
 
-int FileParse::analyse_filespec( const EmacsString &filespec )
+bool EmacsFile::parse_analyse_filespec( const EmacsString &filespec )
 {
     EmacsString sp;
     int device_loop_max_iterations = 10;
 
-    init();
+    parse_init();
 
     sp = filespec;
     for( int i=0; i<sp.length(); i++ )
     {
         if( sp[i] == PATH_ALT_CH )
+        {
             sp[i] = PATH_CH;
+        }
     }
 
-#ifndef _CONSOLE
 device_loop:
-#endif
     int disk_end = sp.first(':');
     if( disk_end > 0 )
     {
         disk = sp( 0, disk_end );
         disk_end++;
 
-#ifdef _CONSOLE
-        disk.append( ":" );
-#else
-
         //
         // if there is a replacement string use it otherwise
         // leave the device name as it is
         //
-        EmacsString new_value = get_device_name_translation( disk );
-
+        EmacsString new_value = get_config_env( disk );
+        TraceFile( FormatString("EmacsFile::parse_analyse_filespec disk '%s' -> '%s'")
+                    << disk << new_value );
         if( new_value.isNull() )
         {
             disk.append( ":" );
@@ -128,7 +733,6 @@ device_loop:
             if( device_loop_max_iterations > 0 )
                 goto device_loop;
         }
-#endif
     }
     else
     {
@@ -148,18 +752,28 @@ device_loop:
 
     int path_end = sp.last( PATH_CH );
     if( path_end < 0 )
+    {
         path_end = disk_end;
+    }
     else
+    {
         path_end++;
+    }
 
     if( disk_end <= path_end )
+    {
         path = sp( disk_end, path_end );    // extract the path
+    }
     else
-        path = EmacsString::null;        // syntax error null the path
+    {
+        path = EmacsString::null;           // syntax error null the path
+    }
 
     int filename_end = sp.last( '.', path_end );
     if( filename_end < 0 )
+    {
         filename_end = sp.length();
+    }
 
     filename = sp( path_end, filename_end );
     filetype = sp( filename_end, INT_MAX );
@@ -185,32 +799,22 @@ static EmacsString get_current_directory()
     return cwd;
 }
 
-bool FileParse::sys_parse( const EmacsString &name, const EmacsString &def )
+bool EmacsFile::parse_filename( const EmacsString &name, const EmacsString &def )
 {
-    FileParse d_fab;
-    EmacsString fn_buf;
+    TraceFile( FormatString("EmacsFile[%d]::parse_filename( '%s', '%s' )")
+        << objectNumber() << name << def );
 
-    if( !analyse_filespec( name ) )
-        return 0;
-    if( !d_fab.analyse_filespec( def ) )
-        return 0;
+    parse_valid = false;
 
-    if( disk.isNull() )
+    if( !parse_analyse_filespec( name ) )
     {
-        if( !d_fab.disk.isNull() )
-            disk = d_fab.disk;
-        else
-        {
-            // default to dev: or //server/service or cur dir
-            EmacsString cur_dir( get_current_directory() );
+        return false;
+    }
 
-            FileParse cur_dir_fab;
-
-            if( !cur_dir_fab.analyse_filespec( cur_dir ) )
-                disk = EmacsString::null;
-            else
-                disk = cur_dir_fab.disk;
-        }
+    EmacsFile def_file;
+    if( !def_file.parse_analyse_filespec( def ) )
+    {
+        return false;
     }
 
     //
@@ -219,6 +823,28 @@ bool FileParse::sys_parse( const EmacsString &name, const EmacsString &def )
     file_case_sensitive = 0;
     filename_maxlen = 8;
     filetype_maxlen = 4;
+
+    if( disk.isNull() )
+    {
+        if( !def_file.disk.isNull() )
+        {
+            disk = def_file.disk;
+        }
+        else
+        {
+            // default to dev: or //server/service or cur dir
+            EmacsFile cur_dir_fab( get_current_directory() );
+
+            if( !cur_dir_fab.parse_is_valid() )
+            {
+                disk = EmacsString::null;
+            }
+            else
+            {
+                disk = cur_dir_fab.disk;
+            }
+        }
+    }
 
     // if its NT then find out what the file system supports
     int file_parsing_override = 0;    // let emacs decide
@@ -252,131 +878,57 @@ bool FileParse::sys_parse( const EmacsString &name, const EmacsString &def )
 
         case 0:    // let Emacs decide
         {
-            // figure out the version of the system
-            OSVERSIONINFO os_info;
-            os_info.dwOSVersionInfoSize = sizeof( OSVERSIONINFO );
+            //
+            //    On new windows we will trust GetVolumeInformation to tell the truth
+            //    about file component lengths
+            //
+            DWORD serial_number;
+            DWORD max_comp_len;
+            wchar_t fs_name[32];
+            DWORD fs_flags;
 
-            // this call may fail on 3.1 with old win32s
-            int is_new_windows = GetVersionEx( &os_info );
-            if( is_new_windows )
+            EmacsString root( FormatString("%s" PATH_STR) << disk );
+
+            if( GetVolumeInformation
+                (
+                root.utf16_data(),
+                NULL, 0,
+                &serial_number,
+                &max_comp_len,
+                &fs_flags,
+                fs_name, sizeof( fs_name )/sizeof(wchar_t)
+                ) )
             {
-                switch( os_info.dwPlatformId )
-            {
-                default:
-                    // unknown version of windows assume its *new*
-                case VER_PLATFORM_WIN32_WINDOWS:
-                    // yep new windows - this is Win95
-                    break;
-                case VER_PLATFORM_WIN32s:
-                    // this is old windows - win 3.1 with win32s
-                    is_new_windows = 0;
-                    break;
-                case VER_PLATFORM_WIN32_NT:
-                    // this is NT - figure out the version
-                    // looking for better trwn NT 3.1
-                    if( os_info.dwMajorVersion == 3 && os_info.dwMinorVersion == 1 )
-                        is_new_windows = 0;
-                    break;
-            }
-            }
-
-            if( is_new_windows )
-            {
-                //
-                //    On new windows we will trust GetVolumeInformation to tell the truth
-                //    about file component lengths
-                //
-                DWORD serial_number;
-                DWORD max_comp_len;
-                wchar_t fs_name[32];
-                DWORD fs_flags;
-
-                EmacsString root( FormatString("%s" PATH_STR) << disk );
-
-                if( GetVolumeInformation
-                    (
-                    root.utf16_data(),
-                    NULL, 0,
-                    &serial_number,
-                    &max_comp_len,
-                    &fs_flags,
-                    fs_name, sizeof( fs_name )/sizeof(wchar_t)
-                    ) )
-                {
-                    filename_maxlen = (int)max_comp_len;
-                    filetype_maxlen = (int)max_comp_len;
-                }
-                else
-                {
-                    filename_maxlen = 255;
-                    filetype_maxlen = 255;
-                }
+                filename_maxlen = (int)max_comp_len;
+                filetype_maxlen = (int)max_comp_len;
             }
             else
             {
-                //
-                //    On old windows we will trust GetVolumeInformation just so far
-                //    then we figure out the limits
-                //
-                DWORD serial_number;
-                DWORD max_comp_len;
-                wchar_t fs_name[32];
-                DWORD fs_flags;
-
-                EmacsString root( FormatString("%s" PATH_STR) << disk );
-
-                if( GetVolumeInformation
-                    (
-                    root.utf16_data(),
-                    NULL, 0,
-                    &serial_number,
-                    &max_comp_len,
-                    &fs_flags,
-                    fs_name, sizeof( fs_name )/sizeof( wchar_t )
-                    ) )
-                {
-                    // seems that NT is always insensitive
-                    // file_case_sensitive = (fs_flags&FS_CASE_SENSITIVE) != 0;
-
-                    if( wcscmp( fs_name, L"FAT" ) == 0 )
-                    {
-                        filename_maxlen = 8;
-                        filetype_maxlen = 4;
-                    }
-                    else
-                        // assume all others do not need a special check
-                    {
-                        filename_maxlen = (int)max_comp_len;
-                        filetype_maxlen = (int)max_comp_len;
-                    }
-                }
-                else
-                {
-                    filename_maxlen = 255;
-                    filetype_maxlen = 255;
-                }
+                filename_maxlen = 255;
+                filetype_maxlen = 255;
             }
-        }
+            }
             break;
         }
     }
 
     if( path.isNull() )
     {
-        if( !d_fab.path.isNull() )
-            path = d_fab.path;
+        if( !def_file.path.isNull() )
+            path = def_file.path;
         else
         {
-            // default to path of cur dir
-            EmacsString cur_dir( get_current_directory() );
-
-            FileParse cur_dir_fab;
+            EmacsFile cur_dir_fab( get_current_directory() );
 
             // only use the current dir if its on the same disk
-            if( cur_dir_fab.analyse_filespec( cur_dir ) && disk == cur_dir_fab.disk )
+            if( cur_dir_fab.parse_is_valid() && disk == cur_dir_fab.disk )
+            {
                 path = cur_dir_fab.path;
+            }
             else
+            {
                 path = EmacsString("/");
+            }
         }
     }
 
@@ -393,7 +945,7 @@ bool FileParse::sys_parse( const EmacsString &name, const EmacsString &def )
             filetype_maxlen << filetype );
 
         // get attributes
-        if( file_is_directory( fullspec ) )
+        if( fio_is_directory( fullspec ) )
         {
             // need to merge the filename on to the path
             path = FormatString("%s%.*s%.*s") <<
@@ -407,34 +959,53 @@ bool FileParse::sys_parse( const EmacsString &name, const EmacsString &def )
     }
 
     if( filename.isNull() )
-        filename = d_fab.filename;
+    {
+        filename = def_file.filename;
+    }
 
     if( filetype.isNull() )
-        filetype = d_fab.filetype;
+    {
+        filetype = def_file.filetype;
+    }
 
-    fn_buf = FormatString("%s%s%.*s%.*s") <<
+    EmacsString fn_buf( FormatString("%s%s%.*s%.*s") <<
         disk <<
         path <<
         filename_maxlen << filename <<
-        filetype_maxlen << filetype;
+        filetype_maxlen << filetype );
 
     char full_path_str[MAXPATHLEN+1 ];
     if( _fullpath( full_path_str, fn_buf, MAXPATHLEN+1 ) != NULL )
     {
         EmacsString full_path( full_path_str );
         if( full_path[-1] != PATH_CH
-        && file_is_directory( full_path ) )
+        && fio_is_directory( full_path ) )
+        {
             full_path.append( PATH_STR );
+        }
         else
+        {
             if( fn_buf[-1] == '.' && full_path[-1] != '.' )
+            {
                 full_path.append( '.' );
+            }
+        }
 
         result_spec = convertShortPathToLongPath( full_path );
     }
     else
-        return 0;
+    {
+        TraceFile( FormatString("EmacsFile[%d]::parse_filename false fn_buf '%s'")
+            << objectNumber() << fn_buf );
 
-    return 1;
+        return false;
+    }
+
+    TraceFile( FormatString("EmacsFile[%d]::parse_filename true result_spec '%s'")
+        << objectNumber() << result_spec );
+
+    parse_valid = true;
+    return true;
 }
 
 //
@@ -494,79 +1065,54 @@ static EmacsString convertShortPathToLongPath( const EmacsString &short_path )
 }
 
 
-class FileFindWindowsNT : public FileFindInternal
-{
-public:
-    FileFindWindowsNT( const EmacsString &files, bool return_all_directories );
-    virtual ~FileFindWindowsNT();
-
-    EmacsString next();
-private:
-    enum { first_time, next_time, all_done } state;
-    WIN32_FIND_DATA find;
-    HANDLE handle;
-    int case_sensitive;
-    EmacsString root_path;
-    EmacsString match_pattern;
-    EmacsString full_filename;
-};
-
-FileFind::FileFind( const EmacsString &files, bool return_all_directories )
-{
-    implementation = new FileFindWindowsNT( files, return_all_directories );
-}
-
-FileFind::~FileFind()
-{
-    delete implementation;
-}
-
-EmacsString FileFind::next()
-{
-    if( implementation )
-        return implementation->next();
-    return EmacsString::null;
-}
-
-
-FileFindWindowsNT::FileFindWindowsNT( const EmacsString &_files, bool _return_all_directories )
-: FileFindInternal( _return_all_directories )
-, state( all_done )    // assume all done
-, handle( INVALID_HANDLE_VALUE )
-, case_sensitive(0)
-, root_path()
-, full_filename()
+FileFindLocal::FileFindLocal( EmacsFile &files, EmacsFileLocal &local, bool return_all_directories )
+: FileFindImplementation( files, return_all_directories )
+, m_local( local )
+, m_handle( INVALID_HANDLE_VALUE )
+, m_case_sensitive( false )
 {
     wchar_t file_name_buffer[ MAX_PATH ];
-    DWORD len = GetFullPathName( _files.utf16_data(), MAX_PATH, file_name_buffer, NULL );
+    DWORD len = GetFullPathName( files.result_spec.utf16_data(), MAX_PATH, file_name_buffer, NULL );
     if( len == 0 )
         return;
 
     // now its possible to get the first file
-    state = first_time;
+    m_state = first_time;
 
-    root_path = EmacsString( file_name_buffer, len );
-    int last_path_ch = root_path.last( PATH_CH );
+    m_root_path = EmacsString( file_name_buffer, len );
+    int last_path_ch = m_root_path.last( PATH_CH );
     if( last_path_ch >= 0 )
     {
-        match_pattern = root_path( last_path_ch+1, INT_MAX );
-        root_path.remove( last_path_ch+1 );
+        m_match_pattern = m_root_path( last_path_ch+1, INT_MAX );
+        m_root_path.remove( last_path_ch+1 );
     }
-    if( !case_sensitive )
-        match_pattern.toLower();
+    if( !m_case_sensitive )
+    {
+        m_match_pattern.toLower();
+    }
 }
 
-FileFindWindowsNT::~FileFindWindowsNT()
+FileFindLocal::~FileFindLocal()
 {
-    if( handle )
-        FindClose( handle );
+    if( m_handle )
+        FindClose( m_handle );
 }
 
-EmacsString FileFindWindowsNT::next()
+EmacsString FileFindLocal::repr()
+{
+    return FormatString("FileFindLocal (%p) state %d root %s pattern %s full_filename %s")
+            << this
+            << m_state
+            << m_root_path
+            << m_match_pattern
+            << m_full_filename;
+}
+
+EmacsString FileFindLocal::next()
 {
     for(;;)
     {
-        switch( state )
+        switch( m_state )
         {
         default:
         case all_done:
@@ -574,51 +1120,61 @@ EmacsString FileFindWindowsNT::next()
 
         case first_time:
         {
-            EmacsString files( root_path );
+            EmacsString files( m_root_path );
             files.append( "*" );
-            handle = FindFirstFile( files.utf16_data(), &find );
-            if( handle == INVALID_HANDLE_VALUE )
+            m_handle = FindFirstFile( files.utf16_data(), &m_find );
+            if( m_handle == INVALID_HANDLE_VALUE )
             {
-                state = all_done;
+                m_state = all_done;
                 return EmacsString::null;
             }
 
-            state = next_time;
+            m_state = next_time;
         }
             break;
 
         case next_time:
-            if( !FindNextFile( handle, &find ) )
+            if( !FindNextFile( m_handle, &m_find ) )
             {
-                state = all_done;
+                m_state = all_done;
                 return EmacsString::null;
             }
             break;
         }
 
-        if( wcscmp( find.cFileName, L"." ) == 0
-        || wcscmp( find.cFileName, L".." ) == 0 )
+        if( wcscmp( m_find.cFileName, L"." ) == 0
+        || wcscmp( m_find.cFileName, L".." ) == 0 )
+        {
             continue;
-
+        }
         // return all directories if requested to do so
-        if( return_all_directories
-        &&  find.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY )
+        if( m_return_all_directories
+        &&  m_find.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY )
+        {
             break;
+        }
         // if the name does match the pattern
-        EmacsString file_name( find.cFileName, wcslen( find.cFileName ) );
-        if( !case_sensitive )
+        EmacsString file_name( m_find.cFileName, wcslen( m_find.cFileName ) );
+        if( !m_case_sensitive )
+        {
             file_name.toLower();
-        if( match_wild( file_name, match_pattern ) )
+        }
+        if( match_wild( file_name, m_match_pattern ) )
+        {
             break;
+        }
     }
 
     // return success and the full path
-    full_filename = root_path;
-    EmacsString file_name( find.cFileName, wcslen( find.cFileName ) );
-    full_filename.append( file_name );
-    if( find.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY
-    && full_filename[-1] != PATH_CH )
-        full_filename.append( PATH_STR );
+    m_full_filename = m_root_path;
+    EmacsString file_name( m_find.cFileName, wcslen( m_find.cFileName ) );
+    m_full_filename.append( file_name );
 
-    return full_filename;
+    if( m_find.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY
+    && m_full_filename[-1] != PATH_CH )
+    {
+        m_full_filename.append( PATH_STR );
+    }
+
+    return m_full_filename;
 }

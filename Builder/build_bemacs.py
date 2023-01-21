@@ -44,6 +44,7 @@ class BuildBEmacs(object):
         self.opt_vcredist = None
         self.opt_editor_setup_opt = []
         self.opt_prefix = '/usr'
+        self.opt_appmode = '--gui'
 
         self.bemacs_version_info = None
 
@@ -84,6 +85,12 @@ class BuildBEmacs(object):
                     if arg == '--verbose':
                         self.opt_verbose = True
 
+                    elif arg == '--cli':
+                        self.opt_appmode = '--cli'
+
+                    elif arg == '--gui':
+                        self.opt_appmode = '--gui'
+
                     elif arg == '--colour':
                         self.opt_colour = True
 
@@ -104,6 +111,7 @@ class BuildBEmacs(object):
                                 ,'--system-ucd'
                                 ,'--system-sqlite'
                                 ,'--system-hunspell'
+                                ,'--no-sftp'
                                 ,'--no-warnings-as-errors'):
                         self.opt_editor_setup_opt.append( arg )
 
@@ -148,7 +156,15 @@ class BuildBEmacs(object):
             else:
                 raise BuildError( 'Windows 32 bit is not supported' )
 
+        if 'BUILDER_TOP_DIR' not in os.environ:
+            # assume that the current directory is BUILDER_TOP_DIR
+            os.environ[ 'BUILDER_TOP_DIR' ] = os.getcwd()
+
         self.BUILDER_TOP_DIR = os.environ[ 'BUILDER_TOP_DIR' ]
+
+        if 'PYTHON' not in os.environ:
+            # assume its this python that we need to use
+            os.environ[ 'PYTHON' ] = sys.executable
 
         if self.platform in ('Linux', 'NetBSD'):
             if 'DESTDIR' in os.environ:
@@ -157,7 +173,7 @@ class BuildBEmacs(object):
             else:
                 self.BEMACS_ROOT_DIR = '%s/Builder/tmp/ROOT' % (self.BUILDER_TOP_DIR,)
 
-            self.INSTALL_BEMACS_DOC_DIR = '%s/share/bemacs/doc' % (self.opt_prefix,)
+            self.INSTALL_BEMACS_DOC_DIR = '%s/share/doc/bemacs' % (self.opt_prefix,)
             self.INSTALL_BEMACS_LIB_DIR = '%s/lib/bemacs' % (self.opt_prefix,)
             self.INSTALL_BEMACS_BIN_DIR = '%s/bin' % (self.opt_prefix,)
 
@@ -205,7 +221,7 @@ class BuildBEmacs(object):
             self.cmd_make_args = ['/nologo']
 
             # fix up the PATH that may have a Qt/bin added to it that will break the build
-            os.environ['PATH'] = ';'.join( [path for path in os.environ['PATH'].split(';') if not path.endswith(r'PyQt5\Qt\bin')] )
+            os.environ['PATH'] = ';'.join( [path for path in os.environ['PATH'].split(';') if not path.endswith(r'PyQt6\Qt\bin')] )
 
         else:
             raise BuildError( 'Unsupported platform: %s' % (self.platform,) )
@@ -228,9 +244,9 @@ class BuildBEmacs(object):
 
         if self.platform in ('Linux',):
             try:
-                from PyQt5 import QtWidgets, QtGui, QtCore
+                from PyQt6 import QtWidgets, QtGui, QtCore
             except ImportError:
-                raise BuildError( 'PyQt5 is not installed for %s. Hint: dnf install PyQt5' % (sys.executable,) )
+                raise BuildError( 'PyQt6 is not installed for %s. Hint: dnf install PyQt6' % (sys.executable,) )
             try:
                 import xml_preferences
             except ImportError:
@@ -240,13 +256,13 @@ class BuildBEmacs(object):
             try:
                 if self.platform == 'win64':
                     # in a venv on Windows need to tell the OS about the dll's that Qt uses
-                    import PyQt5
-                    qt_bin_dir = os.path.join( os.path.dirname( PyQt5.__file__ ), 'Qt5', 'bin' )
+                    import PyQt6
+                    qt_bin_dir = os.path.join( os.path.dirname( PyQt6.__file__ ), 'Qt6', 'bin' )
                     os.add_dll_directory( qt_bin_dir )
 
-                from PyQt5 import QtWidgets, QtGui, QtCore
+                from PyQt6 import QtWidgets, QtGui, QtCore
             except ImportError:
-                raise BuildError( 'PyQt5 is not installed for %s. Hint: pip3 install --user PyQt5' % (sys.executable,) )
+                raise BuildError( 'PyQt6 is not installed for %s. Hint: pip3 install --user PyQt6' % (sys.executable,) )
             try:
                 import xml_preferences
             except ImportError:
@@ -337,16 +353,17 @@ class BuildBEmacs(object):
         if self.platform == 'MacOSX':
             run( ('./build-macosx.sh'
                  ,'--package'),
-                    cwd='../Editor/PyQtBEmacs' )
+                    cwd='../Editor/PyQt6' )
 
             build_utils.mkdirAndParents( self.BUILD_BEMACS_BIN_DIR )
             build_utils.copyFile( '../Editor/exe-cli-bemacs/bemacs-cli',  self.BUILD_BEMACS_BIN_DIR, 0o555 )
 
         elif self.platform == 'win64':
             run( ('build-windows.cmd'
+                 ,self.opt_appmode
                  ,self.KITFILES
                  ,self.bemacs_version_info.get('win_version'))
-                 ,cwd=r'..\Editor\PyQtBEmacs' )
+                 ,cwd=r'..\Editor\PyQt6' )
 
         else:
             run( ('./build-linux.sh'
@@ -354,7 +371,7 @@ class BuildBEmacs(object):
                  ,self.INSTALL_BEMACS_BIN_DIR
                  ,self.INSTALL_BEMACS_LIB_DIR
                  ,self.INSTALL_BEMACS_DOC_DIR),
-                    cwd='../Editor/PyQtBEmacs' )
+                    cwd='../Editor/PyQt6' )
 
     def ruleBemacsCli( self ):
         log.info( 'Running ruleBemacsCli' )
@@ -401,7 +418,7 @@ class BuildBEmacs(object):
     def ruleMacosPackage( self ):
         log.info( 'Make macOS package' )
 
-        pkg_name = 'BarrysEmacs-%s' % (self.bemacs_version_info.get('version'),)
+        pkg_name = 'BarrysEmacs-%s-%s' % (self.bemacs_version_info.get('version'), platform.machine())
         dmg_folder = '%s/Builder/tmp/dmg' % (self.BUILDER_TOP_DIR,)
         pkg_folder = '%s/Builder/tmp/pkg' % (self.BUILDER_TOP_DIR,)
         venv_bin = '%s/Builder/venv.tmp/bin' % (self.BUILDER_TOP_DIR,)
@@ -453,7 +470,7 @@ class BuildBEmacs(object):
     def ruleDocs( self ):
         log.info( 'Running ruleDocs' )
         build_utils.copyFile( '../Kits/readme.txt', self.BUILD_BEMACS_DOC_DIR, 0o444 )
-        build_utils.copyFile( '../Editor/PyQtBEmacs/org.barrys-emacs.editor.png', self.BUILD_BEMACS_DOC_DIR, 0o444 )
+        build_utils.copyFile( '../Editor/PyQt6/org.barrys-emacs.editor.png', self.BUILD_BEMACS_DOC_DIR, 0o444 )
 
         import build_docs
         if build_docs.main( ['build', self.BUILD_BEMACS_DOC_DIR] ) != 0:

@@ -487,11 +487,12 @@ static EmacsString calcNewPythonPath(void)
         part = emacs_path( start_pos, index );
         start_pos = index+1;
 
-        EmacsString  new_part;
-        expand_and_default( part, EmacsString::null, new_part );
-
-        new_python_path.append( new_part );
-        new_python_path.append( ';' );
+        EmacsFile new_part( part );
+        if( new_part.fab.is_valid() )
+        {
+            new_python_path.append( new_part.fab.fio_getname() );
+            new_python_path.append( ';' );
+        }
     }
 
     // remove trailing ';'

@@ -62,6 +62,9 @@ extern void init_var(void);
 extern void restore_var(void);
 extern void init_subprocesses(void);
 extern void restore_timer(void);
+#if defined( SFTP )
+extern void shutdown_sftp(void);
+#endif
 extern void init_win(void);
 
 int dbg_flags;
@@ -163,13 +166,13 @@ int emacsMain
     }
     if( rv > 0 )
     {
-        int status;
         init_display();                         // " the core display system
         init_lisp();                            // " the MLisp system
         init_abs();                             // " the current directory name
 #ifdef vms
         vms_restoring_env( full_rest_fn.data() );
 #endif
+        int status;
         if( ((status = EmacsSaveRestoreEnvironmentObject->DoRestore())&1) != 1 )
         {
 #ifdef vms
@@ -219,7 +222,7 @@ int emacsMain
     }
 
     //
-    //    Emacs internals are now initrialised
+    //    Emacs internals are now initialised
     //    Before running the user MLisp code
     //    give the OS/GUI code a chance to do
     //    some work.
@@ -232,7 +235,9 @@ int emacsMain
     //    Exit if the event handler detects an error
     //
     if( !emacs_internal_init_done_event() )
+    {
         return EXIT_SUCCESS;
+    }
 
 #ifdef vms
 #error need to move this into the VMS emacs_internal_init_done_event rtn
@@ -250,29 +255,37 @@ int emacsMain
         gui_error = 0;
     }
     else
+    {
         rv = 0;
+    }
 
     //
     // do not run the enter-emacs-hook if we are building the default environment
     //
-    if(( term_is_terminal || is_restored != 0)
-    && rv == 0 )
+    if( (term_is_terminal || is_restored != 0)
+    &&  rv == 0 )
     {
         if( user_interface_hook_proc != NULL )
             rv = execute_bound_saved_environment( user_interface_hook_proc );
             // ignore result of user_interface_hook_proc
 
         if( enter_emacs_proc != NULL )
+        {
             rv = execute_bound_saved_environment( enter_emacs_proc );
+        }
     }
 
     if( rv == 0 )
+    {
         rv = execute_package( command_line_arguments.argument(0).value() );
+    }
 
     if( rv == 0
     && !touched_command_args
     && !read_in_files() )
+    {
         read_emacs_memory_file();
+    }
 
     ml_err = 0;
 
@@ -284,19 +297,27 @@ int emacsMain
         do
         {
             if( rv == 0 )
+            {
                 process_keys();
+            }
+
             rv = 0;
 #ifdef WIN32
             can_exit = UI_quit_emacs();
 #else
             can_exit = true;
             if( mod_exist() )
+            {
                 can_exit = get_yes_or_no( 0, u_str("Modified buffers exist, do you really want to exit? ") );
+            }
+
 #if defined( SUBPROCESSES )
             if( can_exit
             && ! silently_kill_processes
             && count_processes() )
+            {
                 can_exit = get_yes_or_no( 1, u_str("You have processes still on the prowl, shall I chase them down for you? " ) );
+            }
 #endif
 #endif
 
@@ -304,11 +325,15 @@ int emacsMain
         while( ! can_exit );
     }
     else
+    {
         // execute sys$input as the command stream
         rv = execute_mlisp_file( device, 0 );
+    }
 
     if( exit_emacs_proc != 0 && rv == 0 )
+    {
         rv = execute_bound_saved_environment( exit_emacs_proc );
+    }
 
     write_emacs_memory_file();
 
@@ -318,10 +343,18 @@ int emacsMain
 #ifdef vms
     // check for an exit DCL command, and send it to the mailbox if required
     if( !exit_emacs_dcl_command.isNull() )
+    {
         send_exit_message( exit_emacs_dcl_command );
+    }
+
 #endif
     kill_checkpoint_files();
     EmacsBufferJournal::journal_exit();
+
+#if defined( SFTP )
+    // shutdown any remaining SFTP sessions
+    shutdown_sftp();
+#endif
 
     rst_dsp();
     emacs_is_exiting = 1;
@@ -333,23 +366,29 @@ static void read_emacs_memory_file()
 {
     EmacsString fn( MEMORY_FILE_STR );
     if( fn.isNull() )
+    {
         return;
+    }
 
     EmacsString memory = FormatString( fn ) << MEMORY_FILE_ARG;
 
     unsigned char combuf[300];
 
     {
-    EmacsFile args;
-    if( !args.fio_open( memory, FIO_READ, EmacsString::null ) )
+    EmacsFile args( memory );
+    if( !args.fio_open( FIO_READ ) )
+    {
         return;
+    }
 
     int saved_err = 0;
     while( args.fio_get_line( combuf, sizeof( combuf)) > 0 )
     {
         unsigned char *p = combuf;
         while( *p != 0 && *p >= ' ' )
+        {
             p++;
+        }
 
         int i = p[0];
         *p++ = 0;
@@ -361,30 +400,37 @@ static void read_emacs_memory_file()
         {
             i = 0;
             while( '0' <= *p && *p <= '9' )
+            {
                 i = i * 10 + *p++ - '0';
+            }
 
             if( i > bf_cur->first_character()
             && i <= (bf_cur->num_characters()+1) )
+            {
                 set_dot( i );
+            }
         }
     }
 
     ml_err = saved_err;
     }
 
-    EmacsFile::fio_delete( memory );
+    EmacsFile( memory ).fio_delete();
 }
 
 static void write_emacs_memory_file()
 {
     EmacsString fn( MEMORY_FILE_STR );
     if( fn.isNull() )
+    {
         return;
+    }
 
     EmacsString memory = FormatString( fn ) << MEMORY_FILE_ARG;
 
-    EmacsFile args;
     EmacsWindow *w = theActiveView->windows.windows;
+    EmacsFile args( memory );
+
     while( w != 0 )
     {
         w->w_buf->set_bf();
@@ -392,10 +438,13 @@ static void write_emacs_memory_file()
         {
             if( !args.fio_is_open() )
             {
-                args.fio_create( memory, 1, FIO_STD, EmacsString(), (FIO_EOL_Attribute)(int)default_end_of_line_style );
+                args.fio_create( FIO_STD, (FIO_EOL_Attribute)(int)default_end_of_line_style );
                 if( !args.fio_is_open() )
+                {
                     break;
+                }
             }
+
             EmacsString mem_line( FormatString("%s\001%d\n") << bf_cur->b_fname << dot );
             args.fio_put( mem_line );
         }
@@ -778,6 +827,9 @@ int parse_dbg_flags( const EmacsString &flags )
 
         else if( keyword == "timer" )
             flags_value |= DBG_TIMER;
+
+        else if( keyword == "file" )
+            flags_value |= DBG_FILE;
 
         else if( keyword == "ext_parser" )
             flags_value |= DBG_EXT_PARSER;

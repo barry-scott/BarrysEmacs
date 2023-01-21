@@ -21,7 +21,7 @@ int spell_check_init(void)
     EmacsString dic_filename;
     expand_and_default( lang, SPELL_DICTIONARY_DIR "en_US.dic", dic_filename );
 
-    if( EmacsFile::fio_access( dic_filename ) == 0 )
+    if( EmacsFile( dic_filename ).fio_access() == 0 )
     {
         error( FormatString("Cannot find required spell checker dictionary %s") << dic_filename );
     }
@@ -29,7 +29,7 @@ int spell_check_init(void)
     EmacsString aff_filename;
     expand_and_default( lang, SPELL_DICTIONARY_DIR "en_US.aff", aff_filename );
 
-    if( EmacsFile::fio_access( aff_filename ) == 0 )
+    if( EmacsFile( aff_filename ).fio_access() == 0 )
     {
         error( FormatString("Cannot find required spell checker affices %s") << aff_filename );
     }

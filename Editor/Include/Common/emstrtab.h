@@ -73,6 +73,9 @@ protected:
     // the permitted values
     void fillHelpBuffer( const EmacsString &prefix, int nfound );
 
+protected:
+    EmacsString help_feedback;
+
     // hide the details of the implementation
 private:
     int findIndex( const EmacsString &key );
@@ -86,4 +89,4 @@ private:
 
 
 #define getword( obj, prompt ) (cur_exec == NULL ? obj get_word_interactive( prompt ) : obj get_word_mlisp())
-#define getescword( obj, prompt, result ) (cur_exec == NULL ? obj get_esc_word_interactive( prompt, result ) : obj get_esc_word_mlisp( result))
+#define getescword( obj, prompt, result ) (cur_exec == NULL ? obj get_esc_word_interactive( prompt, result ) : obj get_esc_word_mlisp( result ))

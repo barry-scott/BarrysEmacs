@@ -3,7 +3,7 @@
 #
 maturity:   V
 major:      8
-minor:      8
+minor:      9
 patch:      3
 
 version:            %(maturity)s%(major)s.%(minor)s.%(patch)s

@@ -114,6 +114,7 @@ extern int beginning_of_window(void);
 extern int bind_to_key(void);
 extern int bobp_command(void);
 extern int bolp_command(void);
+extern int close_remote_connection(void);
 extern int set_break_point(void);
 extern int buf_size_command(void);
 extern int char_compare_command(void);
@@ -267,6 +268,7 @@ extern int list_databases(void);
 # if defined (SUBPROCESSES)
 extern int list_processes(void);
 # endif
+extern int list_remote_connections(void);
 extern int list_syntax_tables(void);
 extern int execute_mlisp_file_command(void);
 extern int local_bind_to_key(void);
@@ -587,6 +589,7 @@ static void init_fncs_a( void )
     EMACS_NEW BoundName( "char-to-string", char_to_string );
     EMACS_NEW BoundName( "checkpoint", checkpoint_everything );
     EMACS_NEW BoundName( "checkpoint-buffers", checkpoint_buffers );
+    EMACS_NEW BoundName( "close-remote-connection", close_remote_connection );
     EMACS_NEW BoundName( "column-to-left-of-window", column_to_left_of_window );
     EMACS_NEW BoundName( "concat", concat_command );
     EMACS_NEW BoundName( "convert-key-string", convert_key_string_command  );
@@ -729,6 +732,7 @@ static void init_fncs_a( void )
 # if defined (SUBPROCESSES)
     EMACS_NEW BoundName( "list-processes", list_processes );
 # endif
+    EMACS_NEW BoundName( "list-remote-connections", list_remote_connections );
     EMACS_NEW BoundName( "list-syntax-tables", list_syntax_tables );
     EMACS_NEW BoundName( "load", execute_mlisp_file_command );
     EMACS_NEW BoundName( "local-bind-to-key", local_bind_to_key );

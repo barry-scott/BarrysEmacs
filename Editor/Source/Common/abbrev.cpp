@@ -407,20 +407,30 @@ int write_abbrev_file( void )
 {
     EmacsString fn;
     if( cur_exec == NULL )
+    {
         fn = get_string_interactive( ": write-abbrev-file " );
+    }
     else
+    {
         fn = get_string_mlisp();
+    }
     if( fn.isNull() )
+    {
         return 0;
+    }
 
-    EmacsFile f;
-    f.fio_create( fn, 0, FIO_STD, abbreviations, (FIO_EOL_Attribute)(int)default_end_of_line_style );
+    EmacsFile f( fn, abbreviations );
+    f.fio_create( FIO_STD, (FIO_EOL_Attribute)(int)default_end_of_line_style );
     if( !f.fio_is_open() )
+    {
          error( FormatString( two_percents ) << fetch_os_error( errno ) << fn );
+    }
     else
     {
         for( int i=0; i<AbbrevTable::name_table.entries(); i += 1 )
+        {
             write_abbrevs( f, AbbrevTable::name_table.value( i ) );
+        }
         f.fio_close();
     }
 
@@ -450,10 +460,12 @@ static int read_abbrevs
 
     AbbrevTable *table = 0;
     EmacsFile f;
-    if( !f.fio_open_using_path( EMACS_PATH, name, FIO_READ, abbreviations ) )
+    if( !f.fio_find_using_path( EMACS_PATH, name, abbreviations ) || !f.fio_open() )
     {
         if( report )
+        {
             error( FormatString(two_percents) << fetch_os_error( errno ) << name);
+        }
         return 0;
     }
 

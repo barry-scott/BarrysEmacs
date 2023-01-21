@@ -63,21 +63,26 @@ int extend_database_search_list( void )
         p = EMACS_NEW DatabaseSearchList( name );
 
     EmacsString buf( FormatString( ": extend-database-search-list (list) %s (database) " ) << p->dbs_name );
-
     EmacsFileTable file_table;
-    EmacsString content;
-    getescword( file_table., buf, content );
-    if( content.isNull() )
+    EmacsString db_filename;
+    getescword( file_table., buf, db_filename );
+    if( db_filename.isNull() )
         return 0;
 
-    EmacsString filename;
-    expand_and_default( content, EMACS_DB_DEFAULT, filename );
+    EmacsFile db_file( db_filename, EMACS_DB_DEFAULT );
+    if( !db_file.parse_is_valid() )
+    {
+        error( FormatString("Cannot find DB file \"%s\"") << db_filename );
+        return 0;
+    }
 
     for( int i = 0; i < p->dbs_size; i++ )
     {
         database *dbx = p->dbs_elements[i];
-        if( filename == dbx->db_name )
+        if( db_file.result_spec == dbx->db_name )
+        {
             return 0;
+        }
     }
 
     if( p->dbs_size == DatabaseSearchList::SEARCH_LEN )
@@ -87,16 +92,18 @@ int extend_database_search_list( void )
     }
 
     if( arg_state == have_arg )
+    {
         access_flags = arg;
-
-    else if( ! interactive() && cur_exec->p_nargs > 2 )
+    }
+    else if( !interactive() && cur_exec->p_nargs > 2 )
+    {
         access_flags = getnum( u_str(": extend-database-search-list (flags) ") );
+    }
 
     database *db = EMACS_NEW database;
-
-    if( db == NULL || !db->open_db( filename, access_flags & database::access_readonly, access_flags & database::access_may_create ) )
+    if( db == NULL || !db->open_db( db_file, access_flags & database::access_readonly, access_flags & database::access_may_create ) )
     {
-        error( FormatString("Cannot find database \"%s\"") << filename );
+        error( FormatString("Cannot find database \"%s\"") << db_file.result_spec );
         return 0;
     }
 

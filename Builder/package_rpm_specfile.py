@@ -55,6 +55,14 @@ def createRpmSpecFile( opt, spec_filename ):
     else:
         all_config_options.add( '--no-sqlite' )
 
+    if opt.opt_sftp:
+        all_requires_cli.add( 'libssh' )
+        all_requires_gui.add( 'libssh' )
+        all_build_requires.add( 'libssh-devel' )
+
+    else:
+        all_build_requires.add( '--no-sftp' )
+
     if not opt.opt_warnings_as_errors:
         all_config_options.add( '--no-warnings-as-errors' )
 
@@ -79,14 +87,14 @@ def createRpmSpecFile( opt, spec_filename ):
             python = '/usr/bin/python3'
             all_requires_gui.add( 'bemacs-common = %{version}-%{release}' )
             all_requires_gui.add( 'python3 >= 3.4' )
-            all_requires_gui.add( 'python3-qt5 >= 5.5.1' )
+            all_requires_gui.add( 'python3-qt6' )
 
             all_requires_base.add( 'bemacs-gui = %{version}-%{release}' )
             all_requires_base.add( 'python3' )
 
             all_build_requires.add( 'python3 >= 3.4' )
             all_build_requires.add( 'python3-devel >= 3.4' )
-            all_build_requires.add( 'python3-qt5 >= 5.5.1' )
+            all_build_requires.add( 'python3-qt6' )
 
         if opt.opt_kit_xml_preferences is None:
             all_requires_gui.add( 'python3-xml-preferences' )
@@ -193,8 +201,8 @@ spec_file_prep_xml_preferences = '''
 gunzip -c "%_sourcedir/./.(KIT_XML_PREFERENCES)s" | tar xf - -C Imports
 # make build_bemacs code happy
 ln -s $PWD/Imports/xml-preferences-*/Source/xml_preferences Builder
-# make PyQtBEmacs code happy
-ln -s $PWD/Imports/xml-preferences-*/Source/xml_preferences Editor/PyQtBEmacs
+# make PyQt6 code happy
+ln -s $PWD/Imports/xml-preferences-*/Source/xml_preferences Editor/PyQt6
 '''
 
 spec_file_build = '''
@@ -226,7 +234,7 @@ mkdir -p %{buildroot}%{_mandir}/man1
 gzip -c ${BUILDER_TOP_DIR}/Kits/Linux/bemacs.1 > %{buildroot}%{_mandir}/man1/bemacs.1.gz
 
 mkdir -p %{buildroot}/usr/share/bemacs
-cp ${BUILDER_TOP_DIR}/Editor/PyQtBEmacs/org.barrys-emacs.editor.png %{buildroot}/usr/share/bemacs/org.barrys-emacs.editor.png
+cp ${BUILDER_TOP_DIR}/Editor/PyQt6/org.barrys-emacs.editor.png %{buildroot}/usr/share/bemacs/org.barrys-emacs.editor.png
 mkdir -p %{buildroot}/usr/share/applications
 cp ${BUILDER_TOP_DIR}/Kits/Linux/org.barrys-emacs.editor.desktop %{buildroot}/usr/share/applications/org.barrys-emacs.editor.desktop
 
@@ -303,7 +311,7 @@ spec_file_files_cli = '''
 spec_file_files_common = '''
 %files common
 %defattr(-, root, root, -)
-/usr/share/bemacs/doc/*
+/usr/share/doc/bemacs/*
 /usr/lib/bemacs/*.db
 /usr/lib/bemacs/*.ml
 %attr(0644,root,root) %{_mandir}/man1/bemacs.1.gz

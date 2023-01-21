@@ -164,7 +164,7 @@ void TerminalControl::t_io_printf( const char *fmt, ... )
 
     va_start( argp, fmt );
 
-    vsprintf( buf, fmt, argp );
+    vsnprintf( buf, sizeof(buf), fmt, argp );
 
     t_io_print( u_str(buf) );
 }
@@ -238,7 +238,7 @@ TerminalControl_FILE::TerminalControl_FILE( const EmacsString &file )
     //    open the (message "...") stream
     //
 #ifdef vms
-    message_file.fio_create( u_str("SYS$OUTPUT"), 0, 0, u_str("emacs.lis"), default_end_of_line_style );
+    message_file.fio_create( u_str("SYS$OUTPUT"), 0, u_str("emacs.lis"), default_end_of_line_style );
 #else
     message_file.fio_open( stdout, default_end_of_line_style );
 #endif
@@ -252,7 +252,9 @@ TerminalControl_FILE::TerminalControl_FILE( const EmacsString &file )
     //
     if( !file.isNull() )
     {
-        command_file.fio_open( file, 0, EmacsString::null );
+        EmacsFile fd( file );
+        command_file.fio_set_filespec_from( fd );
+        command_file.fio_open( false, FIO_EOL__None );
     }
     else
     {
@@ -279,9 +281,9 @@ void TerminalControl_FILE::t_io_printf(const char *fmt, ...)
     va_start( argp, fmt );
 
     char buf[256];
-    int size = vsprintf( buf, fmt, argp );
+    int size = vsnprintf( buf, sizeof(buf), fmt, argp );
 
-    message_file.fio_put( (const unsigned char *)buf, size );
+    message_file.fio_put( u_str(buf), size );
 }
 
 static int async_io;

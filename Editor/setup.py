@@ -6,7 +6,7 @@ import sys
 import subprocess
 import glob
 
-pycxx_version = (7,1,5)
+pycxx_version = (7,1,7)
 pycxx_version_str = '%d.%d.%d' % pycxx_version
 
 sys.path.insert( 0, '../Builder' )
@@ -30,6 +30,8 @@ class Setup:
         self.opt_coverage = False
         self.opt_system_pycxx = False
         self.opt_system_ucd = False
+        self.opt_sftp = True
+        self.opt_system_libssh = False
         self.opt_warnings_as_errors = True
         self.opt_sqlite = True
         self.opt_system_sqlite = False
@@ -99,6 +101,9 @@ class Setup:
                 elif arg == '--system-hunspell':
                     self.opt_system_hunspell = True
 
+                elif arg == '--system-libssh':
+                    self.opt_system_libssh = True
+
                 elif arg == '--system-sqlite':
                     self.opt_system_sqlite = True
 
@@ -113,6 +118,9 @@ class Setup:
 
                 elif arg == '--coverage':
                     self.opt_coverage = True
+
+                elif arg == '--no-sftp':
+                    self.opt_sftp = False
 
                 elif arg == '--no-sqlite':
                     self.opt_sqlite = False
@@ -195,6 +203,10 @@ class Setup:
             cli_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
             utils_feature_defines = []
 
+            if self.opt_sftp:
+                pybemacs_feature_defines.append( ('SFTP', '1') )
+                cli_feature_defines.append( ('SFTP', '1') )
+
             if self.opt_sqlite:
                 pybemacs_feature_defines.append( ('DB_SQLITE', '1') )
                 cli_feature_defines.append( ('DB_SQLITE', '1') )
@@ -223,6 +235,10 @@ class Setup:
             pybemacs_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
             cli_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
             utils_feature_defines = []
+
+            if self.opt_sftp:
+                pybemacs_feature_defines.append( ('SFTP', '1') )
+                cli_feature_defines.append( ('SFTP', '1') )
 
             if self.opt_sqlite:
                 pybemacs_feature_defines.append( ('DB_SQLITE', '1') )
@@ -315,14 +331,16 @@ class Setup:
                 self.unicode_header = UnicodeDataHeader( self.c_utils )
 
             if self.platform in ['linux', 'macosx', 'netbsd']:
-                self.db_files.append( Source( self.c_utils, 'Source/Unix/unixfile.cpp' ) )
+                self.db_files.append( Source( self.c_utils, 'Source/Unix/unix_file_local.cpp' ) )
+                if self.opt_sftp:
+                    self.db_files.append( Source( self.c_utils, 'Source/Unix/unix_file_remote.cpp' ) )
 
             elif self.platform in ('win32', 'win64'):
                 self.db_files.append( Source( self.c_utils, 'Source/Windows/win_file.cpp' ) )
 
         if self.opt_bemacs_gui:
             if not os.path.exists( self.c_pybemacs.expand( '%(PYCXXSRC)s' ) ):
-                raise SetupError( 'PyCXX version %s expect to be in %s' % (pycxx_version, self.c_pybemacs.expand( '%(PYCXX)s' )) )
+                raise SetupError( 'PyCXX version %s expect to be in %s' % (pycxx_version, self.c_pybemacs.expand( '%(PYCXXSRC)s' )) )
 
             self.pycxx_obj_file = [
                 Source( self.c_pybemacs, '%(PYCXXSRC)s/cxxsupport.cxx' ),
@@ -410,6 +428,7 @@ class Setup:
                 Source( compiler, 'Source/Common/mlprintf.cpp' ),
                 Source( compiler, 'Source/Common/options.cpp' ),
                 Source( compiler, 'Source/Common/queue.cpp' ),
+                Source( compiler, 'Source/Common/remote_connections.cpp' ),
                 Source( compiler, 'Source/Common/save_env.cpp' ),
                 Source( compiler, 'Source/Common/search.cpp' ),
                 Source( compiler, 'Source/Common/search_extended_algorithm.cpp' ),
@@ -451,25 +470,32 @@ class Setup:
 
             if self.platform in ('linux',):
                 obj_files.extend( [
-                    Source( compiler, 'Source/Unix/unixfile.cpp' ),
+                    Source( compiler, 'Source/Unix/unix_file_local.cpp' ),
                     Source( compiler, 'Source/Unix/emacs_signal.cpp' ),
                     Source( compiler, 'Source/Unix/unixcomm.cpp' ),
                     ] )
+                if self.opt_sftp:
+                     obj_files.append( Source( compiler, 'Source/Unix/unix_file_remote.cpp' ) )
+
             if self.platform in ('macosx',):
                 obj_files.extend( [
                     # similar enough for the same set of source files
-                    Source( compiler, 'Source/Unix/unixfile.cpp' ),
+                    Source( compiler, 'Source/Unix/unix_file_local.cpp' ),
                     Source( compiler, 'Source/Unix/emacs_signal.cpp' ),
                     Source( compiler, 'Source/Unix/unixcomm.cpp' ),
                     ] )
+                if self.opt_sftp:
+                     obj_files.append( Source( compiler, 'Source/Unix/unix_file_remote.cpp' ) )
             if self.platform in ('netbsd',):
                 obj_files.extend( [
                     # similar enough for the same set of source files
-                    Source( compiler, 'Source/Unix/unixfile.cpp' ),
+                    Source( compiler, 'Source/Unix/unix_file_local.cpp' ),
                     Source( compiler, 'Source/Unix/emacs_signal.cpp' ),
                     Source( compiler, 'Source/Unix/unixcomm.cpp' ),
                     Source( compiler, 'Source/Unix/ptyopen_bsd.cpp' ),
                     ] )
+                if self.opt_sftp:
+                     obj_files.append( Source( compiler, 'Source/Unix/unix_file_remote.cpp' ) )
             if self.platform in ('win32', 'win64'):
                 obj_files.extend( [
                     Source( compiler, 'Source/Windows/win_file.cpp' ),
@@ -660,12 +686,12 @@ class Win64CompilerVC14(Compiler):
         self._addVar( 'SQLITESRC',      r'%(BUILDER_TOP_DIR)s\Imports\sqlite' )
         self._addVar( 'UCDDIR',         r'%(BUILDER_TOP_DIR)s\Imports\ucd' )
 
-        if setup.opt_sqlite:
-            self._addVar( 'SQLITESRC',     r'%(BUILDER_TOP_DIR)s\Imports\sqlite' )
-            self._addVar( 'SQLITE_FLAGS',  r'-I%(BUILDER_TOP_DIR)s\Imports\sqlite' )
+        if not setup.opt_sqlite:
+            self._addVar( 'SQLITE_FLAGS',   '' )
 
         else:
-            self._addVar( 'SQLITE_FLAGS',   '' )
+            self._addVar( 'SQLITESRC',     r'%(BUILDER_TOP_DIR)s\Imports\sqlite' )
+            self._addVar( 'SQLITE_FLAGS',  r'-I%(BUILDER_TOP_DIR)s\Imports\sqlite' )
 
         if not self.setup.opt_hunspell:
             self._addVar( 'HUNSPELL_CFLAGS', '' )
@@ -839,7 +865,13 @@ class CompilerGCC(Compiler):
         Compiler.__init__( self, setup )
 
         if setup.opt_system_ucd:
-            self._addVar( 'UCDDIR',         '/usr/share/unicode/ucd' )
+            for ucd_dir in ('/usr/share/unicode/ucd', '/usr/share/unicode'):
+                if os.path.exists( os.path.join( ucd_dir, 'UnicodeData.txt' ) ):
+                    self._addVar( 'UCDDIR',         ucd_dir )
+                    break
+
+            else:
+                raise SetupError( 'Cannot find UnicodeData.txt' )
 
         else:
             self._addVar( 'UCDDIR',         '%(BUILDER_TOP_DIR)s/Imports/ucd' )
@@ -853,8 +885,13 @@ class CompilerGCC(Compiler):
             self._addVar( 'PYCXXSRC',       '%(BUILDER_TOP_DIR)s/Imports/pycxx-%(PYCXX_VER)s/Src' )
 
         if self.setup.platform == 'macosx':
-            self._addVar( 'CCC',        'g++ -arch x86_64' )
-            self._addVar( 'CC',         'gcc -arch x86_64' )
+            if True:
+                self._addVar( 'CCC',        'g++ ' )
+                self._addVar( 'CC',         'gcc ' )
+
+            else:
+                self._addVar( 'CCC',        'g++ -arch x86_64 -arch arm64' )
+                self._addVar( 'CC',         'gcc -arch x86_64 -arch arm64' )
 
         else:
             self._addVar( 'CCC',        'g++' )
@@ -950,6 +987,14 @@ class CompilerGCC(Compiler):
 class MacOsxCompilerGCC(CompilerGCC):
     def __init__( self, setup ):
         CompilerGCC.__init__( self, setup )
+        if setup.opt_sftp:
+            self._addVar( 'LIBSSH_FLAGS',   '-I%s/include' % (os.environ['HOMEBREW_PREFIX'],) )
+            self._addVar( 'LIBSSH_LFLAGS',  '-L%s/lib -lssh' % (os.environ['HOMEBREW_PREFIX'],) )
+
+        else:
+            self._addVar( 'LIBSSH_FLAGS',   '' )
+            self._addVar( 'LIBSSH_LFLAGS',   '' )
+
         if setup.opt_sqlite:
             self._addVar( 'SQLITESRC',      '%(BUILDER_TOP_DIR)s/Imports/sqlite' )
             self._addVar( 'SQLITE_FLAGS',   '-I%(BUILDER_TOP_DIR)s/Imports/sqlite' )
@@ -1034,6 +1079,7 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"python\\"" '
                                         '-DDARWIN '
                                         '%(FEATURE_DEFINES)s '
+                                        '%(LIBSSH_FLAGS)s '
                                         '%(SQLITE_FLAGS)s '
                                         '%(HUNSPELL_CFLAGS)s '
                                         '-D%(LOG.DEBUG)s' )
@@ -1041,6 +1087,7 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '-fexceptions -frtti ' )
 
         self._addVar( 'LDSHARED',       '%(CCC)s -bundle -g '
+                                        '%(LIBSSH_LFLAGS)s '
                                         '-framework System '
                                         '%(PYTHON_FRAMEWORK)s '
                                         '-framework CoreFoundation '
@@ -1062,13 +1109,15 @@ class MacOsxCompilerGCC(CompilerGCC):
                                         '"-DOS_NAME=\\"MacOSX\\"" '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
                                         '%(FEATURE_DEFINES)s '
+                                        '%(LIBSSH_FLAGS)s '
                                         '%(SQLITE_FLAGS)s '
                                         '%(HUNSPELL_CFLAGS)s '
                                         '-D%(LOG.DEBUG)s' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
                                         '-fexceptions -frtti ' )
 
-        self._addVar( 'LDEXE',          '%(CCC)s -g' )
+        self._addVar( 'LDEXE',          '%(CCC)s -g '
+                                        '%(LIBSSH_LFLAGS)s ' )
 
     def setupPythonTools( self ):
         log.info( 'setupPythonTools' )
@@ -1207,6 +1256,8 @@ class LinuxCompilerGCC(CompilerGCC):
             self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)sm' % (sys.prefix,) )
 
         link_libs = ['-lutil']
+        if self.setup.opt_sftp:
+            link_libs.append( '-lssh' )
 
         self._addVar( 'CCFLAGS',        '-g '
                                         '%(CCC_WARNINGS)s -Wall -fPIC '
@@ -1249,6 +1300,8 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'BEMACS_DOC_DIR', self.setup.opt_doc_dir )
 
         link_libs = ['-lutil']
+        if self.setup.opt_sftp:
+            link_libs.append( '-lssh' )
 
         if self.setup.opt_coverage:
             self._addVar( 'CCC_OPT',    '-O0 '

@@ -556,6 +556,7 @@ EmacsString &EmacsString::toLower()
 
     for( int i=0; i<_rep->length; i++ )
         if( unicode_is_upper( _rep->data[i] ) )
+            // QQQ this is unicode safe
             _rep->data[i] = (EmacsChar_t)(_rep->data[i] + ('a' - 'A'));
     return *this;
 }
@@ -566,6 +567,7 @@ EmacsString &EmacsString::toUpper()
 
     for( int i=0; i<_rep->length; i++ )
         if( unicode_is_lower( _rep->data[i] ) )
+            // QQQ this is unicode safe
             _rep->data[i] = (EmacsChar_t)(_rep->data[i] + ('A' - 'a'));
     return *this;
 }

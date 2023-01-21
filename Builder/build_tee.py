@@ -9,8 +9,12 @@ log.setColour( True )
 
 def main( argv ):
     all_copies = []
+    mode = 'w'
     for filename in argv[1:]:
-        all_copies.append( open( filename, 'w' ) )
+        if filename == '-a':
+            mode = 'a'
+        else:
+            all_copies.append( open( filename, mode ) )
 
     colour = re.compile( r'\033\[[\d;]*m' )
 

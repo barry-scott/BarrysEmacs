@@ -1,5 +1,5 @@
 //
-//    Em_Time.c - emacs time services
+//    em_time.c - emacs time services
 //    Copyright 1993-2000 Barry A. Scott
 //
 #include <emacs.h>
@@ -28,7 +28,7 @@ EmacsString EmacsDateTime::asString(void) const
 
     struct tm *tm = localtime( &clock );
 
-    return FormatString("%4d-%2d-%2d %2d:%2d:%2d.%3.3d")
+    return FormatString("%04d-%02d-%02d %02d:%02d:%02d.%03.3d")
         << tm->tm_year + 1900 << tm->tm_mon + 1 << tm->tm_mday
         << tm->tm_hour << tm->tm_min << tm->tm_sec << milli_sec;
 }
@@ -39,7 +39,7 @@ EmacsString EmacsDateTime::asString(void) const
 //
 void ProcTimer::timeOut()
 {
-    TimerTrace( "timer_interrupt" );
+    TraceTimer( "timer_interrupt" );
     //
     //    Wake up the Scheduler
     //
@@ -52,7 +52,7 @@ void ProcTimer::timeOut()
 //
 void process_timer_interrupts( void )
 {
-    TimerTrace( "process_timer_interrupts" );
+    TraceTimer( "process_timer_interrupts" );
 
     interlock_dec( &input_pending );
     interlock_dec( &timer_interrupt_occurred );
@@ -81,10 +81,10 @@ void process_timer_interrupts( void )
         //
         //    Call its procedure
         //
-        TimerTrace("process_timer_interrupts found procedure");
+        TraceTimer("process_timer_interrupts found procedure");
         if( timer->tim_procedure_to_call != NULL )
         {
-            TimerTrace( FormatString("process_timer_interrupts calling procedure %s")
+            TraceTimer( FormatString("process_timer_interrupts calling procedure %s")
                 << timer->tim_procedure_to_call->b_proc_name );
 
             execute_bound_saved_environment( timer->tim_procedure_to_call );
@@ -117,7 +117,7 @@ int schedule_procedure( void )
         return 0;
     }
 
-    TimerTrace( FormatString("schedule_procedure proc %s, interval %d")
+    TraceTimer( FormatString("schedule_procedure proc %s, interval %d")
         << procedure->b_proc_name << reschedule_interval );
 
     //
@@ -131,7 +131,7 @@ int schedule_procedure( void )
             //
             //    Found it - Unlink it from the List
             //
-            TimerTrace( FormatString("schedule_procedure removing proc %s")
+            TraceTimer( FormatString("schedule_procedure removing proc %s")
                 << procedure->b_proc_name );
 
             delete e->timer;
@@ -147,7 +147,7 @@ int schedule_procedure( void )
     if( reschedule_interval == 0 )
         return 0 ;
 
-    TimerTrace( FormatString("schedule_procedure new TimerEntry for proc %s")
+    TraceTimer( FormatString("schedule_procedure new TimerEntry for proc %s")
         << procedure->b_proc_name );
     ProcTimer *t = EMACS_NEW ProcTimer( procedure, reschedule_interval );
     e = EMACS_NEW ProcTimerEntry( t );
@@ -193,7 +193,7 @@ void init_scheduled_timeout(void)
 
 void restore_scheduled_timeout(void)
 {
-    TimerTrace( "restore_scheduled_timeout" );
+    TraceTimer( "restore_scheduled_timeout" );
 
 }
 

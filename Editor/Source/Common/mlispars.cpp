@@ -41,6 +41,7 @@ public:
 
     // return the current line number
     int currentLine() const { return m_line_number; }
+
 protected:
     virtual EmacsChar_t readCharacter() = 0;
     bool        m_at_eof;
@@ -224,6 +225,7 @@ public:
     virtual ~MLispFileInputStream();
 
     virtual bool isOk();
+
 private:
     virtual EmacsChar_t readCharacter();
 
@@ -241,15 +243,29 @@ MLispFileInputStream::MLispFileInputStream( const EmacsString &fn )
 , file_size( 0 )
 , file_pointer( NULL )
 {
-    fio_open_using_path( EMACS_PATH, fn, FIO_READ, ".ml" );
+    TraceFile( FormatString("MLispFileInputStream[%d]( '%s' )")
+        << objectNumber() << fn );
+    if( fio_find_using_path( EMACS_PATH, fn, ".ml" ) )
+    {
+        TraceFile( FormatString("MLispFileInputStream[%d] found result_spec '%s'")
+            << objectNumber() << result_spec );
+        fio_open();
+        TraceFile( FormatString("MLispFileInputStream[%d] opened %d result_spec '%s'")
+            << objectNumber() << fio_is_open() << result_spec);
+    }
+
 #if DBG_EXECFILE
     if( dbg_flags&DBG_EXECFILE )
     {
-        _dbg_msg( FormatString("execute-mlisp-file == %s (file) %s") << fn << fio_getname() );
-        _dbg_msg( FormatString("execute-mlisp-file == (file) isOk() %d") << isOk() );
+        _dbg_msg( FormatString("execute-mlisp-file == MLispFileInputStream[%d] %s (file) %s")
+            << objectNumber() << fn << fio_getname() );
+        _dbg_msg( FormatString("execute-mlisp-file == MLispFileInputStream[%d] (file) fio_is_open() %d")
+            << objectNumber() << fio_is_open() );
     }
 #endif
 
+    TraceFile( FormatString("MLispFileInputStream[%d] done")
+        << objectNumber() );
 }
 
 bool MLispFileInputStream::isOk()
@@ -339,8 +355,8 @@ MLispLibraryInputStream::MLispLibraryInputStream( const EmacsString &fn )
 #if DBG_EXECFILE
         if( dbg_flags&DBG_EXECFILE )
         {
-            _dbg_msg( FormatString("execute-mlisp-file == %s (db) %s") << fn << cp );
-            _dbg_msg( FormatString("execute-mlisp-file == (db) isOk() %d") << isOk() );
+            _dbg_msg( FormatString("execute-mlisp-file == MLispLibraryInputStream:: %s (db) %s") << fn << cp );
+            _dbg_msg( FormatString("execute-mlisp-file == MLispLibraryInputStream:: (db) isOk() %d") << isOk() );
         }
 #endif
 
@@ -350,8 +366,8 @@ MLispLibraryInputStream::MLispLibraryInputStream( const EmacsString &fn )
     {
         if( dbg_flags&DBG_EXECFILE )
         {
-            _dbg_msg( FormatString("execute-mlisp-file == cannot open Mlisp-library for %s") << fn );
-            _dbg_msg( FormatString("execute-mlisp-file == (db) isOk() %d") << isOk() );
+            _dbg_msg( FormatString("execute-mlisp-file == MLispLibraryInputStream:: cannot open Mlisp-library for %s") << fn );
+            _dbg_msg( FormatString("execute-mlisp-file == MLispLibraryInputStream:: (db) isOk() %d") << isOk() );
         }
     }
 #endif

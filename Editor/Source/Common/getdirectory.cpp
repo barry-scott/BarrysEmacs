@@ -11,7 +11,7 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 
 EmacsDirectoryTable::EmacsDirectoryTable()
-    : EmacsStringTable( 1024, 1024 )
+: EmacsStringTable( 1024, 1024 )
 { }
 
 EmacsDirectoryTable::~EmacsDirectoryTable()
@@ -19,46 +19,52 @@ EmacsDirectoryTable::~EmacsDirectoryTable()
 
 void EmacsDirectoryTable::makeTable( EmacsString &prefix )
 {
-    FileParse fab;
-
     emptyTable();
 
     //
     // if we can parse what we have then make that the prompt
     //
-    if( fab.sys_parse( prefix, "" ) )
     {
-        prefix = fab.result_spec;
+        EmacsFile fab( prefix );
+
+        if( fab.parse_is_valid() )
+        {
+            prefix = fab.fio_getname();
+        }
     }
 
     // need the 'file' with a wild * on the end
     EmacsString wild_file = prefix;
     wild_file.append( "*" );
 
+    EmacsFile *fab = EMACS_NEW EmacsFile( ALL_FILES, wild_file );
     // Expand to a full path
-    int resp = fab.sys_parse( ALL_FILES, wild_file );
-    if( !resp )
+    if( !fab->parse_is_valid() )
     {
         //
         // opss thats a bad path...
         // just return the current directory contents
         //
-        resp = fab.sys_parse( ALL_FILES, EmacsString::null );
+        EmacsFile all_files( ALL_FILES );
+        fab->fio_set_filespec_from( all_files );
     }
-    if( resp )
+
+    if( fab->parse_is_valid() )
     {
         //
         // For each file that matches the filespec, save the name
         // away in the table. Make sure old entries in the table are
         // deallocated first
         //
-        FileFind finder( fab.result_spec );
+        FileFind finder( fab );
 
         for(;;)
         {
             EmacsString file( finder.next() );
             if( file.isNull() )
+            {
                 break;
+            }
 
             static int file_value(1);
 
@@ -66,10 +72,19 @@ void EmacsDirectoryTable::makeTable( EmacsString &prefix )
             //    duplicate file names can be returned from
             //    samba mounted Unix disks on Windows systems
             //
-            if( file_is_directory( file )    // only if its a directory
-            && find( file ) == NULL )    // and its not already in the table
+
+            // only if its a directory
+            if( fab->fio_is_directory( file )
+            // and its not already in the table
+            && find( file ) == NULL )
+            {
                 add( file, (void *)&file_value );
+            }
         }
+    }
+    else
+    {
+        delete fab;
     }
 }
 

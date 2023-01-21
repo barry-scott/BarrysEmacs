@@ -88,7 +88,7 @@ EmacsString emacs_tmpnam()
         tmp_dir = getenv("TMP");
 
     EmacsString tmp;
-    if( tmp_dir == NULL || !EmacsFile::fio_file_exists( tmp_dir ) )
+    if( tmp_dir == NULL || !EmacsFile( tmp_dir ).fio_file_exists() )
         tmp = current_directory.asString();
     else
         tmp.append( tmp_dir );
@@ -105,7 +105,7 @@ EmacsString emacs_tmpnam()
     {
         EmacsString result = FormatString("%semacs_%x_%d.tmp")
             << tmp << pid << tmp_name_count++;
-        if( !EmacsFile::fio_file_exists( result ) )
+        if( !EmacsFile( result ).fio_file_exists() )
             return result;
     }
 
@@ -208,12 +208,7 @@ int filter_region( void )
 // buffer
 void filter_through( int n, const EmacsString &command )
 {
-    EmacsString tempfile( emacs_tmpnam() );
-    if( tempfile.isNull() )
-    {
-        error( "Unable to create temporary file" );
-        return;
-    }
+    EmacsFile tempfile( emacs_tmpnam() );
 
     EmacsBufferRef old( bf_cur );
     replace_to_buf( n, "Kill buffer" );
@@ -223,13 +218,13 @@ void filter_through( int n, const EmacsString &command )
     old.set_bf();
 
 # if defined( vms )
-    exec_bf( bf_cur->b_buf_name, 0, tempfile, 0, "notused", command.data(), NULL );
+    exec_bf( bf_cur->b_buf_name, 0, tempfile.fio_getname(), 0, "notused", command.data(), NULL );
 # endif
 # if defined( __unix__ )
-    exec_bf( bf_cur->b_buf_name, 0, tempfile, 0, shell(), "-c", command.utf8_data(), NULL );
+    exec_bf( bf_cur->b_buf_name, 0, tempfile.fio_getname(), 0, shell(), "-c", command.utf8_data(), NULL );
 # endif
 # if defined( WIN32 )
-    exec_bf( bf_cur->b_buf_name, 0, tempfile, 0, "notused", command.utf8_data(), NULL );
+    exec_bf( bf_cur->b_buf_name, 0, tempfile.fio_getname(), 0, "notused", command.utf8_data(), NULL );
 # endif
 
     if( bf_cur->b_modified == 0 )
@@ -237,7 +232,8 @@ void filter_through( int n, const EmacsString &command )
         redo_modes = cant_1line_opt = 1;
     }
     bf_cur->b_modified++;
-    EmacsFile::fio_delete( tempfile );
+
+    tempfile.fio_delete();
 }
 
 # if defined( __unix__ )

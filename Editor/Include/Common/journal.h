@@ -128,8 +128,7 @@ private:
     unsigned m_jnl_active : 1;
     unsigned m_jnl_open : 1;
     unsigned m_jnl_flush : 1;
-    FILE *m_jnl_file;
-    EmacsString m_jnl_jname;
+    EmacsFile m_jnl_file;
     int m_jnl_used;           // records used in the current journal buf
     int m_jnl_record;         // last record written in the current journal buffer
     union journal_record m_jnl_buf[ JNL_BUF_NUM_RECORDS ];

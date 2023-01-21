@@ -17,14 +17,17 @@ SystemExpressionRepresentationIntBoolean confirm_expansion_choice( 0 );
 int expand = 0;
 int help = 0;
 
-unsigned char *msg_choose_one = u_str("Choose one of the following:\n");
-unsigned char *msg_ambiguous_choose_one = u_str("Ambiguous, choose one of the following:\n");
-unsigned char *msg_please_use_one = u_str("Please use one of the following words:\n");
+const char *msg_choose_one = "Choose one of the following:\n";
+const char *msg_ambiguous_choose_one = "Ambiguous, choose one of the following:\n";
+const char *msg_please_use_one = "Please use one of the following words:\n";
 
 EmacsStringTable::EmacsStringTable( int initial_size, int growth )
-    : num_entries( 0 )
-    , allocated_entries( initial_size )
-    , grow_by( std::min( growth, 32 ) )
+: help_feedback()
+, num_entries( 0 )
+, allocated_entries( initial_size )
+, grow_by( std::min( growth, 32 ) )
+// keys
+// values
 {
     keys = (EmacsString **)EMACS_MALLOC( allocated_entries * sizeof( EmacsString * ), malloc_type_star_star );
     values = (void **)EMACS_MALLOC( allocated_entries * sizeof( void * ), malloc_type_star_star );
@@ -307,18 +310,25 @@ void EmacsStringTable::fillHelpBuffer( const EmacsString &prefix, int nfound )
 {
     EmacsBuffer::scratch_bfn( "Help", 1 );
 
+    bf_cur->ins_cstr( help_feedback );
+
     //
     // Work out what to prompt with next time round, and what
     // message to spit at the user in the help buffer
     //
     const char *msg;
     if( help )
-        msg = "Choose one of the following:\n";
+    {
+        msg = msg_choose_one;
+    }
+    else if( nfound > 1 )
+    {
+        msg = msg_ambiguous_choose_one;
+    }
     else
-        if( nfound > 1 )
-            msg = "Ambiguous, choose one of the following:\n";
-        else
-            msg = "Please use one of the following words:\n";
+    {
+        msg = msg_please_use_one;
+    }
 
     bf_cur->ins_cstr( msg );
 
@@ -326,7 +336,9 @@ void EmacsStringTable::fillHelpBuffer( const EmacsString &prefix, int nfound )
     int longest_string;
     int p;
     for( longest_string=0, p=0; p<num_entries; p++ )
+    {
         longest_string = std::max( longest_string, keys[p]->length() );
+    }
     longest_string += 2;
 
     int len = prefix.length();
@@ -369,18 +381,23 @@ class save_windows
 {
 public:
     save_windows()
-        : windows_pushed( false )
+    : windows_pushed( false )
     { }
+
     ~save_windows()
     {
         if( windows_pushed )
+        {
             pop_window_ring();
+        }
     }
+
     void save()
     {
         push_window_ring();
         windows_pushed = true;
     }
+
 private:
     bool windows_pushed;
 };
@@ -426,11 +443,14 @@ EmacsString &EmacsStringTable::get_word_interactive( const EmacsString &prompt, 
             if( find( current_string ) != NULL )
             {
                 if( !complete_unique_choices || !expand )
+                {
                     nfound = 1;
+                }
             }
-            else
-                if( current_string.length() < longest_match.length() )
-                    current_string = longest_match;
+            else if( current_string.length() < longest_match.length() )
+            {
+                current_string = longest_match;
+            }
 
             //
             // We have searched all of the items specified. If we only have one item,
@@ -469,7 +489,9 @@ EmacsString &EmacsStringTable::get_word_interactive( const EmacsString &prompt, 
             {
                 old.set_mark( bf_cur, 1, 0 );
                 if( remove_help_window && cur_exec == NULL )
+                {
                     saved_windows.save();
+                }
             }
 
             //
@@ -528,7 +550,9 @@ EmacsString &EmacsStringTable::get_word_mlisp( EmacsString &result )
     EmacsString matched_prefix;
     int nfound = match( current_string, matched_prefix );
     if( matched_prefix != current_string )
+    {
         nfound = 0;
+    }
 
     error( FormatString("\"%s\" %s") << current_string <<
         ( nfound == 0 ?
@@ -544,12 +568,12 @@ EmacsString &EmacsStringTable::get_word_mlisp( EmacsString &result )
 // return one of the keys, a new value otherwise NULL
 EmacsString &EmacsStringTable::get_esc_word_interactive( const EmacsString &prompt, const EmacsString &default_value, EmacsString &result )
 {
-    Marker old;            // old position of dot
+    Marker old;                         // old position of dot
 
-    save_windows saved_windows;    // true if windows should be saved
+    save_windows saved_windows;         // true if windows should be saved
 
-    Save<int> old_expand( &expand );// Saved value of expand flag
-    Save<int> old_help( &help );    // Saved value of help flag
+    Save<int> old_expand( &expand );    // Saved value of expand flag
+    Save<int> old_help( &help );        // Saved value of help flag
 
     //
     // Get words from the user until one is found to match
@@ -583,9 +607,10 @@ EmacsString &EmacsStringTable::get_esc_word_interactive( const EmacsString &prom
             if( nfound == 1
             // and its logically the same as the user input
             && compareKeys( current_string, longest_match ) == 0 )
+            {
                 // use the longest as it may have different case
                 current_string = longest_match;
-
+            }
             break;
         }
 
@@ -610,8 +635,9 @@ EmacsString &EmacsStringTable::get_esc_word_interactive( const EmacsString &prom
             if( nfound == 1
             // or did we find a longer prefix?
             || longest_match.length() > current_string.length() )
+            {
                 current_string = longest_match;
-
+            }
         }
 
         //
@@ -624,12 +650,16 @@ EmacsString &EmacsStringTable::get_esc_word_interactive( const EmacsString &prom
             if( find( current_string ) != NULL && terminalEntry( current_string ) )
             {
                 if( !confirm_expansion_choice )
+                {
                     break;
-                else
-                    if( compareKeys( current_string, initial_input ) == 0 )
-                        break;
+                }
+                else if( compareKeys( current_string, initial_input ) == 0 )
+                {
+                    break;
+                }
                 // go around again
             }
+
         //
         // The input string is now so way off that no prefix strings matches
         // or the string is wrong in the later sections. Either way, the poor
@@ -670,7 +700,9 @@ EmacsString &EmacsStringTable::get_esc_word_interactive( const EmacsString &prom
             {
                 old.set_mark( bf_cur, 1, 0 );
                 if( remove_help_window != 0 && cur_exec == 0 )
+                {
                     saved_windows.save();
+                }
             }
 
             if( !expand )
@@ -691,10 +723,14 @@ EmacsString &EmacsStringTable::get_esc_word_interactive( const EmacsString &prom
     // get on with it
     //
     if( old.isSet() )
+    {
         theActiveView->window_on( old.m_buf );
+    }
 
     if( interactive() )
+    {
         message( FormatString("%s%s") << prompt << current_string );
+    }
 
     //
     // return the actual text that caused the exit

@@ -110,12 +110,6 @@ EmacsString get_config_env( const EmacsString &name )
     return EmacsString::null;
 }
 
-EmacsString get_device_name_translation( const EmacsString &name )
-{
-    return EmacsString::null;
-}
-
-
 //
 //
 //    EmacsInitialisation

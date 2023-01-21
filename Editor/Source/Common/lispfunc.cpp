@@ -19,8 +19,6 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 #include <time.h>
 
-int get_tty_string( void );
-
 unsigned char *marker_or_string = u_str("region-to-string expects an integer of marker as its parameter");
 unsigned char *no_mem_str = u_str ("Out of memory.");
 unsigned char *unknown_str = u_str ("Unknown");
@@ -532,16 +530,23 @@ static bool get_tty_prompt_and_default_value( const EmacsString &command_name, E
     else
     {
         if( check_args( 1, 2 ) )
+        {
             return false;
+        }
 
         prompt = get_string_mlisp();
         if( ml_err )
+        {
             return false;
+        }
+
         if( cur_exec->p_nargs >= 2 )
         {
             default_value = get_string_mlisp();
             if( ml_err )
+            {
                 return false;
+            }
         }
     }
 
@@ -633,7 +638,9 @@ int get_tty_file( void )
     EmacsString default_value;
 
     if( !get_tty_prompt_and_default_value( ": get-tty-file", prompt, default_value ) )
+    {
         return 0;
+    }
 
     Save<ProgramNode *> lcur_exec( &cur_exec );
     cur_exec = NULL;
