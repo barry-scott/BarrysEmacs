@@ -1,5 +1,5 @@
 setlocal
-set PYTHONPATH=%BUILDER_TOP_DIR%\Editor\PyQtBEmacs;%BUILDER_TOP_DIR%\Editor\exe-pybemacs
+set PYTHONPATH=%BUILDER_TOP_DIR%\Editor\PyQt5;%BUILDER_TOP_DIR%\Editor\exe-pybemacs
 set BEMACS_EMACS_LIBRARY=%BUILDER_TOP_DIR%\Builder\tmp\kitfiles\emacs_library
 set BEMACS_EMACS_DOC=%BUILDER_TOP_DIR%\Builder\tmp\kitfiles\Documentation
 
