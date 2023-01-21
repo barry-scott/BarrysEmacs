@@ -3,6 +3,9 @@
 #   script called from debian/rules make file
 #
 export DESTDIR="$1"
+shift
+export PYQT_VERSION="$2"
+shift
 export BUILDER_TOP_DIR=$(pwd)
 
 # figure out the explicit python executable

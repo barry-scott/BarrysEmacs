@@ -17,6 +17,8 @@ import package_list_repo
 
 log = build_log.BuildLog()
 
+SUPPORTED_PYQT_VERSIONS = ('5', '6')
+
 # setup build_utils
 build_utils.log = log
 # alias run()
@@ -38,6 +40,7 @@ class PackageBEmacs(object):
         self.opt_sqlite = True
         self.opt_sftp = True
         self.opt_gui = True
+        self.opt_pyqt_version = '6'
         self.opt_system_ucd = False
         self.opt_hunspell = True
         self.opt_system_hunspell = False
@@ -205,6 +208,11 @@ class PackageBEmacs(object):
                 elif arg == '--no-gui':
                     self.opt_gui = False
 
+                elif arg.startswith('--qt-version='):
+                    self.opt_pyqt_version = arg[len('--qt-version='):]
+                    if self.opt_pyqt_version not in SUPPORTED_PYQT_VERSIONS:
+                        BuildError( 'Unsupport PyQt version %r' % (arg,) )
+
                 elif arg.startswith('--kit-pycxx='):
                     self.opt_kit_pycxx = arg[len('--kit-pycxx='):]
 
@@ -353,7 +361,7 @@ class PackageBEmacs(object):
             '${shlibs:Depends}',
             '${misc:Depends}',
             'python3',
-            'python3-pyqt6',
+            'python3-pyqt%s' % (self.opt_pyqt_version,),
             'fonts-noto-mono',
             ]
 
@@ -389,7 +397,7 @@ Description: Barry's Emacs text editor
             f.write(
 '''Files:
  *
-Copyright: 1980-2022 Barry A. Scott
+Copyright: 1980-2023 Barry A. Scott
 License: Apache-2.0
 ''' )
 
@@ -400,12 +408,12 @@ License: Apache-2.0
         # debian/rules
         with open( 'tmp/%s/debian/rules' % (self.KIT_BASENAME,), 'w' ) as f:
             f.write(
-'''#!/usr/bin/make -f
+f'''#!/usr/bin/make -f
 %:
         dh $@
 
 override_dh_auto_install:
-        Builder/debian-package-dh-build.sh $$(pwd)/debian/bemacs
+        Builder/debian-package-dh-build.sh $$(pwd)/debian/bemacs "{self.opt_pyqt_version}"
 '''.replace('\n        ', '\n\t') )
         os.chmod( 'tmp/%s/debian/rules' % (self.KIT_BASENAME,), 0o775)
 
