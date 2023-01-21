@@ -857,7 +857,7 @@ public:
 
     ~ByteBuffer()
     {
-        delete m_ptr;
+        delete []m_ptr;
     }
 
     size_t m_size;
