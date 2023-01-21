@@ -4,3 +4,4 @@
 .directory
 *.obj
 Kits/Linux/RPM/ROOT/
+Builder/tmp

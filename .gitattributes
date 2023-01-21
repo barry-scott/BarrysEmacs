@@ -5,54 +5,102 @@ Builder/build-windows.cmd -text
 Builder/builder_custom_init.cmd eol=crlf
 Builder/import-meinc.cmd -text
 Builder/local-install-linux.sh -text
-Editor/PyQtBEmacs/WindowsNamedPipes/Makefile -text
-Editor/PyQtBEmacs/WindowsNamedPipes/named-pipe-client.cpp -text
-Editor/PyQtBEmacs/WindowsNamedPipes/named-pipe-server.cpp -text
-Editor/PyQtBEmacs/be_command_line_handler_posix.py -text
-Editor/PyQtBEmacs/be_command_line_handler_windows.py -text
-Editor/PyQtBEmacs/bemacs.icns -text
-Editor/PyQtBEmacs/org.barrys-emacs.editor.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/build_compile.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/build_next_error.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/build_prev_error.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/case_capitalise.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/case_invert.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/case_lower.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/case_upper.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/close-curly-brace.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/edit.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/edit_copy.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/edit_cut.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/edit_delete.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/edit_paste.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/editcopy.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/editcut.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/editpaste.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/file_open.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/file_print.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/file_save.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/file_save_all.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/justify.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/macro_play.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/macro_record.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/macro_stop.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/open-curly-brace.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/region_indent.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/region_undent.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/search_find.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/search_fold_case.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/stop.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/synchronize.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/tools_grep.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/view_white_space.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/view_wrap_long.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/window_cascade.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/window_del_other.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/window_del_this.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/window_split_horiz.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/window_split_vert.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/window_tile_horiz.png -text svneol=unset#image/png
-Editor/PyQtBEmacs/toolbar_images/window_tile_vert.png -text svneol=unset#image/png
+Editor/PyQt5/WindowsNamedPipes/Makefile -text
+Editor/PyQt5/WindowsNamedPipes/named-pipe-client.cpp -text
+Editor/PyQt5/WindowsNamedPipes/named-pipe-server.cpp -text
+Editor/PyQt5/be_command_line_handler_posix.py -text
+Editor/PyQt5/be_command_line_handler_windows.py -text
+Editor/PyQt5/bemacs.icns -text
+Editor/PyQt5/org.barrys-emacs.editor.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/build_compile.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/build_next_error.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/build_prev_error.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/case_capitalise.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/case_invert.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/case_lower.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/case_upper.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/close-curly-brace.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/edit.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/edit_copy.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/edit_cut.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/edit_delete.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/edit_paste.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/editcopy.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/editcut.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/editpaste.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/file_open.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/file_print.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/file_save.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/file_save_all.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/justify.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/macro_play.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/macro_record.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/macro_stop.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/open-curly-brace.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/region_indent.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/region_undent.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/search_find.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/search_fold_case.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/stop.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/synchronize.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/tools_grep.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/view_white_space.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/view_wrap_long.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/window_cascade.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/window_del_other.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/window_del_this.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/window_split_horiz.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/window_split_vert.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/window_tile_horiz.png -text svneol=unset#image/png
+Editor/PyQt5/toolbar_images/window_tile_vert.png -text svneol=unset#image/png
+Editor/PyQt6/WindowsNamedPipes/Makefile -text
+Editor/PyQt6/WindowsNamedPipes/named-pipe-client.cpp -text
+Editor/PyQt6/WindowsNamedPipes/named-pipe-server.cpp -text
+Editor/PyQt6/be_command_line_handler_posix.py -text
+Editor/PyQt6/be_command_line_handler_windows.py -text
+Editor/PyQt6/bemacs.icns -text
+Editor/PyQt6/org.barrys-emacs.editor.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/build_compile.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/build_next_error.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/build_prev_error.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/case_capitalise.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/case_invert.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/case_lower.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/case_upper.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/close-curly-brace.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/edit.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/edit_copy.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/edit_cut.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/edit_delete.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/edit_paste.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/editcopy.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/editcut.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/editpaste.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/file_open.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/file_print.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/file_save.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/file_save_all.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/justify.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/macro_play.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/macro_record.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/macro_stop.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/open-curly-brace.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/region_indent.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/region_undent.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/search_find.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/search_fold_case.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/stop.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/synchronize.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/tools_grep.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/view_white_space.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/view_wrap_long.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/window_cascade.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/window_del_other.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/window_del_this.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/window_split_horiz.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/window_split_vert.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/window_tile_horiz.png -text svneol=unset#image/png
+Editor/PyQt6/toolbar_images/window_tile_vert.png -text svneol=unset#image/png
 Editor/PythonBEmacs.sln -text
 Editor/Source/Windows/Resources/win_emacs.ico -text
 HTML/ug_bemacs_doc.gif -text
