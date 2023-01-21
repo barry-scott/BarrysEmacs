@@ -3,7 +3,7 @@ cmd=${1:-mock-testing}
 shift
 arch=${1}
 shift
-fedora_rel=${3}
+fedora_rel=${1}
 shift
 
 if [ "$arch" = "" ]
