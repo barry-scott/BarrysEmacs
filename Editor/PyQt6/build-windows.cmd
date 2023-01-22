@@ -31,6 +31,11 @@ rem always merge as the build system puts Docs and emacs lib files in first
 %VPYTHON% -m win_app_packager build be_client.py %APPMODE% %DIST_DIR% --version %VERSION% --icon ..\Source\Windows\Resources\win_emacs.ico --name bemacs --merge --modules-allowed-to-be-missing-file allowed-missing.txt
     if errorlevel 1 goto :error
 
+rem set the stack to 16MiB aka 16777216
+dumpbin /nologo /headers %DIST_DIR%\bemacs_server.exe | findstr "stack"
+editbin /nologo /stack:16777216 %DIST_DIR%\bemacs_server.exe
+dumpbin /nologo /headers %DIST_DIR%\bemacs_server.exe | findstr "stack"
+
 rem do not need the test folders
 rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\lib2to3
 rmdir /s /q %DIST_DIR%\PyWinAppRes\Lib\test
