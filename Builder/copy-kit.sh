@@ -40,10 +40,11 @@ Linux-Ubuntu|Linux-Debian)
     if [[ "$1" = "--install" ]]
     then
         pushd /shared/Downloads/Debian
-        ./make-apt-repos.sh update
+        ./make-apt-repos.sh update ${VERSION_CODENAME}
 
         colour-print "<>info Info: apt update<>"
         sudo apt update
+
         colour-print "<>info Info: apt install bemacs<>"
         sudo apt install bemacs
     fi
