@@ -17,7 +17,7 @@ import package_list_repo
 
 log = build_log.BuildLog()
 
-SUPPORTED_PYQT_VERSIONS = ('5', '6')
+SUPPORTED_PYQT_VERSIONS = ('6', '5')
 
 # setup build_utils
 build_utils.log = log
@@ -40,7 +40,7 @@ class PackageBEmacs(object):
         self.opt_sqlite = True
         self.opt_sftp = True
         self.opt_gui = True
-        self.opt_pyqt_version = '6'
+        self.opt_pyqt_version = SUPPORTED_PYQT_VERSIONS[0]
         self.opt_system_ucd = False
         self.opt_hunspell = True
         self.opt_system_hunspell = False
@@ -211,7 +211,7 @@ class PackageBEmacs(object):
                 elif arg.startswith('--pyqt-version='):
                     self.opt_pyqt_version = arg[len('--pyqt-version='):]
                     if self.opt_pyqt_version not in SUPPORTED_PYQT_VERSIONS:
-                        BuildError( 'Unsupport PyQt version %r' % (arg,) )
+                        BuildError( 'Unsupported PyQt version %r' % (arg,) )
 
                 elif arg.startswith('--kit-pycxx='):
                     self.opt_kit_pycxx = arg[len('--kit-pycxx='):]

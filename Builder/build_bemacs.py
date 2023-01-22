@@ -24,6 +24,8 @@ sys.path.insert( 0, '../HTML' )
 
 log = build_log.BuildLog()
 
+SUPPORTED_PYQT_VERSIONS = ('6', '5')
+
 # setup build_utils
 build_utils.log = log
 # alias run()
@@ -45,6 +47,7 @@ class BuildBEmacs(object):
         self.opt_editor_setup_opt = []
         self.opt_prefix = '/usr'
         self.opt_appmode = '--gui'
+        self.opt_pyqt_version = SUPPORTED_PYQT_VERSIONS[0]
 
         self.bemacs_version_info = None
 
@@ -105,6 +108,11 @@ class BuildBEmacs(object):
 
                     elif arg.startswith( '--prefix=' ):
                         self.opt_prefix = arg[len('--prefix='):]
+
+                    elif arg.startswith('--pyqt-version='):
+                        self.opt_pyqt_version = arg[len('--pyqt-version='):]
+                        if self.opt_pyqt_version not in SUPPORTED_PYQT_VERSIONS:
+                            BuildError( 'Unsupport PyQt version %r' % (arg,) )
 
                     elif arg in ('--enable-debug'
                                 ,'--system-pycxx'
@@ -221,7 +229,7 @@ class BuildBEmacs(object):
             self.cmd_make_args = ['/nologo']
 
             # fix up the PATH that may have a Qt/bin added to it that will break the build
-            os.environ['PATH'] = ';'.join( [path for path in os.environ['PATH'].split(';') if not path.endswith(r'PyQt6\Qt\bin')] )
+            os.environ['PATH'] = ';'.join( [path for path in os.environ['PATH'].split(';') if not path.endswith(r'Qt\bin')] )
 
         else:
             raise BuildError( 'Unsupported platform: %s' % (self.platform,) )
@@ -243,10 +251,21 @@ class BuildBEmacs(object):
             raise BuildError( 'bemacs GUI needs python version 3' )
 
         if self.platform in ('Linux',):
-            try:
-                from PyQt6 import QtWidgets, QtGui, QtCore
-            except ImportError:
-                raise BuildError( 'PyQt6 is not installed for %s. Hint: dnf install PyQt6' % (sys.executable,) )
+            if self.opt_pyqt_version == '6':
+                try:
+                    from PyQt6 import QtWidgets, QtGui, QtCore
+                except ImportError:
+                    raise BuildError( 'PyQt6 is not installed for %s. Hint: dnf install PyQt6 - apt install python3-pyqt6' % (sys.executable,) )
+
+            elif self.opt_pyqt_version == '5':
+                try:
+                    from PyQt5 import QtWidgets, QtGui, QtCore
+                except ImportError:
+                    raise BuildError( 'PyQt5 is not installed for %s. Hint: dnf install PyQt5 - apt install python3-pyqt5' % (sys.executable,) )
+
+            else:
+                raise BuildError( 'Unsupported PyQt version %r' % (self.opt_pyqt_version,) )
+
             try:
                 import xml_preferences
             except ImportError:
@@ -351,6 +370,7 @@ class BuildBEmacs(object):
             build_utils.copyFile( '../Editor/exe-cli-bemacs/bemacs-cli',  self.BUILD_BEMACS_BIN_DIR, 0o555 )
 
         if self.platform == 'MacOSX':
+            assert self.opt_pyqt_version == '6', 'Only support PyQt6 on macOS'
             run( ('./build-macosx.sh'
                  ,'--package'),
                     cwd='../Editor/PyQt6' )
@@ -359,6 +379,7 @@ class BuildBEmacs(object):
             build_utils.copyFile( '../Editor/exe-cli-bemacs/bemacs-cli',  self.BUILD_BEMACS_BIN_DIR, 0o555 )
 
         elif self.platform == 'win64':
+            assert self.opt_pyqt_version == '6', 'Only support PyQt6 on Windows'
             run( ('build-windows.cmd'
                  ,self.opt_appmode
                  ,self.KITFILES
@@ -371,7 +392,7 @@ class BuildBEmacs(object):
                  ,self.INSTALL_BEMACS_BIN_DIR
                  ,self.INSTALL_BEMACS_LIB_DIR
                  ,self.INSTALL_BEMACS_DOC_DIR),
-                    cwd='../Editor/PyQt6' )
+                    cwd='../Editor/PyQt%s' % (self.opt_pyqt_version,) )
 
     def ruleBemacsCli( self ):
         log.info( 'Running ruleBemacsCli' )

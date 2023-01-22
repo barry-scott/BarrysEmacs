@@ -2,16 +2,12 @@
 #
 #   script called from debian/rules make file
 #
-export DESTDIR="$1"
+export DESTDIR="$1:? arg 1 must be DESTDIR"
 shift
-export PYQT_VERSION="$1"
+export PYQT_VERSION="$1:? arg 2 must be the PyQt version"
 shift
+
 export BUILDER_TOP_DIR=$(pwd)
-
-# figure out the explicit python executable
-#version=$( /usr/bin/python3 -c 'import sys;print("%d.%d" % (sys.version_info.major, sys.version_info.minor))' )
-#export PYTHON=/usr/bin/python${version}
-
 export PYTHON=/usr/bin/python3
 
 echo "Info: debian bemacs builder BUILDER_TOP_DIR ${BUILDER_TOP_DIR} DESTDIR ${DESTDIR} PYTHON ${PYTHON}"
@@ -19,6 +15,7 @@ echo "Info: debian bemacs builder BUILDER_TOP_DIR ${BUILDER_TOP_DIR} DESTDIR ${D
 cd Builder
 
 ${PYTHON} ./build_bemacs.py gui \
+    --pyqt-version=${PYQT_VERSION} \
     --no-warnings-as-errors \
     --system-hunspell \
     --system-pycxx \
