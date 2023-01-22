@@ -20,6 +20,7 @@ import time
 import math
 import ctypes
 import tempfile
+import subprocess
 
 _debug_client = False
 _debug_log = None
@@ -71,27 +72,37 @@ class ClientBase:
         global _debug_client
         _debug_client = 'BEMACS_CLIENT_DEBUG' in os.environ
 
+        self.is_cli_supported = True
+
         self.opt_name = None
+        self.opt_cli = False
         self.opt_wait = False
         self.opt_start_app = True
 
     def main( self, argv ):
         try:
-            self.__parseArgsIntoCommandElements( argv )
+            self._parseArgsIntoCommandElements( argv )
 
-            if not self.processCommand():
-                self.startBemacsServer()
+            if self.opt_cli:
+                self.startBemacsCli()
 
-                while not self.processCommand():
-                    time.sleep( 0.1 )
+            else:
+                if not self.processCommand():
+                    self.startBemacsServer()
 
-            self.bringTofront()
+                    while not self.processCommand():
+                        time.sleep( 0.1 )
 
-            if self.opt_wait:
-                self.waitCommand()
+                self.bringTofront()
+
+                if self.opt_wait:
+                    self.waitCommand()
 
         except ClientError as e:
             print( 'Error: %s' % (str(e),) )
+
+    def startBemacsCli( self ):
+        raise NotImplementedError()
 
     def startBemacsServer( self ):
         raise NotImplementedError()
@@ -99,7 +110,7 @@ class ClientBase:
     def bringTofront( self ):
         raise NotImplementedError()
 
-    def __parseArgsIntoCommandElements( self, _argv ):
+    def _parseArgsIntoCommandElements( self, _argv ):
         self.all_command_elements.append( os.getcwd() )
         # set the package name
         self.all_command_elements.append( 'emacs' )
@@ -130,7 +141,10 @@ class ClientBase:
                         name = self.getArgQualifierName( arg )
                         debugClient( 'getArgQualifierName( %r ) => %r' % (arg, name) )
 
-                        if name == 'name':
+                        if self.is_cli_supported and name == 'cli':
+                            self.opt_cli = True
+
+                        elif name == 'name':
                             self.opt_name = self.getArgValue( arg, argv )
 
                         elif name == 'wait':
@@ -180,6 +194,7 @@ class ClientBase:
 class ClientPosix(ClientBase):
     def __init__( self ):
         ClientBase.__init__( self )
+        self.is_cli_supported = True
 
     def isQualifier( self, arg ):
         if not self.process_qualifers:
@@ -209,7 +224,7 @@ class ClientPosix(ClientBase):
             return Next( argv )
 
     def processCommand( self ):
-        completed, reply = self.__sendCommand( b'C'+self._encodeCommandString() )
+        completed, reply = self._sendCommand( b'C'+self._encodeCommandString() )
         if len(reply) > 1:
             print( reply[1:] )
 
@@ -218,7 +233,7 @@ class ClientPosix(ClientBase):
     def waitCommand( self ):
         while True:
             debugClient( 'Poll for Wait' )
-            completed, reply = self.__sendCommand( b'W' )
+            completed, reply = self._sendCommand( b'W' )
             debugClient( '-> %r, %r' % (completed, reply) )
             if completed and reply[0] == 'w':
                 if len(reply) > 1:
@@ -228,8 +243,8 @@ class ClientPosix(ClientBase):
 
             time.sleep( 0.1 )
 
-    def __sendCommand( self, cmd ):
-        debugClient( '__sendCommand( %r )' % (cmd,) )
+    def _sendCommand( self, cmd ):
+        debugClient( '_sendCommand( %r )' % (cmd,) )
         import pwd
 
         fifo_name = os.environ.get( 'BEMACS_FIFO', '.bemacs8/.emacs_command' )
@@ -256,8 +271,8 @@ class ClientPosix(ClientBase):
         if not os.path.exists( fifo_dir ):
             os.makedirs( fifo_dir )
 
-        self.__makeFifo( server_fifo )
-        self.__makeFifo( client_fifo )
+        self._makeFifo( server_fifo )
+        self._makeFifo( client_fifo )
 
         try:
             fd_command = os.open( server_fifo, os.O_WRONLY|os.O_NONBLOCK )
@@ -300,7 +315,7 @@ class ClientPosix(ClientBase):
             os.close( fd_response )
             return False, ''
 
-    def __makeFifo( self, fifo_name ):
+    def _makeFifo( self, fifo_name ):
         if os.path.exists( fifo_name ):
             stats = os.stat( fifo_name )
             if not stat.S_ISFIFO( stats.st_mode ):
@@ -313,28 +328,7 @@ class ClientPosix(ClientBase):
 
         os.mkfifo( fifo_name, stat.S_IRUSR|stat.S_IWUSR )
 
-
-class ClientMacOsX(ClientPosix):
-    def __init__( self ):
-        ClientPosix.__init__( self )
-
-    def startBemacsServer( self ):
-        debugClient( 'startBemacsServer' )
-
-        if self.opt_start_app:
-            os.system( '/usr/bin/open -b org.barrys-emacs.bemacs-devel' )
-
-    def bringTofront( self ):
-        debugClient( 'bringTofront' )
-        self.startBemacsServer()
-
-class ClientUnix(ClientPosix):
-    def __init__( self ):
-        ClientPosix.__init__( self )
-
-    def startBemacsServer( self ):
-        debugClient( 'startBemacsServer' )
-
+    def _findBemacsExecutable( self, name ):
         argv0 = sys.argv[0]
 
         app_dir = ''
@@ -355,7 +349,70 @@ class ClientUnix(ClientPosix):
         if app_dir == '':
             app_dir = os.getcwd()
 
-        server_path = os.path.join( app_dir, 'bemacs_server' )
+        return os.path.join( app_dir, name )
+
+class ClientMacOsX(ClientPosix):
+    def __init__( self ):
+        ClientPosix.__init__( self )
+
+    def startBemacsCli( self ):
+        debugClient( 'startBemacsCli' )
+        p = subprocess.run(
+            ['osascript', '-e'
+            ,'tell application "Finder" to POSIX path of '
+                '(get application file id "org.barrys-emacs.bemacs" as alias)'],
+            stdout=subprocess.PIPE )
+
+        app_path = p.stdout.strip().decode('utf-8')
+
+        bemacs_cli =  os.path.join(app_path, 'Contents/Resources/bin/bemacs-cli' )
+        debugClient( 'bemacs_cli %r' % (bemacs_cli,) )
+
+        args = [bemacs_cli]
+        args.append('-package=%s' % (self.all_command_elements[1],))
+        args.extend(self.all_command_elements[2:])
+
+        debugClient( 'args %r' % (args,) )
+
+        os.execv( bemacs_cli, args )
+
+    def startBemacsServer( self ):
+        debugClient( 'startBemacsServer' )
+
+        if self.opt_start_app:
+            os.system( '/usr/bin/open -b org.barrys-emacs.bemacs-devel' )
+
+    def bringTofront( self ):
+        debugClient( 'bringTofront' )
+        self.startBemacsServer()
+
+class ClientUnix(ClientPosix):
+    def __init__( self ):
+        ClientPosix.__init__( self )
+        self.is_cli_supported = True
+
+        # can only use the GUI bemacs_server is there is a display
+        if 'DISPLAY' not in os.environ and 'WAYLAND_DISPLAY' not in os.environ:
+            self.opt_cli = True
+
+    def startBemacsCli( self ):
+        debugClient( 'startBemacsCli' )
+
+        bemacs_cli = self._findBemacsExecutable( 'bemacs-cli' )
+        debugClient( 'bemacs_cli %r' % (bemacs_cli,) )
+
+        args = [bemacs_cli]
+        args.append('-package=%s' % (self.all_command_elements[1],))
+        args.extend(self.all_command_elements[2:])
+
+        debugClient( 'args %r' % (args,) )
+
+        os.execv( bemacs_cli, args )
+
+    def startBemacsServer( self ):
+        debugClient( 'startBemacsServer' )
+
+        server_path = self._findBemacsExecutable( 'bemacs_server' )
         debugClient( 'server_path %r' % (server_path,) )
 
         args = [server_path]
@@ -372,6 +429,7 @@ class ClientUnix(ClientPosix):
 class ClientWindows(ClientBase):
     def __init__( self ):
         ClientBase.__init__( self )
+        self.is_cli_supported = False
 
         self.editor_pid = 0
 
@@ -403,7 +461,7 @@ class ClientWindows(ClientBase):
             return Next( argv )
 
     def processCommand( self ):
-        reply = self.__sendCommand( b'P' )
+        reply = self._sendCommand( b'P' )
         if reply is None:
             return False
 
@@ -413,11 +471,11 @@ class ClientWindows(ClientBase):
 
         cmd = self._encodeCommandString()
 
-        reply = self.__sendCommand( b'C' + cmd )
+        reply = self._sendCommand( b'C' + cmd )
         return reply is not None
 
-    def __sendCommand( self, cmd ):
-        debugClient( '__sendCommand cmd   %r' % (cmd,) )
+    def _sendCommand( self, cmd ):
+        debugClient( '_sendCommand cmd   %r' % (cmd,) )
 
         pipe_name = "\\\\.\\pipe\\Barry's Emacs 8.2"
 
@@ -438,16 +496,16 @@ class ClientWindows(ClientBase):
             if err == 2:
                 return None
 
-            errmsg  = self.__getErrorMessage( err )
+            errmsg  = self._getErrorMessage( err )
             print( 'Error: CallNamedPipeA rc=%d err=%d errmsg=%r' % (rc, err, errmsg) )
             return None
 
         else:
             reply = buf_result.raw[:buf_size.value]
-            debugClient( '__sendCommand reply %r' % (reply,) )
+            debugClient( '_sendCommand reply %r' % (reply,) )
             return reply
 
-    def __getErrorMessage( self, err ):
+    def _getErrorMessage( self, err ):
         FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000
         FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200
 
