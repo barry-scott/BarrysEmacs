@@ -208,8 +208,8 @@ class PackageBEmacs(object):
                 elif arg == '--no-gui':
                     self.opt_gui = False
 
-                elif arg.startswith('--qt-version='):
-                    self.opt_pyqt_version = arg[len('--qt-version='):]
+                elif arg.startswith('--pyqt-version='):
+                    self.opt_pyqt_version = arg[len('--pyqt-version='):]
                     if self.opt_pyqt_version not in SUPPORTED_PYQT_VERSIONS:
                         BuildError( 'Unsupport PyQt version %r' % (arg,) )
 
