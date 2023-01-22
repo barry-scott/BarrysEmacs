@@ -302,17 +302,18 @@ class PackageBEmacs(object):
             if self.opt_debian_repos is None:
                 raise BuildError( '--release=auto requires --debian-repos=<repos-dir>' )
 
-            if not os.path.exists( self.opt_debian_repos ):
-                raise BuildError( 'debian repos not found %s' % (self.opt_debian_repos,) )
-
             # assume debian release 1
             self.opt_release = '1'
 
-            debian_release = 0
-            for deb in glob.glob( '%s/bemacs_%s-*.deb' % (self.opt_debian_repos, self.version) ):
-                debian_release = max( debian_release, int( deb.split('_')[1].split('-')[1] ) )
+            if not os.path.exists( self.opt_debian_repos ):
+                log.info( 'debian repos not found %s' % (self.opt_debian_repos,) )
 
-            self.opt_release = '%d' % (debian_release + 1,)
+            else:
+                debian_release = 0
+                for deb in glob.glob( '%s/bemacs_%s-*.deb' % (self.opt_debian_repos, self.version) ):
+                    debian_release = max( debian_release, int( deb.split('_')[1].split('-')[1] ) )
+
+                self.opt_release = '%d' % (debian_release + 1,)
 
         log.info( log.colourFormat('Building version <>em %s-%s<>') % (self.version, self.opt_release) )
 
