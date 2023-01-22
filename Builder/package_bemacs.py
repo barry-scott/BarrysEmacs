@@ -380,7 +380,7 @@ class PackageBEmacs(object):
         with open( 'tmp/%s/debian/control' % (self.KIT_BASENAME,), 'w' ) as f:
             f.write(
 '''Source: bemacs
-Maintainer: Barry scott <barry@barrys-eacs.org>
+Maintainer: Barry scott <barry@barrys-emacs.org>
 Section: misc
 Priority: optional
 Standards-Version: %(Standards-Version)s
