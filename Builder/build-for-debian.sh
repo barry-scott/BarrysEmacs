@@ -17,4 +17,6 @@ esac
 python3 ./package_bemacs.py ${CMD} \
     --debian-repos=${TARGET} \
     --pyqt-version=${PYQT_VERSION} \
-    --colour
+    --colour \
+        |& tee build.log
+

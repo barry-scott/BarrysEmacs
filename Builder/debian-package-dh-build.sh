@@ -2,9 +2,11 @@
 #
 #   script called from debian/rules make file
 #
-export DESTDIR="$1:? arg 1 must be DESTDIR"
+set -x
+set -e
+export DESTDIR="${1:? arg 1 must be DESTDIR}"
 shift
-export PYQT_VERSION="$1:? arg 2 must be the PyQt version"
+export PYQT_VERSION="${1:? arg 2 must be the PyQt version}"
 shift
 
 export BUILDER_TOP_DIR=$(pwd)
@@ -21,7 +23,7 @@ ${PYTHON} ./build_bemacs.py gui \
     --system-pycxx \
     --system-sqlite
 
-find "$DESTDIR" -name __pycache__ -exec rm -rf {} ';'
+find "$DESTDIR" -name __pycache__ -prune -exec rm -rfv {} ';'
 
 for page in bemacs.1 bemacs-cli.1 bemacs_server.1
 do
