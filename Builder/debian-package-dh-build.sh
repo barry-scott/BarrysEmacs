@@ -4,7 +4,7 @@
 #
 export DESTDIR="$1"
 shift
-export PYQT_VERSION="$2"
+export PYQT_VERSION="$1"
 shift
 export BUILDER_TOP_DIR=$(pwd)
 
