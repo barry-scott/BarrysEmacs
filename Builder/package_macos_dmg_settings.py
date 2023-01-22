@@ -41,8 +41,8 @@ client_path = os.path.join( 'tmp', PKGNAME, client_name )
 for tool_name, tool_path in [(client_name, client_path)]:
     __text = '''#!/bin/bash
 __APP_FOLDER=$(osascript -e  'tell application "Finder" to POSIX path of (get application file id "org.barrys-emacs.bemacs" as alias)')
-exec "$(__APP_FOLDER)/Contents/Resources/bin/%s" "$@"
-    ''' % (tool_name,)
+exec "${__APP_FOLDER}/Contents/Resources/bin/%s" "$@"
+''' % (tool_name,)
 
     tool_path = os.path.join( 'tmp', PKGNAME, tool_name )
 
