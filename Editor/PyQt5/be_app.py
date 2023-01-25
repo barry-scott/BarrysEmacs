@@ -156,6 +156,8 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         self.log.info( 'emacs_library %s' % (be_platform_specific.getLibraryDir(),) )
         self.log.info( 'emacs_doc %s' % (be_platform_specific.getDocDir(),) )
 
+        self.user_window_preference_is_dark_mode = self.palette().text().color().lightnessF() > self.palette().window().color().lightnessF()
+
         self.prefs_mgr = be_preferences.BemacsPreferenceManager(
                 self,
                 be_platform_specific.getPreferencesFilename(),
@@ -171,15 +173,16 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         self.setDesktopFileName( '/usr/share/applications/org.barrys-emacs.editor.desktop' )
         self.log.info( 'desktopFileName %r' % (self.desktopFileName(),) )
 
-        is_dark_mode = self.palette().text().color().lightnessF() > self.palette().window().color().lightnessF()
         prefs = self.getPrefs()
 
-        self.log.info( 'Is Dark mode %r, theme %r' % (is_dark_mode, prefs.window.theme.name) )
-        if not is_dark_mode and prefs.window.theme.name == 'Dark':
+        self.log.info( 'Is Dark mode %r, theme %r' %
+            (self.user_window_preference_is_dark_mode, prefs.window.theme.name) )
+
+        if not self.user_window_preference_is_dark_mode and prefs.window.theme.name == 'Dark':
             self.log.info( 'Setting dark palette' )
             self.setDarkPalette()
 
-        elif is_dark_mode:
+        elif self.user_window_preference_is_dark_mode:
             self.log.info( 'Setting dark mode styles' )
             self.setStyleSheet( 'QToolButton { border: none; }'
                                 'QToolButton:checked { background: darkblue }' )

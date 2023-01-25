@@ -11,7 +11,7 @@
     be_preferences.py
 
 '''
-import pathlib
+from pathlib import Path
 import sys
 
 from  xml_preferences import XmlPreferences, Scheme, SchemeNode, PreferencesNode
@@ -141,7 +141,10 @@ class Window(PreferencesNode):
 
     def finaliseNode( self ):
         if self.theme is None:
-            self.theme = Theme( name='Light' )
+            if app.user_window_preference_is_dark_mode:
+                self.theme = Theme( name='Dark' )
+            else:
+                self.theme = Theme( name='Light' )
 
         if self.font is None:
             self.font = Font()
@@ -186,8 +189,15 @@ class Font(PreferencesNode):
             self.point_size = 14
 
         elif sys.platform == 'linux':
-            self.face = 'Fira Mono'
-            self.point_size = 12
+            if Path( '/etc/os-release' ).exists():
+                # assume this is debian/ubuntu
+                self.face = 'Noto Mono'
+                self.point_size = 12
+
+            else:
+                # assume fedora
+                self.face = 'Fira Mono'
+                self.point_size = 12
 
         else:
             # Assuming linux/xxxBSD
@@ -270,18 +280,21 @@ bemacs_session_scheme = (Scheme(
         SchemeNode( Session, 'session', ('geometry',) )
     ) )
 
+app = None
+
 class BemacsPreferenceManager:
-    def __init__( self, app, prefs_filename, session_filename ):
+    def __init__( self, app_, prefs_filename, session_filename ):
         self.xml_prefs = XmlPreferences( bemacs_preferences_scheme )
         self.xml_session = XmlPreferences( bemacs_session_scheme )
 
-        self.app = app
+        global app
+        app = app_
 
         self.prefs_filename = prefs_filename
         self.session_filename = session_filename
 
-        assert isinstance( prefs_filename, pathlib.Path )
-        assert isinstance( session_filename, pathlib.Path )
+        assert isinstance( prefs_filename, Path )
+        assert isinstance( session_filename, Path )
 
         try:
             self.session = self.xml_session.load( self.session_filename )

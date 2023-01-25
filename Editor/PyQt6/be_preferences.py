@@ -141,7 +141,10 @@ class Window(PreferencesNode):
 
     def finaliseNode( self ):
         if self.theme is None:
-            self.theme = Theme( name='Light' )
+            if app.user_window_preference_is_dark_mode:
+                self.theme = Theme( name='Dark' )
+            else:
+                self.theme = Theme( name='Light' )
 
         if self.font is None:
             self.font = Font()
@@ -188,7 +191,7 @@ class Font(PreferencesNode):
         elif sys.platform == 'linux':
             if Path( '/etc/os-release' ).exists():
                 # assume this is debian/ubuntu
-                self.face = 'Nota Mono'
+                self.face = 'Noto Mono'
                 self.point_size = 12
 
             else:
@@ -277,12 +280,15 @@ bemacs_session_scheme = (Scheme(
         SchemeNode( Session, 'session', ('geometry',) )
     ) )
 
+app = None
+
 class BemacsPreferenceManager:
-    def __init__( self, app, prefs_filename, session_filename ):
+    def __init__( self, app_, prefs_filename, session_filename ):
         self.xml_prefs = XmlPreferences( bemacs_preferences_scheme )
         self.xml_session = XmlPreferences( bemacs_session_scheme )
 
-        self.app = app
+        global app
+        app = app_
 
         self.prefs_filename = prefs_filename
         self.session_filename = session_filename
