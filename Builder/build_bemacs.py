@@ -266,11 +266,6 @@ class BuildBEmacs(object):
             else:
                 raise BuildError( 'Unsupported PyQt version %r' % (self.opt_pyqt_version,) )
 
-            try:
-                import xml_preferences
-            except ImportError:
-                raise BuildError( 'xml-preferences is not installed for %s. Hint: dnf install python3-xml-preferences' % (sys.executable,) )
-
         if self.platform in ('MacOSX', 'win64', 'NetBSD'):
             try:
                 if self.platform == 'win64':
