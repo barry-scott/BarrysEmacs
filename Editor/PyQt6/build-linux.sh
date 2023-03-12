@@ -8,14 +8,7 @@ DOC_DIR=${4:? Doc dir}
 
 ${PYTHON} make_be_images.py
 
-cp be_*.py ${ROOT_DIR}${LIB_DIR}
-
-# see if xml_preferences has been included in the src.rpm
-if [[ -e xml_preferences ]]
-then
-    # its possible to convert into a single file
-    cp xml_preferences/__init__.py ${ROOT_DIR}${LIB_DIR}/xml_preferences.py
-fi
+cp be_*.py xml_preferences.py ${ROOT_DIR}${LIB_DIR}
 
 rm ${ROOT_DIR}${LIB_DIR}/be_client.py
 
@@ -36,8 +29,4 @@ EOF
 ${PYTHON} create_bemacs_client.py . "${ROOT_DIR}${BIN_DIR}/bemacs"
 
 cd ${ROOT_DIR}${LIB_DIR}
-${PYTHON} -m compileall be_*.py
-if [[ -e xml_preferences.py ]]
-then
-    ${PYTHON} -m compileall xml_preferences.py
-fi
+${PYTHON} -m compileall be_*.py xml_preferences.py
