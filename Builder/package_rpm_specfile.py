@@ -61,14 +61,18 @@ def createRpmSpecFile( opt, spec_filename ):
         all_build_requires.add( 'libssh-devel' )
 
     else:
-        all_build_requires.add( '--no-sftp' )
+        all_config_options.add( '--no-sftp' )
 
     if not opt.opt_warnings_as_errors:
         all_config_options.add( '--no-warnings-as-errors' )
 
     if opt.opt_gui:
         # options for gui
-        all_requires_gui.add( 'mozilla-fira-mono-fonts' )
+        all_requires_gui.add( opt.opt_default_font_package )
+        all_config_options.add( '--default-font-name=%s' % (opt.opt_default_font_name,) )
+
+        all_config_options.add( '--pyqt-version=%s' % (opt.opt_pyqt_version,) )
+
         if opt.opt_mock_target.startswith( 'epel-7-' ):
             # centos 7 uses python36 not python3
             python = '/usr/bin/python3'
@@ -87,22 +91,22 @@ def createRpmSpecFile( opt, spec_filename ):
             python = '/usr/bin/python3'
             all_requires_gui.add( 'bemacs-common = %{version}-%{release}' )
             all_requires_gui.add( 'python3 >= 3.4' )
-            all_requires_gui.add( 'python3-qt6' )
+
+            if opt.opt_pyqt_version == '6':
+                all_requires_gui.add( 'python3-pyqt6' )
+            else:
+                all_requires_gui.add( 'python3-qt5' )
 
             all_requires_base.add( 'bemacs-gui = %{version}-%{release}' )
             all_requires_base.add( 'python3' )
 
             all_build_requires.add( 'python3 >= 3.4' )
             all_build_requires.add( 'python3-devel >= 3.4' )
-            all_build_requires.add( 'python3-qt6' )
 
-        if opt.opt_kit_xml_preferences is None:
-            all_requires_gui.add( 'python3-xml-preferences' )
-            all_build_requires.add( 'python3-xml-preferences' )
-
-        else:
-            kit_xml_preferences_basename = os.path.basename( opt.opt_kit_xml_preferences )
-            all_sources.append( opt.opt_kit_xml_preferences )
+            if opt.opt_pyqt_version == '6':
+                all_build_requires.add( 'python3-pyqt6' )
+            else:
+                all_build_requires.add( 'python3-qt5' )
 
         if opt.opt_kit_pycxx is None:
             if opt.opt_mock_target.startswith( 'epel-7-' ):
@@ -155,7 +159,7 @@ def createRpmSpecFile( opt, spec_filename ):
                 ,'KIT_PYCXX':           kit_pycxx_basename
                 ,'KIT_SQLITE':          kit_sqlite_basename
                 ,'KIT_XML_PREFERENCES': kit_xml_preferences_basename
-                ,'CONFIG_OPTIONS':      ' '.join( sorted( all_config_options ) )
+                ,'CONFIG_OPTIONS':      ' '.join( "'%s'" % (opt,) for opt in sorted( all_config_options ) )
                 }
     spec_file = fmt_spec_file % spec_vars
 

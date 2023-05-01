@@ -25,4 +25,8 @@ do
     fi
 done
 
-${PYTHON} build_bemacs.py --system-hunspell --system-sqlite "$@"
+${PYTHON} build_bemacs.py \
+    --system-hunspell \
+    --system-sqlite \
+    --default-font-name="Liberation Mono" \
+    "$@"

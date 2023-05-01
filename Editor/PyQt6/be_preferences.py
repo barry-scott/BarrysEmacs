@@ -17,6 +17,7 @@ import sys
 from  xml_preferences import XmlPreferences, Scheme, SchemeNode, PreferencesNode
 
 import be_emacs_panel
+import be_platform_specific
 
 # cannot use a class for bool as PyQt wll not use __bool__ to get its truth
 def Bool( text ):
@@ -179,31 +180,8 @@ class Font(PreferencesNode):
 
     def __init__( self ):
         super().__init__()
-        # point size and face need to chosen by platform
-        if sys.platform.startswith( 'win' ):
-            self.face = 'Courier New'
-            self.point_size = 14
-
-        elif sys.platform == 'darwin':
-            self.face = 'Monaco'
-            self.point_size = 14
-
-        elif sys.platform == 'linux':
-            if Path( '/etc/os-release' ).exists():
-                # assume this is debian/ubuntu
-                self.face = 'Noto Mono'
-                self.point_size = 12
-
-            else:
-                # assume fedora
-                self.face = 'Fira Mono'
-                self.point_size = 12
-
-        else:
-            # Assuming linux/xxxBSD
-            self.face = 'Liberation Mono'
-            self.point_size = 11
-
+        self.face = be_platform_specific.default_font_name
+        self.point_size = be_platform_specific.default_font_point_size
 
 class CursorStyle(PreferencesNode):
     xml_attribute_info = (('blink', Bool), ('interval', int), ('shape', str))

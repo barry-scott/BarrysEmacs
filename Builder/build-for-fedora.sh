@@ -1,9 +1,9 @@
 #!/bin/bash
 cmd=${1:-mock-testing}
 shift
-arch=${1}
-shift
 fedora_rel=${1}
+shift
+arch=${1}
 shift
 
 if [ "$arch" = "" ]
@@ -20,5 +20,7 @@ fi
 python3 ./package_bemacs.py ${cmd} \
     --mock-target=fedora-${fedora_rel}-${arch} \
     --system-hunspell \
+    --default-font-name="Fira Mono" \
+    --default-font-package=mozilla-fira-mono-fonts \
     --colour "${@}" \
         |& tee build-for-fedora-${fedora_rel}-${arch}.log

@@ -41,6 +41,8 @@ class PackageBEmacs(object):
         self.opt_sftp = True
         self.opt_gui = True
         self.opt_pyqt_version = SUPPORTED_PYQT_VERSIONS[0]
+        self.opt_default_font_name = None
+        self.opt_default_font_package = None
         self.opt_system_ucd = False
         self.opt_hunspell = True
         self.opt_system_hunspell = False
@@ -57,14 +59,12 @@ class PackageBEmacs(object):
         self.COPR_REPO_OTHER_URL = None
         self.MOCK_COPR_REPO_FILENAME = None
 
-        self.copr_repo_pyqt6 = 'copr:copr.fedorainfracloud.org:barryascott:python-qt6'
-        self.MOCK_COPR_REPO_PYQT6_FILENAME = '/etc/yum.repos.d/_%s.repo' % (self.copr_repo_pyqt6,)
-
         self.cmd = None
         self.opt_release = 'auto'
         self.opt_debian_repos = None
         self.commit_id = 'unknown'
         self.opt_mock_target = None
+        self.opt_mock_epel_distro = 'rocky'
         self.opt_arch = None
         self.install = False
 
@@ -213,6 +213,12 @@ class PackageBEmacs(object):
                     if self.opt_pyqt_version not in SUPPORTED_PYQT_VERSIONS:
                         BuildError( 'Unsupported PyQt version %r' % (arg,) )
 
+                elif arg.startswith('--default-font-name='):
+                    self.opt_default_font_name = arg[len('--default-font-name='):]
+
+                elif arg.startswith('--default-font-package='):
+                    self.opt_default_font_package = arg[len('--default-font-package='):]
+
                 elif arg.startswith('--kit-pycxx='):
                     self.opt_kit_pycxx = arg[len('--kit-pycxx='):]
 
@@ -240,6 +246,9 @@ class PackageBEmacs(object):
                 elif arg.startswith('--mock-target='):
                     self.opt_mock_target = arg[len('--mock-target='):]
 
+                elif arg.startswith('--mock-epel-distro='):
+                    self.opt_mock_epel_distro = arg[len('--mock-epel-distro='):]
+
                 elif arg.startswith('--arch='):
                     self.opt_arch = arg[len('--arch='):]
 
@@ -248,6 +257,11 @@ class PackageBEmacs(object):
 
                 else:
                     raise BuildError( 'Unknown option in package_bemacs %r' % (arg,) )
+
+                # only need copr for the xml-preferences package
+                if self.opt_kit_xml_preferences is not None:
+                    self.copr_repo = None
+                    self.copr_repo_other = None
 
         except StopIteration:
             pass
@@ -363,7 +377,7 @@ class PackageBEmacs(object):
             '${misc:Depends}',
             'python3',
             'python3-pyqt%s' % (self.opt_pyqt_version,),
-            'fonts-noto-mono',
+            self.opt_default_font_package,
             ]
 
         control_args = {
@@ -458,7 +472,6 @@ bemacs source: source-is-missing [HTML/ug_top.html]
             run( ('mock',
                         '--root=%s' % (self.MOCK_TARGET_FILENAME,),
                         '--enablerepo=copr:copr.fedorainfracloud.org:barryascott:%s' % (self.copr_repo,),
-                        '--enablerepo=%s' % (self.copr_repo_pyqt6,),
                         '--rebuild',
                         self.SRPM_FILENAME) )
         else:
@@ -554,13 +567,18 @@ bemacs source: source-is-missing [HTML/ug_top.html]
         if self.opt_mock_target.startswith( '/' ):
             mock_cfg = self.opt_mock_target + '.cfg'
         else:
-            mock_cfg = '/etc/mock/%s.cfg' % (self.opt_mock_target,)
+            if self.opt_mock_target.startswith( 'epel-' ):
+                mock_cfg = '/etc/mock/%s+%s.cfg' % (self.opt_mock_epel_distro, self.opt_mock_target)
+            else:
+                mock_cfg = '/etc/mock/%s.cfg' % (self.opt_mock_target,)
+
         if not os.path.exists( mock_cfg ):
             raise BuildError( 'Mock CFG files does not exist %s' % (mock_cfg,) )
 
         with open( mock_cfg, 'r' ) as f:
             # starting with Fedora 31 mock uses the include('template') statement
             config_opts = {'yum_install_command': 'install yum yum-utils'
+                          ,'dnf_install_command': 'install dnf dnf-plugins-core'
                           ,'plugin_conf':
                             {'root_cache_opts': {}
                             ,'selinux_enable': False}}
@@ -592,8 +610,17 @@ bemacs source: source-is-missing [HTML/ug_top.html]
         return config_opts
 
     def makeMockTargetFile( self ):
+        if self.opt_mock_target.startswith('epel-'):
+            if self.opt_mock_epel_distro is None:
+                raise BuildError( 'Require --mock-epel-distro=<distro> to be able to build the SRPM' )
+
+            mock_target = '%s+%s' % (self.opt_mock_epel_distro, self.opt_mock_target)
+
+        else:
+            mock_target = os.path.basename( self.opt_mock_target )
+
         self.MOCK_TARGET_FILENAME = 'tmp/%s-%s-%s.cfg' % (
-                self.KITNAME, self.copr_repo, os.path.basename( self.opt_mock_target ))
+                self.KITNAME, self.copr_repo, mock_target)
 
         config_opts = self.readMockConfig()
 
@@ -610,16 +637,6 @@ bemacs source: source-is-missing [HTML/ug_top.html]
 
         if self.MOCK_COPR_REPO_FILENAME:
             with open( self.MOCK_COPR_REPO_FILENAME, 'r' ) as f:
-                repo = f.read()
-
-                if self.opt_mock_target.startswith( 'epel-' ):
-                    repo = repo.replace( '/fedora-$releasever-$basearch/', '/epel-$releasever-$basearch/' )
-
-                config_opts[conf_key] += '\n'
-                config_opts[conf_key] += repo
-
-        if self.MOCK_COPR_REPO_PYQT6_FILENAME:
-            with open( self.MOCK_COPR_REPO_PYQT6_FILENAME, 'r' ) as f:
                 repo = f.read()
 
                 if self.opt_mock_target.startswith( 'epel-' ):
@@ -645,7 +662,10 @@ bemacs source: source-is-missing [HTML/ug_top.html]
         if self.opt_mock_target.startswith( '/' ):
             mock_cfg = self.opt_mock_target + '.cfg'
         else:
-            mock_cfg = '/etc/mock/%s.cfg' % (self.opt_mock_target,)
+            if self.opt_mock_target.startswith( 'epel-' ):
+                mock_cfg = '/etc/mock/%s+%s.cfg' % (self.opt_mock_epel_distro, self.opt_mock_target)
+            else:
+                mock_cfg = '/etc/mock/%s.cfg' % (self.opt_mock_target,)
 
         st = os.stat( mock_cfg )
         os.utime( self.MOCK_TARGET_FILENAME, (st.st_atime, st.st_mtime) )

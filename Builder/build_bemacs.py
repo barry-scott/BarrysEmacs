@@ -48,6 +48,8 @@ class BuildBEmacs(object):
         self.opt_prefix = '/usr'
         self.opt_appmode = '--gui'
         self.opt_pyqt_version = SUPPORTED_PYQT_VERSIONS[0]
+        self.opt_default_font_name = 'DejaVu Sans Mono'
+        self.opt_default_font_package = 'dejavu-sans-mono-fonts'
 
         self.bemacs_version_info = None
 
@@ -113,6 +115,12 @@ class BuildBEmacs(object):
                         self.opt_pyqt_version = arg[len('--pyqt-version='):]
                         if self.opt_pyqt_version not in SUPPORTED_PYQT_VERSIONS:
                             BuildError( 'Unsupport PyQt version %r' % (arg,) )
+
+                    elif arg.startswith('--default-font-name='):
+                        self.opt_default_font_name = arg[len('--default-font-name='):]
+
+                    elif arg.startswith('--default-font-package='):
+                        self.opt_default_font_package = arg[len('--default-font-package='):]
 
                     elif arg in ('--enable-debug'
                                 ,'--system-pycxx'
@@ -386,7 +394,8 @@ class BuildBEmacs(object):
                  ,self.BEMACS_ROOT_DIR
                  ,self.INSTALL_BEMACS_BIN_DIR
                  ,self.INSTALL_BEMACS_LIB_DIR
-                 ,self.INSTALL_BEMACS_DOC_DIR),
+                 ,self.INSTALL_BEMACS_DOC_DIR
+                 ,self.opt_default_font_name),
                     cwd='../Editor/PyQt%s' % (self.opt_pyqt_version,) )
 
     def ruleBemacsCli( self ):

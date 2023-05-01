@@ -17,6 +17,8 @@ esac
 python3 ./package_bemacs.py ${CMD} \
     --debian-repos=${TARGET} \
     --pyqt-version=${PYQT_VERSION} \
+    --default-font-name="Noto Mono" \
+    --default-font-package=fonts-noto-mono \
     --colour \
-        |& tee build.log
+        |& tee build-for-debian.log
 

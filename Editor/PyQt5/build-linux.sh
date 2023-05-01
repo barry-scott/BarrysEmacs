@@ -5,6 +5,7 @@ ROOT_DIR=${1:? Root dir}
 BIN_DIR=${2:? Bin dir}
 LIB_DIR=${3:? Lib dir}
 DOC_DIR=${4:? Doc dir}
+FONT_NAME=${5:? Font name}
 
 ${PYTHON} make_be_images.py
 
@@ -24,6 +25,8 @@ chmod +x ${ROOT_DIR}${BIN_DIR}/bemacs_server
 cat <<EOF >>${ROOT_DIR}${LIB_DIR}/be_platform_unix_specific.py
 library_dir = "${LIB_DIR}"
 doc_dir = "${DOC_DIR}"
+default_font_name = "${FONT_NAME}"
+default_font_point_size = 12
 EOF
 
 ${PYTHON} create_bemacs_client.py . "${ROOT_DIR}${BIN_DIR}/bemacs"
