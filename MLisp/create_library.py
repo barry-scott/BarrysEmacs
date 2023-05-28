@@ -254,6 +254,8 @@ library_files =    [
     ('common',    'Library/query-replace.ml'),
     ('common',    'Library/rectangular.key'),
     ('common',    'Library/rectangular.ml'),
+    ('common',    'Library/rust-mode.ml'),
+    ('common',    'Library/rust-mode.key'),
     ('common',    'Library/rpm-specfile-mode.ml'),
     ('common',    'Library/scribe.ml'),
     ('common',    'Library/sentence.ml'),

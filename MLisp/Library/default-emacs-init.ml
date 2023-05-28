@@ -177,6 +177,8 @@
     (auto-execute "Java-mode" "*.java")
     ; LaTex files
     (auto-execute "latex-mode" "*.tex")
+    ; rust files
+    (auto-execute "rust-mode" "*.rs")
     ; SQL files
     (auto-execute "SQL-mode" "*.sql")
 

@@ -80,6 +80,7 @@
 (autoload "resize-tabs-in-buffer" "tabs")
 (autoload "reverse-incremental-search" "incsearch")
 (autoload "RPM-specfile-mode" "rpm-specfile-mode.ml")
+(autoload "rust-mode" "rust-mode.ml")
 (autoload "shell" "process")
 (autoload "show-buffer" "show-buffer")
 (autoload "sh-mode" "sh-mode")
