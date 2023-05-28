@@ -345,6 +345,7 @@
     (modify-syntax-table "comment" "//" "\n")
     (modify-syntax-table "comment" "/*" "*/")
 
+    (modify-syntax-table "keyword-1" "->")
     (modify-syntax-table "keyword-1" "=>")
     (modify-syntax-table "keyword-1" "and")
     (modify-syntax-table "keyword-1" "as")
@@ -388,6 +389,13 @@
 
     (modify-syntax-table "keyword-2" "union")
     (modify-syntax-table "keyword-2" "static")
+
+    (modify-syntax-table "keyword-3" "bool")
+    (modify-syntax-table "keyword-3" "true")
+    (modify-syntax-table "keyword-3" "false")
+
+    (modify-syntax-table "keyword-3" "tup")
+    (modify-syntax-table "keyword-3" "char")
 
     (modify-syntax-table "keyword-3" "u8")
     (modify-syntax-table "keyword-3" "i8")
