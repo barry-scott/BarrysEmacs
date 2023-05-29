@@ -9,6 +9,8 @@ FONT_NAME=${5:? Font name}
 
 ${PYTHON} make_be_images.py
 
+echo "Info: PyQt6 libdir ${ROOT_DIR}${LIB_DIR}"
+
 cp be_*.py xml_preferences.py ${ROOT_DIR}${LIB_DIR}
 
 rm ${ROOT_DIR}${LIB_DIR}/be_client.py
