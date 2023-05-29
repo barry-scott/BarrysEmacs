@@ -89,7 +89,7 @@ const SyntaxKind_t SYNTAX_MULTI_CHAR_TYPES
 const int SYNTAX_PROP_CASE_FOLD_MATCH( 1 );     // case blind matching of this entry
 const int SYNTAX_PROP_REGEX_MATCH( 2 );         // entry is a regular expression
 const int SYNTAX_PROP_PAIRED( 4 );              // entry is a paired value (used for string)
-
+const int SYNTAX_PROP_CHAR( 8 );                // string is single character long
 typedef int SyntaxData_t;
 
 typedef short int SyntaxCharData_t;
@@ -256,13 +256,14 @@ private:
     void modify_table_dull_type( const EmacsString &str1 );
 
     // range of characters type like word A-Z
-    void modify_table_range_type( int type, const EmacsString &str1, void (SyntaxTable::*set_func)( int type, int ch ) );
+    void modify_table_range_type( int type, int properties, const EmacsString &str1,
+                                  void (SyntaxTable::*set_func)( int type, int properties, int ch ) );
 
     // paired strings like comments // to
     void modify_table_paired_type( int type, int properties, const EmacsString &str1, const EmacsString &str2  );
 
-    void modify_table_set_simple_type( int type, int ch );
-    void modify_table_set_paired_type( int type, int ch );
+    void modify_table_set_simple_type( int type, int properties, int ch );
+    void modify_table_set_paired_type( int type, int properties, int ch );
 
     // add any type of syntax string
     void add_syntax_string_to_table( int ch, const SyntaxString &str );

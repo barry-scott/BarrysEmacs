@@ -411,19 +411,43 @@ static ModifySyntaxData modify_syntax_table_init_data[] =
                             " (character-set) ",    ""},
 {"string",                  SYNTAX_TYPE_STRING1,    0,
                             " (character-set) ",    ""},
+{"string,char",             SYNTAX_TYPE_STRING1,    SYNTAX_PROP_CHAR,
+                            " (character-set) ",    ""},
 {"string,paired",           SYNTAX_TYPE_STRING1,    SYNTAX_PROP_PAIRED,
+                            " (string-begin) ",     " (string-end) "},
+{"string,paired,char",      SYNTAX_TYPE_STRING1,    SYNTAX_PROP_PAIRED|SYNTAX_PROP_CHAR,
+                            " (string-begin) ",     " (string-end) "},
+{"string,char,paired",      SYNTAX_TYPE_STRING1,    SYNTAX_PROP_PAIRED|SYNTAX_PROP_CHAR,
                             " (string-begin) ",     " (string-end) "},
 {"string-1",                SYNTAX_TYPE_STRING1,    0,
                             " (character-set) ",    ""},
+{"string-1,char",           SYNTAX_TYPE_STRING1,    SYNTAX_PROP_CHAR,
+                            " (character-set) ",    ""},
 {"string-1,paired",         SYNTAX_TYPE_STRING1,    SYNTAX_PROP_PAIRED,
                             " (string-begin) ",     " (string-end) "},
-{"string-2",                SYNTAX_TYPE_STRING2,    0,
-                            " (character-set) ",    ""},
-{"string-2,paired",         SYNTAX_TYPE_STRING2,    SYNTAX_PROP_PAIRED,
+{"string-1,paired,char",    SYNTAX_TYPE_STRING1,    SYNTAX_PROP_PAIRED|SYNTAX_PROP_CHAR,
                             " (string-begin) ",     " (string-end) "},
-{"string-3",                SYNTAX_TYPE_STRING3,    0,
+{"string-1,char,paired",    SYNTAX_TYPE_STRING1,    SYNTAX_PROP_PAIRED|SYNTAX_PROP_CHAR,
+                            " (string-begin) ",     " (string-end) "},
+{"string-2",                SYNTAX_TYPE_STRING1,    0,
                             " (character-set) ",    ""},
-{"string-3,paired",         SYNTAX_TYPE_STRING3,    SYNTAX_PROP_PAIRED,
+{"string-2,char",           SYNTAX_TYPE_STRING1,    SYNTAX_PROP_CHAR,
+                            " (character-set) ",    ""},
+{"string-2,paired",         SYNTAX_TYPE_STRING1,    SYNTAX_PROP_PAIRED,
+                            " (string-begin) ",     " (string-end) "},
+{"string-2,paired,char",    SYNTAX_TYPE_STRING1,    SYNTAX_PROP_PAIRED|SYNTAX_PROP_CHAR,
+                            " (string-begin) ",     " (string-end) "},
+{"string-2,char,paired",    SYNTAX_TYPE_STRING1,    SYNTAX_PROP_PAIRED|SYNTAX_PROP_CHAR,
+                            " (string-begin) ",     " (string-end) "},
+{"string-3",                SYNTAX_TYPE_STRING1,    0,
+                            " (character-set) ",    ""},
+{"string-3,char",           SYNTAX_TYPE_STRING1,    SYNTAX_PROP_CHAR,
+                            " (character-set) ",    ""},
+{"string-3,paired",         SYNTAX_TYPE_STRING1,    SYNTAX_PROP_PAIRED,
+                            " (string-begin) ",     " (string-end) "},
+{"string-3,paired,char",    SYNTAX_TYPE_STRING1,    SYNTAX_PROP_PAIRED|SYNTAX_PROP_CHAR,
+                            " (string-begin) ",     " (string-end) "},
+{"string-3,char,paired",    SYNTAX_TYPE_STRING1,    SYNTAX_PROP_PAIRED|SYNTAX_PROP_CHAR,
                             " (string-begin) ",     " (string-end) "},
 {"word",                    SYNTAX_WORD,            0,
                             " (character-set) ",    ""},
@@ -509,14 +533,14 @@ void SyntaxTable::modify_table( int type, int properties, const EmacsString &str
         case SYNTAX_TYPE_STRING2:
         case SYNTAX_TYPE_STRING3:
             if( (properties&SYNTAX_PROP_PAIRED) != 0 )
-                modify_table_paired_type( type, 0, str1, str2 );
+                modify_table_paired_type( type, properties&(~SYNTAX_PROP_PAIRED), str1, str2 );
             else
-                modify_table_range_type( type, str1, &SyntaxTable::modify_table_set_paired_type );
+                modify_table_range_type( type, properties&(~SYNTAX_PROP_PAIRED), str1, &SyntaxTable::modify_table_set_paired_type );
             break;
 
         case SYNTAX_WORD:
         case SYNTAX_PREFIX_QUOTE:
-            modify_table_range_type( type, str1, &SyntaxTable::modify_table_set_simple_type );
+            modify_table_range_type( type, properties, str1, &SyntaxTable::modify_table_set_simple_type );
             break;
 
         case SYNTAX_BEGIN_PAREN:
@@ -603,18 +627,19 @@ void SyntaxTable::modify_table_dull_type( const EmacsString &str1 )
     }
 }
 
-void SyntaxTable::modify_table_set_simple_type( int type, int ch )
+void SyntaxTable::modify_table_set_simple_type( int type, int properties, int ch )
 {
     s_kind[ ch ] = getSyntaxKind( ch ) | type;
 }
 
-void SyntaxTable::modify_table_set_paired_type( int type, int ch )
+void SyntaxTable::modify_table_set_paired_type( int type, int properties, int ch )
 {
     EmacsString str1; str1.append( EmacsChar_t( ch ) );
-    modify_table_paired_type( type, 0, str1, str1 );
+    modify_table_paired_type( type, properties, str1, str1 );
 }
 
-void SyntaxTable::modify_table_range_type( int type, const EmacsString &str1, void (SyntaxTable::*set_func)( int type, int ch ) )
+void SyntaxTable::modify_table_range_type( int type, int properties, const EmacsString &str1,
+                                           void (SyntaxTable::*set_func)( int type, int properties, int ch ) )
 {
     EmacsChar_t ch = 0;
 
@@ -639,7 +664,7 @@ void SyntaxTable::modify_table_range_type( int type, const EmacsString &str1, vo
             throw SyntaxErrorException();
 
         for( ch=c; ch<=lim; ch++ )
-            (this->*set_func)( type, ch );
+            (this->*set_func)( type, properties, ch );
     }
 }
 
@@ -1198,6 +1223,11 @@ int dump_syntax_table( void )
                 int type = cur->s_kind >> SYNTAX_STRING_SHIFT;
                 syntax_details = FormatString("String type %d between \"%s\" and \"%s\"")
                                 << type << cur->s_main_str << cur->s_match_str;
+
+                if( cur->s_properties&SYNTAX_PROP_CHAR )
+                {
+                    syntax_details.append( ", Char" );
+                }
 
                 for( SyntaxStringList_t::iterator alt = cur->s_alt_matching.begin();
                         alt != cur->s_alt_matching.end();
@@ -1871,13 +1901,36 @@ bool EmacsBuffer::syntax_update_range( int pos, int limit, int required )
                     if( (string->s_kind&SYNTAX_STRING_MASK) != 0
                     && (len = string->looking_at_main( pos )) > 0 )
                     {
-                        state = st_string;
+                        if( string->s_properties&SYNTAX_PROP_CHAR )
+                        {
+                            if( char_at_is( pos+1, SYNTAX_PREFIX_QUOTE )
+                            && string->looking_at_match( pos+3 ) )
+                            {
+                                for( int i=0; i<4; i++, pos++ )
+                                    set_syntax_at( pos, string->s_kind );
 
-                        for( int i=0; i<len; i++, pos++ )
-                            set_syntax_at( pos, string->s_kind );
+                                pos--;    // incremented at the top of the loop
+                                goto for_loop_end;
+                            }
+                            else if( string->looking_at_match( pos+2 ) )
+                            {
+                                for( int i=0; i<3; i++, pos++ )
+                                    set_syntax_at( pos, string->s_kind );
 
-                        pos--;    // incremented at the top of the loop
-                        goto for_loop_end;
+                                pos--;    // incremented at the top of the loop
+                                goto for_loop_end;
+                            }
+                        }
+                        else
+                        {
+                            state = st_string;
+
+                            for( int i=0; i<len; i++, pos++ )
+                                set_syntax_at( pos, string->s_kind );
+
+                            pos--;    // incremented at the top of the loop
+                            goto for_loop_end;
+                        }
                     }
                 }
             }

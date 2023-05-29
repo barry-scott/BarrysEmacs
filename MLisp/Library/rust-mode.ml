@@ -58,20 +58,20 @@
         ; parsing stops on errors
         (if
             (error-occurred
-                (ere-search-forward "^error.*\n  --> (.+):(\\d+):(\\d+)"))
+                (ere-search-forward "^(error|warning).*\n  --> (.+):(\\d+):(\\d+)"))
             (progn
                 (setq error-line-number 0)
             )
             (progn
                 (save-window-excursion
-                    (region-around-match 1)
+                    (region-around-match 2)
                     (setq error-file-name (region-to-string))
                     (while (! (file-exists error-file-name))
                         (setq error-file-name (get-tty-file "Locate file: " error-file-name))
                     )
-                    (region-around-match 2)
-                    (setq error-line-number (region-to-string))
                     (region-around-match 3)
+                    (setq error-line-number (region-to-string))
+                    (region-around-match 4)
                     (setq ~error-column (region-to-string))
                 )
                 (beginning-of-line)
@@ -337,7 +337,10 @@
     (modify-syntax-table "string,paired" "br#\"" "\"#")
     (modify-syntax-table "string,paired" "b\"" "\"")
 
-    (modify-syntax-table "string" "'")
+    ; rust uses ' as a prefix for loop labels as well as for the char literal
+    ; 'label: loop
+    ; let ch = 'a'
+    (modify-syntax-table "string,char" "'")
     (modify-syntax-table "string,paired" "b'" "'")
 
     (modify-syntax-table "prefix" "\\")
