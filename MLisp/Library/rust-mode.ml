@@ -385,13 +385,12 @@
     (modify-syntax-table "keyword-1" "true")
     (modify-syntax-table "keyword-1" "try")
     (modify-syntax-table "keyword-1" "type")
-    (modify-syntax-table "keyword-1" "unsafe")
     (modify-syntax-table "keyword-1" "use")
     (modify-syntax-table "keyword-1" "where")
     (modify-syntax-table "keyword-1" "while")
 
+    (modify-syntax-table "keyword-2" "unsafe")
     (modify-syntax-table "keyword-2" "union")
-    (modify-syntax-table "keyword-2" "static")
 
     (modify-syntax-table "keyword-3" "bool")
     (modify-syntax-table "keyword-3" "true")
