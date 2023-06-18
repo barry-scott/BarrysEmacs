@@ -58,7 +58,7 @@
         ; parsing stops on errors
         (if
             (error-occurred
-                (ere-search-forward "^(error|warning).*\n  --> (.+):(\\d+):(\\d+)"))
+                (ere-search-forward "^(error|warning).*\n +--> (.+):(\\d+):(\\d+)"))
             (progn
                 (setq error-line-number 0)
             )
