@@ -56,6 +56,7 @@ int previous_error( void )
 
 SystemExpressionRepresentationString error_file_name;
 SystemExpressionRepresentationIntPositive error_line_number;
+SystemExpressionRepresentationIntPositive error_column_number;
 SystemExpressionRepresentationIntPositive error_start_position;
 
 BoundName *error_message_parser;
@@ -128,18 +129,23 @@ int parse_erb( int pos, int limit )
         erb->set_bf();
         // Apply the users function
         rv = execute_bound_saved_environment(error_message_parser);
-        // check that he output everything required
+        // check that it output everything required
         if( ml_err
         || error_start_position <= 0
         || error_line_number <= 0
         || error_file_name.isNull() )
             break;
+
         // Visit the required file and create the markers
         if( visit_file( error_file_name.asString(), 0, 0, EmacsString::null ) == 0 )
         {
             break;
         }
         int pos = error_line_number == 1 ? 1 : scan_bf_for_lf( 1, error_line_number - 1 );
+        if( error_column_number > 0 )
+        {
+            pos += error_column_number - 1;
+        }
         ErrorBlock *new_eb = EMACS_NEW ErrorBlock
                 (
                 erb, error_start_position,
