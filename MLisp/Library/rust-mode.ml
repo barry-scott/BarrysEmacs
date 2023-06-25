@@ -58,7 +58,7 @@
         ; parsing stops on errors
         (if
             (error-occurred
-                (ere-search-forward "^(error|warning).*\n +--> (.+):(\\d+):(\\d+)"))
+                (ere-search-forward "^(error|warning|note).*\n +--> (.+):(\\d+):(\\d+)"))
             (progn
                 (setq error-line-number 0)
             )
@@ -66,13 +66,18 @@
                 (save-window-excursion
                     (region-around-match 2)
                     (setq error-file-name (region-to-string))
-                    (while (! (file-exists error-file-name))
-                        (setq error-file-name (get-tty-file "Locate file: " error-file-name))
+                    (if (= "/builddir/" (string-extract error-file-name 0 10))
+                        (setq error-line-number 0)
+                        (progn
+                            (while (! (file-exists error-file-name))
+                                (setq error-file-name (get-tty-file "Locate file: " error-file-name))
+                            )
+                            (region-around-match 3)
+                            (setq error-line-number (region-to-string))
+                            (region-around-match 4)
+                            (setq ~error-column (region-to-string))
+                        )
                     )
-                    (region-around-match 3)
-                    (setq error-line-number (region-to-string))
-                    (region-around-match 4)
-                    (setq ~error-column (region-to-string))
                 )
                 (beginning-of-line)
                 (previous-line)
