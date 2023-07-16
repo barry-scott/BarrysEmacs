@@ -43,9 +43,18 @@
         ~project-folder
         ~error-column
 
-        (setq ~project-folder (file-format-string ".%pc" ""))
+        (setq ~project-folder (expand-file-name (current-directory)))
         (setq ~error-column 1)
 
+        ; project folder has the Cargo.toml file in it
+        (while
+            (&
+                (= (expand-file-name "Cargo.toml" ~project-folder) "")
+                (!= "/" ~project-folder)
+            )
+            (setq ~project-folder
+                (expand-file-name (concat ~project-folder "..")))
+        )
         (save-excursion
             (beginning-of-file)
             (if (ere-looking-at "^.*\\((.*)\\)")
