@@ -48,33 +48,35 @@
 
         (save-excursion
             (beginning-of-file)
-            (error-occurred
-                (ere-looking-at "^.*(\\(.*\\))")
-                (region-around-match 1)
-                (setq ~project-folder (region-to-string))
+            (if (ere-looking-at "^.*\\((.*)\\)")
+                (progn
+                    (region-around-match 1)
+                    (setq ~project-folder (concat (region-to-string) (file-format-string "%pc" "")))
+                )
             )
         )
 
         ; parsing stops on errors
         (if
             (error-occurred
-                (ere-search-forward "^(error|warning|note).*\n +--> (.+):(\\d+):(\\d+)"))
+                (ere-search-forward "^(error|warning|note|extra).*\n +(-->|:::) (.+):(\\d+):(\\d+)"))
             (progn
                 (setq error-line-number 0)
             )
             (progn
                 (save-window-excursion
-                    (region-around-match 2)
+                    (region-around-match 3)
                     (setq error-file-name (region-to-string))
                     (if (= "/builddir/" (string-extract error-file-name 0 10))
                         (setq error-line-number 0)
                         (progn
+                            (setq error-file-name (concat ~project-folder error-file-name))
                             (while (! (file-exists error-file-name))
                                 (setq error-file-name (get-tty-file "Locate file: " error-file-name))
                             )
-                            (region-around-match 3)
-                            (setq error-line-number (region-to-string))
                             (region-around-match 4)
+                            (setq error-line-number (region-to-string))
+                            (region-around-match 5)
                             (setq error-column-number (region-to-string))
                         )
                     )
@@ -94,9 +96,10 @@
         ~arg
         ~cargo-command
 
-        (setq ~arg (if (> prefix-argument 1)
-                          (arg 1 ": rust-compile cargo [build]: ")
-                         ""))
+        (setq ~arg
+            (if (> prefix-argument 1)
+                (arg 1 ": rust-compile cargo [build]: ")
+                ""))
         (if (length ~arg)
             (setq ~cargo-command ~arg)
             (setq ~cargo-command "build"))
@@ -149,6 +152,7 @@
             (setq error-message-parser "rust-error-message-parser")
 
             (beginning-of-file)
+            (error-occurred (replace-string "\n  :::" "\nextra:\n  :::"))
             (set-mark)
             (end-of-file)
             (parse-error-messages-in-region)
