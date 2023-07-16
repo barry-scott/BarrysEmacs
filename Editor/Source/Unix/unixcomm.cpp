@@ -413,15 +413,13 @@ void change_msgs( void )
             p->p_flag &= ~CHANGED;
             change_processed++;
 
-            switch( p->p_flag & (SIGNALED | EXITED) )
+            if( p->p_flag & EXITED )
             {
-            case SIGNALED:
-                status = SIG_names[int(p->p_reason)];
-                break;
-
-            case EXITED:
                 status = FormatString("Process exited %d") << p->p_reason;
-                break;
+            }
+            else if( p->p_flag & SIGNALED )
+            {
+                status = SIG_names[int(p->p_reason)];
             }
 
             if( p->term_proc != NULL )
