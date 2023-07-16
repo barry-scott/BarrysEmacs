@@ -8,5 +8,5 @@ pyobjc-framework-Quartz
 colour-text
 
 # emacs dependencies
-PyQt6
+PyQt6==6.4.2
 xml-preferences>=1.1.2
