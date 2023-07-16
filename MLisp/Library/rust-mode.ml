@@ -43,7 +43,7 @@
         ~project-folder
         ~error-column
 
-        (setq ~project-folder ".")
+        (setq ~project-folder (file-format-string ".%pc" ""))
         (setq ~error-column 1)
 
         (save-excursion
