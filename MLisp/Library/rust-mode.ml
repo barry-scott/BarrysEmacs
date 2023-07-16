@@ -49,7 +49,7 @@
         ; project folder has the Cargo.toml file in it
         (while
             (&
-                (= (expand-file-name "Cargo.toml" ~project-folder) "")
+                (= (expand-file-name (file-name-expand-and-default "Cargo.toml" ~project-folder)) "")
                 (!= "/" ~project-folder)
             )
             (setq ~project-folder
