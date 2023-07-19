@@ -76,19 +76,27 @@
                 (save-window-excursion
                     (region-around-match 3)
                     (setq error-file-name (region-to-string))
-                    (if (= "/builddir/" (string-extract error-file-name 0 10))
-                        (setq error-line-number 0)
+                    (setq error-file-name (concat ~project-folder error-file-name))
+                    ; ask once only
+                    (if (! (file-exists error-file-name))
+                        (setq error-file-name
+                            (get-tty-file "Locate rust source file: " error-file-name))
+                    )
+                    ; as the user cannot find the file ignore this error
+                    (if (! (file-exists error-file-name))
                         (progn
-                            (setq error-file-name (concat ~project-folder error-file-name))
-                            (while (! (file-exists error-file-name))
-                                (setq error-file-name (get-tty-file "Locate file: " error-file-name))
-                            )
+                            (setq error-line-number 0)
+                            (setq error-file-name "")
+                        )
+                        (progn
                             (region-around-match 4)
                             (setq error-line-number (region-to-string))
                             (region-around-match 5)
                             (setq error-column-number (region-to-string))
                         )
                     )
+
+
                 )
                 (beginning-of-line)
                 (previous-line)
