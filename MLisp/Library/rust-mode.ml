@@ -77,12 +77,8 @@
                     (region-around-match 3)
                     (setq error-file-name (region-to-string))
                     (setq error-file-name (concat ~project-folder error-file-name))
-                    ; ask once only
-                    (if (! (file-exists error-file-name))
-                        (setq error-file-name
-                            (get-tty-file "Locate rust source file: " error-file-name))
-                    )
-                    ; as the user cannot find the file ignore this error
+                    ; files that cannot be found are parts of rust std or
+                    ; dependency crates
                     (if (! (file-exists error-file-name))
                         (progn
                             (setq error-line-number 0)
