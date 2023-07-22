@@ -386,14 +386,13 @@ void change_msgs( void )
 # if DBG_PROCESS
     if( dbg_flags&DBG_PROCESS )
     {
-        _dbg_msg( "change_msgs() starting\n" );
+        _dbg_msg( FormatString("change_msgs() starting child_changed=%d\n") << child_changed );
     }
 # endif
 
     int dodsp = 0, restore = 0;
     EmacsBufferRef old( bf_cur );
     int OldBufferIsVisible = (theActiveView->currentWindow()->w_buf == bf_cur );
-    int old_cc = child_changed;
     int change_processed = 0;
 
     for( int index=0; index<EmacsProcessCommon::name_table.entries(); index++ )
@@ -490,17 +489,7 @@ void change_msgs( void )
     }
 
     // Update the child_changed counter
-    if( change_processed == 0 )
-    {
-        if( child_changed == old_cc )
-        {
-            child_changed = 0;
-        }
-    }
-    else
-    {
-        child_changed -= change_processed;
-    }
+    child_changed -= change_processed;
 
 # if DBG_PROCESS
     if( dbg_flags&DBG_PROCESS )
@@ -1003,8 +992,8 @@ int set_process_termination_proc( void )
 # if DBG_PROCESS
         if( dbg_flags&DBG_PROCESS )
         {
-            _dbg_msg( FormatString("set_process_termination_proc after exit (%s) \n")
-                     << process->proc_name );
+            _dbg_msg( FormatString("set_process_termination_proc after exit (%s) child_changed=%d\n")
+                     << process->proc_name << child_changed );
         }
 # endif
     }
@@ -1660,7 +1649,7 @@ void ChildSignalHandler::signalHandler()
 #  if DBG_PROCESS
             if( dbg_flags&DBG_PROCESS )
             {
-                _dbg_msg( "p_flags <= EXITED | CHANGED\n" );
+                _dbg_msg( FormatString("p_flags <= EXITED | CHANGED child_changed=%d\n") << child_changed );
             }
 #  endif
         }
@@ -1673,7 +1662,7 @@ void ChildSignalHandler::signalHandler()
 #  if DBG_PROCESS
             if( dbg_flags&DBG_PROCESS )
             {
-                _dbg_msg( "p_flags <= SIGNALED | CHANGED\n" );
+                _dbg_msg( FormatString("p_flags <= SIGNALED | CHANGED child_changed=%d\n") << child_changed );
             }
 #  endif
         }
