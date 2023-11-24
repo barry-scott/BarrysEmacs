@@ -607,6 +607,10 @@ bemacs source: source-is-missing [HTML/ug_top.html]
         if self.dist_tag == 'centos6':
             self.dist_tag = 'el6'
 
+        # rawhide will put fcXX into the RPM names
+        if self.dist_tag == 'rawhide':
+            self.dist_tag = 'fc%s' % (config_opts[ 'releasever' ],)
+
         return config_opts
 
     def makeMockTargetFile( self ):
