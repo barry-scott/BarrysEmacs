@@ -15,7 +15,7 @@ Darwin)
     ;;
 
 Linux)
-    for version in 3.11 3.10 3.9
+    for version in 3.12 3.11 3.10 3.9
     do
         if [ -e /usr/bin/python${version} ]
         then
