@@ -33,7 +33,6 @@ Pre-built kits for Windows and macOS are available from the http://barrys-emacs.
 
 Fedora RPMs are available from COPR repos:
 * Barry's Emacs - https://copr.fedorainfracloud.org/coprs/barryascott/tools/
-* PyQT6 needed for the GUI - https://copr.fedorainfracloud.org/coprs/barryascott/python-qt6/
 
 Details on how to build and install Barry's Emacs for Linux, macOS and Windows from source are covered in
 `INSTALL.html <http://htmlpreview.github.io/?https://github.com/barry-scott/BarrysEmacs/blob/master/INSTALL.html>`_.

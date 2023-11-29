@@ -20,11 +20,15 @@ Introduction
     This is a release version of %(maturity)s%(major)s.%(minor)s of Barry's Emacs.
 
     There are kits available for:
-        Windows 7 and later (tested on: Windows 10 and Windows 11)
+        Windows 10 and later (tested on: Windows 10 and Windows 11)
         Mac OS X 10.13 (tested on: macOS 13.1 Intel and Apple silicon)
-        Linux (tested on: Fedora 36, Fedora 37, Debian bookworm, Ubuntu kinetic)
+        Linux (tested on: Fedora 39, Fedora 38, Debian bookworm, Ubuntu kinetic)
 
 New in %(version)s
+    * bemacs will raise to top on Wayland when sent a command from the bemacs client.
+      The window will be hidden then appear on the top after a short delay.
+
+New in 8.9.6
     * support Debian and Ubuntu
     * Add remote file editing via ssh's sftp.
     * Support HiDPI screens, so called Retinae or 4K displays.
