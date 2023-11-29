@@ -5,7 +5,8 @@ export emacs_user="$HOME/bemacs"
 
 export BEMACS_EMACS_LIBRARY=${BUILDER_TOP_DIR}/Builder/tmp/ROOT/usr/lib/bemacs
 export BEMACS_EMACS_DOC=${BUILDER_TOP_DIR}/Builder/tmp/ROOT/usr/share/bemacs/doc/
-export PYTHONPATH=${BEMACS_EMACS_LIBRARY}:${BUILDER_TOP_DIR}/Editor/exe-pybemacs
+BEMACS_PYTHON_SOURCE=${BUILDER_TOP_DIR}/Editor/PyQt6
+export PYTHONPATH=${BEMACS_PYTHON_SOURCE}:${BUILDER_TOP_DIR}/Editor/exe-pybemacs
 
 RUN_GDB=0
 RUN_VALGRIND=0
@@ -82,5 +83,6 @@ then
     gdb python${PYTHON_VERSION}
 
 else
-    python${PYTHON_VERSION} -u ${BEMACS_EMACS_LIBRARY}/be_main.py "$@"
+    echo "PYTHONPATH ${PYTHONPATH}"
+    python${PYTHON_VERSION} -u ${BEMACS_PYTHON_SOURCE}/be_main.py "$@"
 fi

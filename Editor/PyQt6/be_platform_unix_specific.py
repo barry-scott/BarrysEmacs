@@ -61,3 +61,6 @@ def setupPlatformSpecific_( argv0 ):
 
 # build will add definition of library_dir
 # build will add definition of doc_dir
+
+default_font_name = "DejaVu Sans Mono"
+default_font_point_size = 12
