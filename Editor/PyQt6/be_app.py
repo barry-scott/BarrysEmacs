@@ -170,6 +170,10 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         # init QApplication now that we have the plugin dir setup
         QtWidgets.QApplication.__init__( self, [sys.argv[0]] )
 
+        self.show_window_timer = QtCore.QTimer( self )
+        self.show_window_timer.setSingleShot( True )
+        self.show_window_timer.timeout.connect( self.showMainWindowTimeout )
+
         screen = self.primaryScreen()
         self.log.info( 'primary screen availableGeometry %r' % (screen.availableGeometry(),) )
         self.log.info( 'primary screen availableSize %r' % (screen.availableSize(),) )
@@ -424,12 +428,22 @@ class BemacsApp(QtWidgets.QApplication, be_debug.EmacsDebugMixin):
         command_directory = all_client_args[0]
         command_args = all_client_args[1:]
 
-        self.main_window.raise_()
-        self.main_window.activateWindow()
+        if 'WAYLAND_DISPLAY' in os.environ:
+            self.main_window.hide()
+            self.show_window_timer.start( 150 )
+
+        else:
+            # X11 version
+            self.main_window.raise_()
+            self.main_window.activateWindow()
 
         self._debugApp( 'guiClientCommandHandler: command_directory %r' % (command_directory,) )
         self._debugApp( 'guiClientCommandHandler: command_args %r' % (command_args,) )
         self.editor.guiClientCommand( command_directory, command_args )
+
+    def showMainWindowTimeout( self ):
+        self.main_window.show()
+        self.main_window.activateWindow()
 
     #--------------------------------------------------------------------------------
     def __initEditorThread( self ):
