@@ -62,6 +62,20 @@ NetBSD)
     export BUILDER_CFG_PLATFORM=NetBSD
     ;;
 
+OpenBSD)
+    for version in 3.11 3.10 3.9
+    do
+        python_candidate=/usr/local/bin/python${version}
+        if [ -e $python_candidate ]
+        then
+            export PYTHON_VERSION=${version}
+            export PYTHON=$python_candidate
+            break
+        fi
+    done
+    export BUILDER_CFG_PLATFORM=OpenBSD
+    ;;
+
 *)
     # no need to change
     ;;
