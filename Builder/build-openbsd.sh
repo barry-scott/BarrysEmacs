@@ -25,8 +25,12 @@ do
     fi
 done
 
+target=${1:-cli}
+shift
+
+# no     --system-hunspell \
 ${PYTHON} build_bemacs.py \
-    --system-hunspell \
     --system-sqlite \
+    --no-sftp \
     --default-font-name="Liberation Mono" \
-    "$@"
+    ${target} "$@"

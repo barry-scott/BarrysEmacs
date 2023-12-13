@@ -78,7 +78,7 @@ class Setup:
             self.makefile_name = next(args)
 
         except StopIteration:
-            raise SetupError( 'Usage: setup.py win32|win64|macosx|netbsd|linux> <gui|cli|utils|unit-tests> <makefile> [<options>]' )
+            raise SetupError( 'Usage: Editor/setup.py win32|win64|macosx|netbsd|openbsd|linux> <gui|cli|utils|unit-tests> <makefile> [<options>]' )
 
         try:
             while True:
@@ -289,6 +289,40 @@ class Setup:
                 cli_feature_defines.append( ('SPELL_CHECKER', '1') )
                 cli_feature_defines.append( ('SPELL_DICTIONARY_DIR',
                                              '\\"%s/\\"' % (spell_dictionary_dir,) ) )
+
+        elif self.platform == 'openbsd':
+            if self.opt_utils:
+                self.c_utils = OpenBSDCompilerGCC( self )
+
+            if self.opt_unit_tests:
+                self.c_unit_tests = OpenBSDCompilerGCC( self )
+
+            if self.opt_bemacs_gui:
+                self.c_python_tools = OpenBSDCompilerGCC( self )
+                self.c_pybemacs = OpenBSDCompilerGCC( self )
+
+            if self.opt_bemacs_cli:
+                self.c_clibemacs = OpenBSDCompilerGCC( self )
+
+            pybemacs_feature_defines = [('EXEC_BF', '1')]
+            cli_feature_defines = [('EXEC_BF', '1'), ('SUBPROCESSES', '1')]
+            utils_feature_defines = []
+
+            if self.opt_sqlite:
+                pybemacs_feature_defines.append( ('DB_SQLITE', '1') )
+                cli_feature_defines.append( ('DB_SQLITE', '1') )
+                utils_feature_defines.append( ('DB_SQLITE', '1') )
+
+            if self.opt_hunspell:
+                spell_dictionary_dir = self.findSpellDictionaryDir()
+                log.info( 'Using SPELL_DICTIONARY_DIR %s' % (spell_dictionary_dir,) )
+
+                pybemacs_feature_defines.append( ('SPELL_CHECKER', '1') )
+                pybemacs_feature_defines.append( ('SPELL_DICTIONARY_DIR',
+                                                  '\\"%s/\\"' % (spell_dictionary_dir,) ) )
+                cli_feature_defines.append( ('SPELL_CHECKER', '1') )
+                cli_feature_defines.append( ('SPELL_DICTIONARY_DIR',
+                                             '\\"%s/\\"' % (spell_dictionary_dir,) ) )
         else:
             raise SetupError( 'Unknown platform %r' % (self.platform,) )
 
@@ -330,7 +364,7 @@ class Setup:
             if self.unicode_header is None:
                 self.unicode_header = UnicodeDataHeader( self.c_utils )
 
-            if self.platform in ['linux', 'macosx', 'netbsd']:
+            if self.platform in ('linux', 'macosx', 'netbsd', 'openbsd'):
                 self.db_files.append( Source( self.c_utils, 'Source/Unix/unix_file_local.cpp' ) )
                 if self.opt_sftp:
                     self.db_files.append( Source( self.c_utils, 'Source/Unix/unix_file_remote.cpp' ) )
@@ -357,10 +391,11 @@ class Setup:
                 Source( self.c_pybemacs, 'Source/pybemacs/python_thread_control.cpp' ),
                 ] + self.pycxx_obj_file
 
-            if self.platform in ('linux', 'macosx', 'netbsd'):
+            if self.platform in ('linux', 'macosx', 'netbsd', 'openbsd'):
                 self.pybemacs_specific_obj_files.extend( [
                     Source( self.c_pybemacs, 'Source/Unix/unix_rtl_pybemacs.cpp' ),
                     ] )
+
             elif self.platform in ('win32', 'win64'):
                 self.pybemacs_specific_obj_files.extend( [
                     Source( self.c_pybemacs, 'Source/Windows/win_rtl_pybemacs.cpp' ),
@@ -486,7 +521,8 @@ class Setup:
                     ] )
                 if self.opt_sftp:
                      obj_files.append( Source( compiler, 'Source/Unix/unix_file_remote.cpp' ) )
-            if self.platform in ('netbsd',):
+
+            if self.platform in ('netbsd', 'openbsd'):
                 obj_files.extend( [
                     # similar enough for the same set of source files
                     Source( compiler, 'Source/Unix/unix_file_local.cpp' ),
@@ -496,6 +532,7 @@ class Setup:
                     ] )
                 if self.opt_sftp:
                      obj_files.append( Source( compiler, 'Source/Unix/unix_file_remote.cpp' ) )
+
             if self.platform in ('win32', 'win64'):
                 obj_files.extend( [
                     Source( compiler, 'Source/Windows/win_file.cpp' ),
@@ -892,6 +929,10 @@ class CompilerGCC(Compiler):
             else:
                 self._addVar( 'CCC',        'g++ -arch x86_64 -arch arm64' )
                 self._addVar( 'CC',         'gcc -arch x86_64 -arch arm64' )
+
+        elif self.setup.platform == 'openbsd':
+            self._addVar( 'CCC',        'eg++' )
+            self._addVar( 'CC',         'egcc' )
 
         else:
             self._addVar( 'CCC',        'g++' )
@@ -1484,6 +1525,174 @@ class NetBSDCompilerGCC(CompilerGCC):
                                         '%(CCC_WARNINGS)s -Wall -fPIC '
                                         '-IInclude/Common -IInclude/Unix '
                                         '"-DOS_NAME=\\"NetBSD\\"" '
+                                        '-DUSE_UTIL_H '
+                                        '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
+                                        '-D%(LOG.DEBUG)s '
+                                        '%(FEATURE_DEFINES)s '
+                                        '%(SQLITE_FLAGS)s '
+                                        '%(HUNSPELL_CFLAGS)s '
+                                        '-DBEMACS_DOC_DIR=\\"%(BEMACS_DOC_DIR)s\\" '
+                                        '-DBEMACS_LIB_DIR=\\"%(BEMACS_LIB_DIR)s\\"' )
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
+                                        '-fexceptions -frtti ' )
+
+        link_libs = []
+
+        if self.setup.opt_system_sqlite:
+            p = subprocess.run( ['pkg-config', 'sqlite3', '--libs'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
+            link_libs.append( p.stdout.strip() )
+
+        if self.setup.opt_hunspell:
+            p = subprocess.run( ['pkg-config', 'hunspell', '--libs'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
+            link_libs.append( p.stdout.strip() )
+
+        link_libs += ['-lutil', '-pthread']
+
+        self._addVar( 'LINK_LIBS',      ' '.join( link_libs ) )
+        self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s ' )
+
+    def setupPythonTools( self ):
+        log.info( 'setupPythonTools' )
+        self._addVar( 'PYTHON',         sys.executable )
+
+        self._addVar( 'EDIT_OBJ',       'obj-python-tools' )
+        self._addVar( 'EDIT_EXE',       'exe-python-tools' )
+
+        self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)s' % (sys.prefix,) )
+        self._addVar( 'LINK_LIBS', '-L%s/lib -lpython%d.%d' % (sys.prefix, sys.version_info.major, sys.version_info.minor) )
+
+        self._addVar( 'CCFLAGS',        '-g '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
+                                        '-DPYBEMACS=1 '
+                                        '-DEMACS_PYTHON_EXTENSION=1 '
+                                        '-IInclude/Common -IInclude/Unix '
+                                        '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
+                                        '-D%(LOG.DEBUG)s' )
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
+                                        '-fexceptions -frtti ' )
+
+        self._addVar( 'LDEXE',          '%(CCC)s -g' )
+
+class OpenBSDCompilerGCC(CompilerGCC):
+    def __init__( self, setup ):
+        CompilerGCC.__init__( self, setup )
+        if setup.opt_sqlite and not setup.opt_system_sqlite:
+            self._addVar( 'SQLITESRC',      '%(BUILDER_TOP_DIR)s/Imports/sqlite' )
+            self._addVar( 'SQLITE_FLAGS',   '-I%(BUILDER_TOP_DIR)s/Imports/sqlite' )
+
+        elif setup.opt_system_sqlite:
+            p = subprocess.run( ['pkg-config', 'sqlite3', '--cflags'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
+            self._addVar( 'SQLITE_FLAGS', p.stdout.strip() )
+
+        else:
+            self._addVar( 'SQLITE_FLAGS',   '' )
+
+        if self.setup.opt_hunspell:
+            p = subprocess.run( ['pkg-config', 'hunspell', '--cflags'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
+            self._addVar( 'HUNSPELL_CFLAGS', p.stdout.strip() )
+
+        else:
+            self._addVar( 'HUNSPELL_CFLAGS', '' )
+
+    def setupUtilities( self, feature_defines ):
+        log.info( 'setupUtilities' )
+        self.addFeatureDefines( feature_defines )
+        self._addVar( 'PYTHON',         sys.executable )
+
+        self._addVar( 'EDIT_OBJ',       'obj-utils' )
+        self._addVar( 'EDIT_EXE',       'exe-utils' )
+        self._addVar( 'CCFLAGS',        '-g %(CCC_OPT)s '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
+                                        '-IInclude/Common -IInclude/Unix '
+                                        '"-DOS_NAME=\\"OpenBSD\\"" '
+                                        '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
+                                        '%(FEATURE_DEFINES)s '
+                                        '%(SQLITE_FLAGS)s '
+                                        '-D%(LOG.DEBUG)s' )
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
+                                        '-fexceptions -frtti ' )
+        self._addVar( 'LDEXE',          '%(CCC)s -g %(CCC_OPT)s' )
+        self._addVar( 'OBJ_SUFFIX',     '.o' )
+
+    def setupUnittests( self ):
+        log.info( 'setupUnittests' )
+        self._addVar( 'PYTHON',         sys.executable )
+
+        self._addVar( 'EDIT_OBJ',       'obj-unit-tests' )
+        self._addVar( 'EDIT_EXE',       'exe-unit-tests' )
+        self._addVar( 'CCFLAGS',        '-g -O0 '
+                                        '-DUNIT_TEST=1 '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
+                                        '-IInclude/Common -IInclude/Unix '
+                                        '-I/usr/pkg/include '
+                                        '"-DOS_NAME=\\"OpenBSD\\"" '
+                                        '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"console\\"" '
+                                        '-D%(LOG.DEBUG)s' )
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
+                                        '-fexceptions -frtti ' )
+        self._addVar( 'LDEXE',          '%(CCC)s -g' )
+
+    def setupPythonEmacs( self, feature_defines=None ):
+        log.info( 'setupPythonEmacs' )
+        self.addFeatureDefines( feature_defines )
+
+        self._addVar( 'PYTHON',         sys.executable )
+
+        self._addVar( 'EDIT_OBJ',       'obj-pybemacs' )
+        self._addVar( 'EDIT_EXE',       'exe-pybemacs' )
+
+        self._addVar( 'PYTHON_INCLUDE', '%s/include/python%%(PYTHON_VERSION)s' % (sys.prefix,) )
+
+        self._addVar( 'CCFLAGS',        '-g '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
+                                        '-DPYBEMACS=1 '
+                                        '-DEMACS_PYTHON_EXTENSION=1 '
+                                        '-IInclude/Common -IInclude/Unix '
+                                        '-I%(PYCXX)s -I%(PYCXXSRC)s -I%(PYTHON_INCLUDE)s '
+                                        '-I/usr/pkg/include '
+                                        '"-DOS_NAME=\\"OpenBSD\\"" '
+                                        '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"python\\"" '
+                                        '%(FEATURE_DEFINES)s '
+                                        '-D%(LOG.DEBUG)s' )
+        self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s -std=c++11 '
+                                        '-fexceptions -frtti ' )
+
+        if self.setup.opt_system_sqlite:
+            self._addVar( 'LINK_LIBS',  '-L/usr/pkg/lib -lsqlite3')
+
+        self._addVar( 'LDEXE',          '%(CCC)s -g ' )
+        self._addVar( 'LDSHARED',       '%(CCC)s -shared -g ' )
+
+    def setupCliEmacs( self, feature_defines=None ):
+        log.info( 'setupCliEmacs' )
+        self.addFeatureDefines( feature_defines )
+
+        self._addVar( 'PYTHON',         sys.executable )
+
+        self._addVar( 'EDIT_OBJ',       'obj-cli-bemacs' )
+        self._addVar( 'EDIT_EXE',       'exe-cli-bemacs' )
+
+        self._addVar( 'BEMACS_LIB_DIR', self.setup.opt_lib_dir )
+        self._addVar( 'BEMACS_DOC_DIR', self.setup.opt_doc_dir )
+
+        if self.setup.opt_hunspell:
+            p = subprocess.run( ['pkg-config', 'hunspell', '--cflags'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
+            self._addVar( 'HUNSPELL_CFLAGS', p.stdout.strip() )
+
+        else:
+            self._addVar( 'HUNSPELL_CFLAGS', '' )
+
+        if self.setup.opt_coverage:
+            self._addVar( 'CCC_OPT',    '-O0 '
+                                        '-ftest-coverage '
+                                        '-fprofile-arcs '
+                                        '-fprofile-abs-path '
+                                        '-fprofile-dir=%s ' % (os.getcwd(),) )
+
+        self._addVar( 'CCFLAGS',        '-g %(CCC_OPT)s '
+                                        '%(CCC_WARNINGS)s -Wall -fPIC '
+                                        '-IInclude/Common -IInclude/Unix '
+                                        '"-DOS_NAME=\\"OpenBSD\\"" '
                                         '-DUSE_UTIL_H '
                                         '"-DCPU_TYPE=\\"i386\\"" "-DUI_TYPE=\\"ANSI\\"" '
                                         '-D%(LOG.DEBUG)s '

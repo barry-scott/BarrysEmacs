@@ -73,7 +73,7 @@ class BuildBEmacs(object):
             log.info( 'Build complete' )
 
         except BuildError as e:
-            log.error( str(e) )
+            log.error( 'build_bemacs.py: %s' % (e,) )
             return 1
 
         return 0
@@ -182,7 +182,7 @@ class BuildBEmacs(object):
             # assume its this python that we need to use
             os.environ[ 'PYTHON' ] = sys.executable
 
-        if self.platform in ('Linux', 'NetBSD'):
+        if self.platform in ('Linux', 'NetBSD', 'OpenBSD'):
             if 'DESTDIR' in os.environ:
                 self.BEMACS_ROOT_DIR = os.environ[ 'DESTDIR' ]
 
@@ -197,7 +197,7 @@ class BuildBEmacs(object):
             self.BUILD_BEMACS_LIB_DIR = '%s%s' % (self.BEMACS_ROOT_DIR, self.INSTALL_BEMACS_LIB_DIR)
             self.BUILD_BEMACS_BIN_DIR = '%s%s' % (self.BEMACS_ROOT_DIR, self.INSTALL_BEMACS_BIN_DIR)
 
-            if self.platform == 'NetBSD':
+            if self.platform in ('NetBSD', 'OpenBSD'):
                 self.cmd_make = 'gmake'
                 self.cmd_make_args = ['-j', '%d' % (build_utils.numCpus(),)]
 
@@ -517,7 +517,7 @@ class BuildBEmacs(object):
             shutil.copyfile( aff, aff_dst )
 
     def setupEditorMakefile( self ):
-        if self.platform in ('Linux', 'MacOSX', 'NetBSD'):
+        if self.platform in ('Linux', 'MacOSX', 'NetBSD', 'OpenBSD'):
             setup_targets = set( [self.target, 'cli', 'unit-tests'] )
 
         elif self.platform in ('win64',):
