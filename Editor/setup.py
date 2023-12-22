@@ -1,12 +1,12 @@
 #
-#   Copyright (c) 2010-2020 Barry A. Scott
+#   Copyright (c) 2010-2023 Barry A. Scott
 #
 import os
 import sys
 import subprocess
 import glob
 
-pycxx_version = (7,1,7)
+pycxx_version = (7,1,9)
 pycxx_version_str = '%d.%d.%d' % pycxx_version
 
 sys.path.insert( 0, '../Builder' )
