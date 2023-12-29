@@ -14,6 +14,16 @@ jammy)
     ;;
 esac
 
+case "$CMD" in
+--install-deps)
+    sudo apt install \
+        devscripts \
+        libhunspell-dev python3-cxx-dev libsqlite3-dev libssh-dev unicode-data \
+        hunspell hunspell-uk python3-pyqt6 \
+        ;
+    ;;
+
+*)
 python3 ./package_bemacs.py ${CMD} \
     --debian-repos=${TARGET} \
     --pyqt-version=${PYQT_VERSION} \
@@ -21,4 +31,5 @@ python3 ./package_bemacs.py ${CMD} \
     --default-font-package=fonts-noto-mono \
     --colour \
         |& tee build-for-debian.log
-
+    ;;
+esac
