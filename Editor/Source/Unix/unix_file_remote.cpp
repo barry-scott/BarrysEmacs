@@ -200,7 +200,7 @@ public:
     , m_impl( NULL )
     { }
 
-    EmacsSshSession( EmacsSshSession &other )
+    EmacsSshSession( const EmacsSshSession &other )
     : EmacsObject()
     , m_impl( other.m_impl )
     {
