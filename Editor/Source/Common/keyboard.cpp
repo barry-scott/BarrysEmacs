@@ -1283,6 +1283,7 @@ process_f_keys:
                     ;
                 }
                 else
+                // DEC workstaion mouse?
                 if( cs_cvt_mouse
                 && ch == 'w'
                 && &hold[0] != hold_put_ptr
