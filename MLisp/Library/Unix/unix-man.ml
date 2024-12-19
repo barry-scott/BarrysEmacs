@@ -55,6 +55,8 @@
     (error-occurred
         (replace-string "\e[24m\e[1m" ""))
     (error-occurred
+        (ere-replace-string "\e]8;;[-#a-zA-Z0-9]*\e\\\\" ""))
+    (error-occurred
         (replace-string "\e[4m\e[22m" "\e[22m\e[4m"))
     (error-occurred
         (ere-replace-string "( +)\e\\[22m" "\e[22m\\1"))
