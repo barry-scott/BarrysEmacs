@@ -166,6 +166,7 @@
             "param"
             "plaintext"
             "pre"
+            "progress"
             "s"
             "samp"
             "script"
