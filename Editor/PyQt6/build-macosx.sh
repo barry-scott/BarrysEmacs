@@ -61,8 +61,7 @@ then
     ${PYTHON} "${SRC_DIR}/create_bemacs_client.py" "${SRC_DIR}" "Resources/bin/bemacs"
 
     # remove translations stuff
-    rm MacOS/PyQt6/Qt6/translations
-    rm -r Resources/PyQt6/Qt6/translations
+    rm -r Frameworks/PyQt6/Qt6/translations
 
     # 5. remove .sip files
     find Resources -name '*.sip' -delete
