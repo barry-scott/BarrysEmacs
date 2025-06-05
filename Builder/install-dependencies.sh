@@ -18,7 +18,7 @@ function setup_system_info() {
     fi
     if [[ "$SYSTEM" = "Darwin" && -e /usr/bin/sw_vers ]]
     then
-        if [[ "$( /usr/bin/sw_vers -productName )" = "Mac OS X" ]]
+        if [[ "$( /usr/bin/sw_vers -productName )" = "macOS" ]]
         then
             SYSTEM="macOS"
         fi
@@ -31,10 +31,6 @@ colour-print "<>info Info:<> Import build dependencies for ${SYSTEM}"
 
 case "$SYSTEM" in
 macOS)
-    colour-print "<>info Info:<> Import python packages from PyPI"
-    ${PYTHON} -m pip install --user PyQt6
-    ${PYTHON} -m pip install --user xml-preferences
-
     if [ "$1" = "" -o ! -d "$1" ]
     then
         colour-print "<>error Error:<> Expect \$1 to be a folder of dependencies"
