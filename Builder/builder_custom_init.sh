@@ -2,20 +2,16 @@
 
 export BUILDER_CFG_PLATFORM=$(uname -s)
 
-# ether set to tag:<ver> or trunk:<ver>
-export PYCXX_VER=tag7.1.2
-export PYCXX_VER=trunk:7.1.2
-
 case ${BUILDER_CFG_PLATFORM} in
 
 Darwin)
-    export PYTHON_VERSION=3.11
+    export PYTHON_VERSION=3.12
     export BUILDER_CFG_PLATFORM=MacOSX
     export PYTHON=python${PYTHON_VERSION}
     ;;
 
 Linux)
-    for version in 3.11 3.10 3.9
+    for version in 3.13 3.12
     do
         if [ -e /usr/bin/python${version} ]
         then
