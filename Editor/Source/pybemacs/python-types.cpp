@@ -26,14 +26,12 @@ int main( int argc, char **argv )
     describeType( int );
     describeType( unsigned int );
     describeType( wchar_t );
-    describeType( Py_UNICODE );
+    describeType( char32_t );
     describeType( Py_UCS1 );
     describeType( Py_UCS2 );
     describeType( Py_UCS4 );
     describeType( EmacsChar_t );
     describeType( DisplayBody_t );
-    describeType( PY_UNICODE_TYPE );
-    describeType( Py_UNICODE );
     return 0;
 }
 
