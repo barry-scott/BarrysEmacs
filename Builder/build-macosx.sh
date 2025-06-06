@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+INSTALL=no
+
 if ! which colour-print >/dev/null
 then
     function colour-print {
@@ -36,13 +38,19 @@ then
     exit 1
 fi
 
+if [[ "$1" = "--install" ]]
+then
+    INSTALL=yes
+    shift
+fi
+
 # make sure that libssh is installed
 brew install libssh
 
 ./build-venv.sh 2>&1 | ${PYTHON} -u build_tee.py build.log
 
 export PYTHON=${PWD}/venv.tmp/bin/python
-${PYTHON} ./build_bemacs.py gui --colour | ${PYTHON} -u build_tee.py -a build.log
+${PYTHON} ./build_bemacs.py gui --colour "$@"| ${PYTHON} -u build_tee.py -a build.log
 
 if false
 then
@@ -53,10 +61,10 @@ then
      -r -domain local -domain system -domain user
 fi
 
-DMG="$( ls -1 tmp/dmg/*.dmg )"
-colour-print "<>info Info:<> DMG ${DMG}"
-if [ "$1" = "--install" ]
+if [ "$INSTALL" = "yes" ]
 then
+    DMG="$( ls -1 tmp/dmg/*.dmg )"
+    colour-print "<>info Info:<> DMG ${DMG}"
     # macOS knows about these extra copies of the emacs app
     # and will start all of them at the same time so delete
     rm -rf tmp/pkg
