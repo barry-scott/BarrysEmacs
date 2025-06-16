@@ -38,11 +38,20 @@ then
     exit 1
 fi
 
-if [[ "$1" = "--install" ]]
-then
+case "$1" in
+"--install")
     INSTALL=yes
     shift
-fi
+    ;;
+
+"--clean")
+    colour-print "<>info Info:<> Cleanup tmp files"
+    rm -rf tmp
+    rm -rf venv.tmp
+    exit
+    ;;
+esac
+
 
 # make sure that libssh is installed
 brew install libssh
