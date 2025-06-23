@@ -45,7 +45,7 @@ Linux)
     ;;
 
 NetBSD)
-    for version in 3.11 3.10 3.9
+    for version in 3.12 3.11 3.10 3.9
     do
         python_candidate=/usr/pkg/bin/python${version}
         if [ -e $python_candiddate ]
@@ -65,7 +65,7 @@ esac
 
 echo Info: WorkingDir: ${BUILDER_TOP_DIR}
 echo Info: Config Platform: ${BUILDER_CFG_PLATFORM}
-if [[ "${PYTHON_VERSION}" = "" ]]
+if [ -z "${PYTHON_VERSION}" ]
 then
     echo "ERROR: cannot find a suitable version of python."
     PYTHON='/bin/echo ERROR'

@@ -865,7 +865,13 @@ class CompilerGCC(Compiler):
         Compiler.__init__( self, setup )
 
         if setup.opt_system_ucd:
-            for ucd_dir in ('/usr/share/unicode/ucd', '/usr/share/unicode'):
+            if setup.platform == 'netbsd':
+                ucd_dir_candidates = ('/usr/pkg/share/unicode/ucd',)
+
+            else:
+                ucd_dir_candidates = ('/usr/share/unicode/ucd', '/usr/share/unicode')
+
+            for ucd_dir in ucd_dir_candidates:
                 if os.path.exists( os.path.join( ucd_dir, 'UnicodeData.txt' ) ):
                     self._addVar( 'UCDDIR',         ucd_dir )
                     break
@@ -1473,6 +1479,14 @@ class NetBSDCompilerGCC(CompilerGCC):
         else:
             self._addVar( 'HUNSPELL_CFLAGS', '' )
 
+        if self.setup.opt_sftp:
+            p = subprocess.run( ['pkg-config', 'libssh', '--cflags'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
+            self._addVar( 'SFTP_CFLAGS', p.stdout.strip() )
+
+        else:
+            self._addVar( 'SFTP_CFLAGS', '' )
+
+
         if self.setup.opt_coverage:
             self._addVar( 'CCC_OPT',    '-O0 '
                                         '-ftest-coverage '
@@ -1490,6 +1504,7 @@ class NetBSDCompilerGCC(CompilerGCC):
                                         '%(FEATURE_DEFINES)s '
                                         '%(SQLITE_FLAGS)s '
                                         '%(HUNSPELL_CFLAGS)s '
+                                        '%(SFTP_CFLAGS)s '
                                         '-DBEMACS_DOC_DIR=\\"%(BEMACS_DOC_DIR)s\\" '
                                         '-DBEMACS_LIB_DIR=\\"%(BEMACS_LIB_DIR)s\\"' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
@@ -1503,6 +1518,10 @@ class NetBSDCompilerGCC(CompilerGCC):
 
         if self.setup.opt_hunspell:
             p = subprocess.run( ['pkg-config', 'hunspell', '--libs'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
+            link_libs.append( p.stdout.strip() )
+
+        if self.setup.opt_sftp:
+            p = subprocess.run( ['pkg-config', 'libssh', '--libs'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
             link_libs.append( p.stdout.strip() )
 
         link_libs += ['-lutil', '-pthread']
