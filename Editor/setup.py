@@ -289,6 +289,11 @@ class Setup:
                 cli_feature_defines.append( ('SPELL_CHECKER', '1') )
                 cli_feature_defines.append( ('SPELL_DICTIONARY_DIR',
                                              '\\"%s/\\"' % (spell_dictionary_dir,) ) )
+
+            if self.opt_sftp:
+                pybemacs_feature_defines.append( ('SFTP', '1') )
+                cli_feature_defines.append( ('SFTP', '1') )
+
         else:
             raise SetupError( 'Unknown platform %r' % (self.platform,) )
 
