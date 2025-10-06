@@ -29,6 +29,7 @@ def Bool( text ):
     else:
         raise ValueError( 'Bool expects the string true or false' )
 
+
 class RGB:
     def __init__( self, value=None ):
         if value is None:
@@ -61,6 +62,7 @@ class RGB:
 
     def __repr__( self ):
         return '<RGB R:%d G:%d B:%d>' % self.value
+
 
 class RGBA:
     def __init__( self, value=None ):
@@ -100,11 +102,16 @@ class Preferences(PreferencesNode):
     def __init__( self ):
         super().__init__()
         self.window = None
+        self.keybinding = None
 
     def finaliseNode( self ):
         if self.window is None:
             self.window = Window()
             self.window.finaliseNode()
+
+        if self.keybinding is None:
+            self.keybinding = KeyBinding()
+            self.keybinding.finaliseNode()
 
 # ------------------------------------------------------------
 class Session(PreferencesNode):
@@ -171,6 +178,7 @@ class Window(PreferencesNode):
         else:
             raise RuntimeError( 'unknown name %r' % (name,) )
 
+# ------------------------------------------------------------
 class Font(PreferencesNode):
     xml_attribute_info = (('face', str), ('point_size', int))
 
@@ -201,7 +209,7 @@ class Font(PreferencesNode):
             self.face = 'Liberation Mono'
             self.point_size = 11
 
-
+# ------------------------------------------------------------
 class CursorStyle(PreferencesNode):
     xml_attribute_info = (('blink', Bool), ('interval', int), ('shape', str))
 
@@ -214,6 +222,7 @@ class CursorStyle(PreferencesNode):
     def setAttr( self, name, value ):
         super().setAttr( name, value )
 
+# ------------------------------------------------------------
 class Colour(PreferencesNode):
     xml_attribute_info = (('fg', RGB), ('bg', RGB))
 
@@ -226,6 +235,7 @@ class Colour(PreferencesNode):
     def __lt__( self, other ):
         return self.name < other.name
 
+# ------------------------------------------------------------
 class CursorColour(PreferencesNode):
     xml_attribute_info = (('fg', RGBA),)
 
@@ -243,6 +253,7 @@ class CursorColour(PreferencesNode):
             self.fg = RGBA()
             self.fg.setTuple( be_emacs_panel.all_themes[be_emacs_panel.theme_name_default].cursor_fg )
 
+# ------------------------------------------------------------
 class Theme(PreferencesNode):
     xml_attribute_info = (('name', str),)
 
@@ -260,6 +271,33 @@ class Theme(PreferencesNode):
         if self.name is None:
             self.name = be_emacs_panel.theme_name_default
 
+# ------------------------------------------------------------
+class KeyBinding(PreferencesNode):
+    xml_attribute_info = ()
+
+    def __init__( self ):
+        super().__init__()
+        self.interrupt_key = None
+
+    def getInterruptKey( self ):
+        return self.interrupt_key
+
+    def finaliseNode( self ):
+        if self.interrupt_key is None:
+            self.interrupt_key = InterruptKey()
+
+# ------------------------------------------------------------
+class InterruptKey(PreferencesNode):
+    xml_attribute_info = (('name', str),)
+
+    def __init__( self, name='ctrl-g', ):
+        super().__init__()
+        self.name = name
+
+    def setAttr( self, name, value ):
+        super().setAttr( name, value )
+
+# ------------------------------------------------------------
 bemacs_preferences_scheme = (Scheme(
         (SchemeNode( Preferences, 'preferences',  )
 
@@ -270,6 +308,9 @@ bemacs_preferences_scheme = (Scheme(
             << SchemeNode( Colour, 'colour', key_attribute='name' )
             << SchemeNode( CursorColour, 'cursor' )
             )
+        <<  (SchemeNode( KeyBinding, 'keybinding', () )
+            << SchemeNode( InterruptKey, 'interrupt_key' )
+            )
         )
     ) )
 
@@ -277,6 +318,7 @@ bemacs_session_scheme = (Scheme(
         SchemeNode( Session, 'session', ('geometry',) )
     ) )
 
+# ------------------------------------------------------------
 class BemacsPreferenceManager:
     def __init__( self, app, prefs_filename, session_filename ):
         self.xml_prefs = XmlPreferences( bemacs_preferences_scheme )
