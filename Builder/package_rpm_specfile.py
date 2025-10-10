@@ -68,7 +68,7 @@ def createRpmSpecFile( opt, spec_filename ):
 
     if opt.opt_gui:
         # options for gui
-        all_requires_gui.add( 'mozilla-fira-mono-fonts' )
+        all_requires_gui.add( 'adobe-source-code-pro-fonts' )
         if opt.opt_mock_target.startswith( 'epel-7-' ):
             # centos 7 uses python36 not python3
             python = '/usr/bin/python3'

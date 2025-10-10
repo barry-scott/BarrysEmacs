@@ -201,7 +201,7 @@ class Font(PreferencesNode):
 
             else:
                 # assume fedora
-                self.face = 'Fira Mono'
+                self.face = 'Source Code Pro'
                 self.point_size = 12
 
         else:
