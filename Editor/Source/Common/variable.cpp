@@ -1,5 +1,5 @@
 //
-//    Copyright (c) 1995-2002
+//    Copyright (c) 1995-2025
 //        Barry A. Scott
 //
 #include <emacs.h>
@@ -10,6 +10,7 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 SystemExpressionRepresentationIntBoolean force_redisplay;
 
+SystemExpressionRepresentationInt preferred_interrupt_key( 7 );
 SystemExpressionRepresentationInt ui_open_file_readonly;
 SystemExpressionRepresentationString ui_open_file_name;
 SystemExpressionRepresentationString ui_save_as_file_name;
@@ -189,6 +190,7 @@ void restore_var(void)
     VarRep("operating-system-version", &operating_system_version )
     VarRep("CPU-type", &CPU_type )
     VarRep("pop-up-windows", &pop_up_windows)
+    VarRep("preferred-interrupt-key", &preferred_interrupt_key)
     Var0("prefix-argument", PrefixArgument)
     Var0("prefix-argument-provided", PrefixArgumentProvided)
     Var0("prefix-string",  PrefixString)

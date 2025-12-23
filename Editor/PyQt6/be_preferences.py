@@ -1,6 +1,6 @@
 '''
  ====================================================================
- Copyright (c) 2003-2019 Barry A Scott.  All rights reserved.
+ Copyright (c) 2003-2025 Barry A Scott.  All rights reserved.
 
  This software is licensed as described in the file LICENSE.txt,
  which you should have received as part of this distribution.
@@ -276,17 +276,17 @@ class KeyBinding(PreferencesNode):
 
     def __init__( self ):
         super().__init__()
-        self.interrupt_key = None
+        self.preferred_interrupt_key = None
 
-    def getInterruptKey( self ):
-        return self.interrupt_key
+    def getPreferredInterruptKey( self ):
+        return self.preferred_interrupt_key
 
     def finaliseNode( self ):
-        if self.interrupt_key is None:
-            self.interrupt_key = InterruptKey()
+        if self.preferred_interrupt_key is None:
+            self.preferred_interrupt_key = PreferredInterruptKey()
 
 # ------------------------------------------------------------
-class InterruptKey(PreferencesNode):
+class PreferredInterruptKey(PreferencesNode):
     xml_attribute_info = (('name', str),)
 
     def __init__( self, name='ctrl-g', ):
@@ -308,7 +308,7 @@ bemacs_preferences_scheme = (Scheme(
             << SchemeNode( CursorColour, 'cursor' )
             )
         <<  (SchemeNode( KeyBinding, 'keybinding', () )
-            << SchemeNode( InterruptKey, 'interrupt_key' )
+            << SchemeNode( InterruptKey, 'preferred_interrupt_key' )
             )
         )
     ) )

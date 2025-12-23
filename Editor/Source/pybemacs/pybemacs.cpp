@@ -96,6 +96,12 @@ public:
 
         Py::String py_emacs_doc( args[2] );
         env_emacs_doc = py_emacs_doc.as_std_string( "utf-8" );
+
+        interrupt_key = 7;   // assume ctrl-g
+
+        Py::String py_interrupt_key( args[3] );
+        if( py_interrupt_key == "ctrl-y" )
+            interrupt_key = 25  // ctrl-y
     }
 
     virtual ~BemacsEditor()
