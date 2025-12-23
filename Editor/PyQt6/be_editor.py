@@ -37,7 +37,7 @@ class BEmacs(_bemacs.BemacsEditor, be_debug.EmacsDebugMixin):
                 str(be_platform_specific.getUserDir()),
                 str(be_platform_specific.getLibraryDir()),
                 str(be_platform_specific.getDocDir()),
-                app.prefs_mgr.getPrefs().getPreferredInterruptKey() )
+                app.prefs_mgr.getPrefs().keybinding.getPreferredInterruptKey().keyname )
 
         be_debug.EmacsDebugMixin.__init__( self )
 

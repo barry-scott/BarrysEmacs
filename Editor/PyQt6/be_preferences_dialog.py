@@ -514,17 +514,17 @@ class KeyBindingTab(QtWidgets.QWidget):
         self.initControls()
 
     def initControls( self ):
-        p = self.app.getPrefs().keybinding.interrupt_key
+        p = self.app.getPrefs().keybinding.preferred_interrupt_key
 
-        self.intkey_label = QtWidgets.QLabel( T_('Interrupt Key') )
+        self.intkey_label = QtWidgets.QLabel( T_('Preferred Interrupt Key') )
         self.intkey_group = QtWidgets.QButtonGroup()
-        self.intkey_ctrl_g = QtWidgets.QRadioButton( T_('Ctrl-G is the intertupt, Ctrl-Y is the yank key') )
+        self.intkey_ctrl_g = QtWidgets.QRadioButton( T_('Ctrl-G is the preferred-interrupt-key, Ctrl-Y is the yank key') )
         self.intkey_group.addButton( self.intkey_ctrl_g )
-        self.intkey_ctrl_g.setChecked( p.name == 'ctrl-g' )
+        self.intkey_ctrl_g.setChecked( p.keyname == 'ctrl-g' )
 
-        self.intkey_ctrl_y = QtWidgets.QRadioButton( T_('Ctrl-Y is the interrupt_key, Ctrl-G is the yank (get) key') )
+        self.intkey_ctrl_y = QtWidgets.QRadioButton( T_('Ctrl-Y is the preferred-interrupt-key, Ctrl-G is the yank (get) key') )
         self.intkey_group.addButton( self.intkey_ctrl_y )
-        self.intkey_ctrl_y.setChecked( p.name == 'ctrl-y' )
+        self.intkey_ctrl_y.setChecked( p.keyname == 'ctrl-y' )
 
         self.fill_lable = QtWidgets.QLabel( '' )
 
@@ -544,13 +544,13 @@ class KeyBindingTab(QtWidgets.QWidget):
         self.setLayout( self.grid_sizer )
 
     def savePreferences( self ):
-        p = self.app.getPrefs().keybinding.interrupt_key
+        p = self.app.getPrefs().keybinding.preferred_interrupt_key
 
         if self.intkey_ctrl_g.isChecked():
-            p.name = 'ctrl-g'
+            p.keyname = 'ctrl-g'
 
         elif self.intkey_ctrl_y.isChecked():
-            p.name = 'ctrl-y'
+            p.keyname = 'ctrl-y'
 
     def validate( self ):
         return True

@@ -287,11 +287,11 @@ class KeyBinding(PreferencesNode):
 
 # ------------------------------------------------------------
 class PreferredInterruptKey(PreferencesNode):
-    xml_attribute_info = (('name', str),)
+    xml_attribute_info = (('keyname', str),)
 
-    def __init__( self, name='ctrl-g', ):
+    def __init__( self, keyname='ctrl-g', ):
         super().__init__()
-        self.name = name
+        self.keyname = keyname
 
     def setAttr( self, name, value ):
         super().setAttr( name, value )
@@ -308,7 +308,7 @@ bemacs_preferences_scheme = (Scheme(
             << SchemeNode( CursorColour, 'cursor' )
             )
         <<  (SchemeNode( KeyBinding, 'keybinding', () )
-            << SchemeNode( InterruptKey, 'preferred_interrupt_key' )
+            << SchemeNode( PreferredInterruptKey, 'preferred_interrupt_key' )
             )
         )
     ) )
