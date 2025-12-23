@@ -10,7 +10,8 @@ static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FIL
 
 SystemExpressionRepresentationIntBoolean force_redisplay;
 
-SystemExpressionRepresentationInt preferred_interrupt_key( 7 );
+SystemExpressionRepresentationString preferred_interrupt_key;
+
 SystemExpressionRepresentationInt ui_open_file_readonly;
 SystemExpressionRepresentationString ui_open_file_name;
 SystemExpressionRepresentationString ui_save_as_file_name;
