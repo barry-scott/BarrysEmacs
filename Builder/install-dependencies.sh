@@ -49,11 +49,14 @@ macOS)
 
 fedora)
     for PKG in \
+        gcc-g++ \
         unicode-ucd \
         sqlite \
         sqlite-devel \
         hunspell \
         hunspell-devel \
+        libssh-devel \
+        python3-devel \
         python3-pycxx-devel \
         ;
     do
