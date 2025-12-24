@@ -23,11 +23,14 @@ EmacsString true_str("true");
 EmacsString false_str("false");
 EmacsString too_few_args_str("Too few arguments given to %s");
 
+EmacsChar_t preferred_interrupt_key_char('\x07');
+
 extern int gui_error;
 
 // dump an error message; called like printf
 
 SystemExpressionRepresentationString error_messages_buffer;
+extern SystemExpressionRepresentationString preferred_interrupt_key;
 
 EmacsBuffer *minibuf_context = NULL;
 
@@ -447,7 +450,7 @@ EmacsString get_key_interactive( KeyMap *kmap, const EmacsString &prompt )
         minibuf_body.setPromptBody( minibuf_text );
 
         EmacsChar_t c( get_char() );
-        if( c == '\007' )
+        if( c == preferred_interrupt_key_char )
         {
             error( "Aborted.");
             return EmacsString::null;
