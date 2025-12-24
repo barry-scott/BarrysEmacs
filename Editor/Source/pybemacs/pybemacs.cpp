@@ -104,7 +104,7 @@ public:
 
         if( py_preferred_interrupt_key.as_std_string( "utf-8" ) == "ctrl-y" )
         {
-            preferred_interrupt_key_char = '\x17';
+            preferred_interrupt_key_char = '\x19';
         }
         else
         {
