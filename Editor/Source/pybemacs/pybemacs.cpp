@@ -52,8 +52,6 @@ extern void init_subprocesses( void );
 extern int vertical_bar_width;
 
 extern SystemExpressionRepresentationString preferred_interrupt_key;
-static EmacsString ctrl_g("\0x07");
-static EmacsString ctrl_y("\0x17");
 
 class BemacsEditor;
 class BemacsModule;
@@ -105,13 +103,14 @@ public:
 
         if( py_preferred_interrupt_key.as_std_string( "utf-8" ) == "ctrl-y" )
         {
+            EmacsString ctrl_y("\x17");
             preferred_interrupt_key = ctrl_y;
         }
         else
         {
+            EmacsString ctrl_g("\x07");
             preferred_interrupt_key = ctrl_g;
         }
-
     }
 
     virtual ~BemacsEditor()
