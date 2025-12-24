@@ -68,7 +68,7 @@
 (bind-to-key "forward-paragraph" "\e)")
 (bind-to-key "forward-sentence" "\ee")
 (bind-to-key "forward-word" "\ef")
-(bind-to-key "illegal-operation" "\^g")
+(bind-to-key "illegal-operation" preferred-interrupt-key)
 (bind-to-key "indent-C-procedure" "\ej")
 (bind-to-key "insert-file" "\^x\^i")
 (bind-to-key "kill-compilation" "\^x\^K")
@@ -126,10 +126,10 @@
 (bind-to-key "write-modified-files" "\^x\^m")
 (bind-to-key "write-named-file" "\^x\^w")
 (bind-to-key "what-cursor-position" "\^x=")
-(bind-to-key "yank-buffer" "\e\^y")
-(bind-to-key "yank-from-killbuffer" "\^y")
+(bind-to-key "yank-buffer" (concat "\e" preferred-yank-key))
+(bind-to-key "yank-from-killbuffer" preferred-yank-key)
 (bind-to-key "help-key" "\^_")
-(bind-to-key "interrupt-key" "\^G")
+(bind-to-key "interrupt-key" preferred-interrupt-key)
 
 ;
 ; Set up the Mini-buffer keymaps
@@ -137,7 +137,7 @@
 (save-excursion
     (temp-use-buffer "setup-default-keybindings")
     (use-local-map "Minibuf-local-map")
-    (local-bind-to-key "error-and-exit" "\^g")
+    (local-bind-to-key "error-and-exit" preferred-interrupt-key)
     (local-bind-to-key "expand-and-exit" "\e")
     (local-bind-to-key "exit-emacs" "\^m")
     (local-bind-to-key "exit-emacs" "\^j")
@@ -146,7 +146,7 @@
 (save-excursion
     (temp-use-buffer "setup-default-keybindings")
     (use-local-map "Minibuf-local-NS-map")
-    (local-bind-to-key "error-and-exit" "\^g")
+    (local-bind-to-key "error-and-exit" preferred-interrupt-key)
     (local-bind-to-key "expand-and-exit" " ")
     (local-bind-to-key "expand-and-exit" "\t")
     (local-bind-to-key "expand-and-exit" "\e")
