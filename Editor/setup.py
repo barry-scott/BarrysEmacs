@@ -677,7 +677,7 @@ class Compiler:
         except (ValueError, TypeError, KeyError) as e:
             log.error( 'Exception: %r' % (e,) )
             log.error( 'String: %s' % (s,) )
-            log.error( 'Vairables: %r' % (self.__variables,) )
+            log.error( 'Variables: %r' % (self.__variables,) )
 
             raise SetupError( '%s: Cannot translate string (%s)' % (self.__class__.__name__, e) )
 
