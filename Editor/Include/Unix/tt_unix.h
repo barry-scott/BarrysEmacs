@@ -87,6 +87,8 @@ public:
     virtual void t_io_print( const unsigned char * );
     virtual void t_io_flush();
 
+    int getInterruptChar();
+
 private:
     void pad( int n, float f );
     void PAD( int n, float f );
