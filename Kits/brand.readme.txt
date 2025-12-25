@@ -20,11 +20,20 @@ Introduction
     This is a release version of %(maturity)s%(major)s.%(minor)s of Barry's Emacs.
 
     There are kits available for:
-        Windows 7 and later (tested on: Windows 10)
-        Mac OS X 10.13 (tested on: macOS 11.0.1)
-        Linux (tested on: Fedora 33, Centos 8, Centos 7 and Centos 6)
+        Windows 10 and later (tested on: Windows 11)
+        Mac OS X 10.13 (tested on: macOS 26.2)
+        Linux (tested on: Fedora 43)
 
 New in %(version)s
+    * Support configuring Ctrl-Y as the interrupt key and Ctrl-G as the yank key.
+      - For GUI set the preference in "Key Binding" tab of "Preferences"
+      - For CLI the perference is set when the tty intr=^Y
+      - Each use of ^G and ^Y in the MLisp library uses the
+        preferred-interrupt-key and preferred-yank-key
+      - This change was inspired by issues with systemd's run0 that broke
+        if the stty intr=^G was used.
+
+New in 8.8.1
     * Stop cursor blinking when Emacs is not the focused app.
     * Wayland on Linux required changes to the way icons and desktop files are named and used.
 
