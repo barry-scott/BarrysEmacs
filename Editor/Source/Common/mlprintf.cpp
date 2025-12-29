@@ -191,12 +191,10 @@ static void print_decimal( EmacsString &output, long int n, int w )
         output.append( "-2147483648" );
     }
 
-    int used = 0;
     if( n < 0 )
     {
         output.append( '-' );
         n = -n;
-        used++;
     }
 
     int i = 0;
@@ -210,12 +208,9 @@ static void print_decimal( EmacsString &output, long int n, int w )
 
     if( w && w > i )
     {
-        used = w;
         for(; w > i; w-- )
             output.append( ' ' );
     }
-    else
-        used += i;
 
     while( i-- )
         output.append( digits[i] );

@@ -73,7 +73,7 @@ private:
 
                 // map all "-" in name to "_". This works well as Python uses "_" and MLisp uses "-".
                 // thus mode-line-format becomes mode_line_format
-                std::replace_if( str_name.begin(), str_name.end(), std::bind2nd(std::equal_to<char>(), '-'), '_' );
+                std::replace( str_name.begin(), str_name.end(), '-', '_' );
 
                 members.append( Py::String( str_name ) );
             }
@@ -90,7 +90,7 @@ private:
 
         // map all "_" in name to "-". This works well as Python uses "_" and MLisp uses "-".
         // thus mode_line_format becomes mode-line-format
-        std::replace_if( str_name.begin(), str_name.end(), std::bind2nd(std::equal_to<char>(), '_'), '-' );
+        std::replace( str_name.begin(), str_name.end(), '_', '-' );
 
         EmacsString name( str_name.c_str() );
 
@@ -120,7 +120,7 @@ private:
 
         // map all "_" in name to "-". This works well as Python uses "_" and MLisp uses "-".
         // thus mode_line_format becomes mode-line-format
-        std::replace_if( str_name.begin(), str_name.end(), std::bind2nd(std::equal_to<char>(), '_'), '-' );
+        std::replace( str_name.begin(), str_name.end(), '_', '-' );
 
         EmacsString name( str_name.c_str() );
 
@@ -226,7 +226,7 @@ private:
 
                 // map all "-" in name to "_". This works well as Python uses "_" and MLisp uses "-".
                 // thus mode-line-format becomes mode_line_format
-                std::replace_if( str_name.begin(), str_name.end(), std::bind2nd(std::equal_to<char>(), '-'), '_' );
+                std::replace( str_name.begin(), str_name.end(), '-', '_' );
 
                 methods.append( Py::String( str_name ) );
             }
@@ -240,7 +240,7 @@ private:
 
         // map all "_" in name to "-". This works well as Python uses "_" and MLisp uses "-".
         // thus mode_line_format becomes mode-line-format
-        std::replace_if( std_fn_name.begin(), std_fn_name.end(), std::bind2nd(std::equal_to<char>(), '_'), '-' );
+        std::replace( std_fn_name.begin(), std_fn_name.end(), '_', '-' );
 
         EmacsString name( std_fn_name.c_str() );
 

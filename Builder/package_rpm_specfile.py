@@ -68,11 +68,7 @@ def createRpmSpecFile( opt, spec_filename ):
 
     if opt.opt_gui:
         # options for gui
-        all_requires_gui.add( opt.opt_default_font_package )
-        all_config_options.add( '--default-font-name=%s' % (opt.opt_default_font_name,) )
-
-        all_config_options.add( '--pyqt-version=%s' % (opt.opt_pyqt_version,) )
-
+        all_requires_gui.add( 'adobe-source-code-pro-fonts' )
         if opt.opt_mock_target.startswith( 'epel-7-' ):
             # centos 7 uses python36 not python3
             python = '/usr/bin/python3'
@@ -91,17 +87,14 @@ def createRpmSpecFile( opt, spec_filename ):
             python = '/usr/bin/python3'
             all_requires_gui.add( 'bemacs-common = %{version}-%{release}' )
             all_requires_gui.add( 'python3 >= 3.4' )
-
-            if opt.opt_pyqt_version == '6':
-                all_requires_gui.add( 'python3-pyqt6' )
-            else:
-                all_requires_gui.add( 'python3-qt5' )
+            all_requires_gui.add( 'python3-pyqt6' )
 
             all_requires_base.add( 'bemacs-gui = %{version}-%{release}' )
             all_requires_base.add( 'python3' )
 
             all_build_requires.add( 'python3 >= 3.4' )
             all_build_requires.add( 'python3-devel >= 3.4' )
+            all_build_requires.add( 'python3-pyqt6' )
 
             if opt.opt_pyqt_version == '6':
                 all_build_requires.add( 'python3-pyqt6' )

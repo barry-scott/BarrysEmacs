@@ -296,7 +296,7 @@
         (~ins-message)
         (if (setq ~ins-is-failing
                 (error-occurred (search-forward ~inc-search-string)))
-            (send-string-to-terminal "\^g")
+            (send-string-to-terminal preferred-interrupt-key)
         )
         (~ins-message)
     )
@@ -307,7 +307,7 @@
         (~ins-message)
         (if (setq ~ins-is-failing
                 (error-occurred (search-reverse ~inc-search-string)))
-            (send-string-to-terminal "\^g")
+            (send-string-to-terminal preferred-interrupt-key)
         )
         (~ins-message)
     )
@@ -318,7 +318,7 @@
         (setq ~char (arg 1 "Next char?"))
         (if ~ins-is-failing
             (progn
-                (send-string-to-terminal "\^g")
+                (send-string-to-terminal preferred-interrupt-key)
                 (~ins-message)
             )
             ; else

@@ -2,20 +2,16 @@
 
 export BUILDER_CFG_PLATFORM=$(uname -s)
 
-# ether set to tag:<ver> or trunk:<ver>
-export PYCXX_VER=tag7.1.9
-export PYCXX_VER=trunk:7.1.9
-
 case ${BUILDER_CFG_PLATFORM} in
 
 Darwin)
-    export PYTHON_VERSION=3.12
+    export PYTHON_VERSION=3.14
     export BUILDER_CFG_PLATFORM=MacOSX
     export PYTHON=python${PYTHON_VERSION}
     ;;
 
 Linux)
-    for version in 3.12 3.11 3.10 3.9
+    for version in 3.14 3.13 3.12
     do
         if [ -e /usr/bin/python${version} ]
         then
@@ -49,7 +45,7 @@ Linux)
     ;;
 
 NetBSD)
-    for version in 3.11 3.10 3.9
+    for version in 3.12 3.11 3.10 3.9
     do
         python_candidate=/usr/pkg/bin/python${version}
         if [ -e $python_candiddate ]
@@ -83,7 +79,7 @@ esac
 
 echo Info: WorkingDir: ${BUILDER_TOP_DIR}
 echo Info: Config Platform: ${BUILDER_CFG_PLATFORM}
-if [[ "${PYTHON_VERSION}" = "" ]]
+if [ -z "${PYTHON_VERSION}" ]
 then
     echo "ERROR: cannot find a suitable version of python."
     PYTHON='/bin/echo ERROR'

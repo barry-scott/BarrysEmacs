@@ -166,11 +166,26 @@
         (setq ~line-num 0)
         (setq ~col-num 0)
 
+
         ; handle <filename>:<line-num> and <filename>:<line-num>:<col-num>
-        ; is there a :<num> at the end of the ¬filename
+        ; is there a :<num> at the end of the filename
         (setq ~index (string-index-of-last ~filename-pattern ":"))
+
+
         (if (>= ~index 0)
             (progn
+                (if
+                    (&
+                        ; more then one colon
+                        (!= ~index (string-index-of-first ~filename-pattern ":"))
+                        ; and its at the end the end
+                        (= ~index (- (length ~filename-pattern) 1))
+                    )
+                    (progn
+                        (setq ~filename-pattern (string-extract ~filename-pattern 0 ~index))
+                        (setq ~index (string-index-of-last ~filename-pattern ":"))
+                    )
+                )
                 (setq ~suffix (string-extract ~filename-pattern (+ ~index 1) (length ~filename-pattern)))
                 ; is it a integer?
                 (if (! (error-occurred (setq ~line-num (+ ~suffix))))

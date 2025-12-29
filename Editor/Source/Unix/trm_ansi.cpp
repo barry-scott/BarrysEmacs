@@ -17,6 +17,8 @@
 static char THIS_FILE[] = __FILE__;
 static EmacsInitialisation emacs_initialisation( __DATE__ " " __TIME__, THIS_FILE );
 
+extern SystemExpressionRepresentationString preferred_interrupt_key;
+extern EmacsChar_t preferred_interrupt_key_char;
 
 //forward
 const char SO( 016 );
@@ -753,9 +755,33 @@ TerminalControl_CHAR::TerminalControl_CHAR( const EmacsString &dev )
 TerminalControl_CHAR::~TerminalControl_CHAR()
 { }
 
+int TerminalControl_CHAR::getInterruptChar()
+{
+    if( !t_attr_valid )
+    {
+        tcgetattr( input_channel, &t_user_attributes );
+    }
+
+    return t_user_attributes.c_cc[VINTR];
+}
+
 int init_char_terminal( const EmacsString &device )
 {
-    theActiveView = new TerminalControl_CHAR( device );
+    TerminalControl_CHAR *term = new TerminalControl_CHAR( device );
+    theActiveView = term;
+
+    if( term->getInterruptChar() == '\x19' )
+    {
+        preferred_interrupt_key_char = '\x19';
+    }
+    else
+    {
+        preferred_interrupt_key_char = '\x07';
+    }
+
+    EmacsString preferred_interrupt_key_str(EmacsString::copy, &preferred_interrupt_key_char, 1);
+    preferred_interrupt_key = preferred_interrupt_key_str;
+
     return 1;
 }
 

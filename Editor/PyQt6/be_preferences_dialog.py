@@ -41,6 +41,7 @@ class PreferencesDialog( QtWidgets.QDialog ):
         self.all_tabs.append( FontTab( self.app, T_('Font') ) )
         self.all_tabs.append( ColoursTab( self.app, T_('Colours') ) )
         self.all_tabs.append( CursorTab( self.app, T_('Cursor') ) )
+        self.all_tabs.append( KeyBindingTab( self.app, T_('Key Binding') ) )
 
         for tab in self.all_tabs:
             tabs.addTab( tab, tab.title )
@@ -96,10 +97,11 @@ class CursorTab(QtWidgets.QWidget):
 
         self.colour_lable = QtWidgets.QLabel( T_('Note: The cursor colour can be set on in the Colours tab') )
 
+        self.fill_lable = QtWidgets.QLabel( '' )
+
         self.grid_sizer = QtWidgets.QGridLayout()
         row = 0
-        self.grid_sizer.addWidget( self.shape_label, row, 0, 3, 1 )
-        row += 1
+        self.grid_sizer.addWidget( self.shape_label, row, 0, 2, 1 )
         self.grid_sizer.addWidget( self.shape_block_radio, row, 1 )
         row += 1
         self.grid_sizer.addWidget( self.shape_line_radio, row, 1 )
@@ -111,6 +113,8 @@ class CursorTab(QtWidgets.QWidget):
         self.grid_sizer.addWidget( self.interval_value, row, 1 )
         row += 1
         self.grid_sizer.addWidget( self.colour_lable, row, 0, 1, 2 )
+        row += 1
+        self.grid_sizer.addWidget( self.fill_lable, row, 0, 1, 2 )
 
         self.grid_sizer.setRowStretch( row, 5 )
         self.grid_sizer.setColumnStretch( 1, 5 )
@@ -498,3 +502,55 @@ class ColourTableModel(QtCore.QAbstractTableModel):
                     return brush
 
         return None
+
+
+class KeyBindingTab(QtWidgets.QWidget):
+    def __init__( self, app, title ):
+        super().__init__()
+
+        self.title = title
+        self.app = app
+
+        self.initControls()
+
+    def initControls( self ):
+        p = self.app.getPrefs().keybinding.preferred_interrupt_key
+
+        self.intkey_label = QtWidgets.QLabel( T_('Preferred Interrupt Key') )
+        self.intkey_group = QtWidgets.QButtonGroup()
+        self.intkey_ctrl_g = QtWidgets.QRadioButton( T_('Ctrl-G is the preferred-interrupt-key, Ctrl-Y is the yank key') )
+        self.intkey_group.addButton( self.intkey_ctrl_g )
+        self.intkey_ctrl_g.setChecked( p.keyname == 'ctrl-g' )
+
+        self.intkey_ctrl_y = QtWidgets.QRadioButton( T_('Ctrl-Y is the preferred-interrupt-key, Ctrl-G is the yank (get) key') )
+        self.intkey_group.addButton( self.intkey_ctrl_y )
+        self.intkey_ctrl_y.setChecked( p.keyname == 'ctrl-y' )
+
+        self.fill_lable = QtWidgets.QLabel( '' )
+
+        self.grid_sizer = QtWidgets.QGridLayout()
+        row = 0
+        self.grid_sizer.addWidget( self.intkey_label, row, 0, 2, 1 )
+        row += 1
+        self.grid_sizer.addWidget( self.intkey_ctrl_g, row, 1 )
+        row += 1
+        self.grid_sizer.addWidget( self.intkey_ctrl_y, row, 1 )
+        row += 1
+        self.grid_sizer.addWidget( self.fill_lable, row, 0 )
+
+        self.grid_sizer.setRowStretch( row, 5 )
+        self.grid_sizer.setColumnStretch( 1, 5 )
+
+        self.setLayout( self.grid_sizer )
+
+    def savePreferences( self ):
+        p = self.app.getPrefs().keybinding.preferred_interrupt_key
+
+        if self.intkey_ctrl_g.isChecked():
+            p.keyname = 'ctrl-g'
+
+        elif self.intkey_ctrl_y.isChecked():
+            p.keyname = 'ctrl-y'
+
+    def validate( self ):
+        return True

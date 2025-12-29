@@ -26,6 +26,7 @@ mkdir -p ../Imports
 tar -xf "${1? hunspell tar ball}" -C ../Imports
 
 cd ../Imports
+patch <../Builder/patches/hunspell-1.7.2-remove-unused-variable-test.patch
 shift
 
 ln -sf hunspell-* hunspell

@@ -69,7 +69,7 @@
     (bind-to-key "mouse-local-copy" "\^X\[mouse-2-down]")
     (bind-to-key "mouse-local-paste" "\^X\[mouse-3-down]")
     (bind-to-key "local-copy-region" "\^Xc")
-    (bind-to-key "local-paste" "\^X\^Y")
+    (bind-to-key "local-paste" (concat "\^X" preferred-yank-key))
 )
 
 (defun mouse-off()

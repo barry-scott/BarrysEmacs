@@ -1,12 +1,12 @@
 #
-#   Copyright (c) 2010-2023 Barry A. Scott
+#   Copyright (c) 2010-2025 Barry A. Scott
 #
 import os
 import sys
 import subprocess
 import glob
 
-pycxx_version = (7,1,9)
+pycxx_version = (7,2,0)
 pycxx_version_str = '%d.%d.%d' % pycxx_version
 
 sys.path.insert( 0, '../Builder' )
@@ -323,6 +323,10 @@ class Setup:
                 cli_feature_defines.append( ('SPELL_CHECKER', '1') )
                 cli_feature_defines.append( ('SPELL_DICTIONARY_DIR',
                                              '\\"%s/\\"' % (spell_dictionary_dir,) ) )
+            if self.opt_sftp:
+                pybemacs_feature_defines.append( ('SFTP', '1') )
+                cli_feature_defines.append( ('SFTP', '1') )
+
         else:
             raise SetupError( 'Unknown platform %r' % (self.platform,) )
 
@@ -709,7 +713,7 @@ class Compiler:
         except (ValueError, TypeError, KeyError) as e:
             log.error( 'Exception: %r' % (e,) )
             log.error( 'String: %s' % (s,) )
-            log.error( 'Vairables: %r' % (self.__variables,) )
+            log.error( 'Variables: %r' % (self.__variables,) )
 
             raise SetupError( '%s: Cannot translate string (%s)' % (self.__class__.__name__, e) )
 
@@ -902,7 +906,13 @@ class CompilerGCC(Compiler):
         Compiler.__init__( self, setup )
 
         if setup.opt_system_ucd:
-            for ucd_dir in ('/usr/share/unicode/ucd', '/usr/share/unicode'):
+            if setup.platform == 'netbsd':
+                ucd_dir_candidates = ('/usr/pkg/share/unicode/ucd',)
+
+            else:
+                ucd_dir_candidates = ('/usr/share/unicode/ucd', '/usr/share/unicode')
+
+            for ucd_dir in ucd_dir_candidates:
                 if os.path.exists( os.path.join( ucd_dir, 'UnicodeData.txt' ) ):
                     self._addVar( 'UCDDIR',         ucd_dir )
                     break
@@ -1514,6 +1524,14 @@ class NetBSDCompilerGCC(CompilerGCC):
         else:
             self._addVar( 'HUNSPELL_CFLAGS', '' )
 
+        if self.setup.opt_sftp:
+            p = subprocess.run( ['pkg-config', 'libssh', '--cflags'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
+            self._addVar( 'SFTP_CFLAGS', p.stdout.strip() )
+
+        else:
+            self._addVar( 'SFTP_CFLAGS', '' )
+
+
         if self.setup.opt_coverage:
             self._addVar( 'CCC_OPT',    '-O0 '
                                         '-ftest-coverage '
@@ -1531,6 +1549,7 @@ class NetBSDCompilerGCC(CompilerGCC):
                                         '%(FEATURE_DEFINES)s '
                                         '%(SQLITE_FLAGS)s '
                                         '%(HUNSPELL_CFLAGS)s '
+                                        '%(SFTP_CFLAGS)s '
                                         '-DBEMACS_DOC_DIR=\\"%(BEMACS_DOC_DIR)s\\" '
                                         '-DBEMACS_LIB_DIR=\\"%(BEMACS_LIB_DIR)s\\"' )
         self._addVar( 'CCCFLAGS',       '%(CCFLAGS)s '
@@ -1544,6 +1563,10 @@ class NetBSDCompilerGCC(CompilerGCC):
 
         if self.setup.opt_hunspell:
             p = subprocess.run( ['pkg-config', 'hunspell', '--libs'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
+            link_libs.append( p.stdout.strip() )
+
+        if self.setup.opt_sftp:
+            p = subprocess.run( ['pkg-config', 'libssh', '--libs'], stdout=subprocess.PIPE, encoding='utf-8', check=True )
             link_libs.append( p.stdout.strip() )
 
         link_libs += ['-lutil', '-pthread']

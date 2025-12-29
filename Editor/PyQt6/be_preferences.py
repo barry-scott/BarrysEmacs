@@ -1,6 +1,6 @@
 '''
  ====================================================================
- Copyright (c) 2003-2019 Barry A Scott.  All rights reserved.
+ Copyright (c) 2003-2025 Barry A Scott.  All rights reserved.
 
  This software is licensed as described in the file LICENSE.txt,
  which you should have received as part of this distribution.
@@ -29,6 +29,7 @@ def Bool( text ):
 
     else:
         raise ValueError( 'Bool expects the string true or false' )
+
 
 class RGB:
     def __init__( self, value=None ):
@@ -62,6 +63,7 @@ class RGB:
 
     def __repr__( self ):
         return '<RGB R:%d G:%d B:%d>' % self.value
+
 
 class RGBA:
     def __init__( self, value=None ):
@@ -101,11 +103,16 @@ class Preferences(PreferencesNode):
     def __init__( self ):
         super().__init__()
         self.window = None
+        self.keybinding = None
 
     def finaliseNode( self ):
         if self.window is None:
             self.window = Window()
             self.window.finaliseNode()
+
+        if self.keybinding is None:
+            self.keybinding = KeyBinding()
+            self.keybinding.finaliseNode()
 
 # ------------------------------------------------------------
 class Session(PreferencesNode):
@@ -175,14 +182,37 @@ class Window(PreferencesNode):
         else:
             raise RuntimeError( 'unknown name %r' % (name,) )
 
+# ------------------------------------------------------------
 class Font(PreferencesNode):
     xml_attribute_info = (('face', str), ('point_size', int))
 
     def __init__( self ):
         super().__init__()
-        self.face = be_platform_specific.default_font_name
-        self.point_size = be_platform_specific.default_font_point_size
+        # point size and face need to chosen by platform
+        if sys.platform.startswith( 'win' ):
+            self.face = 'Courier New'
+            self.point_size = 14
 
+        elif sys.platform == 'darwin':
+            self.face = 'Monaco'
+            self.point_size = 14
+
+        elif sys.platform == 'linux':
+            if Path( '/etc/fedora-release' ).exists():
+                # fedora
+                self.face = 'Source Code Pro'
+                self.point_size = 12
+            else:
+                # assume this is debian/ubuntu
+                self.face = 'Nota Mono'
+                self.point_size = 12
+
+        else:
+            # Assuming linux/xxxBSD
+            self.face = 'Liberation Mono'
+            self.point_size = 11
+
+# ------------------------------------------------------------
 class CursorStyle(PreferencesNode):
     xml_attribute_info = (('blink', Bool), ('interval', int), ('shape', str))
 
@@ -195,6 +225,7 @@ class CursorStyle(PreferencesNode):
     def setAttr( self, name, value ):
         super().setAttr( name, value )
 
+# ------------------------------------------------------------
 class Colour(PreferencesNode):
     xml_attribute_info = (('fg', RGB), ('bg', RGB))
 
@@ -207,6 +238,7 @@ class Colour(PreferencesNode):
     def __lt__( self, other ):
         return self.name < other.name
 
+# ------------------------------------------------------------
 class CursorColour(PreferencesNode):
     xml_attribute_info = (('fg', RGBA),)
 
@@ -224,6 +256,7 @@ class CursorColour(PreferencesNode):
             self.fg = RGBA()
             self.fg.setTuple( be_emacs_panel.all_themes[be_emacs_panel.theme_name_default].cursor_fg )
 
+# ------------------------------------------------------------
 class Theme(PreferencesNode):
     xml_attribute_info = (('name', str),)
 
@@ -241,6 +274,33 @@ class Theme(PreferencesNode):
         if self.name is None:
             self.name = be_emacs_panel.theme_name_default
 
+# ------------------------------------------------------------
+class KeyBinding(PreferencesNode):
+    xml_attribute_info = ()
+
+    def __init__( self ):
+        super().__init__()
+        self.preferred_interrupt_key = None
+
+    def getPreferredInterruptKey( self ):
+        return self.preferred_interrupt_key
+
+    def finaliseNode( self ):
+        if self.preferred_interrupt_key is None:
+            self.preferred_interrupt_key = PreferredInterruptKey()
+
+# ------------------------------------------------------------
+class PreferredInterruptKey(PreferencesNode):
+    xml_attribute_info = (('keyname', str),)
+
+    def __init__( self, keyname='ctrl-g', ):
+        super().__init__()
+        self.keyname = keyname
+
+    def setAttr( self, name, value ):
+        super().setAttr( name, value )
+
+# ------------------------------------------------------------
 bemacs_preferences_scheme = (Scheme(
         (SchemeNode( Preferences, 'preferences',  )
 
@@ -251,6 +311,9 @@ bemacs_preferences_scheme = (Scheme(
             << SchemeNode( Colour, 'colour', key_attribute='name' )
             << SchemeNode( CursorColour, 'cursor' )
             )
+        <<  (SchemeNode( KeyBinding, 'keybinding', () )
+            << SchemeNode( PreferredInterruptKey, 'preferred_interrupt_key' )
+            )
         )
     ) )
 
@@ -258,8 +321,7 @@ bemacs_session_scheme = (Scheme(
         SchemeNode( Session, 'session', ('geometry',) )
     ) )
 
-app = None
-
+# ------------------------------------------------------------
 class BemacsPreferenceManager:
     def __init__( self, app_, prefs_filename, session_filename ):
         self.xml_prefs = XmlPreferences( bemacs_preferences_scheme )

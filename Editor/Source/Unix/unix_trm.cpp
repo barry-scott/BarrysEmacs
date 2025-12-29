@@ -50,10 +50,12 @@ void TerminalControl_CHAR::t_io_flush()
 
     // convert to utf-8
     int  utf8_length = length_unicode_to_utf8( output_size, output_buffer );
-    unsigned char utf8_buffer[ utf8_length ];
+    unsigned char *utf8_buffer = new unsigned char[ utf8_length ];
     convert_unicode_to_utf8( output_size, output_buffer, utf8_buffer );
 
-    write( output_channel, &utf8_buffer, utf8_length );
+    write( output_channel, utf8_buffer, utf8_length );
+
+    delete[] utf8_buffer;
 
     output_size = 0;
 }

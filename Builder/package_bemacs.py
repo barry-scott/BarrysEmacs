@@ -174,7 +174,7 @@ class PackageBEmacs(object):
 
             self.cmd = next(args)
             if self.cmd not in self.valid_cmds:
-                raise BuildError( 'Unknown command %r - pick on of: %s' %
+                raise BuildError( 'Unknown command %r - pick one of: %s' %
                                     (self.cmd, ', '.join( self.valid_cmds,)) )
 
             if self.cmd in ('srpm-release', 'mock-release', 'list-release', 'copr-release'):

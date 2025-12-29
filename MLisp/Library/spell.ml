@@ -69,7 +69,7 @@
             (local-bind-to-key "~spell-help" "\[default]")
 
             (use-local-map "~spell-map")
-            (local-bind-to-key "interrupt-key" "\^g")
+            (local-bind-to-key "interrupt-key" preferred-interrupt-key)
             (local-bind-to-key "~spell-help" "\[default]")
             (local-bind-to-key "~spell-map-key-prefix" "\[key-prefix]")
             (local-bind-to-key "~spell-map-mouse-prefix" "\[mouse-prefix]")

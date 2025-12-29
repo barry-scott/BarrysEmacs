@@ -40,6 +40,7 @@ class BuildBEmacs(object):
 
         self.opt_colour = False
         self.opt_verbose = False
+        self.opt_package = True
         self.opt_sqlite = True
         self.opt_hunspell = True
         self.opt_hunspell_package_dictionaries = False
@@ -104,6 +105,9 @@ class BuildBEmacs(object):
 
                     elif arg == '--no-sqlite':
                         self.opt_sqlite = False
+
+                    elif arg == '--no-package':
+                        self.opt_package = False
 
                     elif arg == '--no-hunspell':
                         self.opt_hunspell = False
@@ -340,10 +344,11 @@ class BuildBEmacs(object):
         self.ruleQuickInfo()
         self.ruleDocs()
 
-        if self.platform == 'MacOSX':
-            self.ruleMacosPackage()
-        if self.platform == 'win64':
-            self.ruleInnoInstaller()
+        if self.opt_package:
+            if self.platform == 'MacOSX':
+                self.ruleMacosPackage()
+            if self.platform == 'win64':
+                self.ruleInnoInstaller()
 
     def ruleBrand( self ):
         log.info( 'Running ruleBrand' )
@@ -394,9 +399,8 @@ class BuildBEmacs(object):
                  ,self.BEMACS_ROOT_DIR
                  ,self.INSTALL_BEMACS_BIN_DIR
                  ,self.INSTALL_BEMACS_LIB_DIR
-                 ,self.INSTALL_BEMACS_DOC_DIR
-                 ,self.opt_default_font_name),
-                    cwd='../Editor/PyQt%s' % (self.opt_pyqt_version,) )
+                 ,self.INSTALL_BEMACS_DOC_DIR),
+                    cwd='../Editor/PyQt6' )
 
     def ruleBemacsCli( self ):
         log.info( 'Running ruleBemacsCli' )
@@ -451,7 +455,8 @@ class BuildBEmacs(object):
         build_utils.mkdirAndParents( pkg_folder )
         build_utils.mkdirAndParents( dmg_folder )
 
-        run( ('cp', '-r',
+        # must use -R to copy symlinks
+        run( ('cp', '-R',
                 "%s/Barry's Emacs.app" % (pkg_folder,),
                 "%s/Barry's Emacs.app" % (dmg_folder,)) )
 

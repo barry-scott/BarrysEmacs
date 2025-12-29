@@ -10,6 +10,15 @@
 ; users can have their own key bindings
 ;
 (setq error-messages-buffer "Startup Error Messages")
+(declare-global preferred-yank-key)
+
+(setq preferred-yank-key
+    (if (= preferred-interrupt-key "\^g")
+        "\^y"
+        "\^g"
+    )
+)
+
 (defun
     (~emacs-profile-clear-error-buffer
         (if (!= error-messages-buffer "")

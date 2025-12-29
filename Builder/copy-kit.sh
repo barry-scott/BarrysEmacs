@@ -44,6 +44,7 @@ Linux-Ubuntu|Linux-Debian)
 
         colour-print "<>info Info: apt update<>"
         sudo apt update
+
         colour-print "<>info Info: apt install bemacs<>"
         sudo apt install bemacs
     fi
