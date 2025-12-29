@@ -59,6 +59,3 @@ def setupPlatformSpecific_( argv0 ):
                 break
 
     assert app_dir is not None
-
-default_font_name = 'Monaco'
-default_font_point_size = 14

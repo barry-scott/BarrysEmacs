@@ -71,6 +71,3 @@ def setupPlatformSpecific_( argv0 ):
             if app_path.exists():
                 app_dir = app_path.parent
                 break
-
-default_font_name = 'Courier New'
-default_font_point_size = 14
