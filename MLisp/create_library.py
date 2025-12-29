@@ -255,6 +255,7 @@ library_files =    [
     ('common',    'Library/rectangular.key'),
     ('common',    'Library/rectangular.ml'),
     ('common',    'Library/rpm-specfile-mode.ml'),
+    ('common',    'Library/rust-mode.ml'),
     ('common',    'Library/scribe.ml'),
     ('common',    'Library/sentence.ml'),
     ('common',    'Library/sh-mode.key'),
