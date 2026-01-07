@@ -81,7 +81,7 @@
                     (setq val (~minifun)))
                 (if (!= error-message "\"~minifun\" did not return a value; \"setq\" was expecting it to.")
                     (progn ; else a real error
-                        (send-string-to-terminal Preferred-interrupt-key)
+                        (send-string-to-terminal preferred-interrupt-key)
                         (message "execute error:" error-message)
                     )
                     ; probably a function that just did not return a value
@@ -90,7 +90,7 @@
             )
             ; else had error during defun
             (progn
-                (send-string-to-terminal Preferred-interrupt-key)
+                (send-string-to-terminal preferred-interrupt-key)
                 (message val)
             )
         )
