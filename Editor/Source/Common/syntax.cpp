@@ -169,7 +169,7 @@ void SyntaxTable::q()
     EmacsCharToSyntaxKind_t::iterator i = s_kind.begin();
     while( i != s_kind.end() )
     {
-        std::cout << std::hex << " key=0x" << i->first << " val=0x" << i->second << std::endl;
+        std::cout << std::hex << " key=0x" << static_cast<int>(i->first) << " val=0x" << i->second << std::endl;
         ++i;
     }
 }

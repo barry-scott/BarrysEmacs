@@ -49,7 +49,7 @@ void EmacsString::q() const
     std::cout << "            data " << std::hex;
     for( int i=0; i<qstr._rep->length; i++ )
     {
-        std::cout << " 0x" << qstr._rep->data[i];
+        std::cout << " 0x" << static_cast<int>(qstr._rep->data[i]);
     }
     std::cout << std::dec << std::endl;
 }

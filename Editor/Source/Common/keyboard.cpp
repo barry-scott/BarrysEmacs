@@ -108,7 +108,7 @@ void KeyMap::q() const
         EmacsChar_t key = it->first;
         BoundName *b = it->second;
 
-        std::cout << "    key " << std::hex << key << ": " << b->b_proc_name.sdata() << std::endl;
+        std::cout << "    key " << std::hex << static_cast<int>(key) << ": " << b->b_proc_name.sdata() << std::endl;
     }
 }
 
