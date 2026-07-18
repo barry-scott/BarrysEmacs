@@ -142,6 +142,8 @@
     )
     (beginning-of-file)
     (message "")
+    (sit-for 0)
+    (novalue)
 )
 
 ; Set up global stuff.

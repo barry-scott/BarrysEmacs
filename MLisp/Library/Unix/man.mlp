@@ -1,0 +1,10 @@
+(defun
+    (man-com
+        (if (>= (argc) 3)
+            (man (concat (argv 1) " " (argv 2)))
+            (>= (argc) 2)
+            (man (argv 1))
+            (man)
+        )
+    )
+)
