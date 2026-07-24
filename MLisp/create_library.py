@@ -367,8 +367,8 @@ library_files =    [
     ('unix',    'Library/Unix/unix-process.key'),
     ('unix',    'Library/Unix/unix-buffer.ml'),
     ('unix',    'Library/Unix/unix-server.ml'),
-    ('unix',    'Library/Unix/unix-man.ml')
-    ('unix',    'Library/Unix/unix-man.mlp')
+    ('unix',    'Library/Unix/unix-man.ml'),
+    ('unix',    'Library/Unix/man.mlp')
     ]
 
 if __name__ == "__main__":
