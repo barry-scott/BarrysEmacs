@@ -863,9 +863,9 @@ class Win64CompilerVC14(Compiler):
         self.addFeatureDefines( feature_defines )
         self._addVar( 'EDIT_OBJ',       r'obj-pybemacs' )
         self._addVar( 'EDIT_EXE',       r'exe-pybemacs' )
-        self._addVar( 'LINK_LIBS',      'advapi32.lib '
-                                        'user32.lib '
-                                        '"%%(PYTHON_LIB)s\python%d%d.lib"' %
+        self._addVar( 'LINK_LIBS',      r'advapi32.lib '
+                                        r'user32.lib '
+                                        r'"%%(PYTHON_LIB)s\python%d%d.lib"' %
                                         (sys.version_info.major, sys.version_info.minor) )
         self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc '
                                         r'-DPYBEMACS=1 '
@@ -889,7 +889,7 @@ class Win64CompilerVC14(Compiler):
         log.info( 'setupPythonTools' )
         self._addVar( 'EDIT_OBJ',       r'obj-python-tools' )
         self._addVar( 'EDIT_EXE',       r'exe-python-tools' )
-        self._addVar( 'LINK_LIBS',      '"%%(PYTHON_LIB)s\python%d%d.lib"' %
+        self._addVar( 'LINK_LIBS',      r'"%%(PYTHON_LIB)s\python%d%d.lib"' %
                                         (sys.version_info.major, sys.version_info.minor) )
         self._addVar( 'CCCFLAGS',       r'/Zi /MT /EHsc '
                                         r'-DPYBEMACS=1 '
