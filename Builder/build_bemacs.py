@@ -177,8 +177,7 @@ class BuildBEmacs(object):
                 raise BuildError( 'Windows 32 bit is not supported' )
 
         if 'BUILDER_TOP_DIR' not in os.environ:
-            # assume that the current directory is BUILDER_TOP_DIR
-            os.environ[ 'BUILDER_TOP_DIR' ] = os.getcwd()
+            os.environ[ 'BUILDER_TOP_DIR' ] = os.path.dirname(os.path.dirname(__file__))
 
         self.BUILDER_TOP_DIR = os.environ[ 'BUILDER_TOP_DIR' ]
 
