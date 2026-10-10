@@ -5,13 +5,13 @@ export BUILDER_CFG_PLATFORM=$(uname -s)
 case ${BUILDER_CFG_PLATFORM} in
 
 Darwin)
-    export PYTHON_VERSION=3.14
+    export PYTHON_VERSION=3.15
     export BUILDER_CFG_PLATFORM=MacOSX
     export PYTHON=python${PYTHON_VERSION}
     ;;
 
 Linux)
-    for version in 3.14 3.13 3.12
+    for version in 3.15 3.14 3.13 3.12
     do
         if [ -e /usr/bin/python${version} ]
         then
@@ -45,7 +45,7 @@ Linux)
     ;;
 
 NetBSD)
-    for version in 3.12 3.11 3.10 3.9
+    for version in 3.15 3.14 3.13 3.12 3.11 3.10 3.9
     do
         python_candidate=/usr/pkg/bin/python${version}
         if [ -e $python_candiddate ]
@@ -59,7 +59,7 @@ NetBSD)
     ;;
 
 OpenBSD)
-    for version in 3.11 3.10 3.9
+    for version in 3.15 3.14 3.13 3.12 3.11 3.10 3.9
     do
         python_candidate=/usr/local/bin/python${version}
         if [ -e $python_candidate ]
